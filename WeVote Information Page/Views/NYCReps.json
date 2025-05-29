@@ -1,0 +1,1312 @@
+
+{
+  "Federal": {
+    "President": {
+      "name": "Donald Trump",
+      "office": "President of the United States",
+      "party": "Republican",
+      "district": null,
+      "boroughs": [
+        "Manhattan",
+        "Brooklyn",
+        "Queens",
+        "The Bronx",
+        "Staten Island"
+      ],
+      "website": "https://www.whitehouse.gov",
+      "photoURL": "https://upload.wikimedia.org/wikipedia/commons/6/68/Joe_Biden_presidential_portrait.jpg",
+      "divisionIds": [
+        "ocd-division/country:us"
+      ]
+    },
+    "Senators": [
+      {
+        "name": "Chuck Schumer",
+        "office": "U.S. Senator (New York)",
+        "party": "Democratic",
+        "district": null,
+        "boroughs": [
+          "Manhattan",
+          "Brooklyn",
+          "Queens",
+          "The Bronx",
+          "Staten Island"
+        ],
+        "website": "https://www.schumer.senate.gov",
+        "photoURL": "https://upload.wikimedia.org/wikipedia/commons/f/f0/Chuck_Schumer_official_photo.jpg",
+        "divisionIds": [
+          "ocd-division/country:us/state:ny"
+        ]
+      },
+      {
+        "name": "Kirsten Gillibrand",
+        "office": "U.S. Senator (New York)",
+        "party": "Democratic",
+        "district": null,
+        "boroughs": [
+          "Manhattan",
+          "Brooklyn",
+          "Queens",
+          "The Bronx",
+          "Staten Island"
+        ],
+        "website": "https://www.gillibrand.senate.gov",
+        "photoURL": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Kirsten_Gillibrand%2C_official_photo%2C_116th_Congress.jpg",
+        "divisionIds": [
+          "ocd-division/country:us/state:ny"
+        ]
+      }
+    ],
+    "Representatives": [
+      {
+        "name": "Tom Suozzi",
+        "office": "U.S. Representative",
+        "party": "Democratic",
+        "district": "NY-3",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://suozzi.house.gov",
+        "photoURL": "https://upload.wikimedia.org/wikipedia/commons/8/84/Thomas_Suozzi%2C_official_portrait%2C_115th_Congress.jpg",
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/cd:3"
+        ]
+      },
+      {
+        "name": "Gregory Meeks",
+        "office": "U.S. Representative",
+        "party": "Democratic",
+        "district": "NY-5",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://meeks.house.gov",
+        "photoURL": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Gregory_Meeks_official_photo.jpg",
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/cd:5"
+        ]
+      },
+      {
+        "name": "Grace Meng",
+        "office": "U.S. Representative",
+        "party": "Democratic",
+        "district": "NY-6",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://meng.house.gov",
+        "photoURL": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Grace_Meng%2C_official_portrait%2C_113th_Congress.jpg",
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/cd:6"
+        ]
+      },
+      {
+        "name": "Nydia Velázquez",
+        "office": "U.S. Representative",
+        "party": "Democratic",
+        "district": "NY-7",
+        "boroughs": [
+          "Brooklyn",
+          "Queens",
+          "Manhattan"
+        ],
+        "website": "https://velazquez.house.gov",
+        "photoURL": "https://upload.wikimedia.org/wikipedia/commons/5/55/Nydia_Vel%C3%A1zquez%2C_official_portrait%2C_116th_Congress.jpg",
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/cd:7"
+        ]
+      },
+      {
+        "name": "Hakeem Jeffries",
+        "office": "U.S. Representative",
+        "party": "Democratic",
+        "district": "NY-8",
+        "boroughs": [
+          "Brooklyn",
+          "Queens"
+        ],
+        "website": "https://jeffries.house.gov",
+        "photoURL": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Hakeem_Jeffries_official_photo.jpg",
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/cd:8"
+        ]
+      },
+      {
+        "name": "Yvette Clarke",
+        "office": "U.S. Representative",
+        "party": "Democratic",
+        "district": "NY-9",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://clarke.house.gov",
+        "photoURL": "https://upload.wikimedia.org/wikipedia/commons/3/35/Yvette_Clarke_official_photo.jpg",
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/cd:9"
+        ]
+      },
+      {
+        "name": "Jerry Nadler",
+        "office": "U.S. Representative",
+        "party": "Democratic",
+        "district": "NY-10",
+        "boroughs": [
+          "Manhattan",
+          "Brooklyn"
+        ],
+        "website": "https://nadler.house.gov",
+        "photoURL": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Jerry_Nadler_official_photo.jpg",
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/cd:10"
+        ]
+      },
+      {
+        "name": "Nicole Malliotakis",
+        "office": "U.S. Representative",
+        "party": "Republican",
+        "district": "NY-11",
+        "boroughs": [
+          "Staten Island",
+          "Brooklyn"
+        ],
+        "website": "https://malliotakis.house.gov",
+        "photoURL": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Nicole_Malliotakis_117th_U.S_Congress.jpg",
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/cd:11"
+        ]
+      },
+      {
+        "name": "Carolyn Maloney",
+        "office": "U.S. Representative",
+        "party": "Democratic",
+        "district": "NY-12",
+        "boroughs": [
+          "Manhattan",
+          "Queens",
+          "Brooklyn"
+        ],
+        "website": "https://maloney.house.gov",
+        "photoURL": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Carolyn_Maloney%2C_official_portrait%2C_116th_Congress.jpg",
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/cd:12"
+        ]
+      },
+      {
+        "name": "Adriano Espaillat",
+        "office": "U.S. Representative",
+        "party": "Democratic",
+        "district": "NY-13",
+        "boroughs": [
+          "Manhattan",
+          "The Bronx"
+        ],
+        "website": "https://espaillat.house.gov",
+        "photoURL": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Adriano_Espaillat_115th_Congress_photo.jpg",
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/cd:13"
+        ]
+      },
+      {
+        "name": "Alexandria Ocasio-Cortez",
+        "office": "U.S. Representative",
+        "party": "Democratic",
+        "district": "NY-14",
+        "boroughs": [
+          "Queens",
+          "The Bronx"
+        ],
+        "website": "https://ocasio-cortez.house.gov",
+        "photoURL": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Alexandria_Ocasio-Cortez_Official_Portrait.jpg",
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/cd:14"
+        ]
+      },
+      {
+        "name": "Ritchie Torres",
+        "office": "U.S. Representative",
+        "party": "Democratic",
+        "district": "NY-15",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://torres.house.gov",
+        "photoURL": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Ritchie_Torres%2C_official_portrait%2C_117th_Congress.jpg",
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/cd:15"
+        ]
+      }
+    ]
+  },
+  "State": {
+    "Governor": {
+      "name": "Kathy Hochul",
+      "office": "Governor of New York",
+      "party": "Democratic",
+      "district": null,
+      "boroughs": [
+        "Manhattan",
+        "Brooklyn",
+        "Queens",
+        "The Bronx",
+        "Staten Island"
+      ],
+      "website": "https://www.governor.ny.gov",
+      "photoURL": null,
+      "divisionIds": [
+        "ocd-division/country:us/state:ny"
+      ]
+    },
+    "StateSenators": [
+      {
+        "name": "James Sanders Jr.",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "10th Senate District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://www.nysenate.gov/senators/james-sanders-jr",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:10"
+        ]
+      },
+      {
+        "name": "Joseph P. Addabbo Jr.",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "15th Senate District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://www.nysenate.gov/senators/joseph-p-addabbo-jr",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:15"
+        ]
+      },
+      {
+        "name": "Toby Ann Stavisky",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "16th Senate District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://www.nysenate.gov/senators/toby-ann-stavisky",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:16"
+        ]
+      },
+      {
+        "name": "John Liu",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "11th Senate District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://www.nysenate.gov/senators/john-liu",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:11"
+        ]
+      },
+      {
+        "name": "Roxanne Persaud",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "19th Senate District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://www.nysenate.gov/senators/roxanne-j-persaud",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:19"
+        ]
+      },
+      {
+        "name": "Andrew Gounardes",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "22nd Senate District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://www.nysenate.gov/senators/andrew-gounardes",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:22"
+        ]
+      },
+      {
+        "name": "Diane Savino",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "23rd Senate District",
+        "boroughs": [
+          "Staten Island",
+          "Brooklyn"
+        ],
+        "website": "https://www.nysenate.gov/senators/diane-j-savino",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:23"
+        ]
+      },
+      {
+        "name": "Brad Hoylman",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "27th Senate District",
+        "boroughs": [
+          "Manhattan"
+        ],
+        "website": "https://www.nysenate.gov/senators/brad-hoylman",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:27"
+        ]
+      },
+      {
+        "name": "Brian Kavanagh",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "26th Senate District",
+        "boroughs": [
+          "Manhattan",
+          "Brooklyn"
+        ],
+        "website": "https://www.nysenate.gov/senators/brian-kavanagh",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:26"
+        ]
+      },
+      {
+        "name": "Kevin Parker",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "21st Senate District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://www.nysenate.gov/senators/kevin-s-parker",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:21"
+        ]
+      },
+      {
+        "name": "Zellnor Myrie",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "20th Senate District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://www.nysenate.gov/senators/zellnor-myrie",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:20"
+        ]
+      },
+      {
+        "name": "Julia Salazar",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "18th Senate District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://www.nysenate.gov/senators/julia-salazar",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:18"
+        ]
+      },
+      {
+        "name": "Velmanette Montgomery",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "25th Senate District",
+        "boroughs": [
+          "Brooklyn",
+          "Manhattan"
+        ],
+        "website": "https://www.nysenate.gov/senators/velmanette-montgomery",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:25"
+        ]
+      },
+      {
+        "name": "Simcha Felder",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "17th Senate District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://www.nysenate.gov/senators/simcha-felder",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:17"
+        ]
+      },
+      {
+        "name": "Brian Benjamin",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "30th Senate District",
+        "boroughs": [
+          "Manhattan"
+        ],
+        "website": "https://www.nysenate.gov/senators/brian-a-benjamin",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:30"
+        ]
+      },
+      {
+        "name": "Luis Sepúlveda",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "32nd Senate District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://www.nysenate.gov/senators/luis-r-sepulveda",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:32"
+        ]
+      },
+      {
+        "name": "Jamaal Bailey",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "36th Senate District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://www.nysenate.gov/senators/jamaal-t-bailey",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:36"
+        ]
+      },
+      {
+        "name": "Alessandra Biaggi",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "34th Senate District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://www.nysenate.gov/senators/alessandra-biaggi",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:34"
+        ]
+      },
+      {
+        "name": "Gustavo Rivera",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "33rd Senate District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://www.nysenate.gov/senators/gustavo-rivera",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:33"
+        ]
+      },
+      {
+        "name": "José M. Serrano",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "29th Senate District",
+        "boroughs": [
+          "The Bronx",
+          "Manhattan"
+        ],
+        "website": "https://www.nysenate.gov/senators/jose-m-serrano",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:29"
+        ]
+      },
+      {
+        "name": "Robert Jackson",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "31st Senate District",
+        "boroughs": [
+          "Manhattan"
+        ],
+        "website": "https://www.nysenate.gov/senators/robert-jackson",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:31"
+        ]
+      },
+      {
+        "name": "Liz Krueger",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "28th Senate District",
+        "boroughs": [
+          "Manhattan"
+        ],
+        "website": "https://www.nysenate.gov/senators/liz-krueger",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:28"
+        ]
+      },
+      {
+        "name": "Rachel May",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "53rd Senate District",
+        "boroughs": [
+          "Brooklyn",
+          "Manhattan"
+        ],
+        "website": "https://www.nysenate.gov/senators/rachel-may",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:53"
+        ]
+      },
+      {
+        "name": "Anna Kaplan",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "7th Senate District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://www.nysenate.gov/senators/anna-m-kaplan",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:7"
+        ]
+      },
+      {
+        "name": "John C. Liu",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "11th Senate District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://www.nysenate.gov/senators/john-c-liu",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:11"
+        ]
+      },
+      {
+        "name": "Leroy Comrie",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "14th Senate District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://www.nysenate.gov/senators/leroy-comrie",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:14"
+        ]
+      },
+      {
+        "name": "James Sanders Jr.",
+        "office": "State Senator",
+        "party": "Democratic",
+        "district": "10th Senate District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://www.nysenate.gov/senators/james-sanders-jr",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldu:10"
+        ]
+      }
+    ],
+    "StateAssemblyMembers": [
+      {
+        "name": "Stacey Pheffer Amato",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "23rd Assembly District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://nyassembly.gov/mem/Stacey-Pheffer-Amato",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:23"
+        ]
+      },
+      {
+        "name": "Daniel Rosenthal",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "27th Assembly District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://nyassembly.gov/mem/Daniel-Rosenthal",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:27"
+        ]
+      },
+      {
+        "name": "Nily Rozic",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "25th Assembly District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://nyassembly.gov/mem/Nily-Rozic",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:25"
+        ]
+      },
+      {
+        "name": "David Weprin",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "24th Assembly District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://nyassembly.gov/mem/David-I-Weprin",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:24"
+        ]
+      },
+      {
+        "name": "Catherine Nolan",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "37th Assembly District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://nyassembly.gov/mem/Catherine-Nolan",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:37"
+        ]
+      },
+      {
+        "name": "Michael DenDekker",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "34th Assembly District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://nyassembly.gov/mem/Michael-G-DenDekker",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:34"
+        ]
+      },
+      {
+        "name": "Jeffrion Aubry",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "35th Assembly District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://nyassembly.gov/mem/Jeffrion-L-Aubry",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:35"
+        ]
+      },
+      {
+        "name": "Andrew Hevesi",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "28th Assembly District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://nyassembly.gov/mem/Andrew-Hevesi",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:28"
+        ]
+      },
+      {
+        "name": "Brian Barnwell",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "30th Assembly District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://nyassembly.gov/mem/Brian-Barnwell",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:30"
+        ]
+      },
+      {
+        "name": "Michael Miller",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "38th Assembly District",
+        "boroughs": [
+          "Queens"
+        ],
+        "website": "https://nyassembly.gov/mem/Michael-Miller",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:38"
+        ]
+      },
+      {
+        "name": "Robert Carroll",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "44th Assembly District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://nyassembly.gov/mem/Robert-C-Carroll",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:44"
+        ]
+      },
+      {
+        "name": "Mathylde Frontus",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "46th Assembly District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://nyassembly.gov/mem/Mathylde-Frontus",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:46"
+        ]
+      },
+      {
+        "name": "Felix Ortiz",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "51st Assembly District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://nyassembly.gov/mem/Felix-Ortiz",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:51"
+        ]
+      },
+      {
+        "name": "Pamela Harris",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "48th Assembly District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://nyassembly.gov/mem/Pamela-Harris",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:48"
+        ]
+      },
+      {
+        "name": "Nicole Malliotakis",
+        "office": "Assembly Member",
+        "party": "Republican",
+        "district": "64th Assembly District",
+        "boroughs": [
+          "Staten Island",
+          "Brooklyn"
+        ],
+        "website": "https://nyassembly.gov/mem/Nicole-Malliotakis",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:64"
+        ]
+      },
+      {
+        "name": "Charles Barron",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "60th Assembly District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://nyassembly.gov/mem/Charles-Barron",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:60"
+        ]
+      },
+      {
+        "name": "Nick Perry",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "58th Assembly District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://nyassembly.gov/mem/Nick-Perry",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:58"
+        ]
+      },
+      {
+        "name": "Erik Dilan",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "54th Assembly District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://nyassembly.gov/mem/Erik-Martin-Dilan",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:54"
+        ]
+      },
+      {
+        "name": "Maritza Davila",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "53rd Assembly District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://nyassembly.gov/mem/Maritza-Davila",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:53"
+        ]
+      },
+      {
+        "name": "Joseph Lentol",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "50th Assembly District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://nyassembly.gov/mem/Joseph-R-Lentol",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:50"
+        ]
+      },
+      {
+        "name": "Trev Poblete",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "52nd Assembly District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://nyassembly.gov/mem/Trev-Poblete",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:52"
+        ]
+      },
+      {
+        "name": "Diana Richardson",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "43rd Assembly District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://nyassembly.gov/mem/Diana-C-Richardson",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:43"
+        ]
+      },
+      {
+        "name": "Walter Mosley",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "57th Assembly District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://nyassembly.gov/mem/Walter-T-Mosley",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:57"
+        ]
+      },
+      {
+        "name": "Latrice Walker",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "55th Assembly District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://nyassembly.gov/mem/Latrice-Walker",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:55"
+        ]
+      },
+      {
+        "name": "Charles Barron",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "60th Assembly District",
+        "boroughs": [
+          "Brooklyn"
+        ],
+        "website": "https://nyassembly.gov/mem/Charles-Barron",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:60"
+        ]
+      },
+      {
+        "name": "Karines Reyes",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "87th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Karines-Reyes",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:87"
+        ]
+      },
+      {
+        "name": "Luis R. Sepúlveda",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "87th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Luis-R-Sepulveda",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:87"
+        ]
+      },
+      {
+        "name": "Mark Gjonaj",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "80th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Mark-Gjonaj",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:80"
+        ]
+      },
+      {
+        "name": "Michael Blake",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "79th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Michael-Blake",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:79"
+        ]
+      },
+      {
+        "name": "Victor Pichardo",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "86th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Victor-M-Pichardo",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:86"
+        ]
+      },
+      {
+        "name": "Jose Rivera",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "78th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Jose-Rivera",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:78"
+        ]
+      },
+      {
+        "name": "Marcos Crespo",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "85th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Marcos-A-Crespo",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:85"
+        ]
+      },
+      {
+        "name": "Jeffrey Dinowitz",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "81st Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Jeffrey-Dinowitz",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:81"
+        ]
+      },
+      {
+        "name": "Andrew Cohen",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "78th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Andrew-Cohen",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:78"
+        ]
+      },
+      {
+        "name": "Michael Benedetto",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "82nd Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Michael-Benedetto",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:82"
+        ]
+      },
+      {
+        "name": "Latoya Joyner",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "77th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Latoya-Joyner",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:77"
+        ]
+      },
+      {
+        "name": "Carmen Arroyo",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "84th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Carmen-E-Arroyo",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:84"
+        ]
+      },
+      {
+        "name": "Michael Blake",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "79th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Michael-Blake",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:79"
+        ]
+      },
+      {
+        "name": "Mark Gjonaj",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "80th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Mark-Gjonaj",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:80"
+        ]
+      },
+      {
+        "name": "Victor Pichardo",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "86th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Victor-M-Pichardo",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:86"
+        ]
+      },
+      {
+        "name": "Michael Blake",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "79th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Michael-Blake",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:79"
+        ]
+      },
+      {
+        "name": "Marcos Crespo",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "85th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Marcos-A-Crespo",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:85"
+        ]
+      },
+      {
+        "name": "Jeffrey Dinowitz",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "81st Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Jeffrey-Dinowitz",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:81"
+        ]
+      },
+      {
+        "name": "Latoya Joyner",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "77th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Latoya-Joyner",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:77"
+        ]
+      },
+      {
+        "name": "Jose Rivera",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "78th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Jose-Rivera",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:78"
+        ]
+      },
+      {
+        "name": "Karines Reyes",
+        "office": "Assembly Member",
+        "party": "Democratic",
+        "district": "87th Assembly District",
+        "boroughs": [
+          "The Bronx"
+        ],
+        "website": "https://nyassembly.gov/mem/Karines-Reyes",
+        "photoURL": null,
+        "divisionIds": [
+          "ocd-division/country:us/state:ny/sldl:87"
+        ]
+      }
+    ]
+  },
+  "City": {
+    "Mayor": {
+      "name": "Eric Adams",
+      "office": "Mayor of New York City",
+      "party": "Democratic",
+      "district": null,
+      "boroughs": [
+        "Manhattan",
+        "Brooklyn",
+        "Queens",
+        "The Bronx",
+        "Staten Island"
+      ],
+      "website": "https://www.nyc.gov/office-of-the-mayor",
+      "photoURL": null,
+      "divisionIds": [
+        "ocd-division/country:us/state:ny/place:new_york"
+      ]
+    }
+  }
+}
