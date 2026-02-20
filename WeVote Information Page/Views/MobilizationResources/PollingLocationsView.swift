@@ -15,10 +15,14 @@ import CoreLocation
 
 struct PollingLocationsView: View {
     @Binding var selectedPlace: PollingPlace?
+    var isActive: Bool = true
     
     @StateObject private var locationManager = LocationManager()
     @State private var pollingLocations     = pollingPlaces
     @State private var showFullMap          = false
+    @State private var isGeocoding          = false
+    @State private var pendingSortTask: Task<Void, Never>?
+    @State private var geocodeTask: Task<Void, Never>?
     
     @State private var region = MKCoordinateRegion(
         center: pollingPlaces.first?.coordinate
@@ -26,7 +30,9 @@ struct PollingLocationsView: View {
         span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
     )
     
-    private let geocoder = CLGeocoder()
+    private let geocodeCacheKey = "PollingLocations.GeocodeCache.v1"
+    private let maxConcurrentGeocodes = 4
+    private let interBatchDelayNanos: UInt64 = 120_000_000
     
     var body: some View {
         ScrollView {
@@ -37,15 +43,54 @@ struct PollingLocationsView: View {
             }
             .padding(.vertical)
         }
-        .onAppear { geocodeNext(at: 0) }
+        .onAppear {
+            guard isActive else { return }
+            deferToNextRunLoop {
+                hydrateCoordinatesFromCache()
+                startGeocodingMissingAddressesIfNeeded()
+            }
+        }
+        .onChange(of: isActive) { active in
+            if active {
+                deferToNextRunLoop {
+                    hydrateCoordinatesFromCache()
+                    startGeocodingMissingAddressesIfNeeded()
+                }
+            } else {
+                pendingSortTask?.cancel()
+                pendingSortTask = nil
+                geocodeTask?.cancel()
+                geocodeTask = nil
+                isGeocoding = false
+            }
+        }
         .onChange(of: locationManager.location) { newLoc in
-            if let user = newLoc { sortAndFit(userLocation: user) }
+            guard isActive else { return }
+            guard let user = newLoc else { return }
+            pendingSortTask?.cancel()
+            pendingSortTask = Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 120_000_000)
+                guard !Task.isCancelled else { return }
+                sortAndFit(userLocation: user)
+            }
+        }
+        .onDisappear {
+            pendingSortTask?.cancel()
+            pendingSortTask = nil
+            geocodeTask?.cancel()
+            geocodeTask = nil
+            isGeocoding = false
         }
         .fullScreenCover(isPresented: $showFullMap) {
             FullScreenMapView(
-                region: $region,
+                initialRegion: region,
                 places: pollingLocations,
-                selectedPlace: $selectedPlace
+                selectedPlace: $selectedPlace,
+                onDoneRegion: { nextRegion in
+                    deferToNextRunLoop {
+                        region = nextRegion
+                    }
+                }
             )
         }
     }
@@ -53,10 +98,24 @@ struct PollingLocationsView: View {
     // MARK: — Subviews
     
     private var mapButton: some View {
-        Button("Show Full Map") {
+        Button {
             showFullMap = true
+        } label: {
+            Label("Show Full Map", systemImage: "map")
+                .font(.subheadline.weight(.semibold))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
         }
-        .buttonStyle(.borderedProminent)
+        .foregroundColor(.white)
+        .background(
+            LinearGradient(
+                colors: [Color.blue.opacity(0.85), Color.blue.opacity(0.65)],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .shadow(color: .blue.opacity(0.18), radius: 6, x: 0, y: 3)
         .padding(.horizontal)
     }
     
@@ -67,10 +126,16 @@ struct PollingLocationsView: View {
             annotationItems: pollingLocations
         ) { place in
             MapAnnotation(coordinate: place.coordinate) {
-                Image(systemName: "mappin.circle.fill")
-                    .font(.title)
-                    .foregroundColor(.red)
-                    .onTapGesture { selectedPlace = place }
+                Button {
+                    deferToNextRunLoop {
+                        selectedPlace = place
+                    }
+                } label: {
+                    PollingLocationPinView(
+                        isSelected: selectedPlace?.id == place.id
+                    )
+                }
+                .buttonStyle(.plain)
             }
         }
         .frame(height: 250)
@@ -79,81 +144,214 @@ struct PollingLocationsView: View {
     }
     
     private var placeList: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 10) {
             ForEach(pollingLocations) { place in
                 placeRow(place)
-                Divider()
             }
         }
-        .background(Color(.systemBackground))
-        .cornerRadius(8)
         .padding(.horizontal)
     }
     
     @ViewBuilder
     private func placeRow(_ place: PollingPlace) -> some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
+        HStack(alignment: .top, spacing: 12) {
+            PollingLocationPinView(isSelected: selectedPlace?.id == place.id)
+                .scaleEffect(0.9)
+
+            VStack(alignment: .leading, spacing: 6) {
                 Text(place.name)
-                    .font(.headline)
-                    .fontWeight(
-                        selectedPlace?.id == place.id ? .bold : .regular
+                    .font(.subheadline.weight(selectedPlace?.id == place.id ? .bold : .semibold))
+                    .lineLimit(1)
+
+                Text(place.address)
+                    .font(.caption)
+                    .foregroundColor(VoteNowColors.mutedText)
+                    .lineLimit(1)
+
+                HStack(spacing: 10) {
+                    Label(
+                        place.distance == "--" ? "Distance updating…" : place.distance,
+                        systemImage: "location"
                     )
-                Text(place.distance)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .font(.caption)
+                    .foregroundColor(VoteNowColors.mutedText)
+
+                    if place.hours != "--" {
+                        Label(place.hours, systemImage: "clock")
+                            .font(.caption)
+                            .foregroundColor(VoteNowColors.mutedText)
+                    }
+                }
             }
-            Spacer()
+
+            Spacer(minLength: 8)
+
             Button {
-                let item = MKMapItem(
-                    placemark: MKPlacemark(coordinate: place.coordinate)
-                )
-                item.name = place.name.isEmpty
-                    ? place.address
-                    : place.name
+                let item = MKMapItem(placemark: MKPlacemark(coordinate: place.coordinate))
+                item.name = place.name.isEmpty ? place.address : place.name
                 item.openInMaps(launchOptions: nil)
             } label: {
-                Image(systemName: "arrow.triangle.turn.up.right.diamond")
+                Image(systemName: "arrow.triangle.turn.up.right.diamond.fill")
                     .font(.title3)
-                    .foregroundColor(.blue)
+                    .foregroundColor(VoteNowColors.richBlue)
             }
             .buttonStyle(.plain)
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal)
+        .padding(12)
         .contentShape(Rectangle())
         .background(
-            selectedPlace?.id == place.id
-            ? Color.blue.opacity(0.1)
-            : Color.clear
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(
+                    selectedPlace?.id == place.id
+                    ? VoteNowColors.richBlue.opacity(0.14)
+                    : VoteNowColors.infoSurfaceBlue
+                )
         )
-        .cornerRadius(8)
-        .onTapGesture { selectedPlace = place }
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(
+                    selectedPlace?.id == place.id
+                    ? VoteNowColors.richBlue.opacity(0.45)
+                    : VoteNowColors.primaryText.opacity(0.05),
+                    lineWidth: 1
+                )
+        )
+        .shadow(color: .black.opacity(0.05), radius: 3, x: 0, y: 2)
+        .onTapGesture {
+            deferToNextRunLoop {
+                selectedPlace = place
+            }
+        }
     }
     
     
-    // MARK: — Sequential Geocode to Avoid Throttling
-    
-    private func geocodeNext(at index: Int) {
-        guard index < pollingLocations.count else {
-            if let userLoc = locationManager.location {
-                sortAndFit(userLocation: userLoc)
-            } else {
-                fitAllPins()
-            }
-            return
+    // MARK: — Cached Geocoding
+
+    private struct CachedCoordinate: Codable {
+        let lat: Double
+        let lon: Double
+    }
+
+    private func loadCache() -> [String: CachedCoordinate] {
+        guard let data = UserDefaults.standard.data(forKey: geocodeCacheKey),
+              let decoded = try? JSONDecoder().decode([String: CachedCoordinate].self, from: data) else {
+            return [:]
         }
-        
-        geocoder.geocodeAddressString(pollingLocations[index].address) { results, _ in
-            if let coord = results?.first?.location?.coordinate {
-                DispatchQueue.main.async {
-                    pollingLocations[index].coordinate = coord
+        return decoded
+    }
+
+    private func saveCache(_ cache: [String: CachedCoordinate]) {
+        guard let data = try? JSONEncoder().encode(cache) else { return }
+        UserDefaults.standard.set(data, forKey: geocodeCacheKey)
+    }
+
+    private func hydrateCoordinatesFromCache() {
+        let cache = loadCache()
+
+        for i in pollingLocations.indices {
+            let address = pollingLocations[i].address
+            guard let hit = cache[address] else { continue }
+            pollingLocations[i].coordinate = CLLocationCoordinate2D(
+                latitude: hit.lat,
+                longitude: hit.lon
+            )
+        }
+
+        if let userLoc = locationManager.location {
+            sortAndFit(userLocation: userLoc)
+        } else {
+            fitAllPins()
+        }
+    }
+
+    private func startGeocodingMissingAddressesIfNeeded() {
+        guard isActive else { return }
+        guard !isGeocoding else { return }
+
+        let cache = loadCache()
+        let missing = Array(
+            Set(
+                pollingLocations
+                    .map(\.address)
+                    .filter { cache[$0] == nil }
+            )
+        )
+
+        guard !missing.isEmpty else { return }
+        isGeocoding = true
+        geocodeTask = Task {
+            await geocodeAddressesInBatches(missing)
+        }
+    }
+
+    @MainActor
+    private func geocodeAddressesInBatches(_ addresses: [String]) async {
+        var cache = loadCache()
+
+        for batch in chunked(addresses, size: maxConcurrentGeocodes) {
+            if Task.isCancelled || !isActive {
+                isGeocoding = false
+                return
+            }
+            let resolved = await withTaskGroup(of: (String, CLLocationCoordinate2D?).self) { group in
+                for address in batch {
+                    group.addTask {
+                        let coord = await geocodeAddress(address)
+                        return (address, coord)
+                    }
                 }
+
+                var results: [(String, CLLocationCoordinate2D?)] = []
+                for await result in group {
+                    results.append(result)
+                }
+                return results
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                geocodeNext(at: index + 1)
+
+            var didUpdateAny = false
+            for (address, coord) in resolved {
+                guard let coord else { continue }
+                cache[address] = CachedCoordinate(lat: coord.latitude, lon: coord.longitude)
+                for i in pollingLocations.indices where pollingLocations[i].address == address {
+                    pollingLocations[i].coordinate = coord
+                }
+                didUpdateAny = true
+            }
+
+            if didUpdateAny {
+                saveCache(cache)
+            }
+
+            try? await Task.sleep(nanoseconds: interBatchDelayNanos)
+        }
+
+        isGeocoding = false
+        geocodeTask = nil
+        if let userLoc = locationManager.location {
+            sortAndFit(userLocation: userLoc)
+        } else {
+            fitAllPins()
+        }
+    }
+
+    private func geocodeAddress(_ address: String) async -> CLLocationCoordinate2D? {
+        await withCheckedContinuation { continuation in
+            CLGeocoder().geocodeAddressString(address) { results, _ in
+                continuation.resume(returning: results?.first?.location?.coordinate)
             }
         }
+    }
+
+    private func chunked(_ addresses: [String], size: Int) -> [[String]] {
+        guard size > 0, !addresses.isEmpty else { return [] }
+        var out: [[String]] = []
+        var start = 0
+        while start < addresses.count {
+            let end = min(start + size, addresses.count)
+            out.append(Array(addresses[start..<end]))
+            start = end
+        }
+        return out
     }
     
     // MARK: — Compute Distances, Sort & Zoom
@@ -194,9 +392,8 @@ struct PollingLocationsView: View {
                 )
             )
         }
-        withAnimation {
-            region = MKCoordinateRegion(rect)
-        }
+        let nextRegion = MKCoordinateRegion(rect)
+        updateRegionIfNeeded(nextRegion)
     }
     
     // MARK: — Fit Map if No User Location
@@ -213,9 +410,50 @@ struct PollingLocationsView: View {
                 )
             )
         }
-        withAnimation {
-            region = MKCoordinateRegion(rect)
+        let nextRegion = MKCoordinateRegion(rect)
+        updateRegionIfNeeded(nextRegion)
+    }
+
+    private func updateRegionIfNeeded(_ nextRegion: MKCoordinateRegion) {
+        guard isActive else { return }
+        // Avoid tiny feedback updates from MapKit bindings.
+        let epsilon = 0.000_001
+        let centerChanged =
+            abs(region.center.latitude - nextRegion.center.latitude) > epsilon ||
+            abs(region.center.longitude - nextRegion.center.longitude) > epsilon
+        let spanChanged =
+            abs(region.span.latitudeDelta - nextRegion.span.latitudeDelta) > epsilon ||
+            abs(region.span.longitudeDelta - nextRegion.span.longitudeDelta) > epsilon
+        guard centerChanged || spanChanged else { return }
+        deferToNextRunLoop {
+            withAnimation {
+                region = nextRegion
+            }
         }
+    }
+
+    private func deferToNextRunLoop(_ action: @escaping () -> Void) {
+        DispatchQueue.main.async(execute: action)
+    }
+}
+
+private struct PollingLocationPinView: View {
+    let isSelected: Bool
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(isSelected ? Color(red: 0.87, green: 0.35, blue: 0.27) : VoteNowColors.richBlue)
+                .frame(width: 24, height: 24)
+            Image(systemName: "mappin")
+                .font(.caption.bold())
+                .foregroundColor(.white)
+        }
+        .overlay(
+            Circle()
+                .stroke(VoteNowColors.surfaceWhite, lineWidth: 2)
+        )
+        .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
     }
 }
 

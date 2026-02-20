@@ -36,25 +36,145 @@ struct VotePlan {
     var distanceETA   : String? = nil  // e.g. "2.3 mi • ETA 12 min"
 }
 
-/// A simple election model — adjust fields as needed.
+enum SearchPrecision: String, CaseIterable, Identifiable {
+    case address
+    case zipOrCity
+
+    var id: String { rawValue }
+
+    var inputTitle: String {
+        switch self {
+        case .address:
+            return "Address (recommended)"
+        case .zipOrCity:
+            return "ZIP/City (approximate)"
+        }
+    }
+}
+
 struct Election: Identifiable {
-    let id = UUID()
+    var id: String {
+        let reg = Int(registrationDeadline.timeIntervalSinceReferenceDate)
+        let start = Int(startDate.timeIntervalSinceReferenceDate)
+        let day = Int(electionDay.timeIntervalSinceReferenceDate)
+        return "\(name)|\(subtitle)|\(reg)|\(start)|\(day)"
+    }
     let name: String
     let subtitle: String
     let registrationDeadline: Date
     let startDate: Date
     let electionDay: Date
+    let earlyVotingText: String?
+    let registrationNotes: String?
+    let jurisdictionLevel: String
+    let jurisdictionName: String
+    let visibility: String
+    let flags: [String]
+    let matchConfidence: Int?
+    let sourceUrl: String?
+
+    init(
+        name: String,
+        subtitle: String,
+        registrationDeadline: Date,
+        startDate: Date,
+        electionDay: Date,
+        earlyVotingText: String? = nil,
+        registrationNotes: String? = nil,
+        jurisdictionLevel: String = "statewide",
+        jurisdictionName: String = "",
+        visibility: String = "public",
+        flags: [String] = [],
+        matchConfidence: Int? = nil,
+        sourceUrl: String? = nil
+    ) {
+        self.name = name
+        self.subtitle = subtitle
+        self.registrationDeadline = registrationDeadline
+        self.startDate = startDate
+        self.electionDay = electionDay
+        self.earlyVotingText = earlyVotingText
+        self.registrationNotes = registrationNotes
+        self.jurisdictionLevel = jurisdictionLevel
+        self.jurisdictionName = jurisdictionName
+        self.visibility = visibility
+        self.flags = flags
+        self.matchConfidence = matchConfidence
+        self.sourceUrl = sourceUrl
+    }
+
+    private var normalizedFlags: Set<String> {
+        Set(flags.map { $0.uppercased() })
+    }
+
+    var isBucketRow: Bool {
+        if normalizedFlags.contains("BUCKET_LOCAL_ELECTIONS_STATEWIDE") {
+            return true
+        }
+
+        let searchableText = [
+            name,
+            subtitle,
+            registrationNotes ?? ""
+        ]
+            .joined(separator: " ")
+            .lowercased()
+
+        let level = jurisdictionLevel.lowercased()
+        let isStatewideBucketLevel = level == "statewide" || level == "statewide_bucket"
+        return isStatewideBucketLevel && searchableText.contains("local elections")
+    }
+
+    var requiresFullAddress: Bool {
+        let lowerLevel = jurisdictionLevel.lowercased()
+        if ["city", "school_district", "special_district", "recall"].contains(lowerLevel) {
+            return true
+        }
+        return normalizedFlags.contains("ZIP_FALSE_POSITIVE_RISK")
+    }
+
+    func isPublicResultEligible(for searchPrecision: SearchPrecision) -> Bool {
+        guard visibility.lowercased() == "public", !isBucketRow else { return false }
+
+        switch searchPrecision {
+        case .address:
+            return true
+        case .zipOrCity:
+            let lowerLevel = jurisdictionLevel.lowercased()
+            if lowerLevel == "statewide" {
+                return true
+            }
+            if lowerLevel == "county", let matchConfidence, matchConfidence >= 80 {
+                return true
+            }
+            return false
+        }
+    }
 }
 
 // MARK: – ViewModel
 
 final class PlanViewModel: ObservableObject {
+    private enum StorageKeys {
+        static let zip = "planvm.zip"
+        static let userState = "planvm.userAddress.state"
+        static let userZip = "planvm.userAddress.zip"
+    }
+    private let zipStateResolver = USZipStateResolver()
+
     // MARK: – User Info
-    @Published var userAddress: Address = Address()
+    @Published var userAddress: Address = Address() {
+        didSet { persistUserAddress() }
+    }
     @Published var selectedParty: PoliticalParty = .independent
 
     /// The user’s ZIP code for “My Reps” lookups
-    @Published var zip: String = ""
+    @Published var zip: String = "" {
+        didSet {
+            UserDefaults.standard.set(zip, forKey: StorageKeys.zip)
+            syncAddressFieldsFromZIPIfNeeded()
+        }
+    }
 
     /// A legacy full-address string if you ever need it
     @Published var homeAddress: String = ""
@@ -66,6 +186,18 @@ final class PlanViewModel: ObservableObject {
     @Published var plan = VotePlan()
 
     init() {
+        let savedZip = UserDefaults.standard.string(forKey: StorageKeys.zip) ?? ""
+        let savedState = UserDefaults.standard.string(forKey: StorageKeys.userState) ?? ""
+        let savedAddressZip = UserDefaults.standard.string(forKey: StorageKeys.userZip) ?? ""
+
+        zip = savedZip
+        userAddress = Address(
+            street: "",
+            city: "",
+            state: savedState,
+            zip: savedAddressZip.isEmpty ? savedZip : savedAddressZip
+        )
+
         // TODO: Replace these sample entries with real data from your API or JSON bundle.
         upcomingElections = [
             Election(
@@ -83,6 +215,34 @@ final class PlanViewModel: ObservableObject {
                 electionDay:          Date.from("2025-11-04")
             )
         ]
+    }
+
+    private func persistUserAddress() {
+        UserDefaults.standard.set(userAddress.state, forKey: StorageKeys.userState)
+        UserDefaults.standard.set(userAddress.zip, forKey: StorageKeys.userZip)
+    }
+
+    private func syncAddressFieldsFromZIPIfNeeded() {
+        let normalizedZip = String(zip.filter(\.isNumber).prefix(5))
+        guard normalizedZip.count == 5 else { return }
+
+        var updatedAddress = userAddress
+        var hasChanges = false
+
+        if updatedAddress.zip != normalizedZip {
+            updatedAddress.zip = normalizedZip
+            hasChanges = true
+        }
+
+        if let inferredStateCode = zipStateResolver.stateCode(for: normalizedZip),
+           updatedAddress.state != inferredStateCode {
+            updatedAddress.state = inferredStateCode
+            hasChanges = true
+        }
+
+        if hasChanges {
+            userAddress = updatedAddress
+        }
     }
 
     // MARK: – Plan Helpers

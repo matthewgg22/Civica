@@ -1,0 +1,4 @@
+module FirebaseAnalyticsWithoutAdIdSupportWrapper {
+umbrella "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/firebase-ios-sdk/FirebaseAnalyticsWithoutAdIdSupportWrapper/include"
+export *
+}

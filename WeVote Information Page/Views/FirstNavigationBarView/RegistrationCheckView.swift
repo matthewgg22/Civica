@@ -9,7 +9,24 @@ import SwiftUI
 
 struct RegistrationCheckView: View {
     @Binding var registrationStatus: String?
-    @Environment(\.openURL) private var openURL
+    @EnvironmentObject private var planVM: PlanViewModel
+
+    private let contextResolver = ElectionGuideContextResolver()
+    private let contentProvider = RegistrationGuideContentProvider()
+
+    private var checkStatusURL: URL {
+        guard let context = contextResolver.resolve(for: planVM) else {
+            return URL(string: "https://www.vote.gov/")!
+        }
+        return contentProvider.content(for: context).checkStatusURL
+    }
+
+    private var checkStatusLabel: String {
+        guard let context = contextResolver.resolve(for: planVM) else {
+            return "Check Registration Status"
+        }
+        return contentProvider.content(for: context).checkStatusLabel
+    }
 
     var body: some View {
         ScrollView {
@@ -18,21 +35,18 @@ struct RegistrationCheckView: View {
                     .font(.title2)
                     .bold()
 
-                Text("Click below to check your NYC voter registration status online.")
+                Text("Use the button below to check your current voter registration status.")
                     .font(.body)
                     .padding(.bottom, 24)
 
-                // —––––––––––––––––––––––––––––––––––––––––––––––––––––
-                // Replace the old form + submit button with this Link:
-                Link(destination: URL(string: "https://e-register.vote.nyc")!) {
-                    Text("Check Registration Status")
+                Link(destination: checkStatusURL) {
+                    Text(checkStatusLabel)
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.blue.cornerRadius(10))
+                        .background(VoteNowColors.richBlue.cornerRadius(10))
                         .foregroundColor(.white)
                 }
-                // —––––––––––––––––––––––––––––––––––––––––––––––––––––
 
                 Spacer()
             }
@@ -42,7 +56,11 @@ struct RegistrationCheckView: View {
     }
 }
 
-#Preview {
-    RegistrationCheckView(registrationStatus: .constant(nil))
+#if DEBUG
+struct RegistrationCheckView_Previews: PreviewProvider {
+    static var previews: some View {
+        RegistrationCheckView(registrationStatus: .constant(nil))
+            .environmentObject(PlanViewModel())
+    }
 }
-
+#endif

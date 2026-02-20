@@ -13,24 +13,37 @@ import MapKit
 
 struct FullScreenMapView: View {
     @Environment(\.dismiss) private var dismiss
-    @Binding var region: MKCoordinateRegion
+    @State private var localRegion: MKCoordinateRegion
     let places: [PollingPlace]
     @Binding var selectedPlace: PollingPlace?
+    let onDoneRegion: (MKCoordinateRegion) -> Void
+
+    init(
+        initialRegion: MKCoordinateRegion,
+        places: [PollingPlace],
+        selectedPlace: Binding<PollingPlace?>,
+        onDoneRegion: @escaping (MKCoordinateRegion) -> Void
+    ) {
+        _localRegion = State(initialValue: initialRegion)
+        self.places = places
+        _selectedPlace = selectedPlace
+        self.onDoneRegion = onDoneRegion
+    }
 
     var body: some View {
         NavigationView {
-            Map(coordinateRegion: $region,
+            Map(coordinateRegion: $localRegion,
                 annotationItems: places
             ) { place in
                 MapAnnotation(coordinate: place.coordinate) {
                     Button {
-                        // open the sheet
-                        selectedPlace = place
+                        deferToNextRunLoop {
+                            selectedPlace = place
+                        }
                     } label: {
-                        Image(systemName: "mappin.circle.fill")
-                            .font(.title)
-                            .foregroundColor(.red)
+                        FullMapPollingPinView(isSelected: selectedPlace?.id == place.id)
                     }
+                    .buttonStyle(.plain)
                 }
             }
             .ignoresSafeArea()
@@ -39,6 +52,7 @@ struct FullScreenMapView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
+                        onDoneRegion(localRegion)
                         dismiss()
                     }
                 }
@@ -49,19 +63,42 @@ struct FullScreenMapView: View {
             }
         }
     }
+
+    private func deferToNextRunLoop(_ action: @escaping () -> Void) {
+        DispatchQueue.main.async(execute: action)
+    }
+}
+
+private struct FullMapPollingPinView: View {
+    let isSelected: Bool
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(isSelected ? Color(red: 0.87, green: 0.35, blue: 0.27) : VoteNowColors.richBlue)
+                .frame(width: 28, height: 28)
+            Image(systemName: "mappin")
+                .font(.footnote.bold())
+                .foregroundColor(.white)
+        }
+        .overlay(
+            Circle()
+                .stroke(VoteNowColors.surfaceWhite, lineWidth: 2)
+        )
+        .shadow(color: .black.opacity(0.2), radius: 3, x: 0, y: 2)
+    }
 }
 
 struct FullScreenMapView_Previews: PreviewProvider {
     static var previews: some View {
         FullScreenMapView(
-            region: .constant(
-                MKCoordinateRegion(
-                    center: CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060),
-                    span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
-                )
+            initialRegion: MKCoordinateRegion(
+                center: CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060),
+                span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
             ),
             places: pollingPlaces,
-            selectedPlace: .constant(nil)
+            selectedPlace: .constant(nil),
+            onDoneRegion: { _ in }
         )
     }
 }

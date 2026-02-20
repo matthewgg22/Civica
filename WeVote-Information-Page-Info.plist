@@ -2,7 +2,26 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>This app needs calendar access so it can add your voting plan as an event.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>VoteNow Deep Links</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>votenow</string>
+			</array>
+		</dict>
+	</array>
+	<key>OPENSTATES_API_KEY</key>
+	<string>968e5fe9-3c45-41c6-9c69-8160d95855c9</string>
+	<key>SUPABASE_ANON_KEY</key>
+	<string>sb_publishable_q3zkLzVytOBy0_f7AdKfvg_6yiatDpN</string>
+	<key>SUPABASE_URL</key>
+	<string>https://zgqphgcqfxsgviofsccs.supabase.co</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 </dict>
 </plist>

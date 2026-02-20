@@ -10,104 +10,33 @@ import SwiftUI
 
 struct PlanCardView: View {
   @EnvironmentObject var planVM: PlanViewModel
+  @EnvironmentObject var mapvPlanStore: MAPVPlanStore
+  var waterfallController: EmojiWaterfallController? = nil
+  @State private var showPlannerSheet = false
+  @State private var didBootstrapLegacyPlan = false
+  @StateObject private var localWaterfallController = EmojiWaterfallController()
 
-  private static let dateFormatter: DateFormatter = {
-    let df = DateFormatter()
-    df.dateStyle = .medium
-    df.timeStyle = .none
-    return df
-  }()
-
-  private static let timeFormatter: DateFormatter = {
-    let tf = DateFormatter()
-    tf.dateStyle = .none
-    tf.timeStyle = .short
-    return tf
-  }()
+  private var activeWaterfallController: EmojiWaterfallController {
+      waterfallController ?? localWaterfallController
+  }
 
   var body: some View {
-    let vm = planVM
-    let nextTitle = vm.upcomingElections.first?.name ?? ""
-
-    // Only require method + voteTime
-    if let methodRaw = vm.plan.method,
-       let voteTime  = vm.plan.voteTime
-    {
-      VStack(alignment: .leading, spacing: 16) {
-        // Title
-        VStack(spacing: 4) {
-          Text("My Plan to Vote")
-            .font(.headline)
-            .frame(maxWidth: .infinity)
-            .multilineTextAlignment(.center)
-
-          Text(nextTitle)
-            .font(.subheadline)
-            .foregroundColor(.secondary)
-            .frame(maxWidth: .infinity)
-            .multilineTextAlignment(.center)
-        }
-
-        Divider()
-
-        // Show different rows depending on method
-        switch methodRaw {
-        case VotingMethod.early.rawValue,
-             VotingMethod.election.rawValue:
-          // Common in-person flow
-          HStack(spacing: 8) {
-            Image(systemName: methodRaw.lowercased().contains("early")
-                      ? "clock"
-                      : "calendar")
-            Text(methodRaw)
-              .font(.subheadline)
+      MAPVCardView(
+          waterfallController: activeWaterfallController,
+          onChangePlanTapped: {
+          showPlannerSheet = true
+      })
+      .onAppear {
+          guard didBootstrapLegacyPlan == false else { return }
+          didBootstrapLegacyPlan = true
+          DispatchQueue.main.async {
+              mapvPlanStore.bootstrapFromLegacyPlanViewModel(planVM)
           }
-
-          if let placeName = vm.plan.placeName,
-             let placeAddr = vm.plan.placeAddress,
-             let hours     = vm.plan.placeHours
-          {
-            HStack(spacing: 8) {
-              Image(systemName: "mappin.and.ellipse")
-              VStack(alignment: .leading, spacing: 2) {
-                Text(placeName)
-                  .font(.subheadline)
-                Text(placeAddr)
-                  .font(.caption)
-                  .foregroundColor(.gray)
-              }
-            }
-
-            Text("Hours: \(hours)")
-              .font(.caption)
-          }
-
-        case VotingMethod.mail.rawValue:
-          // Mail-in flow
-          HStack(spacing: 8) {
-            Image(systemName: "envelope")
-            Text(methodRaw)
-              .font(.subheadline)
-          }
-          Text("✉️ Request Absentee/Mail-in Ballot")
-            .font(.subheadline)
-
-        default:
-          EmptyView()
-        }
-
-        // Voting time
-        HStack(spacing: 8) {
-          Image(systemName: "calendar")
-          Text("\(Self.dateFormatter.string(from: voteTime)) at \(Self.timeFormatter.string(from: voteTime))")
-            .font(.caption)
-        }
       }
-      .padding()
-      .background(.regularMaterial)
-      .cornerRadius(16)
-      .shadow(radius: 2)
-      .frame(maxWidth: .infinity)
-    }
+      .sheet(isPresented: $showPlannerSheet) {
+          MultiStepFormView()
+              .environmentObject(planVM)
+              .environmentObject(mapvPlanStore)
+      }
   }
 }

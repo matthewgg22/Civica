@@ -34,7 +34,7 @@ struct BarRow: View {
             if showLabel {
                 Text("\(Int(percent * 100))%")
                     .font(.caption2).bold()
-                    .foregroundColor(.black)
+                    .foregroundColor(VoteNowColors.primaryText)
                     .padding(.leading, 4)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

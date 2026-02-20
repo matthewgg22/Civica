@@ -1,0 +1,60 @@
+{
+  "" : {
+    "const-values" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgREST-master.swiftconstvalues",
+    "dependencies" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgREST-master.d",
+    "diagnostics" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgREST-master.dia",
+    "emit-module-dependencies" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgREST-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgREST-master-emit-module.dia",
+    "swift-dependencies" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgREST-master.swiftdeps"
+  },
+  "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/Sources/PostgREST/Defaults.swift" : {
+    "index-unit-output-path" : "/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/Defaults.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/Defaults.bc",
+    "object" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/Defaults.o"
+  },
+  "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/Sources/PostgREST/Deprecated.swift" : {
+    "index-unit-output-path" : "/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/Deprecated.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/Deprecated.bc",
+    "object" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/Deprecated.o"
+  },
+  "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/Sources/PostgREST/Exports.swift" : {
+    "index-unit-output-path" : "/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/Exports.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/Exports.bc",
+    "object" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/Exports.o"
+  },
+  "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/Sources/PostgREST/PostgrestBuilder.swift" : {
+    "index-unit-output-path" : "/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestBuilder.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestBuilder.bc",
+    "object" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestBuilder.o"
+  },
+  "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/Sources/PostgREST/PostgrestClient.swift" : {
+    "index-unit-output-path" : "/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestClient.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestClient.bc",
+    "object" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestClient.o"
+  },
+  "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/Sources/PostgREST/PostgrestFilterBuilder.swift" : {
+    "index-unit-output-path" : "/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestFilterBuilder.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestFilterBuilder.bc",
+    "object" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestFilterBuilder.o"
+  },
+  "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/Sources/PostgREST/PostgrestFilterValue.swift" : {
+    "index-unit-output-path" : "/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestFilterValue.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestFilterValue.bc",
+    "object" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestFilterValue.o"
+  },
+  "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/Sources/PostgREST/PostgrestQueryBuilder.swift" : {
+    "index-unit-output-path" : "/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestQueryBuilder.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestQueryBuilder.bc",
+    "object" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestQueryBuilder.o"
+  },
+  "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/Sources/PostgREST/PostgrestTransformBuilder.swift" : {
+    "index-unit-output-path" : "/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestTransformBuilder.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestTransformBuilder.bc",
+    "object" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/PostgrestTransformBuilder.o"
+  },
+  "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/Sources/PostgREST/Types.swift" : {
+    "index-unit-output-path" : "/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/Types.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/Types.bc",
+    "object" : "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/supabase-swift/build/Supabase.build/Release-iphoneos/PostgREST.build/Objects-normal/arm64/Types.o"
+  }
+}

@@ -1,0 +1,2921 @@
+[
+  {
+    "state_name": "Delaware",
+    "state_code": "DE",
+    "district": "Delaware",
+    "description": "Del. local elections",
+    "election_date": "2026-02-21"
+  },
+  {
+    "state_name": "Michigan",
+    "state_code": "MI",
+    "district": "Michigan Green Party state convention",
+    "description": "Michigan Green Party state convention",
+    "election_date": "2026-02-21"
+  },
+  {
+    "state_name": "Iowa",
+    "state_code": "IA",
+    "district": "Iowa",
+    "description": "Iowa local elections",
+    "election_date": "2026-02-24"
+  },
+  {
+    "state_name": "Maine",
+    "state_code": "ME",
+    "district": "Maine House of Representatives District 94",
+    "description": "Special general election for Maine House of Representatives District 94",
+    "election_date": "2026-02-24"
+  },
+  {
+    "state_name": "Pennsylvania",
+    "state_code": "PA",
+    "district": "Pennsylvania House of Representatives District 22",
+    "description": "Special election for Pennsylvania House of Representatives District 22",
+    "election_date": "2026-02-24"
+  },
+  {
+    "state_name": "Pennsylvania",
+    "state_code": "PA",
+    "district": "Pennsylvania House of Representatives District 42",
+    "description": "Special election for Pennsylvania House of Representatives District 42",
+    "election_date": "2026-02-24"
+  },
+  {
+    "state_name": "South Carolina",
+    "state_code": "SC",
+    "district": "South Carolina",
+    "description": "S.C., local elections",
+    "election_date": "2026-02-24"
+  },
+  {
+    "state_name": "Delaware",
+    "state_code": "DE",
+    "district": "Delaware",
+    "description": "Del. local elections",
+    "election_date": "2026-02-28"
+  },
+  {
+    "state_name": "Delaware",
+    "state_code": "DE",
+    "district": "Delaware",
+    "description": "Del. local elections",
+    "election_date": "2026-03-02"
+  },
+  {
+    "state_name": "Arkansas",
+    "state_code": "AR",
+    "district": "Arkansas",
+    "description": "Arkansas statewide nonpartisan general election",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "Arkansas",
+    "state_code": "AR",
+    "district": "Arkansas House of Representatives District 70",
+    "description": "Special general election for Arkansas House of Representatives District 70",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "Arkansas",
+    "state_code": "AR",
+    "district": "Arkansas State Senate District 26",
+    "description": "Special general election for Arkansas State Senate District 26",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "Arkansas",
+    "state_code": "AR",
+    "district": "Arkansas statewide primary election",
+    "description": "Arkansas statewide primary election",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "Arkansas",
+    "state_code": "AR",
+    "district": "Deer-Mount Judea School District",
+    "description": "Recall election",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "California",
+    "description": "Calif. local elections",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "Florida",
+    "state_code": "FL",
+    "district": "Florida",
+    "description": "Fla. local elections",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "Iowa",
+    "state_code": "IA",
+    "district": "Iowa",
+    "description": "Iowa local elections",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "Kansas",
+    "state_code": "KS",
+    "district": "Wichita",
+    "description": "Special election",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "Massachusetts",
+    "state_code": "MA",
+    "district": "Massachusetts House of Representatives 5th Essex District",
+    "description": "Special primary election for Massachusetts House of Representatives 5th Essex District",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "Massachusetts",
+    "state_code": "MA",
+    "district": "Massachusetts State Senate 1st Middlesex District",
+    "description": "Massachusetts State Senate 1st Middlesex District special general election",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "North Carolina",
+    "state_code": "NC",
+    "district": "Durham Public Schools",
+    "description": "Durham Public Schools general election",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "North Carolina",
+    "state_code": "NC",
+    "district": "North Carolina statewide primary election",
+    "description": "North Carolina statewide primary election",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "New Mexico",
+    "state_code": "NM",
+    "district": "New Mexico",
+    "description": "N.M. local elections",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "South Carolina",
+    "state_code": "SC",
+    "district": "South Carolina",
+    "description": "S.C. local elections",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Harris County",
+    "description": "Harris county attorney special primary",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Texas Appellate Court District 1",
+    "description": "Special primary election for Texas First District Court of Appeals Place 4.",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Texas Appellate Court District 12",
+    "description": "Special primary election for Texas Twelfth District Court of Appeals Place 3.",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Texas statewide primary election",
+    "description": "Texas statewide primary election",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Travis County Constable-Justice of the Peace District 4",
+    "description": "Special primary election for Travis County Constable District 4",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "Virginia",
+    "state_code": "VA",
+    "district": "Fairfax County School Board Braddock District",
+    "description": "Special election for Fairfax County Public School Board Braddock District",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "Vermont",
+    "state_code": "VT",
+    "district": "Montpelier",
+    "description": "Montpelier general election",
+    "election_date": "2026-03-03"
+  },
+  {
+    "state_name": "Delaware",
+    "state_code": "DE",
+    "district": "Delaware",
+    "description": "Del. local elections",
+    "election_date": "2026-03-07"
+  },
+  {
+    "state_name": "Florida",
+    "state_code": "FL",
+    "district": "Florida",
+    "description": "Fla. local elections",
+    "election_date": "2026-03-07"
+  },
+  {
+    "state_name": "Arizona",
+    "state_code": "AZ",
+    "district": "Arizona",
+    "description": "General election",
+    "election_date": "2026-03-10"
+  },
+  {
+    "state_name": "Arizona",
+    "state_code": "AZ",
+    "district": "Pima County",
+    "description": "Pima County, Arizona, special election March 2026",
+    "election_date": "2026-03-10"
+  },
+  {
+    "state_name": "Florida",
+    "state_code": "FL",
+    "district": "Florida",
+    "description": "Fla. local elections",
+    "election_date": "2026-03-10"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Georgia",
+    "description": "Ga. local elections",
+    "election_date": "2026-03-10"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Georgia District 14",
+    "description": "Special election for U.S. House Georgia District 14",
+    "election_date": "2026-03-10"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Georgia House of Representatives District 130",
+    "description": "Special general election for Georgia House of Representatives District 130",
+    "election_date": "2026-03-10"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Georgia House of Representatives District 94",
+    "description": "Special general election for Georgia House of Representatives District 94",
+    "election_date": "2026-03-10"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Georgia State Senate District 53",
+    "description": "Special general election for Georgia State Senate District 53",
+    "election_date": "2026-03-10"
+  },
+  {
+    "state_name": "Minnesota",
+    "state_code": "MN",
+    "district": "Minnesota",
+    "description": "Minn. local elections",
+    "election_date": "2026-03-10"
+  },
+  {
+    "state_name": "Mississippi",
+    "state_code": "MS",
+    "district": "Mississippi statewide primary election",
+    "description": "Mississippi statewide primary election",
+    "election_date": "2026-03-10"
+  },
+  {
+    "state_name": "New Hampshire",
+    "state_code": "NH",
+    "district": "New Hampshire House of Representatives Carroll 7",
+    "description": "Special general election for New Hampshire House of Representatives District Carroll 7",
+    "election_date": "2026-03-10"
+  },
+  {
+    "state_name": "South Carolina",
+    "state_code": "SC",
+    "district": "South Carolina",
+    "description": "S.C local elections",
+    "election_date": "2026-03-10"
+  },
+  {
+    "state_name": "Virginia",
+    "state_code": "VA",
+    "district": "Virginia",
+    "description": "Va. local elections",
+    "election_date": "2026-03-10"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "Louisiana House of Representatives District 100",
+    "description": "Louisiana House of Representatives District 100 special general election",
+    "election_date": "2026-03-14"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "Louisiana House of Representatives District 69",
+    "description": "Special primary election for Louisiana House of Representatives District 69",
+    "election_date": "2026-03-14"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "Louisiana State Senate District 3",
+    "description": "Special general election for Louisiana State Senate District 3",
+    "election_date": "2026-03-14"
+  },
+  {
+    "state_name": "Maine",
+    "state_code": "ME",
+    "district": "Maine",
+    "description": "Maine local elections",
+    "election_date": "2026-03-14"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Texas",
+    "description": "Texas local elections",
+    "election_date": "2026-03-14"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Texas minor party county conventions",
+    "description": "Texas minor party county conventions",
+    "election_date": "2026-03-14"
+  },
+  {
+    "state_name": "Florida",
+    "state_code": "FL",
+    "district": "Florida",
+    "description": "Fla. local elections",
+    "election_date": "2026-03-17"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Georgia",
+    "description": "Ga. local elections",
+    "election_date": "2026-03-17"
+  },
+  {
+    "state_name": "Illinois",
+    "state_code": "IL",
+    "district": "Illinois statewide primary election",
+    "description": "Illinois statewide primary election",
+    "election_date": "2026-03-17"
+  },
+  {
+    "state_name": "Illinois",
+    "state_code": "IL",
+    "district": "Metropolitan Water Reclamation District of Greater Chicago",
+    "description": "Special primary for Metropolitan Water Reclamation District of Greater Chicago",
+    "election_date": "2026-03-17"
+  },
+  {
+    "state_name": "Pennsylvania",
+    "state_code": "PA",
+    "district": "Pennsylvania House of Representatives District 193",
+    "description": "Special election for Pennsylvania House of Representatives District 193",
+    "election_date": "2026-03-17"
+  },
+  {
+    "state_name": "Pennsylvania",
+    "state_code": "PA",
+    "district": "Pennsylvania House of Representatives District 79",
+    "description": "Special election for Pennsylvania House of Representatives District 79",
+    "election_date": "2026-03-17"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Iron County",
+    "description": "Iron County Democratic convention",
+    "election_date": "2026-03-17"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Utah County",
+    "description": "Utah County Democratic convention",
+    "election_date": "2026-03-17"
+  },
+  {
+    "state_name": "Wyoming",
+    "state_code": "WY",
+    "district": "Wyoming",
+    "description": "Wyo. local elections",
+    "election_date": "2026-03-17"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Texas minor party district conventions",
+    "description": "Texas minor party district conventions",
+    "election_date": "2026-03-21"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Utah County",
+    "description": "Utah County Forward convention",
+    "election_date": "2026-03-21"
+  },
+  {
+    "state_name": "Indiana",
+    "state_code": "IN",
+    "district": "Indiana Libertarian Party state convention",
+    "description": "Indiana Libertarian Party state convention",
+    "election_date": "2026-03-22"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "Ontario",
+    "description": "Special election",
+    "election_date": "2026-03-24"
+  },
+  {
+    "state_name": "Florida",
+    "state_code": "FL",
+    "district": "Florida",
+    "description": "Fla. local elections",
+    "election_date": "2026-03-24"
+  },
+  {
+    "state_name": "Florida",
+    "state_code": "FL",
+    "district": "Florida House of Representatives District 51",
+    "description": "Special general election for Florida House of Representatives District 51",
+    "election_date": "2026-03-24"
+  },
+  {
+    "state_name": "Florida",
+    "state_code": "FL",
+    "district": "Florida House of Representatives District 87",
+    "description": "Special general election for Florida House of Representatives District 87",
+    "election_date": "2026-03-24"
+  },
+  {
+    "state_name": "Florida",
+    "state_code": "FL",
+    "district": "Florida State Senate District 14",
+    "description": "Special general election for Florida State Senate District 14",
+    "election_date": "2026-03-24"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Davis County",
+    "description": "Davis County Forward convention",
+    "election_date": "2026-03-24"
+  },
+  {
+    "state_name": "Wyoming",
+    "state_code": "WY",
+    "district": "Wyoming",
+    "description": "Wyo. local elections",
+    "election_date": "2026-03-24"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Salt Lake County",
+    "description": "Salt Lake County Forward convention",
+    "election_date": "2026-03-28"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Washington County",
+    "description": "Washington County Democratic convention",
+    "election_date": "2026-03-28"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Weber County",
+    "description": "Weber County Democratic convention",
+    "election_date": "2026-03-28"
+  },
+  {
+    "state_name": "Arkansas",
+    "state_code": "AR",
+    "district": "Arkansas",
+    "description": "Arkansas statewide primary runoff election",
+    "election_date": "2026-03-31"
+  },
+  {
+    "state_name": "Massachusetts",
+    "state_code": "MA",
+    "district": "Massachusetts House of Representatives 5th Essex District",
+    "description": "Special general election for Massachusetts House of Representatives 5th Essex District",
+    "election_date": "2026-03-31"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Houston City Council District C",
+    "description": "Special general election for Houston City Council District C",
+    "election_date": "2026-04-04"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Plano",
+    "description": "Special general election runoff for Plano City Council Place 7",
+    "election_date": "2026-04-04"
+  },
+  {
+    "state_name": "Alaska",
+    "state_code": "AK",
+    "district": "Anchorage",
+    "description": "Anchorage general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Alaska",
+    "state_code": "AK",
+    "district": "Anchorage School District",
+    "description": "Anchorage School District general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Colorado",
+    "state_code": "CO",
+    "district": "Collbran",
+    "description": "Jessica Price recall election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Georgia House of Representatives District 130",
+    "description": "Special general runoff for Georgia House of Representatives District 130",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Georgia House of Representatives District 94",
+    "description": "Special general runoff for Georgia House of Representatives District 94",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Georgia State Senate District 53",
+    "description": "Special general runoff for Georgia State Senate District 53",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "district": "Center School District",
+    "description": "Center School District general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "district": "Clay County",
+    "description": "Clay County general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "district": "Grandview C-4 School District",
+    "description": "Grandview C-4 School District general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "district": "Hickman Mills C-1 School District",
+    "description": "Hickman Mills C-1 School District general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "district": "Jackson County",
+    "description": "Jackson County general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "district": "Jefferson City",
+    "description": "General election in Jefferson City, Missouri",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "district": "Liberty Public Schools",
+    "description": "Liberty Public Schools general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "district": "North Kansas City Schools",
+    "description": "North Kansas City Schools general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "district": "Park Hill School District",
+    "description": "Park Hill School District general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "district": "Platte County",
+    "description": "Platte County general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "district": "St. Joseph School District",
+    "description": "St. Joseph School District general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "district": "St. Louis",
+    "description": "General election in St. Louis, Missouri",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "district": "St. Louis Community College Board of Trustees District",
+    "description": "General election for St. Louis Community College District",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Mississippi",
+    "state_code": "MS",
+    "district": "Mississippi",
+    "description": "Mississippi statewide primary runoff election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Crooked Oak Public Schools",
+    "description": "Crooked Oak Public Schools general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Edmond Public Schools",
+    "description": "Edmond Public Schools general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Millwood Public Schools",
+    "description": "Millwood Public Schools general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Moore Public Schools",
+    "description": "Moore Public Schools general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Oklahoma City",
+    "description": "Oklahoma City general election runoff",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Oklahoma City Public Schools",
+    "description": "Oklahoma City Public Schools general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Oklahoma County",
+    "description": "Oklahoma County general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Tulsa Public Schools",
+    "description": "Tulsa Public Schools general election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Tulsa Tech",
+    "description": "General election for Tulsa Technology Center Board of Education",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Wisconsin",
+    "state_code": "WI",
+    "district": "Wisconsin",
+    "description": "Wisconsin spring statewide election",
+    "election_date": "2026-04-07"
+  },
+  {
+    "state_name": "Maine",
+    "state_code": "ME",
+    "district": "Maine",
+    "description": "General election",
+    "election_date": "2026-04-10"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Texas Green Party state convention",
+    "description": "Texas Green Party state convention",
+    "election_date": "2026-04-11"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Cache County",
+    "description": "Cache County Republican party convention",
+    "election_date": "2026-04-11"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Davis County",
+    "description": "Davis County Democratic party convention",
+    "election_date": "2026-04-11"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Salt Lake County",
+    "description": "Salt Lake County Democratic convention",
+    "election_date": "2026-04-11"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Utah state Forward Party convention",
+    "description": "Utah state Forward Party convention",
+    "election_date": "2026-04-11"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Weber County",
+    "description": "Weber County Republican convention",
+    "election_date": "2026-04-11"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Texas Libertarian Party state convention",
+    "description": "Texas Libertarian Party state convention",
+    "election_date": "2026-04-12"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "California",
+    "description": "Calif. local elections",
+    "election_date": "2026-04-14"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "Whitehawk Ranch Community Services District",
+    "description": "Whitehawk Ranch Community Services District special election",
+    "election_date": "2026-04-14"
+  },
+  {
+    "state_name": "Delaware",
+    "state_code": "DE",
+    "district": "Delaware",
+    "description": "Del. local elections",
+    "election_date": "2026-04-14"
+  },
+  {
+    "state_name": "New Jersey",
+    "state_code": "NJ",
+    "district": "New Jersey District 11",
+    "description": "Special general election for U.S. House New Jersey District 11",
+    "election_date": "2026-04-16"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Iron County",
+    "description": "Iron County Republican convention",
+    "election_date": "2026-04-17"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "Louisiana House of Representatives District 69",
+    "description": "Special general election for Louisiana House of Representatives District 69",
+    "election_date": "2026-04-18"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Davis County",
+    "description": "Davis County Republican convention",
+    "election_date": "2026-04-18"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Salt Lake County",
+    "description": "Salt Lake County Republican convention",
+    "election_date": "2026-04-18"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Utah County",
+    "description": "Utah County Republican convention",
+    "election_date": "2026-04-18"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Washington County",
+    "description": "Washington County Republican convention",
+    "election_date": "2026-04-18"
+  },
+  {
+    "state_name": "Colorado",
+    "state_code": "CO",
+    "district": "Firestone",
+    "description": "Firestone Board of Trustees recall election",
+    "election_date": "2026-04-21"
+  },
+  {
+    "state_name": "New Jersey",
+    "state_code": "NJ",
+    "district": "Newark Public Schools",
+    "description": "Newark Public Schools general election",
+    "election_date": "2026-04-21"
+  },
+  {
+    "state_name": "New Jersey",
+    "state_code": "NJ",
+    "district": "Newark Public Schools",
+    "description": "Newark Public Schools special election",
+    "election_date": "2026-04-21"
+  },
+  {
+    "state_name": "Virginia",
+    "state_code": "VA",
+    "district": "Virginia",
+    "description": "Virginia special ballot measure election",
+    "election_date": "2026-04-21"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Tooele County",
+    "description": "Tooele County Republican party convention",
+    "election_date": "2026-04-23"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Utah State Board of Education District 7",
+    "description": "Special election convention for Utah State Board of Education District 7",
+    "election_date": "2026-04-25"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Utah state party convention date",
+    "description": "Utah state party convention date",
+    "election_date": "2026-04-25"
+  },
+  {
+    "state_name": "New York",
+    "state_code": "NY",
+    "district": "New York City Council District 3",
+    "description": "Special general election for New York City Council District 3",
+    "election_date": "2026-04-28"
+  },
+  {
+    "state_name": "South Dakota",
+    "state_code": "SD",
+    "district": "South Dakota Libertarian Party Convention",
+    "description": "South Dakota Libertarian Party Convention",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Alamo Heights Independent School District",
+    "description": "Alamo Heights Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Allen Independent School District",
+    "description": "Allen Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Arlington",
+    "description": "General election in Arlington, Texas",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Arlington Independent School District",
+    "description": "Arlington Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Burleson Independent School District",
+    "description": "Burleson Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Carrollton-Farmers Branch Independent School District",
+    "description": "Carrollton-Farmers Branch Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Castleberry Independent School District",
+    "description": "Castleberry Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Clear Creek Independent School District",
+    "description": "Clear Creek Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Coppell Independent School District",
+    "description": "Coppell Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Crowley Independent School District",
+    "description": "Crowley Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Dallas County",
+    "description": "General election in Dallas County, Texas",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Dallas Independent School District",
+    "description": "Dallas Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Duncanville Independent School District",
+    "description": "Duncanville Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Eagle Mountain-Saginaw Independent School District",
+    "description": "Eagle Mountain-Saginaw Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Eanes Independent School District",
+    "description": "Eanes Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Everman Independent School District",
+    "description": "Everman Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Forney Independent School District",
+    "description": "Forney Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Fort Worth City Council District 10",
+    "description": "Special general election for Fort Worth City Council District 10",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Frenship Independent School District",
+    "description": "Frenship Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Frisco Independent School District",
+    "description": "Frisco Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Galena Park Independent School District",
+    "description": "Galena Park Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Garland",
+    "description": "General election in Garland, Texas",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Garland Independent School District",
+    "description": "Garland Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Grand Prairie Independent School District",
+    "description": "Grand Prairie Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Hays Consolidated Independent School District",
+    "description": "Hays Consolidated Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Highland Park Independent School District (Dallas)",
+    "description": "Highland Park Independent School District (Dallas) general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Idalou Independent School District",
+    "description": "Idalou Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Irving",
+    "description": "General election in Irving, Texas",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Irving City Council District 6",
+    "description": "Special election for Irving City Council Place 6",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Irving Independent School District",
+    "description": "Irving Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Katy Independent School District",
+    "description": "Katy Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Kennedale Independent School District",
+    "description": "Kennedale Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Killeen Independent School District",
+    "description": "Killeen Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Kingsville",
+    "description": "Recall election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Lancaster Independent School District",
+    "description": "Lancaster Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Lewisville Independent School District",
+    "description": "Lewisville Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Lubbock",
+    "description": "General election in Lubbock, Texas",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Lubbock Independent School District",
+    "description": "Lubbock Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Lubbock-Cooper Independent School District",
+    "description": "Lubbock-Cooper Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Mansfield Independent School District",
+    "description": "Mansfield Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Mesquite Independent School District",
+    "description": "Mesquite Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "New Deal Independent School District",
+    "description": "New Deal Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "North East Independent School District",
+    "description": "North East Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Northwest Independent School District",
+    "description": "Northwest Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Port Aransas Independent School District",
+    "description": "Port Aransas Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Richardson Independent School District",
+    "description": "Richardson Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Rockport-Fulton Independent School District",
+    "description": "Rockport-Fulton Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Rockwall Independent School District",
+    "description": "Rockwall Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Roosevelt Independent School District",
+    "description": "Roosevelt Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Southwest Independent School District",
+    "description": "Southwest Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Spring Branch Independent School District",
+    "description": "Spring Branch Independent School District general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Texas State Senate District 4",
+    "description": "Texas State Senate District 4 special general election",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Travis County",
+    "description": "General election in Travis County, Texas",
+    "election_date": "2026-05-02"
+  },
+  {
+    "state_name": "Indiana",
+    "state_code": "IN",
+    "district": "Indiana statewide primary election",
+    "description": "Indiana statewide primary election",
+    "election_date": "2026-05-05"
+  },
+  {
+    "state_name": "Michigan",
+    "state_code": "MI",
+    "district": "Michigan State Senate District 35",
+    "description": "Special general election for Michigan State Senate District 35",
+    "election_date": "2026-05-05"
+  },
+  {
+    "state_name": "Ohio",
+    "state_code": "OH",
+    "district": "Ohio",
+    "description": "Special primary election for U.S. Senate Ohio",
+    "election_date": "2026-05-05"
+  },
+  {
+    "state_name": "Ohio",
+    "state_code": "OH",
+    "district": "Ohio statewide primary election",
+    "description": "Ohio statewide primary election",
+    "election_date": "2026-05-05"
+  },
+  {
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "district": "Clarksville-Montgomery County School System",
+    "description": "Clarksville-Montgomery County School System primary",
+    "election_date": "2026-05-05"
+  },
+  {
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "district": "Hamilton County Schools",
+    "description": "Hamilton County Schools primary",
+    "election_date": "2026-05-05"
+  },
+  {
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "district": "Knox County Schools",
+    "description": "Knox County Schools primary",
+    "election_date": "2026-05-05"
+  },
+  {
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "district": "Memphis-Shelby County Schools",
+    "description": "Memphis-Shelby County Schools primary",
+    "election_date": "2026-05-05"
+  },
+  {
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "district": "Metropolitan Nashville Public Schools",
+    "description": "Metropolitan Nashville Public Schools primary",
+    "election_date": "2026-05-05"
+  },
+  {
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "district": "Nashville",
+    "description": "Nashville consolidated city-county primary",
+    "election_date": "2026-05-05"
+  },
+  {
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "district": "Rutherford County Schools",
+    "description": "Rutherford County Schools primary",
+    "election_date": "2026-05-05"
+  },
+  {
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "district": "Shelby County",
+    "description": "Shelby County primary election",
+    "election_date": "2026-05-05"
+  },
+  {
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "district": "Williamson County Schools",
+    "description": "Williamson County Schools primary",
+    "election_date": "2026-05-05"
+  },
+  {
+    "state_name": "North Carolina",
+    "state_code": "NC",
+    "district": "North Carolina",
+    "description": "North Carolina statewide primary runoff",
+    "election_date": "2026-05-12"
+  },
+  {
+    "state_name": "Nebraska",
+    "state_code": "NE",
+    "district": "Nebraska State Senate District 41",
+    "description": "Special primary election for Nebraska State Senate District 41",
+    "election_date": "2026-05-12"
+  },
+  {
+    "state_name": "Nebraska",
+    "state_code": "NE",
+    "district": "Nebraska statewide primary election",
+    "description": "Nebraska statewide primary election",
+    "election_date": "2026-05-12"
+  },
+  {
+    "state_name": "Nebraska",
+    "state_code": "NE",
+    "district": "University of Nebraska Board of Regents District 4",
+    "description": "Special primary for University of Nebraska Board of Regents District 4",
+    "election_date": "2026-05-12"
+  },
+  {
+    "state_name": "Nebraska",
+    "state_code": "NE",
+    "district": "Westside Community Schools",
+    "description": "Westside Community Schools general election",
+    "election_date": "2026-05-12"
+  },
+  {
+    "state_name": "New Jersey",
+    "state_code": "NJ",
+    "district": "Newark",
+    "description": "Newark city general election",
+    "election_date": "2026-05-12"
+  },
+  {
+    "state_name": "West Virginia",
+    "state_code": "WV",
+    "district": "West Virginia",
+    "description": "West Virginia general election for judicial candidates",
+    "election_date": "2026-05-12"
+  },
+  {
+    "state_name": "West Virginia",
+    "state_code": "WV",
+    "district": "West Virginia",
+    "description": "West Virginia Supreme Court special general election",
+    "election_date": "2026-05-12"
+  },
+  {
+    "state_name": "West Virginia",
+    "state_code": "WV",
+    "district": "West Virginia State Senate District 17",
+    "description": "Special primary election for West Virginia State Senate District 17",
+    "election_date": "2026-05-12"
+  },
+  {
+    "state_name": "West Virginia",
+    "state_code": "WV",
+    "district": "West Virginia State Senate District 3",
+    "description": "Special primary election for West Virginia State Senate District 3",
+    "election_date": "2026-05-12"
+  },
+  {
+    "state_name": "West Virginia",
+    "state_code": "WV",
+    "district": "West Virginia statewide primary election",
+    "description": "West Virginia statewide primary election",
+    "election_date": "2026-05-12"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "Baton Rouge",
+    "description": "Baton Rouge special primary",
+    "election_date": "2026-05-16"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "Caddo Parish School Board District 8",
+    "description": "Special primary for Caddo Parish School Board District 8",
+    "election_date": "2026-05-16"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "Louisiana Board of Elementary and Secondary Education District 1",
+    "description": "Special election primary for Louisiana Board of Elementary and Secondary Education District 1",
+    "election_date": "2026-05-16"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "Louisiana statewide party primary",
+    "description": "Louisiana statewide party primary",
+    "election_date": "2026-05-16"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "Louisiana Supreme Court District 1",
+    "description": "Louisiana Supreme Court special primary",
+    "election_date": "2026-05-16"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "New Orleans",
+    "description": "Orleans Parish Civil and Criminal District Court special primary",
+    "election_date": "2026-05-16"
+  },
+  {
+    "state_name": "Alabama",
+    "state_code": "AL",
+    "district": "Alabama statewide primary election",
+    "description": "Alabama statewide primary election",
+    "election_date": "2026-05-19"
+  },
+  {
+    "state_name": "Arizona",
+    "state_code": "AZ",
+    "district": "Benson",
+    "description": "Benson City Council recall",
+    "election_date": "2026-05-19"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Cherokee County School District",
+    "description": "Cherokee County School District District 3 special primary",
+    "election_date": "2026-05-19"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Georgia",
+    "description": "Georgia statewide judicial and school board general election",
+    "election_date": "2026-05-19"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Georgia statewide primary election",
+    "description": "Georgia statewide primary election",
+    "election_date": "2026-05-19"
+  },
+  {
+    "state_name": "Idaho",
+    "state_code": "ID",
+    "district": "Idaho statewide primary",
+    "description": "Idaho statewide primary",
+    "election_date": "2026-05-19"
+  },
+  {
+    "state_name": "Kentucky",
+    "state_code": "KY",
+    "district": "Kentucky statewide primary election",
+    "description": "Kentucky statewide primary election",
+    "election_date": "2026-05-19"
+  },
+  {
+    "state_name": "New York",
+    "state_code": "NY",
+    "district": "Lackawanna City School District",
+    "description": "Lackawanna City School District general election",
+    "election_date": "2026-05-19"
+  },
+  {
+    "state_name": "Oregon",
+    "state_code": "OR",
+    "district": "Oregon statewide primary election",
+    "description": "Oregon statewide primary election",
+    "election_date": "2026-05-19"
+  },
+  {
+    "state_name": "Pennsylvania",
+    "state_code": "PA",
+    "district": "Pennsylvania House of Representatives District 196",
+    "description": "Special election Pennsylvania House of Representatives District 196",
+    "election_date": "2026-05-19"
+  },
+  {
+    "state_name": "Pennsylvania",
+    "state_code": "PA",
+    "district": "Pennsylvania statewide primary election",
+    "description": "Pennsylvania statewide primary election",
+    "election_date": "2026-05-19"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Texas",
+    "description": "Texas statewide primary runoff election",
+    "election_date": "2026-05-26"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "Alameda County",
+    "description": "Alameda County District Attorney special primary election",
+    "election_date": "2026-06-02"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "California District 1",
+    "description": "California 1st Congressional District special primary election",
+    "election_date": "2026-06-02"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "California statewide primary election",
+    "description": "California statewide primary election",
+    "election_date": "2026-06-02"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "Compton Unified School District",
+    "description": "Compton Unified School District general election",
+    "election_date": "2026-06-02"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "Riverside",
+    "description": "General election in Riverside, California",
+    "election_date": "2026-06-02"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "San Benito County",
+    "description": "Recall election",
+    "election_date": "2026-06-02"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "San Francisco",
+    "description": "San Francisco special election",
+    "election_date": "2026-06-02"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "Twin Rivers Unified School District",
+    "description": "Twin Rivers Unified School District general election",
+    "election_date": "2026-06-02"
+  },
+  {
+    "state_name": "Iowa",
+    "state_code": "IA",
+    "district": "Iowa statewide primary election",
+    "description": "Iowa statewide primary election",
+    "election_date": "2026-06-02"
+  },
+  {
+    "state_name": "Montana",
+    "state_code": "MT",
+    "district": "Montana statewide primary election",
+    "description": "Montana statewide primary election",
+    "election_date": "2026-06-02"
+  },
+  {
+    "state_name": "New Jersey",
+    "state_code": "NJ",
+    "district": "New Jersey statewide primary election",
+    "description": "New Jersey statewide primary election",
+    "election_date": "2026-06-02"
+  },
+  {
+    "state_name": "New Mexico",
+    "state_code": "NM",
+    "district": "New Mexico State Senate District 33",
+    "description": "New Mexico State Senate District 33 special primary election",
+    "election_date": "2026-06-02"
+  },
+  {
+    "state_name": "New Mexico",
+    "state_code": "NM",
+    "district": "New Mexico statewide primary election",
+    "description": "New Mexico statewide primary election",
+    "election_date": "2026-06-02"
+  },
+  {
+    "state_name": "South Dakota",
+    "state_code": "SD",
+    "district": "South Dakota statewide primary election",
+    "description": "South Dakota statewide primary election",
+    "election_date": "2026-06-02"
+  },
+  {
+    "state_name": "Indiana",
+    "state_code": "IN",
+    "district": "Indiana Democratic Party state convention",
+    "description": "Indiana Democratic Party state convention",
+    "election_date": "2026-06-06"
+  },
+  {
+    "state_name": "South Dakota",
+    "state_code": "SD",
+    "district": "South Dakota Democratic Party state convention",
+    "description": "South Dakota Democratic Party state convention",
+    "election_date": "2026-06-06"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Fort Worth City Council District 10",
+    "description": "Special general runoff election for Fort Worth City Council District 10",
+    "election_date": "2026-06-06"
+  },
+  {
+    "state_name": "Maine",
+    "state_code": "ME",
+    "district": "Maine House of Representatives District 29",
+    "description": "Special general election for Maine House of Representatives District 29",
+    "election_date": "2026-06-09"
+  },
+  {
+    "state_name": "Maine",
+    "state_code": "ME",
+    "district": "Maine statewide primary election",
+    "description": "Maine statewide primary election",
+    "election_date": "2026-06-09"
+  },
+  {
+    "state_name": "North Dakota",
+    "state_code": "ND",
+    "district": "North Dakota",
+    "description": "North Dakota statewide special election primary",
+    "election_date": "2026-06-09"
+  },
+  {
+    "state_name": "North Dakota",
+    "state_code": "ND",
+    "district": "North Dakota statewide primary election",
+    "description": "North Dakota statewide primary election",
+    "election_date": "2026-06-09"
+  },
+  {
+    "state_name": "New Jersey",
+    "state_code": "NJ",
+    "district": "Newark",
+    "description": "Newark city general election runoff",
+    "election_date": "2026-06-09"
+  },
+  {
+    "state_name": "Nevada",
+    "state_code": "NV",
+    "district": "Nevada statewide primary election",
+    "description": "Nevada statewide primary election",
+    "election_date": "2026-06-09"
+  },
+  {
+    "state_name": "South Carolina",
+    "state_code": "SC",
+    "district": "South Carolina statewide primary election",
+    "description": "South Carolina statewide primary election",
+    "election_date": "2026-06-09"
+  },
+  {
+    "state_name": "Alabama",
+    "state_code": "AL",
+    "district": "Alabama",
+    "description": "Alabama statewide primary runoff election",
+    "election_date": "2026-06-16"
+  },
+  {
+    "state_name": "District of Columbia",
+    "state_code": "DC",
+    "district": "District of Columbia",
+    "description": "Special general election for Washington, D.C., city council at-large",
+    "election_date": "2026-06-16"
+  },
+  {
+    "state_name": "District of Columbia",
+    "state_code": "DC",
+    "district": "District of Columbia 2026 primary election",
+    "description": "District of Columbia 2026 primary election",
+    "election_date": "2026-06-16"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Cherokee County School District",
+    "description": "Cherokee County School District District 3 special primary runoff",
+    "election_date": "2026-06-16"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "DeKalb County School District",
+    "description": "DeKalb County School District general runoff election",
+    "election_date": "2026-06-16"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Fulton County Schools",
+    "description": "Fulton County Schools general runoff election",
+    "election_date": "2026-06-16"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Georgia",
+    "description": "Georgia statewide primary runoff election",
+    "election_date": "2026-06-16"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Gwinnett County Public Schools",
+    "description": "Gwinnett County Public Schools general runoff election",
+    "election_date": "2026-06-16"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Henry County Schools",
+    "description": "Henry County Schools general runoff election",
+    "election_date": "2026-06-16"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Muscogee County School District",
+    "description": "Muscogee County School District general runoff election",
+    "election_date": "2026-06-16"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Savannah-Chatham County Public School System",
+    "description": "Savannah-Chatham County Public School System general runoff election",
+    "election_date": "2026-06-16"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Oklahoma House of Representatives District 92",
+    "description": "Special primary for Oklahoma House of Representatives District 92",
+    "election_date": "2026-06-16"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Oklahoma State Senate District 17",
+    "description": "Special primary for Oklahoma State Senate District 17",
+    "election_date": "2026-06-16"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Oklahoma statewide primary election",
+    "description": "Oklahoma statewide primary election",
+    "election_date": "2026-06-16"
+  },
+  {
+    "state_name": "Virginia",
+    "state_code": "VA",
+    "district": "Virginia statewide primary election",
+    "description": "Virginia statewide primary election",
+    "election_date": "2026-06-16"
+  },
+  {
+    "state_name": "Indiana",
+    "state_code": "IN",
+    "district": "Indiana Republican Party state convention",
+    "description": "Indiana Republican Party state convention",
+    "election_date": "2026-06-20"
+  },
+  {
+    "state_name": "Maryland",
+    "state_code": "MD",
+    "district": "Maryland statewide primary election",
+    "description": "Maryland statewide primary election",
+    "election_date": "2026-06-23"
+  },
+  {
+    "state_name": "New York",
+    "state_code": "NY",
+    "district": "New York statewide primary",
+    "description": "New York statewide primary",
+    "election_date": "2026-06-23"
+  },
+  {
+    "state_name": "South Carolina",
+    "state_code": "SC",
+    "district": "South Carolina",
+    "description": "South Carolina statewide primary runoff election",
+    "election_date": "2026-06-23"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Utah State Board of Education District 7",
+    "description": "Special election primary for Utah State Board of Education District 7",
+    "election_date": "2026-06-23"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Utah statewide primary election",
+    "description": "Utah statewide primary election",
+    "election_date": "2026-06-23"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "Baton Rouge",
+    "description": "Baton Rouge special election",
+    "election_date": "2026-06-27"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "Caddo Parish School Board District 8",
+    "description": "Special general election for Caddo Parish School Board District 8",
+    "election_date": "2026-06-27"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "Louisiana",
+    "description": "Louisiana statewide party primary runoff",
+    "election_date": "2026-06-27"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "New Orleans",
+    "description": "Orleans Parish Civil and Criminal District Court special general election",
+    "election_date": "2026-06-27"
+  },
+  {
+    "state_name": "South Dakota",
+    "state_code": "SD",
+    "district": "South Dakota Republican Party state convention",
+    "description": "South Dakota Republican Party state convention",
+    "election_date": "2026-06-27"
+  },
+  {
+    "state_name": "Colorado",
+    "state_code": "CO",
+    "district": "Colorado State Senate District 17",
+    "description": "Special primary for Colorado State Senate District 17",
+    "election_date": "2026-06-30"
+  },
+  {
+    "state_name": "Colorado",
+    "state_code": "CO",
+    "district": "Colorado State Senate District 29",
+    "description": "Special primary for Colorado State Senate District 29",
+    "election_date": "2026-06-30"
+  },
+  {
+    "state_name": "Colorado",
+    "state_code": "CO",
+    "district": "Colorado State Senate District 31",
+    "description": "Special primary for Colorado State Senate District 31",
+    "election_date": "2026-06-30"
+  },
+  {
+    "state_name": "Colorado",
+    "state_code": "CO",
+    "district": "Colorado statewide primary election",
+    "description": "Colorado statewide primary election",
+    "election_date": "2026-06-30"
+  },
+  {
+    "state_name": "Arizona",
+    "state_code": "AZ",
+    "district": "Arizona statewide primary election",
+    "description": "Arizona statewide primary election",
+    "election_date": "2026-07-21"
+  },
+  {
+    "state_name": "South Dakota",
+    "state_code": "SD",
+    "district": "South Dakota",
+    "description": "South Dakota statewide primary election",
+    "election_date": "2026-07-28"
+  },
+  {
+    "state_name": "Guam",
+    "state_code": "GU",
+    "district": "Guam territory-wide primary election",
+    "description": "Guam territory-wide primary election",
+    "election_date": "2026-08-01"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "California District 1",
+    "description": "California 1st Congressional District special general election",
+    "election_date": "2026-08-04"
+  },
+  {
+    "state_name": "Kansas",
+    "state_code": "KS",
+    "district": "Kansas statewide primary election",
+    "description": "Kansas statewide primary election",
+    "election_date": "2026-08-04"
+  },
+  {
+    "state_name": "Michigan",
+    "state_code": "MI",
+    "district": "Michigan statewide primary election",
+    "description": "Michigan statewide primary election",
+    "election_date": "2026-08-04"
+  },
+  {
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "district": "Missouri statewide primary election",
+    "description": "Missouri statewide primary election",
+    "election_date": "2026-08-04"
+  },
+  {
+    "state_name": "Washington",
+    "state_code": "WA",
+    "district": "Washington",
+    "description": "Washington State Supreme Court nonpartisan special primary election",
+    "election_date": "2026-08-04"
+  },
+  {
+    "state_name": "Washington",
+    "state_code": "WA",
+    "district": "Washington statewide primary election",
+    "description": "Washington statewide primary election",
+    "election_date": "2026-08-04"
+  },
+  {
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "district": "Tennessee",
+    "description": "Tennessee judicial and local general elections",
+    "election_date": "2026-08-06"
+  },
+  {
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "district": "Tennessee statewide primary election",
+    "description": "Tennessee statewide primary election",
+    "election_date": "2026-08-06"
+  },
+  {
+    "state_name": "Hawaii",
+    "state_code": "HI",
+    "district": "Hawaii statewide primary election",
+    "description": "Hawaii statewide primary election",
+    "election_date": "2026-08-08"
+  },
+  {
+    "state_name": "Connecticut",
+    "state_code": "CT",
+    "district": "Connecticut statewide primary election",
+    "description": "Connecticut statewide primary election",
+    "election_date": "2026-08-11"
+  },
+  {
+    "state_name": "Minnesota",
+    "state_code": "MN",
+    "district": "Minnesota statewide primary election",
+    "description": "Minnesota statewide primary election",
+    "election_date": "2026-08-11"
+  },
+  {
+    "state_name": "Vermont",
+    "state_code": "VT",
+    "district": "Vermont statewide primary election",
+    "description": "Vermont statewide primary election",
+    "election_date": "2026-08-11"
+  },
+  {
+    "state_name": "Wisconsin",
+    "state_code": "WI",
+    "district": "Wisconsin statewide primary election",
+    "description": "Wisconsin statewide primary election",
+    "election_date": "2026-08-11"
+  },
+  {
+    "state_name": "Florida",
+    "state_code": "FL",
+    "district": "Jacksonville",
+    "description": "Jacksonville consolidated city-county primary",
+    "election_date": "2026-08-16"
+  },
+  {
+    "state_name": "Florida",
+    "state_code": "FL",
+    "district": "St. Petersburg",
+    "description": "St. Petersburg city primary",
+    "election_date": "2026-08-16"
+  },
+  {
+    "state_name": "Alaska",
+    "state_code": "AK",
+    "district": "Alaska statewide primary election",
+    "description": "Alaska statewide primary election",
+    "election_date": "2026-08-18"
+  },
+  {
+    "state_name": "Florida",
+    "state_code": "FL",
+    "district": "Florida",
+    "description": "Special primary election for U.S. Senate Florida",
+    "election_date": "2026-08-18"
+  },
+  {
+    "state_name": "Florida",
+    "state_code": "FL",
+    "district": "Florida statewide primary election",
+    "description": "Florida statewide primary election",
+    "election_date": "2026-08-18"
+  },
+  {
+    "state_name": "Wyoming",
+    "state_code": "WY",
+    "district": "Wyoming statewide primary election",
+    "description": "Wyoming statewide primary election",
+    "election_date": "2026-08-18"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Oklahoma",
+    "description": "Oklahoma statewide primary runoff election",
+    "election_date": "2026-08-25"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Oklahoma House of Representatives District 92",
+    "description": "Special primary runoff for Oklahoma House of Representatives District 92",
+    "election_date": "2026-08-25"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Oklahoma State Senate District 17",
+    "description": "Special primary runoff for Oklahoma State Senate District 17",
+    "election_date": "2026-08-25"
+  },
+  {
+    "state_name": "Massachusetts",
+    "state_code": "MA",
+    "district": "Massachusetts statewide primary election",
+    "description": "Massachusetts statewide primary election",
+    "election_date": "2026-09-01"
+  },
+  {
+    "state_name": "New Hampshire",
+    "state_code": "NH",
+    "district": "New Hampshire statewide primary election",
+    "description": "New Hampshire statewide primary election",
+    "election_date": "2026-09-08"
+  },
+  {
+    "state_name": "Rhode Island",
+    "state_code": "RI",
+    "district": "Rhode Island statewide primary election",
+    "description": "Rhode Island statewide primary election",
+    "election_date": "2026-09-08"
+  },
+  {
+    "state_name": "Delaware",
+    "state_code": "DE",
+    "district": "Delaware statewide primary election",
+    "description": "Delaware statewide primary election",
+    "election_date": "2026-09-15"
+  },
+  {
+    "state_name": "Alaska",
+    "state_code": "AK",
+    "district": "Alaska",
+    "description": "Alaska statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Alabama",
+    "state_code": "AL",
+    "district": "Alabama",
+    "description": "Alabama statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Arkansas",
+    "state_code": "AR",
+    "district": "Arkansas",
+    "description": "Arkansas statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Arkansas",
+    "state_code": "AR",
+    "district": "Arkansas",
+    "description": "Arkansas statewide judicial general runoff election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "American Samoa",
+    "state_code": "AS",
+    "district": "American Samoa",
+    "description": "American Samoa territory-wide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Arizona",
+    "state_code": "AZ",
+    "district": "Arizona",
+    "description": "Arizona statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "Alameda County",
+    "description": "Alameda County District Attorney special general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "California",
+    "description": "California statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "Central Unified School District",
+    "description": "Central Unified School District Area 3 special election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "East Side Union High School District",
+    "description": "East Side Union Area 1 special general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "Fruitvale School District",
+    "description": "Fruitvale School District Area 3 special election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "Manteca Unified School District",
+    "description": "Manteca Unified School District Area 3 special election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "Panama-Buena Vista Union School District",
+    "description": "Panama-Buena Vista Union School District Area 4 special election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "Riverside",
+    "description": "General election runoff in Riverside, California",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "Sanger Unified School District",
+    "description": "Sanger Unified School District Area 3 special election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "Solana Beach School District",
+    "description": "Solana Beach School District Area 5 special election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "California",
+    "state_code": "CA",
+    "district": "Vineland Elementary School District",
+    "description": "Vineland Elementary School District special election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Colorado",
+    "state_code": "CO",
+    "district": "Colorado",
+    "description": "Colorado statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Colorado",
+    "state_code": "CO",
+    "district": "Colorado State Senate District 17",
+    "description": "Special general election for Colorado State Senate District 17",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Colorado",
+    "state_code": "CO",
+    "district": "Colorado State Senate District 29",
+    "description": "Special general election for Colorado State Senate District 29",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Colorado",
+    "state_code": "CO",
+    "district": "Colorado State Senate District 31",
+    "description": "Special general election for Colorado State Senate District 31",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Connecticut",
+    "state_code": "CT",
+    "district": "Connecticut",
+    "description": "Connecticut statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "District of Columbia",
+    "state_code": "DC",
+    "district": "District of Columbia",
+    "description": "District of Columbia general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Delaware",
+    "state_code": "DE",
+    "district": "Delaware",
+    "description": "Delaware statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Florida",
+    "state_code": "FL",
+    "district": "Florida",
+    "description": "Florida statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Florida",
+    "state_code": "FL",
+    "district": "Florida",
+    "description": "Special general election for U.S. Senate Florida",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Cherokee County School District",
+    "description": "Cherokee County School District District 3 special general",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Georgia",
+    "description": "Georgia statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Guam",
+    "state_code": "GU",
+    "district": "Guam",
+    "description": "Guam territory-wide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Hawaii",
+    "state_code": "HI",
+    "district": "Hawaii",
+    "description": "Hawaii statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Iowa",
+    "state_code": "IA",
+    "district": "Iowa",
+    "description": "Iowa statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Idaho",
+    "state_code": "ID",
+    "district": "Idaho",
+    "description": "Idaho statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Illinois",
+    "state_code": "IL",
+    "district": "Illinois",
+    "description": "Illinois statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Illinois",
+    "state_code": "IL",
+    "district": "Metropolitan Water Reclamation District of Greater Chicago",
+    "description": "Special general election for Metropolitan Water Reclamation District of Greater Chicago",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Indiana",
+    "state_code": "IN",
+    "district": "Indiana",
+    "description": "Indiana statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Kansas",
+    "state_code": "KS",
+    "district": "Kansas",
+    "description": "Kansas statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Kentucky",
+    "state_code": "KY",
+    "district": "Kentucky",
+    "description": "Kentucky statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Kentucky",
+    "state_code": "KY",
+    "district": "Kentucky Appellate Court District 3",
+    "description": "Special general election for Kentucky Court of Appeals 3rd Division 2",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Kentucky",
+    "state_code": "KY",
+    "district": "Kentucky Appellate Court District 5",
+    "description": "Special general election for Kentucky Court of Appeals 5th Division 1",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "East Baton Rouge Justice of the Peace Ward 2 District 3",
+    "description": "Special primary election for East Baton Rouge Parish Justice Court Ward 2, District 3",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "Louisiana",
+    "description": "Louisiana statewide party general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "Louisiana Board of Elementary and Secondary Education District 1",
+    "description": "Special election for Louisiana Board of Elementary and Secondary Education District 1",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "Louisiana statewide majority-vote system primary election",
+    "description": "Louisiana statewide majority-vote system primary election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "Louisiana Supreme Court District 1",
+    "description": "Louisiana Supreme Court special general",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Massachusetts",
+    "state_code": "MA",
+    "district": "Massachusetts",
+    "description": "Massachusetts statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Maryland",
+    "state_code": "MD",
+    "district": "Maryland",
+    "description": "Maryland statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Maine",
+    "state_code": "ME",
+    "district": "Maine",
+    "description": "Maine statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Michigan",
+    "state_code": "MI",
+    "district": "Michigan",
+    "description": "Michigan statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Minnesota",
+    "state_code": "MN",
+    "district": "Minnesota",
+    "description": "Minnesota statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "district": "Missouri",
+    "description": "Missouri statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Northern Mariana Islands",
+    "state_code": "MP",
+    "district": "Northern Mariana Islands",
+    "description": "Northern Mariana Islands territory-wide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Mississippi",
+    "state_code": "MS",
+    "district": "Mississippi",
+    "description": "Mississippi statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Mississippi",
+    "state_code": "MS",
+    "district": "Mississippi Appellate Court District 1",
+    "description": "Mississippi IAC special election; Greenlee vacancy; District 1 Position 1",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Montana",
+    "state_code": "MT",
+    "district": "Montana",
+    "description": "Montana statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "North Carolina",
+    "state_code": "NC",
+    "district": "North Carolina",
+    "description": "North Carolina statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "North Dakota",
+    "state_code": "ND",
+    "district": "North Dakota",
+    "description": "North Dakota statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "North Dakota",
+    "state_code": "ND",
+    "district": "North Dakota",
+    "description": "North Dakota statewide special election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Nebraska",
+    "state_code": "NE",
+    "district": "Nebraska",
+    "description": "Nebraska statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Nebraska",
+    "state_code": "NE",
+    "district": "Nebraska State Senate District 41",
+    "description": "Special general election for Nebraska State Senate District 41",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Nebraska",
+    "state_code": "NE",
+    "district": "University of Nebraska Board of Regents District 4",
+    "description": "Special general election for University of Nebraska Board of Regents District 4",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "New Hampshire",
+    "state_code": "NH",
+    "district": "New Hampshire",
+    "description": "New Hampshire statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "New Jersey",
+    "state_code": "NJ",
+    "district": "New Jersey",
+    "description": "New Jersey statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "New Mexico",
+    "state_code": "NM",
+    "district": "New Mexico",
+    "description": "New Mexico statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "New Mexico",
+    "state_code": "NM",
+    "district": "New Mexico State Senate District 33",
+    "description": "New Mexico State Senate District 33 special general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Nevada",
+    "state_code": "NV",
+    "district": "Nevada",
+    "description": "Nevada statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Nevada",
+    "state_code": "NV",
+    "district": "Nevada Board of Regents District 8",
+    "description": "Special election for Nevada Board of Regents District 8",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "New York",
+    "state_code": "NY",
+    "district": "New York",
+    "description": "New York statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Ohio",
+    "state_code": "OH",
+    "district": "Ohio",
+    "description": "Ohio statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Ohio",
+    "state_code": "OH",
+    "district": "Ohio",
+    "description": "Special general election for U.S. Senate Ohio",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Oklahoma",
+    "description": "Oklahoma statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Oklahoma House of Representatives District 92",
+    "description": "Special general election for Oklahoma House of Representatives District 92",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "district": "Oklahoma State Senate District 17",
+    "description": "Special general election for Oklahoma State Senate District 17",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Oregon",
+    "state_code": "OR",
+    "district": "Oregon",
+    "description": "Oregon statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Pennsylvania",
+    "state_code": "PA",
+    "district": "Pennsylvania",
+    "description": "Pennsylvania statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Rhode Island",
+    "state_code": "RI",
+    "district": "Rhode Island",
+    "description": "Rhode Island statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "South Carolina",
+    "state_code": "SC",
+    "district": "South Carolina",
+    "description": "South Carolina statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "South Dakota",
+    "state_code": "SD",
+    "district": "South Dakota",
+    "description": "South Dakota statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "district": "Tennessee",
+    "description": "Tennessee statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Harris County",
+    "description": "Harris county attorney special general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Texas",
+    "description": "Texas statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Texas Appellate Court District 1",
+    "description": "Special election for Texas First District Court of Appeals Place 4.",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Texas Appellate Court District 12",
+    "description": "Special election for Texas Twelfth District Court of Appeals Place 3.",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Texas",
+    "state_code": "TX",
+    "district": "Travis County Constable-Justice of the Peace District 4",
+    "description": "Special general election for Travis County Constable District 4",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Utah",
+    "description": "Utah statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Utah",
+    "state_code": "UT",
+    "district": "Utah State Board of Education District 7",
+    "description": "Special election for Utah State Board of Education District 7",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Virginia",
+    "state_code": "VA",
+    "district": "Virginia",
+    "description": "Virginia statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Virgin Islands",
+    "state_code": "VI",
+    "district": "Virgin Islands",
+    "description": "Virgin Islands territory-wide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Vermont",
+    "state_code": "VT",
+    "district": "Vermont",
+    "description": "Vermont statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Washington",
+    "state_code": "WA",
+    "district": "Washington",
+    "description": "Washington State Supreme Court nonpartisan special general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Washington",
+    "state_code": "WA",
+    "district": "Washington",
+    "description": "Washington statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Wisconsin",
+    "state_code": "WI",
+    "district": "Wisconsin",
+    "description": "Wisconsin statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "West Virginia",
+    "state_code": "WV",
+    "district": "West Virginia",
+    "description": "West Virginia statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "West Virginia",
+    "state_code": "WV",
+    "district": "West Virginia State Senate District 17",
+    "description": "Special general election for West Virginia State Senate District 17",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "West Virginia",
+    "state_code": "WV",
+    "district": "West Virginia State Senate District 3",
+    "description": "Special general election for West Virginia State Senate District 3",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Wyoming",
+    "state_code": "WY",
+    "district": "Wyoming",
+    "description": "Wyoming statewide general election",
+    "election_date": "2026-11-03"
+  },
+  {
+    "state_name": "Guam",
+    "state_code": "GU",
+    "district": "Guam",
+    "description": "Guam territory-wide general runoff election",
+    "election_date": "2026-11-17"
+  },
+  {
+    "state_name": "Virgin Islands",
+    "state_code": "VI",
+    "district": "Virgin Islands",
+    "description": "Virgin Islands territory-wide general runoff election",
+    "election_date": "2026-11-17"
+  },
+  {
+    "state_name": "Arkansas",
+    "state_code": "AR",
+    "district": "Little Rock",
+    "description": "Little Rock general election runoff",
+    "election_date": "2026-12-01"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Cherokee County School District",
+    "description": "Cherokee County School District District 3 special general runoff",
+    "election_date": "2026-12-01"
+  },
+  {
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "district": "Georgia",
+    "description": "Georgia statewide general runoff election",
+    "election_date": "2026-12-01"
+  },
+  {
+    "state_name": "Mississippi",
+    "state_code": "MS",
+    "district": "Mississippi",
+    "description": "Mississippi statewide general runoff election",
+    "election_date": "2026-12-01"
+  },
+  {
+    "state_name": "New Jersey",
+    "state_code": "NJ",
+    "district": "Trenton",
+    "description": "Trenton city general election runoff",
+    "election_date": "2026-12-08"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "East Baton Rouge Justice of the Peace Ward 2 District 3",
+    "description": "Special general election for East Baton Rouge Parish Justice Court Ward 2, District 3",
+    "election_date": "2026-12-12"
+  },
+  {
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "district": "Louisiana",
+    "description": "Louisiana statewide majority-vote system general election",
+    "election_date": "2026-12-12"
+  }
+]

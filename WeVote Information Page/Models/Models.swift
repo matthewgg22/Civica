@@ -11,6 +11,12 @@
 
 import Foundation
 
+public enum OfficialLevel: String, Codable {
+    case federal
+    case state
+    case local
+}
+
 /// Mapping from ZIP code → district identifiers
 public struct DistrictMapping: Codable {
     public let congressional:  String
@@ -28,6 +34,32 @@ public struct Official: Identifiable, Codable {
     public let party:      String?
     public let photoURL:   String?
     public let url:        String?
+    public let officialPhone: String?
+    public let websiteURL: String?
+    public let contactFormURL: String?
+    public let level: OfficialLevel?
+
+    public init(
+        name: String,
+        divisionId: String?,
+        party: String?,
+        photoURL: String?,
+        url: String? = nil,
+        officialPhone: String? = nil,
+        websiteURL: String? = nil,
+        contactFormURL: String? = nil,
+        level: OfficialLevel? = nil
+    ) {
+        self.name = name
+        self.divisionId = divisionId
+        self.party = party
+        self.photoURL = photoURL
+        self.url = url
+        self.officialPhone = officialPhone
+        self.websiteURL = websiteURL ?? url
+        self.contactFormURL = contactFormURL
+        self.level = level
+    }
 
     /// Derives the name of the image in Assets.xcassets
     ///   • Uses only the last name (e.g. “Schumer” from “Chuck Schumer”)
@@ -51,18 +83,42 @@ public struct Official: Identifiable, Codable {
         guard let id = divisionId else { return nil }
 
         if let r = id.range(of: "/cd:") {
-            return "Congressional District " + id[r.upperBound...]
+            return "Congressional District " + normalizedDistrictFragment(id[r.upperBound...])
         }
         if let r = id.range(of: "/sldu:") {
-            return "State Senate District " + id[r.upperBound...]
+            return "State Senate District " + normalizedDistrictFragment(id[r.upperBound...])
         }
         if let r = id.range(of: "/sldl:") {
-            return "State Assembly District " + id[r.upperBound...]
+            return "State Assembly District " + normalizedDistrictFragment(id[r.upperBound...])
         }
         if id.contains("/place:")  { return "Citywide" }
         if id.contains("/state:")  { return "Statewide" }
         if id.contains("/country:"){ return "Nationwide" }
         return nil
+    }
+
+    public var resolvedWebsiteURL: String? {
+        websiteURL ?? url
+    }
+
+    public func withLevel(_ level: OfficialLevel) -> Official {
+        Official(
+            name: name,
+            divisionId: divisionId,
+            party: party,
+            photoURL: photoURL,
+            url: url,
+            officialPhone: officialPhone,
+            websiteURL: websiteURL,
+            contactFormURL: contactFormURL,
+            level: level
+        )
+    }
+
+    private func normalizedDistrictFragment(_ value: Substring) -> String {
+        String(value)
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 

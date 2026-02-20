@@ -6,7 +6,7 @@
 //
 
 import Testing
-@testable import WeVote_Information_Page
+@testable import VoteNow
 
 struct WeVote_Information_PageTests {
 
