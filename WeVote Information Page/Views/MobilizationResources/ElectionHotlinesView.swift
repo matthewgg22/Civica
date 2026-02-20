@@ -22,11 +22,11 @@ struct ElectionHotlinesView: View {
 
                     Text("Have questions about how, when, or where to vote? Contact this hotline to get clear info from trained professionals.")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(VoteNowColors.mutedText)
 
                     HStack {
                         Image(systemName: "phone.circle.fill")
-                            .foregroundColor(.blue)
+                            .foregroundColor(VoteNowColors.richBlue)
                         Text("(866-390-2992)")
                             .fontWeight(.medium)
                     }
@@ -40,11 +40,11 @@ struct ElectionHotlinesView: View {
 
                     Text("If you or someone you know is being threatened or blocked from voting, call this national hotline immediately.")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(VoteNowColors.mutedText)
 
                     HStack {
                         Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundColor(.red)
+                            .foregroundColor(VoteNowColors.richRed)
                         Text("(866-868-3692)")
                             .fontWeight(.medium)
                     }

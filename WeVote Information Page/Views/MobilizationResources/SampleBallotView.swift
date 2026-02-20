@@ -18,8 +18,8 @@ struct Candidate: Identifiable, Hashable {
     // Party color: blue for Dems, red for Repubs, default for others
     var partyColor: Color {
         switch party {
-        case "Democratic Party":   return .blue
-        case "Republican Party":   return .red
+        case "Democratic Party":   return VoteNowColors.richBlue
+        case "Republican Party":   return VoteNowColors.richRed
         default:                   return .primary
         }
     }
@@ -114,90 +114,266 @@ let sampleRaces: [BallotRace] = [
 
 struct SampleBallotView: View {
     @EnvironmentObject var planVM: PlanViewModel
-    @State private var rankings: [UUID: Int] = [:]
-    
+    @State private var raceRankings: [String: [String: Int]] = [:]
+
+    struct CandidateSummary: Identifiable {
+        let id: String
+        let name: String
+        let parties: [String]
+        let website: URL?
+    }
+
     private var filteredRaces: [BallotRace] {
         sampleRaces.compactMap { race in
             let matches = race.candidates.filter { cand in
-                planVM.selectedParty == .independent || cand.party.contains(planVM.selectedParty.rawValue)
+                partyMatchesRegistration(cand.party)
             }
             guard !matches.isEmpty else { return nil }
             return BallotRace(office: race.office, candidates: matches)
         }
     }
 
+    private func partyMatchesRegistration(_ candidateParty: String) -> Bool {
+        switch planVM.selectedParty {
+        case .democrat:
+            return candidateParty.localizedCaseInsensitiveContains("Democratic")
+        case .republican:
+            return candidateParty.localizedCaseInsensitiveContains("Republican")
+        case .independent:
+            return candidateParty.localizedCaseInsensitiveContains("Independent")
+                || candidateParty.localizedCaseInsensitiveContains("Nonpartisan")
+        }
+    }
+
+    private func compactCandidates(for race: BallotRace) -> [CandidateSummary] {
+        var grouped: [String: (name: String, parties: [String], website: URL?)] = [:]
+
+        for cand in race.candidates {
+            let key = "\(cand.name.lowercased())|\(cand.website?.absoluteString ?? "")"
+            if var existing = grouped[key] {
+                if !existing.parties.contains(cand.party) {
+                    existing.parties.append(cand.party)
+                }
+                grouped[key] = existing
+            } else {
+                grouped[key] = (cand.name, [cand.party], cand.website)
+            }
+        }
+
+        return grouped.values
+            .map { value in
+                CandidateSummary(
+                    id: "\(value.name)|\(value.website?.absoluteString ?? "")",
+                    name: value.name,
+                    parties: value.parties.sorted(),
+                    website: value.website
+                )
+            }
+            .sorted { $0.name < $1.name }
+    }
+
+    private func rankLimit(for candidates: [CandidateSummary]) -> Int {
+        min(5, candidates.count)
+    }
+
+    private func rankSelectionBinding(raceKey: String, candidateID: String) -> Binding<Int> {
+        Binding(
+            get: { raceRankings[raceKey]?[candidateID] ?? 0 },
+            set: { newValue in
+                setRank(newValue == 0 ? nil : newValue, raceKey: raceKey, candidateID: candidateID)
+            }
+        )
+    }
+
+    private func setRank(_ rank: Int?, raceKey: String, candidateID: String) {
+        var raceMap = raceRankings[raceKey] ?? [:]
+
+        if let rank {
+            for (otherID, otherRank) in raceMap where otherID != candidateID && otherRank == rank {
+                raceMap.removeValue(forKey: otherID)
+            }
+            raceMap[candidateID] = rank
+        } else {
+            raceMap.removeValue(forKey: candidateID)
+        }
+
+        if raceMap.isEmpty {
+            raceRankings.removeValue(forKey: raceKey)
+        } else {
+            raceRankings[raceKey] = raceMap
+        }
+    }
+
+    private func rankedCandidates(for raceKey: String, from candidates: [CandidateSummary]) -> [(rank: Int, candidate: CandidateSummary)] {
+        let raceMap = raceRankings[raceKey] ?? [:]
+        return candidates
+            .compactMap { candidate in
+                guard let rank = raceMap[candidate.id] else { return nil }
+                return (rank, candidate)
+            }
+            .sorted { lhs, rhs in
+                if lhs.rank == rhs.rank { return lhs.candidate.name < rhs.candidate.name }
+                return lhs.rank < rhs.rank
+            }
+    }
+
     var body: some View {
         ScrollView(.vertical) {
-            VStack(alignment: .leading, spacing: 30) {
-                Text("🗳️ Sample Ballot")
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Sample Ballot")
                     .font(.largeTitle).bold()
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top)
-                
+                Text("Preview candidates by race. Party filter from My Information is applied.")
+                    .font(.subheadline)
+                    .foregroundColor(VoteNowColors.mutedText)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Ranked-Choice Prep")
+                        .font(.subheadline.weight(.semibold))
+                    Text("This sample is structured for ranked-choice voting, so you can set your candidate order now before entering the voting booth.")
+                        .font(.footnote)
+                        .foregroundColor(VoteNowColors.mutedText)
+                    Text("Only candidates matching your selected party registration are shown.")
+                        .font(.footnote)
+                        .foregroundColor(VoteNowColors.mutedText)
+                }
+                .padding(12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(VoteNowColors.infoSurfaceBlue)
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+                if filteredRaces.isEmpty {
+                    Text("No candidates match your selected party registration in this sample.")
+                        .font(.footnote)
+                        .foregroundColor(VoteNowColors.mutedText)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
                 ForEach(filteredRaces) { race in
-                    VStack(alignment: .leading, spacing: 15) {
-                        Text(race.office)
-                            .font(.headline)
-                        
-                        ForEach(race.candidates) { cand in
+                    let compact = compactCandidates(for: race)
+                    let raceKey = race.office
+                    let maxRank = rankLimit(for: compact)
+                    let ranked = rankedCandidates(for: raceKey, from: compact)
+
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text(race.office)
+                                .font(.headline)
+                            Spacer()
+                            Text("\(compact.count) candidates")
+                                .font(.caption)
+                                .foregroundColor(VoteNowColors.mutedText)
+                        }
+
+                        if !ranked.isEmpty {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("Your Ballot Order")
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundColor(VoteNowColors.mutedText)
+                                ForEach(ranked, id: \.candidate.id) { entry in
+                                    Text("\(entry.rank). \(entry.candidate.name)")
+                                        .font(.caption)
+                                        .foregroundColor(VoteNowColors.primaryText)
+                                }
+                            }
+                            .padding(10)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(VoteNowColors.brandSoftBlue.opacity(0.08))
+                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        }
+
+                        ForEach(compact) { candidate in
                             CandidateRow(
-                                candidate: cand,
-                                rank: Binding(get: { rankings[cand.id] ?? 0 }, set: { rankings[cand.id] = $0 }),
-                                maxRank: race.candidates.count
+                                summary: candidate,
+                                maxRank: maxRank,
+                                rankSelection: rankSelectionBinding(raceKey: raceKey, candidateID: candidate.id)
                             )
                         }
                     }
-                    .padding(.horizontal)
+                    .padding(14)
+                    .background(VoteNowColors.background)
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .stroke(VoteNowColors.borderWarm.opacity(0.2), lineWidth: 1)
+                    )
                 }
-                
-                Spacer(minLength: 50)
             }
-            .padding(.bottom)
+            .padding()
         }
-        .background(Color(.systemGray6))
+        .background(VoteNowColors.infoSurfaceBlue)
         .navigationBarTitleDisplayMode(.inline)
+        .onChange(of: planVM.selectedParty) { _ in
+            raceRankings = [:]
+        }
     }
 }
 
 struct CandidateRow: View {
-    let candidate: Candidate
-    @Binding var rank: Int
+    let summary: SampleBallotView.CandidateSummary
     let maxRank: Int
-    
+    @Binding var rankSelection: Int
+
+    private func color(for party: String) -> Color {
+        if party.contains("Democratic") { return VoteNowColors.richBlue }
+        if party.contains("Republican") { return VoteNowColors.richRed }
+        return .secondary
+    }
+
     var body: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(candidate.name)
-                    .font(.subheadline)
+        HStack(alignment: .top, spacing: 10) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(summary.name)
+                    .font(.subheadline.weight(.semibold))
                     .fixedSize(horizontal: false, vertical: true)
-                
-                Text(candidate.party)
-                    .font(.caption)
-                    .foregroundColor(candidate.partyColor)
+
+                HStack(spacing: 6) {
+                    ForEach(summary.parties, id: \.self) { party in
+                        Text(party.replacingOccurrences(of: " Party", with: ""))
+                            .font(.caption2.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(color(for: party).opacity(0.12))
+                            .foregroundColor(color(for: party))
+                            .clipShape(Capsule())
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            
+
             Spacer()
-            
-            if let url = candidate.website {
-                Link(destination: url) {
-                    Image(systemName: "link.circle")
-                        .font(.title3)
+
+            VStack(alignment: .trailing, spacing: 8) {
+                if let url = summary.website {
+                    Link(destination: url) {
+                        Image(systemName: "link.circle.fill")
+                            .font(.title3)
+                            .foregroundColor(VoteNowColors.richBlue)
+                    }
                 }
-                .padding(.trailing, 8)
-            }
-            
-            Picker("", selection: $rank) {
-                Text("–").tag(0)
-                ForEach(1...maxRank, id: \.self) { i in
-                    Text("\(i)").tag(i)
+
+                Menu {
+                    Button("Unranked") { rankSelection = 0 }
+                    ForEach(1...maxRank, id: \.self) { rank in
+                        Button("Rank \(rank)") { rankSelection = rank }
+                    }
+                } label: {
+                    Text(rankSelection == 0 ? "Set Rank" : "Rank \(rankSelection)")
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(rankSelection == 0 ? .secondary : .blue)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(VoteNowColors.background)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .stroke(VoteNowColors.borderWarm.opacity(0.35), lineWidth: 1)
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 }
             }
-            .pickerStyle(MenuPickerStyle())
-            .frame(width: 50)
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, 6)
         .padding(.horizontal, 12)
-        .background(Color(.systemGray5))
+        .background(VoteNowColors.infoSurfaceBlue)
         .cornerRadius(8)
     }
 }

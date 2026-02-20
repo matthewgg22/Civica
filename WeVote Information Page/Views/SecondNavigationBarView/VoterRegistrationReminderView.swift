@@ -9,7 +9,24 @@ import SwiftUI
 
 struct VoterRegistrationReminderView: View {
     @Binding var selectedTab: Tab
-    @Environment(\.openURL) private var openURL
+    @EnvironmentObject private var planVM: PlanViewModel
+
+    private let contextResolver = ElectionGuideContextResolver()
+    private let contentProvider = RegistrationGuideContentProvider()
+
+    private var checkStatusURL: URL {
+        guard let context = contextResolver.resolve(for: planVM) else {
+            return URL(string: "https://www.vote.gov/")!
+        }
+        return contentProvider.content(for: context).checkStatusURL
+    }
+
+    private var checkStatusLabel: String {
+        guard let context = contextResolver.resolve(for: planVM) else {
+            return "Check Registration Status"
+        }
+        return contentProvider.content(for: context).checkStatusLabel
+    }
 
     var body: some View {
         VStack(spacing: 24) {
@@ -17,16 +34,15 @@ struct VoterRegistrationReminderView: View {
                 .font(.title2)
                 .bold()
 
-            Text("Make sure you’re registered and ready to vote!")
+            Text("Make sure you are registered and ready to vote.")
                 .multilineTextAlignment(.center)
 
-            // 👉 This Link will open the URL when tapped
-            Link(destination: URL(string: "https://e-register.vote.nyc")!) {
-                Text("Check Registration Status")
+            Link(destination: checkStatusURL) {
+                Text(checkStatusLabel)
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(Color.blue.cornerRadius(8))
+                    .background(VoteNowColors.richBlue.cornerRadius(8))
                     .foregroundColor(.white)
             }
 
@@ -41,4 +57,3 @@ struct VoterRegistrationReminderView: View {
         .padding()
     }
 }
-

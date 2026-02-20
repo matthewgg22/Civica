@@ -33,7 +33,7 @@ enum Tab: String, CaseIterable {
     case myReps             = "My Reps"
     case electionTimeline   = "Election Timeline"
     case registration       = "Registration"
-    case nycMayoralElection = "NYC Mayoral Election"
+    case electionGuide      = "Election Guide"
     case howToVote          = "How to Vote"
 
     var iconName: String {
@@ -41,7 +41,7 @@ enum Tab: String, CaseIterable {
         case .myReps:             return "person.3.fill"
         case .electionTimeline:   return "calendar"
         case .registration:       return "person.badge.plus"
-        case .nycMayoralElection: return "mappin.and.ellipse"
+        case .electionGuide:      return "mappin.and.ellipse"
         case .howToVote:          return "flag.fill"
         }
     }
@@ -49,15 +49,58 @@ enum Tab: String, CaseIterable {
 
 // MARK: – Root Content View
 struct ContentView: View {
-    // ← Create & own both view models here
-    @StateObject private var planVM = PlanViewModel()
-    @StateObject private var repsVM = MyRepsViewModel()
+    @EnvironmentObject private var planVM: PlanViewModel
+    @EnvironmentObject private var repsVM: MyRepsViewModel
+    @StateObject private var mapvPlanStore = MAPVPlanStore.shared
+    @Environment(\.scenePhase) private var scenePhase
+    private let zipStateResolver = USZipStateResolver()
+
+    private static let stateCodeToName: [String: String] = [
+        "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "CA": "California",
+        "CO": "Colorado", "CT": "Connecticut", "DE": "Delaware", "FL": "Florida", "GA": "Georgia",
+        "HI": "Hawaii", "ID": "Idaho", "IL": "Illinois", "IN": "Indiana", "IA": "Iowa",
+        "KS": "Kansas", "KY": "Kentucky", "LA": "Louisiana", "ME": "Maine", "MD": "Maryland",
+        "MA": "Massachusetts", "MI": "Michigan", "MN": "Minnesota", "MS": "Mississippi", "MO": "Missouri",
+        "MT": "Montana", "NE": "Nebraska", "NV": "Nevada", "NH": "New Hampshire", "NJ": "New Jersey",
+        "NM": "New Mexico", "NY": "New York", "NC": "North Carolina", "ND": "North Dakota", "OH": "Ohio",
+        "OK": "Oklahoma", "OR": "Oregon", "PA": "Pennsylvania", "RI": "Rhode Island", "SC": "South Carolina",
+        "SD": "South Dakota", "TN": "Tennessee", "TX": "Texas", "UT": "Utah", "VT": "Vermont",
+        "VA": "Virginia", "WA": "Washington", "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming",
+        "DC": "District of Columbia", "AS": "American Samoa", "GU": "Guam",
+        "MP": "Northern Mariana Islands", "PR": "Puerto Rico", "VI": "U.S. Virgin Islands"
+    ]
 
     @State private var selectedTab        = Tab.myReps
     @State private var showCivicScorecard = false
     @State private var showRegReminder    = false
     @State private var selectedElection: Election?
-    @State private var showMyInfoPanel    = false
+    @State private var showLaunchOverlay  = true
+    @State private var showWhyVoteOverlay = false
+    @State private var whyVoteTapOriginInSpreadSpace: CGPoint?
+
+    private var loadingZip: String? {
+        let primary = String(planVM.zip.filter(\.isNumber).prefix(5))
+        if primary.count == 5 { return primary }
+        let fallback = String(planVM.userAddress.zip.filter(\.isNumber).prefix(5))
+        return fallback.count == 5 ? fallback : nil
+    }
+
+    private var loadingStateName: String? {
+        let enteredState = planVM.userAddress.state.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !enteredState.isEmpty {
+            if enteredState.count == 2 {
+                let code = enteredState.uppercased()
+                return Self.stateCodeToName[code] ?? code
+            }
+            return enteredState
+        }
+
+        if let zip = loadingZip,
+           let stateCode = zipStateResolver.stateCode(for: zip) {
+            return Self.stateCodeToName[stateCode] ?? stateCode
+        }
+        return nil
+    }
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -83,39 +126,98 @@ struct ContentView: View {
                 }
                 .tag(Tab.registration)
 
-            // 4. NYC Mayoral Election
+            // 4. Election Guide
             NYCMayoralElectionView()
                 .tabItem {
-                    Label(Tab.nycMayoralElection.rawValue,
-                          systemImage: Tab.nycMayoralElection.iconName)
+                    Label(Tab.electionGuide.rawValue,
+                          systemImage: Tab.electionGuide.iconName)
                 }
-                .tag(Tab.nycMayoralElection)
+                .tag(Tab.electionGuide)
 
             // 5. How to Vote
             MobilizationView()
                 .environmentObject(planVM)
                 .tabItem {
-                    Image("WeVoteLogo")
-                        .renderingMode(.original)     // ← preserves your logo’s true colors
-                        .resizable()                  // ← if you need to size it
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 24, height: 24) // ← tweak as needed
+                    Image(uiImage: VoteNowLogoIcon.tabBarBarsUIImage)
+                        .renderingMode(.original)
                     Text(Tab.howToVote.rawValue)
                 }
                 .tag(Tab.howToVote)
         }
-        // ← Inject both into the environment
-        .environmentObject(planVM)
-        .environmentObject(repsVM)
-        .tint(.blue)
-        .overlay(alignment: .topTrailing) {
-            Button { showMyInfoPanel = true } label: {
-                Image(systemName: "person.crop.circle.fill")
-                    .font(.system(size: 28))
-                    .padding()
+        .environmentObject(mapvPlanStore)
+        .coordinateSpace(name: "SpreadSpace")
+        .tint(VoteNowColors.primaryCTA)
+        .overlay {
+            if showWhyVoteOverlay {
+                WhyVoteFloodOverlay(
+                    isPresented: $showWhyVoteOverlay,
+                    originInSpreadSpace: whyVoteTapOriginInSpreadSpace
+                )
+                    .environmentObject(planVM)
+                    .environmentObject(repsVM)
+                    .zIndex(900)
+            }
+        }
+        .overlay {
+            if showLaunchOverlay {
+                LoadingView(
+                    selectedStateName: loadingStateName,
+                    selectedZip: loadingZip
+                )
+                    .transition(.opacity)
+                    .zIndex(1000)
             }
         }
         .ignoresSafeArea(edges: .bottom)
+        .onAppear {
+            DispatchQueue.main.async {
+                mapvPlanStore.bootstrapFromLegacyPlanViewModel(planVM)
+                mapvPlanStore.refreshLiveActivity()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 7.0) {
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        showLaunchOverlay = false
+                    }
+                }
+            }
+        }
+        .onChange(of: scenePhase) { phase in
+            guard phase == .active else { return }
+            DispatchQueue.main.async {
+                mapvPlanStore.bootstrapFromLegacyPlanViewModel(planVM)
+                mapvPlanStore.refreshLiveActivity()
+            }
+        }
+        .onOpenURL { url in
+            let scheme = url.scheme?.lowercased()
+            let host = url.host?.lowercased() ?? ""
+            let path = url.path.lowercased()
+
+            guard scheme == "votenow" else { return }
+
+            if host == "mapv" || path.contains("mapv") {
+                selectedTab = .howToVote
+            } else if host == "directions" || path.contains("directions") {
+                selectedTab = .howToVote
+                if let mapsURL = mapvPlanStore.plan?.mapsURL {
+                    UIApplication.shared.open(mapsURL)
+                }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .toggleWhyVoteOverlay)) { notification in
+            DispatchQueue.main.async {
+                let userInfo = notification.userInfo
+                if let x = userInfo?["originX"] as? CGFloat,
+                   let y = userInfo?["originY"] as? CGFloat {
+                    whyVoteTapOriginInSpreadSpace = CGPoint(x: x, y: y)
+                } else if let x = userInfo?["originX"] as? Double,
+                          let y = userInfo?["originY"] as? Double {
+                    whyVoteTapOriginInSpreadSpace = CGPoint(x: x, y: y)
+                }
+
+                guard !showWhyVoteOverlay else { return }
+                showWhyVoteOverlay = true
+            }
+        }
 
         // Civic Scorecard sheet
         .sheet(isPresented: $showCivicScorecard) {
@@ -135,12 +237,6 @@ struct ContentView: View {
                 .environmentObject(planVM)
         }
 
-        // My Info panel sheet
-        .sheet(isPresented: $showMyInfoPanel) {
-            MyInfoPanelView()
-                .environmentObject(planVM)
-                .environmentObject(repsVM)
-        }
     }
 }
 

@@ -23,6 +23,7 @@ final class LocationManager: NSObject, ObservableObject {
     @Published var authorizationStatus: CLAuthorizationStatus
 
     private let manager = CLLocationManager()
+    private var hasPublishedInitialLocation = false
 
     override init() {
         // Initialize with whatever the manager’s current status is
@@ -32,6 +33,9 @@ final class LocationManager: NSObject, ObservableObject {
         manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         // Kick off the permission prompt
         manager.requestWhenInUseAuthorization()
+        if manager.authorizationStatus == .authorizedAlways || manager.authorizationStatus == .authorizedWhenInUse {
+            manager.requestLocation()
+        }
     }
 }
 
@@ -46,8 +50,8 @@ extension LocationManager: CLLocationManagerDelegate {
 
         switch status {
         case .authorizedWhenInUse, .authorizedAlways:
-            // Now that we’re authorized, start getting updates
-            manager.startUpdatingLocation()
+            // Use one-shot location requests to avoid constant map/state churn.
+            manager.requestLocation()
         case .notDetermined:
             // Still waiting on the user—ask again
             manager.requestWhenInUseAuthorization()
@@ -61,10 +65,15 @@ extension LocationManager: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager,
                          didUpdateLocations locations: [CLLocation])
     {
-        guard let loc = locations.first else { return }
+        guard let loc = locations.last else { return }
+        if hasPublishedInitialLocation {
+            return
+        }
+        hasPublishedInitialLocation = true
         DispatchQueue.main.async {
             self.location = loc
         }
+        manager.stopUpdatingLocation()
     }
 
     // Called if there’s an error obtaining location

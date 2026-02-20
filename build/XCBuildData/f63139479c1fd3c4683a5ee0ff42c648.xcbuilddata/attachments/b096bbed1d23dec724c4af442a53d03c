@@ -1,0 +1,455 @@
+{
+  "" : {
+    "const-values" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/VoteNow-master.swiftconstvalues",
+    "dependencies" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/VoteNow-master.d",
+    "diagnostics" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/VoteNow-master.dia",
+    "emit-module-dependencies" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/VoteNow-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/VoteNow-master-emit-module.dia",
+    "swift-dependencies" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/VoteNow-master.swiftdeps"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/App/EmojiWaterfallView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/EmojiWaterfallView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/EmojiWaterfallView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/EmojiWaterfallView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/App/HoldToConfirmButton.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/HoldToConfirmButton.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/HoldToConfirmButton.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/HoldToConfirmButton.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/App/MAPVCardView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVCardView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVCardView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVCardView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/App/MAPVLiveActivityAttributes.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVLiveActivityAttributes.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVLiveActivityAttributes.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVLiveActivityAttributes.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/App/MAPVLiveActivityManager.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVLiveActivityManager.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVLiveActivityManager.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVLiveActivityManager.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/App/MAPVPlan.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVPlan.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVPlan.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVPlan.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/App/MAPVPlanStore.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVPlanStore.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVPlanStore.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVPlanStore.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/App/MAPVSharedTypes.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVSharedTypes.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVSharedTypes.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVSharedTypes.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/AppDelegate.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/AppDelegate.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/AppDelegate.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/AppDelegate.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Components/HomeAddressHeaderView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/HomeAddressHeaderView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/HomeAddressHeaderView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/HomeAddressHeaderView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Components/LoadingVC.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/LoadingVC.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/LoadingVC.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/LoadingVC.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/ContentView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ContentView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/ElectionTabView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionTabView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionTabView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionTabView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/FullScreenMapView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/FullScreenMapView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/FullScreenMapView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/FullScreenMapView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Helpers/StateFlagCatalog.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/StateFlagCatalog.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/StateFlagCatalog.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/StateFlagCatalog.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/HowtoVoteView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/HowtoVoteView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/HowtoVoteView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/HowtoVoteView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/LocationManager.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/LocationManager.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/LocationManager.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/LocationManager.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/ApplePayDonationManager.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ApplePayDonationManager.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ApplePayDonationManager.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ApplePayDonationManager.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/AuthStore.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/AuthStore.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/AuthStore.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/AuthStore.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/CivicResponseModel.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/CivicResponseModel.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/CivicResponseModel.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/CivicResponseModel.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/DatabaseService.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/DatabaseService.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/DatabaseService.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/DatabaseService.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/ElectionGuideProvider.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionGuideProvider.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionGuideProvider.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionGuideProvider.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/ElectionResultClassifier.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionResultClassifier.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionResultClassifier.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionResultClassifier.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/ElectionsAPI.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionsAPI.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionsAPI.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionsAPI.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/GeocodingService.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GeocodingService.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GeocodingService.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GeocodingService.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/GovHelpModels.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GovHelpModels.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GovHelpModels.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GovHelpModels.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/GovHelpReportingDestinations.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GovHelpReportingDestinations.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GovHelpReportingDestinations.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GovHelpReportingDestinations.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/GovHelpService.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GovHelpService.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GovHelpService.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GovHelpService.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/Models.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/Models.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/Models.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/Models.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/MyRepsViewModel.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MyRepsViewModel.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MyRepsViewModel.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MyRepsViewModel.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/OpenStatesStateLegislativeService.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/OpenStatesStateLegislativeService.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/OpenStatesStateLegislativeService.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/OpenStatesStateLegislativeService.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/PlanViewModel.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PlanViewModel.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PlanViewModel.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PlanViewModel.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/PollingPlace.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PollingPlace.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PollingPlace.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PollingPlace.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/PushTokenStore.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PushTokenStore.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PushTokenStore.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PushTokenStore.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/RegistrationGuideProvider.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RegistrationGuideProvider.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RegistrationGuideProvider.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RegistrationGuideProvider.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/RepsProviders.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RepsProviders.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RepsProviders.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RepsProviders.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/StateVoteInfo.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/StateVoteInfo.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/StateVoteInfo.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/StateVoteInfo.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/SupabaseClientProvider.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseClientProvider.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseClientProvider.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseClientProvider.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/SupabaseConfig.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseConfig.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseConfig.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseConfig.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/SupabaseHealthCheck.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseHealthCheck.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseHealthCheck.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseHealthCheck.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/SupabaseManager.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseManager.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseManager.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseManager.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/WhyVoteCloseElectionContext.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/WhyVoteCloseElectionContext.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/WhyVoteCloseElectionContext.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/WhyVoteCloseElectionContext.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/WhyVoteDataStore.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/WhyVoteDataStore.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/WhyVoteDataStore.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/WhyVoteDataStore.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/WikipediaImageService.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/WikipediaImageService.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/WikipediaImageService.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/WikipediaImageService.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Models/ZipToDistrictMap.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ZipToDistrictMap.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ZipToDistrictMap.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ZipToDistrictMap.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/ModelsElection.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ModelsElection.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ModelsElection.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ModelsElection.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/PollingData.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PollingData.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PollingData.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PollingData.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/PollingPlaceDetailSheet.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PollingPlaceDetailSheet.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PollingPlaceDetailSheet.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PollingPlaceDetailSheet.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/PollingPlaceDetailView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PollingPlaceDetailView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PollingPlaceDetailView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PollingPlaceDetailView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/PushManager.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PushManager.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PushManager.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PushManager.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/RankedChoiceVotingView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RankedChoiceVotingView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RankedChoiceVotingView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RankedChoiceVotingView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/SharedUI.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SharedUI.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SharedUI.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SharedUI.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/TabAndBaseTab.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/TabAndBaseTab.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/TabAndBaseTab.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/TabAndBaseTab.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/TransportationHelpView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/TransportationHelpView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/TransportationHelpView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/TransportationHelpView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/ApplePayButton.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ApplePayButton.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ApplePayButton.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ApplePayButton.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/DirectionalRevealDemoView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/DirectionalRevealDemoView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/DirectionalRevealDemoView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/DirectionalRevealDemoView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/FirstNavigationBarView/ElectionTimelineCardView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionTimelineCardView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionTimelineCardView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionTimelineCardView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/FirstNavigationBarView/ElectionTimelineView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionTimelineView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionTimelineView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionTimelineView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/FirstNavigationBarView/ElectionsRowView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionsRowView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionsRowView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionsRowView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/FirstNavigationBarView/MobilizationView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MobilizationView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MobilizationView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MobilizationView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/FirstNavigationBarView/NYCMayoralElectionView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/NYCMayoralElectionView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/NYCMayoralElectionView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/NYCMayoralElectionView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/FirstNavigationBarView/RegistrationCheckView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RegistrationCheckView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RegistrationCheckView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RegistrationCheckView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/FirstNavigationBarView/RepresentativeSectionView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RepresentativeSectionView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RepresentativeSectionView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RepresentativeSectionView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/FirstNavigationBarView/WhyVoteView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/WhyVoteView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/WhyVoteView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/WhyVoteView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/GovHelpChatSheetView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GovHelpChatSheetView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GovHelpChatSheetView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GovHelpChatSheetView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/InteractiveIslandView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/InteractiveIslandView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/InteractiveIslandView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/InteractiveIslandView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/LoadingView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/LoadingView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/LoadingView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/LoadingView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/MAPVAddToCalendarFlow.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVAddToCalendarFlow.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVAddToCalendarFlow.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MAPVAddToCalendarFlow.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/MobilizationResources/ElectionHotlinesView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionHotlinesView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionHotlinesView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/ElectionHotlinesView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/MobilizationResources/MailInBallotView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MailInBallotView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MailInBallotView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MailInBallotView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/MobilizationResources/PollingLocationsView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PollingLocationsView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PollingLocationsView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PollingLocationsView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/MobilizationResources/RaceCandidatesView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RaceCandidatesView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RaceCandidatesView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RaceCandidatesView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/MobilizationResources/SampleBallotView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SampleBallotView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SampleBallotView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SampleBallotView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/MultiStepFormView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MultiStepFormView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MultiStepFormView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MultiStepFormView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/MyInfoPanelView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MyInfoPanelView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MyInfoPanelView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MyInfoPanelView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/MyRepsView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MyRepsView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MyRepsView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/MyRepsView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/PlanCardView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PlanCardView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PlanCardView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/PlanCardView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/RepsData.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RepsData.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RepsData.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/RepsData.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/SecondNavigationBarView/CivicScorecardView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/CivicScorecardView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/CivicScorecardView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/CivicScorecardView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/SecondNavigationBarView/VoterRegistrationReminderView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/VoterRegistrationReminderView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/VoterRegistrationReminderView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/VoterRegistrationReminderView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/SecondNavigationBarView/VoterRegistrationView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/VoterRegistrationView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/VoterRegistrationView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/VoterRegistrationView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/SupabaseMAPVDebugView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseMAPVDebugView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseMAPVDebugView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseMAPVDebugView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/SupabaseStatusView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseStatusView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseStatusView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupabaseStatusView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/SupportVoteTab.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupportVoteTab.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupportVoteTab.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupportVoteTab.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/SupportVoteView.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupportVoteView.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupportVoteView.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/SupportVoteView.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/Views/TimeReactiveBackground.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/TimeReactiveBackground.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/TimeReactiveBackground.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/TimeReactiveBackground.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/VoteNowColors.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/VoteNowColors.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/VoteNowColors.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/VoteNowColors.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/WeVote Information Page/WeVote_Information_PageApp.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/WeVote_Information_PageApp.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/WeVote_Information_PageApp.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/WeVote_Information_PageApp.o"
+  },
+  "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/build/VoteNow.build/Release-iphoneos/VoteNow.build/Objects-normal/arm64/GeneratedAssetSymbols.o"
+  }
+}

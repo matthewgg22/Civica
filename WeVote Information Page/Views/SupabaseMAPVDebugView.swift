@@ -1,0 +1,101 @@
+import SwiftUI
+
+#if DEBUG
+struct SupabaseMAPVDebugView: View {
+    @State private var plans: [MapvPlan] = []
+    @State private var statusText = "Idle"
+    @State private var isWorking = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Supabase MAPV Debug")
+                .font(.headline)
+
+            Text(statusText)
+                .font(.subheadline)
+                .foregroundStyle(VoteNowColors.mutedText)
+
+            HStack(spacing: 10) {
+                Button("DEBUG: Insert MAPV") {
+                    Task { await insertDebugPlan() }
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(isWorking)
+
+                Button("DEBUG: Fetch MAPV Plans") {
+                    Task { await fetchDebugPlans() }
+                }
+                .buttonStyle(.bordered)
+                .disabled(isWorking)
+            }
+
+            if plans.isEmpty {
+                Text("No plans loaded.")
+                    .font(.footnote)
+                    .foregroundStyle(VoteNowColors.mutedText)
+            } else {
+                ForEach(plans.prefix(5)) { plan in
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(plan.electionID)
+                            .font(.subheadline.weight(.semibold))
+                        Text(plan.pollingPlace ?? "No polling place")
+                            .font(.footnote)
+                            .foregroundStyle(VoteNowColors.mutedText)
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(VoteNowColors.infoSurfaceBlue)
+        )
+        .task { await runStartupAuth() }
+    }
+
+    private func runStartupAuth() async {
+        isWorking = true
+        defer { isWorking = false }
+
+        do {
+            try await SupabaseManager.shared.signInAnonymouslyIfNeeded()
+            statusText = "Anonymous session ready"
+        } catch {
+            statusText = "Error: \(error.localizedDescription)"
+            print("[SupabaseMAPVDebug] Auth error:", error.localizedDescription)
+        }
+    }
+
+    private func insertDebugPlan() async {
+        isWorking = true
+        defer { isWorking = false }
+
+        do {
+            try await SupabaseManager.shared.insertDebugMAPVPlan()
+            statusText = "Inserted test plan"
+        } catch {
+            statusText = "Insert failed: \(error.localizedDescription)"
+            print("[SupabaseMAPVDebug] Insert failed:", error.localizedDescription)
+        }
+    }
+
+    private func fetchDebugPlans() async {
+        isWorking = true
+        defer { isWorking = false }
+
+        do {
+            let latest = try await SupabaseManager.shared.fetchMAPVPlans()
+            plans = latest
+            statusText = "Fetched \(latest.count) plan(s)"
+        } catch {
+            statusText = "Fetch failed: \(error.localizedDescription)"
+            print("[SupabaseMAPVDebug] Fetch failed:", error.localizedDescription)
+        }
+    }
+}
+
+#Preview {
+    SupabaseMAPVDebugView()
+}
+#endif

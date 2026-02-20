@@ -58,7 +58,7 @@ struct RaceCandidatesView: View {
 
                                 Text(candidate.experience)
                                     .font(.subheadline)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(VoteNowColors.mutedText)
 
                                 Text("Announced: \(candidate.announcedDate)")
                                     .font(.caption)
@@ -66,7 +66,7 @@ struct RaceCandidatesView: View {
 
                                 Link("Website", destination: URL(string: candidate.websiteURL)!)
                                     .font(.caption)
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(VoteNowColors.richBlue)
                             }
                             .padding(.leading, 8)
                         }

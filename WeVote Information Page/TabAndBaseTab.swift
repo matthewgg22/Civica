@@ -39,18 +39,18 @@ struct TabAndBaseTab: View {
                 .tabItem { Label("Registration", systemImage: "person.badge.plus") }
                 .tag(Tab.registration)
 
-            // NYC Mayoral Election
+            // Election Guide
             NYCMayoralElectionView()
                 .environmentObject(planVM)
-                .tabItem { Label("NYC Mayoral Election", systemImage: "mappin.and.ellipse") }
-                .tag(Tab.nycMayoralElection)
+                .tabItem { Label("Election Guide", systemImage: "mappin.and.ellipse") }
+                .tag(Tab.electionGuide)
 
             // How to Vote
             MobilizationView()
                 .environmentObject(planVM)
                 .tabItem {
-                    Image("WeVoteLogo")
-                        .renderingMode(.original)  // keeps your logo’s original colors
+                    Image(uiImage: VoteNowLogoIcon.tabBarBarsUIImage)
+                        .renderingMode(.original)
                     Text("How to Vote")
                 }
                 .tag(Tab.howToVote)
@@ -58,7 +58,7 @@ struct TabAndBaseTab: View {
         }
         .environmentObject(planVM)
         .environmentObject(repsVM)
-        .tint(.blue)
+        .tint(VoteNowColors.primaryCTA)
         .overlay(alignment: .topTrailing) {
             Button { showMyInfoPanel = true } label: {
                 Image(systemName: "person.crop.circle.fill")
