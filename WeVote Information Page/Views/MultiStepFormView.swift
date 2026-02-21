@@ -185,9 +185,7 @@ private final class MAPVFlowModel: ObservableObject {
     @Published var selectedMethod: VotingMethod? = nil
     @Published var selectedPollingPlace: PollingPlace? = nil
     @Published var hasExplicitlyPickedVotingDay = false
-    @Published var chosenVotingTime: Date = Calendar.current.date(
-        from: DateComponents(year: 2025, month: 6, day: 14, hour: 9)
-    ) ?? Date()
+    @Published var chosenVotingTime: Date = Date()
 
     let steps: [MAPVStep] = [
         MAPVStep(id: "method", title: "Method to Vote", icon: "checklist"),
@@ -1799,30 +1797,21 @@ struct StepFourView: View {
     }
 
     private var resolvedElection: (title: String, date: Date) {
-        if let future = planVM.upcomingElections
-            .filter({ $0.electionDay >= chosenVotingTime })
-            .sorted(by: { $0.electionDay < $1.electionDay })
-            .first {
-            return (future.name, future.electionDay)
-        }
-
-        if let nearest = planVM.upcomingElections.min(by: {
-            abs($0.electionDay.timeIntervalSince(chosenVotingTime)) < abs($1.electionDay.timeIntervalSince(chosenVotingTime))
-        }) {
-            return (nearest.name, nearest.electionDay)
-        }
-
-        return ("Upcoming Election", chosenVotingTime)
+        mapvPlanStore.resolvedElectionForMAPV(planVM: planVM, chosenVotingTime: chosenVotingTime)
     }
 
     private var previewPlan: MAPVPlan {
         let election = resolvedElection
+        let normalizedArrival = mapvPlanStore.normalizePlannedArrivalForMAPV(
+            chosenVotingTime: chosenVotingTime,
+            electionDate: election.date
+        )
         return MAPVPlan.fromWizard(
             electionTitle: election.title,
             electionDate: election.date,
             selectedMethod: selectedMethod,
             selectedPollingPlace: selectedPollingPlace,
-            plannedArrival: chosenVotingTime,
+            plannedArrival: normalizedArrival,
             distanceETAString: planVM.plan.distanceETA,
             liveActivityEnabled: mapvPlanStore.liveActivityEnabled,
             travelMode: .driving

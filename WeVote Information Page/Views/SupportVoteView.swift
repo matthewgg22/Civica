@@ -71,7 +71,7 @@ struct SupportVoteView: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 18) {
-                        PageHeader(title: "Support Americans Vote!")
+                        PageHeader(title: "Support VoteNow")
 
                         missionCard
                         supportCard
@@ -92,11 +92,11 @@ struct SupportVoteView: View {
 
     private var missionCard: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Support Americans Vote!")
+            Text("Empower Americans Vote!")
                 .font(.title3.weight(.bold))
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text("VoteNow is built to be the lowest-friction voting companion possible: no ads, no partisanship, and no paywalls. We believe that reducing logistical friction—deadlines, locations, ID rules, and confusing steps—is essential to authentic voting help.\nIf you’d like to support this work, you can donate below.")
+            Text("VoteNow's mission is to empower every American to vote by being the least friction companion to support participation. We believe that reducing logistical friction—deadlines, locations, ID rules, and confusing steps—is essential to authentic voting help.")
                 .font(.body)
                 .foregroundStyle(VoteNowColors.mutedText)
                 .fixedSize(horizontal: false, vertical: true)
@@ -114,10 +114,10 @@ struct SupportVoteView: View {
 
     private var supportCard: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("What your donation supports")
+            Text("As a college founded civic start up, we rely on community support to keep voter tools accessible. Your Contribution supports")
                 .font(.headline)
 
-            supportBullet("No ads or tracking")
+            supportBullet("No ads or paywalls")
             supportBullet("Nonpartisan voting logistics")
             supportBullet("Fast, accessible UX improvements")
         }

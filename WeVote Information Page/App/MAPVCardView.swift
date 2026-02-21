@@ -1,5 +1,6 @@
 import SwiftUI
 import ActivityKit
+import UIKit
 
 struct MAPVCardView: View {
     @EnvironmentObject private var mapvPlanStore: MAPVPlanStore
@@ -12,6 +13,8 @@ struct MAPVCardView: View {
     var onChangePlanTapped: (() -> Void)? = nil
 
     @State private var now = Date()
+    @State private var shareImage: UIImage?
+    @State private var showingShare = false
     private let minuteTicker = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     private let cardCornerRadius: CGFloat = 14
     private let mapvCardBackground = Color(red: 243 / 255, green: 235 / 255, blue: 203 / 255)
@@ -31,6 +34,13 @@ struct MAPVCardView: View {
                 emptyCard
             }
         }
+        .sheet(isPresented: $showingShare, onDismiss: {
+            shareImage = nil
+        }) {
+            if let shareImage {
+                ShareSheet(items: [shareImage])
+            }
+        }
     }
 
     private func card(plan: MAPVPlan) -> some View {
@@ -38,10 +48,11 @@ struct MAPVCardView: View {
 
         return VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text(plan.electionTitle)
+                Text(displayElectionHeader(for: plan.electionTitle))
                     .font(.title2.weight(.bold))
                     .lineLimit(1)
-                    .minimumScaleFactor(0.82)
+                    .minimumScaleFactor(0.58)
+                    .allowsTightening(true)
                 Spacer(minLength: 8)
                 Text(presentation.statusPillText)
                     .font(.caption2.weight(.bold))
@@ -243,6 +254,37 @@ struct MAPVCardView: View {
         ActivityAuthorizationInfo().areActivitiesEnabled
     }
 
+    private func shareMapv() {
+        guard let plan = previewPlan ?? mapvPlanStore.plan else { return }
+        let shareSize = CGSize(width: 631, height: 406)
+        let shareCard = VStack(spacing: 0) {
+            MAPVCardView(
+                waterfallController: EmojiWaterfallController(),
+                previewPlan: plan,
+                isVotedActionEnabled: false
+            )
+            .environmentObject(mapvPlanStore)
+            .environment(\.dynamicTypeSize, .accessibility1)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+            .overlay(alignment: .bottomTrailing) {
+                VoteNowLogoIcon(size: 53, shadowColor: .clear)
+                    .opacity(0.94)
+                    .padding(.trailing, 10)
+                    .padding(.bottom, 10)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+        .padding(0)
+        .frame(width: shareSize.width, height: shareSize.height, alignment: .top)
+        .background(VoteNowColors.appBackground)
+        .clipped()
+
+        if let image = ViewSnapshotter.snapshot(shareCard, size: shareSize) {
+            shareImage = image
+            showingShare = true
+        }
+    }
+
     private func shortTime(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .none
@@ -256,6 +298,51 @@ struct MAPVCardView: View {
         formatter.timeStyle = .short
         return formatter.string(from: date)
     }
+
+    private func displayElectionHeader(for rawTitle: String) -> String {
+        let normalized = rawTitle.lowercased()
+
+        if normalized.contains("midterm") && normalized.contains("runoff") {
+            return "Midterm Primary Runoff Election"
+        }
+        if normalized.contains("midterm") && normalized.contains("primary") {
+            return "Midterm Primary Election"
+        }
+        if normalized.contains("midterm") && normalized.contains("general") {
+            return "Midterm General Election"
+        }
+        if normalized.contains("presidential") && normalized.contains("primary") {
+            return "Presidential Primary Election"
+        }
+        if normalized.contains("presidential") && normalized.contains("general") {
+            return "Presidential General Election"
+        }
+        if normalized.contains("runoff") {
+            return "Midterm Primary Runoff Election"
+        }
+        if normalized.contains("primary") {
+            return "Midterm Primary Election"
+        }
+        if normalized.contains("general") {
+            return "Midterm General Election"
+        }
+
+        return rawTitle
+    }
+
+    private static let shareDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter
+    }()
+
+    private static let shareTimeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        return formatter
+    }()
 }
 
 #Preview {

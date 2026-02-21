@@ -6,13 +6,17 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct MobilizationView: View {
     @EnvironmentObject var planVM: PlanViewModel
     @EnvironmentObject var mapvPlanStore: MAPVPlanStore
+    @Environment(\.openURL) private var openURL
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var selectedPlace: PollingPlace?
     @State private var showPlanSheet = false
+    @State private var shareImage: UIImage?
+    @State private var showingShare = false
     @StateObject private var waterfallController = EmojiWaterfallController()
     @State private var planCardOffset: CGFloat = 0
     @State private var planCardShadowBoost = false
@@ -201,11 +205,26 @@ struct MobilizationView: View {
                                         AddToCalendarButtonView(payload: payload)
                                     }
 
-                                    ShareLink(
-                                        item: howToVoteShareText,
-                                        subject: Text("My Plan to Vote"),
-                                        message: Text("Here is my voting plan.")
-                                    ) {
+                                    if let directionsURL {
+                                        Button {
+                                            openURL(directionsURL)
+                                        } label: {
+                                            Label("Navigation", systemImage: "location.fill")
+                                                .font(.subheadline.weight(.semibold))
+                                                .lineLimit(1)
+                                                .minimumScaleFactor(0.7)
+                                                .frame(maxWidth: .infinity)
+                                                .padding(.vertical, 11)
+                                        }
+                                        .buttonStyle(.plain)
+                                        .background(VoteNowColors.infoSurfaceBlue)
+                                        .foregroundColor(VoteNowColors.primaryText)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                    }
+
+                                    Button {
+                                        shareMapvCard()
+                                    } label: {
                                         Label("Share My Plan", systemImage: "square.and.arrow.up")
                                             .font(.subheadline.weight(.semibold))
                                             .lineLimit(1)
@@ -278,15 +297,33 @@ struct MobilizationView: View {
         .sheet(item: $selectedPlace) { place in
             PollingPlaceDetailView(place: place)
         }
+        .sheet(isPresented: $showingShare, onDismiss: {
+            shareImage = nil
+        }) {
+            if let shareImage {
+                ShareSheet(items: [shareImage])
+            }
+        }
         .onAppear {
+            synchronizePlanElectionHeaderIfNeeded()
             deferToNextRunLoop {
                 lastRenderedPlanID = mapvPlanStore.plan?.id
             }
+        }
+        .onChange(of: planVM.zip) { _ in
+            synchronizePlanElectionHeaderIfNeeded()
+        }
+        .onChange(of: planVM.userAddress.state) { _ in
+            synchronizePlanElectionHeaderIfNeeded()
+        }
+        .onChange(of: planVM.userAddress.zip) { _ in
+            synchronizePlanElectionHeaderIfNeeded()
         }
         .onChange(of: mapvPlanStore.plan?.id) { newID in
             guard let newID else { return }
             guard newID != lastRenderedPlanID else { return }
             deferToNextRunLoop {
+                synchronizePlanElectionHeaderIfNeeded()
                 lastRenderedPlanID = newID
                 runPlanCardAssemblyAnimation()
             }
@@ -314,6 +351,38 @@ struct MobilizationView: View {
         }
     }
 
+    private func synchronizePlanElectionHeaderIfNeeded() {
+        guard var currentPlan = mapvPlanStore.plan else { return }
+        let resolved = mapvPlanStore.resolvedElectionForMAPV(
+            planVM: planVM,
+            chosenVotingTime: currentPlan.plannedArrival
+        )
+        let normalizedArrival = mapvPlanStore.normalizePlannedArrivalForMAPV(
+            chosenVotingTime: currentPlan.plannedArrival,
+            electionDate: resolved.date
+        )
+        let normalizedOpen = mapvPlanStore.normalizePlannedArrivalForMAPV(
+            chosenVotingTime: currentPlan.pollingOpen,
+            electionDate: resolved.date
+        )
+        let normalizedClose = mapvPlanStore.normalizePlannedArrivalForMAPV(
+            chosenVotingTime: currentPlan.pollingClose,
+            electionDate: resolved.date
+        )
+
+        guard currentPlan.electionTitle != resolved.title ||
+              currentPlan.electionDate != resolved.date ||
+              currentPlan.plannedArrival != normalizedArrival ||
+              currentPlan.pollingOpen != normalizedOpen ||
+              currentPlan.pollingClose != normalizedClose else { return }
+        currentPlan.electionTitle = resolved.title
+        currentPlan.electionDate = resolved.date
+        currentPlan.plannedArrival = normalizedArrival
+        currentPlan.pollingOpen = normalizedOpen
+        currentPlan.pollingClose = normalizedClose
+        mapvPlanStore.save(currentPlan, shouldSyncLiveActivity: true, shouldSyncSupabase: false)
+    }
+
     private var howToVoteShareText: String {
         if let mapv = mapvPlanStore.plan {
             return [
@@ -336,6 +405,83 @@ struct MobilizationView: View {
         if let place = planVM.plan.placeName { lines.append("Location: \(place)") }
         if let address = planVM.plan.placeAddress { lines.append("Address: \(address)") }
         return lines.joined(separator: "\n")
+    }
+
+    private var directionsURL: URL? {
+        if let mapvURL = mapvPlanStore.plan?.mapsURL {
+            return mapvURL
+        }
+
+        if let address = planVM.plan.placeAddress?
+            .trimmingCharacters(in: .whitespacesAndNewlines),
+           !address.isEmpty,
+           let encoded = address.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+            return URL(string: "http://maps.apple.com/?daddr=\(encoded)")
+        }
+
+        return nil
+    }
+
+    private func shareMapvCard() {
+        if let mapv = mapvPlanStore.plan {
+            let shareSize = CGSize(width: 631, height: 406)
+            let shareCard = VStack(spacing: 0) {
+                MAPVCardView(
+                    waterfallController: EmojiWaterfallController(),
+                    previewPlan: mapv,
+                    isVotedActionEnabled: false
+                )
+                .environmentObject(mapvPlanStore)
+                .environment(\.dynamicTypeSize, .accessibility1)
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+                .overlay(alignment: .bottomTrailing) {
+                    VoteNowLogoIcon(size: 53, shadowColor: .clear)
+                        .opacity(0.94)
+                        .padding(.trailing, 10)
+                        .padding(.bottom, 10)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            }
+            .padding(0)
+            .frame(width: shareSize.width, height: shareSize.height, alignment: .top)
+            .background(VoteNowColors.appBackground)
+            .clipped()
+
+            if let image = ViewSnapshotter.snapshot(shareCard, size: shareSize) {
+                shareImage = image
+                showingShare = true
+            }
+            return
+        }
+
+        let fallbackVoteDate = planVM.plan.voteTime ?? Date()
+        let fallbackLocation = planVM.plan.placeAddress ?? planVM.plan.placeName ?? "Polling Place"
+        let addressParts = fallbackLocation
+            .split(separator: ",", maxSplits: 1, omittingEmptySubsequences: true)
+            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
+        let line1 = addressParts.first ?? fallbackLocation
+        let line2 = addressParts.count > 1 ? addressParts[1] : nil
+        let shareURL = directionsURL?.absoluteString ?? "https://votenow.app"
+        let fallbackCard = MapvShareCardView(
+            title: "My Plan to Vote",
+            electionName: electionSubtitleText,
+            voteDateText: Self.dateFormatter.string(from: fallbackVoteDate),
+            voteTimeText: Self.timeFormatter.string(from: fallbackVoteDate),
+            locationLine1: line1,
+            locationLine2: line2,
+            shareURLString: shareURL
+        )
+        .overlay(alignment: .bottomTrailing) {
+            VoteNowLogoIcon(size: 77, shadowColor: .clear)
+                .opacity(0.94)
+                .padding(.trailing, 14)
+                .padding(.bottom, 14)
+        }
+
+        if let image = ViewSnapshotter.snapshot(fallbackCard, size: CGSize(width: 1080, height: 1350)) {
+            shareImage = image
+            showingShare = true
+        }
     }
 
     private var calendarPayload: MAPVCalendarPlanPayload? {

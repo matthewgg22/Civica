@@ -7,12 +7,15 @@
 import SwiftUI
 import UIKit
 
-struct ShareSheet: UIViewControllerRepresentable {
-    let items: [Any]
-
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: items, applicationActivities: nil)
+enum ViewSnapshotter {
+    @MainActor
+    static func snapshot<Content: View>(_ view: Content, size: CGSize) -> UIImage? {
+        let renderer = ImageRenderer(
+            content: view
+                .frame(width: size.width, height: size.height)
+        )
+        renderer.scale = UIScreen.main.scale
+        renderer.proposedSize = ProposedViewSize(size)
+        return renderer.uiImage
     }
-
-    func updateUIViewController(_ vc: UIActivityViewController, context: Context) { }
 }
