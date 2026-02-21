@@ -54,55 +54,62 @@ struct MyRepsView: View {
         ZStack {
             VoteNowColors.appBackground.ignoresSafeArea()
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    PageHeader(title: "Representatives")
+            VStack(spacing: 0) {
+                PageHeader(title: "Representatives")
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                    .padding(.bottom, 8)
+                    .background(VoteNowColors.appBackground)
 
-                    searchCard
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        searchCard
 
-                    locationCoverageCard(
-                        region: repsVM.zipMapRegion ?? Self.defaultMapRegion,
-                        center: repsVM.zipMapCenter,
-                        radiusMeters: repsVM.zipMapRadiusMeters
-                    )
+                        locationCoverageCard(
+                            region: repsVM.zipMapRegion ?? Self.defaultMapRegion,
+                            center: repsVM.zipMapCenter,
+                            radiusMeters: repsVM.zipMapRadiusMeters
+                        )
 
-                    if repsVM.isLoading {
-                        ProgressView("Looking up your reps…")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.top, 8)
-                    }
+                        if repsVM.isLoading {
+                            ProgressView("Looking up your reps…")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.top, 8)
+                        }
 
-                    if let error = repsVM.errorMessage, !error.isEmpty {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(error)
-                                .font(.subheadline)
-                                .foregroundColor(VoteNowColors.urgentCTA)
+                        if let error = repsVM.errorMessage, !error.isEmpty {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(error)
+                                    .font(.subheadline)
+                                    .foregroundColor(VoteNowColors.urgentCTA)
 
-                            Button("Retry") {
-                                submitLookup()
+                                Button("Retry") {
+                                    submitLookup()
+                                }
+                                .buttonStyle(VoteNowPrimaryCTAButtonStyle())
                             }
-                            .buttonStyle(VoteNowPrimaryCTAButtonStyle())
                         }
-                    }
 
-                    if !sections.isEmpty {
-                        ForEach(sections) { section in
-                            RepresentativeSection(
-                                title: section.title,
-                                officials: section.officials
-                            )
+                        if !sections.isEmpty {
+                            ForEach(sections) { section in
+                                RepresentativeSection(
+                                    title: section.title,
+                                    officials: section.officials
+                                )
+                            }
+                        } else if !repsVM.isLoading && (repsVM.errorMessage?.isEmpty ?? true) {
+                            Text("Enter your ZIP or full U.S. address to load your representatives.")
+                                .font(.subheadline)
+                                .foregroundColor(VoteNowColors.mutedText)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.top, 8)
                         }
-                    } else if !repsVM.isLoading && (repsVM.errorMessage?.isEmpty ?? true) {
-                        Text("Enter your ZIP or full U.S. address to load your representatives.")
-                            .font(.subheadline)
-                            .foregroundColor(VoteNowColors.mutedText)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.top, 8)
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 16)
                 }
-                .padding(16)
+                .scrollDismissesKeyboard(.interactively)
             }
-            .scrollDismissesKeyboard(.interactively)
         }
         .safeAreaInset(edge: .bottom) {
             HStack {

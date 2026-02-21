@@ -54,11 +54,11 @@ private extension View {
 
 struct PageHeader: View {
     let title: String
-    var iconSize: CGFloat = 50
+    var iconSize: CGFloat = 56
     @State private var iconFrameInSpreadSpace: CGRect = .zero
 
     var body: some View {
-        HStack(alignment: .center, spacing: 12) {
+        HStack(alignment: .top, spacing: 14) {
             Button {
                 guard iconFrameInSpreadSpace != .zero else { return }
                 let origin = CGPoint(
@@ -86,7 +86,9 @@ struct PageHeader: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .lineLimit(1)
-                .frame(height: iconSize, alignment: .center)
+                .minimumScaleFactor(0.84)
+                .padding(.top, 2)
+                .frame(minHeight: iconSize, alignment: .topLeading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.top, 4)
@@ -104,7 +106,7 @@ struct VoteNowLogoIcon: View {
     var size: CGFloat = 50
     var backgroundColor: Color = Color(red: 0.68, green: 0.84, blue: 0.90) // #ADD7E5-ish icon tone
     var stripeColor: Color = Color(red: 223.0 / 255.0, green: 88.0 / 255.0, blue: 69.0 / 255.0) // #DF5845
-    var cornerRadiusScale: CGFloat = 0.22
+    var cornerRadiusScale: CGFloat = 0.24
     var borderColor: Color = VoteNowColors.surfaceWhite.opacity(0.9)
     var borderWidth: CGFloat = 0.6
     var shadowColor: Color = VoteNowColors.primaryText.opacity(0.14)

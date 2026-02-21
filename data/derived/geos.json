@@ -1,0 +1,344 @@
+[
+  {
+    "code": "AK",
+    "fips": "02",
+    "geo_name": "Alaska",
+    "type": "state"
+  },
+  {
+    "code": "AL",
+    "fips": "01",
+    "geo_name": "Alabama",
+    "type": "state"
+  },
+  {
+    "code": "AR",
+    "fips": "05",
+    "geo_name": "Arkansas",
+    "type": "state"
+  },
+  {
+    "code": "AS",
+    "fips": "60",
+    "geo_name": "American Samoa",
+    "type": "territory"
+  },
+  {
+    "code": "AZ",
+    "fips": "04",
+    "geo_name": "Arizona",
+    "type": "state"
+  },
+  {
+    "code": "CA",
+    "fips": "06",
+    "geo_name": "California",
+    "type": "state"
+  },
+  {
+    "code": "CO",
+    "fips": "08",
+    "geo_name": "Colorado",
+    "type": "state"
+  },
+  {
+    "code": "CT",
+    "fips": "09",
+    "geo_name": "Connecticut",
+    "type": "state"
+  },
+  {
+    "code": "DC",
+    "fips": "11",
+    "geo_name": "District of Columbia",
+    "type": "dc"
+  },
+  {
+    "code": "DE",
+    "fips": "10",
+    "geo_name": "Delaware",
+    "type": "state"
+  },
+  {
+    "code": "FL",
+    "fips": "12",
+    "geo_name": "Florida",
+    "type": "state"
+  },
+  {
+    "code": "GA",
+    "fips": "13",
+    "geo_name": "Georgia",
+    "type": "state"
+  },
+  {
+    "code": "GU",
+    "fips": "66",
+    "geo_name": "Guam",
+    "type": "territory"
+  },
+  {
+    "code": "HI",
+    "fips": "15",
+    "geo_name": "Hawaii",
+    "type": "state"
+  },
+  {
+    "code": "IA",
+    "fips": "19",
+    "geo_name": "Iowa",
+    "type": "state"
+  },
+  {
+    "code": "ID",
+    "fips": "16",
+    "geo_name": "Idaho",
+    "type": "state"
+  },
+  {
+    "code": "IL",
+    "fips": "17",
+    "geo_name": "Illinois",
+    "type": "state"
+  },
+  {
+    "code": "IN",
+    "fips": "18",
+    "geo_name": "Indiana",
+    "type": "state"
+  },
+  {
+    "code": "KS",
+    "fips": "20",
+    "geo_name": "Kansas",
+    "type": "state"
+  },
+  {
+    "code": "KY",
+    "fips": "21",
+    "geo_name": "Kentucky",
+    "type": "state"
+  },
+  {
+    "code": "LA",
+    "fips": "22",
+    "geo_name": "Louisiana",
+    "type": "state"
+  },
+  {
+    "code": "MA",
+    "fips": "25",
+    "geo_name": "Massachusetts",
+    "type": "state"
+  },
+  {
+    "code": "MD",
+    "fips": "24",
+    "geo_name": "Maryland",
+    "type": "state"
+  },
+  {
+    "code": "ME",
+    "fips": "23",
+    "geo_name": "Maine",
+    "type": "state"
+  },
+  {
+    "code": "MI",
+    "fips": "26",
+    "geo_name": "Michigan",
+    "type": "state"
+  },
+  {
+    "code": "MN",
+    "fips": "27",
+    "geo_name": "Minnesota",
+    "type": "state"
+  },
+  {
+    "code": "MO",
+    "fips": "29",
+    "geo_name": "Missouri",
+    "type": "state"
+  },
+  {
+    "code": "MP",
+    "fips": "69",
+    "geo_name": "Northern Mariana Islands",
+    "type": "territory"
+  },
+  {
+    "code": "MS",
+    "fips": "28",
+    "geo_name": "Mississippi",
+    "type": "state"
+  },
+  {
+    "code": "MT",
+    "fips": "30",
+    "geo_name": "Montana",
+    "type": "state"
+  },
+  {
+    "code": "NC",
+    "fips": "37",
+    "geo_name": "North Carolina",
+    "type": "state"
+  },
+  {
+    "code": "ND",
+    "fips": "38",
+    "geo_name": "North Dakota",
+    "type": "state"
+  },
+  {
+    "code": "NE",
+    "fips": "31",
+    "geo_name": "Nebraska",
+    "type": "state"
+  },
+  {
+    "code": "NH",
+    "fips": "33",
+    "geo_name": "New Hampshire",
+    "type": "state"
+  },
+  {
+    "code": "NJ",
+    "fips": "34",
+    "geo_name": "New Jersey",
+    "type": "state"
+  },
+  {
+    "code": "NM",
+    "fips": "35",
+    "geo_name": "New Mexico",
+    "type": "state"
+  },
+  {
+    "code": "NV",
+    "fips": "32",
+    "geo_name": "Nevada",
+    "type": "state"
+  },
+  {
+    "code": "NY",
+    "fips": "36",
+    "geo_name": "New York",
+    "type": "state"
+  },
+  {
+    "code": "OH",
+    "fips": "39",
+    "geo_name": "Ohio",
+    "type": "state"
+  },
+  {
+    "code": "OK",
+    "fips": "40",
+    "geo_name": "Oklahoma",
+    "type": "state"
+  },
+  {
+    "code": "OR",
+    "fips": "41",
+    "geo_name": "Oregon",
+    "type": "state"
+  },
+  {
+    "code": "PA",
+    "fips": "42",
+    "geo_name": "Pennsylvania",
+    "type": "state"
+  },
+  {
+    "code": "PR",
+    "fips": "72",
+    "geo_name": "Puerto Rico",
+    "type": "territory"
+  },
+  {
+    "code": "RI",
+    "fips": "44",
+    "geo_name": "Rhode Island",
+    "type": "state"
+  },
+  {
+    "code": "SC",
+    "fips": "45",
+    "geo_name": "South Carolina",
+    "type": "state"
+  },
+  {
+    "code": "SD",
+    "fips": "46",
+    "geo_name": "South Dakota",
+    "type": "state"
+  },
+  {
+    "code": "TN",
+    "fips": "47",
+    "geo_name": "Tennessee",
+    "type": "state"
+  },
+  {
+    "code": "TX",
+    "fips": "48",
+    "geo_name": "Texas",
+    "type": "state"
+  },
+  {
+    "code": "US",
+    "fips": "00",
+    "geo_name": "United States",
+    "type": "national"
+  },
+  {
+    "code": "UT",
+    "fips": "49",
+    "geo_name": "Utah",
+    "type": "state"
+  },
+  {
+    "code": "VA",
+    "fips": "51",
+    "geo_name": "Virginia",
+    "type": "state"
+  },
+  {
+    "code": "VI",
+    "fips": "78",
+    "geo_name": "U.S. Virgin Islands",
+    "type": "territory"
+  },
+  {
+    "code": "VT",
+    "fips": "50",
+    "geo_name": "Vermont",
+    "type": "state"
+  },
+  {
+    "code": "WA",
+    "fips": "53",
+    "geo_name": "Washington",
+    "type": "state"
+  },
+  {
+    "code": "WI",
+    "fips": "55",
+    "geo_name": "Wisconsin",
+    "type": "state"
+  },
+  {
+    "code": "WV",
+    "fips": "54",
+    "geo_name": "West Virginia",
+    "type": "state"
+  },
+  {
+    "code": "WY",
+    "fips": "56",
+    "geo_name": "Wyoming",
+    "type": "state"
+  }
+]

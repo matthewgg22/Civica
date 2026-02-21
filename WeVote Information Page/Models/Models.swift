@@ -32,6 +32,7 @@ public struct Official: Identifiable, Codable {
     public let name:       String
     public let divisionId: String?
     public let party:      String?
+    public let officeTitle: String?
     public let photoURL:   String?
     public let url:        String?
     public let officialPhone: String?
@@ -43,6 +44,7 @@ public struct Official: Identifiable, Codable {
         name: String,
         divisionId: String?,
         party: String?,
+        officeTitle: String? = nil,
         photoURL: String?,
         url: String? = nil,
         officialPhone: String? = nil,
@@ -53,6 +55,7 @@ public struct Official: Identifiable, Codable {
         self.name = name
         self.divisionId = divisionId
         self.party = party
+        self.officeTitle = officeTitle
         self.photoURL = photoURL
         self.url = url
         self.officialPhone = officialPhone
@@ -106,6 +109,7 @@ public struct Official: Identifiable, Codable {
             name: name,
             divisionId: divisionId,
             party: party,
+            officeTitle: officeTitle,
             photoURL: photoURL,
             url: url,
             officialPhone: officialPhone,

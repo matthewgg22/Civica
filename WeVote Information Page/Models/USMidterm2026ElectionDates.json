@@ -24,11 +24,11 @@
     "registration_deadline_primary": "2026-05-04",
     "registration_deadline_general": "2026-10-19",
     "registration_notes": "See state election office for modality-specific deadlines",
-    "early_voting_primary": "No early voting",
-    "early_voting_general": "No early voting",
+    "early_voting_primary": null,
+    "early_voting_general": null,
     "primary_source": "https://www.ncsl.org/elections-and-campaigns/2026-state-primary-election-dates",
     "registration_source": "https://www.ncsl.org/elections-and-campaigns/voter-registration-deadlines/maptype/tile",
-    "early_voting_primary_runoff": "No early voting"
+    "early_voting_primary_runoff": null
   },
   {
     "state_name": "Arkansas",
@@ -450,8 +450,8 @@
     "registration_deadline_primary": null,
     "registration_deadline_general": null,
     "registration_notes": "Deadline varies by locality (6\u201313 days); same-day registration on Election Day",
-    "early_voting_primary": "No in-person early or no-excuse absentee voting (N/A)",
-    "early_voting_general": "No in-person early or no-excuse absentee voting (N/A)",
+    "early_voting_primary": null,
+    "early_voting_general": null,
     "primary_source": "https://www.ncsl.org/elections-and-campaigns/2026-state-primary-election-dates",
     "registration_source": "https://www.ncsl.org/elections-and-campaigns/voter-registration-deadlines/maptype/tile"
   },
@@ -556,8 +556,8 @@
     "registration_deadline_primary": "2026-04-28",
     "registration_deadline_general": "2026-10-13",
     "registration_notes": "See state election office for modality-specific deadlines",
-    "early_voting_primary": "All-mail ballots (N/A)",
-    "early_voting_general": "All-mail ballots (N/A)",
+    "early_voting_primary": null,
+    "early_voting_general": null,
     "primary_source": "https://www.ncsl.org/elections-and-campaigns/2026-state-primary-election-dates",
     "registration_source": "https://www.ncsl.org/elections-and-campaigns/voter-registration-deadlines/maptype/tile"
   },
@@ -575,7 +575,7 @@
     "early_voting_general": "2026-09-14",
     "primary_source": "https://www.ncsl.org/elections-and-campaigns/2026-state-primary-election-dates",
     "registration_source": "https://www.ncsl.org/elections-and-campaigns/voter-registration-deadlines/maptype/tile",
-    "early_voting_primary_runoff": "No early voting"
+    "early_voting_primary_runoff": null
   },
   {
     "state_name": "Rhode Island",

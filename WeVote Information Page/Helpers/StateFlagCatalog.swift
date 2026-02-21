@@ -7,7 +7,7 @@ enum StateFlagCatalog {
         "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
         "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
         "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY",
-        "AS", "GU", "MP", "PR", "VI"
+        "DC", "AS", "GU", "MP", "PR", "VI"
     ]
 
     static func assetName(for stateCode: String?) -> String? {

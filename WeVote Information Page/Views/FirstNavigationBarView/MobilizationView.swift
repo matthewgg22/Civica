@@ -17,15 +17,172 @@ struct MobilizationView: View {
     @State private var planCardOffset: CGFloat = 0
     @State private var planCardShadowBoost = false
     @State private var lastRenderedPlanID: UUID?
+    private let stateResolver = USZipStateResolver()
+
+    private var nextUpcomingElection: Election? {
+        guard let code = resolvedStateCode() else { return nil }
+        let today = Calendar.current.startOfDay(for: Date())
+        return loadElectionsFromBundle(for: code)
+            .filter { Calendar.current.startOfDay(for: $0.electionDay) >= today }
+            .sorted {
+                if $0.electionDay != $1.electionDay { return $0.electionDay < $1.electionDay }
+                return displayElectionTitle(for: $0) < displayElectionTitle(for: $1)
+            }
+            .first
+    }
+
+    private var electionSubtitleText: String {
+        guard let election = nextUpcomingElection else { return "No upcoming election loaded" }
+        return displayElectionTitle(for: election)
+    }
+
+    private func displayElectionTitle(for election: Election) -> String {
+        let state = election.jurisdictionName
+        let base = election.name
+            .replacingOccurrences(of: state, with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let phase = election.subtitle
+            .replacingOccurrences(of: "Election", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if !base.isEmpty, !phase.isEmpty {
+            let phaseWords = phase.split(separator: " ").map(String.init)
+            if let lastBaseWord = base.split(separator: " ").last?.lowercased(),
+               let firstPhaseWord = phaseWords.first?.lowercased(),
+               lastBaseWord == firstPhaseWord {
+                let dedupedPhase = phaseWords.dropFirst().joined(separator: " ")
+                if !dedupedPhase.isEmpty {
+                    return "\(base) \(dedupedPhase)"
+                }
+            }
+            return "\(base) \(phase)"
+        }
+
+        if !base.isEmpty { return base }
+        if !phase.isEmpty { return phase }
+        return election.name
+    }
+
+    private func resolvedStateCode() -> String? {
+        let directZip = String(planVM.zip.filter(\.isNumber).prefix(5))
+        if directZip.count == 5, let code = stateResolver.stateCode(for: directZip) {
+            return code
+        }
+
+        let addressZip = String(planVM.userAddress.zip.filter(\.isNumber).prefix(5))
+        if addressZip.count == 5, let code = stateResolver.stateCode(for: addressZip) {
+            return code
+        }
+
+        let rawState = planVM.userAddress.state.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !rawState.isEmpty else { return nil }
+        if rawState.count == 2 { return rawState.uppercased() }
+        return Self.stateCodeByName[rawState.lowercased()]
+    }
+
+    private func loadElectionsFromBundle(for stateCode: String) -> [Election] {
+        guard let url = Bundle.main.url(forResource: "USMidterm2026ElectionDates", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let records = try? JSONDecoder().decode([TimelineStateRecord].self, from: data),
+              let record = records.first(where: { $0.state_code == stateCode }) else {
+            return []
+        }
+
+        let stateName = record.state_name
+        let midtermName = "\(stateName) 2026 Midterm"
+        let presidentialName = "\(stateName) 2028 Presidential"
+        var built: [Election] = []
+
+        func appendElection(
+            electionName: String,
+            subtitle: String,
+            electionDateISO: String?,
+            registrationISO: String?,
+            earlyVotingISO: String?
+        ) {
+            guard let electionDate = Self.isoDate(from: electionDateISO) else { return }
+            let registrationDate = Self.isoDate(from: registrationISO) ?? electionDate
+            let earlyVotingDate = Self.isoDate(from: earlyVotingISO)
+
+            built.append(
+                Election(
+                    name: electionName,
+                    subtitle: subtitle,
+                    registrationDeadline: registrationDate,
+                    startDate: earlyVotingDate ?? electionDate,
+                    electionDay: electionDate,
+                    earlyVotingText: nil,
+                    registrationNotes: record.registration_notes,
+                    jurisdictionLevel: "statewide",
+                    jurisdictionName: stateName,
+                    visibility: "public",
+                    flags: [],
+                    matchConfidence: nil,
+                    sourceUrl: record.primary_source
+                )
+            )
+        }
+
+        appendElection(
+            electionName: midtermName,
+            subtitle: "Primary Election",
+            electionDateISO: record.primary_date,
+            registrationISO: record.registration_deadline_primary,
+            earlyVotingISO: record.early_voting_primary
+        )
+
+        appendElection(
+            electionName: midtermName,
+            subtitle: "Primary Runoff Election",
+            electionDateISO: record.primary_runoff_date,
+            registrationISO: record.registration_deadline_primary,
+            earlyVotingISO: record.early_voting_primary_runoff ?? record.early_voting_primary
+        )
+
+        appendElection(
+            electionName: midtermName,
+            subtitle: "General Election",
+            electionDateISO: record.general_election_date,
+            registrationISO: record.registration_deadline_general,
+            earlyVotingISO: record.early_voting_general
+        )
+
+        appendElection(
+            electionName: presidentialName,
+            subtitle: "Presidential Primary Election",
+            electionDateISO: Self.shiftedISOYear(from: record.primary_date, toYear: 2028) ?? "2028-03-07",
+            registrationISO: "2028-03-01",
+            earlyVotingISO: nil
+        )
+
+        appendElection(
+            electionName: presidentialName,
+            subtitle: "Presidential General Election",
+            electionDateISO: "2028-11-07",
+            registrationISO: "2028-10-30",
+            earlyVotingISO: nil
+        )
+
+        return built
+    }
 
     var body: some View {
         ZStack {
+            VoteNowColors.appBackground.ignoresSafeArea()
+
             NavigationStack {
                 ScrollView {
                     VStack(spacing: 20) {
-                        PageHeader(title: "How to Vote")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal)
+                        VStack(alignment: .leading, spacing: 0) {
+                            PageHeader(title: "How to Vote")
+                            Text(electionSubtitleText)
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundColor(VoteNowColors.mutedText)
+                                .padding(.leading, 72)
+                                .padding(.top, -6)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
 
                         if planVM.plan.voteTime != nil {
                             VStack(spacing: 10) {
@@ -105,6 +262,7 @@ struct MobilizationView: View {
                     }
                     .padding(.vertical)
                 }
+                .background(VoteNowColors.appBackground)
                 .navigationBarTitleDisplayMode(.inline)
             }
 
@@ -225,9 +383,61 @@ struct MobilizationView: View {
         return formatter
     }()
 
+    private static let stateCodeByName: [String: String] = [
+        "alabama": "AL", "alaska": "AK", "arizona": "AZ", "arkansas": "AR", "california": "CA",
+        "colorado": "CO", "connecticut": "CT", "delaware": "DE", "florida": "FL", "georgia": "GA",
+        "hawaii": "HI", "idaho": "ID", "illinois": "IL", "indiana": "IN", "iowa": "IA",
+        "kansas": "KS", "kentucky": "KY", "louisiana": "LA", "maine": "ME", "maryland": "MD",
+        "massachusetts": "MA", "michigan": "MI", "minnesota": "MN", "mississippi": "MS", "missouri": "MO",
+        "montana": "MT", "nebraska": "NE", "nevada": "NV", "new hampshire": "NH", "new jersey": "NJ",
+        "new mexico": "NM", "new york": "NY", "north carolina": "NC", "north dakota": "ND", "ohio": "OH",
+        "oklahoma": "OK", "oregon": "OR", "pennsylvania": "PA", "rhode island": "RI", "south carolina": "SC",
+        "south dakota": "SD", "tennessee": "TN", "texas": "TX", "utah": "UT", "vermont": "VT",
+        "virginia": "VA", "washington": "WA", "west virginia": "WV", "wisconsin": "WI", "wyoming": "WY",
+        "district of columbia": "DC"
+    ]
+
+    private static let isoFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
+    private static func isoDate(from iso: String?) -> Date? {
+        guard let iso, !iso.isEmpty else { return nil }
+        return isoFormatter.date(from: iso)
+    }
+
+    private static func shiftedISOYear(from sourceISO: String?, toYear: Int) -> String? {
+        guard let sourceDate = isoDate(from: sourceISO) else { return nil }
+        let calendar = Calendar(identifier: .gregorian)
+        var components = calendar.dateComponents(in: TimeZone(secondsFromGMT: 0)!, from: sourceDate)
+        components.year = toYear
+        guard let shiftedDate = calendar.date(from: components) else { return nil }
+        return isoFormatter.string(from: shiftedDate)
+    }
+
     private func deferToNextRunLoop(_ action: @escaping () -> Void) {
         DispatchQueue.main.async(execute: action)
     }
+}
+
+private struct TimelineStateRecord: Decodable {
+    let state_name: String
+    let state_code: String
+    let primary_date: String?
+    let primary_runoff_date: String?
+    let general_election_date: String?
+    let registration_deadline_primary: String?
+    let registration_deadline_general: String?
+    let registration_notes: String?
+    let early_voting_primary: String?
+    let early_voting_primary_runoff: String?
+    let early_voting_general: String?
+    let primary_source: String?
 }
 
 enum SectionType: CaseIterable {

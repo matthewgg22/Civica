@@ -1,0 +1,19 @@
+{
+  "created_at": "2026-02-21T00:57:10+00:00",
+  "input_file": "data/source/votenow_voter_participation_metrics_catalog_v3.xlsx",
+  "input_filename": "votenow_voter_participation_metrics_catalog_v3.xlsx",
+  "input_sha256": "b3fa3065e2a8fcb79eab4c90f313b0b8266ac28f7c9190c5b8d840df90320c32",
+  "output_rows": {
+    "geo_metric_long.jsonl": 2109,
+    "geos.json": 57,
+    "metrics.json": 37,
+    "state_figures_2024.json": 57
+  },
+  "sheet_rows": {
+    "Geo_Metric_Long": 2109,
+    "Geos": 57,
+    "Metric_Catalog": 37,
+    "Metric_Copy_Blocks": 37,
+    "State_Figures_2024": 57
+  }
+}

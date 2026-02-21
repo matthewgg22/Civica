@@ -29,6 +29,28 @@ struct MultiStepFormView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @StateObject private var flowModel = MAPVFlowModel()
 
+    private var nextTimelineElection: Election? {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let sorted = planVM.upcomingElections.sorted { $0.electionDay < $1.electionDay }
+        if let upcoming = sorted.first(where: { calendar.startOfDay(for: $0.electionDay) >= today }) {
+            return upcoming
+        }
+        return sorted.first
+    }
+
+    private var timelineEarlyVotingLine: String {
+        guard let election = nextTimelineElection else { return "Early Voting: Date TBD" }
+        let text = election.earlyVotingText?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let value = text.isEmpty ? Self.timelineDateFormatter.string(from: election.startDate) : text
+        return "Early Voting: \(value)"
+    }
+
+    private var timelineElectionDayLine: String {
+        guard let election = nextTimelineElection else { return "Election Day: Date TBD" }
+        return "Election Day: \(Self.timelineDateFormatter.string(from: election.electionDay))"
+    }
+
     var body: some View {
         MAPVFlowView(
             flowModel: flowModel,
@@ -60,7 +82,9 @@ struct MultiStepFormView: View {
                     StepOneView(selectedMethod: Binding(
                         get: { flowModel.selectedMethod },
                         set: { flowModel.setMethod($0) }
-                    ))
+                    ),
+                    earlyVotingLine: timelineEarlyVotingLine,
+                    electionDayLine: timelineElectionDayLine)
                     .padding(.vertical, 6)
                 }
                 .scrollIndicators(.hidden)
@@ -89,6 +113,7 @@ struct MultiStepFormView: View {
                 StepThreeView(
                     selectedMethod: flowModel.selectedMethod,
                     selectedPollingPlace: flowModel.selectedPollingPlace,
+                    earliestVotingDate: nextTimelineElection?.startDate,
                     isActive: flowModel.currentStepIndex == 2,
                     hasExplicitlyPickedVotingDay: Binding(
                         get: { flowModel.hasExplicitlyPickedVotingDay },
@@ -131,6 +156,15 @@ struct MultiStepFormView: View {
         MAPVFlowHaptics.finished()
         dismiss()
     }
+
+    private static let timelineDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone.current
+        formatter.dateFormat = "MMM d, yyyy"
+        return formatter
+    }()
 }
 
 private enum MAPVStepNavDirection {
@@ -334,17 +368,6 @@ private struct MAPVFlowView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 .shadow(color: .black.opacity(0.10 + (theme.ambientOverlayOpacity * 0.18)), radius: 14, x: 0, y: 8)
 
-                MAPVStepIndicator(
-                    steps: flowModel.steps,
-                    currentStep: flowModel.currentStepIndex,
-                    isStepComplete: flowModel.isStepComplete,
-                    canTapStep: flowModel.canJump(to:),
-                    onTap: { idx in
-                        withAnimation(reduceMotion ? .easeInOut(duration: 0.12) : .easeInOut(duration: 0.24)) {
-                            flowModel.jump(to: idx, reduceMotion: reduceMotion)
-                        }
-                    }
-                )
                 controls
             }
             .padding()
@@ -374,9 +397,22 @@ private struct MAPVFlowView: View {
                 onBack()
             }
             .buttonStyle(.bordered)
+            .frame(minWidth: 78)
             .disabled(flowModel.currentStepIndex == 0)
 
-            Spacer()
+            MAPVStepIndicator(
+                steps: flowModel.steps,
+                currentStep: flowModel.currentStepIndex,
+                isStepComplete: flowModel.isStepComplete,
+                canTapStep: flowModel.canJump(to:),
+                compact: true,
+                onTap: { idx in
+                    withAnimation(reduceMotion ? .easeInOut(duration: 0.12) : .easeInOut(duration: 0.24)) {
+                        flowModel.jump(to: idx, reduceMotion: reduceMotion)
+                    }
+                }
+            )
+            .frame(maxWidth: 210)
 
             if flowModel.currentStepIndex < flowModel.steps.count - 1 {
                 Button("Next") {
@@ -384,6 +420,7 @@ private struct MAPVFlowView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(VoteNowColors.primaryCTA)
+                .frame(minWidth: 78)
                 .disabled(!flowModel.canAdvance(from: flowModel.currentStepIndex))
                 .accessibilityHint(flowModel.canAdvance(from: flowModel.currentStepIndex) ? "Move to next step" : "Complete this step first")
             } else {
@@ -392,6 +429,7 @@ private struct MAPVFlowView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(VoteNowColors.primaryCTA)
+                .frame(minWidth: 78)
                 .disabled(!flowModel.canAdvance(from: flowModel.currentStepIndex))
                 .accessibilityHint("Build your final voter plan card")
             }
@@ -461,10 +499,11 @@ private struct MAPVStepIndicator: View {
     let currentStep: Int
     let isStepComplete: (Int) -> Bool
     let canTapStep: (Int) -> Bool
+    let compact: Bool
     let onTap: (Int) -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: compact ? 6 : 12) {
             ForEach(Array(steps.enumerated()), id: \.element.id) { idx, step in
                 Button {
                     guard canTapStep(idx) else { return }
@@ -480,7 +519,7 @@ private struct MAPVStepIndicator: View {
                                     .fill(background(for: idx))
                             )
                     }
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: compact ? nil : .infinity)
                 }
                 .buttonStyle(.plain)
                 .disabled(!canTapStep(idx))
@@ -514,10 +553,12 @@ private struct MAPVStepIndicator: View {
 
 struct StepOneView: View {
     @Binding var selectedMethod: VotingMethod?
+    let earlyVotingLine: String
+    let electionDayLine: String
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Choose how you'll vote.")
+        VStack(spacing: 16) {
+            Text("How would you like to vote?")
                 .font(.title3.weight(.bold))
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
@@ -525,40 +566,47 @@ struct StepOneView: View {
             VotingMethodCard(
                 methodTitle: VotingMethod.early.rawValue,
                 emoji: "⏰",
+                accentColor: VoteNowColors.warningAmber,
                 isSelected: selectedMethod == .early,
                 action: { selectedMethod = .early }
             ) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Pros: Flexibility, Shorter Wait Times, Avoids Last-Minute Issues")
-                    Text("Early Voting: June 14 – June 22, 2025")
+                    (Text("Pros:").bold() + Text(" Flexibility, Shorter Wait Times, Avoids Last-Minute Issues"))
+                    Text(earlyVotingLine)
+                        .bold()
                 }
             }
 
             VotingMethodCard(
                 methodTitle: VotingMethod.mail.rawValue,
                 emoji: "✉️",
+                accentColor: VoteNowColors.primaryCTA,
                 isSelected: selectedMethod == .mail,
                 action: { selectedMethod = .mail }
             ) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Pros: Convenience, Extended Time, Accessibility")
+                    (Text("Pros:").bold() + Text(" Convenience, Extended Time, Accessibility"))
                     Text("Request by: June 14, 2025")
+                        .bold()
                 }
             }
 
             VotingMethodCard(
                 methodTitle: VotingMethod.election.rawValue,
                 emoji: "🗳️",
+                accentColor: VoteNowColors.successGreen,
                 isSelected: selectedMethod == .election,
                 action: { selectedMethod = .election }
             ) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Election Day: Tuesday, June 24, 2025")
+                    Text(electionDayLine)
+                        .bold()
                     Text("Polls 6 AM – 9 PM")
+                        .bold()
                 }
             }
         }
-        .padding(.horizontal)
+        .padding(.horizontal, 8)
     }
 }
 
@@ -568,6 +616,7 @@ struct StepOneView: View {
 struct VotingMethodCard<Details: View>: View {
     let methodTitle    : String
     let emoji          : String
+    let accentColor    : Color
     let isSelected     : Bool
     let action         : () -> Void
     private let detailsContent: Details
@@ -575,12 +624,14 @@ struct VotingMethodCard<Details: View>: View {
     init(
         methodTitle: String,
         emoji: String,
+        accentColor: Color,
         isSelected: Bool = false,
         action: @escaping () -> Void,
         @ViewBuilder details: () -> Details
     ) {
         self.methodTitle     = methodTitle
         self.emoji           = emoji
+        self.accentColor     = accentColor
         self.isSelected      = isSelected
         self.action          = action
         self.detailsContent  = details()
@@ -589,29 +640,38 @@ struct VotingMethodCard<Details: View>: View {
     var body: some View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: 10) {
-                HStack(spacing: 8) {
+                ZStack {
                     Text(methodTitle)
-                        .font(.headline.weight(.semibold))
-                    Spacer()
-                    Text(emoji)
-                        .font(.title3)
+                        .font(.title3.weight(.bold))
+                        .foregroundColor(accentColor)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity, alignment: .center)
+
+                    HStack {
+                        Text(emoji)
+                            .font(.title2)
+                        Spacer()
+                        Text(emoji)
+                            .font(.title2)
+                    }
                 }
 
                 detailsContent
                     .font(.subheadline)
-                    .foregroundColor(VoteNowColors.mutedText)
+                    .foregroundColor(VoteNowColors.primaryText)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(14)
             .frame(maxWidth: .infinity)
+            .frame(minHeight: 150, alignment: .topLeading)
             .background(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(isSelected ? VoteNowColors.infoSurfaceBlue : VoteNowColors.surfaceWhite)
+                    .fill(isSelected ? accentColor.opacity(0.20) : accentColor.opacity(0.08))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .stroke(
-                        isSelected ? VoteNowColors.primaryCTA : VoteNowColors.borderWarm.opacity(0.7),
+                        isSelected ? accentColor : accentColor.opacity(0.45),
                         lineWidth: isSelected ? 1.6 : 1
                     )
             )
@@ -677,6 +737,7 @@ struct StepThreeView: View {
     @EnvironmentObject var planVM: PlanViewModel
     var selectedMethod: VotingMethod?
     var selectedPollingPlace: PollingPlace?
+    var earliestVotingDate: Date?
     var isActive: Bool = true
     @Binding var hasExplicitlyPickedVotingDay: Bool
     @Binding var chosenVotingTime: Date
@@ -694,7 +755,14 @@ struct StepThreeView: View {
     }
 
     private var dayRailStartDate: Date {
-        Calendar.current.startOfDay(for: Date())
+        if let earliestVotingDate {
+            return Calendar.current.startOfDay(for: earliestVotingDate)
+        }
+        return Calendar.current.startOfDay(for: Date())
+    }
+
+    private var dayRailMonthLabel: String {
+        Self.monthFormatter.string(from: dayRailStartDate)
     }
 
     private var selectedTimeProgress: Double {
@@ -715,6 +783,12 @@ struct StepThreeView: View {
             Text("Drag the slider to set your planned arrival time.")
                 .font(.caption)
                 .foregroundColor(VoteNowColors.mutedText)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+
+            Text(dayRailMonthLabel)
+                .font(.subheadline.weight(.semibold))
+                .foregroundColor(VoteNowColors.primaryText)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
 
@@ -743,7 +817,7 @@ struct StepThreeView: View {
                 Spacer()
                 Text(Self.timeFormatter.string(from: chosenVotingTime))
                     .font(.title3.monospacedDigit().weight(.bold))
-                    .foregroundColor(selectedTimeColor)
+                    .foregroundColor(VoteNowColors.primaryText)
             }
             .padding(14)
             .background(
@@ -783,6 +857,15 @@ struct StepThreeView: View {
         let formatter = DateFormatter()
         formatter.dateStyle = .none
         formatter.timeStyle = .short
+        return formatter
+    }()
+
+    private static let monthFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone.current
+        formatter.dateFormat = "MMMM yyyy"
         return formatter
     }()
 

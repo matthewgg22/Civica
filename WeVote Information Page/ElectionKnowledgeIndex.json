@@ -1,0 +1,423 @@
+{
+  "metadata": {
+    "schemaVersion": 1,
+    "generatedAtISO": "2026-02-20T00:00:00-05:00",
+    "timezone": "America/New_York",
+    "designIntent": "This file intentionally avoids hardcoding state-specific procedural rules or voter-ID requirements. It provides a comprehensive topic + question index and routes users to trusted official sources for the current rules.",
+    "trustedSources": [
+      {
+        "name": "vote.gov (Official U.S. voter registration portal)",
+        "url": "https://vote.gov/register"
+      },
+      {
+        "name": "NASS Can I Vote (created by state election officials; links to state election sites)",
+        "url": "https://www.nass.org/can-i-vote"
+      },
+      {
+        "name": "NASS Can I Vote - Valid Forms of ID",
+        "url": "https://www.nass.org/can-i-vote/valid-forms-id"
+      },
+      {
+        "name": "VoteRiders - State voter ID rules (state-by-state pages)",
+        "url": "https://www.voteriders.org/staterules/"
+      }
+    ]
+  },
+  "procedureTopicIndex": [
+    {
+      "topicKey": "election_type_primary",
+      "section": "Election types",
+      "displayTitle": "Primary elections",
+      "coreQuestions": [
+        "Is the election you’re preparing for a primary election?",
+        "Do you know whether your state uses open, closed, or semi-closed primaries?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Official state guidance (start here)",
+          "url": "https://www.nass.org/can-i-vote"
+        }
+      ]
+    },
+    {
+      "topicKey": "election_type_general",
+      "section": "Election types",
+      "displayTitle": "General elections",
+      "coreQuestions": [
+        "Is the election you’re preparing for a general election?",
+        "Do you want to vote in person, early, or by mail (if available)?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Official state guidance (start here)",
+          "url": "https://www.nass.org/can-i-vote"
+        }
+      ]
+    },
+    {
+      "topicKey": "election_type_special",
+      "section": "Election types",
+      "displayTitle": "Special elections",
+      "coreQuestions": [
+        "Are you voting in a special election (outside the normal election calendar)?",
+        "Do you know the exact election date and any special deadlines?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Find official election info for your state",
+          "url": "https://www.nass.org/can-i-vote"
+        }
+      ]
+    },
+    {
+      "topicKey": "election_type_runoff",
+      "section": "Election types",
+      "displayTitle": "Runoff elections",
+      "coreQuestions": [
+        "Does your election have a runoff possibility?",
+        "If a runoff happens, do you know how you’ll be notified and where to confirm dates?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Find official election info for your state",
+          "url": "https://www.nass.org/can-i-vote"
+        }
+      ]
+    },
+    {
+      "topicKey": "election_type_local_municipal",
+      "section": "Election types",
+      "displayTitle": "Local & municipal elections",
+      "coreQuestions": [
+        "Are you voting in a city/county/local election?",
+        "Do you know whether it appears on the same day as statewide/federal elections?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Find your local election website (via state election office)",
+          "url": "https://www.nass.org/can-i-vote"
+        }
+      ]
+    },
+    {
+      "topicKey": "election_type_ballot_measures",
+      "section": "Election types",
+      "displayTitle": "Ballot measures, initiatives & referenda",
+      "coreQuestions": [
+        "Are there ballot measures you want to review before voting?",
+        "Do you want to see a sample ballot before Election Day?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Find your state election website",
+          "url": "https://www.nass.org/can-i-vote"
+        }
+      ]
+    },
+    {
+      "topicKey": "registration_check_status",
+      "section": "Registration",
+      "displayTitle": "Check your registration status",
+      "coreQuestions": [
+        "Are you currently registered at your current address?",
+        "Have you moved or changed your name since the last election?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Check registration status (official state link)",
+          "url": "https://www.nass.org/can-i-vote/voter-registration-status"
+        },
+        {
+          "label": "Register or update registration (official U.S. portal)",
+          "url": "https://vote.gov/register"
+        }
+      ]
+    },
+    {
+      "topicKey": "registration_deadlines",
+      "section": "Registration",
+      "displayTitle": "Registration deadlines",
+      "coreQuestions": [
+        "Do you know your state’s registration deadline for your next election?",
+        "Do you need to register for the first time or update an existing registration?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Register / see deadlines by state",
+          "url": "https://vote.gov/register"
+        }
+      ]
+    },
+    {
+      "topicKey": "registration_same_day",
+      "section": "Registration",
+      "displayTitle": "Same-day registration",
+      "coreQuestions": [
+        "Does your state allow registration on Election Day or during early voting?",
+        "If yes, what proof-of-residency or documentation is required?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Official state guidance (start here)",
+          "url": "https://www.nass.org/can-i-vote"
+        }
+      ]
+    },
+    {
+      "topicKey": "registration_party_affiliation",
+      "section": "Registration",
+      "displayTitle": "Party affiliation & primary rules",
+      "coreQuestions": [
+        "Do you need a party affiliation to vote in a primary where you live?",
+        "Do you need to update party affiliation before a deadline?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Update registration / party info (official portal)",
+          "url": "https://vote.gov/register"
+        }
+      ]
+    },
+    {
+      "topicKey": "voting_early_in_person",
+      "section": "Voting methods",
+      "displayTitle": "Early in-person voting",
+      "coreQuestions": [
+        "Do you want to vote before Election Day?",
+        "Do you need weekend or extended-hour options?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Absentee & early voting (official state link)",
+          "url": "https://www.nass.org/can-i-vote/absentee-early-voting"
+        }
+      ]
+    },
+    {
+      "topicKey": "voting_absentee_mail",
+      "section": "Voting methods",
+      "displayTitle": "Absentee / vote-by-mail",
+      "coreQuestions": [
+        "Do you plan to vote by mail?",
+        "Do you need to request a ballot, or are ballots automatically mailed where you live?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Absentee & early voting (official state link)",
+          "url": "https://www.nass.org/can-i-vote/absentee-early-voting"
+        }
+      ]
+    },
+    {
+      "topicKey": "voting_polling_place",
+      "section": "Voting methods",
+      "displayTitle": "Find your polling place or vote center",
+      "coreQuestions": [
+        "Do you know where you vote in person (and whether it changed recently)?",
+        "Do you need accessible entrance/parking options?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Find your polling place (official state link)",
+          "url": "https://www.nass.org/can-i-vote"
+        }
+      ]
+    },
+    {
+      "topicKey": "voting_voter_id",
+      "section": "Voting requirements",
+      "displayTitle": "Voter ID requirements (in-person)",
+      "coreQuestions": [
+        "Do you need to show ID to vote in person where you live?",
+        "If you don’t have the right ID, what backup option is available?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Valid Forms of ID (official state election officials portal)",
+          "url": "https://www.nass.org/can-i-vote/valid-forms-id"
+        },
+        {
+          "label": "State-by-state voter ID help (VoteRiders)",
+          "url": "https://www.voteriders.org/staterules/"
+        }
+      ]
+    },
+    {
+      "topicKey": "voting_provisional_ballots",
+      "section": "Troubleshooting",
+      "displayTitle": "Provisional ballots",
+      "coreQuestions": [
+        "If there’s an issue at check-in, do you know you can ask whether a provisional ballot is available?",
+        "Do you know how to check whether a provisional ballot was counted (if applicable)?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Provisional ballot best practices (EAC reference)",
+          "url": "https://www.eac.gov/research-and-data/provisional-voting"
+        }
+      ]
+    },
+    {
+      "topicKey": "voting_ballot_tracking",
+      "section": "Voting methods",
+      "displayTitle": "Ballot tracking & cure process",
+      "coreQuestions": [
+        "If you vote by mail, can you track your ballot’s status?",
+        "If there’s a signature or other issue, is there a fix (cure) process in your state?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Official state guidance (start here)",
+          "url": "https://www.nass.org/can-i-vote"
+        }
+      ]
+    },
+    {
+      "topicKey": "voting_accessibility",
+      "section": "Accessibility & special situations",
+      "displayTitle": "Voting with a disability",
+      "coreQuestions": [
+        "Do you need an accessible polling place or accessible ballot?",
+        "Do you need assistive technology or assistance marking a ballot?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Guide to voting with a disability (vote.gov)",
+          "url": "https://vote.gov/register"
+        }
+      ]
+    },
+    {
+      "topicKey": "voting_overseas_military",
+      "section": "Accessibility & special situations",
+      "displayTitle": "Overseas & military voting",
+      "coreQuestions": [
+        "Are you voting from outside the U.S. or while on military duty?",
+        "Do you need to request an absentee ballot under the military/overseas process?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Voting from outside the U.S. (vote.gov)",
+          "url": "https://vote.gov/register"
+        }
+      ]
+    },
+    {
+      "topicKey": "voting_student_voters",
+      "section": "Accessibility & special situations",
+      "displayTitle": "Student voters",
+      "coreQuestions": [
+        "Are you voting where you go to school or in your home state?",
+        "Do you need to confirm residency requirements and accepted IDs?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Official state guidance (start here)",
+          "url": "https://www.nass.org/can-i-vote"
+        },
+        {
+          "label": "State-by-state voter ID help (VoteRiders)",
+          "url": "https://www.voteriders.org/staterules/"
+        }
+      ]
+    },
+    {
+      "topicKey": "voting_after_felony_conviction",
+      "section": "Accessibility & special situations",
+      "displayTitle": "Voting after a felony conviction",
+      "coreQuestions": [
+        "Does your state restore voting rights automatically or after a process?",
+        "Do you need to confirm your eligibility before registering or voting?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Vote.gov guidance entry point",
+          "url": "https://vote.gov/register"
+        }
+      ]
+    },
+    {
+      "topicKey": "election_day_logistics",
+      "section": "Election day planning",
+      "displayTitle": "Election Day logistics",
+      "coreQuestions": [
+        "Do you know your polling hours and what time you plan to go?",
+        "Do you want a checklist of what to bring (ID if required, sample ballot, etc.)?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Official state guidance (start here)",
+          "url": "https://www.nass.org/can-i-vote"
+        }
+      ]
+    },
+    {
+      "topicKey": "results_recounts_audits",
+      "section": "After voting",
+      "displayTitle": "Results, recounts & audits",
+      "coreQuestions": [
+        "Do you want to know when results are official (certified)?",
+        "Do you want to understand what recounts/audits mean (if they occur)?"
+      ],
+      "resourceLinks": [
+        {
+          "label": "Official state election office (start here)",
+          "url": "https://www.nass.org/can-i-vote"
+        }
+      ]
+    }
+  ],
+  "voterIdResourcesByState": [
+    { "jurisdiction": "Alabama", "code": "AL", "voteGovSlug": "alabama", "voteRidersSlug": "alabama" },
+    { "jurisdiction": "Alaska", "code": "AK", "voteGovSlug": "alaska", "voteRidersSlug": "alaska" },
+    { "jurisdiction": "Arizona", "code": "AZ", "voteGovSlug": "arizona", "voteRidersSlug": "arizona" },
+    { "jurisdiction": "Arkansas", "code": "AR", "voteGovSlug": "arkansas", "voteRidersSlug": "arkansas" },
+    { "jurisdiction": "California", "code": "CA", "voteGovSlug": "california", "voteRidersSlug": "california" },
+    { "jurisdiction": "Colorado", "code": "CO", "voteGovSlug": "colorado", "voteRidersSlug": "colorado" },
+    { "jurisdiction": "Connecticut", "code": "CT", "voteGovSlug": "connecticut", "voteRidersSlug": "connecticut" },
+    { "jurisdiction": "Delaware", "code": "DE", "voteGovSlug": "delaware", "voteRidersSlug": "delaware" },
+    { "jurisdiction": "District of Columbia", "code": "DC", "voteGovSlug": "district-of-columbia", "voteRidersSlug": "washington-dc" },
+    { "jurisdiction": "Florida", "code": "FL", "voteGovSlug": "florida", "voteRidersSlug": "florida" },
+    { "jurisdiction": "Georgia", "code": "GA", "voteGovSlug": "georgia", "voteRidersSlug": "georgia" },
+    { "jurisdiction": "Hawaii", "code": "HI", "voteGovSlug": "hawaii", "voteRidersSlug": "hawaii" },
+    { "jurisdiction": "Idaho", "code": "ID", "voteGovSlug": "idaho", "voteRidersSlug": "idaho" },
+    { "jurisdiction": "Illinois", "code": "IL", "voteGovSlug": "illinois", "voteRidersSlug": "illinois" },
+    { "jurisdiction": "Indiana", "code": "IN", "voteGovSlug": "indiana", "voteRidersSlug": "indiana" },
+    { "jurisdiction": "Iowa", "code": "IA", "voteGovSlug": "iowa", "voteRidersSlug": "iowa" },
+    { "jurisdiction": "Kansas", "code": "KS", "voteGovSlug": "kansas", "voteRidersSlug": "kansas" },
+    { "jurisdiction": "Kentucky", "code": "KY", "voteGovSlug": "kentucky", "voteRidersSlug": "kentucky" },
+    { "jurisdiction": "Louisiana", "code": "LA", "voteGovSlug": "louisiana", "voteRidersSlug": "louisiana" },
+    { "jurisdiction": "Maine", "code": "ME", "voteGovSlug": "maine", "voteRidersSlug": "maine" },
+    { "jurisdiction": "Maryland", "code": "MD", "voteGovSlug": "maryland", "voteRidersSlug": "maryland" },
+    { "jurisdiction": "Massachusetts", "code": "MA", "voteGovSlug": "massachusetts", "voteRidersSlug": "massachusetts" },
+    { "jurisdiction": "Michigan", "code": "MI", "voteGovSlug": "michigan", "voteRidersSlug": "michigan" },
+    { "jurisdiction": "Minnesota", "code": "MN", "voteGovSlug": "minnesota", "voteRidersSlug": "minnesota" },
+    { "jurisdiction": "Mississippi", "code": "MS", "voteGovSlug": "mississippi", "voteRidersSlug": "mississippi" },
+    { "jurisdiction": "Missouri", "code": "MO", "voteGovSlug": "missouri", "voteRidersSlug": "missouri" },
+    { "jurisdiction": "Montana", "code": "MT", "voteGovSlug": "montana", "voteRidersSlug": "montana" },
+    { "jurisdiction": "Nebraska", "code": "NE", "voteGovSlug": "nebraska", "voteRidersSlug": "nebraska" },
+    { "jurisdiction": "Nevada", "code": "NV", "voteGovSlug": "nevada", "voteRidersSlug": "nevada" },
+    { "jurisdiction": "New Hampshire", "code": "NH", "voteGovSlug": "new-hampshire", "voteRidersSlug": "new-hampshire" },
+    { "jurisdiction": "New Jersey", "code": "NJ", "voteGovSlug": "new-jersey", "voteRidersSlug": "new-jersey" },
+    { "jurisdiction": "New Mexico", "code": "NM", "voteGovSlug": "new-mexico", "voteRidersSlug": "new-mexico" },
+    { "jurisdiction": "New York", "code": "NY", "voteGovSlug": "new-york", "voteRidersSlug": "new-york" },
+    { "jurisdiction": "North Carolina", "code": "NC", "voteGovSlug": "north-carolina", "voteRidersSlug": "north-carolina" },
+    { "jurisdiction": "North Dakota", "code": "ND", "voteGovSlug": "north-dakota", "voteRidersSlug": "north-dakota" },
+    { "jurisdiction": "Ohio", "code": "OH", "voteGovSlug": "ohio", "voteRidersSlug": "ohio" },
+    { "jurisdiction": "Oklahoma", "code": "OK", "voteGovSlug": "oklahoma", "voteRidersSlug": "oklahoma" },
+    { "jurisdiction": "Oregon", "code": "OR", "voteGovSlug": "oregon", "voteRidersSlug": "oregon" },
+    { "jurisdiction": "Pennsylvania", "code": "PA", "voteGovSlug": "pennsylvania", "voteRidersSlug": "pennsylvania" },
+    { "jurisdiction": "Rhode Island", "code": "RI", "voteGovSlug": "rhode-island", "voteRidersSlug": "rhode-island" },
+    { "jurisdiction": "South Carolina", "code": "SC", "voteGovSlug": "south-carolina", "voteRidersSlug": "south-carolina" },
+    { "jurisdiction": "South Dakota", "code": "SD", "voteGovSlug": "south-dakota", "voteRidersSlug": "south-dakota" },
+    { "jurisdiction": "Tennessee", "code": "TN", "voteGovSlug": "tennessee", "voteRidersSlug": "tennessee" },
+    { "jurisdiction": "Texas", "code": "TX", "voteGovSlug": "texas", "voteRidersSlug": "texas" },
+    { "jurisdiction": "Utah", "code": "UT", "voteGovSlug": "utah", "voteRidersSlug": "utah" },
+    { "jurisdiction": "Vermont", "code": "VT", "voteGovSlug": "vermont", "voteRidersSlug": "vermont" },
+    { "jurisdiction": "Virginia", "code": "VA", "voteGovSlug": "virginia", "voteRidersSlug": "virginia" },
+    { "jurisdiction": "Washington", "code": "WA", "voteGovSlug": "washington", "voteRidersSlug": "washington" },
+    { "jurisdiction": "West Virginia", "code": "WV", "voteGovSlug": "west-virginia", "voteRidersSlug": "west-virginia" },
+    { "jurisdiction": "Wisconsin", "code": "WI", "voteGovSlug": "wisconsin", "voteRidersSlug": "wisconsin" },
+    { "jurisdiction": "Wyoming", "code": "WY", "voteGovSlug": "wyoming", "voteRidersSlug": "wyoming" }
+  ]
+}

@@ -11,6 +11,16 @@ private let allUSStateCodes: Set<String> = [
 private let allUSStateAndTerritoryCodes: Set<String> =
     allUSStateCodes.union(["AS", "DC", "GU", "MP", "PR", "VI"])
 
+private func normalizedOfficialPhone(_ raw: String?) -> String? {
+    guard let value = raw?.trimmingCharacters(in: .whitespacesAndNewlines),
+          !value.isEmpty else {
+        return nil
+    }
+    let digits = value.filter(\.isNumber)
+    guard digits.count >= 7 else { return nil }
+    return value
+}
+
 struct RepsLookupResult {
     let executive: [Official]
     let federal: [Official]
@@ -33,19 +43,7 @@ struct RepsLookupResult {
         var unique: [Official] = []
 
         for official in officials {
-            let key: String
-            if let url = official.url?.lowercased(), !url.isEmpty {
-                var normalizedURL = url.trimmingCharacters(in: .whitespacesAndNewlines)
-                while normalizedURL.hasSuffix("/") {
-                    normalizedURL.removeLast()
-                }
-                key = "url:\(normalizedURL)"
-            } else {
-                key = [
-                    official.name.lowercased(),
-                    official.divisionId?.lowercased() ?? ""
-                ].joined(separator: "|")
-            }
+            let key = mergeKey(for: official)
 
             if let existingIndex = indicesByKey[key] {
                 unique[existingIndex] = mergedOfficial(preferred: unique[existingIndex], fallback: official)
@@ -63,13 +61,56 @@ struct RepsLookupResult {
             name: preferred.name,
             divisionId: preferred.divisionId ?? fallback.divisionId,
             party: preferred.party ?? fallback.party,
+            officeTitle: preferred.officeTitle ?? fallback.officeTitle,
             photoURL: preferred.photoURL ?? fallback.photoURL,
             url: preferred.url ?? fallback.url,
-            officialPhone: preferred.officialPhone ?? fallback.officialPhone,
+            officialPhone: normalizedOfficialPhone(preferred.officialPhone) ?? normalizedOfficialPhone(fallback.officialPhone),
             websiteURL: preferred.websiteURL ?? fallback.websiteURL,
             contactFormURL: preferred.contactFormURL ?? fallback.contactFormURL,
             level: preferred.level ?? fallback.level
         )
+    }
+
+    private func mergeKey(for official: Official) -> String {
+        let normalizedDivision = normalizedDivisionKey(official.divisionId)
+        let normalizedName = normalizedNameKey(official.name)
+
+        if let normalizedURL = normalizedURLKey(official.url) {
+            if !normalizedDivision.isEmpty {
+                return "url+division|\(normalizedURL)|\(normalizedDivision)"
+            }
+            if !normalizedName.isEmpty {
+                return "url+name|\(normalizedURL)|\(normalizedName)"
+            }
+            return "url|\(normalizedURL)"
+        }
+
+        return "name+division|\(normalizedName)|\(normalizedDivision)"
+    }
+
+    private func normalizedURLKey(_ raw: String?) -> String? {
+        guard var normalized = raw?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
+              !normalized.isEmpty else {
+            return nil
+        }
+        while normalized.hasSuffix("/") {
+            normalized.removeLast()
+        }
+        return normalized
+    }
+
+    private func normalizedDivisionKey(_ raw: String?) -> String {
+        (raw ?? "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+    }
+
+    private func normalizedNameKey(_ raw: String) -> String {
+        raw
+            .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+            .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
     }
 }
 
@@ -293,7 +334,7 @@ final class USExecutiveProvider: RepsProvider {
             party: "Republican",
             photoURL: nil,
             url: "https://www.whitehouse.gov/administration/vice-president-vance/",
-            officialPhone: "(202) 456-1414",
+            officialPhone: "(202) 456-7549",
             websiteURL: "https://www.whitehouse.gov/administration/vice-president-vance/",
             contactFormURL: "https://www.whitehouse.gov/contact/"
         )
@@ -360,6 +401,7 @@ final class USGovernorsProvider: RepsProvider {
             name: governor.name,
             divisionId: "ocd-division/country:us/state:\(stateCode.lowercased())",
             party: governor.party,
+            officeTitle: "Governor",
             photoURL: nil,
             url: governor.url
         )
@@ -372,6 +414,7 @@ final class USGovernorsProvider: RepsProvider {
                     name: "Lieutenant Governor: \(lieutenantGovernor)",
                     divisionId: "ocd-division/country:us/state:\(stateCode.lowercased())",
                     party: governor.lieutenant_governor_party,
+                    officeTitle: "Lieutenant Governor",
                     photoURL: nil,
                     url: governor.lieutenant_governor_url
                 )
@@ -384,6 +427,7 @@ final class USGovernorsProvider: RepsProvider {
                     name: "Attorney General: \(attorneyGeneral)",
                     divisionId: "ocd-division/country:us/state:\(stateCode.lowercased())",
                     party: nil,
+                    officeTitle: "Attorney General",
                     photoURL: nil,
                     url: governor.attorney_general_url
                 )
@@ -453,7 +497,7 @@ final class USSenatorsProvider: RepsProvider {
                 party: senator.party,
                 photoURL: nil,
                 url: websiteURL,
-                officialPhone: senator.phone,
+                officialPhone: normalizedOfficialPhone(senator.phone),
                 websiteURL: websiteURL,
                 contactFormURL: resolvedLegislativeContactURL(
                     explicitContactURL: senator.contact_form_url,
@@ -906,7 +950,7 @@ final class USHouseMembersProvider: RepsProvider {
             party: member.party,
             photoURL: nil,
             url: websiteURL,
-            officialPhone: member.phone,
+            officialPhone: normalizedOfficialPhone(member.phone),
             websiteURL: websiteURL,
             contactFormURL: resolvedLegislativeContactURL(
                 explicitContactURL: member.contact_form_url,

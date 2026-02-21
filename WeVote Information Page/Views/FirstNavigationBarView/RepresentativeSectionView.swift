@@ -12,7 +12,7 @@ private func telephoneURL(from raw: String?) -> URL? {
     guard let raw else { return nil }
     let digits = raw.filter { $0.isNumber }
     guard digits.count >= 7 else { return nil }
-    return URL(string: "tel://\(digits)")
+    return URL(string: "tel:\(digits)")
 }
 
 private func normalizedURL(_ raw: String?) -> URL? {
@@ -36,6 +36,9 @@ private struct RepContactAction: Identifiable {
     let title: String
     let systemImage: String
     let destination: URL
+    let phoneLabel: String?
+
+    var isPhone: Bool { id == "phone" }
 }
 
 private struct RepHeadshotView: View {
@@ -129,7 +132,11 @@ private struct RepHeadshotView: View {
 struct RepRow: View {
     let rep: Official
 
+    @Environment(\.openURL) private var openURL
+
     @State private var isContactExpanded = false
+    @State private var showPhoneFallbackAlert = false
+    @State private var phoneFallbackMessage = ""
 
     private var contactURL: URL? {
         normalizedURL(rep.contactFormURL)
@@ -143,6 +150,19 @@ struct RepRow: View {
         telephoneURL(from: rep.officialPhone)
     }
 
+    private var districtLabel: String? {
+        guard let district = rep.district?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !district.isEmpty else {
+            return nil
+        }
+        guard district.caseInsensitiveCompare("Statewide") == .orderedSame,
+              let officeTitle = rep.officeTitle?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !officeTitle.isEmpty else {
+            return district
+        }
+        return "\(district) - \(officeTitle)"
+    }
+
     private var contactActions: [RepContactAction] {
         var actions: [RepContactAction] = []
         if let contactURL {
@@ -151,7 +171,8 @@ struct RepRow: View {
                     id: "email",
                     title: "Email",
                     systemImage: "envelope.badge.fill",
-                    destination: contactURL
+                    destination: contactURL,
+                    phoneLabel: nil
                 )
             )
         }
@@ -161,7 +182,8 @@ struct RepRow: View {
                     id: "phone",
                     title: "Phone",
                     systemImage: "phone.fill",
-                    destination: phoneURL
+                    destination: phoneURL,
+                    phoneLabel: rep.officialPhone
                 )
             )
         }
@@ -171,7 +193,8 @@ struct RepRow: View {
                     id: "website",
                     title: "Website",
                     systemImage: "link",
-                    destination: websiteURL
+                    destination: websiteURL,
+                    phoneLabel: nil
                 )
             )
         }
@@ -196,8 +219,8 @@ struct RepRow: View {
                             .foregroundColor(partyTint(party))
                     }
 
-                    if let district = rep.district, !district.isEmpty {
-                        Text(district)
+                    if let districtLabel {
+                        Text(districtLabel)
                             .font(.system(size: 16, weight: .regular))
                             .foregroundColor(VoteNowColors.mutedText)
                     }
@@ -222,7 +245,9 @@ struct RepRow: View {
             if isContactExpanded, !contactActions.isEmpty {
                 HStack(spacing: 8) {
                     ForEach(contactActions) { action in
-                        Link(destination: action.destination) {
+                        Button {
+                            handleActionTap(action)
+                        } label: {
                             HStack(spacing: 6) {
                                 Image(systemName: action.systemImage)
                                 Text(action.title)
@@ -243,6 +268,39 @@ struct RepRow: View {
             }
         }
         .padding(.vertical, 8)
+        .alert("Phone Not Available", isPresented: $showPhoneFallbackAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(phoneFallbackMessage)
+        }
+    }
+
+    private func handleActionTap(_ action: RepContactAction) {
+        if action.isPhone, UIApplication.shared.canOpenURL(action.destination) == false {
+            presentPhoneFallback(for: action)
+            return
+        }
+
+        openURL(action.destination) { accepted in
+            if action.isPhone, !accepted {
+                presentPhoneFallback(for: action)
+            }
+        }
+    }
+
+    private func presentPhoneFallback(for action: RepContactAction) {
+        let number = action.phoneLabel?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let message: String
+
+        if let number, !number.isEmpty {
+            UIPasteboard.general.string = number
+            message = "This device cannot place calls. Copied number: \(number)"
+        } else {
+            message = "This device cannot place calls."
+        }
+
+        phoneFallbackMessage = message
+        showPhoneFallbackAlert = true
     }
 }
 
@@ -274,12 +332,71 @@ struct RepresentativeSection: View {
 
     private var header: some View {
         HStack {
-            Label(title, systemImage: "building.columns")
+            headerIcon
+            Text(title)
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(VoteNowColors.primaryCTA)
 
             Spacer()
         }
+    }
+
+    @ViewBuilder
+    private var headerIcon: some View {
+        switch normalizedTitle {
+        case "federal executive":
+            Image(systemName: "house.fill")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(VoteNowColors.primaryCTA)
+                .frame(width: 22, height: 22)
+        case "federal legislative":
+            Image(systemName: "building.columns.fill")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(VoteNowColors.primaryCTA)
+                .frame(width: 22, height: 22)
+        case "state":
+            if let asset = StateFlagCatalog.assetName(for: resolvedStateCode),
+               UIImage(named: asset) != nil {
+                Image(asset)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 18)
+                    .clipShape(RoundedRectangle(cornerRadius: 3, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 3, style: .continuous)
+                            .stroke(VoteNowColors.primaryCTA.opacity(0.22), lineWidth: 0.8)
+                    )
+            } else {
+                Image(systemName: "map.fill")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(VoteNowColors.primaryCTA)
+                    .frame(width: 22, height: 22)
+            }
+        default:
+            Image(systemName: "building.2.fill")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(VoteNowColors.primaryCTA)
+                .frame(width: 22, height: 22)
+        }
+    }
+
+    private var normalizedTitle: String {
+        title.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+
+    private var resolvedStateCode: String? {
+        for official in officials {
+            guard let divisionId = official.divisionId?.lowercased(),
+                  let range = divisionId.range(of: "/state:") else {
+                continue
+            }
+            let suffix = divisionId[range.upperBound...]
+            let code = suffix.prefix { $0.isLetter }
+            if code.count == 2 {
+                return String(code).uppercased()
+            }
+        }
+        return nil
     }
 }
 
