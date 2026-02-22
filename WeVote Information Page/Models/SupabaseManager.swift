@@ -269,6 +269,22 @@ final class SupabaseManager {
         }
     }
 
+    func currentUserIDIfAvailable() async -> UUID? {
+        do {
+            let session = try await client.auth.session
+            return session.user.id
+        } catch {
+            return nil
+        }
+    }
+
+    func submitFeedback(_ payload: FeedbackInsert) async throws {
+        _ = try await client
+            .from("feedback")
+            .insert(payload)
+            .execute()
+    }
+
     func fetchLatestMapvPlans(limit: Int = 10) async throws -> [MapvPlan] {
         guard limit > 0 else { throw SupabaseManagerError.invalidLimit }
 

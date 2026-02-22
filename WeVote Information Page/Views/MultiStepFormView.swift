@@ -714,6 +714,46 @@ struct AbsenteeView: View {
         return "Set your address in My Reps"
     }
 
+    private var defaultJurisdictionCode: String? {
+        AbsenteeBallotRequestProvider.resolveDefaultJurisdictionCode(
+            userState: planVM.userAddress.state,
+            primaryZip: planVM.zip,
+            fallbackZip: planVM.userAddress.zip
+        )
+    }
+
+    private var nextTimelineElection: Election? {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let sorted = planVM.upcomingElections.sorted { $0.electionDay < $1.electionDay }
+        if let upcoming = sorted.first(where: { calendar.startOfDay(for: $0.electionDay) >= today }) {
+            return upcoming
+        }
+        return sorted.first
+    }
+
+    private var selectedRequestDeadlines: MailBallotRequestDeadlines? {
+        let candidates = [
+            selectedJurisdiction?.displayName,
+            selectedJurisdiction?.code,
+            defaultJurisdictionCode,
+            planVM.userAddress.state
+        ]
+
+        for candidate in candidates {
+            guard let candidate = candidate?.trimmingCharacters(in: .whitespacesAndNewlines),
+                  !candidate.isEmpty else {
+                continue
+            }
+
+            if let record = MailBallotDeadlinesStore.deadlines(for: candidate) {
+                return record
+            }
+        }
+
+        return nil
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
@@ -804,50 +844,7 @@ struct AbsenteeView: View {
                             .accessibilityLabel("Open official voter info for \(jurisdiction.displayName)")
                         }
 
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("Request deadlines")
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundColor(VoteNowColors.primaryText)
-
-                            ForEach(jurisdiction.deadlineRows(), id: \.label) { row in
-                                HStack(alignment: .top, spacing: 12) {
-                                    Text(row.label)
-                                        .font(.caption.weight(.semibold))
-                                        .foregroundColor(VoteNowColors.mutedText)
-                                        .frame(width: 108, alignment: .leading)
-
-                                    Text(row.value)
-                                        .font(.subheadline)
-                                        .foregroundColor(VoteNowColors.primaryText)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                }
-                            }
-                        }
-                        .padding(12)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(VoteNowColors.infoSurfaceBlue)
-                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .stroke(VoteNowColors.primaryCTA.opacity(0.18), lineWidth: 1)
-                        )
-
-                        if let sourceURL = jurisdiction.deadlineSourceURL {
-                            Link(destination: sourceURL) {
-                                Text("Deadline source")
-                                    .font(.footnote.weight(.semibold))
-                                    .foregroundColor(VoteNowColors.primaryCTA)
-                            }
-                            .accessibilityLabel("Open deadline source for \(jurisdiction.displayName)")
-                        }
-
-                        if let notes = jurisdiction.notes, !notes.isEmpty {
-                            Text(notes)
-                                .font(.footnote)
-                                .foregroundColor(VoteNowColors.mutedText)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
+                        requestDeadlinesSection
 
                         Text("This section is for absentee/mail ballot requests. Early-voting deadlines can be different.")
                             .font(.footnote.weight(.semibold))
@@ -872,6 +869,8 @@ struct AbsenteeView: View {
                         .font(.subheadline)
                         .foregroundColor(VoteNowColors.mutedText)
                         .fixedSize(horizontal: false, vertical: true)
+
+                    fallbackDeadlinesCard
                 }
             }
             .padding()
@@ -895,6 +894,193 @@ struct AbsenteeView: View {
             syncJurisdictionFromMyReps()
         }
     }
+
+    @ViewBuilder
+    private var requestDeadlinesSection: some View {
+        if let deadlines = selectedRequestDeadlines {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Request deadlines")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(VoteNowColors.primaryText)
+
+                ForEach(Array(requestDeadlineRows(for: deadlines).enumerated()), id: \.element.label) { index, row in
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(row.label)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundColor(VoteNowColors.mutedText)
+
+                        styledDeadlineValueText(row.value)
+                            .font(.body)
+                            .foregroundColor(VoteNowColors.primaryText)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    if index < 2 {
+                        Divider()
+                            .background(VoteNowColors.primaryCTA.opacity(0.2))
+                    }
+                }
+
+                if let conventions = deadlines.conventions, !conventions.isEmpty {
+                    VStack(alignment: .leading, spacing: 6) {
+                        ForEach(conventions, id: \.self) { note in
+                            HStack(alignment: .top, spacing: 7) {
+                                Text("•")
+                                    .font(.caption.weight(.bold))
+                                    .foregroundColor(VoteNowColors.mutedText)
+                                    .padding(.top, 2)
+                                Text(note)
+                                    .font(.footnote)
+                                    .foregroundColor(VoteNowColors.mutedText)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                    }
+                    .padding(.top, 2)
+                }
+
+                if let sourceURL = URL(string: deadlines.sourceURL) {
+                    Link(destination: sourceURL) {
+                        Text("Source")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundColor(VoteNowColors.primaryCTA)
+                    }
+                    .accessibilityLabel("Open request deadline source")
+                }
+            }
+            .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(VoteNowColors.infoSurfaceBlue)
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(VoteNowColors.primaryCTA.opacity(0.18), lineWidth: 1)
+            )
+        } else {
+            fallbackDeadlinesCard
+        }
+    }
+
+    private var fallbackDeadlinesCard: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Request deadlines")
+                .font(.subheadline.weight(.semibold))
+                .foregroundColor(VoteNowColors.primaryText)
+            Text("Deadlines vary. Check your election office.")
+                .font(.subheadline)
+                .foregroundColor(VoteNowColors.primaryText)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(VoteNowColors.infoSurfaceBlue)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(VoteNowColors.primaryCTA.opacity(0.18), lineWidth: 1)
+        )
+    }
+
+    private func requestDeadlineRows(for record: MailBallotRequestDeadlines) -> [AbsenteeDeadlineRow] {
+        let electionDay = nextTimelineElection?.electionDay
+
+        return [
+            AbsenteeDeadlineRow(
+                label: "In person",
+                value: requestDeadlineValue(record.methods.inPerson, electionDay: electionDay)
+            ),
+            AbsenteeDeadlineRow(
+                label: "By mail",
+                value: requestDeadlineValue(record.methods.byMail, electionDay: electionDay)
+            ),
+            AbsenteeDeadlineRow(
+                label: "Online / email / fax",
+                value: requestDeadlineValue(record.methods.onlineEmail, electionDay: electionDay)
+            ),
+        ]
+    }
+
+    private func requestDeadlineValue(_ value: String?, electionDay: Date?) -> String {
+        guard let value = value?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !value.isEmpty else {
+            return "Not available"
+        }
+
+        guard let computedLine = computedDeadlineLine(for: value, electionDay: electionDay) else {
+            return value
+        }
+        return "\(value) \(computedLine)"
+    }
+
+    private func computedDeadlineLine(for text: String, electionDay: Date?) -> String? {
+        guard let electionDay,
+              let daysBeforeElection = parsedDaysBeforeElectionDay(in: text),
+              let computedDeadline = Calendar.current.date(
+                  byAdding: .day,
+                  value: -daysBeforeElection,
+                  to: electionDay
+              ) else {
+            return nil
+        }
+
+        let daysAway = daysAwayText(from: computedDeadline)
+        return "(\(daysAway))"
+    }
+
+    private func parsedDaysBeforeElectionDay(in text: String) -> Int? {
+        guard let regex = try? NSRegularExpression(
+            pattern: #"(\d+)(?:st|nd|rd|th)?\s+day(?:s)?\s+(?:before|prior\s+to)\s+(?:the\s+)?election(?:\s+day)?"#,
+            options: [.caseInsensitive]
+        ) else {
+            return nil
+        }
+
+        let fullRange = NSRange(text.startIndex..<text.endIndex, in: text)
+        guard let match = regex.firstMatch(in: text, options: [], range: fullRange),
+              let dayRange = Range(match.range(at: 1), in: text) else {
+            return nil
+        }
+
+        return Int(text[dayRange])
+    }
+
+    private func daysAwayText(from date: Date) -> String {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let target = calendar.startOfDay(for: date)
+        let delta = calendar.dateComponents([.day], from: today, to: target).day ?? 0
+        let daysAway = max(delta, 0)
+        return "\(daysAway) \(daysAway == 1 ? "day" : "days") away"
+    }
+
+    private func styledDeadlineValueText(_ value: String) -> Text {
+        let normalized = value.replacingOccurrences(of: "\n", with: " ")
+        guard let openParenIndex = normalized.lastIndex(of: "("),
+              normalized.hasSuffix(")"),
+              normalized[openParenIndex...].localizedCaseInsensitiveContains("away") else {
+            return Text(normalized)
+        }
+
+        let prefix = normalized[..<openParenIndex].trimmingCharacters(in: .whitespacesAndNewlines)
+        let suffix = String(normalized[openParenIndex...])
+
+        if prefix.isEmpty {
+            return Text(suffix).bold().italic()
+        }
+
+        return Text("\(prefix) ") + Text(suffix).bold().italic()
+    }
+
+    private static let requestDeadlineDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone.current
+        formatter.dateFormat = "MMM d, yyyy"
+        return formatter
+    }()
 
     private func syncJurisdictionFromMyReps() {
         guard !jurisdictions.isEmpty else { return }

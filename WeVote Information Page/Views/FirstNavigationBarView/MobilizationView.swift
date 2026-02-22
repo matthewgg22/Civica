@@ -623,12 +623,49 @@ enum SectionType: CaseIterable {
 }
 
 private struct FeedbackView: View {
+    private enum FeedbackCategory: String, CaseIterable, Identifiable {
+        case idea
+        case bug
+        case question
+
+        var id: String { rawValue }
+
+        var title: String {
+            switch self {
+            case .idea: return "Idea"
+            case .bug: return "Bug"
+            case .question: return "Question"
+            }
+        }
+    }
+
     @State private var feedbackText: String = ""
-    @State private var didSend = false
+    @State private var email: String = ""
+    @State private var selectedCategory: FeedbackCategory = .idea
+    @State private var isSending = false
+    @State private var successMessage: String?
+    @State private var errorMessage: String?
     @FocusState private var isFeedbackFocused: Bool
 
+    private var trimmedMessage: String {
+        feedbackText.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var normalizedEmail: String? {
+        let value = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        return value.isEmpty ? nil : value
+    }
+
     private var canSend: Bool {
-        !feedbackText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        !trimmedMessage.isEmpty && !isSending
+    }
+
+    private var appVersion: String? {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+    }
+
+    private var buildNumber: String? {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
     }
 
     var body: some View {
@@ -655,6 +692,26 @@ private struct FeedbackView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Share your feedback")
                         .font(.headline)
+
+                    Picker("Category", selection: $selectedCategory) {
+                        ForEach(FeedbackCategory.allCases) { item in
+                            Text(item.title).tag(item)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+
+                    TextField("Email (optional)", text: $email)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.emailAddress)
+                        .autocorrectionDisabled(true)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
+                        .background(VoteNowColors.surfaceWhite)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                        )
 
                     ZStack(alignment: .topLeading) {
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -684,25 +741,42 @@ private struct FeedbackView: View {
                     }
 
                     Button {
-                        feedbackText = ""
-                        isFeedbackFocused = false
-                        didSend = true
+                        Task {
+                            await sendFeedback()
+                        }
                     } label: {
-                        Text("Send Feedback")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(canSend ? VoteNowColors.primaryCTA : VoteNowColors.borderWarm.opacity(0.6))
-                            .foregroundColor(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        Group {
+                            if isSending {
+                                HStack(spacing: 8) {
+                                    ProgressView()
+                                        .tint(.white)
+                                    Text("Sending...")
+                                        .font(.headline)
+                                }
+                            } else {
+                                Text("Send Feedback")
+                                    .font(.headline)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(canSend ? VoteNowColors.primaryCTA : VoteNowColors.borderWarm.opacity(0.6))
+                        .foregroundColor(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     }
                     .buttonStyle(.plain)
                     .disabled(!canSend)
 
-                    if didSend {
-                        Text("Thank you. Your feedback helps us improve VoteNow.")
+                    if let successMessage {
+                        Text(successMessage)
                             .font(.footnote.weight(.semibold))
                             .foregroundColor(VoteNowColors.successGreen)
+                    }
+
+                    if let errorMessage {
+                        Text(errorMessage)
+                            .font(.footnote.weight(.semibold))
+                            .foregroundColor(.red)
                     }
                 }
                 .padding(14)
@@ -723,10 +797,49 @@ private struct FeedbackView: View {
         .navigationBarTitleDisplayMode(.inline)
         .background(VoteNowColors.background)
         .onChange(of: feedbackText) { _ in
-            if didSend {
-                didSend = false
-            }
+            if successMessage != nil { successMessage = nil }
+            if errorMessage != nil { errorMessage = nil }
         }
+        .onChange(of: email) { _ in
+            if successMessage != nil { successMessage = nil }
+            if errorMessage != nil { errorMessage = nil }
+        }
+    }
+
+    private func sendFeedback() async {
+        guard canSend else { return }
+        isSending = true
+        successMessage = nil
+        errorMessage = nil
+
+        let userID = await SupabaseManager.shared.currentUserIDIfAvailable()
+        let payload = FeedbackInsert(
+            userID: userID,
+            email: normalizedEmail,
+            message: trimmedMessage,
+            category: selectedCategory.rawValue,
+            rating: nil,
+            appVersion: appVersion,
+            buildNumber: buildNumber,
+            platform: "iOS",
+            deviceModel: UIDevice.current.model,
+            osVersion: UIDevice.current.systemVersion,
+            locale: Locale.current.identifier
+        )
+
+        do {
+            try await SupabaseManager.shared.submitFeedback(payload)
+            feedbackText = ""
+            email = ""
+            selectedCategory = .idea
+            isFeedbackFocused = false
+            successMessage = "Thanks — feedback sent ✅"
+        } catch {
+            print("[Feedback] submit failed:", String(describing: error))
+            errorMessage = "Could not send feedback. Please try again."
+        }
+
+        isSending = false
     }
 }
 
