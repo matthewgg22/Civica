@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 private struct VoterRegistrationCard: Identifiable {
     enum Action {
@@ -104,18 +105,17 @@ struct VoterRegistrationView: View {
             VoterRegistrationCard(
                 id: "step-1",
                 kind: .whyRegister,
-                stepLabel: "STEP 1",
-                title: "Why register?",
-                summary: "Registration makes you eligible to vote and confirms you are on the voter rolls tied to your current address.",
+                stepLabel: "",
+                title: "What is Voter Registration?",
+                summary: "Voter registration is the process that puts you on your state’s voter rolls so you are eligible to vote.",
                 bullets: [
                     "Most states require registration before you can vote.",
-                    "If you moved, changed your name, or changed party, you may need to update.",
                     "Checking early helps prevent Election Day surprises."
                 ],
                 primaryActionTitle: "Start registration",
                 primaryAction: .openURL(registrationPortalURL),
-                secondaryActionTitle: registrationPortalURL != voteGovURL ? "Open vote.gov" : nil,
-                secondaryAction: registrationPortalURL != voteGovURL ? .openURL(voteGovURL) : nil
+                secondaryActionTitle: nil,
+                secondaryAction: nil
             ),
             VoterRegistrationCard(
                 id: "step-2",
@@ -124,19 +124,18 @@ struct VoterRegistrationView: View {
                 title: "Register before the deadline",
                 summary: "Deadlines vary by state and method. Register early so you have time to fix any issues before polls open.",
                 bullets: [
-                    "Your state can set different cutoffs for online, mail, and in-person methods.",
-                    "If your details changed, update your registration before the deadline."
+                    "Your state can set different cutoffs for online, mail, and in-person methods."
                 ],
-                primaryActionTitle: "See my deadline details",
+                primaryActionTitle: "Start registration",
                 primaryAction: .openURL(registrationPortalURL),
-                secondaryActionTitle: "Check official site",
+                secondaryActionTitle: "See my deadline details",
                 secondaryAction: .openURL(registrationPortalURL)
             ),
             VoterRegistrationCard(
                 id: "step-3",
                 kind: .check,
                 stepLabel: "STEP 3",
-                title: "How to check your registration",
+                title: "How to check registration",
                 summary: "Use your state’s official voter lookup to verify your registration details are active and accurate.",
                 bullets: [
                     "Use your state’s official voter lookup tool.",
@@ -214,21 +213,32 @@ struct VoterRegistrationView: View {
             : min(max(viewportHeight * 0.40, 240), 330)
 
         VStack(alignment: .leading, spacing: 12) {
-            (
-                Text("\(card.stepLabel) ")
-                    .font(.caption.weight(.semibold))
-                    .foregroundColor(VoteNowColors.primaryCTA)
-                +
+            if card.kind == .whyRegister {
                 Text(card.title)
-                    .font(isLeadCard ? .title2.weight(.bold) : .title3.weight(.bold))
+                    .font(.title3.weight(.bold))
                     .foregroundColor(VoteNowColors.primaryText)
-            )
-            .fixedSize(horizontal: false, vertical: true)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else {
+                (
+                    Text("\(card.stepLabel) ")
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(VoteNowColors.primaryCTA)
+                    +
+                    Text(card.title)
+                        .font(.title3.weight(.bold))
+                        .foregroundColor(VoteNowColors.primaryText)
+                )
+                .fixedSize(horizontal: false, vertical: true)
+            }
 
             Text(card.summary)
-                .font(isLeadCard ? .body : .callout)
+                .font(.body)
                 .foregroundColor(VoteNowColors.mutedText)
                 .fixedSize(horizontal: false, vertical: true)
+
+            if card.kind == .whyRegister {
+                primaryBallotGuidancePanel
+            }
 
             if card.kind == .deadline {
                 deadlinePanel
@@ -241,7 +251,7 @@ struct VoterRegistrationView: View {
                             .font(.callout.weight(.semibold))
                             .foregroundColor(VoteNowColors.primaryCTA)
                         Text(bullet)
-                            .font(isLeadCard ? .callout : .footnote)
+                            .font(.callout)
                             .foregroundColor(VoteNowColors.primaryText)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -250,15 +260,17 @@ struct VoterRegistrationView: View {
 
             Spacer(minLength: 4)
 
-            Button(card.primaryActionTitle) {
-                handleCardAction(card.primaryAction)
+            if card.kind != .whyRegister {
+                Button(card.primaryActionTitle) {
+                    handleCardAction(card.primaryAction)
+                }
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .background(VoteNowColors.primaryCTA)
+                .foregroundColor(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
-            .font(.headline)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .background(VoteNowColors.primaryCTA)
-            .foregroundColor(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
 
             if let secondaryTitle = card.secondaryActionTitle,
                let secondaryAction = card.secondaryAction {
@@ -272,7 +284,7 @@ struct VoterRegistrationView: View {
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .frame(minHeight: targetHeight, alignment: .topLeading)
-        .background(VoteNowColors.surfaceWhite)
+        .background(card.kind == .whyRegister ? VoteNowColors.infoSurfaceBlue : VoteNowColors.surfaceWhite)
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
@@ -289,36 +301,41 @@ struct VoterRegistrationView: View {
 
     private var deadlinePanel: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .top, spacing: 10) {
+            HStack(alignment: .top, spacing: 12) {
+                registrationStateFlag
+
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Upcoming Election Day")
                         .font(.subheadline.weight(.semibold))
                         .foregroundColor(VoteNowColors.mutedText)
-                    Text(formattedElectionDay(nextUpcomingElectionDay))
-                        .font(.subheadline.weight(.bold))
-                        .foregroundColor(VoteNowColors.primaryText)
+                    HStack(alignment: .center, spacing: 8) {
+                        Text(formattedElectionDay(nextUpcomingElectionDay))
+                            .font(.subheadline.weight(.bold))
+                            .foregroundColor(VoteNowColors.primaryText)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.9)
+
+                        Spacer(minLength: 8)
+
+                        Text(countdownText(to: nextUpcomingElectionDay))
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundColor(VoteNowColors.primaryCTA)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
+                            .background(VoteNowColors.primaryCTA.opacity(0.10))
+                            .clipShape(Capsule())
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.85)
+                    }
                 }
-
-                Spacer(minLength: 8)
-
-                Text(countdownText(to: nextUpcomingElectionDay))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundColor(VoteNowColors.primaryCTA)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 7)
-                    .background(VoteNowColors.primaryCTA.opacity(0.10))
-                    .clipShape(Capsule())
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             Text("\(registrationDeadlineLabel): \(formattedElectionDay(guideContent?.registrationDeadline))")
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(VoteNowColors.primaryText)
 
-            if methodSpecificDeadlineRows.isEmpty {
-                Text("Method-specific registration cutoffs may differ. Check your official state site for online, mail, and in-person details.")
-                    .font(.footnote)
-                    .foregroundColor(VoteNowColors.mutedText)
-            } else {
+            if !methodSpecificDeadlineRows.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
                     ForEach(Array(methodSpecificDeadlineRows.enumerated()), id: \.offset) { _, item in
                         Text("\(item.label): \(item.value)")
@@ -329,8 +346,96 @@ struct VoterRegistrationView: View {
             }
         }
         .padding(12)
+        .background(VoteNowColors.infoSurfaceBlue)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(VoteNowColors.primaryCTA.opacity(0.16), lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
+    @ViewBuilder
+    private var registrationStateFlag: some View {
+        if let asset = StateFlagCatalog.assetName(for: registrationStateCode),
+           UIImage(named: asset) != nil {
+            Image(asset)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 41, height: 29)
+                .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 4, style: .continuous)
+                        .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                )
+        } else {
+            ZStack {
+                RoundedRectangle(cornerRadius: 4, style: .continuous)
+                    .fill(VoteNowColors.infoSurfaceBlue)
+                Text(registrationStateCode ?? "US")
+                    .font(.caption2.weight(.bold))
+                    .foregroundColor(VoteNowColors.primaryCTA)
+            }
+            .frame(width: 41, height: 29)
+        }
+    }
+
+    private var registrationStateCode: String? {
+        if let code = guideContext?.stateCode.trimmingCharacters(in: .whitespacesAndNewlines),
+           code.count == 2 {
+            return code.uppercased()
+        }
+        let entered = planVM.userAddress.state.trimmingCharacters(in: .whitespacesAndNewlines)
+        if entered.count == 2 {
+            return entered.uppercased()
+        }
+        return nil
+    }
+
+    private var primaryBallotGuidancePanel: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            (
+                Text("In a primary election, ")
+                + Text("Democrat").foregroundColor(VoteNowColors.richBlue).fontWeight(.semibold)
+                + Text(" and ")
+                + Text("Republican").foregroundColor(VoteNowColors.richRed).fontWeight(.semibold)
+                + Text(" registrations can determine which party ballot you receive.")
+            )
+            .font(.callout)
+            .foregroundColor(VoteNowColors.primaryText)
+
+            (
+                Text("Your current setting: ")
+                + Text(currentPartyLabel).foregroundColor(currentPartyColor).fontWeight(.semibold)
+            )
+            .font(.callout)
+            .foregroundColor(VoteNowColors.primaryText)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(VoteNowColors.appBackground.opacity(0.72))
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
+    private var currentPartyLabel: String {
+        switch planVM.selectedParty {
+        case .democrat:
+            return "Democrat"
+        case .republican:
+            return "Republican"
+        case .independent:
+            return "Independent"
+        }
+    }
+
+    private var currentPartyColor: Color {
+        switch planVM.selectedParty {
+        case .democrat:
+            return VoteNowColors.richBlue
+        case .republican:
+            return VoteNowColors.richRed
+        case .independent:
+            return VoteNowColors.primaryText
+        }
     }
 
     private func handleCardAction(_ action: VoterRegistrationCard.Action) {

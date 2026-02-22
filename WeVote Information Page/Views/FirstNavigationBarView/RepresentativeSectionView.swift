@@ -155,12 +155,32 @@ struct RepRow: View {
               !district.isEmpty else {
             return nil
         }
-        guard district.caseInsensitiveCompare("Statewide") == .orderedSame,
+        guard district.caseInsensitiveCompare("Statewide") == .orderedSame ||
+                district.caseInsensitiveCompare("Citywide") == .orderedSame,
               let officeTitle = rep.officeTitle?.trimmingCharacters(in: .whitespacesAndNewlines),
               !officeTitle.isEmpty else {
             return district
         }
         return "\(district) - \(officeTitle)"
+    }
+
+    private var displayName: String {
+        guard rep.level == .local else { return rep.name }
+        return rep.name.replacingOccurrences(
+            of: #"\s*\(mayor\)\s*$"#,
+            with: "",
+            options: [.regularExpression, .caseInsensitive]
+        )
+    }
+
+    private var displayParty: String? {
+        guard let party = rep.party?.trimmingCharacters(in: .whitespacesAndNewlines), !party.isEmpty else {
+            return nil
+        }
+        if party.caseInsensitiveCompare("Democratic") == .orderedSame {
+            return "Democrat"
+        }
+        return party
     }
 
     private var contactActions: [RepContactAction] {
@@ -205,24 +225,30 @@ struct RepRow: View {
         VStack(alignment: .leading, spacing: 7) {
             HStack(spacing: 14) {
                 RepHeadshotView(rep: rep)
-                .frame(width: 72, height: 72)
+                .frame(width: 65, height: 65)
                 .clipShape(Circle())
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(rep.name)
+                    Text(displayName)
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(VoteNowColors.primaryText)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.72)
 
-                    if let party = rep.party, !party.isEmpty {
+                    if let party = displayParty {
                         Text(party)
                             .font(.system(size: 17, weight: .regular))
                             .foregroundColor(partyTint(party))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.72)
                     }
 
                     if let districtLabel {
                         Text(districtLabel)
                             .font(.system(size: 16, weight: .regular))
                             .foregroundColor(VoteNowColors.mutedText)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.72)
                     }
                 }
 
@@ -332,12 +358,16 @@ struct RepresentativeSection: View {
 
     private var header: some View {
         HStack {
-            headerIcon
-            Text(title)
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundColor(VoteNowColors.primaryCTA)
-
-            Spacer()
+            Spacer(minLength: 0)
+            HStack(spacing: 8) {
+                headerIcon
+                Text(displayTitle)
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundColor(VoteNowColors.primaryCTA)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+            }
+            Spacer(minLength: 0)
         }
     }
 
@@ -345,22 +375,39 @@ struct RepresentativeSection: View {
     private var headerIcon: some View {
         switch normalizedTitle {
         case "federal executive":
-            Image(systemName: "house.fill")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(VoteNowColors.primaryCTA)
-                .frame(width: 22, height: 22)
+            Image("WhiteHouseIcon")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 29, height: 29)
+                .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 5, style: .continuous)
+                        .stroke(VoteNowColors.primaryCTA.opacity(0.22), lineWidth: 0.8)
+                )
         case "federal legislative":
-            Image(systemName: "building.columns.fill")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(VoteNowColors.primaryCTA)
-                .frame(width: 22, height: 22)
+            if UIImage(named: "CapitolIcon") != nil {
+                Image("CapitolIcon")
+                    .renderingMode(.original)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 32, height: 32)
+                    .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 5, style: .continuous)
+                            .stroke(VoteNowColors.primaryCTA.opacity(0.22), lineWidth: 0.8)
+                    )
+            } else {
+                Text("🏛️")
+                    .font(.system(size: 24))
+                    .frame(width: 29, height: 29)
+            }
         case "state":
             if let asset = StateFlagCatalog.assetName(for: resolvedStateCode),
                UIImage(named: asset) != nil {
                 Image(asset)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 24, height: 18)
+                    .frame(width: 30, height: 23)
                     .clipShape(RoundedRectangle(cornerRadius: 3, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 3, style: .continuous)
@@ -382,6 +429,17 @@ struct RepresentativeSection: View {
 
     private var normalizedTitle: String {
         title.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+
+    private var displayTitle: String {
+        switch normalizedTitle {
+        case "federal executive":
+            return "\(title) (White House)"
+        case "federal legislative":
+            return "\(title) (Congress)"
+        default:
+            return title
+        }
     }
 
     private var resolvedStateCode: String? {

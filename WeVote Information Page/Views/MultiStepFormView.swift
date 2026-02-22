@@ -684,47 +684,232 @@ struct VotingMethodCard<Details: View>: View {
 // MARK: - Step 2: Mail Voting Logistics
 
 struct AbsenteeView: View {
+    @EnvironmentObject private var planVM: PlanViewModel
+
+    @State private var jurisdictions: [AbsenteeBallotJurisdiction] = []
+    @State private var selectedJurisdictionID: String?
+
+    private var selectedJurisdiction: AbsenteeBallotJurisdiction? {
+        guard let selectedJurisdictionID else { return nil }
+        return jurisdictions.first(where: { $0.id == selectedJurisdictionID })
+    }
+
+    private var addressLine: String {
+        let parts = [
+            planVM.userAddress.street.trimmingCharacters(in: .whitespacesAndNewlines),
+            planVM.userAddress.city.trimmingCharacters(in: .whitespacesAndNewlines),
+            planVM.userAddress.state.trimmingCharacters(in: .whitespacesAndNewlines),
+            planVM.userAddress.zip.trimmingCharacters(in: .whitespacesAndNewlines)
+        ].filter { !$0.isEmpty }
+
+        if !parts.isEmpty {
+            return parts.joined(separator: ", ")
+        }
+
+        let zip = String(planVM.zip.filter(\.isNumber).prefix(5))
+        if zip.count == 5 {
+            return zip
+        }
+
+        return "Set your address in My Reps"
+    }
+
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 14) {
                 Text("📬 Request Your Mail-in Ballot")
-                    .font(.title2).bold()
-                    .multilineTextAlignment(.center)
-                    .padding(.top)
+                    .font(.title2.weight(.bold))
+                    .foregroundColor(VoteNowColors.primaryText)
+                    .padding(.top, 8)
+
+                Text(addressLine)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(VoteNowColors.mutedText)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Early Mail Ballot").font(.headline)
-                    Text("""
-NY’s new Early Mail Voter Act lets any registered voter apply for a mail-in ballot before Election Day. \
-You must apply by **June 14, 2025**. Filing a false application or casting an illegal ballot is a felony. \
-Once issued, you can’t vote on a machine—but you can still vote in-person with an affidavit ballot.
-""")
+                    Text("What is mail-in voting?")
+                        .font(.headline.weight(.semibold))
+                        .foregroundColor(VoteNowColors.primaryText)
+                    Text("Mail-in voting lets eligible voters receive a ballot and return it by mail or approved drop-off methods. Some states mail ballots automatically, while others require a request.")
+                        .font(.footnote)
+                        .foregroundColor(VoteNowColors.mutedText)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-
-                Divider()
+                .padding(12)
+                .background(VoteNowColors.surfaceWhite)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                )
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Absentee Ballot").font(.headline)
-                    Text("""
-If you’ll be away, ill, caring for someone, or otherwise can’t appear in person, you may apply for an absentee ballot by **June 14, 2025** (online/mail) or **June 23, 2025** (in person). \
-Applications received by mail must arrive 10 days before Election Day; in-person apps are accepted up to the day before.
-""")
+                    Text("What is absentee voting?")
+                        .font(.headline.weight(.semibold))
+                        .foregroundColor(VoteNowColors.primaryText)
+                    Text("Absentee voting is a mail-ballot process typically used when you cannot vote in person. Rules and eligibility vary by jurisdiction.")
+                        .font(.footnote)
+                        .foregroundColor(VoteNowColors.mutedText)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
+                .padding(12)
+                .background(VoteNowColors.surfaceWhite)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                )
 
-                // ← pinned link button, no Spacer below
-                Link(destination: URL(string: "https://vote.nyc/RequestBallot")!) {
-                    Text("Go to NYC Ballot Request")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(VoteNowColors.richBlue)
-                        .cornerRadius(10)
+                if let jurisdiction = selectedJurisdiction {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack(alignment: .center, spacing: 10) {
+                            if let flagAsset = StateFlagCatalog.assetName(for: jurisdiction.code) {
+                                Image(flagAsset)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 62.4, height: 40.8)
+                                    .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 7, style: .continuous)
+                                            .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                                    )
+                            }
+
+                            Text("Jurisdiction: \(jurisdiction.displayName)")
+                                .font(.title3.weight(.bold))
+                                .foregroundColor(VoteNowColors.primaryText)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                        if let requestURL = jurisdiction.requestApplyURL {
+                            Link(destination: requestURL) {
+                                Text("Request / Apply for a mail ballot")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 11)
+                                    .background(VoteNowColors.primaryCTA)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            }
+                            .accessibilityLabel("Request or apply for a mail ballot in \(jurisdiction.displayName)")
+                        }
+
+                        if let officialURL = jurisdiction.officialVoterInfoURL {
+                            Link(destination: officialURL) {
+                                Text("Official voter info")
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundColor(VoteNowColors.primaryCTA)
+                            }
+                            .accessibilityLabel("Open official voter info for \(jurisdiction.displayName)")
+                        }
+
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Request deadlines")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundColor(VoteNowColors.primaryText)
+
+                            ForEach(jurisdiction.deadlineRows(), id: \.label) { row in
+                                HStack(alignment: .top, spacing: 12) {
+                                    Text(row.label)
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundColor(VoteNowColors.mutedText)
+                                        .frame(width: 108, alignment: .leading)
+
+                                    Text(row.value)
+                                        .font(.subheadline)
+                                        .foregroundColor(VoteNowColors.primaryText)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                            }
+                        }
+                        .padding(12)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(VoteNowColors.infoSurfaceBlue)
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .stroke(VoteNowColors.primaryCTA.opacity(0.18), lineWidth: 1)
+                        )
+
+                        if let sourceURL = jurisdiction.deadlineSourceURL {
+                            Link(destination: sourceURL) {
+                                Text("Deadline source")
+                                    .font(.footnote.weight(.semibold))
+                                    .foregroundColor(VoteNowColors.primaryCTA)
+                            }
+                            .accessibilityLabel("Open deadline source for \(jurisdiction.displayName)")
+                        }
+
+                        if let notes = jurisdiction.notes, !notes.isEmpty {
+                            Text(notes)
+                                .font(.footnote)
+                                .foregroundColor(VoteNowColors.mutedText)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        Text("This section is for absentee/mail ballot requests. Early-voting deadlines can be different.")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundColor(VoteNowColors.primaryText)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        Text("Deadlines can change. Confirm details with your official election office site.")
+                            .font(.footnote)
+                            .foregroundColor(VoteNowColors.mutedText)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(14)
+                    .background(VoteNowColors.surfaceWhite)
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                    )
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                } else {
+                    Text("We could not detect your jurisdiction yet. Enter your address in My Reps to auto-load absentee and mail-ballot request details.")
+                        .font(.subheadline)
+                        .foregroundColor(VoteNowColors.mutedText)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(.top)
             }
             .padding()
         }
+        .background(VoteNowColors.appBackground)
+        .navigationTitle("Request Mail-in Ballot")
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            if jurisdictions.isEmpty {
+                jurisdictions = AbsenteeBallotRequestProvider.loadJurisdictions()
+            }
+            syncJurisdictionFromMyReps()
+        }
+        .onChange(of: planVM.userAddress.state) { _ in
+            syncJurisdictionFromMyReps()
+        }
+        .onChange(of: planVM.userAddress.zip) { _ in
+            syncJurisdictionFromMyReps()
+        }
+        .onChange(of: planVM.zip) { _ in
+            syncJurisdictionFromMyReps()
+        }
+    }
+
+    private func syncJurisdictionFromMyReps() {
+        guard !jurisdictions.isEmpty else { return }
+        guard let code = AbsenteeBallotRequestProvider.resolveDefaultJurisdictionCode(
+            userState: planVM.userAddress.state,
+            primaryZip: planVM.zip,
+            fallbackZip: planVM.userAddress.zip
+        ) else {
+            selectedJurisdictionID = nil
+            return
+        }
+
+        selectedJurisdictionID = jurisdictions.first {
+            $0.code?.caseInsensitiveCompare(code) == .orderedSame
+        }?.id
     }
 }
 

@@ -89,3 +89,37 @@ Optional convenience loaders are available in `votenow_metrics/data.py`:
 - `load_metrics()`
 - `load_geos()`
 - `load_values(year: int | None = None)`
+
+## Absentee/Mail Ballot Request Data
+
+The absentee/mail request directory is sourced from:
+
+- `data/absentee_ballot_request_links_deadlines.xlsx`
+
+Convert it to normalized JSON with:
+
+```bash
+python3 scripts/convert_absentee_xlsx_to_json.py \
+  --input data/absentee_ballot_request_links_deadlines.xlsx \
+  --out data/absentee_ballot_request_links_deadlines.json \
+  --bundle-out "WeVote Information Page/Models/absentee_ballot_request_links_deadlines.json"
+```
+
+Or use:
+
+```bash
+make ingest-absentee
+```
+
+Artifacts:
+
+- `data/absentee_ballot_request_links_deadlines.json`
+  - canonical derived JSON for repository data workflows
+- `WeVote Information Page/Models/absentee_ballot_request_links_deadlines.json`
+  - bundled app resource consumed by the “Request Mail-in Ballot” UI
+
+Notes:
+
+- Replace the XLSX first, then run the conversion command, then commit both JSON files.
+- Empty spreadsheet cells are converted to `null`.
+- Explicit `N/A` values are preserved as `"N/A"`.

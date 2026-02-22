@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SupportVoteView: View {
     private let pageBackground = Color(red: 172.0 / 255.0, green: 213.0 / 255.0, blue: 227.0 / 255.0) // #ACD5E3
+    private let warmSupportYellow = Color(hex: "#F3D487")
 
     private enum PresetAmount: Hashable, CaseIterable {
         case five
@@ -34,10 +35,7 @@ struct SupportVoteView: View {
     @StateObject private var applePayManager = ApplePayDonationManager()
     @State private var selectedAmount: PresetAmount = .fifteen
     @State private var customAmountText: String = ""
-    @State private var feedbackInput: String = ""
-    @State private var feedbackMessages: [FeedbackMessage] = []
     @FocusState private var isCustomAmountFocused: Bool
-    @FocusState private var isFeedbackInputFocused: Bool
 
     private var resolvedAmount: Decimal? {
         if let value = selectedAmount.value {
@@ -74,9 +72,9 @@ struct SupportVoteView: View {
                         PageHeader(title: "Support VoteNow")
 
                         missionCard
-                        supportCard
-                        feedbackCard
                         donationCard
+                        disruptCard
+                        supportCard
 
                         Spacer(minLength: 24)
                     }
@@ -114,8 +112,13 @@ struct SupportVoteView: View {
 
     private var supportCard: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("As a college founded civic start up, we rely on community support to keep voter tools accessible. Your Contribution supports")
-                .font(.headline)
+            Text("What your donation supports")
+                .font(.headline.weight(.bold))
+                .foregroundStyle(VoteNowColors.warningAmber)
+
+            Text("As a college-founded civic startup, we rely on community support to keep voter tools accessible.")
+                .font(.subheadline)
+                .foregroundStyle(VoteNowColors.mutedText)
 
             supportBullet("No ads or paywalls")
             supportBullet("Nonpartisan voting logistics")
@@ -125,11 +128,11 @@ struct SupportVoteView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(VoteNowColors.richBlue.opacity(0.08))
+                .fill(warmSupportYellow)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(VoteNowColors.richBlue.opacity(0.22), lineWidth: 1)
+                .stroke(VoteNowColors.warningAmber.opacity(0.58), lineWidth: 1)
         )
     }
 
@@ -215,79 +218,32 @@ struct SupportVoteView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(VoteNowColors.background)
+                .fill(warmSupportYellow)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
+                .stroke(VoteNowColors.warningAmber.opacity(0.58), lineWidth: 1)
         )
     }
 
-    private var feedbackCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Feedback")
-                .font(.headline)
+    private var disruptCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Disrupt the Status Quo by empowering voters, not campaigns.")
+                .font(.headline.weight(.bold))
 
-            Text("As a college startup, we have lots of ways to improve, learn, and grow with U.S. voters. We would love any feedback, friction points, or experiences you have in the U.S. voting process.")
+            Text("Most voter outreach in America isn’t funded by voters. It’s funded by PACs and Super PACs. That means:")
                 .font(.subheadline)
                 .foregroundStyle(VoteNowColors.mutedText)
                 .fixedSize(horizontal: false, vertical: true)
 
-            VStack(alignment: .leading, spacing: 8) {
-                if feedbackMessages.isEmpty {
-                    Text("Chat with us:")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.mutedText)
-                    Text("Share what felt confusing, frustrating, or helpful.")
-                        .font(.caption)
-                        .foregroundStyle(VoteNowColors.mutedText)
-                } else {
-                    ForEach(feedbackMessages) { message in
-                        HStack {
-                            if message.isUser { Spacer(minLength: 24) }
-                            Text(message.text)
-                                .font(.subheadline)
-                                .foregroundStyle(message.isUser ? .white : .primary)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 8)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                        .fill(message.isUser ? VoteNowColors.richBlue : VoteNowColors.infoSurfaceBlue)
-                                )
-                            if !message.isUser { Spacer(minLength: 24) }
-                        }
-                    }
-                }
-            }
-            .padding(10)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(VoteNowColors.background)
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
-            )
+            supportBullet("Messaging is designed to move votes for a side")
+            supportBullet("Outreach spikes where races are close (and money is flowing)")
+            supportBullet("Voters become “targets,” not long-term users")
+            supportBullet("The system optimizes for winning — not serving")
 
-            HStack(spacing: 8) {
-                TextField("Share your thoughts...", text: $feedbackInput)
-                    .textFieldStyle(.roundedBorder)
-                    .focused($isFeedbackInputFocused)
-                    .submitLabel(.send)
-                    .onSubmit {
-                        sendFeedbackMessage()
-                    }
-
-                Button("Send") {
-                    sendFeedbackMessage()
-                }
+            Text("VoteNow is built around servicing YOU, the voter.")
                 .font(.subheadline.weight(.semibold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 9)
-                .background(feedbackSendEnabled ? VoteNowColors.richBlue : VoteNowColors.borderWarm.opacity(0.5))
-                .foregroundStyle(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
-                .disabled(!feedbackSendEnabled)
-            }
+                .padding(.top, 4)
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -298,26 +254,6 @@ struct SupportVoteView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .stroke(VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
-        )
-    }
-
-    private var feedbackSendEnabled: Bool {
-        !feedbackInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
-
-    private func sendFeedbackMessage() {
-        let trimmed = feedbackInput.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
-
-        feedbackMessages.append(FeedbackMessage(isUser: true, text: trimmed))
-        feedbackInput = ""
-        isFeedbackInputFocused = false
-
-        feedbackMessages.append(
-            FeedbackMessage(
-                isUser: false,
-                text: "Thanks for sharing this. We are listening and using feedback like this to improve VoteNow."
-            )
         )
     }
 
@@ -360,12 +296,6 @@ struct SupportVoteView: View {
         formatter.maximumFractionDigits = 2
         return formatter.string(from: number) ?? "$\(number)"
     }
-}
-
-private struct FeedbackMessage: Identifiable {
-    let id = UUID()
-    let isUser: Bool
-    let text: String
 }
 
 #Preview {

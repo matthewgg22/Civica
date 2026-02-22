@@ -66,10 +66,23 @@ struct VoterIDGuideCard: View {
 
             Spacer(minLength: 8)
 
-            Image(systemName: metric == nil ? "location.slash" : "checkmark.seal")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(VoteNowColors.primaryCTA)
-                .padding(.top, 2)
+            if let asset = StateFlagCatalog.assetName(for: normalizedStateCode) {
+                Image(asset)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 40, height: 28)
+                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                    )
+                    .padding(.top, 2)
+            } else {
+                Image(systemName: "location.slash")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(VoteNowColors.primaryCTA)
+                    .padding(.top, 2)
+            }
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)

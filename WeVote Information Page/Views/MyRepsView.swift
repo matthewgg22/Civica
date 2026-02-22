@@ -185,11 +185,7 @@ struct MyRepsView: View {
                         .stroke(VoteNowColors.borderWarm, lineWidth: 1)
                 )
                 .onChange(of: locationInput) { newValue in
-                    let sanitized = USZipInputValidator.sanitizedInput(newValue)
-                    if sanitized != newValue {
-                        locationInput = sanitized
-                    }
-                    repsVM.handleLocationInputTyping(sanitized)
+                    repsVM.handleLocationInputTyping(newValue)
                 }
                 .onSubmit {
                     submitLookup()
@@ -211,9 +207,9 @@ struct MyRepsView: View {
                 repsVM.resetZipEntryState()
             } label: {
                 Image(systemName: "xmark")
-                    .font(.system(size: 15, weight: .bold))
+                    .font(.system(size: 12, weight: .bold))
                     .foregroundColor(.white)
-                    .frame(width: 34, height: 34)
+                    .frame(width: 26, height: 26)
                     .background(Color.gray.opacity(0.60))
                     .clipShape(Circle())
             }
@@ -228,7 +224,7 @@ struct MyRepsView: View {
                 Text("My Info")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(.white)
-                    .padding(.horizontal, 22)
+                    .padding(.horizontal, 16)
                     .padding(.vertical, 11)
                     .background(VoteNowColors.primaryCTA)
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))

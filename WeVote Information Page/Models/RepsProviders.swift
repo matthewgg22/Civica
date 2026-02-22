@@ -411,7 +411,7 @@ final class USGovernorsProvider: RepsProvider {
            !lieutenantGovernor.isEmpty {
             stateOfficials.append(
                 Official(
-                    name: "Lieutenant Governor: \(lieutenantGovernor)",
+                    name: lieutenantGovernor,
                     divisionId: "ocd-division/country:us/state:\(stateCode.lowercased())",
                     party: governor.lieutenant_governor_party,
                     officeTitle: "Lieutenant Governor",
@@ -424,7 +424,7 @@ final class USGovernorsProvider: RepsProvider {
            !attorneyGeneral.isEmpty {
             stateOfficials.append(
                 Official(
-                    name: "Attorney General: \(attorneyGeneral)",
+                    name: attorneyGeneral,
                     divisionId: "ocd-division/country:us/state:\(stateCode.lowercased())",
                     party: nil,
                     officeTitle: "Attorney General",
@@ -1128,9 +1128,10 @@ final class USMayorsProvider: RepsProvider {
         let divisionId = "ocd-division/country:us/state:\(stateCodeLower)/place:\(place)"
 
         return Official(
-            name: "\(name) (Mayor)",
+            name: name,
             divisionId: divisionId,
             party: mayor.party,
+            officeTitle: "Mayor",
             photoURL: nil,
             url: normalizedMayorWebsiteURL(name: name, fallbackURL: mayor.url)
         )

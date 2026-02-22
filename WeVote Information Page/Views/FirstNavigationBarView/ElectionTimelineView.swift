@@ -157,7 +157,7 @@ struct ElectionTimelineView: View {
 
                     HStack(spacing: 8) {
                         Text(stateName(for: election))
-                            .font(.caption.weight(.semibold))
+                            .font(.subheadline.weight(.semibold))
                             .foregroundColor(VoteNowColors.mutedText)
                             .lineLimit(1)
 
@@ -198,17 +198,19 @@ struct ElectionTimelineView: View {
                 .accessibilityLabel("Flag election")
             }
 
-            HStack(spacing: 10) {
+            HStack(alignment: .top, spacing: 10) {
                 keyDateTile(
                     title: "Early Voting",
                     value: earlyVotingText(for: election),
-                    icon: "clock"
+                    icon: "clock",
+                    useTintedBackground: index != 0
                 )
 
                 keyDateTile(
                     title: "Election Day",
                     value: formattedDateText(election.electionDay),
-                    icon: "calendar"
+                    icon: "calendar",
+                    useTintedBackground: index != 0
                 )
             }
 
@@ -282,10 +284,14 @@ struct ElectionTimelineView: View {
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(VoteNowColors.surfaceWhite)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(index == 0 ? VoteNowColors.warningAmber.opacity(0.08) : .clear)
+                )
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                .stroke(index == 0 ? VoteNowColors.warningAmber.opacity(0.34) : VoteNowColors.borderWarm, lineWidth: 1)
         )
         .shadow(color: VoteNowColors.primaryText.opacity(0.06), radius: 3, x: 0, y: 1)
     }
@@ -384,8 +390,8 @@ struct ElectionTimelineView: View {
     }
 
     @ViewBuilder
-    private func keyDateTile(title: String, value: String, icon: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+    private func keyDateTile(title: String, value: String, icon: String, useTintedBackground: Bool) -> some View {
+        VStack(alignment: .center, spacing: 4) {
             HStack(spacing: 6) {
                 Image(systemName: icon)
                     .font(.caption.weight(.semibold))
@@ -394,22 +400,24 @@ struct ElectionTimelineView: View {
                     .font(.caption.weight(.semibold))
                     .foregroundColor(VoteNowColors.mutedText)
             }
+            .frame(maxWidth: .infinity, alignment: .center)
             Text(value)
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(VoteNowColors.primaryText)
-                .lineLimit(1)
+                .lineLimit(2)
                 .minimumScaleFactor(0.85)
+                .multilineTextAlignment(.center)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .center)
         .padding(.horizontal, 10)
-        .padding(.vertical, 9)
+        .padding(.vertical, 8)
         .background(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(VoteNowColors.infoSurfaceBlue.opacity(0.42))
+                .fill(useTintedBackground ? VoteNowColors.infoSurfaceBlue.opacity(0.42) : VoteNowColors.surfaceWhite)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(VoteNowColors.borderWarm.opacity(0.55), lineWidth: 1)
+                .stroke(VoteNowColors.borderWarm.opacity(useTintedBackground ? 0.55 : 0.85), lineWidth: 1)
         )
     }
 
@@ -885,36 +893,21 @@ struct ElectionTimelineView: View {
     private func electionCountdownAndDeadlineText(for election: Election) -> String {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
-        let electionDay = calendar.startOfDay(for: election.electionDay)
-        let dayDelta = calendar.dateComponents([.day], from: today, to: electionDay).day ?? 0
-        let dateText = formattedDateText(election.electionDay)
+        let votingStart = calendar.startOfDay(for: election.startDate)
+        let dayDelta = calendar.dateComponents([.day], from: today, to: votingStart).day ?? 0
 
-        if dayDelta < 0 { return "Ended • \(dateText)" }
-        if dayDelta == 0 { return "Today • \(dateText)" }
-        if dayDelta == 1 { return "1 day left • \(dateText)" }
-        return "\(dayDelta) days left • \(dateText)"
+        if dayDelta < 0 { return "Voting Started" }
+        if dayDelta == 0 { return "Voting Starts Today" }
+        if dayDelta == 1 { return "Voting Starts in 1 day" }
+        return "Voting Starts in \(dayDelta) days"
     }
 
     private func countdownBackgroundColor(for election: Election) -> Color {
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        let electionDay = calendar.startOfDay(for: election.electionDay)
-        let dayDelta = calendar.dateComponents([.day], from: today, to: electionDay).day ?? 0
-
-        if dayDelta < 0 { return VoteNowColors.borderWarm }
-        if dayDelta <= 7 { return VoteNowColors.infoSurfaceBlue }
-        return VoteNowColors.surfaceWhite
+        VoteNowColors.primaryCTA
     }
 
     private func countdownForegroundColor(for election: Election) -> Color {
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        let electionDay = calendar.startOfDay(for: election.electionDay)
-        let dayDelta = calendar.dateComponents([.day], from: today, to: electionDay).day ?? 0
-
-        if dayDelta < 0 { return VoteNowColors.mutedText }
-        if dayDelta <= 7 { return VoteNowColors.primaryCTA }
-        return VoteNowColors.primaryText
+        .white
     }
 
     private func isPrimaryElection(_ election: Election) -> Bool {
