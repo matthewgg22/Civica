@@ -379,6 +379,170 @@ struct WhyVoteFloodOverlay: View {
     }
 }
 
+struct WhyCallFloodOverlay: View {
+    @Binding var isPresented: Bool
+    var originInSpreadSpace: CGPoint?
+
+    private let floodColor = Color(red: 173.0 / 255.0, green: 215.0 / 255.0, blue: 229.0 / 255.0)
+    private let accent = Color(red: 223.0 / 255.0, green: 88.0 / 255.0, blue: 69.0 / 255.0)
+    private let logoSize: CGFloat = 50
+    private let headerHorizontalPadding: CGFloat = 16
+    private let headerTopPadding: CGFloat = 4
+    private let duration: Double = 0.86
+    private let directionalBias: CGFloat = 0.06
+    private let softness: CGFloat = 2.5
+    @State private var spread: CGFloat = 0.001
+    @State private var resolvedOriginInSpreadSpace: CGPoint?
+
+    var body: some View {
+        GeometryReader { geo in
+            let frameInSpreadSpace = geo.frame(in: .named("SpreadSpace"))
+            let fallbackInSpreadSpace = CGPoint(
+                x: frameInSpreadSpace.minX + headerHorizontalPadding + (logoSize / 2),
+                y: frameInSpreadSpace.minY + headerTopPadding + (logoSize / 2)
+            )
+            let spreadSpaceOrigin = resolvedOriginInSpreadSpace ?? originInSpreadSpace ?? fallbackInSpreadSpace
+            let localOrigin = CGPoint(
+                x: spreadSpaceOrigin.x - frameInSpreadSpace.minX,
+                y: spreadSpaceOrigin.y - frameInSpreadSpace.minY
+            )
+
+            ZStack(alignment: .topLeading) {
+                floodColor
+                    .mask {
+                        WhyVoteDirectionalRevealMask(
+                            origin: localOrigin,
+                            progress: spread,
+                            direction: CGVector(dx: 1.0, dy: 0.0),
+                            bias: directionalBias,
+                            softness: softness
+                        )
+                    }
+                    .ignoresSafeArea()
+
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(alignment: .center, spacing: 12) {
+                        Button {
+                            withAnimation(.easeOut(duration: max(0.2, duration * 0.5))) {
+                                spread = 0.001
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + max(0.2, duration * 0.5)) {
+                                isPresented = false
+                            }
+                        } label: {
+                            VoteNowLogoIcon(
+                                size: logoSize,
+                                backgroundColor: .white,
+                                stripeColor: accent,
+                                borderColor: .white.opacity(0.9),
+                                shadowColor: .black.opacity(0.14)
+                            )
+                            .frame(width: logoSize, height: logoSize)
+                            .fixedSize(horizontal: true, vertical: true)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Close Why Call overlay")
+
+                        Text("Why Call")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .lineLimit(1)
+                            .frame(height: logoSize, alignment: .center)
+                            .foregroundColor(accent)
+                            .opacity(spread > 0.65 ? 1 : 0)
+
+                        Spacer(minLength: 0)
+                    }
+                    .padding(.horizontal, headerHorizontalPadding)
+                    .padding(.top, headerTopPadding)
+
+                    WhyCallView()
+                        .opacity(spread > 0.72 ? 1 : 0)
+                }
+            }
+            .contentShape(Rectangle())
+            .onAppear {
+                spread = 0.001
+                resolvedOriginInSpreadSpace = nil
+                DispatchQueue.main.async {
+                    if let provided = originInSpreadSpace, provided != .zero {
+                        resolvedOriginInSpreadSpace = provided
+                    } else {
+                        resolvedOriginInSpreadSpace = fallbackInSpreadSpace
+                    }
+                    withAnimation(.easeInOut(duration: duration)) {
+                        spread = 1.0
+                    }
+                }
+            }
+        }
+    }
+}
+
+private struct WhyCallView: View {
+    @Environment(\.locale) private var locale
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 14) {
+                card(
+                    title: l("app.why_call.card.why.title", "Why calling matters"),
+                    body: l(
+                        "app.why_call.card.why.body",
+                        "A phone call is one of the fastest ways to share your position with your elected office. Staff logs calls and summarizes constituent feedback for the member."
+                    )
+                )
+
+                card(
+                    title: l("app.why_call.card.how.title", "How to make an effective call"),
+                    body: l(
+                        "app.why_call.card.how.body",
+                        "Identify yourself as a constituent, reference the issue or bill, make one clear ask, and request the member's current position."
+                    )
+                )
+
+                card(
+                    title: l("app.why_call.card.tips.title", "Quick call tips"),
+                    body: l(
+                        "app.why_call.card.tips.body",
+                        "Be brief, stay respectful, and log the outcome. If no one answers, leave voicemail and continue to your next representative."
+                    )
+                )
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+            .padding(.bottom, 24)
+        }
+    }
+
+    private func card(title: String, body: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.headline)
+            Text(body)
+                .font(.subheadline)
+                .foregroundColor(VoteNowColors.primaryText)
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(VoteNowColors.surfaceWhite.opacity(0.82))
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
+        )
+    }
+}
+
 /// Directionally biased reveal shape:
 /// r(theta) = baseRadius(t) * (1 + bias * cos(theta - theta0)) * superellipse(theta)
 private struct WhyVoteDirectionalRevealMask: Shape {

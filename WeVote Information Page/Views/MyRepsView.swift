@@ -11,6 +11,7 @@ struct MyRepsView: View {
     @State private var locationInput: String = ""
     @State private var showMyInfoSheet = false
     @State private var showGovHelpChat = false
+    @State private var showIssueCallCenter = false
 
     private static let mapUpdatedDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -60,93 +61,139 @@ struct MyRepsView: View {
         String(planVM.zip.filter(\.isNumber).prefix(5))
     }
 
+    private var issueCallAddressLine: String {
+        let city = planVM.userAddress.city.trimmingCharacters(in: .whitespacesAndNewlines)
+        let state = planVM.userAddress.state.trimmingCharacters(in: .whitespacesAndNewlines)
+        let addressZip = String(planVM.userAddress.zip.filter(\.isNumber).prefix(5))
+        let zip = normalizedZip.isEmpty ? addressZip : normalizedZip
+
+        if !city.isEmpty && !state.isEmpty && !zip.isEmpty {
+            return "\(city), \(state) \(zip)"
+        }
+        if !state.isEmpty && !zip.isEmpty {
+            return "\(state), \(zip)"
+        }
+        if !zip.isEmpty {
+            return zip
+        }
+
+        let home = planVM.homeAddress.trimmingCharacters(in: .whitespacesAndNewlines)
+        return home
+    }
+
+    private var hasAddressInputForIssueCall: Bool {
+        if !locationInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return true }
+        if !normalizedZip.isEmpty { return true }
+        if !planVM.homeAddress.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return true }
+
+        let addressParts = [
+            planVM.userAddress.street,
+            planVM.userAddress.city,
+            planVM.userAddress.state,
+            planVM.userAddress.zip
+        ]
+        return addressParts.contains { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    }
+
     var body: some View {
-        ZStack {
-            VoteNowColors.appBackground.ignoresSafeArea()
+        NavigationStack {
+            ZStack {
+                VoteNowColors.appBackground.ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                PageHeader(title: Text("app.page.my_reps", tableName: "AppShell"))
-                    .padding(.horizontal, 16)
-                    .padding(.top, 16)
-                    .padding(.bottom, 8)
-                    .background(VoteNowColors.appBackground)
+                VStack(spacing: 0) {
+                    PageHeader(title: Text("app.page.my_reps", tableName: "AppShell"))
+                        .padding(.horizontal, 16)
+                        .padding(.top, 16)
+                        .padding(.bottom, 8)
+                        .background(VoteNowColors.appBackground)
 
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
-                        searchCard
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 16) {
+                            searchCard
 
-                        locationCoverageCard(
-                            region: repsVM.zipMapRegion ?? Self.defaultMapRegion,
-                            center: repsVM.zipMapCenter,
-                            radiusMeters: repsVM.zipMapRadiusMeters
-                        )
+                            locationCoverageCard(
+                                region: repsVM.zipMapRegion ?? Self.defaultMapRegion,
+                                center: repsVM.zipMapCenter,
+                                radiusMeters: repsVM.zipMapRadiusMeters
+                            )
 
-                        if repsVM.isLoading {
-                            ProgressView(l("app.reps.loading", "Looking up your reps..."))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.top, 8)
-                        }
+                            if repsVM.isLoading {
+                                ProgressView(l("app.reps.loading", "Looking up your reps..."))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.top, 8)
+                            }
 
-                        if let error = repsVM.errorMessage, !error.isEmpty {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text(error)
-                                    .font(.subheadline)
-                                    .foregroundColor(VoteNowColors.urgentCTA)
+                            if let error = repsVM.errorMessage, !error.isEmpty {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text(error)
+                                        .font(.subheadline)
+                                        .foregroundColor(VoteNowColors.urgentCTA)
 
-                                Button(l("app.reps.action.retry", "Retry")) {
-                                    submitLookup()
+                                    Button(l("app.reps.action.retry", "Retry")) {
+                                        submitLookup()
+                                    }
+                                    .buttonStyle(VoteNowPrimaryCTAButtonStyle())
                                 }
-                                .buttonStyle(VoteNowPrimaryCTAButtonStyle())
                             }
-                        }
 
-                        if !sections.isEmpty {
-                            ForEach(sections) { section in
-                                RepresentativeSection(
-                                    title: section.title,
-                                    officials: section.officials
-                                )
+                            if !sections.isEmpty {
+                                ForEach(sections) { section in
+                                    RepresentativeSection(
+                                        title: section.title,
+                                        officials: section.officials
+                                    )
+                                }
+                            } else if !repsVM.isLoading && (repsVM.errorMessage?.isEmpty ?? true) {
+                                Text(l("app.reps.empty_prompt", "Enter your ZIP or full U.S. address to load your representatives."))
+                                    .font(.subheadline)
+                                    .foregroundColor(VoteNowColors.mutedText)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.top, 8)
                             }
-                        } else if !repsVM.isLoading && (repsVM.errorMessage?.isEmpty ?? true) {
-                            Text(l("app.reps.empty_prompt", "Enter your ZIP or full U.S. address to load your representatives."))
-                                .font(.subheadline)
-                                .foregroundColor(VoteNowColors.mutedText)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.top, 8)
                         }
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 16)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 16)
+                    .scrollDismissesKeyboard(.interactively)
                 }
-                .scrollDismissesKeyboard(.interactively)
             }
-        }
-        .safeAreaInset(edge: .bottom) {
-            HStack {
-                Spacer()
-                chatButton
+            .safeAreaInset(edge: .bottom) {
+                HStack(spacing: 10) {
+                    if hasAddressInputForIssueCall {
+                        issueCallButton
+                    }
+                    Spacer(minLength: 0)
+                    chatButton
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+                .padding(.bottom, 8)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 8)
-            .padding(.bottom, 8)
-        }
-        .onAppear {
-            seedLookupInputIfNeeded()
-            if !normalizedZip.isEmpty {
-                repsVM.fetchReps(for: normalizedZip)
+            .onAppear {
+                seedLookupInputIfNeeded()
+                if !normalizedZip.isEmpty {
+                    repsVM.fetchReps(for: normalizedZip)
+                }
             }
-        }
-        .onTapGesture {
-            locationFieldFocused = false
-        }
-        .onChange(of: repsVM.resolvedLocationSelection?.timestamp) { _, _ in
-            guard let selection = repsVM.resolvedLocationSelection else { return }
-            if let zip = selection.postalCode {
-                planVM.zip = zip
-                planVM.userAddress.zip = zip
+            .onTapGesture {
+                locationFieldFocused = false
             }
-            if let state = selection.administrativeArea {
-                planVM.userAddress.state = state
+            .onChange(of: repsVM.resolvedLocationSelection?.timestamp) { _, _ in
+                guard let selection = repsVM.resolvedLocationSelection else { return }
+                if let zip = selection.postalCode {
+                    planVM.zip = zip
+                    planVM.userAddress.zip = zip
+                }
+                if let state = selection.administrativeArea {
+                    planVM.userAddress.state = state
+                }
+            }
+            .navigationDestination(isPresented: $showIssueCallCenter) {
+                IssueCallCenterView(
+                    federalReps: repsVM.federalReps,
+                    userZip: normalizedZip,
+                    userAddressLine: issueCallAddressLine
+                )
             }
         }
         .sheet(isPresented: $showMyInfoSheet) {
@@ -176,6 +223,23 @@ struct MyRepsView: View {
                 .shadow(color: VoteNowColors.primaryText.opacity(0.18), radius: 4, x: 0, y: 2)
         }
         .buttonStyle(.plain)
+    }
+
+    private var issueCallButton: some View {
+        Button {
+            showIssueCallCenter = true
+        } label: {
+            Label(l("app.reps.action.call_on_issue", "Call my Rep"), systemImage: "phone.arrow.up.right.fill")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundColor(.white)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 12)
+                .background(VoteNowColors.primaryCTA)
+                .clipShape(Capsule())
+                .shadow(color: VoteNowColors.primaryText.opacity(0.18), radius: 4, x: 0, y: 2)
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("myreps.call_on_issue_button")
     }
 
     private var searchCard: some View {
