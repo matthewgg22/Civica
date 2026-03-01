@@ -107,6 +107,7 @@ struct GovHelpReportingDestinationPayload: Codable {
 
 struct GovHelpRequestPayload: Codable {
     let zip: String
+    let preferredLanguageCode: String
     let userMessage: String
     let messages: [GovHelpConversationTurn]
     let conversation: [GovHelpConversationTurn]
@@ -115,6 +116,7 @@ struct GovHelpRequestPayload: Codable {
 
     enum CodingKeys: String, CodingKey {
         case zip
+        case preferredLanguageCode = "preferred_language_code"
         case userMessage = "user_message"
         case messages
         case conversation

@@ -3,12 +3,27 @@ import SwiftUI
 struct WhyVoteView: View {
     @EnvironmentObject private var planVM: PlanViewModel
     @EnvironmentObject private var repsVM: MyRepsViewModel
+    @Environment(\.locale) private var locale
     @StateObject private var dataStore = WhyVoteDataStore()
 
     @State private var visibleFacts: [String] = []
     @State private var showPlanToVote = false
 
     private let zipStateResolver = USZipStateResolver()
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
+
+    private func lf(_ key: String, _ fallback: String, _ args: CVarArg...) -> String {
+        let format = l(key, fallback)
+        return String(format: format, locale: locale, arguments: args)
+    }
 
     private var activeFacts: [String] {
         Array(visibleFacts.prefix(3))
@@ -58,9 +73,9 @@ struct WhyVoteView: View {
 
     private var stateSectionHeader: String {
         if let info = stateInfo {
-            return "Voter Turnout in \(info.stateName)"
+            return lf("app.why_vote.state_header.with_state", "Voter Turnout in %@", info.stateName)
         }
-        return "Voter Turnout in Your Area"
+        return l("app.why_vote.state_header.your_area", "Voter Turnout in Your Area")
     }
 
     private var addressSummaryLine: String? {
@@ -122,13 +137,16 @@ struct WhyVoteView: View {
             .padding(.top, 16)
             .padding(.bottom, 12)
         }
-        .navigationTitle("Why Vote")
+        .navigationTitle(Text("app.page.why_vote", tableName: "AppShell"))
         .navigationBarTitleDisplayMode(.inline)
         .safeAreaInset(edge: .bottom) {
             bottomCTA
         }
         .onAppear {
             seedFactsIfNeeded()
+        }
+        .onChange(of: locale.identifier) { _ in
+            reseedFactsForActiveLocale()
         }
         .sheet(isPresented: $showPlanToVote) {
             MultiStepFormView()
@@ -138,12 +156,12 @@ struct WhyVoteView: View {
 
     private var quickFactsSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Facts on Voter Turnout in the U.S...")
+            Text(l("app.why_vote.facts.header", "Facts on Voter Turnout in the U.S..."))
                 .font(.title3.weight(.semibold))
 
             VStack(alignment: .leading, spacing: 8) {
                 if activeFacts.isEmpty {
-                    Text("Voting participation trends and close-race facts will appear here.")
+                    Text(l("app.why_vote.facts.empty", "Voting participation trends and close-race facts will appear here."))
                         .font(.subheadline)
                         .foregroundColor(VoteNowColors.mutedText)
                 } else {
@@ -187,7 +205,7 @@ struct WhyVoteView: View {
                     Divider()
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Turnout snapshot")
+                        Text(l("app.why_vote.turnout_snapshot", "Turnout snapshot"))
                             .font(.subheadline.weight(.semibold))
 
                         ForEach(turnoutRows(for: info), id: \.label) { row in
@@ -209,7 +227,7 @@ struct WhyVoteView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Closest election")
+                        Text(l("app.why_vote.closest_election", "Closest election"))
                             .font(.subheadline.weight(.semibold))
                         Text(info.notableCloseRace)
                             .font(.subheadline)
@@ -217,7 +235,7 @@ struct WhyVoteView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("State voting fact")
+                        Text(l("app.why_vote.state_fact", "State voting fact"))
                             .font(.subheadline.weight(.semibold))
                         Text(info.funFact)
                             .font(.subheadline)
@@ -226,7 +244,7 @@ struct WhyVoteView: View {
 
                     (
                         Text(takeawayLead(for: info) + " ")
-                        + Text("Your vote can shift turnout.")
+                        + Text(l("app.why_vote.takeaway.bold", "Your vote can shift turnout."))
                             .fontWeight(.bold)
                             .italic()
                     )
@@ -244,15 +262,21 @@ struct WhyVoteView: View {
             } else {
                 VStack(alignment: .leading, spacing: 8) {
                     if let zip = resolvedZipForState {
-                        Text("We found ZIP \(zip), but could not map state stats yet.")
+                        Text(
+                            lf(
+                                "app.why_vote.state_missing.with_zip",
+                                "We found ZIP %@, but could not map state stats yet.",
+                                zip
+                            )
+                        )
                             .font(.subheadline)
-                        Text("Try re-entering ZIP and state in My Representatives to refresh this card.")
+                        Text(l("app.why_vote.state_missing.retry", "Try re-entering ZIP and state in My Representatives to refresh this card."))
                             .font(.footnote)
                             .foregroundColor(VoteNowColors.mutedText)
                     } else {
-                        Text("Enter a ZIP in My Representatives to load your state profile.")
+                        Text(l("app.why_vote.state_missing.enter_zip", "Enter a ZIP in My Representatives to load your state profile."))
                             .font(.subheadline)
-                        Text("This section is state-specific and uses your current ZIP to choose the right state data.")
+                        Text(l("app.why_vote.state_missing.explainer", "This section is state-specific and uses your current ZIP to choose the right state data."))
                             .font(.footnote)
                             .foregroundColor(VoteNowColors.mutedText)
                     }
@@ -274,7 +298,7 @@ struct WhyVoteView: View {
             Button {
                 showPlanToVote = true
             } label: {
-                Text("Make My Plan to Vote")
+                Text(l("app.why_vote.action.make_plan", "Make My Plan to Vote"))
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 13)
@@ -299,15 +323,15 @@ struct WhyVoteView: View {
 
     private func turnoutRows(for info: StateVoteInfo) -> [(label: String, value: Double?)] {
         [
-            ("2022 Midterm", info.turnout2022Mid),
-            ("2020 Presidential", info.turnout2020Pres),
-            ("2018 Midterm", info.turnout2018Mid),
-            ("2016 Presidential", info.turnout2016Pres)
+            (l("app.why_vote.row.2022_midterm", "2022 Midterm"), info.turnout2022Mid),
+            (l("app.why_vote.row.2020_presidential", "2020 Presidential"), info.turnout2020Pres),
+            (l("app.why_vote.row.2018_midterm", "2018 Midterm"), info.turnout2018Mid),
+            (l("app.why_vote.row.2016_presidential", "2016 Presidential"), info.turnout2016Pres)
         ]
     }
 
     private func formattedPercent(_ value: Double?) -> String {
-        guard let value else { return "N/A" }
+        guard let value else { return l("app.why_vote.na", "N/A") }
         return "\(Self.percentFormatter.string(from: NSNumber(value: value)) ?? "\(value)")%"
     }
 
@@ -323,37 +347,79 @@ struct WhyVoteView: View {
 
         let delta = abs(pres - mid)
         if pres >= mid {
-            return "From 2020 to 2022, participation fell by about \(formattedPoints(delta)) points."
+            return lf(
+                "app.why_vote.delta.fell",
+                "From 2020 to 2022, participation fell by about %@ points.",
+                formattedPoints(delta)
+            )
         }
-        return "From 2020 to 2022, participation rose by about \(formattedPoints(delta)) points."
+        return lf(
+            "app.why_vote.delta.rose",
+            "From 2020 to 2022, participation rose by about %@ points.",
+            formattedPoints(delta)
+        )
     }
 
     private func takeawayLead(for info: StateVoteInfo) -> String {
         if let pres = info.turnout2020Pres, let mid = info.turnout2022Mid {
-            return "In \(info.stateName), about \(formattedPercent(pres)) voted in the last presidential election, but only \(formattedPercent(mid)) voted in the last midterm. That means many eligible voters sat out, even though close races can be decided by tiny margins."
+            return lf(
+                "app.why_vote.takeaway.full",
+                "In %@, about %@ voted in the last presidential election, but only %@ voted in the last midterm. That means many eligible voters sat out, even though close races can be decided by tiny margins.",
+                info.stateName,
+                formattedPercent(pres),
+                formattedPercent(mid)
+            )
         }
 
         if let pres = info.turnout2020Pres {
-            return "In \(info.stateName), turnout reached about \(formattedPercent(pres)) in the last presidential election. Midterm participation data in this summary is limited, but close-race history still shows that small vote shifts can change results."
+            return lf(
+                "app.why_vote.takeaway.pres_only",
+                "In %@, turnout reached about %@ in the last presidential election. Midterm participation data in this summary is limited, but close-race history still shows that small vote shifts can change results.",
+                info.stateName,
+                formattedPercent(pres)
+            )
         }
 
         if let mid = info.turnout2022Mid {
-            return "In \(info.stateName), turnout was about \(formattedPercent(mid)) in the last midterm election. Presidential participation data in this summary is limited, but close races can still be decided by tiny margins."
+            return lf(
+                "app.why_vote.takeaway.mid_only",
+                "In %@, turnout was about %@ in the last midterm election. Presidential participation data in this summary is limited, but close races can still be decided by tiny margins.",
+                info.stateName,
+                formattedPercent(mid)
+            )
         }
 
-        return "In \(info.stateName), some turnout fields are not available in this summary. Even with incomplete data, close-race history shows that small vote shifts can change results."
+        return lf(
+            "app.why_vote.takeaway.limited",
+            "In %@, some turnout fields are not available in this summary. Even with incomplete data, close-race history shows that small vote shifts can change results.",
+            info.stateName
+        )
     }
 
-    private func seedFactsIfNeeded() {
-        guard visibleFacts.isEmpty else { return }
+    private var localeAwareNationalFacts: [String] {
+        let usesSpanish = locale.identifier.lowercased().hasPrefix("es")
+        if usesSpanish {
+            return [
+                l("app.why_vote.fact.1", "La participación en elecciones intermedias suele ser más baja, alrededor del 50-53% a nivel nacional."),
+                l("app.why_vote.fact.2", "Las elecciones cerradas son comunes, así que pequeños cambios en participación pueden cambiar resultados estatales."),
+                l("app.why_vote.fact.3", "En elecciones presidenciales recientes, la participación en EE. UU. ha estado alrededor del 61-67%.")
+            ]
+        }
+        return dataStore.nationalFacts
+    }
 
-        let source = dataStore.nationalFacts
+    private func reseedFactsForActiveLocale() {
+        let source = localeAwareNationalFacts
         guard !source.isEmpty else {
             visibleFacts = []
             return
         }
-
         visibleFacts = source.shuffled()
+    }
+
+    private func seedFactsIfNeeded() {
+        guard visibleFacts.isEmpty else { return }
+        reseedFactsForActiveLocale()
     }
 
     private func normalizeStateCode(from rawValue: String?) -> String? {

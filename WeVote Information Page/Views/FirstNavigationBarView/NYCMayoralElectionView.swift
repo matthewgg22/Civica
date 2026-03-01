@@ -2,6 +2,7 @@ import SwiftUI
 
 struct NYCMayoralElectionView: View {
     @EnvironmentObject private var planVM: PlanViewModel
+    @Environment(\.locale) private var locale
 
     @State private var upcomingElection: Election?
     @State private var stateCode: String?
@@ -11,11 +12,25 @@ struct NYCMayoralElectionView: View {
 
     private let stateResolver = USZipStateResolver()
 
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
+
+    private func lf(_ key: String, _ fallback: String, _ args: CVarArg...) -> String {
+        let format = l(key, fallback)
+        return String(format: format, locale: locale, arguments: args)
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
                 VStack(alignment: .leading, spacing: 0) {
-                    PageHeader(title: "Election Guide")
+                    PageHeader(title: Text("app.page.election_guide", tableName: "AppShell"))
                     Text(electionSubtitleText)
                         .font(.subheadline.weight(.semibold))
                         .foregroundColor(VoteNowColors.mutedText)
@@ -79,49 +94,46 @@ struct NYCMayoralElectionView: View {
         .onChange(of: planVM.userAddress.state) { _ in refreshGuide() }
         .onChange(of: planVM.userAddress.zip) { _ in refreshGuide() }
         .onChange(of: planVM.selectedParty) { _ in refreshGuide() }
+        .onChange(of: locale.identifier) { _ in refreshGuide() }
     }
 
     private var electionSubtitleText: String {
-        guard let upcomingElection else { return "No upcoming election loaded" }
-        return displayElectionTitle(for: upcomingElection)
-    }
-
-    private var introLineText: String {
         guard let upcomingElection else {
-            return "Enter a valid state or ZIP to load your upcoming election guide."
+            return l("app.guide.subtitle.none", "No upcoming election loaded")
         }
-
-        let electionLabel = displayElectionTitle(for: upcomingElection).lowercased()
-        let voterLabel = stateName.isEmpty ? "voters" : "\(stateName) voters"
-
-        if Calendar.current.isDate(upcomingElection.startDate, inSameDayAs: upcomingElection.electionDay) {
-            return "On \(formatLongDate(upcomingElection.electionDay)), \(voterLabel) are eligible to vote in the \(electionLabel)."
-        }
-
-        return "Starting \(formatLongDate(upcomingElection.startDate)) through \(formatLongDate(upcomingElection.electionDay)), \(voterLabel) are eligible to vote in the \(electionLabel)."
+        return displayElectionTitle(for: upcomingElection)
     }
 
     private var introLineView: some View {
         Group {
             if let upcomingElection {
                 let electionLabel = displayElectionTitle(for: upcomingElection).lowercased()
-                let voterLabel = stateName.isEmpty ? "voters" : "\(stateName) voters"
+                let voterLabel = stateName.isEmpty ? l("app.guide.voters.label", "voters") : "\(stateName) \(l("app.guide.voters.label", "voters"))"
 
                 if Calendar.current.isDate(upcomingElection.startDate, inSameDayAs: upcomingElection.electionDay) {
-                    (
-                        Text("On \(formatLongDate(upcomingElection.electionDay)), \(voterLabel) are eligible to vote in the ")
-                        + Text(electionLabel).bold().italic()
-                        + Text(".")
+                    Text(
+                        lf(
+                            "app.guide.intro.same_day",
+                            "On %@, %@ are eligible to vote in the %@.",
+                            formatLongDate(upcomingElection.electionDay),
+                            voterLabel,
+                            electionLabel
+                        )
                     )
                 } else {
-                    (
-                        Text("Starting \(formatLongDate(upcomingElection.startDate)) through \(formatLongDate(upcomingElection.electionDay)), \(voterLabel) are eligible to vote in the ")
-                        + Text(electionLabel).bold().italic()
-                        + Text(".")
+                    Text(
+                        lf(
+                            "app.guide.intro.range",
+                            "Starting %@ through %@, %@ are eligible to vote in the %@.",
+                            formatLongDate(upcomingElection.startDate),
+                            formatLongDate(upcomingElection.electionDay),
+                            voterLabel,
+                            electionLabel
+                        )
                     )
                 }
             } else {
-                Text("Enter a valid state or ZIP to load your upcoming election guide.")
+                Text(l("app.guide.error.enter_valid", "Enter a valid state or ZIP to load your upcoming election guide."))
             }
         }
         .font(.body)
@@ -130,13 +142,13 @@ struct NYCMayoralElectionView: View {
 
     private func refreshGuide() {
         guard let resolvedStateCode = resolveStateCode() else {
-            clearGuide(message: "Enter a valid state or ZIP to see your next election guide.")
+            clearGuide(message: l("app.guide.error.enter_valid_next", "Enter a valid state or ZIP to see your next election guide."))
             return
         }
 
         let candidates = loadUpcomingElections(for: resolvedStateCode)
         guard let nextElection = selectUpcomingElection(from: candidates) else {
-            clearGuide(message: "No upcoming elections found for your state.")
+            clearGuide(message: l("app.guide.error.no_upcoming", "No upcoming elections found for your state."))
             return
         }
 
@@ -226,8 +238,8 @@ struct NYCMayoralElectionView: View {
             guard let electionDate = Self.isoDate(from: electionDateISO) else { return }
             let registrationDate = Self.isoDate(from: registrationISO) ?? electionDate
             let earlyVotingDate = Self.isoDate(from: earlyVotingISO)
-            let earlyVotingText = Self.displayText(from: earlyVotingISO, fallbackDate: earlyVotingDate)
-            let registrationText = Self.displayText(from: registrationISO, fallbackDate: registrationDate)
+            let earlyVotingText = displayText(from: earlyVotingISO, fallbackDate: earlyVotingDate)
+            let registrationText = displayText(from: registrationISO, fallbackDate: registrationDate)
 
             built.append(
                 Election(
@@ -335,23 +347,23 @@ struct NYCMayoralElectionView: View {
         case .primary:
             cards.append(
                 ElectionGuideInfoCard(
-                    title: "A Primary Election",
-                    body: "A primary election decides which candidates advance to the general election. Rules can vary by party and office."
+                    title: l("app.guide.card.primary.title", "A Primary Election"),
+                    body: l("app.guide.card.primary.body", "A primary election decides which candidates advance to the general election. Rules can vary by party and office.")
                 )
             )
 
             if stateCode == "CA" {
                 cards.append(
                     ElectionGuideInfoCard(
-                        title: "Jungle Primary",
-                        body: "California uses a top-two primary for many offices: all candidates appear on one ballot, and the top two finishers advance to the general election regardless of party."
+                        title: l("app.guide.card.jungle.title", "Jungle Primary"),
+                        body: l("app.guide.card.jungle.body", "California uses a top-two primary for many offices: all candidates appear on one ballot, and the top two finishers advance to the general election regardless of party.")
                     )
                 )
             } else if stateCode == "WA" {
                 cards.append(
                     ElectionGuideInfoCard(
-                        title: "Top-Two Primary",
-                        body: "Washington uses a top-two style primary for many races, where all voters can choose from all candidates and the top two advance."
+                        title: l("app.guide.card.top_two.title", "Top-Two Primary"),
+                        body: l("app.guide.card.top_two.body", "Washington uses a top-two style primary for many races, where all voters can choose from all candidates and the top two advance.")
                     )
                 )
             }
@@ -359,8 +371,8 @@ struct NYCMayoralElectionView: View {
             if planVM.selectedParty == .independent {
                 cards.append(
                     ElectionGuideInfoCard(
-                        title: "Party Affiliation",
-                        body: "Primary ballot eligibility can depend on your current party registration. Confirm your state rules before election day."
+                        title: l("app.guide.card.party_affiliation.title", "Party Affiliation"),
+                        body: l("app.guide.card.party_affiliation.body", "Primary ballot eligibility can depend on your current party registration. Confirm your state rules before election day.")
                     )
                 )
             }
@@ -368,24 +380,24 @@ struct NYCMayoralElectionView: View {
         case .runoff:
             cards.append(
                 ElectionGuideInfoCard(
-                    title: "Primary Runoff",
-                    body: "A runoff election happens when no candidate reaches the required threshold in the first primary round."
+                    title: l("app.guide.card.runoff.title", "Primary Runoff"),
+                    body: l("app.guide.card.runoff.body", "A runoff election happens when no candidate reaches the required threshold in the first primary round.")
                 )
             )
 
         case .general:
             cards.append(
                 ElectionGuideInfoCard(
-                    title: "General Election",
-                    body: "The general election determines who takes office from the candidates who qualified in earlier rounds."
+                    title: l("app.guide.card.general.title", "General Election"),
+                    body: l("app.guide.card.general.body", "The general election determines who takes office from the candidates who qualified in earlier rounds.")
                 )
             )
 
             if stateCode == "AK" || stateCode == "ME" {
                 cards.append(
                     ElectionGuideInfoCard(
-                        title: "Ranked Choice",
-                        body: "Ranked-choice voting can apply in covered contests. You can rank candidates in order of preference where allowed."
+                        title: l("app.guide.card.ranked_choice.title", "Ranked Choice"),
+                        body: l("app.guide.card.ranked_choice.body", "Ranked-choice voting can apply in covered contests. You can rank candidates in order of preference where allowed.")
                     )
                 )
             }
@@ -393,16 +405,16 @@ struct NYCMayoralElectionView: View {
         case .special:
             cards.append(
                 ElectionGuideInfoCard(
-                    title: "Special Election",
-                    body: "Special elections fill vacancies or decide urgent ballot questions outside the normal election calendar."
+                    title: l("app.guide.card.special.title", "Special Election"),
+                    body: l("app.guide.card.special.body", "Special elections fill vacancies or decide urgent ballot questions outside the normal election calendar.")
                 )
             )
 
         case .unknown:
             cards.append(
                 ElectionGuideInfoCard(
-                    title: "Election Overview",
-                    body: "This guide is personalized to your next upcoming election based on your current ZIP and state."
+                    title: l("app.guide.card.overview.title", "Election Overview"),
+                    body: l("app.guide.card.overview.body", "This guide is personalized to your next upcoming election based on your current ZIP and state.")
                 )
             )
         }
@@ -419,8 +431,8 @@ struct NYCMayoralElectionView: View {
         if joined.contains("presidential") {
             return [
                 ElectionGuideInfoCard(
-                    title: "Presidential Elections",
-                    body: "What is on the ballot: president/vice president, all U.S. House seats, some U.S. Senate seats, and state and local offices or ballot measures where scheduled."
+                    title: l("app.guide.card.presidential.title", "Presidential Elections"),
+                    body: l("app.guide.card.presidential.body", "What is on the ballot: president/vice president, all U.S. House seats, some U.S. Senate seats, and state and local offices or ballot measures where scheduled.")
                 )
             ]
         }
@@ -428,8 +440,8 @@ struct NYCMayoralElectionView: View {
         if joined.contains("midterm") {
             return [
                 ElectionGuideInfoCard(
-                    title: "Midterm Elections",
-                    body: "What is on the ballot: all U.S. House seats, some U.S. Senate seats, many governor and state legislature races, and statewide/local ballot measures."
+                    title: l("app.guide.card.midterm.title", "Midterm Elections"),
+                    body: l("app.guide.card.midterm.body", "What is on the ballot: all U.S. House seats, some U.S. Senate seats, many governor and state legislature races, and statewide/local ballot measures.")
                 )
             ]
         }
@@ -437,8 +449,8 @@ struct NYCMayoralElectionView: View {
         if joined.contains("mayor") || joined.contains("mayoral") {
             return [
                 ElectionGuideInfoCard(
-                    title: "Mayoral Elections",
-                    body: "What is on the ballot: mayor, and often city council or other city offices, plus local ballot questions depending on your city."
+                    title: l("app.guide.card.mayoral.title", "Mayoral Elections"),
+                    body: l("app.guide.card.mayoral.body", "What is on the ballot: mayor, and often city council or other city offices, plus local ballot questions depending on your city.")
                 )
             ]
         }
@@ -475,17 +487,13 @@ struct NYCMayoralElectionView: View {
     }
 
     private func formatLongDate(_ date: Date) -> String {
-        Self.longDateFormatter.string(from: date)
-    }
-
-    private static let longDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.locale = locale
         formatter.timeZone = TimeZone.current
-        formatter.dateFormat = "MMMM d"
-        return formatter
-    }()
+        formatter.setLocalizedDateFormatFromTemplate("MMMM d")
+        return formatter.string(from: date)
+    }
 
     private static let isoFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -530,18 +538,18 @@ struct NYCMayoralElectionView: View {
         return isoDate(from: shifted) == nil ? nil : shifted
     }
 
-    private static func displayText(from rawValue: String?, fallbackDate: Date?) -> String {
+    private func displayText(from rawValue: String?, fallbackDate: Date?) -> String {
         let trimmed = rawValue?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        if let parsedDate = isoDate(from: trimmed) {
-            return longDateFormatter.string(from: parsedDate)
+        if let parsedDate = Self.isoDate(from: trimmed) {
+            return formatLongDate(parsedDate)
         }
         if !trimmed.isEmpty {
             return trimmed
         }
         if let fallbackDate {
-            return longDateFormatter.string(from: fallbackDate)
+            return formatLongDate(fallbackDate)
         }
-        return "Not listed in dataset"
+        return l("app.guide.not_listed_dataset", "Not listed in dataset")
     }
 }
 

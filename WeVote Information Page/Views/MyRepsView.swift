@@ -5,6 +5,7 @@ import UIKit
 struct MyRepsView: View {
     @EnvironmentObject private var planVM: PlanViewModel
     @EnvironmentObject private var repsVM: MyRepsViewModel
+    @Environment(\.locale) private var locale
 
     @FocusState private var locationFieldFocused: Bool
     @State private var locationInput: String = ""
@@ -21,6 +22,15 @@ struct MyRepsView: View {
         center: CLLocationCoordinate2D(latitude: 39.8283, longitude: -98.5795),
         span: MKCoordinateSpan(latitudeDelta: 34, longitudeDelta: 56)
     )
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
 
     private struct RepsSection: Identifiable {
         let id: String
@@ -55,7 +65,7 @@ struct MyRepsView: View {
             VoteNowColors.appBackground.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                PageHeader(title: "Representatives")
+                PageHeader(title: Text("app.page.my_reps", tableName: "AppShell"))
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
                     .padding(.bottom, 8)
@@ -72,7 +82,7 @@ struct MyRepsView: View {
                         )
 
                         if repsVM.isLoading {
-                            ProgressView("Looking up your reps…")
+                            ProgressView(l("app.reps.loading", "Looking up your reps..."))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.top, 8)
                         }
@@ -83,7 +93,7 @@ struct MyRepsView: View {
                                     .font(.subheadline)
                                     .foregroundColor(VoteNowColors.urgentCTA)
 
-                                Button("Retry") {
+                                Button(l("app.reps.action.retry", "Retry")) {
                                     submitLookup()
                                 }
                                 .buttonStyle(VoteNowPrimaryCTAButtonStyle())
@@ -98,7 +108,7 @@ struct MyRepsView: View {
                                 )
                             }
                         } else if !repsVM.isLoading && (repsVM.errorMessage?.isEmpty ?? true) {
-                            Text("Enter your ZIP or full U.S. address to load your representatives.")
+                            Text(l("app.reps.empty_prompt", "Enter your ZIP or full U.S. address to load your representatives."))
                                 .font(.subheadline)
                                 .foregroundColor(VoteNowColors.mutedText)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -156,7 +166,7 @@ struct MyRepsView: View {
         Button {
             showGovHelpChat = true
         } label: {
-            Label("Chat", systemImage: "message.fill")
+            Label(l("app.reps.action.chat", "Chat"), systemImage: "message.fill")
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 14)
@@ -170,7 +180,11 @@ struct MyRepsView: View {
 
     private var searchCard: some View {
         HStack(spacing: 10) {
-            TextField("Enter ZIP or full U.S. address", text: $locationInput)
+            TextField(
+                "",
+                text: $locationInput,
+                prompt: Text("app.reps.search.placeholder", tableName: "AppShell")
+            )
                 .font(.system(size: 18))
                 .textInputAutocapitalization(.words)
                 .autocorrectionDisabled()
@@ -193,7 +207,7 @@ struct MyRepsView: View {
                 .toolbar {
                     ToolbarItemGroup(placement: .keyboard) {
                         Spacer()
-                        Button("Done") {
+                        Button(l("app.reps.action.done", "Done")) {
                             locationFieldFocused = false
                         }
                     }
@@ -221,7 +235,7 @@ struct MyRepsView: View {
                 locationFieldFocused = false
                 showMyInfoSheet = true
             } label: {
-                Text("My Info")
+                Text(l("app.reps.action.my_info", "My Info"))
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(.white)
                     .padding(.horizontal, 16)
@@ -240,7 +254,11 @@ struct MyRepsView: View {
         radiusMeters: CLLocationDistance?
     ) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(center == nil ? "Find your district by entering your address" : "Your address matches you to your district")
+            Text(
+                center == nil
+                ? l("app.reps.coverage.find_district", "Find your district by entering your address")
+                : l("app.reps.coverage.matched", "Your address matches you to your district")
+            )
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(VoteNowColors.primaryText)
 
@@ -254,11 +272,11 @@ struct MyRepsView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
 
             if let updatedAt = repsVM.zipMapLastUpdated {
-                Text("Updated \(Self.mapUpdatedDateFormatter.string(from: updatedAt))")
+                Text("\(l("app.reps.coverage.updated_prefix", "Updated")) \(Self.mapUpdatedDateFormatter.string(from: updatedAt))")
                     .font(.system(size: 14, weight: .regular))
                     .foregroundColor(VoteNowColors.mutedText)
             } else {
-                Text("Map preview available before lookup")
+                Text(l("app.reps.coverage.preview_before_lookup", "Map preview available before lookup"))
                     .font(.system(size: 14, weight: .regular))
                     .foregroundColor(VoteNowColors.mutedText)
             }

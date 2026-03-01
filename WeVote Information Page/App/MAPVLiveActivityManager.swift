@@ -21,7 +21,7 @@ final class MAPVLiveActivityManager: ObservableObject {
             pollingPlaceAddress: plan.pollingPlaceAddress
         )
 
-        let presentation = MAPVStatusResolver.resolve(plan: plan, now: now)
+        let presentation = MAPVStatusResolver.resolve(plan: plan, now: now, locale: preferredLocale())
         let contentState = makeContentState(plan: plan, presentation: presentation, now: now)
         let content = ActivityContent(
             state: contentState,
@@ -72,7 +72,7 @@ final class MAPVLiveActivityManager: ObservableObject {
             default:
                 break
             }
-            let presentation = MAPVStatusResolver.resolve(plan: finalPlan, now: now)
+            let presentation = MAPVStatusResolver.resolve(plan: finalPlan, now: now, locale: preferredLocale())
             let finalState = makeContentState(plan: finalPlan, presentation: presentation, now: now)
             let content = ActivityContent(
                 state: finalState,
@@ -127,5 +127,25 @@ final class MAPVLiveActivityManager: ObservableObject {
         guard !trimmed.isEmpty else { return "Polling Place" }
         if trimmed.count <= 30 { return trimmed }
         return String(trimmed.prefix(30)) + "…"
+    }
+
+    private func preferredLocale() -> Locale {
+        let code = UserDefaults.standard.string(forKey: "my_info.preferred_language_code") ?? "en"
+        let normalized: String
+        switch code.lowercased() {
+        case "tl", "tagalog", "fil-ph":
+            normalized = "fil"
+        case "zh", "zh-cn", "zh-hans", "zh-hans-cn":
+            normalized = "zh-Hans"
+        case "vi-vn":
+            normalized = "vi"
+        case "es-es", "es-mx":
+            normalized = "es"
+        case "en-us", "en-gb":
+            normalized = "en"
+        default:
+            normalized = code
+        }
+        return Locale(identifier: normalized)
     }
 }

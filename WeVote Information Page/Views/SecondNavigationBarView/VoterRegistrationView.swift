@@ -36,6 +36,7 @@ private struct VoterRegistrationCard: Identifiable {
 // MARK: - VoterRegistrationView
 struct VoterRegistrationView: View {
     @Environment(\.openURL) private var openURL
+    @Environment(\.locale) private var locale
     @EnvironmentObject private var planVM: PlanViewModel
 
     private let contextResolver = ElectionGuideContextResolver()
@@ -43,6 +44,20 @@ struct VoterRegistrationView: View {
     private let stickyHeaderHeight: CGFloat = 126
     private let voteGovURL = URL(string: "https://www.vote.gov/")!
     private let howToVoteDeepLink = URL(string: "votenow://mapv")!
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
+
+    private func lf(_ key: String, _ fallback: String, _ args: CVarArg...) -> String {
+        let format = l(key, fallback)
+        return String(format: format, locale: locale, arguments: args)
+    }
 
     private var guideContext: ElectionGuideContext? {
         contextResolver.resolve(for: planVM)
@@ -73,7 +88,7 @@ struct VoterRegistrationView: View {
     }
 
     private var registrationDeadlineLabel: String {
-        guideContent?.deadlineLabel ?? "Registration Deadline"
+        guideContent?.deadlineLabel ?? l("app.registration.deadline.default", "Registration Deadline")
     }
 
     private var methodSpecificDeadlineRows: [(label: String, value: String)] {
@@ -97,7 +112,7 @@ struct VoterRegistrationView: View {
             return zip
         }
 
-        return "Set your address in My Reps"
+        return l("app.registration.location.set_address", "Set your address in My Reps")
     }
 
     private var cards: [VoterRegistrationCard] {
@@ -106,13 +121,13 @@ struct VoterRegistrationView: View {
                 id: "step-1",
                 kind: .whyRegister,
                 stepLabel: "",
-                title: "What is Voter Registration?",
-                summary: "Voter registration is the process that puts you on your state’s voter rolls so you are eligible to vote.",
+                title: l("app.registration.card.what_is.title", "What is Voter Registration?"),
+                summary: l("app.registration.card.what_is.summary", "Voter registration is the process that puts you on your state’s voter rolls so you are eligible to vote."),
                 bullets: [
-                    "Most states require registration before you can vote.",
-                    "Checking early helps prevent Election Day surprises."
+                    l("app.registration.card.what_is.bullet_1", "Most states require registration before you can vote."),
+                    l("app.registration.card.what_is.bullet_2", "Checking early helps prevent Election Day surprises.")
                 ],
-                primaryActionTitle: "Start registration",
+                primaryActionTitle: l("app.registration.action.start_registration", "Start registration"),
                 primaryAction: .openURL(registrationPortalURL),
                 secondaryActionTitle: nil,
                 secondaryAction: nil
@@ -120,45 +135,45 @@ struct VoterRegistrationView: View {
             VoterRegistrationCard(
                 id: "step-2",
                 kind: .deadline,
-                stepLabel: "STEP 2",
-                title: "Register before the deadline",
-                summary: "Deadlines vary by state and method. Register early so you have time to fix any issues before polls open.",
+                stepLabel: l("app.registration.step.2", "STEP 2"),
+                title: l("app.registration.card.deadline.title", "Register before the deadline"),
+                summary: l("app.registration.card.deadline.summary", "Deadlines vary by state and method. Register early so you have time to fix any issues before polls open."),
                 bullets: [
-                    "Your state can set different cutoffs for online, mail, and in-person methods."
+                    l("app.registration.card.deadline.bullet_1", "Your state can set different cutoffs for online, mail, and in-person methods.")
                 ],
-                primaryActionTitle: "Start registration",
+                primaryActionTitle: l("app.registration.action.start_registration", "Start registration"),
                 primaryAction: .openURL(registrationPortalURL),
-                secondaryActionTitle: "See my deadline details",
+                secondaryActionTitle: l("app.registration.action.deadline_details", "See my deadline details"),
                 secondaryAction: .openURL(registrationPortalURL)
             ),
             VoterRegistrationCard(
                 id: "step-3",
                 kind: .check,
-                stepLabel: "STEP 3",
-                title: "How to check registration",
-                summary: "Use your state’s official voter lookup to verify your registration details are active and accurate.",
+                stepLabel: l("app.registration.step.3", "STEP 3"),
+                title: l("app.registration.card.check.title", "How to check registration"),
+                summary: l("app.registration.card.check.summary", "Use your state’s official voter lookup to verify your registration details are active and accurate."),
                 bullets: [
-                    "Use your state’s official voter lookup tool.",
-                    "Confirm your status and polling address.",
-                    "Update your record if anything looks wrong."
+                    l("app.registration.card.check.bullet_1", "Use your state’s official voter lookup tool."),
+                    l("app.registration.card.check.bullet_2", "Confirm your status and polling address."),
+                    l("app.registration.card.check.bullet_3", "Update your record if anything looks wrong.")
                 ],
-                primaryActionTitle: "Check my registration",
+                primaryActionTitle: l("app.registration.action.check_registration", "Check my registration"),
                 primaryAction: .openURL(registrationPortalURL),
-                secondaryActionTitle: registrationPortalURL != voteGovURL ? "Find lookup on vote.gov" : nil,
+                secondaryActionTitle: registrationPortalURL != voteGovURL ? l("app.registration.action.find_on_vote_gov", "Find lookup on vote.gov") : nil,
                 secondaryAction: registrationPortalURL != voteGovURL ? .openURL(voteGovURL) : nil
             ),
             VoterRegistrationCard(
                 id: "step-4",
                 kind: .thenVote,
-                stepLabel: "STEP 4",
-                title: "Then vote",
-                summary: "Once your registration is set, move straight into your voting plan.",
+                stepLabel: l("app.registration.step.4", "STEP 4"),
+                title: l("app.registration.card.then_vote.title", "Then vote"),
+                summary: l("app.registration.card.then_vote.summary", "Once your registration is set, move straight into your voting plan."),
                 bullets: [
-                    "Make a plan for when and where you will vote.",
-                    "Review what is on your ballot ahead of time.",
-                    "Confirm polling location and hours before you go."
+                    l("app.registration.card.then_vote.bullet_1", "Make a plan for when and where you will vote."),
+                    l("app.registration.card.then_vote.bullet_2", "Review what is on your ballot ahead of time."),
+                    l("app.registration.card.then_vote.bullet_3", "Confirm polling location and hours before you go.")
                 ],
-                primaryActionTitle: "Go to How to Vote",
+                primaryActionTitle: l("app.registration.action.go_how_to_vote", "Go to How to Vote"),
                 primaryAction: .goToHowToVoteTab,
                 secondaryActionTitle: nil,
                 secondaryAction: nil
@@ -185,7 +200,7 @@ struct VoterRegistrationView: View {
                     .scrollTargetBehavior(.viewAligned)
 
                     VStack(alignment: .leading, spacing: 0) {
-                        PageHeader(title: "Voter Registration")
+                        PageHeader(title: Text("app.page.voter_registration", tableName: "AppShell"))
                         Text(locationSubtitle)
                             .font(.subheadline.weight(.semibold))
                             .foregroundColor(VoteNowColors.mutedText)
@@ -305,7 +320,7 @@ struct VoterRegistrationView: View {
                 registrationStateFlag
 
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Upcoming Election Day")
+                    Text(l("app.registration.upcoming_election_day", "Upcoming Election Day"))
                         .font(.subheadline.weight(.semibold))
                         .foregroundColor(VoteNowColors.mutedText)
                     HStack(alignment: .center, spacing: 8) {
@@ -394,17 +409,17 @@ struct VoterRegistrationView: View {
     private var primaryBallotGuidancePanel: some View {
         VStack(alignment: .leading, spacing: 6) {
             (
-                Text("In a primary election, ")
-                + Text("Democrat").foregroundColor(VoteNowColors.richBlue).fontWeight(.semibold)
-                + Text(" and ")
-                + Text("Republican").foregroundColor(VoteNowColors.richRed).fontWeight(.semibold)
-                + Text(" registrations can determine which party ballot you receive.")
+                Text(l("app.registration.primary_guidance.prefix", "In a primary election, "))
+                + Text(l("app.registration.party.democrat", "Democrat")).foregroundColor(VoteNowColors.richBlue).fontWeight(.semibold)
+                + Text(l("app.registration.primary_guidance.and", " and "))
+                + Text(l("app.registration.party.republican", "Republican")).foregroundColor(VoteNowColors.richRed).fontWeight(.semibold)
+                + Text(l("app.registration.primary_guidance.suffix", " registrations can determine which party ballot you receive."))
             )
             .font(.callout)
             .foregroundColor(VoteNowColors.primaryText)
 
             (
-                Text("Your current setting: ")
+                Text(l("app.registration.current_setting.prefix", "Your current setting: "))
                 + Text(currentPartyLabel).foregroundColor(currentPartyColor).fontWeight(.semibold)
             )
             .font(.callout)
@@ -419,11 +434,11 @@ struct VoterRegistrationView: View {
     private var currentPartyLabel: String {
         switch planVM.selectedParty {
         case .democrat:
-            return "Democrat"
+            return l("app.registration.party.democrat", "Democrat")
         case .republican:
-            return "Republican"
+            return l("app.registration.party.republican", "Republican")
         case .independent:
-            return "Independent"
+            return l("app.registration.party.independent", "Independent")
         }
     }
 
@@ -448,21 +463,29 @@ struct VoterRegistrationView: View {
     }
 
     private func formattedElectionDay(_ date: Date?) -> String {
-        guard let date else { return "Date TBD" }
+        guard let date else { return l("app.registration.date_tbd", "Date TBD") }
         return Self.displayDateFormatter.string(from: date)
     }
 
     private func countdownText(to date: Date?) -> String {
-        guard let date else { return "Countdown TBD" }
+        guard let date else { return l("app.registration.countdown.tbd", "Countdown TBD") }
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let electionDay = calendar.startOfDay(for: date)
         let delta = calendar.dateComponents([.day], from: today, to: electionDay).day ?? 0
 
-        if delta == 0 { return "Election day is today" }
-        if delta > 0 { return "\(delta) day\(delta == 1 ? "" : "s") left" }
+        if delta == 0 { return l("app.registration.countdown.today", "Election day is today") }
+        if delta > 0 {
+            if delta == 1 {
+                return l("app.registration.countdown.left.one", "1 day left")
+            }
+            return lf("app.registration.countdown.left.many", "%d days left", delta)
+        }
         let ago = abs(delta)
-        return "\(ago) day\(ago == 1 ? "" : "s") ago"
+        if ago == 1 {
+            return l("app.registration.countdown.ago.one", "1 day ago")
+        }
+        return lf("app.registration.countdown.ago.many", "%d days ago", ago)
     }
 
     private func parseMethodSpecificDeadlines(from notes: String?) -> [(label: String, value: String)] {
@@ -489,13 +512,13 @@ struct VoterRegistrationView: View {
             let label: String
             switch rawKind {
             case "online":
-                label = "Online deadline"
+                label = l("app.registration.deadline.online", "Online deadline")
             case "mail", "by mail":
-                label = "Mail deadline"
+                label = l("app.registration.deadline.mail", "Mail deadline")
             case "in-person", "in person":
-                label = "In-person deadline"
+                label = l("app.registration.deadline.in_person", "In-person deadline")
             default:
-                label = "Deadline"
+                label = l("app.registration.deadline.generic", "Deadline")
             }
 
             let value = notes[valueRange].trimmingCharacters(in: .whitespacesAndNewlines)

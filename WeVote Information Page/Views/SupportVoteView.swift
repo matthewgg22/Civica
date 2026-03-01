@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SupportVoteView: View {
+    @Environment(\.locale) private var locale
     private let pageBackground = Color(red: 172.0 / 255.0, green: 213.0 / 255.0, blue: 227.0 / 255.0) // #ACD5E3
     private let warmSupportYellow = Color(hex: "#F3D487")
 
@@ -17,7 +18,7 @@ struct SupportVoteView: View {
             case .fifteen: return "$15"
             case .twentyFive: return "$25"
             case .fifty: return "$50"
-            case .custom: return "Custom"
+            case .custom: return "app.support_vote.amount.custom"
             }
         }
 
@@ -62,39 +63,37 @@ struct SupportVoteView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                pageBackground
-                    .ignoresSafeArea()
+        ZStack {
+            pageBackground
+                .ignoresSafeArea()
 
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 18) {
-                        PageHeader(title: "Support VoteNow")
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    PageHeader(title: Text(l("app.support_vote.page_title", "Support VoteNow")))
 
-                        missionCard
-                        donationCard
-                        disruptCard
-                        supportCard
+                    missionCard
+                    donationCard
+                    disruptCard
+                    supportCard
 
-                        Spacer(minLength: 24)
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 10)
-                    .padding(.bottom, 24)
+                    Spacer(minLength: 24)
                 }
+                .padding(.horizontal, 16)
+                .padding(.top, 10)
+                .padding(.bottom, 24)
             }
-            .scrollDismissesKeyboard(.interactively)
-            .navigationBarTitleDisplayMode(.inline)
         }
+        .scrollDismissesKeyboard(.interactively)
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     private var missionCard: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Empower Americans Vote!")
+            Text(l("app.support_vote.mission.title", "Empower Americans Vote!"))
                 .font(.title3.weight(.bold))
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text("VoteNow's mission is to empower every American to vote by being the least friction companion to support participation. We believe that reducing logistical friction—deadlines, locations, ID rules, and confusing steps—is essential to authentic voting help.")
+            Text(l("app.support_vote.mission.body", "VoteNow's mission is to empower every American to vote by being the least friction companion to support participation. We believe that reducing logistical friction-deadlines, locations, ID rules, and confusing steps-is essential to authentic voting help."))
                 .font(.body)
                 .foregroundStyle(VoteNowColors.mutedText)
                 .fixedSize(horizontal: false, vertical: true)
@@ -112,17 +111,17 @@ struct SupportVoteView: View {
 
     private var supportCard: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("What your donation supports")
+            Text(l("app.support_vote.supports.title", "What your donation supports"))
                 .font(.headline.weight(.bold))
                 .foregroundStyle(VoteNowColors.warningAmber)
 
-            Text("As a college-founded civic startup, we rely on community support to keep voter tools accessible.")
+            Text(l("app.support_vote.supports.body", "As a college-founded civic startup, we rely on community support to keep voter tools accessible."))
                 .font(.subheadline)
                 .foregroundStyle(VoteNowColors.mutedText)
 
-            supportBullet("No ads or paywalls")
-            supportBullet("Nonpartisan voting logistics")
-            supportBullet("Fast, accessible UX improvements")
+            supportBullet(l("app.support_vote.supports.bullet_1", "No ads or paywalls"))
+            supportBullet(l("app.support_vote.supports.bullet_2", "Nonpartisan voting logistics"))
+            supportBullet(l("app.support_vote.supports.bullet_3", "Fast, accessible UX improvements"))
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -147,31 +146,31 @@ struct SupportVoteView: View {
 
     private var donationCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Choose amount")
+            Text(l("app.support_vote.amount.title", "Choose amount"))
                 .font(.headline)
 
             amountPickerGrid
 
             if selectedAmount == .custom {
                 VStack(alignment: .leading, spacing: 6) {
-                    TextField("Enter amount (USD)", text: $customAmountText)
+                    TextField(l("app.support_vote.amount.custom_placeholder", "Enter amount (USD)"), text: $customAmountText)
                         .keyboardType(.decimalPad)
                         .textFieldStyle(.roundedBorder)
                         .focused($isCustomAmountFocused)
-                        .accessibilityLabel("Custom donation amount in dollars")
+                        .accessibilityLabel(l("app.support_vote.amount.custom_accessibility", "Custom donation amount in dollars"))
 
-                    Text("Minimum $1, maximum $500")
+                    Text(l("app.support_vote.amount.range_hint", "Minimum $1, maximum $500"))
                         .font(.caption)
                         .foregroundStyle(VoteNowColors.mutedText)
                 }
             }
 
             if let amount = resolvedAmount {
-                Text("Donation amount: \(formattedCurrency(amount))")
+                Text("\(l("app.support_vote.amount.selected_prefix", "Donation amount:")) \(formattedCurrency(amount))")
                     .font(.subheadline.weight(.semibold))
                     .foregroundColor(isAmountValid ? .primary : .red)
             } else {
-                Text("Select an amount to continue.")
+                Text(l("app.support_vote.amount.select_to_continue", "Select an amount to continue."))
                     .font(.subheadline)
                     .foregroundStyle(VoteNowColors.mutedText)
             }
@@ -185,10 +184,10 @@ struct SupportVoteView: View {
             .frame(height: 48)
             .opacity(donationButtonEnabled ? 1 : 0.45)
             .allowsHitTesting(donationButtonEnabled)
-            .accessibilityHint("Double tap to donate with Apple Pay")
+            .accessibilityHint(l("app.support_vote.amount.apple_pay_hint", "Double tap to donate with Apple Pay"))
 
             if !applePayManager.canMakePayments() {
-                Text("Apple Pay is not available on this device.")
+                Text(l("app.support_vote.amount.apple_pay_unavailable", "Apple Pay is not available on this device."))
                     .font(.footnote)
                     .foregroundStyle(VoteNowColors.mutedText)
             }
@@ -228,20 +227,20 @@ struct SupportVoteView: View {
 
     private var disruptCard: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Disrupt the Status Quo by empowering voters, not campaigns.")
+            Text(l("app.support_vote.disrupt.title", "Disrupt the Status Quo by empowering voters, not campaigns."))
                 .font(.headline.weight(.bold))
 
-            Text("Most voter outreach in America isn’t funded by voters. It’s funded by PACs and Super PACs. That means:")
+            Text(l("app.support_vote.disrupt.body", "Most voter outreach in America is not funded by voters. It is funded by PACs and Super PACs. That means:"))
                 .font(.subheadline)
                 .foregroundStyle(VoteNowColors.mutedText)
                 .fixedSize(horizontal: false, vertical: true)
 
-            supportBullet("Messaging is designed to move votes for a side")
-            supportBullet("Outreach spikes where races are close (and money is flowing)")
-            supportBullet("Voters become “targets,” not long-term users")
-            supportBullet("The system optimizes for winning — not serving")
+            supportBullet(l("app.support_vote.disrupt.bullet_1", "Messaging is designed to move votes for a side"))
+            supportBullet(l("app.support_vote.disrupt.bullet_2", "Outreach spikes where races are close (and money is flowing)"))
+            supportBullet(l("app.support_vote.disrupt.bullet_3", "Voters become targets, not long-term users"))
+            supportBullet(l("app.support_vote.disrupt.bullet_4", "The system optimizes for winning - not serving"))
 
-            Text("VoteNow is built around servicing YOU, the voter.")
+            Text(l("app.support_vote.disrupt.footer", "VoteNow is built around servicing YOU, the voter."))
                 .font(.subheadline.weight(.semibold))
                 .padding(.top, 4)
         }
@@ -266,7 +265,9 @@ struct SupportVoteView: View {
                         isCustomAmountFocused = false
                     }
                 } label: {
-                    Text(preset.title)
+                    Text(preset.title.hasPrefix("app.")
+                         ? l(preset.title, "Custom")
+                         : preset.title)
                         .font(.footnote.weight(.semibold))
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
@@ -283,7 +284,11 @@ struct SupportVoteView: View {
                         )
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Donation amount \(preset.title)")
+                .accessibilityLabel(
+                    preset.title.hasPrefix("app.")
+                    ? lf("app.support_vote.amount.accessibility.option", "Donation amount %@", l(preset.title, "Custom"))
+                    : lf("app.support_vote.amount.accessibility.option", "Donation amount %@", preset.title)
+                )
             }
         }
     }
@@ -295,6 +300,20 @@ struct SupportVoteView: View {
         formatter.currencyCode = "USD"
         formatter.maximumFractionDigits = 2
         return formatter.string(from: number) ?? "$\(number)"
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
+
+    private func lf(_ key: String, _ fallback: String, _ args: CVarArg...) -> String {
+        let format = l(key, fallback)
+        return String(format: format, locale: locale, arguments: args)
     }
 }
 

@@ -13,6 +13,7 @@ import MapKit
 
 struct FullScreenMapView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.locale) private var locale
     @State private var localRegion: MKCoordinateRegion
     let places: [PollingPlace]
     @Binding var selectedPlace: PollingPlace?
@@ -47,11 +48,11 @@ struct FullScreenMapView: View {
                 }
             }
             .ignoresSafeArea()
-            .navigationTitle("Polling Places")
+            .navigationTitle(Text(l("app.polling_locations.full_map.title", "Polling Places")))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button(l("app.polling_locations.full_map.done", "Done")) {
                         onDoneRegion(localRegion)
                         dismiss()
                     }
@@ -66,6 +67,15 @@ struct FullScreenMapView: View {
 
     private func deferToNextRunLoop(_ action: @escaping () -> Void) {
         DispatchQueue.main.async(execute: action)
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
     }
 }
 

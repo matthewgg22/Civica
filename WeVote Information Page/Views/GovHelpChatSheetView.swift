@@ -53,6 +53,7 @@ struct GovHelpChatSheetView: View {
     let currentZip: String
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.locale) private var locale
     @State private var inputText = ""
     @State private var isSending = false
     @State private var messages: [GovHelpChatMessage]
@@ -67,22 +68,7 @@ struct GovHelpChatSheetView: View {
         self.reps = reps
         self.currentZip = currentZip
         self.service = service
-
-        let normalizedZip = currentZip.trimmingCharacters(in: .whitespacesAndNewlines)
-        let openingText: String
-        if normalizedZip.isEmpty {
-            openingText = "I can help route your government issue to the right office. Casework is usually handled only for constituents, so please confirm the ZIP used to load your representatives."
-        } else {
-            openingText = "I can help route your government issue to the right office. Casework is usually handled only for constituents, so please confirm you want to use ZIP \(normalizedZip)."
-        }
-
-        _messages = State(initialValue: [
-            GovHelpChatMessage.assistant(
-                openingText,
-                suggestedRepIDs: [],
-                reportingDestinationIDs: []
-            )
-        ])
+        _messages = State(initialValue: [])
     }
 
     var body: some View {
@@ -92,15 +78,18 @@ struct GovHelpChatSheetView: View {
                 composer
             }
             .background(VoteNowColors.background)
-            .navigationTitle("Government Help")
+            .navigationTitle(Text("app.gov_help.title", tableName: "AppShell"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") {
+                    Button(l("app.gov_help.action.done", "Done")) {
                         dismiss()
                     }
                 }
             }
+        }
+        .onAppear {
+            seedOpeningMessageIfNeeded()
         }
     }
 
@@ -116,7 +105,7 @@ struct GovHelpChatSheetView: View {
                     if isSending {
                         HStack(spacing: 8) {
                             ProgressView()
-                            Text("Thinking…")
+                            Text(l("app.gov_help.thinking", "Thinking..."))
                                 .font(.footnote)
                                 .foregroundColor(VoteNowColors.mutedText)
                         }
@@ -185,7 +174,7 @@ struct GovHelpChatSheetView: View {
 
     private var composer: some View {
         HStack(spacing: 8) {
-            TextField("Describe what you need help with", text: $inputText, axis: .vertical)
+            TextField(l("app.gov_help.input.placeholder", "Describe what you need help with"), text: $inputText, axis: .vertical)
                 .lineLimit(1...4)
                 .textFieldStyle(.roundedBorder)
                 .disabled(isSending)
@@ -238,7 +227,7 @@ struct GovHelpChatSheetView: View {
         }
         guard !repPayloads.isEmpty else {
             isSending = false
-            messages.append(.error("Load your representatives first, then try again."))
+            messages.append(.error(l("app.gov_help.error.load_reps_first", "Load your representatives first, then try again.")))
             return
         }
 
@@ -253,6 +242,7 @@ struct GovHelpChatSheetView: View {
 
         let payload = GovHelpRequestPayload(
             zip: normalizedZip(currentZip),
+            preferredLanguageCode: locale.language.languageCode?.identifier ?? "en",
             userMessage: prompt,
             messages: conversation,
             conversation: conversation,
@@ -268,14 +258,14 @@ struct GovHelpChatSheetView: View {
                 let assistantText = response.assistantMessage.trimmingCharacters(in: .whitespacesAndNewlines)
                 messages.append(
                     .assistant(
-                        assistantText.isEmpty ? "I couldn't generate guidance for that request. Please try rephrasing." : assistantText,
+                        assistantText.isEmpty ? l("app.gov_help.error.empty_guidance", "I couldn't generate guidance for that request. Please try rephrasing.") : assistantText,
                         suggestedRepIDs: response.recommendedRepIDs,
                         reportingDestinationIDs: response.reportingDestinationIDs
                     )
                 )
             } catch {
                 let fallback = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-                messages.append(.error("I couldn't reach government help right now: \(fallback)"))
+                messages.append(.error(lf("app.gov_help.error.unreachable", "I couldn't reach government help right now: %@", fallback)))
             }
         }
     }
@@ -299,14 +289,56 @@ struct GovHelpChatSheetView: View {
         }
         return raw.trimmingCharacters(in: .whitespacesAndNewlines)
     }
+
+    private func seedOpeningMessageIfNeeded() {
+        guard messages.isEmpty else { return }
+
+        let normalizedZip = currentZip.trimmingCharacters(in: .whitespacesAndNewlines)
+        let openingText: String
+        if normalizedZip.isEmpty {
+            openingText = l(
+                "app.gov_help.opening.no_zip",
+                "I can help route your government issue to the right office. Casework is usually handled only for constituents, so please confirm the ZIP used to load your representatives."
+            )
+        } else {
+            openingText = lf(
+                "app.gov_help.opening.with_zip",
+                "I can help route your government issue to the right office. Casework is usually handled only for constituents, so please confirm you want to use ZIP %@.",
+                normalizedZip
+            )
+        }
+
+        messages = [
+            GovHelpChatMessage.assistant(
+                openingText,
+                suggestedRepIDs: [],
+                reportingDestinationIDs: []
+            )
+        ]
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
+
+    private func lf(_ key: String, _ fallback: String, _ args: CVarArg...) -> String {
+        let format = l(key, fallback)
+        return String(format: format, locale: locale, arguments: args)
+    }
 }
 
 private struct GovHelpSuggestedContactsView: View {
     let contexts: [RepCardContext]
+    @Environment(\.locale) private var locale
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Suggested Contacts")
+            Text(l("app.gov_help.suggested_contacts", "Suggested Contacts"))
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(VoteNowColors.primaryText)
 
@@ -325,20 +357,30 @@ private struct GovHelpSuggestedContactsView: View {
                 .stroke(VoteNowColors.borderWarm, lineWidth: 1)
         )
     }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
 }
 
 private struct GovHelpDestinationLinksView: View {
     let destinations: [GovHelpReportingDestination]
+    @Environment(\.locale) private var locale
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Official Reporting")
+            Text(l("app.gov_help.official_reporting", "Official Reporting"))
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(VoteNowColors.primaryText)
 
             ForEach(destinations) { destination in
                 Link(destination: destination.url) {
-                    Label(destination.label, systemImage: "link")
+                    Label(localizedDestinationLabel(destination), systemImage: "link")
                         .font(.footnote.weight(.semibold))
                         .foregroundColor(VoteNowColors.primaryCTA)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -352,6 +394,32 @@ private struct GovHelpDestinationLinksView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+        )
+    }
+
+    private func localizedDestinationLabel(_ destination: GovHelpReportingDestination) -> String {
+        switch destination.id {
+        case "us-house-clerk":
+            return l("app.gov_help.destination.us_house_clerk", destination.label)
+        case "us-senate":
+            return l("app.gov_help.destination.us_senate", destination.label)
+        case "usa-gov-complaint":
+            return l("app.gov_help.destination.usa_gov_complaint", destination.label)
+        case "eac":
+            return l("app.gov_help.destination.eac", destination.label)
+        case "federal-trade-commission":
+            return l("app.gov_help.destination.ftc", destination.label)
+        default:
+            return destination.label
+        }
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
         )
     }
 }

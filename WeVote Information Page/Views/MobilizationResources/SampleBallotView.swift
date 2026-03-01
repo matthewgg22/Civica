@@ -113,6 +113,7 @@ let sampleRaces: [BallotRace] = [
 // MARK: - Views
 
 struct SampleBallotView: View {
+    @Environment(\.locale) private var locale
     @EnvironmentObject var planVM: PlanViewModel
     @State private var raceRankings: [String: [String: Int]] = [:]
 
@@ -220,19 +221,19 @@ struct SampleBallotView: View {
     var body: some View {
         ScrollView(.vertical) {
             VStack(alignment: .leading, spacing: 20) {
-                Text("Sample Ballot")
+                Text(l("app.sample_ballot.title", "Sample Ballot"))
                     .font(.largeTitle).bold()
-                Text("Preview candidates by race. Party filter from My Information is applied.")
+                Text(l("app.sample_ballot.subtitle", "Preview candidates by race. Party filter from My Information is applied."))
                     .font(.subheadline)
                     .foregroundColor(VoteNowColors.mutedText)
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Ranked-Choice Prep")
+                    Text(l("app.sample_ballot.ranked_choice.title", "Ranked-Choice Prep"))
                         .font(.subheadline.weight(.semibold))
-                    Text("This sample is structured for ranked-choice voting, so you can set your candidate order now before entering the voting booth.")
+                    Text(l("app.sample_ballot.ranked_choice.body_1", "This sample is structured for ranked-choice voting, so you can set your candidate order now before entering the voting booth."))
                         .font(.footnote)
                         .foregroundColor(VoteNowColors.mutedText)
-                    Text("Only candidates matching your selected party registration are shown.")
+                    Text(l("app.sample_ballot.ranked_choice.body_2", "Only candidates matching your selected party registration are shown."))
                         .font(.footnote)
                         .foregroundColor(VoteNowColors.mutedText)
                 }
@@ -242,7 +243,7 @@ struct SampleBallotView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
                 if filteredRaces.isEmpty {
-                    Text("No candidates match your selected party registration in this sample.")
+                    Text(l("app.sample_ballot.empty.no_match", "No candidates match your selected party registration in this sample."))
                         .font(.footnote)
                         .foregroundColor(VoteNowColors.mutedText)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -259,14 +260,14 @@ struct SampleBallotView: View {
                             Text(race.office)
                                 .font(.headline)
                             Spacer()
-                            Text("\(compact.count) candidates")
+                            Text(lf("app.sample_ballot.count.candidates", "%d candidates", compact.count))
                                 .font(.caption)
                                 .foregroundColor(VoteNowColors.mutedText)
                         }
 
                         if !ranked.isEmpty {
                             VStack(alignment: .leading, spacing: 6) {
-                                Text("Your Ballot Order")
+                                Text(l("app.sample_ballot.order.title", "Your Ballot Order"))
                                     .font(.caption.weight(.semibold))
                                     .foregroundColor(VoteNowColors.mutedText)
                                 ForEach(ranked, id: \.candidate.id) { entry in
@@ -306,9 +307,24 @@ struct SampleBallotView: View {
             raceRankings = [:]
         }
     }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
+
+    private func lf(_ key: String, _ fallback: String, _ args: CVarArg...) -> String {
+        let format = l(key, fallback)
+        return String(format: format, locale: locale, arguments: args)
+    }
 }
 
 struct CandidateRow: View {
+    @Environment(\.locale) private var locale
     let summary: SampleBallotView.CandidateSummary
     let maxRank: Int
     @Binding var rankSelection: Int
@@ -352,12 +368,14 @@ struct CandidateRow: View {
                 }
 
                 Menu {
-                    Button("Unranked") { rankSelection = 0 }
+                    Button(l("app.sample_ballot.rank.unranked", "Unranked")) { rankSelection = 0 }
                     ForEach(1...maxRank, id: \.self) { rank in
-                        Button("Rank \(rank)") { rankSelection = rank }
+                        Button(lf("app.sample_ballot.rank.option", "Rank %d", rank)) { rankSelection = rank }
                     }
                 } label: {
-                    Text(rankSelection == 0 ? "Set Rank" : "Rank \(rankSelection)")
+                    Text(rankSelection == 0
+                         ? l("app.sample_ballot.rank.set", "Set Rank")
+                         : lf("app.sample_ballot.rank.option", "Rank %d", rankSelection))
                         .font(.caption.weight(.semibold))
                         .foregroundColor(rankSelection == 0 ? .secondary : .blue)
                         .padding(.horizontal, 10)
@@ -375,6 +393,20 @@ struct CandidateRow: View {
         .padding(.horizontal, 12)
         .background(VoteNowColors.infoSurfaceBlue)
         .cornerRadius(8)
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
+
+    private func lf(_ key: String, _ fallback: String, _ args: CVarArg...) -> String {
+        let format = l(key, fallback)
+        return String(format: format, locale: locale, arguments: args)
     }
 }
 

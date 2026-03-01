@@ -14,6 +14,7 @@ import MapKit
 import CoreLocation
 
 struct PollingLocationsView: View {
+    @Environment(\.locale) private var locale
     @Binding var selectedPlace: PollingPlace?
     var isActive: Bool = true
     
@@ -101,7 +102,7 @@ struct PollingLocationsView: View {
         Button {
             showFullMap = true
         } label: {
-            Label("Show Full Map", systemImage: "map")
+            Label(l("app.polling_locations.action.show_full_map", "Show Full Map"), systemImage: "map")
                 .font(.subheadline.weight(.semibold))
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 10)
@@ -170,7 +171,7 @@ struct PollingLocationsView: View {
 
                 HStack(spacing: 10) {
                     Label(
-                        place.distance == "--" ? "Distance updating…" : place.distance,
+                        place.distance == "--" ? l("app.polling_locations.distance.updating", "Distance updating...") : place.distance,
                         systemImage: "location"
                     )
                     .font(.caption)
@@ -222,6 +223,15 @@ struct PollingLocationsView: View {
                 selectedPlace = place
             }
         }
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
     }
     
     

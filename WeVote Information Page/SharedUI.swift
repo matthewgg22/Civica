@@ -8,6 +8,54 @@
 import SwiftUI
 import UIKit
 
+func localizedCatalogString(
+    _ key: String,
+    tableName: String,
+    locale: Locale,
+    fallback: String
+) -> String {
+    let localeIdentifier = locale.identifier.replacingOccurrences(of: "_", with: "-")
+    var candidateCodes: [String] = []
+
+    if !localeIdentifier.isEmpty {
+        candidateCodes.append(localeIdentifier)
+        if let languageSubtag = localeIdentifier.split(separator: "-").first {
+            candidateCodes.append(String(languageSubtag))
+        }
+    }
+
+    if let languageCode = locale.languageCode {
+        candidateCodes.append(languageCode)
+    }
+    if let languageCode = locale.language.languageCode?.identifier {
+        candidateCodes.append(languageCode)
+    }
+
+    candidateCodes.append("en")
+
+    var seen = Set<String>()
+    let uniqueCandidates = candidateCodes.filter { seen.insert($0).inserted }
+
+    for code in uniqueCandidates {
+        guard let path = Bundle.main.path(forResource: code, ofType: "lproj"),
+              let bundle = Bundle(path: path) else {
+            continue
+        }
+
+        let localized = bundle.localizedString(forKey: key, value: nil, table: tableName)
+        if localized != key {
+            return localized
+        }
+    }
+
+    let mainBundleValue = Bundle.main.localizedString(forKey: key, value: nil, table: tableName)
+    if mainBundleValue != key {
+        return mainBundleValue
+    }
+
+    return fallback
+}
+
 extension Notification.Name {
     static let toggleWhyVoteOverlay = Notification.Name("toggleWhyVoteOverlay")
 }
@@ -53,9 +101,19 @@ private extension View {
 }
 
 struct PageHeader: View {
-    let title: String
+    let title: Text
     var iconSize: CGFloat = 56
     @State private var iconFrameInSpreadSpace: CGRect = .zero
+
+    init(title: Text, iconSize: CGFloat = 56) {
+        self.title = title
+        self.iconSize = iconSize
+    }
+
+    init(title: String, iconSize: CGFloat = 56) {
+        self.title = Text(verbatim: title)
+        self.iconSize = iconSize
+    }
 
     var body: some View {
         HStack(alignment: .top, spacing: 14) {
@@ -82,7 +140,7 @@ struct PageHeader: View {
             .buttonStyle(.plain)
             .accessibilityLabel("Toggle Why Vote overlay")
 
-            Text(title)
+            title
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .lineLimit(1)

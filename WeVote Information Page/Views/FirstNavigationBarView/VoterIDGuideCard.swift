@@ -3,6 +3,7 @@ import SwiftUI
 struct VoterIDGuideCard: View {
     let stateCode: String?
     let stateName: String?
+    @Environment(\.locale) private var locale
 
     private struct VoterIDMetric {
         let category: String
@@ -23,9 +24,9 @@ struct VoterIDGuideCard: View {
     private var photoIDRequirementText: String? {
         guard let metric else { return nil }
         if metric.category == "Photo ID required" {
-            return "Photo ID IS required to vote."
+            return localized("app.voter_id.photo_required", fallback: "Photo ID IS required to vote.")
         }
-        return "Photo ID IS NOT required to vote."
+        return localized("app.voter_id.photo_not_required", fallback: "Photo ID IS NOT required to vote.")
     }
 
     private var resolvedStateName: String {
@@ -35,13 +36,30 @@ struct VoterIDGuideCard: View {
         if let code = normalizedStateCode {
             return Self.stateNameByCode[code] ?? code
         }
-        return "your state"
+        return localized("app.voter_id.your_state", fallback: "your state")
+    }
+
+    private var headerText: String {
+        localized("app.voter_id.requirements.header", fallback: "Voter ID Requirements by State")
+    }
+
+    private var missingStatePromptText: String {
+        localized("app.voter_id.set_zip_prompt", fallback: "Set your ZIP/state to load your voter ID category.")
+    }
+
+    private func localized(_ key: String, fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
     }
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             VStack(alignment: .leading, spacing: 6) {
-                Text("Voter ID Requirements by State")
+                Text(headerText)
                     .font(.headline)
                     .foregroundColor(VoteNowColors.primaryText)
 
@@ -57,7 +75,7 @@ struct VoterIDGuideCard: View {
                             .foregroundColor(VoteNowColors.mutedText)
                     }
                 } else {
-                    Text("Set your ZIP/state to load your voter ID category.")
+                    Text(missingStatePromptText)
                         .font(.subheadline.weight(.semibold))
                         .foregroundColor(VoteNowColors.mutedText)
                         .padding(.top, 2)

@@ -29,12 +29,12 @@ extension Date {
 }
 
 // MARK: – Bottom-Tab Enum
-enum Tab: String, CaseIterable {
-    case myReps             = "My Reps"
-    case electionTimeline   = "Election Timeline"
-    case registration       = "Registration"
-    case electionGuide      = "Election Guide"
-    case howToVote          = "How to Vote"
+enum Tab: CaseIterable {
+    case myReps
+    case electionTimeline
+    case registration
+    case electionGuide
+    case howToVote
 
     var iconName: String {
         switch self {
@@ -107,30 +107,44 @@ struct ContentView: View {
             // 1. My Reps
             MyRepsView()
                 .tabItem {
-                    Label(Tab.myReps.rawValue, systemImage: Tab.myReps.iconName)
+                    Label {
+                        Text("app.tab.my_reps", tableName: "AppShell")
+                    } icon: {
+                        Image(systemName: Tab.myReps.iconName)
+                    }
                 }
                 .tag(Tab.myReps)
 
             // 2. Election Timeline
             ElectionTimelineView()
                 .tabItem {
-                    Label(Tab.electionTimeline.rawValue,
-                          systemImage: Tab.electionTimeline.iconName)
+                    Label {
+                        Text("app.tab.election_timeline", tableName: "AppShell")
+                    } icon: {
+                        Image(systemName: Tab.electionTimeline.iconName)
+                    }
                 }
                 .tag(Tab.electionTimeline)
 
             // 3. Registration
             VoterRegistrationView()
                 .tabItem {
-                    Label(Tab.registration.rawValue, systemImage: Tab.registration.iconName)
+                    Label {
+                        Text("app.tab.registration", tableName: "AppShell")
+                    } icon: {
+                        Image(systemName: Tab.registration.iconName)
+                    }
                 }
                 .tag(Tab.registration)
 
             // 4. Election Guide
             NYCMayoralElectionView()
                 .tabItem {
-                    Label(Tab.electionGuide.rawValue,
-                          systemImage: Tab.electionGuide.iconName)
+                    Label {
+                        Text("app.tab.election_guide", tableName: "AppShell")
+                    } icon: {
+                        Image(systemName: Tab.electionGuide.iconName)
+                    }
                 }
                 .tag(Tab.electionGuide)
 
@@ -140,7 +154,7 @@ struct ContentView: View {
                 .tabItem {
                     Image(uiImage: VoteNowLogoIcon.tabBarBarsUIImage)
                         .renderingMode(.original)
-                    Text(Tab.howToVote.rawValue)
+                    Text("app.tab.how_to_vote", tableName: "AppShell")
                 }
                 .tag(Tab.howToVote)
         }

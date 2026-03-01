@@ -133,10 +133,25 @@ struct RepRow: View {
     let rep: Official
 
     @Environment(\.openURL) private var openURL
+    @Environment(\.locale) private var locale
 
     @State private var isContactExpanded = false
     @State private var showPhoneFallbackAlert = false
     @State private var phoneFallbackMessage = ""
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
+
+    private func lf(_ key: String, _ fallback: String, _ args: CVarArg...) -> String {
+        let format = l(key, fallback)
+        return String(format: format, locale: locale, arguments: args)
+    }
 
     private var contactURL: URL? {
         normalizedURL(rep.contactFormURL)
@@ -178,7 +193,7 @@ struct RepRow: View {
             return nil
         }
         if party.caseInsensitiveCompare("Democratic") == .orderedSame {
-            return "Democrat"
+            return l("app.reps.party.democrat", "Democrat")
         }
         return party
     }
@@ -189,7 +204,7 @@ struct RepRow: View {
             actions.append(
                 RepContactAction(
                     id: "email",
-                    title: "Email",
+                    title: l("app.reps.action.email", "Email"),
                     systemImage: "envelope.badge.fill",
                     destination: contactURL,
                     phoneLabel: nil
@@ -200,7 +215,7 @@ struct RepRow: View {
             actions.append(
                 RepContactAction(
                     id: "phone",
-                    title: "Phone",
+                    title: l("app.reps.action.phone", "Phone"),
                     systemImage: "phone.fill",
                     destination: phoneURL,
                     phoneLabel: rep.officialPhone
@@ -211,7 +226,7 @@ struct RepRow: View {
             actions.append(
                 RepContactAction(
                     id: "website",
-                    title: "Website",
+                    title: l("app.reps.action.website", "Website"),
                     systemImage: "link",
                     destination: websiteURL,
                     phoneLabel: nil
@@ -294,8 +309,8 @@ struct RepRow: View {
             }
         }
         .padding(.vertical, 8)
-        .alert("Phone Not Available", isPresented: $showPhoneFallbackAlert) {
-            Button("OK", role: .cancel) {}
+        .alert(l("app.reps.alert.phone_unavailable.title", "Phone Not Available"), isPresented: $showPhoneFallbackAlert) {
+            Button(l("app.reps.alert.phone_unavailable.ok", "OK"), role: .cancel) {}
         } message: {
             Text(phoneFallbackMessage)
         }
@@ -320,9 +335,13 @@ struct RepRow: View {
 
         if let number, !number.isEmpty {
             UIPasteboard.general.string = number
-            message = "This device cannot place calls. Copied number: \(number)"
+            message = lf(
+                "app.reps.alert.phone_unavailable.copied",
+                "This device cannot place calls. Copied number: %@",
+                number
+            )
         } else {
-            message = "This device cannot place calls."
+            message = l("app.reps.alert.phone_unavailable.generic", "This device cannot place calls.")
         }
 
         phoneFallbackMessage = message
@@ -333,6 +352,16 @@ struct RepRow: View {
 struct RepresentativeSection: View {
     let title: String
     let officials: [Official]
+    @Environment(\.locale) private var locale
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -434,9 +463,13 @@ struct RepresentativeSection: View {
     private var displayTitle: String {
         switch normalizedTitle {
         case "federal executive":
-            return "\(title) (White House)"
+            return "\(l("app.reps.section.federal_executive", "Federal Executive")) (\(l("app.reps.section.white_house", "White House")))"
         case "federal legislative":
-            return "\(title) (Congress)"
+            return "\(l("app.reps.section.federal_legislative", "Federal Legislative")) (\(l("app.reps.section.congress", "Congress")))"
+        case "state":
+            return l("app.reps.section.state", "State")
+        case "local":
+            return l("app.reps.section.local", "Local")
         default:
             return title
         }

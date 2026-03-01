@@ -11,6 +11,7 @@ import SwiftUI
 
 struct HowToVoteView: View {
     @EnvironmentObject var planVM: PlanViewModel
+    @Environment(\.locale) private var locale
 
     var body: some View {
         NavigationView {
@@ -31,7 +32,7 @@ struct HowToVoteView: View {
                             destination: MultiStepFormView()
                                 .environmentObject(planVM)
                         ) {
-                            Label("Make a Plan to Vote", systemImage: "calendar.badge.plus")
+                            Label(l("app.how_to_vote.action.make_plan", "Make a Plan to Vote"), systemImage: "calendar.badge.plus")
                                 .font(.headline)
                                 .frame(maxWidth: .infinity, alignment: .center)
                         }
@@ -43,22 +44,31 @@ struct HowToVoteView: View {
 
                 // 3) How-to-Vote menu
                 Section {
-                    NavigationLink("Race Candidates",
+                    NavigationLink(l("app.how_to_vote.section.race_candidates", "Race Candidates"),
                                    destination: RaceCandidatesView())
-                    NavigationLink("Polling Locations",
+                    NavigationLink(l("app.how_to_vote.section.polling_locations", "Polling Locations"),
                                    destination: PollingLocationsView(selectedPlace: .constant(nil)))
-                    NavigationLink("Sample Ballot",
+                    NavigationLink(l("app.how_to_vote.section.sample_ballot", "Sample Ballot"),
                                    destination: SampleBallotView())
-                    NavigationLink("Request Mail-in Ballot",
-                                   destination: AbsenteeView())
+                    NavigationLink(l("app.how_to_vote.section.mail_in_ballot", "Request Mail-in Ballot"),
+                                   destination: MailInBallotView())
                     // — Transportation Help removed —
-                    NavigationLink("Election Hotlines",
+                    NavigationLink(l("app.how_to_vote.section.hotlines", "Election Hotlines"),
                                    destination: ElectionHotlinesView())
                 }
             }
             .listStyle(InsetGroupedListStyle())
-            .navigationTitle("How to Vote")
+            .navigationTitle(l("app.page.how_to_vote", "How to Vote"))
         }
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
     }
 }
 

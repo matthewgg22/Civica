@@ -217,7 +217,7 @@ struct MAPVStatusPresentation: Hashable {
 enum MAPVStatusResolver {
     static let closingSoonMinutes = 60
 
-    static func resolve(plan: MAPVPlan, now: Date = Date()) -> MAPVStatusPresentation {
+    static func resolve(plan: MAPVPlan, now: Date = Date(), locale: Locale = .current) -> MAPVStatusPresentation {
         let status = deriveStatus(plan: plan, now: now)
         let colorToken = token(for: status)
         let progressNow = progress(at: now, open: plan.pollingOpen, close: plan.pollingClose)
@@ -226,37 +226,70 @@ enum MAPVStatusResolver {
         let primaryText: String = {
             switch status {
             case .scheduled:
-                return "Opens in \(durationText(plan.pollingOpen.timeIntervalSince(now)))"
+                return lf(
+                    "app.mapv.status.primary.opens_in",
+                    locale: locale,
+                    fallback: "Opens in %@",
+                    durationText(plan.pollingOpen.timeIntervalSince(now))
+                )
             case .open, .enRoute, .closingSoon:
-                return "Polls close in \(durationText(plan.pollingClose.timeIntervalSince(now)))"
+                return lf(
+                    "app.mapv.status.primary.closes_in",
+                    locale: locale,
+                    fallback: "Polls close in %@",
+                    durationText(plan.pollingClose.timeIntervalSince(now))
+                )
             case .closed:
-                return "Polls closed at \(timeText(plan.pollingClose))"
+                return lf(
+                    "app.mapv.status.primary.closed_at",
+                    locale: locale,
+                    fallback: "Polls closed at %@",
+                    timeText(plan.pollingClose)
+                )
             case .completed:
-                return "Marked as voted"
+                return l("app.mapv.status.primary.marked_voted", locale: locale, fallback: "Marked as voted")
             case .missed:
                 if now < plan.pollingClose {
-                    return "Planned arrival passed"
+                    return l("app.mapv.status.primary.arrival_passed", locale: locale, fallback: "Planned arrival passed")
                 }
-                return "Polls closed - plan missed"
+                return l("app.mapv.status.primary.closed_plan_missed", locale: locale, fallback: "Polls closed - plan missed")
             }
         }()
 
         let secondaryText: String = {
             switch (plan.distanceMiles, plan.etaMinutes) {
             case let (miles?, eta?):
-                return String(format: "%.1f mi • ETA %d min", miles, eta)
+                return lf(
+                    "app.mapv.status.secondary.distance_eta",
+                    locale: locale,
+                    fallback: "%.1f mi • ETA %d min",
+                    miles,
+                    eta
+                )
             case let (miles?, nil):
-                return String(format: "%.1f mi • Tap for ETA", miles)
+                return lf(
+                    "app.mapv.status.secondary.distance_tap_eta",
+                    locale: locale,
+                    fallback: "%.1f mi • Tap for ETA",
+                    miles
+                )
             case let (nil, eta?):
-                return "ETA \(eta) min"
+                return lf(
+                    "app.mapv.status.secondary.eta_only",
+                    locale: locale,
+                    fallback: "ETA %d min",
+                    eta
+                )
             default:
-                return plan.mapsURL == nil ? "View plan details" : ""
+                return plan.mapsURL == nil
+                    ? l("app.mapv.status.secondary.view_details", locale: locale, fallback: "View plan details")
+                    : ""
             }
         }()
 
         return MAPVStatusPresentation(
             status: status,
-            statusPillText: pillText(for: status),
+            statusPillText: pillText(for: status, locale: locale),
             statusColorToken: colorToken,
             primaryCountdownText: primaryText,
             secondaryMetaText: secondaryText,
@@ -326,15 +359,22 @@ enum MAPVStatusResolver {
         return formatter.string(from: date)
     }
 
-    private static func pillText(for status: MAPVDisplayStatus) -> String {
+    private static func pillText(for status: MAPVDisplayStatus, locale: Locale) -> String {
         switch status {
-        case .scheduled: return "Plan Set"
-        case .open: return "Polls Open"
-        case .enRoute: return "Go Time"
-        case .closingSoon: return "Closing Soon"
-        case .closed: return "Polls Closed"
-        case .completed: return "Voted"
-        case .missed: return "Plan Missed"
+        case .scheduled:
+            return l("app.mapv.status.pill.plan_set", locale: locale, fallback: "Plan Set")
+        case .open:
+            return l("app.mapv.status.pill.polls_open", locale: locale, fallback: "Polls Open")
+        case .enRoute:
+            return l("app.mapv.status.pill.go_time", locale: locale, fallback: "Go Time")
+        case .closingSoon:
+            return l("app.mapv.status.pill.closing_soon", locale: locale, fallback: "Closing Soon")
+        case .closed:
+            return l("app.mapv.status.pill.polls_closed", locale: locale, fallback: "Polls Closed")
+        case .completed:
+            return l("app.mapv.status.pill.voted", locale: locale, fallback: "Voted")
+        case .missed:
+            return l("app.mapv.status.pill.plan_missed", locale: locale, fallback: "Plan Missed")
         }
     }
 
@@ -386,6 +426,20 @@ enum MAPVStatusResolver {
         case .closingSoon:
             return 1.00
         }
+    }
+
+    private static func l(_ key: String, locale: Locale, fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
+
+    private static func lf(_ key: String, locale: Locale, fallback: String, _ args: CVarArg...) -> String {
+        let format = l(key, locale: locale, fallback: fallback)
+        return String(format: format, locale: locale, arguments: args)
     }
 }
 

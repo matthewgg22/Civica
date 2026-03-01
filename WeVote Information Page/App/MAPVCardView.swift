@@ -6,6 +6,7 @@ struct MAPVCardView: View {
     @EnvironmentObject private var mapvPlanStore: MAPVPlanStore
     @Environment(\.openURL) private var openURL
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.locale) private var locale
 
     let waterfallController: EmojiWaterfallController
     var previewPlan: MAPVPlan? = nil
@@ -44,7 +45,7 @@ struct MAPVCardView: View {
     }
 
     private func card(plan: MAPVPlan) -> some View {
-        let presentation = MAPVStatusResolver.resolve(plan: plan, now: now)
+        let presentation = MAPVStatusResolver.resolve(plan: plan, now: now, locale: locale)
 
         return VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
@@ -143,7 +144,7 @@ struct MAPVCardView: View {
             }
 
             VStack(alignment: .leading, spacing: 4) {
-                Text("My Plan to Vote:")
+                Text(l("app.mapv.card.plan_title_colon", "My Plan to Vote:"))
                     .font(.subheadline.weight(.semibold))
                 Text(planDateTime(plan.plannedArrival))
                 Text(plan.pollingPlaceName)
@@ -153,14 +154,14 @@ struct MAPVCardView: View {
             }
 
             HStack(spacing: 10) {
-                Button("Change Plan to Vote") {
+                Button(l("app.mapv.card.action.change_plan", "Change Plan to Vote")) {
                     onChangePlanTapped?()
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(VoteNowColors.primaryCTA)
 
                 if plan.mapsURL != nil {
-                    Button("Start Directions") {
+                    Button(l("app.mapv.card.action.start_directions", "Start Directions")) {
                         mapvPlanStore.markEnRoute(true)
                         if let mapsURL = plan.mapsURL {
                             openURL(mapsURL)
@@ -170,8 +171,8 @@ struct MAPVCardView: View {
                 }
 
                 HoldToConfirmButton(
-                    title: "Voted?",
-                    confirmedTitle: "Reset",
+                    title: l("app.mapv.card.action.voted", "Voted?"),
+                    confirmedTitle: l("app.mapv.card.action.reset", "Reset"),
                     isConfirmed: plan.isCompleted,
                     holdDuration: 5.0,
                     onConfirm: {
@@ -192,19 +193,19 @@ struct MAPVCardView: View {
                 get: { mapvPlanStore.liveActivityEnabled },
                 set: { mapvPlanStore.setLiveActivityEnabled($0) }
             )) {
-                Text("Enable Live Activity")
+                Text(l("app.mapv.card.live_activity.toggle", "Enable Live Activity"))
                     .font(.subheadline.weight(.semibold))
             }
             .toggleStyle(.switch)
             .disabled(!liveActivitiesAvailable)
 
             if mapvPlanStore.liveActivityEnabled {
-                Text("Live activity updates around open/close windows and plan changes.")
+                Text(l("app.mapv.card.live_activity.enabled_detail", "Live activity updates around open/close windows and plan changes."))
                     .font(.caption)
                     .foregroundStyle(VoteNowColors.mutedText)
                     .transition(.opacity)
             } else if !liveActivitiesAvailable {
-                Text("Live Activities are disabled on this device. Enable them in Settings.")
+                Text(l("app.mapv.card.live_activity.disabled_detail", "Live Activities are disabled on this device. Enable them in Settings."))
                     .font(.caption)
                     .foregroundStyle(VoteNowColors.mutedText)
             }
@@ -225,9 +226,9 @@ struct MAPVCardView: View {
 
     private var emptyCard: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("My Plan to Vote")
+            Text(l("app.mapv.card.empty.title", "My Plan to Vote"))
                 .font(.headline)
-            Text("No plan saved yet. Build your voting plan to enable a live activity.")
+            Text(l("app.mapv.card.empty.body", "No plan saved yet. Build your voting plan to enable a live activity."))
                 .font(.subheadline)
                 .foregroundStyle(VoteNowColors.mutedText)
         }
@@ -303,31 +304,40 @@ struct MAPVCardView: View {
         let normalized = rawTitle.lowercased()
 
         if normalized.contains("midterm") && normalized.contains("runoff") {
-            return "Midterm Primary Runoff Election"
+            return l("app.mapv.election_header.midterm_runoff", "Midterm Primary Runoff Election")
         }
         if normalized.contains("midterm") && normalized.contains("primary") {
-            return "Midterm Primary Election"
+            return l("app.mapv.election_header.midterm_primary", "Midterm Primary Election")
         }
         if normalized.contains("midterm") && normalized.contains("general") {
-            return "Midterm General Election"
+            return l("app.mapv.election_header.midterm_general", "Midterm General Election")
         }
         if normalized.contains("presidential") && normalized.contains("primary") {
-            return "Presidential Primary Election"
+            return l("app.mapv.election_header.presidential_primary", "Presidential Primary Election")
         }
         if normalized.contains("presidential") && normalized.contains("general") {
-            return "Presidential General Election"
+            return l("app.mapv.election_header.presidential_general", "Presidential General Election")
         }
         if normalized.contains("runoff") {
-            return "Midterm Primary Runoff Election"
+            return l("app.mapv.election_header.midterm_runoff", "Midterm Primary Runoff Election")
         }
         if normalized.contains("primary") {
-            return "Midterm Primary Election"
+            return l("app.mapv.election_header.midterm_primary", "Midterm Primary Election")
         }
         if normalized.contains("general") {
-            return "Midterm General Election"
+            return l("app.mapv.election_header.midterm_general", "Midterm General Election")
         }
 
         return rawTitle
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
     }
 
     private static let shareDateFormatter: DateFormatter = {

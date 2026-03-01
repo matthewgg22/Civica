@@ -12,6 +12,7 @@ struct MobilizationView: View {
     @EnvironmentObject var planVM: PlanViewModel
     @EnvironmentObject var mapvPlanStore: MAPVPlanStore
     @Environment(\.openURL) private var openURL
+    @Environment(\.locale) private var locale
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var selectedPlace: PollingPlace?
     @State private var showPlanSheet = false
@@ -22,6 +23,15 @@ struct MobilizationView: View {
     @State private var planCardShadowBoost = false
     @State private var lastRenderedPlanID: UUID?
     private let stateResolver = USZipStateResolver()
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
 
     private var nextUpcomingElection: Election? {
         guard let code = resolvedStateCode() else { return nil }
@@ -36,7 +46,9 @@ struct MobilizationView: View {
     }
 
     private var electionSubtitleText: String {
-        guard let election = nextUpcomingElection else { return "No upcoming election loaded" }
+        guard let election = nextUpcomingElection else {
+            return l("app.how_to_vote.subtitle.none", "No upcoming election loaded")
+        }
         return displayElectionTitle(for: election)
     }
 
@@ -178,7 +190,7 @@ struct MobilizationView: View {
                 ScrollView {
                     VStack(spacing: 20) {
                         VStack(alignment: .leading, spacing: 0) {
-                            PageHeader(title: "How to Vote")
+                            PageHeader(title: Text("app.page.how_to_vote", tableName: "AppShell"))
                             Text(electionSubtitleText)
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundColor(VoteNowColors.mutedText)
@@ -209,7 +221,7 @@ struct MobilizationView: View {
                                         Button {
                                             openURL(directionsURL)
                                         } label: {
-                                            Label("Navigation", systemImage: "location.fill")
+                                            Label(l("app.how_to_vote.action.navigation", "Navigation"), systemImage: "location.fill")
                                                 .font(.subheadline.weight(.semibold))
                                                 .lineLimit(1)
                                                 .minimumScaleFactor(0.7)
@@ -225,7 +237,7 @@ struct MobilizationView: View {
                                     Button {
                                         shareMapvCard()
                                     } label: {
-                                        Label("Share My Plan", systemImage: "square.and.arrow.up")
+                                        Label(l("app.how_to_vote.action.share_plan", "Share My Plan"), systemImage: "square.and.arrow.up")
                                             .font(.subheadline.weight(.semibold))
                                             .lineLimit(1)
                                             .minimumScaleFactor(0.7)
@@ -240,7 +252,7 @@ struct MobilizationView: View {
                                 .padding(.horizontal)
                             }
                         } else {
-                            Button("Make a Plan to Vote") {
+                            Button(l("app.how_to_vote.action.make_plan", "Make a Plan to Vote")) {
                                 showPlanSheet = true
                             }
                             .font(.headline)
@@ -266,7 +278,7 @@ struct MobilizationView: View {
                                             Image(systemName: "bubble.left.and.bubble.right.fill")
                                                 .foregroundColor(VoteNowColors.primaryCTA)
                                         }
-                                        Text(section.title)
+                                        Text(section.localizedTitle(locale: locale))
                                             .foregroundColor(VoteNowColors.primaryText)
                                         Spacer()
                                     }
@@ -386,24 +398,24 @@ struct MobilizationView: View {
     private var howToVoteShareText: String {
         if let mapv = mapvPlanStore.plan {
             return [
-                "My Plan to Vote",
-                "Election: \(mapv.electionTitle)",
-                "Date: \(Self.dateFormatter.string(from: mapv.plannedArrival))",
-                "Time: \(Self.timeFormatter.string(from: mapv.plannedArrival))",
-                "Location: \(mapv.pollingPlaceName)",
-                "Address: \(mapv.pollingPlaceAddress)"
+                l("app.mapv.share.title", "My Plan to Vote"),
+                "\(l("app.mapv.share.election_prefix", "Election:")) \(mapv.electionTitle)",
+                "\(l("app.mapv.share.date_prefix", "Date:")) \(Self.dateFormatter.string(from: mapv.plannedArrival))",
+                "\(l("app.mapv.share.time_prefix", "Time:")) \(Self.timeFormatter.string(from: mapv.plannedArrival))",
+                "\(l("app.mapv.share.location_prefix", "Location:")) \(mapv.pollingPlaceName)",
+                "\(l("app.mapv.share.address_prefix", "Address:")) \(mapv.pollingPlaceAddress)"
             ]
             .joined(separator: "\n")
         }
 
-        var lines: [String] = ["My Plan to Vote"]
-        if let method = planVM.plan.method { lines.append("Method: \(method)") }
+        var lines: [String] = [l("app.mapv.share.title", "My Plan to Vote")]
+        if let method = planVM.plan.method { lines.append("\(l("app.mapv.share.method_prefix", "Method:")) \(method)") }
         if let voteTime = planVM.plan.voteTime {
-            lines.append("Date: \(Self.dateFormatter.string(from: voteTime))")
-            lines.append("Time: \(Self.timeFormatter.string(from: voteTime))")
+            lines.append("\(l("app.mapv.share.date_prefix", "Date:")) \(Self.dateFormatter.string(from: voteTime))")
+            lines.append("\(l("app.mapv.share.time_prefix", "Time:")) \(Self.timeFormatter.string(from: voteTime))")
         }
-        if let place = planVM.plan.placeName { lines.append("Location: \(place)") }
-        if let address = planVM.plan.placeAddress { lines.append("Address: \(address)") }
+        if let place = planVM.plan.placeName { lines.append("\(l("app.mapv.share.location_prefix", "Location:")) \(place)") }
+        if let address = planVM.plan.placeAddress { lines.append("\(l("app.mapv.share.address_prefix", "Address:")) \(address)") }
         return lines.joined(separator: "\n")
     }
 
@@ -455,7 +467,7 @@ struct MobilizationView: View {
         }
 
         let fallbackVoteDate = planVM.plan.voteTime ?? Date()
-        let fallbackLocation = planVM.plan.placeAddress ?? planVM.plan.placeName ?? "Polling Place"
+        let fallbackLocation = planVM.plan.placeAddress ?? planVM.plan.placeName ?? l("app.mapv.polling_place_fallback", "Polling Place")
         let addressParts = fallbackLocation
             .split(separator: ",", maxSplits: 1, omittingEmptySubsequences: true)
             .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -463,7 +475,7 @@ struct MobilizationView: View {
         let line2 = addressParts.count > 1 ? addressParts[1] : nil
         let shareURL = directionsURL?.absoluteString ?? "https://votenow.app"
         let fallbackCard = MapvShareCardView(
-            title: "My Plan to Vote",
+            title: l("app.mapv.share.title", "My Plan to Vote"),
             electionName: electionSubtitleText,
             voteDateText: Self.dateFormatter.string(from: fallbackVoteDate),
             voteTimeText: Self.timeFormatter.string(from: fallbackVoteDate),
@@ -496,21 +508,21 @@ struct MobilizationView: View {
                 startDate: mapv.plannedArrival,
                 endDate: mapv.plannedArrival.addingTimeInterval(60 * 60),
                 location: cleanLocation,
-                notes: "Plan to vote at \(Self.timeFormatter.string(from: mapv.plannedArrival)).",
+                notes: "\(l("app.mapv.calendar.notes_prefix", "Plan to vote at")) \(Self.timeFormatter.string(from: mapv.plannedArrival)).",
                 url: URL(string: "votenow://mapv")
             )
         }
 
         guard let voteTime = planVM.plan.voteTime else { return nil }
-        let location = planVM.plan.placeAddress ?? planVM.plan.placeName ?? "Polling Place"
+        let location = planVM.plan.placeAddress ?? planVM.plan.placeName ?? l("app.mapv.polling_place_fallback", "Polling Place")
         return MAPVCalendarPlanPayload(
             planID: "legacy-\(voteTime.timeIntervalSince1970)",
             electionID: "upcoming-election",
-            electionTitle: "Upcoming Election",
+            electionTitle: l("app.mapv.calendar.upcoming_election", "Upcoming Election"),
             startDate: voteTime,
             endDate: voteTime.addingTimeInterval(60 * 60),
             location: location,
-            notes: "Plan to vote at \(Self.timeFormatter.string(from: voteTime)).",
+            notes: "\(l("app.mapv.calendar.notes_prefix", "Plan to vote at")) \(Self.timeFormatter.string(from: voteTime)).",
             url: URL(string: "votenow://mapv")
         )
     }
@@ -601,6 +613,60 @@ enum SectionType: CaseIterable {
         }
     }
 
+    func localizedTitle(locale: Locale) -> String {
+        switch self {
+        case .raceCandidates:
+            return localizedCatalogString(
+                "app.how_to_vote.section.race_candidates",
+                tableName: "AppShell",
+                locale: locale,
+                fallback: title
+            )
+        case .pollingLocations:
+            return localizedCatalogString(
+                "app.how_to_vote.section.polling_locations",
+                tableName: "AppShell",
+                locale: locale,
+                fallback: title
+            )
+        case .sampleBallot:
+            return localizedCatalogString(
+                "app.how_to_vote.section.sample_ballot",
+                tableName: "AppShell",
+                locale: locale,
+                fallback: title
+            )
+        case .mailInBallot:
+            return localizedCatalogString(
+                "app.how_to_vote.section.mail_in_ballot",
+                tableName: "AppShell",
+                locale: locale,
+                fallback: title
+            )
+        case .electionHotlines:
+            return localizedCatalogString(
+                "app.how_to_vote.section.hotlines",
+                tableName: "AppShell",
+                locale: locale,
+                fallback: title
+            )
+        case .feedback:
+            return localizedCatalogString(
+                "app.how_to_vote.section.feedback",
+                tableName: "AppShell",
+                locale: locale,
+                fallback: title
+            )
+        case .supportAmericansVote:
+            return localizedCatalogString(
+                "app.how_to_vote.section.support",
+                tableName: "AppShell",
+                locale: locale,
+                fallback: title
+            )
+        }
+    }
+
     @ViewBuilder
     func destination(selectedPlace: Binding<PollingPlace?>) -> some View {
         switch self {
@@ -623,6 +689,8 @@ enum SectionType: CaseIterable {
 }
 
 private struct FeedbackView: View {
+    @Environment(\.locale) private var locale
+
     private enum FeedbackCategory: String, CaseIterable, Identifiable {
         case idea
         case bug
@@ -632,9 +700,9 @@ private struct FeedbackView: View {
 
         var title: String {
             switch self {
-            case .idea: return "Idea"
-            case .bug: return "Bug"
-            case .question: return "Question"
+            case .idea: return "app.feedback.category.idea"
+            case .bug: return "app.feedback.category.bug"
+            case .question: return "app.feedback.category.question"
             }
         }
     }
@@ -671,13 +739,13 @@ private struct FeedbackView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                PageHeader(title: "Feedback")
+                PageHeader(title: Text(l("app.feedback.title", "Feedback")))
 
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("College Student Endeavor")
+                    Text(l("app.feedback.college_endeavor.title", "College Student Endeavor"))
                         .font(.title3.weight(.bold))
 
-                    Text("VoteNow is a college student endeavor built to support all Americans remotely by reducing logistical friction in voting. We would love your feedback to improve the app and overall voter experience.")
+                    Text(l("app.feedback.college_endeavor.body", "VoteNow is a college student endeavor built to support all Americans remotely by reducing logistical friction in voting. We would love your feedback to improve the app and overall voter experience."))
                         .font(.body)
                         .foregroundColor(VoteNowColors.mutedText)
                         .fixedSize(horizontal: false, vertical: true)
@@ -690,17 +758,17 @@ private struct FeedbackView: View {
                 )
 
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Share your feedback")
+                    Text(l("app.feedback.share.title", "Share your feedback"))
                         .font(.headline)
 
-                    Picker("Category", selection: $selectedCategory) {
+                    Picker(l("app.feedback.category.label", "Category"), selection: $selectedCategory) {
                         ForEach(FeedbackCategory.allCases) { item in
-                            Text(item.title).tag(item)
+                            Text(l(item.title, fallbackCategoryTitle(for: item))).tag(item)
                         }
                     }
                     .pickerStyle(.segmented)
 
-                    TextField("Email (optional)", text: $email)
+                    TextField(l("app.feedback.email.placeholder", "Email (optional)"), text: $email)
                         .textInputAutocapitalization(.never)
                         .keyboardType(.emailAddress)
                         .autocorrectionDisabled(true)
@@ -723,7 +791,7 @@ private struct FeedbackView: View {
                             )
 
                         if feedbackText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                            Text("Tell us what felt confusing, frustrating, or helpful.")
+                            Text(l("app.feedback.message.placeholder", "Tell us what felt confusing, frustrating, or helpful."))
                                 .font(.subheadline)
                                 .foregroundColor(VoteNowColors.mutedText)
                                 .padding(.horizontal, 14)
@@ -750,11 +818,11 @@ private struct FeedbackView: View {
                                 HStack(spacing: 8) {
                                     ProgressView()
                                         .tint(.white)
-                                    Text("Sending...")
+                                    Text(l("app.feedback.action.sending", "Sending..."))
                                         .font(.headline)
                                 }
                             } else {
-                                Text("Send Feedback")
+                                Text(l("app.feedback.action.send", "Send Feedback"))
                                     .font(.headline)
                             }
                         }
@@ -833,13 +901,30 @@ private struct FeedbackView: View {
             email = ""
             selectedCategory = .idea
             isFeedbackFocused = false
-            successMessage = "Thanks — feedback sent ✅"
+            successMessage = l("app.feedback.success.sent", "Thanks - feedback sent.")
         } catch {
             print("[Feedback] submit failed:", String(describing: error))
-            errorMessage = "Could not send feedback. Please try again."
+            errorMessage = l("app.feedback.error.send_failed", "Could not send feedback. Please try again.")
         }
 
         isSending = false
+    }
+
+    private func fallbackCategoryTitle(for category: FeedbackCategory) -> String {
+        switch category {
+        case .idea: return "Idea"
+        case .bug: return "Bug"
+        case .question: return "Question"
+        }
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
     }
 }
 

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ElectionTimelineCardView: View {
+    @Environment(\.locale) private var locale
     let stateLabel: String
     let titleText: String
     let subtitleText: String?
@@ -33,7 +34,7 @@ struct ElectionTimelineCardView: View {
                 }
                 .buttonStyle(.plain)
                 .contentShape(Circle())
-                .accessibilityLabel("Flag election")
+                .accessibilityLabel(l("app.timeline.flag.accessibility", "Flag election"))
             }
 
             VStack(alignment: .leading, spacing: 5) {
@@ -70,7 +71,9 @@ struct ElectionTimelineCardView: View {
 
             if showPlanButton {
                 Button(action: onPlan) {
-                    Text(canMakePlan ? "Make a Plan to Vote" : "Election Day Passed")
+                    Text(canMakePlan
+                         ? l("app.timeline.mapv.button.make_plan", "Make a Plan to Vote")
+                         : l("app.timeline.mapv.button.passed", "Election Day Passed"))
                         .font(.subheadline.weight(.semibold))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
@@ -94,5 +97,14 @@ struct ElectionTimelineCardView: View {
                 .stroke(VoteNowColors.borderWarm, lineWidth: 1)
         )
         .shadow(color: VoteNowColors.primaryText.opacity(0.06), radius: 3, x: 0, y: 1)
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
     }
 }

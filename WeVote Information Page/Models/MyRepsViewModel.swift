@@ -74,7 +74,16 @@ enum RepsLocationResolverError: LocalizedError {
             return "Enter a 5-digit U.S. ZIP or a full U.S. address."
         case .invalidInput:
             return "Enter a valid U.S. ZIP or full address."
-        case .notFound:gib
+        case .notFound:
+            return "We couldn't find that U.S. location. Try a full address with city and state."
+        case .outsideUS:
+            return "VoteNow currently supports U.S. addresses only."
+        case .missingCoordinate:
+            return "We couldn't determine a map coordinate for that location."
+        case .missingPostalCode:
+            return "We couldn't determine a valid U.S. ZIP code for that location."
+        }
+    }
 }
 
 enum USZipInputValidator {

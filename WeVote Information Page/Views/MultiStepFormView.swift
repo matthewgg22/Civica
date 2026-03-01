@@ -24,6 +24,7 @@ enum VotingMethod: String {
 
 struct MultiStepFormView: View {
     @EnvironmentObject var planVM: PlanViewModel
+    @Environment(\.locale) private var locale
     private let mapvPlanStore = MAPVPlanStore.shared
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -40,15 +41,19 @@ struct MultiStepFormView: View {
     }
 
     private var timelineEarlyVotingLine: String {
-        guard let election = nextTimelineElection else { return "Early Voting: Date TBD" }
+        guard let election = nextTimelineElection else {
+            return l("app.mapv.step1.early_voting_tbd", "Early Voting: Date TBD")
+        }
         let text = election.earlyVotingText?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        let value = text.isEmpty ? Self.timelineDateFormatter.string(from: election.startDate) : text
-        return "Early Voting: \(value)"
+        let value = text.isEmpty ? formatTimelineDate(election.startDate) : text
+        return lf("app.mapv.step1.early_voting_format", "Early Voting: %@", value)
     }
 
     private var timelineElectionDayLine: String {
-        guard let election = nextTimelineElection else { return "Election Day: Date TBD" }
-        return "Election Day: \(Self.timelineDateFormatter.string(from: election.electionDay))"
+        guard let election = nextTimelineElection else {
+            return l("app.mapv.step1.election_day_tbd", "Election Day: Date TBD")
+        }
+        return lf("app.mapv.step1.election_day_format", "Election Day: %@", formatTimelineDate(election.electionDay))
     }
 
     var body: some View {
@@ -96,7 +101,7 @@ struct MultiStepFormView: View {
             }
             return AnyView(
                 VStack(spacing: 16) {
-                    Text("Choose a polling location near you.")
+                    Text(l("app.mapv.step2.choose_polling_location", "Choose a polling location near you."))
                         .font(.subheadline.weight(.semibold))
                         .multilineTextAlignment(.leading)
                         .padding(.horizontal)
@@ -137,7 +142,7 @@ struct MultiStepFormView: View {
             )
 
         default:
-            return AnyView(Text("Invalid Step"))
+            return AnyView(Text(l("app.mapv.error.invalid_step", "Invalid Step")))
         }
     }
 
@@ -157,14 +162,28 @@ struct MultiStepFormView: View {
         dismiss()
     }
 
-    private static let timelineDateFormatter: DateFormatter = {
+    private func formatTimelineDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.locale = locale
         formatter.timeZone = TimeZone.current
-        formatter.dateFormat = "MMM d, yyyy"
-        return formatter
-    }()
+        formatter.setLocalizedDateFormatFromTemplate("MMM d, yyyy")
+        return formatter.string(from: date)
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
+
+    private func lf(_ key: String, _ fallback: String, _ args: CVarArg...) -> String {
+        let format = l(key, fallback)
+        return String(format: format, locale: locale, arguments: args)
+    }
 }
 
 private enum MAPVStepNavDirection {
@@ -174,7 +193,8 @@ private enum MAPVStepNavDirection {
 
 private struct MAPVStep: Identifiable {
     let id: String
-    let title: String
+    let titleKey: String
+    let fallbackTitle: String
     let icon: String
 }
 
@@ -188,10 +208,10 @@ private final class MAPVFlowModel: ObservableObject {
     @Published var chosenVotingTime: Date = Date()
 
     let steps: [MAPVStep] = [
-        MAPVStep(id: "method", title: "Method to Vote", icon: "checklist"),
-        MAPVStep(id: "location", title: "Logistics", icon: "mappin.and.ellipse"),
-        MAPVStep(id: "time", title: "When I'm Voting", icon: "calendar.badge.clock"),
-        MAPVStep(id: "review", title: "Commit and Bring a Friend", icon: "checkmark.seal")
+        MAPVStep(id: "method", titleKey: "app.mapv.step.title.method", fallbackTitle: "Method to Vote", icon: "checklist"),
+        MAPVStep(id: "location", titleKey: "app.mapv.step.title.location", fallbackTitle: "Logistics", icon: "mappin.and.ellipse"),
+        MAPVStep(id: "time", titleKey: "app.mapv.step.title.time", fallbackTitle: "When I'm Voting", icon: "calendar.badge.clock"),
+        MAPVStep(id: "review", titleKey: "app.mapv.step.title.review", fallbackTitle: "Commit and Bring a Friend", icon: "checkmark.seal")
     ]
 
     func isStepComplete(_ step: Int) -> Bool {
@@ -320,6 +340,7 @@ private enum MAPVFlowHaptics {
 }
 
 private struct MAPVFlowView: View {
+    @Environment(\.locale) private var locale
     @ObservedObject var flowModel: MAPVFlowModel
     let lockPulse: Bool
     let reduceMotion: Bool
@@ -379,19 +400,27 @@ private struct MAPVFlowView: View {
                 .foregroundStyle(VoteNowColors.richBlue)
                 .frame(width: 36, height: 36)
                 .background(Circle().fill(VoteNowColors.richBlue.opacity(0.13)))
-            Text(flowModel.steps[flowModel.currentStepIndex].title)
+            Text(stepTitle(for: flowModel.steps[flowModel.currentStepIndex]))
                 .font(.title3.weight(.bold))
                 .lineLimit(2)
             Spacer()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Step \(flowModel.currentStepIndex + 1) of \(flowModel.steps.count): \(flowModel.steps[flowModel.currentStepIndex].title)")
+        .accessibilityLabel(
+            lf(
+                "app.mapv.accessibility.step_header",
+                "Step %d of %d: %@",
+                flowModel.currentStepIndex + 1,
+                flowModel.steps.count,
+                stepTitle(for: flowModel.steps[flowModel.currentStepIndex])
+            )
+        )
     }
 
     private var controls: some View {
         HStack(spacing: 12) {
-            Button("Back") {
+            Button(l("app.mapv.action.back", "Back")) {
                 onBack()
             }
             .buttonStyle(.bordered)
@@ -413,25 +442,52 @@ private struct MAPVFlowView: View {
             .frame(maxWidth: 210)
 
             if flowModel.currentStepIndex < flowModel.steps.count - 1 {
-                Button("Next") {
+                Button(l("app.mapv.action.next", "Next")) {
                     onNext()
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(VoteNowColors.primaryCTA)
                 .frame(minWidth: 78)
                 .disabled(!flowModel.canAdvance(from: flowModel.currentStepIndex))
-                .accessibilityHint(flowModel.canAdvance(from: flowModel.currentStepIndex) ? "Move to next step" : "Complete this step first")
+                .accessibilityHint(
+                    flowModel.canAdvance(from: flowModel.currentStepIndex)
+                    ? l("app.mapv.accessibility.hint.next_enabled", "Move to next step")
+                    : l("app.mapv.accessibility.hint.next_disabled", "Complete this step first")
+                )
             } else {
-                Button("Finish") {
+                Button(l("app.mapv.action.finish", "Finish")) {
                     onFinish()
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(VoteNowColors.primaryCTA)
                 .frame(minWidth: 78)
                 .disabled(!flowModel.canAdvance(from: flowModel.currentStepIndex))
-                .accessibilityHint("Build your final voter plan card")
+                .accessibilityHint(l("app.mapv.accessibility.hint.finish", "Build your final voter plan card"))
             }
         }
+    }
+
+    private func stepTitle(for step: MAPVStep) -> String {
+        localizedCatalogString(
+            step.titleKey,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: step.fallbackTitle
+        )
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
+
+    private func lf(_ key: String, _ fallback: String, _ args: CVarArg...) -> String {
+        let format = l(key, fallback)
+        return String(format: format, locale: locale, arguments: args)
     }
 }
 
@@ -493,6 +549,7 @@ private struct MAPVStepPager: View {
 }
 
 private struct MAPVStepIndicator: View {
+    @Environment(\.locale) private var locale
     let steps: [MAPVStep]
     let currentStep: Int
     let isStepComplete: (Int) -> Bool
@@ -521,8 +578,19 @@ private struct MAPVStepIndicator: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(!canTapStep(idx))
-                .accessibilityLabel("Step \(idx + 1): \(step.title)")
-                .accessibilityHint(canTapStep(idx) ? "Jump to this step" : "Complete earlier steps first")
+                .accessibilityLabel(
+                    lf(
+                        "app.mapv.accessibility.step_label",
+                        "Step %d: %@",
+                        idx + 1,
+                        stepTitle(for: step)
+                    )
+                )
+                .accessibilityHint(
+                    canTapStep(idx)
+                    ? l("app.mapv.accessibility.hint.jump", "Jump to this step")
+                    : l("app.mapv.accessibility.hint.complete_prior", "Complete earlier steps first")
+                )
             }
         }
         .padding(.horizontal, 2)
@@ -545,52 +613,76 @@ private struct MAPVStepIndicator: View {
         if isStepComplete(index) { return Color.green.opacity(0.12) }
         return VoteNowColors.borderWarm.opacity(0.10)
     }
+
+    private func stepTitle(for step: MAPVStep) -> String {
+        localizedCatalogString(
+            step.titleKey,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: step.fallbackTitle
+        )
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
+
+    private func lf(_ key: String, _ fallback: String, _ args: CVarArg...) -> String {
+        let format = l(key, fallback)
+        return String(format: format, locale: locale, arguments: args)
+    }
 }
 
 // MARK: - Step 1: Method to Vote
 
 struct StepOneView: View {
+    @Environment(\.locale) private var locale
     @Binding var selectedMethod: VotingMethod?
     let earlyVotingLine: String
     let electionDayLine: String
 
     var body: some View {
         VStack(spacing: 16) {
-            Text("How would you like to vote?")
+            Text(l("app.mapv.step1.prompt", "How would you like to vote?"))
                 .font(.title3.weight(.bold))
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
 
             VotingMethodCard(
-                methodTitle: VotingMethod.early.rawValue,
+                methodTitle: methodTitle(for: .early),
                 emoji: "⏰",
                 accentColor: VoteNowColors.warningAmber,
                 isSelected: selectedMethod == .early,
                 action: { selectedMethod = .early }
             ) {
                 VStack(alignment: .leading, spacing: 4) {
-                    (Text("Pros:").bold() + Text(" Flexibility, Shorter Wait Times, Avoids Last-Minute Issues"))
+                    (Text(l("app.mapv.step1.pros_prefix", "Pros:")).bold() + Text(" " + l("app.mapv.step1.early.pros", "Flexibility, Shorter Wait Times, Avoids Last-Minute Issues")))
                     Text(earlyVotingLine)
                         .bold()
                 }
             }
 
             VotingMethodCard(
-                methodTitle: VotingMethod.mail.rawValue,
+                methodTitle: methodTitle(for: .mail),
                 emoji: "✉️",
                 accentColor: VoteNowColors.primaryCTA,
                 isSelected: selectedMethod == .mail,
                 action: { selectedMethod = .mail }
             ) {
                 VStack(alignment: .leading, spacing: 4) {
-                    (Text("Pros:").bold() + Text(" Convenience, Extended Time, Accessibility"))
-                    Text("Request by: June 14, 2025")
+                    (Text(l("app.mapv.step1.pros_prefix", "Pros:")).bold() + Text(" " + l("app.mapv.step1.mail.pros", "Convenience, Extended Time, Accessibility")))
+                    Text(l("app.mapv.step1.mail.request_by", "Request by: June 14, 2025"))
                         .bold()
                 }
             }
 
             VotingMethodCard(
-                methodTitle: VotingMethod.election.rawValue,
+                methodTitle: methodTitle(for: .election),
                 emoji: "🗳️",
                 accentColor: VoteNowColors.successGreen,
                 isSelected: selectedMethod == .election,
@@ -599,12 +691,32 @@ struct StepOneView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(electionDayLine)
                         .bold()
-                    Text("Polls 6 AM – 9 PM")
+                    Text(l("app.mapv.step1.election.poll_hours", "Polls 6 AM – 9 PM"))
                         .bold()
                 }
             }
         }
         .padding(.horizontal, 8)
+    }
+
+    private func methodTitle(for method: VotingMethod) -> String {
+        switch method {
+        case .early:
+            return l("app.mapv.step1.method.early", "Vote Early")
+        case .mail:
+            return l("app.mapv.step1.method.mail", "Vote by Mail")
+        case .election:
+            return l("app.mapv.step1.method.election_day", "Vote on Election Day")
+        }
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
     }
 }
 
@@ -685,6 +797,7 @@ struct VotingMethodCard<Details: View>: View {
 
 struct AbsenteeView: View {
     @EnvironmentObject private var planVM: PlanViewModel
+    @Environment(\.locale) private var locale
 
     @State private var jurisdictions: [AbsenteeBallotJurisdiction] = []
     @State private var selectedJurisdictionID: String?
@@ -711,7 +824,7 @@ struct AbsenteeView: View {
             return zip
         }
 
-        return "Set your address in My Reps"
+        return l("app.mapv.absentee.address_fallback", "Set your address in My Reps")
     }
 
     private var defaultJurisdictionCode: String? {
@@ -757,7 +870,7 @@ struct AbsenteeView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
-                Text("📬 Request Your Mail-in Ballot")
+                Text(l("app.mapv.absentee.hero_title", "📬 Request Your Mail-in Ballot"))
                     .font(.title2.weight(.bold))
                     .foregroundColor(VoteNowColors.primaryText)
                     .padding(.top, 8)
@@ -768,10 +881,10 @@ struct AbsenteeView: View {
                     .fixedSize(horizontal: false, vertical: true)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("What is mail-in voting?")
+                    Text(l("app.mapv.absentee.what_mail_in.title", "What is mail-in voting?"))
                         .font(.headline.weight(.semibold))
                         .foregroundColor(VoteNowColors.primaryText)
-                    Text("Mail-in voting lets eligible voters receive a ballot and return it by mail or approved drop-off methods. Some states mail ballots automatically, while others require a request.")
+                    Text(l("app.mapv.absentee.what_mail_in.body", "Mail-in voting lets eligible voters receive a ballot and return it by mail or approved drop-off methods. Some states mail ballots automatically, while others require a request."))
                         .font(.footnote)
                         .foregroundColor(VoteNowColors.mutedText)
                         .fixedSize(horizontal: false, vertical: true)
@@ -785,10 +898,10 @@ struct AbsenteeView: View {
                 )
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("What is absentee voting?")
+                    Text(l("app.mapv.absentee.what_absentee.title", "What is absentee voting?"))
                         .font(.headline.weight(.semibold))
                         .foregroundColor(VoteNowColors.primaryText)
-                    Text("Absentee voting is a mail-ballot process typically used when you cannot vote in person. Rules and eligibility vary by jurisdiction.")
+                    Text(l("app.mapv.absentee.what_absentee.body", "Absentee voting is a mail-ballot process typically used when you cannot vote in person. Rules and eligibility vary by jurisdiction."))
                         .font(.footnote)
                         .foregroundColor(VoteNowColors.mutedText)
                         .fixedSize(horizontal: false, vertical: true)
@@ -816,7 +929,7 @@ struct AbsenteeView: View {
                                     )
                             }
 
-                            Text("Jurisdiction: \(jurisdiction.displayName)")
+                            Text(lf("app.mapv.absentee.jurisdiction_prefix", "Jurisdiction: %@", jurisdiction.displayName))
                                 .font(.title3.weight(.bold))
                                 .foregroundColor(VoteNowColors.primaryText)
                         }
@@ -824,7 +937,7 @@ struct AbsenteeView: View {
 
                         if let requestURL = jurisdiction.requestApplyURL {
                             Link(destination: requestURL) {
-                                Text("Request / Apply for a mail ballot")
+                                Text(l("app.mapv.absentee.action.request_apply", "Request / Apply for a mail ballot"))
                                     .font(.headline)
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
@@ -832,26 +945,38 @@ struct AbsenteeView: View {
                                     .background(VoteNowColors.primaryCTA)
                                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                             }
-                            .accessibilityLabel("Request or apply for a mail ballot in \(jurisdiction.displayName)")
+                            .accessibilityLabel(
+                                lf(
+                                    "app.mapv.absentee.action.request_apply.a11y",
+                                    "Request or apply for a mail ballot in %@",
+                                    jurisdiction.displayName
+                                )
+                            )
                         }
 
                         if let officialURL = jurisdiction.officialVoterInfoURL {
                             Link(destination: officialURL) {
-                                Text("Official voter info")
+                                Text(l("app.mapv.absentee.action.official_info", "Official voter info"))
                                     .font(.subheadline.weight(.semibold))
                                     .foregroundColor(VoteNowColors.primaryCTA)
                             }
-                            .accessibilityLabel("Open official voter info for \(jurisdiction.displayName)")
+                            .accessibilityLabel(
+                                lf(
+                                    "app.mapv.absentee.action.official_info.a11y",
+                                    "Open official voter info for %@",
+                                    jurisdiction.displayName
+                                )
+                            )
                         }
 
                         requestDeadlinesSection
 
-                        Text("This section is for absentee/mail ballot requests. Early-voting deadlines can be different.")
+                        Text(l("app.mapv.absentee.note.request_vs_early", "This section is for absentee/mail ballot requests. Early-voting deadlines can be different."))
                             .font(.footnote.weight(.semibold))
                             .foregroundColor(VoteNowColors.primaryText)
                             .fixedSize(horizontal: false, vertical: true)
 
-                        Text("Deadlines can change. Confirm details with your official election office site.")
+                        Text(l("app.mapv.absentee.note.confirm_official", "Deadlines can change. Confirm details with your official election office site."))
                             .font(.footnote)
                             .foregroundColor(VoteNowColors.mutedText)
                             .fixedSize(horizontal: false, vertical: true)
@@ -865,7 +990,7 @@ struct AbsenteeView: View {
                     )
                     .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
-                    Text("We could not detect your jurisdiction yet. Enter your address in My Reps to auto-load absentee and mail-ballot request details.")
+                    Text(l("app.mapv.absentee.fallback.jurisdiction_missing", "We could not detect your jurisdiction yet. Enter your address in My Reps to auto-load absentee and mail-ballot request details."))
                         .font(.subheadline)
                         .foregroundColor(VoteNowColors.mutedText)
                         .fixedSize(horizontal: false, vertical: true)
@@ -876,7 +1001,7 @@ struct AbsenteeView: View {
             .padding()
         }
         .background(VoteNowColors.appBackground)
-        .navigationTitle("Request Mail-in Ballot")
+        .navigationTitle(l("app.mail_ballot.navigation.title", "Request Mail-in Ballot"))
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             if jurisdictions.isEmpty {
@@ -899,7 +1024,7 @@ struct AbsenteeView: View {
     private var requestDeadlinesSection: some View {
         if let deadlines = selectedRequestDeadlines {
             VStack(alignment: .leading, spacing: 10) {
-                Text("Request deadlines")
+                Text(l("app.mapv.absentee.deadlines.title", "Request deadlines"))
                     .font(.subheadline.weight(.semibold))
                     .foregroundColor(VoteNowColors.primaryText)
 
@@ -943,11 +1068,11 @@ struct AbsenteeView: View {
 
                 if let sourceURL = URL(string: deadlines.sourceURL) {
                     Link(destination: sourceURL) {
-                        Text("Source")
+                        Text(l("app.mapv.absentee.source", "Source"))
                             .font(.footnote.weight(.semibold))
                             .foregroundColor(VoteNowColors.primaryCTA)
                     }
-                    .accessibilityLabel("Open request deadline source")
+                    .accessibilityLabel(l("app.mapv.absentee.source.a11y", "Open request deadline source"))
                 }
             }
             .padding(12)
@@ -965,10 +1090,10 @@ struct AbsenteeView: View {
 
     private var fallbackDeadlinesCard: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Request deadlines")
+            Text(l("app.mapv.absentee.deadlines.title", "Request deadlines"))
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(VoteNowColors.primaryText)
-            Text("Deadlines vary. Check your election office.")
+            Text(l("app.mapv.absentee.deadlines.fallback", "Deadlines vary. Check your election office."))
                 .font(.subheadline)
                 .foregroundColor(VoteNowColors.primaryText)
                 .fixedSize(horizontal: false, vertical: true)
@@ -988,15 +1113,15 @@ struct AbsenteeView: View {
 
         return [
             AbsenteeDeadlineRow(
-                label: "In person",
+                label: l("app.mapv.absentee.deadlines.method.in_person", "In person"),
                 value: requestDeadlineValue(record.methods.inPerson, electionDay: electionDay)
             ),
             AbsenteeDeadlineRow(
-                label: "By mail",
+                label: l("app.mapv.absentee.deadlines.method.by_mail", "By mail"),
                 value: requestDeadlineValue(record.methods.byMail, electionDay: electionDay)
             ),
             AbsenteeDeadlineRow(
-                label: "Online / email / fax",
+                label: l("app.mapv.absentee.deadlines.method.online_email_fax", "Online / email / fax"),
                 value: requestDeadlineValue(record.methods.onlineEmail, electionDay: electionDay)
             ),
         ]
@@ -1005,7 +1130,7 @@ struct AbsenteeView: View {
     private func requestDeadlineValue(_ value: String?, electionDay: Date?) -> String {
         guard let value = value?.trimmingCharacters(in: .whitespacesAndNewlines),
               !value.isEmpty else {
-            return "Not available"
+            return l("app.mapv.absentee.deadlines.not_available", "Not available")
         }
 
         guard let computedLine = computedDeadlineLine(for: value, electionDay: electionDay) else {
@@ -1052,14 +1177,16 @@ struct AbsenteeView: View {
         let target = calendar.startOfDay(for: date)
         let delta = calendar.dateComponents([.day], from: today, to: target).day ?? 0
         let daysAway = max(delta, 0)
-        return "\(daysAway) \(daysAway == 1 ? "day" : "days") away"
+        if daysAway == 1 {
+            return lf("app.mapv.absentee.days_away.one", "%d day away", daysAway)
+        }
+        return lf("app.mapv.absentee.days_away.other", "%d days away", daysAway)
     }
 
     private func styledDeadlineValueText(_ value: String) -> Text {
         let normalized = value.replacingOccurrences(of: "\n", with: " ")
         guard let openParenIndex = normalized.lastIndex(of: "("),
-              normalized.hasSuffix(")"),
-              normalized[openParenIndex...].localizedCaseInsensitiveContains("away") else {
+              normalized.hasSuffix(")") else {
             return Text(normalized)
         }
 
@@ -1097,6 +1224,20 @@ struct AbsenteeView: View {
             $0.code?.caseInsensitiveCompare(code) == .orderedSame
         }?.id
     }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
+
+    private func lf(_ key: String, _ fallback: String, _ args: CVarArg...) -> String {
+        let format = l(key, fallback)
+        return String(format: format, locale: locale, arguments: args)
+    }
 }
 
 
@@ -1104,6 +1245,7 @@ struct AbsenteeView: View {
 
 struct StepThreeView: View {
     @EnvironmentObject var planVM: PlanViewModel
+    @Environment(\.locale) private var locale
     var selectedMethod: VotingMethod?
     var selectedPollingPlace: PollingPlace?
     var earliestVotingDate: Date?
@@ -1131,7 +1273,7 @@ struct StepThreeView: View {
     }
 
     private var dayRailMonthLabel: String {
-        Self.monthFormatter.string(from: dayRailStartDate)
+        monthLabel(for: dayRailStartDate)
     }
 
     private var selectedTimeProgress: Double {
@@ -1144,12 +1286,12 @@ struct StepThreeView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Text("Pick your voting time")
+            Text(l("app.mapv.step3.prompt", "Pick your voting time"))
                 .font(.title.weight(.bold))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
 
-            Text("Drag the slider to set your planned arrival time.")
+            Text(l("app.mapv.step3.helper", "Drag the slider to set your planned arrival time."))
                 .font(.caption)
                 .foregroundColor(VoteNowColors.mutedText)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -1180,7 +1322,7 @@ struct StepThreeView: View {
             .padding(.horizontal)
 
             HStack(spacing: 10) {
-                Text("Selected Time")
+                Text(l("app.mapv.step3.selected_time", "Selected Time"))
                     .font(.headline.weight(.semibold))
                     .foregroundColor(VoteNowColors.primaryText)
                 Spacer()
@@ -1229,14 +1371,14 @@ struct StepThreeView: View {
         return formatter
     }()
 
-    private static let monthFormatter: DateFormatter = {
+    private func monthLabel(for date: Date) -> String {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.locale = locale
         formatter.timeZone = TimeZone.current
-        formatter.dateFormat = "MMMM yyyy"
-        return formatter
-    }()
+        formatter.setLocalizedDateFormatFromTemplate("MMMM yyyy")
+        return formatter.string(from: date)
+    }
 
     private static func updatingTime(of date: Date, toMinuteOfDay minuteOfDay: Int) -> Date {
         let calendar = Calendar.current
@@ -1286,6 +1428,15 @@ struct StepThreeView: View {
     private func deferToNextRunLoop(_ action: @escaping () -> Void) {
         DispatchQueue.main.async(execute: action)
     }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
 }
 
 private enum MAPVDayRailConstants {
@@ -1295,6 +1446,7 @@ private enum MAPVDayRailConstants {
 }
 
 private struct MAPVDayRailSelector: View {
+    @Environment(\.locale) private var locale
     @Binding var selectedDate: Date
     let startDate: Date
     var isActive: Bool = true
@@ -1333,7 +1485,7 @@ private struct MAPVDayRailSelector: View {
                         .frame(width: MAPVDayRailConstants.controlSize, height: MAPVDayRailConstants.controlSize)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Previous week")
+                .accessibilityLabel(l("app.mapv.step3.dayrail.previous_week", "Previous week"))
             }
 
             HStack(spacing: 4) {
@@ -1357,7 +1509,7 @@ private struct MAPVDayRailSelector: View {
                     .frame(width: MAPVDayRailConstants.controlSize, height: MAPVDayRailConstants.controlSize)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Next week")
+            .accessibilityLabel(l("app.mapv.step3.dayrail.next_week", "Next week"))
         }
         .padding(8)
         .background(VoteNowColors.infoSurfaceBlue.opacity(0.6))
@@ -1462,7 +1614,7 @@ private struct MAPVDayRailSelector: View {
         formatter.locale = calendar.locale ?? .current
         formatter.dateStyle = .full
         formatter.timeStyle = .none
-        return "Select \(formatter.string(from: date))"
+        return "\(l("app.mapv.step3.dayrail.select_prefix", "Select")) \(formatter.string(from: date))"
     }
 
     private func mergeDate(_ targetDay: Date, withTimeFrom source: Date) -> Date {
@@ -1482,6 +1634,15 @@ private struct MAPVDayRailSelector: View {
 
     private func deferToNextRunLoop(_ action: @escaping () -> Void) {
         DispatchQueue.main.async(execute: action)
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
     }
 }
 
@@ -1571,7 +1732,15 @@ private enum CrowdCue: String {
     case busy
     case neutral
 
-    var headline: String {
+    var headlineKey: String {
+        switch self {
+        case .good: return "app.mapv.step3.crowd.good"
+        case .busy: return "app.mapv.step3.crowd.busy"
+        case .neutral: return "app.mapv.step3.crowd.neutral"
+        }
+    }
+
+    var headlineFallback: String {
         switch self {
         case .good: return "Usually quieter"
         case .busy: return "Often busiest"
@@ -1604,7 +1773,18 @@ private enum CrowdReason: String {
     case midAfternoon
     case neutral
 
-    var detail: String {
+    var detailKey: String {
+        switch self {
+        case .openingRush: return "app.mapv.step3.reason.opening_rush"
+        case .lunchRush: return "app.mapv.step3.reason.lunch_rush"
+        case .afterWorkRush: return "app.mapv.step3.reason.after_work_rush"
+        case .midMorning: return "app.mapv.step3.reason.between_rushes"
+        case .midAfternoon: return "app.mapv.step3.reason.between_rushes"
+        case .neutral: return "app.mapv.step3.reason.lines_vary"
+        }
+    }
+
+    var detailFallback: String {
         switch self {
         case .openingRush: return "Before work rush"
         case .lunchRush: return "Lunch break rush"
@@ -1736,6 +1916,7 @@ private struct CrowdCueBubble: View {
 }
 
 private struct MAPVTimeSlider: View {
+    @Environment(\.locale) private var locale
     @Binding var selectedDate: Date
     let openDate: Date
     let closeDate: Date
@@ -1815,9 +1996,9 @@ private struct MAPVTimeSlider: View {
                             }
                     )
                     .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("Voting time selector")
-                    .accessibilityValue("\(Self.timeFormatter.string(from: selectedDate)). \(cueState.cue.headline). \(cueState.reason.detail).")
-                    .accessibilityHint("Drag left or right to choose your voting time.")
+                    .accessibilityLabel(l("app.mapv.step3.accessibility.time_selector", "Voting time selector"))
+                    .accessibilityValue("\(Self.timeFormatter.string(from: selectedDate)). \(headlineText). \(detailText).")
+                    .accessibilityHint(l("app.mapv.step3.accessibility.time_selector_hint", "Drag left or right to choose your voting time."))
 
                     MAPVTimeContextEmojiStrip(progress: progress, isDragging: isDragging)
                         .frame(height: MAPVTimeVisualConstants.emojiStripHeight)
@@ -1840,8 +2021,8 @@ private struct MAPVTimeSlider: View {
 
                 CrowdCueBubble(
                     cue: cueState.cue,
-                    headline: cueState.cue.headline,
-                    detail: cueState.reason.detail
+                    headline: headlineText,
+                    detail: detailText
                 )
                 .frame(maxWidth: 208)
 
@@ -1899,6 +2080,23 @@ private struct MAPVTimeSlider: View {
 
     private func deferToNextRunLoop(_ action: @escaping () -> Void) {
         DispatchQueue.main.async(execute: action)
+    }
+
+    private var headlineText: String {
+        l(cueState.cue.headlineKey, cueState.cue.headlineFallback)
+    }
+
+    private var detailText: String {
+        l(cueState.reason.detailKey, cueState.reason.detailFallback)
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
     }
 }
 
@@ -2153,6 +2351,7 @@ private struct MAPVTimeSliderDemo: View {
 struct StepFourView: View {
     @EnvironmentObject private var planVM: PlanViewModel
     @EnvironmentObject private var mapvPlanStore: MAPVPlanStore
+    @Environment(\.locale) private var locale
     @StateObject private var previewWaterfallController = EmojiWaterfallController()
 
     var selectedMethod: VotingMethod?
@@ -2191,18 +2390,18 @@ struct StepFourView: View {
 
     private var shareSummaryText: String {
         var lines: [String] = [
-            "My Plan to Vote",
-            "Election: \(previewPlan.electionTitle)",
-            "Method: \(selectedMethod?.rawValue ?? "Plan to Vote")",
-            "Date: \(formattedDate)",
-            "Time: \(formattedTime)"
+            l("app.mapv.share.title", "My Plan to Vote"),
+            "\(l("app.mapv.share.election_prefix", "Election:")) \(previewPlan.electionTitle)",
+            "\(l("app.mapv.share.method_prefix", "Method:")) \(selectedMethod?.rawValue ?? l("app.mapv.share.method_fallback", "Plan to Vote"))",
+            "\(l("app.mapv.share.date_prefix", "Date:")) \(formattedDate)",
+            "\(l("app.mapv.share.time_prefix", "Time:")) \(formattedTime)"
         ]
         if selectedMethod == .mail || previewPlan.pollingPlaceAddress.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            lines.append("Plan: Request Absentee / Mail-in Ballot")
+            lines.append("\(l("app.mapv.share.plan_prefix", "Plan:")) \(l("app.mapv.share.plan_mail_ballot", "Request Absentee / Mail-in Ballot"))")
         } else {
-            lines.append("Location: \(previewPlan.pollingPlaceName)")
-            lines.append("Address: \(previewPlan.pollingPlaceAddress)")
-            lines.append("Polls: \(formattedPollWindow)")
+            lines.append("\(l("app.mapv.share.location_prefix", "Location:")) \(previewPlan.pollingPlaceName)")
+            lines.append("\(l("app.mapv.share.address_prefix", "Address:")) \(previewPlan.pollingPlaceAddress)")
+            lines.append("\(l("app.mapv.share.polls_prefix", "Polls:")) \(formattedPollWindow)")
         }
         return lines.joined(separator: "\n")
     }
@@ -2232,10 +2431,10 @@ struct StepFourView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("You're almost done.")
+                    Text(l("app.mapv.step4.almost_done", "You're almost done."))
                         .font(.subheadline.weight(.semibold))
                         .foregroundColor(VoteNowColors.mutedText)
-                    Text("Review your card before you finish.")
+                    Text(l("app.mapv.step4.review_card", "Review your card before you finish."))
                         .font(.subheadline)
                         .foregroundColor(.secondary.opacity(0.85))
                 }
@@ -2250,15 +2449,15 @@ struct StepFourView: View {
                 HStack(spacing: 10) {
                     AddToCalendarButtonView(
                         payload: calendarPayload,
-                        buttonTitle: "Add to Calendar"
+                        buttonTitle: l("app.mapv.step4.action.add_calendar", "Add to Calendar")
                     )
 
                     ShareLink(
                         item: shareSummaryText,
-                        subject: Text("My Plan to Vote"),
-                        message: Text("Here is my voting plan.")
+                        subject: Text(l("app.mapv.share.title", "My Plan to Vote")),
+                        message: Text(l("app.mapv.step4.share_message", "Here is my voting plan."))
                     ) {
-                        Label("Share Plan", systemImage: "square.and.arrow.up")
+                        Label(l("app.mapv.step4.action.share_plan", "Share Plan"), systemImage: "square.and.arrow.up")
                             .font(.subheadline.weight(.semibold))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
@@ -2269,7 +2468,7 @@ struct StepFourView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
 
-                Text("Share via text, WhatsApp, or any app in your share sheet.")
+                Text(l("app.mapv.step4.share_hint", "Share via text, WhatsApp, or any app in your share sheet."))
                     .font(.caption)
                     .foregroundColor(VoteNowColors.mutedText)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -2280,6 +2479,15 @@ struct StepFourView: View {
         .onDisappear {
             previewWaterfallController.stop()
         }
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
     }
 
     private static let dateFormatter: DateFormatter = {
@@ -2302,6 +2510,7 @@ struct StepFourView: View {
 
 struct FullPlanDetailView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.locale) private var locale
     let method    : VotingMethod?
     let place     : PollingPlace?
     let votingTime: Date
@@ -2323,12 +2532,21 @@ struct FullPlanDetailView: View {
                 }
                 Label(formattedTime, systemImage: "calendar")
             }
-            .navigationTitle("Your Voting Plan")
+            .navigationTitle(l("app.mapv.full_plan.title", "Your Voting Plan"))
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                    Button(l("app.mapv.action.done", "Done")) { dismiss() }
                 }
             }
         }
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
     }
 }

@@ -17,6 +17,8 @@ struct StaticCandidate: Identifiable {
 }
 
 struct RaceCandidatesView: View {
+    @Environment(\.locale) private var locale
+
     let candidates = [
         StaticCandidate(name: "Adrienne Adams", imageName: "adrienne", experience: "Speaker of the NYC Council (2022–present), Councilmember (2017–present)", announcedDate: "March 5, 2025", websiteURL: "https://adrienneforthepeople.com"),
         StaticCandidate(name: "Michael Blake", imageName: "blake", experience: "Assemblymember (2015–2021), DNC Vice Chair, Candidate for Public Advocate & NY-15", announcedDate: "Nov 24, 2024", websiteURL: "https://blakefornyc.com"),
@@ -32,12 +34,12 @@ struct RaceCandidatesView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 20) {
-                Text("Race Candidates")
+                Text(l("app.race_candidates.title", "Race Candidates"))
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
 
-                Text("🗽 2025 NYC Mayoral Race - Dem Primary")
+                Text(l("app.race_candidates.subtitle", "🗽 2025 NYC Mayoral Race - Dem Primary"))
                     .font(.title3)
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
@@ -56,15 +58,15 @@ struct RaceCandidatesView: View {
                                 Text(candidate.name)
                                     .font(.headline)
 
-                                Text(candidate.experience)
+                                Text(localizedExperience(for: candidate))
                                     .font(.subheadline)
                                     .foregroundColor(VoteNowColors.mutedText)
 
-                                Text("Announced: \(candidate.announcedDate)")
+                                Text("\(l("app.race_candidates.announced_prefix", "Announced:")) \(candidate.announcedDate)")
                                     .font(.caption)
                                     .foregroundColor(.gray)
 
-                                Link("Website", destination: URL(string: candidate.websiteURL)!)
+                                Link(l("app.race_candidates.website", "Website"), destination: URL(string: candidate.websiteURL)!)
                                     .font(.caption)
                                     .foregroundColor(VoteNowColors.richBlue)
                             }
@@ -77,6 +79,40 @@ struct RaceCandidatesView: View {
             }
             .padding(.bottom)
         }
+    }
+
+    private func localizedExperience(for candidate: StaticCandidate) -> String {
+        switch candidate.name {
+        case "Adrienne Adams":
+            return l("app.race_candidates.exp.adrienne_adams", candidate.experience)
+        case "Michael Blake":
+            return l("app.race_candidates.exp.michael_blake", candidate.experience)
+        case "Andrew Cuomo":
+            return l("app.race_candidates.exp.andrew_cuomo", candidate.experience)
+        case "Brad Lander":
+            return l("app.race_candidates.exp.brad_lander", candidate.experience)
+        case "Zohran Mamdani":
+            return l("app.race_candidates.exp.zohran_mamdani", candidate.experience)
+        case "Zellnor Myrie":
+            return l("app.race_candidates.exp.zellnor_myrie", candidate.experience)
+        case "Jessica Ramos":
+            return l("app.race_candidates.exp.jessica_ramos", candidate.experience)
+        case "Scott Stringer":
+            return l("app.race_candidates.exp.scott_stringer", candidate.experience)
+        case "Whitney Tilson":
+            return l("app.race_candidates.exp.whitney_tilson", candidate.experience)
+        default:
+            return candidate.experience
+        }
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
     }
 }
 

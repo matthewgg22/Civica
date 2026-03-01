@@ -10,34 +10,72 @@ import SwiftUI
 
 struct MyInfoPanelView: View {
     private enum LanguageOption: String, CaseIterable {
-        case english = "English"
-        case spanish = "Spanish"
-        case chinese = "Chinese"
-        case tagalog = "Tagalog"
-        case vietnamese = "Vietnamese"
+        case english = "en"
+        case spanish = "es"
+        case chinese = "zh-Hans"
+        case filipino = "fil"
+        case vietnamese = "vi"
+
+        static func fromStoredCode(_ code: String) -> LanguageOption? {
+            let normalized = normalizeStoredCode(code)
+            return LanguageOption(rawValue: normalized)
+        }
+
+        static func normalizeStoredCode(_ code: String) -> String {
+            let trimmed = code.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmed.isEmpty else { return LanguageOption.english.rawValue }
+
+            let lower = trimmed.lowercased()
+            switch lower {
+            case "tl", "tagalog", "fil-ph":
+                return LanguageOption.filipino.rawValue
+            case "zh", "zh-cn", "zh-hans", "zh-hans-cn":
+                return LanguageOption.chinese.rawValue
+            case "vi-vn":
+                return LanguageOption.vietnamese.rawValue
+            case "es-es", "es-mx":
+                return LanguageOption.spanish.rawValue
+            case "en-us", "en-gb":
+                return LanguageOption.english.rawValue
+            default:
+                return trimmed
+            }
+        }
     }
 
     @EnvironmentObject private var planVM: PlanViewModel
     @EnvironmentObject private var repsVM: MyRepsViewModel
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.locale) private var locale
+
+    @AppStorage("my_info.preferred_language_code")
+    private var preferredLanguageCode: String = LanguageOption.english.rawValue
 
     @State private var zip: String = ""
     @State private var affiliation: PoliticalParty = .independent
-    @State private var selectedLanguage: LanguageOption = .english
+    @State private var showInvalidZipAlert = false
     private let zipStateResolver = USZipStateResolver()
+
+    private var selectedLanguage: LanguageOption {
+        LanguageOption.fromStoredCode(preferredLanguageCode) ?? .english
+    }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("e.g. 10044", text: $zip)
+                    TextField(
+                        "",
+                        text: $zip,
+                        prompt: Text("my_info.zip.placeholder", tableName: "MyInfoPanel")
+                    )
                         .keyboardType(.numberPad)
                         .textFieldStyle(.roundedBorder)
-                    Text("Provides Personal eligible elections logistics")
+                    Text("my_info.zip.helper", tableName: "MyInfoPanel")
                         .font(.footnote)
                         .foregroundColor(VoteNowColors.mutedText)
                 } header: {
-                    Text("YOUR ZIP CODE")
+                    Text("my_info.section.zip.header", tableName: "MyInfoPanel")
                         .font(.headline.weight(.bold))
                         .textCase(nil)
                 }
@@ -45,19 +83,20 @@ struct MyInfoPanelView: View {
                 Section {
                     PartyAffiliationToggle(selection: $affiliation)
                         .padding(.vertical, 4)
-                    Text("Determines primary election eligibility")
+                    Text("my_info.party.helper", tableName: "MyInfoPanel")
                         .font(.footnote)
                         .foregroundColor(VoteNowColors.mutedText)
                 } header: {
-                    Text("PARTY REGISTRATION")
+                    Text("my_info.section.party.header", tableName: "MyInfoPanel")
                         .font(.headline.weight(.bold))
                         .textCase(nil)
                 }
 
-                Button("Show My Representatives") {
+                Button {
                     let normalizedZip = String(zip.filter(\.isNumber).prefix(5))
                     guard normalizedZip.count == 5 else {
                         print("ZIP is invalid — not proceeding.")
+                        showInvalidZipAlert = true
                         return
                     }
 
@@ -78,6 +117,8 @@ struct MyInfoPanelView: View {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                         dismiss()
                     }
+                } label: {
+                    Text("my_info.action.show_reps", tableName: "MyInfoPanel")
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
@@ -87,16 +128,16 @@ struct MyInfoPanelView: View {
 
                 Section {
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Language Options")
+                        Text("my_info.language.title", tableName: "MyInfoPanel")
                             .font(.subheadline.weight(.semibold))
                             .padding(.bottom, 2)
 
                         ForEach(LanguageOption.allCases, id: \.self) { option in
                             Button {
-                                selectedLanguage = option
+                                preferredLanguageCode = option.rawValue
                             } label: {
                                 HStack {
-                                    Text(option.rawValue)
+                                    languageLabel(for: option)
                                         .foregroundColor(VoteNowColors.primaryText)
                                     Spacer()
                                     Image(systemName: selectedLanguage == option ? "largecircle.fill.circle" : "circle")
@@ -106,34 +147,70 @@ struct MyInfoPanelView: View {
                             .buttonStyle(.plain)
                         }
 
-                        Text("These preferences were translated from English and therefore can have inaccuracies.")
+                        Text("my_info.language.disclaimer", tableName: "MyInfoPanel")
                             .font(.footnote)
                             .foregroundColor(VoteNowColors.mutedText)
                             .italic()
                             .padding(.top, 4)
                     }
                 } header: {
-                    Text("ACCESSIBILITY")
+                    Text("my_info.section.accessibility.header", tableName: "MyInfoPanel")
                         .font(.headline.weight(.bold))
                         .textCase(nil)
                 }
             }
-            .navigationTitle("My Information")
+            .navigationTitle(Text(l("my_info.navigation.title", "My Information")))
             .navigationBarTitleDisplayMode(.large)
             .onChange(of: affiliation) { _, newValue in
                 planVM.selectedParty = newValue
             }
+            .alert(isPresented: $showInvalidZipAlert) {
+                Alert(
+                    title: Text("my_info.alert.invalid_zip.title", tableName: "MyInfoPanel"),
+                    message: Text("my_info.alert.invalid_zip.message", tableName: "MyInfoPanel"),
+                    dismissButton: .default(Text("my_info.alert.invalid_zip.ok", tableName: "MyInfoPanel"))
+                )
+            }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", role: .cancel) { dismiss() }
+                    Button(role: .cancel) {
+                        dismiss()
+                    } label: {
+                        Text("my_info.action.cancel", tableName: "MyInfoPanel")
+                    }
                 }
             }
             .onAppear {
                 zip = planVM.zip
                 affiliation = planVM.selectedParty
-                selectedLanguage = .english
+                preferredLanguageCode = selectedLanguage.rawValue
             }
         }
+    }
+
+    @ViewBuilder
+    private func languageLabel(for option: LanguageOption) -> some View {
+        switch option {
+        case .english:
+            Text("my_info.language.english", tableName: "MyInfoPanel")
+        case .spanish:
+            Text("my_info.language.spanish", tableName: "MyInfoPanel")
+        case .chinese:
+            Text("my_info.language.chinese", tableName: "MyInfoPanel")
+        case .filipino:
+            Text("my_info.language.filipino", tableName: "MyInfoPanel")
+        case .vietnamese:
+            Text("my_info.language.vietnamese", tableName: "MyInfoPanel")
+        }
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "MyInfoPanel",
+            locale: locale,
+            fallback: fallback
+        )
     }
 }
 
@@ -151,7 +228,7 @@ private struct PartyAffiliationToggle: View {
                         selection = party
                     }
                 } label: {
-                    Text(label(for: party))
+                    partyLabel(for: party)
                         .font(.subheadline.weight(.semibold))
                         .foregroundColor(textColor(for: party))
                         .frame(maxWidth: .infinity)
@@ -174,11 +251,15 @@ private struct PartyAffiliationToggle: View {
         )
     }
 
-    private func label(for party: PoliticalParty) -> String {
+    @ViewBuilder
+    private func partyLabel(for party: PoliticalParty) -> some View {
         switch party {
-        case .democrat: return "Democrat"
-        case .independent: return "Independent"
-        case .republican: return "Republican"
+        case .democrat:
+            Text("my_info.party.democrat", tableName: "MyInfoPanel")
+        case .independent:
+            Text("my_info.party.independent", tableName: "MyInfoPanel")
+        case .republican:
+            Text("my_info.party.republican", tableName: "MyInfoPanel")
         }
     }
 

@@ -19,6 +19,7 @@ private struct MidtermStateElectionRecord: Decodable {
 
 struct ElectionTimelineView: View {
     @EnvironmentObject private var planVM: PlanViewModel
+    @Environment(\.locale) private var locale
 
     @State private var planElection: Election?
     @State private var allElections: [Election] = []
@@ -30,10 +31,24 @@ struct ElectionTimelineView: View {
 
     private let stateResolver = USZipStateResolver()
 
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
+
+    private func lf(_ key: String, _ fallback: String, _ args: CVarArg...) -> String {
+        let format = l(key, fallback)
+        return String(format: format, locale: locale, arguments: args)
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 0) {
-                PageHeader(title: "Election Timeline")
+                PageHeader(title: Text("app.page.election_timeline", tableName: "AppShell"))
                 Text(timelineAddressSubtitle)
                     .font(.subheadline.weight(.semibold))
                     .foregroundColor(VoteNowColors.mutedText)
@@ -54,7 +69,7 @@ struct ElectionTimelineView: View {
                     }
 
                     if visibleElections.isEmpty, errorMessage == nil {
-                        Text("No upcoming elections found for that state yet.")
+                        Text(l("app.timeline.empty.none_for_state", "No upcoming elections found for that state yet."))
                             .font(.subheadline)
                             .foregroundColor(VoteNowColors.mutedText)
                     }
@@ -68,13 +83,13 @@ struct ElectionTimelineView: View {
             }
         }
         .background(VoteNowColors.appBackground.ignoresSafeArea())
-        .navigationTitle("Election Timeline")
+        .navigationTitle(Text("app.page.election_timeline", tableName: "AppShell"))
         .sheet(item: $planElection) { _ in
             MultiStepFormView()
                 .environmentObject(planVM)
         }
         .confirmationDialog(
-            "Flag Election Listing",
+            l("app.timeline.flag.dialog.title", "Flag Election Listing"),
             isPresented: Binding(
                 get: { pendingFlagElection != nil },
                 set: { isPresented in
@@ -85,19 +100,19 @@ struct ElectionTimelineView: View {
             ),
             titleVisibility: .visible
         ) {
-            Button("Report Issue", role: .destructive) {
+            Button(l("app.timeline.flag.dialog.report", "Report Issue"), role: .destructive) {
                 submitElectionFlag()
             }
-            Button("Cancel", role: .cancel) {
+            Button(l("app.timeline.flag.dialog.cancel", "Cancel"), role: .cancel) {
                 pendingFlagElection = nil
             }
         } message: {
-            Text("Report an issue with this election listing?")
+            Text(l("app.timeline.flag.dialog.message", "Report an issue with this election listing?"))
         }
-        .alert("Thanks for flagging", isPresented: $showFlagSubmittedAlert) {
-            Button("OK", role: .cancel) {}
+        .alert(l("app.timeline.flag.alert.title", "Thanks for flagging"), isPresented: $showFlagSubmittedAlert) {
+            Button(l("app.timeline.flag.alert.ok", "OK"), role: .cancel) {}
         } message: {
-            Text("We will review this election entry.")
+            Text(l("app.timeline.flag.alert.message", "We will review this election entry."))
         }
         .onAppear {
             loadElectionsIfNeeded()
@@ -137,7 +152,7 @@ struct ElectionTimelineView: View {
             return zip
         }
 
-        return "Set your address in My Reps"
+        return l("app.timeline.location.set_address", "Set your address in My Reps")
     }
 
     @ViewBuilder
@@ -195,19 +210,19 @@ struct ElectionTimelineView: View {
                 }
                 .buttonStyle(.plain)
                 .contentShape(Circle())
-                .accessibilityLabel("Flag election")
+                .accessibilityLabel(l("app.timeline.flag.accessibility", "Flag election"))
             }
 
             HStack(alignment: .top, spacing: 10) {
                 keyDateTile(
-                    title: "Early Voting",
+                    title: l("app.timeline.date_tile.early_voting", "Early Voting"),
                     value: earlyVotingText(for: election),
                     icon: "clock",
                     useTintedBackground: index != 0
                 )
 
                 keyDateTile(
-                    title: "Election Day",
+                    title: l("app.timeline.date_tile.election_day", "Election Day"),
                     value: formattedDateText(election.electionDay),
                     icon: "calendar",
                     useTintedBackground: index != 0
@@ -241,7 +256,13 @@ struct ElectionTimelineView: View {
                 )
 
                 if case .pending(let activationDate) = mapvStatus {
-                    Text("MAPV becomes active on \(formattedDateText(activationDate)).")
+                    Text(
+                        lf(
+                            "app.timeline.mapv.pending_message",
+                            "MAPV becomes active on %@.",
+                            formattedDateText(activationDate)
+                        )
+                    )
                         .font(.caption)
                         .foregroundColor(VoteNowColors.mutedText)
                 }
@@ -261,7 +282,7 @@ struct ElectionTimelineView: View {
             ) {
                 VStack(alignment: .leading, spacing: 8) {
                     detailRow(
-                        label: "Voter registration deadline",
+                        label: l("app.timeline.detail.registration_deadline", "Voter registration deadline"),
                         value: registrationDeadlineText(for: election)
                     )
 
@@ -274,7 +295,7 @@ struct ElectionTimelineView: View {
                 }
                 .padding(.top, 6)
             } label: {
-                Text("Preliminary Things to Vote On")
+                Text(l("app.timeline.disclosure.preliminary", "Preliminary Things to Vote On"))
                     .font(.subheadline.weight(.semibold))
                     .foregroundColor(VoteNowColors.primaryText)
             }
@@ -449,19 +470,19 @@ struct ElectionTimelineView: View {
         switch planVM.selectedParty {
         case .democrat:
             return PartyBadgeStyle(
-                title: "Democrat",
+                title: l("app.timeline.party.democrat", "Democrat"),
                 foreground: VoteNowColors.richBlue,
                 background: VoteNowColors.infoSurfaceBlue
             )
         case .republican:
             return PartyBadgeStyle(
-                title: "Republican",
+                title: l("app.timeline.party.republican", "Republican"),
                 foreground: VoteNowColors.richRed,
                 background: VoteNowColors.infoSurfaceBlue
             )
         case .independent:
             return PartyBadgeStyle(
-                title: "Independent",
+                title: l("app.timeline.party.independent", "Independent"),
                 foreground: VoteNowColors.primaryText,
                 background: VoteNowColors.infoSurfaceBlue
             )
@@ -503,7 +524,7 @@ struct ElectionTimelineView: View {
             return resolved
         }
 
-        return "Statewide"
+        return l("app.timeline.statewide", "Statewide")
     }
 
     private func cardTitle(for election: Election) -> String {
@@ -572,7 +593,7 @@ struct ElectionTimelineView: View {
         guard !targetStateCodes.isEmpty else {
             visibleElections = []
             planVM.upcomingElections = []
-            errorMessage = "Set a valid U.S. address or ZIP in My Reps to load your timeline."
+            errorMessage = l("app.timeline.error.set_valid_address", "Set a valid U.S. address or ZIP in My Reps to load your timeline.")
             return
         }
 
@@ -580,7 +601,7 @@ struct ElectionTimelineView: View {
         if !territoryTargets.isEmpty {
             visibleElections = []
             planVM.upcomingElections = []
-            errorMessage = "Territory elections are not in this state dataset yet."
+            errorMessage = l("app.timeline.error.territory_unavailable", "Territory elections are not in this state dataset yet.")
             return
         }
 
@@ -896,10 +917,10 @@ struct ElectionTimelineView: View {
         let votingStart = calendar.startOfDay(for: election.startDate)
         let dayDelta = calendar.dateComponents([.day], from: today, to: votingStart).day ?? 0
 
-        if dayDelta < 0 { return "Voting Started" }
-        if dayDelta == 0 { return "Voting Starts Today" }
-        if dayDelta == 1 { return "Voting Starts in 1 day" }
-        return "Voting Starts in \(dayDelta) days"
+        if dayDelta < 0 { return l("app.timeline.countdown.started", "Voting Started") }
+        if dayDelta == 0 { return l("app.timeline.countdown.starts_today", "Voting Starts Today") }
+        if dayDelta == 1 { return l("app.timeline.countdown.starts_one_day", "Voting Starts in 1 day") }
+        return lf("app.timeline.countdown.starts_many_days", "Voting Starts in %d days", dayDelta)
     }
 
     private func countdownBackgroundColor(for election: Election) -> Color {
@@ -950,9 +971,9 @@ struct ElectionTimelineView: View {
     private func mapvButtonTitle(for availability: MAPVAvailability) -> String {
         switch availability {
         case .active, .pending:
-            return "Make a Plan to Vote"
+            return l("app.timeline.mapv.button.make_plan", "Make a Plan to Vote")
         case .closed:
-            return "Election Day Passed"
+            return l("app.timeline.mapv.button.passed", "Election Day Passed")
         }
     }
 }
