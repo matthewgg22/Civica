@@ -24,9 +24,9 @@ struct RaceCandidatesView: View {
         StaticCandidate(name: "Michael Blake", imageName: "blake", experience: "Assemblymember (2015–2021), DNC Vice Chair, Candidate for Public Advocate & NY-15", announcedDate: "Nov 24, 2024", websiteURL: "https://blakefornyc.com"),
         StaticCandidate(name: "Andrew Cuomo", imageName: "cuomo", experience: "Governor (2011–2021), NY AG (2007–2010), HUD Secretary (1997–2001)", announcedDate: "March 1, 2025", websiteURL: "https://www.andrewcuomo.com"),
         StaticCandidate(name: "Brad Lander", imageName: "lander", experience: "NYC Comptroller (2022–present), Councilmember (2010–2021)", announcedDate: "July 30, 2024", websiteURL: "https://landerfornyc.com"),
-        StaticCandidate(name: "Zohran Mamdani", imageName: "mamdani", experience: "Assemblymember, District 36 (2021–present)", announcedDate: "Oct 22, 2024", websiteURL: "https://www.zohranfornyc.com"),
-        StaticCandidate(name: "Zellnor Myrie", imageName: "myrie", experience: "NY State Senator, District 20 (2019–present)", announcedDate: "May 8, 2024", websiteURL: "https://www.zellnor.nyc"),
-        StaticCandidate(name: "Jessica Ramos", imageName: "ramos", experience: "NY State Senator, District 13 (2019–present)", announcedDate: "Sept 13, 2024", websiteURL: "https://www.ramosfornyc.com"),
+        StaticCandidate(name: "Zohran Mamdani", imageName: "mayor_mamdani", experience: "Assemblymember, District 36 (2021–present)", announcedDate: "Oct 22, 2024", websiteURL: "https://www.zohranfornyc.com"),
+        StaticCandidate(name: "Zellnor Myrie", imageName: "mayor_myrie", experience: "NY State Senator, District 20 (2019–present)", announcedDate: "May 8, 2024", websiteURL: "https://www.zellnor.nyc"),
+        StaticCandidate(name: "Jessica Ramos", imageName: "mayor_ramos", experience: "NY State Senator, District 13 (2019–present)", announcedDate: "Sept 13, 2024", websiteURL: "https://www.ramosfornyc.com"),
         StaticCandidate(name: "Scott Stringer", imageName: "stringer", experience: "NYC Comptroller (2014–2021), Manhattan BP (2006–2013), Assemblymember (1993–2005)", announcedDate: "Jan 18, 2024", websiteURL: "https://scottstringernyc.com"),
         StaticCandidate(name: "Whitney Tilson", imageName: "tilson", experience: "Investor, Hedge fund manager", announcedDate: "Nov 26, 2024", websiteURL: "https://www.whitneyformayor.com")
     ]

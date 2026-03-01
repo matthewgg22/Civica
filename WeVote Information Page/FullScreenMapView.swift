@@ -15,6 +15,7 @@ struct FullScreenMapView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.locale) private var locale
     @State private var localRegion: MKCoordinateRegion
+    @State private var mapPosition: MapCameraPosition
     let places: [PollingPlace]
     @Binding var selectedPlace: PollingPlace?
     let onDoneRegion: (MKCoordinateRegion) -> Void
@@ -26,6 +27,7 @@ struct FullScreenMapView: View {
         onDoneRegion: @escaping (MKCoordinateRegion) -> Void
     ) {
         _localRegion = State(initialValue: initialRegion)
+        _mapPosition = State(initialValue: .region(initialRegion))
         self.places = places
         _selectedPlace = selectedPlace
         self.onDoneRegion = onDoneRegion
@@ -33,19 +35,22 @@ struct FullScreenMapView: View {
 
     var body: some View {
         NavigationView {
-            Map(coordinateRegion: $localRegion,
-                annotationItems: places
-            ) { place in
-                MapAnnotation(coordinate: place.coordinate) {
-                    Button {
-                        deferToNextRunLoop {
-                            selectedPlace = place
+            Map(position: $mapPosition) {
+                ForEach(places) { place in
+                    Annotation("", coordinate: place.coordinate) {
+                        Button {
+                            deferToNextRunLoop {
+                                selectedPlace = place
+                            }
+                        } label: {
+                            FullMapPollingPinView(isSelected: selectedPlace?.id == place.id)
                         }
-                    } label: {
-                        FullMapPollingPinView(isSelected: selectedPlace?.id == place.id)
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
+            }
+            .onMapCameraChange { context in
+                localRegion = context.region
             }
             .ignoresSafeArea()
             .navigationTitle(Text(l("app.polling_locations.full_map.title", "Polling Places")))

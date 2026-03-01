@@ -90,11 +90,11 @@ struct NYCMayoralElectionView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .onAppear(perform: refreshGuide)
-        .onChange(of: planVM.zip) { _ in refreshGuide() }
-        .onChange(of: planVM.userAddress.state) { _ in refreshGuide() }
-        .onChange(of: planVM.userAddress.zip) { _ in refreshGuide() }
-        .onChange(of: planVM.selectedParty) { _ in refreshGuide() }
-        .onChange(of: locale.identifier) { _ in refreshGuide() }
+        .onChange(of: planVM.zip) { _, _ in refreshGuide() }
+        .onChange(of: planVM.userAddress.state) { _, _ in refreshGuide() }
+        .onChange(of: planVM.userAddress.zip) { _, _ in refreshGuide() }
+        .onChange(of: planVM.selectedParty) { _, _ in refreshGuide() }
+        .onChange(of: locale.identifier) { _, _ in refreshGuide() }
     }
 
     private var electionSubtitleText: String {

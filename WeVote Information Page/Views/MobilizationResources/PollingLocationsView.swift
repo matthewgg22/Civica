@@ -14,6 +14,9 @@ import MapKit
 import CoreLocation
 
 struct PollingLocationsView: View {
+    private static let fallbackCenter = CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060)
+    private static let fallbackSpan = MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+
     @Environment(\.locale) private var locale
     @Binding var selectedPlace: PollingPlace?
     var isActive: Bool = true
@@ -27,8 +30,15 @@ struct PollingLocationsView: View {
     
     @State private var region = MKCoordinateRegion(
         center: pollingPlaces.first?.coordinate
-            ?? CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060),
-        span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+            ?? Self.fallbackCenter,
+        span: Self.fallbackSpan
+    )
+    @State private var mapPosition = MapCameraPosition.region(
+        MKCoordinateRegion(
+            center: pollingPlaces.first?.coordinate
+                ?? Self.fallbackCenter,
+            span: Self.fallbackSpan
+        )
     )
     
     private let geocodeCacheKey = "PollingLocations.GeocodeCache.v1"
@@ -51,7 +61,7 @@ struct PollingLocationsView: View {
                 startGeocodingMissingAddressesIfNeeded()
             }
         }
-        .onChange(of: isActive) { active in
+        .onChange(of: isActive) { _, active in
             if active {
                 deferToNextRunLoop {
                     hydrateCoordinatesFromCache()
@@ -65,7 +75,7 @@ struct PollingLocationsView: View {
                 isGeocoding = false
             }
         }
-        .onChange(of: locationManager.location) { newLoc in
+        .onChange(of: locationManager.location) { _, newLoc in
             guard isActive else { return }
             guard let user = newLoc else { return }
             pendingSortTask?.cancel()
@@ -121,12 +131,10 @@ struct PollingLocationsView: View {
     }
     
     private var miniMap: some View {
-        Map(
-            coordinateRegion: $region,
-            showsUserLocation: true,
-            annotationItems: pollingLocations
-        ) { place in
-            MapAnnotation(coordinate: place.coordinate) {
+        Map(position: $mapPosition, interactionModes: .all) {
+            UserAnnotation()
+            ForEach(pollingLocations) { place in
+                Annotation("", coordinate: place.coordinate) {
                 Button {
                     deferToNextRunLoop {
                         selectedPlace = place
@@ -138,6 +146,10 @@ struct PollingLocationsView: View {
                 }
                 .buttonStyle(.plain)
             }
+        }
+        }
+        .onMapCameraChange { context in
+            region = context.region
         }
         .frame(height: 250)
         .cornerRadius(12)
@@ -438,6 +450,7 @@ struct PollingLocationsView: View {
         deferToNextRunLoop {
             withAnimation {
                 region = nextRegion
+                mapPosition = .region(nextRegion)
             }
         }
     }

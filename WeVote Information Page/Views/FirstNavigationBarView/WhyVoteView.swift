@@ -145,7 +145,7 @@ struct WhyVoteView: View {
         .onAppear {
             seedFactsIfNeeded()
         }
-        .onChange(of: locale.identifier) { _ in
+        .onChange(of: locale.identifier) { _, _ in
             reseedFactsForActiveLocale()
         }
         .sheet(isPresented: $showPlanToVote) {

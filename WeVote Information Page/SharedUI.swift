@@ -24,9 +24,6 @@ func localizedCatalogString(
         }
     }
 
-    if let languageCode = locale.languageCode {
-        candidateCodes.append(languageCode)
-    }
     if let languageCode = locale.language.languageCode?.identifier {
         candidateCodes.append(languageCode)
     }

@@ -83,13 +83,13 @@ final class MAPVLiveActivityManager: ObservableObject {
             return
         }
 
-        await activity.end(dismissalPolicy: dismissalPolicy)
+        await activity.end(nil, dismissalPolicy: dismissalPolicy)
     }
 
     func endAll(immediate: Bool = false) async {
         let dismissal: ActivityUIDismissalPolicy = immediate ? .immediate : .default
         for activity in Activity<MAPVLiveActivityAttributes>.activities {
-            await activity.end(dismissalPolicy: dismissal)
+            await activity.end(nil, dismissalPolicy: dismissal)
         }
     }
 

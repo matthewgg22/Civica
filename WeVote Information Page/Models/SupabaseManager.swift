@@ -193,7 +193,7 @@ final class SupabaseManager {
     }
 
     func signInAnonymouslyIfNeeded() async throws {
-        if let cachedSession {
+        if cachedSession != nil {
             return
         }
         if isSigningIn { return }

@@ -118,19 +118,19 @@ struct ElectionTimelineView: View {
             loadElectionsIfNeeded()
             applyFilter()
         }
-        .onChange(of: planVM.zip) { _ in
+        .onChange(of: planVM.zip) { _, _ in
             applyFilter()
         }
-        .onChange(of: planVM.userAddress.street) { _ in
+        .onChange(of: planVM.userAddress.street) { _, _ in
             applyFilter()
         }
-        .onChange(of: planVM.userAddress.city) { _ in
+        .onChange(of: planVM.userAddress.city) { _, _ in
             applyFilter()
         }
-        .onChange(of: planVM.userAddress.state) { _ in
+        .onChange(of: planVM.userAddress.state) { _, _ in
             applyFilter()
         }
-        .onChange(of: planVM.userAddress.zip) { _ in
+        .onChange(of: planVM.userAddress.zip) { _, _ in
             applyFilter()
         }
     }

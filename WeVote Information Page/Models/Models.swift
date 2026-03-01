@@ -40,6 +40,19 @@ public struct Official: Identifiable, Codable {
     public let contactFormURL: String?
     public let level: OfficialLevel?
 
+    enum CodingKeys: String, CodingKey {
+        case name
+        case divisionId
+        case party
+        case officeTitle
+        case photoURL
+        case url
+        case officialPhone
+        case websiteURL
+        case contactFormURL
+        case level
+    }
+
     public init(
         name: String,
         divisionId: String?,

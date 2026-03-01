@@ -322,16 +322,16 @@ struct MobilizationView: View {
                 lastRenderedPlanID = mapvPlanStore.plan?.id
             }
         }
-        .onChange(of: planVM.zip) { _ in
+        .onChange(of: planVM.zip) { _, _ in
             synchronizePlanElectionHeaderIfNeeded()
         }
-        .onChange(of: planVM.userAddress.state) { _ in
+        .onChange(of: planVM.userAddress.state) { _, _ in
             synchronizePlanElectionHeaderIfNeeded()
         }
-        .onChange(of: planVM.userAddress.zip) { _ in
+        .onChange(of: planVM.userAddress.zip) { _, _ in
             synchronizePlanElectionHeaderIfNeeded()
         }
-        .onChange(of: mapvPlanStore.plan?.id) { newID in
+        .onChange(of: mapvPlanStore.plan?.id) { _, newID in
             guard let newID else { return }
             guard newID != lastRenderedPlanID else { return }
             deferToNextRunLoop {
@@ -864,11 +864,11 @@ private struct FeedbackView: View {
         .scrollDismissesKeyboard(.interactively)
         .navigationBarTitleDisplayMode(.inline)
         .background(VoteNowColors.background)
-        .onChange(of: feedbackText) { _ in
+        .onChange(of: feedbackText) { _, _ in
             if successMessage != nil { successMessage = nil }
             if errorMessage != nil { errorMessage = nil }
         }
-        .onChange(of: email) { _ in
+        .onChange(of: email) { _, _ in
             if successMessage != nil { successMessage = nil }
             if errorMessage != nil { errorMessage = nil }
         }

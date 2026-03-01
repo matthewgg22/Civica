@@ -53,16 +53,15 @@ struct PollingPlaceDetailSheet: View {
             VStack(spacing: 16) {
                 // 1) Mini map centered on this place
                 Map(
-                    coordinateRegion: .constant(
+                    initialPosition: .region(
                         MKCoordinateRegion(
                             center: place.coordinate,
                             span: MKCoordinateSpan(latitudeDelta: 0.005,
                                                    longitudeDelta: 0.005)
                         )
-                    ),
-                    annotationItems: [place]
-                ) { place in
-                    MapMarker(coordinate: place.coordinate)
+                    )
+                ) {
+                    Marker(place.name, coordinate: place.coordinate)
                 }
                 .frame(height: 200)
                 .cornerRadius(12)

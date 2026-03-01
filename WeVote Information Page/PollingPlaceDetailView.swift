@@ -51,15 +51,14 @@ struct PollingPlaceDetailView: View {
             .font(.subheadline)
 
             Map(
-                coordinateRegion: .constant(
+                initialPosition: .region(
                     MKCoordinateRegion(
                         center: place.coordinate,
                         span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
                     )
-                ),
-                annotationItems: [place]
-            ) { place in
-                MapMarker(coordinate: place.coordinate)
+                )
+            ) {
+                Marker(place.name, coordinate: place.coordinate)
             }
             .frame(height: 200)
             .cornerRadius(12)

@@ -194,7 +194,7 @@ struct ContentView: View {
                 }
             }
         }
-        .onChange(of: scenePhase) { phase in
+        .onChange(of: scenePhase) { _, phase in
             guard phase == .active else { return }
             DispatchQueue.main.async {
                 mapvPlanStore.bootstrapFromLegacyPlanViewModel(planVM)

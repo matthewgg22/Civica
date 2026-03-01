@@ -74,7 +74,7 @@ struct MultiStepFormView: View {
             },
             onFinish: handleFinish
         )
-        .onChange(of: flowModel.currentStepIndex) { _ in
+        .onChange(of: flowModel.currentStepIndex) { _, _ in
             MAPVFlowHaptics.stepChanged()
         }
     }
@@ -1009,13 +1009,13 @@ struct AbsenteeView: View {
             }
             syncJurisdictionFromMyReps()
         }
-        .onChange(of: planVM.userAddress.state) { _ in
+        .onChange(of: planVM.userAddress.state) { _, _ in
             syncJurisdictionFromMyReps()
         }
-        .onChange(of: planVM.userAddress.zip) { _ in
+        .onChange(of: planVM.userAddress.zip) { _, _ in
             syncJurisdictionFromMyReps()
         }
-        .onChange(of: planVM.zip) { _ in
+        .onChange(of: planVM.zip) { _, _ in
             syncJurisdictionFromMyReps()
         }
     }
@@ -1352,7 +1352,7 @@ struct StepThreeView: View {
                 }
             }
         }
-        .onChange(of: chosenVotingTime) { newValue in
+        .onChange(of: chosenVotingTime) { _, newValue in
             guard isActive else { return }
             let clamped = clampDate(newValue, min: openDateForSelectedDay, max: closeDateForSelectedDay)
             guard clamped != newValue else { return }
@@ -1525,7 +1525,7 @@ private struct MAPVDayRailSelector: View {
                 }
             }
         }
-        .onChange(of: startDate) { newValue in
+        .onChange(of: startDate) { _, newValue in
             guard isActive else { return }
             let normalized = normalizeToStartOfDay(newValue)
             if selectedDate < normalized {
@@ -1537,7 +1537,7 @@ private struct MAPVDayRailSelector: View {
                 }
             }
         }
-        .onChange(of: selectedDate) { newValue in
+        .onChange(of: selectedDate) { _, newValue in
             guard isActive else { return }
             if newValue < normalizedStartDate {
                 let merged = mergeDate(normalizedStartDate, withTimeFrom: newValue)

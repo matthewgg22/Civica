@@ -129,7 +129,7 @@ final class AuthStore: ObservableObject {
 
     private func listenForAuthChanges() async {
         #if canImport(Supabase)
-        for await (event, updatedSession) in await client.auth.authStateChanges {
+        for await (event, updatedSession) in client.auth.authStateChanges {
             if Task.isCancelled { break }
             applyAuthState(session: updatedSession, source: "event-\(String(describing: event))")
         }

@@ -122,13 +122,13 @@ struct GovHelpChatSheetView: View {
                 }
                 .padding(14)
             }
-            .onChange(of: messages.count) { _ in
+            .onChange(of: messages.count) { _, _ in
                 guard let last = messages.last else { return }
                 withAnimation(.easeOut(duration: 0.2)) {
                     proxy.scrollTo(last.id, anchor: .bottom)
                 }
             }
-            .onChange(of: isSending) { sending in
+            .onChange(of: isSending) { _, sending in
                 if sending {
                     withAnimation(.easeOut(duration: 0.2)) {
                         proxy.scrollTo("typing", anchor: .bottom)

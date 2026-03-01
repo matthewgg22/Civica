@@ -53,6 +53,6 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        completionHandler([.alert, .badge, .sound])  // show push while app is open
+        completionHandler([.banner, .badge, .sound])  // show push while app is open
     }
 }

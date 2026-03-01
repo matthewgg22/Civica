@@ -303,7 +303,7 @@ struct SampleBallotView: View {
         }
         .background(VoteNowColors.infoSurfaceBlue)
         .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: planVM.selectedParty) { _ in
+        .onChange(of: planVM.selectedParty) { _, _ in
             raceRankings = [:]
         }
     }

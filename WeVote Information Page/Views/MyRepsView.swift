@@ -139,7 +139,7 @@ struct MyRepsView: View {
         .onTapGesture {
             locationFieldFocused = false
         }
-        .onChange(of: repsVM.resolvedLocationSelection?.timestamp) { _ in
+        .onChange(of: repsVM.resolvedLocationSelection?.timestamp) { _, _ in
             guard let selection = repsVM.resolvedLocationSelection else { return }
             if let zip = selection.postalCode {
                 planVM.zip = zip
@@ -198,7 +198,7 @@ struct MyRepsView: View {
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
                         .stroke(VoteNowColors.borderWarm, lineWidth: 1)
                 )
-                .onChange(of: locationInput) { newValue in
+                .onChange(of: locationInput) { _, newValue in
                     repsVM.handleLocationInputTyping(newValue)
                 }
                 .onSubmit {
