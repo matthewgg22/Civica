@@ -37,10 +37,19 @@ Defined in `backend/civic_api/api.py`:
 - `GET /api/v1/civic/examples`
 - `POST /api/v1/civic/assistant/resolve`
 - `POST /api/v1/civic/calls/log`
+- `POST /api/v1/civic/calls/launch`
+- `POST /api/v1/civic/calls/confirm`
 - `GET /api/v1/civic/history`
+- `GET /api/v1/civic/call-score/summary`
+- `GET /api/v1/civic/call-score/breakdown`
+- `GET /api/v1/civic/call-score/history`
+- `POST /api/v1/civic/call-score/recompute`
+- `GET /api/v1/civic/leaderboard`
+- `GET /api/v1/civic/leaderboard/me`
 
 ### Core modules
 - `service.py`: orchestration for examples, assistant resolve, call logging, history
+- `issue_catalog.py`: baseline issue-response content library with chamber targeting, script variants, placeholders, and tags
 - `congress_client.py`: Congress.gov integration client with retry + timeout + normalization
 - `relevance.py`: scoring engine and reason-badge mapping
 - `script_composer.py`: script generation with word limits and explicit ask control
@@ -59,6 +68,10 @@ Adds tables:
 - `call_briefs`
 - `call_logs`
 - `member_statement_sources` (phase-2 placeholder)
+- `call_launch_events`
+- `call_events`
+- `call_score_snapshots`
+- `leaderboard_call_rollups`
 
 ## Testing
 Python tests:
@@ -84,4 +97,11 @@ Swift tests:
   - `SUPABASE_URL`
   - `SUPABASE_SERVICE_ROLE_KEY`
   - `CONGRESS_GOV_API_KEY`
+  - `VOTENOW_ENABLE_CALL_SCORE_V1` (`true`/`false`, defaults to `true`)
 - Run scheduled sync job to pre-cache member/bill metadata and reduce runtime fanout.
+
+## Rollout plan (safe)
+1. Deploy migration + backend endpoints with `VOTENOW_ENABLE_CALL_SCORE_V1=false`.
+2. Enable internal QA users first via app-side toggle (`feature.call_score_v1_enabled`) and backend flag.
+3. Verify duplicate suppression + score stability + leaderboard period totals.
+4. Enable for all users after monitoring call completion and scoring analytics events.

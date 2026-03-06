@@ -255,12 +255,23 @@ struct MobilizationView: View {
                             Button(l("app.how_to_vote.action.make_plan", "Make a Plan to Vote")) {
                                 showPlanSheet = true
                             }
-                            .font(.headline)
+                            .font(.headline.weight(.semibold))
                             .frame(maxWidth: .infinity)
-                            .padding()
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 16)
                             .background(VoteNowColors.richBlue)
                             .foregroundColor(.white)
-                            .cornerRadius(10)
+                            .clipShape(Capsule(style: .continuous))
+                            .voteNowPillDualOrbit(
+                                redColor: Color(hex: "#FF3B30"),
+                                blueColor: Color(hex: "#2563FF"),
+                                strokeThickness: 3.0,
+                                loopDuration: 2.2,
+                                glowIntensity: 0.42,
+                                idleOpacity: 0.34,
+                                borderInset: 0.0,
+                                segmentLength: 0.34
+                            )
                             .padding(.horizontal)
                         }
 

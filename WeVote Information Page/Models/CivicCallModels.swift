@@ -177,23 +177,112 @@ struct CivicIssueResolutionResponse: Codable, Sendable {
 
 struct CivicExampleIssueCard: Identifiable, Codable, Sendable {
     let id: String
+    let slug: String?
     let title: String
+    let category: String?
+    let targetChambers: [String]
+    let primaryAsk: String?
     let summary: String
     let relatedBills: [String]
     let repRelevance: [String]
     let templateAsks: [CivicAsk]
     let liveScript: String
     let voicemailScript: String
+    let supporterVariant: String?
+    let undecidedVariant: String?
+    let stafferVariant: String?
+    let voicemailFooter: String?
+    let placeholders: [String]
+    let tags: [String]
 
     enum CodingKeys: String, CodingKey {
         case id = "issue_id"
+        case slug
         case title
+        case category
+        case targetChambers = "target_chambers"
+        case primaryAsk = "primary_ask"
         case summary
         case relatedBills = "related_bills"
         case repRelevance = "rep_relevance"
         case templateAsks = "template_asks"
         case liveScript = "live_script"
         case voicemailScript = "voicemail_script"
+        case supporterVariant = "supporter_variant"
+        case undecidedVariant = "undecided_variant"
+        case stafferVariant = "staffer_variant"
+        case voicemailFooter = "voicemail_footer"
+        case placeholders
+        case tags
+    }
+
+    init(
+        id: String,
+        slug: String? = nil,
+        title: String,
+        category: String? = nil,
+        targetChambers: [String] = [],
+        primaryAsk: String? = nil,
+        summary: String,
+        relatedBills: [String],
+        repRelevance: [String],
+        templateAsks: [CivicAsk],
+        liveScript: String,
+        voicemailScript: String,
+        supporterVariant: String? = nil,
+        undecidedVariant: String? = nil,
+        stafferVariant: String? = nil,
+        voicemailFooter: String? = nil,
+        placeholders: [String] = [],
+        tags: [String] = []
+    ) {
+        self.id = id
+        self.slug = slug
+        self.title = title
+        self.category = category
+        self.targetChambers = targetChambers
+        self.primaryAsk = primaryAsk
+        self.summary = summary
+        self.relatedBills = relatedBills
+        self.repRelevance = repRelevance
+        self.templateAsks = templateAsks
+        self.liveScript = liveScript
+        self.voicemailScript = voicemailScript
+        self.supporterVariant = supporterVariant
+        self.undecidedVariant = undecidedVariant
+        self.stafferVariant = stafferVariant
+        self.voicemailFooter = voicemailFooter
+        self.placeholders = placeholders
+        self.tags = tags
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        slug = try container.decodeIfPresent(String.self, forKey: .slug)
+        title = try container.decode(String.self, forKey: .title)
+        category = try container.decodeIfPresent(String.self, forKey: .category)
+        targetChambers = try container.decodeIfPresent([String].self, forKey: .targetChambers) ?? []
+        primaryAsk = try container.decodeIfPresent(String.self, forKey: .primaryAsk)
+        summary = try container.decode(String.self, forKey: .summary)
+        relatedBills = try container.decodeIfPresent([String].self, forKey: .relatedBills) ?? []
+        repRelevance = try container.decodeIfPresent([String].self, forKey: .repRelevance) ?? []
+        templateAsks = try container.decodeIfPresent([CivicAsk].self, forKey: .templateAsks) ?? []
+        liveScript = try container.decode(String.self, forKey: .liveScript)
+        voicemailScript = try container.decode(String.self, forKey: .voicemailScript)
+        supporterVariant = try container.decodeIfPresent(String.self, forKey: .supporterVariant)
+        undecidedVariant = try container.decodeIfPresent(String.self, forKey: .undecidedVariant)
+        stafferVariant = try container.decodeIfPresent(String.self, forKey: .stafferVariant)
+        voicemailFooter = try container.decodeIfPresent(String.self, forKey: .voicemailFooter)
+        placeholders = try container.decodeIfPresent([String].self, forKey: .placeholders) ?? []
+        tags = try container.decodeIfPresent([String].self, forKey: .tags) ?? []
+    }
+
+    var preferredAsk: CivicAsk? {
+        if let primaryAsk, let mapped = CivicAsk(rawValue: primaryAsk) {
+            return mapped
+        }
+        return templateAsks.first
     }
 }
 
@@ -240,6 +329,185 @@ struct CivicHistoryGroup: Identifiable, Codable, Sendable {
         case date
         case briefs
         case logs
+    }
+}
+
+struct CivicCallScoreSnapshot: Codable, Sendable {
+    let callScore: Int
+    let activationPoints: Int
+    let recencyPoints: Int
+    let consistencyPoints: Int
+    let breadthPoints: Int
+    let momentumPoints: Int
+    let tierName: String
+    let updatedAt: Date
+
+    enum CodingKeys: String, CodingKey {
+        case callScore = "call_score"
+        case activationPoints = "activation_points"
+        case recencyPoints = "recency_points"
+        case consistencyPoints = "consistency_points"
+        case breadthPoints = "breadth_points"
+        case momentumPoints = "momentum_points"
+        case tierName = "tier_name"
+        case updatedAt = "updated_at"
+    }
+}
+
+struct CivicCallScoreSummary: Codable, Sendable {
+    let callScore: Int
+    let tierName: String
+    let explanation: String
+    let updatedAt: Date
+    let enabled: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case callScore = "call_score"
+        case tierName = "tier_name"
+        case explanation
+        case updatedAt = "updated_at"
+        case enabled
+    }
+}
+
+struct CivicCallScoreComponents: Codable, Sendable {
+    let activationPoints: Int
+    let recencyPoints: Int
+    let consistencyPoints: Int
+    let breadthPoints: Int
+    let momentumPoints: Int
+
+    enum CodingKeys: String, CodingKey {
+        case activationPoints = "activation_points"
+        case recencyPoints = "recency_points"
+        case consistencyPoints = "consistency_points"
+        case breadthPoints = "breadth_points"
+        case momentumPoints = "momentum_points"
+    }
+}
+
+struct CivicCallScoreBreakdown: Codable, Sendable {
+    let callScore: Int
+    let tierName: String
+    let components: CivicCallScoreComponents
+    let maxima: CivicCallScoreComponents
+    let updatedAt: Date
+    let enabled: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case callScore = "call_score"
+        case tierName = "tier_name"
+        case components
+        case maxima
+        case updatedAt = "updated_at"
+        case enabled
+    }
+}
+
+struct CivicCallScoreHistoryItem: Identifiable, Codable, Sendable {
+    let id: String
+    let officeID: String
+    let issueID: String?
+    let completedConfirmedAt: Date
+    let scoringEligible: Bool
+    let scoringIneligibilityReason: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id = "call_event_id"
+        case officeID = "office_id"
+        case issueID = "issue_id"
+        case completedConfirmedAt = "completed_confirmed_at"
+        case scoringEligible = "scoring_eligible_boolean"
+        case scoringIneligibilityReason = "scoring_ineligibility_reason"
+    }
+}
+
+struct CivicCallScoreHistoryResponse: Codable, Sendable {
+    let history: [CivicCallScoreHistoryItem]
+}
+
+struct CivicCallLaunchResponse: Codable, Sendable {
+    let ok: Bool
+    let launchEventID: String
+    let launchedAt: Date
+    let callScoreEnabled: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case ok
+        case launchEventID = "launch_event_id"
+        case launchedAt = "launched_at"
+        case callScoreEnabled = "call_score_enabled"
+    }
+}
+
+struct CivicCallCompletionResponse: Codable, Sendable {
+    let ok: Bool
+    let launchEventID: String
+    let callLogged: Bool
+    let callEventID: String?
+    let scoringEligible: Bool?
+    let scoringIneligibilityReason: String?
+    let callScoreSnapshot: CivicCallScoreSnapshot?
+    let changedComponents: [String]
+    let baselineCrossed: Bool
+    let tierChanged: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case ok
+        case launchEventID = "launch_event_id"
+        case callLogged = "call_logged"
+        case callEventID = "call_event_id"
+        case scoringEligible = "scoring_eligible_boolean"
+        case scoringIneligibilityReason = "scoring_ineligibility_reason"
+        case callScoreSnapshot = "call_score_snapshot"
+        case changedComponents = "changed_components"
+        case baselineCrossed = "baseline_crossed"
+        case tierChanged = "tier_changed"
+    }
+}
+
+struct CivicLeaderboardEntry: Identifiable, Codable, Sendable {
+    var id: String { userID + "-\(rank)" }
+    let userID: String
+    let eligibleVerifiedCallCount: Int
+    let uniqueOfficeCount: Int
+    let rank: Int
+
+    enum CodingKeys: String, CodingKey {
+        case userID = "user_id"
+        case eligibleVerifiedCallCount = "eligible_verified_call_count"
+        case uniqueOfficeCount = "unique_office_count"
+        case rank
+    }
+}
+
+struct CivicLeaderboardResponse: Codable, Sendable {
+    let periodType: String
+    let periodStart: Date
+    let entries: [CivicLeaderboardEntry]
+
+    enum CodingKeys: String, CodingKey {
+        case periodType = "period_type"
+        case periodStart = "period_start"
+        case entries
+    }
+}
+
+struct CivicLeaderboardUserSummary: Codable, Sendable {
+    let periodType: String
+    let periodStart: Date
+    let userID: String
+    let eligibleVerifiedCallCount: Int
+    let uniqueOfficeCount: Int
+    let rank: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case periodType = "period_type"
+        case periodStart = "period_start"
+        case userID = "user_id"
+        case eligibleVerifiedCallCount = "eligible_verified_call_count"
+        case uniqueOfficeCount = "unique_office_count"
+        case rank
     }
 }
 

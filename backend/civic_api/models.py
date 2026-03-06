@@ -34,6 +34,16 @@ class CallOutcome(str, Enum):
     OTHER = "other"
 
 
+class VerificationMethod(str, Enum):
+    APP_INITIATED_SELF_CONFIRMED = "app_initiated_self_confirmed"
+
+
+class LeaderboardPeriodType(str, Enum):
+    DAILY = "daily"
+    MONTHLY = "monthly"
+    ANNUAL = "annual"
+
+
 @dataclass
 class AssistantResolveRequest:
     user_id: str
@@ -88,13 +98,23 @@ class AssistantResolveResponse:
 @dataclass
 class ExampleIssueCard:
     issue_id: str
+    slug: str
     title: str
+    category: str
+    target_chambers: list[str]
+    primary_ask: str
     summary: str
     related_bills: list[str]
     rep_relevance: list[str]
     template_asks: list[Ask]
     live_script: str
     voicemail_script: str
+    supporter_variant: str | None = None
+    undecided_variant: str | None = None
+    staffer_variant: str | None = None
+    voicemail_footer: str | None = None
+    placeholders: list[str] = field(default_factory=list)
+    tags: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -111,6 +131,9 @@ class ExamplesResponse:
                 else:
                     normalized.append(str(value))
             item["template_asks"] = normalized
+            primary_ask = item.get("primary_ask")
+            if isinstance(primary_ask, Enum):
+                item["primary_ask"] = primary_ask.value
         return payload
 
 
@@ -123,6 +146,170 @@ class CallLogRequest:
     outcome: CallOutcome
     staffer_position: str | None
     notes: str
+
+
+@dataclass
+class CallLaunchRequest:
+    user_id: str
+    office_id: str
+    issue_id: str | None
+    source_screen: str
+    session_id: str | None = None
+
+
+@dataclass
+class CallCompletionRequest:
+    user_id: str
+    launch_event_id: str
+    completed: bool
+
+
+@dataclass
+class CallLaunchEvent:
+    id: str
+    user_id: str
+    office_id: str
+    issue_id: str | None
+    launched_at: datetime
+    source_screen: str
+    session_id: str | None
+
+
+@dataclass
+class CallEvent:
+    id: str
+    user_id: str
+    office_id: str
+    issue_id: str | None
+    launch_event_id: str
+    completed_confirmed_at: datetime
+    verification_method: VerificationMethod
+    scoring_eligible_boolean: bool
+    scoring_ineligibility_reason: str | None = None
+
+
+@dataclass
+class CallScoreSnapshot:
+    user_id: str
+    call_score: int
+    activation_points: int
+    recency_points: int
+    consistency_points: int
+    breadth_points: int
+    momentum_points: int
+    tier_name: str
+    updated_at: datetime
+
+    def to_dict(self) -> dict[str, Any]:
+        payload = asdict(self)
+        payload["updated_at"] = self.updated_at.astimezone(timezone.utc).isoformat()
+        return payload
+
+
+@dataclass
+class LeaderboardCallRollup:
+    user_id: str
+    period_type: LeaderboardPeriodType
+    period_start: datetime
+    eligible_verified_call_count: int
+    unique_office_count: int
+    updated_at: datetime
+
+
+@dataclass
+class CallScoreHistoryItem:
+    call_event_id: str
+    office_id: str
+    issue_id: str | None
+    completed_confirmed_at: datetime
+    scoring_eligible_boolean: bool
+    scoring_ineligibility_reason: str | None
+
+
+@dataclass
+class CallScoreHistoryResponse:
+    history: list[CallScoreHistoryItem]
+
+    def to_dict(self) -> dict[str, Any]:
+        payload = asdict(self)
+        for item in payload.get("history", []):
+            if isinstance(item.get("completed_confirmed_at"), datetime):
+                item["completed_confirmed_at"] = item["completed_confirmed_at"].astimezone(timezone.utc).isoformat()
+        return payload
+
+
+@dataclass
+class LeaderboardEntry:
+    user_id: str
+    eligible_verified_call_count: int
+    unique_office_count: int
+    rank: int
+
+
+@dataclass
+class LeaderboardResponse:
+    period_type: LeaderboardPeriodType
+    period_start: datetime
+    entries: list[LeaderboardEntry]
+
+    def to_dict(self) -> dict[str, Any]:
+        payload = asdict(self)
+        period_type = payload.get("period_type")
+        if isinstance(period_type, Enum):
+            payload["period_type"] = period_type.value
+        if isinstance(self.period_start, datetime):
+            payload["period_start"] = self.period_start.astimezone(timezone.utc).isoformat()
+        return payload
+
+
+@dataclass
+class LeaderboardUserSummary:
+    period_type: LeaderboardPeriodType
+    period_start: datetime
+    user_id: str
+    eligible_verified_call_count: int
+    unique_office_count: int
+    rank: int | None
+
+    def to_dict(self) -> dict[str, Any]:
+        payload = asdict(self)
+        period_type = payload.get("period_type")
+        if isinstance(period_type, Enum):
+            payload["period_type"] = period_type.value
+        payload["period_start"] = self.period_start.astimezone(timezone.utc).isoformat()
+        return payload
+
+
+@dataclass
+class CallCompletionResponse:
+    ok: bool
+    launch_event_id: str
+    call_logged: bool
+    call_event_id: str | None
+    scoring_eligible_boolean: bool | None
+    scoring_ineligibility_reason: str | None
+    call_score_snapshot: CallScoreSnapshot | None
+    changed_components: list[str]
+    baseline_crossed: bool
+    tier_changed: bool
+
+    def to_dict(self) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "ok": self.ok,
+            "launch_event_id": self.launch_event_id,
+            "call_logged": self.call_logged,
+            "call_event_id": self.call_event_id,
+            "scoring_eligible_boolean": self.scoring_eligible_boolean,
+            "scoring_ineligibility_reason": self.scoring_ineligibility_reason,
+            "changed_components": self.changed_components,
+            "baseline_crossed": self.baseline_crossed,
+            "tier_changed": self.tier_changed,
+        }
+        if self.call_score_snapshot is not None:
+            payload["call_score_snapshot"] = self.call_score_snapshot.to_dict()
+        else:
+            payload["call_score_snapshot"] = None
+        return payload
 
 
 @dataclass

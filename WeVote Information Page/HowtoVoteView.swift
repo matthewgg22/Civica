@@ -33,10 +33,24 @@ struct HowToVoteView: View {
                                 .environmentObject(planVM)
                         ) {
                             Label(l("app.how_to_vote.action.make_plan", "Make a Plan to Vote"), systemImage: "calendar.badge.plus")
-                                .font(.headline)
+                                .font(.headline.weight(.semibold))
+                                .foregroundColor(.white)
                                 .frame(maxWidth: .infinity, alignment: .center)
+                                .padding(.vertical, 12)
+                                .background(VoteNowColors.primaryCTA)
+                                .clipShape(Capsule(style: .continuous))
+                                .voteNowPillDualOrbit(
+                                    redColor: Color(hex: "#FF3B30"),
+                                    blueColor: Color(hex: "#2563FF"),
+                                    strokeThickness: 2.8,
+                                    loopDuration: 2.2,
+                                    glowIntensity: 0.36,
+                                    idleOpacity: 0.30,
+                                    borderInset: 0.7,
+                                    segmentLength: 0.34
+                                )
                         }
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(.plain)
                         .listRowInsets(.init())
                         .padding(.vertical, 8)
                     }

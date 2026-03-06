@@ -171,3 +171,44 @@ def test_log_call_persists_history_group() -> None:
     assert len(history) == 1
     assert history[0]["issue_id"] == brief.issue_id
     assert history[0]["logs"][0]["outcome"] == "voicemail"
+
+
+def test_examples_include_all_baseline_issues_for_federal_context() -> None:
+    repo = InMemoryCivicRepository()
+    _seed_repo_with_federal_reps(repo, user_id="u-3")
+    service = CivicService(repository=repo)
+
+    response = service.get_examples("u-3").to_dict()
+    assert len(response["examples"]) == 10
+
+    slugs = {item["slug"] for item in response["examples"]}
+    assert "stop-unauthorized-military-strikes-on-iran" in slugs
+    assert "protect-state-level-ai-regulation" in slugs
+    assert "oppose-steve-pearce-as-blm-director" in slugs
+
+
+def test_examples_filter_out_senate_only_issues_for_house_only_users() -> None:
+    repo = InMemoryCivicRepository()
+    repo.seed_reps(
+        "u-house-only",
+        [
+            RepContext(
+                rep_id="house-only-1",
+                rep_name="House Only",
+                office_type="U.S. Representative",
+                chamber="house",
+                district="CA-7",
+                state="CA",
+                primary_phone_number="(202) 555-0123",
+            )
+        ],
+    )
+    service = CivicService(repository=repo)
+
+    examples = service.get_examples("u-house-only").to_dict()["examples"]
+    slugs = {item["slug"] for item in examples}
+
+    assert "oppose-steve-pearce-as-blm-director" not in slugs
+    assert "oppose-the-save-america-act" not in slugs
+    assert "oppose-casey-means-for-surgeon-general" not in slugs
+    assert "protect-state-level-ai-regulation" in slugs

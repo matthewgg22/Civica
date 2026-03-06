@@ -5,15 +5,20 @@ struct IssueCallCenterView: View {
     @Environment(\.locale) private var locale
     @Environment(\.openURL) private var openURL
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.scenePhase) private var scenePhase
 
     @StateObject private var viewModel: IssueCallCenterViewModel
     @StateObject private var waterfallController = EmojiWaterfallController()
+    @AppStorage("feature.call_score_v1_enabled") private var callScoreV1Enabled = true
     @FocusState private var focusedField: FocusedField?
     @State private var showWhyCallOverlay = false
     @State private var didCompleteMAPC = false
     @State private var isTalkingPointsExpanded = false
     @State private var logoFrameInSpreadSpace: CGRect = .zero
     @State private var overlayOriginInSpreadSpace: CGPoint?
+    @State private var showCompletionPrompt = false
+    @State private var showBreakdownSheet = false
+    @State private var lastPromptedLaunchEventID: String?
     private let userAddressLine: String
 
     private enum FocusedField: Hashable {
@@ -119,7 +124,13 @@ struct IssueCallCenterView: View {
             if showWhyCallOverlay {
                 WhyCallFloodOverlay(
                     isPresented: $showWhyCallOverlay,
-                    originInSpreadSpace: overlayOriginInSpreadSpace
+                    originInSpreadSpace: overlayOriginInSpreadSpace,
+                    onStartCalling: {
+                        focusedField = nil
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            viewModel.selectedTab = .assistant
+                        }
+                    }
                 )
                     .transition(.identity)
                     .zIndex(20)
@@ -155,6 +166,27 @@ struct IssueCallCenterView: View {
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
+        .confirmationDialog(
+            l("app.issue_call.completion.prompt.title", "Did you complete the call?"),
+            isPresented: $showCompletionPrompt,
+            titleVisibility: .visible
+        ) {
+            Button(l("app.issue_call.completion.prompt.yes", "Yes")) {
+                Task {
+                    await viewModel.confirmPendingCallCompletion(completed: true)
+                }
+            }
+            Button(l("app.issue_call.completion.prompt.not_yet", "Not yet")) {
+                Task {
+                    await viewModel.confirmPendingCallCompletion(completed: false)
+                }
+            }
+            Button(l("app.issue_call.alert.cancel", "Cancel"), role: .cancel) {}
+        }
+        .sheet(isPresented: $showBreakdownSheet) {
+            callScoreBreakdownSheet
+                .presentationDetents([.medium, .large])
+        }
         .onTapGesture {
             focusedField = nil
         }
@@ -181,6 +213,20 @@ struct IssueCallCenterView: View {
             guard viewModel.selectedTab == .assistant else { return }
             guard newID != nil else { return }
             didCompleteMAPC = false
+        }
+        .onChange(of: scenePhase) { _, newValue in
+            guard newValue == .active else { return }
+            guard callScoreV1Enabled else { return }
+            guard let pending = viewModel.pendingCallLaunch else { return }
+            guard viewModel.shouldPromptForPendingCallCompletion() else { return }
+            guard lastPromptedLaunchEventID != pending.launchEventID else { return }
+            lastPromptedLaunchEventID = pending.launchEventID
+            showCompletionPrompt = true
+        }
+        .onChange(of: viewModel.pendingCallLaunch?.launchEventID) { _, newValue in
+            if newValue == nil {
+                lastPromptedLaunchEventID = nil
+            }
         }
     }
 
@@ -315,6 +361,10 @@ struct IssueCallCenterView: View {
     private var scriptFocusModeContent: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
+                if viewModel.lastCompletionResult != nil {
+                    completionFeedbackCard
+                }
+
                 issueSummaryCard
 
                 if let brief = viewModel.activeBrief {
@@ -337,6 +387,10 @@ struct IssueCallCenterView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
+                    if viewModel.lastCompletionResult != nil {
+                        completionFeedbackCard
+                    }
+
                     if viewModel.issueTitle.isEmpty || didCompleteMAPC {
                         concernComposerCard
                     } else {
@@ -601,7 +655,12 @@ struct IssueCallCenterView: View {
             HStack(spacing: 8) {
                 Button {
                     guard let url = primaryCallURL else { return }
-                    openURL(url)
+                    Task {
+                        if callScoreV1Enabled {
+                            await viewModel.beginCallLaunch(for: brief, sourceScreen: "issue_call_center")
+                        }
+                        openURL(url)
+                    }
                 } label: {
                     Label(
                         l("app.issue_call.action.call_rep", "Call this representative"),
@@ -738,6 +797,26 @@ struct IssueCallCenterView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(example.title)
                             .font(.headline)
+
+                        HStack(spacing: 8) {
+                            if let category = example.category, !category.isEmpty {
+                                Text(category)
+                                    .font(.caption.weight(.semibold))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(VoteNowColors.infoSurfaceBlue)
+                                    .clipShape(Capsule())
+                            }
+                            if !example.targetChambers.isEmpty {
+                                Text(example.targetChambers.map { $0.capitalized }.joined(separator: " + "))
+                                    .font(.caption.weight(.semibold))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(VoteNowColors.infoSurfaceBlue)
+                                    .clipShape(Capsule())
+                            }
+                        }
+
                         Text(example.summary)
                             .font(.subheadline)
 
@@ -747,6 +826,31 @@ struct IssueCallCenterView: View {
 
                         scriptBlock(title: l("app.issue_call.script.live", "Live-call script"), text: example.liveScript)
                         scriptBlock(title: l("app.issue_call.script.voicemail", "Voicemail"), text: example.voicemailScript)
+
+                        if let footer = example.voicemailFooter, !footer.isEmpty {
+                            Text(footer)
+                                .font(.caption)
+                                .foregroundColor(VoteNowColors.mutedText)
+                        }
+
+                        Button {
+                            focusedField = nil
+                            didCompleteMAPC = false
+                            isTalkingPointsExpanded = false
+                            Task {
+                                await viewModel.startMAPC(from: example)
+                            }
+                        } label: {
+                            Text(l("app.issue_call.examples.use_for_mapc", "Use this issue for MAPC"))
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .background(VoteNowColors.primaryCTA)
+                                .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(viewModel.isSubmitting)
                     }
                     .padding(12)
                     .background(VoteNowColors.surfaceWhite)
@@ -765,6 +869,9 @@ struct IssueCallCenterView: View {
     private var civicScoreTab: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
+                if viewModel.lastCompletionResult != nil {
+                    completionFeedbackCard
+                }
                 civicScoreSummaryCard
                 historyTrackerSection
             }
@@ -774,20 +881,51 @@ struct IssueCallCenterView: View {
     }
 
     private var civicScoreSummaryCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(l("app.issue_call.civic_score.title", "Civic Scorecard: 3 🔥"))
-                .font(.headline)
-            Divider()
-            VStack(alignment: .leading, spacing: 6) {
-                Text(l("app.issue_call.civic_score.item.general", "1x General Election"))
-                Text(l("app.issue_call.civic_score.item.primary", "1x Primary Election"))
-                Text(l("app.issue_call.civic_score.item.gubernatorial", "1x Gubernatorial Election"))
+        let summary = viewModel.callScoreSummary
+        let score = summary?.callScore ?? 0
+        let tier = summary?.tierName ?? l("app.issue_call.score.tier.not_active", "Not Active Yet")
+
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(l("app.issue_call.score.title", "Call Score"))
+                    .font(.headline)
+                Spacer()
+                Text("\(score)/100")
+                    .font(.title2.weight(.bold))
+                    .foregroundColor(VoteNowColors.primaryCTA)
             }
-            .font(.subheadline)
-            Divider()
-            Text(l("app.issue_call.civic_score.summary", "You are in the top 25% of American Voters"))
+
+            Text(tier)
+                .font(.subheadline.weight(.semibold))
+
+            Text(summary?.explanation ?? l("app.issue_call.score.explanation", "Build a real civic calling habit with verified, non-duplicate calls over time."))
                 .font(.footnote)
                 .foregroundColor(VoteNowColors.primaryText)
+
+            if let leaderboardSummary = viewModel.leaderboardSummary {
+                Text(
+                    l(
+                        "app.issue_call.score.leaderboard.summary",
+                        "This month: \(leaderboardSummary.eligibleVerifiedCallCount) eligible calls across \(leaderboardSummary.uniqueOfficeCount) office(s)."
+                    )
+                )
+                .font(.caption)
+                .foregroundColor(VoteNowColors.mutedText)
+            }
+
+            Button {
+                showBreakdownSheet = true
+            } label: {
+                Text(l("app.issue_call.score.action.breakdown", "View score breakdown"))
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 9)
+                    .background(VoteNowColors.primaryCTA)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("issue_call.score.breakdown")
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -797,6 +935,149 @@ struct IssueCallCenterView: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
         )
+    }
+
+    @ViewBuilder
+    private var completionFeedbackCard: some View {
+        if let result = viewModel.lastCompletionResult {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text(l("app.issue_call.completion.logged", "Call logged"))
+                        .font(.headline)
+                    Spacer()
+                    Button(l("app.issue_call.alert.dismiss", "Dismiss")) {
+                        viewModel.clearCompletionResult()
+                    }
+                    .font(.caption.weight(.semibold))
+                }
+
+                if result.scoringEligible == true, let snapshot = result.callScoreSnapshot {
+                    Text(l("app.issue_call.completion.new_score", "New call score: \(snapshot.callScore)"))
+                        .font(.subheadline.weight(.semibold))
+
+                    if result.baselineCrossed {
+                        Text(l("app.issue_call.completion.baseline", "You crossed the baseline"))
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(VoteNowColors.successGreen)
+                    }
+
+                    if !result.changedComponents.isEmpty {
+                        Text(l("app.issue_call.completion.changed", "Updated components:"))
+                            .font(.caption.weight(.semibold))
+                        Text(
+                            result.changedComponents
+                                .map { viewModel.componentDisplayName(for: $0) }
+                                .joined(separator: ", ")
+                        )
+                        .font(.caption)
+                        .foregroundColor(VoteNowColors.mutedText)
+                    }
+                } else {
+                    Text(l("app.issue_call.completion.no_change", "No score change"))
+                        .font(.subheadline.weight(.semibold))
+                    Text(
+                        result.scoringIneligibilityReason
+                        ?? l("app.issue_call.completion.duplicate_default", "A recent duplicate call was logged, so score and leaderboard counts did not change.")
+                    )
+                    .font(.caption)
+                    .foregroundColor(VoteNowColors.mutedText)
+                }
+            }
+            .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(VoteNowColors.surfaceWhite)
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+            )
+        }
+    }
+
+    @ViewBuilder
+    private var callScoreBreakdownSheet: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 12) {
+                    if let breakdown = viewModel.callScoreBreakdown {
+                        Text("\(l("app.issue_call.score.title", "Call Score")): \(breakdown.callScore)/100")
+                            .font(.title3.weight(.bold))
+                        Text(breakdown.tierName)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundColor(VoteNowColors.primaryCTA)
+
+                        scoreBreakdownRow(
+                            title: l("app.issue_call.score.activation", "Activation"),
+                            value: breakdown.components.activationPoints,
+                            maxPoints: breakdown.maxima.activationPoints
+                        )
+                        scoreBreakdownRow(
+                            title: l("app.issue_call.score.recency", "Recency"),
+                            value: breakdown.components.recencyPoints,
+                            maxPoints: breakdown.maxima.recencyPoints
+                        )
+                        scoreBreakdownRow(
+                            title: l("app.issue_call.score.consistency", "Consistency"),
+                            value: breakdown.components.consistencyPoints,
+                            maxPoints: breakdown.maxima.consistencyPoints
+                        )
+                        scoreBreakdownRow(
+                            title: l("app.issue_call.score.breadth", "Breadth"),
+                            value: breakdown.components.breadthPoints,
+                            maxPoints: breakdown.maxima.breadthPoints
+                        )
+                        scoreBreakdownRow(
+                            title: l("app.issue_call.score.momentum", "Momentum"),
+                            value: breakdown.components.momentumPoints,
+                            maxPoints: breakdown.maxima.momentumPoints
+                        )
+
+                        if !viewModel.callScoreHistory.isEmpty {
+                            Text(l("app.issue_call.score.history", "Recent scoring history"))
+                                .font(.headline)
+                                .padding(.top, 4)
+                            ForEach(viewModel.callScoreHistory.prefix(8)) { item in
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(item.officeID)
+                                            .font(.caption.weight(.semibold))
+                                        Text(item.completedConfirmedAt.formatted(date: .abbreviated, time: .shortened))
+                                            .font(.caption2)
+                                            .foregroundColor(VoteNowColors.mutedText)
+                                    }
+                                    Spacer()
+                                    Text(
+                                        item.scoringEligible
+                                        ? l("app.issue_call.score.history.eligible", "Eligible")
+                                        : l("app.issue_call.score.history.duplicate", "Duplicate")
+                                    )
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundColor(item.scoringEligible ? VoteNowColors.successGreen : VoteNowColors.warningAmber)
+                                }
+                                .padding(8)
+                                .background(VoteNowColors.infoSurfaceBlue)
+                                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            }
+                        }
+                    } else {
+                        Text(l("app.issue_call.score.loading", "Loading score breakdown..."))
+                            .font(.subheadline)
+                            .foregroundColor(VoteNowColors.mutedText)
+                    }
+                }
+                .padding(16)
+            }
+            .background(VoteNowColors.brandSoftBlue.ignoresSafeArea())
+            .navigationTitle(l("app.issue_call.score.breakdown.title", "Score Breakdown"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(l("app.issue_call.alert.done", "Done")) {
+                        showBreakdownSheet = false
+                    }
+                }
+            }
+        }
     }
 
     private var historyTrackerSection: some View {
@@ -985,6 +1266,39 @@ struct IssueCallCenterView: View {
             return normalizedRepID
         }
         return repName.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+
+    @ViewBuilder
+    private func scoreBreakdownRow(title: String, value: Int, maxPoints: Int) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+                Spacer()
+                Text("\(value)/\(maxPoints)")
+                    .font(.subheadline.weight(.bold))
+                    .foregroundColor(VoteNowColors.primaryCTA)
+            }
+            GeometryReader { geo in
+                let ratio = maxPoints > 0 ? CGFloat(value) / CGFloat(maxPoints) : 0
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(VoteNowColors.infoSurfaceBlue.opacity(0.8))
+                        .frame(height: 8)
+                    Capsule()
+                        .fill(VoteNowColors.primaryCTA)
+                        .frame(width: Swift.max(0, geo.size.width * ratio), height: 8)
+                }
+            }
+            .frame(height: 8)
+        }
+        .padding(10)
+        .background(VoteNowColors.surfaceWhite)
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+        )
     }
 
     @ViewBuilder

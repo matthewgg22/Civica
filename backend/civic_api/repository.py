@@ -12,7 +12,19 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 from typing import Any
 
-from .models import CallBrief, CallLogRecord, CallOutcome, HistoryGroup, RepContext
+from .models import (
+    CallBrief,
+    CallEvent,
+    CallLaunchEvent,
+    CallLogRecord,
+    CallOutcome,
+    CallScoreSnapshot,
+    HistoryGroup,
+    LeaderboardCallRollup,
+    LeaderboardPeriodType,
+    RepContext,
+    VerificationMethod,
+)
 
 
 class CivicRepository(ABC):
@@ -37,6 +49,66 @@ class CivicRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def insert_call_launch_event(self, event: CallLaunchEvent) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_call_launch_event(self, user_id: str, launch_event_id: str) -> CallLaunchEvent | None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def insert_call_event(self, event: CallEvent) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def find_recent_scoring_eligible_call(
+        self,
+        user_id: str,
+        office_id: str,
+        issue_id: str | None,
+        since: datetime,
+    ) -> CallEvent | None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def list_call_events(
+        self,
+        user_id: str,
+        since: datetime | None = None,
+        eligible_only: bool = False,
+    ) -> list[CallEvent]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def upsert_call_score_snapshot(self, snapshot: CallScoreSnapshot) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_call_score_snapshot(self, user_id: str) -> CallScoreSnapshot | None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def upsert_leaderboard_rollups(self, rollups: list[LeaderboardCallRollup]) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def list_leaderboard_rollups(
+        self,
+        period_type: LeaderboardPeriodType,
+        period_start: datetime,
+    ) -> list[LeaderboardCallRollup]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_user_leaderboard_rollup(
+        self,
+        user_id: str,
+        period_type: LeaderboardPeriodType,
+        period_start: datetime,
+    ) -> LeaderboardCallRollup | None:
+        raise NotImplementedError
+
+    @abstractmethod
     def load_history(self, user_id: str) -> list[HistoryGroup]:
         raise NotImplementedError
 
@@ -48,6 +120,10 @@ class InMemoryCivicRepository(CivicRepository):
         self._signals: list[dict[str, Any]] = []
         self._briefs_by_user_issue: dict[tuple[str, str], list[CallBrief]] = defaultdict(list)
         self._logs_by_user: dict[str, list[CallLogRecord]] = defaultdict(list)
+        self._launches_by_id: dict[str, CallLaunchEvent] = {}
+        self._events_by_user: dict[str, list[CallEvent]] = defaultdict(list)
+        self._score_snapshot_by_user: dict[str, CallScoreSnapshot] = {}
+        self._leaderboard_rollups: dict[tuple[str, str, str], LeaderboardCallRollup] = {}
 
     def seed_reps(self, user_id: str, reps: list[RepContext]) -> None:
         self._rep_context_by_user[user_id] = reps
@@ -67,6 +143,91 @@ class InMemoryCivicRepository(CivicRepository):
 
     def insert_call_log(self, record: CallLogRecord) -> None:
         self._logs_by_user[record.user_id].insert(0, record)
+
+    def insert_call_launch_event(self, event: CallLaunchEvent) -> None:
+        self._launches_by_id[event.id] = event
+
+    def get_call_launch_event(self, user_id: str, launch_event_id: str) -> CallLaunchEvent | None:
+        event = self._launches_by_id.get(launch_event_id)
+        if event is None:
+            return None
+        if event.user_id != user_id:
+            return None
+        return event
+
+    def insert_call_event(self, event: CallEvent) -> None:
+        self._events_by_user[event.user_id].insert(0, event)
+
+    def find_recent_scoring_eligible_call(
+        self,
+        user_id: str,
+        office_id: str,
+        issue_id: str | None,
+        since: datetime,
+    ) -> CallEvent | None:
+        for event in self._events_by_user.get(user_id, []):
+            if not event.scoring_eligible_boolean:
+                continue
+            if event.office_id != office_id:
+                continue
+            if event.completed_confirmed_at < since:
+                continue
+            if issue_id is None:
+                if event.issue_id is None:
+                    return event
+            else:
+                if event.issue_id == issue_id:
+                    return event
+        return None
+
+    def list_call_events(
+        self,
+        user_id: str,
+        since: datetime | None = None,
+        eligible_only: bool = False,
+    ) -> list[CallEvent]:
+        events = list(self._events_by_user.get(user_id, []))
+        if since is not None:
+            events = [event for event in events if event.completed_confirmed_at >= since]
+        if eligible_only:
+            events = [event for event in events if event.scoring_eligible_boolean]
+        return sorted(events, key=lambda event: event.completed_confirmed_at, reverse=True)
+
+    def upsert_call_score_snapshot(self, snapshot: CallScoreSnapshot) -> None:
+        self._score_snapshot_by_user[snapshot.user_id] = snapshot
+
+    def get_call_score_snapshot(self, user_id: str) -> CallScoreSnapshot | None:
+        return self._score_snapshot_by_user.get(user_id)
+
+    def upsert_leaderboard_rollups(self, rollups: list[LeaderboardCallRollup]) -> None:
+        for rollup in rollups:
+            key = (
+                rollup.user_id,
+                rollup.period_type.value,
+                rollup.period_start.astimezone(timezone.utc).isoformat(),
+            )
+            self._leaderboard_rollups[key] = rollup
+
+    def list_leaderboard_rollups(
+        self,
+        period_type: LeaderboardPeriodType,
+        period_start: datetime,
+    ) -> list[LeaderboardCallRollup]:
+        period_iso = period_start.astimezone(timezone.utc).isoformat()
+        return [
+            rollup
+            for (_, stored_period_type, stored_period_start), rollup in self._leaderboard_rollups.items()
+            if stored_period_type == period_type.value and stored_period_start == period_iso
+        ]
+
+    def get_user_leaderboard_rollup(
+        self,
+        user_id: str,
+        period_type: LeaderboardPeriodType,
+        period_start: datetime,
+    ) -> LeaderboardCallRollup | None:
+        key = (user_id, period_type.value, period_start.astimezone(timezone.utc).isoformat())
+        return self._leaderboard_rollups.get(key)
 
     def load_history(self, user_id: str) -> list[HistoryGroup]:
         groups: dict[str, HistoryGroup] = {}
@@ -148,6 +309,161 @@ class SupabaseCivicRepository(CivicRepository):
         row["created_at"] = record.created_at.astimezone(timezone.utc).isoformat()
         row["outcome"] = record.outcome.value if isinstance(record.outcome, CallOutcome) else str(record.outcome)
         self._request_json("POST", "/rest/v1/call_logs", body=[row])
+
+    def insert_call_launch_event(self, event: CallLaunchEvent) -> None:
+        row = asdict(event)
+        row["launched_at"] = event.launched_at.astimezone(timezone.utc).isoformat()
+        self._request_json("POST", "/rest/v1/call_launch_events", body=[row])
+
+    def get_call_launch_event(self, user_id: str, launch_event_id: str) -> CallLaunchEvent | None:
+        params = urllib.parse.urlencode(
+            {
+                "id": f"eq.{launch_event_id}",
+                "user_id": f"eq.{user_id}",
+                "limit": "1",
+            }
+        )
+        rows = self._request_json("GET", f"/rest/v1/call_launch_events?{params}")
+        if not rows:
+            return None
+        row = rows[0]
+        return CallLaunchEvent(
+            id=str(row.get("id", "")),
+            user_id=str(row.get("user_id", "")),
+            office_id=str(row.get("office_id", "")),
+            issue_id=row.get("issue_id"),
+            launched_at=_parse_ts(str(row.get("launched_at", ""))),
+            source_screen=str(row.get("source_screen", "")),
+            session_id=row.get("session_id"),
+        )
+
+    def insert_call_event(self, event: CallEvent) -> None:
+        row = asdict(event)
+        row["completed_confirmed_at"] = event.completed_confirmed_at.astimezone(timezone.utc).isoformat()
+        verification = row.get("verification_method")
+        if isinstance(verification, VerificationMethod):
+            row["verification_method"] = verification.value
+        self._request_json("POST", "/rest/v1/call_events", body=[row])
+
+    def find_recent_scoring_eligible_call(
+        self,
+        user_id: str,
+        office_id: str,
+        issue_id: str | None,
+        since: datetime,
+    ) -> CallEvent | None:
+        params: dict[str, str] = {
+            "user_id": f"eq.{user_id}",
+            "office_id": f"eq.{office_id}",
+            "scoring_eligible_boolean": "eq.true",
+            "completed_confirmed_at": f"gte.{since.astimezone(timezone.utc).isoformat()}",
+            "order": "completed_confirmed_at.desc",
+            "limit": "1",
+        }
+        if issue_id is None:
+            params["issue_id"] = "is.null"
+        else:
+            params["issue_id"] = f"eq.{issue_id}"
+        rows = self._request_json("GET", f"/rest/v1/call_events?{urllib.parse.urlencode(params)}")
+        if not rows:
+            return None
+        return _row_to_call_event(rows[0])
+
+    def list_call_events(
+        self,
+        user_id: str,
+        since: datetime | None = None,
+        eligible_only: bool = False,
+    ) -> list[CallEvent]:
+        params: dict[str, str] = {
+            "user_id": f"eq.{user_id}",
+            "order": "completed_confirmed_at.desc",
+        }
+        if since is not None:
+            params["completed_confirmed_at"] = f"gte.{since.astimezone(timezone.utc).isoformat()}"
+        if eligible_only:
+            params["scoring_eligible_boolean"] = "eq.true"
+
+        rows = self._request_json("GET", f"/rest/v1/call_events?{urllib.parse.urlencode(params)}")
+        return [_row_to_call_event(row) for row in rows]
+
+    def upsert_call_score_snapshot(self, snapshot: CallScoreSnapshot) -> None:
+        row = asdict(snapshot)
+        row["updated_at"] = snapshot.updated_at.astimezone(timezone.utc).isoformat()
+        self._request_json("POST", "/rest/v1/call_score_snapshots", body=[row], prefer="resolution=merge-duplicates")
+
+    def get_call_score_snapshot(self, user_id: str) -> CallScoreSnapshot | None:
+        params = urllib.parse.urlencode({"user_id": f"eq.{user_id}", "limit": "1"})
+        rows = self._request_json("GET", f"/rest/v1/call_score_snapshots?{params}")
+        if not rows:
+            return None
+        row = rows[0]
+        return CallScoreSnapshot(
+            user_id=str(row.get("user_id", user_id)),
+            call_score=int(row.get("call_score", 0)),
+            activation_points=int(row.get("activation_points", 0)),
+            recency_points=int(row.get("recency_points", 0)),
+            consistency_points=int(row.get("consistency_points", 0)),
+            breadth_points=int(row.get("breadth_points", 0)),
+            momentum_points=int(row.get("momentum_points", 0)),
+            tier_name=str(row.get("tier_name", "Not Active Yet")),
+            updated_at=_parse_ts(str(row.get("updated_at", ""))),
+        )
+
+    def upsert_leaderboard_rollups(self, rollups: list[LeaderboardCallRollup]) -> None:
+        if not rollups:
+            return
+        rows: list[dict[str, Any]] = []
+        for rollup in rollups:
+            rows.append(
+                {
+                    "user_id": rollup.user_id,
+                    "period_type": rollup.period_type.value,
+                    "period_start": rollup.period_start.astimezone(timezone.utc).isoformat(),
+                    "eligible_verified_call_count": rollup.eligible_verified_call_count,
+                    "unique_office_count": rollup.unique_office_count,
+                    "updated_at": rollup.updated_at.astimezone(timezone.utc).isoformat(),
+                }
+            )
+        self._request_json(
+            "POST",
+            "/rest/v1/leaderboard_call_rollups",
+            body=rows,
+            prefer="resolution=merge-duplicates",
+        )
+
+    def list_leaderboard_rollups(
+        self,
+        period_type: LeaderboardPeriodType,
+        period_start: datetime,
+    ) -> list[LeaderboardCallRollup]:
+        params = urllib.parse.urlencode(
+            {
+                "period_type": f"eq.{period_type.value}",
+                "period_start": f"eq.{period_start.astimezone(timezone.utc).isoformat()}",
+            }
+        )
+        rows = self._request_json("GET", f"/rest/v1/leaderboard_call_rollups?{params}")
+        return [_row_to_leaderboard_rollup(row) for row in rows]
+
+    def get_user_leaderboard_rollup(
+        self,
+        user_id: str,
+        period_type: LeaderboardPeriodType,
+        period_start: datetime,
+    ) -> LeaderboardCallRollup | None:
+        params = urllib.parse.urlencode(
+            {
+                "user_id": f"eq.{user_id}",
+                "period_type": f"eq.{period_type.value}",
+                "period_start": f"eq.{period_start.astimezone(timezone.utc).isoformat()}",
+                "limit": "1",
+            }
+        )
+        rows = self._request_json("GET", f"/rest/v1/leaderboard_call_rollups?{params}")
+        if not rows:
+            return None
+        return _row_to_leaderboard_rollup(rows[0])
 
     def load_history(self, user_id: str) -> list[HistoryGroup]:
         logs_params = urllib.parse.urlencode({"user_id": f"eq.{user_id}", "order": "created_at.desc"})
@@ -277,3 +593,48 @@ def _parse_ts(value: str) -> datetime:
         return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(timezone.utc)
     except ValueError:
         return datetime.now(timezone.utc)
+
+
+def _row_to_call_event(row: dict[str, Any]) -> CallEvent:
+    verification_raw = str(row.get("verification_method", VerificationMethod.APP_INITIATED_SELF_CONFIRMED.value))
+    try:
+        verification = VerificationMethod(verification_raw)
+    except ValueError:
+        verification = VerificationMethod.APP_INITIATED_SELF_CONFIRMED
+
+    scored_raw = row.get("scoring_eligible_boolean", False)
+    if isinstance(scored_raw, bool):
+        scored_eligible = scored_raw
+    elif isinstance(scored_raw, str):
+        scored_eligible = scored_raw.strip().lower() in {"true", "t", "1", "yes"}
+    else:
+        scored_eligible = bool(scored_raw)
+
+    return CallEvent(
+        id=str(row.get("id", "")),
+        user_id=str(row.get("user_id", "")),
+        office_id=str(row.get("office_id", "")),
+        issue_id=row.get("issue_id"),
+        launch_event_id=str(row.get("launch_event_id", "")),
+        completed_confirmed_at=_parse_ts(str(row.get("completed_confirmed_at", ""))),
+        verification_method=verification,
+        scoring_eligible_boolean=scored_eligible,
+        scoring_ineligibility_reason=row.get("scoring_ineligibility_reason"),
+    )
+
+
+def _row_to_leaderboard_rollup(row: dict[str, Any]) -> LeaderboardCallRollup:
+    period_type_raw = str(row.get("period_type", LeaderboardPeriodType.DAILY.value))
+    try:
+        period_type = LeaderboardPeriodType(period_type_raw)
+    except ValueError:
+        period_type = LeaderboardPeriodType.DAILY
+
+    return LeaderboardCallRollup(
+        user_id=str(row.get("user_id", "")),
+        period_type=period_type,
+        period_start=_parse_ts(str(row.get("period_start", ""))),
+        eligible_verified_call_count=int(row.get("eligible_verified_call_count", 0)),
+        unique_office_count=int(row.get("unique_office_count", 0)),
+        updated_at=_parse_ts(str(row.get("updated_at", ""))),
+    )

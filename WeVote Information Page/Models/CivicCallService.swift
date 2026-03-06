@@ -45,6 +45,42 @@ private struct CivicHistoryResponse: Codable {
     let history: [CivicHistoryGroup]
 }
 
+private struct CivicCallLaunchRequest: Codable {
+    let userID: String
+    let officeID: String
+    let issueID: String?
+    let sourceScreen: String
+    let sessionID: String?
+
+    enum CodingKeys: String, CodingKey {
+        case userID = "user_id"
+        case officeID = "office_id"
+        case issueID = "issue_id"
+        case sourceScreen = "source_screen"
+        case sessionID = "session_id"
+    }
+}
+
+private struct CivicCallCompletionRequestPayload: Codable {
+    let userID: String
+    let launchEventID: String
+    let completed: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case userID = "user_id"
+        case launchEventID = "launch_event_id"
+        case completed
+    }
+}
+
+private struct CivicCallScoreRecomputePayload: Codable {
+    let userID: String
+
+    enum CodingKeys: String, CodingKey {
+        case userID = "user_id"
+    }
+}
+
 protocol CivicIssueCallAPIClientProtocol {
     func fetchExamples(userID: String, reps: [CivicRepTarget]) async throws -> [CivicExampleIssueCard]
     func resolve(
@@ -64,6 +100,24 @@ protocol CivicIssueCallAPIClientProtocol {
         notes: String
     ) async throws
     func fetchHistory(userID: String) async throws -> [CivicHistoryGroup]
+    func logCallLaunch(
+        userID: String,
+        officeID: String,
+        issueID: String?,
+        sourceScreen: String,
+        sessionID: String?
+    ) async throws -> CivicCallLaunchResponse
+    func confirmCallCompletion(
+        userID: String,
+        launchEventID: String,
+        completed: Bool
+    ) async throws -> CivicCallCompletionResponse
+    func fetchCallScoreSummary(userID: String) async throws -> CivicCallScoreSummary
+    func fetchCallScoreBreakdown(userID: String) async throws -> CivicCallScoreBreakdown
+    func fetchCallScoreHistory(userID: String, limit: Int) async throws -> [CivicCallScoreHistoryItem]
+    func recomputeCallScore(userID: String) async throws -> CivicCallScoreSnapshot
+    func fetchLeaderboard(periodType: String, periodStart: Date?) async throws -> CivicLeaderboardResponse
+    func fetchUserLeaderboardSummary(userID: String, periodType: String, periodStart: Date?) async throws -> CivicLeaderboardUserSummary
 }
 
 final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
@@ -159,6 +213,126 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         return try decoder.decode(CivicHistoryResponse.self, from: data).history
     }
 
+    func logCallLaunch(
+        userID: String,
+        officeID: String,
+        issueID: String?,
+        sourceScreen: String,
+        sessionID: String?
+    ) async throws -> CivicCallLaunchResponse {
+        let payload = CivicCallLaunchRequest(
+            userID: userID,
+            officeID: officeID,
+            issueID: issueID,
+            sourceScreen: sourceScreen,
+            sessionID: sessionID
+        )
+        var request = URLRequest(url: endpoint("/api/v1/civic/calls/launch"))
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try encoder.encode(payload)
+        let data = try await requestData(for: request)
+        return try decoder.decode(CivicCallLaunchResponse.self, from: data)
+    }
+
+    func confirmCallCompletion(
+        userID: String,
+        launchEventID: String,
+        completed: Bool
+    ) async throws -> CivicCallCompletionResponse {
+        let payload = CivicCallCompletionRequestPayload(
+            userID: userID,
+            launchEventID: launchEventID,
+            completed: completed
+        )
+        var request = URLRequest(url: endpoint("/api/v1/civic/calls/confirm"))
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try encoder.encode(payload)
+        let data = try await requestData(for: request)
+        return try decoder.decode(CivicCallCompletionResponse.self, from: data)
+    }
+
+    func fetchCallScoreSummary(userID: String) async throws -> CivicCallScoreSummary {
+        var components = URLComponents(url: endpoint("/api/v1/civic/call-score/summary"), resolvingAgainstBaseURL: false)
+        components?.queryItems = [URLQueryItem(name: "user_id", value: userID)]
+        guard let url = components?.url else { throw URLError(.badURL) }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        let data = try await requestData(for: request)
+        return try decoder.decode(CivicCallScoreSummary.self, from: data)
+    }
+
+    func fetchCallScoreBreakdown(userID: String) async throws -> CivicCallScoreBreakdown {
+        var components = URLComponents(url: endpoint("/api/v1/civic/call-score/breakdown"), resolvingAgainstBaseURL: false)
+        components?.queryItems = [URLQueryItem(name: "user_id", value: userID)]
+        guard let url = components?.url else { throw URLError(.badURL) }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        let data = try await requestData(for: request)
+        return try decoder.decode(CivicCallScoreBreakdown.self, from: data)
+    }
+
+    func fetchCallScoreHistory(userID: String, limit: Int) async throws -> [CivicCallScoreHistoryItem] {
+        var components = URLComponents(url: endpoint("/api/v1/civic/call-score/history"), resolvingAgainstBaseURL: false)
+        components?.queryItems = [
+            URLQueryItem(name: "user_id", value: userID),
+            URLQueryItem(name: "limit", value: String(max(1, limit)))
+        ]
+        guard let url = components?.url else { throw URLError(.badURL) }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        let data = try await requestData(for: request)
+        return try decoder.decode(CivicCallScoreHistoryResponse.self, from: data).history
+    }
+
+    func recomputeCallScore(userID: String) async throws -> CivicCallScoreSnapshot {
+        let payload = CivicCallScoreRecomputePayload(userID: userID)
+        var request = URLRequest(url: endpoint("/api/v1/civic/call-score/recompute"))
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try encoder.encode(payload)
+        let data = try await requestData(for: request)
+        struct RecomputeResponse: Codable { let snapshot: CivicCallScoreSnapshot }
+        return try decoder.decode(RecomputeResponse.self, from: data).snapshot
+    }
+
+    func fetchLeaderboard(periodType: String, periodStart: Date?) async throws -> CivicLeaderboardResponse {
+        var components = URLComponents(url: endpoint("/api/v1/civic/leaderboard"), resolvingAgainstBaseURL: false)
+        var queryItems = [URLQueryItem(name: "period_type", value: periodType)]
+        if let periodStart {
+            queryItems.append(URLQueryItem(name: "period_start", value: ISO8601DateFormatter().string(from: periodStart)))
+        }
+        components?.queryItems = queryItems
+        guard let url = components?.url else { throw URLError(.badURL) }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        let data = try await requestData(for: request)
+        return try decoder.decode(CivicLeaderboardResponse.self, from: data)
+    }
+
+    func fetchUserLeaderboardSummary(userID: String, periodType: String, periodStart: Date?) async throws -> CivicLeaderboardUserSummary {
+        var components = URLComponents(url: endpoint("/api/v1/civic/leaderboard/me"), resolvingAgainstBaseURL: false)
+        var queryItems = [
+            URLQueryItem(name: "user_id", value: userID),
+            URLQueryItem(name: "period_type", value: periodType),
+        ]
+        if let periodStart {
+            queryItems.append(URLQueryItem(name: "period_start", value: ISO8601DateFormatter().string(from: periodStart)))
+        }
+        components?.queryItems = queryItems
+        guard let url = components?.url else { throw URLError(.badURL) }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        let data = try await requestData(for: request)
+        return try decoder.decode(CivicLeaderboardUserSummary.self, from: data)
+    }
+
     private func requestData(for request: URLRequest) async throws -> Data {
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse else { throw URLError(.badServerResponse) }
@@ -213,6 +387,14 @@ final class CivicCallBriefCacheStore {
 
 @MainActor
 final class IssueCallCenterViewModel: ObservableObject {
+    struct PendingCallLaunch: Sendable {
+        let launchEventID: String
+        let briefID: String
+        let officeID: String
+        let issueID: String?
+        let launchedAt: Date
+    }
+
     @Published var selectedTab: CivicIssueCallTab = .assistant
     @Published var selectedRepFilter: CivicRepFilter = .all
     @Published var concernText: String = ""
@@ -229,6 +411,12 @@ final class IssueCallCenterViewModel: ObservableObject {
     @Published var historyGroups: [CivicHistoryGroup] = []
     @Published var activeBriefID: String?
     @Published var loggedOutcomeByBriefID: [String: CivicCallOutcome] = [:]
+    @Published var callScoreSummary: CivicCallScoreSummary?
+    @Published var callScoreBreakdown: CivicCallScoreBreakdown?
+    @Published var callScoreHistory: [CivicCallScoreHistoryItem] = []
+    @Published var leaderboardSummary: CivicLeaderboardUserSummary?
+    @Published var lastCompletionResult: CivicCallCompletionResponse?
+    @Published var pendingCallLaunch: PendingCallLaunch?
 
     let repTargets: [CivicRepTarget]
     private let officialLookupByRepID: [String: Official]
@@ -327,6 +515,8 @@ final class IssueCallCenterViewModel: ObservableObject {
         } catch {
             // Keep local snapshot history as offline fallback.
         }
+
+        await refreshCallScoreData(for: userID)
     }
 
     func submitAssistantRequest() async {
@@ -375,6 +565,22 @@ final class IssueCallCenterViewModel: ObservableObject {
         }
     }
 
+    func startMAPC(from example: CivicExampleIssueCard) async {
+        concernText = example.summary.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let ask = example.preferredAsk {
+            selectedAsk = ask
+        }
+
+        if let firstBill = example.relatedBills.first(where: { !$0.contains("[") && !$0.contains("]") }) {
+            optionalBillRef = firstBill
+        } else {
+            optionalBillRef = ""
+        }
+
+        selectedTab = .assistant
+        await submitAssistantRequest()
+    }
+
     func reopen(historyGroup: CivicHistoryGroup) {
         issueTitle = historyGroup.issueTitle
         issueSummary = historyGroup.issueSummary
@@ -383,6 +589,84 @@ final class IssueCallCenterViewModel: ObservableObject {
         activeBriefID = filteredBriefs.first?.id
         selectedTab = .assistant
         persistDraftState()
+    }
+
+    func beginCallLaunch(for brief: CivicCallBrief, sourceScreen: String = "issue_call_center") async {
+        let userID = await userIDForRequest()
+        do {
+            let launch = try await apiClient.logCallLaunch(
+                userID: userID,
+                officeID: brief.repID,
+                issueID: brief.issueID.isEmpty ? nil : brief.issueID,
+                sourceScreen: sourceScreen,
+                sessionID: UUID().uuidString
+            )
+            pendingCallLaunch = PendingCallLaunch(
+                launchEventID: launch.launchEventID,
+                briefID: brief.id,
+                officeID: brief.repID,
+                issueID: brief.issueID.isEmpty ? nil : brief.issueID,
+                launchedAt: launch.launchedAt
+            )
+            if launch.callScoreEnabled == false {
+                errorMessage = "Call score is currently disabled for this rollout."
+            }
+        } catch {
+            // Preserve the ability to ask for completion locally even when network launch logging fails.
+            pendingCallLaunch = PendingCallLaunch(
+                launchEventID: UUID().uuidString,
+                briefID: brief.id,
+                officeID: brief.repID,
+                issueID: brief.issueID.isEmpty ? nil : brief.issueID,
+                launchedAt: Date()
+            )
+            errorMessage = "Could not sync call launch right now. You can still confirm your call."
+        }
+    }
+
+    func shouldPromptForPendingCallCompletion(timeout: TimeInterval = 10 * 60) -> Bool {
+        guard let pending = pendingCallLaunch else { return false }
+        return Date().timeIntervalSince(pending.launchedAt) <= timeout
+    }
+
+    func confirmPendingCallCompletion(completed: Bool) async {
+        guard let pending = pendingCallLaunch else { return }
+        let userID = await userIDForRequest()
+
+        do {
+            let response = try await apiClient.confirmCallCompletion(
+                userID: userID,
+                launchEventID: pending.launchEventID,
+                completed: completed
+            )
+
+            if completed {
+                lastCompletionResult = response
+                pendingCallLaunch = nil
+                await refreshCallScoreData(for: userID)
+            } else {
+                lastCompletionResult = nil
+            }
+        } catch {
+            if completed {
+                errorMessage = "Could not confirm the call right now. Please try again."
+            }
+        }
+    }
+
+    func clearCompletionResult() {
+        lastCompletionResult = nil
+    }
+
+    func componentDisplayName(for key: String) -> String {
+        switch key {
+        case "activation_points": return "Activation"
+        case "recency_points": return "Recency"
+        case "consistency_points": return "Consistency"
+        case "breadth_points": return "Breadth"
+        case "momentum_points": return "Momentum"
+        default: return key.replacingOccurrences(of: "_", with: " ").capitalized
+        }
     }
 
     func logOutcome(for brief: CivicCallBrief, outcome: CivicCallOutcome, notes: String = "") async {
@@ -445,6 +729,37 @@ final class IssueCallCenterViewModel: ObservableObject {
         }
 
         saveSnapshot()
+    }
+
+    func refreshCallScoreData(for userID: String? = nil) async {
+        let resolvedUserID: String
+        if let userID {
+            resolvedUserID = userID
+        } else {
+            resolvedUserID = await userIDForRequest()
+        }
+
+        async let summaryTask = apiClient.fetchCallScoreSummary(userID: resolvedUserID)
+        async let breakdownTask = apiClient.fetchCallScoreBreakdown(userID: resolvedUserID)
+        async let historyTask = apiClient.fetchCallScoreHistory(userID: resolvedUserID, limit: 30)
+        async let leaderboardTask = apiClient.fetchUserLeaderboardSummary(
+            userID: resolvedUserID,
+            periodType: "monthly",
+            periodStart: nil
+        )
+
+        if let summary = try? await summaryTask {
+            callScoreSummary = summary
+        }
+        if let breakdown = try? await breakdownTask {
+            callScoreBreakdown = breakdown
+        }
+        if let history = try? await historyTask {
+            callScoreHistory = history
+        }
+        if let leaderboard = try? await leaderboardTask {
+            leaderboardSummary = leaderboard
+        }
     }
 
     func advanceToNextRep(after brief: CivicCallBrief) {
@@ -607,18 +922,200 @@ final class IssueCallCenterViewModel: ObservableObject {
 
     private func fallbackExamples() -> [CivicExampleIssueCard] {
         guard !repTargets.isEmpty else { return [] }
-        return [
-            CivicExampleIssueCard(
-                id: "example-federal-budget",
-                title: "Federal budget oversight",
-                summary: "Congress is reviewing appropriations and agency oversight priorities for the current fiscal cycle.",
-                relatedBills: ["H.R.____", "S.____"],
-                repRelevance: repTargets.map { "\($0.official.name) serves in \($0.officeType)." },
-                templateAsks: [.seekOversight, .askPublicStatement, .support],
-                liveScript: "Hi, I am a constituent from \(userZip). I am calling about federal budget oversight. Please prioritize transparent oversight hearings and share the member's current position. Thank you.",
-                voicemailScript: "Constituent from \(userZip) calling on budget oversight. Please share the member's position. Thank you."
+        struct Seed {
+            let id: String
+            let title: String
+            let category: String
+            let targetChambers: [String]
+            let primaryAsk: String
+            let summary: String
+            let liveScript: String
+            let voicemailScript: String
+            let templateAsks: [CivicAsk]
+            let relatedBills: [String]
+            let tags: [String]
+        }
+
+        let sharedSupporter = "Thank you [OFFICIAL_TITLE] [OFFICIAL_LAST] for supporting this issue. Please keep speaking out publicly, push leadership to act, and urge your colleagues to join you."
+        let sharedUndecided = "I'm asking [OFFICIAL_TITLE] [OFFICIAL_LAST] to review this issue urgently and take a public position as soon as possible."
+        let sharedStaffer = "Please pass this message to [OFFICIAL_TITLE] [OFFICIAL_LAST] and let them know this matters to me as a constituent."
+        let sharedVoicemailFooter = "If leaving voicemail, please include your full street address, [FULL_ADDRESS], so your message is tallied."
+        let placeholders = ["[YOUR_NAME]", "[CITY]", "[ZIP]", "[FULL_ADDRESS]", "[OFFICIAL_TITLE]", "[OFFICIAL_LAST]", "[BILL_OR_RESOLUTION]"]
+
+        let availableChambers: Set<String> = Set(
+            repTargets.map { $0.slot == .house ? "house" : "senate" }
+        )
+
+        let seeds: [Seed] = [
+            Seed(
+                id: "stop-unauthorized-military-strikes-on-iran",
+                title: "Stop Unauthorized Military Strikes on Iran",
+                category: "Foreign Affairs",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "support",
+                summary: "Recent military escalation has renewed pressure on Congress to reassert its constitutional war powers. This issue asks members of Congress to oppose unauthorized U.S. military action against Iran, support de-escalation, and back legislation or resolutions requiring congressional approval before further escalation.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support [BILL_OR_RESOLUTION] and oppose any unauthorized U.S. war with Iran. Congress must reassert its constitutional authority and prevent further escalation without a vote.\n\nPlease speak out publicly, support immediate de-escalation, and vote to block any continued military action that has not been authorized by Congress.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, my name is [YOUR_NAME], and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support [BILL_OR_RESOLUTION] and oppose unauthorized military action against Iran. The United States should not be pulled deeper into another war without congressional approval.\n\nPlease take public action to defend Congress's war powers and push for de-escalation.\n\nThank you.",
+                templateAsks: [.support, .askPublicStatement, .seekOversight],
+                relatedBills: ["[BILL_OR_RESOLUTION]"],
+                tags: ["foreign-policy", "war-powers", "congress", "deescalation", "iran"]
+            ),
+            Seed(
+                id: "protect-trans-rights-and-gender-affirming-care",
+                title: "Protect Trans Rights and Gender-Affirming Care",
+                category: "LGBTQ",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "oppose",
+                summary: "This issue asks Congress to oppose anti-trans legislation, censorship efforts, and restrictions on medically necessary gender-affirming care. The focus is equal protection, bodily autonomy, and evidence-based treatment rather than political targeting.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to defend transgender people and oppose federal attacks on gender-affirming care. Please oppose any ban on care, reject anti-trans censorship bills like [BILL_OR_RESOLUTION], and fight policies that strip trans people of safety, dignity, and medically necessary treatment.\n\nTrans people deserve evidence-based care and equal protection under the law, not political targeting.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm asking [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect trans rights and oppose new federal restrictions on gender-affirming care and anti-LGBTQ censorship. Please speak out publicly and vote against measures that harm transgender people and their families.\n\nThank you.",
+                templateAsks: [.oppose, .askPublicStatement, .support],
+                relatedBills: ["[BILL_OR_RESOLUTION]"],
+                tags: ["trans-rights", "lgbtq", "healthcare", "civil-rights", "anti-discrimination"]
+            ),
+            Seed(
+                id: "demand-the-resignation-of-fbi-director-kash-patel",
+                title: "Demand the Resignation of FBI Director Kash Patel",
+                category: "Government Oversight",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "seek_oversight",
+                summary: "This issue frames concerns about FBI leadership as an accountability and public-trust issue. Constituents ask members of Congress to demand Kash Patel's resignation, support investigations into misconduct or misuse of resources, and pursue formal accountability measures if needed.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to demand FBI Director Kash Patel's resignation and support aggressive oversight into his conduct. Reports about misuse of government resources, retaliation, and mismanagement at the FBI are serious and demand a response.\n\nIf Patel refuses to resign, [OFFICIAL_TITLE] [OFFICIAL_LAST] should support formal investigations and pursue every available accountability measure.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to call for Kash Patel's resignation and back immediate oversight of his conduct as FBI director. The bureau should never be used as a tool for personal privilege or political retaliation.\n\nPlease take public action on this issue.\n\nThank you.",
+                templateAsks: [.seekOversight, .askPublicStatement, .oppose],
+                relatedBills: [],
+                tags: ["oversight", "fbi", "accountability", "corruption", "rule-of-law"]
+            ),
+            Seed(
+                id: "oppose-steve-pearce-as-blm-director",
+                title: "Oppose Steve Pearce as Bureau of Land Management Director",
+                category: "Nominations",
+                targetChambers: ["senate"],
+                primaryAsk: "vote_no",
+                summary: "This issue asks senators to oppose Steve Pearce for Bureau of Land Management director because of his record on public lands and ties to extraction interests. The message emphasizes stewardship, conservation, and protection of federal lands.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge Senator [OFFICIAL_LAST] to oppose Steve Pearce's confirmation as Director of the Bureau of Land Management. His record shows too much alignment with oil and gas interests and too little commitment to protecting public lands for future generations.\n\nPlease vote no on his confirmation and speak out in defense of our public lands.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME], and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to ask Senator [OFFICIAL_LAST] to oppose Steve Pearce for BLM director. This position should go to someone committed to stewardship of public lands, not someone whose record raises concerns about extraction and selloffs.\n\nThank you.",
+                templateAsks: [.voteNo, .oppose, .askPublicStatement],
+                relatedBills: [],
+                tags: ["nominations", "public-lands", "environment", "senate", "blm"]
+            ),
+            Seed(
+                id: "oppose-the-save-america-act",
+                title: "Oppose the SAVE America Act",
+                category: "Voter Rights",
+                targetChambers: ["senate"],
+                primaryAsk: "oppose",
+                summary: "This issue asks senators to reject legislation that would impose new documentation barriers to voter registration and participation. The emphasis is protecting ballot access for eligible voters and opposing unnecessary bureaucratic hurdles.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge Senator [OFFICIAL_LAST] to oppose the SAVE America Act and any effort to force it through the Senate. This bill would create unnecessary documentation barriers that make it harder for eligible citizens to register and vote.\n\nPlease defend voting rights, reject this bill, and oppose any attempt to make voting less accessible for lawful voters.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm calling to ask Senator [OFFICIAL_LAST] to oppose the SAVE America Act. Eligible Americans should not lose access to the ballot because of burdensome paperwork requirements.\n\nPlease vote no and speak out against this bill.\n\nThank you.",
+                templateAsks: [.oppose, .voteNo, .askPublicStatement],
+                relatedBills: [],
+                tags: ["voting-rights", "democracy", "senate", "ballot-access", "elections"]
+            ),
+            Seed(
+                id: "oppose-casey-means-for-surgeon-general",
+                title: "Oppose Casey Means for U.S. Surgeon General",
+                category: "Nominations",
+                targetChambers: ["senate"],
+                primaryAsk: "vote_no",
+                summary: "This issue asks senators to oppose Casey Means for Surgeon General and support evidence-based public health leadership. The message centers on credibility, trust, and the importance of science-driven health communication.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge Senator [OFFICIAL_LAST] to oppose Casey Means for U.S. Surgeon General. This role should go to someone with strong public health credibility, clear support for evidence-based medicine, and full public trust.\n\nPlease vote no on this nomination and speak out for qualified, science-based public health leadership.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm calling to ask Senator [OFFICIAL_LAST] to oppose Casey Means for Surgeon General. The country needs trusted, evidence-based public health leadership in this role.\n\nPlease vote no on this nomination.\n\nThank you.",
+                templateAsks: [.voteNo, .oppose, .askPublicStatement],
+                relatedBills: [],
+                tags: ["nominations", "public-health", "senate", "science", "surgeon-general"]
+            ),
+            Seed(
+                id: "support-tps-extension-for-haitians",
+                title: "Support Temporary Protected Status for Haitians",
+                category: "Immigration",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "support",
+                summary: "This issue asks lawmakers to defend Temporary Protected Status for Haitians, oppose efforts to end those protections, and support stability for families facing dangerous conditions and legal uncertainty.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support continued Temporary Protected Status for Haitians and oppose any effort to strip those protections away.\n\nPlease speak out publicly, support every available legislative and oversight tool to protect Haitian TPS holders, and reject deportation policies that would put families at risk.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support TPS protections for Haitians and oppose efforts to end them. Haitian families deserve stability and protection, not more fear and uncertainty.\n\nThank you.",
+                templateAsks: [.support, .askPublicStatement, .seekOversight],
+                relatedBills: [],
+                tags: ["immigration", "tps", "haiti", "humanitarian", "deportation"]
+            ),
+            Seed(
+                id: "protest-the-epa-repeal-of-the-endangerment-finding",
+                title: "Protest the EPA's Repeal of the Endangerment Finding",
+                category: "Environment",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "oppose",
+                summary: "This issue asks members of Congress to oppose efforts to dismantle the legal basis for federal climate regulation and to defend protections against dangerous pollution. The focus is climate responsibility and public health.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to oppose the repeal of the EPA's endangerment finding and defend strong federal climate protections.\n\nPlease support aggressive oversight and legislation to restore meaningful greenhouse-gas standards and protect communities from dangerous pollution.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm asking [OFFICIAL_TITLE] [OFFICIAL_LAST] to oppose the repeal of the EPA's endangerment finding and defend strong climate and public-health protections.\n\nPlease take public action on this issue.\n\nThank you.",
+                templateAsks: [.oppose, .seekOversight, .askPublicStatement],
+                relatedBills: [],
+                tags: ["climate", "epa", "pollution", "public-health", "environment"]
+            ),
+            Seed(
+                id: "block-trumps-push-to-take-control-of-greenland",
+                title: "Block Trump's Push to Take Control of Greenland",
+                category: "Foreign Affairs",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "oppose",
+                summary: "This issue asks Congress to oppose any effort by the administration to pressure or take control of Greenland and to defend allied sovereignty, international stability, and responsible foreign policy.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to reject any attempt by the administration to seize, pressure, or coerce Greenland.\n\nThe United States should respect Greenlandic and Danish sovereignty, protect our alliances, and make clear that Congress will not support reckless attempts to take control of allied territory.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to oppose any U.S. attempt to take control of Greenland and to defend allied sovereignty and international stability.\n\nPlease speak out publicly on this issue.\n\nThank you.",
+                templateAsks: [.oppose, .askPublicStatement, .support],
+                relatedBills: [],
+                tags: ["foreign-policy", "greenland", "sovereignty", "diplomacy", "congress"]
+            ),
+            Seed(
+                id: "protect-state-level-ai-regulation",
+                title: "Protect State-Level AI Regulation",
+                category: "Digital Rights",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "oppose",
+                summary: "This issue asks Congress to preserve states' ability to regulate AI systems when federal protections are incomplete. The message centers on consumer protection, state authority, and the need for enforceable safeguards.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect states' ability to regulate artificial intelligence and oppose any federal effort to punish states for passing basic AI safeguards.\n\nCongress should not strip states of the power to enact consumer protections while federal law remains incomplete. Please oppose preemption and any funding threats tied to state AI regulation.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm asking [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect state authority to regulate AI and oppose efforts to override state safeguards or threaten funding.\n\nPlease defend the ability of states to protect their residents.\n\nThank you.",
+                templateAsks: [.oppose, .askPublicStatement, .seekOversight],
+                relatedBills: [],
+                tags: ["ai", "digital-rights", "consumer-protection", "states-rights", "tech-policy"]
             )
         ]
+
+        return seeds
+            .filter { seed in
+                !Set(seed.targetChambers).intersection(availableChambers).isEmpty
+            }
+            .map { seed in
+                let relevantReps = repTargets.filter { target in
+                    if seed.targetChambers.contains("house") && target.slot == .house { return true }
+                    if seed.targetChambers.contains("senate") && (target.slot == .senate1 || target.slot == .senate2) { return true }
+                    return false
+                }
+                let repRelevance = [
+                    seed.targetChambers == ["senate"]
+                    ? "This issue is currently targeted to the Senate."
+                    : "This issue can be raised with both House and Senate offices."
+                ] + relevantReps.prefix(3).map { "\($0.official.name) serves in \($0.officeType)." }
+
+                return CivicExampleIssueCard(
+                    id: seed.id,
+                    slug: seed.id,
+                    title: seed.title,
+                    category: seed.category,
+                    targetChambers: seed.targetChambers,
+                    primaryAsk: seed.primaryAsk,
+                    summary: seed.summary,
+                    relatedBills: seed.relatedBills,
+                    repRelevance: repRelevance,
+                    templateAsks: seed.templateAsks,
+                    liveScript: seed.liveScript,
+                    voicemailScript: seed.voicemailScript,
+                    supporterVariant: sharedSupporter,
+                    undecidedVariant: sharedUndecided,
+                    stafferVariant: sharedStaffer,
+                    voicemailFooter: sharedVoicemailFooter,
+                    placeholders: placeholders,
+                    tags: seed.tags
+                )
+            }
     }
 
     private func fallbackResolution(
@@ -832,7 +1329,14 @@ final class IssueCallCenterViewModel: ObservableObject {
         if let id = await SupabaseManager.shared.currentUserIDIfAvailable() {
             return id.uuidString
         }
-        return "anonymous-local"
+        let key = "civic.local.user_id.v1"
+        if let existing = UserDefaults.standard.string(forKey: key),
+           UUID(uuidString: existing) != nil {
+            return existing
+        }
+        let generated = UUID().uuidString
+        UserDefaults.standard.set(generated, forKey: key)
+        return generated
     }
 }
 

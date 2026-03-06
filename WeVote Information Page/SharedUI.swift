@@ -382,6 +382,7 @@ struct WhyVoteFloodOverlay: View {
 struct WhyCallFloodOverlay: View {
     @Binding var isPresented: Bool
     var originInSpreadSpace: CGPoint?
+    var onStartCalling: () -> Void = {}
 
     private let floodColor = Color(red: 173.0 / 255.0, green: 215.0 / 255.0, blue: 229.0 / 255.0)
     private let accent = Color(red: 223.0 / 255.0, green: 88.0 / 255.0, blue: 69.0 / 255.0)
@@ -456,7 +457,16 @@ struct WhyCallFloodOverlay: View {
                     .padding(.horizontal, headerHorizontalPadding)
                     .padding(.top, headerTopPadding)
 
-                    WhyCallView()
+                    WhyCallView(content: .live) {
+                        withAnimation(.easeOut(duration: max(0.2, duration * 0.5))) {
+                            spread = 0.001
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + max(0.2, duration * 0.5)) {
+                            isPresented = false
+                            onStartCalling()
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                         .opacity(spread > 0.72 ? 1 : 0)
                 }
             }
@@ -479,67 +489,252 @@ struct WhyCallFloodOverlay: View {
     }
 }
 
-private struct WhyCallView: View {
-    @Environment(\.locale) private var locale
+struct WhyCallStat: Identifiable, Hashable {
+    let id = UUID()
+    let value: String
+    let title: String
+    let body: String
+}
 
-    private func l(_ key: String, _ fallback: String) -> String {
-        localizedCatalogString(
-            key,
-            tableName: "AppShell",
-            locale: locale,
-            fallback: fallback
-        )
-    }
+struct WhyCallReason: Identifiable, Hashable {
+    let id = UUID()
+    let title: String
+    let body: String
+}
+
+struct WhyCallContent: Hashable {
+    let eyebrow: String
+    let title: String
+    let intro: String
+    let context: String
+    let stats: [WhyCallStat]
+    let reasons: [WhyCallReason]
+    let note: String
+    let primaryCTA: String
+
+    static let live = WhyCallContent(
+        eyebrow: "Research-backed",
+        title: "Why call?",
+        intro: "Calling your reps is a fast, personal way to put your opinion on the record while a decision is still live.",
+        context: "Most Americans do not contact Congress in a given year. Surveys suggest only about one in five to one in four people reach out annually, and email is more common than calling. Even so, calling remains one of the fastest, most direct ways to make your view known before a hearing, vote, or other key legislative moment.",
+        stats: [
+            WhyCallStat(
+                value: "21.7%–23%",
+                title: "Most people do not reach out",
+                body: "Recent survey findings suggest only a minority of Americans contact Congress or other elected officials in a given year."
+            ),
+            WhyCallStat(
+                value: "86%",
+                title: "Calls matter when it's live",
+                body: "Phone calls have some or a lot of influence when a member is undecided."
+            ),
+            WhyCallStat(
+                value: "20% vs 1%",
+                title: "Personal beats copied",
+                body: "Personalized messages are much more influential than identical form messages."
+            ),
+            WhyCallStat(
+                value: "Tracked by offices",
+                title: "Your view gets logged",
+                body: "Congressional offices track which issues are most salient and where constituents stand."
+            )
+        ],
+        reasons: [
+            WhyCallReason(
+                title: "Your voice becomes visible",
+                body: "A call helps your opinion get counted as constituent input."
+            ),
+            WhyCallReason(
+                title: "Personal beats generic",
+                body: "Your own words carry more weight than a canned message."
+            ),
+            WhyCallReason(
+                title: "Local impact matters",
+                body: "The strongest calls explain how the issue affects you, your family, or your community."
+            )
+        ],
+        note: "Based on findings from Pew Research Center, the Congressional Management Foundation, and academic research on congressional constituent contact.",
+        primaryCTA: "Start Calling Reps!"
+    )
+}
+
+struct WhyCallView: View {
+    let content: WhyCallContent
+    let onStartCalling: () -> Void
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
-                card(
-                    title: l("app.why_call.card.why.title", "Why calling matters"),
-                    body: l(
-                        "app.why_call.card.why.body",
-                        "A phone call is one of the fastest ways to share your position with your elected office. Staff logs calls and summarizes constituent feedback for the member."
-                    )
-                )
+            LazyVStack(alignment: .leading, spacing: 16) {
+                WhyCallHero(content: content)
 
-                card(
-                    title: l("app.why_call.card.how.title", "How to make an effective call"),
-                    body: l(
-                        "app.why_call.card.how.body",
-                        "Identify yourself as a constituent, reference the issue or bill, make one clear ask, and request the member's current position."
-                    )
-                )
+                Text(content.context)
+                    .font(.body)
+                    .foregroundStyle(.primary)
+                    .padding(14)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(cardBackground)
+                    .overlay(cardBorder)
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
 
-                card(
-                    title: l("app.why_call.card.tips.title", "Quick call tips"),
-                    body: l(
-                        "app.why_call.card.tips.body",
-                        "Be brief, stay respectful, and log the outcome. If no one answers, leave voicemail and continue to your next representative."
-                    )
-                )
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("What research shows")
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+
+                    ForEach(content.stats) { stat in
+                        WhyCallStatCard(stat: stat)
+                    }
+                }
+
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Why calling matters")
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+
+                    ForEach(content.reasons) { reason in
+                        WhyCallReasonCard(reason: reason)
+                    }
+                }
             }
             .padding(.horizontal, 16)
-            .padding(.top, 16)
-            .padding(.bottom, 24)
+            .padding(.top, 14)
+            .padding(.bottom, 20)
+        }
+        .safeAreaInset(edge: .bottom) {
+            WhyCallBottomCTA(note: content.note, title: content.primaryCTA, action: onStartCalling)
         }
     }
 
-    private func card(title: String, body: String) -> some View {
+    private var cardBackground: some ShapeStyle {
+        Color(uiColor: .secondarySystemBackground).opacity(0.92)
+    }
+
+    private var cardBorder: some View {
+        RoundedRectangle(cornerRadius: 14, style: .continuous)
+            .stroke(VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
+    }
+}
+
+private struct WhyCallHero: View {
+    let content: WhyCallContent
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(title)
+            Text(content.eyebrow.uppercased())
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(VoteNowColors.mutedText)
+
+            Text(content.title)
+                .font(.title.bold())
+                .foregroundStyle(.primary)
+
+            Text(content.intro)
+                .font(.body)
+                .foregroundStyle(.primary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+private struct WhyCallStatCard: View {
+    let stat: WhyCallStat
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(stat.value)
+                .font(.title2.weight(.bold))
+                .foregroundStyle(VoteNowColors.primaryCTA)
+            Text(stat.title)
                 .font(.headline)
-            Text(body)
-                .font(.subheadline)
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundStyle(.primary)
+            Text(stat.body)
+                .font(.body)
+                .foregroundStyle(.primary)
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(VoteNowColors.surfaceWhite.opacity(0.82))
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(Color(uiColor: .secondarySystemBackground).opacity(0.92))
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .stroke(VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
         )
+        .accessibilityElement(children: .combine)
+    }
+}
+
+private struct WhyCallReasonCard: View {
+    let reason: WhyCallReason
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(reason.title)
+                .font(.headline)
+                .foregroundStyle(.primary)
+            Text(reason.body)
+                .font(.body)
+                .foregroundStyle(.primary)
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(uiColor: .secondarySystemBackground).opacity(0.92))
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
+        )
+        .accessibilityElement(children: .combine)
+    }
+}
+
+private struct WhyCallBottomCTA: View {
+    let note: String
+    let title: String
+    let action: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(note)
+                .font(.footnote)
+                .foregroundStyle(VoteNowColors.mutedText)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Button(action: action) {
+                Text(title)
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(VoteNowPrimaryCTAButtonStyle())
+            .accessibilityLabel("Start Calling Reps")
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 10)
+        .padding(.bottom, 10)
+        .background(
+            Rectangle()
+                .fill(Color(uiColor: .systemBackground).opacity(0.96))
+                .ignoresSafeArea(edges: .bottom)
+        )
+    }
+}
+
+struct WhyCallView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            WhyCallView(content: .live, onStartCalling: {})
+                .background(VoteNowColors.brandSoftBlue.ignoresSafeArea())
+                .previewDisplayName("Default")
+
+            WhyCallView(content: .live, onStartCalling: {})
+                .background(VoteNowColors.brandSoftBlue.ignoresSafeArea())
+                .preferredColorScheme(.dark)
+                .previewDisplayName("Dark")
+
+            WhyCallView(content: .live, onStartCalling: {})
+                .background(VoteNowColors.brandSoftBlue.ignoresSafeArea())
+                .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
+                .previewDisplayName("AXXXL")
+        }
     }
 }
 
