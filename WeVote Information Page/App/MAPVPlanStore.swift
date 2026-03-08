@@ -374,7 +374,7 @@ final class MAPVPlanStore: ObservableObject {
     private static func shiftedISOYear(from sourceISO: String?, toYear: Int) -> String? {
         guard let sourceDate = isoDate(from: sourceISO) else { return nil }
         let calendar = Calendar(identifier: .gregorian)
-        var components = calendar.dateComponents(in: TimeZone(secondsFromGMT: 0)!, from: sourceDate)
+        var components = calendar.dateComponents(in: TimeZone(secondsFromGMT: 0) ?? .current, from: sourceDate)
         components.year = toYear
         guard let shiftedDate = calendar.date(from: components) else { return nil }
         return isoFormatter.string(from: shiftedDate)
@@ -508,9 +508,14 @@ final class MAPVPlanStore: ObservableObject {
             on: plannedArrival
         )
         let clampedArrival = min(max(plannedArrival, window.open), window.close)
-        let place = (remote.pollingPlace?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false)
-            ? remote.pollingPlace!.trimmingCharacters(in: .whitespacesAndNewlines)
-            : "Polling Place"
+        let trimmedPollingPlace = remote.pollingPlace?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let place: String
+        if let trimmedPollingPlace, !trimmedPollingPlace.isEmpty {
+            place = trimmedPollingPlace
+        } else {
+            print("[MAPVPlanStore] Missing polling_place from Supabase row \(remote.id.uuidString); using fallback.")
+            place = "Polling Place"
+        }
         let electionTitle = remote.electionID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ? "Upcoming Election"
             : remote.electionID

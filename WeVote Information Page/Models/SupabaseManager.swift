@@ -159,9 +159,37 @@ struct MapvPlan: Decodable, Identifiable, Sendable {
     }
 }
 
+struct ScheduledNotificationInsert: Encodable, Sendable {
+    let userID: UUID
+    let electionID: String
+    let notificationType: String
+    let title: String
+    let body: String
+    let sendAt: Date
+    let status: String
+
+    enum CodingKeys: String, CodingKey {
+        case userID = "user_id"
+        case electionID = "election_id"
+        case notificationType = "notification_type"
+        case title
+        case body
+        case sendAt = "send_at"
+        case status
+    }
+}
+
+struct ElectionReminderSchedule: Sendable {
+    let electionID: String
+    let electionDay: Date
+    let earlyVotingStart: Date?
+    let stateCode: String
+}
+
 enum SupabaseManagerError: LocalizedError {
     case invalidLimit
     case noSession
+    case dateCalculationFailed
 
     var errorDescription: String? {
         switch self {
@@ -169,6 +197,8 @@ enum SupabaseManagerError: LocalizedError {
             return "Limit must be greater than zero."
         case .noSession:
             return "No Supabase session is available."
+        case .dateCalculationFailed:
+            return "Unable to compute notification send date."
         }
     }
 }
@@ -283,6 +313,217 @@ final class SupabaseManager {
             .from("feedback")
             .insert(payload)
             .execute()
+    }
+
+    func saveDeviceToken(_ token: String) async {
+        let deviceToken = token.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !deviceToken.isEmpty else {
+            print("⚠️ APNs token is empty; skipping Supabase save")
+            return
+        }
+
+        func redactedToken(_ raw: String) -> String {
+            guard raw.count > 12 else { return raw }
+            return "\(raw.prefix(8))...\(raw.suffix(4))"
+        }
+
+        do {
+            let session = try await client.auth.session
+            let userId = session.user.id
+
+            _ = try await client
+                .from("device_tokens")
+                .insert([
+                    [
+                        "user_id": userId.uuidString,
+                        "token": deviceToken
+                    ]
+                ])
+                .execute()
+
+            print("✅ Device token saved to Supabase (\(redactedToken(deviceToken)))")
+        } catch {
+            print("❌ Failed saving device token:", String(describing: error))
+        }
+    }
+
+    func scheduleElectionRemindersForResolvedAddress(_ schedule: ElectionReminderSchedule) async throws {
+        let session = try await client.auth.session
+        let userID = session.user.id
+
+        print("ℹ️ cancelling old pending election reminders for user")
+        try await cancelPendingElectionReminders(userID: userID)
+
+        if let earlyVotingStart = schedule.earlyVotingStart {
+            let earlyVotingSendAt = try reminderSendAt10_30AM(
+                on: earlyVotingStart,
+                stateCode: schedule.stateCode
+            )
+            let earlyVotingPayload = ScheduledNotificationInsert(
+                userID: userID,
+                electionID: schedule.electionID,
+                notificationType: "early_voting_open",
+                title: "You are eligible to vote",
+                body: "Early voting is now open for your next election.",
+                sendAt: earlyVotingSendAt,
+                status: "pending"
+            )
+
+            _ = try await client
+                .from("scheduled_notifications")
+                .insert([earlyVotingPayload])
+                .execute()
+            print("✅ early voting reminder created")
+        } else {
+            print("ℹ️ no early voting date found, skipping early voting reminder")
+        }
+
+        let electionDaySendAt = try reminderSendAt10_30AM(
+            on: schedule.electionDay,
+            stateCode: schedule.stateCode
+        )
+        let electionDayPayload = ScheduledNotificationInsert(
+            userID: userID,
+            electionID: schedule.electionID,
+            notificationType: "election_day_reminder",
+            title: "It's Election Day",
+            body: "Today is Election Day. Head to your polling place and vote.",
+            sendAt: electionDaySendAt,
+            status: "pending"
+        )
+
+        _ = try await client
+            .from("scheduled_notifications")
+            .insert([electionDayPayload])
+            .execute()
+        print("✅ election day reminder created")
+    }
+
+    private func cancelPendingElectionReminders(userID: UUID) async throws {
+        try await cancelPendingElectionReminder(
+            userID: userID,
+            notificationType: "early_voting_open"
+        )
+        try await cancelPendingElectionReminder(
+            userID: userID,
+            notificationType: "election_day_reminder"
+        )
+    }
+
+    private func cancelPendingElectionReminder(
+        userID: UUID,
+        notificationType: String
+    ) async throws {
+        _ = try await client
+            .from("scheduled_notifications")
+            .update(["status": "canceled"])
+            .eq("user_id", value: userID.uuidString)
+            .eq("notification_type", value: notificationType)
+            .eq("status", value: "pending")
+            .execute()
+    }
+
+    private func reminderSendAt10_30AM(on date: Date, stateCode: String) throws -> Date {
+        let timeZone = electionTimeZone(for: stateCode)
+        print("✅ reminder timezone: \(timeZone.identifier)")
+
+        var utcCalendar = Calendar(identifier: .gregorian)
+        let utc = TimeZone(secondsFromGMT: 0) ?? .current
+        utcCalendar.timeZone = utc
+        var localCalendar = Calendar(identifier: .gregorian)
+        localCalendar.timeZone = timeZone
+
+        let dateParts = utcCalendar.dateComponents([.year, .month, .day], from: date)
+        var localDateParts = DateComponents()
+        localDateParts.year = dateParts.year
+        localDateParts.month = dateParts.month
+        localDateParts.day = dateParts.day
+        localDateParts.hour = 10
+        localDateParts.minute = 30
+        localDateParts.second = 0
+        localDateParts.timeZone = timeZone
+
+        guard let sendAt = localCalendar.date(from: localDateParts) else {
+            throw SupabaseManagerError.dateCalculationFailed
+        }
+
+        let localFormatter = DateFormatter()
+        localFormatter.calendar = localCalendar
+        localFormatter.locale = Locale(identifier: "en_US_POSIX")
+        localFormatter.timeZone = timeZone
+        localFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss zzz"
+        print("✅ computed local 10:30 AM send_at: \(localFormatter.string(from: sendAt))")
+
+        return sendAt
+    }
+
+    private func electionTimeZone(for stateCode: String) -> TimeZone {
+        let mapping: [String: String] = [
+            // Eastern
+            "CT": "America/New_York",
+            "DC": "America/New_York",
+            "DE": "America/New_York",
+            "FL": "America/New_York",
+            "GA": "America/New_York",
+            "IN": "America/New_York",
+            "KY": "America/New_York",
+            "MA": "America/New_York",
+            "MD": "America/New_York",
+            "ME": "America/New_York",
+            "MI": "America/New_York",
+            "NC": "America/New_York",
+            "NH": "America/New_York",
+            "NJ": "America/New_York",
+            "NY": "America/New_York",
+            "OH": "America/New_York",
+            "PA": "America/New_York",
+            "RI": "America/New_York",
+            "SC": "America/New_York",
+            "VA": "America/New_York",
+            "VT": "America/New_York",
+            "WV": "America/New_York",
+
+            // Central
+            "AL": "America/Chicago",
+            "AR": "America/Chicago",
+            "IA": "America/Chicago",
+            "IL": "America/Chicago",
+            "KS": "America/Chicago",
+            "LA": "America/Chicago",
+            "MN": "America/Chicago",
+            "MO": "America/Chicago",
+            "MS": "America/Chicago",
+            "NE": "America/Chicago",
+            "ND": "America/Chicago",
+            "OK": "America/Chicago",
+            "SD": "America/Chicago",
+            "TN": "America/Chicago",
+            "TX": "America/Chicago",
+            "WI": "America/Chicago",
+
+            // Mountain
+            "CO": "America/Denver",
+            "ID": "America/Denver",
+            "MT": "America/Denver",
+            "NM": "America/Denver",
+            "UT": "America/Denver",
+            "WY": "America/Denver",
+
+            // Arizona exception
+            "AZ": "America/Phoenix",
+
+            // Pacific
+            "CA": "America/Los_Angeles",
+            "NV": "America/Los_Angeles",
+            "OR": "America/Los_Angeles",
+            "WA": "America/Los_Angeles",
+
+            // Alaska / Hawaii
+            "AK": "America/Anchorage",
+            "HI": "Pacific/Honolulu"
+        ]
+        let identifier = mapping[stateCode.uppercased()] ?? "America/New_York"
+        return TimeZone(identifier: identifier) ?? (TimeZone(secondsFromGMT: 0) ?? .current)
     }
 
     func fetchLatestMapvPlans(limit: Int = 10) async throws -> [MapvPlan] {

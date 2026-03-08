@@ -563,8 +563,8 @@ enum CivicIssueCallTab: String, CaseIterable, Identifiable, Codable {
 
     var title: String {
         switch self {
-        case .assistant: return "Assistant"
-        case .examples: return "Examples"
+        case .assistant: return "Build Script"
+        case .examples: return "Premade"
         case .civicScore: return "Civic Score"
         case .history: return "History"
         }

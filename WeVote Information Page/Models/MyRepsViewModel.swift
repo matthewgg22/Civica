@@ -60,6 +60,26 @@ struct ResolvedLocation: Sendable {
     let source: RepsLookupSource
 }
 
+private struct ScheduledReminderElection {
+    let electionID: String
+    let electionName: String
+    let electionDay: Date
+    let earlyVotingStart: Date?
+}
+
+private struct TimelineStateElectionRecord: Decodable {
+    let state_name: String
+    let state_code: String
+    let primary_date: String?
+    let primary_runoff_date: String?
+    let general_election_date: String?
+    let registration_deadline_primary: String?
+    let registration_deadline_general: String?
+    let early_voting_primary: String?
+    let early_voting_primary_runoff: String?
+    let early_voting_general: String?
+}
+
 enum RepsLocationResolverError: LocalizedError {
     case emptyInput
     case invalidInput
@@ -87,8 +107,6 @@ enum RepsLocationResolverError: LocalizedError {
 }
 
 enum USZipInputValidator {
-    private static let zipRegex = try! NSRegularExpression(pattern: #"^\d{5}$"#)
-
     static func sanitizedInput(_ input: String) -> String {
         // Only sanitize when the user is clearly entering a ZIP-like value.
         // This preserves spaces while typing addresses like "877 Siesta Key ...".
@@ -101,8 +119,7 @@ enum USZipInputValidator {
     static func isValidUSZipFormat(_ input: String) -> Bool {
         let trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return false }
-        let range = NSRange(location: 0, length: trimmed.utf16.count)
-        return zipRegex.firstMatch(in: trimmed, options: [], range: range) != nil
+        return trimmed.range(of: #"^\d{5}$"#, options: .regularExpression) != nil
     }
 
     static func normalizedPrimaryZIP(from input: String) -> String? {
@@ -302,6 +319,31 @@ final class MyRepsViewModel: ObservableObject {
     private var zipRadiusCache: [String: CLLocationDistance] = [:]
     private let defaultZipRadiusMeters: CLLocationDistance = 8000
     private var lastTrackedLookupErrorCode: String?
+    private var reminderSchedulingInFlightElectionIDs: Set<String> = []
+    private var reminderScheduledElectionIDsThisSession: Set<String> = []
+    private static let fallbackPresidentialPrimaryISO = "2028-03-07"
+    private static let presidentialGeneralElectionISO = "2028-11-07"
+
+    private static let isoDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
+    private static let timelineRecordsByState: [String: TimelineStateElectionRecord] = {
+        guard
+            let url = Bundle.main.url(forResource: "USMidterm2026ElectionDates", withExtension: "json"),
+            let data = try? Data(contentsOf: url),
+            let records = try? JSONDecoder().decode([TimelineStateElectionRecord].self, from: data)
+        else {
+            return [:]
+        }
+
+        return Dictionary(uniqueKeysWithValues: records.map { ($0.state_code.uppercased(), $0) })
+    }()
 
     init(registry: RepsProviderRegistry = .defaultRegistry()) {
         self.registry = registry
@@ -747,6 +789,186 @@ final class MyRepsViewModel: ObservableObject {
 
         detectedStateCode = placemark.administrativeArea ?? registry.resolvedStateCode(for: lookupZIP)
         performLookup(zip: lookupZIP, coordinate: repsCoordinate, locality: locality, token: token)
+
+        let resolvedLogLine = normalizedAddress.isEmpty ? userInput : normalizedAddress
+        print("✅ Address search resolved: \(resolvedLogLine)")
+        scheduleElectionRemindersAfterAddressResolution(
+            zip: lookupZIP,
+            stateCode: detectedStateCode
+        )
+    }
+
+    private func scheduleElectionRemindersAfterAddressResolution(zip: String, stateCode: String?) {
+        Task {
+            guard await SupabaseManager.shared.currentUserIDIfAvailable() != nil else {
+                print("ℹ️ Skipping scheduled notification insert: no authenticated user.")
+                return
+            }
+
+            let normalizedStateCode = stateCode?.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+                ?? registry.resolvedStateCode(for: zip)
+
+            guard let normalizedStateCode else {
+                print("❌ insert failed: unable to determine state code for scheduled reminders.")
+                return
+            }
+
+            guard let nextElection = nextUpcomingTimelineElection(for: normalizedStateCode) else {
+                print("❌ insert failed: no next upcoming election found for \(normalizedStateCode).")
+                return
+            }
+
+            if reminderSchedulingInFlightElectionIDs.contains(nextElection.electionID)
+                || reminderScheduledElectionIDsThisSession.contains(nextElection.electionID) {
+                print("ℹ️ skipping duplicate reminder scheduling for electionID: \(nextElection.electionID)")
+                return
+            }
+
+            reminderSchedulingInFlightElectionIDs.insert(nextElection.electionID)
+            defer { reminderSchedulingInFlightElectionIDs.remove(nextElection.electionID) }
+
+            print("✅ next election found: \(nextElection.electionName) [\(nextElection.electionID)]")
+            print("⏳ About to insert scheduled notification after address search resolution.")
+
+            do {
+                try await SupabaseManager.shared.scheduleElectionRemindersForResolvedAddress(
+                    ElectionReminderSchedule(
+                        electionID: nextElection.electionID,
+                        electionDay: nextElection.electionDay,
+                        earlyVotingStart: nextElection.earlyVotingStart,
+                        stateCode: normalizedStateCode
+                    )
+                )
+                reminderScheduledElectionIDsThisSession.insert(nextElection.electionID)
+                print("✅ new election reminders scheduled")
+            } catch {
+                print("❌ insert failed: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func nextUpcomingTimelineElection(for stateCode: String, now: Date = Date()) -> ScheduledReminderElection? {
+        guard let record = loadTimelineRecord(for: stateCode) else {
+            return nil
+        }
+
+        let midtermName = "\(record.state_name) 2026 Midterm"
+        let presidentialName = "\(record.state_name) 2028 Presidential"
+        var candidates: [ScheduledReminderElection] = []
+
+        appendReminderElection(
+            to: &candidates,
+            electionName: midtermName,
+            subtitle: "Primary Election",
+            electionDateISO: record.primary_date,
+            registrationDateISO: record.registration_deadline_primary,
+            earlyVotingDateISO: record.early_voting_primary
+        )
+
+        appendReminderElection(
+            to: &candidates,
+            electionName: midtermName,
+            subtitle: "Primary Runoff Election",
+            electionDateISO: record.primary_runoff_date,
+            registrationDateISO: record.registration_deadline_primary,
+            earlyVotingDateISO: record.early_voting_primary_runoff ?? record.early_voting_primary
+        )
+
+        appendReminderElection(
+            to: &candidates,
+            electionName: midtermName,
+            subtitle: "General Election",
+            electionDateISO: record.general_election_date,
+            registrationDateISO: record.registration_deadline_general,
+            earlyVotingDateISO: record.early_voting_general
+        )
+
+        appendReminderElection(
+            to: &candidates,
+            electionName: presidentialName,
+            subtitle: "Presidential Primary Election",
+            electionDateISO: projectedPresidentialPrimaryISO(from: record.primary_date),
+            registrationDateISO: projectedPresidentialPrimaryISO(from: record.primary_date),
+            earlyVotingDateISO: nil
+        )
+
+        appendReminderElection(
+            to: &candidates,
+            electionName: presidentialName,
+            subtitle: "Presidential General Election",
+            electionDateISO: Self.presidentialGeneralElectionISO,
+            registrationDateISO: Self.presidentialGeneralElectionISO,
+            earlyVotingDateISO: nil
+        )
+
+        guard !candidates.isEmpty else { return nil }
+
+        let calendar = Calendar.current
+        let startOfToday = calendar.startOfDay(for: now)
+        let sorted = candidates.sorted { $0.electionDay < $1.electionDay }
+
+        if let upcoming = sorted.first(where: { calendar.startOfDay(for: $0.electionDay) >= startOfToday }) {
+            return upcoming
+        }
+        return sorted.last
+    }
+
+    private func appendReminderElection(
+        to candidates: inout [ScheduledReminderElection],
+        electionName: String,
+        subtitle: String,
+        electionDateISO: String?,
+        registrationDateISO: String?,
+        earlyVotingDateISO: String?
+    ) {
+        guard let electionDay = Self.isoDateFormatter.date(from: electionDateISO ?? "") else {
+            return
+        }
+
+        let registrationDeadline = Self.isoDateFormatter.date(from: registrationDateISO ?? "") ?? electionDay
+        let earlyVotingStart = Self.isoDateFormatter.date(from: earlyVotingDateISO ?? "")
+        let startDate = earlyVotingStart ?? electionDay
+        let election = Election(
+            name: electionName,
+            subtitle: subtitle,
+            registrationDeadline: registrationDeadline,
+            startDate: startDate,
+            electionDay: electionDay
+        )
+
+        candidates.append(
+            ScheduledReminderElection(
+                electionID: election.id,
+                electionName: "\(electionName) • \(subtitle)",
+                electionDay: electionDay,
+                earlyVotingStart: earlyVotingStart
+            )
+        )
+    }
+
+    private func loadTimelineRecord(for stateCode: String) -> TimelineStateElectionRecord? {
+        Self.timelineRecordsByState[stateCode.uppercased()]
+    }
+
+    private func projectedPresidentialPrimaryISO(from midtermPrimaryISO: String?) -> String {
+        guard
+            let iso = midtermPrimaryISO,
+            !iso.isEmpty
+        else {
+            return Self.fallbackPresidentialPrimaryISO
+        }
+
+        let parts = iso.split(separator: "-")
+        guard parts.count == 3 else {
+            return Self.fallbackPresidentialPrimaryISO
+        }
+
+        let shifted = String(format: "%04d-%@-%@", 2028, String(parts[1]), String(parts[2]))
+        if Self.isoDateFormatter.date(from: shifted) != nil {
+            return shifted
+        }
+
+        return Self.fallbackPresidentialPrimaryISO
     }
 
     private func performLookup(zip: String, coordinate: RepsGeoCoordinate?, locality: String?, token: UUID) {

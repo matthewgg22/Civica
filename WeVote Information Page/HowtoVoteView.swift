@@ -40,10 +40,10 @@ struct HowToVoteView: View {
                                 .background(VoteNowColors.primaryCTA)
                                 .clipShape(Capsule(style: .continuous))
                                 .voteNowPillDualOrbit(
-                                    redColor: Color(hex: "#FF3B30"),
-                                    blueColor: Color(hex: "#2563FF"),
+                                    redColor: VoteNowColors.ctaRed,
+                                    blueColor: VoteNowColors.ctaBlue,
                                     strokeThickness: 2.8,
-                                    loopDuration: 2.2,
+                                    loopDuration: 3.3,
                                     glowIntensity: 0.36,
                                     idleOpacity: 0.30,
                                     borderInset: 0.7,

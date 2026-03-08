@@ -25,11 +25,12 @@ struct SupabaseConfig: Sendable {
 
         let urlString = (rawURL?.isEmpty == false ? rawURL : fallbackURLString) ?? fallbackURLString
         let anonKey = (rawAnon?.isEmpty == false ? rawAnon : fallbackAnonKey) ?? fallbackAnonKey
+        let fallbackURL = URL(string: fallbackURLString) ?? URL(fileURLWithPath: "/")
 
         guard let url = URL(string: urlString), url.scheme?.hasPrefix("http") == true else {
             logger.error("Invalid Supabase URL in Info.plist (\(urlString, privacy: .public)). Using fallback URL.")
             return SupabaseConfig(
-                url: URL(string: fallbackURLString)!,
+                url: fallbackURL,
                 anonKey: anonKey
             )
         }

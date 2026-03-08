@@ -28,7 +28,7 @@ public typealias ZipToDistrict = [String: DistrictMapping]
 
 /// A single elected official
 public struct Official: Identifiable, Codable {
-    public let id = UUID()
+    public let id: UUID
     public let name:       String
     public let divisionId: String?
     public let party:      String?
@@ -41,6 +41,7 @@ public struct Official: Identifiable, Codable {
     public let level: OfficialLevel?
 
     enum CodingKeys: String, CodingKey {
+        case id
         case name
         case divisionId
         case party
@@ -54,6 +55,7 @@ public struct Official: Identifiable, Codable {
     }
 
     public init(
+        id: UUID = UUID(),
         name: String,
         divisionId: String?,
         party: String?,
@@ -65,6 +67,7 @@ public struct Official: Identifiable, Codable {
         contactFormURL: String? = nil,
         level: OfficialLevel? = nil
     ) {
+        self.id = id
         self.name = name
         self.divisionId = divisionId
         self.party = party
@@ -75,6 +78,24 @@ public struct Official: Identifiable, Codable {
         self.websiteURL = websiteURL ?? url
         self.contactFormURL = contactFormURL
         self.level = level
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let decodedURL = try container.decodeIfPresent(String.self, forKey: .url)
+        let decodedWebsiteURL = try container.decodeIfPresent(String.self, forKey: .websiteURL)
+
+        id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        name = try container.decode(String.self, forKey: .name)
+        divisionId = try container.decodeIfPresent(String.self, forKey: .divisionId)
+        party = try container.decodeIfPresent(String.self, forKey: .party)
+        officeTitle = try container.decodeIfPresent(String.self, forKey: .officeTitle)
+        photoURL = try container.decodeIfPresent(String.self, forKey: .photoURL)
+        url = decodedURL
+        officialPhone = try container.decodeIfPresent(String.self, forKey: .officialPhone)
+        websiteURL = decodedWebsiteURL ?? decodedURL
+        contactFormURL = try container.decodeIfPresent(String.self, forKey: .contactFormURL)
+        level = try container.decodeIfPresent(OfficialLevel.self, forKey: .level)
     }
 
     /// Derives the name of the image in Assets.xcassets
@@ -119,6 +140,7 @@ public struct Official: Identifiable, Codable {
 
     public func withLevel(_ level: OfficialLevel) -> Official {
         Official(
+            id: id,
             name: name,
             divisionId: divisionId,
             party: party,

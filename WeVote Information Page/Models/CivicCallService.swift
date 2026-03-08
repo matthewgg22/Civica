@@ -387,6 +387,18 @@ final class CivicCallBriefCacheStore {
 
 @MainActor
 final class IssueCallCenterViewModel: ObservableObject {
+    struct CivicCallStats: Sendable {
+        let totalVoteNowCalls: Int
+        let monthlyVoteNowCalls: Int
+        let userCallCount: Int
+
+        static let empty = CivicCallStats(
+            totalVoteNowCalls: 0,
+            monthlyVoteNowCalls: 0,
+            userCallCount: 0
+        )
+    }
+
     struct PendingCallLaunch: Sendable {
         let launchEventID: String
         let briefID: String
@@ -415,6 +427,7 @@ final class IssueCallCenterViewModel: ObservableObject {
     @Published var callScoreBreakdown: CivicCallScoreBreakdown?
     @Published var callScoreHistory: [CivicCallScoreHistoryItem] = []
     @Published var leaderboardSummary: CivicLeaderboardUserSummary?
+    @Published var callStats: CivicCallStats = .empty
     @Published var lastCompletionResult: CivicCallCompletionResponse?
     @Published var pendingCallLaunch: PendingCallLaunch?
 
@@ -459,14 +472,9 @@ final class IssueCallCenterViewModel: ObservableObject {
         // Do not preload stale briefs into Assistant on open.
         // Offline access is preserved via History/reopen.
         historyGroups = snapshot.history.sorted(by: { $0.date > $1.date })
-        if let draft = snapshot.assistantDraft {
-            selectedTab = (draft.selectedTab == .history) ? .civicScore : draft.selectedTab
-            selectedRepFilter = .all
-            concernText = draft.concernText
-            selectedAsk = draft.selectedAsk
-            optionalBillRef = draft.optionalBillRef
-            activeBriefID = draft.activeBriefID
-        }
+        // Keep Build Script composer blank on open (no auto-prefill from prior session).
+        selectedTab = .assistant
+        selectedRepFilter = .all
     }
 
     var availableFilters: [CivicRepFilter] {
@@ -565,20 +573,15 @@ final class IssueCallCenterViewModel: ObservableObject {
         }
     }
 
-    func startMAPC(from example: CivicExampleIssueCard) async {
-        concernText = example.summary.trimmingCharacters(in: .whitespacesAndNewlines)
-        if let ask = example.preferredAsk {
-            selectedAsk = ask
-        }
-
-        if let firstBill = example.relatedBills.first(where: { !$0.contains("[") && !$0.contains("]") }) {
-            optionalBillRef = firstBill
-        } else {
-            optionalBillRef = ""
-        }
-
-        selectedTab = .assistant
-        await submitAssistantRequest()
+    func startMAPC(from example: CivicExampleIssueCard) {
+        // Premade selection should open MAPC directly without overriding
+        // the user's Build Script personalization draft fields.
+        // Also clear any stale composer inputs so Build Script remains blank
+        // when the user returns from MAPC.
+        concernText = ""
+        selectedAsk = nil
+        optionalBillRef = ""
+        applySeedResolution(for: example)
     }
 
     func reopen(historyGroup: CivicHistoryGroup) {
@@ -742,9 +745,22 @@ final class IssueCallCenterViewModel: ObservableObject {
         async let summaryTask = apiClient.fetchCallScoreSummary(userID: resolvedUserID)
         async let breakdownTask = apiClient.fetchCallScoreBreakdown(userID: resolvedUserID)
         async let historyTask = apiClient.fetchCallScoreHistory(userID: resolvedUserID, limit: 30)
-        async let leaderboardTask = apiClient.fetchUserLeaderboardSummary(
+        async let monthlyUserLeaderboardTask = apiClient.fetchUserLeaderboardSummary(
             userID: resolvedUserID,
             periodType: "monthly",
+            periodStart: nil
+        )
+        async let monthlyLeaderboardTask = apiClient.fetchLeaderboard(periodType: "monthly", periodStart: nil)
+        async let allTimeLeaderboardTask = apiClient.fetchLeaderboard(periodType: "all_time", periodStart: nil)
+        async let annualLeaderboardTask = apiClient.fetchLeaderboard(periodType: "annual", periodStart: nil)
+        async let allTimeUserSummaryTask = apiClient.fetchUserLeaderboardSummary(
+            userID: resolvedUserID,
+            periodType: "all_time",
+            periodStart: nil
+        )
+        async let annualUserSummaryTask = apiClient.fetchUserLeaderboardSummary(
+            userID: resolvedUserID,
+            periodType: "annual",
             periodStart: nil
         )
 
@@ -757,8 +773,47 @@ final class IssueCallCenterViewModel: ObservableObject {
         if let history = try? await historyTask {
             callScoreHistory = history
         }
-        if let leaderboard = try? await leaderboardTask {
+        if let leaderboard = try? await monthlyUserLeaderboardTask {
             leaderboardSummary = leaderboard
+        }
+
+        let monthlyLeaderboard = try? await monthlyLeaderboardTask
+        let allTimeLeaderboard = try? await allTimeLeaderboardTask
+        let annualLeaderboard = try? await annualLeaderboardTask
+        let allTimeUserSummary = try? await allTimeUserSummaryTask
+        let annualUserSummary = try? await annualUserSummaryTask
+
+        let monthlyVoteNowCalls = monthlyLeaderboard
+            .map(Self.sumEligibleVerifiedCalls(in:)) ?? 0
+
+        let totalVoteNowCalls: Int
+        if let allTime = allTimeLeaderboard {
+            totalVoteNowCalls = Self.sumEligibleVerifiedCalls(in: allTime)
+        } else if let annual = annualLeaderboard {
+            totalVoteNowCalls = Self.sumEligibleVerifiedCalls(in: annual)
+        } else {
+            totalVoteNowCalls = monthlyVoteNowCalls
+        }
+
+        let userCallCount: Int
+        if let allTime = allTimeUserSummary {
+            userCallCount = allTime.eligibleVerifiedCallCount
+        } else if let annual = annualUserSummary {
+            userCallCount = annual.eligibleVerifiedCallCount
+        } else {
+            userCallCount = leaderboardSummary?.eligibleVerifiedCallCount ?? 0
+        }
+
+        callStats = CivicCallStats(
+            totalVoteNowCalls: totalVoteNowCalls,
+            monthlyVoteNowCalls: monthlyVoteNowCalls,
+            userCallCount: userCallCount
+        )
+    }
+
+    private static func sumEligibleVerifiedCalls(in leaderboard: CivicLeaderboardResponse) -> Int {
+        leaderboard.entries.reduce(0) { partial, entry in
+            partial + max(0, entry.eligibleVerifiedCallCount)
         }
     }
 
@@ -855,6 +910,137 @@ final class IssueCallCenterViewModel: ObservableObject {
         )
         historyGroups.removeAll(where: { $0.issueID == fresh.issueID })
         historyGroups.insert(fresh, at: 0)
+    }
+
+    private func applySeedResolution(for example: CivicExampleIssueCard) {
+        let selectedSlots = slotsForExample(example)
+        let selectedTargets = repTargets.filter { selectedSlots.contains($0.slot) }
+        guard !selectedTargets.isEmpty else { return }
+
+        let issueID = seededIssueID(for: example)
+        let relatedBills = example.relatedBills.filter {
+            !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+        let relatedCommittees = resolvedEntities.committees
+        let talkPointAsk = selectedAsk?.title ?? example.primaryAsk ?? "Support"
+
+        let briefs: [CivicCallBrief] = selectedTargets.map { target in
+            let repName = target.official.name
+            let repLastName = repName
+                .split(separator: " ")
+                .last
+                .map(String.init) ?? repName
+            let billValue = relatedBills.first
+
+            let liveScript = interpolateExampleScript(
+                example.liveScript,
+                officialTitle: target.officeType,
+                officialLastName: repLastName,
+                billOrResolution: billValue
+            )
+            let voicemailScript = interpolateExampleScript(
+                example.voicemailScript,
+                officialTitle: target.officeType,
+                officialLastName: repLastName,
+                billOrResolution: billValue
+            )
+            let relevance = example.repRelevance.isEmpty
+                ? fallbackRelevance(for: target, billRef: billValue)
+                : example.repRelevance
+
+            return CivicCallBrief(
+                id: UUID().uuidString,
+                repID: stableRepID(for: target.official),
+                repName: repName,
+                officeType: target.officeType,
+                primaryPhoneNumber: target.official.officialPhone ?? "",
+                localOfficePhoneNumber: nil,
+                relevanceBadges: relevance,
+                relatedBills: relatedBills,
+                relatedCommittees: relatedCommittees,
+                liveScript: liveScript,
+                voicemailScript: voicemailScript,
+                talkingPoints: [
+                    "Issue: \(example.title)",
+                    "Explicit ask: \(talkPointAsk)",
+                    "Request the office to share the member's current position"
+                ],
+                issueID: issueID,
+                repSlot: target.slot
+            )
+        }
+
+        applyResolution(
+            CivicIssueResolutionResponse(
+                issueID: issueID,
+                issueTitle: example.title,
+                issueSummary: example.summary,
+                resolvedEntities: CivicResolvedEntities(
+                    bills: relatedBills,
+                    committees: relatedCommittees,
+                    agencies: resolvedEntities.agencies
+                ),
+                callBriefs: briefs
+            )
+        )
+        selectedRepFilter = .all
+        saveSnapshot()
+    }
+
+    private func seededIssueID(for example: CivicExampleIssueCard) -> String {
+        let raw = example.id.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !raw.isEmpty {
+            return raw
+        }
+        if let slug = example.slug?.trimmingCharacters(in: .whitespacesAndNewlines), !slug.isEmpty {
+            return slug
+        }
+        return UUID().uuidString
+    }
+
+    private func slotsForExample(_ example: CivicExampleIssueCard) -> [CivicRepSlot] {
+        let chamberSet = Set(
+            example.targetChambers
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }
+                .filter { !$0.isEmpty }
+        )
+        guard !chamberSet.isEmpty else { return requestRepSlots }
+
+        var slots: [CivicRepSlot] = []
+        if chamberSet.contains("house") {
+            slots.append(.house)
+        }
+        if chamberSet.contains("senate") {
+            if repTargets.contains(where: { $0.slot == .senate1 }) {
+                slots.append(.senate1)
+            }
+            if repTargets.contains(where: { $0.slot == .senate2 }) {
+                slots.append(.senate2)
+            }
+        }
+
+        return slots.isEmpty ? requestRepSlots : slots
+    }
+
+    private func interpolateExampleScript(
+        _ script: String,
+        officialTitle: String,
+        officialLastName: String,
+        billOrResolution: String?
+    ) -> String {
+        let billText: String
+        if let billOrResolution,
+           !billOrResolution.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            billText = billOrResolution
+        } else {
+            billText = "this issue"
+        }
+
+        return script
+            .replacingOccurrences(of: "[OFFICIAL_TITLE]", with: officialTitle)
+            .replacingOccurrences(of: "[OFFICIAL_LAST]", with: officialLastName)
+            .replacingOccurrences(of: "[BILL_OR_RESOLUTION]", with: billText)
+            .replacingOccurrences(of: "[ZIP]", with: userZip)
     }
 
     private func saveSnapshot() {

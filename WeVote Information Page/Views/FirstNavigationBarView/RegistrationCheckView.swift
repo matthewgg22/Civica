@@ -13,10 +13,11 @@ struct RegistrationCheckView: View {
 
     private let contextResolver = ElectionGuideContextResolver()
     private let contentProvider = RegistrationGuideContentProvider()
+    private let fallbackCheckStatusURL = URL(string: "https://www.vote.gov/") ?? URL(fileURLWithPath: "/")
 
     private var checkStatusURL: URL {
         guard let context = contextResolver.resolve(for: planVM) else {
-            return URL(string: "https://www.vote.gov/")!
+            return fallbackCheckStatusURL
         }
         return contentProvider.content(for: context).checkStatusURL
     }

@@ -42,8 +42,10 @@ struct VoterRegistrationView: View {
     private let contextResolver = ElectionGuideContextResolver()
     private let contentProvider = RegistrationGuideContentProvider()
     private let stickyHeaderHeight: CGFloat = 126
-    private let voteGovURL = URL(string: "https://www.vote.gov/")!
-    private let howToVoteDeepLink = URL(string: "votenow://mapv")!
+    private let voteGovURL = URL(string: "https://www.vote.gov/") ?? URL(fileURLWithPath: "/")
+    private let howToVoteDeepLink = URL(string: "votenow://mapv")
+        ?? URL(string: "https://www.vote.gov/")
+        ?? URL(fileURLWithPath: "/")
 
     private func l(_ key: String, _ fallback: String) -> String {
         localizedCatalogString(

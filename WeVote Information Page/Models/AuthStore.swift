@@ -76,7 +76,7 @@ final class AuthStore: ObservableObject {
         #if canImport(Supabase)
         do {
             try await client.auth.signOut()
-            applyAuthState(session: nil, source: "signOut")
+            applyAuthState(session: nil)
         } catch is CancellationError {
             return
         } catch {
@@ -84,7 +84,7 @@ final class AuthStore: ObservableObject {
             lastError = error.localizedDescription
         }
         #else
-        applyAuthState(session: nil, source: "signOut-no-sdk")
+        applyAuthState(session: nil)
         #endif
 
         isLoading = false
@@ -102,7 +102,7 @@ final class AuthStore: ObservableObject {
         #if canImport(Supabase)
         do {
             let currentSession = try await client.auth.session
-            applyAuthState(session: currentSession, source: "refresh")
+            applyAuthState(session: currentSession)
         } catch is CancellationError {
             return
         } catch {
@@ -116,32 +116,30 @@ final class AuthStore: ObservableObject {
         #if canImport(Supabase)
         do {
             let currentSession = try await client.auth.session
-            applyAuthState(session: currentSession, source: "bootstrap")
+            applyAuthState(session: currentSession)
         } catch is CancellationError {
             return
         } catch {
-            applyAuthState(session: nil, source: "bootstrap-empty")
+            applyAuthState(session: nil)
         }
         #else
-        applyAuthState(session: nil, source: "bootstrap-no-sdk")
+        applyAuthState(session: nil)
         #endif
     }
 
     private func listenForAuthChanges() async {
         #if canImport(Supabase)
-        for await (event, updatedSession) in client.auth.authStateChanges {
+        for await (_, updatedSession) in client.auth.authStateChanges {
             if Task.isCancelled { break }
-            applyAuthState(session: updatedSession, source: "event-\(String(describing: event))")
+            applyAuthState(session: updatedSession)
         }
         #endif
     }
 
-    private func applyAuthState(session: SupabaseSession?, source: String) {
+    private func applyAuthState(session: SupabaseSession?) {
         self.session = session
         self.user = session?.user
         self.isSignedIn = session != nil
         self.isLoading = false
-
-        _ = source
     }
 }

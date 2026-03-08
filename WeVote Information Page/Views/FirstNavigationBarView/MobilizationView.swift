@@ -263,10 +263,10 @@ struct MobilizationView: View {
                             .foregroundColor(.white)
                             .clipShape(Capsule(style: .continuous))
                             .voteNowPillDualOrbit(
-                                redColor: Color(hex: "#FF3B30"),
-                                blueColor: Color(hex: "#2563FF"),
+                                redColor: VoteNowColors.ctaRed,
+                                blueColor: VoteNowColors.ctaBlue,
                                 strokeThickness: 3.0,
-                                loopDuration: 2.2,
+                                loopDuration: 3.3,
                                 glowIntensity: 0.42,
                                 idleOpacity: 0.34,
                                 borderInset: 0.0,
@@ -583,7 +583,7 @@ struct MobilizationView: View {
     private static func shiftedISOYear(from sourceISO: String?, toYear: Int) -> String? {
         guard let sourceDate = isoDate(from: sourceISO) else { return nil }
         let calendar = Calendar(identifier: .gregorian)
-        var components = calendar.dateComponents(in: TimeZone(secondsFromGMT: 0)!, from: sourceDate)
+        var components = calendar.dateComponents(in: TimeZone(secondsFromGMT: 0) ?? .current, from: sourceDate)
         components.year = toYear
         guard let shiftedDate = calendar.date(from: components) else { return nil }
         return isoFormatter.string(from: shiftedDate)

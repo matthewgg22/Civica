@@ -503,7 +503,6 @@ struct WhyCallReason: Identifiable, Hashable {
 }
 
 struct WhyCallContent: Hashable {
-    let eyebrow: String
     let title: String
     let intro: String
     let context: String
@@ -513,10 +512,9 @@ struct WhyCallContent: Hashable {
     let primaryCTA: String
 
     static let live = WhyCallContent(
-        eyebrow: "Research-backed",
-        title: "Why call?",
-        intro: "Calling your reps is a fast, personal way to put your opinion on the record while a decision is still live.",
-        context: "Most Americans do not contact Congress in a given year. Surveys suggest only about one in five to one in four people reach out annually, and email is more common than calling. Even so, calling remains one of the fastest, most direct ways to make your view known before a hearing, vote, or other key legislative moment.",
+        title: "",
+        intro: "",
+        context: "Calling your elected leaders remains one of the fastest, most direct ways to make your view known before a hearing, vote, or other key legislative moments.",
         stats: [
             WhyCallStat(
                 value: "21.7%–23%",
@@ -534,7 +532,7 @@ struct WhyCallContent: Hashable {
                 body: "Personalized messages are much more influential than identical form messages."
             ),
             WhyCallStat(
-                value: "Tracked by offices",
+                value: "Your view gets logged",
                 title: "Your view gets logged",
                 body: "Congressional offices track which issues are most salient and where constituents stand."
             )
@@ -553,7 +551,7 @@ struct WhyCallContent: Hashable {
                 body: "The strongest calls explain how the issue affects you, your family, or your community."
             )
         ],
-        note: "Based on findings from Pew Research Center, the Congressional Management Foundation, and academic research on congressional constituent contact.",
+        note: "",
         primaryCTA: "Start Calling Reps!"
     )
 }
@@ -620,17 +618,17 @@ private struct WhyCallHero: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(content.eyebrow.uppercased())
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(VoteNowColors.mutedText)
+            if !content.title.isEmpty {
+                Text(content.title)
+                    .font(.title.bold())
+                    .foregroundStyle(.primary)
+            }
 
-            Text(content.title)
-                .font(.title.bold())
-                .foregroundStyle(.primary)
-
-            Text(content.intro)
-                .font(.body)
-                .foregroundStyle(.primary)
+            if !content.intro.isEmpty {
+                Text(content.intro)
+                    .font(.body)
+                    .foregroundStyle(.primary)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -694,10 +692,12 @@ private struct WhyCallBottomCTA: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(note)
-                .font(.footnote)
-                .foregroundStyle(VoteNowColors.mutedText)
-                .fixedSize(horizontal: false, vertical: true)
+            if !note.isEmpty {
+                Text(note)
+                    .font(.footnote)
+                    .foregroundStyle(VoteNowColors.mutedText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
 
             Button(action: action) {
                 Text(title)
@@ -710,11 +710,6 @@ private struct WhyCallBottomCTA: View {
         .padding(.horizontal, 16)
         .padding(.top, 10)
         .padding(.bottom, 10)
-        .background(
-            Rectangle()
-                .fill(Color(uiColor: .systemBackground).opacity(0.96))
-                .ignoresSafeArea(edges: .bottom)
-        )
     }
 }
 

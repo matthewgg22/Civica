@@ -87,19 +87,24 @@ final class DatabaseService {
         limit: Int? = nil
     ) async throws -> [T] {
         #if canImport(Supabase)
-        if let limit {
-            return try await client
-                .from(table)
-                .select(columns)
-                .limit(limit)
-                .execute()
-                .value
-        } else {
-            return try await client
-                .from(table)
-                .select(columns)
-                .execute()
-                .value
+        do {
+            if let limit {
+                return try await client
+                    .from(table)
+                    .select(columns)
+                    .limit(limit)
+                    .execute()
+                    .value
+            } else {
+                return try await client
+                    .from(table)
+                    .select(columns)
+                    .execute()
+                    .value
+            }
+        } catch {
+            logger.error("DB select failed table=\(table, privacy: .public) columns=\(columns, privacy: .public) limit=\(String(describing: limit), privacy: .public) error=\(error.localizedDescription, privacy: .public)")
+            throw error
         }
         #else
         _ = table
@@ -116,13 +121,18 @@ final class DatabaseService {
         returning: Result.Type
     ) async throws -> Result {
         #if canImport(Supabase)
-        return try await client
-            .from(table)
-            .insert(values)
-            .select()
-            .single()
-            .execute()
-            .value
+        do {
+            return try await client
+                .from(table)
+                .insert(values)
+                .select()
+                .single()
+                .execute()
+                .value
+        } catch {
+            logger.error("DB insert failed table=\(table, privacy: .public) error=\(error.localizedDescription, privacy: .public)")
+            throw error
+        }
         #else
         _ = table
         _ = values
@@ -140,14 +150,19 @@ final class DatabaseService {
         returning: Result.Type
     ) async throws -> Result {
         #if canImport(Supabase)
-        return try await client
-            .from(table)
-            .update(values)
-            .eq(column, value: value)
-            .select()
-            .single()
-            .execute()
-            .value
+        do {
+            return try await client
+                .from(table)
+                .update(values)
+                .eq(column, value: value)
+                .select()
+                .single()
+                .execute()
+                .value
+        } catch {
+            logger.error("DB update failed table=\(table, privacy: .public) filterColumn=\(column, privacy: .public) error=\(error.localizedDescription, privacy: .public)")
+            throw error
+        }
         #else
         _ = table
         _ = values
@@ -164,11 +179,16 @@ final class DatabaseService {
         value: FilterValue
     ) async throws {
         #if canImport(Supabase)
-        _ = try await client
-            .from(table)
-            .delete()
-            .eq(column, value: value)
-            .execute()
+        do {
+            _ = try await client
+                .from(table)
+                .delete()
+                .eq(column, value: value)
+                .execute()
+        } catch {
+            logger.error("DB delete failed table=\(table, privacy: .public) filterColumn=\(column, privacy: .public) error=\(error.localizedDescription, privacy: .public)")
+            throw error
+        }
         #else
         _ = table
         _ = column
@@ -188,13 +208,18 @@ final class DatabaseService {
     func upsertProfile(_ profile: ProfileRow) async throws -> ProfileRow {
         logger.debug("Upserting profile \(profile.id.uuidString, privacy: .public)")
         #if canImport(Supabase)
-        return try await client
-            .from(SupabaseTable.profiles)
-            .upsert(profile)
-            .select()
-            .single()
-            .execute()
-            .value
+        do {
+            return try await client
+                .from(SupabaseTable.profiles)
+                .upsert(profile)
+                .select()
+                .single()
+                .execute()
+                .value
+        } catch {
+            logger.error("DB upsert failed table=\(SupabaseTable.profiles, privacy: .public) profileID=\(profile.id.uuidString, privacy: .public) error=\(error.localizedDescription, privacy: .public)")
+            throw error
+        }
         #else
         _ = profile
         throw DatabaseServiceError.sdkMissing

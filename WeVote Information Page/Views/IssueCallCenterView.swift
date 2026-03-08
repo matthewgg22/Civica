@@ -17,8 +17,16 @@ struct IssueCallCenterView: View {
     @State private var logoFrameInSpreadSpace: CGRect = .zero
     @State private var overlayOriginInSpreadSpace: CGPoint?
     @State private var showCompletionPrompt = false
-    @State private var showBreakdownSheet = false
     @State private var lastPromptedLaunchEventID: String?
+    @State private var selectedExampleCategory: String = "All"
+    @State private var expandedVoicemailBriefIDs: Set<String> = []
+    @State private var mapcSessionLoggedBriefIDs: Set<String> = []
+    @State private var mapcBriefsSignature: String = ""
+    @State private var animatedTotalVoteNowCalls: Int?
+    @State private var animatedMonthlyVoteNowCalls: Int?
+    @State private var animatedUserCallCount: Int?
+    @State private var animatedMapcCallGain: Int = 0
+    @State private var showMapcCallGainBadge = false
     private let userAddressLine: String
 
     private enum FocusedField: Hashable {
@@ -88,6 +96,60 @@ struct IssueCallCenterView: View {
 
     private var visibleTabs: [CivicIssueCallTab] {
         [.assistant, .examples, .civicScore]
+    }
+
+    private var exampleCategoryOptions: [String] {
+        var seen = Set<String>()
+        var categories: [String] = []
+
+        for card in viewModel.examples {
+            let category = (card.category ?? "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !category.isEmpty else { continue }
+            if seen.insert(category).inserted {
+                categories.append(category)
+            }
+        }
+
+        return ["All"] + categories
+    }
+
+    private var filteredExamples: [CivicExampleIssueCard] {
+        guard selectedExampleCategory != "All" else { return viewModel.examples }
+        return viewModel.examples.filter { card in
+            let category = (card.category ?? "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            return category == selectedExampleCategory
+        }
+    }
+
+    private var exampleCategoryColorMap: [String: Color] {
+        let palette: [Color] = [
+            Color(hex: "#1E40AF"),
+            Color(hex: "#6D28D9"),
+            Color(hex: "#0F766E"),
+            Color(hex: "#B45309"),
+            Color(hex: "#BE123C"),
+            Color(hex: "#0369A1"),
+            Color(hex: "#15803D"),
+            Color(hex: "#4338CA"),
+            Color(hex: "#9D174D"),
+            Color(hex: "#374151"),
+            Color(hex: "#7C2D12"),
+            Color(hex: "#14532D"),
+            Color(hex: "#334155"),
+            Color(hex: "#4C1D95"),
+            Color(hex: "#7F1D1D"),
+            Color(hex: "#0C4A6E")
+        ]
+
+        var map: [String: Color] = ["all": VoteNowColors.primaryCTA]
+        let categories = exampleCategoryOptions.filter { $0.caseInsensitiveCompare("All") != .orderedSame }
+        for (index, category) in categories.enumerated() {
+            let key = category.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            map[key] = palette[index % palette.count]
+        }
+        return map
     }
 
     var body: some View {
@@ -183,10 +245,6 @@ struct IssueCallCenterView: View {
             }
             Button(l("app.issue_call.alert.cancel", "Cancel"), role: .cancel) {}
         }
-        .sheet(isPresented: $showBreakdownSheet) {
-            callScoreBreakdownSheet
-                .presentationDetents([.medium, .large])
-        }
         .onTapGesture {
             focusedField = nil
         }
@@ -228,18 +286,52 @@ struct IssueCallCenterView: View {
                 lastPromptedLaunchEventID = nil
             }
         }
+        .onChange(of: viewModel.examples.count) { _, _ in
+            if !exampleCategoryOptions.contains(selectedExampleCategory) {
+                selectedExampleCategory = "All"
+            }
+        }
+        .onChange(of: viewModel.callBriefs.map(\.id)) { _, ids in
+            let signature = ids.joined(separator: "|")
+            if signature != mapcBriefsSignature {
+                mapcBriefsSignature = signature
+                mapcSessionLoggedBriefIDs.removeAll()
+            }
+        }
+        .onChange(of: viewModel.callStats.totalVoteNowCalls) { _, newValue in
+            if let animated = animatedTotalVoteNowCalls, newValue >= animated {
+                animatedTotalVoteNowCalls = nil
+            }
+        }
+        .onChange(of: viewModel.callStats.monthlyVoteNowCalls) { _, newValue in
+            if let animated = animatedMonthlyVoteNowCalls, newValue >= animated {
+                animatedMonthlyVoteNowCalls = nil
+            }
+        }
+        .onChange(of: viewModel.callStats.userCallCount) { _, newValue in
+            if let animated = animatedUserCallCount, newValue >= animated {
+                animatedUserCallCount = nil
+            }
+        }
     }
 
     private var mapcAddressSection: some View {
         Group {
             if !userAddressLine.isEmpty {
-                Text(userAddressLine)
-                    .font(.title3.weight(.semibold))
-                    .foregroundColor(VoteNowColors.mutedText)
-                    .lineLimit(2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 16)
-                    .padding(.top, 10)
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Text(userAddressLine)
+                        .font(.title3.weight(.semibold))
+                        .foregroundColor(VoteNowColors.mutedText)
+                        .lineLimit(2)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    if let activeBrief = viewModel.activeBrief,
+                       !activeBrief.talkingPoints.isEmpty {
+                        scriptInputsToggleButton
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 10)
             }
         }
     }
@@ -426,19 +518,20 @@ struct IssueCallCenterView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text(l("app.issue_call.concern.header", "Build your Script"))
                 .font(.headline)
-            Text(l(
-                "app.issue_call.concern.subheader",
-                "Enter your issue below to generate a personalized script for each of your reps."
-            ))
-            .font(.subheadline)
-            .foregroundColor(VoteNowColors.mutedText)
 
             ZStack(alignment: .topLeading) {
                 if viewModel.concernText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                    Text(l("app.issue_call.concern.placeholder", "What issue do you want to call about?"))
-                        .foregroundColor(VoteNowColors.mutedText)
+                    Text(l(
+                        "app.issue_call.concern.subheader",
+                        "Enter your issue below to generate a personalized script for each of your reps."
+                    ))
+                        .foregroundColor(VoteNowColors.mutedText.opacity(0.64))
+                        .font(.subheadline)
+                        .fixedSize(horizontal: false, vertical: true)
                         .padding(.top, 12)
                         .padding(.leading, 8)
+                        .padding(.trailing, 10)
+                        .allowsHitTesting(false)
                 }
 
                 TextEditor(text: $viewModel.concernText)
@@ -538,38 +631,21 @@ struct IssueCallCenterView: View {
 
     private var issueSummaryCard: some View {
         let talkingPoints = viewModel.activeBrief?.talkingPoints ?? []
+        let issueHeadline = isMAPCMode ? mapcIssueHeadline : viewModel.issueTitle
 
         return VStack(alignment: .leading, spacing: 6) {
             ZStack {
-                Text("\(l("app.issue_call.issue.prefix", "Issue:")) \(viewModel.issueTitle)")
-                    .font(.title3.weight(.semibold))
+                Text("\(l("app.issue_call.issue.prefix", "Issue:")) \(issueHeadline)")
+                    .font(isMAPCMode ? .headline.weight(.semibold) : .title3.weight(.semibold))
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity, alignment: .center)
             }
-            .lineLimit(1)
-            .minimumScaleFactor(0.85)
-            .padding(.trailing, talkingPoints.isEmpty ? 0 : 122)
+            .lineLimit(isMAPCMode ? 2 : 1)
+            .minimumScaleFactor(isMAPCMode ? 0.92 : 0.85)
+            .padding(.trailing, talkingPoints.isEmpty ? 0 : (isMAPCMode ? 0 : 122))
             .overlay(alignment: .topTrailing) {
-                if !talkingPoints.isEmpty {
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            isTalkingPointsExpanded.toggle()
-                        }
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text(l("app.issue_call.script.talking_points", "Talking points"))
-                                .font(.caption.weight(.semibold))
-                            Image(systemName: isTalkingPointsExpanded ? "chevron.up" : "chevron.down")
-                                .font(.caption2.weight(.bold))
-                        }
-                        .foregroundColor(VoteNowColors.primaryCTA)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 5)
-                        .background(VoteNowColors.infoSurfaceBlue)
-                        .clipShape(Capsule())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("issue_call.talking_points.toggle")
+                if !talkingPoints.isEmpty, !isMAPCMode {
+                    scriptInputsToggleButton
                 }
             }
 
@@ -579,9 +655,9 @@ struct IssueCallCenterView: View {
                     .foregroundColor(VoteNowColors.primaryText)
             }
 
-            if !talkingPoints.isEmpty && isTalkingPointsExpanded {
+            if !talkingPoints.isEmpty && isTalkingPointsExpanded && !isMAPCMode {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(l("app.issue_call.script.talking_points", "Talking points"))
+                    Text(l("app.issue_call.script.inputs", "Script inputs"))
                         .font(.subheadline.weight(.semibold))
                     VStack(alignment: .leading, spacing: 4) {
                         ForEach(Array(talkingPoints.enumerated()), id: \.offset) { _, point in
@@ -604,14 +680,16 @@ struct IssueCallCenterView: View {
                 chipRow(title: l("app.issue_call.related.agencies", "Related agencies"), items: viewModel.resolvedEntities.agencies)
             }
         }
-        .padding(10)
+        .padding(isMAPCMode ? 0 : 10)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(VoteNowColors.surfaceWhite)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
-        )
+        .background(isMAPCMode ? Color.clear : VoteNowColors.surfaceWhite)
+        .clipShape(RoundedRectangle(cornerRadius: isMAPCMode ? 0 : 12, style: .continuous))
+        .overlay {
+            if !isMAPCMode {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+            }
+        }
     }
 
     private var isIssueSummaryDuplicate: Bool {
@@ -629,6 +707,9 @@ struct IssueCallCenterView: View {
         let isLastBrief = viewModel.isLastBrief(brief)
         let briefIndex = viewModel.callBriefs.firstIndex(where: { $0.id == brief.id }) ?? 0
         let isFirstBrief = briefIndex == 0
+        let isVoicemailExpanded = expandedVoicemailBriefIDs.contains(brief.id)
+        let selectedOutcome = viewModel.loggedOutcomeByBriefID[brief.id]
+        let isVoicemailOutcomeLocked = condensedForMAPC && isVoicemailExpanded
 
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .top, spacing: 8) {
@@ -663,7 +744,7 @@ struct IssueCallCenterView: View {
                     }
                 } label: {
                     Label(
-                        l("app.issue_call.action.call_rep", "Call this representative"),
+                        callButtonTitle(for: brief),
                         systemImage: "phone.fill"
                     )
                     .font(.subheadline.weight(.semibold))
@@ -694,10 +775,65 @@ struct IssueCallCenterView: View {
                 }
             }
 
-            scriptBlock(title: l("app.issue_call.script.live", "Live-call script"), text: brief.liveScript)
-            scriptBlock(title: l("app.issue_call.script.voicemail", "Voicemail"), text: brief.voicemailScript)
+            scriptBlock(
+                title: l("app.issue_call.script.live", "Live-call script"),
+                text: brief.liveScript,
+                showScriptInputsToggle: false
+            )
+            if condensedForMAPC, isTalkingPointsExpanded, !brief.talkingPoints.isEmpty {
+                scriptInputsExpandedBlock(brief.talkingPoints)
+                    .padding(.leading, 8)
+            }
 
-            outcomeButtons(brief)
+            if condensedForMAPC {
+                VStack(alignment: .leading, spacing: 4) {
+                    Button {
+                        if selectedOutcome != .voicemail {
+                            if isMAPCMode {
+                                mapcSessionLoggedBriefIDs.insert(brief.id)
+                            }
+                            Task {
+                                await viewModel.logOutcome(for: brief, outcome: .voicemail)
+                            }
+                        }
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            if isVoicemailExpanded {
+                                expandedVoicemailBriefIDs.remove(brief.id)
+                            } else {
+                                expandedVoicemailBriefIDs.insert(brief.id)
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 8) {
+                            Text("Voicemail Script")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundColor(VoteNowColors.primaryText)
+                            Spacer(minLength: 0)
+                            Image(systemName: isVoicemailExpanded ? "chevron.up" : "chevron.down")
+                                .font(.caption.weight(.bold))
+                                .foregroundColor(VoteNowColors.primaryCTA)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(VoteNowColors.infoSurfaceBlue)
+                        .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+
+                    if isVoicemailExpanded {
+                        scriptBlock(title: "Voicemail Script", text: brief.voicemailScript)
+                    }
+                }
+            } else {
+                scriptBlock(title: "Voicemail Script", text: brief.voicemailScript)
+            }
+
+            outcomeButtons(
+                brief,
+                selectedOutcome: selectedOutcome,
+                isVoicemailLocked: isVoicemailOutcomeLocked
+            )
 
             if condensedForMAPC {
                 HStack(spacing: 8) {
@@ -746,6 +882,7 @@ struct IssueCallCenterView: View {
         let canAdvance = viewModel.hasLoggedOutcome(for: brief)
 
         return Button {
+            let mapcGain = mapcSessionLoggedBriefIDs.count
             withAnimation(.easeInOut(duration: 0.28)) {
                 if isLastBrief {
                     waterfallController.trigger(reduceMotion: reduceMotion)
@@ -754,6 +891,8 @@ struct IssueCallCenterView: View {
                         withAnimation(.easeInOut(duration: 0.22)) {
                             didCompleteMAPC = true
                             viewModel.selectedTab = .civicScore
+                            startMAPCCallGainAnimation(gain: mapcGain)
+                            mapcSessionLoggedBriefIDs.removeAll()
                         }
                     }
                 } else {
@@ -787,25 +926,84 @@ struct IssueCallCenterView: View {
     private var examplesTab: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
+                if !exampleCategoryOptions.isEmpty {
+                    ChipFlowLayout(itemSpacing: 8, rowSpacing: 8) {
+                        ForEach(exampleCategoryOptions, id: \.self) { category in
+                            let isAllMode = selectedExampleCategory == "All"
+                            let isSelected = isAllMode || (category == selectedExampleCategory)
+                            let categoryColor = exampleCategoryColor(for: category)
+                            Button {
+                                selectedExampleCategory = category
+                            } label: {
+                                Text(exampleCategoryDisplayName(for: category))
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundColor(.white)
+                                    .lineLimit(1)
+                                    .multilineTextAlignment(.center)
+                                    .minimumScaleFactor(0.78)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(
+                                        ZStack {
+                                            exampleCategoryBackgroundColor(for: category, isSelected: isSelected)
+                                            if isSelected {
+                                                Capsule()
+                                                    .fill(Color.white.opacity(0.16))
+                                                    .padding(1)
+                                            }
+                                        }
+                                    )
+                                    .clipShape(Capsule())
+                                    .overlay(
+                                        Capsule()
+                                            .stroke(
+                                                isSelected ? Color.white.opacity(0.98) : categoryColor.opacity(0.85),
+                                                lineWidth: isSelected ? 1.8 : 1
+                                            )
+                                    )
+                                    .shadow(
+                                        color: isSelected ? categoryColor.opacity(0.36) : .clear,
+                                        radius: isSelected ? 4 : 0,
+                                        x: 0,
+                                        y: 1
+                                    )
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 4)
+                }
+
                 if viewModel.examples.isEmpty {
                     Text(l("app.issue_call.examples.empty", "No example cards are available right now."))
                         .font(.subheadline)
                         .foregroundColor(VoteNowColors.mutedText)
+                } else if filteredExamples.isEmpty {
+                    Text(l("app.issue_call.examples.empty_for_category", "No examples match this category yet."))
+                        .font(.subheadline)
+                        .foregroundColor(VoteNowColors.mutedText)
                 }
 
-                ForEach(viewModel.examples) { example in
+                ForEach(filteredExamples) { example in
                     VStack(alignment: .leading, spacing: 8) {
                         Text(example.title)
                             .font(.headline)
 
                         HStack(spacing: 8) {
                             if let category = example.category, !category.isEmpty {
+                                let categoryColor = exampleCategoryColor(for: category)
                                 Text(category)
                                     .font(.caption.weight(.semibold))
+                                    .foregroundColor(categoryColor)
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 4)
-                                    .background(VoteNowColors.infoSurfaceBlue)
+                                    .background(exampleCategoryBackgroundColor(for: category, isSelected: false))
                                     .clipShape(Capsule())
+                                    .overlay(
+                                        Capsule()
+                                            .stroke(categoryColor.opacity(0.85), lineWidth: 1)
+                                    )
                             }
                             if !example.targetChambers.isEmpty {
                                 Text(example.targetChambers.map { $0.capitalized }.joined(separator: " + "))
@@ -817,29 +1015,24 @@ struct IssueCallCenterView: View {
                             }
                         }
 
-                        Text(example.summary)
-                            .font(.subheadline)
+                        emphasizedPromptText(example.summary, baseFont: .subheadline)
+                            .foregroundColor(VoteNowColors.primaryText)
+                            .fixedSize(horizontal: false, vertical: true)
 
                         chipRow(title: l("app.issue_call.examples.bills", "Related bill(s)"), items: example.relatedBills)
                         chipRow(title: l("app.issue_call.examples.relevance", "Why your reps are relevant"), items: example.repRelevance)
                         chipRow(title: l("app.issue_call.examples.template_asks", "Template asks"), items: example.templateAsks.map(\.title))
 
-                        scriptBlock(title: l("app.issue_call.script.live", "Live-call script"), text: example.liveScript)
-                        scriptBlock(title: l("app.issue_call.script.voicemail", "Voicemail"), text: example.voicemailScript)
-
-                        if let footer = example.voicemailFooter, !footer.isEmpty {
-                            Text(footer)
-                                .font(.caption)
-                                .foregroundColor(VoteNowColors.mutedText)
-                        }
+                        exampleScriptBlock(
+                            title: l("app.issue_call.script.live", "Live-call script"),
+                            text: condensedPremadeScriptPlaceholderText(example.liveScript)
+                        )
 
                         Button {
                             focusedField = nil
                             didCompleteMAPC = false
                             isTalkingPointsExpanded = false
-                            Task {
-                                await viewModel.startMAPC(from: example)
-                            }
+                            viewModel.startMAPC(from: example)
                         } label: {
                             Text(l("app.issue_call.examples.use_for_mapc", "Use this issue for MAPC"))
                                 .font(.subheadline.weight(.semibold))
@@ -862,6 +1055,7 @@ struct IssueCallCenterView: View {
                 }
             }
             .padding(.horizontal, 16)
+            .padding(.top, 6)
             .padding(.bottom, 20)
         }
     }
@@ -881,51 +1075,46 @@ struct IssueCallCenterView: View {
     }
 
     private var civicScoreSummaryCard: some View {
-        let summary = viewModel.callScoreSummary
-        let score = summary?.callScore ?? 0
-        let tier = summary?.tierName ?? l("app.issue_call.score.tier.not_active", "Not Active Yet")
+        let stats = viewModel.callStats
+        let displayedTotalCalls = max(stats.totalVoteNowCalls, animatedTotalVoteNowCalls ?? 0)
+        let displayedMonthlyCalls = max(stats.monthlyVoteNowCalls, animatedMonthlyVoteNowCalls ?? 0)
+        let displayedUserCalls = max(stats.userCallCount, animatedUserCallCount ?? 0)
 
-        return VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(l("app.issue_call.score.title", "Call Score"))
-                    .font(.headline)
-                Spacer()
-                Text("\(score)/100")
-                    .font(.title2.weight(.bold))
-                    .foregroundColor(VoteNowColors.primaryCTA)
+        return VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Text("\(displayedTotalCalls.formatted(.number)) Total Calls")
+                        .font(.system(size: 36, weight: .bold, design: .rounded))
+                        .foregroundColor(VoteNowColors.primaryCTA)
+
+                    if showMapcCallGainBadge && animatedMapcCallGain > 0 {
+                        Text("+\(animatedMapcCallGain)")
+                            .font(.title3.weight(.bold))
+                            .foregroundColor(VoteNowColors.successGreen)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                }
+                .animation(.easeInOut(duration: 0.2), value: showMapcCallGainBadge)
+
+                if showMapcCallGainBadge && animatedMapcCallGain > 0 {
+                    Text("+\(animatedMapcCallGain) added to Calls to Congress")
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(VoteNowColors.successGreen)
+                }
             }
 
-            Text(tier)
-                .font(.subheadline.weight(.semibold))
+            Divider()
 
-            Text(summary?.explanation ?? l("app.issue_call.score.explanation", "Build a real civic calling habit with verified, non-duplicate calls over time."))
-                .font(.footnote)
-                .foregroundColor(VoteNowColors.primaryText)
-
-            if let leaderboardSummary = viewModel.leaderboardSummary {
-                Text(
-                    l(
-                        "app.issue_call.score.leaderboard.summary",
-                        "This month: \(leaderboardSummary.eligibleVerifiedCallCount) eligible calls across \(leaderboardSummary.uniqueOfficeCount) office(s)."
-                    )
+            VStack(alignment: .leading, spacing: 10) {
+                scoreStatLine(
+                    label: l("app.issue_call.score.stats.monthly_calls", "Monthly number of calls"),
+                    value: displayedMonthlyCalls
                 )
-                .font(.caption)
-                .foregroundColor(VoteNowColors.mutedText)
+                scoreStatLine(
+                    label: l("app.issue_call.score.stats.user_calls", "Your number of calls"),
+                    value: displayedUserCalls
+                )
             }
-
-            Button {
-                showBreakdownSheet = true
-            } label: {
-                Text(l("app.issue_call.score.action.breakdown", "View score breakdown"))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 9)
-                    .background(VoteNowColors.primaryCTA)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("issue_call.score.breakdown")
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -935,6 +1124,17 @@ struct IssueCallCenterView: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
         )
+    }
+
+    private func scoreStatLine(label: String, value: Int) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            Text(value.formatted(.number))
+                .font(.title3.weight(.bold))
+                .foregroundColor(VoteNowColors.primaryCTA)
+            Text(label)
+                .font(.subheadline)
+                .foregroundColor(VoteNowColors.primaryText)
+        }
     }
 
     @ViewBuilder
@@ -994,96 +1194,11 @@ struct IssueCallCenterView: View {
         }
     }
 
-    @ViewBuilder
-    private var callScoreBreakdownSheet: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 12) {
-                    if let breakdown = viewModel.callScoreBreakdown {
-                        Text("\(l("app.issue_call.score.title", "Call Score")): \(breakdown.callScore)/100")
-                            .font(.title3.weight(.bold))
-                        Text(breakdown.tierName)
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundColor(VoteNowColors.primaryCTA)
-
-                        scoreBreakdownRow(
-                            title: l("app.issue_call.score.activation", "Activation"),
-                            value: breakdown.components.activationPoints,
-                            maxPoints: breakdown.maxima.activationPoints
-                        )
-                        scoreBreakdownRow(
-                            title: l("app.issue_call.score.recency", "Recency"),
-                            value: breakdown.components.recencyPoints,
-                            maxPoints: breakdown.maxima.recencyPoints
-                        )
-                        scoreBreakdownRow(
-                            title: l("app.issue_call.score.consistency", "Consistency"),
-                            value: breakdown.components.consistencyPoints,
-                            maxPoints: breakdown.maxima.consistencyPoints
-                        )
-                        scoreBreakdownRow(
-                            title: l("app.issue_call.score.breadth", "Breadth"),
-                            value: breakdown.components.breadthPoints,
-                            maxPoints: breakdown.maxima.breadthPoints
-                        )
-                        scoreBreakdownRow(
-                            title: l("app.issue_call.score.momentum", "Momentum"),
-                            value: breakdown.components.momentumPoints,
-                            maxPoints: breakdown.maxima.momentumPoints
-                        )
-
-                        if !viewModel.callScoreHistory.isEmpty {
-                            Text(l("app.issue_call.score.history", "Recent scoring history"))
-                                .font(.headline)
-                                .padding(.top, 4)
-                            ForEach(viewModel.callScoreHistory.prefix(8)) { item in
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(item.officeID)
-                                            .font(.caption.weight(.semibold))
-                                        Text(item.completedConfirmedAt.formatted(date: .abbreviated, time: .shortened))
-                                            .font(.caption2)
-                                            .foregroundColor(VoteNowColors.mutedText)
-                                    }
-                                    Spacer()
-                                    Text(
-                                        item.scoringEligible
-                                        ? l("app.issue_call.score.history.eligible", "Eligible")
-                                        : l("app.issue_call.score.history.duplicate", "Duplicate")
-                                    )
-                                    .font(.caption.weight(.semibold))
-                                    .foregroundColor(item.scoringEligible ? VoteNowColors.successGreen : VoteNowColors.warningAmber)
-                                }
-                                .padding(8)
-                                .background(VoteNowColors.infoSurfaceBlue)
-                                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                            }
-                        }
-                    } else {
-                        Text(l("app.issue_call.score.loading", "Loading score breakdown..."))
-                            .font(.subheadline)
-                            .foregroundColor(VoteNowColors.mutedText)
-                    }
-                }
-                .padding(16)
-            }
-            .background(VoteNowColors.brandSoftBlue.ignoresSafeArea())
-            .navigationTitle(l("app.issue_call.score.breakdown.title", "Score Breakdown"))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(l("app.issue_call.alert.done", "Done")) {
-                        showBreakdownSheet = false
-                    }
-                }
-            }
-        }
-    }
-
     private var historyTrackerSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(l("app.issue_call.tracker.title", "Call Tracker"))
+            Text(l("app.issue_call.tracker.title.calls_to_my_reps", "Calls to My Reps"))
                 .font(.headline)
+                .frame(maxWidth: .infinity, alignment: .center)
 
             if trackerGroups.isEmpty {
                 Text(l("app.issue_call.history.empty", "Your call history will appear here after you generate and log call briefs."))
@@ -1092,37 +1207,29 @@ struct IssueCallCenterView: View {
             } else {
                 ForEach(trackerGroups.prefix(4)) { group in
                     let outcomeRows = trackerOutcomeRows(for: group)
+                    let totalReps = max(1, viewModel.repTargets.count)
+                    let displayIssueTitle = trackerDisplayIssueTitle(for: group)
 
                     VStack(alignment: .leading, spacing: 8) {
-                        HStack(alignment: .top, spacing: 10) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(group.issueTitle)
-                                    .font(.headline)
-                                    .lineLimit(2)
+                        Text(displayIssueTitle)
+                            .font(.headline)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.9)
 
-                                Text(group.issueSummary)
-                                    .font(.subheadline)
-                                    .foregroundColor(VoteNowColors.primaryText)
-                                    .lineLimit(2)
-                            }
+                        HStack(alignment: .center, spacing: 10) {
+                            Text(group.date.formatted(date: .abbreviated, time: .shortened))
+                                .font(.caption)
+                                .foregroundColor(VoteNowColors.mutedText)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 5)
+                                .background(VoteNowColors.infoSurfaceBlue)
+                                .clipShape(Capsule())
 
                             Spacer(minLength: 0)
 
-                            VStack(alignment: .trailing, spacing: 6) {
-                                Text(group.date.formatted(date: .abbreviated, time: .shortened))
-                                    .font(.caption)
-                                    .foregroundColor(VoteNowColors.mutedText)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 5)
-                                    .background(VoteNowColors.infoSurfaceBlue)
-                                    .clipShape(Capsule())
-
-                                if !outcomeRows.isEmpty {
-                                    Text("\(outcomeRows.count) of 3 reps")
-                                        .font(.caption2.weight(.semibold))
-                                        .foregroundColor(VoteNowColors.mutedText)
-                                }
-                            }
+                            Text("\(outcomeRows.count) of \(totalReps) reps")
+                                .font(.caption2.weight(.semibold))
+                                .foregroundColor(VoteNowColors.mutedText)
                         }
 
                         if !outcomeRows.isEmpty {
@@ -1130,22 +1237,29 @@ struct IssueCallCenterView: View {
                                 Text(l("app.issue_call.history.outcomes", "Recent outcomes"))
                                     .font(.subheadline.weight(.semibold))
 
-                                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 6) {
+                                HStack(spacing: 6) {
                                     ForEach(outcomeRows) { row in
-                                        VStack(alignment: .leading, spacing: 2) {
-                                            Text(row.repName)
+                                        VStack(alignment: .center, spacing: 2) {
+                                            Text(trackerDisplayLastName(from: row.repName))
                                                 .font(.caption.weight(.semibold))
+                                                .foregroundColor(VoteNowColors.primaryText)
                                                 .lineLimit(1)
+                                                .multilineTextAlignment(.center)
                                             Text(row.outcome.title)
                                                 .font(.caption2)
-                                                .foregroundColor(VoteNowColors.mutedText)
+                                                .foregroundColor(outcomeColor(for: row.outcome))
                                                 .lineLimit(1)
+                                                .multilineTextAlignment(.center)
                                         }
-                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .frame(maxWidth: .infinity, alignment: .center)
                                         .padding(.horizontal, 8)
-                                        .padding(.vertical, 6)
-                                        .background(VoteNowColors.infoSurfaceBlue.opacity(0.9))
+                                        .padding(.vertical, 5)
+                                        .background(outcomeHistoryBackground(for: row.outcome))
                                         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                                .stroke(outcomeColor(for: row.outcome).opacity(0.42), lineWidth: 1)
+                                        )
                                     }
                                 }
                             }
@@ -1154,7 +1268,7 @@ struct IssueCallCenterView: View {
                         Button {
                             viewModel.reopen(historyGroup: group.representativeGroup)
                         } label: {
-                            Text(l("app.issue_call.history.reopen", "Reopen brief"))
+                            Text(l("app.issue_call.history.reopen", "Repeat Script"))
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
@@ -1268,46 +1382,243 @@ struct IssueCallCenterView: View {
         return repName.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     }
 
-    @ViewBuilder
-    private func scoreBreakdownRow(title: String, value: Int, maxPoints: Int) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(title)
-                    .font(.subheadline.weight(.semibold))
-                Spacer()
-                Text("\(value)/\(maxPoints)")
-                    .font(.subheadline.weight(.bold))
-                    .foregroundColor(VoteNowColors.primaryCTA)
-            }
-            GeometryReader { geo in
-                let ratio = maxPoints > 0 ? CGFloat(value) / CGFloat(maxPoints) : 0
-                ZStack(alignment: .leading) {
-                    Capsule()
-                        .fill(VoteNowColors.infoSurfaceBlue.opacity(0.8))
-                        .frame(height: 8)
-                    Capsule()
-                        .fill(VoteNowColors.primaryCTA)
-                        .frame(width: Swift.max(0, geo.size.width * ratio), height: 8)
-                }
-            }
-            .frame(height: 8)
+    private func trackerDisplayLastName(from fullName: String) -> String {
+        let components = fullName
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .split(separator: " ")
+            .map(String.init)
+
+        guard !components.isEmpty else {
+            return fullName
         }
-        .padding(10)
-        .background(VoteNowColors.surfaceWhite)
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
-        )
+
+        if components.count >= 3 {
+            let suffixes = Set(["jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v"])
+            let lastRaw = components[components.count - 1]
+            let secondLastRaw = components[components.count - 2]
+
+            let cleanedLast = lastRaw.trimmingCharacters(in: CharacterSet(charactersIn: ",."))
+            let cleanedSecond = secondLastRaw.trimmingCharacters(in: CharacterSet(charactersIn: ",."))
+            let normalizedLast = cleanedLast.lowercased()
+            let secondLooksLikeMiddleInitial = cleanedSecond.count <= 2 || cleanedSecond.hasSuffix(".")
+
+            if !suffixes.contains(normalizedLast), !secondLooksLikeMiddleInitial, !cleanedSecond.isEmpty {
+                return "\(cleanedSecond) \(cleanedLast)"
+            }
+        }
+
+        let fallback = components.last?.trimmingCharacters(in: CharacterSet(charactersIn: ",.")) ?? fullName
+        return fallback.isEmpty ? fullName : fallback
+    }
+
+    private func trackerDisplayIssueTitle(for group: TrackerIssueGroup) -> String {
+        let rawTitle = group.issueTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        let slugTitle = trackerIssueTitleFromIssueID(group.representativeGroup.issueID)
+
+        if rawTitle.isEmpty {
+            return slugTitle ?? l("app.issue_call.history.issue_default", "Issue call")
+        }
+
+        if trackerLooksLikeSummaryText(rawTitle), let slugTitle {
+            return slugTitle
+        }
+
+        return rawTitle
+    }
+
+    private func trackerLooksLikeSummaryText(_ text: String) -> Bool {
+        let cleaned = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let lower = cleaned.lowercased()
+        let wordCount = cleaned.split(whereSeparator: \.isWhitespace).count
+
+        if cleaned.contains(".") || cleaned.contains(":") { return true }
+        if wordCount >= 9 { return true }
+        if lower.hasPrefix("this issue")
+            || lower.hasPrefix("recent ")
+            || lower.contains("i'm calling")
+            || lower.contains("i am calling")
+            || lower.contains("please ")
+        {
+            return true
+        }
+
+        return false
+    }
+
+    private func trackerIssueTitleFromIssueID(_ issueID: String) -> String? {
+        let raw = issueID.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !raw.isEmpty else { return nil }
+
+        let candidate = raw.split(separator: "/").last.map(String.init) ?? raw
+        let uuidCharset = CharacterSet(charactersIn: "0123456789abcdef-")
+        let lowerCandidate = candidate.lowercased()
+        if lowerCandidate.unicodeScalars.allSatisfy({ uuidCharset.contains($0) }), lowerCandidate.count >= 32 {
+            return nil
+        }
+
+        let normalized = candidate
+            .replacingOccurrences(of: "_", with: " ")
+            .replacingOccurrences(of: "-", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !normalized.isEmpty else { return nil }
+        return normalized.capitalized
+    }
+
+    private var mapcIssueHeadline: String {
+        let rawTitle = viewModel.issueTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !rawTitle.isEmpty, !trackerLooksLikeSummaryText(rawTitle) {
+            return normalizedMAPCIssueHeadline(rawTitle)
+        }
+
+        if let issueID = viewModel.activeBrief?.issueID,
+           let fromIssueID = trackerIssueTitleFromIssueID(issueID) {
+            return normalizedMAPCIssueHeadline(fromIssueID)
+        }
+
+        let concern = viewModel.concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !concern.isEmpty {
+            return normalizedMAPCIssueHeadline(concern)
+        }
+
+        if !rawTitle.isEmpty {
+            return normalizedMAPCIssueHeadline(rawTitle)
+        }
+
+        let summary = viewModel.issueSummary.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !summary.isEmpty {
+            return normalizedMAPCIssueHeadline(summary)
+        }
+
+        return l("app.issue_call.issue.default", "Issue")
+    }
+
+    private func normalizedMAPCIssueHeadline(_ text: String) -> String {
+        var value = text
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+
+        let prefixRewrites: [(prefix: String, replacement: String)] = [
+            ("this issue asks members of congress to ", "Ask Congress to "),
+            ("this issue asks congress to ", "Ask Congress to "),
+            ("this issue asks lawmakers to ", "Ask lawmakers to "),
+            ("this issue asks senators to ", "Ask senators to "),
+            ("this issue asks ", "Ask "),
+            ("recent military escalation has renewed pressure on congress to ", "Ask Congress to ")
+        ]
+
+        for rewrite in prefixRewrites {
+            if value.lowercased().hasPrefix(rewrite.prefix) {
+                value = rewrite.replacement + value.dropFirst(rewrite.prefix.count)
+                break
+            }
+        }
+
+        if let firstSentence = value
+            .split(whereSeparator: { $0 == "." || $0 == "!" || $0 == "?" })
+            .first
+            .map(String.init)?
+            .trimmingCharacters(in: .whitespacesAndNewlines),
+           !firstSentence.isEmpty
+        {
+            value = firstSentence
+        }
+
+        value = conciseIssueHeadline(value, maxWords: 10)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        while let last = value.last, [",", ";", ":"].contains(last) {
+            value.removeLast()
+            value = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        guard !value.isEmpty else { return l("app.issue_call.issue.default", "Issue") }
+        let first = value.prefix(1).uppercased()
+        let remainder = value.dropFirst()
+        return first + remainder
+    }
+
+    private func conciseIssueHeadline(_ text: String, maxWords: Int = 8) -> String {
+        let firstSentence = text
+            .split(whereSeparator: { $0 == "." || $0 == "!" || $0 == "?" })
+            .first
+            .map(String.init)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? text
+
+        let words = firstSentence
+            .split(whereSeparator: \.isWhitespace)
+            .map(String.init)
+
+        guard words.count > maxWords else { return firstSentence }
+
+        var trimmed = Array(words.prefix(maxWords))
+        let trailingStopWords = Set(["to", "for", "of", "on", "in", "at", "with", "and", "or"])
+        while let last = trimmed.last, trailingStopWords.contains(last.lowercased()), trimmed.count > 1 {
+            trimmed.removeLast()
+        }
+
+        return trimmed.joined(separator: " ")
     }
 
     @ViewBuilder
-    private func scriptBlock(title: String, text: String) -> some View {
+    private func scriptBlock(
+        title: String,
+        text: String,
+        showScriptInputsToggle: Bool = false,
+        textLineLimit: Int? = nil
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            ZStack {
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .multilineTextAlignment(.center)
+                if showScriptInputsToggle {
+                    HStack {
+                        Spacer(minLength: 0)
+                        scriptInputsToggleButton
+                    }
+                }
+            }
+            emphasizedPromptText(text, baseFont: .footnote)
+                .foregroundColor(VoteNowColors.primaryText)
+                .lineLimit(textLineLimit)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(VoteNowColors.infoSurfaceBlue)
+        .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+    }
+
+    @ViewBuilder
+    private func scriptInputsExpandedBlock(_ talkingPoints: [String]) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(l("app.issue_call.script.inputs", "Script inputs"))
+                .font(.subheadline.weight(.semibold))
+            VStack(alignment: .leading, spacing: 4) {
+                ForEach(Array(talkingPoints.enumerated()), id: \.offset) { _, point in
+                    Text("• \(point)")
+                        .font(.caption)
+                        .foregroundColor(VoteNowColors.primaryText)
+                }
+            }
+            .padding(.top, 2)
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(VoteNowColors.infoSurfaceBlue)
+        .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+    }
+
+    @ViewBuilder
+    private func exampleScriptBlock(title: String, text: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .font(.subheadline.weight(.semibold))
-            Text(text)
-                .font(.footnote)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .multilineTextAlignment(.center)
+            emphasizedPromptText(text, baseFont: .footnote)
                 .foregroundColor(VoteNowColors.primaryText)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -1315,6 +1626,41 @@ struct IssueCallCenterView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(VoteNowColors.infoSurfaceBlue)
         .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+    }
+
+    private func emphasizedPromptText(_ text: String, baseFont: Font) -> Text {
+        guard let regex = try? NSRegularExpression(pattern: #"\[[^\[\]]+\]"#) else {
+            return Text(text).font(baseFont.weight(.bold))
+        }
+
+        let nsRange = NSRange(text.startIndex..<text.endIndex, in: text)
+        let matches = regex.matches(in: text, options: [], range: nsRange)
+        if matches.isEmpty {
+            return Text(text).font(baseFont.weight(.bold))
+        }
+
+        var composed = Text("")
+        var cursor = text.startIndex
+
+        for match in matches {
+            guard let matchRange = Range(match.range, in: text) else { continue }
+
+            if cursor < matchRange.lowerBound {
+                let prefix = String(text[cursor..<matchRange.lowerBound])
+                composed = composed + Text(prefix).font(baseFont.weight(.bold))
+            }
+
+            let token = String(text[matchRange])
+            composed = composed + Text(token).font(baseFont)
+            cursor = matchRange.upperBound
+        }
+
+        if cursor < text.endIndex {
+            let suffix = String(text[cursor..<text.endIndex])
+            composed = composed + Text(suffix).font(baseFont.weight(.bold))
+        }
+
+        return composed
     }
 
     @ViewBuilder
@@ -1367,35 +1713,52 @@ struct IssueCallCenterView: View {
         }
     }
 
-    private func outcomeButtons(_ brief: CivicCallBrief) -> some View {
+    private func outcomeButtons(
+        _ brief: CivicCallBrief,
+        selectedOutcome: CivicCallOutcome?,
+        isVoicemailLocked: Bool
+    ) -> some View {
         let selectableOutcomes: [CivicCallOutcome] = [
-            .voicemail,
             .supportive,
             .opposed,
             .undecided,
-            .followUpRequested,
             .other
         ]
-        let selectedOutcome = viewModel.loggedOutcomeByBriefID[brief.id]
 
         return VStack(alignment: .leading, spacing: 8) {
-            Text(l("app.issue_call.outcomes", "Log outcome"))
-                .font(.subheadline.weight(.semibold))
+            HStack(spacing: 8) {
+                Text(l("app.issue_call.outcomes", "Log outcome"))
+                    .font(.subheadline.weight(.semibold))
+                Spacer(minLength: 0)
+                if isVoicemailLocked {
+                    Text("Log Outcome: Voicemail")
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(VoteNowColors.mutedText)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(VoteNowColors.infoSurfaceBlue)
+                        .clipShape(Capsule())
+                }
+            }
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 120), spacing: 8)], spacing: 8) {
                 ForEach(selectableOutcomes) { outcome in
                     Button {
+                        guard !isVoicemailLocked else { return }
+                        if isMAPCMode {
+                            mapcSessionLoggedBriefIDs.insert(brief.id)
+                        }
                         Task {
                             await viewModel.logOutcome(for: brief, outcome: outcome)
                         }
                     } label: {
                         Text(outcome.title)
-                            .font(.subheadline.weight(.semibold))
+                            .font(.body.weight(.semibold))
                             .foregroundColor(selectedOutcome == outcome ? .white : VoteNowColors.primaryText)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
                             .background(
                                 selectedOutcome == outcome
-                                ? VoteNowColors.warningAmber
+                                ? outcomeColor(for: outcome)
                                 : VoteNowColors.infoSurfaceBlue.opacity(0.95)
                             )
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
@@ -1405,8 +1768,201 @@ struct IssueCallCenterView: View {
                             )
                     }
                     .buttonStyle(.plain)
+                    .disabled(isVoicemailLocked)
                 }
             }
+            .opacity(isVoicemailLocked ? 0.34 : 1.0)
+        }
+    }
+
+    private func outcomeColor(for outcome: CivicCallOutcome) -> Color {
+        switch outcome {
+        case .voicemail:
+            return Color(hex: "#6B5B54")
+        case .supportive:
+            return VoteNowColors.successGreen
+        case .opposed:
+            return VoteNowColors.urgentCTA
+        case .undecided:
+            return Color(hex: "#5D6B75")
+        case .followUpRequested:
+            return Color(hex: "#6A4FB3")
+        case .other:
+            return Color(hex: "#B56A18")
+        case .unavailable:
+            return Color(hex: "#7F8A93")
+        case .stafferReached:
+            return Color(hex: "#3B7CA5")
+        }
+    }
+
+    private func callButtonTitle(for brief: CivicCallBrief) -> String {
+        let lastName = trackerDisplayLastName(from: brief.repName)
+        let office = brief.officeType.lowercased()
+
+        if office.contains("senator") {
+            return "Call Senator \(lastName)"
+        }
+        if office.contains("representative") || office.contains("house") || brief.repSlot == .house {
+            return "Call Congressman \(lastName)"
+        }
+        return "Call \(lastName)"
+    }
+
+    private func outcomeHistoryBackground(for outcome: CivicCallOutcome) -> Color {
+        outcomeColor(for: outcome).opacity(0.18)
+    }
+
+    private func startMAPCCallGainAnimation(gain: Int) {
+        guard gain > 0 else { return }
+
+        let currentTotal = max(viewModel.callStats.totalVoteNowCalls, animatedTotalVoteNowCalls ?? 0)
+        let currentMonthly = max(viewModel.callStats.monthlyVoteNowCalls, animatedMonthlyVoteNowCalls ?? 0)
+        let currentUser = max(viewModel.callStats.userCallCount, animatedUserCallCount ?? 0)
+        let targetTotal = currentTotal + gain
+        let targetMonthly = currentMonthly + gain
+        let targetUser = currentUser + gain
+
+        animatedMapcCallGain = gain
+        showMapcCallGainBadge = true
+        animatedTotalVoteNowCalls = currentTotal
+        animatedMonthlyVoteNowCalls = currentMonthly
+        animatedUserCallCount = currentUser
+
+        Task { @MainActor in
+            if reduceMotion {
+                animatedTotalVoteNowCalls = targetTotal
+                animatedMonthlyVoteNowCalls = targetMonthly
+                animatedUserCallCount = targetUser
+            } else {
+                let steps = max(6, gain * 4)
+                for step in 1...steps {
+                    let progress = Double(step) / Double(steps)
+                    let increment = Int(round(Double(gain) * progress))
+                    animatedTotalVoteNowCalls = min(targetTotal, currentTotal + increment)
+                    animatedMonthlyVoteNowCalls = min(targetMonthly, currentMonthly + increment)
+                    animatedUserCallCount = min(targetUser, currentUser + increment)
+                    try? await Task.sleep(nanoseconds: 70_000_000)
+                }
+            }
+
+            animatedTotalVoteNowCalls = targetTotal
+            animatedMonthlyVoteNowCalls = targetMonthly
+            animatedUserCallCount = targetUser
+            try? await Task.sleep(nanoseconds: reduceMotion ? 900_000_000 : 1_500_000_000)
+            withAnimation(.easeOut(duration: 0.2)) {
+                showMapcCallGainBadge = false
+            }
+            animatedMapcCallGain = 0
+        }
+    }
+
+    private func exampleCategoryBackgroundColor(for category: String, isSelected: Bool) -> Color {
+        let base = exampleCategoryColor(for: category)
+        return isSelected ? base : base.opacity(0.78)
+    }
+
+    private func exampleCategoryDisplayName(for category: String) -> String {
+        if category.caseInsensitiveCompare("Government Oversight") == .orderedSame {
+            return "Gov. Oversight"
+        }
+        return category
+    }
+
+    private func condensedPremadeScriptPlaceholderText(_ text: String) -> String {
+        // Premade cards are read as quick previews, so collapse verbose official tokens.
+        text.replacingOccurrences(
+            of: #"\[OFFICIAL_TITLE\]\s+\[OFFICIAL_LAST\]"#,
+            with: "[YOUR_REP]",
+            options: .regularExpression
+        )
+    }
+
+    private var scriptInputsToggleButton: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isTalkingPointsExpanded.toggle()
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Text(l("app.issue_call.script.inputs", "Script inputs"))
+                    .font(.caption.weight(.semibold))
+                Image(systemName: isTalkingPointsExpanded ? "chevron.up" : "chevron.down")
+                    .font(.caption2.weight(.bold))
+            }
+            .foregroundColor(VoteNowColors.primaryCTA)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 5)
+            .background(VoteNowColors.infoSurfaceBlue)
+            .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("issue_call.talking_points.toggle")
+    }
+
+    private func exampleCategoryColor(for category: String) -> Color {
+        let normalized = category.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if let mapped = exampleCategoryColorMap[normalized] {
+            return mapped
+        }
+        return VoteNowColors.primaryCTA
+    }
+}
+
+private struct ChipFlowLayout: Layout {
+    var itemSpacing: CGFloat = 8
+    var rowSpacing: CGFloat = 8
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let maxWidth = proposal.width ?? .greatestFiniteMagnitude
+        var currentX: CGFloat = 0
+        var currentY: CGFloat = 0
+        var rowHeight: CGFloat = 0
+        var usedWidth: CGFloat = 0
+
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            let needsWrap = currentX > 0 && (currentX + size.width) > maxWidth
+            if needsWrap {
+                usedWidth = max(usedWidth, currentX - itemSpacing)
+                currentX = 0
+                currentY += rowHeight + rowSpacing
+                rowHeight = 0
+            }
+
+            currentX += size.width + itemSpacing
+            rowHeight = max(rowHeight, size.height)
+        }
+
+        if currentX > 0 {
+            usedWidth = max(usedWidth, currentX - itemSpacing)
+        }
+
+        let height = currentY + rowHeight
+        let finalWidth = proposal.width ?? usedWidth
+        return CGSize(width: finalWidth, height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        var currentX = bounds.minX
+        var currentY = bounds.minY
+        var rowHeight: CGFloat = 0
+
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            let needsWrap = currentX > bounds.minX && (currentX + size.width) > bounds.maxX
+            if needsWrap {
+                currentX = bounds.minX
+                currentY += rowHeight + rowSpacing
+                rowHeight = 0
+            }
+
+            subview.place(
+                at: CGPoint(x: currentX, y: currentY),
+                proposal: ProposedViewSize(width: size.width, height: size.height)
+            )
+            currentX += size.width + itemSpacing
+            rowHeight = max(rowHeight, size.height)
         }
     }
 }

@@ -66,9 +66,15 @@ struct RaceCandidatesView: View {
                                     .font(.caption)
                                     .foregroundColor(.gray)
 
-                                Link(l("app.race_candidates.website", "Website"), destination: URL(string: candidate.websiteURL)!)
-                                    .font(.caption)
-                                    .foregroundColor(VoteNowColors.richBlue)
+                                if let websiteURL = URL(string: candidate.websiteURL) {
+                                    Link(l("app.race_candidates.website", "Website"), destination: websiteURL)
+                                        .font(.caption)
+                                        .foregroundColor(VoteNowColors.richBlue)
+                                } else {
+                                    Text(l("app.race_candidates.website", "Website"))
+                                        .font(.caption)
+                                        .foregroundColor(VoteNowColors.mutedText)
+                                }
                             }
                             .padding(.leading, 8)
                         }

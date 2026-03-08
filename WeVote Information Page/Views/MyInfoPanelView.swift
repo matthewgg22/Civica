@@ -93,29 +93,8 @@ struct MyInfoPanelView: View {
                 }
 
                 Button {
-                    let normalizedZip = String(zip.filter(\.isNumber).prefix(5))
-                    guard normalizedZip.count == 5 else {
-                        print("ZIP is invalid — not proceeding.")
-                        showInvalidZipAlert = true
-                        return
-                    }
-
-                    planVM.zip = normalizedZip
-                    planVM.selectedParty = affiliation
-                    var updatedAddress = planVM.userAddress
-                    if updatedAddress.zip != normalizedZip {
-                        updatedAddress.zip = normalizedZip
-                    }
-                    if let inferredStateCode = zipStateResolver.stateCode(for: normalizedZip),
-                       updatedAddress.state != inferredStateCode {
-                        updatedAddress.state = inferredStateCode
-                    }
-                    planVM.userAddress = updatedAddress
-                    repsVM.fetchReps(for: normalizedZip)
-
-                    // Add slight delay to avoid dismissal race condition
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        dismiss()
+                    Task {
+                        await handleSaveAddressTapped()
                     }
                 } label: {
                     Text("my_info.action.show_reps", tableName: "MyInfoPanel")
@@ -211,6 +190,34 @@ struct MyInfoPanelView: View {
             locale: locale,
             fallback: fallback
         )
+    }
+
+    @MainActor
+    private func handleSaveAddressTapped() async {
+        let normalizedZip = String(zip.filter(\.isNumber).prefix(5))
+        guard normalizedZip.count == 5 else {
+            print("ZIP is invalid — not proceeding.")
+            showInvalidZipAlert = true
+            return
+        }
+
+        planVM.zip = normalizedZip
+        planVM.selectedParty = affiliation
+        var updatedAddress = planVM.userAddress
+        if updatedAddress.zip != normalizedZip {
+            updatedAddress.zip = normalizedZip
+        }
+        if let inferredStateCode = zipStateResolver.stateCode(for: normalizedZip),
+           updatedAddress.state != inferredStateCode {
+            updatedAddress.state = inferredStateCode
+        }
+        planVM.userAddress = updatedAddress
+        repsVM.fetchReps(for: normalizedZip)
+
+        // Add slight delay to avoid dismissal race condition
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            dismiss()
+        }
     }
 }
 

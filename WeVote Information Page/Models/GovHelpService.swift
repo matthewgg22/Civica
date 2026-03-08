@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 import Supabase
 
 enum GovHelpServiceError: LocalizedError {
@@ -23,6 +24,7 @@ enum GovHelpServiceError: LocalizedError {
 
 final class GovHelpService {
     private let client: AppSupabaseClient
+    private let logger = Logger(subsystem: "VoteNow", category: "GovHelpService")
 
     init(client: AppSupabaseClient = SupabaseClientProvider.shared.client) {
         self.client = client
@@ -44,6 +46,7 @@ final class GovHelpService {
         if result.statusCode == 400,
            let errorPayload = try? JSONDecoder().decode(GovHelpErrorPayload.self, from: result.data),
            errorPayload.error.localizedCaseInsensitiveContains("missing required fields: zip and messages[]") {
+            logger.debug("GovHelp fallback payload path triggered after 400 response.")
             let fallbackBody = try JSONEncoder().encode(legacyFallbackPayload(from: request))
             result = try await sendHTTP(
                 endpoint: endpoint,
@@ -53,6 +56,7 @@ final class GovHelpService {
         }
 
         if (200...299).contains(result.statusCode) == false {
+            logger.error("GovHelp request failed status=\(result.statusCode) endpoint=\(endpoint.absoluteString, privacy: .public)")
             if let errorPayload = try? JSONDecoder().decode(GovHelpErrorPayload.self, from: result.data) {
                 let detailedMessage: String
                 if let detail = errorPayload.detail?.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -68,10 +72,13 @@ final class GovHelpService {
         }
 
         let decoder = JSONDecoder()
-        guard let parsed = try? decoder.decode(GovHelpResponsePayload.self, from: result.data) else {
+        do {
+            let parsed = try decoder.decode(GovHelpResponsePayload.self, from: result.data)
+            return parsed
+        } catch {
+            logger.error("GovHelp decode failed for response payload: \(error.localizedDescription, privacy: .public)")
             throw GovHelpServiceError.invalidResponse
         }
-        return parsed
     }
 
     private func resolveSession() async throws -> SupabaseSession {

@@ -35,7 +35,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         let token = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
         print("✅ APNs device token:", redactedToken(token))
         Task {
-            await saveDeviceTokenToSupabase(token: token)
+            await saveDeviceToken(token)
         }
     }
 
