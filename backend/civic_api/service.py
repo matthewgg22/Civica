@@ -55,6 +55,7 @@ class CivicService:
         reps = self._load_user_reps(user_id)
         if not reps:
             return ExamplesResponse(examples=[])
+        rep_committees_by_rep_id = self._load_rep_committees_for_examples(reps)
 
         available_chambers = {rep.chamber for rep in reps}
         cards: list[ExampleIssueCard] = []
@@ -75,6 +76,8 @@ class CivicService:
                     rep_relevance=self._build_rep_relevance(
                         target_chambers=variant.target_chambers,
                         reps=reps,
+                        issue_tags=variant.tags,
+                        rep_committees_by_rep_id=rep_committees_by_rep_id,
                     ),
                     template_asks=list(variant.template_asks) or [
                         variant.primary_ask,
@@ -112,7 +115,11 @@ class CivicService:
                 issue_title=issue_title,
                 bill_ref=request.optional_bill_ref,
             )
-            committees = list(dict.fromkeys(committees + [badge for badge in scored.reason_badges if "Committee" in badge]))
+            committees = list(
+                dict.fromkeys(
+                    committees + [badge for badge in scored.reason_badges if "committee" in badge.lower()]
+                )
+            )
 
             live_script, voicemail_script, talking_points = compose_call_scripts(
                 rep=rep,
@@ -734,19 +741,68 @@ class CivicService:
         summary = None
         house_vote_signal = False
 
-        if bill_ref:
-            parsed = _parse_bill_ref(bill_ref)
-            if parsed:
+        parsed = _parse_bill_ref(bill_ref) if bill_ref else None
+        script_bill_ref = tuple(parsed) if parsed else None
+        try:
+            context = self.congress.build_script_context(
+                rep_name=rep.rep_name,
+                rep_state=rep.state,
+                rep_chamber=rep.chamber,
+                bill_ref=script_bill_ref,
+            )
+
+            if parsed and context.bill_context is not None:
+                latest_date = context.bill_context.latest_action_date
+                latest_text = context.bill_context.latest_action_text
+                summary = context.bill_context.summary
+
+            if parsed and (latest_date is None or latest_text is None) and context.bill_actions:
+                first_action = context.bill_actions[0]
+                latest_date = latest_date or first_action.action_date
+                latest_text = latest_text or first_action.text
+
+            if parsed and summary is None:
                 congress, bill_type, bill_num = parsed
-                try:
-                    latest = self.congress.get_bill_latest_action(congress, bill_type, bill_num)
-                    latest_date = latest.get("action_date")
-                    latest_text = latest.get("action_text")
-                    summary = self.congress.get_bill_summary(congress, bill_type, bill_num)
-                except Exception:
-                    latest_date = None
-                    latest_text = None
-                    summary = None
+                summary = self.congress.get_bill_summary(congress, bill_type, bill_num)
+
+            if context.member_profile and context.member_profile.bioguide_id:
+                bioguide_id = context.member_profile.bioguide_id
+                if parsed:
+                    congress, _, _ = parsed
+                    sponsored = self.congress.get_member_sponsored_bills(
+                        bioguide_id=bioguide_id,
+                        congress=congress,
+                    )
+                    cosponsored = self.congress.get_member_cosponsored_bills(
+                        bioguide_id=bioguide_id,
+                        congress=congress,
+                    )
+                committees.extend(self.congress.get_member_committees(bioguide_id=bioguide_id))
+
+            for activity in context.bill_committee_activity:
+                if not activity.committee_name:
+                    continue
+                committees.append(
+                    {
+                        "committee_name": activity.committee_name,
+                        "subcommittee_name": activity.subcommittee_name,
+                        "chamber": activity.chamber,
+                    }
+                )
+
+            for assignment in context.committee_assignments:
+                committees.append(
+                    {
+                        "committee_name": assignment.committee_name,
+                        "subcommittee_name": assignment.subcommittee_name,
+                        "chamber": assignment.chamber,
+                        "role": assignment.role,
+                    }
+                )
+        except Exception:
+            latest_date = None
+            latest_text = None
+            summary = None
 
         house_vote_signal = enrich_house_vote_signal(
             rep=rep,
@@ -781,9 +837,25 @@ class CivicService:
         self,
         target_chambers: tuple[str, ...],
         reps: list[RepContext],
+        issue_tags: tuple[str, ...],
+        rep_committees_by_rep_id: dict[str, list[str]],
     ) -> list[str]:
         relevant_reps = [rep for rep in reps if rep.chamber in target_chambers]
-        rep_lines = [f"{rep.rep_name} serves in {rep.office_type}." for rep in relevant_reps[:3]]
+        jurisdiction_committees = _committees_for_issue_tags(issue_tags)
+
+        rep_lines: list[str] = []
+        for rep in relevant_reps[:3]:
+            rep_committees = rep_committees_by_rep_id.get(rep.rep_id, [])
+            matching_committee = _find_matching_jurisdiction_committee(
+                rep_committees=rep_committees,
+                jurisdiction_committees=jurisdiction_committees,
+            )
+            if matching_committee:
+                rep_lines.append(
+                    f"{rep.rep_name} serves on {matching_committee} (committee of jurisdiction)."
+                )
+            else:
+                rep_lines.append(f"{rep.rep_name} serves in {rep.office_type}.")
 
         if target_chambers == ("senate",):
             return [
@@ -801,6 +873,38 @@ class CivicService:
             "This issue can be raised with both House and Senate offices.",
             *rep_lines,
         ]
+
+    def _load_rep_committees_for_examples(self, reps: list[RepContext]) -> dict[str, list[str]]:
+        if not getattr(self.congress, "is_configured", False):
+            return {}
+
+        rep_committees_by_rep_id: dict[str, list[str]] = {}
+        for rep in reps:
+            try:
+                context = self.congress.build_script_context(
+                    rep_name=rep.rep_name,
+                    rep_state=rep.state,
+                    rep_chamber=rep.chamber,
+                    bill_ref=None,
+                )
+            except Exception as exc:
+                print(f"[civic] unable to load committee assignments for {rep.rep_name}: {exc}")
+                continue
+
+            committee_names: list[str] = []
+            for assignment in context.committee_assignments:
+                if assignment.committee_name:
+                    committee_names.append(assignment.committee_name.strip())
+            if context.member_profile:
+                for assignment in context.member_profile.committee_assignments:
+                    if assignment.committee_name:
+                        committee_names.append(assignment.committee_name.strip())
+
+            cleaned = [name for name in dict.fromkeys(committee_names) if name]
+            if cleaned:
+                rep_committees_by_rep_id[rep.rep_id] = cleaned
+
+        return rep_committees_by_rep_id
 
 
 def _parse_bill_ref(bill_ref: str) -> tuple[int, str, int] | None:
@@ -821,6 +925,100 @@ def _trim_words(text: str, max_words: int) -> str:
     if len(words) <= max_words:
         return text
     return " ".join(words[:max_words])
+
+
+ISSUE_TO_COMMITTEES: dict[str, tuple[str, ...]] = {
+    "healthcare": ("Health, Education, Labor, and Pensions", "Finance"),
+    "abortion-reproductive-rights": ("Health, Education, Labor, and Pensions", "Judiciary"),
+    "immigration": ("Judiciary", "Homeland Security and Governmental Affairs", "Foreign Relations"),
+    "gun-safety": ("Judiciary",),
+    "climate": ("Environment and Public Works", "Energy and Natural Resources", "Commerce, Science, and Transportation"),
+    "education": ("Health, Education, Labor, and Pensions",),
+    "labor": ("Health, Education, Labor, and Pensions",),
+    "veterans": ("Veterans' Affairs", "Armed Services"),
+    "housing": ("Banking, Housing, and Urban Affairs",),
+    "taxes": ("Finance",),
+    "technology-privacy": ("Commerce, Science, and Transportation", "Judiciary"),
+    "foreign-policy": ("Foreign Relations", "Armed Services"),
+    "war-powers": ("Foreign Relations", "Armed Services"),
+    "iran": ("Foreign Relations", "Armed Services"),
+    "diplomacy": ("Foreign Relations",),
+    "trans-rights": ("Health, Education, Labor, and Pensions", "Judiciary"),
+    "lgbtq": ("Health, Education, Labor, and Pensions", "Judiciary"),
+    "civil-rights": ("Judiciary",),
+    "anti-discrimination": ("Judiciary", "Health, Education, Labor, and Pensions"),
+    "oversight": ("Judiciary", "Homeland Security and Governmental Affairs", "Oversight and Accountability"),
+    "fbi": ("Judiciary", "Homeland Security and Governmental Affairs"),
+    "accountability": ("Judiciary", "Oversight and Accountability"),
+    "corruption": ("Judiciary", "Oversight and Accountability"),
+    "rule-of-law": ("Judiciary",),
+    "nominations": ("Judiciary", "Health, Education, Labor, and Pensions", "Energy and Natural Resources"),
+    "public-lands": ("Energy and Natural Resources", "Natural Resources"),
+    "blm": ("Energy and Natural Resources", "Natural Resources"),
+    "environment": ("Environment and Public Works", "Energy and Natural Resources", "Natural Resources"),
+    "voting-rights": ("Rules and Administration", "Judiciary", "House Administration"),
+    "democracy": ("Rules and Administration", "Judiciary", "House Administration"),
+    "ballot-access": ("Rules and Administration", "Judiciary", "House Administration"),
+    "elections": ("Rules and Administration", "House Administration"),
+    "public-health": ("Health, Education, Labor, and Pensions", "Energy and Commerce"),
+    "science": ("Commerce, Science, and Transportation", "Science, Space, and Technology"),
+    "tps": ("Judiciary", "Foreign Relations", "Homeland Security and Governmental Affairs"),
+    "haiti": ("Foreign Relations", "Judiciary"),
+    "humanitarian": ("Foreign Relations", "Judiciary"),
+    "deportation": ("Judiciary", "Homeland Security and Governmental Affairs"),
+    "epa": ("Environment and Public Works", "Energy and Commerce"),
+    "pollution": ("Environment and Public Works", "Energy and Commerce"),
+    "ai": ("Commerce, Science, and Transportation", "Judiciary"),
+    "digital-rights": ("Commerce, Science, and Transportation", "Judiciary"),
+    "consumer-protection": ("Commerce, Science, and Transportation", "Judiciary"),
+    "states-rights": ("Judiciary",),
+    "tech-policy": ("Commerce, Science, and Transportation",),
+}
+
+
+def _committees_for_issue_tags(issue_tags: tuple[str, ...]) -> list[str]:
+    committees: list[str] = []
+    for raw_tag in issue_tags:
+        tag = raw_tag.strip().lower()
+        if not tag:
+            continue
+        committees.extend(ISSUE_TO_COMMITTEES.get(tag, ()))
+    return [name for name in dict.fromkeys(committees) if name]
+
+
+def _find_matching_jurisdiction_committee(
+    rep_committees: list[str],
+    jurisdiction_committees: list[str],
+) -> str | None:
+    if not rep_committees or not jurisdiction_committees:
+        return None
+
+    for rep_committee in rep_committees:
+        normalized_rep = _normalize_committee_name(rep_committee)
+        if not normalized_rep:
+            continue
+        for jurisdiction_committee in jurisdiction_committees:
+            normalized_jurisdiction = _normalize_committee_name(jurisdiction_committee)
+            if not normalized_jurisdiction:
+                continue
+            if (
+                normalized_rep == normalized_jurisdiction
+                or normalized_rep in normalized_jurisdiction
+                or normalized_jurisdiction in normalized_rep
+            ):
+                return rep_committee
+    return None
+
+
+def _normalize_committee_name(value: str | None) -> str:
+    if not value:
+        return ""
+    lowered = value.lower().strip()
+    lowered = lowered.removeprefix("committee on ").strip()
+    lowered = lowered.removeprefix("committee of ").strip()
+    lowered = lowered.replace("&", " and ")
+    lowered = re.sub(r"[^a-z0-9\s]", " ", lowered)
+    return re.sub(r"\s+", " ", lowered).strip()
 
 
 def _tier_for_score(score: int) -> str:

@@ -411,6 +411,7 @@ final class IssueCallCenterViewModel: ObservableObject {
     @Published var selectedRepFilter: CivicRepFilter = .all
     @Published var concernText: String = ""
     @Published var selectedAsk: CivicAsk?
+    @Published var selectedIssue: IssueCode?
     @Published var optionalBillRef: String = ""
     @Published var isSubmitting = false
     @Published var errorMessage: String?
@@ -509,6 +510,20 @@ final class IssueCallCenterViewModel: ObservableObject {
         selectedAsk != nil && !concernText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !repTargets.isEmpty
     }
 
+    var generatedScript: String {
+        guard let issue = selectedIssue else {
+            return "Select an issue to generate a simple script."
+        }
+        guard let brief = activeBrief, isSenateBrief(brief) else {
+            return "Select a senator to generate a simple script."
+        }
+        return CallScriptGenerator.script(
+            for: brief.repName,
+            issue: issue,
+            assignedCommittees: committeeAssignments(for: brief)
+        )
+    }
+
     func loadExamplesAndHistory() async {
         let userID = await userIDForRequest()
         do {
@@ -580,6 +595,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         // when the user returns from MAPC.
         concernText = ""
         selectedAsk = nil
+        selectedIssue = nil
         optionalBillRef = ""
         applySeedResolution(for: example)
     }
@@ -860,6 +876,19 @@ final class IssueCallCenterViewModel: ObservableObject {
         saveSnapshot()
     }
 
+    func isSenateBrief(_ brief: CivicCallBrief) -> Bool {
+        if brief.repSlot == .senate1 || brief.repSlot == .senate2 {
+            return true
+        }
+        return brief.officeType.lowercased().contains("senator")
+    }
+
+    func committeeAssignments(for brief: CivicCallBrief) -> [String] {
+        let fromOfficial = official(for: brief)?.committeeAssignments ?? []
+        let fromRelevance = extractedCommitteeAssignments(from: brief.relevanceBadges)
+        return Array(Set(fromOfficial + fromRelevance)).sorted()
+    }
+
     func hasNextRep(after brief: CivicCallBrief) -> Bool {
         let scoped = callBriefs
         guard let currentIndex = scoped.firstIndex(where: { $0.id == brief.id }) else { return false }
@@ -895,6 +924,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         resolvedEntities = response.resolvedEntities
         callBriefs = normalized
         activeBriefID = filteredBriefs.first?.id
+        selectedIssue = nil
     }
 
     private func appendHistory(for resolution: CivicIssueResolutionResponse) {
@@ -921,7 +951,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         let relatedBills = example.relatedBills.filter {
             !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         }
-        let relatedCommittees = resolvedEntities.committees
+        let relatedCommittees = inferredCommittees(for: example)
         let talkPointAsk = selectedAsk?.title ?? example.primaryAsk ?? "Support"
 
         let briefs: [CivicCallBrief] = selectedTargets.map { target in
@@ -931,22 +961,31 @@ final class IssueCallCenterViewModel: ObservableObject {
                 .last
                 .map(String.init) ?? repName
             let billValue = relatedBills.first
+            let relevance = example.repRelevance.isEmpty
+                ? fallbackRelevance(for: target, billRef: billValue)
+                : example.repRelevance
+            let committeeCallout = committeeJurisdictionCallout(
+                repName: repName,
+                officeType: target.officeType,
+                officialCommittees: target.official.committeeAssignments,
+                issueCommittees: relatedCommittees,
+                repRelevance: relevance
+            )
 
-            let liveScript = interpolateExampleScript(
+            let baseLiveScript = interpolateExampleScript(
                 example.liveScript,
                 officialTitle: target.officeType,
                 officialLastName: repLastName,
                 billOrResolution: billValue
             )
-            let voicemailScript = interpolateExampleScript(
+            let baseVoicemailScript = interpolateExampleScript(
                 example.voicemailScript,
                 officialTitle: target.officeType,
                 officialLastName: repLastName,
                 billOrResolution: billValue
             )
-            let relevance = example.repRelevance.isEmpty
-                ? fallbackRelevance(for: target, billRef: billValue)
-                : example.repRelevance
+            let liveScript = injectCommitteeCallout(committeeCallout, into: baseLiveScript)
+            let voicemailScript = injectCommitteeCallout(committeeCallout, into: baseVoicemailScript)
 
             return CivicCallBrief(
                 id: UUID().uuidString,
@@ -1041,6 +1080,262 @@ final class IssueCallCenterViewModel: ObservableObject {
             .replacingOccurrences(of: "[OFFICIAL_LAST]", with: officialLastName)
             .replacingOccurrences(of: "[BILL_OR_RESOLUTION]", with: billText)
             .replacingOccurrences(of: "[ZIP]", with: userZip)
+    }
+
+    private func extractedCommitteeAssignments(from relevanceBadges: [String]) -> [String] {
+        var assignments: [String] = []
+
+        for badge in relevanceBadges {
+            let normalized = badge.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !normalized.isEmpty else { continue }
+            guard normalized.localizedCaseInsensitiveContains("committee") else { continue }
+
+            if let servesOnRange = normalized.range(of: "serves on", options: [.caseInsensitive]) {
+                var committee = String(normalized[servesOnRange.upperBound...])
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                if let parentheticalStart = committee.firstIndex(of: "(") {
+                    committee = String(committee[..<parentheticalStart])
+                }
+                committee = committee.trimmingCharacters(in: CharacterSet(charactersIn: " ."))
+                if !committee.isEmpty {
+                    assignments.append(committee)
+                    continue
+                }
+            }
+
+            if normalized.localizedCaseInsensitiveContains("serves on ") {
+                let components = normalized.components(separatedBy: "serves on ")
+                if let tail = components.last {
+                    let committee = tail.trimmingCharacters(in: CharacterSet(charactersIn: " ."))
+                    if !committee.isEmpty {
+                        assignments.append(committee)
+                    }
+                }
+            }
+        }
+
+        return Array(Set(assignments)).sorted()
+    }
+
+    private func inferredCommittees(for example: CivicExampleIssueCard) -> [String] {
+        var ordered: [String] = []
+
+        func appendUnique(_ values: [String]) {
+            for value in values {
+                let cleaned = value.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !cleaned.isEmpty else { continue }
+                if !ordered.contains(where: { normalizeCommitteeName($0) == normalizeCommitteeName(cleaned) }) {
+                    ordered.append(cleaned)
+                }
+            }
+        }
+
+        appendUnique(extractedCommitteeAssignments(from: example.repRelevance))
+
+        let categoryKey = (example.category ?? "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+        let categoryCommittees: [String: [String]] = [
+            "foreign affairs": ["Foreign Relations", "Armed Services", "Intelligence", "Appropriations"],
+            "lgbtq": ["Judiciary", "Health, Education, Labor, and Pensions", "Homeland Security and Governmental Affairs"],
+            "government oversight": ["Judiciary", "Homeland Security and Governmental Affairs", "Appropriations", "Intelligence"],
+            "nominations": ["Judiciary", "Health, Education, Labor, and Pensions", "Finance", "Environment and Public Works", "Energy and Natural Resources"],
+            "voter rights": ["Judiciary", "Rules and Administration", "Homeland Security and Governmental Affairs"],
+            "immigration": ["Judiciary", "Homeland Security and Governmental Affairs", "Foreign Relations"],
+            "environment": ["Environment and Public Works", "Energy and Natural Resources", "Appropriations"],
+            "digital rights": ["Commerce, Science, and Transportation", "Judiciary", "Homeland Security and Governmental Affairs"],
+        ]
+        appendUnique(categoryCommittees[categoryKey] ?? [])
+
+        let tagCommittees: [String: [String]] = [
+            "foreign-policy": ["Foreign Relations", "Armed Services", "Intelligence"],
+            "war-powers": ["Foreign Relations", "Armed Services"],
+            "climate": ["Environment and Public Works", "Energy and Natural Resources"],
+            "public-health": ["Health, Education, Labor, and Pensions", "Finance"],
+            "immigration": ["Judiciary", "Homeland Security and Governmental Affairs"],
+            "voting-rights": ["Judiciary", "Rules and Administration"],
+            "digital-rights": ["Commerce, Science, and Transportation", "Judiciary"],
+        ]
+        let tagKeys = example.tags.map { $0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }
+        for key in tagKeys {
+            appendUnique(tagCommittees[key] ?? [])
+        }
+
+        return ordered
+    }
+
+    private func committeeJurisdictionCallout(
+        repName: String,
+        officeType: String,
+        officialCommittees: [String],
+        issueCommittees: [String],
+        repRelevance: [String]
+    ) -> String? {
+        var candidateIssueCommittees = issueCommittees
+        var relevanceCommittee: String?
+        if let relevanceLine = matchingCommitteeRelevanceLine(for: repName, in: repRelevance),
+           let fromRelevance = committeeNameFromRelevanceLine(relevanceLine) {
+            relevanceCommittee = fromRelevance
+            candidateIssueCommittees.append(fromRelevance)
+        }
+
+        let matchedCommittee = bestMatchedCommittee(
+            assigned: officialCommittees,
+            relevant: candidateIssueCommittees
+        ) ?? relevanceCommittee
+
+        guard let matchedCommittee else {
+            return nil
+        }
+
+        let officeLabel = officeType.lowercased().contains("senator") ? "Senator" : "Representative"
+        let lastName = preferredLastName(from: repName)
+        let committeeLabel = formattedCommitteeLabel(matchedCommittee, officeLabel: officeLabel)
+
+        return "As \(officeLabel) \(lastName) is a member of the \(committeeLabel), this issue is in that committee's jurisdiction."
+    }
+
+    private func bestMatchedCommittee(assigned: [String], relevant: [String]) -> String? {
+        let assignedClean = assigned
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        let relevantClean = relevant
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+
+        guard !assignedClean.isEmpty, !relevantClean.isEmpty else {
+            return nil
+        }
+
+        for targetCommittee in relevantClean {
+            let normalizedTarget = normalizeCommitteeName(targetCommittee)
+            guard !normalizedTarget.isEmpty else { continue }
+
+            for assignedCommittee in assignedClean {
+                let normalizedAssigned = normalizeCommitteeName(assignedCommittee)
+                guard !normalizedAssigned.isEmpty else { continue }
+                if normalizedAssigned.contains(normalizedTarget)
+                    || normalizedTarget.contains(normalizedAssigned) {
+                    return assignedCommittee
+                }
+            }
+        }
+
+        return nil
+    }
+
+    private func formattedCommitteeLabel(_ committeeName: String, officeLabel: String) -> String {
+        var committeeLabel: String
+        if committeeName.lowercased().contains("committee") {
+            committeeLabel = committeeName
+        } else {
+            committeeLabel = "\(committeeName) Committee"
+        }
+        if officeLabel == "Senator", !committeeLabel.lowercased().contains("senate") {
+            committeeLabel = "Senate \(committeeLabel)"
+        } else if officeLabel == "Representative", !committeeLabel.lowercased().contains("house") {
+            committeeLabel = "House \(committeeLabel)"
+        }
+        return committeeLabel
+    }
+
+    private func normalizeCommitteeName(_ value: String) -> String {
+        var normalized = value
+            .lowercased()
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        normalized = normalized.replacingOccurrences(of: "&", with: " and ")
+        normalized = normalized.replacingOccurrences(of: "committee on ", with: "")
+        normalized = normalized.replacingOccurrences(of: "committee for ", with: "")
+        normalized = normalized.replacingOccurrences(of: "committee of ", with: "")
+        normalized = normalized.replacingOccurrences(of: "senate ", with: "")
+        normalized = normalized.replacingOccurrences(of: "house ", with: "")
+        normalized = normalized.replacingOccurrences(of: "u.s. ", with: "")
+        normalized = normalized.replacingOccurrences(of: "us ", with: "")
+        normalized = normalized.replacingOccurrences(of: "'", with: "")
+
+        let allowed = CharacterSet.alphanumerics.union(.whitespaces)
+        normalized = String(normalized.unicodeScalars.map { allowed.contains($0) ? Character($0) : " " })
+        normalized = normalized.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+        return normalized.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func matchingCommitteeRelevanceLine(for repName: String, in repRelevance: [String]) -> String? {
+        let committeeLines = repRelevance.filter {
+            $0.localizedCaseInsensitiveContains("committee of jurisdiction")
+        }
+        guard !committeeLines.isEmpty else { return nil }
+
+        let normalizedRepName = Self.normalizeNameKey(repName)
+        if let match = committeeLines.first(where: { Self.normalizeNameKey($0).contains(normalizedRepName) }) {
+            return match
+        }
+
+        let lastName = preferredLastName(from: repName)
+        let normalizedLastName = Self.normalizeNameKey(lastName)
+        if let match = committeeLines.first(where: { Self.normalizeNameKey($0).contains(normalizedLastName) }) {
+            return match
+        }
+
+        return committeeLines.first
+    }
+
+    private func committeeNameFromRelevanceLine(_ line: String) -> String? {
+        let withoutSuffix = line
+            .replacingOccurrences(
+                of: "(committee of jurisdiction).",
+                with: "",
+                options: [.caseInsensitive],
+                range: nil
+            )
+            .replacingOccurrences(
+                of: "(committee of jurisdiction)",
+                with: "",
+                options: [.caseInsensitive],
+                range: nil
+            )
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard let servesOnRange = withoutSuffix.range(of: "serves on", options: [.caseInsensitive]) else {
+            return nil
+        }
+
+        let committeeName = withoutSuffix[servesOnRange.upperBound...]
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .trimmingCharacters(in: CharacterSet(charactersIn: "."))
+
+        return committeeName.isEmpty ? nil : committeeName
+    }
+
+    private func preferredLastName(from repName: String) -> String {
+        repName
+            .split(separator: " ")
+            .last
+            .map(String.init) ?? repName
+    }
+
+    private func injectCommitteeCallout(_ callout: String?, into script: String) -> String {
+        guard let callout,
+              !callout.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return script
+        }
+
+        if script.localizedCaseInsensitiveContains("committee's jurisdiction")
+            || script.localizedCaseInsensitiveContains("committee of jurisdiction") {
+            return script
+        }
+
+        let paragraphs = script
+            .components(separatedBy: "\n\n")
+            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+
+        guard paragraphs.count >= 2 else {
+            return script + "\n\n" + callout
+        }
+
+        var updated = paragraphs
+        updated.insert(callout, at: 2)
+        return updated.joined(separator: "\n\n")
     }
 
     private func saveSnapshot() {

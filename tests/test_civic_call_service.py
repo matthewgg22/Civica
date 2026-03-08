@@ -1,6 +1,15 @@
 from __future__ import annotations
 
-from backend.civic_api.models import Ask, AssistantResolveRequest, CallLogRequest, CallOutcome, RepContext, RepTarget
+from backend.civic_api.models import (
+    Ask,
+    AssistantResolveRequest,
+    CallLogRequest,
+    CallOutcome,
+    CommitteeAssignment,
+    RepContext,
+    RepTarget,
+    ScriptContext,
+)
 from backend.civic_api.relevance import enrich_house_vote_signal, reason_badges_from_signals, score_rep_issue
 from backend.civic_api.repository import InMemoryCivicRepository
 from backend.civic_api.service import CivicService
@@ -212,3 +221,45 @@ def test_examples_filter_out_senate_only_issues_for_house_only_users() -> None:
     assert "oppose-the-save-america-act" not in slugs
     assert "oppose-casey-means-for-surgeon-general" not in slugs
     assert "protect-state-level-ai-regulation" in slugs
+
+
+def test_examples_include_committee_of_jurisdiction_callout_when_assignment_matches() -> None:
+    class _FakeCongressClient:
+        is_configured = True
+
+        def build_script_context(
+            self,
+            rep_name: str,
+            rep_state: str | None,
+            rep_chamber: str,
+            bill_ref: tuple[int, str, int] | None,
+        ) -> ScriptContext:
+            assignments: list[CommitteeAssignment] = []
+            if rep_name == "Senator One":
+                assignments = [
+                    CommitteeAssignment(
+                        committee_name="Judiciary",
+                        subcommittee_name=None,
+                        role="member",
+                        congress=119,
+                        chamber="senate",
+                        member_name=rep_name,
+                    )
+                ]
+            return ScriptContext(
+                member_profile=None,
+                bill_context=None,
+                committee_assignments=assignments,
+            )
+
+    repo = InMemoryCivicRepository()
+    _seed_repo_with_federal_reps(repo, user_id="u-committee")
+    service = CivicService(repository=repo, congress_client=_FakeCongressClient())
+
+    examples = service.get_examples("u-committee").to_dict()["examples"]
+    senate_issue = next(item for item in examples if item["slug"] == "oppose-the-save-america-act")
+
+    assert any(
+        "committee of jurisdiction" in line.lower() and "Senator One" in line
+        for line in senate_issue["rep_relevance"]
+    )

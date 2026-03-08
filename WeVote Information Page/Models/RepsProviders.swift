@@ -21,6 +21,120 @@ private func normalizedOfficialPhone(_ raw: String?) -> String? {
     return value
 }
 
+private func parsedCommitteeAssignments(_ raw: String?) -> [String] {
+    guard let raw = raw?.trimmingCharacters(in: .whitespacesAndNewlines),
+          !raw.isEmpty else {
+        return []
+    }
+
+    var seen = Set<String>()
+    var ordered: [String] = []
+    for value in raw.split(separator: "|") {
+        let committee = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !committee.isEmpty else { continue }
+        if seen.insert(committee).inserted {
+            ordered.append(committee)
+        }
+    }
+    return ordered
+}
+
+private let senateCommitteeNameCatalog: [String] = [
+    "Agriculture, Nutrition, and Forestry",
+    "Appropriations",
+    "Armed Services",
+    "Banking, Housing, and Urban Affairs",
+    "Budget",
+    "Commerce, Science, and Transportation",
+    "Energy and Natural Resources",
+    "Environment and Public Works",
+    "Finance",
+    "Foreign Relations",
+    "Health, Education, Labor, and Pensions",
+    "Homeland Security and Governmental Affairs",
+    "Indian Affairs",
+    "Judiciary",
+    "Rules and Administration",
+    "Small Business and Entrepreneurship",
+    "Veterans' Affairs",
+    "Select Committee on Ethics",
+    "Select Committee on Intelligence",
+    "Special Committee on Aging",
+    "Joint Economic Committee",
+    "Joint Committee on Taxation",
+    "Joint Committee of Congress on the Library",
+    "Joint Committee on Printing",
+]
+
+private func normalizedPersonNameKey(_ raw: String) -> String {
+    let lowered = raw
+        .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+        .lowercased()
+
+    let allowed = CharacterSet.alphanumerics.union(.whitespaces)
+    let sanitized = String(lowered.unicodeScalars.map { allowed.contains($0) ? Character($0) : " " })
+    return sanitized
+        .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+        .trimmingCharacters(in: .whitespacesAndNewlines)
+}
+
+private func normalizedCommitteeNameKey(_ raw: String) -> String {
+    var normalized = raw
+        .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+        .lowercased()
+        .trimmingCharacters(in: .whitespacesAndNewlines)
+
+    normalized = normalized.replacingOccurrences(of: "&", with: " and ")
+    normalized = normalized.replacingOccurrences(of: "committee on ", with: "")
+    normalized = normalized.replacingOccurrences(of: "committee of ", with: "")
+    normalized = normalized.replacingOccurrences(of: "committee for ", with: "")
+    normalized = normalized.replacingOccurrences(of: "u.s. ", with: "")
+    normalized = normalized.replacingOccurrences(of: "us ", with: "")
+
+    let allowed = CharacterSet.alphanumerics.union(.whitespaces)
+    normalized = String(normalized.unicodeScalars.map { allowed.contains($0) ? Character($0) : " " })
+    return normalized
+        .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+        .trimmingCharacters(in: .whitespacesAndNewlines)
+}
+
+private func extractedCanonicalSenateCommittees(from rawAssignments: [String]) -> [String] {
+    var seen = Set<String>()
+    var ordered: [String] = []
+
+    for rawAssignment in rawAssignments {
+        let normalizedAssignment = normalizedCommitteeNameKey(rawAssignment)
+        guard !normalizedAssignment.isEmpty else { continue }
+
+        for canonicalCommittee in senateCommitteeNameCatalog {
+            let normalizedCanonical = normalizedCommitteeNameKey(canonicalCommittee)
+            guard !normalizedCanonical.isEmpty else { continue }
+
+            if normalizedAssignment.contains(normalizedCanonical)
+                || normalizedCanonical.contains(normalizedAssignment) {
+                if seen.insert(canonicalCommittee).inserted {
+                    ordered.append(canonicalCommittee)
+                }
+            }
+        }
+    }
+
+    return ordered
+}
+
+private func reorderedName(from rawName: String?) -> String? {
+    guard let rawName else { return nil }
+    let trimmed = rawName.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !trimmed.isEmpty else { return nil }
+
+    let pieces = trimmed.split(separator: ",").map {
+        $0.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    guard pieces.count == 2 else { return trimmed }
+
+    return "\(pieces[1]) \(pieces[0])"
+}
+
 struct RepsLookupResult {
     let executive: [Official]
     let federal: [Official]
@@ -67,6 +181,9 @@ struct RepsLookupResult {
             officialPhone: normalizedOfficialPhone(preferred.officialPhone) ?? normalizedOfficialPhone(fallback.officialPhone),
             websiteURL: preferred.websiteURL ?? fallback.websiteURL,
             contactFormURL: preferred.contactFormURL ?? fallback.contactFormURL,
+            committeeAssignments: preferred.committeeAssignments.isEmpty
+                ? fallback.committeeAssignments
+                : preferred.committeeAssignments,
             level: preferred.level ?? fallback.level
         )
     }
@@ -447,6 +564,7 @@ final class USSenatorsProvider: RepsProvider {
         let party: String
         let url: String
         let contact_form_url: String?
+        let committee_assignments: String?
         let senate_class: String
         let office: String
         let phone: String
@@ -458,6 +576,7 @@ final class USSenatorsProvider: RepsProvider {
     private let bundle: Bundle
     private let stateResolver = USZipStateResolver()
     private var senatorsByState: [String: [SenatorRecord]] = [:]
+    private var committeesByNormalizedName: [String: [String]] = [:]
     private var isLoaded = false
 
     init(bundle: Bundle = .main) {
@@ -479,6 +598,13 @@ final class USSenatorsProvider: RepsProvider {
             throw RepsProviderError.dataLoad(message: "Could not parse US senators data.")
         }
 
+        do {
+            committeesByNormalizedName = try loadCommitteeAssignmentsByName()
+        } catch {
+            committeesByNormalizedName = [:]
+            print("⚠️ Failed to parse USSenateCommitteeAssignments.json: \(error.localizedDescription)")
+        }
+
         isLoaded = true
     }
 
@@ -491,6 +617,12 @@ final class USSenatorsProvider: RepsProvider {
 
         let officials = senators.map { senator in
             let websiteURL = normalizedWebsiteURL(senator.url)
+            let directAssignments = parsedCommitteeAssignments(senator.committee_assignments)
+            let fallbackAssignments = committeeAssignmentsFromDataset(for: senator)
+            let committeeAssignments = mergedCommitteeAssignments(
+                primary: directAssignments,
+                fallback: fallbackAssignments
+            )
             return Official(
                 name: senator.name,
                 divisionId: "ocd-division/country:us/state:\(stateCode.lowercased())",
@@ -504,7 +636,8 @@ final class USSenatorsProvider: RepsProvider {
                     websiteURL: websiteURL,
                     hostSuffix: ".senate.gov",
                     fallbackOverride: contactFormURLOverride(for: senator)
-                )
+                ),
+                committeeAssignments: committeeAssignments
             )
         }
 
@@ -519,6 +652,58 @@ final class USSenatorsProvider: RepsProvider {
         default:
             return nil
         }
+    }
+
+    private func loadCommitteeAssignmentsByName() throws -> [String: [String]] {
+        guard let url = bundle.url(forResource: "USSenateCommitteeAssignments", withExtension: "json"),
+              let data = try? Data(contentsOf: url) else {
+            return [:]
+        }
+
+        let decoded = try JSONDecoder().decode([String: [String]].self, from: data)
+        var normalizedLookup: [String: [String]] = [:]
+
+        for (senatorName, assignments) in decoded {
+            let canonicalAssignments = extractedCanonicalSenateCommittees(from: assignments)
+            guard !canonicalAssignments.isEmpty else { continue }
+            normalizedLookup[normalizedPersonNameKey(senatorName)] = canonicalAssignments
+        }
+
+        return normalizedLookup
+    }
+
+    private func committeeAssignmentsFromDataset(for senator: SenatorRecord) -> [String] {
+        let candidateNames = [
+            senator.name,
+            senator.raw_name,
+            reorderedName(from: senator.raw_name)
+        ]
+            .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+
+        for candidateName in candidateNames {
+            let key = normalizedPersonNameKey(candidateName)
+            if let assignments = committeesByNormalizedName[key], !assignments.isEmpty {
+                return assignments
+            }
+        }
+
+        return []
+    }
+
+    private func mergedCommitteeAssignments(primary: [String], fallback: [String]) -> [String] {
+        var seen = Set<String>()
+        var ordered: [String] = []
+
+        for assignment in primary + fallback {
+            let cleaned = assignment.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !cleaned.isEmpty else { continue }
+            if seen.insert(cleaned).inserted {
+                ordered.append(cleaned)
+            }
+        }
+
+        return ordered
     }
 
     private func resolvedLegislativeContactURL(
@@ -957,7 +1142,8 @@ final class USHouseMembersProvider: RepsProvider {
                 websiteURL: websiteURL,
                 hostSuffix: ".house.gov",
                 fallbackOverride: contactFormURLOverride(for: member)
-            )
+            ),
+            committeeAssignments: parsedCommitteeAssignments(member.committee_assignment)
         )
     }
 

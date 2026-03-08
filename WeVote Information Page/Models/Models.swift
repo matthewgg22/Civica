@@ -38,6 +38,7 @@ public struct Official: Identifiable, Codable {
     public let officialPhone: String?
     public let websiteURL: String?
     public let contactFormURL: String?
+    public let committeeAssignments: [String]
     public let level: OfficialLevel?
 
     enum CodingKeys: String, CodingKey {
@@ -51,6 +52,7 @@ public struct Official: Identifiable, Codable {
         case officialPhone
         case websiteURL
         case contactFormURL
+        case committeeAssignments
         case level
     }
 
@@ -65,6 +67,7 @@ public struct Official: Identifiable, Codable {
         officialPhone: String? = nil,
         websiteURL: String? = nil,
         contactFormURL: String? = nil,
+        committeeAssignments: [String] = [],
         level: OfficialLevel? = nil
     ) {
         self.id = id
@@ -77,6 +80,7 @@ public struct Official: Identifiable, Codable {
         self.officialPhone = officialPhone
         self.websiteURL = websiteURL ?? url
         self.contactFormURL = contactFormURL
+        self.committeeAssignments = committeeAssignments
         self.level = level
     }
 
@@ -95,6 +99,7 @@ public struct Official: Identifiable, Codable {
         officialPhone = try container.decodeIfPresent(String.self, forKey: .officialPhone)
         websiteURL = decodedWebsiteURL ?? decodedURL
         contactFormURL = try container.decodeIfPresent(String.self, forKey: .contactFormURL)
+        committeeAssignments = try container.decodeIfPresent([String].self, forKey: .committeeAssignments) ?? []
         level = try container.decodeIfPresent(OfficialLevel.self, forKey: .level)
     }
 
@@ -150,6 +155,7 @@ public struct Official: Identifiable, Codable {
             officialPhone: officialPhone,
             websiteURL: websiteURL,
             contactFormURL: contactFormURL,
+            committeeAssignments: committeeAssignments,
             level: level
         )
     }

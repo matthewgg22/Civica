@@ -393,3 +393,100 @@ class RepIssueScored:
     rep: RepContext
     signals: RepIssueSignals
     reason_badges: list[str]
+
+
+@dataclass
+class CommitteeAssignment:
+    committee_name: str
+    subcommittee_name: str | None
+    role: str
+    congress: int | None
+    chamber: str = "senate"
+    member_name: str | None = None
+
+
+@dataclass
+class MemberProfile:
+    bioguide_id: str
+    name: str
+    party: str | None
+    state: str | None
+    district: str | None
+    chamber: str
+    phone: str | None
+    office_address: str | None
+    website: str | None
+    contact_form: str | None
+    leadership_roles: list[str] = field(default_factory=list)
+    sponsored_legislation_ref: str | None = None
+    cosponsored_legislation_ref: str | None = None
+    committees_ref: str | None = None
+    committee_assignments: list[CommitteeAssignment] = field(default_factory=list)
+    terms: list[dict[str, Any]] = field(default_factory=list)
+
+
+@dataclass
+class BillContext:
+    congress: int
+    bill_type: str
+    bill_number: int
+    title: str | None
+    introduced_date: str | None
+    origin_chamber: str | None
+    policy_area: str | None
+    summary: str | None
+    latest_action_date: str | None
+    latest_action_text: str | None
+    summaries_ref: str | None
+    committees_ref: str | None
+    actions_ref: str | None
+    cosponsors_ref: str | None
+
+
+@dataclass
+class BillAction:
+    action_date: str | None
+    text: str | None
+    action_code: str | None = None
+    chamber: str | None = None
+
+
+@dataclass
+class BillCosponsor:
+    bioguide_id: str | None
+    name: str | None
+    party: str | None
+    state: str | None
+    sponsorship_date: str | None
+    is_original_cosponsor: bool = False
+
+
+@dataclass
+class BillCommitteeActivity:
+    committee_name: str
+    chamber: str | None
+    activity_name: str | None
+    activity_date: str | None
+    subcommittee_name: str | None = None
+
+
+@dataclass
+class PoliticalEvent:
+    event_type: str
+    title: str
+    date: str | None
+    status: str | None
+    committees: list[str] = field(default_factory=list)
+    related_bills: list[str] = field(default_factory=list)
+    ref_url: str | None = None
+
+
+@dataclass
+class ScriptContext:
+    member_profile: MemberProfile | None
+    bill_context: BillContext | None
+    bill_actions: list[BillAction] = field(default_factory=list)
+    bill_cosponsors: list[BillCosponsor] = field(default_factory=list)
+    bill_committee_activity: list[BillCommitteeActivity] = field(default_factory=list)
+    committee_assignments: list[CommitteeAssignment] = field(default_factory=list)
+    political_events: list[PoliticalEvent] = field(default_factory=list)

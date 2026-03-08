@@ -710,6 +710,7 @@ struct IssueCallCenterView: View {
         let isVoicemailExpanded = expandedVoicemailBriefIDs.contains(brief.id)
         let selectedOutcome = viewModel.loggedOutcomeByBriefID[brief.id]
         let isVoicemailOutcomeLocked = condensedForMAPC && isVoicemailExpanded
+        let liveScriptText = brief.liveScript
 
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .top, spacing: 8) {
@@ -777,7 +778,7 @@ struct IssueCallCenterView: View {
 
             scriptBlock(
                 title: l("app.issue_call.script.live", "Live-call script"),
-                text: brief.liveScript,
+                text: liveScriptText,
                 showScriptInputsToggle: false
             )
             if condensedForMAPC, isTalkingPointsExpanded, !brief.talkingPoints.isEmpty {
