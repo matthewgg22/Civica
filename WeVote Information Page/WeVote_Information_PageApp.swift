@@ -9,6 +9,7 @@
 //
 
 import SwiftUI
+import StripePaymentSheet
 
 @main
 struct WeVote_Information_PageApp: App {
@@ -50,6 +51,10 @@ struct WeVote_Information_PageApp: App {
 
     // hook up our AppDelegate so FirebaseApp.configure() runs
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
+    init() {
+        STPAPIClient.shared.publishableKey = "pk_test_51T8Yi1Ek0rWAoZA5BLUzJkeEY1mFQfQ2VOWvuk7QzDasZjeQFWn8G6FHnk8AZwih92UDtqShZig7tjWgPw1tORgt00wTE0GedO"
+    }
 
     // shared view models
     @StateObject private var planVM = PlanViewModel()

@@ -16,6 +16,7 @@
 		C3B863412D9B08630092C1CB /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = C3B863402D9B08630092C1CB /* FirebaseAnalyticsWithoutAdIdSupport */; };
 		C3B863432D9B08630092C1CB /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = C3B863422D9B08630092C1CB /* FirebaseAppCheck */; };
 		C3B863452D9B08630092C1CB /* FirebaseAppDistribution-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = C3B863442D9B08630092C1CB /* FirebaseAppDistribution-Beta */; };
+		D1A5B00331A9000100ABCDEF /* StripePaymentSheet in Frameworks */ = {isa = PBXBuildFile; productRef = D1A5B00231A9000100ABCDEF /* StripePaymentSheet */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -117,6 +118,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1A5B00331A9000100ABCDEF /* StripePaymentSheet in Frameworks */,
 				C36C75A12F427A1F007CB83D /* Supabase in Frameworks */,
 				C3B863432D9B08630092C1CB /* FirebaseAppCheck in Frameworks */,
 				C3B8633D2D9B08630092C1CB /* FirebaseAnalytics in Frameworks */,
@@ -221,6 +223,7 @@
 			);
 			name = VoteNow;
 			packageProductDependencies = (
+				D1A5B00231A9000100ABCDEF /* StripePaymentSheet */,
 				C36C75A02F427A1F007CB83D /* Supabase */,
 				C3B8633C2D9B08630092C1CB /* FirebaseAnalytics */,
 				C3B8633E2D9B08630092C1CB /* FirebaseAnalyticsOnDeviceConversion */,
@@ -314,6 +317,7 @@
 			mainGroup = C3B862DF2D9A42E00092C1CB;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				D1A5B00131A9000100ABCDEF /* XCRemoteSwiftPackageReference "stripe-ios-spm" */,
 				C3B8633B2D9B07130092C1CB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				C36C759F2F42719F007CB83D /* XCRemoteSwiftPackageReference "supabase-swift" */,
 			);
@@ -619,7 +623,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.VoteNow-Information-Page";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = VoteNow_Dev_Push_Profile;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = VoteNow_Dev_Push_Profile_ApplePay;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -659,7 +663,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.VoteNow-Information-Page";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = VoteNow_Dev_Push_Profile;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = VoteNow_Dev_Push_Profile_ApplePay;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -805,6 +809,14 @@
 				minimumVersion = 11.10.0;
 			};
 		};
+		D1A5B00131A9000100ABCDEF /* XCRemoteSwiftPackageReference "stripe-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stripe/stripe-ios-spm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 24.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -837,6 +849,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C3B8633B2D9B07130092C1CB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = "FirebaseAppDistribution-Beta";
+		};
+		D1A5B00231A9000100ABCDEF /* StripePaymentSheet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D1A5B00131A9000100ABCDEF /* XCRemoteSwiftPackageReference "stripe-ios-spm" */;
+			productName = StripePaymentSheet;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

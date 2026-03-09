@@ -175,6 +175,9 @@ struct SupportVoteView: View {
                     .foregroundStyle(VoteNowColors.mutedText)
             }
 
+            // TODO(PaymentSheet): Replace this Apple Pay-only flow by presenting Stripe PaymentSheet
+            // from this donation page, using StripePaymentSheetConfig.merchantId and
+            // StripePaymentSheetConfig.merchantCountryCode in PaymentSheet.Configuration.applePay.
             ApplePayButton(type: .donate, style: .black, cornerRadius: 12) {
                 guard let amount = resolvedAmount else { return }
                 Task {

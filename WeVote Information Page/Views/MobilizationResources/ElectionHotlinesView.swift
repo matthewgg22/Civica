@@ -29,8 +29,7 @@ struct ElectionHotlinesView: View {
                     HStack {
                         Image(systemName: "phone.circle.fill")
                             .foregroundColor(VoteNowColors.richBlue)
-                        Text("(866-390-2992)")
-                            .fontWeight(.medium)
+                        hotlineNumberLink(display: "(866-390-2992)", digits: "8663902992")
                     }
                 }
 
@@ -47,8 +46,7 @@ struct ElectionHotlinesView: View {
                     HStack {
                         Image(systemName: "exclamationmark.triangle.fill")
                             .foregroundColor(VoteNowColors.richRed)
-                        Text("(866-868-3692)")
-                            .fontWeight(.medium)
+                        hotlineNumberLink(display: "(866-868-3692)", digits: "8668683692")
                     }
                 }
 
@@ -65,6 +63,18 @@ struct ElectionHotlinesView: View {
             locale: locale,
             fallback: fallback
         )
+    }
+
+    @ViewBuilder
+    private func hotlineNumberLink(display: String, digits: String) -> some View {
+        if let telURL = URL(string: "tel:\(digits)") {
+            Link(display, destination: telURL)
+                .fontWeight(.medium)
+                .foregroundColor(VoteNowColors.primaryCTA)
+        } else {
+            Text(display)
+                .fontWeight(.medium)
+        }
     }
 }
 

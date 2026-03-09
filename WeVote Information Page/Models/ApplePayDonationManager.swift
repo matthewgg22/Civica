@@ -87,7 +87,7 @@ final class ApplePayDonationManager: NSObject, ObservableObject {
         } else {
             request.merchantCapabilities = [.capability3DS]
         }
-        request.countryCode = "US"
+        request.countryCode = StripePaymentSheetConfig.merchantCountryCode
         request.currencyCode = "USD"
 
         let amountNumber = NSDecimalNumber(decimal: amount)

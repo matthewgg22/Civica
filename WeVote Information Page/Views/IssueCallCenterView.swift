@@ -20,6 +20,7 @@ struct IssueCallCenterView: View {
     @State private var lastPromptedLaunchEventID: String?
     @State private var selectedExampleCategory: String = "All"
     @State private var expandedVoicemailBriefIDs: Set<String> = []
+    @State private var expandedLiveBriefIDs: Set<String> = []
     @State private var mapcSessionLoggedBriefIDs: Set<String> = []
     @State private var mapcBriefsSignature: String = ""
     @State private var animatedTotalVoteNowCalls: Int?
@@ -155,27 +156,36 @@ struct IssueCallCenterView: View {
     var body: some View {
         ZStack {
             VStack(spacing: 12) {
-                if isMAPCMode {
-                    mapcAddressSection
-                    repProgressRow
-                    scriptFocusModeContent
-                } else {
-                    headerSection
-                    Group {
-                        switch viewModel.selectedTab {
-                        case .assistant:
-                            assistantTab
-                        case .examples:
-                            examplesTab
-                        case .civicScore:
-                            civicScoreTab
-                        case .history:
-                            civicScoreTab
+                ZStack {
+                    if isMAPCMode {
+                        VStack(spacing: 12) {
+                            mapcAddressSection
+                            repProgressRow
+                            scriptFocusModeContent
                         }
+                        .transition(.move(edge: .trailing).combined(with: .opacity))
+                    } else {
+                        VStack(spacing: 12) {
+                            headerSection
+                            Group {
+                                switch viewModel.selectedTab {
+                                case .assistant:
+                                    assistantTab
+                                case .examples:
+                                    examplesTab
+                                case .civicScore:
+                                    civicScoreTab
+                                case .history:
+                                    civicScoreTab
+                                }
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                        }
+                        .transition(.move(edge: .leading).combined(with: .opacity))
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 }
             }
+            .animation(.easeInOut(duration: 0.28), value: isMAPCMode)
             .background(VoteNowColors.brandSoftBlue.ignoresSafeArea())
 
             EmojiWaterfallView(controller: waterfallController)
@@ -256,6 +266,9 @@ struct IssueCallCenterView: View {
             if !isMAPCMode {
                 viewModel.selectedTab = .assistant
             }
+            if let activeID = viewModel.activeBriefID {
+                synchronizeScriptAccordionState(for: activeID)
+            }
         }
         .onDisappear {
             viewModel.persistDraftState()
@@ -267,6 +280,9 @@ struct IssueCallCenterView: View {
             isTalkingPointsExpanded = false
         }
         .onChange(of: viewModel.activeBriefID) { _, newID in
+            if let newID {
+                synchronizeScriptAccordionState(for: newID)
+            }
             guard didCompleteMAPC else { return }
             guard viewModel.selectedTab == .assistant else { return }
             guard newID != nil else { return }
@@ -776,11 +792,50 @@ struct IssueCallCenterView: View {
                 }
             }
 
-            scriptBlock(
-                title: l("app.issue_call.script.live", "Live-call script"),
-                text: liveScriptText,
-                showScriptInputsToggle: false
-            )
+            if condensedForMAPC {
+                VStack(alignment: .leading, spacing: 4) {
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            if expandedLiveBriefIDs.contains(brief.id) {
+                                expandedLiveBriefIDs.remove(brief.id)
+                            } else {
+                                expandedLiveBriefIDs.insert(brief.id)
+                                expandedVoicemailBriefIDs.remove(brief.id)
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 8) {
+                            Text("Live-call Script")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundColor(VoteNowColors.primaryText)
+                            Spacer(minLength: 0)
+                            Image(systemName: expandedLiveBriefIDs.contains(brief.id) ? "chevron.up" : "chevron.down")
+                                .font(.caption.weight(.bold))
+                                .foregroundColor(VoteNowColors.primaryCTA)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(VoteNowColors.infoSurfaceBlue)
+                        .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+
+                    if expandedLiveBriefIDs.contains(brief.id) {
+                        scriptBlock(
+                            title: "Live-call Script",
+                            text: liveScriptText,
+                            showScriptInputsToggle: false
+                        )
+                    }
+                }
+            } else {
+                scriptBlock(
+                    title: "Live-call Script",
+                    text: liveScriptText,
+                    showScriptInputsToggle: false
+                )
+            }
             if condensedForMAPC, isTalkingPointsExpanded, !brief.talkingPoints.isEmpty {
                 scriptInputsExpandedBlock(brief.talkingPoints)
                     .padding(.leading, 8)
@@ -800,8 +855,10 @@ struct IssueCallCenterView: View {
                         withAnimation(.easeInOut(duration: 0.2)) {
                             if isVoicemailExpanded {
                                 expandedVoicemailBriefIDs.remove(brief.id)
+                                expandedLiveBriefIDs.insert(brief.id)
                             } else {
                                 expandedVoicemailBriefIDs.insert(brief.id)
+                                expandedLiveBriefIDs.remove(brief.id)
                             }
                         }
                     } label: {
@@ -990,16 +1047,22 @@ struct IssueCallCenterView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(example.title)
                             .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 8)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(exampleCategoryColor(for: example.category ?? "All"))
+                            .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
 
                         HStack(spacing: 8) {
                             if let category = example.category, !category.isEmpty {
                                 let categoryColor = exampleCategoryColor(for: category)
                                 Text(category)
                                     .font(.caption.weight(.semibold))
-                                    .foregroundColor(categoryColor)
+                                    .foregroundColor(.white)
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 4)
-                                    .background(exampleCategoryBackgroundColor(for: category, isSelected: false))
+                                    .background(categoryColor)
                                     .clipShape(Capsule())
                                     .overlay(
                                         Capsule()
@@ -1009,9 +1072,10 @@ struct IssueCallCenterView: View {
                             if !example.targetChambers.isEmpty {
                                 Text(example.targetChambers.map { $0.capitalized }.joined(separator: " + "))
                                     .font(.caption.weight(.semibold))
+                                    .foregroundColor(.white)
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 4)
-                                    .background(VoteNowColors.infoSurfaceBlue)
+                                    .background(VoteNowColors.primaryCTA)
                                     .clipShape(Capsule())
                             }
                         }
@@ -1025,7 +1089,7 @@ struct IssueCallCenterView: View {
                         chipRow(title: l("app.issue_call.examples.template_asks", "Template asks"), items: example.templateAsks.map(\.title))
 
                         exampleScriptBlock(
-                            title: l("app.issue_call.script.live", "Live-call script"),
+                            title: "Live-call Script",
                             text: condensedPremadeScriptPlaceholderText(example.liveScript)
                         )
 
@@ -1033,9 +1097,11 @@ struct IssueCallCenterView: View {
                             focusedField = nil
                             didCompleteMAPC = false
                             isTalkingPointsExpanded = false
-                            viewModel.startMAPC(from: example)
+                            withAnimation(.easeInOut(duration: 0.28)) {
+                                viewModel.startMAPC(from: example)
+                            }
                         } label: {
-                            Text(l("app.issue_call.examples.use_for_mapc", "Use this issue for MAPC"))
+                            Text(l("app.issue_call.examples.use_for_mapc", "Use this Call Script"))
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
@@ -1081,9 +1147,10 @@ struct IssueCallCenterView: View {
         let displayedMonthlyCalls = max(stats.monthlyVoteNowCalls, animatedMonthlyVoteNowCalls ?? 0)
         let displayedUserCalls = max(stats.userCallCount, animatedUserCallCount ?? 0)
 
-        return VStack(alignment: .leading, spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
+        return VStack(alignment: .center, spacing: 12) {
+            VStack(alignment: .center, spacing: 4) {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Spacer(minLength: 0)
                     Text("\(displayedTotalCalls.formatted(.number)) Total Calls")
                         .font(.system(size: 36, weight: .bold, design: .rounded))
                         .foregroundColor(VoteNowColors.primaryCTA)
@@ -1094,13 +1161,16 @@ struct IssueCallCenterView: View {
                             .foregroundColor(VoteNowColors.successGreen)
                             .transition(.move(edge: .top).combined(with: .opacity))
                     }
+                    Spacer(minLength: 0)
                 }
                 .animation(.easeInOut(duration: 0.2), value: showMapcCallGainBadge)
+                .frame(maxWidth: .infinity, alignment: .center)
 
                 if showMapcCallGainBadge && animatedMapcCallGain > 0 {
                     Text("+\(animatedMapcCallGain) added to Calls to Congress")
                         .font(.caption.weight(.semibold))
                         .foregroundColor(VoteNowColors.successGreen)
+                        .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
 
@@ -1899,6 +1969,12 @@ struct IssueCallCenterView: View {
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("issue_call.talking_points.toggle")
+    }
+
+    private func synchronizeScriptAccordionState(for briefID: String) {
+        if !expandedLiveBriefIDs.contains(briefID) && !expandedVoicemailBriefIDs.contains(briefID) {
+            expandedLiveBriefIDs.insert(briefID)
+        }
     }
 
     private func exampleCategoryColor(for category: String) -> Color {

@@ -17,6 +17,7 @@ enum MAPVTravelMode: String, Codable, CaseIterable {
 
 struct MAPVPlan: Codable, Identifiable, Equatable {
     var id: UUID = UUID()
+    var planSnapshotID: String = UUID().uuidString
     var electionTitle: String
     var electionDate: Date
     var pollingPlaceName: String

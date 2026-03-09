@@ -26,7 +26,10 @@ struct ElectionTimelineView: View {
     @State private var visibleElections: [Election] = []
     @State private var errorMessage: String?
     @State private var pendingFlagElection: Election?
-    @State private var showFlagSubmittedAlert = false
+    @State private var shareImage: UIImage?
+    @State private var showingShareSheet = false
+    @State private var showingFeedbackComposer = false
+    @State private var feedbackPrefillMessage = ""
     @State private var expandedCardIDs: Set<String> = []
 
     private let stateResolver = USZipStateResolver()
@@ -88,8 +91,23 @@ struct ElectionTimelineView: View {
             MultiStepFormView()
                 .environmentObject(planVM)
         }
+        .sheet(isPresented: $showingShareSheet) {
+            shareImage = nil
+        } content: {
+            if let shareImage {
+                ShareSheet(items: [shareImage])
+            }
+        }
+        .sheet(isPresented: $showingFeedbackComposer) {
+            NavigationStack {
+                FeedbackView(
+                    preselectedCategoryRawValue: "bug",
+                    prefilledMessage: feedbackPrefillMessage
+                )
+            }
+        }
         .confirmationDialog(
-            l("app.timeline.flag.dialog.title", "Flag Election Listing"),
+            l("app.timeline.action.dialog.title", "Election Actions"),
             isPresented: Binding(
                 get: { pendingFlagElection != nil },
                 set: { isPresented in
@@ -100,19 +118,23 @@ struct ElectionTimelineView: View {
             ),
             titleVisibility: .visible
         ) {
-            Button(l("app.timeline.flag.dialog.report", "Report Issue"), role: .destructive) {
-                submitElectionFlag()
+            Button(l("app.timeline.action.dialog.share", "Share with friend")) {
+                if let election = pendingFlagElection {
+                    shareElectionCard(for: election)
+                }
+                pendingFlagElection = nil
             }
-            Button(l("app.timeline.flag.dialog.cancel", "Cancel"), role: .cancel) {
+            Button(l("app.timeline.action.dialog.report", "Report problem")) {
+                if let election = pendingFlagElection {
+                    openFeedbackComposer(for: election)
+                }
+                pendingFlagElection = nil
+            }
+            Button(l("app.timeline.action.dialog.cancel", "Cancel"), role: .cancel) {
                 pendingFlagElection = nil
             }
         } message: {
-            Text(l("app.timeline.flag.dialog.message", "Report an issue with this election listing?"))
-        }
-        .alert(l("app.timeline.flag.alert.title", "Thanks for flagging"), isPresented: $showFlagSubmittedAlert) {
-            Button(l("app.timeline.flag.alert.ok", "OK"), role: .cancel) {}
-        } message: {
-            Text(l("app.timeline.flag.alert.message", "We will review this election entry."))
+            Text(l("app.timeline.action.dialog.message", "Share this election listing or report a problem."))
         }
         .onAppear {
             loadElectionsIfNeeded()
@@ -210,7 +232,7 @@ struct ElectionTimelineView: View {
                 }
                 .buttonStyle(.plain)
                 .contentShape(Circle())
-                .accessibilityLabel(l("app.timeline.flag.accessibility", "Flag election"))
+                .accessibilityLabel(l("app.timeline.action.accessibility", "Election actions"))
             }
 
             HStack(alignment: .top, spacing: 10) {
@@ -506,11 +528,33 @@ struct ElectionTimelineView: View {
         pendingFlagElection = election
     }
 
-    private func submitElectionFlag() {
-        guard pendingFlagElection != nil else { return }
-        pendingFlagElection = nil
-        // TODO: Route this action to the persisted election reporting flow when available.
-        showFlagSubmittedAlert = true
+    private func openFeedbackComposer(for election: Election) {
+        feedbackPrefillMessage = [
+            "Election timeline report:",
+            "Election: \(cardTitle(for: election))",
+            "State: \(stateName(for: election))",
+            "Election Day: \(formattedDateText(election.electionDay))",
+            "Issue:"
+        ].joined(separator: "\n")
+        showingFeedbackComposer = true
+    }
+
+    private func shareElectionCard(for election: Election) {
+        let shareSize = CGSize(width: 1080, height: 1350)
+        let shareCard = ElectionTimelineShareCard(
+            electionTitle: headerTitle(for: election),
+            stateName: stateName(for: election),
+            electionDayText: formattedDateText(election.electionDay),
+            earlyVotingText: earlyVotingText(for: election),
+            registrationText: registrationDeadlineText(for: election)
+        )
+
+        if let image = ViewSnapshotter.snapshot(shareCard, size: shareSize) {
+            shareImage = image
+            showingShareSheet = true
+        } else {
+            print("[ElectionTimeline] Failed to generate election share image.")
+        }
     }
 
     private func stateName(for election: Election) -> String {
@@ -974,6 +1018,74 @@ struct ElectionTimelineView: View {
             return l("app.timeline.mapv.button.make_plan", "Make a Plan to Vote")
         case .closed:
             return l("app.timeline.mapv.button.passed", "Election Day Passed")
+        }
+    }
+}
+
+private struct ElectionTimelineShareCard: View {
+    let electionTitle: String
+    let stateName: String
+    let electionDayText: String
+    let earlyVotingText: String
+    let registrationText: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            HStack(spacing: 14) {
+                VoteNowLogoIcon(size: 88)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Election Timeline")
+                        .font(.system(size: 34, weight: .bold))
+                        .foregroundColor(VoteNowColors.primaryText)
+                    Text(stateName)
+                        .font(.system(size: 26, weight: .semibold))
+                        .foregroundColor(VoteNowColors.mutedText)
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 18) {
+                Text(electionTitle)
+                    .font(.system(size: 54, weight: .bold))
+                    .foregroundColor(VoteNowColors.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                shareRow(title: "Election Day", value: electionDayText)
+                shareRow(title: "Early Voting", value: earlyVotingText)
+                shareRow(title: "Registration Deadline", value: registrationText)
+            }
+            .padding(30)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 26, style: .continuous)
+                    .fill(VoteNowColors.surfaceWhite)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 26, style: .continuous)
+                    .stroke(VoteNowColors.borderWarm, lineWidth: 2)
+            )
+
+            Spacer()
+
+            Text("Shared from VoteNow")
+                .font(.system(size: 30, weight: .semibold))
+                .foregroundColor(VoteNowColors.primaryCTA)
+        }
+        .padding(48)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background(VoteNowColors.appBackground)
+    }
+
+    private func shareRow(title: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.system(size: 28, weight: .semibold))
+                .foregroundColor(VoteNowColors.mutedText)
+
+            Text(value)
+                .font(.system(size: 38, weight: .bold))
+                .foregroundColor(VoteNowColors.primaryText)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 }

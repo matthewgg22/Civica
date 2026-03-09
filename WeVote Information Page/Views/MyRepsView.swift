@@ -13,12 +13,6 @@ struct MyRepsView: View {
     @State private var showGovHelpChat = false
     @State private var showIssueCallCenter = false
 
-    private static let mapUpdatedDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter
-    }()
     private static let defaultMapRegion = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 39.8283, longitude: -98.5795),
         span: MKCoordinateSpan(latitudeDelta: 34, longitudeDelta: 56)
@@ -334,16 +328,6 @@ struct MyRepsView: View {
             .id(repsVM.zipMapUpdateID)
             .frame(height: 215)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-
-            if let updatedAt = repsVM.zipMapLastUpdated {
-                Text("\(l("app.reps.coverage.updated_prefix", "Updated")) \(Self.mapUpdatedDateFormatter.string(from: updatedAt))")
-                    .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(VoteNowColors.mutedText)
-            } else {
-                Text(l("app.reps.coverage.preview_before_lookup", "Map preview available before lookup"))
-                    .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(VoteNowColors.mutedText)
-            }
         }
     }
 

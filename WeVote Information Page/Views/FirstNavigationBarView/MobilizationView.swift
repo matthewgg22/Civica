@@ -263,14 +263,15 @@ struct MobilizationView: View {
                             .foregroundColor(.white)
                             .clipShape(Capsule(style: .continuous))
                             .voteNowPillDualOrbit(
-                                redColor: VoteNowColors.ctaRed,
-                                blueColor: VoteNowColors.ctaBlue,
+                                redColor: VoteNowColors.ctaRed.opacity(0.86),
+                                blueColor: VoteNowColors.ctaRed.opacity(0.58),
                                 strokeThickness: 3.0,
-                                loopDuration: 3.3,
-                                glowIntensity: 0.42,
-                                idleOpacity: 0.34,
+                                loopDuration: 4.95,
+                                glowIntensity: 0.30,
+                                idleOpacity: 0.26,
                                 borderInset: 0.0,
-                                segmentLength: 0.34
+                                segmentLength: 0.34,
+                                separatorThickness: 0.75
                             )
                             .padding(.horizontal)
                         }
@@ -282,15 +283,18 @@ struct MobilizationView: View {
                                 NavigationLink(destination: section.destination(selectedPlace: $selectedPlace)) {
                                     HStack(spacing: 10) {
                                         if section == .supportAmericansVote {
-                                            VoteNowLogoIcon(size: 24)
-                                                .frame(width: 24, height: 24)
+                                            VoteNowLogoIcon(size: 28)
+                                                .frame(width: 30, height: 30, alignment: .center)
                                                 .fixedSize(horizontal: true, vertical: true)
                                         } else if section == .feedback {
                                             Image(systemName: "bubble.left.and.bubble.right.fill")
                                                 .foregroundColor(VoteNowColors.primaryCTA)
+                                                .frame(width: 30, alignment: .center)
                                         }
                                         Text(section.localizedTitle(locale: locale))
                                             .foregroundColor(VoteNowColors.primaryText)
+                                            .lineLimit(1)
+                                            .minimumScaleFactor(0.9)
                                         Spacer()
                                     }
                                 }
@@ -699,7 +703,7 @@ enum SectionType: CaseIterable {
     }
 }
 
-private struct FeedbackView: View {
+struct FeedbackView: View {
     @Environment(\.locale) private var locale
 
     private enum FeedbackCategory: String, CaseIterable, Identifiable {
@@ -718,13 +722,19 @@ private struct FeedbackView: View {
         }
     }
 
-    @State private var feedbackText: String = ""
+    @State private var feedbackText: String
     @State private var email: String = ""
-    @State private var selectedCategory: FeedbackCategory = .idea
+    @State private var selectedCategory: FeedbackCategory
     @State private var isSending = false
     @State private var successMessage: String?
     @State private var errorMessage: String?
     @FocusState private var isFeedbackFocused: Bool
+
+    init(preselectedCategoryRawValue: String? = nil, prefilledMessage: String? = nil) {
+        let initialCategory = FeedbackCategory(rawValue: preselectedCategoryRawValue ?? "") ?? .idea
+        _selectedCategory = State(initialValue: initialCategory)
+        _feedbackText = State(initialValue: prefilledMessage ?? "")
+    }
 
     private var trimmedMessage: String {
         feedbackText.trimmingCharacters(in: .whitespacesAndNewlines)

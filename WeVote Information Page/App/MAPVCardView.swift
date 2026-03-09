@@ -16,6 +16,8 @@ struct MAPVCardView: View {
     @State private var now = Date()
     @State private var shareImage: UIImage?
     @State private var showingShare = false
+    @State private var showingVoteConfirmationPrompt = false
+    @State private var lastPromptedSnapshotID: String?
     private let minuteTicker = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     private let cardCornerRadius: CGFloat = 14
     private let mapvCardBackground = Color(red: 243 / 255, green: 235 / 255, blue: 203 / 255)
@@ -27,6 +29,7 @@ struct MAPVCardView: View {
                 card(plan: plan)
                     .onReceive(minuteTicker) { input in
                         now = input
+                        maybeShowPostPlanPrompt(for: plan, at: input)
                     }
                     .onDisappear {
                         waterfallController.stop()
@@ -34,6 +37,24 @@ struct MAPVCardView: View {
             } else {
                 emptyCard
             }
+        }
+        .confirmationDialog(
+            "Did you vote?",
+            isPresented: $showingVoteConfirmationPrompt,
+            titleVisibility: .visible
+        ) {
+            Button("Yes, I’m done") {
+                mapvPlanStore.markCompleted()
+            }
+            Button("Not yet") {
+                mapvPlanStore.markNotYetVoted()
+            }
+            Button("Need help") {
+                onChangePlanTapped?()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Your planned voting time has passed. Confirm your completion status.")
         }
         .sheet(isPresented: $showingShare, onDismiss: {
             shareImage = nil
@@ -46,6 +67,8 @@ struct MAPVCardView: View {
 
     private func card(plan: MAPVPlan) -> some View {
         let presentation = MAPVStatusResolver.resolve(plan: plan, now: now, locale: locale)
+        let completionStatus = mapvPlanStore.userElectionStatus
+        let completionIsTerminal = completionStatus?.completionState.isTerminal == true
 
         return VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
@@ -64,82 +87,23 @@ struct MAPVCardView: View {
                     .clipShape(Capsule())
             }
 
-            VStack(spacing: 6) {
-                GeometryReader { geo in
-                    let width = geo.size.width
-                    let clampedNow = max(0, min(presentation.progressNow, 1))
-                    let clampedPlan = max(0, min(presentation.progressPlan, 1))
-                    let nowX = width * clampedNow
-                    let planX = width * clampedPlan
-
-                    ZStack(alignment: .leading) {
-                        Capsule()
-                            .fill(.gray.opacity(0.20))
-                            .frame(height: 9)
-
-                        Capsule()
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        Color.green.opacity(0.85),
-                                        Color.yellow.opacity(0.88)
-                                    ],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .frame(width: max(2, planX), height: 9)
-
-                        Capsule()
-                            .fill(Color.orange.opacity(0.92))
-                            .frame(width: max(0, width - planX), height: 9)
-                            .offset(x: min(max(planX, 0), width))
-
-                        Text("✉️")
-                            .font(.system(size: 15))
-                            .frame(width: 21, height: 21)
-                            .background(
-                                Circle()
-                                    .fill(VoteNowColors.background.opacity(0.95))
-                                    .overlay(
-                                        Circle()
-                                            .stroke(VoteNowColors.primaryText.opacity(0.7), lineWidth: 0.8)
-                                    )
-                            )
-                            .offset(x: min(max(planX - 10.5, 0), width - 21), y: -4)
-
-                        Circle()
-                            .fill(VoteNowColors.surfaceWhite)
-                            .frame(width: 14, height: 14)
-                            .overlay(
-                                Circle()
-                                    .stroke(VoteNowColors.primaryText.opacity(0.75), lineWidth: 1.5)
-                            )
-                            .shadow(color: .black.opacity(0.16), radius: 2, x: 0, y: 1)
-                            .offset(x: min(max(nowX - 7, 0), width - 14))
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                }
-                .frame(height: 16)
-
-                HStack {
-                    Text(shortTime(plan.pollingOpen))
-                    Spacer()
-                    Text(shortTime(plan.pollingClose))
-                }
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(VoteNowColors.primaryText)
+            if completionIsTerminal {
+                completionSummaryCard(status: completionStatus, plan: plan)
+            } else {
+                progressSection(plan: plan, presentation: presentation)
             }
 
-            HStack(spacing: 10) {
-                Text(presentation.primaryCountdownText)
-                    .font(.subheadline.weight(.semibold))
-                Spacer(minLength: 8)
-                if !presentation.secondaryMetaText.isEmpty {
-                    Text(presentation.secondaryMetaText)
-                        .font(.subheadline)
-                        .foregroundStyle(VoteNowColors.mutedText)
-                        .lineLimit(1)
+            if completionIsTerminal == false {
+                HStack(spacing: 10) {
+                    Text(presentation.primaryCountdownText)
+                        .font(.subheadline.weight(.semibold))
+                    Spacer(minLength: 8)
+                    if !presentation.secondaryMetaText.isEmpty {
+                        Text(presentation.secondaryMetaText)
+                            .font(.subheadline)
+                            .foregroundStyle(VoteNowColors.mutedText)
+                            .lineLimit(1)
+                    }
                 }
             }
 
@@ -150,25 +114,47 @@ struct MAPVCardView: View {
                 Text(plan.pollingPlaceName)
                     .lineLimit(2)
                     .minimumScaleFactor(0.85)
-                .font(.subheadline)
+                    .font(.subheadline)
             }
 
-            HStack(spacing: 10) {
-                Button(l("app.mapv.card.action.change_plan", "Change Plan to Vote")) {
+            VStack(spacing: 10) {
+                Button(l("app.mapv.card.action.change_plan_to_vote", "Change Plan to Vote")) {
                     onChangePlanTapped?()
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(VoteNowColors.primaryCTA)
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: 42)
+                .font(.subheadline.weight(.semibold))
 
-                if plan.mapsURL != nil {
-                    Button(l("app.mapv.card.action.start_directions", "Start Directions")) {
-                        mapvPlanStore.markEnRoute(true)
-                        if let mapsURL = plan.mapsURL {
-                            openURL(mapsURL)
-                        }
+                let secondaryColumns = [
+                    GridItem(.adaptive(minimum: 132), spacing: 8)
+                ]
+                LazyVGrid(columns: secondaryColumns, alignment: .leading, spacing: 8) {
+                    Button(l("app.mapv.card.action.confirm_plan", "Confirm")) {
+                        mapvPlanStore.markNotYetVoted()
                     }
                     .buttonStyle(.bordered)
+                    .lineLimit(1)
+
+                    Button(l("app.mapv.card.action.add_backup", "Add backup")) {
+                        onChangePlanTapped?()
+                    }
+                    .buttonStyle(.bordered)
+                    .lineLimit(1)
+
+                    if plan.mapsURL != nil {
+                        Button(l("app.mapv.card.action.start_directions", "Start Directions")) {
+                            mapvPlanStore.markEnRoute(true)
+                            if let mapsURL = plan.mapsURL {
+                                openURL(mapsURL)
+                            }
+                        }
+                        .buttonStyle(.bordered)
+                        .lineLimit(1)
+                    }
                 }
+                .font(.caption.weight(.semibold))
 
                 HoldToConfirmButton(
                     title: l("app.mapv.card.action.voted", "Voted?"),
@@ -184,10 +170,45 @@ struct MAPVCardView: View {
                         mapvPlanStore.resetCompleted()
                     }
                 )
-                .frame(width: 132)
+                .frame(maxWidth: .infinity, minHeight: 44)
                 .disabled(!isVotedActionEnabled)
+
+                Menu {
+                    Button("I voted") {
+                        mapvPlanStore.markCompleted()
+                    }
+                    Button("My ballot is returned") {
+                        mapvPlanStore.markBallotReturned()
+                    }
+                    Button("My ballot was accepted") {
+                        mapvPlanStore.markBallotAccepted()
+                    }
+                    Button("Undo completion", role: .destructive) {
+                        mapvPlanStore.resetCompleted()
+                    }
+                } label: {
+                    HStack(spacing: 8) {
+                        Label("Update completion status", systemImage: "checkmark.circle")
+                            .lineLimit(1)
+                        Spacer(minLength: 6)
+                        Image(systemName: "chevron.down")
+                            .font(.caption.weight(.bold))
+                    }
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(VoteNowColors.richBlue)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 11, style: .continuous)
+                            .fill(VoteNowColors.infoSurfaceBlue.opacity(0.65))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 11, style: .continuous)
+                            .stroke(VoteNowColors.richBlue.opacity(0.25), lineWidth: 1)
+                    )
+                }
             }
-            .font(.caption.weight(.semibold))
 
             Toggle(isOn: Binding(
                 get: { mapvPlanStore.liveActivityEnabled },
@@ -209,7 +230,6 @@ struct MAPVCardView: View {
                     .font(.caption)
                     .foregroundStyle(VoteNowColors.mutedText)
             }
-
         }
         .padding(14)
         .background(
@@ -222,6 +242,75 @@ struct MAPVCardView: View {
         )
         .clipShape(RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous))
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: presentation.status)
+    }
+
+    private func progressSection(plan: MAPVPlan, presentation: MAPVStatusPresentation) -> some View {
+        VStack(spacing: 6) {
+            GeometryReader { geo in
+                let width = geo.size.width
+                let clampedNow = max(0, min(presentation.progressNow, 1))
+                let clampedPlan = max(0, min(presentation.progressPlan, 1))
+                let nowX = width * clampedNow
+                let planX = width * clampedPlan
+
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(.gray.opacity(0.20))
+                        .frame(height: 9)
+
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color.green.opacity(0.85),
+                                    Color.yellow.opacity(0.88)
+                                ],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .frame(width: max(2, planX), height: 9)
+
+                    Capsule()
+                        .fill(Color.orange.opacity(0.92))
+                        .frame(width: max(0, width - planX), height: 9)
+                        .offset(x: min(max(planX, 0), width))
+
+                    Text("✉️")
+                        .font(.system(size: 15))
+                        .frame(width: 21, height: 21)
+                        .background(
+                            Circle()
+                                .fill(VoteNowColors.background.opacity(0.95))
+                                .overlay(
+                                    Circle()
+                                        .stroke(VoteNowColors.primaryText.opacity(0.7), lineWidth: 0.8)
+                                )
+                        )
+                        .offset(x: min(max(planX - 10.5, 0), width - 21), y: -4)
+
+                    Circle()
+                        .fill(VoteNowColors.surfaceWhite)
+                        .frame(width: 14, height: 14)
+                        .overlay(
+                            Circle()
+                                .stroke(VoteNowColors.primaryText.opacity(0.75), lineWidth: 1.5)
+                        )
+                        .shadow(color: .black.opacity(0.16), radius: 2, x: 0, y: 1)
+                        .offset(x: min(max(nowX - 7, 0), width - 14))
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 16)
+
+            HStack {
+                Text(shortTime(plan.pollingOpen))
+                Spacer()
+                Text(shortTime(plan.pollingClose))
+            }
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(VoteNowColors.primaryText)
+        }
     }
 
     private var emptyCard: some View {
@@ -238,6 +327,62 @@ struct MAPVCardView: View {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .fill(VoteNowColors.infoSurfaceBlue)
         )
+    }
+
+    @ViewBuilder
+    private func completionSummaryCard(status: UserElectionStatusRecord?, plan: MAPVPlan) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("You’re done for this election")
+                .font(.headline.weight(.bold))
+            Text("Completion method: \(completionMethodText(status: status, plan: plan))")
+                .font(.subheadline)
+            if let completedAt = status?.completedAt ?? plan.completedAt {
+                Text("Completion timestamp: \(planDateTime(completedAt))")
+                    .font(.subheadline)
+            }
+            if let source = status?.completionSource, !source.isEmpty {
+                Text("Source: \(source)")
+                    .font(.caption)
+                    .foregroundStyle(VoteNowColors.mutedText)
+            }
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color.green.opacity(0.14))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(Color.green.opacity(0.35), lineWidth: 1)
+        )
+    }
+
+    private func completionMethodText(status: UserElectionStatusRecord?, plan: MAPVPlan) -> String {
+        let state = status?.completionState ?? (plan.isCompleted ? .voted : .notStarted)
+        switch state {
+        case .voted:
+            return "I voted"
+        case .ballotReceived:
+            return "My ballot is returned"
+        case .ballotAccepted:
+            return "My ballot was accepted"
+        case .notStarted, .inProgress, .ballotMailed, .ballotDelivered, .provisionalPending, .cureNeeded:
+            return "In progress"
+        }
+    }
+
+    private func maybeShowPostPlanPrompt(for plan: MAPVPlan, at now: Date) {
+        guard mapvPlanStore.userElectionStatus?.completionState.isTerminal != true else { return }
+        guard plan.isCompleted == false else { return }
+        guard showingVoteConfirmationPrompt == false else { return }
+
+        let graceSeconds = TimeInterval(max(plan.missedArrivalGraceMinutes, 1) * 60)
+        guard now >= plan.plannedArrival.addingTimeInterval(graceSeconds) else { return }
+
+        guard lastPromptedSnapshotID != plan.planSnapshotID else { return }
+        lastPromptedSnapshotID = plan.planSnapshotID
+        showingVoteConfirmationPrompt = true
     }
 
     private func color(for token: MAPVStatusColorToken) -> Color {
@@ -339,20 +484,6 @@ struct MAPVCardView: View {
             fallback: fallback
         )
     }
-
-    private static let shareDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
-        return formatter
-    }()
-
-    private static let shareTimeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .none
-        formatter.timeStyle = .short
-        return formatter
-    }()
 }
 
 #Preview {

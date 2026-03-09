@@ -284,7 +284,7 @@ struct RepRow: View {
             }
 
             if isContactExpanded, !contactActions.isEmpty {
-                HStack(spacing: 8) {
+                VStack(spacing: 8) {
                     ForEach(contactActions) { action in
                         Button {
                             handleActionTap(action)
@@ -300,11 +300,9 @@ struct RepRow: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                         }
                         .buttonStyle(.plain)
-                        .frame(maxWidth: .infinity)
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.leading, 86)
                 .transition(.move(edge: .top).combined(with: .opacity))
             }
         }

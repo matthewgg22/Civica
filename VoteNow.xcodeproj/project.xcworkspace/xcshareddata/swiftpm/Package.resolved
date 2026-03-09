@@ -1,5 +1,5 @@
 {
-  "originHash" : "763165ce4160115fddc7c8f92ba1d06d997791cc5d1990546c79909f0e8740ac",
+  "originHash" : "430b3df1b5ea38dddbab75ed529f4b710915ecc151bf50f533f4a7cc25b15a2c",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -107,6 +107,15 @@
       "state" : {
         "revision" : "540318ecedd63d883069ae7f1ed811a2df00b6ac",
         "version" : "2.4.0"
+      }
+    },
+    {
+      "identity" : "stripe-ios-spm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/stripe/stripe-ios-spm",
+      "state" : {
+        "revision" : "f4f28a0b358011089e4538059d443eccff183382",
+        "version" : "24.25.0"
       }
     },
     {

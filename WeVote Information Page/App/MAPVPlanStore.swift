@@ -20,6 +20,7 @@ final class MAPVPlanStore: ObservableObject {
     static let shared = MAPVPlanStore()
 
     @Published private(set) var plan: MAPVPlan?
+    @Published private(set) var userElectionStatus: UserElectionStatusRecord?
     @Published private(set) var liveActivityEnabled: Bool = false
     @Published private(set) var locationETAUpdatesEnabled: Bool = false
 
@@ -52,15 +53,19 @@ final class MAPVPlanStore: ObservableObject {
         shouldSyncLiveActivity: Bool = true,
         shouldSyncSupabase: Bool = true
     ) {
+        let previousPlan = plan
         var value = newPlan
         value.liveActivityEnabled = liveActivityEnabled
         value.updatedAt = Date()
+        value.planSnapshotID = resolvePlanSnapshotID(newPlan: value, previousPlan: previousPlan)
 
         plan = value
         persist()
 
         if shouldSyncSupabase {
             syncPlanToSupabaseIfNeeded(value)
+            schedulePlanUpdatedNotifications(newPlan: value, previousPlan: previousPlan)
+            refreshUserElectionStatus(forElectionID: value.electionTitle)
         }
 
         guard shouldSyncLiveActivity else { return }
@@ -111,6 +116,11 @@ final class MAPVPlanStore: ObservableObject {
         currentPlan.completedAt = Date()
         currentPlan.isEnRoute = false
         save(currentPlan)
+        setUserElectionCompletionState(
+            .voted,
+            source: .selfReport,
+            confidence: 1.0
+        )
 
         if beginCompletionPushGate(at: Date()) {
             Task {
@@ -142,6 +152,39 @@ final class MAPVPlanStore: ObservableObject {
         currentPlan.isCompleted = false
         currentPlan.completedAt = nil
         save(currentPlan)
+        undoUserElectionCompletionState()
+    }
+
+    func markBallotReturned() {
+        guard var currentPlan = plan else { return }
+        currentPlan.isCompleted = true
+        currentPlan.completedAt = Date()
+        save(currentPlan)
+        setUserElectionCompletionState(
+            .ballotReceived,
+            source: .selfReport,
+            confidence: 0.95
+        )
+    }
+
+    func markBallotAccepted() {
+        guard var currentPlan = plan else { return }
+        currentPlan.isCompleted = true
+        currentPlan.completedAt = Date()
+        save(currentPlan)
+        setUserElectionCompletionState(
+            .ballotAccepted,
+            source: .selfReport,
+            confidence: 1.0
+        )
+    }
+
+    func markNotYetVoted() {
+        setUserElectionCompletionState(
+            .inProgress,
+            source: .selfReport,
+            confidence: 0.7
+        )
     }
 
     func updateETA(distanceMiles: Double?, etaMinutes: Int?, timestamp: Date = Date()) {
@@ -417,6 +460,7 @@ final class MAPVPlanStore: ObservableObject {
             decoded.liveActivityEnabled = liveActivityEnabled
             plan = decoded
             lastSupabaseSyncFingerprint = supabaseSyncFingerprint(for: decoded)
+            refreshUserElectionStatus(forElectionID: decoded.electionTitle)
         } catch {
             plan = nil
             defaults.removeObject(forKey: Keys.plan)
@@ -494,6 +538,7 @@ final class MAPVPlanStore: ObservableObject {
             guard let restored = mapvPlan(from: latest) else { return }
 
             save(restored, shouldSyncLiveActivity: false, shouldSyncSupabase: false)
+            refreshUserElectionStatus(forElectionID: restored.electionTitle)
         } catch {
             print("[MAPVPlanStore] Supabase bootstrap skipped: \(String(describing: error))")
         }
@@ -559,5 +604,145 @@ final class MAPVPlanStore: ObservableObject {
     private func endCompletionPushGate(sentAt: Date) {
         Self.completionPushInFlight = false
         Self.lastCompletionPushSentAt = sentAt
+    }
+
+    private func resolvePlanSnapshotID(newPlan: MAPVPlan, previousPlan: MAPVPlan?) -> String {
+        guard let previousPlan else {
+            return UUID().uuidString
+        }
+        let newFingerprint = materialPlanFingerprint(for: newPlan)
+        let oldFingerprint = materialPlanFingerprint(for: previousPlan)
+        if newFingerprint == oldFingerprint {
+            return previousPlan.planSnapshotID
+        }
+        return UUID().uuidString
+    }
+
+    private func materialPlanFingerprint(for value: MAPVPlan) -> String {
+        let plannedEpoch = Int(value.plannedArrival.timeIntervalSince1970)
+        let method = value.votingMethodRawValue ?? "election_day"
+        let place = normalizedPollingPlace(for: value).lowercased()
+        return "\(value.electionTitle.lowercased())|\(plannedEpoch)|\(method)|\(place)"
+    }
+
+    private func schedulePlanUpdatedNotifications(newPlan: MAPVPlan, previousPlan: MAPVPlan?) {
+        let changed = previousPlan.map { materialPlanFingerprint(for: $0) != materialPlanFingerprint(for: newPlan) } ?? true
+        if let previousPlan,
+           changed == false,
+           Date().timeIntervalSince(previousPlan.updatedAt) < 24 * 60 * 60 {
+            print("ℹ️ skipping duplicate reminder scheduling for electionID: \(newPlan.electionTitle)")
+            return
+        }
+        let context = MAPVNotificationPluginContext(
+            electionID: newPlan.electionTitle,
+            planSnapshotID: newPlan.planSnapshotID,
+            method: newPlan.votingMethodRawValue ?? "election_day",
+            electionDay: newPlan.electionDate,
+            plannedActionTime: newPlan.plannedArrival,
+            plannedDepartureTime: newPlan.plannedArrival,
+            pollSiteName: newPlan.pollingPlaceName,
+            pollOpen: newPlan.pollingOpen,
+            pollClose: newPlan.pollingClose,
+            isPlanComplete: missingField(for: newPlan) == nil,
+            missingField: missingField(for: newPlan),
+            materialEditInLast24h: changed,
+            commitmentText: nil,
+            replayAllowed: false,
+            commitmentRemoved: false,
+            buddyName: nil,
+            buddyContactID: nil,
+            buddyTwoWayOptIn: false,
+            officialChange: nil,
+            completionState: userElectionStatus?.completionState ?? (newPlan.isCompleted ? .voted : .inProgress),
+            completionMethodDescription: newPlan.votingMethodRawValue,
+            earlyVoteWindowStart: nil,
+            earlyVoteWindowEnd: nil,
+            mailRequestRequired: nil,
+            mailRequestWindowOpen: nil,
+            mailBallotRequested: nil,
+            autoMailJurisdiction: nil,
+            trackerStatus: nil,
+            returnMethod: nil,
+            safeMailDeadline: nil,
+            backupOption1: "early vote",
+            backupOption2: "in-person Election Day",
+            now: Date()
+        )
+
+        Task {
+            await SupabaseManager.shared.processMAPVNotificationPlugins(
+                trigger: .planUpdated,
+                context: context
+            )
+        }
+    }
+
+    private func missingField(for plan: MAPVPlan) -> String? {
+        let method = plan.votingMethodRawValue ?? "election_day"
+        let hasPollingPlace = !plan.pollingPlaceName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && plan.pollingPlaceName.lowercased() != "polling place"
+        let hasDate = plan.electionDate.timeIntervalSince1970 > 0
+        let hasTime = plan.plannedArrival.timeIntervalSince1970 > 0
+
+        switch method {
+        case "vote_by_mail":
+            if hasDate == false { return "date" }
+            if hasTime == false { return "time" }
+            return nil
+        case "early_vote", "election_day":
+            if hasDate == false { return "date" }
+            if hasTime == false { return "time" }
+            if hasPollingPlace == false { return "polling place" }
+            return nil
+        default:
+            if hasPollingPlace == false { return "polling place" }
+            return nil
+        }
+    }
+
+    private func setUserElectionCompletionState(
+        _ completionState: UserElectionCompletionState,
+        source: UserElectionCompletionSource,
+        confidence: Double?
+    ) {
+        guard let electionID = plan?.electionTitle else { return }
+        Task {
+            do {
+                try await SupabaseManager.shared.updateUserElectionStatus(
+                    electionID: electionID,
+                    completionState: completionState,
+                    completionSource: source,
+                    completionConfidence: confidence
+                )
+                await MainActor.run {
+                    self.refreshUserElectionStatus(forElectionID: electionID)
+                }
+            } catch {
+                print("[MAPVPlanStore] Failed updating user_election_status:", String(describing: error))
+            }
+        }
+    }
+
+    private func undoUserElectionCompletionState() {
+        guard let electionID = plan?.electionTitle else { return }
+        Task {
+            do {
+                try await SupabaseManager.shared.undoUserElectionCompletion(electionID: electionID)
+                await MainActor.run {
+                    self.refreshUserElectionStatus(forElectionID: electionID)
+                }
+            } catch {
+                print("[MAPVPlanStore] Failed undoing user_election_status:", String(describing: error))
+            }
+        }
+    }
+
+    private func refreshUserElectionStatus(forElectionID electionID: String) {
+        Task {
+            let status = await SupabaseManager.shared.fetchUserElectionStatus(electionID: electionID)
+            await MainActor.run {
+                self.userElectionStatus = status
+            }
+        }
     }
 }

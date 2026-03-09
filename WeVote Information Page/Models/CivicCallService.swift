@@ -411,7 +411,6 @@ final class IssueCallCenterViewModel: ObservableObject {
     @Published var selectedRepFilter: CivicRepFilter = .all
     @Published var concernText: String = ""
     @Published var selectedAsk: CivicAsk?
-    @Published var selectedIssue: IssueCode?
     @Published var optionalBillRef: String = ""
     @Published var isSubmitting = false
     @Published var errorMessage: String?
@@ -510,20 +509,6 @@ final class IssueCallCenterViewModel: ObservableObject {
         selectedAsk != nil && !concernText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !repTargets.isEmpty
     }
 
-    var generatedScript: String {
-        guard let issue = selectedIssue else {
-            return "Select an issue to generate a simple script."
-        }
-        guard let brief = activeBrief, isSenateBrief(brief) else {
-            return "Select a senator to generate a simple script."
-        }
-        return CallScriptGenerator.script(
-            for: brief.repName,
-            issue: issue,
-            assignedCommittees: committeeAssignments(for: brief)
-        )
-    }
-
     func loadExamplesAndHistory() async {
         let userID = await userIDForRequest()
         do {
@@ -595,7 +580,6 @@ final class IssueCallCenterViewModel: ObservableObject {
         // when the user returns from MAPC.
         concernText = ""
         selectedAsk = nil
-        selectedIssue = nil
         optionalBillRef = ""
         applySeedResolution(for: example)
     }
@@ -628,7 +612,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 launchedAt: launch.launchedAt
             )
             if launch.callScoreEnabled == false {
-                errorMessage = "Call score is currently disabled for this rollout."
+                print("[IssueCall] Call score is currently disabled for this rollout.")
             }
         } catch {
             // Preserve the ability to ask for completion locally even when network launch logging fails.
@@ -639,7 +623,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 issueID: brief.issueID.isEmpty ? nil : brief.issueID,
                 launchedAt: Date()
             )
-            errorMessage = "Could not sync call launch right now. You can still confirm your call."
+            print("[IssueCall] call launch log failed; continuing with local completion prompt.")
         }
     }
 
@@ -924,7 +908,6 @@ final class IssueCallCenterViewModel: ObservableObject {
         resolvedEntities = response.resolvedEntities
         callBriefs = normalized
         activeBriefID = filteredBriefs.first?.id
-        selectedIssue = nil
     }
 
     private func appendHistory(for resolution: CivicIssueResolutionResponse) {

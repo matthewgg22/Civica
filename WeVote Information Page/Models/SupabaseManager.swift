@@ -167,6 +167,33 @@ struct ScheduledNotificationInsert: Encodable, Sendable {
     let body: String
     let sendAt: Date
     let status: String
+    let pluginID: String?
+    let planSnapshotID: String?
+    let metadata: [String: String]?
+
+    init(
+        userID: UUID,
+        electionID: String,
+        notificationType: String,
+        title: String,
+        body: String,
+        sendAt: Date,
+        status: String,
+        pluginID: String? = nil,
+        planSnapshotID: String? = nil,
+        metadata: [String: String]? = nil
+    ) {
+        self.userID = userID
+        self.electionID = electionID
+        self.notificationType = notificationType
+        self.title = title
+        self.body = body
+        self.sendAt = sendAt
+        self.status = status
+        self.pluginID = pluginID
+        self.planSnapshotID = planSnapshotID
+        self.metadata = metadata
+    }
 
     enum CodingKeys: String, CodingKey {
         case userID = "user_id"
@@ -176,6 +203,9 @@ struct ScheduledNotificationInsert: Encodable, Sendable {
         case body
         case sendAt = "send_at"
         case status
+        case pluginID = "plugin_id"
+        case planSnapshotID = "plan_snapshot_id"
+        case metadata
     }
 }
 
@@ -213,6 +243,8 @@ final class SupabaseManager {
     private var cachedSession: SupabaseSession?
     private var isSigningIn = false
     private var insertedPlanFingerprintsThisLaunch: Set<String> = []
+    private var insertedNotificationFingerprintsThisLaunch: Set<String> = []
+    private var hasLoggedMissingUserElectionStatusTable = false
     #if DEBUG
     private var hasInsertedDebugPlanThisLaunch = false
     #endif
@@ -343,18 +375,31 @@ final class SupabaseManager {
 
             print("✅ Device token saved to Supabase (\(redactedToken(deviceToken)))")
         } catch {
-            print("❌ Failed saving device token:", String(describing: error))
+            let message = String(describing: error)
+            if message.contains("23505") && message.contains("device_tokens_token_key") {
+                print("ℹ️ Device token already exists; keeping current record (\(redactedToken(deviceToken)))")
+            } else {
+                print("❌ Failed saving device token:", message)
+            }
         }
     }
 
     func scheduleElectionRemindersForResolvedAddress(_ schedule: ElectionReminderSchedule) async throws {
         let session = try await client.auth.session
         let userID = session.user.id
+        var createdAnyReminder = false
 
         print("ℹ️ cancelling old pending election reminders for user")
         try await cancelPendingElectionReminders(userID: userID)
 
         if let earlyVotingStart = schedule.earlyVotingStart {
+            if try await shouldSuppressNotificationForElection(
+                userID: userID,
+                electionID: schedule.electionID,
+                notificationType: "early_voting_open"
+            ) {
+                print("ℹ️ suppression active: skipping early_voting_open for election \(schedule.electionID)")
+            } else {
             let earlyVotingSendAt = try reminderSendAt10_30AM(
                 on: earlyVotingStart,
                 stateCode: schedule.stateCode
@@ -374,8 +419,22 @@ final class SupabaseManager {
                 .insert([earlyVotingPayload])
                 .execute()
             print("✅ early voting reminder created")
+            createdAnyReminder = true
+            }
         } else {
             print("ℹ️ no early voting date found, skipping early voting reminder")
+        }
+
+        if try await shouldSuppressNotificationForElection(
+            userID: userID,
+            electionID: schedule.electionID,
+            notificationType: "election_day_reminder"
+        ) {
+            print("ℹ️ suppression active: skipping election_day_reminder for election \(schedule.electionID)")
+            if createdAnyReminder {
+                print("✅ new election reminders scheduled")
+            }
+            return
         }
 
         let electionDaySendAt = try reminderSendAt10_30AM(
@@ -397,6 +456,234 @@ final class SupabaseManager {
             .insert([electionDayPayload])
             .execute()
         print("✅ election day reminder created")
+        createdAnyReminder = true
+        if createdAnyReminder {
+            print("✅ new election reminders scheduled")
+        }
+    }
+
+    func processMAPVNotificationPlugins(
+        trigger: MAPVNotificationTrigger,
+        context: MAPVNotificationPluginContext
+    ) async {
+        do {
+            let session = try await client.auth.session
+            let userID = session.user.id
+
+            let drafts = MAPVNotificationPluginEngine.generateDrafts(
+                trigger: trigger,
+                context: context
+            )
+
+            guard !drafts.isEmpty else { return }
+
+            for draft in drafts {
+                let fingerprint = "\(userID.uuidString)|\(context.electionID)|\(context.planSnapshotID)|\(draft.notificationType)|\(Int(draft.sendAt.timeIntervalSince1970))"
+                guard insertedNotificationFingerprintsThisLaunch.contains(fingerprint) == false else {
+                    continue
+                }
+
+                guard try await shouldSuppressNotificationForElection(
+                    userID: userID,
+                    electionID: context.electionID,
+                    notificationType: draft.notificationType
+                ) == false else {
+                    print("ℹ️ notification suppressed for plugin \(draft.pluginID.rawValue)")
+                    continue
+                }
+
+                if try await hasRecentScheduledNotification(
+                    userID: userID,
+                    electionID: context.electionID,
+                    notificationType: draft.notificationType,
+                    sinceHours: 24
+                ) {
+                    continue
+                }
+
+                let payload = ScheduledNotificationInsert(
+                    userID: userID,
+                    electionID: context.electionID,
+                    notificationType: draft.notificationType,
+                    title: draft.title,
+                    body: draft.body,
+                    sendAt: draft.sendAt,
+                    status: "pending",
+                    pluginID: draft.pluginID.rawValue,
+                    planSnapshotID: context.planSnapshotID,
+                    metadata: [
+                        "bypass_quiet_hours": draft.bypassQuietHours ? "true" : "false"
+                    ]
+                )
+
+                _ = try await client
+                    .from("scheduled_notifications")
+                    .insert([payload])
+                    .execute()
+                insertedNotificationFingerprintsThisLaunch.insert(fingerprint)
+            }
+        } catch {
+            print("❌ MAPV plugin notification scheduling failed: \(error.localizedDescription)")
+        }
+    }
+
+    func fetchUserElectionStatus(electionID: String) async -> UserElectionStatusRecord? {
+        do {
+            let session = try await client.auth.session
+            let userID = session.user.id
+
+            let records: [UserElectionStatusRecord] = try await client
+                .from("user_election_status")
+                .select()
+                .eq("user_id", value: userID.uuidString)
+                .eq("election_id", value: electionID)
+                .limit(1)
+                .execute()
+                .value
+
+            return records.first
+        } catch {
+            if isMissingUserElectionStatusTableError(error) {
+                logMissingUserElectionStatusTableOnce(context: "fetch")
+            }
+            return nil
+        }
+    }
+
+    func updateUserElectionStatus(
+        electionID: String,
+        completionState: UserElectionCompletionState,
+        completionSource: UserElectionCompletionSource,
+        completionConfidence: Double?
+    ) async throws {
+        do {
+            let session = try await client.auth.session
+            let userID = session.user.id
+
+            let notificationsSuppressed = completionState.isTerminal || completionState.isProvisionalFlow
+            let suppressionReason: String? = {
+                if completionState.isTerminal {
+                    return "completed_\(completionState.rawValue)"
+                }
+                if completionState == .provisionalPending {
+                    return "provisional_pending"
+                }
+                if completionState == .cureNeeded {
+                    return "cure_needed"
+                }
+                return nil
+            }()
+
+            let nowISO = SupabaseTimestampCodec.encode(Date())
+            let completedAtISO = completionState.isTerminal ? nowISO : nil
+            let insertPayload = UserElectionStatusInsertPayload(
+                userID: userID,
+                electionID: electionID,
+                completionState: completionState.rawValue,
+                completedAt: completedAtISO,
+                completionSource: completionSource.rawValue,
+                completionConfidence: completionConfidence,
+                notificationsSuppressed: notificationsSuppressed,
+                suppressionReason: suppressionReason,
+                suppressionUpdatedAt: nowISO
+            )
+            let updatePayload = UserElectionStatusUpdatePayload(
+                completionState: completionState.rawValue,
+                completedAt: completedAtISO,
+                completionSource: completionSource.rawValue,
+                completionConfidence: completionConfidence,
+                notificationsSuppressed: notificationsSuppressed,
+                suppressionReason: suppressionReason,
+                suppressionUpdatedAt: nowISO
+            )
+
+            let existing: [UserElectionStatusRecord] = try await client
+                .from("user_election_status")
+                .select()
+                .eq("user_id", value: userID.uuidString)
+                .eq("election_id", value: electionID)
+                .limit(1)
+                .execute()
+                .value
+
+            if existing.isEmpty {
+                _ = try await client
+                    .from("user_election_status")
+                    .insert([insertPayload])
+                    .execute()
+            } else {
+                _ = try await client
+                    .from("user_election_status")
+                    .update(updatePayload)
+                    .eq("user_id", value: userID.uuidString)
+                    .eq("election_id", value: electionID)
+                    .execute()
+            }
+        } catch {
+            if isMissingUserElectionStatusTableError(error) {
+                logMissingUserElectionStatusTableOnce(context: "update")
+                return
+            }
+            throw error
+        }
+    }
+
+    func undoUserElectionCompletion(electionID: String) async throws {
+        do {
+            let session = try await client.auth.session
+            let userID = session.user.id
+
+            let nowISO = SupabaseTimestampCodec.encode(Date())
+            let updatePayload = UserElectionStatusUpdatePayload(
+                completionState: UserElectionCompletionState.inProgress.rawValue,
+                completedAt: nil,
+                completionSource: UserElectionCompletionSource.undo.rawValue,
+                completionConfidence: nil,
+                notificationsSuppressed: false,
+                suppressionReason: nil,
+                suppressionUpdatedAt: nowISO
+            )
+
+            let existing: [UserElectionStatusRecord] = try await client
+                .from("user_election_status")
+                .select()
+                .eq("user_id", value: userID.uuidString)
+                .eq("election_id", value: electionID)
+                .limit(1)
+                .execute()
+                .value
+
+            if existing.isEmpty {
+                let insertPayload = UserElectionStatusInsertPayload(
+                    userID: userID,
+                    electionID: electionID,
+                    completionState: UserElectionCompletionState.inProgress.rawValue,
+                    completedAt: nil,
+                    completionSource: UserElectionCompletionSource.undo.rawValue,
+                    completionConfidence: nil,
+                    notificationsSuppressed: false,
+                    suppressionReason: nil,
+                    suppressionUpdatedAt: nowISO
+                )
+                _ = try await client
+                    .from("user_election_status")
+                    .insert([insertPayload])
+                    .execute()
+            } else {
+                _ = try await client
+                    .from("user_election_status")
+                    .update(updatePayload)
+                    .eq("user_id", value: userID.uuidString)
+                    .eq("election_id", value: electionID)
+                    .execute()
+            }
+        } catch {
+            if isMissingUserElectionStatusTableError(error) {
+                logMissingUserElectionStatusTableOnce(context: "undo")
+                return
+            }
+            throw error
+        }
     }
 
     private func cancelPendingElectionReminders(userID: UUID) async throws {
@@ -421,6 +708,91 @@ final class SupabaseManager {
             .eq("notification_type", value: notificationType)
             .eq("status", value: "pending")
             .execute()
+    }
+
+    private func hasRecentScheduledNotification(
+        userID: UUID,
+        electionID: String,
+        notificationType: String,
+        sinceHours: Int
+    ) async throws -> Bool {
+        struct ExistingScheduledNotification: Decodable {
+            let sendAt: Date?
+
+            enum CodingKeys: String, CodingKey {
+                case sendAt = "send_at"
+            }
+
+            init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                if let raw = try container.decodeIfPresent(String.self, forKey: .sendAt) {
+                    sendAt = SupabaseTimestampCodec.decode(raw)
+                } else {
+                    sendAt = try container.decodeIfPresent(Date.self, forKey: .sendAt)
+                }
+            }
+        }
+
+        let threshold = Date().addingTimeInterval(TimeInterval(-sinceHours * 3600))
+        let rows: [ExistingScheduledNotification] = try await client
+            .from("scheduled_notifications")
+            .select("send_at")
+            .eq("user_id", value: userID.uuidString)
+            .eq("election_id", value: electionID)
+            .eq("notification_type", value: notificationType)
+            .neq("status", value: "canceled")
+            .limit(1)
+            .execute()
+            .value
+
+        guard let sendAt = rows.first?.sendAt else {
+            return false
+        }
+        return sendAt >= threshold
+    }
+
+    private func shouldSuppressNotificationForElection(
+        userID: UUID,
+        electionID: String,
+        notificationType: String
+    ) async throws -> Bool {
+        do {
+            let rows: [UserElectionStatusRecord] = try await client
+                .from("user_election_status")
+                .select()
+                .eq("user_id", value: userID.uuidString)
+                .eq("election_id", value: electionID)
+                .limit(1)
+                .execute()
+                .value
+
+            let status = MAPVNotificationPluginEngine.status(
+                for: electionID,
+                in: rows
+            )
+            return MAPVNotificationPluginEngine.shouldSuppressNotification(
+                status: status,
+                notificationType: notificationType
+            )
+        } catch {
+            if isMissingUserElectionStatusTableError(error) {
+                logMissingUserElectionStatusTableOnce(context: "suppression_check")
+                return false
+            }
+            throw error
+        }
+    }
+
+    private func isMissingUserElectionStatusTableError(_ error: Error) -> Bool {
+        let message = String(describing: error)
+        return message.contains("PGRST205")
+            || message.contains("Could not find the table 'public.user_election_status'")
+    }
+
+    private func logMissingUserElectionStatusTableOnce(context: String) {
+        guard !hasLoggedMissingUserElectionStatusTable else { return }
+        hasLoggedMissingUserElectionStatusTable = true
+        print("⚠️ user_election_status table is missing (\(context)). Apply migration 20260308_mapv_notification_suppression.sql in Supabase.")
     }
 
     private func reminderSendAt10_30AM(on date: Date, stateCode: String) throws -> Date {
