@@ -351,6 +351,28 @@ struct USZipStateResolver {
         return nil
     }
 
+    func representativeZIP(for stateCode: String) -> String? {
+        let normalizedStateCode = stateCode
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .uppercased()
+
+        switch normalizedStateCode {
+        case "AS":
+            return "96799"
+        case "MP":
+            return "96950"
+        case "VI":
+            return "00802"
+        default:
+            break
+        }
+
+        guard let prefix = ranges.first(where: { $0.1 == normalizedStateCode })?.0.lowerBound else {
+            return nil
+        }
+        return String(format: "%03d01", prefix)
+    }
+
     private func normalizeZIP(_ zip: String) -> String {
         String(zip.filter(\.isNumber).prefix(5))
     }
@@ -1130,10 +1152,10 @@ final class USHouseMembersProvider: RepsProvider {
 
         let websiteURL = normalizedWebsiteURL(member.url)
         return Official(
-            name: formattedDisplayName(from: member.name),
+            name: displayNameOverride(for: member) ?? formattedDisplayName(from: member.name),
             divisionId: divisionId,
             party: member.party,
-            photoURL: nil,
+            photoURL: photoURLOverride(for: member),
             url: websiteURL,
             officialPhone: normalizedOfficialPhone(member.phone),
             websiteURL: websiteURL,
@@ -1145,6 +1167,13 @@ final class USHouseMembersProvider: RepsProvider {
             ),
             committeeAssignments: parsedCommitteeAssignments(member.committee_assignment)
         )
+    }
+
+    private func displayNameOverride(for member: HouseRecord) -> String? {
+        if member.state_code == "FL", member.district == "17" {
+            return "Greg Steube"
+        }
+        return nil
     }
 
     private func formattedDisplayName(from rawName: String) -> String {
@@ -1178,6 +1207,13 @@ final class USHouseMembersProvider: RepsProvider {
         }
         if member.state_code == "FL", member.district == "17" {
             return "https://steube.house.gov/contact/"
+        }
+        return nil
+    }
+
+    private func photoURLOverride(for member: HouseRecord) -> String? {
+        if member.state_code == "FL", member.district == "17" {
+            return "https://steube.house.gov/wp-content/uploads/2023/05/steube-tbg.png"
         }
         return nil
     }
@@ -1503,6 +1539,10 @@ final class RepsProviderRegistry {
 
     func resolvedStateCode(for zip: String) -> String? {
         stateResolver.stateCode(for: zip)
+    }
+
+    func representativeZIP(for stateCode: String) -> String? {
+        stateResolver.representativeZIP(for: stateCode)
     }
 
     func lookup(zip: String) throws -> RepsLookupResult {

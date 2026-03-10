@@ -194,6 +194,7 @@ struct CivicExampleIssueCard: Identifiable, Codable, Sendable {
     let voicemailFooter: String?
     let placeholders: [String]
     let tags: [String]
+    let updatedAt: Date?
 
     enum CodingKeys: String, CodingKey {
         case id = "issue_id"
@@ -214,6 +215,11 @@ struct CivicExampleIssueCard: Identifiable, Codable, Sendable {
         case voicemailFooter = "voicemail_footer"
         case placeholders
         case tags
+        case updatedAt = "updated_at"
+    }
+
+    private enum LegacyDateCodingKeys: String, CodingKey {
+        case createdAt = "created_at"
     }
 
     init(
@@ -234,7 +240,8 @@ struct CivicExampleIssueCard: Identifiable, Codable, Sendable {
         stafferVariant: String? = nil,
         voicemailFooter: String? = nil,
         placeholders: [String] = [],
-        tags: [String] = []
+        tags: [String] = [],
+        updatedAt: Date? = nil
     ) {
         self.id = id
         self.slug = slug
@@ -254,6 +261,7 @@ struct CivicExampleIssueCard: Identifiable, Codable, Sendable {
         self.voicemailFooter = voicemailFooter
         self.placeholders = placeholders
         self.tags = tags
+        self.updatedAt = updatedAt
     }
 
     init(from decoder: Decoder) throws {
@@ -276,6 +284,11 @@ struct CivicExampleIssueCard: Identifiable, Codable, Sendable {
         voicemailFooter = try container.decodeIfPresent(String.self, forKey: .voicemailFooter)
         placeholders = try container.decodeIfPresent([String].self, forKey: .placeholders) ?? []
         tags = try container.decodeIfPresent([String].self, forKey: .tags) ?? []
+        updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
+            ?? {
+                let legacy = try decoder.container(keyedBy: LegacyDateCodingKeys.self)
+                return try legacy.decodeIfPresent(Date.self, forKey: .createdAt)
+            }()
     }
 
     var preferredAsk: CivicAsk? {

@@ -138,7 +138,7 @@ struct MyRepsView: View {
                                     )
                                 }
                             } else if !repsVM.isLoading && (repsVM.errorMessage?.isEmpty ?? true) {
-                                Text(l("app.reps.empty_prompt", "Enter your ZIP or full U.S. address to load your representatives."))
+                                Text(l("app.reps.empty_prompt", "Enter your ZIP, city/state, or full U.S. address to load your representatives."))
                                     .font(.subheadline)
                                     .foregroundColor(VoteNowColors.mutedText)
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -328,6 +328,21 @@ struct MyRepsView: View {
             .id(repsVM.zipMapUpdateID)
             .frame(height: 215)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+
+            Text(
+                repsVM.isGeneralLocationSearchResult
+                ? l(
+                    "app.reps.coverage.statewide_only_note",
+                    "Showing statewide officials for this general location search. Enter your full street address to load all reps."
+                )
+                : l(
+                    "app.reps.coverage.full_address_note",
+                    "Enter your full street address to load all reps."
+                )
+            )
+            .font(.system(size: 13, weight: .medium))
+            .foregroundColor(VoteNowColors.mutedText)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 

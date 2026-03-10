@@ -125,10 +125,7 @@ struct VoterRegistrationView: View {
                 stepLabel: "",
                 title: l("app.registration.card.what_is.title", "What is Voter Registration?"),
                 summary: l("app.registration.card.what_is.summary", "Voter registration is the process that puts you on your state’s voter rolls so you are eligible to vote."),
-                bullets: [
-                    l("app.registration.card.what_is.bullet_1", "Most states require registration before you can vote."),
-                    l("app.registration.card.what_is.bullet_2", "Checking early helps prevent Election Day surprises.")
-                ],
+                bullets: [],
                 primaryActionTitle: l("app.registration.action.start_registration", "Start registration"),
                 primaryAction: .openURL(registrationPortalURL),
                 secondaryActionTitle: nil,

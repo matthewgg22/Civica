@@ -88,7 +88,7 @@ struct VoterIDGuideCard: View {
                 Image(asset)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 40, height: 28)
+                    .frame(width: 50, height: 35)
                     .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 6, style: .continuous)

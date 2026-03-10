@@ -91,9 +91,9 @@ enum RepsLocationResolverError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .emptyInput:
-            return "Enter a 5-digit U.S. ZIP or a full U.S. address."
+            return "Enter a 5-digit U.S. ZIP, full U.S. address, city, or state."
         case .invalidInput:
-            return "Enter a valid U.S. ZIP or full address."
+            return "Enter a valid U.S. ZIP, full U.S. address, city, or state."
         case .notFound:
             return "We couldn't find that U.S. location. Try a full address with city and state."
         case .outsideUS:
@@ -129,9 +129,55 @@ enum USZipInputValidator {
     }
 }
 
+private let usStateNameToCodeMap: [String: String] = [
+    "alabama": "AL", "alaska": "AK", "arizona": "AZ", "arkansas": "AR", "california": "CA",
+    "colorado": "CO", "connecticut": "CT", "delaware": "DE", "florida": "FL", "georgia": "GA",
+    "hawaii": "HI", "idaho": "ID", "illinois": "IL", "indiana": "IN", "iowa": "IA",
+    "kansas": "KS", "kentucky": "KY", "louisiana": "LA", "maine": "ME", "maryland": "MD",
+    "massachusetts": "MA", "michigan": "MI", "minnesota": "MN", "mississippi": "MS", "missouri": "MO",
+    "montana": "MT", "nebraska": "NE", "nevada": "NV", "new hampshire": "NH", "new jersey": "NJ",
+    "new mexico": "NM", "new york": "NY", "north carolina": "NC", "north dakota": "ND", "ohio": "OH",
+    "oklahoma": "OK", "oregon": "OR", "pennsylvania": "PA", "rhode island": "RI", "south carolina": "SC",
+    "south dakota": "SD", "tennessee": "TN", "texas": "TX", "utah": "UT", "vermont": "VT",
+    "virginia": "VA", "washington": "WA", "west virginia": "WV", "wisconsin": "WI", "wyoming": "WY",
+    "district of columbia": "DC", "american samoa": "AS", "guam": "GU",
+    "northern mariana islands": "MP", "commonwealth of the northern mariana islands": "MP",
+    "puerto rico": "PR", "us virgin islands": "VI", "u s virgin islands": "VI", "virgin islands": "VI"
+]
+
+private let usStateAndTerritoryCodes: Set<String> = Set(usStateNameToCodeMap.values)
+private let usTerritoryCodes: Set<String> = ["AS", "GU", "MP", "PR", "VI"]
+
+private func normalizedUSStateCode(from raw: String?) -> String? {
+    guard let raw = raw?
+        .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+        .lowercased()
+        .trimmingCharacters(in: .whitespacesAndNewlines),
+          !raw.isEmpty else {
+        return nil
+    }
+
+    let stripped = raw
+        .replacingOccurrences(of: #"[^\p{L}\p{N}]+"#, with: " ", options: .regularExpression)
+        .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+        .trimmingCharacters(in: .whitespacesAndNewlines)
+
+    if stripped.count == 2 {
+        let code = stripped.uppercased()
+        return usStateAndTerritoryCodes.contains(code) ? code : nil
+    }
+
+    if let code = usStateNameToCodeMap[stripped] {
+        return code
+    }
+
+    return nil
+}
+
 enum RepsLookupInputKind: Equatable {
     case zip(String)
     case address(String)
+    case generalLocation(String)
     case invalid
 }
 
@@ -149,8 +195,13 @@ enum RepsLookupInputParser {
             return .zip(normalizedZIP)
         }
 
-        guard looksLikeAddress(trimmed) else { return .invalid }
-        return .address(trimmed)
+        if looksLikeAddress(trimmed) {
+            return .address(trimmed)
+        }
+        if looksLikeGeneralLocation(trimmed) {
+            return .generalLocation(trimmed)
+        }
+        return .invalid
     }
 
     static func looksLikeAddress(_ input: String) -> Bool {
@@ -163,14 +214,43 @@ enum RepsLookupInputParser {
         let hasStreetToken = words.contains { streetTokens.contains($0.trimmingCharacters(in: .punctuationCharacters)) }
         let hasCommaPattern = input.contains(",") && words.count >= 2
         let hasStateZipPattern = normalized.range(of: #"\b[a-z]{2}\b\s+\d{5}\b"#, options: .regularExpression) != nil
-        let hasAnyLetters = normalized.range(of: #"[a-z]"#, options: .regularExpression) != nil
-        let hasMultiWordLetters = hasAnyLetters && words.count >= 2
 
-        return (hasStreetNumber && (hasStreetToken || hasCommaPattern))
-            || hasStateZipPattern
-            || hasCommaPattern
-            || hasMultiWordLetters
+        return hasStateZipPattern
+            || (hasStreetNumber && hasStreetToken)
+            || (hasStreetNumber && hasCommaPattern)
     }
+
+    static func looksLikeGeneralLocation(_ input: String) -> Bool {
+        let normalized = input
+            .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+            .lowercased()
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !normalized.isEmpty else { return false }
+
+        if normalizedUSStateCode(from: normalized) != nil {
+            return true
+        }
+
+        let hasDigits = normalized.range(of: #"\d"#, options: .regularExpression) != nil
+        guard !hasDigits else { return false }
+
+        let cleaned = normalized
+            .replacingOccurrences(of: #"[^\p{L}\s\.\-']+"#, with: " ", options: .regularExpression)
+            .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleaned.isEmpty else { return false }
+
+        let words = cleaned.split(separator: " ")
+        guard !words.isEmpty else { return false }
+        guard words.count <= 4 else { return false }
+
+        return true
+    }
+}
+
+private enum RepsLookupResultScope {
+    case allReps
+    case stateLevelOnly
 }
 
 enum USGeoGuard {
@@ -214,7 +294,7 @@ enum USGeoGuard {
 }
 
 private enum MyRepsTrustCopy {
-    static let invalidInput = "Enter a valid U.S. ZIP or full U.S. address."
+    static let invalidInput = "Enter a valid U.S. ZIP, full address, city, or state."
     static let invalidZip = "Enter a 5-digit U.S. ZIP code (e.g., 10001)."
     static let usOnly = "VoteNow only supports U.S. locations."
 }
@@ -307,6 +387,7 @@ final class MyRepsViewModel: ObservableObject {
     @Published var zipMapUpdateID = UUID()
     @Published var zipMapLookupState: ZipMapLookupState = .idle
     @Published var resolvedLocationSelection: RepsLocationSelection?
+    @Published var isGeneralLocationSearchResult = false
 
     private let registry: RepsProviderRegistry
     private let openStatesService = OpenStatesStateLegislativeService()
@@ -364,6 +445,7 @@ final class MyRepsViewModel: ObservableObject {
             return
         }
 
+        isGeneralLocationSearchResult = false
         zipMapLookupState = .typing
         errorMessage = nil
     }
@@ -394,6 +476,7 @@ final class MyRepsViewModel: ObservableObject {
         isLoading = false
         errorMessage = nil
         zipMapLookupState = .idle
+        isGeneralLocationSearchResult = false
         clearReps()
         clearZipMapHighlight()
     }
@@ -404,6 +487,7 @@ final class MyRepsViewModel: ObservableObject {
         locationResolveTask?.cancel()
         geocoder.cancelGeocode()
         isLoading = true
+        isGeneralLocationSearchResult = false
         zipMapLookupState = .geocoding
         errorMessage = nil
 
@@ -508,6 +592,9 @@ final class MyRepsViewModel: ObservableObject {
         case .address(let address):
             fallbackMeters = 1800
             placemark = try await resolvePlacemarkForAddress(address)
+        case .generalLocation(let location):
+            fallbackMeters = 48_000
+            placemark = try await resolvePlacemarkForGeneralLocation(location)
         case .invalid:
             throw RepsLocationResolverError.invalidInput
         }
@@ -533,7 +620,7 @@ final class MyRepsViewModel: ObservableObject {
             switch parsed {
             case .zip:
                 return .zip
-            case .address:
+            case .address, .generalLocation:
                 return .fullAddress
             case .invalid:
                 let digitsOnly = String(trimmed.filter(\.isNumber))
@@ -690,6 +777,7 @@ final class MyRepsViewModel: ObservableObject {
         geocoder.cancelGeocode()
 
         isLoading = true
+        isGeneralLocationSearchResult = false
         errorMessage = nil
         zipMapLookupState = .geocoding
 
@@ -735,6 +823,10 @@ final class MyRepsViewModel: ObservableObject {
         guard token == lookupToken else { return }
 
         let parsed = RepsLookupInputParser.parse(userInput)
+        let isGeneralLocationLookup: Bool = {
+            if case .generalLocation = parsed { return true }
+            return false
+        }()
 
         let normalizedZIP = USZipInputValidator.normalizedPrimaryZIP(from: placemark.postalCode ?? "")
             ?? {
@@ -742,10 +834,25 @@ final class MyRepsViewModel: ObservableObject {
                 return nil
             }()
 
-        guard let lookupZIP = normalizedZIP else {
+        let normalizedStateCode = normalizedUSStateCode(from: placemark.administrativeArea)
+            ?? normalizedUSStateCode(from: placemark.postalAddress?.state)
+            ?? normalizedZIP.flatMap { registry.resolvedStateCode(for: $0) }
+
+        let lookupZIP: String?
+        if let normalizedZIP {
+            lookupZIP = normalizedZIP
+        } else if isGeneralLocationLookup, let normalizedStateCode {
+            lookupZIP = registry.representativeZIP(for: normalizedStateCode)
+        } else {
+            lookupZIP = nil
+        }
+
+        guard let lookupZIP else {
             isLoading = false
             zipMapLookupState = .error
-            errorMessage = RepsLocationResolverError.missingPostalCode.errorDescription
+            errorMessage = isGeneralLocationLookup
+                ? "We couldn't determine a U.S. state from that location."
+                : RepsLocationResolverError.missingPostalCode.errorDescription
             clearReps()
             return
         }
@@ -787,15 +894,24 @@ final class MyRepsViewModel: ObservableObject {
         resolvedLocationSelection = selection
         saveLocationSelectionToSupabase(selection)
 
-        detectedStateCode = placemark.administrativeArea ?? registry.resolvedStateCode(for: lookupZIP)
-        performLookup(zip: lookupZIP, coordinate: repsCoordinate, locality: locality, token: token)
+        detectedStateCode = normalizedStateCode ?? registry.resolvedStateCode(for: lookupZIP)
+        performLookup(
+            zip: lookupZIP,
+            coordinate: repsCoordinate,
+            locality: locality,
+            scope: isGeneralLocationLookup ? .stateLevelOnly : .allReps,
+            token: token
+        )
+        isGeneralLocationSearchResult = isGeneralLocationLookup
 
         let resolvedLogLine = normalizedAddress.isEmpty ? userInput : normalizedAddress
         print("✅ Address search resolved: \(resolvedLogLine)")
-        scheduleElectionRemindersAfterAddressResolution(
-            zip: lookupZIP,
-            stateCode: detectedStateCode
-        )
+        if !isGeneralLocationLookup {
+            scheduleElectionRemindersAfterAddressResolution(
+                zip: lookupZIP,
+                stateCode: detectedStateCode
+            )
+        }
     }
 
     private func scheduleElectionRemindersAfterAddressResolution(zip: String, stateCode: String?) {
@@ -971,17 +1087,40 @@ final class MyRepsViewModel: ObservableObject {
         return Self.fallbackPresidentialPrimaryISO
     }
 
-    private func performLookup(zip: String, coordinate: RepsGeoCoordinate?, locality: String?, token: UUID) {
+    private func performLookup(
+        zip: String,
+        coordinate: RepsGeoCoordinate?,
+        locality: String?,
+        scope: RepsLookupResultScope,
+        token: UUID
+    ) {
         guard token == lookupToken else { return }
 
         do {
             let result = try registry.lookup(zip: zip, coordinate: coordinate, locality: locality)
-            executiveReps = applyLevel(.federal, to: result.executive)
-            federalReps = applyLevel(.federal, to: result.federal)
-            stateReps = applyLevel(.state, to: result.state)
-            cityReps = applyLevel(.local, to: result.city)
+
+            switch scope {
+            case .allReps:
+                executiveReps = applyLevel(.federal, to: result.executive)
+                federalReps = applyLevel(.federal, to: result.federal)
+                stateReps = applyLevel(.state, to: result.state)
+                cityReps = applyLevel(.local, to: result.city)
+                isGeneralLocationSearchResult = false
+            case .stateLevelOnly:
+                executiveReps = applyLevel(.federal, to: result.executive)
+                federalReps = applyLevel(.federal, to: result.federal).filter(isStatewideFederalOfficial)
+                stateReps = applyLevel(.state, to: result.state).filter(isStatewideStateOfficial)
+                cityReps = []
+                isGeneralLocationSearchResult = true
+            }
+
             if zipMapLookupState != .outsideUSBlocked {
                 zipMapLookupState = .resolvedUSCoordinate
+            }
+
+            if scope == .stateLevelOnly {
+                isLoading = false
+                return
             }
 
             guard let coordinate else {
@@ -1023,29 +1162,137 @@ final class MyRepsViewModel: ObservableObject {
         }
     }
 
+    private func isStatewideFederalOfficial(_ official: Official) -> Bool {
+        let division = (official.divisionId ?? "").lowercased()
+        guard division.contains("/state:") else { return false }
+        if !division.contains("/cd:") { return true }
+
+        guard let stateCode = stateCodeFromDivisionID(division),
+              usTerritoryCodes.contains(stateCode) else {
+            return false
+        }
+
+        return division.contains("/cd:at_large")
+            || division.contains("/cd:delegate")
+            || division.contains("/cd:resident_commissioner")
+    }
+
+    private func isStatewideStateOfficial(_ official: Official) -> Bool {
+        let division = (official.divisionId ?? "").lowercased()
+        guard division.contains("/state:") else { return false }
+        return !division.contains("/sldu:") && !division.contains("/sldl:")
+    }
+
+    private func stateCodeFromDivisionID(_ divisionID: String) -> String? {
+        guard let stateRange = divisionID.range(of: "/state:") else {
+            return nil
+        }
+        let suffix = divisionID[stateRange.upperBound...]
+        let code = suffix.prefix { $0.isLetter }
+        guard code.count == 2 else { return nil }
+        return String(code).uppercased()
+    }
+
     private func dedupedOfficials(_ officials: [Official]) -> [Official] {
-        var seen = Set<String>()
+        var indicesByKey: [String: Int] = [:]
         var unique: [Official] = []
 
         for official in officials {
-            let key: String
-            if let url = official.url?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
-               !url.isEmpty {
-                var normalizedURL = url
-                while normalizedURL.hasSuffix("/") {
-                    normalizedURL.removeLast()
-                }
-                key = "url:\(normalizedURL)"
-            } else {
-                key = "\(official.name.lowercased())|\(official.divisionId?.lowercased() ?? "")"
-            }
+            let keys = dedupeKeys(for: official)
+            if let existingIndex = keys.compactMap({ indicesByKey[$0] }).first {
+                let merged = mergedOfficial(preferred: unique[existingIndex], fallback: official)
+                unique[existingIndex] = merged
 
-            guard !seen.contains(key) else { continue }
-            seen.insert(key)
-            unique.append(official)
+                for key in Set(keys + dedupeKeys(for: merged)) {
+                    indicesByKey[key] = existingIndex
+                }
+            } else {
+                let index = unique.count
+                unique.append(official)
+                for key in Set(keys) {
+                    indicesByKey[key] = index
+                }
+            }
         }
 
         return unique
+    }
+
+    private func dedupeKeys(for official: Official) -> [String] {
+        var keys: [String] = []
+        let normalizedName = normalizedDedupeText(official.name)
+        let normalizedDivision = normalizedDedupeText(official.divisionId)
+
+        if !normalizedName.isEmpty && !normalizedDivision.isEmpty {
+            keys.append("name+division|\(normalizedName)|\(normalizedDivision)")
+        }
+
+        if !normalizedDivision.isEmpty && (
+            normalizedDivision.contains("/sldu:")
+            || normalizedDivision.contains("/sldl:")
+            || normalizedDivision.contains("/cd:")
+        ) {
+            keys.append("seat|\(normalizedDivision)")
+        }
+
+        if let normalizedURL = normalizedDedupeURL(official.url) {
+            keys.append("url|\(normalizedURL)")
+        }
+        if let normalizedWebsite = normalizedDedupeURL(official.websiteURL) {
+            keys.append("website|\(normalizedWebsite)")
+        }
+        if let normalizedContact = normalizedDedupeURL(official.contactFormURL) {
+            keys.append("contact|\(normalizedContact)")
+        }
+
+        if keys.isEmpty && !normalizedName.isEmpty {
+            keys.append("name|\(normalizedName)")
+        }
+
+        return keys
+    }
+
+    private func mergedOfficial(preferred: Official, fallback: Official) -> Official {
+        Official(
+            id: preferred.id,
+            name: preferred.name,
+            divisionId: preferred.divisionId ?? fallback.divisionId,
+            party: preferred.party ?? fallback.party,
+            officeTitle: preferred.officeTitle ?? fallback.officeTitle,
+            photoURL: preferred.photoURL ?? fallback.photoURL,
+            url: preferred.url ?? fallback.url,
+            officialPhone: preferred.officialPhone ?? fallback.officialPhone,
+            websiteURL: preferred.websiteURL ?? fallback.websiteURL,
+            contactFormURL: preferred.contactFormURL ?? fallback.contactFormURL,
+            committeeAssignments: preferred.committeeAssignments.isEmpty
+                ? fallback.committeeAssignments
+                : preferred.committeeAssignments,
+            level: preferred.level ?? fallback.level
+        )
+    }
+
+    private func normalizedDedupeText(_ raw: String?) -> String {
+        (raw ?? "")
+            .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+            .lowercased()
+            .replacingOccurrences(of: #"[^\p{L}\p{N}]+"#, with: " ", options: .regularExpression)
+            .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func normalizedDedupeURL(_ raw: String?) -> String? {
+        guard var normalized = raw?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased(),
+            !normalized.isEmpty else {
+            return nil
+        }
+
+        while normalized.hasSuffix("/") {
+            normalized.removeLast()
+        }
+
+        return normalized
     }
 
     private func applyLevel(_ level: OfficialLevel, to officials: [Official]) -> [Official] {
@@ -1090,6 +1337,20 @@ final class MyRepsViewModel: ObservableObject {
         guard !hintedPlacemarks.isEmpty else { throw RepsLocationResolverError.notFound }
 
         if let best = bestUSPlacemark(from: hintedPlacemarks, zip: nil) {
+            return best
+        }
+
+        throw RepsLocationResolverError.outsideUS
+    }
+
+    private func resolvePlacemarkForGeneralLocation(_ location: String) async throws -> CLPlacemark {
+        let query = addUSHintIfNeeded(to: location)
+        let placemarks = try await geocoder.geocodeAddressString(query)
+        guard !placemarks.isEmpty else {
+            throw RepsLocationResolverError.notFound
+        }
+
+        if let best = bestUSPlacemark(from: placemarks, zip: nil) {
             return best
         }
 
@@ -1160,6 +1421,7 @@ final class MyRepsViewModel: ObservableObject {
     }
 
     private func clearReps() {
+        isGeneralLocationSearchResult = false
         executiveReps = []
         federalReps = []
         stateReps = []

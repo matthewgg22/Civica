@@ -31,6 +31,7 @@ struct ElectionTimelineView: View {
     @State private var showingFeedbackComposer = false
     @State private var feedbackPrefillMessage = ""
     @State private var expandedCardIDs: Set<String> = []
+    @State private var showingMapvNotificationPrompt = false
 
     private let stateResolver = USZipStateResolver()
 
@@ -116,7 +117,7 @@ struct ElectionTimelineView: View {
                     }
                 }
             ),
-            titleVisibility: .visible
+            titleVisibility: .hidden
         ) {
             Button(l("app.timeline.action.dialog.share", "Share with friend")) {
                 if let election = pendingFlagElection {
@@ -130,11 +131,19 @@ struct ElectionTimelineView: View {
                 }
                 pendingFlagElection = nil
             }
-            Button(l("app.timeline.action.dialog.cancel", "Cancel"), role: .cancel) {
-                pendingFlagElection = nil
-            }
+        }
+        .alert(
+            l("app.timeline.mapv.notifications.title", "Turn On Notifications"),
+            isPresented: $showingMapvNotificationPrompt
+        ) {
+            Button(l("app.timeline.mapv.notifications.ok", "OK"), role: .cancel) {}
         } message: {
-            Text(l("app.timeline.action.dialog.message", "Share this election listing or report a problem."))
+            Text(
+                l(
+                    "app.timeline.mapv.notifications.message",
+                    "Turn on notifications to ensure you don't miss your next chance to vote."
+                )
+            )
         }
         .onAppear {
             loadElectionsIfNeeded()
@@ -263,14 +272,19 @@ struct ElectionTimelineView: View {
             }
 
             if index == 0 {
-                Button(action: { planElection = election }) {
+                Button {
+                    if mapvStatus.isEnabled {
+                        planElection = election
+                    } else {
+                        showingMapvNotificationPrompt = true
+                    }
+                } label: {
                     Text(mapvButtonTitle(for: mapvStatus))
                         .font(.subheadline.weight(.semibold))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
                 }
                 .buttonStyle(.plain)
-                .disabled(!mapvStatus.isEnabled)
                 .foregroundColor(mapvStatus.isEnabled ? .white : VoteNowColors.primaryText.opacity(0.75))
                 .background(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
@@ -540,7 +554,7 @@ struct ElectionTimelineView: View {
     }
 
     private func shareElectionCard(for election: Election) {
-        let shareSize = CGSize(width: 1080, height: 1350)
+        let shareSize = CGSize(width: 1080, height: 900)
         let shareCard = ElectionTimelineShareCard(
             electionTitle: headerTitle(for: election),
             stateName: stateName(for: election),
@@ -815,13 +829,255 @@ struct ElectionTimelineView: View {
             )
         }
 
+        appendSupplementalGubernatorialElections(to: &elections)
+        appendSupplementalTerritorialElections(to: &elections)
+
         return elections
+    }
+
+    private struct SupplementalGubernatorialElection {
+        let stateName: String
+        let stateCode: String
+        let electionName: String
+        let subtitle: String
+        let electionDateISO: String
+        let electionType: String
+    }
+
+    private static func appendSupplementalGubernatorialElections(to elections: inout [Election]) {
+        let supplemental: [SupplementalGubernatorialElection] = [
+            SupplementalGubernatorialElection(
+                stateName: "Kentucky",
+                stateCode: "KY",
+                electionName: "Kentucky 2027 Gubernatorial",
+                subtitle: "Primary Election",
+                electionDateISO: "2027-05-18",
+                electionType: "PRIMARY"
+            ),
+            SupplementalGubernatorialElection(
+                stateName: "Kentucky",
+                stateCode: "KY",
+                electionName: "Kentucky 2027 Gubernatorial",
+                subtitle: "General Election",
+                electionDateISO: "2027-11-02",
+                electionType: "GENERAL"
+            ),
+            SupplementalGubernatorialElection(
+                stateName: "Louisiana",
+                stateCode: "LA",
+                electionName: "Louisiana 2027 Gubernatorial",
+                subtitle: "Primary Election",
+                electionDateISO: "2027-10-09",
+                electionType: "PRIMARY"
+            ),
+            SupplementalGubernatorialElection(
+                stateName: "Louisiana",
+                stateCode: "LA",
+                electionName: "Louisiana 2027 Gubernatorial",
+                subtitle: "General / Runoff Election",
+                electionDateISO: "2027-11-13",
+                electionType: "GENERAL_RUNOFF"
+            ),
+            SupplementalGubernatorialElection(
+                stateName: "Mississippi",
+                stateCode: "MS",
+                electionName: "Mississippi 2027 Gubernatorial",
+                subtitle: "Primary Election",
+                electionDateISO: "2027-08-03",
+                electionType: "PRIMARY"
+            ),
+            SupplementalGubernatorialElection(
+                stateName: "Mississippi",
+                stateCode: "MS",
+                electionName: "Mississippi 2027 Gubernatorial",
+                subtitle: "General Election",
+                electionDateISO: "2027-11-02",
+                electionType: "GENERAL"
+            )
+        ]
+
+        for item in supplemental {
+            guard let electionDate = isoDate(from: item.electionDateISO) else { continue }
+
+            elections.append(
+                Election(
+                    name: item.electionName,
+                    subtitle: item.subtitle,
+                    registrationDeadline: electionDate,
+                    startDate: electionDate,
+                    electionDay: electionDate,
+                    earlyVotingText: supplementalGubernatorialInfoText,
+                    registrationNotes: supplementalGubernatorialNote,
+                    jurisdictionLevel: "statewide",
+                    jurisdictionName: item.stateName,
+                    visibility: "public",
+                    flags: [
+                        "STATE_CODE:\(item.stateCode)",
+                        "ELECTION_TYPE:\(item.electionType)",
+                        "REGISTRATION_DEADLINE_TEXT:\(supplementalGubernatorialInfoText)"
+                    ],
+                    matchConfidence: nil,
+                    sourceUrl: nil
+                )
+            )
+        }
+    }
+
+    private struct SupplementalTerritorialElection {
+        let stateName: String
+        let stateCode: String
+        let electionName: String
+        let subtitle: String
+        let electionDateISO: String
+        let electionType: String
+    }
+
+    private static func appendSupplementalTerritorialElections(to elections: inout [Election]) {
+        let supplemental: [SupplementalTerritorialElection] = [
+            SupplementalTerritorialElection(
+                stateName: "Guam",
+                stateCode: "GU",
+                electionName: "Guam 2026 Territorial",
+                subtitle: "Primary Election",
+                electionDateISO: "2026-08-01",
+                electionType: "PRIMARY"
+            ),
+            SupplementalTerritorialElection(
+                stateName: "Guam",
+                stateCode: "GU",
+                electionName: "Guam 2026 Territorial",
+                subtitle: "General Election",
+                electionDateISO: "2026-11-03",
+                electionType: "GENERAL"
+            ),
+            SupplementalTerritorialElection(
+                stateName: "Guam",
+                stateCode: "GU",
+                electionName: "Guam 2028 Territorial",
+                subtitle: "Primary Election",
+                electionDateISO: "2028-08-05",
+                electionType: "PRIMARY"
+            ),
+            SupplementalTerritorialElection(
+                stateName: "Guam",
+                stateCode: "GU",
+                electionName: "Guam 2028 Territorial",
+                subtitle: "General Election",
+                electionDateISO: "2028-11-07",
+                electionType: "GENERAL"
+            ),
+            SupplementalTerritorialElection(
+                stateName: "Puerto Rico",
+                stateCode: "PR",
+                electionName: "Puerto Rico 2028 Territorial",
+                subtitle: "Primary Election",
+                electionDateISO: "2028-06-04",
+                electionType: "PRIMARY"
+            ),
+            SupplementalTerritorialElection(
+                stateName: "Puerto Rico",
+                stateCode: "PR",
+                electionName: "Puerto Rico 2028 Territorial",
+                subtitle: "General Election",
+                electionDateISO: "2028-11-07",
+                electionType: "GENERAL"
+            ),
+            SupplementalTerritorialElection(
+                stateName: "U.S. Virgin Islands",
+                stateCode: "VI",
+                electionName: "U.S. Virgin Islands 2026 Territorial",
+                subtitle: "General Election",
+                electionDateISO: "2026-11-03",
+                electionType: "GENERAL"
+            ),
+            SupplementalTerritorialElection(
+                stateName: "U.S. Virgin Islands",
+                stateCode: "VI",
+                electionName: "U.S. Virgin Islands 2028 Territorial",
+                subtitle: "General Election",
+                electionDateISO: "2028-11-07",
+                electionType: "GENERAL"
+            ),
+            SupplementalTerritorialElection(
+                stateName: "American Samoa",
+                stateCode: "AS",
+                electionName: "American Samoa 2026 Territorial",
+                subtitle: "General Election",
+                electionDateISO: "2026-11-03",
+                electionType: "GENERAL"
+            ),
+            SupplementalTerritorialElection(
+                stateName: "American Samoa",
+                stateCode: "AS",
+                electionName: "American Samoa 2028 Territorial",
+                subtitle: "General Election",
+                electionDateISO: "2028-11-07",
+                electionType: "GENERAL"
+            ),
+            SupplementalTerritorialElection(
+                stateName: "Northern Mariana Islands",
+                stateCode: "MP",
+                electionName: "Northern Mariana Islands 2026 Territorial",
+                subtitle: "General Election",
+                electionDateISO: "2026-11-03",
+                electionType: "GENERAL"
+            ),
+            SupplementalTerritorialElection(
+                stateName: "Northern Mariana Islands",
+                stateCode: "MP",
+                electionName: "Northern Mariana Islands 2028 Territorial",
+                subtitle: "General Election",
+                electionDateISO: "2028-11-07",
+                electionType: "GENERAL"
+            )
+        ]
+
+        for item in supplemental {
+            guard let electionDate = isoDate(from: item.electionDateISO) else { continue }
+            let stateFlag = "STATE_CODE:\(item.stateCode)"
+            let typeFlag = "ELECTION_TYPE:\(item.electionType)"
+
+            let alreadyExists = elections.contains { existing in
+                existing.electionDay == electionDate
+                    && existing.flags.contains(stateFlag)
+                    && existing.flags.contains(typeFlag)
+            }
+            if alreadyExists { continue }
+
+            elections.append(
+                Election(
+                    name: item.electionName,
+                    subtitle: item.subtitle,
+                    registrationDeadline: electionDate,
+                    startDate: electionDate,
+                    electionDay: electionDate,
+                    earlyVotingText: supplementalTerritorialInfoText,
+                    registrationNotes: supplementalTerritorialNote,
+                    jurisdictionLevel: "statewide",
+                    jurisdictionName: item.stateName,
+                    visibility: "public",
+                    flags: [
+                        stateFlag,
+                        typeFlag,
+                        "REGISTRATION_DEADLINE_TEXT:\(supplementalTerritorialInfoText)"
+                    ],
+                    matchConfidence: nil,
+                    sourceUrl: nil
+                )
+            )
+        }
     }
 
     private static let presidentialProjectionNote =
         "2028 presidential dates are projected for planning and will be updated when states certify final calendars."
 
     private static let presidentialCycleTBDText = "TBD for 2028 cycle"
+    private static let supplementalGubernatorialInfoText = "Check state election office for deadlines"
+    private static let supplementalGubernatorialNote =
+        "2027 gubernatorial dates are included for planning. Verify registration and early-voting windows with your state election office."
+    private static let supplementalTerritorialInfoText = "Check territory election office for deadlines"
+    private static let supplementalTerritorialNote =
+        "Territorial election dates are included for planning. Verify registration and early-voting windows with local election officials."
     private static let fallbackPresidentialPrimaryISO = "2028-03-07"
     private static let presidentialGeneralElectionISO = "2028-11-07"
 
@@ -1065,14 +1321,12 @@ private struct ElectionTimelineShareCard: View {
                     .stroke(VoteNowColors.borderWarm, lineWidth: 2)
             )
 
-            Spacer()
-
             Text("Shared from VoteNow")
                 .font(.system(size: 30, weight: .semibold))
                 .foregroundColor(VoteNowColors.primaryCTA)
         }
         .padding(48)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
         .background(VoteNowColors.appBackground)
     }
 

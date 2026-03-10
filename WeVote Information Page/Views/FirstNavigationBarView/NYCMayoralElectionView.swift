@@ -61,7 +61,7 @@ struct NYCMayoralElectionView: View {
                                     Text(card.title)
                                         .font(.headline.weight(.bold))
                                         .italic()
-                                        .foregroundColor(VoteNowColors.primaryText)
+                                        .foregroundColor(card.accent.color)
 
                                     Text(card.body)
                                         .font(.subheadline)
@@ -107,30 +107,31 @@ struct NYCMayoralElectionView: View {
     private var introLineView: some View {
         Group {
             if let upcomingElection {
-                let electionLabel = displayElectionTitle(for: upcomingElection).lowercased()
                 let voterLabel = stateName.isEmpty ? l("app.guide.voters.label", "voters") : "\(stateName) \(l("app.guide.voters.label", "voters"))"
 
                 if Calendar.current.isDate(upcomingElection.startDate, inSameDayAs: upcomingElection.electionDay) {
                     Text(
                         lf(
-                            "app.guide.intro.same_day",
-                            "On %@, %@ are eligible to vote in the %@.",
+                            "app.guide.intro.same_day.prefix",
+                            "On %@, %@ are eligible to vote in the ",
                             formatLongDate(upcomingElection.electionDay),
-                            voterLabel,
-                            electionLabel
+                            voterLabel
                         )
                     )
+                    + styledElectionDescriptorText(for: upcomingElection)
+                    + Text(".")
                 } else {
                     Text(
                         lf(
-                            "app.guide.intro.range",
-                            "Starting %@ through %@, %@ are eligible to vote in the %@.",
+                            "app.guide.intro.range.prefix",
+                            "Starting %@ through %@, %@ are eligible to vote in the ",
                             formatLongDate(upcomingElection.startDate),
                             formatLongDate(upcomingElection.electionDay),
-                            voterLabel,
-                            electionLabel
+                            voterLabel
                         )
                     )
+                    + styledElectionDescriptorText(for: upcomingElection)
+                    + Text(".")
                 }
             } else {
                 Text(l("app.guide.error.enter_valid", "Enter a valid state or ZIP to load your upcoming election guide."))
@@ -138,6 +139,44 @@ struct NYCMayoralElectionView: View {
         }
         .font(.body)
         .foregroundColor(VoteNowColors.primaryText)
+    }
+
+    private func styledElectionDescriptorText(for election: Election) -> Text {
+        let descriptor = displayElectionTitle(for: election)
+        let tokens = descriptor.split(separator: " ", omittingEmptySubsequences: true)
+        guard !tokens.isEmpty else { return Text(descriptor) }
+
+        return tokens.enumerated().reduce(Text("")) { partial, part in
+            let token = String(part.element)
+            let accent = accentForDescriptorToken(token)
+
+            var piece = Text(token)
+            if let accent {
+                piece = piece
+                    .foregroundColor(accent.color)
+                    .bold()
+                    .italic()
+            }
+
+            if part.offset > 0 {
+                piece = Text(" ") + piece
+            }
+
+            return partial + piece
+        }
+    }
+
+    private func accentForDescriptorToken(_ token: String) -> ElectionGuideCardAccent? {
+        let normalized = token
+            .lowercased()
+            .trimmingCharacters(in: .punctuationCharacters)
+
+        if normalized.contains("midterm") { return .midterm }
+        if normalized.contains("primary") { return .primary }
+        if normalized.contains("general") { return .general }
+        if normalized.contains("runoff") { return .runoff }
+        if normalized.contains("presidential") { return .presidential }
+        return nil
     }
 
     private func refreshGuide() {
@@ -341,14 +380,21 @@ struct NYCMayoralElectionView: View {
 
     private func buildGuideCards(for election: Election, stateCode: String) -> [ElectionGuideInfoCard] {
         let phase = phaseForElection(election)
+        let overviewCards = electionTypeOverviewCards(for: election)
         var cards: [ElectionGuideInfoCard] = []
+
+        if phase == .primary,
+           let midtermCard = overviewCards.first(where: { $0.accent == .midterm }) {
+            cards.append(midtermCard)
+        }
 
         switch phase {
         case .primary:
             cards.append(
                 ElectionGuideInfoCard(
                     title: l("app.guide.card.primary.title", "A Primary Election"),
-                    body: l("app.guide.card.primary.body", "A primary election decides which candidates advance to the general election. Rules can vary by party and office.")
+                    body: l("app.guide.card.primary.body", "A primary election decides which candidates advance to the general election. Rules can vary by party and office."),
+                    accent: .primary
                 )
             )
 
@@ -356,14 +402,16 @@ struct NYCMayoralElectionView: View {
                 cards.append(
                     ElectionGuideInfoCard(
                         title: l("app.guide.card.jungle.title", "Jungle Primary"),
-                        body: l("app.guide.card.jungle.body", "California uses a top-two primary for many offices: all candidates appear on one ballot, and the top two finishers advance to the general election regardless of party.")
+                        body: l("app.guide.card.jungle.body", "California uses a top-two primary for many offices: all candidates appear on one ballot, and the top two finishers advance to the general election regardless of party."),
+                        accent: .primary
                     )
                 )
             } else if stateCode == "WA" {
                 cards.append(
                     ElectionGuideInfoCard(
                         title: l("app.guide.card.top_two.title", "Top-Two Primary"),
-                        body: l("app.guide.card.top_two.body", "Washington uses a top-two style primary for many races, where all voters can choose from all candidates and the top two advance.")
+                        body: l("app.guide.card.top_two.body", "Washington uses a top-two style primary for many races, where all voters can choose from all candidates and the top two advance."),
+                        accent: .primary
                     )
                 )
             }
@@ -381,7 +429,8 @@ struct NYCMayoralElectionView: View {
             cards.append(
                 ElectionGuideInfoCard(
                     title: l("app.guide.card.runoff.title", "Primary Runoff"),
-                    body: l("app.guide.card.runoff.body", "A runoff election happens when no candidate reaches the required threshold in the first primary round.")
+                    body: l("app.guide.card.runoff.body", "A runoff election happens when no candidate reaches the required threshold in the first primary round."),
+                    accent: .runoff
                 )
             )
 
@@ -389,7 +438,8 @@ struct NYCMayoralElectionView: View {
             cards.append(
                 ElectionGuideInfoCard(
                     title: l("app.guide.card.general.title", "General Election"),
-                    body: l("app.guide.card.general.body", "The general election determines who takes office from the candidates who qualified in earlier rounds.")
+                    body: l("app.guide.card.general.body", "The general election determines who takes office from the candidates who qualified in earlier rounds."),
+                    accent: .general
                 )
             )
 
@@ -397,7 +447,8 @@ struct NYCMayoralElectionView: View {
                 cards.append(
                     ElectionGuideInfoCard(
                         title: l("app.guide.card.ranked_choice.title", "Ranked Choice"),
-                        body: l("app.guide.card.ranked_choice.body", "Ranked-choice voting can apply in covered contests. You can rank candidates in order of preference where allowed.")
+                        body: l("app.guide.card.ranked_choice.body", "Ranked-choice voting can apply in covered contests. You can rank candidates in order of preference where allowed."),
+                        accent: .general
                     )
                 )
             }
@@ -406,7 +457,8 @@ struct NYCMayoralElectionView: View {
             cards.append(
                 ElectionGuideInfoCard(
                     title: l("app.guide.card.special.title", "Special Election"),
-                    body: l("app.guide.card.special.body", "Special elections fill vacancies or decide urgent ballot questions outside the normal election calendar.")
+                    body: l("app.guide.card.special.body", "Special elections fill vacancies or decide urgent ballot questions outside the normal election calendar."),
+                    accent: .special
                 )
             )
 
@@ -419,7 +471,21 @@ struct NYCMayoralElectionView: View {
             )
         }
 
-        cards.append(contentsOf: electionTypeOverviewCards(for: election))
+        if phase == .primary {
+            cards.append(contentsOf: overviewCards.filter { $0.accent != .midterm })
+        } else {
+            cards.append(contentsOf: overviewCards)
+        }
+
+        cards.append(
+            ElectionGuideInfoCard(
+                title: l("app.guide.card.voting_methods.title", "Three Ways You Can Vote"),
+                body: l(
+                    "app.guide.card.voting_methods.body",
+                    "Early Vote: Vote in person before Election Day during your state's early voting window. By Mail: Request and return your mail ballot by your state's deadlines. Election Day: Vote in person at your assigned polling place on Election Day."
+                )
+            )
+        )
         return cards
     }
 
@@ -432,7 +498,8 @@ struct NYCMayoralElectionView: View {
             return [
                 ElectionGuideInfoCard(
                     title: l("app.guide.card.presidential.title", "Presidential Elections"),
-                    body: l("app.guide.card.presidential.body", "What is on the ballot: president/vice president, all U.S. House seats, some U.S. Senate seats, and state and local offices or ballot measures where scheduled.")
+                    body: l("app.guide.card.presidential.body", "What is on the ballot: president/vice president, all U.S. House seats, some U.S. Senate seats, and state and local offices or ballot measures where scheduled."),
+                    accent: .presidential
                 )
             ]
         }
@@ -441,7 +508,8 @@ struct NYCMayoralElectionView: View {
             return [
                 ElectionGuideInfoCard(
                     title: l("app.guide.card.midterm.title", "Midterm Elections"),
-                    body: l("app.guide.card.midterm.body", "What is on the ballot: all U.S. House seats, some U.S. Senate seats, many governor and state legislature races, and statewide/local ballot measures.")
+                    body: l("app.guide.card.midterm.body", "What is on the ballot: all U.S. House seats, some U.S. Senate seats, many governor and state legislature races, and statewide/local ballot measures."),
+                    accent: .midterm
                 )
             ]
         }
@@ -572,6 +640,42 @@ private struct ElectionGuideInfoCard: Identifiable {
     let id = UUID()
     let title: String
     let body: String
+    let accent: ElectionGuideCardAccent
+
+    init(title: String, body: String, accent: ElectionGuideCardAccent = .neutral) {
+        self.title = title
+        self.body = body
+        self.accent = accent
+    }
+}
+
+private enum ElectionGuideCardAccent {
+    case neutral
+    case primary
+    case midterm
+    case general
+    case runoff
+    case presidential
+    case special
+
+    var color: Color {
+        switch self {
+        case .neutral:
+            return VoteNowColors.primaryText
+        case .primary:
+            return VoteNowColors.richBlue
+        case .midterm:
+            return VoteNowColors.warningAmber
+        case .general:
+            return VoteNowColors.successGreen
+        case .runoff:
+            return VoteNowColors.richRed
+        case .presidential:
+            return VoteNowColors.primaryCTA
+        case .special:
+            return VoteNowColors.richRed
+        }
+    }
 }
 
 struct NYCMayoralElectionView_Previews: PreviewProvider {

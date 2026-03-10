@@ -4,10 +4,10 @@ struct WhyVoteView: View {
     @EnvironmentObject private var planVM: PlanViewModel
     @EnvironmentObject private var repsVM: MyRepsViewModel
     @Environment(\.locale) private var locale
+    @Environment(\.openURL) private var openURL
     @StateObject private var dataStore = WhyVoteDataStore()
 
     @State private var visibleFacts: [String] = []
-    @State private var showPlanToVote = false
 
     private let zipStateResolver = USZipStateResolver()
 
@@ -147,10 +147,6 @@ struct WhyVoteView: View {
         }
         .onChange(of: locale.identifier) { _, _ in
             reseedFactsForActiveLocale()
-        }
-        .sheet(isPresented: $showPlanToVote) {
-            MultiStepFormView()
-                .environmentObject(planVM)
         }
     }
 
@@ -296,7 +292,8 @@ struct WhyVoteView: View {
     private var bottomCTA: some View {
         VStack(spacing: 8) {
             Button {
-                showPlanToVote = true
+                guard let mapvURL = URL(string: "votenow://mapv") else { return }
+                openURL(mapvURL)
             } label: {
                 Text(l("app.why_vote.action.make_plan", "Make My Plan to Vote"))
                     .font(.headline)

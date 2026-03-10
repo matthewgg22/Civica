@@ -24,7 +24,6 @@ struct IssueCallCenterView: View {
     @State private var mapcSessionLoggedBriefIDs: Set<String> = []
     @State private var mapcBriefsSignature: String = ""
     @State private var animatedTotalVoteNowCalls: Int?
-    @State private var animatedMonthlyVoteNowCalls: Int?
     @State private var animatedUserCallCount: Int?
     @State private var animatedMapcCallGain: Int = 0
     @State private var showMapcCallGainBadge = false
@@ -319,11 +318,6 @@ struct IssueCallCenterView: View {
                 animatedTotalVoteNowCalls = nil
             }
         }
-        .onChange(of: viewModel.callStats.monthlyVoteNowCalls) { _, newValue in
-            if let animated = animatedMonthlyVoteNowCalls, newValue >= animated {
-                animatedMonthlyVoteNowCalls = nil
-            }
-        }
         .onChange(of: viewModel.callStats.userCallCount) { _, newValue in
             if let animated = animatedUserCallCount, newValue >= animated {
                 animatedUserCallCount = nil
@@ -539,7 +533,7 @@ struct IssueCallCenterView: View {
                 if viewModel.concernText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     Text(l(
                         "app.issue_call.concern.subheader",
-                        "Enter your issue below to generate a personalized script for each of your reps."
+                        "Write what issue you want to inform Congress and we will generate a script!"
                     ))
                         .foregroundColor(VoteNowColors.mutedText.opacity(0.64))
                         .font(.subheadline)
@@ -971,7 +965,7 @@ struct IssueCallCenterView: View {
             .frame(maxWidth: .infinity)
             .background(
                 canAdvance
-                ? (isLastBrief ? VoteNowColors.successGreen : VoteNowColors.primaryCTA)
+                ? VoteNowColors.warningAmber
                 : VoteNowColors.mutedText.opacity(0.45)
             )
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
@@ -1045,14 +1039,38 @@ struct IssueCallCenterView: View {
 
                 ForEach(filteredExamples) { example in
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(example.title)
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 8)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(exampleCategoryColor(for: example.category ?? "All"))
-                            .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                                Text(example.title)
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .lineLimit(2)
+                                    .fixedSize(horizontal: false, vertical: true)
+
+                                Spacer(minLength: 6)
+                            }
+
+                            HStack(spacing: 6) {
+                                Spacer(minLength: 0)
+                                Text("UPDATED: \(premadeUpdatedDate(for: example))")
+                                    .font(.caption2.weight(.bold))
+                                    .foregroundColor(.white.opacity(0.96))
+                                    .lineLimit(1)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(exampleCategoryColor(for: example.category ?? "All"))
+                                    .clipShape(Capsule())
+                                    .overlay(
+                                        Capsule()
+                                            .stroke(Color.white.opacity(0.72), lineWidth: 1)
+                                    )
+                            }
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(exampleCategoryColor(for: example.category ?? "All"))
+                        .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
 
                         HStack(spacing: 8) {
                             if let category = example.category, !category.isEmpty {
@@ -1084,8 +1102,10 @@ struct IssueCallCenterView: View {
                             .foregroundColor(VoteNowColors.primaryText)
                             .fixedSize(horizontal: false, vertical: true)
 
+                        let committeeJurisdictionItems = premadeCommitteeJurisdictionItems(from: example.repRelevance)
+
                         chipRow(title: l("app.issue_call.examples.bills", "Related bill(s)"), items: example.relatedBills)
-                        chipRow(title: l("app.issue_call.examples.relevance", "Why your reps are relevant"), items: example.repRelevance)
+                        chipRow(title: l("app.issue_call.examples.relevance", "Why your reps are relevant"), items: committeeJurisdictionItems)
                         chipRow(title: l("app.issue_call.examples.template_asks", "Template asks"), items: example.templateAsks.map(\.title))
 
                         exampleScriptBlock(
@@ -1144,7 +1164,6 @@ struct IssueCallCenterView: View {
     private var civicScoreSummaryCard: some View {
         let stats = viewModel.callStats
         let displayedTotalCalls = max(stats.totalVoteNowCalls, animatedTotalVoteNowCalls ?? 0)
-        let displayedMonthlyCalls = max(stats.monthlyVoteNowCalls, animatedMonthlyVoteNowCalls ?? 0)
         let displayedUserCalls = max(stats.userCallCount, animatedUserCallCount ?? 0)
 
         return VStack(alignment: .center, spacing: 12) {
@@ -1177,10 +1196,6 @@ struct IssueCallCenterView: View {
             Divider()
 
             VStack(alignment: .leading, spacing: 10) {
-                scoreStatLine(
-                    label: l("app.issue_call.score.stats.monthly_calls", "Monthly number of calls"),
-                    value: displayedMonthlyCalls
-                )
                 scoreStatLine(
                     label: l("app.issue_call.score.stats.user_calls", "Your number of calls"),
                     value: displayedUserCalls
@@ -1278,7 +1293,7 @@ struct IssueCallCenterView: View {
             } else {
                 ForEach(trackerGroups.prefix(4)) { group in
                     let outcomeRows = trackerOutcomeRows(for: group)
-                    let totalReps = max(1, viewModel.repTargets.count)
+                    let appWideCompletedCalls = trackerAppWideCompletedCalls(for: group)
                     let displayIssueTitle = trackerDisplayIssueTitle(for: group)
 
                     VStack(alignment: .leading, spacing: 8) {
@@ -1298,10 +1313,12 @@ struct IssueCallCenterView: View {
 
                             Spacer(minLength: 0)
 
-                            Text("\(outcomeRows.count) of \(totalReps) reps")
+                            Text(trackerProgressSummaryText(completedCalls: appWideCompletedCalls))
                                 .font(.caption2.weight(.semibold))
                                 .foregroundColor(VoteNowColors.mutedText)
                         }
+
+                        trackerIssueProgressBar(completedCalls: appWideCompletedCalls)
 
                         if !outcomeRows.isEmpty {
                             VStack(alignment: .leading, spacing: 4) {
@@ -1432,6 +1449,50 @@ struct IssueCallCenterView: View {
 
         return Array(orderedRows.prefix(3))
     }
+
+    private func trackerIssueProgressBar(completedCalls: Int) -> some View {
+        let safeGoal = max(1, trackerProgressGoalCalls)
+        let safeCompleted = max(0, completedCalls)
+        let progress = min(Double(safeCompleted) / Double(safeGoal), 1)
+
+        return GeometryReader { geometry in
+            let filledWidth = geometry.size.width * progress
+
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(VoteNowColors.infoSurfaceBlue)
+
+                Capsule()
+                    .fill(VoteNowColors.primaryCTA)
+                    .frame(width: filledWidth)
+            }
+            .overlay(
+                Capsule()
+                    .stroke(VoteNowColors.borderWarm.opacity(0.5), lineWidth: 0.7)
+            )
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 10)
+        .accessibilityLabel("Issue call progress \(min(safeCompleted, safeGoal)) of \(safeGoal)")
+    }
+
+    private func trackerAppWideCompletedCalls(for _: TrackerIssueGroup) -> Int {
+        viewModel.callStats.totalVoteNowCalls
+    }
+
+    private func trackerProgressSummaryText(completedCalls: Int) -> String {
+        let safeGoal = max(1, trackerProgressGoalCalls)
+        let safeCompleted = max(0, completedCalls)
+        let completedText: String
+        if safeCompleted >= safeGoal {
+            completedText = "\(safeGoal.formatted(.number))+"
+        } else {
+            completedText = safeCompleted.formatted(.number)
+        }
+        return "\(completedText) / \(safeGoal.formatted(.number)) calls"
+    }
+
+    private var trackerProgressGoalCalls: Int { 1_000 }
 
     private func trackerIssueKey(for group: CivicHistoryGroup) -> String {
         let normalizedIssueID = group.issueID.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -1804,10 +1865,10 @@ struct IssueCallCenterView: View {
                 if isVoicemailLocked {
                     Text("Log Outcome: Voicemail")
                         .font(.caption.weight(.semibold))
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(.white)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(VoteNowColors.infoSurfaceBlue)
+                        .background(Color.gray.opacity(0.9))
                         .clipShape(Capsule())
                 }
             }
@@ -1888,22 +1949,18 @@ struct IssueCallCenterView: View {
         guard gain > 0 else { return }
 
         let currentTotal = max(viewModel.callStats.totalVoteNowCalls, animatedTotalVoteNowCalls ?? 0)
-        let currentMonthly = max(viewModel.callStats.monthlyVoteNowCalls, animatedMonthlyVoteNowCalls ?? 0)
         let currentUser = max(viewModel.callStats.userCallCount, animatedUserCallCount ?? 0)
         let targetTotal = currentTotal + gain
-        let targetMonthly = currentMonthly + gain
         let targetUser = currentUser + gain
 
         animatedMapcCallGain = gain
         showMapcCallGainBadge = true
         animatedTotalVoteNowCalls = currentTotal
-        animatedMonthlyVoteNowCalls = currentMonthly
         animatedUserCallCount = currentUser
 
         Task { @MainActor in
             if reduceMotion {
                 animatedTotalVoteNowCalls = targetTotal
-                animatedMonthlyVoteNowCalls = targetMonthly
                 animatedUserCallCount = targetUser
             } else {
                 let steps = max(6, gain * 4)
@@ -1911,20 +1968,24 @@ struct IssueCallCenterView: View {
                     let progress = Double(step) / Double(steps)
                     let increment = Int(round(Double(gain) * progress))
                     animatedTotalVoteNowCalls = min(targetTotal, currentTotal + increment)
-                    animatedMonthlyVoteNowCalls = min(targetMonthly, currentMonthly + increment)
                     animatedUserCallCount = min(targetUser, currentUser + increment)
                     try? await Task.sleep(nanoseconds: 70_000_000)
                 }
             }
 
             animatedTotalVoteNowCalls = targetTotal
-            animatedMonthlyVoteNowCalls = targetMonthly
             animatedUserCallCount = targetUser
             try? await Task.sleep(nanoseconds: reduceMotion ? 900_000_000 : 1_500_000_000)
             withAnimation(.easeOut(duration: 0.2)) {
                 showMapcCallGainBadge = false
             }
             animatedMapcCallGain = 0
+        }
+    }
+
+    private func premadeCommitteeJurisdictionItems(from relevance: [String]) -> [String] {
+        relevance.filter { line in
+            line.localizedCaseInsensitiveContains("committee of jurisdiction")
         }
     }
 
@@ -1938,6 +1999,16 @@ struct IssueCallCenterView: View {
             return "Gov. Oversight"
         }
         return category
+    }
+
+    private func premadeUpdatedDate(for example: CivicExampleIssueCard) -> String {
+        let date = example.updatedAt ?? Date()
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.timeZone = TimeZone.current
+        formatter.dateFormat = "MMMM d, yyyy"
+        return formatter.string(from: date)
     }
 
     private func condensedPremadeScriptPlaceholderText(_ text: String) -> String {

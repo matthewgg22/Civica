@@ -444,7 +444,7 @@ struct WhyCallFloodOverlay: View {
                         .buttonStyle(.plain)
                         .accessibilityLabel("Close Why Call overlay")
 
-                        Text("Why Call")
+                        Text("Why Call Your Rep?")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .lineLimit(1)
@@ -530,11 +530,6 @@ struct WhyCallContent: Hashable {
                 value: "20% vs 1%",
                 title: "Personal beats copied",
                 body: "Personalized messages are much more influential than identical form messages."
-            ),
-            WhyCallStat(
-                value: "Your view gets logged",
-                title: "Your view gets logged",
-                body: "Congressional offices track which issues are most salient and where constituents stand."
             )
         ],
         reasons: [
@@ -584,15 +579,6 @@ struct WhyCallView: View {
                     }
                 }
 
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Why calling matters")
-                        .font(.headline)
-                        .foregroundStyle(.primary)
-
-                    ForEach(content.reasons) { reason in
-                        WhyCallReasonCard(reason: reason)
-                    }
-                }
             }
             .padding(.horizontal, 16)
             .padding(.top, 14)

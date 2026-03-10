@@ -12,6 +12,7 @@ actor WikipediaImageService {
 
     // Cache of query title -> resolved thumbnail URL (or nil for known miss).
     private var cache: [String: URL?] = [:]
+    private var politicalCache: [String: URL?] = [:]
     private let session: URLSession
     private let preferredThumbnailURLOverrides: [String: String] = [
         "aaron frey": "https://dems.ag/wp-content/uploads/2024/02/Website-Headshots-Frey.jpg",
@@ -167,6 +168,40 @@ actor WikipediaImageService {
         return resolved
     }
 
+    func verifiedPoliticalThumbnailURL(for displayName: String) async throws -> URL? {
+        let normalized = normalizeDisplayName(displayName)
+        let lookupKey = normalizedLookupKey(normalized)
+        if politicalCache.keys.contains(lookupKey) {
+            return politicalCache[lookupKey] ?? nil
+        }
+
+        var candidates = titleCandidates(from: normalized)
+        let searchCandidates = try await fetchSearchCandidateTitles(for: normalized)
+        for candidate in searchCandidates where !candidates.contains(candidate) {
+            candidates.append(candidate)
+        }
+
+        var resolved: URL?
+        for candidate in candidates {
+            guard let summary = try await fetchSummaryMetadata(forTitle: candidate),
+                  let candidateURL = summary.thumbnailURL else {
+                continue
+            }
+
+            if isVerifiedPoliticalCandidate(
+                title: summary.title ?? candidate,
+                description: summary.description,
+                normalizedName: lookupKey
+            ) {
+                resolved = candidateURL
+                break
+            }
+        }
+
+        politicalCache[lookupKey] = .some(resolved)
+        return resolved
+    }
+
     private func cachedEntry(for key: String) -> (isCached: Bool, url: URL?) {
         guard cache.keys.contains(key) else { return (false, nil) }
         return (true, cache[key] ?? nil)
@@ -286,6 +321,50 @@ actor WikipediaImageService {
         return score
     }
 
+    private func isVerifiedPoliticalCandidate(
+        title: String,
+        description: String?,
+        normalizedName: String
+    ) -> Bool {
+        let normalizedTitle = normalizedLookupKey(title)
+        let nameTokens = normalizedName.split(separator: " ").map(String.init)
+        let titleTokens = Set(normalizedTitle.split(separator: " ").map(String.init))
+
+        guard let lastName = nameTokens.last, titleTokens.contains(lastName) else {
+            return false
+        }
+        if let firstName = nameTokens.first {
+            let firstInitial = String(firstName.prefix(1))
+            let hasFirstMatch = titleTokens.contains(firstName) || titleTokens.contains(where: { $0.hasPrefix(firstInitial) })
+            guard hasFirstMatch else { return false }
+        }
+
+        let loweredTitle = title.lowercased()
+        if loweredTitle.contains("(politician)") {
+            return true
+        }
+
+        guard let description = description?.lowercased(), !description.isEmpty else {
+            return false
+        }
+
+        let politicalKeywords: [String] = [
+            "politician",
+            "senator",
+            "representative",
+            "governor",
+            "lieutenant governor",
+            "attorney general",
+            "legislator",
+            "assembly",
+            "state senate",
+            "member of",
+            "congress"
+        ]
+
+        return politicalKeywords.contains { description.contains($0) }
+    }
+
     private func normalizedLookupKey(_ raw: String) -> String {
         let folded = raw.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
         return folded
@@ -337,6 +416,14 @@ actor WikipediaImageService {
     }
 
     private func fetchSummaryThumbnailURL(forTitle title: String) async throws -> URL? {
+        if let metadata = try await fetchSummaryMetadata(forTitle: title),
+           let source = metadata.thumbnailURL {
+            return source
+        }
+        return nil
+    }
+
+    private func fetchSummaryMetadata(forTitle title: String) async throws -> (thumbnailURL: URL?, description: String?, title: String?)? {
         guard !title.isEmpty else { return nil }
         let safePath = title
             .replacingOccurrences(of: " ", with: "_")
@@ -357,8 +444,8 @@ actor WikipediaImageService {
         }
 
         let decoded = try JSONDecoder().decode(WikipediaSummaryResponse.self, from: data)
-        guard let source = decoded.thumbnail?.source else { return nil }
-        return URL(string: source)
+        let thumbnailURL = decoded.thumbnail?.source.flatMap { URL(string: $0) }
+        return (thumbnailURL, decoded.description, decoded.title)
     }
 }
 
@@ -391,6 +478,8 @@ private struct WikipediaSearchResponse: Decodable {
 }
 
 private struct WikipediaSummaryResponse: Decodable {
+    let title: String?
+    let description: String?
     let thumbnail: Thumbnail?
 
     struct Thumbnail: Decodable {

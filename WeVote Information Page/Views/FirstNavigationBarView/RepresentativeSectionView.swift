@@ -49,11 +49,18 @@ private struct RepHeadshotView: View {
     @State private var attemptedWikipediaLookup = false
 
     private var bundledImage: UIImage? {
-        UIImage(named: rep.assetName)
+        guard shouldUseBundledImage else { return nil }
+        return UIImage(named: rep.assetName)
     }
 
     private var providedPhotoURL: URL? {
         normalizedImageURL(rep.photoURL)
+    }
+
+    private var shouldUseBundledImage: Bool {
+        guard rep.level == .state else { return true }
+        guard let stateCode = stateCodeFromDivisionID(rep.divisionId) else { return false }
+        return stateCode == "ny"
     }
 
     var body: some View {
@@ -116,7 +123,12 @@ private struct RepHeadshotView: View {
         }
 
         do {
-            let wikipediaURL = try await WikipediaImageService.shared.thumbnailURL(for: rep.name)
+            let wikipediaURL: URL?
+            if rep.level == .state {
+                wikipediaURL = try await WikipediaImageService.shared.verifiedPoliticalThumbnailURL(for: rep.name)
+            } else {
+                wikipediaURL = try await WikipediaImageService.shared.thumbnailURL(for: rep.name)
+            }
             await MainActor.run {
                 fallbackWikipediaURL = wikipediaURL
                 if activeRemoteURL == nil {
@@ -126,6 +138,17 @@ private struct RepHeadshotView: View {
         } catch {
             return
         }
+    }
+
+    private func stateCodeFromDivisionID(_ divisionID: String?) -> String? {
+        guard let divisionID = divisionID?.lowercased(),
+              let stateRange = divisionID.range(of: "/state:") else {
+            return nil
+        }
+        let suffix = divisionID[stateRange.upperBound...]
+        let code = suffix.prefix { $0.isLetter }
+        guard code.count == 2 else { return nil }
+        return String(code)
     }
 }
 
@@ -284,7 +307,7 @@ struct RepRow: View {
             }
 
             if isContactExpanded, !contactActions.isEmpty {
-                VStack(spacing: 8) {
+                HStack(spacing: 8) {
                     ForEach(contactActions) { action in
                         Button {
                             handleActionTap(action)
@@ -293,7 +316,9 @@ struct RepRow: View {
                                 Image(systemName: action.systemImage)
                                 Text(action.title)
                             }
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.system(size: 12, weight: .semibold))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity, minHeight: 36)
                             .background(VoteNowColors.primaryCTA)
@@ -406,9 +431,11 @@ struct RepresentativeSection: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 29, height: 29)
-                .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+                .padding(5)
+                .background(VoteNowColors.primaryCTA.opacity(0.16))
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 5, style: .continuous)
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
                         .stroke(VoteNowColors.primaryCTA.opacity(0.22), lineWidth: 0.8)
                 )
         case "federal legislative":
@@ -418,15 +445,24 @@ struct RepresentativeSection: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 32, height: 32)
-                    .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+                    .padding(4)
+                    .background(VoteNowColors.primaryCTA.opacity(0.30))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 5, style: .continuous)
-                            .stroke(VoteNowColors.primaryCTA.opacity(0.22), lineWidth: 0.8)
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .stroke(VoteNowColors.primaryCTA.opacity(0.40), lineWidth: 1.3)
                     )
             } else {
                 Text("🏛️")
                     .font(.system(size: 24))
-                    .frame(width: 29, height: 29)
+                    .frame(width: 32, height: 32)
+                    .padding(4)
+                    .background(VoteNowColors.primaryCTA.opacity(0.30))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .stroke(VoteNowColors.primaryCTA.opacity(0.40), lineWidth: 1.3)
+                    )
             }
         case "state":
             if let asset = StateFlagCatalog.assetName(for: resolvedStateCode),
@@ -434,17 +470,22 @@ struct RepresentativeSection: View {
                 Image(asset)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 30, height: 23)
-                    .clipShape(RoundedRectangle(cornerRadius: 3, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 3, style: .continuous)
-                            .stroke(VoteNowColors.primaryCTA.opacity(0.22), lineWidth: 0.8)
-                    )
+                    .frame(width: 38, height: 29)
+                    .padding(3)
+                    .background(VoteNowColors.primaryCTA.opacity(0.30))
+                    .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
             } else {
                 Image(systemName: "map.fill")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(VoteNowColors.primaryCTA)
                     .frame(width: 22, height: 22)
+                    .padding(4)
+                    .background(VoteNowColors.primaryCTA.opacity(0.30))
+                    .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 4, style: .continuous)
+                            .stroke(VoteNowColors.primaryCTA.opacity(0.40), lineWidth: 1.3)
+                    )
             }
         default:
             Image(systemName: "building.2.fill")

@@ -902,12 +902,69 @@ final class IssueCallCenterViewModel: ObservableObject {
     }
 
     private func applyResolution(_ response: CivicIssueResolutionResponse) {
-        let normalized = normalizedBriefs(response.callBriefs)
-        issueTitle = response.issueTitle
-        issueSummary = response.issueSummary
-        resolvedEntities = response.resolvedEntities
+        let enriched = enrichResolutionWithFallbackBills(response)
+        let normalized = normalizedBriefs(enriched.callBriefs)
+        issueTitle = enriched.issueTitle
+        issueSummary = enriched.issueSummary
+        resolvedEntities = enriched.resolvedEntities
         callBriefs = normalized
         activeBriefID = filteredBriefs.first?.id
+    }
+
+    private func enrichResolutionWithFallbackBills(_ response: CivicIssueResolutionResponse) -> CivicIssueResolutionResponse {
+        let explicitBill = normalizedBillReference(optionalBillRef)
+        var resolvedBills = response.resolvedEntities.bills.compactMap(normalizedBillReference)
+        if let explicitBill, !containsCaseInsensitive(resolvedBills, value: explicitBill) {
+            resolvedBills.append(explicitBill)
+        }
+
+        let issueCommittees = response.resolvedEntities.committees
+        let updatedBriefs = response.callBriefs.map { brief in
+            let cleanedBriefBills = brief.relatedBills.compactMap(normalizedBillReference)
+            let inferredBill = suggestedBillReference(
+                issueTitle: response.issueTitle,
+                issueSummary: response.issueSummary,
+                issueCommittees: issueCommittees,
+                target: targetForBrief(brief)
+            )
+            let selectedBill = cleanedBriefBills.first ?? explicitBill ?? inferredBill
+            if let selectedBill, !containsCaseInsensitive(resolvedBills, value: selectedBill) {
+                resolvedBills.append(selectedBill)
+            }
+
+            let relatedBills = cleanedBriefBills.isEmpty ? (selectedBill.map { [$0] } ?? []) : cleanedBriefBills
+            let liveScript = interpolateBillPlaceholder(in: brief.liveScript, billReference: selectedBill)
+            let voicemailScript = interpolateBillPlaceholder(in: brief.voicemailScript, billReference: selectedBill)
+
+            return CivicCallBrief(
+                id: brief.id,
+                repID: brief.repID,
+                repName: brief.repName,
+                officeType: brief.officeType,
+                primaryPhoneNumber: brief.primaryPhoneNumber,
+                localOfficePhoneNumber: brief.localOfficePhoneNumber,
+                relevanceBadges: brief.relevanceBadges,
+                relatedBills: relatedBills,
+                relatedCommittees: brief.relatedCommittees,
+                liveScript: liveScript,
+                voicemailScript: voicemailScript,
+                talkingPoints: brief.talkingPoints,
+                issueID: brief.issueID,
+                repSlot: brief.repSlot
+            )
+        }
+
+        return CivicIssueResolutionResponse(
+            issueID: response.issueID,
+            issueTitle: response.issueTitle,
+            issueSummary: response.issueSummary,
+            resolvedEntities: CivicResolvedEntities(
+                bills: resolvedBills,
+                committees: response.resolvedEntities.committees,
+                agencies: response.resolvedEntities.agencies
+            ),
+            callBriefs: updatedBriefs
+        )
     }
 
     private func appendHistory(for resolution: CivicIssueResolutionResponse) {
@@ -931,9 +988,8 @@ final class IssueCallCenterViewModel: ObservableObject {
         guard !selectedTargets.isEmpty else { return }
 
         let issueID = seededIssueID(for: example)
-        let relatedBills = example.relatedBills.filter {
-            !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        }
+        let explicitRelatedBills = example.relatedBills.compactMap(normalizedBillReference)
+        var resolvedBills = explicitRelatedBills
         let relatedCommittees = inferredCommittees(for: example)
         let talkPointAsk = selectedAsk?.title ?? example.primaryAsk ?? "Support"
 
@@ -943,7 +999,16 @@ final class IssueCallCenterViewModel: ObservableObject {
                 .split(separator: " ")
                 .last
                 .map(String.init) ?? repName
-            let billValue = relatedBills.first
+            let inferredBill = suggestedBillReference(
+                issueTitle: example.title,
+                issueSummary: example.summary,
+                issueCommittees: relatedCommittees,
+                target: target
+            )
+            let billValue = explicitRelatedBills.first ?? inferredBill
+            if let billValue, !containsCaseInsensitive(resolvedBills, value: billValue) {
+                resolvedBills.append(billValue)
+            }
             let relevance = example.repRelevance.isEmpty
                 ? fallbackRelevance(for: target, billRef: billValue)
                 : example.repRelevance
@@ -969,6 +1034,9 @@ final class IssueCallCenterViewModel: ObservableObject {
             )
             let liveScript = injectCommitteeCallout(committeeCallout, into: baseLiveScript)
             let voicemailScript = injectCommitteeCallout(committeeCallout, into: baseVoicemailScript)
+            let briefRelatedBills = explicitRelatedBills.isEmpty
+                ? billValue.map { [$0] } ?? []
+                : explicitRelatedBills
 
             return CivicCallBrief(
                 id: UUID().uuidString,
@@ -978,7 +1046,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 primaryPhoneNumber: target.official.officialPhone ?? "",
                 localOfficePhoneNumber: nil,
                 relevanceBadges: relevance,
-                relatedBills: relatedBills,
+                relatedBills: briefRelatedBills,
                 relatedCommittees: relatedCommittees,
                 liveScript: liveScript,
                 voicemailScript: voicemailScript,
@@ -998,7 +1066,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 issueTitle: example.title,
                 issueSummary: example.summary,
                 resolvedEntities: CivicResolvedEntities(
-                    bills: relatedBills,
+                    bills: resolvedBills,
                     committees: relatedCommittees,
                     agencies: resolvedEntities.agencies
                 ),
@@ -1063,6 +1131,53 @@ final class IssueCallCenterViewModel: ObservableObject {
             .replacingOccurrences(of: "[OFFICIAL_LAST]", with: officialLastName)
             .replacingOccurrences(of: "[BILL_OR_RESOLUTION]", with: billText)
             .replacingOccurrences(of: "[ZIP]", with: userZip)
+    }
+
+    private func interpolateBillPlaceholder(in script: String, billReference: String?) -> String {
+        let replacement: String
+        if let billReference,
+           !billReference.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            replacement = billReference
+        } else {
+            replacement = "this issue"
+        }
+
+        return script.replacingOccurrences(of: "[BILL_OR_RESOLUTION]", with: replacement)
+    }
+
+    private func targetForBrief(_ brief: CivicCallBrief) -> CivicRepTarget? {
+        if let slot = brief.repSlot,
+           let target = repTargets.first(where: { $0.slot == slot }) {
+            return target
+        }
+
+        let trimmedRepID = brief.repID.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmedRepID.isEmpty,
+           let target = repTargets.first(where: {
+               stableRepID(for: $0.official).caseInsensitiveCompare(trimmedRepID) == .orderedSame
+           }) {
+            return target
+        }
+
+        let normalizedName = Self.normalizeNameKey(brief.repName)
+        if !normalizedName.isEmpty,
+           let target = repTargets.first(where: {
+               Self.normalizeNameKey($0.official.name) == normalizedName
+           }) {
+            return target
+        }
+
+        guard let official = official(for: brief) else {
+            return nil
+        }
+
+        if let resolvedSlot = brief.repSlot
+            ?? slotByRepID[trimmedRepID]
+            ?? slotByName[normalizedName] {
+            return CivicRepTarget(slot: resolvedSlot, official: official)
+        }
+
+        return nil
     }
 
     private func extractedCommitteeAssignments(from relevanceBadges: [String]) -> [String] {
@@ -1540,6 +1655,149 @@ final class IssueCallCenterViewModel: ObservableObject {
                 templateAsks: [.oppose, .askPublicStatement, .seekOversight],
                 relatedBills: [],
                 tags: ["ai", "digital-rights", "consumer-protection", "states-rights", "tech-policy"]
+            ),
+            Seed(
+                id: "protect-snap-food-security-and-family-farmers",
+                title: "Protect SNAP, Food Security, and Family Farmers",
+                category: "Agriculture",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "support",
+                summary: "This issue asks lawmakers to support a farm bill that protects SNAP, strengthens food security, and helps family farmers instead of shifting large new costs to states.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support a farm bill that protects SNAP, strengthens food security, and helps family farmers rather than shifting big new costs to states.\n\nPlease oppose harmful cuts or cost-shifts and support a final bill that keeps food assistance strong and rural communities stable.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support a farm bill that protects SNAP, strengthens food security, and helps family farmers instead of shifting new costs to states.\n\nThank you for your time and consideration.",
+                templateAsks: [.support, .askPublicStatement, .seekOversight],
+                relatedBills: [],
+                tags: ["farm-bill", "snap", "food-security", "family-farmers", "agriculture"]
+            ),
+            Seed(
+                id: "protect-pell-grants-and-affordable-student-aid",
+                title: "Protect Pell Grants and Affordable Student Aid",
+                category: "Education",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "support",
+                summary: "This issue asks lawmakers to protect Pell Grants and student-aid programs and avoid changes that make college or job training harder to afford.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect Pell Grants and student-aid programs and avoid changes that make college or job training harder to afford.\n\nStudents and working adults need real access to education and job training, not new barriers or higher costs.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect Pell Grants and student-aid programs and avoid changes that make college or job training harder to afford.\n\nThank you for your time and consideration.",
+                templateAsks: [.support, .askPublicStatement, .seekOversight],
+                relatedBills: [],
+                tags: ["education", "pell-grants", "student-aid", "college-affordability", "job-training"]
+            ),
+            Seed(
+                id: "invest-in-climate-resilience-grid-and-insurance-stability",
+                title: "Invest in Climate Resilience and Insurance Stability",
+                category: "Environment",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "support",
+                summary: "This issue asks Congress to invest in resilience, grid reliability, and insurance-market stability so disaster costs do not keep falling on households.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to invest in resilience, grid reliability, and insurance-market stability so disaster costs do not keep falling on households.\n\nPlease support policies that help communities prepare for climate disasters instead of leaving families to absorb the damage alone.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to invest in resilience, grid reliability, and insurance-market stability so disaster costs do not keep falling on households.\n\nThank you for your time and consideration.",
+                templateAsks: [.support, .askPublicStatement, .seekOversight],
+                relatedBills: [],
+                tags: ["climate", "resilience", "insurance", "grid-reliability", "disasters"]
+            ),
+            Seed(
+                id: "support-fair-maps-and-election-guardrails",
+                title: "Support Fair Maps and Transparent Election Rules",
+                category: "Democracy",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "support",
+                summary: "This issue asks lawmakers to support fair maps, transparent election administration, and guardrails against mid-cycle partisan redistricting.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support fair maps, transparent election administration, and guardrails against mid-cycle partisan redistricting.\n\nVoters deserve stable rules, equal representation, and a democracy that is not manipulated for partisan advantage.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support fair maps, transparent election administration, and guardrails against mid-cycle partisan redistricting.\n\nThank you for your time and consideration.",
+                templateAsks: [.support, .askPublicStatement, .seekOversight],
+                relatedBills: [],
+                tags: ["democracy", "redistricting", "elections", "fair-maps", "representation"]
+            ),
+            Seed(
+                id: "advance-social-security-and-medicare-solvency-plan",
+                title: "Advance a Bipartisan Social Security and Medicare Plan",
+                category: "Retirement Security",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "support",
+                summary: "This issue asks lawmakers to advance a bipartisan solvency plan now so any changes are gradual, protect earned benefits, and avoid sudden cuts.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to advance a bipartisan Social Security and Medicare solvency plan now so any changes are gradual and not sudden benefit cuts.\n\nPlease protect earned benefits and work across the aisle on a long-term solution before the choices become more painful.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to advance a bipartisan Social Security and Medicare solvency plan now so any changes are gradual and not sudden benefit cuts.\n\nThank you for your time and consideration.",
+                templateAsks: [.support, .askPublicStatement],
+                relatedBills: [],
+                tags: ["social-security", "medicare", "solvency", "retirement-security", "earned-benefits"]
+            ),
+            Seed(
+                id: "expand-housing-supply-and-prevent-homelessness",
+                title: "Expand Housing Supply and Prevent Homelessness",
+                category: "Housing",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "support",
+                summary: "This issue asks lawmakers to support more housing supply, more rental relief, and federal incentives for states and cities to allow more homes near jobs and transit.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support more housing supply, more rental relief, and federal incentives for states and cities to allow more homes near jobs and transit.\n\nPlease treat housing affordability and homelessness as urgent national issues and back policies that make it easier to build and keep people housed.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support more housing supply, more rental relief, and federal incentives for states and cities to allow more homes near jobs and transit.\n\nThank you for your time and consideration.",
+                templateAsks: [.support, .askPublicStatement, .seekOversight],
+                relatedBills: [],
+                tags: ["housing", "homelessness", "rental-relief", "zoning", "affordability"]
+            ),
+            Seed(
+                id: "protect-affordable-coverage-and-reject-medicaid-work-requirements",
+                title: "Protect Affordable Coverage and Reject Medicaid Work Requirements",
+                category: "Health Care",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "support",
+                summary: "This issue asks lawmakers to prevent avoidable coverage losses by restoring affordability and rejecting paperwork rules that push eligible people off insurance.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to prevent avoidable coverage losses by restoring affordability and rejecting Medicaid work requirements and other paperwork rules that push eligible people off insurance.\n\nPlease protect access to care and do not let eligible families lose coverage because of higher costs or red tape.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to restore affordable coverage and reject Medicaid work requirements and other paperwork rules that push eligible people off insurance.\n\nThank you for your time and consideration.",
+                templateAsks: [.support, .oppose, .askPublicStatement],
+                relatedBills: [],
+                tags: ["aca", "medicaid", "coverage", "work-requirements", "affordability"]
+            ),
+            Seed(
+                id: "lower-health-care-costs-and-protect-coverage",
+                title: "Lower Health Care Costs While Protecting Coverage",
+                category: "Health Care",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "support",
+                summary: "This issue asks lawmakers to prioritize lower premiums, deductibles, and drug costs while protecting health coverage.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to prioritize lower premiums, deductibles, and drug costs while protecting coverage.\n\nHealth care has to be more affordable for families without forcing people to give up access or benefits.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to lower premiums, deductibles, and drug costs while protecting coverage.\n\nThank you for your time and consideration.",
+                templateAsks: [.support, .askPublicStatement, .seekOversight],
+                relatedBills: [],
+                tags: ["health-care", "premiums", "deductibles", "drug-costs", "coverage"]
+            ),
+            Seed(
+                id: "protect-federal-reproductive-health-care-and-funding",
+                title: "Protect Federal Reproductive Health Care and Funding",
+                category: "Reproductive Rights",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "support",
+                summary: "This issue asks lawmakers to clearly support federal protections and funding for reproductive health care and to vote accordingly.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to state clearly whether they support federal protections and funding for reproductive health care, and to vote to protect that care.\n\nCongress still shapes access through Medicaid, Title X, appropriations, and broader health-funding laws, so this position should be explicit.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to state clearly whether they support federal protections and funding for reproductive health care, and to vote to protect that care.\n\nThank you for your time and consideration.",
+                templateAsks: [.support, .askPublicStatement],
+                relatedBills: [],
+                tags: ["reproductive-health", "abortion", "title-x", "medicaid", "health-funding"]
+            ),
+            Seed(
+                id: "support-workers-during-layoffs-and-economic-uncertainty",
+                title: "Support Workers During Layoffs and Economic Uncertainty",
+                category: "Labor",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "support",
+                summary: "This issue asks lawmakers to support worker protections, retraining, and transparent impact assessments for layoffs and federal workforce cuts.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support worker protections, retraining, and transparent impact assessments for layoffs and federal workforce cuts.\n\nFamilies need job security, honest planning, and real support when the labor market starts to cool.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support worker protections, retraining, and transparent impact assessments for layoffs and federal workforce cuts.\n\nThank you for your time and consideration.",
+                templateAsks: [.support, .askPublicStatement, .seekOversight],
+                relatedBills: [],
+                tags: ["jobs", "layoffs", "workers", "retraining", "labor-market"]
+            ),
+            Seed(
+                id: "lower-everyday-costs-for-working-families",
+                title: "Lower Everyday Costs for Working Families",
+                category: "Economy",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "support",
+                summary: "This issue asks lawmakers to back policies that lower everyday costs for families without adding hidden taxes or supply shocks.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to back policies that lower everyday costs for families without adding new hidden taxes or supply shocks.\n\nPlease focus on affordability in the real economy, especially food, housing, and other essential household costs.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to back policies that lower everyday costs for families without adding hidden taxes or supply shocks.\n\nThank you for your time and consideration.",
+                templateAsks: [.support, .askPublicStatement, .seekOversight],
+                relatedBills: [],
+                tags: ["economy", "inflation", "cost-of-living", "prices", "families"]
             )
         ]
 
@@ -1593,19 +1851,34 @@ final class IssueCallCenterViewModel: ObservableObject {
         let summary = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
 
         let selectedTargets = repTargets.filter { selectedSlots.contains($0.slot) }
-        let briefs: [CivicCallBrief] = selectedTargets.map { target in
+        let explicitBillRef = normalizedBillReference(optionalBillRef)
+        var resolvedBills: [String] = explicitBillRef.map { [$0] } ?? []
+        var briefs: [CivicCallBrief] = []
+
+        for target in selectedTargets {
             let repID = stableRepID(for: target.official)
-            let reasons = fallbackRelevance(for: target, billRef: optionalBillRef)
+            let selectedBillRef = explicitBillRef
+                ?? suggestedBillReference(
+                    issueTitle: title,
+                    issueSummary: summary,
+                    issueCommittees: [],
+                    target: target
+                )
+            if let selectedBillRef, !containsCaseInsensitive(resolvedBills, value: selectedBillRef) {
+                resolvedBills.append(selectedBillRef)
+            }
+
+            let reasons = fallbackRelevance(for: target, billRef: selectedBillRef)
             let (live, voicemail, points) = composeScripts(
                 repName: target.official.name,
                 issueTitle: title,
                 ask: ask,
-                billRef: optionalBillRef,
+                billRef: selectedBillRef,
                 zip: userZip,
                 reasons: reasons
             )
 
-            return CivicCallBrief(
+            let brief = CivicCallBrief(
                 id: UUID().uuidString,
                 repID: repID,
                 repName: target.official.name,
@@ -1613,7 +1886,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 primaryPhoneNumber: target.official.officialPhone ?? "",
                 localOfficePhoneNumber: nil,
                 relevanceBadges: reasons,
-                relatedBills: optionalBillRef.map { [$0] } ?? [],
+                relatedBills: selectedBillRef.map { [$0] } ?? [],
                 relatedCommittees: [],
                 liveScript: live,
                 voicemailScript: voicemail,
@@ -1621,6 +1894,8 @@ final class IssueCallCenterViewModel: ObservableObject {
                 issueID: issueID,
                 repSlot: target.slot
             )
+
+            briefs.append(brief)
         }
 
         return CivicIssueResolutionResponse(
@@ -1628,7 +1903,7 @@ final class IssueCallCenterViewModel: ObservableObject {
             issueTitle: title,
             issueSummary: summary,
             resolvedEntities: CivicResolvedEntities(
-                bills: optionalBillRef.map { [$0] } ?? [],
+                bills: resolvedBills,
                 committees: [],
                 agencies: []
             ),
@@ -1653,6 +1928,412 @@ final class IssueCallCenterViewModel: ObservableObject {
         }
         return reasons
     }
+
+    private func normalizedBillReference(_ raw: String?) -> String? {
+        guard let raw else { return nil }
+        let cleaned = raw
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+        guard !cleaned.isEmpty else { return nil }
+        if cleaned.localizedCaseInsensitiveContains("[BILL_OR_RESOLUTION]") {
+            return nil
+        }
+        return cleaned
+    }
+
+    private func containsCaseInsensitive(_ values: [String], value: String) -> Bool {
+        values.contains { existing in
+            existing.caseInsensitiveCompare(value) == .orderedSame
+        }
+    }
+
+    private func suggestedBillReference(
+        issueTitle: String,
+        issueSummary: String,
+        issueCommittees: [String],
+        target: CivicRepTarget?
+    ) -> String? {
+        let context = "\(issueTitle) \(issueSummary)".lowercased()
+        let resolutionContext = isResolutionContext(context)
+        let targetCommittees = Set(
+            (target?.official.committeeAssignments ?? [])
+                .map(normalizeCommitteeName)
+                .filter { !$0.isEmpty }
+        )
+        let relevantIssueCommittees = Set(
+            issueCommittees
+                .map(normalizeCommitteeName)
+                .filter { !$0.isEmpty }
+        )
+
+        var bestTemplate: FallbackBillTemplate?
+        var bestScore = Int.min
+
+        for template in Self.fallbackBillTemplates {
+            let keywordScore = template.keywords.reduce(into: 0) { partial, keyword in
+                if context.contains(keyword) {
+                    partial += 3
+                }
+            }
+            let targetCommitteeScore = hasCommitteeOverlap(
+                candidateCommittees: template.committees,
+                normalizedCommittees: targetCommittees
+            ) ? 6 : 0
+            let issueCommitteeScore = hasCommitteeOverlap(
+                candidateCommittees: template.committees,
+                normalizedCommittees: relevantIssueCommittees
+            ) ? 4 : 0
+            let resolutionScore = (resolutionContext && isResolutionReference(template.reference)) ? 5 : 0
+
+            let score = keywordScore + targetCommitteeScore + issueCommitteeScore + resolutionScore
+            if score > bestScore {
+                bestScore = score
+                bestTemplate = template
+            }
+        }
+
+        if bestScore > 0 {
+            return bestTemplate?.reference
+        }
+
+        if !targetCommittees.isEmpty,
+           let byTargetCommittee = Self.fallbackBillTemplates.first(where: {
+               hasCommitteeOverlap(candidateCommittees: $0.committees, normalizedCommittees: targetCommittees)
+           }) {
+            return byTargetCommittee.reference
+        }
+
+        if !relevantIssueCommittees.isEmpty,
+           let byIssueCommittee = Self.fallbackBillTemplates.first(where: {
+               hasCommitteeOverlap(candidateCommittees: $0.committees, normalizedCommittees: relevantIssueCommittees)
+           }) {
+            return byIssueCommittee.reference
+        }
+
+        if let byKeyword = Self.fallbackBillTemplates.first(where: { template in
+            template.keywords.contains(where: { context.contains($0) })
+        }) {
+            return byKeyword.reference
+        }
+
+        return Self.fallbackBillTemplates.first?.reference
+    }
+
+    private func hasCommitteeOverlap(candidateCommittees: [String], normalizedCommittees: Set<String>) -> Bool {
+        guard !candidateCommittees.isEmpty, !normalizedCommittees.isEmpty else {
+            return false
+        }
+
+        for candidate in candidateCommittees {
+            let normalizedCandidate = normalizeCommitteeName(candidate)
+            guard !normalizedCandidate.isEmpty else { continue }
+            if normalizedCommittees.contains(where: { normalized in
+                normalized.contains(normalizedCandidate) || normalizedCandidate.contains(normalized)
+            }) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private func isResolutionContext(_ lowercasedContext: String) -> Bool {
+        let markers = ["resolution", "joint resolution", "disapproval", "s.j.res", "s.res"]
+        return markers.contains { lowercasedContext.contains($0) }
+    }
+
+    private func isResolutionReference(_ reference: String) -> Bool {
+        let normalized = reference.lowercased().replacingOccurrences(of: " ", with: "")
+        return normalized.contains("s.j.res.") || normalized.contains("s.res.")
+    }
+
+    private struct FallbackBillTemplate {
+        let reference: String
+        let keywords: [String]
+        let committees: [String]
+    }
+
+    private static let fallbackBillTemplates: [FallbackBillTemplate] = [
+        FallbackBillTemplate(
+            reference: "S.J.Res. 114 Iran War Powers Resolution",
+            keywords: ["iran", "war powers", "unauthorized hostilities", "armed forces", "congressional authorization"],
+            committees: ["Foreign Relations"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.J.Res. 112 BIS End-Use Controls Disapproval Resolution",
+            keywords: ["bureau of industry and security", "end-use controls", "export controls", "disapproval", "rule"],
+            committees: ["Banking, Housing, and Urban Affairs"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.J.Res. 116 Iran War Powers Resolution",
+            keywords: ["iran", "war powers", "unauthorized hostilities", "armed forces", "congressional authorization"],
+            committees: ["Foreign Relations"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.J.Res. 118 Iran War Powers Resolution",
+            keywords: ["iran", "war powers", "unauthorized hostilities", "armed forces", "congressional authorization"],
+            committees: ["Foreign Relations"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.J.Res. 115 Iran War Powers Resolution",
+            keywords: ["iran", "war powers", "unauthorized hostilities", "armed forces", "congressional authorization"],
+            committees: ["Foreign Relations"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 628 Music in Our Schools Month Resolution",
+            keywords: ["music in our schools", "music education", "schools", "arts education"],
+            committees: ["Health, Education, Labor, and Pensions"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 627 National Slam the Scam Day Resolution",
+            keywords: ["scam", "fraud", "impostor scams", "consumer protection", "public awareness"],
+            committees: ["Judiciary"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.J.Res. 113 OCC Climate Financial Risk Disapproval Resolution",
+            keywords: ["office of the comptroller", "occ", "climate-related financial risk", "bank regulation", "disapproval"],
+            committees: ["Banking, Housing, and Urban Affairs"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.J.Res. 117 Iran War Powers Resolution",
+            keywords: ["iran", "war powers", "unauthorized hostilities", "armed forces", "congressional authorization"],
+            committees: ["Foreign Relations"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.J.Res. 110 Treasury Leverage Ratio Disapproval Resolution",
+            keywords: ["treasury", "supplementary leverage ratio", "bank holding companies", "financial regulation", "disapproval"],
+            committees: ["Banking, Housing, and Urban Affairs"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.J.Res. 109 Grand Staircase-Escalante Management Plan Disapproval Resolution",
+            keywords: ["bureau of land management", "grand staircase-escalante", "public lands", "national monument", "management plans"],
+            committees: ["Energy and Natural Resources"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.J.Res. 111 Federal Reserve Rating System Disapproval Resolution",
+            keywords: ["federal reserve", "large financial institution rating system", "bank oversight", "financial regulation", "disapproval"],
+            committees: ["Banking, Housing, and Urban Affairs"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 625 Hawaiian Language Month Resolution",
+            keywords: ["hawaiian language", "olelo hawaii", "language month", "cultural preservation"],
+            committees: ["Judiciary"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 624 National Social and Emotional Learning Week Resolution",
+            keywords: ["social and emotional learning", "sel", "schools", "students", "mental health"],
+            committees: ["Health, Education, Labor, and Pensions"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 616 Human Rights in Honduras Resolution",
+            keywords: ["human rights", "honduras", "oversight", "foreign policy", "state department"],
+            committees: ["Foreign Relations"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 623 Team USA Ice Hockey Resolution",
+            keywords: ["team usa", "ice hockey", "international competition", "sports diplomacy"],
+            committees: ["Commerce, Science, and Transportation"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 612 Support for Ukraine Resolution",
+            keywords: ["ukraine", "russia invasion", "support ukraine", "foreign policy", "security assistance"],
+            committees: ["Foreign Relations"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 607 Marjory Stoneman Douglas Victims Resolution",
+            keywords: ["marjory stoneman douglas", "school shooting", "gun violence", "victims"],
+            committees: ["Judiciary"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 608 Ghislaine Maxwell Clemency Opposition Resolution",
+            keywords: ["ghislaine maxwell", "clemency", "justice", "victims rights"],
+            committees: ["Judiciary"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 557 Climate Financial Market Risk Resolution",
+            keywords: ["climate change", "financial market", "systemic risk", "market collapse", "banking risk"],
+            committees: ["Banking, Housing, and Urban Affairs"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 552 Ocean Warming Resolution",
+            keywords: ["oceans warming", "ocean temperature", "climate change", "marine environment"],
+            committees: ["Commerce, Science, and Transportation"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.J.Res. 100 Caribbean and Eastern Pacific War Powers Resolution",
+            keywords: ["caribbean sea", "eastern pacific", "unauthorized hostilities", "war powers", "armed forces"],
+            committees: ["Foreign Relations"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 567 Foreign Censorship Opposition Resolution",
+            keywords: ["foreign censorship", "free speech", "constitutionally protected speech", "civil liberties"],
+            committees: ["Foreign Relations"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 565 Renewable Electricity Cost Resolution",
+            keywords: ["renewable electricity", "clean energy", "energy costs", "grid", "electricity"],
+            committees: ["Energy and Natural Resources"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 547 U.S.-Japan Alliance Support Resolution",
+            keywords: ["u.s.-japan alliance", "japan alliance", "indo-pacific", "china pressure", "foreign policy"],
+            committees: ["Foreign Relations"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 556 Florida Insurance Climate Risk Resolution",
+            keywords: ["florida insurance", "insurance market", "climate risks", "property insurance"],
+            committees: ["Banking, Housing, and Urban Affairs"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 561 Particulate Matter Pollution Resolution",
+            keywords: ["particulate matter", "pm2.5", "air pollution", "health harms", "environment"],
+            committees: ["Environment and Public Works"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 555 Climate Mortgage Risk Resolution",
+            keywords: ["climate change", "mortgage market", "home values", "housing risk", "financial risk"],
+            committees: ["Banking, Housing, and Urban Affairs"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 562 Ozone Pollution Health Harms Resolution",
+            keywords: ["ozone pollution", "air quality", "public health", "reproductive harms", "environment"],
+            committees: ["Environment and Public Works"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.Res. 549 Seize Shadow Fleet Russian Oil Resolution",
+            keywords: ["shadow fleet", "russian oil", "sanctions enforcement", "maritime shipping", "foreign policy"],
+            committees: ["Foreign Relations"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.1241 Sanctioning Russia Act of 2025",
+            keywords: ["russia", "ukraine", "sanction", "international", "foreign policy"],
+            committees: ["Banking, Housing, and Urban Affairs"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.1032 Major Richard Star Act",
+            keywords: ["armed forces", "military", "national security", "veteran", "defense"],
+            committees: ["Armed Services"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.1748 Kids Online Safety Act",
+            keywords: ["kids online", "online safety", "social media", "technology", "internet"],
+            committees: ["Commerce, Science, and Transportation"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.1261 CONNECT for Health Act of 2025",
+            keywords: ["health", "telehealth", "care access", "medicare", "coverage"],
+            committees: ["Finance"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.2837 Protect America's Workforce Act",
+            keywords: ["workforce", "labor", "employment", "worker", "layoff"],
+            committees: ["Homeland Security and Governmental Affairs"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.1515 Affordable Housing Credit Improvement Act of 2025",
+            keywords: ["housing", "rent", "homelessness", "affordability", "zoning"],
+            committees: ["Finance"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.1973 Treat and Reduce Obesity Act of 2025",
+            keywords: ["obesity", "nutrition", "chronic disease", "health"],
+            committees: ["Finance"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.3048 TREATS Act",
+            keywords: ["addiction", "opioid", "e-prescribing", "telehealth", "substance use"],
+            committees: ["Health, Education, Labor, and Pensions"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.3209 NOPAIN for Veterans Act",
+            keywords: ["veterans", "pain", "military health", "opioid"],
+            committees: ["Veterans Affairs"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.3257 Mental Health in Aviation Act of 2025",
+            keywords: ["mental health", "aviation", "airline", "pilot"],
+            committees: ["Commerce, Science, and Transportation"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.847 Child Care Availability and Affordability Act",
+            keywords: ["child care", "families", "caregiving", "affordability"],
+            committees: ["Finance"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.932 Give Kids a Chance Act of 2025",
+            keywords: ["kids", "children", "health", "pediatric"],
+            committees: ["Health, Education, Labor, and Pensions"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.29 Sunshine Protection Act of 2025",
+            keywords: ["sunshine", "daylight saving", "time change"],
+            committees: ["Commerce, Science, and Transportation"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.1272 Trade Review Act of 2025",
+            keywords: ["trade", "tariff", "import", "export", "international finance"],
+            committees: ["Finance"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.179 FARM Act (Foreign Adversary Risk Management Act)",
+            keywords: ["farm", "agriculture", "foreign adversary", "food security", "supply chain"],
+            committees: ["Banking, Housing, and Urban Affairs"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.2237 Hospital Inpatient Services Modernization Act",
+            keywords: ["hospital", "inpatient", "health care", "modernization"],
+            committees: ["Finance"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.41 Advanced Border Coordination Act of 2025",
+            keywords: ["immigration", "border", "asylum", "homeland security"],
+            committees: ["Homeland Security and Governmental Affairs"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.3281 Restoring Food Security for American Families and Farmers Act of 2025",
+            keywords: ["snap", "food security", "farmers", "agriculture", "nutrition"],
+            committees: ["Agriculture, Nutrition, and Forestry"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.852 Richard L. Trumka Protecting the Right to Organize Act of 2025",
+            keywords: ["union", "organize", "labor", "workers rights", "collective bargaining"],
+            committees: ["Health, Education, Labor, and Pensions"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.46 Health Care Affordability Act of 2025",
+            keywords: ["health care", "premiums", "deductibles", "coverage", "affordability"],
+            committees: ["Finance"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.51 Washington, D.C. Admission Act",
+            keywords: ["dc", "statehood", "representation", "voting rights", "democracy"],
+            committees: ["Homeland Security and Governmental Affairs"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.1531 Assault Weapons Ban of 2025",
+            keywords: ["assault weapons", "gun violence", "firearms", "crime"],
+            committees: ["Judiciary"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.3043 Military and Federal Employee Protection Act",
+            keywords: ["federal employee", "military", "workforce", "public finance"],
+            committees: ["Appropriations"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.2823 FAMILY Act",
+            keywords: ["family leave", "paid leave", "workers", "families", "labor"],
+            committees: ["Finance"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.40 Commission to Study and Develop Reparation Proposals for African Americans Act",
+            keywords: ["reparations", "civil rights", "racial justice", "minority issues"],
+            committees: ["Judiciary"]
+        ),
+        FallbackBillTemplate(
+            reference: "S.2939 Child Care for Every Community Act",
+            keywords: ["child care", "families", "early childhood", "community"],
+            committees: ["Health, Education, Labor, and Pensions"]
+        )
+    ]
 
     private func composeScripts(
         repName: String,
