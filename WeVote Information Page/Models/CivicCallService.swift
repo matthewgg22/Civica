@@ -355,7 +355,15 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
            let url = URL(string: configured) {
             return url
         }
-        return SupabaseConfig.current.url
+
+        if let supabaseURL = (bundle.object(forInfoDictionaryKey: "SUPABASE_URL") as? String)?
+            .trimmingCharacters(in: .whitespacesAndNewlines),
+           !supabaseURL.isEmpty,
+           let url = URL(string: supabaseURL) {
+            return url
+        }
+
+        return URL(string: "https://YOUR-PROJECT-REF.supabase.co") ?? URL(fileURLWithPath: "/")
     }
 }
 
@@ -428,6 +436,7 @@ final class IssueCallCenterViewModel: ObservableObject {
     @Published var callScoreHistory: [CivicCallScoreHistoryItem] = []
     @Published var leaderboardSummary: CivicLeaderboardUserSummary?
     @Published var callStats: CivicCallStats = .empty
+    @Published var appWideCompletedCallsByIssueID: [String: Int] = [:]
     @Published var lastCompletionResult: CivicCallCompletionResponse?
     @Published var pendingCallLaunch: PendingCallLaunch?
 
@@ -440,12 +449,15 @@ final class IssueCallCenterViewModel: ObservableObject {
     private let userZip: String
     private let apiClient: CivicIssueCallAPIClientProtocol
     private let cacheStore: CivicCallBriefCacheStore
+    private let supabaseManager: SupabaseManager
+    private var activeMAPCSessionID: UUID?
 
     init(
         federalReps: [Official],
         userZip: String,
         apiClient: CivicIssueCallAPIClientProtocol = CivicIssueCallAPIClient(),
-        cacheStore: CivicCallBriefCacheStore = CivicCallBriefCacheStore()
+        cacheStore: CivicCallBriefCacheStore = CivicCallBriefCacheStore(),
+        supabaseManager: SupabaseManager? = nil
     ) {
         let targets = IssueCallCenterViewModel.buildRepTargets(from: federalReps)
         self.repTargets = targets
@@ -467,6 +479,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         self.userZip = userZip
         self.apiClient = apiClient
         self.cacheStore = cacheStore
+        self.supabaseManager = supabaseManager ?? SupabaseManager.shared
 
         let snapshot = cacheStore.load()
         // Do not preload stale briefs into Assistant on open.
@@ -558,6 +571,7 @@ final class IssueCallCenterViewModel: ObservableObject {
             saveSnapshot()
             selectedRepFilter = .all
             selectedTab = .assistant
+            await refreshCallScoreData(for: userID)
         } catch {
             let fallback = fallbackResolution(
                 concernText: trimmedConcern,
@@ -570,6 +584,7 @@ final class IssueCallCenterViewModel: ObservableObject {
             saveSnapshot()
             selectedRepFilter = .all
             errorMessage = "Using offline call briefs while the civic API is unavailable."
+            await refreshCallScoreData(for: userID)
         }
     }
 
@@ -578,16 +593,35 @@ final class IssueCallCenterViewModel: ObservableObject {
         // the user's Build Script personalization draft fields.
         // Also clear any stale composer inputs so Build Script remains blank
         // when the user returns from MAPC.
+        activeMAPCSessionID = UUID()
         concernText = ""
         selectedAsk = nil
         optionalBillRef = ""
         applySeedResolution(for: example)
+
+        queueMAPCCallEvent(
+            type: .mapcStarted,
+            brief: activeBrief,
+            issueID: seededIssueID(for: example),
+            issueTitle: example.title,
+            sourceScreen: "issue_call_center",
+            metadata: [
+                "example_id": example.id,
+                "example_category": example.category ?? "",
+                "target_chambers": example.targetChambers.joined(separator: ",")
+            ]
+        )
     }
 
     func reopen(historyGroup: CivicHistoryGroup) {
         issueTitle = historyGroup.issueTitle
         issueSummary = historyGroup.issueSummary
-        callBriefs = normalizedBriefs(historyGroup.briefs)
+        let fallbackIssueID = resolvedIssueIdentifier(
+            preferredIssueID: historyGroup.issueID,
+            issueTitle: historyGroup.issueTitle,
+            issueSummary: historyGroup.issueSummary
+        )
+        callBriefs = normalizedBriefs(historyGroup.briefs, fallbackIssueID: fallbackIssueID)
         resolvedEntities = .empty
         activeBriefID = filteredBriefs.first?.id
         selectedTab = .assistant
@@ -596,13 +630,14 @@ final class IssueCallCenterViewModel: ObservableObject {
 
     func beginCallLaunch(for brief: CivicCallBrief, sourceScreen: String = "issue_call_center") async {
         let userID = await userIDForRequest()
+        let launchSessionID = UUID().uuidString
         do {
             let launch = try await apiClient.logCallLaunch(
                 userID: userID,
                 officeID: brief.repID,
                 issueID: brief.issueID.isEmpty ? nil : brief.issueID,
                 sourceScreen: sourceScreen,
-                sessionID: UUID().uuidString
+                sessionID: launchSessionID
             )
             pendingCallLaunch = PendingCallLaunch(
                 launchEventID: launch.launchEventID,
@@ -611,17 +646,38 @@ final class IssueCallCenterViewModel: ObservableObject {
                 issueID: brief.issueID.isEmpty ? nil : brief.issueID,
                 launchedAt: launch.launchedAt
             )
+            queueMAPCCallEvent(
+                type: .callLaunch,
+                brief: brief,
+                sourceScreen: sourceScreen,
+                metadata: [
+                    "launch_event_id": launch.launchEventID,
+                    "api_launch_logged": "true",
+                    "session_id": launchSessionID
+                ]
+            )
             if launch.callScoreEnabled == false {
                 print("[IssueCall] Call score is currently disabled for this rollout.")
             }
         } catch {
             // Preserve the ability to ask for completion locally even when network launch logging fails.
+            let fallbackLaunchEventID = UUID().uuidString
             pendingCallLaunch = PendingCallLaunch(
-                launchEventID: UUID().uuidString,
+                launchEventID: fallbackLaunchEventID,
                 briefID: brief.id,
                 officeID: brief.repID,
                 issueID: brief.issueID.isEmpty ? nil : brief.issueID,
                 launchedAt: Date()
+            )
+            queueMAPCCallEvent(
+                type: .callLaunch,
+                brief: brief,
+                sourceScreen: sourceScreen,
+                metadata: [
+                    "launch_event_id": fallbackLaunchEventID,
+                    "api_launch_logged": "false",
+                    "session_id": launchSessionID
+                ]
             )
             print("[IssueCall] call launch log failed; continuing with local completion prompt.")
         }
@@ -643,6 +699,21 @@ final class IssueCallCenterViewModel: ObservableObject {
                 completed: completed
             )
 
+            let completionBrief = callBriefs.first { $0.id == pending.briefID }
+            queueMAPCCallEvent(
+                type: .callCompletionConfirmed,
+                brief: completionBrief,
+                issueID: pending.issueID,
+                issueTitle: issueTitle,
+                completed: completed,
+                sourceScreen: "issue_call_center",
+                metadata: [
+                    "launch_event_id": pending.launchEventID,
+                    "call_logged": response.callLogged ? "true" : "false",
+                    "scoring_eligible": (response.scoringEligible ?? false) ? "true" : "false"
+                ]
+            )
+
             if completed {
                 lastCompletionResult = response
                 pendingCallLaunch = nil
@@ -651,6 +722,18 @@ final class IssueCallCenterViewModel: ObservableObject {
                 lastCompletionResult = nil
             }
         } catch {
+            let completionBrief = callBriefs.first { $0.id == pending.briefID }
+            queueMAPCCallEvent(
+                type: .callCompletionFailed,
+                brief: completionBrief,
+                issueID: pending.issueID,
+                issueTitle: issueTitle,
+                completed: completed,
+                sourceScreen: "issue_call_center",
+                metadata: [
+                    "launch_event_id": pending.launchEventID
+                ]
+            )
             if completed {
                 errorMessage = "Could not confirm the call right now. Please try again."
             }
@@ -731,6 +814,16 @@ final class IssueCallCenterViewModel: ObservableObject {
             )
         }
 
+        queueMAPCCallEvent(
+            type: .callOutcomeLogged,
+            brief: brief,
+            issueID: brief.issueID,
+            issueTitle: issueTitle,
+            outcome: outcome,
+            sourceScreen: "issue_call_center",
+            metadata: notes.isEmpty ? nil : ["notes_present": "true"]
+        )
+
         saveSnapshot()
     }
 
@@ -804,16 +897,128 @@ final class IssueCallCenterViewModel: ObservableObject {
             userCallCount = leaderboardSummary?.eligibleVerifiedCallCount ?? 0
         }
 
-        callStats = CivicCallStats(
+        var mergedStats = CivicCallStats(
             totalVoteNowCalls: totalVoteNowCalls,
             monthlyVoteNowCalls: monthlyVoteNowCalls,
             userCallCount: userCallCount
         )
+
+        if let supabaseSums = await supabaseManager.fetchMAPCCallSums() {
+            mergedStats = CivicCallStats(
+                totalVoteNowCalls: max(mergedStats.totalVoteNowCalls, supabaseSums.totalCompletedCalls),
+                monthlyVoteNowCalls: max(mergedStats.monthlyVoteNowCalls, supabaseSums.monthlyCompletedCalls),
+                userCallCount: max(mergedStats.userCallCount, supabaseSums.userCompletedCalls)
+            )
+        }
+        callStats = mergedStats
+
+        let trackedIssueIDs = trackedIssueIDsForCivicScore(maxCount: 24)
+        if trackedIssueIDs.isEmpty {
+            appWideCompletedCallsByIssueID = [:]
+        } else if let issueSums = await supabaseManager.fetchMAPCCallIssueSums(issueIDs: trackedIssueIDs) {
+            var normalizedCounts: [String: Int] = [:]
+            for (issueID, count) in issueSums.appCompletedCallsByIssueID {
+                guard let key = Self.normalizedIssueIDKey(issueID) else { continue }
+                normalizedCounts[key] = max(0, count)
+            }
+            for issueID in trackedIssueIDs {
+                guard let key = Self.normalizedIssueIDKey(issueID) else { continue }
+                if normalizedCounts[key] == nil {
+                    normalizedCounts[key] = 0
+                }
+            }
+            appWideCompletedCallsByIssueID = normalizedCounts
+        }
+    }
+
+    func appWideCompletedCalls(forIssueID issueID: String) -> Int? {
+        guard let key = Self.normalizedIssueIDKey(issueID) else { return nil }
+        return appWideCompletedCallsByIssueID[key]
     }
 
     private static func sumEligibleVerifiedCalls(in leaderboard: CivicLeaderboardResponse) -> Int {
         leaderboard.entries.reduce(0) { partial, entry in
             partial + max(0, entry.eligibleVerifiedCallCount)
+        }
+    }
+
+    private static func normalizedIssueIDKey(_ issueID: String) -> String? {
+        let normalized = issueID
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+        return normalized.isEmpty ? nil : normalized
+    }
+
+    private func trackedIssueIDsForCivicScore(maxCount: Int) -> [String] {
+        var orderedIssueIDs: [String] = []
+        var seenKeys = Set<String>()
+
+        func appendIssueID(_ rawIssueID: String?) {
+            guard let rawIssueID else { return }
+            let normalized = rawIssueID.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !normalized.isEmpty else { return }
+            let key = normalized.lowercased()
+            guard seenKeys.insert(key).inserted else { return }
+            orderedIssueIDs.append(normalized)
+        }
+
+        for brief in callBriefs {
+            appendIssueID(brief.issueID)
+            if orderedIssueIDs.count >= maxCount { return orderedIssueIDs }
+        }
+
+        for group in historyGroups.sorted(by: { $0.date > $1.date }) {
+            appendIssueID(group.issueID)
+            if orderedIssueIDs.count >= maxCount { return orderedIssueIDs }
+        }
+
+        return orderedIssueIDs
+    }
+
+    private func ensureActiveMAPCSessionID() -> UUID {
+        if let activeMAPCSessionID {
+            return activeMAPCSessionID
+        }
+        let generated = UUID()
+        activeMAPCSessionID = generated
+        return generated
+    }
+
+    private func queueMAPCCallEvent(
+        type: MAPCCallEventInsert.EventType,
+        brief: CivicCallBrief?,
+        issueID: String? = nil,
+        issueTitle: String? = nil,
+        completed: Bool? = nil,
+        outcome: CivicCallOutcome? = nil,
+        sourceScreen: String? = nil,
+        metadata: [String: String]? = nil
+    ) {
+        let normalizedIssueTitle: String? = {
+            let direct = issueTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if !direct.isEmpty { return direct }
+            let fallback = self.issueTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+            return fallback.isEmpty ? nil : fallback
+        }()
+
+        let payload = MAPCCallEventInsert(
+            sessionID: ensureActiveMAPCSessionID(),
+            userID: nil,
+            issueID: issueID ?? brief?.issueID,
+            issueTitle: normalizedIssueTitle,
+            briefID: brief?.id,
+            repID: brief?.repID,
+            repName: brief?.repName,
+            repSlot: brief?.repSlot?.rawValue,
+            eventType: type,
+            completed: completed,
+            outcome: outcome?.rawValue,
+            sourceScreen: sourceScreen,
+            metadata: metadata
+        )
+
+        Task { [supabaseManager] in
+            await supabaseManager.logMAPCCallEvent(payload)
         }
     }
 
@@ -903,7 +1108,12 @@ final class IssueCallCenterViewModel: ObservableObject {
 
     private func applyResolution(_ response: CivicIssueResolutionResponse) {
         let enriched = enrichResolutionWithFallbackBills(response)
-        let normalized = normalizedBriefs(enriched.callBriefs)
+        let fallbackIssueID = resolvedIssueIdentifier(
+            preferredIssueID: enriched.issueID,
+            issueTitle: enriched.issueTitle,
+            issueSummary: enriched.issueSummary
+        )
+        let normalized = normalizedBriefs(enriched.callBriefs, fallbackIssueID: fallbackIssueID)
         issueTitle = enriched.issueTitle
         issueSummary = enriched.issueSummary
         resolvedEntities = enriched.resolvedEntities
@@ -968,10 +1178,15 @@ final class IssueCallCenterViewModel: ObservableObject {
     }
 
     private func appendHistory(for resolution: CivicIssueResolutionResponse) {
-        let normalized = normalizedBriefs(resolution.callBriefs)
+        let fallbackIssueID = resolvedIssueIdentifier(
+            preferredIssueID: resolution.issueID,
+            issueTitle: resolution.issueTitle,
+            issueSummary: resolution.issueSummary
+        )
+        let normalized = normalizedBriefs(resolution.callBriefs, fallbackIssueID: fallbackIssueID)
         let fresh = CivicHistoryGroup(
             id: UUID().uuidString,
-            issueID: resolution.issueID,
+            issueID: fallbackIssueID,
             issueTitle: resolution.issueTitle,
             issueSummary: resolution.issueSummary,
             date: Date(),
@@ -1085,7 +1300,11 @@ final class IssueCallCenterViewModel: ObservableObject {
         if let slug = example.slug?.trimmingCharacters(in: .whitespacesAndNewlines), !slug.isEmpty {
             return slug
         }
-        return UUID().uuidString
+        return resolvedIssueIdentifier(
+            preferredIssueID: nil,
+            issueTitle: example.title,
+            issueSummary: example.summary
+        )
     }
 
     private func slotsForExample(_ example: CivicExampleIssueCard) -> [CivicRepSlot] {
@@ -1532,7 +1751,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Foreign Affairs",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "Recent military escalation has renewed pressure on Congress to reassert its constitutional war powers. This issue asks members of Congress to oppose unauthorized U.S. military action against Iran, support de-escalation, and back legislation or resolutions requiring congressional approval before further escalation.",
+                summary: "Tensions between the United States and Iran periodically raise questions about the president's authority to conduct military operations without explicit congressional approval. Recent escalation has renewed debate over the constitutional balance between executive power and Congress's role in authorizing the use of force. The issue carries significant geopolitical implications, including the risk of broader regional conflict and the long-term precedent for how military decisions are made.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support [BILL_OR_RESOLUTION] and oppose any unauthorized U.S. war with Iran. Congress must reassert its constitutional authority and prevent further escalation without a vote.\n\nPlease speak out publicly, support immediate de-escalation, and vote to block any continued military action that has not been authorized by Congress.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, my name is [YOUR_NAME], and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support [BILL_OR_RESOLUTION] and oppose unauthorized military action against Iran. The United States should not be pulled deeper into another war without congressional approval.\n\nPlease take public action to defend Congress's war powers and push for de-escalation.\n\nThank you.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -1545,7 +1764,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "LGBTQ",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "oppose",
-                summary: "This issue asks Congress to oppose anti-trans legislation, censorship efforts, and restrictions on medically necessary gender-affirming care. The focus is equal protection, bodily autonomy, and evidence-based treatment rather than political targeting.",
+                summary: "Federal debates over transgender rights and gender-affirming medical care have intensified in recent years as policymakers consider legislation affecting access to treatment, civil rights protections, and public accommodations. The discussion involves competing views about medical standards, parental decision-making, and anti-discrimination protections. Because federal policy can influence health care funding, regulatory authority, and civil-rights enforcement, the outcome of these debates could shape how transgender individuals access care and legal protections nationwide.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to defend transgender people and oppose federal attacks on gender-affirming care. Please oppose any ban on care, reject anti-trans censorship bills like [BILL_OR_RESOLUTION], and fight policies that strip trans people of safety, dignity, and medically necessary treatment.\n\nTrans people deserve evidence-based care and equal protection under the law, not political targeting.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm asking [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect trans rights and oppose new federal restrictions on gender-affirming care and anti-LGBTQ censorship. Please speak out publicly and vote against measures that harm transgender people and their families.\n\nThank you.",
                 templateAsks: [.oppose, .askPublicStatement, .support],
@@ -1558,7 +1777,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Government Oversight",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "seek_oversight",
-                summary: "This issue frames concerns about FBI leadership as an accountability and public-trust issue. Constituents ask members of Congress to demand Kash Patel's resignation, support investigations into misconduct or misuse of resources, and pursue formal accountability measures if needed.",
+                summary: "Leadership controversies within federal law-enforcement agencies often trigger questions about institutional independence, public trust, and congressional oversight. Allegations involving agency leadership can lead lawmakers to evaluate whether internal investigations, external review, or other accountability mechanisms are appropriate. The broader issue centers on maintaining confidence in federal investigative institutions while ensuring that leadership decisions remain subject to democratic oversight.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to demand FBI Director Kash Patel's resignation and support aggressive oversight into his conduct. Reports about misuse of government resources, retaliation, and mismanagement at the FBI are serious and demand a response.\n\nIf Patel refuses to resign, [OFFICIAL_TITLE] [OFFICIAL_LAST] should support formal investigations and pursue every available accountability measure.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to call for Kash Patel's resignation and back immediate oversight of his conduct as FBI director. The bureau should never be used as a tool for personal privilege or political retaliation.\n\nPlease take public action on this issue.\n\nThank you.",
                 templateAsks: [.seekOversight, .askPublicStatement, .oppose],
@@ -1571,7 +1790,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Nominations",
                 targetChambers: ["senate"],
                 primaryAsk: "vote_no",
-                summary: "This issue asks senators to oppose Steve Pearce for Bureau of Land Management director because of his record on public lands and ties to extraction interests. The message emphasizes stewardship, conservation, and protection of federal lands.",
+                summary: "The Bureau of Land Management oversees hundreds of millions of acres of federal land used for conservation, recreation, and natural-resource development. Leadership appointments to the agency therefore influence how public lands are managed, including decisions related to environmental protection, energy development, and land use planning. Confirmation debates often focus on whether nominees' past positions and professional backgrounds align with competing priorities around conservation, economic development, and long-term stewardship.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge Senator [OFFICIAL_LAST] to oppose Steve Pearce's confirmation as Director of the Bureau of Land Management. His record shows too much alignment with oil and gas interests and too little commitment to protecting public lands for future generations.\n\nPlease vote no on his confirmation and speak out in defense of our public lands.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to ask Senator [OFFICIAL_LAST] to oppose Steve Pearce for BLM director. This position should go to someone committed to stewardship of public lands, not someone whose record raises concerns about extraction and selloffs.\n\nThank you.",
                 templateAsks: [.voteNo, .oppose, .askPublicStatement],
@@ -1584,7 +1803,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Voter Rights",
                 targetChambers: ["senate"],
                 primaryAsk: "oppose",
-                summary: "This issue asks senators to reject legislation that would impose new documentation barriers to voter registration and participation. The emphasis is protecting ballot access for eligible voters and opposing unnecessary bureaucratic hurdles.",
+                summary: "Proposals to modify voter-registration requirements and election procedures frequently generate debate about access to the ballot and election security. Supporters argue that stricter documentation rules help maintain accurate voter rolls, while critics warn that additional requirements may create administrative barriers for eligible voters. Because election administration varies widely across states, federal legislation in this area can have significant implications for how millions of Americans register and participate in elections.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge Senator [OFFICIAL_LAST] to oppose the SAVE America Act and any effort to force it through the Senate. This bill would create unnecessary documentation barriers that make it harder for eligible citizens to register and vote.\n\nPlease defend voting rights, reject this bill, and oppose any attempt to make voting less accessible for lawful voters.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm calling to ask Senator [OFFICIAL_LAST] to oppose the SAVE America Act. Eligible Americans should not lose access to the ballot because of burdensome paperwork requirements.\n\nPlease vote no and speak out against this bill.\n\nThank you.",
                 templateAsks: [.oppose, .voteNo, .askPublicStatement],
@@ -1597,7 +1816,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Nominations",
                 targetChambers: ["senate"],
                 primaryAsk: "vote_no",
-                summary: "This issue asks senators to oppose Casey Means for Surgeon General and support evidence-based public health leadership. The message centers on credibility, trust, and the importance of science-driven health communication.",
+                summary: "The U.S. Surgeon General serves as the federal government's leading public-health spokesperson, responsible for communicating scientific guidance and shaping national health priorities. Confirmation debates for the role often focus on a nominee's medical expertise, public-health experience, and credibility with both policymakers and the public. Leadership in this position can influence how the federal government responds to health crises, communicates scientific information, and coordinates national health initiatives.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge Senator [OFFICIAL_LAST] to oppose Casey Means for U.S. Surgeon General. This role should go to someone with strong public health credibility, clear support for evidence-based medicine, and full public trust.\n\nPlease vote no on this nomination and speak out for qualified, science-based public health leadership.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm calling to ask Senator [OFFICIAL_LAST] to oppose Casey Means for Surgeon General. The country needs trusted, evidence-based public health leadership in this role.\n\nPlease vote no on this nomination.\n\nThank you.",
                 templateAsks: [.voteNo, .oppose, .askPublicStatement],
@@ -1610,7 +1829,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Immigration",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "This issue asks lawmakers to defend Temporary Protected Status for Haitians, oppose efforts to end those protections, and support stability for families facing dangerous conditions and legal uncertainty.",
+                summary: "Temporary Protected Status (TPS) allows certain foreign nationals already in the United States to remain and work legally when conditions in their home country make return unsafe. Decisions about TPS designations can affect thousands of families, employers, and local communities. The policy debate typically centers on humanitarian protections, immigration stability, and the economic and social consequences of changing legal status for affected populations.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support continued Temporary Protected Status for Haitians and oppose any effort to strip those protections away.\n\nPlease speak out publicly, support every available legislative and oversight tool to protect Haitian TPS holders, and reject deportation policies that would put families at risk.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support TPS protections for Haitians and oppose efforts to end them. Haitian families deserve stability and protection, not more fear and uncertainty.\n\nThank you.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -1623,7 +1842,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Environment",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "oppose",
-                summary: "This issue asks members of Congress to oppose efforts to dismantle the legal basis for federal climate regulation and to defend protections against dangerous pollution. The focus is climate responsibility and public health.",
+                summary: "The Environmental Protection Agency's endangerment finding establishes that greenhouse-gas emissions pose risks to public health and welfare, forming the legal foundation for many federal climate regulations. Proposals to revise or repeal this determination would have far-reaching implications for how the federal government regulates air pollution and climate-related emissions. The debate therefore touches on environmental policy, regulatory authority, and the long-term framework for addressing climate-related risks.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to oppose the repeal of the EPA's endangerment finding and defend strong federal climate protections.\n\nPlease support aggressive oversight and legislation to restore meaningful greenhouse-gas standards and protect communities from dangerous pollution.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm asking [OFFICIAL_TITLE] [OFFICIAL_LAST] to oppose the repeal of the EPA's endangerment finding and defend strong climate and public-health protections.\n\nPlease take public action on this issue.\n\nThank you.",
                 templateAsks: [.oppose, .seekOversight, .askPublicStatement],
@@ -1636,7 +1855,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Foreign Affairs",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "oppose",
-                summary: "This issue asks Congress to oppose any effort by the administration to pressure or take control of Greenland and to defend allied sovereignty, international stability, and responsible foreign policy.",
+                summary: "Discussions about strategic control of Arctic territory have periodically surfaced in U.S. foreign policy debates because of Greenland's geopolitical importance, natural resources, and proximity to major shipping routes. Any proposal involving territorial acquisition or expanded U.S. influence would raise complex questions about international law, allied relations, and Arctic security. The issue reflects broader competition among global powers for influence in the rapidly changing Arctic region.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to reject any attempt by the administration to seize, pressure, or coerce Greenland.\n\nThe United States should respect Greenlandic and Danish sovereignty, protect our alliances, and make clear that Congress will not support reckless attempts to take control of allied territory.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to oppose any U.S. attempt to take control of Greenland and to defend allied sovereignty and international stability.\n\nPlease speak out publicly on this issue.\n\nThank you.",
                 templateAsks: [.oppose, .askPublicStatement, .support],
@@ -1649,7 +1868,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Digital Rights",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "oppose",
-                summary: "This issue asks Congress to preserve states' ability to regulate AI systems when federal protections are incomplete. The message centers on consumer protection, state authority, and the need for enforceable safeguards.",
+                summary: "Artificial intelligence technologies are advancing rapidly, prompting governments to consider how best to regulate issues such as consumer protection, data privacy, algorithmic bias, and economic disruption. Some proposals would create national standards that could limit or override state-level regulation, while others argue that states should retain authority to experiment with their own safeguards. The outcome of this debate could determine how quickly regulatory frameworks adapt to emerging AI technologies.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect states' ability to regulate artificial intelligence and oppose any federal effort to punish states for passing basic AI safeguards.\n\nCongress should not strip states of the power to enact consumer protections while federal law remains incomplete. Please oppose preemption and any funding threats tied to state AI regulation.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm asking [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect state authority to regulate AI and oppose efforts to override state safeguards or threaten funding.\n\nPlease defend the ability of states to protect their residents.\n\nThank you.",
                 templateAsks: [.oppose, .askPublicStatement, .seekOversight],
@@ -1662,7 +1881,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Agriculture",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "This issue asks lawmakers to support a farm bill that protects SNAP, strengthens food security, and helps family farmers instead of shifting large new costs to states.",
+                summary: "Federal farm legislation shapes agricultural subsidies, food-assistance programs, and rural economic policy across the United States. Negotiations over new farm bills often involve balancing support for farmers with nutrition assistance programs such as SNAP. Because the legislation governs billions of dollars in spending and affects food security nationwide, even small policy adjustments can have significant economic and social impacts.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support a farm bill that protects SNAP, strengthens food security, and helps family farmers rather than shifting big new costs to states.\n\nPlease oppose harmful cuts or cost-shifts and support a final bill that keeps food assistance strong and rural communities stable.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support a farm bill that protects SNAP, strengthens food security, and helps family farmers instead of shifting new costs to states.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -1675,7 +1894,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Education",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "This issue asks lawmakers to protect Pell Grants and student-aid programs and avoid changes that make college or job training harder to afford.",
+                summary: "Federal student-aid programs, including Pell Grants, play a central role in helping students afford higher education and workforce training. Changes to eligibility rules, funding levels, or loan structures can influence college access, debt levels, and long-term economic mobility. Policymakers frequently debate how best to balance affordability, fiscal sustainability, and workforce development goals.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect Pell Grants and student-aid programs and avoid changes that make college or job training harder to afford.\n\nStudents and working adults need real access to education and job training, not new barriers or higher costs.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect Pell Grants and student-aid programs and avoid changes that make college or job training harder to afford.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -1688,7 +1907,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Environment",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "This issue asks Congress to invest in resilience, grid reliability, and insurance-market stability so disaster costs do not keep falling on households.",
+                summary: "Extreme weather events and climate-related disasters have placed growing pressure on insurance markets, infrastructure systems, and local government budgets. Policymakers are increasingly examining how federal investments in resilience, grid modernization, and disaster preparedness might reduce long-term economic risks. Decisions in this area could shape how communities prepare for natural disasters and how insurance systems adapt to rising climate-related costs.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to invest in resilience, grid reliability, and insurance-market stability so disaster costs do not keep falling on households.\n\nPlease support policies that help communities prepare for climate disasters instead of leaving families to absorb the damage alone.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to invest in resilience, grid reliability, and insurance-market stability so disaster costs do not keep falling on households.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -1701,7 +1920,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Democracy",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "This issue asks lawmakers to support fair maps, transparent election administration, and guardrails against mid-cycle partisan redistricting.",
+                summary: "Redistricting and election-administration rules play a significant role in determining how voters are represented in federal and state government. Debates over district boundaries, transparency, and election procedures often focus on whether political incentives influence how electoral maps are drawn. Changes to these systems can affect representation, competition between parties, and public confidence in the electoral process.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support fair maps, transparent election administration, and guardrails against mid-cycle partisan redistricting.\n\nVoters deserve stable rules, equal representation, and a democracy that is not manipulated for partisan advantage.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support fair maps, transparent election administration, and guardrails against mid-cycle partisan redistricting.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -1714,7 +1933,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Retirement Security",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "This issue asks lawmakers to advance a bipartisan solvency plan now so any changes are gradual, protect earned benefits, and avoid sudden cuts.",
+                summary: "Social Security and Medicare provide retirement and health benefits to tens of millions of Americans, making their long-term financial sustainability a central policy concern. Demographic shifts, rising health-care costs, and longer life expectancies have prompted discussions about how the programs should be financed in future decades. Policymakers face difficult trade-offs involving taxes, benefits, and eligibility rules as they consider options to maintain the programs' stability.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to advance a bipartisan Social Security and Medicare solvency plan now so any changes are gradual and not sudden benefit cuts.\n\nPlease protect earned benefits and work across the aisle on a long-term solution before the choices become more painful.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to advance a bipartisan Social Security and Medicare solvency plan now so any changes are gradual and not sudden benefit cuts.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement],
@@ -1727,7 +1946,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Housing",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "This issue asks lawmakers to support more housing supply, more rental relief, and federal incentives for states and cities to allow more homes near jobs and transit.",
+                summary: "Housing affordability has become a major economic challenge in many parts of the United States as supply shortages push rents and home prices upward. Policymakers are exploring a range of approaches, including zoning reforms, housing subsidies, and incentives to encourage new construction. Federal policy decisions can influence how quickly housing supply expands and how communities respond to rising homelessness.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support more housing supply, more rental relief, and federal incentives for states and cities to allow more homes near jobs and transit.\n\nPlease treat housing affordability and homelessness as urgent national issues and back policies that make it easier to build and keep people housed.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support more housing supply, more rental relief, and federal incentives for states and cities to allow more homes near jobs and transit.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -1740,7 +1959,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Health Care",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "This issue asks lawmakers to prevent avoidable coverage losses by restoring affordability and rejecting paperwork rules that push eligible people off insurance.",
+                summary: "Medicaid provides health coverage to millions of low-income Americans, and proposals to introduce work or reporting requirements have generated significant policy debate. Supporters argue such requirements encourage workforce participation, while critics warn they may lead eligible individuals to lose coverage due to administrative complexity. The outcome of these discussions could influence access to health care and the structure of public health-insurance programs.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to prevent avoidable coverage losses by restoring affordability and rejecting Medicaid work requirements and other paperwork rules that push eligible people off insurance.\n\nPlease protect access to care and do not let eligible families lose coverage because of higher costs or red tape.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to restore affordable coverage and reject Medicaid work requirements and other paperwork rules that push eligible people off insurance.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .oppose, .askPublicStatement],
@@ -1753,7 +1972,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Health Care",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "This issue asks lawmakers to prioritize lower premiums, deductibles, and drug costs while protecting health coverage.",
+                summary: "Health-care affordability remains a major concern for households, employers, and governments as insurance premiums, deductibles, and prescription-drug prices continue to rise. Policymakers are examining strategies ranging from market competition and price transparency to federal negotiation authority and regulatory reform. The direction of federal policy could affect both the cost and accessibility of medical care nationwide.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to prioritize lower premiums, deductibles, and drug costs while protecting coverage.\n\nHealth care has to be more affordable for families without forcing people to give up access or benefits.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to lower premiums, deductibles, and drug costs while protecting coverage.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -1766,7 +1985,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Reproductive Rights",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "This issue asks lawmakers to clearly support federal protections and funding for reproductive health care and to vote accordingly.",
+                summary: "Federal policy plays an important role in shaping access to reproductive health services through funding programs, regulatory standards, and health-care coverage rules. Debates in Congress often focus on how federal programs such as Medicaid and Title X should support or regulate reproductive health services. These decisions can influence health-care availability, funding for clinics, and how medical providers deliver services across different states.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to state clearly whether they support federal protections and funding for reproductive health care, and to vote to protect that care.\n\nCongress still shapes access through Medicaid, Title X, appropriations, and broader health-funding laws, so this position should be explicit.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to state clearly whether they support federal protections and funding for reproductive health care, and to vote to protect that care.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement],
@@ -1779,7 +1998,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Labor",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "This issue asks lawmakers to support worker protections, retraining, and transparent impact assessments for layoffs and federal workforce cuts.",
+                summary: "Economic downturns and industry restructuring periodically lead to layoffs that affect workers, local communities, and regional economies. Policymakers often examine whether federal programs should provide stronger worker protections, retraining opportunities, or transition assistance during periods of job loss. Decisions in this area can shape how effectively workers adapt to economic change and how quickly communities recover.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support worker protections, retraining, and transparent impact assessments for layoffs and federal workforce cuts.\n\nFamilies need job security, honest planning, and real support when the labor market starts to cool.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support worker protections, retraining, and transparent impact assessments for layoffs and federal workforce cuts.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -1792,7 +2011,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Economy",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "This issue asks lawmakers to back policies that lower everyday costs for families without adding hidden taxes or supply shocks.",
+                summary: "Rising prices for housing, food, energy, and other everyday expenses have made cost-of-living pressures a central economic concern for many households. Policymakers are debating how federal fiscal, regulatory, and economic policies influence inflation and affordability. The broader challenge involves balancing economic growth, consumer protection, and financial stability while addressing household budget pressures.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to back policies that lower everyday costs for families without adding new hidden taxes or supply shocks.\n\nPlease focus on affordability in the real economy, especially food, housing, and other essential household costs.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to back policies that lower everyday costs for families without adding hidden taxes or supply shocks.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -2412,7 +2631,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         return targets
     }
 
-    private func normalizedBriefs(_ briefs: [CivicCallBrief]) -> [CivicCallBrief] {
+    private func normalizedBriefs(_ briefs: [CivicCallBrief], fallbackIssueID: String) -> [CivicCallBrief] {
         var seenIDs = Set<String>()
         var normalized: [(index: Int, brief: CivicCallBrief)] = []
 
@@ -2424,6 +2643,12 @@ final class IssueCallCenterViewModel: ObservableObject {
 
             let nameKey = Self.normalizeNameKey(brief.repName)
             let resolvedSlot = brief.repSlot ?? slotByRepID[brief.repID] ?? slotByName[nameKey]
+            let resolvedIssueID = resolvedIssueIdentifier(
+                preferredIssueID: brief.issueID,
+                issueTitle: issueTitle,
+                issueSummary: issueSummary,
+                fallbackIssueID: fallbackIssueID
+            )
 
             let normalizedBrief = CivicCallBrief(
                 id: uniqueID,
@@ -2438,7 +2663,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 liveScript: brief.liveScript,
                 voicemailScript: brief.voicemailScript,
                 talkingPoints: brief.talkingPoints,
-                issueID: brief.issueID,
+                issueID: resolvedIssueID,
                 repSlot: resolvedSlot
             )
 
@@ -2461,6 +2686,47 @@ final class IssueCallCenterViewModel: ObservableObject {
                 return lhs.index < rhs.index
             }
             .map(\.brief)
+    }
+
+    private func resolvedIssueIdentifier(
+        preferredIssueID: String?,
+        issueTitle: String,
+        issueSummary: String,
+        fallbackIssueID: String? = nil
+    ) -> String {
+        let preferred = preferredIssueID?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !preferred.isEmpty {
+            return preferred
+        }
+
+        if let fallbackIssueID {
+            let normalizedFallback = fallbackIssueID.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !normalizedFallback.isEmpty {
+                return normalizedFallback
+            }
+        }
+
+        if let slug = slugifiedIssueIdentifier(from: issueTitle) {
+            return slug
+        }
+        if let slug = slugifiedIssueIdentifier(from: issueSummary) {
+            return slug
+        }
+
+        return UUID().uuidString
+    }
+
+    private func slugifiedIssueIdentifier(from raw: String) -> String? {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+
+        let lowercased = trimmed.lowercased()
+        let slug = lowercased
+            .replacingOccurrences(of: "[^a-z0-9]+", with: "-", options: .regularExpression)
+            .trimmingCharacters(in: CharacterSet(charactersIn: "-"))
+
+        guard !slug.isEmpty else { return nil }
+        return String(slug.prefix(80))
     }
 
     private static func normalizeNameKey(_ raw: String) -> String {

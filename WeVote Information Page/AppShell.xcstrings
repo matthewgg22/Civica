@@ -357,7 +357,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Primary ballot eligibility can depend on your current party registration. Confirm your state rules before election day."
+            "value": "The Democratic and Republican parties are the two largest in the United States. In many states, primary ballot eligibility depends on your current party registration. Example: in a closed primary, a voter registered as Independent may not be able to vote in either the Democratic or Republican primary unless they change party registration before the state deadline."
           }
         },
         "es": {
@@ -4627,7 +4627,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Preliminary Things to Vote On"
+            "value": "What's on your ballot"
           }
         },
         "es": {

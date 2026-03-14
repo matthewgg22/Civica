@@ -47,6 +47,11 @@ struct VoterIDGuideCard: View {
         localized("app.voter_id.set_zip_prompt", fallback: "Set your ZIP/state to load your voter ID category.")
     }
 
+    private var stateFlagSize: CGSize {
+        let scale: CGFloat = 1.25
+        return CGSize(width: 50 * scale, height: 35 * scale)
+    }
+
     private func localized(_ key: String, fallback: String) -> String {
         localizedCatalogString(
             key,
@@ -88,7 +93,7 @@ struct VoterIDGuideCard: View {
                 Image(asset)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 50, height: 35)
+                    .frame(width: stateFlagSize.width, height: stateFlagSize.height)
                     .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 6, style: .continuous)

@@ -170,7 +170,7 @@ struct VoterRegistrationView: View {
                 bullets: [
                     l("app.registration.card.then_vote.bullet_1", "Make a plan for when and where you will vote."),
                     l("app.registration.card.then_vote.bullet_2", "Review what is on your ballot ahead of time."),
-                    l("app.registration.card.then_vote.bullet_3", "Confirm polling location and hours before you go.")
+                    l("app.registration.card.then_vote.bullet_3", "Confirm polling location and hours.")
                 ],
                 primaryActionTitle: l("app.registration.action.go_how_to_vote", "Go to How to Vote"),
                 primaryAction: .goToHowToVoteTab,
@@ -225,6 +225,7 @@ struct VoterRegistrationView: View {
         let targetHeight = isLeadCard
             ? min(max(viewportHeight * 0.50, 300), 420)
             : min(max(viewportHeight * 0.40, 240), 330)
+        let enforcedMinHeight: CGFloat? = card.kind == .whyRegister ? nil : targetHeight
 
         VStack(alignment: .leading, spacing: 12) {
             if card.kind == .whyRegister {
@@ -272,7 +273,9 @@ struct VoterRegistrationView: View {
                 }
             }
 
-            Spacer(minLength: 4)
+            if card.kind != .whyRegister {
+                Spacer(minLength: 4)
+            }
 
             if card.kind != .whyRegister {
                 Button(card.primaryActionTitle) {
@@ -297,7 +300,7 @@ struct VoterRegistrationView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(minHeight: targetHeight, alignment: .topLeading)
+        .frame(minHeight: enforcedMinHeight, alignment: .topLeading)
         .background(card.kind == .whyRegister ? VoteNowColors.infoSurfaceBlue : VoteNowColors.surfaceWhite)
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         .overlay(

@@ -432,11 +432,11 @@ struct RepresentativeSection: View {
                 .scaledToFit()
                 .frame(width: 29, height: 29)
                 .padding(5)
-                .background(VoteNowColors.primaryCTA.opacity(0.16))
+                .background(VoteNowColors.primaryCTA.opacity(0.30))
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .stroke(VoteNowColors.primaryCTA.opacity(0.22), lineWidth: 0.8)
+                        .stroke(VoteNowColors.primaryCTA.opacity(0.40), lineWidth: 1.3)
                 )
         case "federal legislative":
             if UIImage(named: "CapitolIcon") != nil {
@@ -470,9 +470,7 @@ struct RepresentativeSection: View {
                 Image(asset)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 38, height: 29)
-                    .padding(3)
-                    .background(VoteNowColors.primaryCTA.opacity(0.30))
+                    .frame(width: 42, height: 32)
                     .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
             } else {
                 Image(systemName: "map.fill")

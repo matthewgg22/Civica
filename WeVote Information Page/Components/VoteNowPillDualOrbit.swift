@@ -4,8 +4,8 @@ import SwiftUI
 /// Two colored segments run the same capsule path with dynamic z-order:
 /// the segment currently "ahead" is rendered last, so it occludes the trailing one.
 struct VoteNowPillDualOrbitModifier: ViewModifier {
-    var redColor: Color = Color(hex: "#DF5846")
-    var blueColor: Color = Color(hex: "#DF5846").opacity(0.72)
+    var redColor: Color = Color(hex: "#E14D3A")
+    var blueColor: Color = Color(hex: "#2F83D1").opacity(0.80)
     var strokeThickness: CGFloat = 3
     var loopDuration: Double = 3.3
     var glowIntensity: CGFloat = 0.30
@@ -195,8 +195,8 @@ private struct VoteNowPillDualOrbitLayer: View {
 
 extension View {
     func voteNowPillDualOrbit(
-        redColor: Color = Color(hex: "#DF5846"),
-        blueColor: Color = Color(hex: "#DF5846").opacity(0.72),
+        redColor: Color = Color(hex: "#E14D3A"),
+        blueColor: Color = Color(hex: "#2F83D1").opacity(0.80),
         strokeThickness: CGFloat = 3,
         loopDuration: Double = 3.3,
         glowIntensity: CGFloat = 0.30,

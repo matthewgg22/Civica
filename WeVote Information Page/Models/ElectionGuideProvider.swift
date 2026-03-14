@@ -351,7 +351,7 @@ private struct StarterElectionGuideContentProvider {
             topics.append(ElectionGuideTopic(
                 id: "party-affiliation-impact",
                 title: "How Party Affiliation Affects Primary Voting",
-                body: "Primary ballot eligibility can depend on party registration. Confirm your state's rules before election day."
+                body: "The Democratic and Republican parties are the two largest in the United States. In many states, primary ballot eligibility depends on your current party registration. Example: in a closed primary, a voter registered as Independent may not be able to vote in either the Democratic or Republican primary unless they change party registration before the state deadline."
             ))
         }
 

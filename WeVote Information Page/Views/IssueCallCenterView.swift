@@ -272,8 +272,13 @@ struct IssueCallCenterView: View {
         .onDisappear {
             viewModel.persistDraftState()
         }
-        .onChange(of: viewModel.selectedTab) { _, _ in
+        .onChange(of: viewModel.selectedTab) { _, newTab in
             viewModel.persistDraftState()
+            if newTab == .civicScore || newTab == .history {
+                Task {
+                    await viewModel.refreshCallScoreData()
+                }
+            }
         }
         .onChange(of: viewModel.issueTitle) { _, _ in
             isTalkingPointsExpanded = false
@@ -714,6 +719,7 @@ struct IssueCallCenterView: View {
         let isActive = viewModel.activeBriefID == brief.id
         let official = viewModel.official(for: brief)
         let primaryCallURL = callURL(primary: brief.primaryPhoneNumber, fallback: official?.officialPhone)
+        let shouldShowCallPillOrbit = condensedForMAPC && primaryCallURL != nil
         let isLastBrief = viewModel.isLastBrief(brief)
         let briefIndex = viewModel.callBriefs.firstIndex(where: { $0.id == brief.id }) ?? 0
         let isFirstBrief = briefIndex == 0
@@ -754,16 +760,42 @@ struct IssueCallCenterView: View {
                         openURL(url)
                     }
                 } label: {
-                    Label(
-                        callButtonTitle(for: brief),
-                        systemImage: "phone.fill"
-                    )
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 11)
-                    .background(primaryCallURL == nil ? VoteNowColors.mutedText.opacity(0.45) : VoteNowColors.primaryCTA)
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    Group {
+                        if shouldShowCallPillOrbit {
+                            Label(
+                                callButtonTitle(for: brief),
+                                systemImage: "phone.fill"
+                            )
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 11)
+                            .background(primaryCallURL == nil ? VoteNowColors.mutedText.opacity(0.45) : VoteNowColors.primaryCTA)
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .voteNowPillDualOrbit(
+                                redColor: VoteNowColors.ctaRed.opacity(0.94),
+                                blueColor: VoteNowColors.ctaBlue.opacity(0.88),
+                                strokeThickness: 2.8,
+                                loopDuration: 4.95,
+                                glowIntensity: 0.28,
+                                idleOpacity: 0.24,
+                                borderInset: 0.65,
+                                segmentLength: 0.34,
+                                separatorThickness: 0.75
+                            )
+                        } else {
+                            Label(
+                                callButtonTitle(for: brief),
+                                systemImage: "phone.fill"
+                            )
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 11)
+                            .background(primaryCallURL == nil ? VoteNowColors.mutedText.opacity(0.45) : VoteNowColors.primaryCTA)
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        }
+                    }
                 }
                 .buttonStyle(.plain)
                 .disabled(primaryCallURL == nil)
@@ -1049,22 +1081,6 @@ struct IssueCallCenterView: View {
 
                                 Spacer(minLength: 6)
                             }
-
-                            HStack(spacing: 6) {
-                                Spacer(minLength: 0)
-                                Text("UPDATED: \(premadeUpdatedDate(for: example))")
-                                    .font(.caption2.weight(.bold))
-                                    .foregroundColor(.white.opacity(0.96))
-                                    .lineLimit(1)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 4)
-                                    .background(exampleCategoryColor(for: example.category ?? "All"))
-                                    .clipShape(Capsule())
-                                    .overlay(
-                                        Capsule()
-                                            .stroke(Color.white.opacity(0.72), lineWidth: 1)
-                                    )
-                            }
                         }
                         .padding(.horizontal, 10)
                         .padding(.vertical, 8)
@@ -1096,6 +1112,21 @@ struct IssueCallCenterView: View {
                                     .background(VoteNowColors.primaryCTA)
                                     .clipShape(Capsule())
                             }
+
+                            Spacer(minLength: 0)
+
+                            Text("UPDATED: \(premadeUpdatedDate(for: example))")
+                                .font(.caption2.weight(.bold))
+                                .foregroundColor(.white.opacity(0.96))
+                                .lineLimit(1)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(exampleCategoryColor(for: example.category ?? "All"))
+                                .clipShape(Capsule())
+                                .overlay(
+                                    Capsule()
+                                        .stroke(Color.white.opacity(0.72), lineWidth: 1)
+                                )
                         }
 
                         emphasizedPromptText(example.summary, baseFont: .subheadline)
@@ -1476,8 +1507,17 @@ struct IssueCallCenterView: View {
         .accessibilityLabel("Issue call progress \(min(safeCompleted, safeGoal)) of \(safeGoal)")
     }
 
-    private func trackerAppWideCompletedCalls(for _: TrackerIssueGroup) -> Int {
-        viewModel.callStats.totalVoteNowCalls
+    private func trackerAppWideCompletedCalls(for group: TrackerIssueGroup) -> Int {
+        if let perIssueCount = viewModel.appWideCompletedCalls(forIssueID: group.representativeGroup.issueID) {
+            return perIssueCount
+        }
+
+        let normalizedIssueID = group.representativeGroup.issueID
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        if normalizedIssueID.isEmpty {
+            return viewModel.callStats.totalVoteNowCalls
+        }
+        return 0
     }
 
     private func trackerProgressSummaryText(completedCalls: Int) -> String {

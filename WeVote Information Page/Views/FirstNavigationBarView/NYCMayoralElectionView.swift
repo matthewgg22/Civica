@@ -420,7 +420,7 @@ struct NYCMayoralElectionView: View {
                 cards.append(
                     ElectionGuideInfoCard(
                         title: l("app.guide.card.party_affiliation.title", "Party Affiliation"),
-                        body: l("app.guide.card.party_affiliation.body", "Primary ballot eligibility can depend on your current party registration. Confirm your state rules before election day.")
+                        body: l("app.guide.card.party_affiliation.body", "The Democratic and Republican parties are the two largest in the United States. In many states, primary ballot eligibility depends on your current party registration. Example: in a closed primary, a voter registered as Independent may not be able to vote in either the Democratic or Republican primary unless they change party registration before the state deadline.")
                     )
                 )
             }
@@ -482,7 +482,7 @@ struct NYCMayoralElectionView: View {
                 title: l("app.guide.card.voting_methods.title", "Three Ways You Can Vote"),
                 body: l(
                     "app.guide.card.voting_methods.body",
-                    "Early Vote: Vote in person before Election Day during your state's early voting window. By Mail: Request and return your mail ballot by your state's deadlines. Election Day: Vote in person at your assigned polling place on Election Day."
+                    "Early Vote: Vote in person before Election Day during your state's early voting window.\nBy Mail: Request and return your mail ballot by your state's deadlines.\nElection Day: Vote in person at your assigned polling place on Election Day."
                 )
             )
         )
