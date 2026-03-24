@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct NYCMayoralElectionView: View {
     @EnvironmentObject private var planVM: PlanViewModel
@@ -9,8 +10,63 @@ struct NYCMayoralElectionView: View {
     @State private var stateName: String = ""
     @State private var guideCards: [ElectionGuideInfoCard] = []
     @State private var errorMessage: String?
+    @State private var showRCVDemo = false
+    @State private var showRunoffDemo = false
 
     private let stateResolver = USZipStateResolver()
+    private static let primaryTypeDataset: ElectionGuidePrimaryTypeDataset? = {
+        guard let url = Bundle.main.url(forResource: "ElectionEligibilityDataset", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let decoded = try? JSONDecoder().decode(ElectionGuidePrimaryTypeDataset.self, from: data) else {
+            return nil
+        }
+        return decoded
+    }()
+    private static let ballotTimelineDataset: ElectionGuideBallotTimelineDataset? = {
+        guard let url = Bundle.main.url(forResource: "ElectionEligibilityDataset", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let decoded = try? JSONDecoder().decode(ElectionGuideBallotTimelineDataset.self, from: data) else {
+            return nil
+        }
+        return decoded
+    }()
+    private static let stateVotingFeaturesByCode: [String: ElectionGuideStateVotingFeature] = {
+        guard let url = Bundle.main.url(forResource: "USVotingFeaturesByJurisdiction", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let decoded = try? JSONDecoder().decode([String: ElectionGuideStateVotingFeature].self, from: data) else {
+            return [:]
+        }
+        return decoded
+    }()
+    private static let ballotMeasurePoliciesByState: [String: ElectionGuideBallotMeasurePolicy] = {
+        guard let url = Bundle.main.url(forResource: "USBallotMeasurePoliciesByState", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let decoded = try? JSONDecoder().decode([String: ElectionGuideBallotMeasurePolicy].self, from: data) else {
+            return [:]
+        }
+        return decoded
+    }()
+    private static let statewideBallotMeasuresByStateCode: [String: [ElectionGuideStatewideBallotMeasure]] = {
+        guard let url = Bundle.main.url(forResource: "USStatewideBallotMeasures2026", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let decoded = try? JSONDecoder().decode([String: [ElectionGuideStatewideBallotMeasure]].self, from: data) else {
+            return [:]
+        }
+        return decoded
+    }()
+    private static let officePowersByKey: [String: ElectionGuideOfficePowerRow] = {
+        guard let url = Bundle.main.url(forResource: "USOfficePowersPlainEnglish", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let decoded = try? JSONDecoder().decode(ElectionGuideOfficePowersDataset.self, from: data) else {
+            return [:]
+        }
+        return Dictionary(uniqueKeysWithValues: decoded.rows.map { row in
+            let normalized = row.officeKey
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .lowercased()
+            return (normalized, row)
+        })
+    }()
 
     private func l(_ key: String, _ fallback: String) -> String {
         localizedCatalogString(
@@ -27,74 +83,189 @@ struct NYCMayoralElectionView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                VStack(alignment: .leading, spacing: 0) {
-                    PageHeader(title: Text("app.page.election_guide", tableName: "AppShell"))
-                    Text(electionSubtitleText)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(VoteNowColors.mutedText)
-                        .padding(.leading, 72)
-                        .padding(.top, -6)
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
-                .padding(.bottom, 8)
-                .background(VoteNowColors.appBackground)
-
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
-                        if let errorMessage {
-                            Text(errorMessage)
-                                .font(.body)
-                                .foregroundColor(VoteNowColors.mutedText)
-                        } else {
-                            introLineView
-
-                            VoterIDGuideCard(
-                                stateCode: stateCode,
-                                stateName: stateName
-                            )
-
-                            ForEach(guideCards) { card in
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text(card.title)
-                                        .font(.headline.weight(.bold))
-                                        .italic()
-                                        .foregroundColor(card.accent.color)
-
-                                    Text(card.body)
-                                        .font(.subheadline)
-                                        .foregroundColor(VoteNowColors.mutedText)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                }
-                                .padding(14)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                        .fill(VoteNowColors.surfaceWhite)
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                        .stroke(VoteNowColors.borderWarm, lineWidth: 1)
-                                )
-                                .shadow(color: VoteNowColors.primaryText.opacity(0.05), radius: 2, x: 0, y: 1)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 24)
-                }
+        refreshedGuideView
+            .fullScreenCover(isPresented: $showRCVDemo) {
+            RankedChoiceVotingView(
+                title: l("app.guide.card.special_rules.title.rcv", "Ranked-Choice Voting"),
+                candidateCount: 6,
+                defaultMuted: false,
+                idleTimeoutSeconds: 30
+            )
             }
-            .background(VoteNowColors.appBackground.ignoresSafeArea())
-            .navigationBarTitleDisplayMode(.inline)
+            .fullScreenCover(isPresented: $showRunoffDemo) {
+            RunoffThresholdGateView(
+                title: l("app.guide.card.special_rules.title.runoff", "Runoff Rules"),
+                stateCode: stateCode,
+                stateName: stateName
+            )
+            }
+    }
+
+    private var refreshedGuideView: some View {
+        navigationRootView
+            .onAppear(perform: refreshGuide)
+            .onChange(of: planVM.zip) { _, _ in refreshGuide() }
+            .onChange(of: planVM.userAddress.state) { _, _ in refreshGuide() }
+            .onChange(of: planVM.userAddress.zip) { _, _ in refreshGuide() }
+            .onChange(of: planVM.selectedParty) { _, _ in refreshGuide() }
+            .onChange(of: locale.identifier) { _, _ in refreshGuide() }
+    }
+
+    private var navigationRootView: some View {
+        NavigationStack {
+            mainContentView
         }
-        .onAppear(perform: refreshGuide)
-        .onChange(of: planVM.zip) { _, _ in refreshGuide() }
-        .onChange(of: planVM.userAddress.state) { _, _ in refreshGuide() }
-        .onChange(of: planVM.userAddress.zip) { _, _ in refreshGuide() }
-        .onChange(of: planVM.selectedParty) { _, _ in refreshGuide() }
-        .onChange(of: locale.identifier) { _, _ in refreshGuide() }
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var mainContentView: some View {
+        VStack(spacing: 0) {
+            headerSectionView
+            guideScrollView
+        }
+        .background(VoteNowColors.appBackground.ignoresSafeArea())
+    }
+
+    private var headerSectionView: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            PageHeader(title: Text("app.page.election_guide", tableName: "AppShell"))
+            Text(electionSubtitleText)
+                .font(.subheadline.weight(.semibold))
+                .foregroundColor(VoteNowColors.mutedText)
+                .padding(.leading, 72)
+                .padding(.top, -6)
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 16)
+        .padding(.bottom, 8)
+        .background(VoteNowColors.appBackground)
+    }
+
+    private var guideScrollView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                guideContentView
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 24)
+        }
+    }
+
+    @ViewBuilder
+    private var guideContentView: some View {
+        if let errorMessage {
+            Text(errorMessage)
+                .font(.body)
+                .foregroundColor(VoteNowColors.mutedText)
+        } else {
+            introLineView
+
+            VoterIDGuideCard(
+                stateCode: stateCode,
+                stateName: stateName
+            )
+
+            ForEach(guideCards) { card in
+                guideCardView(card)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func guideCardView(_ card: ElectionGuideInfoCard) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            if let flagCode = card.flagStateCode,
+               let assetName = StateFlagCatalog.assetName(for: flagCode),
+               UIImage(named: assetName) != nil {
+                HStack(alignment: .top, spacing: 10) {
+                    Text(card.title)
+                        .font(.headline.weight(.bold))
+                        .italic()
+                        .foregroundColor(card.accent.color)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    Image(assetName)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 54, height: 36)
+                        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                        )
+                        .opensMyInfoPanelOnLongPress()
+                }
+            } else {
+                Text(card.title)
+                    .font(.headline.weight(.bold))
+                    .italic()
+                    .foregroundColor(card.accent.color)
+            }
+
+            if let threeWays = card.threeWaysContext {
+                threeWaysVotingContent(threeWays)
+            } else if let primaryGuide = card.primaryGuideContext {
+                primaryGuideBodyView(primaryGuide)
+            } else if card.kind == .officesInfluence {
+                officesInfluenceBodyView(card.ballotItems ?? [])
+            } else {
+                Text(card.body)
+                    .font(.subheadline)
+                    .foregroundColor(VoteNowColors.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            if let rcvDemoContext = card.rcvDemoContext {
+                Button {
+                    showRCVDemo = true
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "play.circle.fill")
+                            .font(.subheadline.weight(.semibold))
+                        Text(rcvDemoContext.ctaText)
+                            .font(.subheadline.weight(.semibold))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(VoteNowColors.primaryCTA)
+                    .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 6)
+            }
+
+            if let runoffDemoContext = card.runoffDemoContext {
+                Button {
+                    showRunoffDemo = true
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "gauge.open.with.lines.needle.33percent")
+                            .font(.subheadline.weight(.semibold))
+                        Text(runoffDemoContext.ctaText)
+                            .font(.subheadline.weight(.semibold))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(VoteNowColors.primaryCTA)
+                    .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 6)
+            }
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(VoteNowColors.surfaceWhite)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+        )
+        .shadow(color: VoteNowColors.primaryText.opacity(0.05), radius: 2, x: 0, y: 1)
     }
 
     private var electionSubtitleText: String {
@@ -110,6 +281,7 @@ struct NYCMayoralElectionView: View {
                 let voterLabel = stateName.isEmpty ? l("app.guide.voters.label", "voters") : "\(stateName) \(l("app.guide.voters.label", "voters"))"
 
                 if Calendar.current.isDate(upcomingElection.startDate, inSameDayAs: upcomingElection.electionDay) {
+                    let line =
                     Text(
                         lf(
                             "app.guide.intro.same_day.prefix",
@@ -119,8 +291,11 @@ struct NYCMayoralElectionView: View {
                         )
                     )
                     + styledElectionDescriptorText(for: upcomingElection)
+                    + styledPrimaryRuleInlineText(for: upcomingElection)
                     + Text(".")
+                    line
                 } else {
+                    let line =
                     Text(
                         lf(
                             "app.guide.intro.range.prefix",
@@ -131,7 +306,9 @@ struct NYCMayoralElectionView: View {
                         )
                     )
                     + styledElectionDescriptorText(for: upcomingElection)
+                    + styledPrimaryRuleInlineText(for: upcomingElection)
                     + Text(".")
+                    line
                 }
             } else {
                 Text(l("app.guide.error.enter_valid", "Enter a valid state or ZIP to load your upcoming election guide."))
@@ -173,9 +350,6 @@ struct NYCMayoralElectionView: View {
 
         if normalized.contains("midterm") { return .midterm }
         if normalized.contains("primary") { return .primary }
-        if normalized.contains("general") { return .general }
-        if normalized.contains("runoff") { return .runoff }
-        if normalized.contains("presidential") { return .presidential }
         return nil
     }
 
@@ -194,7 +368,7 @@ struct NYCMayoralElectionView: View {
         stateCode = resolvedStateCode
         stateName = nextElection.jurisdictionName
         upcomingElection = nextElection
-        guideCards = buildGuideCards(for: nextElection, stateCode: resolvedStateCode)
+        guideCards = buildGuideCards(for: nextElection, stateCode: resolvedStateCode, elections: candidates)
         errorMessage = nil
     }
 
@@ -378,7 +552,7 @@ struct NYCMayoralElectionView: View {
         return election.name
     }
 
-    private func buildGuideCards(for election: Election, stateCode: String) -> [ElectionGuideInfoCard] {
+    private func buildGuideCards(for election: Election, stateCode: String, elections: [Election]) -> [ElectionGuideInfoCard] {
         let phase = phaseForElection(election)
         let overviewCards = electionTypeOverviewCards(for: election)
         var cards: [ElectionGuideInfoCard] = []
@@ -393,9 +567,13 @@ struct NYCMayoralElectionView: View {
             cards.append(
                 ElectionGuideInfoCard(
                     title: l("app.guide.card.primary.title", "A Primary Election"),
-                    body: l("app.guide.card.primary.body", "A primary election decides which candidates advance to the general election. Rules can vary by party and office."),
+                    body: l("app.guide.card.primary.body", "A primary election decides which candidates advance to the general election."),
                     accent: .primary
                 )
+            )
+
+            cards.append(
+                primaryGuideCard(for: election, stateCode: stateCode, elections: elections)
             )
 
             if stateCode == "CA" {
@@ -412,15 +590,6 @@ struct NYCMayoralElectionView: View {
                         title: l("app.guide.card.top_two.title", "Top-Two Primary"),
                         body: l("app.guide.card.top_two.body", "Washington uses a top-two style primary for many races, where all voters can choose from all candidates and the top two advance."),
                         accent: .primary
-                    )
-                )
-            }
-
-            if planVM.selectedParty == .independent {
-                cards.append(
-                    ElectionGuideInfoCard(
-                        title: l("app.guide.card.party_affiliation.title", "Party Affiliation"),
-                        body: l("app.guide.card.party_affiliation.body", "The Democratic and Republican parties are the two largest in the United States. In many states, primary ballot eligibility depends on your current party registration. Example: in a closed primary, a voter registered as Independent may not be able to vote in either the Democratic or Republican primary unless they change party registration before the state deadline.")
                     )
                 )
             }
@@ -477,15 +646,11 @@ struct NYCMayoralElectionView: View {
             cards.append(contentsOf: overviewCards)
         }
 
-        cards.append(
-            ElectionGuideInfoCard(
-                title: l("app.guide.card.voting_methods.title", "Three Ways You Can Vote"),
-                body: l(
-                    "app.guide.card.voting_methods.body",
-                    "Early Vote: Vote in person before Election Day during your state's early voting window.\nBy Mail: Request and return your mail ballot by your state's deadlines.\nElection Day: Vote in person at your assigned polling place on Election Day."
-                )
-            )
-        )
+        cards.append(officesAndInfluenceGuideCard(for: election))
+        if let specialRulesCard = specialBallotRulesGuideCard(for: election, stateCode: stateCode) {
+            cards.append(specialRulesCard)
+        }
+        cards.append(ballotMeasuresGuideCard(for: election))
         return cards
     }
 
@@ -498,8 +663,21 @@ struct NYCMayoralElectionView: View {
             return [
                 ElectionGuideInfoCard(
                     title: l("app.guide.card.presidential.title", "Presidential Elections"),
-                    body: l("app.guide.card.presidential.body", "What is on the ballot: president/vice president, all U.S. House seats, some U.S. Senate seats, and state and local offices or ballot measures where scheduled."),
-                    accent: .presidential
+                    body: l(
+                        "app.guide.card.presidential.body",
+                        "Ballot contents below are pulled from your state timeline, plus statewide/local ballot measures where scheduled. This election happens every 4 years."
+                    ),
+                    accent: .presidential,
+                    ballotItems: ballotItemsForOverviewCard(
+                        for: election,
+                        includeStatewideMeasures: true,
+                        fallback: [
+                            "President and Vice President",
+                            "All U.S. House seats",
+                            "Some U.S. Senate seats",
+                            "State/local offices and ballot measures (where scheduled)"
+                        ]
+                    )
                 )
             ]
         }
@@ -508,8 +686,23 @@ struct NYCMayoralElectionView: View {
             return [
                 ElectionGuideInfoCard(
                     title: l("app.guide.card.midterm.title", "Midterm Elections"),
-                    body: l("app.guide.card.midterm.body", "What is on the ballot: all U.S. House seats, some U.S. Senate seats, many governor and state legislature races, and statewide/local ballot measures."),
-                    accent: .midterm
+                    body: l(
+                        "app.guide.card.midterm.body",
+                        "Ballot contents below are pulled from your state timeline, plus statewide/local ballot measures where scheduled. Midterm elections happen every 4 years."
+                    ),
+                    accent: .midterm,
+                    ballotItems: ballotItemsForOverviewCard(
+                        for: election,
+                        includeStatewideMeasures: true,
+                        ensureStateLegislature: true,
+                        fallback: [
+                            "All U.S. House seats",
+                            "Some U.S. Senate seats",
+                            "Many governor races",
+                            "State legislature races",
+                            "Statewide/local ballot measures"
+                        ]
+                    )
                 )
             ]
         }
@@ -518,12 +711,623 @@ struct NYCMayoralElectionView: View {
             return [
                 ElectionGuideInfoCard(
                     title: l("app.guide.card.mayoral.title", "Mayoral Elections"),
-                    body: l("app.guide.card.mayoral.body", "What is on the ballot: mayor, and often city council or other city offices, plus local ballot questions depending on your city.")
+                    body: l("app.guide.card.mayoral.body", "City-level election focused on municipal leadership and local policy."),
+                    ballotItems: ballotItemsForOverviewCard(
+                        for: election,
+                        fallback: [
+                            "Mayor",
+                            "City council or other city offices",
+                            "Local ballot questions (if applicable)"
+                        ]
+                    )
                 )
             ]
         }
 
         return []
+    }
+
+    private func ballotItemsForOverviewCard(
+        for election: Election,
+        includeStatewideMeasures: Bool = false,
+        ensureStateLegislature: Bool = false,
+        fallback: [String]
+    ) -> [String] {
+        var items = timelineDerivedBallotItems(for: election, includePartyFilter: false)
+        if items.isEmpty {
+            items = fallback
+        }
+
+        if includeStatewideMeasures &&
+            !items.contains(where: { $0.localizedCaseInsensitiveContains("ballot measure") }) {
+            items.append("Statewide/local ballot measures (where scheduled)")
+        }
+
+        if ensureStateLegislature &&
+            stateHasStateLegislatureOnBallot(for: election) &&
+            !items.contains(where: { $0.localizedCaseInsensitiveContains("state legislature") }) {
+            items.append("State Legislature")
+        }
+
+        return dedupedAndAnnotatedOverviewItems(items)
+    }
+
+    private func timelineDerivedBallotItems(for election: Election, includePartyFilter: Bool = true) -> [String] {
+        guard let dataset = Self.ballotTimelineDataset,
+              let rawStateCode = stateCodeForElection(election) ?? stateCode,
+              let cycleYear = supportedCycleYear(for: election) else {
+            return []
+        }
+
+        let state = rawStateCode.uppercased()
+        let phase = phaseForElection(election)
+        let stage = (phase == .general) ? "general" : "primary"
+        let stageLabel = phase == .general ? "General" : (phase == .runoff ? "Runoff" : "Primary")
+
+        let rows = dataset.timeline_dataset
+            .filter { row in
+                row.state_abbr.uppercased() == state &&
+                    row.election_stage.lowercased() == stage &&
+                    rowIsOnBallot(row, forCycleYear: cycleYear) &&
+                    (!includePartyFilter || rowMatchesSelectedParty(row, phase: phase))
+            }
+            .sorted { lhs, rhs in
+                let leftOffice = officeSortOrder(for: lhs.office_family)
+                let rightOffice = officeSortOrder(for: rhs.office_family)
+                if leftOffice != rightOffice { return leftOffice < rightOffice }
+
+                let leftParty = partySortOrder(for: lhs.party)
+                let rightParty = partySortOrder(for: rhs.party)
+                if leftParty != rightParty { return leftParty < rightParty }
+
+                return lhs.dropdown_label.localizedCaseInsensitiveCompare(rhs.dropdown_label) == .orderedAscending
+            }
+
+        if rows.isEmpty {
+            return []
+        }
+
+        let collapseByOfficeFamily = planVM.selectedParty == .independent && (phase == .primary || phase == .runoff)
+        var seenOfficeFamilies = Set<String>()
+        var seenTitles = Set<String>()
+        var output: [String] = []
+
+        for row in rows {
+            if collapseByOfficeFamily {
+                let key = row.office_family.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+                if seenOfficeFamilies.contains(key) { continue }
+                seenOfficeFamilies.insert(key)
+            }
+
+            let officeTitle = ballotOfficeTitle(for: row.office_family)
+            let partyLabel = normalizedPartyLabel(for: row.party)
+            let title: String
+            if phase != .general, !partyLabel.isEmpty, !collapseByOfficeFamily {
+                title = "\(officeTitle) \(partyLabel) \(stageLabel)"
+            } else {
+                title = "\(officeTitle) \(stageLabel)"
+            }
+
+            if seenTitles.insert(title).inserted {
+                output.append(title)
+            }
+        }
+
+        return output
+    }
+
+    private func stateHasStateLegislatureOnBallot(for election: Election) -> Bool {
+        guard let dataset = Self.ballotTimelineDataset,
+              let rawStateCode = stateCodeForElection(election) ?? stateCode,
+              let cycleYear = supportedCycleYear(for: election) else {
+            return false
+        }
+
+        let state = rawStateCode.uppercased()
+        let phase = phaseForElection(election)
+        let stage = (phase == .general) ? "general" : "primary"
+
+        return dataset.timeline_dataset.contains { row in
+            row.state_abbr.uppercased() == state &&
+                row.election_stage.lowercased() == stage &&
+                row.office_family.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == "state_legislature" &&
+                rowIsOnBallot(row, forCycleYear: cycleYear)
+        }
+    }
+
+    private func dedupedAndAnnotatedOverviewItems(_ items: [String]) -> [String] {
+        var seen = Set<String>()
+        var output: [String] = []
+
+        for item in items {
+            let normalized = item.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !normalized.isEmpty, seen.insert(normalized).inserted else { continue }
+            output.append(annotateOfficeCycleLength(in: normalized))
+        }
+        return output
+    }
+
+    private func annotateOfficeCycleLength(in item: String) -> String {
+        let lower = item.lowercased()
+        guard !lower.contains("every ") else { return item }
+
+        if lower.contains("u.s. senate") {
+            return "\(item) (every 6 years)"
+        }
+        if lower.contains("u.s. house") {
+            return "\(item) (every 2 years)"
+        }
+        if lower.contains("president and vice president") || lower.contains("president") {
+            return "\(item) (every 4 years)"
+        }
+        return item
+    }
+
+    private func supportedCycleYear(for election: Election) -> Int? {
+        let year = Calendar.current.component(.year, from: election.electionDay)
+        if year == 2026 || year == 2028 {
+            return year
+        }
+        return nil
+    }
+
+    private func rowIsOnBallot(_ row: ElectionGuideBallotTimelineRow, forCycleYear year: Int) -> Bool {
+        let raw = year == 2026 ? row.on_ballot_in_2026_cycle : row.on_ballot_in_2028_cycle
+        return raw.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == "yes"
+    }
+
+    private func rowMatchesSelectedParty(_ row: ElectionGuideBallotTimelineRow, phase: ElectionGuidePhase) -> Bool {
+        let normalizedParty = row.party.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if phase == .general {
+            return normalizedParty == "n/a"
+        }
+
+        switch planVM.selectedParty {
+        case .democrat:
+            return normalizedParty == "democratic"
+        case .republican:
+            return normalizedParty == "republican"
+        case .independent:
+            return normalizedParty == "democratic" || normalizedParty == "republican"
+        }
+    }
+
+    private func officeSortOrder(for officeFamily: String) -> Int {
+        switch officeFamily.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "president": return 0
+        case "us_senate": return 1
+        case "us_house": return 2
+        case "governor": return 3
+        case "state_legislature": return 4
+        case "statewide_exec": return 5
+        case "judicial": return 6
+        case "local": return 7
+        case "ballot_measures": return 8
+        default: return 100
+        }
+    }
+
+    private func partySortOrder(for party: String) -> Int {
+        switch party.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "democratic": return 0
+        case "republican": return 1
+        case "n/a": return 2
+        default: return 3
+        }
+    }
+
+    private func ballotOfficeTitle(for officeFamily: String) -> String {
+        switch officeFamily.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "president":
+            return "President and Vice President"
+        case "us_senate":
+            return "U.S. Senate"
+        case "us_house":
+            return "U.S. House"
+        case "governor":
+            return "Governor"
+        case "state_legislature":
+            return "State Legislature"
+        case "statewide_exec":
+            return "Statewide Executive Offices"
+        case "judicial":
+            return "Judicial Offices"
+        case "local":
+            return "Local Offices"
+        case "ballot_measures":
+            return "Ballot Measures"
+        default:
+            return officeFamily
+                .replacingOccurrences(of: "_", with: " ")
+                .split(separator: " ")
+                .map { $0.capitalized }
+                .joined(separator: " ")
+        }
+    }
+
+    private func normalizedPartyLabel(for party: String) -> String {
+        switch party.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "democratic":
+            return "Democrat"
+        case "republican":
+            return "Republican"
+        default:
+            return ""
+        }
+    }
+
+    private func ballotMeasuresGuideCard(for election: Election) -> ElectionGuideInfoCard {
+        let state = (stateCodeForElection(election) ?? stateCode ?? "").uppercased()
+        let officialItems = officialStatewideMeasureItems(for: election, stateCode: state)
+        let timelineItems = timelineMeasureItems(for: election, includePlaceholder: false)
+        let policy = ballotMeasurePolicy(forStateCode: state)
+        let policyItems = ballotMeasurePolicyItems(policy, stateCode: state)
+
+        var combined: [String] = []
+        if !officialItems.isEmpty {
+            combined.append(contentsOf: officialItems)
+        } else if !timelineItems.isEmpty {
+            combined.append(contentsOf: timelineItems)
+        } else if !policyItems.isEmpty {
+            combined.append(contentsOf: policyItems)
+        }
+
+        if combined.isEmpty {
+            combined.append(
+                l(
+                    "app.guide.card.ballot_measures.placeholder",
+                    "Specific measure titles for your ballot are being integrated."
+                )
+            )
+        }
+
+        let introBody: String
+        if !officialItems.isEmpty {
+            let stateLabel = Self.stateNameByCode[state] ?? "your state"
+            introBody = lf(
+                "app.guide.card.ballot_measures.body.official",
+                "Statewide ballot measures currently listed for %@. Ballot measures let voters decide policy directly.",
+                stateLabel
+            )
+        } else {
+            introBody = l(
+                "app.guide.card.ballot_measures.body",
+                "Ballot measures are policy questions voters decide directly. They can change laws, funding, or state constitutions."
+            )
+        }
+        let body = combined.isEmpty ? introBody : introBody + "\n\n" + combined.joined(separator: "\n")
+
+        return ElectionGuideInfoCard(
+            title: l("app.guide.card.ballot_measures.title", "Ballot Measures and Why They Matter"),
+            body: body,
+            ballotItems: combined
+        )
+    }
+
+    private func officialStatewideMeasureItems(for election: Election, stateCode: String) -> [String] {
+        guard !stateCode.isEmpty else { return [] }
+
+        let rows = Self.statewideBallotMeasuresByStateCode[stateCode] ?? []
+        guard !rows.isEmpty else { return [] }
+
+        let cycleYear = supportedCycleYear(for: election)
+        let filteredByCycle: [ElectionGuideStatewideBallotMeasure]
+        if let cycleYear {
+            filteredByCycle = rows.filter { $0.electionDate.hasPrefix("\(cycleYear)") }
+        } else {
+            filteredByCycle = rows
+        }
+
+        let sourceRows = filteredByCycle.isEmpty ? rows : filteredByCycle
+        let sorted = sourceRows.sorted { lhs, rhs in
+            if lhs.electionDate != rhs.electionDate {
+                return lhs.electionDate < rhs.electionDate
+            }
+            return lhs.measure.localizedCaseInsensitiveCompare(rhs.measure) == .orderedAscending
+        }
+
+        return sorted.prefix(8).compactMap { row in
+            let measure = row.measure.trimmingCharacters(in: .whitespacesAndNewlines)
+            let summary = row.shortSummary.trimmingCharacters(in: .whitespacesAndNewlines)
+            let dateText = displayText(from: row.electionDate, fallbackDate: nil)
+
+            if measure.isEmpty && summary.isEmpty {
+                return nil
+            }
+            if measure.isEmpty {
+                return "\(summary) (\(dateText))"
+            }
+            if summary.isEmpty {
+                return "\(measure) (\(dateText))"
+            }
+            return "\(measure) (\(dateText)): \(summary)"
+        }
+    }
+
+    private func ballotMeasurePolicy(forStateCode stateCode: String) -> ElectionGuideBallotMeasurePolicy? {
+        guard !stateCode.isEmpty else { return nil }
+        return Self.ballotMeasurePoliciesByState[stateCode]
+    }
+
+    private func ballotMeasurePolicyItems(_ policy: ElectionGuideBallotMeasurePolicy?, stateCode: String) -> [String] {
+        guard let policy else { return [] }
+
+        var items: [String] = []
+        let stateLabel = policy.state.isEmpty ? stateCode : policy.state
+
+        if !policy.citizenProcess.isEmpty {
+            items.append("\(stateLabel): citizen petition process is \(policy.citizenProcess).")
+        }
+        if !policy.vetoReferendum.isEmpty {
+            items.append("Referendum to challenge a law: \(policy.vetoReferendum).")
+        }
+        if !policy.constitutionalAmendmentApprovalRequired.isEmpty {
+            items.append("Constitution changes require voter approval: \(policy.constitutionalAmendmentApprovalRequired).")
+        }
+        if items.isEmpty, !policy.explicitPolicySummary.isEmpty {
+            items.append(policy.explicitPolicySummary)
+        }
+        return Array(items.prefix(4))
+    }
+
+    private func officesAndInfluenceGuideCard(for election: Election) -> ElectionGuideInfoCard {
+        let timelineItems = timelineDerivedBallotItems(for: election, includePartyFilter: false)
+        let integrated = officePowerLineItems(forTimelineTitles: timelineItems)
+        let fallback = framedOfficeInfluenceItems(from: timelineItems)
+        let lineItems = integrated.isEmpty ? fallback : integrated
+
+        return ElectionGuideInfoCard(
+            title: l("app.guide.card.offices_influence.title", "Offices on Your Ballot and Their Influence"),
+            body: lineItems.joined(separator: "\n\n"),
+            kind: .officesInfluence,
+            ballotItems: lineItems
+        )
+    }
+
+    private func officePowerLineItems(forTimelineTitles titles: [String]) -> [String] {
+        let source = titles.isEmpty
+            ? [
+                "President and Vice President",
+                "U.S. Senate",
+                "U.S. House",
+                "Governor",
+                "State Legislature",
+                "Statewide Executive Offices",
+                "Local Offices"
+            ]
+            : titles
+
+        var seen = Set<String>()
+        var output: [String] = []
+
+        for title in source {
+            if let row = officePowerRow(forOfficeTitle: title) {
+                let line = "\(row.office): \(row.plainEnglishResponsibility)\n    Example: \(row.currentExample)"
+                if seen.insert(line).inserted {
+                    output.append(line)
+                }
+                continue
+            }
+
+            let framed = frameInfluenceText(forOfficeTitle: title)
+            if seen.insert(framed).inserted {
+                output.append(framed)
+            }
+        }
+
+        return Array(output.prefix(5))
+    }
+
+    private func officePowerRow(forOfficeTitle title: String) -> ElectionGuideOfficePowerRow? {
+        guard let key = normalizedOfficePowerKey(from: title) else { return nil }
+        return Self.officePowersByKey[key]
+    }
+
+    private func normalizedOfficePowerKey(from title: String) -> String? {
+        let normalized = title
+            .lowercased()
+            .replacingOccurrences(of: "[^a-z0-9 ]", with: " ", options: .regularExpression)
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if normalized.contains("white house") || normalized.contains("president") {
+            return "white house president"
+        }
+        if normalized.contains("u s senate") || normalized.contains("us senate") {
+            return "us senate"
+        }
+        if normalized.contains("u s house") || normalized.contains("us house") {
+            return "us house"
+        }
+        if normalized.contains("governor") {
+            return "governor"
+        }
+        if normalized.contains("state legislature") || normalized.contains("state rep") {
+            return "state rep"
+        }
+        if normalized.contains("attorney general") || normalized.contains("statewide executive") {
+            return "state attorney general"
+        }
+        if normalized.contains("mayor") || normalized.contains("local offices") || normalized.contains("local office") {
+            return "mayor"
+        }
+
+        return nil
+    }
+
+    private func framedOfficeInfluenceItems(from titles: [String]) -> [String] {
+        let source = titles.isEmpty
+            ? [
+                "President and Vice President",
+                "U.S. Senate",
+                "U.S. House",
+                "Governor",
+                "State Legislature",
+                "Local Offices"
+            ]
+            : titles
+
+        var seen = Set<String>()
+        var output: [String] = []
+
+        for title in source {
+            let framed = frameInfluenceText(forOfficeTitle: title)
+            if seen.insert(framed).inserted {
+                output.append(framed)
+            }
+        }
+        return output
+    }
+
+    private func frameInfluenceText(forOfficeTitle title: String) -> String {
+        let lower = title.lowercased()
+        if lower.contains("president") {
+            return "\(title): sets national executive priorities, federal agency direction, and veto/sign authority."
+        }
+        if lower.contains("u.s. senate") || lower.contains("senate") {
+            return "\(title): shapes federal law, confirms judges/appointments, and approves treaties."
+        }
+        if lower.contains("u.s. house") || lower.contains("house") {
+            return "\(title): initiates budget/tax bills and represents district interests in federal legislation."
+        }
+        if lower.contains("governor") {
+            return "\(title): leads state executive branch, signs/vetoes state laws, and sets state policy direction."
+        }
+        if lower.contains("state legislature") {
+            return "\(title): passes state laws, budgets, and policy frameworks that affect statewide programs."
+        }
+        if lower.contains("judicial") {
+            return "\(title): interprets laws and legal disputes, affecting rights and policy application."
+        }
+        if lower.contains("local") || lower.contains("council") || lower.contains("mayor") {
+            return "\(title): impacts city/county budgets, schools, zoning, transportation, and public safety decisions."
+        }
+        if lower.contains("ballot measure") {
+            return "\(title): allows direct voter decisions on policy, funding, or constitutional/statutory changes."
+        }
+        return "\(title): affects policy and governance outcomes for your community and representation level."
+    }
+
+    private func specialBallotRulesGuideCard(for _: Election, stateCode: String) -> ElectionGuideInfoCard? {
+        guard let feature = stateVotingFeature(for: stateCode) else { return nil }
+
+        let hasRankedChoice = hasSubstantiveSpecialRule(feature.rankedChoiceStatus, kind: .rankedChoice)
+        let hasRunoff = hasSubstantiveSpecialRule(feature.runoffRules, kind: .runoff)
+
+        var bullets: [String] = []
+        if hasRankedChoice {
+            bullets.append("Ranked-choice voting: \(feature.rankedChoiceStatus)")
+        }
+        if hasRunoff {
+            bullets.append("Runoff rules: \(feature.runoffRules)")
+        }
+
+        guard !bullets.isEmpty else { return nil }
+
+        let title: String
+        if hasRankedChoice && hasRunoff {
+            title = l("app.guide.card.special_rules.title.both", "Ranked-Choice Voting and Runoff Rules")
+        } else if hasRankedChoice {
+            title = l("app.guide.card.special_rules.title.rcv", "Ranked-Choice Voting")
+        } else {
+            title = l("app.guide.card.special_rules.title.runoff", "Runoff Rules")
+        }
+
+        let rcvDemoContext: ElectionGuideRCVDemoContext? = hasRankedChoice
+            ? ElectionGuideRCVDemoContext(
+                ctaText: l("app.guide.card.special_rules.rcv.cta", "Watch what happens in a RCV ballot")
+            )
+            : nil
+        let runoffDemoContext: ElectionGuideRunoffDemoContext? = hasRunoff
+            ? ElectionGuideRunoffDemoContext(
+                ctaText: l("app.guide.card.special_rules.runoff.cta", "Explore the threshold gate runoff demo")
+            )
+            : nil
+
+        return ElectionGuideInfoCard(
+            title: title,
+            body: l(
+                "app.guide.card.special_rules.body",
+                "Your state has special vote-counting or advancement rules for some contests."
+            ),
+            ballotItems: bullets,
+            rcvDemoContext: rcvDemoContext,
+            runoffDemoContext: runoffDemoContext
+        )
+    }
+
+    private func hasSubstantiveSpecialRule(_ value: String, kind: ElectionGuideSpecialRuleKind) -> Bool {
+        let normalized = value
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+        guard !normalized.isEmpty else { return false }
+        let noneMarkers = ["none", "no", "not used", "n/a", "na", "not applicable", "not statewide"]
+        if noneMarkers.contains(where: { normalized == $0 || normalized.hasPrefix($0 + " ") }) {
+            return false
+        }
+
+        if kind == .rankedChoice {
+            let prohibitionMarkers = ["prohibited", "barred", "banned", "ban"]
+            if prohibitionMarkers.contains(where: { normalized.contains($0) }) {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    private func timelineMeasureItems(for election: Election, includePlaceholder: Bool = true) -> [String] {
+        guard let dataset = Self.ballotTimelineDataset,
+              let rawStateCode = stateCodeForElection(election) ?? stateCode,
+              let cycleYear = supportedCycleYear(for: election) else {
+            if includePlaceholder {
+                return [
+                    l(
+                        "app.guide.card.ballot_measures.placeholder",
+                        "Specific measure titles for your ballot are being integrated."
+                    )
+                ]
+            }
+            return []
+        }
+
+        let state = rawStateCode.uppercased()
+        let phase = phaseForElection(election)
+        let stage = (phase == .general) ? "general" : "primary"
+
+        let measureRows = dataset.timeline_dataset.filter { row in
+            let family = row.office_family.lowercased()
+            let isMeasure = family.contains("measure")
+                || family.contains("initiative")
+                || family.contains("referendum")
+                || family.contains("amendment")
+
+            return isMeasure &&
+                row.state_abbr.uppercased() == state &&
+                row.election_stage.lowercased() == stage &&
+                rowIsOnBallot(row, forCycleYear: cycleYear)
+        }
+
+        let items = measureRows
+            .sorted { $0.dropdown_label.localizedCaseInsensitiveCompare($1.dropdown_label) == .orderedAscending }
+            .map {
+                $0.dropdown_label.trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+            .filter { !$0.isEmpty }
+
+        if items.isEmpty {
+            if includePlaceholder {
+                return [
+                    l(
+                        "app.guide.card.ballot_measures.placeholder",
+                        "Specific measure titles for your ballot are being integrated."
+                    )
+                ]
+            }
+            return []
+        }
+
+        return items
     }
 
     private func phaseForElection(_ election: Election) -> ElectionGuidePhase {
@@ -552,6 +1356,386 @@ struct NYCMayoralElectionView: View {
     private func stateCodeForElection(_ election: Election) -> String? {
         election.flags.first(where: { $0.hasPrefix("STATE_CODE:") })?
             .replacingOccurrences(of: "STATE_CODE:", with: "")
+    }
+
+    private func primaryGuideCard(for election: Election, stateCode: String, elections: [Election]) -> ElectionGuideInfoCard {
+        let stateDisplayName = election.jurisdictionName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? (Self.stateNameByCode[stateCode] ?? "This state")
+            : election.jurisdictionName
+        let primaryType = primaryTypeLabel(for: election, stateCode: stateCode)
+        let title = "\(stateDisplayName): \(primaryTypeHeaderLabel(for: primaryType))"
+        let generalTransition = generalElectionTransitionDetails(for: election, in: elections)
+        let primaryGuideContext = ElectionGuidePrimaryCardContext(
+            usesTopTwoStyle: isTopTwoOrTopFourPrimaryType(primaryType),
+            primaryTypeDescription: primaryTypeDescriptionLine(for: primaryType),
+            generalStartInDays: generalTransition?.dayDelta,
+            generalStartDateText: generalTransition?.startDateText,
+            runoffLine: runoffSpecialCircumstanceLine(for: election, in: elections)
+        )
+
+        return ElectionGuideInfoCard(
+            title: title,
+            body: "",
+            accent: .primaryHighlight,
+            flagStateCode: stateCode,
+            primaryGuideContext: primaryGuideContext
+        )
+    }
+
+    private func primaryTypeLabel(for election: Election, stateCode: String) -> String {
+        if let feature = stateVotingFeature(for: stateCode), !feature.primaryCategory.isEmpty {
+            return feature.primaryCategory
+        }
+
+        guard let summary = Self.primaryTypeDataset?.state_summary.first(where: { $0.state_abbr.uppercased() == stateCode.uppercased() }) else {
+            return "primary"
+        }
+
+        if electionType(for: election) == "PRESIDENTIAL_PRIMARY" {
+            let presidential = summary.presidential_primary_type_2026.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !presidential.isEmpty {
+                return presidential
+            }
+        }
+
+        let statePrimary = summary.state_primary_type_2026.trimmingCharacters(in: .whitespacesAndNewlines)
+        return statePrimary.isEmpty ? "primary" : statePrimary
+    }
+
+    private func primaryTypeHeaderLabel(for primaryType: String) -> String {
+        let lower = primaryType.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if lower.contains("top-four") || lower.contains("top four") { return "Top-four primary" }
+        if lower.contains("top-two") || lower.contains("top two") || lower.contains("jungle") { return "Top-two primary" }
+        if lower.contains("partially open") || lower.contains("semi-open") || lower.contains("semi open") { return "Partially open primary" }
+        if lower.contains("partially closed") || lower.contains("semi-closed") || lower.contains("semi closed") { return "Partially closed primary" }
+        if lower.contains("open") { return "Open primary" }
+        if lower.contains("closed") || lower.contains("affiliated") { return "Closed primary" }
+        if lower.contains("nonpartisan") { return "Nonpartisan primary" }
+        return "Primary"
+    }
+
+    private func primaryTypeDescriptionLine(for primaryType: String) -> String {
+        let headerType = primaryTypeHeaderLabel(for: primaryType)
+        switch headerType {
+        case "Closed primary":
+            return "Closed primary: voters generally participate only in their own party's primary."
+        case "Open primary":
+            return "Open primary: voters can choose one party's primary ballot."
+        case "Partially open primary":
+            return "Partially open primary: independents may be able to choose a party primary ballot, while party members stay in-party."
+        case "Partially closed primary":
+            return "Partially closed primary: registered party voters stay in-party, with limited independent access."
+        case "Top-two primary":
+            return "Top-two primary: all candidates appear on one ballot and the top two advance."
+        case "Top-four primary":
+            return "Top-four primary: all candidates appear on one ballot and top finishers advance under state rules."
+        case "Nonpartisan primary":
+            return "Nonpartisan primary: candidates run on one ballot without standard party-primary separation."
+        default:
+            return "Primary rules determine who can vote in each party ballot and who advances."
+        }
+    }
+
+    private func stateVotingFeature(for stateCode: String) -> ElectionGuideStateVotingFeature? {
+        Self.stateVotingFeaturesByCode[stateCode.uppercased()]
+    }
+
+    private func generalElectionTransitionDetails(for primary: Election, in elections: [Election]) -> (dayDelta: Int, startDateText: String)? {
+        guard let general = nextGeneralElection(after: primary, in: elections) else { return nil }
+
+        let primaryDay = Calendar.current.startOfDay(for: primary.electionDay)
+        let generalStart = Calendar.current.startOfDay(for: general.startDate)
+        let dayDelta = max(0, Calendar.current.dateComponents([.day], from: primaryDay, to: generalStart).day ?? 0)
+
+        return (dayDelta, formatLongDate(general.startDate))
+    }
+
+    private func nextGeneralElection(after primary: Election, in elections: [Election]) -> Election? {
+        let sorted = elections.sorted { $0.electionDay < $1.electionDay }
+        let primaryDay = Calendar.current.startOfDay(for: primary.electionDay)
+        let upcoming = sorted.filter { candidate in
+            Calendar.current.startOfDay(for: candidate.electionDay) > primaryDay
+        }
+
+        if let sameCycleGeneral = upcoming.first(where: { candidate in
+            isGeneralElection(candidate) && candidate.name == primary.name
+        }) {
+            return sameCycleGeneral
+        }
+
+        return upcoming.first(where: isGeneralElection)
+    }
+
+    private func runoffSpecialCircumstanceLine(for primary: Election, in elections: [Election]) -> String? {
+        let sorted = elections.sorted { $0.electionDay < $1.electionDay }
+        guard let runoff = sorted.first(where: { candidate in
+            isRunoffElection(candidate) &&
+            candidate.name == primary.name &&
+            Calendar.current.startOfDay(for: candidate.electionDay) > Calendar.current.startOfDay(for: primary.electionDay)
+        }) else {
+            return nil
+        }
+
+        return "Special circumstance: if no candidate reaches the required threshold, a runoff is scheduled for \(formatLongDate(runoff.electionDay))."
+    }
+
+    private func isGeneralElection(_ election: Election) -> Bool {
+        let type = electionType(for: election)
+        if type == "GENERAL" || type == "PRESIDENTIAL_GENERAL" {
+            return true
+        }
+        return election.subtitle.lowercased().contains("general")
+    }
+
+    private func isRunoffElection(_ election: Election) -> Bool {
+        let type = electionType(for: election)
+        if type == "PRIMARY_RUNOFF" || type == "GENERAL_RUNOFF" {
+            return true
+        }
+        return election.subtitle.lowercased().contains("runoff")
+    }
+
+    private func electionType(for election: Election) -> String {
+        election.flags
+            .first(where: { $0.hasPrefix("ELECTION_TYPE:") })?
+            .replacingOccurrences(of: "ELECTION_TYPE:", with: "")
+            .uppercased() ?? ""
+    }
+
+    private func isTopTwoOrTopFourPrimaryType(_ type: String) -> Bool {
+        let lower = type.lowercased()
+        return lower.contains("top-two")
+            || lower.contains("top two")
+            || lower.contains("top-four")
+            || lower.contains("top four")
+            || lower.contains("multi-party")
+            || lower.contains("multi party")
+            || lower.contains("jungle")
+    }
+
+    private func styledPrimaryRuleInlineText(for election: Election) -> Text {
+        guard phaseForElection(election) == .primary, let code = stateCode else { return Text("") }
+        let primaryType = primaryTypeLabel(for: election, stateCode: code)
+        let primaryPhrase = primaryTypePhraseForIntro(primaryType)
+        let stateDisplayName = election.jurisdictionName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? (Self.stateNameByCode[code] ?? "This state")
+            : election.jurisdictionName
+        return Text(". \(stateDisplayName) has ")
+            + Text(primaryPhrase)
+                .foregroundColor(VoteNowColors.successGreen)
+                .bold()
+                .italic()
+    }
+
+    private func primaryTypePhraseForIntro(_ rawPrimaryType: String) -> String {
+        let trimmed = rawPrimaryType.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return "primaries" }
+
+        let lower = trimmed
+            .replacingOccurrences(of: ".", with: "")
+            .lowercased()
+
+        if lower.contains("primaries") {
+            return lower
+        }
+
+        if lower.hasSuffix(" primary") {
+            return String(lower.dropLast(" primary".count)) + " primaries"
+        }
+
+        if lower == "primary" {
+            return "primaries"
+        }
+
+        return "\(lower) primaries"
+    }
+
+    @ViewBuilder
+    private func primaryGuideBodyView(_ context: ElectionGuidePrimaryCardContext) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(context.primaryTypeDescription)
+                .font(.subheadline)
+                .foregroundColor(VoteNowColors.primaryText)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.bottom, 2)
+
+            if context.usesTopTwoStyle {
+                Text("• All voters use one ballot with candidates from multiple parties.")
+                    .font(.subheadline)
+                    .foregroundColor(VoteNowColors.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text("• The top finishers advance to the general election regardless of party.")
+                    .font(.subheadline)
+                    .foregroundColor(VoteNowColors.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else {
+                (
+                    Text("• ").foregroundColor(VoteNowColors.primaryText)
+                    + Text("Registered Democrat")
+                        .foregroundColor(VoteNowColors.richBlue)
+                        .bold()
+                        .fontWeight(.heavy)
+                    + Text(": Only Democrats advance to the general election.")
+                        .foregroundColor(VoteNowColors.primaryText)
+                )
+                .font(.subheadline)
+                .fixedSize(horizontal: false, vertical: true)
+
+                (
+                    Text("• ").foregroundColor(VoteNowColors.primaryText)
+                    + Text("Registered Republican")
+                        .foregroundColor(VoteNowColors.richRed)
+                        .bold()
+                        .fontWeight(.heavy)
+                    + Text(": Only Republicans advance to the general election.")
+                        .foregroundColor(VoteNowColors.primaryText)
+                )
+                .font(.subheadline)
+                .fixedSize(horizontal: false, vertical: true)
+
+                (
+                    Text("• ").foregroundColor(VoteNowColors.primaryText)
+                    + Text("Independent/Unaffiliated")
+                        .foregroundColor(VoteNowColors.primaryText)
+                        .bold()
+                        .fontWeight(.heavy)
+                    + Text(": Ballot access depends on your state's primary rules.")
+                        .foregroundColor(VoteNowColors.primaryText)
+                )
+                .font(.subheadline)
+                .fixedSize(horizontal: false, vertical: true)
+            }
+
+            if let dayDelta = context.generalStartInDays,
+               let startDateText = context.generalStartDateText {
+                (
+                    Text("Whoever wins the primary advances to the General Election. Voting starts in \(dayDelta) days (")
+                    + Text(startDateText).bold()
+                    + Text(").")
+                )
+                .font(.subheadline)
+                .foregroundColor(VoteNowColors.primaryText)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 8)
+            } else {
+                Text("Whoever wins the primary advances to the General Election.")
+                    .font(.subheadline)
+                    .foregroundColor(VoteNowColors.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 8)
+            }
+
+            if let runoffLine = context.runoffLine {
+                Text("• \(runoffLine)")
+                    .font(.subheadline)
+                    .foregroundColor(VoteNowColors.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func officesInfluenceBodyView(_ items: [String]) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            ForEach(Array(items.enumerated()), id: \.offset) { _, item in
+                let lines = item
+                    .components(separatedBy: .newlines)
+                    .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                    .filter { !$0.isEmpty }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    if let firstLine = lines.first {
+                        if let splitIndex = firstLine.firstIndex(of: ":") {
+                            let office = String(firstLine[..<splitIndex])
+                            let remainder = String(firstLine[splitIndex...])
+                            (
+                                Text(office).bold()
+                                + Text(remainder)
+                            )
+                            .font(.subheadline)
+                            .foregroundColor(VoteNowColors.primaryText)
+                            .fixedSize(horizontal: false, vertical: true)
+                        } else {
+                            Text(firstLine)
+                                .font(.subheadline)
+                                .foregroundColor(VoteNowColors.primaryText)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+
+                    ForEach(Array(lines.dropFirst().enumerated()), id: \.offset) { _, line in
+                        Text(line)
+                            .font(.subheadline)
+                            .foregroundColor(VoteNowColors.primaryText)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.leading, 12)
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func threeWaysVotingContent(_ context: ElectionGuideThreeWaysContext) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            (
+                Text("• ")
+                + Text(l("app.guide.voting.early_vote.label", "Early Vote")).bold()
+                + Text(": \(lf("app.guide.voting.early_vote.body", "Starts %@. Vote in person before Election Day.", context.earlyVoteDateText))")
+            )
+            .font(.subheadline)
+            .foregroundColor(VoteNowColors.primaryText)
+            .fixedSize(horizontal: false, vertical: true)
+
+            (
+                Text("• ")
+                + Text(l("app.guide.voting.by_mail.label", "Vote by Mail")).bold()
+                + Text(": \(l("app.guide.voting.by_mail.body", "Request and return your mail ballot by your state's deadlines."))")
+            )
+            .font(.subheadline)
+            .foregroundColor(VoteNowColors.primaryText)
+            .fixedSize(horizontal: false, vertical: true)
+
+            Button {
+                openMailInBallotRequest()
+            } label: {
+                Text(l("app.guide.voting.by_mail.cta", "Open Request Mail-in Ballot"))
+                    .font(.caption.weight(.semibold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 7)
+                    .background(VoteNowColors.primaryCTA)
+                    .clipShape(Capsule())
+            }
+            .buttonStyle(.plain)
+
+            (
+                Text("• ")
+                + Text(l("app.guide.voting.election_day.label", "Election Day")).bold()
+                + Text(": \(lf("app.guide.voting.election_day.body", "Vote in person on %@.", context.electionDayDateText))")
+            )
+            .font(.subheadline)
+            .foregroundColor(VoteNowColors.primaryText)
+            .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private func openMailInBallotRequest() {
+        NotificationCenter.default.post(name: .openHowToVoteMailInBallot, object: nil)
+    }
+
+    private func threeWaysVotingCard(for election: Election) -> ElectionGuideInfoCard {
+        let earlyVoteDateText = formatLongDate(election.startDate)
+        let electionDayDateText = formatLongDate(election.electionDay)
+        return ElectionGuideInfoCard(
+            title: l("app.guide.card.voting_methods.title", "Three Ways You Can Vote"),
+            body: "",
+            threeWaysContext: ElectionGuideThreeWaysContext(
+                earlyVoteDateText: earlyVoteDateText,
+                electionDayDateText: electionDayDateText
+            )
+        )
     }
 
     private func formatLongDate(_ date: Date) -> String {
@@ -586,6 +1770,19 @@ struct NYCMayoralElectionView: View {
         "south dakota": "SD", "tennessee": "TN", "texas": "TX", "utah": "UT", "vermont": "VT",
         "virginia": "VA", "washington": "WA", "west virginia": "WV", "wisconsin": "WI", "wyoming": "WY",
         "district of columbia": "DC"
+    ]
+    private static let stateNameByCode: [String: String] = [
+        "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "CA": "California",
+        "CO": "Colorado", "CT": "Connecticut", "DE": "Delaware", "FL": "Florida", "GA": "Georgia",
+        "HI": "Hawaii", "ID": "Idaho", "IL": "Illinois", "IN": "Indiana", "IA": "Iowa",
+        "KS": "Kansas", "KY": "Kentucky", "LA": "Louisiana", "ME": "Maine", "MD": "Maryland",
+        "MA": "Massachusetts", "MI": "Michigan", "MN": "Minnesota", "MS": "Mississippi", "MO": "Missouri",
+        "MT": "Montana", "NE": "Nebraska", "NV": "Nevada", "NH": "New Hampshire", "NJ": "New Jersey",
+        "NM": "New Mexico", "NY": "New York", "NC": "North Carolina", "ND": "North Dakota", "OH": "Ohio",
+        "OK": "Oklahoma", "OR": "Oregon", "PA": "Pennsylvania", "RI": "Rhode Island", "SC": "South Carolina",
+        "SD": "South Dakota", "TN": "Tennessee", "TX": "Texas", "UT": "Utah", "VT": "Vermont",
+        "VA": "Virginia", "WA": "Washington", "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming",
+        "DC": "District of Columbia"
     ]
 
     private static func isoDate(from iso: String?) -> Date? {
@@ -636,22 +1833,177 @@ private struct MidtermStateElectionRecord: Decodable {
     let primary_source: String?
 }
 
+private struct ElectionGuidePrimaryTypeDataset: Decodable {
+    let state_summary: [ElectionGuidePrimaryTypeStateSummary]
+}
+
+private struct ElectionGuideBallotTimelineDataset: Decodable {
+    let timeline_dataset: [ElectionGuideBallotTimelineRow]
+}
+
+private struct ElectionGuideBallotTimelineRow: Decodable {
+    let dataset_key: String
+    let state_abbr: String
+    let office_family: String
+    let election_stage: String
+    let party: String
+    let dropdown_label: String
+    let on_ballot_in_2026_cycle: String
+    let on_ballot_in_2028_cycle: String
+}
+
+private struct ElectionGuideStateVotingFeature: Decodable {
+    let jurisdiction: String
+    let type: String
+    let primarySystem: String
+    let rankedChoiceStatus: String
+    let runoffRules: String
+    let mailModel: String
+    let notableRule: String
+    let featureTags: String
+    let explainer: String
+    let sourceURLs: String
+    let primaryCategory: String
+    let rcvCategory: String
+    let runoffCategory: String
+    let mailCategory: String
+}
+
+private struct ElectionGuideBallotMeasurePolicy: Decodable {
+    let state: String
+    let reviewFlag: String
+    let citizenProcess: String
+    let icaType: String
+    let icaSignature: String
+    let icaApprovalRule: String
+    let statuteType: String
+    let statuteSignature: String
+    let vetoReferendum: String
+    let referendumSignature: String
+    let referendumBallotMeaning: String
+    let singleSubjectRule: String
+    let subjectRestrictions: String
+    let signatureDistribution: String
+    let legislativeAlterationProtection: String
+    let constitutionalAmendmentApprovalRequired: String
+    let explicitPolicySummary: String
+    let integrationNote: String
+    let sourceURLs: String
+    let lastReviewed: String
+}
+
+private struct ElectionGuideStatewideBallotMeasure: Decodable {
+    let stateCode: String
+    let state: String
+    let measure: String
+    let type: String
+    let electionDate: String
+    let shortSummary: String
+    let sourceURL: String
+}
+
+private struct ElectionGuideOfficePowersDataset: Decodable {
+    let meta: ElectionGuideOfficePowersMeta
+    let rows: [ElectionGuideOfficePowerRow]
+}
+
+private struct ElectionGuideOfficePowersMeta: Decodable {
+    let title: String
+    let lastUpdated: String
+    let sourceFile: String
+}
+
+private struct ElectionGuideOfficePowerRow: Decodable {
+    let office: String
+    let officeKey: String
+    let plainEnglishResponsibility: String
+    let easyMetric: String
+    let currentExample: String
+    let sourceURL: String
+}
+
+private struct ElectionGuidePrimaryTypeStateSummary: Decodable {
+    let state: String
+    let state_abbr: String
+    let state_primary_type_2026: String
+    let presidential_primary_type_2026: String
+    let independent_primary_note: String?
+}
+
 private struct ElectionGuideInfoCard: Identifiable {
     let id = UUID()
     let title: String
     let body: String
     let accent: ElectionGuideCardAccent
+    let kind: ElectionGuideCardKind
+    let flagStateCode: String?
+    let primaryGuideContext: ElectionGuidePrimaryCardContext?
+    let threeWaysContext: ElectionGuideThreeWaysContext?
+    let ballotItems: [String]?
+    let rcvDemoContext: ElectionGuideRCVDemoContext?
+    let runoffDemoContext: ElectionGuideRunoffDemoContext?
 
-    init(title: String, body: String, accent: ElectionGuideCardAccent = .neutral) {
+    init(
+        title: String,
+        body: String,
+        accent: ElectionGuideCardAccent = .neutral,
+        kind: ElectionGuideCardKind = .standard,
+        flagStateCode: String? = nil,
+        primaryGuideContext: ElectionGuidePrimaryCardContext? = nil,
+        threeWaysContext: ElectionGuideThreeWaysContext? = nil,
+        ballotItems: [String]? = nil,
+        rcvDemoContext: ElectionGuideRCVDemoContext? = nil,
+        runoffDemoContext: ElectionGuideRunoffDemoContext? = nil
+    ) {
         self.title = title
         self.body = body
         self.accent = accent
+        self.kind = kind
+        self.flagStateCode = flagStateCode
+        self.primaryGuideContext = primaryGuideContext
+        self.threeWaysContext = threeWaysContext
+        self.ballotItems = ballotItems
+        self.rcvDemoContext = rcvDemoContext
+        self.runoffDemoContext = runoffDemoContext
     }
+}
+
+private enum ElectionGuideCardKind {
+    case standard
+    case partyAffiliation
+    case officesInfluence
+}
+
+private struct ElectionGuideThreeWaysContext {
+    let earlyVoteDateText: String
+    let electionDayDateText: String
+}
+
+private struct ElectionGuideRCVDemoContext {
+    let ctaText: String
+}
+
+private struct ElectionGuideRunoffDemoContext {
+    let ctaText: String
+}
+
+private struct ElectionGuidePrimaryCardContext {
+    let usesTopTwoStyle: Bool
+    let primaryTypeDescription: String
+    let generalStartInDays: Int?
+    let generalStartDateText: String?
+    let runoffLine: String?
+}
+
+private enum ElectionGuideSpecialRuleKind {
+    case rankedChoice
+    case runoff
 }
 
 private enum ElectionGuideCardAccent {
     case neutral
     case primary
+    case primaryHighlight
     case midterm
     case general
     case runoff
@@ -664,6 +2016,8 @@ private enum ElectionGuideCardAccent {
             return VoteNowColors.primaryText
         case .primary:
             return VoteNowColors.richBlue
+        case .primaryHighlight:
+            return VoteNowColors.successGreen
         case .midterm:
             return VoteNowColors.warningAmber
         case .general:
