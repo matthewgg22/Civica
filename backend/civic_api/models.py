@@ -490,3 +490,96 @@ class ScriptContext:
     bill_committee_activity: list[BillCommitteeActivity] = field(default_factory=list)
     committee_assignments: list[CommitteeAssignment] = field(default_factory=list)
     political_events: list[PoliticalEvent] = field(default_factory=list)
+
+
+class BriefStatus(str, Enum):
+    OK = "ok"
+    REFUSED = "refused"
+    NEEDS_CLARIFICATION = "needs_clarification"
+
+
+@dataclass
+class IssueClassifyRequest:
+    user_id: str
+    concern_text: str
+    requested_output: str | None = None
+
+
+@dataclass
+class IssueClassifyResponse:
+    status: BriefStatus
+    canonical_issue: str
+    confidence: float
+    clarification_question: str | None = None
+    candidate_issues: list[str] = field(default_factory=list)
+    policy_flags: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        payload = asdict(self)
+        if isinstance(self.status, Enum):
+            payload["status"] = self.status.value
+        return payload
+
+
+@dataclass
+class IssueEvidenceItem:
+    evidence_id: str
+    canonical_issue: str
+    source_name: str
+    source_url: str | None
+    published_at: datetime | None
+    retrieved_at: datetime
+    claim: str
+    evidence_type: str = "official"
+    supports_view: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        payload = asdict(self)
+        if self.published_at is not None:
+            payload["published_at"] = self.published_at.astimezone(timezone.utc).isoformat()
+        if self.retrieved_at is not None:
+            payload["retrieved_at"] = self.retrieved_at.astimezone(timezone.utc).isoformat()
+        return payload
+
+
+@dataclass
+class IssueBriefRequest:
+    user_id: str
+    concern_text: str
+    requested_output: str | None = None
+    allow_revision: bool = True
+
+
+@dataclass
+class IssueFact:
+    fact: str
+    source_name: str
+    source_url: str | None
+    published_at: str | None
+
+
+@dataclass
+class IssueArgumentView:
+    view: str
+    argument: str
+
+
+@dataclass
+class IssueBriefResponse:
+    status: BriefStatus
+    canonical_issue: str
+    summary_neutral: str
+    current_status: str
+    key_facts: list[IssueFact]
+    arguments_by_view: list[IssueArgumentView]
+    unknowns: list[str]
+    questions_to_consider: list[str]
+    policy_flags: list[str]
+    clarification_question: str | None = None
+    review_prompt: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        payload = asdict(self)
+        if isinstance(self.status, Enum):
+            payload["status"] = self.status.value
+        return payload

@@ -16,12 +16,16 @@ from .models import (
     CallLaunchRequest,
     CallLogRequest,
     CallOutcome,
+    IssueBriefRequest,
+    IssueClassifyRequest,
     LeaderboardPeriodType,
     RepTarget,
 )
+from .issue_brief_service import IssueBriefService
 from .service import CivicService
 
 service = CivicService()
+issue_brief_service = IssueBriefService(repository=service.repository)
 
 
 def parse_resolve_request(payload: dict[str, Any], user_id: str) -> AssistantResolveRequest:
@@ -66,6 +70,23 @@ def parse_completion_request(payload: dict[str, Any], user_id: str) -> CallCompl
 
 def parse_period_type(raw: str) -> LeaderboardPeriodType:
     return LeaderboardPeriodType(raw)
+
+
+def parse_issue_classify_request(payload: dict[str, Any], user_id: str) -> IssueClassifyRequest:
+    return IssueClassifyRequest(
+        user_id=user_id,
+        concern_text=str(payload.get("concern_text", "")).strip(),
+        requested_output=(str(payload.get("requested_output", "")).strip() or None),
+    )
+
+
+def parse_issue_brief_request(payload: dict[str, Any], user_id: str) -> IssueBriefRequest:
+    return IssueBriefRequest(
+        user_id=user_id,
+        concern_text=str(payload.get("concern_text", "")).strip(),
+        requested_output=(str(payload.get("requested_output", "")).strip() or None),
+        allow_revision=bool(payload.get("allow_revision", True)),
+    )
 
 
 def get_examples(user_id: str) -> dict[str, Any]:
@@ -138,6 +159,16 @@ def get_leaderboard_me(user_id: str, period_type: str, period_start: str | None 
         period_type=resolved_period_type,
         period_start=parsed_start,
     ).to_dict()
+
+
+def post_issue_classify(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+    response = issue_brief_service.classify(parse_issue_classify_request(payload, user_id))
+    return response.to_dict()
+
+
+def post_issue_brief(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+    response = issue_brief_service.create_brief(parse_issue_brief_request(payload, user_id))
+    return response.to_dict()
 
 
 _SHARE_CARD_DEFAULTS: dict[str, dict[str, str]] = {
@@ -420,6 +451,30 @@ if FastAPI is not None:
         try:
             user_id = require_authenticated_user_id(request)
             return post_assistant_resolve(payload, user_id)
+        except HTTPException:
+            raise
+        except ValueError as exc:  # pragma: no cover
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except Exception as exc:  # pragma: no cover
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    @app.post("/api/issue-classify")
+    def civic_issue_classify(payload: dict[str, Any], request: Request) -> dict[str, Any]:
+        try:
+            user_id = require_authenticated_user_id(request)
+            return post_issue_classify(payload, user_id)
+        except HTTPException:
+            raise
+        except ValueError as exc:  # pragma: no cover
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except Exception as exc:  # pragma: no cover
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    @app.post("/api/issue-brief")
+    def civic_issue_brief(payload: dict[str, Any], request: Request) -> dict[str, Any]:
+        try:
+            user_id = require_authenticated_user_id(request)
+            return post_issue_brief(payload, user_id)
         except HTTPException:
             raise
         except ValueError as exc:  # pragma: no cover

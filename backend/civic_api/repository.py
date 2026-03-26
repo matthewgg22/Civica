@@ -18,6 +18,7 @@ from .models import (
     CallLaunchEvent,
     CallLogRecord,
     CallOutcome,
+    IssueEvidenceItem,
     CallScoreSnapshot,
     HistoryGroup,
     LeaderboardCallRollup,
@@ -112,6 +113,30 @@ class CivicRepository(ABC):
     def load_history(self, user_id: str) -> list[HistoryGroup]:
         raise NotImplementedError
 
+    def upsert_issue_core(self, issue_row: dict[str, Any]) -> None:
+        raise NotImplementedError
+
+    def list_issue_core(self) -> list[dict[str, Any]]:
+        raise NotImplementedError
+
+    def upsert_issue_evidence_item(self, evidence_row: dict[str, Any]) -> None:
+        raise NotImplementedError
+
+    def list_issue_evidence_items(self, canonical_issue: str) -> list[IssueEvidenceItem]:
+        raise NotImplementedError
+
+    def insert_issue_snapshot(self, snapshot_row: dict[str, Any]) -> None:
+        raise NotImplementedError
+
+    def insert_brief_request(self, request_row: dict[str, Any]) -> None:
+        raise NotImplementedError
+
+    def insert_brief_response(self, response_row: dict[str, Any]) -> None:
+        raise NotImplementedError
+
+    def insert_policy_event(self, policy_row: dict[str, Any]) -> None:
+        raise NotImplementedError
+
 
 class InMemoryCivicRepository(CivicRepository):
     def __init__(self) -> None:
@@ -124,6 +149,12 @@ class InMemoryCivicRepository(CivicRepository):
         self._events_by_user: dict[str, list[CallEvent]] = defaultdict(list)
         self._score_snapshot_by_user: dict[str, CallScoreSnapshot] = {}
         self._leaderboard_rollups: dict[tuple[str, str, str], LeaderboardCallRollup] = {}
+        self._issue_core_by_key: dict[str, dict[str, Any]] = {}
+        self._issue_evidence_by_issue: dict[str, list[IssueEvidenceItem]] = defaultdict(list)
+        self._issue_snapshots: list[dict[str, Any]] = []
+        self._brief_requests: list[dict[str, Any]] = []
+        self._brief_responses: list[dict[str, Any]] = []
+        self._policy_events: list[dict[str, Any]] = []
 
     def seed_reps(self, user_id: str, reps: list[RepContext]) -> None:
         self._rep_context_by_user[user_id] = reps
@@ -253,6 +284,52 @@ class InMemoryCivicRepository(CivicRepository):
                     group.date = log.created_at
 
         return sorted(groups.values(), key=lambda group: group.date, reverse=True)
+
+    def upsert_issue_core(self, issue_row: dict[str, Any]) -> None:
+        key = str(issue_row.get("canonical_issue", "")).strip()
+        if not key:
+            return
+        self._issue_core_by_key[key] = dict(issue_row)
+
+    def list_issue_core(self) -> list[dict[str, Any]]:
+        return list(self._issue_core_by_key.values())
+
+    def upsert_issue_evidence_item(self, evidence_row: dict[str, Any]) -> None:
+        canonical_issue = str(evidence_row.get("canonical_issue", "")).strip()
+        evidence_id = str(evidence_row.get("evidence_id", "")).strip()
+        claim = str(evidence_row.get("claim", "")).strip()
+        source_name = str(evidence_row.get("source_name", "")).strip()
+        if not canonical_issue or not evidence_id or not claim or not source_name:
+            return
+        item = IssueEvidenceItem(
+            evidence_id=evidence_id,
+            canonical_issue=canonical_issue,
+            source_name=source_name,
+            source_url=evidence_row.get("source_url"),
+            published_at=_parse_ts(str(evidence_row.get("published_at", ""))) if evidence_row.get("published_at") else None,
+            retrieved_at=_parse_ts(str(evidence_row.get("retrieved_at", datetime.now(timezone.utc).isoformat()))),
+            claim=claim,
+            evidence_type=str(evidence_row.get("evidence_type", "official")),
+            supports_view=evidence_row.get("supports_view"),
+        )
+        rows = [row for row in self._issue_evidence_by_issue[canonical_issue] if row.evidence_id != item.evidence_id]
+        rows.append(item)
+        self._issue_evidence_by_issue[canonical_issue] = rows
+
+    def list_issue_evidence_items(self, canonical_issue: str) -> list[IssueEvidenceItem]:
+        return list(self._issue_evidence_by_issue.get(canonical_issue, []))
+
+    def insert_issue_snapshot(self, snapshot_row: dict[str, Any]) -> None:
+        self._issue_snapshots.append(dict(snapshot_row))
+
+    def insert_brief_request(self, request_row: dict[str, Any]) -> None:
+        self._brief_requests.append(dict(request_row))
+
+    def insert_brief_response(self, response_row: dict[str, Any]) -> None:
+        self._brief_responses.append(dict(response_row))
+
+    def insert_policy_event(self, policy_row: dict[str, Any]) -> None:
+        self._policy_events.append(dict(policy_row))
 
 
 class SupabaseCivicRepository(CivicRepository):
@@ -539,6 +616,57 @@ class SupabaseCivicRepository(CivicRepository):
                 groups[issue_id].logs.append(record)
 
         return sorted(groups.values(), key=lambda value: value.date, reverse=True)
+
+    def upsert_issue_core(self, issue_row: dict[str, Any]) -> None:
+        self._request_json("POST", "/rest/v1/issue_core", body=[issue_row], prefer="resolution=merge-duplicates")
+
+    def list_issue_core(self) -> list[dict[str, Any]]:
+        return self._request_json("GET", "/rest/v1/issue_core")
+
+    def upsert_issue_evidence_item(self, evidence_row: dict[str, Any]) -> None:
+        self._request_json(
+            "POST",
+            "/rest/v1/issue_evidence_item",
+            body=[evidence_row],
+            prefer="resolution=merge-duplicates",
+        )
+
+    def list_issue_evidence_items(self, canonical_issue: str) -> list[IssueEvidenceItem]:
+        params = urllib.parse.urlencode(
+            {
+                "canonical_issue": f"eq.{canonical_issue}",
+                "order": "published_at.desc.nullslast,retrieved_at.desc",
+            }
+        )
+        rows = self._request_json("GET", f"/rest/v1/issue_evidence_item?{params}")
+        items: list[IssueEvidenceItem] = []
+        for row in rows:
+            items.append(
+                IssueEvidenceItem(
+                    evidence_id=str(row.get("evidence_id", "")),
+                    canonical_issue=str(row.get("canonical_issue", "")),
+                    source_name=str(row.get("source_name", "")),
+                    source_url=row.get("source_url"),
+                    published_at=_parse_ts(str(row.get("published_at", ""))) if row.get("published_at") else None,
+                    retrieved_at=_parse_ts(str(row.get("retrieved_at", ""))),
+                    claim=str(row.get("claim", "")),
+                    evidence_type=str(row.get("evidence_type", "official")),
+                    supports_view=row.get("supports_view"),
+                )
+            )
+        return items
+
+    def insert_issue_snapshot(self, snapshot_row: dict[str, Any]) -> None:
+        self._request_json("POST", "/rest/v1/issue_snapshot", body=[snapshot_row])
+
+    def insert_brief_request(self, request_row: dict[str, Any]) -> None:
+        self._request_json("POST", "/rest/v1/brief_request", body=[request_row])
+
+    def insert_brief_response(self, response_row: dict[str, Any]) -> None:
+        self._request_json("POST", "/rest/v1/brief_response", body=[response_row])
+
+    def insert_policy_event(self, policy_row: dict[str, Any]) -> None:
+        self._request_json("POST", "/rest/v1/policy_event", body=[policy_row])
 
     def _request_json(
         self,
