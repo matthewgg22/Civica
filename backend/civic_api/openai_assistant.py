@@ -19,6 +19,14 @@ class GeneratedDraft:
 
 
 class OpenAICivicAssistant:
+    REQUIRED_TEMPLATE_TOKENS = (
+        "{OFFICE_TYPE}",
+        "{REP_NAME}",
+        "{ASK_ACTION}",
+        "{LOCATION}",
+        "{BILL_OR_ISSUE}",
+    )
+
     def __init__(
         self,
         api_key: str,
@@ -90,7 +98,8 @@ class OpenAICivicAssistant:
             "Return strict JSON only, no markdown. "
             "Write plain-language content at about a 6th-8th grade reading level. "
             "Do not include hate, harassment, threats, criminal planning, or extremist advocacy. "
-            "Keep scripts concise and phone-ready."
+            "Keep scripts concise and phone-ready. "
+            "Use clear, natural spoken language, not robotic phrasing."
         )
         user_prompt = (
             "Generate a civic call draft from this user request.\n"
@@ -99,13 +108,19 @@ class OpenAICivicAssistant:
             f"User location label: {user_location or 'their area'}\n"
             f"Primary targets: {rep_list}\n"
             f"Bill reference: {bill_ref}\n\n"
+            "Quality rules:\n"
+            "- Scripts should sound like a real constituent call.\n"
+            "- Lead with identity + location, then concern, then specific ask.\n"
+            "- Include one concrete reason this matters to constituents.\n"
+            "- End by asking the office to share the member's current position.\n"
+            "- Avoid generic filler like 'I hope this message finds you well'.\n\n"
             "Return JSON object with keys:\n"
             "- issue_title: short title (<= 9 words)\n"
-            "- issue_summary: 2-4 neutral sentences on what the user is asking\n"
-            "- background: 2-4 factual context sentences (no fake citations)\n"
-            "- live_script_template: <= 110 words, include placeholders {OFFICE_TYPE}, {REP_NAME}, {ASK_ACTION}, {LOCATION}, {BILL_OR_ISSUE}\n"
-            "- voicemail_script_template: <= 65 words, same placeholders\n"
-            "- talking_points: array of 3-5 short bullets\n"
+            "- issue_summary: 2-4 plain sentences on what the user is asking\n"
+            "- background: 2-4 factual context sentences; if uncertain, say details are still developing\n"
+            "- live_script_template: 80-120 words, include placeholders {OFFICE_TYPE}, {REP_NAME}, {ASK_ACTION}, {LOCATION}, {BILL_OR_ISSUE}\n"
+            "- voicemail_script_template: 40-70 words, include same placeholders\n"
+            "- talking_points: array of exactly 4 short bullets\n"
             "Do not use placeholders outside the exact tokens above."
         )
 
@@ -138,6 +153,10 @@ class OpenAICivicAssistant:
         talking_points = self._clean_points(parsed.get("talking_points"))
 
         if not issue_title or not issue_summary or not live_template or not voicemail_template:
+            return None
+        if not self._is_usable_template(live_template, min_words=70):
+            return None
+        if not self._is_usable_template(voicemail_template, min_words=35):
             return None
 
         return GeneratedDraft(
@@ -221,3 +240,22 @@ class OpenAICivicAssistant:
             seen.add(key)
             deduped.append(point)
         return deduped[:5]
+
+    def _is_usable_template(self, text: str, min_words: int) -> bool:
+        words = text.split()
+        if len(words) < min_words:
+            return False
+
+        lowered = text.lower()
+        low_quality_patterns = (
+            "i hope this message finds you well",
+            "dear sir or madam",
+            "to whom it may concern",
+        )
+        if any(pattern in lowered for pattern in low_quality_patterns):
+            return False
+
+        for token in self.REQUIRED_TEMPLATE_TOKENS:
+            if token not in text:
+                return False
+        return True
