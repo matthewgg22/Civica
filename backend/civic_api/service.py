@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import re
 import uuid
+import hashlib
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -36,6 +37,7 @@ from .models import (
     ResolvedEntities,
     VerificationMethod,
 )
+from .openai_assistant import GeneratedDraft, OpenAICivicAssistant
 from .relevance import enrich_house_vote_signal, score_rep_issue, serialize_signals
 from .repository import CivicRepository, InMemoryCivicRepository
 from .script_composer import compose_call_scripts
@@ -50,6 +52,8 @@ class CivicService:
         self.repository = repository or InMemoryCivicRepository()
         self.congress = congress_client or CongressGovClient()
         self.call_score_enabled = _env_flag("VOTENOW_ENABLE_CALL_SCORE_V1", default=True)
+        self.openai_assistant = OpenAICivicAssistant.from_env()
+        self.openai_assistant_enabled = _env_flag("VOTENOW_ENABLE_OPENAI_ASSISTANT", default=True)
 
     def get_examples(self, user_id: str) -> ExamplesResponse:
         reps = self._load_user_reps(user_id)
@@ -98,11 +102,35 @@ class CivicService:
         return ExamplesResponse(examples=cards)
 
     def resolve_assistant(self, request: AssistantResolveRequest) -> AssistantResolveResponse:
+        if self.openai_assistant_enabled and self.openai_assistant is not None:
+            blocked, reason = self.openai_assistant.moderate_concern(request.concern_text)
+            if blocked:
+                raise ValueError(f"SAFETY_BLOCKED: {reason or 'Request disallowed by safety policy.'}")
+
         issue_id = str(uuid.uuid4())
+        reps = self._select_target_reps(request.user_id, request.target_reps)
         issue_title = self._resolve_issue_title(request.concern_text)
         issue_summary = request.concern_text.strip()
+        generated_draft: GeneratedDraft | None = None
 
-        reps = self._select_target_reps(request.user_id, request.target_reps)
+        if self.openai_assistant_enabled and self.openai_assistant is not None:
+            rep_names = [rep.rep_name for _, rep in reps]
+            try:
+                generated_draft = self.openai_assistant.generate_draft(
+                    concern_text=request.concern_text,
+                    selected_ask=request.selected_ask.value,
+                    rep_names=rep_names,
+                    optional_bill_ref=request.optional_bill_ref,
+                    user_location=reps[0][1].state if reps else "your area",
+                )
+                if generated_draft is not None:
+                    issue_title = generated_draft.issue_title or issue_title
+                    issue_summary = self._merged_issue_summary(
+                        generated_draft.issue_summary,
+                        generated_draft.background,
+                    ) or issue_summary
+            except Exception as exc:
+                self._track("assistant_llm_fallback", reason=str(exc))
 
         bills = [request.optional_bill_ref] if request.optional_bill_ref else []
         committees: list[str] = []
@@ -121,15 +149,38 @@ class CivicService:
                 )
             )
 
-            live_script, voicemail_script, talking_points = compose_call_scripts(
-                rep=rep,
-                ask=request.selected_ask,
-                issue_title=issue_title,
-                issue_summary=issue_summary,
-                selected_bill=request.optional_bill_ref,
-                user_location=rep.state or "your area",
-                reason_badges=scored.reason_badges,
-            )
+            if generated_draft is not None:
+                live_script = self._render_draft_template(
+                    generated_draft.live_script_template,
+                    rep=rep,
+                    ask=request.selected_ask,
+                    selected_bill=request.optional_bill_ref,
+                )
+                voicemail_script = self._render_draft_template(
+                    generated_draft.voicemail_script_template,
+                    rep=rep,
+                    ask=request.selected_ask,
+                    selected_bill=request.optional_bill_ref,
+                )
+                talking_points = (
+                    generated_draft.talking_points
+                    if generated_draft.talking_points
+                    else [
+                        f"Explicit ask: {request.selected_ask.value}",
+                        "Share one local reason this issue matters",
+                        "Ask for the member's current position and next step",
+                    ]
+                )
+            else:
+                live_script, voicemail_script, talking_points = compose_call_scripts(
+                    rep=rep,
+                    ask=request.selected_ask,
+                    issue_title=issue_title,
+                    issue_summary=issue_summary,
+                    selected_bill=request.optional_bill_ref,
+                    user_location=rep.state or "your area",
+                    reason_badges=scored.reason_badges,
+                )
 
             brief = CallBrief(
                 brief_id=str(uuid.uuid4()),
@@ -667,7 +718,33 @@ class CivicService:
         return rollups
 
     def _track(self, event_name: str, **payload: Any) -> None:
-        print(f"[analytics] {event_name} {payload}")
+        print(f"[analytics] {event_name} {self._redacted_payload(payload)}")
+
+    def _redacted_payload(self, payload: dict[str, Any]) -> dict[str, Any]:
+        redacted: dict[str, Any] = {}
+        for key, value in payload.items():
+            if value is None:
+                redacted[key] = None
+                continue
+
+            lowered = key.lower()
+            if lowered in {"user_id", "session_id"}:
+                redacted[key] = self._hash_identifier(str(value))
+                continue
+            if lowered in {"notes", "concern_text"}:
+                text_value = str(value)
+                redacted[key] = {"length": len(text_value)}
+                continue
+
+            if isinstance(value, str) and len(value) > 256:
+                redacted[key] = value[:256] + "..."
+            else:
+                redacted[key] = value
+        return redacted
+
+    def _hash_identifier(self, value: str) -> str:
+        digest = hashlib.sha256(value.encode("utf-8")).hexdigest()
+        return f"sha256:{digest[:12]}"
 
     def _load_user_reps(self, user_id: str) -> list[RepContext]:
         reps = self.repository.list_rep_context(user_id)
@@ -832,6 +909,53 @@ class CivicService:
         if first_sentence:
             return _trim_words(first_sentence, 9)
         return _trim_words(concern, 9)
+
+    def _merged_issue_summary(self, issue_summary: str, background: str) -> str:
+        primary = issue_summary.strip()
+        context = background.strip()
+        if primary and context:
+            return f"{primary}\n\nWhy this matters: {context}"
+        if primary:
+            return primary
+        return context
+
+    def _render_draft_template(
+        self,
+        template: str,
+        rep: RepContext,
+        ask: Ask,
+        selected_bill: str | None,
+    ) -> str:
+        bill_or_issue = (selected_bill or "this issue").strip() or "this issue"
+        ask_action = self._ask_action_phrase(ask)
+        filled = (
+            template
+            .replace("{OFFICE_TYPE}", rep.office_type)
+            .replace("{REP_NAME}", rep.rep_name)
+            .replace("{ASK_ACTION}", ask_action)
+            .replace("{LOCATION}", rep.state or "my area")
+            .replace("{BILL_OR_ISSUE}", bill_or_issue)
+        )
+        return _trim_words(" ".join(filled.split()), 130)
+
+    def _ask_action_phrase(self, ask: Ask) -> str:
+        if ask is Ask.SUPPORT:
+            return "support"
+        if ask is Ask.OPPOSE:
+            return "oppose"
+        if ask is Ask.COSPONSOR:
+            return "cosponsor"
+        if ask is Ask.VOTE_YES:
+            return "vote yes on"
+        if ask is Ask.VOTE_NO:
+            return "vote no on"
+        if ask is Ask.SEEK_OVERSIGHT:
+            return "seek oversight on"
+        if ask is Ask.ASK_PUBLIC_STATEMENT:
+            return "make a public statement on"
+        if ask is Ask.ASK_AMENDMENT:
+            return "support an amendment on"
+        return "take action on"
 
     def _build_rep_relevance(
         self,
