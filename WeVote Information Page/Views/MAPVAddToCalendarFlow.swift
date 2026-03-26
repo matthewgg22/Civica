@@ -2,6 +2,7 @@ import SwiftUI
 import UIKit
 import EventKit
 import UserNotifications
+import OSLog
 
 struct MAPVCalendarPlanPayload: Hashable {
     let planID: String
@@ -28,7 +29,11 @@ final class NotificationPermissionManager: ObservableObject {
 
     func checkStatus() async {
         let settings = await UNUserNotificationCenter.current().notificationSettings()
-        status = settings.authorizationStatus
+        let authorizationStatus = settings.authorizationStatus
+        status = authorizationStatus
+        if [.authorized, .provisional, .ephemeral].contains(authorizationStatus) {
+            UIApplication.shared.registerForRemoteNotifications()
+        }
     }
 
     @discardableResult
@@ -36,6 +41,9 @@ final class NotificationPermissionManager: ObservableObject {
         do {
             let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
             await checkStatus()
+            if granted {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
             return granted
         } catch {
             await checkStatus()
@@ -50,6 +58,8 @@ final class NotificationPermissionManager: ObservableObject {
 }
 
 enum LocalNotificationScheduler {
+    private static let logger = Logger(subsystem: "VoteNow", category: "LocalNotificationScheduler")
+
     static func scheduleReminders(
         for payload: MAPVCalendarPlanPayload,
         leadMinutes: Int = 60
@@ -79,7 +89,7 @@ enum LocalNotificationScheduler {
             do {
                 try await center.add(primaryRequest)
             } catch {
-                print("Failed to schedule primary reminder: \(error.localizedDescription)")
+                logger.error("Failed to schedule primary reminder notification.")
             }
         }
 
@@ -99,7 +109,7 @@ enum LocalNotificationScheduler {
             do {
                 try await center.add(leadRequest)
             } catch {
-                print("Failed to schedule lead reminder: \(error.localizedDescription)")
+                logger.error("Failed to schedule lead reminder notification.")
             }
         }
     }

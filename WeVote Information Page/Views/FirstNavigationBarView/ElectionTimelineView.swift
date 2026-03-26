@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import OSLog
 
 private struct MidtermStateElectionRecord: Decodable {
     let state_name: String
@@ -37,6 +38,7 @@ private struct ElectionEligibilityTimelineRow: Decodable {
     let primary_type_applied: String
     let on_ballot_in_2026_cycle: String
     let on_ballot_in_2028_cycle: String
+    let cycle_rule: String?
 }
 
 private struct ElectionEligibilityDataset: Decodable {
@@ -44,8 +46,40 @@ private struct ElectionEligibilityDataset: Decodable {
     let timeline_dataset: [ElectionEligibilityTimelineRow]
 }
 
+private struct TopCityMayoralCycleRecord: Decodable {
+    let rank: Int?
+    let city: String
+    let state_name: String
+    let census_geographic_area: String?
+    let population_est_2024: Int?
+    let next_election_year: Int?
+    let next_primary_date_iso: String?
+    let next_general_date_iso: String?
+    let next_runoff_date_iso: String?
+    let date_status: String?
+    let cycle_notes: String?
+    let sources: [String]
+}
+
+private struct TimelineCardFramesPreferenceKey: PreferenceKey {
+    static var defaultValue: [String: CGRect] = [:]
+
+    static func reduce(value: inout [String: CGRect], nextValue: () -> [String: CGRect]) {
+        value.merge(nextValue(), uniquingKeysWith: { _, new in new })
+    }
+}
+
+private struct TimelineViewportPreferenceKey: PreferenceKey {
+    static var defaultValue: CGRect = .zero
+
+    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
+        value = nextValue()
+    }
+}
+
 struct ElectionTimelineView: View {
     @EnvironmentObject private var planVM: PlanViewModel
+    @EnvironmentObject private var repsVM: MyRepsViewModel
     @Environment(\.locale) private var locale
 
     @State private var planElection: Election?
@@ -53,14 +87,20 @@ struct ElectionTimelineView: View {
     @State private var visibleElections: [Election] = []
     @State private var errorMessage: String?
     @State private var pendingFlagElection: Election?
-    @State private var shareImage: UIImage?
+    @State private var shareItems: [Any] = []
     @State private var showingShareSheet = false
     @State private var showingFeedbackComposer = false
     @State private var feedbackPrefillMessage = ""
     @State private var expandedCardIDs: Set<String> = []
     @State private var showingMapvNotificationPrompt = false
+    @State private var focusedTimelineElectionID: String?
+    @State private var manualFocusedElectionID: String?
+    @State private var manualFocusExpiresAt: Date = .distantPast
+    @State private var timelineCardFrames: [String: CGRect] = [:]
+    @State private var timelineViewportFrame: CGRect = .zero
 
     private let stateResolver = USZipStateResolver()
+    private let logger = Logger(subsystem: "VoteNow", category: "ElectionTimeline")
     private static let eligibilityDataset: ElectionEligibilityDataset? = {
         guard let url = Bundle.main.url(forResource: "ElectionEligibilityDataset", withExtension: "json"),
               let data = try? Data(contentsOf: url),
@@ -76,6 +116,7 @@ struct ElectionTimelineView: View {
         "PR": "Primary type: Open or affiliated primary, depending on party format. Independent voter rule: In an open primary, any active voter may vote; in an affiliated primary, voter must affiliate with the party, including immediate affiliation before voting. Can choose Democratic or Republican primary ballot: Sometimes / Depends on party format. Note: Puerto Rico law explicitly distinguishes open and affiliated primaries.",
         "VI": "Primary type: Closed. Independent voter rule: Non-party affiliates cannot vote in the primary. Can choose Democratic or Republican primary ballot: No. Note: VI VOTE FAQ indicates primary elections are for party members only."
     ]
+    private let timelineScrollCoordinateSpace = "ElectionTimelineScrollCoordinateSpace"
 
     private func l(_ key: String, _ fallback: String) -> String {
         localizedCatalogString(
@@ -106,26 +147,116 @@ struct ElectionTimelineView: View {
             .padding(.bottom, 8)
             .background(VoteNowColors.appBackground)
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 14) {
-                    if let errorMessage {
-                        Text(errorMessage)
-                            .font(.subheadline)
-                            .foregroundColor(VoteNowColors.urgentCTA)
+            ScrollViewReader { scrollProxy in
+                let selectElectionFromTimeline: (String) -> Void = { electionID in
+                    manualFocusedElectionID = electionID
+                    manualFocusExpiresAt = Date().addingTimeInterval(0.55)
+                    focusedTimelineElectionID = electionID
+                    withAnimation(.easeInOut(duration: 0.28)) {
+                        scrollProxy.scrollTo(electionID, anchor: .top)
                     }
 
-                    if visibleElections.isEmpty, errorMessage == nil {
-                        Text(l("app.timeline.empty.none_for_state", "No upcoming elections found for that state yet."))
-                            .font(.subheadline)
-                            .foregroundColor(VoteNowColors.mutedText)
-                    }
-
-                    ForEach(Array(visibleElections.enumerated()), id: \.element.id) { index, election in
-                        electionCard(election, index: index)
+                    // A quick follow-up pass makes dot taps resilient while card frames are still updating.
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.14) {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            scrollProxy.scrollTo(electionID, anchor: .top)
+                        }
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 16)
+
+                if !visibleElections.isEmpty {
+                    timelineOverviewSection(for: visibleElections, onElectionTap: selectElectionFromTimeline)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
+                    .background(VoteNowColors.appBackground)
+                    .zIndex(1)
+                }
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 14) {
+                        if let errorMessage {
+                            Text(errorMessage)
+                                .font(.subheadline)
+                                .foregroundColor(VoteNowColors.urgentCTA)
+                        }
+
+                        if visibleElections.isEmpty, errorMessage == nil {
+                            Text(l("app.timeline.empty.none_for_state", "No upcoming elections found for that state yet."))
+                                .font(.subheadline)
+                                .foregroundColor(VoteNowColors.mutedText)
+                        }
+
+                        VStack(alignment: .leading, spacing: 0) {
+                            ForEach(Array(visibleElections.enumerated()), id: \.element.id) { index, election in
+                                let currentYear = calendarYear(for: election.electionDay)
+                                let priorYear = index > 0
+                                    ? calendarYear(for: visibleElections[index - 1].electionDay)
+                                    : nil
+                                timelineCardRow(
+                                    election,
+                                    index: index,
+                                    totalCount: visibleElections.count,
+                                    showYearLabel: priorYear != currentYear,
+                                    onCardTap: {
+                                        selectElectionFromTimeline(election.id)
+                                    }
+                                )
+                                .id(election.id)
+                                .background(
+                                    GeometryReader { proxy in
+                                        Color.clear.preference(
+                                            key: TimelineCardFramesPreferenceKey.self,
+                                            value: [election.id: proxy.frame(in: .named(timelineScrollCoordinateSpace))]
+                                        )
+                                    }
+                                )
+                                .scaleEffect(cardScale(for: election.id), anchor: .center)
+                                .rotation3DEffect(
+                                    .degrees(cardTiltAngle(for: election.id)),
+                                    axis: (x: 1, y: 0, z: 0),
+                                    anchor: .center,
+                                    perspective: 0.6
+                                )
+                                .offset(x: cardHorizontalOffset(for: election.id))
+                                .opacity(cardOpacity(for: election.id))
+                                .zIndex(cardZIndex(for: election.id))
+                                .animation(.easeInOut(duration: 0.2), value: focusedTimelineElectionID)
+                                .padding(.bottom, index == visibleElections.count - 1 ? 0 : 14)
+                            }
+
+                            if let trailingYearLabel {
+                                timelineYearBookmark(trailingYearLabel)
+                                    .padding(.top, 10)
+                                    .padding(.leading, 1)
+                            }
+
+                            // Allow the final card to scroll far enough to become the focused timeline item.
+                            Color.clear
+                                .frame(height: 170)
+                                .accessibilityHidden(true)
+                        }
+                    }
+                    .padding(.leading, 10)
+                    .padding(.trailing, 16)
+                    .padding(.bottom, 16)
+                }
+                .coordinateSpace(name: timelineScrollCoordinateSpace)
+                .background(
+                    GeometryReader { proxy in
+                        Color.clear.preference(
+                            key: TimelineViewportPreferenceKey.self,
+                            value: proxy.frame(in: .named(timelineScrollCoordinateSpace))
+                        )
+                    }
+                )
+                .onPreferenceChange(TimelineCardFramesPreferenceKey.self) { frames in
+                    timelineCardFrames = frames
+                    updateFocusedTimelineElection()
+                }
+                .onPreferenceChange(TimelineViewportPreferenceKey.self) { frame in
+                    timelineViewportFrame = frame
+                    updateFocusedTimelineElection()
+                }
             }
         }
         .background(VoteNowColors.appBackground.ignoresSafeArea())
@@ -135,10 +266,10 @@ struct ElectionTimelineView: View {
                 .environmentObject(planVM)
         }
         .sheet(isPresented: $showingShareSheet) {
-            shareImage = nil
+            shareItems.removeAll()
         } content: {
-            if let shareImage {
-                ShareSheet(items: [shareImage])
+            if !shareItems.isEmpty {
+                ShareSheet(items: shareItems)
             }
         }
         .sheet(isPresented: $showingFeedbackComposer) {
@@ -206,6 +337,9 @@ struct ElectionTimelineView: View {
         .onChange(of: planVM.userAddress.zip) { _, _ in
             applyFilter()
         }
+        .onChange(of: repsVM.resolvedLocationSelection?.timestamp) { _, _ in
+            applyFilter()
+        }
     }
 
     private var timelineAddressSubtitle: String {
@@ -229,8 +363,311 @@ struct ElectionTimelineView: View {
     }
 
     @ViewBuilder
+    private func timelineOverviewSection(
+        for elections: [Election],
+        onElectionTap: @escaping (String) -> Void
+    ) -> some View {
+        let sorted = elections.sorted { lhs, rhs in
+            if lhs.electionDay != rhs.electionDay { return lhs.electionDay < rhs.electionDay }
+            return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
+        }
+        let focusedID = focusedTimelineElectionID ?? sorted.first?.id
+        let focusedIndex = sorted.firstIndex(where: { $0.id == focusedID }) ?? 0
+
+        VStack(alignment: .leading, spacing: 2) {
+            GeometryReader { proxy in
+                let chartHeight: CGFloat = 90
+                let lineY: CGFloat = 34
+                let xPadding: CGFloat = 24
+                let calendar = Calendar.current
+                let nowDay = Calendar.current.startOfDay(for: Date())
+                let maxElectionDay = Calendar.current.startOfDay(for: sorted.map(\.electionDay).max() ?? nowDay)
+                let baseline2029 = calendar.date(from: DateComponents(year: 2029, month: 1, day: 1))
+                    .map { calendar.startOfDay(for: $0) } ?? maxElectionDay
+                let maxDay = max(maxElectionDay, baseline2029)
+                let totalSpanDays = max(
+                    1,
+                    Calendar.current.dateComponents([.day], from: nowDay, to: maxDay).day ?? 1
+                )
+
+                let contentWidth = proxy.size.width
+                let usableWidth = max(1, contentWidth - (xPadding * 2))
+                let plotPoints = timelinePlotPoints(
+                    for: sorted,
+                    minDay: nowDay,
+                    totalSpanDays: totalSpanDays,
+                    usableWidth: usableWidth,
+                    xPadding: xPadding
+                )
+                let yearMarkers = timelineYearMarkers(minDay: nowDay, maxDay: maxDay)
+
+                ZStack(alignment: .topLeading) {
+                    Path { path in
+                        path.move(to: CGPoint(x: xPadding, y: lineY))
+                        path.addLine(to: CGPoint(x: contentWidth - xPadding, y: lineY))
+                    }
+                    .stroke(VoteNowColors.richRed.opacity(0.82), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+
+                    if let nextElection = sorted.first {
+                        let startX = timelineXPosition(
+                            for: nextElection.startDate,
+                            minDay: nowDay,
+                            totalSpanDays: totalSpanDays,
+                            usableWidth: usableWidth,
+                            xPadding: xPadding
+                        )
+                        let electionX = timelineXPosition(
+                            for: nextElection.electionDay,
+                            minDay: nowDay,
+                            totalSpanDays: totalSpanDays,
+                            usableWidth: usableWidth,
+                            xPadding: xPadding
+                        )
+                        let shadeWidth = max(2, electionX - startX)
+
+                        if shadeWidth > 1 {
+                            RoundedRectangle(cornerRadius: 5, style: .continuous)
+                                .fill(VoteNowColors.primaryCTA.opacity(0.2))
+                                .frame(width: shadeWidth, height: 14)
+                                .position(x: startX + (shadeWidth / 2), y: lineY)
+                        }
+                    }
+
+                    Path { path in
+                        path.move(to: CGPoint(x: xPadding, y: lineY - 6))
+                        path.addLine(to: CGPoint(x: xPadding, y: lineY + 6))
+                    }
+                    .stroke(
+                        VoteNowColors.richRed.opacity(0.78),
+                        style: StrokeStyle(lineWidth: 1.6, lineCap: .round)
+                    )
+
+                    Text("TODAY")
+                        .font(.caption.weight(.bold))
+                        .foregroundColor(VoteNowColors.mutedText)
+                        .position(x: xPadding + 10, y: lineY + 18)
+
+                    ForEach(yearMarkers) { marker in
+                        let markerX = timelineXPosition(
+                            for: marker.markerDay,
+                            minDay: nowDay,
+                            totalSpanDays: totalSpanDays,
+                            usableWidth: usableWidth,
+                            xPadding: xPadding
+                        )
+
+                        Path { path in
+                            path.move(to: CGPoint(x: markerX, y: lineY - 6))
+                            path.addLine(to: CGPoint(x: markerX, y: lineY + 6))
+                        }
+                        .stroke(
+                            VoteNowColors.richRed.opacity(0.72),
+                            style: StrokeStyle(lineWidth: 1.6, lineCap: .round)
+                        )
+
+                        Text(marker.label)
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(VoteNowColors.mutedText.opacity(0.9))
+                            .position(x: markerX, y: lineY + 18)
+                    }
+
+                    ForEach(plotPoints) { point in
+                        let distance = abs(point.sequenceIndex - focusedIndex)
+                        let dotOpacity = timelineDotOpacity(distance: distance)
+                        let isFocused = point.sequenceIndex == focusedIndex
+                        let showPointDetail = isFocused
+                        let detailOpacity = showPointDetail ? 1.0 : 0.0
+                        let detailScale: CGFloat = showPointDetail ? 1.0 : 0.97
+                        let pointX = point.electionX + point.pointOffsetX
+                        let edgePadding: CGFloat = 6
+                        let titleHalfSpan = max(56, min(pointX - edgePadding, (contentWidth - edgePadding) - pointX))
+                        let dateHalfSpan = max(34, min(pointX - edgePadding, (contentWidth - edgePadding) - pointX))
+                        let titleWidth = min(220, titleHalfSpan * 2)
+                        let dateWidth = min(96, dateHalfSpan * 2)
+                        let clampedTitleX = min(
+                            max(pointX, edgePadding + (titleWidth / 2)),
+                            contentWidth - edgePadding - (titleWidth / 2)
+                        )
+                        let clampedDateX = min(
+                            max(pointX, edgePadding + (dateWidth / 2)),
+                            contentWidth - edgePadding - (dateWidth / 2)
+                        )
+                        let topY = lineY - 24
+                        let bottomY = lineY + 36
+
+                        timelineOverviewTitleLabel(
+                            text: timelineTopTitle(for: point.election),
+                            width: titleWidth,
+                            x: clampedTitleX,
+                            y: topY,
+                            opacity: detailOpacity,
+                            scale: detailScale,
+                            showPointDetail: showPointDetail
+                        ) {
+                            onElectionTap(point.election.id)
+                        }
+                        .animation(.easeInOut(duration: 0.14), value: focusedTimelineElectionID)
+
+                        Button {
+                            onElectionTap(point.election.id)
+                        } label: {
+                            ZStack {
+                                Circle()
+                                    .fill(isFocused ? VoteNowColors.richRed : VoteNowColors.primaryCTA)
+                                Circle()
+                                    .stroke(Color.white, lineWidth: 2)
+                                if isFocused {
+                                    Circle()
+                                        .stroke(VoteNowColors.richRed.opacity(0.35), lineWidth: 3)
+                                        .scaleEffect(1.55)
+                                }
+                            }
+                            .frame(width: isFocused ? 15 : 12, height: isFocused ? 15 : 12)
+                        }
+                        .buttonStyle(.plain)
+                        .frame(width: 36, height: 36)
+                        .opacity(dotOpacity)
+                        .position(x: pointX, y: lineY)
+                        .contentShape(Rectangle())
+                        .animation(.easeInOut(duration: 0.2), value: isFocused)
+                        .animation(.easeInOut(duration: 0.22), value: focusedTimelineElectionID)
+
+                        Text(Self.timelineMonthDayFormatter.string(from: point.election.electionDay))
+                            .font(.footnote.weight(.semibold))
+                            .foregroundColor(VoteNowColors.primaryText)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.85)
+                            .allowsTightening(true)
+                            .frame(width: dateWidth, alignment: .center)
+                            .padding(.vertical, 1)
+                            .position(x: clampedDateX, y: bottomY)
+                            .opacity(detailOpacity)
+                            .scaleEffect(detailScale)
+                            .allowsHitTesting(showPointDetail)
+                            .onTapGesture {
+                                onElectionTap(point.election.id)
+                            }
+                            .animation(.easeInOut(duration: 0.14), value: focusedTimelineElectionID)
+                    }
+                }
+                .frame(width: contentWidth, height: chartHeight, alignment: .topLeading)
+            }
+            .frame(height: 90)
+
+            Text("\(chancesToVoteUntilNextPresident(in: sorted)) Chances to Vote before the next Presidential Election!")
+                .font(.footnote.weight(.semibold))
+                .italic()
+                .foregroundColor(VoteNowColors.primaryText)
+                .lineLimit(1)
+                .minimumScaleFactor(0.55)
+                .allowsTightening(true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.horizontal, 6)
+        .padding(.bottom, 6)
+        .padding(.top, 2)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(VoteNowColors.infoSurfaceBlue)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+        )
+    }
+
+    private func timelineOverviewTitleLabel(
+        text: String,
+        width: CGFloat,
+        x: CGFloat,
+        y: CGFloat,
+        opacity: Double,
+        scale: CGFloat,
+        showPointDetail: Bool,
+        onTap: @escaping () -> Void
+    ) -> some View {
+        Text(text)
+            .font(.footnote.weight(.semibold))
+            .foregroundColor(VoteNowColors.richRed)
+            .lineLimit(1)
+            .truncationMode(.tail)
+            .multilineTextAlignment(.center)
+            .minimumScaleFactor(0.55)
+            .allowsTightening(true)
+            .frame(width: width, alignment: .center)
+            .padding(.horizontal, 4)
+            .padding(.vertical, 1)
+            .position(x: x, y: y)
+            .opacity(opacity)
+            .scaleEffect(scale)
+            .allowsHitTesting(showPointDetail)
+            .onTapGesture(perform: onTap)
+    }
+
+    @ViewBuilder
+    private func timelineCardRow(
+        _ election: Election,
+        index: Int,
+        totalCount: Int,
+        showYearLabel: Bool,
+        onCardTap: @escaping () -> Void
+    ) -> some View {
+        HStack(alignment: .top, spacing: 0) {
+            timelineCardYearRail(
+                for: election,
+                showYearLabel: showYearLabel,
+                isLast: index == totalCount - 1
+            )
+            electionCard(election, index: index)
+        }
+        .contentShape(Rectangle())
+        .simultaneousGesture(TapGesture().onEnded { onCardTap() })
+        .padding(.top, showYearLabel ? (index == 0 ? 24 : 10) : 0)
+        .overlay(alignment: .topLeading) {
+            if showYearLabel {
+                timelineYearBookmark(Self.timelineYearFormatter.string(from: election.electionDay))
+                    .offset(x: 1, y: index == 0 ? -2 : -14)
+                    .zIndex(3)
+            }
+        }
+        .zIndex(showYearLabel ? 2 : 1)
+    }
+
+    @ViewBuilder
+    private func timelineCardYearRail(
+        for _: Election,
+        showYearLabel _: Bool,
+        isLast _: Bool
+    ) -> some View {
+        Color.clear
+            .frame(width: 0, height: 0)
+    }
+
+    @ViewBuilder
+    private func timelineYearBookmark(_ year: String) -> some View {
+        Text(year)
+            .font(.callout.weight(.bold))
+            .foregroundColor(VoteNowColors.richRed)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+    }
+
+    private func calendarYear(for date: Date) -> Int {
+        Calendar.current.component(.year, from: date)
+    }
+
+    private var trailingYearLabel: String? {
+        guard let lastElection = visibleElections.last else { return nil }
+        let lastYear = calendarYear(for: lastElection.electionDay)
+        return lastYear < 2029 ? "2029" : nil
+    }
+
+    @ViewBuilder
     private func electionCard(_ election: Election, index: Int) -> some View {
+        let selectedID = focusedTimelineElectionID ?? visibleElections.first?.id
+        let isSelected = selectedID == election.id
         let mapvStatus = mapvAvailability(for: election)
+        let advisoryLines = advisoryMessages(for: election)
 
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .center, spacing: 10) {
@@ -248,17 +685,6 @@ struct ElectionTimelineView: View {
                             .font(.subheadline.weight(.semibold))
                             .foregroundColor(VoteNowColors.mutedText)
                             .lineLimit(1)
-
-                        if let partyBadge = primaryPartyBadge(for: election) {
-                            Text(partyBadge.title)
-                                .font(.caption.weight(.semibold))
-                                .foregroundColor(partyBadge.foreground)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(partyBadge.background)
-                                .clipShape(Capsule())
-                                .lineLimit(1)
-                        }
                     }
 
                     if let subtitleText = displaySubtitleText(for: election), !subtitleText.isEmpty {
@@ -310,6 +736,20 @@ struct ElectionTimelineView: View {
                     .padding(.vertical, 5)
                     .background(countdownBackgroundColor(for: election))
                     .clipShape(Capsule())
+
+                if let partyBadge = primaryPartyBadge(for: election) {
+                    Text(partyBadge.title)
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(partyBadge.foreground)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(partyBadge.background)
+                        .clipShape(Capsule())
+                        .lineLimit(1)
+                        .opensMyInfoPanelOnLongPress(
+                            when: planVM.selectedParty == .democrat || planVM.selectedParty == .republican
+                        )
+                }
                 Spacer(minLength: 8)
             }
 
@@ -361,22 +801,37 @@ struct ElectionTimelineView: View {
                 ) {
                     VStack(alignment: .leading, spacing: 10) {
                         if let intro = ballotContent.introText, !intro.isEmpty {
-                            Text(intro)
-                                .font(.caption)
-                                .foregroundColor(VoteNowColors.mutedText)
+                            ballotIntroView(intro)
                         }
 
                         ForEach(ballotContent.items) { item in
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("• \(item.title)")
-                                    .font(.caption.weight(.semibold))
-                                    .foregroundColor(VoteNowColors.primaryText)
-                                if !item.detail.isEmpty {
-                                    Text(item.detail)
-                                        .font(.caption)
-                                        .foregroundColor(VoteNowColors.mutedText)
+                            ballotItemLineView(item)
+                        }
+
+                        if shouldShowPrimaryPartyAffiliationHint(for: election) {
+                            Button {
+                                openMyInfoPanel()
+                            } label: {
+                                HStack(alignment: .center, spacing: 6) {
+                                    Text(
+                                        l(
+                                            "app.timeline.ballot.primary.party_affiliation_hint",
+                                            "Enter your registered party affiliation for more specific information."
+                                        )
+                                    )
+                                    .font(.caption2)
+                                    .foregroundColor(VoteNowColors.mutedText)
+                                    .multilineTextAlignment(.leading)
+
+                                    Spacer(minLength: 4)
+
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption2.weight(.semibold))
+                                        .foregroundColor(VoteNowColors.primaryCTA)
                                 }
+                                .contentShape(Rectangle())
                             }
+                            .buttonStyle(.plain)
                         }
                     }
                     .padding(.top, 6)
@@ -386,6 +841,23 @@ struct ElectionTimelineView: View {
                         .foregroundColor(VoteNowColors.primaryText)
                 }
                 .tint(VoteNowColors.primaryCTA)
+            }
+
+            if !advisoryLines.isEmpty {
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(Array(advisoryLines.enumerated()), id: \.offset) { _, advisory in
+                        HStack(alignment: .top, spacing: 6) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.caption2.weight(.semibold))
+                                .foregroundColor(VoteNowColors.warningAmber)
+                                .padding(.top, 1)
+                            Text(advisory)
+                                .font(.caption)
+                                .foregroundColor(VoteNowColors.mutedText)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                }
             }
         }
         .padding(14)
@@ -399,9 +871,24 @@ struct ElectionTimelineView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(index == 0 ? VoteNowColors.warningAmber.opacity(0.34) : VoteNowColors.borderWarm, lineWidth: 1)
+                .stroke(
+                    isSelected
+                        ? VoteNowColors.richRed.opacity(0.82)
+                        : (index == 0 ? VoteNowColors.warningAmber.opacity(0.34) : VoteNowColors.borderWarm),
+                    lineWidth: isSelected ? 1.8 : 1
+                )
         )
-        .shadow(color: VoteNowColors.primaryText.opacity(0.06), radius: 3, x: 0, y: 1)
+        .shadow(
+            color: (isSelected ? VoteNowColors.richRed : VoteNowColors.primaryText).opacity(isSelected ? 0.22 : 0.06),
+            radius: isSelected ? 6 : 3,
+            x: 0,
+            y: isSelected ? 3 : 1
+        )
+        .animation(.easeInOut(duration: 0.18), value: isSelected)
+    }
+
+    private func shouldShowPrimaryPartyAffiliationHint(for election: Election) -> Bool {
+        ballotStageContext(for: election) == .primary
     }
 
     @ViewBuilder
@@ -420,6 +907,7 @@ struct ElectionTimelineView: View {
                     RoundedRectangle(cornerRadius: 6, style: .continuous)
                         .stroke(VoteNowColors.borderWarm, lineWidth: 1)
                 )
+                .opensMyInfoPanelOnLongPress()
         } else if let remoteURL = stateFlagURL(for: election) {
             AsyncImage(url: remoteURL) { phase in
                 switch phase {
@@ -437,6 +925,7 @@ struct ElectionTimelineView: View {
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
                     .stroke(VoteNowColors.borderWarm, lineWidth: 1)
             )
+            .opensMyInfoPanelOnLongPress()
         } else {
             stateFlagFallback(for: code)
                 .frame(width: flagSize.width, height: flagSize.height)
@@ -445,6 +934,7 @@ struct ElectionTimelineView: View {
                     RoundedRectangle(cornerRadius: 6, style: .continuous)
                         .stroke(VoteNowColors.borderWarm, lineWidth: 1)
                 )
+                .opensMyInfoPanelOnLongPress()
         }
     }
 
@@ -468,6 +958,10 @@ struct ElectionTimelineView: View {
     }
 
     private func headerTitle(for election: Election) -> String {
+        if let mayoralTitle = mayoralHeaderTitle(for: election) {
+            return mayoralTitle
+        }
+
         let state = stateName(for: election)
         let base = election.name
             .replacingOccurrences(of: state, with: "")
@@ -495,6 +989,17 @@ struct ElectionTimelineView: View {
             return phase
         }
         return cardTitle(for: election)
+    }
+
+    private func mayoralHeaderTitle(for election: Election) -> String? {
+        guard isMayoralTimelineCard(election) else { return nil }
+
+        let city = mayoralCityName(election) ?? election.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let year = Calendar.current.component(.year, from: election.electionDay)
+        let stageTitle = mayoralBallotTitle(forStage: mayoralStageName(election))
+            .replacingOccurrences(of: "Mayor ", with: "")
+        return "\(year) Mayoral \(city) \(stageTitle)"
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     @ViewBuilder
@@ -530,6 +1035,9 @@ struct ElectionTimelineView: View {
     }
 
     private func displaySubtitleText(for election: Election) -> String? {
+        if isMayoralTimelineCard(election) {
+            return nil
+        }
         guard let subtitle = cardSecondaryText(for: election)?.trimmingCharacters(in: .whitespacesAndNewlines),
               !subtitle.isEmpty else { return nil }
         let lower = subtitle.lowercased()
@@ -551,10 +1059,24 @@ struct ElectionTimelineView: View {
         let background: Color
     }
 
+    private enum BallotParty {
+        case democrat
+        case republican
+        case other
+    }
+
+    private enum BallotOfficeIcon {
+        case whiteHouse
+        case congress
+    }
+
     private struct BallotDisclosureItem: Identifiable {
         let id: String
         let title: String
         let detail: String
+        let party: BallotParty?
+        let officeIcon: BallotOfficeIcon?
+        let incumbent: String?
     }
 
     private struct BallotDisclosureContent {
@@ -566,6 +1088,202 @@ struct ElectionTimelineView: View {
         case primary
         case runoff
         case general
+    }
+
+    private enum TimelineLocationPrecision {
+        case stateOnly
+        case zipOrCity
+        case fullAddress
+    }
+
+    private struct TimelinePlotPoint: Identifiable {
+        let id: String
+        let election: Election
+        let sequenceIndex: Int
+        let electionX: CGFloat
+        let pointOffsetX: CGFloat
+        let titleOffsetX: CGFloat
+        let bottomOffsetX: CGFloat
+        let titleLane: Int
+        let bottomLane: Int
+    }
+
+    private struct TimelineYearMarker: Identifiable {
+        let year: Int
+        let markerDay: Date
+
+        var id: Int { year }
+        var label: String { "Jan \(year)" }
+    }
+
+    @ViewBuilder
+    private func ballotIntroView(_ intro: String) -> some View {
+        let lines = intro
+            .split(separator: "\n", omittingEmptySubsequences: false)
+            .map(String.init)
+
+        VStack(alignment: .leading, spacing: 4) {
+            ForEach(Array(lines.enumerated()), id: \.offset) { _, line in
+                ballotIntroLineView(line)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func ballotIntroLineView(_ line: String) -> some View {
+        let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty {
+            EmptyView()
+        } else {
+            let isPrimaryType = trimmed.lowercased().hasPrefix("primary type:")
+            ballotIntroLineText(trimmed)
+                .font(.caption)
+                .foregroundColor(isPrimaryType ? VoteNowColors.primaryText : VoteNowColors.mutedText)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private func ballotIntroLineText(_ line: String) -> Text {
+        let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return Text("") }
+
+        let normalized = trimmed.lowercased()
+        let prefix = "primary type:"
+        if normalized.hasPrefix(prefix) {
+            let start = trimmed.index(trimmed.startIndex, offsetBy: prefix.count)
+            let remainder = trimmed[start...].trimmingCharacters(in: .whitespacesAndNewlines)
+            return Text("Primary Type: ").bold() + Text(remainder)
+        }
+
+        return Text(trimmed)
+    }
+
+    private func ballotItemLineView(_ item: BallotDisclosureItem) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                if let officeIcon = item.officeIcon {
+                    ballotOfficeIconView(for: officeIcon)
+                        .frame(width: 18, height: 18)
+                }
+
+                (
+                    Text(item.title)
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(ballotPartyColor(for: item.party))
+                    + Text(": ")
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(VoteNowColors.primaryText)
+                    + Text(item.detail)
+                        .font(.caption)
+                        .foregroundColor(VoteNowColors.mutedText)
+                )
+                .opensMyInfoPanelOnLongPress(when: shouldOpenMyInfoFromPartyItem(item.party))
+            }
+
+            if let incumbent = item.incumbent, !incumbent.isEmpty {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text("◦")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundColor(VoteNowColors.mutedText)
+                        .frame(width: 10, alignment: .leading)
+
+                    styledIncumbentText(incumbent)
+                        .font(.caption2.weight(.semibold))
+                        .opensMyInfoPanelOnLongPress()
+                }
+                .padding(.leading, 16)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func ballotOfficeIconView(for icon: BallotOfficeIcon) -> some View {
+        switch icon {
+        case .whiteHouse:
+            Image("WhiteHouseIcon")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 18, height: 18)
+        case .congress:
+            if UIImage(named: "CapitolIcon") != nil {
+                Image("CapitolIcon")
+                    .renderingMode(.original)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 18, height: 18)
+            } else {
+                Image(systemName: "building.columns.fill")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(VoteNowColors.primaryCTA)
+            }
+        }
+    }
+
+    private func ballotPartyColor(for party: BallotParty?) -> Color {
+        switch party {
+        case .democrat:
+            return VoteNowColors.richBlue
+        case .republican:
+            return VoteNowColors.richRed
+        default:
+            return VoteNowColors.primaryText
+        }
+    }
+
+    private func shouldOpenMyInfoFromPartyItem(_ party: BallotParty?) -> Bool {
+        switch party {
+        case .democrat?, .republican?:
+            return true
+        default:
+            return false
+        }
+    }
+
+    private func styledIncumbentText(_ incumbent: String) -> Text {
+        guard let regex = try? NSRegularExpression(pattern: #"\(([DRI])(?:-[A-Za-z0-9]+)?\)"#) else {
+            return Text(incumbent).foregroundColor(VoteNowColors.primaryText)
+        }
+
+        let source = incumbent as NSString
+        let range = NSRange(location: 0, length: source.length)
+        let matches = regex.matches(in: incumbent, range: range)
+        guard !matches.isEmpty else {
+            return Text(incumbent).foregroundColor(VoteNowColors.primaryText)
+        }
+
+        var cursor = 0
+        var styled = Text("")
+
+        for match in matches {
+            if match.range.location > cursor {
+                let prefixRange = NSRange(location: cursor, length: match.range.location - cursor)
+                let prefix = source.substring(with: prefixRange)
+                styled = styled + Text(prefix).foregroundColor(VoteNowColors.primaryText)
+            }
+
+            let token = source.substring(with: match.range)
+            let partyToken = match.range(at: 1).location != NSNotFound
+                ? source.substring(with: match.range(at: 1))
+                : ""
+            let color: Color
+            if partyToken == "D" {
+                color = VoteNowColors.richBlue
+            } else if partyToken == "R" {
+                color = VoteNowColors.richRed
+            } else {
+                color = VoteNowColors.primaryText
+            }
+            styled = styled + Text(token).foregroundColor(color)
+
+            cursor = match.range.location + match.range.length
+        }
+
+        if cursor < source.length {
+            let suffix = source.substring(from: cursor)
+            styled = styled + Text(suffix).foregroundColor(VoteNowColors.primaryText)
+        }
+
+        return styled
     }
 
     private func primaryPartyBadge(for election: Election) -> PartyBadgeStyle? {
@@ -594,10 +1312,341 @@ struct ElectionTimelineView: View {
     }
 
     private func ballotDisclosureContent(for election: Election) -> BallotDisclosureContent? {
-        if let datasetContent = datasetBackedBallotDisclosureContent(for: election) {
-            return datasetContent
+        let baseContent = datasetBackedBallotDisclosureContent(for: election)
+            ?? supplementalBallotDisclosureContent(for: election)
+        let mayoralItems = mayoralBallotDisclosureItems(for: election)
+        guard baseContent != nil || !mayoralItems.isEmpty else { return nil }
+
+        var content = baseContent ?? BallotDisclosureContent(introText: nil, items: [])
+
+        let stage = ballotStageContext(for: election)
+        let stateCode = stateCode(for: election)?.uppercased() ?? ""
+        if !isMayoralTimelineCard(election) {
+            let stateLegislativeItems = inferredStateLegislativeItems(
+                stateCode: stateCode,
+                stage: stage,
+                existingItems: content.items
+            )
+            if !stateLegislativeItems.isEmpty {
+                content = BallotDisclosureContent(
+                    introText: content.introText,
+                    items: content.items + stateLegislativeItems
+                )
+            }
         }
-        return supplementalBallotDisclosureContent(for: election)
+
+        if !mayoralItems.isEmpty {
+            content = BallotDisclosureContent(
+                introText: content.introText,
+                items: content.items + mayoralItems
+            )
+        }
+
+        return content
+    }
+
+    private struct MayoralBallotMatch {
+        let city: String
+        let stage: String
+        let dateStatus: String
+    }
+
+    private func mayoralBallotDisclosureItems(for election: Election) -> [BallotDisclosureItem] {
+        var items: [BallotDisclosureItem] = []
+        let precision = timelineLocationPrecision()
+        let zip = timelinePrimaryZIP()
+
+        let matches = election.flags.compactMap(parseMayoralBallotMatch)
+        if !matches.isEmpty {
+            let allStages = Array(Set(matches.map(\.stage))).sorted { lhs, rhs in
+                mayoralStageSortOrder(lhs) < mayoralStageSortOrder(rhs)
+            }
+
+            switch precision {
+            case .stateOnly:
+                for stage in allStages {
+                    items.append(
+                        BallotDisclosureItem(
+                            id: "mayor-state-only-\(election.id)-\(stage.lowercased())",
+                            title: mayoralBallotTitle(forStage: stage),
+                            detail: "Mayoral races are city-specific. Enter your full street address to confirm your exact city race eligibility.",
+                            party: nil,
+                            officeIcon: nil,
+                            incumbent: nil
+                        )
+                    )
+                }
+
+            case .zipOrCity, .fullAddress:
+                let focus = focusedMayoralCity(from: matches)
+                let scopedMatches: [MayoralBallotMatch]
+                if let focus {
+                    scopedMatches = matches.filter { citiesLooselyMatch($0.city, focus.city) }
+                } else {
+                    scopedMatches = matches
+                }
+
+                let scopedStages = Array(Set(scopedMatches.map(\.stage))).sorted { lhs, rhs in
+                    mayoralStageSortOrder(lhs) < mayoralStageSortOrder(rhs)
+                }
+                let displayStages = scopedStages.isEmpty ? allStages : scopedStages
+
+                for stage in displayStages {
+                    var detail: String
+                    let stageProjected = scopedMatches.contains {
+                        $0.stage == stage && !isScheduledMayoralDateStatus($0.dateStatus)
+                    }
+                    let projectedSuffix = stageProjected ? " Some city schedules are projected." : ""
+
+                    if let focus {
+                        switch precision {
+                        case .fullAddress:
+                            detail = "\(focus.city) mayor race is shown for your location. Verify city boundary details with your local election office.\(projectedSuffix)"
+                        case .zipOrCity:
+                            if focus.matchedByHint {
+                                if zip.isEmpty {
+                                    detail = "Likely mayoral city match: \(focus.city). ZIP and city boundaries can differ, so double-check your exact eligibility with your local election office.\(projectedSuffix)"
+                                } else {
+                                    detail = "Likely mayoral city match for ZIP \(zip): \(focus.city). ZIP and city boundaries can differ, so double-check your exact eligibility with your local election office.\(projectedSuffix)"
+                                }
+                            } else {
+                                if zip.isEmpty {
+                                    detail = "Closest major-city match: \(focus.city). If you are near a city edge, double-check eligibility with your local election office.\(projectedSuffix)"
+                                } else {
+                                    detail = "Closest major-city match for ZIP \(zip): \(focus.city). If you are near a city edge, double-check eligibility with your local election office.\(projectedSuffix)"
+                                }
+                            }
+                        case .stateOnly:
+                            detail = "Mayoral races are city-specific. Enter your full street address to confirm your exact city race eligibility.\(projectedSuffix)"
+                        }
+                    } else {
+                        let cities = Array(Set(matches.map(\.city))).sorted {
+                            $0.localizedCaseInsensitiveCompare($1) == .orderedAscending
+                        }
+                        let preview = cityListPreview(cities, maxVisible: 4)
+                        if precision == .zipOrCity, !zip.isEmpty {
+                            detail = "Mayoral races near ZIP \(zip) may include \(preview). If you are near a city edge, double-check eligibility with your local election office.\(projectedSuffix)"
+                        } else {
+                            detail = "City mayor races in \(preview). Verify your city eligibility with your local election office.\(projectedSuffix)"
+                        }
+                    }
+
+                    items.append(
+                        BallotDisclosureItem(
+                            id: "mayor-match-\(election.id)-\(stage.lowercased())",
+                            title: mayoralBallotTitle(forStage: stage),
+                            detail: detail,
+                            party: nil,
+                            officeIcon: nil,
+                            incumbent: nil
+                        )
+                    )
+                }
+            }
+        }
+
+        if isMayoralTimelineCard(election) {
+            let city = election.flags
+                .first(where: { $0.hasPrefix("MAYOR_CITY:") })?
+                .replacingOccurrences(of: "MAYOR_CITY:", with: "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                ?? election.name
+            let stage = election.flags
+                .first(where: { $0.hasPrefix("MAYOR_STAGE:") })?
+                .replacingOccurrences(of: "MAYOR_STAGE:", with: "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                ?? "GENERAL"
+            let dateStatus = election.flags
+                .first(where: { $0.hasPrefix("MAYOR_DATE_STATUS:") })?
+                .replacingOccurrences(of: "MAYOR_DATE_STATUS:", with: "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                ?? ""
+
+            var detail = "\(city) citywide mayor election."
+            switch precision {
+            case .stateOnly:
+                detail = "Mayoral races are city-specific. Enter your full street address to confirm your exact city race eligibility."
+            case .zipOrCity:
+                if zip.isEmpty {
+                    detail += " ZIP/city lookups are approximate. If you are near a city edge, double-check eligibility with your local election office."
+                } else {
+                    detail += " ZIP \(zip) is an approximate city match. If you are near a city edge, double-check eligibility with your local election office."
+                }
+            case .fullAddress:
+                detail += " Verify city boundary details with your local election office."
+            }
+            if !dateStatus.isEmpty && dateStatus.caseInsensitiveCompare("Scheduled") != .orderedSame {
+                detail += " Date status: \(dateStatus)."
+            }
+
+            items.append(
+                BallotDisclosureItem(
+                    id: "mayor-city-card-\(election.id)",
+                    title: mayoralBallotTitle(forStage: stage),
+                    detail: detail,
+                    party: nil,
+                    officeIcon: nil,
+                    incumbent: nil
+                )
+            )
+        }
+
+        return items
+    }
+
+    private func parseMayoralBallotMatch(_ flag: String) -> MayoralBallotMatch? {
+        guard flag.hasPrefix("MAYOR_MATCH:") else { return nil }
+
+        let payload = flag.replacingOccurrences(of: "MAYOR_MATCH:", with: "")
+        let parts = payload.split(separator: "|", omittingEmptySubsequences: false).map(String.init)
+        guard !parts.isEmpty else { return nil }
+
+        let city = parts[0].trimmingCharacters(in: .whitespacesAndNewlines)
+        if city.isEmpty { return nil }
+
+        let stage = parts.count > 1
+            ? parts[1].trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+            : "GENERAL"
+        let dateStatus = parts.count > 2
+            ? parts[2].trimmingCharacters(in: .whitespacesAndNewlines)
+            : ""
+
+        return MayoralBallotMatch(city: city, stage: stage, dateStatus: dateStatus)
+    }
+
+    private func mayoralBallotTitle(forStage stage: String) -> String {
+        switch stage.uppercased() {
+        case "PRIMARY":
+            return "Mayor Primary"
+        case "RUNOFF":
+            return "Mayor Runoff"
+        default:
+            return "Mayor General"
+        }
+    }
+
+    private func mayoralStageSortOrder(_ stage: String) -> Int {
+        switch stage.uppercased() {
+        case "PRIMARY":
+            return 0
+        case "RUNOFF":
+            return 1
+        default:
+            return 2
+        }
+    }
+
+    private func cityListPreview(_ cities: [String], maxVisible: Int) -> String {
+        if cities.count <= maxVisible {
+            return cities.joined(separator: ", ")
+        }
+
+        let visible = cities.prefix(maxVisible).joined(separator: ", ")
+        let remaining = cities.count - maxVisible
+        return "\(visible), and \(remaining) more"
+    }
+
+    private func timelinePrimaryZIP() -> String {
+        let fromAddress = String(planVM.userAddress.zip.filter(\.isNumber).prefix(5))
+        if fromAddress.count == 5 {
+            return fromAddress
+        }
+
+        let fromPlan = String(planVM.zip.filter(\.isNumber).prefix(5))
+        if fromPlan.count == 5 {
+            return fromPlan
+        }
+
+        return ""
+    }
+
+    private func timelineCityHint() -> String {
+        let fromSelection = repsVM.resolvedLocationSelection?.city?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !fromSelection.isEmpty {
+            return fromSelection
+        }
+
+        return planVM.userAddress.city.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func timelineLocationPrecision() -> TimelineLocationPrecision {
+        let street = planVM.userAddress.street.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !street.isEmpty {
+            return .fullAddress
+        }
+
+        if let selection = repsVM.resolvedLocationSelection,
+           selection.source == .address {
+            let normalizedAddress = selection.normalizedAddress?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if normalizedAddress.range(of: #"\d"#, options: .regularExpression) != nil {
+                return .fullAddress
+            }
+        }
+
+        if !timelinePrimaryZIP().isEmpty || !timelineCityHint().isEmpty {
+            return .zipOrCity
+        }
+
+        return .stateOnly
+    }
+
+    private func normalizedCityKey(_ raw: String) -> String {
+        raw.lowercased()
+            .replacingOccurrences(of: #"\bcity\b"#, with: "", options: .regularExpression)
+            .replacingOccurrences(of: #"[^a-z0-9]"#, with: "", options: .regularExpression)
+    }
+
+    private func citiesLooselyMatch(_ lhs: String, _ rhs: String) -> Bool {
+        let left = normalizedCityKey(lhs)
+        let right = normalizedCityKey(rhs)
+        guard !left.isEmpty, !right.isEmpty else { return false }
+        return left == right || left.contains(right) || right.contains(left)
+    }
+
+    private func focusedMayoralCity(from matches: [MayoralBallotMatch]) -> (city: String, matchedByHint: Bool)? {
+        let uniqueCities = Array(Set(matches.map(\.city))).sorted {
+            $0.localizedCaseInsensitiveCompare($1) == .orderedAscending
+        }
+        guard !uniqueCities.isEmpty else { return nil }
+
+        let hint = timelineCityHint()
+        if !hint.isEmpty,
+           let matched = uniqueCities.first(where: { citiesLooselyMatch($0, hint) }) {
+            return (city: matched, matchedByHint: true)
+        }
+
+        return (city: uniqueCities[0], matchedByHint: false)
+    }
+
+    private func isScheduledMayoralDateStatus(_ status: String) -> Bool {
+        let normalized = status.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return normalized.isEmpty || normalized == "scheduled"
+    }
+
+    private func advisoryMessages(for election: Election) -> [String] {
+        var messages: [String] = []
+        var seen = Set<String>()
+
+        let closeDateFlags = election.flags.filter { $0.hasPrefix("MAYOR_CLOSE_TO_STATEWIDE:") }
+        for flag in closeDateFlags {
+            let iso = flag.replacingOccurrences(of: "MAYOR_CLOSE_TO_STATEWIDE:", with: "")
+            let message: String
+            if let date = Self.isoDate(from: iso) {
+                message = "Close to another statewide election window (within \(Self.mayoralCloseWindowDays) days of \(formattedDateText(date)))."
+            } else {
+                message = "Close to another statewide election window (within \(Self.mayoralCloseWindowDays) days)."
+            }
+
+            if seen.insert(message).inserted {
+                messages.append(message)
+            }
+        }
+
+        return messages
+    }
+
+    private func isMayoralTimelineCard(_ election: Election) -> Bool {
+        election.flags.contains("MAYOR_TIMELINE_CARD")
     }
 
     private func datasetBackedBallotDisclosureContent(for election: Election) -> BallotDisclosureContent? {
@@ -633,12 +1682,44 @@ struct ElectionTimelineView: View {
             return lhs.dropdown_label.localizedCaseInsensitiveCompare(rhs.dropdown_label) == .orderedAscending
         }
 
-        let items = sortedRows.map { row in
-            BallotDisclosureItem(
+        let shouldCollapsePartyLabelsForIndependent =
+            planVM.selectedParty == .independent && (stage == .primary || stage == .runoff)
+
+        var seenIndependentOfficeFamilies = Set<String>()
+        let items = sortedRows.compactMap { row -> BallotDisclosureItem? in
+            let item = BallotDisclosureItem(
                 id: row.dataset_key,
-                title: ballotTitle(for: row),
-                detail: row.eligibility_summary.trimmingCharacters(in: .whitespacesAndNewlines)
+                title: datasetBallotTitle(
+                    for: row,
+                    stage: stage,
+                    includeParty: !shouldCollapsePartyLabelsForIndependent
+                ),
+                detail: datasetBallotDetail(
+                    for: row,
+                    stage: stage,
+                    isIndependentView: shouldCollapsePartyLabelsForIndependent
+                ),
+                party: shouldCollapsePartyLabelsForIndependent ? nil : ballotParty(from: row.party),
+                officeIcon: ballotOfficeIcon(for: row.office_family),
+                incumbent: incumbentSummary(
+                    for: row,
+                    stateCode: state,
+                    electionYear: Calendar.current.component(.year, from: election.electionDay)
+                )
             )
+
+            guard shouldCollapsePartyLabelsForIndependent else {
+                return item
+            }
+
+            let dedupeKey = row.office_family
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .lowercased()
+            if seenIndependentOfficeFamilies.contains(dedupeKey) {
+                return nil
+            }
+            seenIndependentOfficeFamilies.insert(dedupeKey)
+            return item
         }
 
         let intro = ballotIntroText(
@@ -769,6 +1850,160 @@ struct ElectionTimelineView: View {
         return notes.joined(separator: "\n")
     }
 
+    private enum StateLegislativeChamber {
+        case upper
+        case lower
+    }
+
+    private func inferredStateLegislativeItems(
+        stateCode: String,
+        stage: BallotStageContext?,
+        existingItems: [BallotDisclosureItem]
+    ) -> [BallotDisclosureItem] {
+        guard !stateCode.isEmpty else { return [] }
+        if ["AS", "GU", "MP", "PR", "VI", "DC"].contains(stateCode) { return [] }
+        if hasStateLegislativeItem(existingItems) { return [] }
+
+        let legislativeOfficials = repsVM.stateReps
+            .filter { official($0, matches: stateCode) }
+            .filter { stateLegislativeChamber(for: $0) != nil }
+
+        if legislativeOfficials.isEmpty {
+            return [
+                BallotDisclosureItem(
+                    id: "state-leg-\(stateCode.lowercased())-\(stageID(stage))",
+                    title: stageAwareStateLegislativeTitle(base: "State Legislature", stage: stage),
+                    detail: "District-based State Senate and State House/Assembly races when scheduled.",
+                    party: nil,
+                    officeIcon: nil,
+                    incumbent: nil
+                )
+            ]
+        }
+
+        let sorted = legislativeOfficials.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        let upper = sorted.first(where: { stateLegislativeChamber(for: $0) == .upper })
+        let lower = sorted.first(where: { stateLegislativeChamber(for: $0) == .lower })
+
+        var items: [BallotDisclosureItem] = []
+
+        if let upper {
+            items.append(
+                BallotDisclosureItem(
+                    id: "state-senate-\(stateCode.lowercased())-\(stageID(stage))",
+                    title: stageAwareStateLegislativeTitle(base: "State Senate", stage: stage),
+                    detail: stateLegislativeDetail(for: upper, fallback: "State Senate district race."),
+                    party: nil,
+                    officeIcon: nil,
+                    incumbent: "Incumbent: \(incumbentName(upper))\(incumbentPartySuffix(upper))"
+                )
+            )
+        }
+
+        if let lower {
+            items.append(
+                BallotDisclosureItem(
+                    id: "state-lower-\(stateCode.lowercased())-\(stageID(stage))",
+                    title: stageAwareStateLegislativeTitle(
+                        base: stateLegislativeLowerChamberLabel(for: lower),
+                        stage: stage
+                    ),
+                    detail: stateLegislativeDetail(for: lower, fallback: "State House/Assembly district race."),
+                    party: nil,
+                    officeIcon: nil,
+                    incumbent: "Incumbent: \(incumbentName(lower))\(incumbentPartySuffix(lower))"
+                )
+            )
+        }
+
+        if items.isEmpty {
+            return [
+                BallotDisclosureItem(
+                    id: "state-leg-\(stateCode.lowercased())-\(stageID(stage))",
+                    title: stageAwareStateLegislativeTitle(base: "State Legislature", stage: stage),
+                    detail: "District-based State Senate and State House/Assembly races when scheduled.",
+                    party: nil,
+                    officeIcon: nil,
+                    incumbent: nil
+                )
+            ]
+        }
+
+        return items
+    }
+
+    private func hasStateLegislativeItem(_ items: [BallotDisclosureItem]) -> Bool {
+        let keywords = [
+            "state senate",
+            "state house",
+            "state assembly",
+            "state legislature",
+            "house of delegates"
+        ]
+        return items.contains { item in
+            let lower = item.title.lowercased()
+            return keywords.contains(where: { lower.contains($0) })
+        }
+    }
+
+    private func stateLegislativeChamber(for official: Official) -> StateLegislativeChamber? {
+        let division = (official.divisionId ?? "").lowercased()
+        if division.contains("/sldu:") { return .upper }
+        if division.contains("/sldl:") { return .lower }
+
+        let title = (official.officeTitle ?? "").lowercased()
+        if title.contains("senate") || title.contains("senator") {
+            return .upper
+        }
+        if title.contains("assembly")
+            || title.contains("house of delegates")
+            || title.contains("state representative")
+            || title.contains("delegate")
+            || title.contains("state house")
+            || title.contains("assemblymember")
+            || title.contains("assembly member") {
+            return .lower
+        }
+        return nil
+    }
+
+    private func stateLegislativeLowerChamberLabel(for official: Official) -> String {
+        let title = (official.officeTitle ?? "").lowercased()
+        if title.contains("house of delegates") || title.contains("delegate") {
+            return "State House of Delegates"
+        }
+        if title.contains("assembly") {
+            return "State Assembly"
+        }
+        return "State House"
+    }
+
+    private func stateLegislativeDetail(for official: Official, fallback: String) -> String {
+        let district = official.district?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !district.isEmpty {
+            return district
+        }
+        return fallback
+    }
+
+    private func stageAwareStateLegislativeTitle(base: String, stage: BallotStageContext?) -> String {
+        guard let stage else { return base }
+        return "\(base) \(stageLabel(for: stage))"
+    }
+
+    private func stageID(_ stage: BallotStageContext?) -> String {
+        switch stage {
+        case .primary:
+            return "primary"
+        case .runoff:
+            return "runoff"
+        case .general:
+            return "general"
+        case .none:
+            return "unknown"
+        }
+    }
+
     private func supplementalItem(
         stateCode: String,
         slug: String,
@@ -778,7 +2013,10 @@ struct ElectionTimelineView: View {
         BallotDisclosureItem(
             id: "supplemental-\(stateCode.lowercased())-\(slug)",
             title: title,
-            detail: detail
+            detail: detail,
+            party: nil,
+            officeIcon: nil,
+            incumbent: nil
         )
     }
 
@@ -803,7 +2041,7 @@ struct ElectionTimelineView: View {
             if let summary = dataset.state_summary.first(where: { $0.state_abbr.uppercased() == stateCode }) {
                 let customNote = summary.independent_primary_note?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
                 if !customNote.isEmpty {
-                    notes.append(customNote)
+                    notes.append(simplifiedIndependentPrimaryNote(customNote))
                 } else {
                     let typeText = primaryTypeSummary(for: summary, election: election)
                     if !typeText.isEmpty {
@@ -816,8 +2054,6 @@ struct ElectionTimelineView: View {
                             )
                         )
                     }
-                }
-                if customNote.isEmpty {
                     notes.append(
                         l(
                             "app.timeline.ballot.independent.note.generic_verify",
@@ -826,7 +2062,7 @@ struct ElectionTimelineView: View {
                     )
                 }
             } else if let territoryNote = Self.independentPrimaryTerritoryNotesByCode[stateCode] {
-                notes.append(territoryNote)
+                notes.append(simplifiedIndependentPrimaryNote(territoryNote))
             } else {
                 notes.append(
                     l(
@@ -845,6 +2081,66 @@ struct ElectionTimelineView: View {
             return nil
         }
         return trimmed.joined(separator: "\n")
+    }
+
+    private func simplifiedIndependentPrimaryNote(_ raw: String) -> String {
+        let chunks = raw
+            .split(separator: ".")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+
+        var primaryType: String?
+        var independentRule: String?
+        var note: String?
+
+        for chunk in chunks {
+            let lower = chunk.lowercased()
+            if lower.hasPrefix("primary type:") || lower.hasPrefix("primary type :") || lower.hasPrefix("primary type") {
+                primaryType = chunk.replacingOccurrences(of: "(?i)^primary\\s*type\\s*:\\s*", with: "", options: .regularExpression)
+            } else if lower.hasPrefix("independent voter rule:") {
+                independentRule = chunk.replacingOccurrences(of: "(?i)^independent\\s+voter\\s+rule\\s*:\\s*", with: "", options: .regularExpression)
+            } else if lower.hasPrefix("note:") {
+                note = chunk.replacingOccurrences(of: "(?i)^note\\s*:\\s*", with: "", options: .regularExpression)
+            }
+        }
+
+        var parts: [String] = []
+        if let primaryType, !primaryType.isEmpty {
+            parts.append("Primary Type: \(normalizedPartyWording(in: primaryType)).")
+        }
+        if let independentRule, !independentRule.isEmpty {
+            parts.append("Independent voter rule: \(normalizedPartyWording(in: independentRule)).")
+        }
+        if let note, !note.isEmpty {
+            let normalizedNote = normalizedPartyWording(in: note)
+            if !shouldSuppressIndependentPrimaryClosingNote(normalizedNote) {
+                parts.append("Note: \(normalizedNote).")
+            }
+        }
+
+        if parts.isEmpty {
+            return normalizedPartyWording(in: raw.replacingOccurrences(of: "Primary type:", with: "Primary Type:"))
+        }
+
+        return parts.joined(separator: " ")
+    }
+
+    private func shouldSuppressIndependentPrimaryClosingNote(_ note: String) -> Bool {
+        let normalized = note
+            .lowercased()
+            .replacingOccurrences(of: "\\.", with: "", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if normalized.contains("not fully private like a classic open primary") {
+            return true
+        }
+        if normalized == "closed primary" || normalized.contains("closed primary") {
+            return true
+        }
+        if normalized.contains("one party ballot only") {
+            return true
+        }
+        return false
     }
 
     private func primaryTypeSummary(for summary: ElectionEligibilityStateSummary, election: Election) -> String {
@@ -916,24 +2212,317 @@ struct ElectionTimelineView: View {
         }
     }
 
-    private func ballotTitle(for row: ElectionEligibilityTimelineRow) -> String {
-        let label = row.dropdown_label.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !label.isEmpty {
-            return label
+    private func datasetBallotTitle(
+        for row: ElectionEligibilityTimelineRow,
+        stage: BallotStageContext,
+        includeParty: Bool
+    ) -> String {
+        let office = officeTitleWithContextEmoji(for: row.office_family)
+        let stageLabel = stageLabel(for: stage)
+        let partyLabel = normalizedPartyLabel(row.party)
+
+        if includeParty, !partyLabel.isEmpty, stage != .general {
+            return "\(office) \(partyLabel) \(stageLabel)"
         }
 
-        switch row.office_family.lowercased() {
-        case "president":
-            return "Presidential election"
-        case "governor":
-            return "Governor election"
-        case "us_senate":
-            return "U.S. Senate election"
-        case "us_house":
-            return "U.S. House election"
+        return "\(office) \(stageLabel)"
+    }
+
+    private func datasetBallotDetail(
+        for row: ElectionEligibilityTimelineRow,
+        stage _: BallotStageContext,
+        isIndependentView _: Bool
+    ) -> String {
+        return normalizedPartyWording(in: row.eligibility_summary)
+    }
+
+    private func ballotParty(from rawParty: String) -> BallotParty? {
+        switch rawParty.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "democratic":
+            return .democrat
+        case "republican":
+            return .republican
+        case "n/a":
+            return nil
         default:
-            return "Election item"
+            return .other
         }
+    }
+
+    private func normalizedPartyLabel(_ rawParty: String) -> String {
+        switch rawParty.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "democratic":
+            return "Democrat"
+        case "republican":
+            return "Republican"
+        default:
+            return ""
+        }
+    }
+
+    private func stageLabel(for stage: BallotStageContext) -> String {
+        switch stage {
+        case .primary:
+            return "Primary"
+        case .runoff:
+            return "Runoff"
+        case .general:
+            return "General"
+        }
+    }
+
+    private func officeTitleWithContextEmoji(for officeFamily: String) -> String {
+        switch officeFamily.lowercased() {
+        case "president":
+            return "Presidential (White House)"
+        case "governor":
+            return "Governor"
+        case "us_senate":
+            return "U.S. Senate (Congress)"
+        case "us_house":
+            return "U.S. House (Congress)"
+        default:
+            return "Election"
+        }
+    }
+
+    private func ballotOfficeIcon(for officeFamily: String) -> BallotOfficeIcon? {
+        switch officeFamily.lowercased() {
+        case "president":
+            return .whiteHouse
+        case "us_senate", "us_house":
+            return .congress
+        default:
+            return nil
+        }
+    }
+
+    private func normalizedPartyWording(in text: String) -> String {
+        text
+            .replacingOccurrences(of: "(?i)\\bdemocratic\\b", with: "Democrat", options: .regularExpression)
+            .replacingOccurrences(of: "(?i)\\brepublican\\b", with: "Republican", options: .regularExpression)
+            .replacingOccurrences(of: "(?i)\\busually\\s+", with: "", options: .regularExpression)
+            .replacingOccurrences(of: "\\s{2,}", with: " ", options: .regularExpression)
+            .replacingOccurrences(of: "\\s+([,.])", with: "$1", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func incumbentSummary(for row: ElectionEligibilityTimelineRow, stateCode: String, electionYear: Int) -> String? {
+        let normalizedOffice = row.office_family.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        switch normalizedOffice {
+        case "president":
+            guard let official = incumbentPresident() else { return nil }
+            return "Incumbent: \(incumbentName(official))\(incumbentPartySuffix(official))"
+        case "governor":
+            guard let official = incumbentGovernor(for: stateCode) else { return nil }
+            return "Incumbent: \(incumbentName(official))\(incumbentPartySuffix(official))"
+        case "us_house":
+            guard let official = incumbentUSHouse(for: stateCode) else { return nil }
+            return "Incumbent: \(incumbentName(official))\(incumbentUSHousePartyDistrictSuffix(official))"
+        case "us_senate":
+            let officials = incumbentUSSenators(for: stateCode)
+            guard !officials.isEmpty else { return nil }
+            let targetClass = senateClass(from: row.cycle_rule) ?? senateClass(forElectionYear: electionYear)
+            if let targetClass,
+               let matched = officials.first(where: { senateClass(from: $0) == targetClass }) {
+                return "Incumbent: \(incumbentName(matched))\(incumbentPartySuffix(matched))"
+            }
+
+            let fallback = officials.sorted(by: senateIncumbentSort).first
+            guard let fallback else { return nil }
+            return "Incumbent: \(incumbentName(fallback))\(incumbentPartySuffix(fallback))"
+        default:
+            return nil
+        }
+    }
+
+    private func senateClass(forElectionYear electionYear: Int) -> Int? {
+        let normalizedRemainder = ((electionYear % 6) + 6) % 6
+        switch normalizedRemainder {
+        case 2: return 1
+        case 4: return 2
+        case 0: return 3
+        default: return nil
+        }
+    }
+
+    private func senateClass(from text: String?) -> Int? {
+        let normalized = text?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased() ?? ""
+        guard !normalized.isEmpty else { return nil }
+
+        if normalized.contains("class iii") || normalized.contains("class 3") {
+            return 3
+        }
+        if normalized.contains("class ii") || normalized.contains("class 2") {
+            return 2
+        }
+        if normalized.contains("class i") || normalized.contains("class 1") {
+            return 1
+        }
+        return nil
+    }
+
+    private func senateIncumbentSort(_ lhs: Official, _ rhs: Official) -> Bool {
+        let leftClass = senateClass(from: lhs)
+        let rightClass = senateClass(from: rhs)
+        if leftClass != rightClass {
+            return (leftClass ?? .max) < (rightClass ?? .max)
+        }
+        return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
+    }
+
+    private func senateClass(from official: Official) -> Int? {
+        senateClass(from: official.officeTitle)
+    }
+
+    private func incumbentPresident() -> Official? {
+        if let explicit = repsVM.executiveReps.first(where: isPresidentOfficial) {
+            return explicit
+        }
+        return repsVM.executiveReps.first
+    }
+
+    private func incumbentGovernor(for stateCode: String) -> Official? {
+        if let explicit = repsVM.stateReps.first(where: { isGovernorOfficial($0) && official($0, matches: stateCode) }) {
+            return explicit
+        }
+        return repsVM.stateReps.first(where: { isGovernorOfficial($0) })
+    }
+
+    private func incumbentUSHouse(for stateCode: String) -> Official? {
+        if let explicit = repsVM.federalReps.first(where: { isUSHouseOfficial($0) && official($0, matches: stateCode) }) {
+            return explicit
+        }
+        return repsVM.federalReps.first(where: isUSHouseOfficial)
+    }
+
+    private func incumbentUSSenators(for stateCode: String) -> [Official] {
+        let stateSpecific = repsVM.federalReps.filter { isUSSenateOfficial($0) && official($0, matches: stateCode) }
+        if !stateSpecific.isEmpty {
+            return stateSpecific.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        }
+        return repsVM.federalReps
+            .filter(isUSSenateOfficial)
+            .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
+
+    private func isPresidentOfficial(_ official: Official) -> Bool {
+        let title = (official.officeTitle ?? "").lowercased()
+        if title.contains("vice") { return false }
+        if title.contains("president") { return true }
+        let name = official.name.lowercased()
+        return name.contains("president") && !name.contains("vice")
+    }
+
+    private func isGovernorOfficial(_ official: Official) -> Bool {
+        let title = (official.officeTitle ?? "").lowercased()
+        if title.contains("lieutenant") && title.contains("governor") { return false }
+        return title.contains("governor")
+    }
+
+    private func isUSHouseOfficial(_ official: Official) -> Bool {
+        let division = (official.divisionId ?? "").lowercased()
+        if division.contains("/cd:") {
+            return true
+        }
+        let title = (official.officeTitle ?? "").lowercased()
+        return title.contains("representative") || title.contains("delegate")
+    }
+
+    private func isUSSenateOfficial(_ official: Official) -> Bool {
+        let division = (official.divisionId ?? "").lowercased()
+        if division.contains("/cd:") {
+            return false
+        }
+        if division.contains("/state:") {
+            return true
+        }
+        let title = (official.officeTitle ?? "").lowercased()
+        return title.contains("senate") || title.contains("senator")
+    }
+
+    private func official(_ official: Official, matches stateCode: String) -> Bool {
+        guard let officialState = stateCodeFromDivisionID(official.divisionId) else { return true }
+        return officialState == stateCode.uppercased()
+    }
+
+    private func stateCodeFromDivisionID(_ divisionID: String?) -> String? {
+        guard let lower = divisionID?.lowercased(),
+              let range = lower.range(of: "/state:") else {
+            return nil
+        }
+
+        let suffix = lower[range.upperBound...]
+        let code = suffix.prefix { $0.isLetter }
+        guard code.count == 2 else { return nil }
+        return String(code).uppercased()
+    }
+
+    private func incumbentName(_ official: Official) -> String {
+        let trimmed = official.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return official.name }
+        return official.assetName
+    }
+
+    private func incumbentPartySuffix(_ official: Official) -> String {
+        guard let party = partyAbbreviation(from: official.party) else { return "" }
+        return " (\(party))"
+    }
+
+    private func incumbentUSHousePartyDistrictSuffix(_ official: Official) -> String {
+        guard let party = partyAbbreviation(from: official.party) else { return "" }
+        guard let district = usHouseDistrictLabel(from: official.divisionId) else {
+            return " (\(party))"
+        }
+        return " (\(party)-\(district))"
+    }
+
+    private func usHouseDistrictLabel(from divisionID: String?) -> String? {
+        guard let lower = divisionID?.lowercased(),
+              let range = lower.range(of: "/cd:") else {
+            return nil
+        }
+
+        let suffix = lower[range.upperBound...]
+        let rawDistrict = suffix.prefix { $0.isLetter || $0.isNumber || $0 == "_" || $0 == "-" }
+        guard !rawDistrict.isEmpty else { return nil }
+
+        let normalized = String(rawDistrict)
+            .replacingOccurrences(of: "_", with: "")
+            .replacingOccurrences(of: "-", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .uppercased()
+        guard !normalized.isEmpty else { return nil }
+
+        if normalized == "ATLARGE" {
+            return "AL"
+        }
+
+        let numericOnly = normalized.filter(\.isNumber)
+        if let districtNumber = Int(numericOnly), !numericOnly.isEmpty {
+            return String(districtNumber)
+        }
+
+        return normalized
+    }
+
+    private func partyAbbreviation(from rawParty: String?) -> String? {
+        let normalized = rawParty?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased() ?? ""
+
+        if normalized.contains("democrat") {
+            return "D"
+        }
+        if normalized.contains("republican") {
+            return "R"
+        }
+        if normalized.contains("independent") {
+            return "I"
+        }
+        return nil
     }
 
     private func officeSortOrder(_ officeFamily: String) -> Int {
@@ -991,22 +2580,105 @@ struct ElectionTimelineView: View {
     }
 
     private func shareElectionCard(for election: Election) {
-        let shareSize = CGSize(width: 1080, height: 900)
-        let shareCard = ElectionTimelineShareCard(
-            electionTitle: headerTitle(for: election),
-            stateName: stateName(for: election),
-            electionDayText: formattedDateText(election.electionDay),
-            earlyVotingText: earlyVotingText(for: election),
-            registrationText: registrationDeadlineText(for: election)
+        guard let shareDay = Self.deepLinkDateFormatter.date(from: Self.deepLinkDateFormatter.string(from: election.electionDay)) else {
+            logger.error("Failed to build election share payload.")
+            return
+        }
+
+        let dayText = Self.shareCardDateFormatter.string(from: election.electionDay)
+        let badgeDayText = formattedDateText(election.electionDay)
+        let stateText = stateName(for: election)
+        let electionTypeText = electionTypeToken(for: election)
+            .replacingOccurrences(of: "_", with: " ")
+            .capitalized
+        let registrationText = registrationDeadlineText(for: election)
+        let earlyVoting = earlyVotingText(for: election)
+
+        var details: [URLQueryItem] = [
+            URLQueryItem(name: "eid", value: election.id),
+            URLQueryItem(name: "type", value: electionTypeToken(for: election)),
+            URLQueryItem(name: "day", value: Self.deepLinkDateFormatter.string(from: shareDay)),
+            URLQueryItem(name: "election", value: headerTitle(for: election)),
+            URLQueryItem(name: "registration", value: registrationText),
+            URLQueryItem(name: "early_voting", value: earlyVoting)
+        ]
+        if let code = stateCode(for: election), !code.isEmpty {
+            details.append(URLQueryItem(name: "state", value: code.uppercased()))
+        }
+        details.append(URLQueryItem(name: "state_name", value: stateText))
+
+        let payload = VoteNowShareCardPayload(
+            cardType: .election,
+            target: .election,
+            title: "Upcoming Election: \(headerTitle(for: election))",
+            subtitle: "Election Day is \(dayText). \(electionTypeText). Registration deadline: \(registrationText).",
+            cta: "View Election Details",
+            badge: "\(stateText) · \(badgeDayText)",
+            campaign: "send-to-friend",
+            details: details
         )
 
-        if let image = ViewSnapshotter.snapshot(shareCard, size: shareSize) {
-            shareImage = image
-            showingShareSheet = true
-        } else {
-            print("[ElectionTimeline] Failed to generate election share image.")
-        }
+        shareItems = VoteNowShareComposer.activityItems(for: payload)
+        showingShareSheet = true
     }
+
+    private func electionTypeToken(for election: Election) -> String {
+        if let raw = election.flags
+            .first(where: { $0.hasPrefix("ELECTION_TYPE:") })?
+            .replacingOccurrences(of: "ELECTION_TYPE:", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines),
+           !raw.isEmpty {
+            return raw.uppercased()
+        }
+
+        let subtitle = election.subtitle.lowercased()
+        if subtitle.contains("runoff") {
+            return "PRIMARY_RUNOFF"
+        }
+        if subtitle.contains("primary") {
+            return "PRIMARY"
+        }
+        if subtitle.contains("general") {
+            return "GENERAL"
+        }
+        return "ELECTION"
+    }
+
+    private static let deepLinkDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
+    private static let shareCardDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale.current
+        formatter.timeZone = TimeZone.current
+        formatter.dateFormat = "EEEE, MMM d, yyyy"
+        return formatter
+    }()
+
+    private static let timelineYearFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale.current
+        formatter.timeZone = TimeZone.current
+        formatter.dateFormat = "yyyy"
+        return formatter
+    }()
+
+    private static let timelineMonthDayFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale.current
+        formatter.timeZone = TimeZone.current
+        formatter.dateFormat = "MMM d"
+        return formatter
+    }()
 
     private func stateName(for election: Election) -> String {
         let explicit = election.jurisdictionName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -1069,6 +2741,256 @@ struct ElectionTimelineView: View {
             .capitalized
     }
 
+    private func chancesToVoteUntilNextPresident(in elections: [Election]) -> Int {
+        guard !elections.isEmpty else { return 0 }
+
+        if let nextPresidentialGeneral = elections.first(where: isPresidentialGeneralElection) {
+            return elections.filter { $0.electionDay <= nextPresidentialGeneral.electionDay }.count
+        }
+        return elections.count
+    }
+
+    private func isPresidentialGeneralElection(_ election: Election) -> Bool {
+        if let type = election.flags
+            .first(where: { $0.hasPrefix("ELECTION_TYPE:") })?
+            .replacingOccurrences(of: "ELECTION_TYPE:", with: "")
+            .uppercased(),
+           type == "PRESIDENTIAL_GENERAL" {
+            return true
+        }
+
+        let combined = "\(election.name) \(election.subtitle)".lowercased()
+        return combined.contains("presidential") && combined.contains("general")
+    }
+
+    private func timelineTopTitle(for election: Election) -> String {
+        let raw = headerTitle(for: election)
+        return raw
+            .replacingOccurrences(of: "\n", with: " ")
+            .replacingOccurrences(of: "\\b20\\d{2}\\b", with: "", options: .regularExpression)
+            .replacingOccurrences(of: "\\s{2,}", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func timelinePlotPoints(
+        for sorted: [Election],
+        minDay: Date,
+        totalSpanDays: Int,
+        usableWidth: CGFloat,
+        xPadding: CGFloat
+    ) -> [TimelinePlotPoint] {
+        var points: [TimelinePlotPoint] = []
+        var lastPlacedX: CGFloat = -.greatestFiniteMagnitude
+        var lastPointOffsetX: CGFloat = 0
+        var titleLaneLastX = Array(repeating: -CGFloat.greatestFiniteMagnitude, count: 5)
+        var bottomLaneLastX = Array(repeating: -CGFloat.greatestFiniteMagnitude, count: 3)
+        let titleMinSeparation: CGFloat = 56
+        let bottomMinSeparation: CGFloat = 48
+        let titleLaneOffsets: [CGFloat] = [0, 10, -10, 16, -16]
+        let bottomLaneOffsets: [CGFloat] = [0, 8, -8]
+
+        for (sequenceIndex, election) in sorted.enumerated() {
+            let baseX = timelineXPosition(
+                for: election.electionDay,
+                minDay: minDay,
+                totalSpanDays: totalSpanDays,
+                usableWidth: usableWidth,
+                xPadding: xPadding
+            )
+
+            let pointCollision = abs(baseX - lastPlacedX) < 10
+            let pointOffsetX: CGFloat = pointCollision ? (lastPointOffsetX <= 0 ? 5 : -5) : 0
+            let pointX = baseX + pointOffsetX
+
+            let titleLane = selectLane(
+                for: pointX,
+                laneLastX: titleLaneLastX,
+                minSeparation: titleMinSeparation
+            )
+            let titleOffsetX = titleLaneOffsets[titleLane]
+            titleLaneLastX[titleLane] = pointX + titleOffsetX
+
+            let bottomLane = selectLane(
+                for: pointX,
+                laneLastX: bottomLaneLastX,
+                minSeparation: bottomMinSeparation
+            )
+            let bottomOffsetX = bottomLaneOffsets[bottomLane]
+            bottomLaneLastX[bottomLane] = pointX + bottomOffsetX
+
+            points.append(
+                TimelinePlotPoint(
+                    id: election.id,
+                    election: election,
+                    sequenceIndex: sequenceIndex,
+                    electionX: baseX,
+                    pointOffsetX: pointOffsetX,
+                    titleOffsetX: titleOffsetX,
+                    bottomOffsetX: bottomOffsetX,
+                    titleLane: titleLane,
+                    bottomLane: bottomLane
+                )
+            )
+
+            lastPlacedX = pointX
+            lastPointOffsetX = pointOffsetX
+        }
+
+        return points
+    }
+
+    private func selectLane(
+        for x: CGFloat,
+        laneLastX: [CGFloat],
+        minSeparation: CGFloat
+    ) -> Int {
+        if let lane = laneLastX.firstIndex(where: { (x - $0) >= minSeparation }) {
+            return lane
+        }
+        return laneLastX.enumerated().min(by: { lhs, rhs in lhs.element < rhs.element })?.offset ?? 0
+    }
+
+    private func timelineXPosition(
+        for date: Date,
+        minDay: Date,
+        totalSpanDays: Int,
+        usableWidth: CGFloat,
+        xPadding: CGFloat
+    ) -> CGFloat {
+        let day = Calendar.current.startOfDay(for: date)
+        let delta = Calendar.current.dateComponents([.day], from: minDay, to: day).day ?? 0
+        let clamped = max(0, min(totalSpanDays, delta))
+        let fraction = CGFloat(clamped) / CGFloat(max(1, totalSpanDays))
+        return xPadding + (fraction * usableWidth)
+    }
+
+    private func timelineYearMarkers(minDay: Date, maxDay: Date) -> [TimelineYearMarker] {
+        let calendar = Calendar.current
+        let startYear = calendar.component(.year, from: minDay)
+        let endYear = calendar.component(.year, from: maxDay)
+        guard endYear > startYear else { return [] }
+
+        var markers: [TimelineYearMarker] = []
+        for year in (startYear + 1)...endYear {
+            guard let janStart = calendar.date(from: DateComponents(year: year, month: 1, day: 1)) else {
+                continue
+            }
+            markers.append(TimelineYearMarker(year: year, markerDay: janStart))
+        }
+        return markers
+    }
+
+    private func timelineDotOpacity(distance: Int) -> Double {
+        max(0.88, 1 - (Double(distance) * 0.06))
+    }
+
+    private func updateFocusedTimelineElection() {
+        guard !visibleElections.isEmpty else {
+            focusedTimelineElectionID = nil
+            return
+        }
+
+        if Date() < manualFocusExpiresAt,
+           let manualID = manualFocusedElectionID,
+           visibleElections.contains(where: { $0.id == manualID }) {
+            focusedTimelineElectionID = manualID
+            return
+        }
+        manualFocusedElectionID = nil
+
+        let orderedFrames: [(id: String, frame: CGRect)] = visibleElections.compactMap { election in
+            guard let frame = timelineCardFrames[election.id] else { return nil }
+            return (id: election.id, frame: frame)
+        }
+
+        if !orderedFrames.isEmpty {
+            if let lastElectionID = visibleElections.last?.id,
+               let lastFrame = timelineCardFrames[lastElectionID] {
+                let trailingGap = timelineViewportFrame.maxY - lastFrame.maxY
+                if trailingGap >= 8 {
+                    focusedTimelineElectionID = lastElectionID
+                    return
+                }
+            }
+
+            let contentTop = orderedFrames.map(\.frame.minY).min() ?? timelineViewportFrame.minY
+            let contentBottom = orderedFrames.map(\.frame.maxY).max() ?? timelineViewportFrame.maxY
+            let edgeThreshold: CGFloat = 28
+
+            if let last = orderedFrames.last {
+                let lastVisibleHeight = max(0, timelineViewportFrame.maxY - max(last.frame.minY, timelineViewportFrame.minY))
+                let lastVisibleRatio = lastVisibleHeight / max(1, last.frame.height)
+                if timelineViewportFrame.maxY >= (contentBottom - edgeThreshold) || lastVisibleRatio >= 0.52 {
+                    focusedTimelineElectionID = last.id
+                    return
+                }
+            }
+
+            if let first = orderedFrames.first {
+                let firstVisibleHeight = max(0, min(first.frame.maxY, timelineViewportFrame.maxY) - timelineViewportFrame.minY)
+                let firstVisibleRatio = firstVisibleHeight / max(1, first.frame.height)
+                if timelineViewportFrame.minY <= (contentTop + edgeThreshold) || firstVisibleRatio >= 0.52 {
+                    focusedTimelineElectionID = first.id
+                    return
+                }
+            }
+
+            let viewportFrames = orderedFrames.filter { entry in
+                entry.frame.maxY >= timelineViewportFrame.minY && entry.frame.minY <= timelineViewportFrame.maxY
+            }
+            let candidateFrames = viewportFrames.isEmpty ? orderedFrames : viewportFrames
+
+            let targetY = timelineViewportFrame.midY
+            if let closest = candidateFrames.min(by: { lhs, rhs in
+                abs(lhs.frame.midY - targetY) < abs(rhs.frame.midY - targetY)
+            }) {
+                focusedTimelineElectionID = closest.id
+                return
+            }
+        }
+
+        let validIDs = Set(visibleElections.map(\.id))
+        if focusedTimelineElectionID == nil || !validIDs.contains(focusedTimelineElectionID ?? "") {
+            focusedTimelineElectionID = visibleElections.first?.id
+        }
+    }
+
+    private func cardScale(for electionID: String) -> CGFloat {
+        let progress = abs(cardCarouselProgress(for: electionID))
+        return max(0.91, 1 - (progress * 0.09))
+    }
+
+    private func cardTiltAngle(for electionID: String) -> Double {
+        Double(cardCarouselProgress(for: electionID) * 12.0)
+    }
+
+    private func cardHorizontalOffset(for electionID: String) -> CGFloat {
+        -cardCarouselProgress(for: electionID) * 12
+    }
+
+    private func cardOpacity(for electionID: String) -> Double {
+        max(0.78, 1 - (Double(abs(cardCarouselProgress(for: electionID))) * 0.22))
+    }
+
+    private func cardZIndex(for electionID: String) -> Double {
+        20 - Double(abs(cardCarouselProgress(for: electionID)) * 20)
+    }
+
+    private func cardCarouselProgress(for electionID: String) -> CGFloat {
+        guard let frame = timelineCardFrames[electionID], timelineViewportFrame.height > 1 else {
+            return 0
+        }
+
+        let focusY = timelineViewportFrame.midY
+        let maxDistance = max(1, timelineViewportFrame.height * 0.7)
+        let progress = (frame.midY - focusY) / maxDistance
+        return min(1, max(-1, progress))
+    }
+
+    private func openMyInfoPanel() {
+        NotificationCenter.default.post(name: .openMyInfoPanel, object: nil)
+    }
+
     private func loadElectionsIfNeeded() {
         guard allElections.isEmpty else { return }
         allElections = Self.loadMidtermElectionsFromBundle()
@@ -1078,6 +3000,8 @@ struct ElectionTimelineView: View {
         guard !allElections.isEmpty else {
             visibleElections = []
             planVM.upcomingElections = []
+            focusedTimelineElectionID = nil
+            timelineCardFrames.removeAll()
             return
         }
 
@@ -1088,6 +3012,8 @@ struct ElectionTimelineView: View {
         guard !targetStateCodes.isEmpty else {
             visibleElections = []
             planVM.upcomingElections = []
+            focusedTimelineElectionID = nil
+            timelineCardFrames.removeAll()
             errorMessage = l("app.timeline.error.set_valid_address", "Set a valid U.S. address or ZIP in My Reps to load your timeline.")
             return
         }
@@ -1102,8 +3028,97 @@ struct ElectionTimelineView: View {
             return lhs.name < rhs.name
         }
 
-        visibleElections = filtered
-        planVM.upcomingElections = filtered
+        let streamlined = streamlineMayoralCards(in: filtered)
+        visibleElections = streamlined
+        planVM.upcomingElections = streamlined
+        timelineCardFrames.removeAll()
+        if !streamlined.contains(where: { $0.id == focusedTimelineElectionID }) {
+            focusedTimelineElectionID = streamlined.first?.id
+        }
+    }
+
+    private func streamlineMayoralCards(in elections: [Election]) -> [Election] {
+        let precision = timelineLocationPrecision()
+        let mayoralCards = elections.filter { isMayoralTimelineCard($0) }
+        guard !mayoralCards.isEmpty else { return elections }
+
+        let hint = timelineCityHint()
+        let focusCity: String? = {
+            if !hint.isEmpty,
+               let matched = mayoralCards
+               .compactMap(mayoralCityName)
+               .first(where: { citiesLooselyMatch($0, hint) }) {
+                return matched
+            }
+
+            return mayoralCards
+                .sorted { lhs, rhs in
+                    if lhs.electionDay != rhs.electionDay { return lhs.electionDay < rhs.electionDay }
+                    return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
+                }
+                .compactMap(mayoralCityName)
+                .first
+        }()
+
+        var seenMayoralKeys = Set<String>()
+        var keptFallbackMayoral = false
+        var output: [Election] = []
+
+        for election in elections {
+            guard isMayoralTimelineCard(election) else {
+                output.append(election)
+                continue
+            }
+
+            if precision == .stateOnly {
+                continue
+            }
+
+            if let focusCity {
+                guard let city = mayoralCityName(election),
+                      citiesLooselyMatch(city, focusCity) else {
+                    continue
+                }
+            } else if precision == .zipOrCity {
+                if keptFallbackMayoral {
+                    continue
+                }
+                keptFallbackMayoral = true
+            }
+
+            let dedupeKey = mayoralTimelineDedupKey(for: election)
+            if seenMayoralKeys.contains(dedupeKey) {
+                continue
+            }
+            seenMayoralKeys.insert(dedupeKey)
+            output.append(election)
+        }
+
+        return output
+    }
+
+    private func mayoralCityName(_ election: Election) -> String? {
+        let city = election.flags
+            .first(where: { $0.hasPrefix("MAYOR_CITY:") })?
+            .replacingOccurrences(of: "MAYOR_CITY:", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return city.isEmpty ? nil : city
+    }
+
+    private func mayoralStageName(_ election: Election) -> String {
+        election.flags
+            .first(where: { $0.hasPrefix("MAYOR_STAGE:") })?
+            .replacingOccurrences(of: "MAYOR_STAGE:", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .uppercased() ?? "GENERAL"
+    }
+
+    private func mayoralTimelineDedupKey(for election: Election) -> String {
+        let state = stateCode(for: election)?.uppercased() ?? ""
+        let day = Self.deepLinkDateFormatter.string(from: election.electionDay)
+        let stage = mayoralStageName(election)
+        let city = mayoralCityName(election)?.lowercased() ?? ""
+        return "\(state)|\(day)|\(stage)|\(city)"
     }
 
     private func resolveStateCodes(from query: String) -> Set<String> {
@@ -1261,6 +3276,7 @@ struct ElectionTimelineView: View {
         appendSupplementalGubernatorialElections(to: &elections)
         appendSupplementalTerritorialElections(to: &elections)
         appendCurrentAppCompatibleSpecialElections(to: &elections)
+        appendTopCityMayoralElections(to: &elections)
 
         return elections
     }
@@ -1566,6 +3582,260 @@ struct ElectionTimelineView: View {
         }
     }
 
+    private struct MayoralElectionEvent {
+        let city: String
+        let stateName: String
+        let stateCode: String
+        let stage: String
+        let date: Date
+        let dateStatus: String
+        let cycleNotes: String?
+        let sourceURL: String?
+    }
+
+    private static func appendTopCityMayoralElections(to elections: inout [Election]) {
+        let records = loadTopCityMayoralCycleRecords()
+        guard !records.isEmpty else { return }
+
+        var alignableIndexesByStateAndDay: [String: [String: [Int]]] = [:]
+        var baselineDatesByState: [String: [Date]] = [:]
+
+        for (index, election) in elections.enumerated() {
+            guard let stateCode = stateCode(from: election) else { continue }
+
+            baselineDatesByState[stateCode, default: []].append(election.electionDay)
+
+            guard isMidtermOrPresidentialCycleElection(election) else { continue }
+            let dayKey = deepLinkDateFormatter.string(from: election.electionDay)
+            alignableIndexesByStateAndDay[stateCode, default: [:]][dayKey, default: []].append(index)
+        }
+
+        for record in records {
+            for event in mayoralEvents(from: record) {
+                let dayKey = deepLinkDateFormatter.string(from: event.date)
+                if let indexes = alignableIndexesByStateAndDay[event.stateCode]?[dayKey], !indexes.isEmpty {
+                    for index in indexes {
+                        var flags = elections[index].flags
+                        appendUniqueFlag("MAYOR_MATCH:\(event.city)|\(event.stage)|\(event.dateStatus)", to: &flags)
+                        elections[index] = electionByReplacingFlags(elections[index], flags: flags)
+                    }
+                    continue
+                }
+
+                var flags = [
+                    "STATE_CODE:\(event.stateCode)",
+                    "ELECTION_TYPE:MAYOR_\(event.stage)",
+                    "REGISTRATION_DEADLINE_TEXT:\(supplementalMayoralInfoText)",
+                    "MAYOR_TIMELINE_CARD",
+                    "MAYOR_CITY:\(event.city)",
+                    "MAYOR_STAGE:\(event.stage)",
+                    "MAYOR_DATE_STATUS:\(event.dateStatus)"
+                ]
+
+                if let nearestDate = nearestBaselineDate(to: event.date, from: baselineDatesByState[event.stateCode]),
+                   isWithinCloseWindow(event.date, comparedTo: nearestDate, days: mayoralCloseWindowDays) {
+                    let nearestISO = deepLinkDateFormatter.string(from: nearestDate)
+                    appendUniqueFlag("MAYOR_CLOSE_TO_STATEWIDE:\(nearestISO)", to: &flags)
+                }
+
+                let year = Calendar(identifier: .gregorian).component(.year, from: event.date)
+                let notes = mayoralTimelineNotes(for: event)
+
+                elections.append(
+                    Election(
+                        name: "\(event.city) \(year) Mayoral",
+                        subtitle: mayoralTimelineSubtitle(for: event.stage),
+                        registrationDeadline: event.date,
+                        startDate: event.date,
+                        electionDay: event.date,
+                        earlyVotingText: supplementalMayoralInfoText,
+                        registrationNotes: notes,
+                        jurisdictionLevel: "city",
+                        jurisdictionName: event.stateName,
+                        visibility: "public",
+                        flags: flags,
+                        matchConfidence: nil,
+                        sourceUrl: event.sourceURL
+                    )
+                )
+            }
+        }
+    }
+
+    private static func mayoralEvents(from record: TopCityMayoralCycleRecord) -> [MayoralElectionEvent] {
+        let stateLookupKey = record.state_name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard let stateCode = stateCodeByName[stateLookupKey] else { return [] }
+
+        let city = record.city.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !city.isEmpty else { return [] }
+
+        let status = record.date_status?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let normalizedStatus = status.isEmpty ? "Scheduled" : status
+        guard shouldIntegrateMayoralRecord(withStatus: normalizedStatus) else { return [] }
+        let sourceURL = record.sources.first(where: {
+            !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        })
+
+        let dateTuples: [(stage: String, iso: String?)] = [
+            ("PRIMARY", record.next_primary_date_iso),
+            ("GENERAL", record.next_general_date_iso),
+            ("RUNOFF", record.next_runoff_date_iso)
+        ]
+
+        var events: [MayoralElectionEvent] = []
+        for tuple in dateTuples {
+            guard let date = isoDate(from: tuple.iso) else { continue }
+            events.append(
+                MayoralElectionEvent(
+                    city: city,
+                    stateName: record.state_name,
+                    stateCode: stateCode,
+                    stage: tuple.stage,
+                    date: date,
+                    dateStatus: normalizedStatus,
+                    cycleNotes: record.cycle_notes,
+                    sourceURL: sourceURL
+                )
+            )
+        }
+
+        return events
+    }
+
+    private static func shouldIntegrateMayoralRecord(withStatus status: String) -> Bool {
+        let normalized = status.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if normalized.isEmpty {
+            return true
+        }
+
+        let excludedStatuses: Set<String> = [
+            "no separate mayoral ballot",
+            "projected / tbd",
+            "past / needs update"
+        ]
+        return !excludedStatuses.contains(normalized)
+    }
+
+    private static func loadTopCityMayoralCycleRecords() -> [TopCityMayoralCycleRecord] {
+        guard let url = Bundle.main.url(forResource: "USTop150MayoralElectionCycles", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let records = try? JSONDecoder().decode([TopCityMayoralCycleRecord].self, from: data) else {
+            return []
+        }
+        return records
+    }
+
+    private static func electionByReplacingFlags(_ election: Election, flags: [String]) -> Election {
+        Election(
+            name: election.name,
+            subtitle: election.subtitle,
+            registrationDeadline: election.registrationDeadline,
+            startDate: election.startDate,
+            electionDay: election.electionDay,
+            earlyVotingText: election.earlyVotingText,
+            registrationNotes: election.registrationNotes,
+            jurisdictionLevel: election.jurisdictionLevel,
+            jurisdictionName: election.jurisdictionName,
+            visibility: election.visibility,
+            flags: flags,
+            matchConfidence: election.matchConfidence,
+            sourceUrl: election.sourceUrl
+        )
+    }
+
+    private static func appendUniqueFlag(_ flag: String, to flags: inout [String]) {
+        guard !flag.isEmpty else { return }
+        if !flags.contains(flag) {
+            flags.append(flag)
+        }
+    }
+
+    private static func stateCode(from election: Election) -> String? {
+        election.flags
+            .first(where: { $0.hasPrefix("STATE_CODE:") })?
+            .replacingOccurrences(of: "STATE_CODE:", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .uppercased()
+    }
+
+    private static func isMidtermOrPresidentialCycleElection(_ election: Election) -> Bool {
+        let year = Calendar(identifier: .gregorian).component(.year, from: election.electionDay)
+        guard year == 2026 || year == 2028 else { return false }
+
+        guard let type = election.flags
+            .first(where: { $0.hasPrefix("ELECTION_TYPE:") })?
+            .replacingOccurrences(of: "ELECTION_TYPE:", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .uppercased() else {
+            return false
+        }
+
+        return [
+            "PRIMARY",
+            "PRIMARY_RUNOFF",
+            "GENERAL",
+            "PRESIDENTIAL_PRIMARY",
+            "PRESIDENTIAL_GENERAL"
+        ].contains(type)
+    }
+
+    private static func nearestBaselineDate(to target: Date, from candidates: [Date]?) -> Date? {
+        guard let candidates, !candidates.isEmpty else { return nil }
+
+        var bestDate: Date?
+        var bestDistance = Int.max
+        let calendar = Calendar(identifier: .gregorian)
+        let targetDay = calendar.startOfDay(for: target)
+
+        for candidate in candidates {
+            let candidateDay = calendar.startOfDay(for: candidate)
+            let distance = abs(calendar.dateComponents([.day], from: targetDay, to: candidateDay).day ?? Int.max)
+            if distance < bestDistance {
+                bestDistance = distance
+                bestDate = candidateDay
+            }
+        }
+
+        return bestDate
+    }
+
+    private static func isWithinCloseWindow(_ lhs: Date, comparedTo rhs: Date, days: Int) -> Bool {
+        let calendar = Calendar(identifier: .gregorian)
+        let lhsDay = calendar.startOfDay(for: lhs)
+        let rhsDay = calendar.startOfDay(for: rhs)
+        let delta = abs(calendar.dateComponents([.day], from: lhsDay, to: rhsDay).day ?? Int.max)
+        return delta <= days
+    }
+
+    private static func mayoralTimelineSubtitle(for stage: String) -> String {
+        switch stage.uppercased() {
+        case "PRIMARY":
+            return "Mayoral Primary Election"
+        case "RUNOFF":
+            return "Mayoral Runoff Election"
+        default:
+            return "Mayoral General Election"
+        }
+    }
+
+    private static func mayoralTimelineNotes(for event: MayoralElectionEvent) -> String? {
+        var notes: [String] = []
+
+        if let cycleNotes = event.cycleNotes?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !cycleNotes.isEmpty {
+            notes.append(cycleNotes)
+        }
+
+        if !event.dateStatus.isEmpty {
+            notes.append("Date status: \(event.dateStatus).")
+        }
+
+        if notes.isEmpty {
+            return nil
+        }
+        return notes.joined(separator: " ")
+    }
+
     private static let presidentialProjectionNote =
         "2028 presidential dates are projected for planning and will be updated when states certify final calendars."
 
@@ -1573,12 +3843,14 @@ struct ElectionTimelineView: View {
     private static let supplementalGubernatorialInfoText = "Check state election office for deadlines"
     private static let supplementalGubernatorialNote =
         "2027 gubernatorial dates are included for planning. Verify registration and early-voting windows with your state election office."
+    private static let supplementalMayoralInfoText = "Check city election office for deadlines"
     private static let supplementalTerritorialInfoText = "Check territory election office for deadlines"
     private static let supplementalTerritorialNote =
         "Territorial election dates are included for planning. Verify registration and early-voting windows with local election officials."
     private static let supplementalSpecialInfoText = "Check state election office for deadlines"
     private static let supplementalSpecialNote =
         "Additional statewide-compatible special election rows are included for planning. Verify final details with your state election office."
+    private static let mayoralCloseWindowDays = 30
     private static let fallbackPresidentialPrimaryISO = "2028-03-07"
     private static let presidentialGeneralElectionISO = "2028-11-07"
 
@@ -1779,75 +4051,10 @@ struct ElectionTimelineView: View {
     }
 }
 
-private struct ElectionTimelineShareCard: View {
-    let electionTitle: String
-    let stateName: String
-    let electionDayText: String
-    let earlyVotingText: String
-    let registrationText: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
-            HStack(spacing: 14) {
-                VoteNowLogoIcon(size: 88)
-
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Election Timeline")
-                        .font(.system(size: 34, weight: .bold))
-                        .foregroundColor(VoteNowColors.primaryText)
-                    Text(stateName)
-                        .font(.system(size: 26, weight: .semibold))
-                        .foregroundColor(VoteNowColors.mutedText)
-                }
-            }
-
-            VStack(alignment: .leading, spacing: 18) {
-                Text(electionTitle)
-                    .font(.system(size: 54, weight: .bold))
-                    .foregroundColor(VoteNowColors.primaryText)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                shareRow(title: "Election Day", value: electionDayText)
-                shareRow(title: "Early Voting", value: earlyVotingText)
-                shareRow(title: "Registration Deadline", value: registrationText)
-            }
-            .padding(30)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 26, style: .continuous)
-                    .fill(VoteNowColors.surfaceWhite)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 26, style: .continuous)
-                    .stroke(VoteNowColors.borderWarm, lineWidth: 2)
-            )
-
-            Text("Shared from VoteNow")
-                .font(.system(size: 30, weight: .semibold))
-                .foregroundColor(VoteNowColors.primaryCTA)
-        }
-        .padding(48)
-        .frame(maxWidth: .infinity, alignment: .topLeading)
-        .background(VoteNowColors.appBackground)
-    }
-
-    private func shareRow(title: String, value: String) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(.system(size: 28, weight: .semibold))
-                .foregroundColor(VoteNowColors.mutedText)
-
-            Text(value)
-                .font(.system(size: 38, weight: .bold))
-                .foregroundColor(VoteNowColors.primaryText)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-    }
-}
-
 struct ElectionTimelineView_Previews: PreviewProvider {
     static var previews: some View {
         ElectionTimelineView()
             .environmentObject(PlanViewModel())
+            .environmentObject(MyRepsViewModel())
     }
 }

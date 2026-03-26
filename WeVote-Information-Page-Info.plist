@@ -15,12 +15,16 @@
 	</array>
 	<key>OPENSTATES_API_KEY</key>
 	<string>968e5fe9-3c45-41c6-9c69-8160d95855c9</string>
+	<key>STRIPE_PUBLISHABLE_KEY</key>
+	<string>pk_test_51T8Yi1Ek0rWAoZA5BLUzJkeEY1mFQfQ2VOWvuk7QzDasZjeQFWn8G6FHnk8AZwih92UDtqShZig7tjWgPw1tORgt00wTE0GedO</string>
 	<key>APPLE_PAY_MERCHANT_ID</key>
 	<string>merchant.org.votenow</string>
 	<key>SUPABASE_ANON_KEY</key>
 	<string>sb_publishable_q3zkLzVytOBy0_f7AdKfvg_6yiatDpN</string>
 	<key>SUPABASE_URL</key>
 	<string>https://zgqphgcqfxsgviofsccs.supabase.co</string>
+	<key>CIVIC_API_BASE_URL</key>
+	<string>https://votenow-botr.onrender.com</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

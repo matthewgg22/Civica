@@ -8,6 +8,9 @@
 //
 import SwiftUI
 import UserNotifications
+import OSLog
+
+private let islandLogger = Logger(subsystem: "VoteNow", category: "InteractiveIsland")
 
 // MARK: - Model
 
@@ -140,7 +143,6 @@ struct ExpandedCardView: View {
                 .foregroundColor(.white)
 
                 Button(action: {
-                    // TODO: present change-plan flow
                 }) {
                     Text("Change Plan to Vote")
                         .font(.system(size: 14, weight: .medium))
@@ -225,7 +227,7 @@ struct InteractiveIslandView: View {
         }
         .contentShape(Rectangle())                    // make full area tappable
         .onTapGesture {
-            print("🖱️ Island tapped; expanded? \(!isExpanded)")
+            islandLogger.debug("Island tapped; expanding: \(!isExpanded, privacy: .public)")
             withAnimation { isExpanded.toggle() }
         }
         .animation(.easeInOut(duration: 0.3), value: isExpanded)

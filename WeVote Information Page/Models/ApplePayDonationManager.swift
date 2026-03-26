@@ -121,8 +121,7 @@ final class ApplePayDonationManager: NSObject, ObservableObject {
         }
     }
 
-    // TODO: Replace with real server-side processor (Stripe/Adyen/Braintree).
-    // Apple Pay token must be sent to your backend and charged securely there.
+    // Placeholder processor for local testing; real payment capture must run server-side.
     func processPaymentToken(_ token: PKPaymentToken, amount: Decimal) async throws {
         _ = token
         _ = amount

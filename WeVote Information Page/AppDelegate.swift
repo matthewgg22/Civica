@@ -8,15 +8,12 @@
 
 import UIKit
 import UserNotifications
+import OSLog
 
 // MARK: - AppDelegate with APNs + Supabase support
 final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+    private let logger = Logger(subsystem: "VoteNow", category: "AppDelegate")
 
-    private func redactedToken(_ token: String) -> String {
-        guard token.count > 12 else { return token }
-        return "\(token.prefix(8))...\(token.suffix(4))"
-    }
-    
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
@@ -33,7 +30,6 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
         let token = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
-        print("✅ APNs device token:", redactedToken(token))
         Task {
             await saveDeviceToken(token)
         }
@@ -42,9 +38,11 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
     // Called if registration fails
     func application(
         _ application: UIApplication,
-        didFailToRegisterForRemoteNotificationsWithError error: Error
+        didFailToRegisterForRemoteNotificationsWithError _: Error
     ) {
-        print("❌ Failed to register for remote notifications:", error)
+        #if DEBUG
+        logger.error("Failed to register for remote notifications.")
+        #endif
     }
 
     // Handle notification while app is in foreground

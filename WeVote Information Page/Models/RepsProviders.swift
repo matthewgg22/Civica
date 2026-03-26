@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 private let allUSStateCodes: Set<String> = [
     "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
@@ -10,6 +11,32 @@ private let allUSStateCodes: Set<String> = [
 
 private let allUSStateAndTerritoryCodes: Set<String> =
     allUSStateCodes.union(["AS", "DC", "GU", "MP", "PR", "VI"])
+private let repsProviderLogger = Logger(subsystem: "VoteNow", category: "RepsProviders")
+
+private func normalizedOfficialWebsiteURL(_ value: String?) -> String? {
+    guard var raw = value?.trimmingCharacters(in: .whitespacesAndNewlines),
+          !raw.isEmpty else {
+        return nil
+    }
+
+    if !raw.lowercased().hasPrefix("http://") && !raw.lowercased().hasPrefix("https://") {
+        raw = "https://\(raw)"
+    }
+
+    guard var components = URLComponents(string: raw),
+          let host = components.host?.lowercased() else {
+        return nil
+    }
+
+    let normalizedHost = host.hasPrefix("www.") ? String(host.dropFirst(4)) : host
+    guard !normalizedHost.contains("wikipedia.org") else {
+        return nil
+    }
+
+    components.host = normalizedHost
+    components.scheme = "https"
+    return components.url?.absoluteString
+}
 
 private func normalizedOfficialPhone(_ raw: String?) -> String? {
     guard let value = raw?.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -37,6 +64,38 @@ private func parsedCommitteeAssignments(_ raw: String?) -> [String] {
         }
     }
     return ordered
+}
+
+private func normalizedSenateClass(_ raw: String?) -> String? {
+    guard let raw else { return nil }
+    let sanitized = raw
+        .uppercased()
+        .replacingOccurrences(of: "CLASS", with: "")
+        .components(separatedBy: CharacterSet.alphanumerics.inverted)
+        .joined()
+    switch sanitized {
+    case "I", "1":
+        return "I"
+    case "II", "2":
+        return "II"
+    case "III", "3":
+        return "III"
+    default:
+        return nil
+    }
+}
+
+private func senateClassSortRank(_ raw: String?) -> Int {
+    switch normalizedSenateClass(raw) {
+    case "I":
+        return 1
+    case "II":
+        return 2
+    case "III":
+        return 3
+    default:
+        return 99
+    }
 }
 
 private let senateCommitteeNameCatalog: [String] = [
@@ -433,7 +492,34 @@ final class NewYorkRepsProvider: RepsProvider {
             return nil
         }
 
-        var federal = Array(reps.federal.us_senators.values)
+        let sortedSenatorEntries = reps.federal.us_senators
+            .sorted { lhs, rhs in
+                let lhsRank = senateClassSortRank(lhs.key)
+                let rhsRank = senateClassSortRank(rhs.key)
+                if lhsRank != rhsRank {
+                    return lhsRank < rhsRank
+                }
+                return lhs.value.name.localizedCaseInsensitiveCompare(rhs.value.name) == .orderedAscending
+            }
+
+        var federal = sortedSenatorEntries.map { entry in
+            let official = entry.value
+            return Official(
+                id: official.id,
+                name: official.name,
+                divisionId: official.divisionId,
+                party: official.party,
+                officeTitle: "U.S. Senator",
+                photoURL: official.photoURL,
+                url: official.url,
+                officialPhone: official.officialPhone,
+                websiteURL: official.websiteURL,
+                contactFormURL: official.contactFormURL,
+                committeeAssignments: official.committeeAssignments,
+                level: official.level
+            )
+        }
+
         if let house = reps.federal.us_representatives[map.congressional] {
             federal.append(house)
         }
@@ -493,6 +579,7 @@ final class USGovernorsProvider: RepsProvider {
         let name: String
         let party: String
         let url: String
+        let phone: String?
         let attorney_general: String?
         let attorney_general_url: String?
         let lieutenant_governor: String?
@@ -542,7 +629,8 @@ final class USGovernorsProvider: RepsProvider {
             party: governor.party,
             officeTitle: "Governor",
             photoURL: nil,
-            url: governor.url
+            url: governor.url,
+            officialPhone: normalizedOfficialPhone(governor.phone)
         )
 
         var stateOfficials: [Official] = [governorOfficial]
@@ -624,7 +712,7 @@ final class USSenatorsProvider: RepsProvider {
             committeesByNormalizedName = try loadCommitteeAssignmentsByName()
         } catch {
             committeesByNormalizedName = [:]
-            print("⚠️ Failed to parse USSenateCommitteeAssignments.json: \(error.localizedDescription)")
+            repsProviderLogger.error("Failed to parse USSenateCommitteeAssignments.json.")
         }
 
         isLoaded = true
@@ -637,7 +725,16 @@ final class USSenatorsProvider: RepsProvider {
             return nil
         }
 
-        let officials = senators.map { senator in
+        let orderedSenators = senators.sorted { lhs, rhs in
+            let lhsRank = senateClassSortRank(lhs.senate_class)
+            let rhsRank = senateClassSortRank(rhs.senate_class)
+            if lhsRank != rhsRank {
+                return lhsRank < rhsRank
+            }
+            return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
+        }
+
+        let officials = orderedSenators.map { senator in
             let websiteURL = normalizedWebsiteURL(senator.url)
             let directAssignments = parsedCommitteeAssignments(senator.committee_assignments)
             let fallbackAssignments = committeeAssignmentsFromDataset(for: senator)
@@ -649,6 +746,7 @@ final class USSenatorsProvider: RepsProvider {
                 name: senator.name,
                 divisionId: "ocd-division/country:us/state:\(stateCode.lowercased())",
                 party: senator.party,
+                officeTitle: "U.S. Senator",
                 photoURL: nil,
                 url: websiteURL,
                 officialPhone: normalizedOfficialPhone(senator.phone),
@@ -759,16 +857,7 @@ final class USSenatorsProvider: RepsProvider {
     }
 
     private func normalizedWebsiteURL(_ value: String?) -> String? {
-        guard var url = value?.trimmingCharacters(in: .whitespacesAndNewlines),
-              !url.isEmpty else {
-            return nil
-        }
-
-        if !url.lowercased().hasPrefix("http://") && !url.lowercased().hasPrefix("https://") {
-            url = "https://\(url)"
-        }
-
-        return url
+        normalizedOfficialWebsiteURL(value)
     }
 }
 
@@ -1189,16 +1278,7 @@ final class USHouseMembersProvider: RepsProvider {
     }
 
     private func normalizedWebsiteURL(_ value: String?) -> String? {
-        guard var url = value?.trimmingCharacters(in: .whitespacesAndNewlines),
-              !url.isEmpty else {
-            return nil
-        }
-
-        if !url.lowercased().hasPrefix("http://") && !url.lowercased().hasPrefix("https://") {
-            url = "https://\(url)"
-        }
-
-        return url
+        normalizedOfficialWebsiteURL(value)
     }
 
     private func contactFormURLOverride(for member: HouseRecord) -> String? {
@@ -1286,6 +1366,7 @@ final class USMayorsProvider: RepsProvider {
         "joe hogsett": "https://www.indy.gov/agency/office-of-the-mayor",
         "craig greenberg": "https://louisvilleky.gov/government/mayor-craig-greenberg",
         "freddie o connell": "https://www.nashville.gov/departments/mayor",
+        "freddie oconnell": "https://www.nashville.gov/departments/mayor",
         "kirk watson": "https://www.austintexas.gov/department/mayor-kirk-watson",
         "levar stoney": "https://www.rva.gov/mayors-office",
         "satya rhodes conway": "https://www.cityofmadison.com/mayor",
@@ -1381,17 +1462,7 @@ final class USMayorsProvider: RepsProvider {
         if let preferred = preferredMayorWebsiteByName[lookupKey] {
             return preferred
         }
-
-        guard var url = fallbackURL?.trimmingCharacters(in: .whitespacesAndNewlines),
-              !url.isEmpty else {
-            return nil
-        }
-
-        if !url.lowercased().hasPrefix("http://") && !url.lowercased().hasPrefix("https://") {
-            url = "https://\(url)"
-        }
-
-        return url
+        return normalizedOfficialWebsiteURL(fallbackURL)
     }
 
     private func normalizedLookupKey(_ raw: String) -> String {

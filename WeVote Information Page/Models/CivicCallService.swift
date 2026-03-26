@@ -1,19 +1,18 @@
 import Foundation
 import SwiftUI
+import OSLog
 
 private struct CivicExamplesResponse: Codable {
     let examples: [CivicExampleIssueCard]
 }
 
 private struct CivicAssistantResolveRequest: Codable {
-    let userID: String
     let concernText: String
     let selectedAsk: CivicAsk
     let targetReps: [CivicRepSlot]
     let optionalBillRef: String?
 
     enum CodingKeys: String, CodingKey {
-        case userID = "user_id"
         case concernText = "concern_text"
         case selectedAsk = "selected_ask"
         case targetReps = "target_reps"
@@ -22,7 +21,6 @@ private struct CivicAssistantResolveRequest: Codable {
 }
 
 private struct CivicCallLogRequest: Codable {
-    let userID: String
     let repID: String
     let issueID: String
     let briefID: String
@@ -31,7 +29,6 @@ private struct CivicCallLogRequest: Codable {
     let notes: String
 
     enum CodingKeys: String, CodingKey {
-        case userID = "user_id"
         case repID = "rep_id"
         case issueID = "issue_id"
         case briefID = "brief_id"
@@ -46,14 +43,12 @@ private struct CivicHistoryResponse: Codable {
 }
 
 private struct CivicCallLaunchRequest: Codable {
-    let userID: String
     let officeID: String
     let issueID: String?
     let sourceScreen: String
     let sessionID: String?
 
     enum CodingKeys: String, CodingKey {
-        case userID = "user_id"
         case officeID = "office_id"
         case issueID = "issue_id"
         case sourceScreen = "source_screen"
@@ -62,23 +57,17 @@ private struct CivicCallLaunchRequest: Codable {
 }
 
 private struct CivicCallCompletionRequestPayload: Codable {
-    let userID: String
     let launchEventID: String
     let completed: Bool
 
     enum CodingKeys: String, CodingKey {
-        case userID = "user_id"
         case launchEventID = "launch_event_id"
         case completed
     }
 }
 
-private struct CivicCallScoreRecomputePayload: Codable {
-    let userID: String
-
-    enum CodingKeys: String, CodingKey {
-        case userID = "user_id"
-    }
+private struct CivicCallScoreRecomputePayload: Encodable {
+    let noop: Bool = true
 }
 
 protocol CivicIssueCallAPIClientProtocol {
@@ -125,6 +114,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
     private let session: URLSession
     private let encoder = JSONEncoder()
     private let decoder: JSONDecoder
+    private let requestTimeout: TimeInterval = 35
 
     init(baseURL: URL = CivicIssueCallAPIClient.resolveBaseURL(), session: URLSession = .shared) {
         self.baseURL = baseURL
@@ -137,16 +127,16 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         encoder.dateEncodingStrategy = .iso8601
     }
 
-    func fetchExamples(userID: String, reps: [CivicRepTarget]) async throws -> [CivicExampleIssueCard] {
+    func fetchExamples(userID _: String, reps: [CivicRepTarget]) async throws -> [CivicExampleIssueCard] {
         var components = URLComponents(url: endpoint("/api/v1/civic/examples"), resolvingAgainstBaseURL: false)
         components?.queryItems = [
-            URLQueryItem(name: "user_id", value: userID),
             URLQueryItem(name: "rep_ids", value: reps.map { stableRepID(for: $0.official) }.joined(separator: ","))
         ]
         guard let url = components?.url else { throw URLError(.badURL) }
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
+        try await attachAuthorization(to: &request)
 
         let data = try await requestData(for: request)
         let decoded = try decoder.decode(CivicExamplesResponse.self, from: data)
@@ -154,14 +144,13 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
     }
 
     func resolve(
-        userID: String,
+        userID _: String,
         concernText: String,
         selectedAsk: CivicAsk,
         targetReps: [CivicRepSlot],
         optionalBillRef: String?
     ) async throws -> CivicIssueResolutionResponse {
         let requestBody = CivicAssistantResolveRequest(
-            userID: userID,
             concernText: concernText,
             selectedAsk: selectedAsk,
             targetReps: targetReps,
@@ -170,6 +159,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         var request = URLRequest(url: endpoint("/api/v1/civic/assistant/resolve"))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        try await attachAuthorization(to: &request)
         request.httpBody = try encoder.encode(requestBody)
 
         let data = try await requestData(for: request)
@@ -177,7 +167,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
     }
 
     func logCall(
-        userID: String,
+        userID _: String,
         repID: String,
         issueID: String,
         briefID: String,
@@ -186,7 +176,6 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         notes: String
     ) async throws {
         let payload = CivicCallLogRequest(
-            userID: userID,
             repID: repID,
             issueID: issueID,
             briefID: briefID,
@@ -197,31 +186,30 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         var request = URLRequest(url: endpoint("/api/v1/civic/calls/log"))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        try await attachAuthorization(to: &request)
         request.httpBody = try encoder.encode(payload)
         _ = try await requestData(for: request)
     }
 
-    func fetchHistory(userID: String) async throws -> [CivicHistoryGroup] {
-        var components = URLComponents(url: endpoint("/api/v1/civic/history"), resolvingAgainstBaseURL: false)
-        components?.queryItems = [URLQueryItem(name: "user_id", value: userID)]
-        guard let url = components?.url else { throw URLError(.badURL) }
+    func fetchHistory(userID _: String) async throws -> [CivicHistoryGroup] {
+        let url = endpoint("/api/v1/civic/history")
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
+        try await attachAuthorization(to: &request)
 
         let data = try await requestData(for: request)
         return try decoder.decode(CivicHistoryResponse.self, from: data).history
     }
 
     func logCallLaunch(
-        userID: String,
+        userID _: String,
         officeID: String,
         issueID: String?,
         sourceScreen: String,
         sessionID: String?
     ) async throws -> CivicCallLaunchResponse {
         let payload = CivicCallLaunchRequest(
-            userID: userID,
             officeID: officeID,
             issueID: issueID,
             sourceScreen: sourceScreen,
@@ -230,70 +218,70 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         var request = URLRequest(url: endpoint("/api/v1/civic/calls/launch"))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        try await attachAuthorization(to: &request)
         request.httpBody = try encoder.encode(payload)
         let data = try await requestData(for: request)
         return try decoder.decode(CivicCallLaunchResponse.self, from: data)
     }
 
     func confirmCallCompletion(
-        userID: String,
+        userID _: String,
         launchEventID: String,
         completed: Bool
     ) async throws -> CivicCallCompletionResponse {
         let payload = CivicCallCompletionRequestPayload(
-            userID: userID,
             launchEventID: launchEventID,
             completed: completed
         )
         var request = URLRequest(url: endpoint("/api/v1/civic/calls/confirm"))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        try await attachAuthorization(to: &request)
         request.httpBody = try encoder.encode(payload)
         let data = try await requestData(for: request)
         return try decoder.decode(CivicCallCompletionResponse.self, from: data)
     }
 
-    func fetchCallScoreSummary(userID: String) async throws -> CivicCallScoreSummary {
-        var components = URLComponents(url: endpoint("/api/v1/civic/call-score/summary"), resolvingAgainstBaseURL: false)
-        components?.queryItems = [URLQueryItem(name: "user_id", value: userID)]
-        guard let url = components?.url else { throw URLError(.badURL) }
+    func fetchCallScoreSummary(userID _: String) async throws -> CivicCallScoreSummary {
+        let url = endpoint("/api/v1/civic/call-score/summary")
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
+        try await attachAuthorization(to: &request)
         let data = try await requestData(for: request)
         return try decoder.decode(CivicCallScoreSummary.self, from: data)
     }
 
-    func fetchCallScoreBreakdown(userID: String) async throws -> CivicCallScoreBreakdown {
-        var components = URLComponents(url: endpoint("/api/v1/civic/call-score/breakdown"), resolvingAgainstBaseURL: false)
-        components?.queryItems = [URLQueryItem(name: "user_id", value: userID)]
-        guard let url = components?.url else { throw URLError(.badURL) }
+    func fetchCallScoreBreakdown(userID _: String) async throws -> CivicCallScoreBreakdown {
+        let url = endpoint("/api/v1/civic/call-score/breakdown")
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
+        try await attachAuthorization(to: &request)
         let data = try await requestData(for: request)
         return try decoder.decode(CivicCallScoreBreakdown.self, from: data)
     }
 
-    func fetchCallScoreHistory(userID: String, limit: Int) async throws -> [CivicCallScoreHistoryItem] {
+    func fetchCallScoreHistory(userID _: String, limit: Int) async throws -> [CivicCallScoreHistoryItem] {
         var components = URLComponents(url: endpoint("/api/v1/civic/call-score/history"), resolvingAgainstBaseURL: false)
         components?.queryItems = [
-            URLQueryItem(name: "user_id", value: userID),
             URLQueryItem(name: "limit", value: String(max(1, limit)))
         ]
         guard let url = components?.url else { throw URLError(.badURL) }
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
+        try await attachAuthorization(to: &request)
         let data = try await requestData(for: request)
         return try decoder.decode(CivicCallScoreHistoryResponse.self, from: data).history
     }
 
-    func recomputeCallScore(userID: String) async throws -> CivicCallScoreSnapshot {
-        let payload = CivicCallScoreRecomputePayload(userID: userID)
+    func recomputeCallScore(userID _: String) async throws -> CivicCallScoreSnapshot {
+        let payload = CivicCallScoreRecomputePayload()
         var request = URLRequest(url: endpoint("/api/v1/civic/call-score/recompute"))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        try await attachAuthorization(to: &request)
         request.httpBody = try encoder.encode(payload)
         let data = try await requestData(for: request)
         struct RecomputeResponse: Codable { let snapshot: CivicCallScoreSnapshot }
@@ -311,14 +299,14 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
+        try await attachAuthorization(to: &request)
         let data = try await requestData(for: request)
         return try decoder.decode(CivicLeaderboardResponse.self, from: data)
     }
 
-    func fetchUserLeaderboardSummary(userID: String, periodType: String, periodStart: Date?) async throws -> CivicLeaderboardUserSummary {
+    func fetchUserLeaderboardSummary(userID _: String, periodType: String, periodStart: Date?) async throws -> CivicLeaderboardUserSummary {
         var components = URLComponents(url: endpoint("/api/v1/civic/leaderboard/me"), resolvingAgainstBaseURL: false)
         var queryItems = [
-            URLQueryItem(name: "user_id", value: userID),
             URLQueryItem(name: "period_type", value: periodType),
         ]
         if let periodStart {
@@ -329,19 +317,56 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
+        try await attachAuthorization(to: &request)
         let data = try await requestData(for: request)
         return try decoder.decode(CivicLeaderboardUserSummary.self, from: data)
     }
 
-    private func requestData(for request: URLRequest) async throws -> Data {
-        let (data, response) = try await session.data(for: request)
-        guard let http = response as? HTTPURLResponse else { throw URLError(.badServerResponse) }
-        guard (200...299).contains(http.statusCode) else {
-            throw NSError(domain: "CivicIssueCallAPIClient", code: http.statusCode, userInfo: [
-                NSLocalizedDescriptionKey: String(data: data, encoding: .utf8) ?? "API request failed with status \(http.statusCode)"
-            ])
+    private func attachAuthorization(to request: inout URLRequest) async throws {
+        let token = try await currentAccessToken()
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+    }
+
+    private func currentAccessToken() async throws -> String {
+        do {
+            return try await SupabaseClientProvider.shared.client.auth.session.accessToken
+        } catch {
+            do {
+                let refreshed = try await SupabaseClientProvider.shared.client.auth.refreshSession()
+                return refreshed.accessToken
+            } catch {
+                throw NSError(
+                    domain: "CivicIssueCallAPIClient",
+                    code: 401,
+                    userInfo: [NSLocalizedDescriptionKey: "Authentication required."]
+                )
+            }
         }
-        return data
+    }
+
+    private func requestData(for request: URLRequest) async throws -> Data {
+        var timedRequest = request
+        timedRequest.timeoutInterval = requestTimeout
+
+        do {
+            let (data, response) = try await session.data(for: timedRequest)
+            guard let http = response as? HTTPURLResponse else { throw URLError(.badServerResponse) }
+            guard (200...299).contains(http.statusCode) else {
+                throw NSError(domain: "CivicIssueCallAPIClient", code: http.statusCode, userInfo: [
+                    NSLocalizedDescriptionKey: String(data: data, encoding: .utf8) ?? "API request failed with status \(http.statusCode)"
+                ])
+            }
+            return data
+        } catch {
+            if let urlError = error as? URLError, urlError.code == .timedOut {
+                throw NSError(
+                    domain: "CivicIssueCallAPIClient",
+                    code: urlError.errorCode,
+                    userInfo: [NSLocalizedDescriptionKey: "The civic API request timed out."]
+                )
+            }
+            throw error
+        }
     }
 
     private func endpoint(_ path: String) -> URL {
@@ -372,6 +397,11 @@ final class CivicCallBriefCacheStore {
     private let key = "civic.issue_call.snapshot.v1"
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
+    private let retentionDays = 90
+    private let maxHistoryGroups = 24
+    private let maxLogsPerGroup = 20
+    private let maxConcernLength = 1200
+    private let maxBillReferenceLength = 64
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -384,12 +414,75 @@ final class CivicCallBriefCacheStore {
               let snapshot = try? decoder.decode(CivicLocalSnapshot.self, from: data) else {
             return CivicLocalSnapshot(latestResolution: nil, history: [], updatedAt: .distantPast)
         }
-        return snapshot
+        let sanitized = sanitizedSnapshot(snapshot)
+        if let encoded = try? encoder.encode(sanitized), encoded != data {
+            defaults.set(encoded, forKey: key)
+        }
+        return sanitized
     }
 
     func save(_ snapshot: CivicLocalSnapshot) {
-        guard let data = try? encoder.encode(snapshot) else { return }
+        let sanitized = sanitizedSnapshot(snapshot)
+        guard let data = try? encoder.encode(sanitized) else { return }
         defaults.set(data, forKey: key)
+    }
+
+    func clear() {
+        defaults.removeObject(forKey: key)
+    }
+
+    private func sanitizedSnapshot(_ snapshot: CivicLocalSnapshot) -> CivicLocalSnapshot {
+        let cutoff = Date().addingTimeInterval(-TimeInterval(retentionDays * 24 * 60 * 60))
+        let trimmedHistory = snapshot.history
+            .filter { $0.date >= cutoff }
+            .sorted(by: { $0.date > $1.date })
+            .prefix(maxHistoryGroups)
+            .map { sanitizeHistoryGroup($0) }
+
+        let sanitizedDraft = snapshot.assistantDraft.map { draft in
+            CivicAssistantDraft(
+                selectedTab: draft.selectedTab,
+                selectedRepFilter: draft.selectedRepFilter,
+                concernText: String(draft.concernText.prefix(maxConcernLength)),
+                selectedAsk: draft.selectedAsk,
+                optionalBillRef: String(draft.optionalBillRef.prefix(maxBillReferenceLength)),
+                activeBriefID: draft.activeBriefID
+            )
+        }
+
+        return CivicLocalSnapshot(
+            latestResolution: snapshot.latestResolution,
+            history: Array(trimmedHistory),
+            assistantDraft: sanitizedDraft,
+            updatedAt: snapshot.updatedAt
+        )
+    }
+
+    private func sanitizeHistoryGroup(_ group: CivicHistoryGroup) -> CivicHistoryGroup {
+        let trimmedLogs = Array(group.logs.prefix(maxLogsPerGroup)).map { log in
+            CivicCallLogRecord(
+                id: log.id,
+                createdAt: log.createdAt,
+                repID: log.repID,
+                repName: log.repName,
+                issueID: log.issueID,
+                issueTitle: log.issueTitle,
+                briefID: log.briefID,
+                outcome: log.outcome,
+                stafferPosition: log.stafferPosition,
+                notes: String((log.notes ?? "").prefix(500))
+            )
+        }
+
+        return CivicHistoryGroup(
+            id: group.id,
+            issueID: group.issueID,
+            issueTitle: group.issueTitle,
+            issueSummary: group.issueSummary,
+            date: group.date,
+            briefs: group.briefs,
+            logs: trimmedLogs
+        )
     }
 }
 
@@ -439,6 +532,7 @@ final class IssueCallCenterViewModel: ObservableObject {
     @Published var appWideCompletedCallsByIssueID: [String: Int] = [:]
     @Published var lastCompletionResult: CivicCallCompletionResponse?
     @Published var pendingCallLaunch: PendingCallLaunch?
+    @Published var requiresDraftApproval = false
 
     let repTargets: [CivicRepTarget]
     private let officialLookupByRepID: [String: Official]
@@ -450,7 +544,9 @@ final class IssueCallCenterViewModel: ObservableObject {
     private let apiClient: CivicIssueCallAPIClientProtocol
     private let cacheStore: CivicCallBriefCacheStore
     private let supabaseManager: SupabaseManager
+    private let logger = Logger(subsystem: "VoteNow", category: "IssueCallCenter")
     private var activeMAPCSessionID: UUID?
+    private var pendingGeneratedResolution: CivicIssueResolutionResponse?
 
     init(
         federalReps: [Official],
@@ -557,6 +653,8 @@ final class IssueCallCenterViewModel: ObservableObject {
         let trimmedConcern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedBill = optionalBillRef.trimmingCharacters(in: .whitespacesAndNewlines)
         let userID = await userIDForRequest()
+        pendingGeneratedResolution = nil
+        requiresDraftApproval = false
 
         do {
             let response = try await apiClient.resolve(
@@ -567,12 +665,23 @@ final class IssueCallCenterViewModel: ObservableObject {
                 optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill
             )
             applyResolution(response)
-            appendHistory(for: response)
+            pendingGeneratedResolution = response
+            requiresDraftApproval = true
             saveSnapshot()
             selectedRepFilter = .all
             selectedTab = .assistant
-            await refreshCallScoreData(for: userID)
+            isSubmitting = false
+            Task { [userID] in
+                await self.refreshCallScoreData(for: userID)
+            }
         } catch {
+            if isSafetyBlockedError(error) {
+                pendingGeneratedResolution = nil
+                requiresDraftApproval = false
+                errorMessage = "We can't generate scripts for harmful, hateful, or violent requests."
+                return
+            }
+
             let fallback = fallbackResolution(
                 concernText: trimmedConcern,
                 ask: ask,
@@ -580,12 +689,37 @@ final class IssueCallCenterViewModel: ObservableObject {
                 optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill
             )
             applyResolution(fallback)
-            appendHistory(for: fallback)
+            pendingGeneratedResolution = fallback
+            requiresDraftApproval = true
             saveSnapshot()
             selectedRepFilter = .all
-            errorMessage = "Using offline call briefs while the civic API is unavailable."
-            await refreshCallScoreData(for: userID)
+            errorMessage = resolveFailureMessage(for: error)
+            isSubmitting = false
+            Task { [userID] in
+                await self.refreshCallScoreData(for: userID)
+            }
         }
+    }
+
+    func approveGeneratedDraft() {
+        if let pendingGeneratedResolution {
+            appendHistory(for: pendingGeneratedResolution)
+        }
+        pendingGeneratedResolution = nil
+        requiresDraftApproval = false
+        saveSnapshot()
+    }
+
+    func reviseGeneratedDraft() {
+        pendingGeneratedResolution = nil
+        requiresDraftApproval = false
+        issueTitle = ""
+        issueSummary = ""
+        resolvedEntities = .empty
+        callBriefs = []
+        activeBriefID = nil
+        selectedTab = .assistant
+        saveSnapshot()
     }
 
     func startMAPC(from example: CivicExampleIssueCard) {
@@ -594,6 +728,8 @@ final class IssueCallCenterViewModel: ObservableObject {
         // Also clear any stale composer inputs so Build Script remains blank
         // when the user returns from MAPC.
         activeMAPCSessionID = UUID()
+        pendingGeneratedResolution = nil
+        requiresDraftApproval = false
         concernText = ""
         selectedAsk = nil
         optionalBillRef = ""
@@ -621,7 +757,19 @@ final class IssueCallCenterViewModel: ObservableObject {
             issueTitle: historyGroup.issueTitle,
             issueSummary: historyGroup.issueSummary
         )
-        callBriefs = normalizedBriefs(historyGroup.briefs, fallbackIssueID: fallbackIssueID)
+        let reopenedBriefs = normalizedBriefs(
+            historyGroup.briefs,
+            fallbackIssueID: fallbackIssueID,
+            regenerateIDs: true
+        )
+        callBriefs = reopenedBriefs
+        let reopenedBriefIDs = Set(reopenedBriefs.map(\.id))
+        loggedOutcomeByBriefID = loggedOutcomeByBriefID.filter { reopenedBriefIDs.contains($0.key) }
+        pendingCallLaunch = nil
+        lastCompletionResult = nil
+        activeMAPCSessionID = nil
+        pendingGeneratedResolution = nil
+        requiresDraftApproval = false
         resolvedEntities = .empty
         activeBriefID = filteredBriefs.first?.id
         selectedTab = .assistant
@@ -656,9 +804,6 @@ final class IssueCallCenterViewModel: ObservableObject {
                     "session_id": launchSessionID
                 ]
             )
-            if launch.callScoreEnabled == false {
-                print("[IssueCall] Call score is currently disabled for this rollout.")
-            }
         } catch {
             // Preserve the ability to ask for completion locally even when network launch logging fails.
             let fallbackLaunchEventID = UUID().uuidString
@@ -679,7 +824,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                     "session_id": launchSessionID
                 ]
             )
-            print("[IssueCall] call launch log failed; continuing with local completion prompt.")
+            logger.info("Call launch log failed; continuing with local completion prompt.")
         }
     }
 
@@ -1751,7 +1896,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Foreign Affairs",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "Tensions between the United States and Iran periodically raise questions about the president's authority to conduct military operations without explicit congressional approval. Recent escalation has renewed debate over the constitutional balance between executive power and Congress's role in authorizing the use of force. The issue carries significant geopolitical implications, including the risk of broader regional conflict and the long-term precedent for how military decisions are made.",
+                summary: "Congress-not the president acting alone-holds the constitutional power to declare war, and the War Powers Resolution says unauthorized hostilities must end within 60 days unless Congress approves them. Even so, in early March 2026 both the Senate and House rejected resolutions that would have required congressional authorization for hostilities against Iran, even as Reuters reported Pentagon briefers told Congress there was no intelligence that Iran planned to attack U.S. forces first. This issue asks lawmakers to reassert Congress's war powers, oppose further unauthorized escalation, and require a vote before any expanded military action.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support [BILL_OR_RESOLUTION] and oppose any unauthorized U.S. war with Iran. Congress must reassert its constitutional authority and prevent further escalation without a vote.\n\nPlease speak out publicly, support immediate de-escalation, and vote to block any continued military action that has not been authorized by Congress.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, my name is [YOUR_NAME], and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support [BILL_OR_RESOLUTION] and oppose unauthorized military action against Iran. The United States should not be pulled deeper into another war without congressional approval.\n\nPlease take public action to defend Congress's war powers and push for de-escalation.\n\nThank you.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -1764,7 +1909,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "LGBTQ",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "oppose",
-                summary: "Federal debates over transgender rights and gender-affirming medical care have intensified in recent years as policymakers consider legislation affecting access to treatment, civil rights protections, and public accommodations. The discussion involves competing views about medical standards, parental decision-making, and anti-discrimination protections. Because federal policy can influence health care funding, regulatory authority, and civil-rights enforcement, the outcome of these debates could shape how transgender individuals access care and legal protections nationwide.",
+                summary: "State restrictions remain widespread: KFF's latest tracker counted 27 states with laws or policies limiting youth access to gender-affirming care, 24 penalizing providers, and about half of trans youth ages 13 to 17 living in affected states. At the same time, major medical organizations continue to back evidence-based care: the APA supports unobstructed access to evidence-based clinical care, the Endocrine Society says this care is needed and often life-saving, and a federal judge this month blocked HHS from punishing providers who offer it. This issue asks Congress to oppose anti-trans restrictions, reject political interference in medicine, and protect equal treatment and clinically grounded care.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to defend transgender people and oppose federal attacks on gender-affirming care. Please oppose any ban on care, reject anti-trans censorship bills like [BILL_OR_RESOLUTION], and fight policies that strip trans people of safety, dignity, and medically necessary treatment.\n\nTrans people deserve evidence-based care and equal protection under the law, not political targeting.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm asking [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect trans rights and oppose new federal restrictions on gender-affirming care and anti-LGBTQ censorship. Please speak out publicly and vote against measures that harm transgender people and their families.\n\nThank you.",
                 templateAsks: [.oppose, .askPublicStatement, .support],
@@ -1777,7 +1922,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Government Oversight",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "seek_oversight",
-                summary: "Leadership controversies within federal law-enforcement agencies often trigger questions about institutional independence, public trust, and congressional oversight. Allegations involving agency leadership can lead lawmakers to evaluate whether internal investigations, external review, or other accountability mechanisms are appropriate. The broader issue centers on maintaining confidence in federal investigative institutions while ensuring that leadership decisions remain subject to democratic oversight.",
+                summary: "Recent developments have intensified scrutiny of FBI leadership and public trust. Reuters reported whistleblower allegations that Patel's personal travel and decision-making hampered investigations, two former FBI agents are suing and allege they were fired over work on the Trump election case, and newly released records show a broader special-counsel probe of Patel as a private citizen than previously known, though Reuters said the exact nature of any allegations was unclear. This issue asks Congress to treat the matter as an accountability crisis: demand transparency, investigate potential misuse of power or resources, and press for Patel's resignation and other formal remedies if warranted.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to demand FBI Director Kash Patel's resignation and support aggressive oversight into his conduct. Reports about misuse of government resources, retaliation, and mismanagement at the FBI are serious and demand a response.\n\nIf Patel refuses to resign, [OFFICIAL_TITLE] [OFFICIAL_LAST] should support formal investigations and pursue every available accountability measure.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to call for Kash Patel's resignation and back immediate oversight of his conduct as FBI director. The bureau should never be used as a tool for personal privilege or political retaliation.\n\nPlease take public action on this issue.\n\nThank you.",
                 templateAsks: [.seekOversight, .askPublicStatement, .oppose],
@@ -1790,7 +1935,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Nominations",
                 targetChambers: ["senate"],
                 primaryAsk: "vote_no",
-                summary: "The Bureau of Land Management oversees hundreds of millions of acres of federal land used for conservation, recreation, and natural-resource development. Leadership appointments to the agency therefore influence how public lands are managed, including decisions related to environmental protection, energy development, and land use planning. Confirmation debates often focus on whether nominees' past positions and professional backgrounds align with competing priorities around conservation, economic development, and long-term stewardship.",
+                summary: "The Bureau of Land Management oversees 245 million acres of public land and 700 million acres of mineral estate under a mission that includes both multiple use and conservation. Pearce has long supported expanded domestic oil production, previously owned an oilfield services company, and would oversee major leasing decisions affecting drilling, mining, grazing, recreation, and renewable energy if confirmed; while he told senators he would not recommend broad-scale public-land selloffs, his record still points toward extraction-first management. This issue asks senators to oppose his nomination and insist on BLM leadership centered on stewardship, public access, and balanced land management.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge Senator [OFFICIAL_LAST] to oppose Steve Pearce's confirmation as Director of the Bureau of Land Management. His record shows too much alignment with oil and gas interests and too little commitment to protecting public lands for future generations.\n\nPlease vote no on his confirmation and speak out in defense of our public lands.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to ask Senator [OFFICIAL_LAST] to oppose Steve Pearce for BLM director. This position should go to someone committed to stewardship of public lands, not someone whose record raises concerns about extraction and selloffs.\n\nThank you.",
                 templateAsks: [.voteNo, .oppose, .askPublicStatement],
@@ -1803,7 +1948,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Voter Rights",
                 targetChambers: ["senate"],
                 primaryAsk: "oppose",
-                summary: "Proposals to modify voter-registration requirements and election procedures frequently generate debate about access to the ballot and election security. Supporters argue that stricter documentation rules help maintain accurate voter rolls, while critics warn that additional requirements may create administrative barriers for eligible voters. Because election administration varies widely across states, federal legislation in this area can have significant implications for how millions of Americans register and participate in elections.",
+                summary: "The House passed the SAVE America Act in February 2026, and the bill would require documentary proof of citizenship to register for federal elections while adding stricter ID rules. Independent analysis from the Bipartisan Policy Center estimates about 12% of registered voters do not have ready access to the documents most likely to satisfy those requirements, and because only five states issue Real IDs that indicate citizenship, most eligible voters would need a valid passport or a birth certificate paired with photo ID. This issue asks senators to reject the bill because it would add federal paperwork barriers for eligible voters instead of improving election administration and ballot access.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge Senator [OFFICIAL_LAST] to oppose the SAVE America Act and any effort to force it through the Senate. This bill would create unnecessary documentation barriers that make it harder for eligible citizens to register and vote.\n\nPlease defend voting rights, reject this bill, and oppose any attempt to make voting less accessible for lawful voters.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm calling to ask Senator [OFFICIAL_LAST] to oppose the SAVE America Act. Eligible Americans should not lose access to the ballot because of burdensome paperwork requirements.\n\nPlease vote no and speak out against this bill.\n\nThank you.",
                 templateAsks: [.oppose, .voteNo, .askPublicStatement],
@@ -1816,7 +1961,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Nominations",
                 targetChambers: ["senate"],
                 primaryAsk: "vote_no",
-                summary: "The U.S. Surgeon General serves as the federal government's leading public-health spokesperson, responsible for communicating scientific guidance and shaping national health priorities. Confirmation debates for the role often focus on a nominee's medical expertise, public-health experience, and credibility with both policymakers and the public. Leadership in this position can influence how the federal government responds to health crises, communicates scientific information, and coordinates national health initiatives.",
+                summary: "The surgeon general's effectiveness depends on public trust and clear, science-based communication. Casey Means's nomination has stalled after senators in both parties questioned her experience, inactive medical license, and reluctance at hearing to clearly urge routine vaccination against illnesses like flu and measles; Reuters also described her confirmation hearing as focused on contentious positions on vaccines and birth control. This issue asks senators to reject the nomination and support public-health leadership grounded in evidence, vaccine confidence, and medical credibility.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge Senator [OFFICIAL_LAST] to oppose Casey Means for U.S. Surgeon General. This role should go to someone with strong public health credibility, clear support for evidence-based medicine, and full public trust.\n\nPlease vote no on this nomination and speak out for qualified, science-based public health leadership.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm calling to ask Senator [OFFICIAL_LAST] to oppose Casey Means for Surgeon General. The country needs trusted, evidence-based public health leadership in this role.\n\nPlease vote no on this nomination.\n\nThank you.",
                 templateAsks: [.voteNo, .oppose, .askPublicStatement],
@@ -1829,7 +1974,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Immigration",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "Temporary Protected Status (TPS) allows certain foreign nationals already in the United States to remain and work legally when conditions in their home country make return unsafe. Decisions about TPS designations can affect thousands of families, employers, and local communities. The policy debate typically centers on humanitarian protections, immigration stability, and the economic and social consequences of changing legal status for affected populations.",
+                summary: "Temporary Protected Status exists for countries facing extraordinary conditions, and the Supreme Court has kept in place lower-court orders that, for now, preserve protections for more than 350,000 Haitians living and working in the United States. The State Department continues to warn Americans not to travel to Haiti because of kidnapping, crime, terrorist activity, civil unrest, and limited healthcare, while Reuters and the U.N. report more than 1.4 million Haitians displaced and at least 5,519 people killed between March 2025 and January 2026. This issue asks lawmakers to defend TPS for Haitians and support stability for families who cannot safely be returned to a country in deep crisis.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support continued Temporary Protected Status for Haitians and oppose any effort to strip those protections away.\n\nPlease speak out publicly, support every available legislative and oversight tool to protect Haitian TPS holders, and reject deportation policies that would put families at risk.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support TPS protections for Haitians and oppose efforts to end them. Haitian families deserve stability and protection, not more fear and uncertainty.\n\nThank you.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -1842,7 +1987,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Environment",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "oppose",
-                summary: "The Environmental Protection Agency's endangerment finding establishes that greenhouse-gas emissions pose risks to public health and welfare, forming the legal foundation for many federal climate regulations. Proposals to revise or repeal this determination would have far-reaching implications for how the federal government regulates air pollution and climate-related emissions. The debate therefore touches on environmental policy, regulatory authority, and the long-term framework for addressing climate-related risks.",
+                summary: "The EPA's 2009 endangerment finding concluded that six key greenhouse gases threaten public health and welfare and served as the legal prerequisite for federal greenhouse-gas standards. On February 12, 2026, EPA finalized rescission of that finding and repeal of related vehicle greenhouse-gas rules, and 23 states plus cities and counties have already sued to overturn the rollback. This issue asks Congress to oppose dismantling the scientific and legal foundation of climate regulation and to defend protections against dangerous pollution.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to oppose the repeal of the EPA's endangerment finding and defend strong federal climate protections.\n\nPlease support aggressive oversight and legislation to restore meaningful greenhouse-gas standards and protect communities from dangerous pollution.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm asking [OFFICIAL_TITLE] [OFFICIAL_LAST] to oppose the repeal of the EPA's endangerment finding and defend strong climate and public-health protections.\n\nPlease take public action on this issue.\n\nThank you.",
                 templateAsks: [.oppose, .seekOversight, .askPublicStatement],
@@ -1855,7 +2000,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Foreign Affairs",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "oppose",
-                summary: "Discussions about strategic control of Arctic territory have periodically surfaced in U.S. foreign policy debates because of Greenland's geopolitical importance, natural resources, and proximity to major shipping routes. Any proposal involving territorial acquisition or expanded U.S. influence would raise complex questions about international law, allied relations, and Arctic security. The issue reflects broader competition among global powers for influence in the rapidly changing Arctic region.",
+                summary: "Earlier this year, the White House said Trump was discussing options to acquire Greenland, including purchase and even potential use of the U.S. military, despite clear opposition from Greenland and Denmark. Reuters also reported bipartisan concern in Congress, including proposals to block federal funds from being used for any takeover attempt, and Greenland's prime minister warned that continued U.S. efforts toward ownership or control were \"completely unacceptable.\" This issue asks Congress to reject any funding or authorization for coercion and to defend allied sovereignty, Arctic stability, and NATO cohesion.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to reject any attempt by the administration to seize, pressure, or coerce Greenland.\n\nThe United States should respect Greenlandic and Danish sovereignty, protect our alliances, and make clear that Congress will not support reckless attempts to take control of allied territory.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to oppose any U.S. attempt to take control of Greenland and to defend allied sovereignty and international stability.\n\nPlease speak out publicly on this issue.\n\nThank you.",
                 templateAsks: [.oppose, .askPublicStatement, .support],
@@ -1868,7 +2013,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Digital Rights",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "oppose",
-                summary: "Artificial intelligence technologies are advancing rapidly, prompting governments to consider how best to regulate issues such as consumer protection, data privacy, algorithmic bias, and economic disruption. Some proposals would create national standards that could limit or override state-level regulation, while others argue that states should retain authority to experiment with their own safeguards. The outcome of this debate could determine how quickly regulatory frameworks adapt to emerging AI technologies.",
+                summary: "The White House's March 2026 AI framework explicitly urges Congress to preempt state AI laws, following Trump's December threat to withhold broadband funding from states whose AI rules his administration says hinder innovation. But states are already filling real gaps: NCSL says all 50 states introduced AI legislation in 2025, 38 enacted about 100 measures, lawmakers advanced rules on transparency, health care, chatbot safety, and algorithmic discrimination, and the Senate voted 99 to 1 last year to strip a proposed 10-year moratorium on state and local AI laws. This issue asks Congress to preserve state authority to regulate AI systems until strong, enforceable federal protections actually exist.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect states' ability to regulate artificial intelligence and oppose any federal effort to punish states for passing basic AI safeguards.\n\nCongress should not strip states of the power to enact consumer protections while federal law remains incomplete. Please oppose preemption and any funding threats tied to state AI regulation.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm asking [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect state authority to regulate AI and oppose efforts to override state safeguards or threaten funding.\n\nPlease defend the ability of states to protect their residents.\n\nThank you.",
                 templateAsks: [.oppose, .askPublicStatement, .seekOversight],
@@ -2017,6 +2162,32 @@ final class IssueCallCenterViewModel: ObservableObject {
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
                 relatedBills: [],
                 tags: ["economy", "inflation", "cost-of-living", "prices", "families"]
+            ),
+            Seed(
+                id: "fully-fund-hawaii-flood-relief-and-recovery",
+                title: "Fully Fund Hawaii Flood Relief and Recovery",
+                category: "Disaster Relief",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "support",
+                summary: "Hawaii is facing some of its worst flooding in more than 20 years, with more than 230 rescues, evacuation orders affecting about 5,500 residents, and major damage to homes and public infrastructure. Early estimates indicate damage could exceed $1 billion across roads, schools, farms, and health facilities, while state and county assessments are still ongoing. Governor Josh Green has requested a presidential major disaster declaration and sought up to a 90% federal cost share, signaling state and local resources are not enough. This makes timely federal action through FEMA's Disaster Relief Fund urgent to prevent rebuilding delays and stabilize impacted communities.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to fully support Hawaii flood recovery by backing immediate FEMA Disaster Relief Fund support, an expedited major disaster declaration response, and strong federal cost sharing so rebuilding is not delayed.\n\nThe scale of damage is severe and local resources are not enough. Please push for fast federal action and public accountability so communities can recover quickly.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support urgent federal flood relief for Hawaii through FEMA's Disaster Relief Fund and prompt disaster assistance.\n\nPlease act quickly so families and infrastructure can recover without delay.\n\nThank you.",
+                templateAsks: [.support, .askPublicStatement, .seekOversight],
+                relatedBills: [],
+                tags: ["urgent", "hawaii", "flooding", "disaster-relief", "fema", "recovery", "infrastructure"]
+            ),
+            Seed(
+                id: "strengthen-tsa-staffing-and-reduce-checkpoint-bottlenecks",
+                title: "Strengthen TSA Staffing and Reduce Checkpoint Bottlenecks",
+                category: "Transportation",
+                targetChambers: ["house", "senate"],
+                primaryAsk: "support",
+                summary: "U.S. air travel demand remains very high, placing sustained pressure on TSA screening operations and frontline officers. TSA has faced continuing staffing strain and turnover, including more than 1,100 officers leaving in a two-month period in late 2025, even as passenger volume stays elevated. Federal delay data also shows flight disruptions come from multiple sources: in December 2025, 71.74% of flights were on time, with delays largely tied to carriers and the national aviation system, while a smaller share was directly tied to security. The most accurate policy case is that fully funding TSA staffing and compensation reduces checkpoint bottlenecks, improves traveler experience, and protects safety while broader delay drivers are handled across airlines and air traffic control.",
+                liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support full TSA staffing and compensation funding to reduce checkpoint bottlenecks and improve traveler safety and reliability.\n\nPlease prioritize appropriations and oversight that stabilize the TSA workforce and strengthen frontline operations at high-volume airports.\n\nThank you for your time and consideration.",
+                voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to fully fund TSA staffing and pay so screening lines move more efficiently and safety stays strong during heavy travel demand.\n\nPlease support urgent action on this.\n\nThank you.",
+                templateAsks: [.support, .askPublicStatement, .seekOversight],
+                relatedBills: [],
+                tags: ["urgent", "tsa", "air-travel", "aviation", "staffing", "travel-delays", "airport-security"]
             )
         ]
 
@@ -2595,12 +2766,21 @@ final class IssueCallCenterViewModel: ObservableObject {
     }
 
     private static func buildRepTargets(from federalReps: [Official]) -> [CivicRepTarget] {
-        let senators = federalReps.filter { official in
-            let title = (official.officeTitle ?? "").lowercased()
-            if title.contains("senator") { return true }
-            let division = (official.divisionId ?? "").lowercased()
-            return division.contains("/state:") && !division.contains("/cd:")
-        }
+        let senators = federalReps
+            .filter { official in
+                let title = (official.officeTitle ?? "").lowercased()
+                if title.contains("senator") { return true }
+                let division = (official.divisionId ?? "").lowercased()
+                return division.contains("/state:") && !division.contains("/cd:")
+            }
+            .sorted { lhs, rhs in
+                let lhsRank = senateClassRank(for: lhs)
+                let rhsRank = senateClassRank(for: rhs)
+                if lhsRank != rhsRank {
+                    return lhsRank < rhsRank
+                }
+                return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
+            }
 
         let house = federalReps.first {
             let title = ($0.officeTitle ?? "").lowercased()
@@ -2631,14 +2811,42 @@ final class IssueCallCenterViewModel: ObservableObject {
         return targets
     }
 
-    private func normalizedBriefs(_ briefs: [CivicCallBrief], fallbackIssueID: String) -> [CivicCallBrief] {
+    private static func senateClassRank(for official: Official) -> Int {
+        let upper = (official.officeTitle ?? "")
+            .uppercased()
+            .replacingOccurrences(of: "CLASS", with: " ")
+        let token = upper
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .first(where: { !$0.isEmpty && ($0 == "I" || $0 == "II" || $0 == "III" || $0 == "1" || $0 == "2" || $0 == "3") })
+
+        switch token {
+        case "I", "1":
+            return 1
+        case "II", "2":
+            return 2
+        case "III", "3":
+            return 3
+        default:
+            return 99
+        }
+    }
+
+    private func normalizedBriefs(
+        _ briefs: [CivicCallBrief],
+        fallbackIssueID: String,
+        regenerateIDs: Bool = false
+    ) -> [CivicCallBrief] {
         var seenIDs = Set<String>()
         var normalized: [(index: Int, brief: CivicCallBrief)] = []
 
         for (index, brief) in briefs.enumerated() {
-            let baseID = brief.id.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                ? UUID().uuidString
-                : brief.id.trimmingCharacters(in: .whitespacesAndNewlines)
+            let baseID: String
+            if regenerateIDs {
+                baseID = UUID().uuidString
+            } else {
+                let trimmedID = brief.id.trimmingCharacters(in: .whitespacesAndNewlines)
+                baseID = trimmedID.isEmpty ? UUID().uuidString : trimmedID
+            }
             let uniqueID = seenIDs.insert(baseID).inserted ? baseID : "\(baseID)-\(index)"
 
             let nameKey = Self.normalizeNameKey(brief.repName)
@@ -2736,18 +2944,34 @@ final class IssueCallCenterViewModel: ObservableObject {
             .lowercased()
     }
 
+    private func isSafetyBlockedError(_ error: Error) -> Bool {
+        let lower = (error as NSError).localizedDescription.lowercased()
+        return lower.contains("safety_blocked")
+            || (lower.contains("disallowed") && lower.contains("safety"))
+            || (lower.contains("harmful") && lower.contains("request"))
+    }
+
+    private func resolveFailureMessage(for error: Error) -> String {
+        let raw = (error as NSError).localizedDescription
+        let lower = raw.lowercased()
+
+        if lower.contains("requested path is invalid")
+            || lower.contains("status 404")
+            || lower.contains("badurl") {
+            return "Civic API is not configured yet. Set CIVIC_API_BASE_URL to your deployed civic backend. Using offline call briefs for now."
+        }
+        if lower.contains("timed out") || lower.contains("timeout") {
+            return "The civic API took too long to respond. Using offline call briefs for now."
+        }
+
+        return "Using offline call briefs while the civic API is unavailable."
+    }
+
     private func userIDForRequest() async -> String {
         if let id = await SupabaseManager.shared.currentUserIDIfAvailable() {
             return id.uuidString
         }
-        let key = "civic.local.user_id.v1"
-        if let existing = UserDefaults.standard.string(forKey: key),
-           UUID(uuidString: existing) != nil {
-            return existing
-        }
-        let generated = UUID().uuidString
-        UserDefaults.standard.set(generated, forKey: key)
-        return generated
+        return UUID().uuidString
     }
 }
 

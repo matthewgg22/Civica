@@ -1,7 +1,9 @@
 import SwiftUI
+import OSLog
 
 #if DEBUG
 struct SupabaseMAPVDebugView: View {
+    private let logger = Logger(subsystem: "VoteNow", category: "SupabaseMAPVDebug")
     @State private var plans: [MapvPlan] = []
     @State private var statusText = "Idle"
     @State private var isWorking = false
@@ -63,7 +65,7 @@ struct SupabaseMAPVDebugView: View {
             statusText = "Anonymous session ready"
         } catch {
             statusText = "Error: \(error.localizedDescription)"
-            print("[SupabaseMAPVDebug] Auth error:", error.localizedDescription)
+            logger.error("Auth error in Supabase debug view.")
         }
     }
 
@@ -76,7 +78,7 @@ struct SupabaseMAPVDebugView: View {
             statusText = "Inserted test plan"
         } catch {
             statusText = "Insert failed: \(error.localizedDescription)"
-            print("[SupabaseMAPVDebug] Insert failed:", error.localizedDescription)
+            logger.error("Insert failed in Supabase debug view.")
         }
     }
 
@@ -90,7 +92,7 @@ struct SupabaseMAPVDebugView: View {
             statusText = "Fetched \(latest.count) plan(s)"
         } catch {
             statusText = "Fetch failed: \(error.localizedDescription)"
-            print("[SupabaseMAPVDebug] Fetch failed:", error.localizedDescription)
+            logger.error("Fetch failed in Supabase debug view.")
         }
     }
 }

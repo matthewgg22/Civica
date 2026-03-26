@@ -8,9 +8,7 @@ struct SupabaseConfig: Sendable {
     static let plistURLKey = "SUPABASE_URL"
     static let plistAnonKey = "SUPABASE_ANON_KEY"
 
-    // TODO: Replace with your real Supabase project URL.
     private static let fallbackURLString = "https://YOUR-PROJECT-REF.supabase.co"
-    // TODO: Replace with your real Supabase anon key (safe for client apps with RLS).
     private static let fallbackAnonKey = "YOUR_SUPABASE_ANON_KEY"
 
     private static let logger = Logger(subsystem: "VoteNow", category: "SupabaseConfig")
@@ -37,6 +35,9 @@ struct SupabaseConfig: Sendable {
 
         if urlString == fallbackURLString || anonKey == fallbackAnonKey {
             logger.warning("Supabase config is using fallback placeholder values. Set SUPABASE_URL and SUPABASE_ANON_KEY in Info.plist.")
+            #if DEBUG
+            assertionFailure("Supabase placeholders detected. Configure SUPABASE_URL and SUPABASE_ANON_KEY in Info.plist.")
+            #endif
         }
 
         return SupabaseConfig(url: url, anonKey: anonKey)

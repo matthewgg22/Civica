@@ -10,42 +10,58 @@
 
 import SwiftUI
 import StripePaymentSheet
+import OSLog
+
+enum PreferredLanguageCode {
+    static let fallback = "en"
+
+    static func normalizeStoredCode(_ code: String) -> String {
+        let trimmed = code.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return fallback }
+
+        let lower = trimmed.lowercased()
+        switch lower {
+        case "tl", "tagalog", "fil-ph":
+            return "fil"
+        case "zh", "zh-cn", "zh-hans", "zh-hans-cn":
+            return "zh-Hans"
+        case "zh-tw", "zh-hk", "zh-mo", "zh-hant", "zh-hant-tw", "zh-hant-hk":
+            return "zh-Hant"
+        case "vi-vn":
+            return "vi"
+        case "es-es", "es-mx":
+            return "es"
+        case "fr-fr", "fr-ca", "fr-be", "fr-ch":
+            return "fr"
+        case "de-de", "de-at", "de-ch":
+            return "de"
+        case "en-us", "en-gb":
+            return "en"
+        default:
+            return trimmed
+        }
+    }
+}
 
 @main
 struct WeVote_Information_PageApp: App {
+    private let logger = Logger(subsystem: "VoteNow", category: "App")
+    private static let bootstrapLogger = Logger(subsystem: "VoteNow", category: "AppBootstrap")
+
     private enum AppLanguage: String {
         case english = "en"
         case spanish = "es"
-        case chinese = "zh-Hans"
+        case mandarinSimplified = "zh-Hans"
+        case mandarinTraditional = "zh-Hant"
         case filipino = "fil"
         case vietnamese = "vi"
+        case french = "fr"
+        case german = "de"
 
         var localeIdentifier: String { rawValue }
 
         static func fromStoredCode(_ code: String) -> AppLanguage? {
-            let normalized = normalizeStoredCode(code)
-            return AppLanguage(rawValue: normalized)
-        }
-
-        static func normalizeStoredCode(_ code: String) -> String {
-            let trimmed = code.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !trimmed.isEmpty else { return AppLanguage.english.rawValue }
-
-            let lower = trimmed.lowercased()
-            switch lower {
-            case "tl", "tagalog", "fil-ph":
-                return AppLanguage.filipino.rawValue
-            case "zh", "zh-cn", "zh-hans", "zh-hans-cn":
-                return AppLanguage.chinese.rawValue
-            case "vi-vn":
-                return AppLanguage.vietnamese.rawValue
-            case "es-es", "es-mx":
-                return AppLanguage.spanish.rawValue
-            case "en-us", "en-gb":
-                return AppLanguage.english.rawValue
-            default:
-                return trimmed
-            }
+            AppLanguage(rawValue: PreferredLanguageCode.normalizeStoredCode(code))
         }
     }
 
@@ -53,7 +69,12 @@ struct WeVote_Information_PageApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     init() {
-        STPAPIClient.shared.publishableKey = "pk_test_51T8Yi1Ek0rWAoZA5BLUzJkeEY1mFQfQ2VOWvuk7QzDasZjeQFWn8G6FHnk8AZwih92UDtqShZig7tjWgPw1tORgt00wTE0GedO"
+        guard let publishableKey = Self.stripePublishableKey() else {
+            Self.bootstrapLogger.error("Missing STRIPE_PUBLISHABLE_KEY in Info.plist. Stripe features are disabled.")
+            STPAPIClient.shared.publishableKey = ""
+            return
+        }
+        STPAPIClient.shared.publishableKey = publishableKey
     }
 
     // shared view models
@@ -71,6 +92,14 @@ struct WeVote_Information_PageApp: App {
         Locale(identifier: selectedLanguage.localeIdentifier)
     }
 
+    private static func stripePublishableKey(bundle: Bundle = .main) -> String? {
+        guard let raw = bundle.object(forInfoDictionaryKey: "STRIPE_PUBLISHABLE_KEY") as? String else {
+            return nil
+        }
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()              // ← your single root view
@@ -82,9 +111,8 @@ struct WeVote_Information_PageApp: App {
                     do {
                         try await SupabaseManager.shared.signInAnonymouslyIfNeeded()
                     } catch {
-                        print("[SupabaseManager] Anonymous sign-in on launch failed:", error.localizedDescription)
+                        logger.error("Anonymous Supabase sign-in failed on app launch.")
                     }
-                    await requestPushPermissionAndRegister()
                 }
                 .environment(\.locale, appLocale)
                 .preferredColorScheme(.light)   // forces light mode across the app

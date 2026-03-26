@@ -10,6 +10,7 @@ import SwiftUI
 import CoreLocation
 import MapKit
 import Contacts
+import OSLog
 
 enum ZipMapLookupState: Equatable {
     case idle
@@ -141,6 +142,7 @@ private let usStateNameToCodeMap: [String: String] = [
     "south dakota": "SD", "tennessee": "TN", "texas": "TX", "utah": "UT", "vermont": "VT",
     "virginia": "VA", "washington": "WA", "west virginia": "WV", "wisconsin": "WI", "wyoming": "WY",
     "district of columbia": "DC", "american samoa": "AS", "guam": "GU",
+    "mariana islands": "MP", "northern marianas": "MP", "cnmi": "MP",
     "northern mariana islands": "MP", "commonwealth of the northern mariana islands": "MP",
     "puerto rico": "PR", "us virgin islands": "VI", "u s virgin islands": "VI", "virgin islands": "VI"
 ]
@@ -388,11 +390,18 @@ final class MyRepsViewModel: ObservableObject {
     @Published var zipMapLookupState: ZipMapLookupState = .idle
     @Published var resolvedLocationSelection: RepsLocationSelection?
     @Published var isGeneralLocationSearchResult = false
+    @Published var mapMode: MapMode = .national
+    @Published var resolvedCoordinate: CLLocationCoordinate2D?
+    @Published var resolvedStateCode: String?
+    @Published var politicalGeography: PoliticalGeography?
+    @Published var mapViewportResetID = UUID()
 
     private let registry: RepsProviderRegistry
     private let openStatesService = OpenStatesStateLegislativeService()
     private let geocoder = CLGeocoder()
+    private let politicalGeographyService = PoliticalGeographyService()
     private let locationProvider = USCurrentLocationProvider()
+    private let logger = Logger(subsystem: "VoteNow", category: "MyRepsViewModel")
     private var lookupToken = UUID()
     private var locationResolveTask: Task<Void, Never>?
     private var zipCoordinateCache: [String: RepsGeoCoordinate] = [:]
@@ -400,10 +409,12 @@ final class MyRepsViewModel: ObservableObject {
     private var zipRadiusCache: [String: CLLocationDistance] = [:]
     private let defaultZipRadiusMeters: CLLocationDistance = 8000
     private var lastTrackedLookupErrorCode: String?
+    private var reminderSchedulingTask: Task<Void, Never>?
     private var reminderSchedulingInFlightElectionIDs: Set<String> = []
     private var reminderScheduledElectionIDsThisSession: Set<String> = []
     private static let fallbackPresidentialPrimaryISO = "2028-03-07"
     private static let presidentialGeneralElectionISO = "2028-11-07"
+    private static let nonContinentalMapFocusCodes: Set<String> = ["AK", "HI", "AS", "GU", "MP", "PR", "VI"]
 
     private static let isoDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -430,6 +441,12 @@ final class MyRepsViewModel: ObservableObject {
         self.registry = registry
     }
 
+    deinit {
+        locationResolveTask?.cancel()
+        reminderSchedulingTask?.cancel()
+        geocoder.cancelGeocode()
+    }
+
     func handleLocationInputTyping(_ rawInput: String) {
         let trimmed = rawInput.trimmingCharacters(in: .whitespacesAndNewlines)
         lookupToken = UUID()
@@ -442,6 +459,7 @@ final class MyRepsViewModel: ObservableObject {
             errorMessage = nil
             clearReps()
             clearZipMapHighlight()
+            resetMapToNationalView()
             return
         }
 
@@ -472,6 +490,7 @@ final class MyRepsViewModel: ObservableObject {
     func resetZipEntryState() {
         lookupToken = UUID()
         locationResolveTask?.cancel()
+        reminderSchedulingTask?.cancel()
         geocoder.cancelGeocode()
         isLoading = false
         errorMessage = nil
@@ -479,6 +498,68 @@ final class MyRepsViewModel: ObservableObject {
         isGeneralLocationSearchResult = false
         clearReps()
         clearZipMapHighlight()
+        resetMapToNationalView()
+    }
+
+    func resetMapToNationalView() {
+        mapMode = .national
+        resolvedCoordinate = nil
+        resolvedStateCode = nil
+        politicalGeography = nil
+        mapViewportResetID = UUID()
+    }
+
+    func focusMapStateFromTap(_ rawStateCode: String) {
+        guard let normalizedCode = normalizedUSStateCode(from: rawStateCode) else { return }
+
+        let previousStateCode = resolvedStateCode?.uppercased()
+        if previousStateCode == normalizedCode {
+            // Keep current pin/state context when re-tapping the same state.
+            mapMode = .focused(stateCode: normalizedCode)
+            return
+        }
+
+        lookupToken = UUID()
+        let token = lookupToken
+        locationResolveTask?.cancel()
+        geocoder.cancelGeocode()
+        isLoading = true
+        errorMessage = nil
+        zipMapLookupState = .geocoding
+
+        mapMode = .focused(stateCode: normalizedCode)
+        resolvedStateCode = normalizedCode
+        detectedStateCode = normalizedCode
+
+        // State taps intentionally clear prior address-pin context and load statewide-only reps.
+        resolvedCoordinate = nil
+        politicalGeography = PoliticalGeography(
+            stateCode: normalizedCode,
+            countyName: nil,
+            congressionalDistrict: nil
+        )
+        clearZipMapHighlight()
+
+        guard let lookupZIP = registry.representativeZIP(for: normalizedCode) else {
+            clearReps()
+            isLoading = false
+            zipMapLookupState = .error
+            errorMessage = "We couldn't determine a representative ZIP for \(normalizedCode)."
+            return
+        }
+
+        performLookup(
+            zip: lookupZIP,
+            coordinate: nil,
+            locality: nil,
+            scope: .stateLevelOnly,
+            token: token
+        )
+    }
+
+    func representativeZIP(for stateCode: String) -> String? {
+        guard let normalizedCode = normalizedUSStateCode(from: stateCode) else { return nil }
+        return registry.representativeZIP(for: normalizedCode)
     }
 
     func centerOnCurrentLocation() {
@@ -501,6 +582,7 @@ final class MyRepsViewModel: ObservableObject {
                         self.zipMapLookupState = .outsideUSBlocked
                         self.errorMessage = MyRepsTrustCopy.usOnly
                         self.clearReps()
+                        self.resetMapToNationalView()
                         self.trackNonSensitiveEvent("zip_outside_us_blocked")
                         return
                     }
@@ -511,6 +593,7 @@ final class MyRepsViewModel: ObservableObject {
 
                         do {
                             let placemarks = try await self.geocoder.reverseGeocodeLocation(location)
+                            if Task.isCancelled { return }
                             let resolvedPlacemark = self.bestUSPlacemark(from: placemarks, zip: nil) ?? placemarks.first
 
                             await MainActor.run {
@@ -520,6 +603,7 @@ final class MyRepsViewModel: ObservableObject {
                                     self.zipMapLookupState = .error
                                     self.errorMessage = "Unable to resolve your current address."
                                     self.clearReps()
+                                    self.resetMapToNationalView()
                                     return
                                 }
 
@@ -545,6 +629,7 @@ final class MyRepsViewModel: ObservableObject {
                                 self.zipMapLookupState = .error
                                 self.errorMessage = "Unable to use current location right now."
                                 self.clearReps()
+                                self.resetMapToNationalView()
                             }
                         }
                     }
@@ -553,6 +638,7 @@ final class MyRepsViewModel: ObservableObject {
                     self.zipMapLookupState = .error
                     self.errorMessage = "Unable to use current location right now."
                     self.clearReps()
+                    self.resetMapToNationalView()
                 }
             }
         }
@@ -827,6 +913,7 @@ final class MyRepsViewModel: ObservableObject {
             if case .generalLocation = parsed { return true }
             return false
         }()
+        let inputStateCode = normalizedUSStateCode(from: userInput)
 
         let normalizedZIP = USZipInputValidator.normalizedPrimaryZIP(from: placemark.postalCode ?? "")
             ?? {
@@ -834,7 +921,8 @@ final class MyRepsViewModel: ObservableObject {
                 return nil
             }()
 
-        let normalizedStateCode = normalizedUSStateCode(from: placemark.administrativeArea)
+        let normalizedStateCode = (isGeneralLocationLookup ? inputStateCode : nil)
+            ?? normalizedUSStateCode(from: placemark.administrativeArea)
             ?? normalizedUSStateCode(from: placemark.postalAddress?.state)
             ?? normalizedZIP.flatMap { registry.resolvedStateCode(for: $0) }
 
@@ -854,6 +942,7 @@ final class MyRepsViewModel: ObservableObject {
                 ? "We couldn't determine a U.S. state from that location."
                 : RepsLocationResolverError.missingPostalCode.errorDescription
             clearReps()
+            resetMapToNationalView()
             return
         }
 
@@ -894,7 +983,44 @@ final class MyRepsViewModel: ObservableObject {
         resolvedLocationSelection = selection
         saveLocationSelectionToSupabase(selection)
 
-        detectedStateCode = normalizedStateCode ?? registry.resolvedStateCode(for: lookupZIP)
+        let finalStateCode = normalizedStateCode ?? registry.resolvedStateCode(for: lookupZIP)
+        detectedStateCode = finalStateCode
+        resolvedStateCode = finalStateCode
+        resolvedCoordinate = coordinate
+        politicalGeography = finalStateCode.map {
+            PoliticalGeography(
+                stateCode: $0,
+                countyName: nil,
+                congressionalDistrict: nil
+            )
+        }
+        if let finalStateCode {
+            mapMode = .focused(stateCode: finalStateCode)
+        } else {
+            mapMode = .national
+        }
+
+        let resolvedLatitude = coordinate.latitude
+        let resolvedLongitude = coordinate.longitude
+        Task { [weak self] in
+            guard let self else { return }
+            let enriched = await self.politicalGeographyService.enrich(
+                coordinate: coordinate,
+                stateCode: finalStateCode
+            )
+            await MainActor.run {
+                guard token == self.lookupToken else { return }
+                guard
+                    let current = self.resolvedCoordinate,
+                    abs(current.latitude - resolvedLatitude) < 0.000001,
+                    abs(current.longitude - resolvedLongitude) < 0.000001
+                else {
+                    return
+                }
+                self.politicalGeography = enriched
+            }
+        }
+
         performLookup(
             zip: lookupZIP,
             coordinate: repsCoordinate,
@@ -904,8 +1030,7 @@ final class MyRepsViewModel: ObservableObject {
         )
         isGeneralLocationSearchResult = isGeneralLocationLookup
 
-        let resolvedLogLine = normalizedAddress.isEmpty ? userInput : normalizedAddress
-        print("✅ Address search resolved: \(resolvedLogLine)")
+        logger.info("Address search resolved from source \(source.rawValue, privacy: .public).")
         if !isGeneralLocationLookup {
             scheduleElectionRemindersAfterAddressResolution(
                 zip: lookupZIP,
@@ -915,36 +1040,47 @@ final class MyRepsViewModel: ObservableObject {
     }
 
     private func scheduleElectionRemindersAfterAddressResolution(zip: String, stateCode: String?) {
-        Task {
+        reminderSchedulingTask?.cancel()
+        reminderSchedulingTask = Task { @MainActor [weak self] in
+            guard let self else { return }
             guard await SupabaseManager.shared.currentUserIDIfAvailable() != nil else {
-                print("ℹ️ Skipping scheduled notification insert: no authenticated user.")
+                logger.debug("Skipping scheduled reminder insert because no authenticated user exists.")
                 return
             }
+
+            if Task.isCancelled { return }
 
             let normalizedStateCode = stateCode?.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
-                ?? registry.resolvedStateCode(for: zip)
+                ?? self.registry.resolvedStateCode(for: zip)
 
             guard let normalizedStateCode else {
-                print("❌ insert failed: unable to determine state code for scheduled reminders.")
+                logger.error("Scheduled reminder insert failed: unable to determine state code.")
                 return
             }
 
-            guard let nextElection = nextUpcomingTimelineElection(for: normalizedStateCode) else {
-                print("❌ insert failed: no next upcoming election found for \(normalizedStateCode).")
+            guard let nextElection = self.nextUpcomingTimelineElection(for: normalizedStateCode) else {
+                logger.error("Scheduled reminder insert failed: no upcoming election found for state \(normalizedStateCode, privacy: .public).")
                 return
             }
 
-            if reminderSchedulingInFlightElectionIDs.contains(nextElection.electionID)
-                || reminderScheduledElectionIDsThisSession.contains(nextElection.electionID) {
-                print("ℹ️ skipping duplicate reminder scheduling for electionID: \(nextElection.electionID)")
+            guard ReminderSchedulingDeduper.begin(
+                key: nextElection.electionID,
+                inFlight: &self.reminderSchedulingInFlightElectionIDs,
+                scheduledThisSession: &self.reminderScheduledElectionIDsThisSession
+            ) else {
+                logger.debug("Skipping duplicate reminder scheduling for electionID \(nextElection.electionID, privacy: .public).")
                 return
             }
 
-            reminderSchedulingInFlightElectionIDs.insert(nextElection.electionID)
-            defer { reminderSchedulingInFlightElectionIDs.remove(nextElection.electionID) }
-
-            print("✅ next election found: \(nextElection.electionName) [\(nextElection.electionID)]")
-            print("⏳ About to insert scheduled notification after address search resolution.")
+            var created = false
+            defer {
+                ReminderSchedulingDeduper.finish(
+                    key: nextElection.electionID,
+                    markScheduled: created,
+                    inFlight: &self.reminderSchedulingInFlightElectionIDs,
+                    scheduledThisSession: &self.reminderScheduledElectionIDsThisSession
+                )
+            }
 
             do {
                 try await SupabaseManager.shared.scheduleElectionRemindersForResolvedAddress(
@@ -955,10 +1091,10 @@ final class MyRepsViewModel: ObservableObject {
                         stateCode: normalizedStateCode
                     )
                 )
-                reminderScheduledElectionIDsThisSession.insert(nextElection.electionID)
-                print("✅ new election reminders scheduled")
+                created = true
+                logger.info("Election reminders scheduled for electionID \(nextElection.electionID, privacy: .public).")
             } catch {
-                print("❌ insert failed: \(error.localizedDescription)")
+                logger.error("Scheduled reminder insert failed after address resolution.")
             }
         }
     }
@@ -1131,11 +1267,13 @@ final class MyRepsViewModel: ObservableObject {
             let expectedStateCode = detectedStateCode ?? registry.resolvedStateCode(for: zip)
             Task { [weak self] in
                 guard let self else { return }
+                if Task.isCancelled { return }
                 let openStatesOfficials = await self.openStatesService.lookupStateLegislators(
                     zip: zip,
                     coordinate: coordinate,
                     expectedStateCode: expectedStateCode
                 )
+                if Task.isCancelled { return }
 
                 await MainActor.run {
                     guard token == self.lookupToken else { return }
@@ -1344,10 +1482,27 @@ final class MyRepsViewModel: ObservableObject {
     }
 
     private func resolvePlacemarkForGeneralLocation(_ location: String) async throws -> CLPlacemark {
+        let intendedStateCode = normalizedUSStateCode(from: location)
         let query = addUSHintIfNeeded(to: location)
         let placemarks = try await geocoder.geocodeAddressString(query)
         guard !placemarks.isEmpty else {
             throw RepsLocationResolverError.notFound
+        }
+
+        if let intendedStateCode {
+            if let exactStateMatch = placemarks.first(where: {
+                USGeoGuard.isAllowedUSCountryCode($0.isoCountryCode) &&
+                    placemarkStateCode($0) == intendedStateCode
+            }) {
+                return exactStateMatch
+            }
+
+            // When the user explicitly enters a state/territory name, prefer that
+            // jurisdiction's representative ZIP centroid over ambiguous geocoder hits.
+            if let representativeZIP = registry.representativeZIP(for: intendedStateCode),
+               let statePlacemark = try? await resolvePlacemarkForZIP(representativeZIP) {
+                return statePlacemark
+            }
         }
 
         if let best = bestUSPlacemark(from: placemarks, zip: nil) {
@@ -1355,6 +1510,19 @@ final class MyRepsViewModel: ObservableObject {
         }
 
         throw RepsLocationResolverError.outsideUS
+    }
+
+    private func placemarkStateCode(_ placemark: CLPlacemark) -> String? {
+        if let direct = normalizedUSStateCode(from: placemark.administrativeArea)
+            ?? normalizedUSStateCode(from: placemark.postalAddress?.state) {
+            return direct
+        }
+
+        if let normalizedZIP = USZipInputValidator.normalizedPrimaryZIP(from: placemark.postalCode ?? "") {
+            return registry.resolvedStateCode(for: normalizedZIP)
+        }
+
+        return nil
     }
 
     private func bestUSPlacemark(from placemarks: [CLPlacemark], zip: String?) -> CLPlacemark? {
@@ -1433,6 +1601,7 @@ final class MyRepsViewModel: ObservableObject {
         guard USGeoGuard.isAllowedUSCoordinate(clCoordinate) else {
             zipMapLookupState = .outsideUSBlocked
             errorMessage = MyRepsTrustCopy.usOnly
+            resetMapToNationalView()
             trackNonSensitiveEvent("zip_outside_us_blocked")
             return
         }
@@ -1455,29 +1624,18 @@ final class MyRepsViewModel: ObservableObject {
 
     private func saveLocationSelectionToSupabase(_ selection: RepsLocationSelection) {
         _ = selection
-        // TODO: Persist resolved location selection to Supabase once schema is finalized.
-        // saveLocationSelectionToSupabase(
-        //   input_string: selection.inputString,
-        //   normalized_address: selection.normalizedAddress,
-        //   postal_code: selection.postalCode,
-        //   city: selection.city,
-        //   administrative_area: selection.administrativeArea,
-        //   country_code: selection.countryCode,
-        //   latitude: selection.latitude,
-        //   longitude: selection.longitude,
-        //   source: selection.source.rawValue,
-        //   timestamp: selection.timestamp
-        // )
+        // Intentionally disabled until schema + retention policy are finalized.
     }
 
     private func trackNonSensitiveEvent(_ name: String) {
         #if DEBUG
-        print("[analytics] \(name)")
+        logger.debug("[analytics] \(name, privacy: .public)")
         #endif
     }
 
     private func applyTrackedLookupFailure(for input: String, errorCode: String?) {
         let code = errorCode ?? AddressLookupErrorCode.geocodeFailed
+        resetMapToNationalView()
         switch code {
         case AddressLookupErrorCode.invalidZip:
             zipMapLookupState = .invalidInput
@@ -1523,9 +1681,11 @@ final class MyRepsViewModel: ObservableObject {
             for input in testInputs {
                 let resolved = await self.resolveAndTrackAddress(input: input, context: "my_reps_harness")
                 if let resolved {
-                    print("[AddressLookupHarness] ✅ \(input) -> \(resolved.coordinate.latitude), \(resolved.coordinate.longitude)")
+                    _ = resolved
+                    self.logger.debug("[AddressLookupHarness] lookup resolved.")
                 } else {
-                    print("[AddressLookupHarness] ❌ \(input) -> \(self.lastTrackedLookupErrorCode ?? "unknown_error")")
+                    _ = input
+                    self.logger.debug("[AddressLookupHarness] lookup failed.")
                 }
             }
         }

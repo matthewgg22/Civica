@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 @MainActor
 final class MAPVPlanStore: ObservableObject {
@@ -16,6 +17,22 @@ final class MAPVPlanStore: ObservableObject {
         static let etaOptIn = "mapv.eta.optin.v1"
     }
 
+    private static let timelineRecordsByStateCode: [String: TimelineStateRecord] = {
+        guard
+            let url = Bundle.main.url(forResource: "USMidterm2026ElectionDates", withExtension: "json"),
+            let data = try? Data(contentsOf: url),
+            let records = try? JSONDecoder().decode([TimelineStateRecord].self, from: data)
+        else {
+            return [:]
+        }
+
+        var output: [String: TimelineStateRecord] = [:]
+        for record in records {
+            output[record.state_code.uppercased()] = record
+        }
+        return output
+    }()
+
     nonisolated static let appGroupID = "group.turnoutthevote.votenow"
     static let shared = MAPVPlanStore()
 
@@ -30,10 +47,13 @@ final class MAPVPlanStore: ObservableObject {
     private let defaults: UserDefaults
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
+    private let logger = Logger(subsystem: "VoteNow", category: "MAPVPlanStore")
     private let zipStateResolver = USZipStateResolver()
     private var lastSupabaseSyncFingerprint: String?
     private var didAttemptSupabaseBootstrap = false
     private let completionPushCooldown: TimeInterval = 10
+    private var reminderSchedulingInFlightKeys: Set<String> = []
+    private var reminderScheduledKeysThisSession: Set<String> = []
 
     init(appGroupID: String = MAPVPlanStore.appGroupID) {
         defaults = UserDefaults(suiteName: appGroupID) ?? .standard
@@ -130,7 +150,7 @@ final class MAPVPlanStore: ObservableObject {
                         body: "Your voting plan is set."
                     )
                 } catch {
-                    print("[MAPVPlanStore] send_test_push failed:", String(describing: error))
+                    logger.error("send_test_push failed for completion flow.")
                 }
                 await MainActor.run {
                     self.endCompletionPushGate(sentAt: Date())
@@ -331,10 +351,7 @@ final class MAPVPlanStore: ObservableObject {
     }
 
     private func loadTimelineElections(for stateCode: String) -> [(title: String, date: Date)] {
-        guard let url = Bundle.main.url(forResource: "USMidterm2026ElectionDates", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let records = try? JSONDecoder().decode([TimelineStateRecord].self, from: data),
-              let record = records.first(where: { $0.state_code == stateCode }) else {
+        guard let record = Self.timelineRecordsByStateCode[stateCode.uppercased()] else {
             return []
         }
 
@@ -477,7 +494,7 @@ final class MAPVPlanStore: ObservableObject {
             let data = try encoder.encode(plan)
             defaults.set(data, forKey: Keys.plan)
         } catch {
-            print("MAPVPlanStore persist failed: \(error.localizedDescription)")
+            logger.error("Failed to persist MAPV plan locally.")
         }
     }
 
@@ -497,7 +514,7 @@ final class MAPVPlanStore: ObservableObject {
                     votingMethod: supabaseVotingMethod(from: value.votingMethodRawValue)
                 )
             } catch {
-                print("[MAPVPlanStore] Supabase sync failed: \(String(describing: error))")
+                logger.error("Supabase sync failed for MAPV plan.")
                 if lastSupabaseSyncFingerprint == fingerprint {
                     lastSupabaseSyncFingerprint = nil
                 }
@@ -540,7 +557,7 @@ final class MAPVPlanStore: ObservableObject {
             save(restored, shouldSyncLiveActivity: false, shouldSyncSupabase: false)
             refreshUserElectionStatus(forElectionID: restored.electionTitle)
         } catch {
-            print("[MAPVPlanStore] Supabase bootstrap skipped: \(String(describing: error))")
+            logger.info("Supabase bootstrap skipped for MAPV plan restore.")
         }
     }
 
@@ -558,7 +575,7 @@ final class MAPVPlanStore: ObservableObject {
         if let trimmedPollingPlace, !trimmedPollingPlace.isEmpty {
             place = trimmedPollingPlace
         } else {
-            print("[MAPVPlanStore] Missing polling_place from Supabase row \(remote.id.uuidString); using fallback.")
+            logger.info("Missing polling_place from Supabase row; using fallback.")
             place = "Polling Place"
         }
         let electionTitle = remote.electionID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -630,7 +647,16 @@ final class MAPVPlanStore: ObservableObject {
         if let previousPlan,
            changed == false,
            Date().timeIntervalSince(previousPlan.updatedAt) < 24 * 60 * 60 {
-            print("ℹ️ skipping duplicate reminder scheduling for electionID: \(newPlan.electionTitle)")
+            logger.debug("Skipping reminder scheduling because plan is unchanged within 24h.")
+            return
+        }
+        let reminderKey = "\(newPlan.electionTitle.lowercased())|\(newPlan.planSnapshotID.lowercased())"
+        guard ReminderSchedulingDeduper.begin(
+            key: reminderKey,
+            inFlight: &reminderSchedulingInFlightKeys,
+            scheduledThisSession: &reminderScheduledKeysThisSession
+        ) else {
+            logger.debug("Skipping duplicate reminder scheduling task for key \(reminderKey, privacy: .public)")
             return
         }
         let context = MAPVNotificationPluginContext(
@@ -670,6 +696,14 @@ final class MAPVPlanStore: ObservableObject {
         )
 
         Task {
+            defer {
+                ReminderSchedulingDeduper.finish(
+                    key: reminderKey,
+                    markScheduled: true,
+                    inFlight: &self.reminderSchedulingInFlightKeys,
+                    scheduledThisSession: &self.reminderScheduledKeysThisSession
+                )
+            }
             await SupabaseManager.shared.processMAPVNotificationPlugins(
                 trigger: .planUpdated,
                 context: context
@@ -718,7 +752,7 @@ final class MAPVPlanStore: ObservableObject {
                     self.refreshUserElectionStatus(forElectionID: electionID)
                 }
             } catch {
-                print("[MAPVPlanStore] Failed updating user_election_status:", String(describing: error))
+                logger.error("Failed updating user_election_status.")
             }
         }
     }
@@ -732,7 +766,7 @@ final class MAPVPlanStore: ObservableObject {
                     self.refreshUserElectionStatus(forElectionID: electionID)
                 }
             } catch {
-                print("[MAPVPlanStore] Failed undoing user_election_status:", String(describing: error))
+                logger.error("Failed undoing user_election_status.")
             }
         }
     }

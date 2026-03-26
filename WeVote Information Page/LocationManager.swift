@@ -11,6 +11,7 @@
 
 import Foundation
 import CoreLocation
+import OSLog
 
 /// A simple manager that
 /// 1) requests “when in use” permission
@@ -23,6 +24,7 @@ final class LocationManager: NSObject, ObservableObject {
     @Published var authorizationStatus: CLAuthorizationStatus
 
     private let manager = CLLocationManager()
+    private let logger = Logger(subsystem: "VoteNow", category: "LocationManager")
     private var hasPublishedInitialLocation = false
 
     override init() {
@@ -80,6 +82,6 @@ extension LocationManager: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager,
                          didFailWithError error: Error)
     {
-        print("Location error:", error.localizedDescription)
+        logger.error("Location request failed.")
     }
 }

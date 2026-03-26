@@ -1,9 +1,12 @@
 import Foundation
 import ActivityKit
+import MapKit
+import OSLog
 
 @MainActor
 final class MAPVLiveActivityManager: ObservableObject {
     static let shared = MAPVLiveActivityManager()
+    private let logger = Logger(subsystem: "VoteNow", category: "MAPVLiveActivity")
 
     private init() {}
 
@@ -22,7 +25,13 @@ final class MAPVLiveActivityManager: ObservableObject {
         )
 
         let presentation = MAPVStatusResolver.resolve(plan: plan, now: now, locale: preferredLocale())
-        let contentState = makeContentState(plan: plan, presentation: presentation, now: now)
+        let liveRouteMetrics = await resolveLiveRouteMetrics(for: plan)
+        let contentState = makeContentState(
+            plan: plan,
+            presentation: presentation,
+            now: now,
+            liveRouteMetrics: liveRouteMetrics
+        )
         let content = ActivityContent(
             state: contentState,
             staleDate: presentation.staleDate,
@@ -41,7 +50,7 @@ final class MAPVLiveActivityManager: ObservableObject {
                 pushType: nil
             )
         } catch {
-            print("MAPV Live Activity start failed: \(error.localizedDescription)")
+            logger.error("Failed to start MAPV Live Activity.")
         }
     }
 
@@ -73,7 +82,13 @@ final class MAPVLiveActivityManager: ObservableObject {
                 break
             }
             let presentation = MAPVStatusResolver.resolve(plan: finalPlan, now: now, locale: preferredLocale())
-            let finalState = makeContentState(plan: finalPlan, presentation: presentation, now: now)
+            let liveRouteMetrics = await resolveLiveRouteMetrics(for: finalPlan)
+            let finalState = makeContentState(
+                plan: finalPlan,
+                presentation: presentation,
+                now: now,
+                liveRouteMetrics: liveRouteMetrics
+            )
             let content = ActivityContent(
                 state: finalState,
                 staleDate: now.addingTimeInterval(60),
@@ -100,9 +115,13 @@ final class MAPVLiveActivityManager: ObservableObject {
     private func makeContentState(
         plan: MAPVPlan,
         presentation: MAPVStatusPresentation,
-        now: Date
+        now: Date,
+        liveRouteMetrics: (distanceMiles: Double?, etaMinutes: Int?)?
     ) -> MAPVLiveActivityAttributes.ContentState {
-        MAPVLiveActivityAttributes.ContentState(
+        let distanceMiles = liveRouteMetrics?.distanceMiles ?? plan.distanceMiles
+        let etaMinutes = liveRouteMetrics?.etaMinutes ?? plan.etaMinutes
+
+        return MAPVLiveActivityAttributes.ContentState(
             status: presentation.status,
             statusPillText: presentation.statusPillText,
             statusColorToken: presentation.statusColorToken,
@@ -114,8 +133,8 @@ final class MAPVLiveActivityManager: ObservableObject {
             plannedArrival: plan.plannedArrival,
             nowProgress: presentation.progressNow,
             plannedProgress: presentation.progressPlan,
-            distanceMiles: plan.distanceMiles,
-            etaMinutes: plan.etaMinutes,
+            distanceMiles: distanceMiles,
+            etaMinutes: etaMinutes,
             pollingPlaceShortName: shortLocationName(from: plan.pollingPlaceName),
             deepLinkURL: plan.appDeepLinkURL?.absoluteString ?? "votenow://mapv",
             directionsURL: plan.mapsURL?.absoluteString
@@ -125,27 +144,70 @@ final class MAPVLiveActivityManager: ObservableObject {
     private func shortLocationName(from fullName: String) -> String {
         let trimmed = fullName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return "Polling Place" }
-        if trimmed.count <= 30 { return trimmed }
-        return String(trimmed.prefix(30)) + "…"
+        if trimmed.count <= 24 { return trimmed }
+        return String(trimmed.prefix(24)) + "…"
+    }
+
+    private func resolveLiveRouteMetrics(for plan: MAPVPlan) async -> (distanceMiles: Double?, etaMinutes: Int?)? {
+        if Task.isCancelled { return nil }
+        guard let destination = await destinationMapItem(for: plan) else { return nil }
+        if Task.isCancelled { return nil }
+
+        let request = MKDirections.Request()
+        request.source = MKMapItem.forCurrentLocation()
+        request.destination = destination
+        request.transportType = transportType(for: plan.travelMode)
+        request.requestsAlternateRoutes = false
+
+        do {
+            let response = try await MKDirections(request: request).calculate()
+            if Task.isCancelled { return nil }
+            guard let route = response.routes.first else { return nil }
+            let miles = route.distance / 1609.34
+            let etaMinutes = max(1, Int(route.expectedTravelTime / 60))
+            return (distanceMiles: miles, etaMinutes: etaMinutes)
+        } catch {
+            return nil
+        }
+    }
+
+    private func destinationMapItem(for plan: MAPVPlan) async -> MKMapItem? {
+        if Task.isCancelled { return nil }
+        if let coordinate = plan.coordinate {
+            return MKMapItem(placemark: MKPlacemark(coordinate: coordinate))
+        }
+
+        let query = plan.pollingPlaceAddress.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? plan.pollingPlaceName
+            : plan.pollingPlaceAddress
+
+        guard !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return nil }
+
+        let request = MKLocalSearch.Request()
+        request.naturalLanguageQuery = query
+        do {
+            let response = try await MKLocalSearch(request: request).start()
+            if Task.isCancelled { return nil }
+            return response.mapItems.first
+        } catch {
+            return nil
+        }
+    }
+
+    private func transportType(for travelMode: MAPVTravelMode?) -> MKDirectionsTransportType {
+        switch travelMode {
+        case .walking:
+            return .walking
+        case .transit:
+            return .transit
+        case .driving, .none:
+            return .automobile
+        }
     }
 
     private func preferredLocale() -> Locale {
         let code = UserDefaults.standard.string(forKey: "my_info.preferred_language_code") ?? "en"
-        let normalized: String
-        switch code.lowercased() {
-        case "tl", "tagalog", "fil-ph":
-            normalized = "fil"
-        case "zh", "zh-cn", "zh-hans", "zh-hans-cn":
-            normalized = "zh-Hans"
-        case "vi-vn":
-            normalized = "vi"
-        case "es-es", "es-mx":
-            normalized = "es"
-        case "en-us", "en-gb":
-            normalized = "en"
-        default:
-            normalized = code
-        }
+        let normalized = PreferredLanguageCode.normalizeStoredCode(code)
         return Locale(identifier: normalized)
     }
 }

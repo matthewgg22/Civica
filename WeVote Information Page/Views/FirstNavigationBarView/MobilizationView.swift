@@ -7,17 +7,18 @@
 
 import SwiftUI
 import UIKit
+import OSLog
 
 struct MobilizationView: View {
     @EnvironmentObject var planVM: PlanViewModel
     @EnvironmentObject var mapvPlanStore: MAPVPlanStore
-    @Environment(\.openURL) private var openURL
     @Environment(\.locale) private var locale
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var selectedPlace: PollingPlace?
     @State private var showPlanSheet = false
-    @State private var shareImage: UIImage?
+    @State private var shareItems: [Any] = []
     @State private var showingShare = false
+    @State private var showMailInBallotRequest = false
     @StateObject private var waterfallController = EmojiWaterfallController()
     @State private var planCardOffset: CGFloat = 0
     @State private var planCardShadowBoost = false
@@ -212,43 +213,21 @@ struct MobilizationView: View {
                                         y: planCardShadowBoost ? 8 : 3
                                     )
 
-                                HStack(spacing: 10) {
-                                    if let payload = calendarPayload {
-                                        AddToCalendarButtonView(payload: payload)
-                                    }
-
-                                    if let directionsURL {
-                                        Button {
-                                            openURL(directionsURL)
-                                        } label: {
-                                            Label(l("app.how_to_vote.action.navigation", "Navigation"), systemImage: "location.fill")
-                                                .font(.subheadline.weight(.semibold))
-                                                .lineLimit(1)
-                                                .minimumScaleFactor(0.7)
-                                                .frame(maxWidth: .infinity)
-                                                .padding(.vertical, 11)
-                                        }
-                                        .buttonStyle(.plain)
-                                        .background(VoteNowColors.infoSurfaceBlue)
-                                        .foregroundColor(VoteNowColors.primaryText)
-                                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                                    }
-
-                                    Button {
-                                        shareMapvCard()
-                                    } label: {
-                                        Label(l("app.how_to_vote.action.share_plan", "Share My Plan"), systemImage: "square.and.arrow.up")
-                                            .font(.subheadline.weight(.semibold))
-                                            .lineLimit(1)
-                                            .minimumScaleFactor(0.7)
-                                            .frame(maxWidth: .infinity)
-                                            .padding(.vertical, 11)
-                                    }
-                                    .buttonStyle(.plain)
-                                    .background(VoteNowColors.infoSurfaceBlue)
-                                    .foregroundColor(VoteNowColors.primaryText)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                Button {
+                                    shareMapvCard()
+                                } label: {
+                                    Label(l("app.how_to_vote.action.share_plan", "Share My Plan"), systemImage: "square.and.arrow.up")
+                                        .font(.subheadline.weight(.semibold))
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.7)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 11)
                                 }
+                                .buttonStyle(MAPVUtilityButtonStyle(
+                                    fill: VoteNowColors.primaryCTA,
+                                    foreground: .white,
+                                    border: VoteNowColors.primaryCTA.opacity(0.85)
+                                ))
                                 .padding(.horizontal)
                             }
                         } else {
@@ -310,6 +289,9 @@ struct MobilizationView: View {
                 }
                 .background(VoteNowColors.appBackground)
                 .navigationBarTitleDisplayMode(.inline)
+                .navigationDestination(isPresented: $showMailInBallotRequest) {
+                    MailInBallotView()
+                }
             }
 
             EmojiWaterfallView(controller: waterfallController)
@@ -325,10 +307,10 @@ struct MobilizationView: View {
             PollingPlaceDetailView(place: place)
         }
         .sheet(isPresented: $showingShare, onDismiss: {
-            shareImage = nil
+            shareItems.removeAll()
         }) {
-            if let shareImage {
-                ShareSheet(items: [shareImage])
+            if !shareItems.isEmpty {
+                ShareSheet(items: shareItems)
             }
         }
         .onAppear {
@@ -353,6 +335,11 @@ struct MobilizationView: View {
                 synchronizePlanElectionHeaderIfNeeded()
                 lastRenderedPlanID = newID
                 runPlanCardAssemblyAnimation()
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .openMailInBallotRequest)) { _ in
+            deferToNextRunLoop {
+                showMailInBallotRequest = true
             }
         }
     }
@@ -410,136 +397,62 @@ struct MobilizationView: View {
         mapvPlanStore.save(currentPlan, shouldSyncLiveActivity: true, shouldSyncSupabase: false)
     }
 
-    private var howToVoteShareText: String {
-        if let mapv = mapvPlanStore.plan {
-            return [
-                l("app.mapv.share.title", "My Plan to Vote"),
-                "\(l("app.mapv.share.election_prefix", "Election:")) \(mapv.electionTitle)",
-                "\(l("app.mapv.share.date_prefix", "Date:")) \(Self.dateFormatter.string(from: mapv.plannedArrival))",
-                "\(l("app.mapv.share.time_prefix", "Time:")) \(Self.timeFormatter.string(from: mapv.plannedArrival))",
-                "\(l("app.mapv.share.location_prefix", "Location:")) \(mapv.pollingPlaceName)",
-                "\(l("app.mapv.share.address_prefix", "Address:")) \(mapv.pollingPlaceAddress)"
-            ]
-            .joined(separator: "\n")
-        }
-
-        var lines: [String] = [l("app.mapv.share.title", "My Plan to Vote")]
-        if let method = planVM.plan.method { lines.append("\(l("app.mapv.share.method_prefix", "Method:")) \(method)") }
-        if let voteTime = planVM.plan.voteTime {
-            lines.append("\(l("app.mapv.share.date_prefix", "Date:")) \(Self.dateFormatter.string(from: voteTime))")
-            lines.append("\(l("app.mapv.share.time_prefix", "Time:")) \(Self.timeFormatter.string(from: voteTime))")
-        }
-        if let place = planVM.plan.placeName { lines.append("\(l("app.mapv.share.location_prefix", "Location:")) \(place)") }
-        if let address = planVM.plan.placeAddress { lines.append("\(l("app.mapv.share.address_prefix", "Address:")) \(address)") }
-        return lines.joined(separator: "\n")
-    }
-
-    private var directionsURL: URL? {
-        if let mapvURL = mapvPlanStore.plan?.mapsURL {
-            return mapvURL
-        }
-
-        if let address = planVM.plan.placeAddress?
-            .trimmingCharacters(in: .whitespacesAndNewlines),
-           !address.isEmpty,
-           let encoded = address.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-            return URL(string: "http://maps.apple.com/?daddr=\(encoded)")
-        }
-
-        return nil
-    }
-
     private func shareMapvCard() {
-        if let mapv = mapvPlanStore.plan {
-            let shareSize = CGSize(width: 631, height: 406)
-            let shareCard = VStack(spacing: 0) {
-                MAPVCardView(
-                    waterfallController: EmojiWaterfallController(),
-                    previewPlan: mapv,
-                    isVotedActionEnabled: false
-                )
-                .environmentObject(mapvPlanStore)
-                .environment(\.dynamicTypeSize, .accessibility1)
-                .frame(maxWidth: .infinity, alignment: .topLeading)
-                .overlay(alignment: .bottomTrailing) {
-                    VoteNowLogoIcon(size: 53, shadowColor: .clear)
-                        .opacity(0.94)
-                        .padding(.trailing, 10)
-                        .padding(.bottom, 10)
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            }
-            .padding(0)
-            .frame(width: shareSize.width, height: shareSize.height, alignment: .top)
-            .background(VoteNowColors.appBackground)
-            .clipped()
+        let mappedPlan = mapvPlanStore.plan
+        let electionDate = mappedPlan?.electionDate ?? nextUpcomingElection?.electionDay
+        let badgeDate = electionDate.map { Self.dateFormatter.string(from: $0) } ?? l("app.registration.date_tbd", "Date TBD")
+        let stateCode = resolvedStateCode()
+        let badgeState = stateCode ?? l("app.timeline.statewide", "Statewide")
+        let methodLabel = shareMethodLabel()
 
-            if let image = ViewSnapshotter.snapshot(shareCard, size: shareSize) {
-                shareImage = image
-                showingShare = true
-            }
-            return
+        var details: [URLQueryItem] = [
+            URLQueryItem(name: "method", value: methodLabel),
+            URLQueryItem(name: "state", value: stateCode)
+        ]
+        if let electionDate {
+            details.append(URLQueryItem(name: "day", value: Self.isoFormatter.string(from: electionDate)))
+        }
+        if let electionTitle = mappedPlan?.electionTitle ?? nextUpcomingElection?.name,
+           !electionTitle.isEmpty {
+            details.append(URLQueryItem(name: "election", value: electionTitle))
         }
 
-        let fallbackVoteDate = planVM.plan.voteTime ?? Date()
-        let fallbackLocation = planVM.plan.placeAddress ?? planVM.plan.placeName ?? l("app.mapv.polling_place_fallback", "Polling Place")
-        let addressParts = fallbackLocation
-            .split(separator: ",", maxSplits: 1, omittingEmptySubsequences: true)
-            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
-        let line1 = addressParts.first ?? fallbackLocation
-        let line2 = addressParts.count > 1 ? addressParts[1] : nil
-        let shareURL = directionsURL?.absoluteString ?? "https://votenow.app"
-        let fallbackCard = MapvShareCardView(
-            title: l("app.mapv.share.title", "My Plan to Vote"),
-            electionName: electionSubtitleText,
-            voteDateText: Self.dateFormatter.string(from: fallbackVoteDate),
-            voteTimeText: Self.timeFormatter.string(from: fallbackVoteDate),
-            locationLine1: line1,
-            locationLine2: line2,
-            shareURLString: shareURL
+        let payload = VoteNowShareCardPayload(
+            cardType: .mapv,
+            target: .mapv,
+            title: l("app.mapv.share.headline.plan_now", "Make Your Plan to Vote"),
+            subtitle: l(
+                "app.mapv.share.subtitle.plan_now",
+                "Pick your voting method, review deadlines, and get ready now."
+            ),
+            cta: l("app.mapv.share.cta.plan_now", "Make a Voting Plan"),
+            badge: "\(badgeState) · \(badgeDate)",
+            campaign: "send-to-friend",
+            details: details
         )
-        .overlay(alignment: .bottomTrailing) {
-            VoteNowLogoIcon(size: 77, shadowColor: .clear)
-                .opacity(0.94)
-                .padding(.trailing, 14)
-                .padding(.bottom, 14)
-        }
 
-        if let image = ViewSnapshotter.snapshot(fallbackCard, size: CGSize(width: 1080, height: 1350)) {
-            shareImage = image
-            showingShare = true
-        }
+        shareItems = VoteNowShareComposer.activityItems(for: payload)
+        showingShare = true
     }
 
-    private var calendarPayload: MAPVCalendarPlanPayload? {
-        if let mapv = mapvPlanStore.plan {
-            let cleanLocation = mapv.pollingPlaceAddress.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                ? mapv.pollingPlaceName
-                : mapv.pollingPlaceAddress
-            return MAPVCalendarPlanPayload(
-                planID: mapv.id.uuidString,
-                electionID: mapv.electionTitle,
-                electionTitle: mapv.electionTitle,
-                startDate: mapv.plannedArrival,
-                endDate: mapv.plannedArrival.addingTimeInterval(60 * 60),
-                location: cleanLocation,
-                notes: "\(l("app.mapv.calendar.notes_prefix", "Plan to vote at")) \(Self.timeFormatter.string(from: mapv.plannedArrival)).",
-                url: URL(string: "votenow://mapv")
-            )
+    private func shareMethodLabel() -> String {
+        if let method = mapvPlanStore.plan?.votingMethodRawValue {
+            switch method {
+            case "vote_by_mail":
+                return "Mail ballot"
+            case "early_vote":
+                return "Early vote"
+            case "election_day":
+                return "Election Day"
+            default:
+                break
+            }
         }
-
-        guard let voteTime = planVM.plan.voteTime else { return nil }
-        let location = planVM.plan.placeAddress ?? planVM.plan.placeName ?? l("app.mapv.polling_place_fallback", "Polling Place")
-        return MAPVCalendarPlanPayload(
-            planID: "legacy-\(voteTime.timeIntervalSince1970)",
-            electionID: "upcoming-election",
-            electionTitle: l("app.mapv.calendar.upcoming_election", "Upcoming Election"),
-            startDate: voteTime,
-            endDate: voteTime.addingTimeInterval(60 * 60),
-            location: location,
-            notes: "\(l("app.mapv.calendar.notes_prefix", "Plan to vote at")) \(Self.timeFormatter.string(from: voteTime)).",
-            url: URL(string: "votenow://mapv")
-        )
+        if let method = planVM.plan.method?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !method.isEmpty {
+            return method
+        }
+        return "Plan to vote"
     }
 
     private static let dateFormatter: DateFormatter = {
@@ -705,6 +618,8 @@ enum SectionType: CaseIterable {
 
 struct FeedbackView: View {
     @Environment(\.locale) private var locale
+    @Environment(\.dismiss) private var dismiss
+    private let logger = Logger(subsystem: "VoteNow", category: "FeedbackView")
 
     private enum FeedbackCategory: String, CaseIterable, Identifiable {
         case idea
@@ -726,7 +641,7 @@ struct FeedbackView: View {
     @State private var email: String = ""
     @State private var selectedCategory: FeedbackCategory
     @State private var isSending = false
-    @State private var successMessage: String?
+    @State private var isShowingSubmissionConfirmation = false
     @State private var errorMessage: String?
     @FocusState private var isFeedbackFocused: Bool
 
@@ -740,13 +655,17 @@ struct FeedbackView: View {
         feedbackText.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    private var boundedMessage: String {
+        String(trimmedMessage.prefix(2000))
+    }
+
     private var normalizedEmail: String? {
         let value = email.trimmingCharacters(in: .whitespacesAndNewlines)
         return value.isEmpty ? nil : value
     }
 
     private var canSend: Bool {
-        !trimmedMessage.isEmpty && !isSending
+        !boundedMessage.isEmpty && !isSending
     }
 
     private var appVersion: String? {
@@ -763,10 +682,10 @@ struct FeedbackView: View {
                 PageHeader(title: Text(l("app.feedback.title", "Feedback")))
 
                 VStack(alignment: .leading, spacing: 10) {
-                    Text(l("app.feedback.college_endeavor.title", "College Student Endeavor"))
+                    Text(l("app.feedback.college_endeavor.title", "We Want to Hear From You!"))
                         .font(.title3.weight(.bold))
 
-                    Text(l("app.feedback.college_endeavor.body", "VoteNow is a college student endeavor built to support all Americans remotely by reducing logistical friction in voting. We would love your feedback to improve the app and overall voter experience."))
+                    Text(l("app.feedback.college_endeavor.body", "VoteNow is an endeavor built to support all Americans vote by reducing logistical friction. As a college student endeavor, we want to learn from you and your experience voting. Your feedback is invaluable to improve the app and the voter experience."))
                         .font(.body)
                         .foregroundColor(VoteNowColors.mutedText)
                         .fixedSize(horizontal: false, vertical: true)
@@ -856,12 +775,6 @@ struct FeedbackView: View {
                     .buttonStyle(.plain)
                     .disabled(!canSend)
 
-                    if let successMessage {
-                        Text(successMessage)
-                            .font(.footnote.weight(.semibold))
-                            .foregroundColor(VoteNowColors.successGreen)
-                    }
-
                     if let errorMessage {
                         Text(errorMessage)
                             .font(.footnote.weight(.semibold))
@@ -884,13 +797,16 @@ struct FeedbackView: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(isPresented: $isShowingSubmissionConfirmation) {
+            FeedbackSubmissionConfirmationView(locale: locale) {
+                completeSubmissionFlow()
+            }
+        }
         .background(VoteNowColors.background)
         .onChange(of: feedbackText) { _, _ in
-            if successMessage != nil { successMessage = nil }
             if errorMessage != nil { errorMessage = nil }
         }
         .onChange(of: email) { _, _ in
-            if successMessage != nil { successMessage = nil }
             if errorMessage != nil { errorMessage = nil }
         }
     }
@@ -898,21 +814,20 @@ struct FeedbackView: View {
     private func sendFeedback() async {
         guard canSend else { return }
         isSending = true
-        successMessage = nil
         errorMessage = nil
 
         let userID = await SupabaseManager.shared.currentUserIDIfAvailable()
         let payload = FeedbackInsert(
             userID: userID,
             email: normalizedEmail,
-            message: trimmedMessage,
+            message: boundedMessage,
             category: selectedCategory.rawValue,
             rating: nil,
             appVersion: appVersion,
             buildNumber: buildNumber,
             platform: "iOS",
-            deviceModel: UIDevice.current.model,
-            osVersion: UIDevice.current.systemVersion,
+            deviceModel: nil,
+            osVersion: nil,
             locale: Locale.current.identifier
         )
 
@@ -922,9 +837,11 @@ struct FeedbackView: View {
             email = ""
             selectedCategory = .idea
             isFeedbackFocused = false
-            successMessage = l("app.feedback.success.sent", "Thanks - feedback sent.")
+            isShowingSubmissionConfirmation = true
         } catch {
-            print("[Feedback] submit failed:", String(describing: error))
+            #if DEBUG
+            logger.error("Feedback submit failed.")
+            #endif
             errorMessage = l("app.feedback.error.send_failed", "Could not send feedback. Please try again.")
         }
 
@@ -936,6 +853,75 @@ struct FeedbackView: View {
         case .idea: return "Idea"
         case .bug: return "Bug"
         case .question: return "Question"
+        }
+    }
+
+    private func completeSubmissionFlow() {
+        guard isShowingSubmissionConfirmation else { return }
+        isShowingSubmissionConfirmation = false
+        DispatchQueue.main.async {
+            dismiss()
+        }
+    }
+
+    private func l(_ key: String, _ fallback: String) -> String {
+        localizedCatalogString(
+            key,
+            tableName: "AppShell",
+            locale: locale,
+            fallback: fallback
+        )
+    }
+}
+
+private struct FeedbackSubmissionConfirmationView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    let locale: Locale
+    let onContinue: () -> Void
+    @State private var hasTriggeredAutoReturn = false
+
+    var body: some View {
+        VStack(spacing: 18) {
+            Spacer(minLength: 16)
+
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 68, weight: .semibold))
+                .foregroundColor(VoteNowColors.successGreen)
+
+            Text(l("app.feedback.success.screen.title", "Feedback Sent"))
+                .font(.title2.weight(.bold))
+                .multilineTextAlignment(.center)
+
+            Text(l("app.feedback.success.screen.body", "Thank you for sharing your experience. Returning you now."))
+                .font(.body)
+                .foregroundColor(VoteNowColors.mutedText)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Button(l("app.feedback.success.screen.action", "Return")) {
+                onContinue()
+            }
+            .font(.headline)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(VoteNowColors.primaryCTA)
+            .foregroundColor(.white)
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .buttonStyle(.plain)
+            .padding(.top, 6)
+
+            Spacer()
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(VoteNowColors.background)
+        .navigationBarBackButtonHidden(true)
+        .task {
+            guard !hasTriggeredAutoReturn else { return }
+            hasTriggeredAutoReturn = true
+            try? await Task.sleep(nanoseconds: reduceMotion ? 650_000_000 : 1_350_000_000)
+            onContinue()
         }
     }
 
@@ -954,5 +940,25 @@ struct MobilizationView_Previews: PreviewProvider {
         MobilizationView()
             .environmentObject(PlanViewModel())
             .environmentObject(MAPVPlanStore.shared)
+    }
+}
+
+private struct MAPVUtilityButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+    let fill: Color
+    let foreground: Color
+    let border: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundColor(foreground.opacity(isEnabled ? 1 : 0.6))
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(fill.opacity(isEnabled ? (configuration.isPressed ? 0.86 : 1.0) : 0.55))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(border.opacity(isEnabled ? 1 : 0.5), lineWidth: 1)
+            )
     }
 }

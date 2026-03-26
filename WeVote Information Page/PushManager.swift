@@ -1,5 +1,8 @@
 import UserNotifications
 import UIKit
+import OSLog
+
+private let pushLogger = Logger(subsystem: "VoteNow", category: "PushManager")
 
 @MainActor
 func requestPushPermissionAndRegister() async {
@@ -9,11 +12,11 @@ func requestPushPermissionAndRegister() async {
 
         if granted {
             UIApplication.shared.registerForRemoteNotifications()
-            print("✅ Push permission granted, registering with APNs…")
+            pushLogger.info("Push permission granted; registering for APNs.")
         } else {
-            print("⚠️ Push permission denied")
+            pushLogger.info("Push permission denied.")
         }
     } catch {
-        print("❌ Push permission request failed:", error)
+        pushLogger.error("Push permission request failed.")
     }
 }

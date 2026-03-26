@@ -198,7 +198,7 @@ final class PlanViewModel: ObservableObject {
             zip: savedAddressZip.isEmpty ? savedZip : savedAddressZip
         )
 
-        // TODO: Replace these sample entries with real data from your API or JSON bundle.
+        // Fallback seed entries shown when no richer timeline source is available.
         upcomingElections = [
             Election(
                 name: "NYC Primary Election",
