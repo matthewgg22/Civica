@@ -300,6 +300,16 @@ class IssueBriefService:
                 policy_flags=list(dict.fromkeys(policy_flags + ["normalized_personal_antipathy"])),
             )
 
+        if _is_ukraine_policy_signal(request.concern_text):
+            return IssueClassifyResponse(
+                status=BriefStatus.OK,
+                canonical_issue="ukraine-security-and-humanitarian-support",
+                confidence=0.78,
+                clarification_question=None,
+                candidate_issues=[],
+                policy_flags=list(dict.fromkeys(policy_flags + ["normalized_ukraine_signal"])),
+            )
+
         issue_core = self._load_issue_core()
         ranked = self._rank_issues(request.concern_text, issue_core)
         if not ranked or ranked[0][1] <= 0:
@@ -887,6 +897,23 @@ def _is_person_antipathy_without_policy(concern_text: str) -> bool:
     return has_figure and has_antipathy and not has_policy_signal and token_count <= 8
 
 
+def _is_ukraine_policy_signal(concern_text: str) -> bool:
+    text = _normalize_space(concern_text.lower())
+    if not text:
+        return False
+    return any(
+        token in text
+        for token in (
+            "ukraine",
+            "russia",
+            "russian invasion",
+            "kyiv",
+            "zelensky",
+            "ukrainian",
+        )
+    )
+
+
 def _contains_unverified_legislation_or_quote(text: str, evidence: list[NormalizedEvidence]) -> bool:
     if not text.strip():
         return False
@@ -978,6 +1005,26 @@ def _seed_issue_core_rows() -> list[dict[str, Any]]:
                 ),
                 "tags": ["tsa", "airports", "travel delays", "aviation", "staffing"],
                 "synonyms": ["airport security lines", "tsa officer staffing", "checkpoint delays"],
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+            },
+            {
+                "canonical_issue": "ukraine-security-and-humanitarian-support",
+                "title": "Ukraine Security and Humanitarian Support",
+                "category": "Foreign Affairs",
+                "overview": (
+                    "This issue focuses on U.S. policy toward Ukraine, including defensive support, humanitarian aid, "
+                    "and congressional oversight of funding and strategy. It does not assume a specific bill unless the "
+                    "user provides one."
+                ),
+                "tags": ["ukraine", "russia", "foreign policy", "defense", "humanitarian aid", "appropriations"],
+                "synonyms": [
+                    "support for ukraine",
+                    "ukraine aid",
+                    "ukraine war policy",
+                    "russia ukraine war",
+                    "ukraine humanitarian support",
+                    "ukraine security assistance",
+                ],
                 "updated_at": datetime.now(timezone.utc).isoformat(),
             },
         ]
@@ -1107,6 +1154,32 @@ def _seed_evidence_rows() -> list[dict[str, Any]]:
                     "TSA staffing turnover and attrition pressures can contribute to checkpoint bottlenecks during high travel demand."
                 ),
                 "evidence_type": "workforce_report",
+                "supports_view": "support",
+            },
+            {
+                "evidence_id": str(uuid.uuid4()),
+                "canonical_issue": "ukraine-security-and-humanitarian-support",
+                "source_name": "Congressional foreign affairs and appropriations context",
+                "source_url": None,
+                "published_at": now_iso,
+                "retrieved_at": now_iso,
+                "claim": (
+                    "Congress can influence Ukraine policy through appropriations, oversight hearings, and authorization decisions."
+                ),
+                "evidence_type": "institutional_context",
+                "supports_view": None,
+            },
+            {
+                "evidence_id": str(uuid.uuid4()),
+                "canonical_issue": "ukraine-security-and-humanitarian-support",
+                "source_name": "Constituent ask framing for Ukraine policy",
+                "source_url": None,
+                "published_at": now_iso,
+                "retrieved_at": now_iso,
+                "claim": (
+                    "Constituents can ask members to support or oppose additional Ukraine-related security and humanitarian actions without naming a specific bill."
+                ),
+                "evidence_type": "civic_process",
                 "supports_view": "support",
             },
         ]

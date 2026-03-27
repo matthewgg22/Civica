@@ -56,6 +56,11 @@ _ISSUE_COMMITTEE_MAP: dict[str, list[str]] = {
         "Foreign Relations",
         "Armed Services",
     ],
+    "ukraine-security-and-humanitarian-support": [
+        "Foreign Relations",
+        "Armed Services",
+        "Appropriations",
+    ],
 }
 
 _SCRIPT_PERSONALIZATION_FIELDS = [
