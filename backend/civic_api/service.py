@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 import re
 import uuid
@@ -41,6 +42,8 @@ from .openai_assistant import GeneratedDraft, OpenAICivicAssistant
 from .relevance import enrich_house_vote_signal, score_rep_issue, serialize_signals
 from .repository import CivicRepository, InMemoryCivicRepository
 from .script_composer import compose_call_scripts
+
+logger = logging.getLogger(__name__)
 
 
 class CivicService:
@@ -513,7 +516,7 @@ class CivicService:
         for index, row in enumerate(sorted_rows[: max(1, limit)], start=1):
             entries.append(
                 LeaderboardEntry(
-                    user_id=row.user_id,
+                    user_alias=self._leaderboard_alias(row.user_id),
                     eligible_verified_call_count=row.eligible_verified_call_count,
                     unique_office_count=row.unique_office_count,
                     rank=index,
@@ -542,11 +545,12 @@ class CivicService:
             period_start or datetime.now(timezone.utc),
         )
         board = self.get_leaderboard(period_type=period_type, period_start=resolved_period_start, limit=500)
+        user_alias = self._leaderboard_alias(user_id)
         rank: int | None = None
         count = 0
         unique_offices = 0
         for entry in board.entries:
-            if entry.user_id == user_id:
+            if entry.user_alias == user_alias:
                 rank = entry.rank
                 count = entry.eligible_verified_call_count
                 unique_offices = entry.unique_office_count
@@ -718,7 +722,9 @@ class CivicService:
         return rollups
 
     def _track(self, event_name: str, **payload: Any) -> None:
-        print(f"[analytics] {event_name} {self._redacted_payload(payload)}")
+        if not logger.isEnabledFor(logging.INFO):
+            return
+        logger.info("[analytics] %s %s", event_name, self._redacted_payload(payload))
 
     def _redacted_payload(self, payload: dict[str, Any]) -> dict[str, Any]:
         redacted: dict[str, Any] = {}
@@ -745,6 +751,11 @@ class CivicService:
     def _hash_identifier(self, value: str) -> str:
         digest = hashlib.sha256(value.encode("utf-8")).hexdigest()
         return f"sha256:{digest[:12]}"
+
+    def _leaderboard_alias(self, user_id: str) -> str:
+        salt = os.environ.get("VOTENOW_LEADERBOARD_ALIAS_SALT", "").strip() or "votenow-leaderboard"
+        digest = hashlib.sha256(f"{salt}:{user_id}".encode("utf-8")).hexdigest()
+        return f"voter-{digest[:16]}"
 
     def _load_user_reps(self, user_id: str) -> list[RepContext]:
         reps = self.repository.list_rep_context(user_id)
@@ -1012,7 +1023,11 @@ class CivicService:
                     bill_ref=None,
                 )
             except Exception as exc:
-                print(f"[civic] unable to load committee assignments for {rep.rep_name}: {exc}")
+                logger.warning(
+                    "[civic] unable to load committee assignments for %s: %s",
+                    rep.rep_name,
+                    exc,
+                )
                 continue
 
             committee_names: list[str] = []

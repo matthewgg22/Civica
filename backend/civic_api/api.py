@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import json
+import logging
+import math
 import os
 from datetime import datetime, timezone
 from html import escape
-from typing import Any
+from typing import Any, Callable
 from urllib.parse import urlencode
 import urllib.error
 import urllib.request
@@ -20,32 +22,121 @@ from .models import (
     IssueClassifyRequest,
     LeaderboardPeriodType,
     RepTarget,
+    ScriptPackageRequest,
 )
 from .issue_brief_service import IssueBriefService
+from .repository import CivicRepository, InMemoryCivicRepository, SupabaseCivicRepository
+from .script_package_service import ScriptPackageService
 from .service import CivicService
 
-service = CivicService()
+logger = logging.getLogger(__name__)
+
+
+def _is_production_env() -> bool:
+    for key in ("VOTENOW_ENV", "APP_ENV", "ENV"):
+        value = os.environ.get(key, "").strip().lower()
+        if value in {"prod", "production"}:
+            return True
+    return False
+
+
+def _configured_repository_backend() -> str:
+    configured = os.environ.get("VOTENOW_CIVIC_REPOSITORY", "").strip().lower()
+    if configured:
+        return configured
+    return "supabase" if _is_production_env() else "inmemory"
+
+
+def _build_repository() -> CivicRepository:
+    backend = _configured_repository_backend()
+
+    if backend == "supabase":
+        return SupabaseCivicRepository()
+
+    if backend == "inmemory":
+        if _is_production_env():
+            raise RuntimeError(
+                "InMemoryCivicRepository is not allowed in production. "
+                "Set VOTENOW_CIVIC_REPOSITORY=supabase and configure SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY."
+            )
+        return InMemoryCivicRepository()
+
+    raise RuntimeError(
+        f"Unsupported VOTENOW_CIVIC_REPOSITORY={backend!r}. Expected 'supabase' or 'inmemory'."
+    )
+
+
+service = CivicService(repository=_build_repository())
 issue_brief_service = IssueBriefService(repository=service.repository)
+script_package_service = ScriptPackageService(civic_service=service, issue_brief_service=issue_brief_service)
+
+
+def _required_string(payload: dict[str, Any], key: str) -> str:
+    raw = payload.get(key)
+    value = str(raw).strip() if raw is not None else ""
+    if not value:
+        raise ValueError(f"{key} is required.")
+    return value
+
+
+def _optional_string(payload: dict[str, Any], key: str) -> str | None:
+    raw = payload.get(key)
+    if raw is None:
+        return None
+    value = str(raw).strip()
+    return value or None
+
+
+def _coerce_bool(value: Any, field_name: str, default: bool) -> bool:
+    if value is None:
+        return default
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, int) and value in {0, 1}:
+        return bool(value)
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        if normalized in {"true", "1", "yes", "y", "on"}:
+            return True
+        if normalized in {"false", "0", "no", "n", "off"}:
+            return False
+    raise ValueError(f"{field_name} must be a boolean.")
+
+
+def _coerce_rep_targets(payload: dict[str, Any]) -> list[RepTarget]:
+    raw_targets = payload.get("target_reps", [])
+    if raw_targets is None:
+        return []
+    if not isinstance(raw_targets, list):
+        raise ValueError("target_reps must be an array.")
+
+    normalized: list[RepTarget] = []
+    for value in raw_targets:
+        candidate = str(value).strip()
+        if not candidate:
+            continue
+        normalized.append(RepTarget(candidate))
+    return normalized
 
 
 def parse_resolve_request(payload: dict[str, Any], user_id: str) -> AssistantResolveRequest:
     return AssistantResolveRequest(
         user_id=user_id,
-        concern_text=str(payload["concern_text"]),
-        selected_ask=Ask(str(payload["selected_ask"])),
-        target_reps=[RepTarget(str(value)) for value in payload.get("target_reps", [])],
-        optional_bill_ref=payload.get("optional_bill_ref"),
+        concern_text=_required_string(payload, "concern_text"),
+        selected_ask=Ask(_required_string(payload, "selected_ask")),
+        target_reps=_coerce_rep_targets(payload),
+        optional_bill_ref=_optional_string(payload, "optional_bill_ref"),
     )
 
 
 def parse_log_request(payload: dict[str, Any], user_id: str) -> CallLogRequest:
     return CallLogRequest(
         user_id=user_id,
-        rep_id=str(payload["rep_id"]),
-        issue_id=str(payload["issue_id"]),
-        brief_id=str(payload["brief_id"]),
-        outcome=CallOutcome(str(payload["outcome"])),
-        staffer_position=payload.get("staffer_position"),
+        rep_id=_required_string(payload, "rep_id"),
+        issue_id=_required_string(payload, "issue_id"),
+        brief_id=_required_string(payload, "brief_id"),
+        outcome=CallOutcome(_required_string(payload, "outcome")),
+        staffer_position=_optional_string(payload, "staffer_position"),
         notes=str(payload.get("notes", "")),
     )
 
@@ -53,18 +144,18 @@ def parse_log_request(payload: dict[str, Any], user_id: str) -> CallLogRequest:
 def parse_launch_request(payload: dict[str, Any], user_id: str) -> CallLaunchRequest:
     return CallLaunchRequest(
         user_id=user_id,
-        office_id=str(payload["office_id"]),
-        issue_id=payload.get("issue_id"),
-        source_screen=str(payload.get("source_screen", "issue_call_center")),
-        session_id=payload.get("session_id"),
+        office_id=_required_string(payload, "office_id"),
+        issue_id=_optional_string(payload, "issue_id"),
+        source_screen=_optional_string(payload, "source_screen") or "issue_call_center",
+        session_id=_optional_string(payload, "session_id"),
     )
 
 
 def parse_completion_request(payload: dict[str, Any], user_id: str) -> CallCompletionRequest:
     return CallCompletionRequest(
         user_id=user_id,
-        launch_event_id=str(payload["launch_event_id"]),
-        completed=bool(payload.get("completed", True)),
+        launch_event_id=_required_string(payload, "launch_event_id"),
+        completed=_coerce_bool(payload.get("completed"), "completed", default=True),
     )
 
 
@@ -85,7 +176,18 @@ def parse_issue_brief_request(payload: dict[str, Any], user_id: str) -> IssueBri
         user_id=user_id,
         concern_text=str(payload.get("concern_text", "")).strip(),
         requested_output=(str(payload.get("requested_output", "")).strip() or None),
-        allow_revision=bool(payload.get("allow_revision", True)),
+        allow_revision=_coerce_bool(payload.get("allow_revision"), "allow_revision", default=True),
+    )
+
+
+def parse_script_package_request(payload: dict[str, Any], user_id: str) -> ScriptPackageRequest:
+    return ScriptPackageRequest(
+        user_id=user_id,
+        concern_text=_required_string(payload, "concern_text"),
+        selected_ask=Ask(_required_string(payload, "selected_ask")),
+        target_reps=_coerce_rep_targets(payload),
+        optional_bill_ref=_optional_string(payload, "optional_bill_ref"),
+        allow_revision=_coerce_bool(payload.get("allow_revision"), "allow_revision", default=True),
     )
 
 
@@ -168,6 +270,11 @@ def post_issue_classify(payload: dict[str, Any], user_id: str) -> dict[str, Any]
 
 def post_issue_brief(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
     response = issue_brief_service.create_brief(parse_issue_brief_request(payload, user_id))
+    return response.to_dict()
+
+
+def post_script_package(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+    response = script_package_service.create_package(parse_script_package_request(payload, user_id))
     return response.to_dict()
 
 
@@ -433,143 +540,148 @@ def require_authenticated_user_id(request: Request) -> str:
     return _resolve_authenticated_user_id(access_token)
 
 
+def _internal_server_error(exc: Exception) -> HTTPException:
+    logger.exception("Unhandled civic API exception", exc_info=exc)
+    return HTTPException(status_code=500, detail="Internal server error.")
+
+
+def _run_endpoint(
+    handler: Callable[[], dict[str, Any]],
+    *,
+    bad_request_exceptions: tuple[type[Exception], ...] = (),
+) -> dict[str, Any]:
+    try:
+        return handler()
+    except HTTPException:
+        raise
+    except bad_request_exceptions as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:  # pragma: no cover
+        raise _internal_server_error(exc) from exc
+
+
+def get_openstates_people_geo(lat: float, lng: float, include: str | None = "links") -> dict[str, Any]:
+    if not math.isfinite(lat) or not math.isfinite(lng):
+        raise ValueError("Invalid coordinates.")
+    if lat < -90 or lat > 90 or lng < -180 or lng > 180:
+        raise ValueError("Coordinates out of range.")
+
+    api_key = os.environ.get("OPENSTATES_API_KEY", "").strip()
+    if not api_key or api_key == "YOUR_OPENSTATES_API_KEY":
+        raise HTTPException(status_code=500, detail="OpenStates API key is not configured.")
+
+    params = {
+        "lat": f"{lat:.6f}",
+        "lng": f"{lng:.6f}",
+        "include": "links" if (include or "").strip().lower() == "links" else "links",
+    }
+
+    openstates_request = urllib.request.Request(
+        f"https://v3.openstates.org/people.geo?{urlencode(params)}",
+        method="GET",
+        headers={
+            "Accept": "application/json",
+            "X-API-KEY": api_key,
+        },
+    )
+
+    try:
+        with urllib.request.urlopen(openstates_request, timeout=10) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        if exc.code == 400:
+            raise HTTPException(status_code=400, detail="Invalid OpenStates request.") from exc
+        raise HTTPException(status_code=502, detail="OpenStates request failed.") from exc
+    except (urllib.error.URLError, json.JSONDecodeError) as exc:
+        raise HTTPException(status_code=502, detail="OpenStates request unavailable.") from exc
+
+    if not isinstance(payload, dict):
+        return {"results": []}
+    return payload
+
+
 if FastAPI is not None:
     app = FastAPI(title="VoteNow Civic API", version="1.0.0")
+    bad_request = (ValueError, TypeError)
 
     @app.get("/api/v1/civic/examples")
     def civic_examples(request: Request) -> dict[str, Any]:
-        try:
-            user_id = require_authenticated_user_id(request)
-            return get_examples(user_id)
-        except HTTPException:
-            raise
-        except Exception as exc:  # pragma: no cover
-            raise HTTPException(status_code=500, detail=str(exc)) from exc
+        return _run_endpoint(lambda: get_examples(require_authenticated_user_id(request)))
 
     @app.post("/api/v1/civic/assistant/resolve")
     def civic_resolve(payload: dict[str, Any], request: Request) -> dict[str, Any]:
-        try:
-            user_id = require_authenticated_user_id(request)
-            return post_assistant_resolve(payload, user_id)
-        except HTTPException:
-            raise
-        except ValueError as exc:  # pragma: no cover
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        except Exception as exc:  # pragma: no cover
-            raise HTTPException(status_code=500, detail=str(exc)) from exc
+        return _run_endpoint(
+            lambda: post_assistant_resolve(payload, require_authenticated_user_id(request)),
+            bad_request_exceptions=bad_request,
+        )
 
     @app.post("/api/issue-classify")
     def civic_issue_classify(payload: dict[str, Any], request: Request) -> dict[str, Any]:
-        try:
-            user_id = require_authenticated_user_id(request)
-            return post_issue_classify(payload, user_id)
-        except HTTPException:
-            raise
-        except ValueError as exc:  # pragma: no cover
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        except Exception as exc:  # pragma: no cover
-            raise HTTPException(status_code=500, detail=str(exc)) from exc
+        return _run_endpoint(
+            lambda: post_issue_classify(payload, require_authenticated_user_id(request)),
+            bad_request_exceptions=bad_request,
+        )
 
     @app.post("/api/issue-brief")
     def civic_issue_brief(payload: dict[str, Any], request: Request) -> dict[str, Any]:
-        try:
-            user_id = require_authenticated_user_id(request)
-            return post_issue_brief(payload, user_id)
-        except HTTPException:
-            raise
-        except ValueError as exc:  # pragma: no cover
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        except Exception as exc:  # pragma: no cover
-            raise HTTPException(status_code=500, detail=str(exc)) from exc
+        return _run_endpoint(
+            lambda: post_issue_brief(payload, require_authenticated_user_id(request)),
+            bad_request_exceptions=bad_request,
+        )
+
+    @app.post("/api/v1/civic/script-package")
+    def civic_script_package(payload: dict[str, Any], request: Request) -> dict[str, Any]:
+        return _run_endpoint(
+            lambda: post_script_package(payload, require_authenticated_user_id(request)),
+            bad_request_exceptions=bad_request,
+        )
 
     @app.post("/api/v1/civic/calls/log")
     def civic_log_call(payload: dict[str, Any], request: Request) -> dict[str, Any]:
-        try:
-            user_id = require_authenticated_user_id(request)
-            return post_calls_log(payload, user_id)
-        except HTTPException:
-            raise
-        except ValueError as exc:  # pragma: no cover
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        except Exception as exc:  # pragma: no cover
-            raise HTTPException(status_code=500, detail=str(exc)) from exc
+        return _run_endpoint(
+            lambda: post_calls_log(payload, require_authenticated_user_id(request)),
+            bad_request_exceptions=bad_request,
+        )
 
     @app.post("/api/v1/civic/calls/launch")
     def civic_call_launch(payload: dict[str, Any], request: Request) -> dict[str, Any]:
-        try:
-            user_id = require_authenticated_user_id(request)
-            return post_calls_launch(payload, user_id)
-        except HTTPException:
-            raise
-        except ValueError as exc:  # pragma: no cover
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        except Exception as exc:  # pragma: no cover
-            raise HTTPException(status_code=500, detail=str(exc)) from exc
+        return _run_endpoint(
+            lambda: post_calls_launch(payload, require_authenticated_user_id(request)),
+            bad_request_exceptions=bad_request,
+        )
 
     @app.post("/api/v1/civic/calls/confirm")
     def civic_call_confirm(payload: dict[str, Any], request: Request) -> dict[str, Any]:
-        try:
-            user_id = require_authenticated_user_id(request)
-            return post_calls_confirm(payload, user_id)
-        except HTTPException:
-            raise
-        except ValueError as exc:  # pragma: no cover
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        except Exception as exc:  # pragma: no cover
-            raise HTTPException(status_code=500, detail=str(exc)) from exc
+        return _run_endpoint(
+            lambda: post_calls_confirm(payload, require_authenticated_user_id(request)),
+            bad_request_exceptions=bad_request,
+        )
 
     @app.get("/api/v1/civic/history")
     def civic_history(request: Request) -> dict[str, Any]:
-        try:
-            user_id = require_authenticated_user_id(request)
-            return get_history(user_id)
-        except HTTPException:
-            raise
-        except Exception as exc:  # pragma: no cover
-            raise HTTPException(status_code=500, detail=str(exc)) from exc
+        return _run_endpoint(lambda: get_history(require_authenticated_user_id(request)))
 
     @app.get("/api/v1/civic/call-score/summary")
     def civic_call_score_summary(request: Request) -> dict[str, Any]:
-        try:
-            user_id = require_authenticated_user_id(request)
-            return get_call_score_summary(user_id)
-        except HTTPException:
-            raise
-        except Exception as exc:  # pragma: no cover
-            raise HTTPException(status_code=500, detail=str(exc)) from exc
+        return _run_endpoint(lambda: get_call_score_summary(require_authenticated_user_id(request)))
 
     @app.get("/api/v1/civic/call-score/breakdown")
     def civic_call_score_breakdown(request: Request) -> dict[str, Any]:
-        try:
-            user_id = require_authenticated_user_id(request)
-            return get_call_score_breakdown(user_id)
-        except HTTPException:
-            raise
-        except Exception as exc:  # pragma: no cover
-            raise HTTPException(status_code=500, detail=str(exc)) from exc
+        return _run_endpoint(lambda: get_call_score_breakdown(require_authenticated_user_id(request)))
 
     @app.get("/api/v1/civic/call-score/history")
     def civic_call_score_history(request: Request, limit: int = 20) -> dict[str, Any]:
-        try:
-            user_id = require_authenticated_user_id(request)
-            return get_call_score_history(user_id=user_id, limit=limit)
-        except HTTPException:
-            raise
-        except Exception as exc:  # pragma: no cover
-            raise HTTPException(status_code=500, detail=str(exc)) from exc
+        return _run_endpoint(
+            lambda: get_call_score_history(user_id=require_authenticated_user_id(request), limit=limit)
+        )
 
     @app.post("/api/v1/civic/call-score/recompute")
     def civic_call_score_recompute(payload: dict[str, Any], request: Request) -> dict[str, Any]:
-        try:
+        def handler() -> dict[str, Any]:
             _ = payload
-            user_id = require_authenticated_user_id(request)
-            return post_call_score_recompute(user_id)
-        except HTTPException:
-            raise
-        except ValueError as exc:  # pragma: no cover
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        except Exception as exc:  # pragma: no cover
-            raise HTTPException(status_code=500, detail=str(exc)) from exc
+            return post_call_score_recompute(require_authenticated_user_id(request))
+
+        return _run_endpoint(handler, bad_request_exceptions=bad_request)
 
     @app.get("/api/v1/civic/leaderboard")
     def civic_leaderboard(
@@ -578,15 +690,11 @@ if FastAPI is not None:
         period_start: str | None = None,
         limit: int = 100,
     ) -> dict[str, Any]:
-        try:
+        def handler() -> dict[str, Any]:
             _ = require_authenticated_user_id(request)
             return get_leaderboard(period_type=period_type, period_start=period_start, limit=limit)
-        except HTTPException:
-            raise
-        except ValueError as exc:  # pragma: no cover
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        except Exception as exc:  # pragma: no cover
-            raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+        return _run_endpoint(handler, bad_request_exceptions=bad_request)
 
     @app.get("/api/v1/civic/leaderboard/me")
     def civic_leaderboard_me(
@@ -594,15 +702,27 @@ if FastAPI is not None:
         period_type: str,
         period_start: str | None = None,
     ) -> dict[str, Any]:
-        try:
-            user_id = require_authenticated_user_id(request)
-            return get_leaderboard_me(user_id=user_id, period_type=period_type, period_start=period_start)
-        except HTTPException:
-            raise
-        except ValueError as exc:  # pragma: no cover
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        except Exception as exc:  # pragma: no cover
-            raise HTTPException(status_code=500, detail=str(exc)) from exc
+        return _run_endpoint(
+            lambda: get_leaderboard_me(
+                user_id=require_authenticated_user_id(request),
+                period_type=period_type,
+                period_start=period_start,
+            ),
+            bad_request_exceptions=bad_request,
+        )
+
+    @app.get("/api/v1/openstates/people.geo")
+    def openstates_people_geo(
+        request: Request,
+        lat: float,
+        lng: float,
+        include: str = "links",
+    ) -> dict[str, Any]:
+        def handler() -> dict[str, Any]:
+            _ = require_authenticated_user_id(request)
+            return get_openstates_people_geo(lat=lat, lng=lng, include=include)
+
+        return _run_endpoint(handler, bad_request_exceptions=bad_request)
 
     @app.get("/share/preview/{card_type}.svg")
     def share_preview_svg(

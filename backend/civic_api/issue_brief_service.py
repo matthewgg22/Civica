@@ -57,6 +57,8 @@ _DEMOGRAPHIC_TARGETING_PATTERNS = (
 
 _CANDIDATE_ENDORSEMENT_PATTERNS = (
     "endorse ",
+    "endorsing ",
+    "endorsement ",
     "support candidate",
     "vote for ",
     "re-elect ",
@@ -71,6 +73,48 @@ _ALLOWED_NOMINATION_CONTEXT = (
     "confirmation",
     "senate vote",
     "senate hearing",
+)
+
+_PUBLIC_FIGURE_TOKENS = (
+    "trump",
+    "biden",
+    "harris",
+    "vance",
+    "obama",
+    "desantis",
+    "newsom",
+)
+
+_ANTIPATHY_PATTERNS = (
+    "i hate ",
+    "hate ",
+    "can't stand ",
+    "cannot stand ",
+    "sick of ",
+    "fed up with ",
+)
+
+_POLICY_SIGNAL_TOKENS = (
+    "bill",
+    "law",
+    "act",
+    "policy",
+    "budget",
+    "tax",
+    "immigration",
+    "healthcare",
+    "abortion",
+    "gun",
+    "climate",
+    "fema",
+    "tsa",
+    "crypto",
+    "housing",
+    "inflation",
+    "medicare",
+    "social security",
+    "war",
+    "iran",
 )
 
 _PROMPTS_DIR = Path(__file__).resolve().parent / "prompts"
@@ -244,6 +288,16 @@ class IssueBriefService:
                 clarification_question="I can provide a policy briefing instead.",
                 candidate_issues=[],
                 policy_flags=policy_flags,
+            )
+
+        if _is_person_antipathy_without_policy(request.concern_text):
+            return IssueClassifyResponse(
+                status=BriefStatus.OK,
+                canonical_issue="executive-accountability-and-oversight",
+                confidence=0.42,
+                clarification_question=None,
+                candidate_issues=[],
+                policy_flags=list(dict.fromkeys(policy_flags + ["normalized_personal_antipathy"])),
             )
 
         issue_core = self._load_issue_core()
@@ -798,7 +852,10 @@ def _evaluate_policy(concern_text: str, requested_output: str | None) -> tuple[l
         flags.append("demographic_targeting")
         return flags, "Demographic targeting requests are not allowed."
 
-    if any(pattern in text for pattern in _CANDIDATE_ENDORSEMENT_PATTERNS):
+    has_candidate_endorsement = any(pattern in text for pattern in _CANDIDATE_ENDORSEMENT_PATTERNS) or bool(
+        re.search(r"\bendorse(?:ment|d|s|ing)?\b", text)
+    )
+    if has_candidate_endorsement:
         is_nomination_context = any(token in text for token in _ALLOWED_NOMINATION_CONTEXT)
         if not is_nomination_context:
             flags.append("candidate_endorsement")
@@ -817,6 +874,17 @@ def _infer_user_stance(concern_text: str) -> str | None:
     if "concerned" in lower or "worried" in lower:
         return "seeking risk reduction"
     return None
+
+
+def _is_person_antipathy_without_policy(concern_text: str) -> bool:
+    text = _normalize_space(concern_text.lower())
+    if not text:
+        return False
+    has_figure = any(token in text for token in _PUBLIC_FIGURE_TOKENS)
+    has_antipathy = any(pattern in text for pattern in _ANTIPATHY_PATTERNS)
+    has_policy_signal = any(token in text for token in _POLICY_SIGNAL_TOKENS)
+    token_count = len(_tokenize(text))
+    return has_figure and has_antipathy and not has_policy_signal and token_count <= 8
 
 
 def _contains_unverified_legislation_or_quote(text: str, evidence: list[NormalizedEvidence]) -> bool:
@@ -851,6 +919,24 @@ def _seed_issue_core_rows() -> list[dict[str, Any]]:
 
     rows.extend(
         [
+            {
+                "canonical_issue": "executive-accountability-and-oversight",
+                "title": "Executive Accountability and Oversight",
+                "category": "Government Oversight",
+                "overview": (
+                    "This issue focuses on executive-branch accountability, transparency, and constitutional checks and "
+                    "balances. Constituents can ask Congress to use hearings, public statements, and oversight authorities "
+                    "to hold executive officials accountable."
+                ),
+                "tags": ["oversight", "accountability", "executive branch", "white house", "checks and balances"],
+                "synonyms": [
+                    "executive accountability",
+                    "presidential accountability",
+                    "white house oversight",
+                    "congressional oversight",
+                ],
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+            },
             {
                 "canonical_issue": "crypto-consumer-protection",
                 "title": "Cryptocurrency Consumer Protection",
@@ -919,6 +1005,32 @@ def _seed_evidence_rows() -> list[dict[str, Any]]:
 
     rows.extend(
         [
+            {
+                "evidence_id": str(uuid.uuid4()),
+                "canonical_issue": "executive-accountability-and-oversight",
+                "source_name": "Congressional oversight baseline",
+                "source_url": None,
+                "published_at": now_iso,
+                "retrieved_at": now_iso,
+                "claim": (
+                    "Congress has oversight tools including hearings, investigations, appropriations controls, and public reporting requirements."
+                ),
+                "evidence_type": "institutional_context",
+                "supports_view": None,
+            },
+            {
+                "evidence_id": str(uuid.uuid4()),
+                "canonical_issue": "executive-accountability-and-oversight",
+                "source_name": "Constituent accountability framing",
+                "source_url": None,
+                "published_at": now_iso,
+                "retrieved_at": now_iso,
+                "claim": (
+                    "Constituents can ask members of Congress to publicly state positions and use oversight powers to increase executive accountability."
+                ),
+                "evidence_type": "civic_process",
+                "supports_view": "support",
+            },
             {
                 "evidence_id": str(uuid.uuid4()),
                 "canonical_issue": "crypto-consumer-protection",

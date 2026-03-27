@@ -14,14 +14,71 @@ struct IssueCallCenterViewModelTests {
             examples
         }
 
-        func resolve(
+        func createScriptPackage(
             userID: String,
             concernText: String,
             selectedAsk: CivicAsk,
             targetReps: [CivicRepSlot],
             optionalBillRef: String?
-        ) async throws -> CivicIssueResolutionResponse {
-            resolveResponse
+        ) async throws -> CivicScriptPackageResponse {
+            let billText = optionalBillRef ?? resolveResponse.resolvedEntities.bills.first ?? "this issue"
+            let overlays = resolveResponse.callBriefs.map { brief in
+                CivicScriptPackageOfficeOverlay(
+                    repID: brief.repID,
+                    repName: brief.repName,
+                    officeType: brief.officeType,
+                    chamber: brief.officeType.lowercased().contains("senator") ? "senate" : "house",
+                    committeeMatch: CivicScriptPackageCommitteeMatch(
+                        matched: !brief.relatedCommittees.isEmpty,
+                        matchedCommittees: brief.relatedCommittees,
+                        jurisdictionCallout: nil
+                    ),
+                    roleOverlays: ["none"],
+                    liveScriptFinal: brief.liveScript,
+                    voicemailScriptFinal: brief.voicemailScript,
+                    relatedCommittees: brief.relatedCommittees
+                )
+            }
+            return CivicScriptPackageResponse(
+                status: .ok,
+                packageID: "pkg-test",
+                canonicalContext: CivicScriptPackageCanonicalContext(
+                    issueID: resolveResponse.issueID,
+                    title: resolveResponse.issueTitle,
+                    summaryPlain: resolveResponse.issueSummary,
+                    commonAsk: selectedAsk.rawValue,
+                    relatedBills: resolveResponse.resolvedEntities.bills,
+                    billSource: optionalBillRef == nil ? "none" : "user",
+                    billDisplayText: billText,
+                    evidenceQuality: "limited",
+                    evidenceWarning: nil,
+                    keyFacts: [
+                        CivicIssueBriefFact(
+                            fact: "Test fact",
+                            sourceName: "UnitTest",
+                            sourceURL: nil,
+                            publishedAt: nil
+                        )
+                    ]
+                ),
+                scriptCore: CivicScriptPackageScriptCore(
+                    liveScriptCore: "Hi, I am calling {OFFICE_TYPE} {REP_NAME} about this issue.",
+                    voicemailScriptCore: "Voicemail for {OFFICE_TYPE} {REP_NAME} about this issue."
+                ),
+                officeOverlays: overlays,
+                reviewCanRegenerate: true,
+                reviewRegenerateHint: "Adjust and regenerate.",
+                truthTrace: CivicScriptPackageTruthTrace(
+                    normalizedInput: concernText,
+                    canonicalIssueID: resolveResponse.issueID,
+                    classificationReason: "unit_test",
+                    billSource: optionalBillRef == nil ? "none" : "user",
+                    personalizationFieldsUsed: ["rep_name", "office_type"],
+                    fallbackUsed: "none",
+                    refusalReason: nil
+                ),
+                policyFlags: []
+            )
         }
 
         func logCall(

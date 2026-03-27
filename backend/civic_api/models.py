@@ -240,7 +240,7 @@ class CallScoreHistoryResponse:
 
 @dataclass
 class LeaderboardEntry:
-    user_id: str
+    user_alias: str
     eligible_verified_call_count: int
     unique_office_count: int
     rank: int
@@ -582,4 +582,90 @@ class IssueBriefResponse:
         payload = asdict(self)
         if isinstance(self.status, Enum):
             payload["status"] = self.status.value
+        return payload
+
+
+@dataclass
+class ScriptPackageRequest:
+    user_id: str
+    concern_text: str
+    selected_ask: Ask
+    target_reps: list[RepTarget]
+    optional_bill_ref: str | None = None
+    allow_revision: bool = True
+
+
+@dataclass
+class ScriptPackageCommitteeMatch:
+    matched: bool
+    matched_committees: list[str] = field(default_factory=list)
+    jurisdiction_callout: str | None = None
+
+
+@dataclass
+class ScriptPackageOfficeOverlay:
+    rep_id: str
+    rep_name: str
+    office_type: str
+    chamber: str
+    committee_match: ScriptPackageCommitteeMatch
+    role_overlays: list[str] = field(default_factory=list)
+    live_script_final: str = ""
+    voicemail_script_final: str = ""
+    related_committees: list[str] = field(default_factory=list)
+
+
+@dataclass
+class ScriptPackageCanonicalContext:
+    issue_id: str
+    title: str
+    summary_plain: str
+    common_ask: Ask
+    related_bills: list[str] = field(default_factory=list)
+    bill_source: str = "none"
+    bill_display_text: str = "this issue"
+    evidence_quality: str = "limited"
+    evidence_warning: str | None = None
+    key_facts: list[IssueFact] = field(default_factory=list)
+
+
+@dataclass
+class ScriptPackageScriptCore:
+    live_script_core: str
+    voicemail_script_core: str
+
+
+@dataclass
+class ScriptPackageTruthTrace:
+    normalized_input: str
+    canonical_issue_id: str
+    classification_reason: str
+    bill_source: str
+    personalization_fields_used: list[str]
+    fallback_used: str
+    refusal_reason: str | None = None
+
+
+@dataclass
+class ScriptPackageResponse:
+    status: BriefStatus
+    package_id: str
+    canonical_context: ScriptPackageCanonicalContext | None
+    script_core: ScriptPackageScriptCore | None
+    office_overlays: list[ScriptPackageOfficeOverlay] = field(default_factory=list)
+    review_can_regenerate: bool = True
+    review_regenerate_hint: str = "Tell me what to change and I can regenerate."
+    truth_trace: ScriptPackageTruthTrace | None = None
+    policy_flags: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        payload = asdict(self)
+        status_value = payload.get("status")
+        if isinstance(status_value, Enum):
+            payload["status"] = status_value.value
+        common_ask = (
+            payload.get("canonical_context", {}) or {}
+        ).get("common_ask") if payload.get("canonical_context") else None
+        if isinstance(common_ask, Enum):
+            payload["canonical_context"]["common_ask"] = common_ask.value
         return payload

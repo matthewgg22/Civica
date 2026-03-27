@@ -36,6 +36,22 @@ private struct CivicIssueBriefRequest: Codable {
     }
 }
 
+private struct CivicScriptPackageRequest: Codable {
+    let concernText: String
+    let selectedAsk: CivicAsk
+    let targetReps: [CivicRepSlot]
+    let optionalBillRef: String?
+    let allowRevision: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case concernText = "concern_text"
+        case selectedAsk = "selected_ask"
+        case targetReps = "target_reps"
+        case optionalBillRef = "optional_bill_ref"
+        case allowRevision = "allow_revision"
+    }
+}
+
 struct CivicIssueBriefFact: Codable {
     let fact: String
     let sourceName: String?
@@ -80,6 +96,122 @@ struct CivicIssueBriefResponse: Codable {
         case policyFlags = "policy_flags"
         case clarificationQuestion = "clarification_question"
         case reviewPrompt = "review_prompt"
+    }
+}
+
+struct CivicScriptPackageCommitteeMatch: Codable {
+    let matched: Bool
+    let matchedCommittees: [String]
+    let jurisdictionCallout: String?
+
+    enum CodingKeys: String, CodingKey {
+        case matched
+        case matchedCommittees = "matched_committees"
+        case jurisdictionCallout = "jurisdiction_callout"
+    }
+}
+
+struct CivicScriptPackageOfficeOverlay: Codable {
+    let repID: String
+    let repName: String
+    let officeType: String
+    let chamber: String
+    let committeeMatch: CivicScriptPackageCommitteeMatch
+    let roleOverlays: [String]
+    let liveScriptFinal: String
+    let voicemailScriptFinal: String
+    let relatedCommittees: [String]
+
+    enum CodingKeys: String, CodingKey {
+        case repID = "rep_id"
+        case repName = "rep_name"
+        case officeType = "office_type"
+        case chamber
+        case committeeMatch = "committee_match"
+        case roleOverlays = "role_overlays"
+        case liveScriptFinal = "live_script_final"
+        case voicemailScriptFinal = "voicemail_script_final"
+        case relatedCommittees = "related_committees"
+    }
+}
+
+struct CivicScriptPackageCanonicalContext: Codable {
+    let issueID: String
+    let title: String
+    let summaryPlain: String
+    let commonAsk: String
+    let relatedBills: [String]
+    let billSource: String
+    let billDisplayText: String
+    let evidenceQuality: String
+    let evidenceWarning: String?
+    let keyFacts: [CivicIssueBriefFact]
+
+    enum CodingKeys: String, CodingKey {
+        case issueID = "issue_id"
+        case title
+        case summaryPlain = "summary_plain"
+        case commonAsk = "common_ask"
+        case relatedBills = "related_bills"
+        case billSource = "bill_source"
+        case billDisplayText = "bill_display_text"
+        case evidenceQuality = "evidence_quality"
+        case evidenceWarning = "evidence_warning"
+        case keyFacts = "key_facts"
+    }
+}
+
+struct CivicScriptPackageScriptCore: Codable {
+    let liveScriptCore: String
+    let voicemailScriptCore: String
+
+    enum CodingKeys: String, CodingKey {
+        case liveScriptCore = "live_script_core"
+        case voicemailScriptCore = "voicemail_script_core"
+    }
+}
+
+struct CivicScriptPackageTruthTrace: Codable {
+    let normalizedInput: String
+    let canonicalIssueID: String
+    let classificationReason: String
+    let billSource: String
+    let personalizationFieldsUsed: [String]
+    let fallbackUsed: String
+    let refusalReason: String?
+
+    enum CodingKeys: String, CodingKey {
+        case normalizedInput = "normalized_input"
+        case canonicalIssueID = "canonical_issue_id"
+        case classificationReason = "classification_reason"
+        case billSource = "bill_source"
+        case personalizationFieldsUsed = "personalization_fields_used"
+        case fallbackUsed = "fallback_used"
+        case refusalReason = "refusal_reason"
+    }
+}
+
+struct CivicScriptPackageResponse: Codable {
+    let status: CivicIssueBriefStatus
+    let packageID: String
+    let canonicalContext: CivicScriptPackageCanonicalContext?
+    let scriptCore: CivicScriptPackageScriptCore?
+    let officeOverlays: [CivicScriptPackageOfficeOverlay]
+    let reviewCanRegenerate: Bool
+    let reviewRegenerateHint: String
+    let truthTrace: CivicScriptPackageTruthTrace?
+    let policyFlags: [String]
+
+    enum CodingKeys: String, CodingKey {
+        case status
+        case packageID = "package_id"
+        case canonicalContext = "canonical_context"
+        case scriptCore = "script_core"
+        case officeOverlays = "office_overlays"
+        case reviewCanRegenerate = "review_can_regenerate"
+        case reviewRegenerateHint = "review_regenerate_hint"
+        case truthTrace = "truth_trace"
+        case policyFlags = "policy_flags"
     }
 }
 
@@ -135,10 +267,13 @@ private struct CivicCallScoreRecomputePayload: Encodable {
 
 protocol CivicIssueCallAPIClientProtocol {
     func fetchExamples(userID: String, reps: [CivicRepTarget]) async throws -> [CivicExampleIssueCard]
-    func createIssueBrief(
+    func createScriptPackage(
         userID: String,
-        concernText: String
-    ) async throws -> CivicIssueBriefResponse
+        concernText: String,
+        selectedAsk: CivicAsk,
+        targetReps: [CivicRepSlot],
+        optionalBillRef: String?
+    ) async throws -> CivicScriptPackageResponse
     func logCall(
         userID: String,
         repID: String,
@@ -203,22 +338,28 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         return decoded.examples
     }
 
-    func createIssueBrief(
+    func createScriptPackage(
         userID _: String,
-        concernText: String
-    ) async throws -> CivicIssueBriefResponse {
-        let requestBody = CivicIssueBriefRequest(
+        concernText: String,
+        selectedAsk: CivicAsk,
+        targetReps: [CivicRepSlot],
+        optionalBillRef: String?
+    ) async throws -> CivicScriptPackageResponse {
+        let requestBody = CivicScriptPackageRequest(
             concernText: concernText,
+            selectedAsk: selectedAsk,
+            targetReps: targetReps,
+            optionalBillRef: optionalBillRef,
             allowRevision: true
         )
-        var request = URLRequest(url: endpoint("/api/issue-brief"))
+        var request = URLRequest(url: endpoint("/api/v1/civic/script-package"))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         try await attachAuthorization(to: &request)
         request.httpBody = try encoder.encode(requestBody)
 
         let data = try await requestData(for: request)
-        return try decoder.decode(CivicIssueBriefResponse.self, from: data)
+        return try decoder.decode(CivicScriptPackageResponse.self, from: data)
     }
 
     func logCall(
@@ -712,15 +853,18 @@ final class IssueCallCenterViewModel: ObservableObject {
         requiresDraftApproval = false
 
         do {
-            let brief = try await apiClient.createIssueBrief(
+            let package = try await apiClient.createScriptPackage(
                 userID: userID,
-                concernText: trimmedConcern
+                concernText: trimmedConcern,
+                selectedAsk: ask,
+                targetReps: requestRepSlots,
+                optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill
             )
 
-            switch brief.status {
+            switch package.status {
             case .ok:
-                let response = resolutionFromIssueBrief(
-                    brief,
+                let response = resolutionFromScriptPackage(
+                    package,
                     concernText: trimmedConcern,
                     ask: ask,
                     selectedSlots: requestRepSlots,
@@ -739,11 +883,11 @@ final class IssueCallCenterViewModel: ObservableObject {
             case .needsClarification:
                 pendingGeneratedResolution = nil
                 requiresDraftApproval = false
-                errorMessage = brief.clarificationQuestion ?? "Please clarify the issue so I can generate the draft."
+                errorMessage = package.reviewRegenerateHint
             case .refused:
                 pendingGeneratedResolution = nil
                 requiresDraftApproval = false
-                errorMessage = brief.reviewPrompt ?? brief.summaryNeutral
+                errorMessage = package.truthTrace?.refusalReason ?? package.reviewRegenerateHint
             }
         } catch {
             if isSafetyBlockedError(error) {
@@ -1347,13 +1491,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         let issueCommittees = response.resolvedEntities.committees
         let updatedBriefs = response.callBriefs.map { brief in
             let cleanedBriefBills = brief.relatedBills.compactMap(normalizedBillReference)
-            let inferredBill = suggestedBillReference(
-                issueTitle: response.issueTitle,
-                issueSummary: response.issueSummary,
-                issueCommittees: issueCommittees,
-                target: targetForBrief(brief)
-            )
-            let selectedBill = cleanedBriefBills.first ?? explicitBill ?? inferredBill
+            let selectedBill = cleanedBriefBills.first ?? explicitBill
             if let selectedBill, !containsCaseInsensitive(resolvedBills, value: selectedBill) {
                 resolvedBills.append(selectedBill)
             }
@@ -1430,13 +1568,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 .split(separator: " ")
                 .last
                 .map(String.init) ?? repName
-            let inferredBill = suggestedBillReference(
-                issueTitle: example.title,
-                issueSummary: example.summary,
-                issueCommittees: relatedCommittees,
-                target: target
-            )
-            let billValue = explicitRelatedBills.first ?? inferredBill
+            let billValue = explicitRelatedBills.first
             if let billValue, !containsCaseInsensitive(resolvedBills, value: billValue) {
                 resolvedBills.append(billValue)
             }
@@ -2301,119 +2433,164 @@ final class IssueCallCenterViewModel: ObservableObject {
             }
     }
 
-    private func resolutionFromIssueBrief(
-        _ brief: CivicIssueBriefResponse,
+    private func resolutionFromScriptPackage(
+        _ package: CivicScriptPackageResponse,
         concernText: String,
         ask: CivicAsk,
         selectedSlots: [CivicRepSlot],
         optionalBillRef: String?
     ) -> CivicIssueResolutionResponse {
-        let canonicalIssue = brief.canonicalIssue.trimmingCharacters(in: .whitespacesAndNewlines)
-        let title = canonicalIssueDisplayTitle(from: canonicalIssue).isEmpty
-            ? deriveIssueTitle(from: concernText)
-            : canonicalIssueDisplayTitle(from: canonicalIssue)
-
-        let summaryHeadline = brief.summaryNeutral.trimmingCharacters(in: .whitespacesAndNewlines)
-        let currentStatus = brief.currentStatus.trimmingCharacters(in: .whitespacesAndNewlines)
-        let unknownsLine = brief.unknowns.prefix(2)
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { !$0.isEmpty }
-            .joined(separator: "; ")
+        let canonical = package.canonicalContext
+        let trimmedConcern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let title = canonical?.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
+            ? (canonical?.title ?? "")
+            : deriveIssueTitle(from: trimmedConcern)
 
         var summaryParts: [String] = []
-        if !summaryHeadline.isEmpty {
-            summaryParts.append(summaryHeadline)
+        if let summary = canonical?.summaryPlain.trimmingCharacters(in: .whitespacesAndNewlines),
+           !summary.isEmpty {
+            summaryParts.append(summary)
         }
-        if !currentStatus.isEmpty {
-            summaryParts.append("Current status: \(currentStatus)")
+        if let warning = canonical?.evidenceWarning?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !warning.isEmpty {
+            summaryParts.append("Note: \(warning)")
         }
-        if !unknownsLine.isEmpty {
-            summaryParts.append("Open questions: \(unknownsLine)")
+        if summaryParts.isEmpty, !trimmedConcern.isEmpty {
+            summaryParts.append(trimmedConcern)
         }
-        let summary = summaryParts.isEmpty
-            ? concernText.trimmingCharacters(in: .whitespacesAndNewlines)
-            : summaryParts.joined(separator: "\n\n")
+        let summary = summaryParts.joined(separator: "\n\n")
 
+        let preferredIssueID = canonical?.issueID.trimmingCharacters(in: .whitespacesAndNewlines)
         let issueID = resolvedIssueIdentifier(
-            preferredIssueID: canonicalIssue.isEmpty ? nil : canonicalIssue,
+            preferredIssueID: (preferredIssueID?.isEmpty == false) ? preferredIssueID : nil,
             issueTitle: title,
             issueSummary: summary
         )
 
-        let selectedTargets = repTargets.filter { selectedSlots.contains($0.slot) }
         let explicitBillRef = normalizedBillReference(optionalBillRef)
-        let curatedBillRef = curatedIssueBillReference(for: canonicalIssue)
-        let selectedIssueBillRef = explicitBillRef ?? curatedBillRef
-        let issueCommittees = inferredIssueCommittees(
-            canonicalIssue: canonicalIssue,
-            concernText: concernText,
-            currentStatus: currentStatus
+        var resolvedBills = canonical?.relatedBills.compactMap(normalizedBillReference) ?? []
+        if let explicitBillRef, !containsCaseInsensitive(resolvedBills, value: explicitBillRef) {
+            resolvedBills.append(explicitBillRef)
+        }
+
+        let overlays = orderedOverlaysForSlots(
+            package.officeOverlays,
+            selectedSlots: selectedSlots
         )
-        var resolvedBills: [String] = explicitBillRef.map { [$0] } ?? []
-        var briefs: [CivicCallBrief] = []
+        let selectedTargets = repTargets.filter { selectedSlots.contains($0.slot) }
 
-        let topFact = brief.keyFacts.first?.fact.trimmingCharacters(in: .whitespacesAndNewlines)
-        let topQuestion = brief.questionsToConsider.first?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let keyFactPoints = (canonical?.keyFacts ?? [])
+            .map { $0.fact.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .prefix(2)
+            .map { trimToWordLimit($0, maxWords: 18) }
+        let scriptIssueLine = (canonical?.billDisplayText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false)
+            ? canonical?.billDisplayText
+            : "this issue"
 
-        for target in selectedTargets {
-            let repID = stableRepID(for: target.official)
-            let selectedBillRef = selectedIssueBillRef
-            if let selectedBillRef, !containsCaseInsensitive(resolvedBills, value: selectedBillRef) {
-                resolvedBills.append(selectedBillRef)
+        var briefs: [CivicCallBrief] = overlays.enumerated().map { index, overlay in
+            let slot = slotForOverlay(overlay)
+            let official = officialForOverlay(overlay, slot: slot)
+            let repID = resolvedRepID(for: overlay, official: official, slot: slot)
+            let repName = resolvedRepName(for: overlay, official: official)
+            let officeType = resolvedOfficeType(for: overlay, official: official, slot: slot)
+            let phone = resolvedPrimaryPhone(for: overlay, official: official, slot: slot)
+
+            var reasons: [String] = []
+            if overlay.committeeMatch.matched {
+                reasons.append("Committee jurisdiction match")
+            }
+            if let callout = overlay.committeeMatch.jurisdictionCallout?.trimmingCharacters(in: .whitespacesAndNewlines),
+               !callout.isEmpty {
+                reasons.append(callout)
+            }
+            if overlay.roleOverlays.contains(where: { $0 != "none" }) {
+                reasons.append("Office role relevance")
+            }
+            if reasons.isEmpty, let slot, let target = repTargets.first(where: { $0.slot == slot }) {
+                reasons.append(contentsOf: fallbackRelevance(for: target, billRef: explicitBillRef))
+            } else if reasons.isEmpty {
+                reasons.append("Issue relevance for this office")
             }
 
-            var reasons = ["This issue matters to me and my community."]
-            reasons.append(contentsOf: fallbackRelevance(for: target, billRef: selectedBillRef))
-            if let topFact, !topFact.isEmpty {
-                reasons.insert(trimToWordLimit(topFact, maxWords: 16), at: 0)
-            }
-
-            let committeeCallout = committeeJurisdictionCallout(
-                repName: target.official.name,
-                officeType: target.officeType,
-                officialCommittees: target.official.committeeAssignments,
-                issueCommittees: issueCommittees,
-                repRelevance: reasons
+            let liveScript = renderedScript(
+                finalScript: overlay.liveScriptFinal,
+                coreTemplate: package.scriptCore?.liveScriptCore,
+                officeType: officeType,
+                repName: repName
+            )
+            let voicemailScript = renderedScript(
+                finalScript: overlay.voicemailScriptFinal,
+                coreTemplate: package.scriptCore?.voicemailScriptCore,
+                officeType: officeType,
+                repName: repName
             )
 
-            let (liveBase, voicemailBase, basePoints) = composeScripts(
-                repName: target.official.name,
-                issueTitle: title,
-                ask: ask,
-                billRef: selectedBillRef,
-                zip: userZip,
-                reasons: reasons
-            )
-            let live = injectCommitteeCallout(committeeCallout, into: liveBase)
-            let voicemail = injectCommitteeCallout(committeeCallout, into: voicemailBase)
+            var talkingPoints = [
+                "Issue: \(title)",
+                "Ask: \(ask.title) \(scriptIssueLine ?? "this issue")"
+            ]
+            talkingPoints.append(contentsOf: keyFactPoints)
 
-            var talkingPoints = basePoints
-            if let topQuestion, !topQuestion.isEmpty {
-                talkingPoints.append("Follow-up question: \(trimToWordLimit(topQuestion, maxWords: 16))")
-            }
-            if let committeeCallout,
-               !committeeCallout.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                talkingPoints.append("Committee relevance: raise committee-jurisdiction role.")
-            }
-
-            let created = CivicCallBrief(
-                id: UUID().uuidString,
+            return CivicCallBrief(
+                id: "\(package.packageID)-\(index)-\(repID)",
                 repID: repID,
-                repName: target.official.name,
-                officeType: target.officeType,
-                primaryPhoneNumber: target.official.officialPhone ?? "",
+                repName: repName,
+                officeType: officeType,
+                primaryPhoneNumber: phone,
                 localOfficePhoneNumber: nil,
                 relevanceBadges: reasons,
-                relatedBills: selectedBillRef.map { [$0] } ?? [],
-                relatedCommittees: issueCommittees,
-                liveScript: live,
-                voicemailScript: voicemail,
+                relatedBills: resolvedBills,
+                relatedCommittees: overlay.relatedCommittees,
+                liveScript: liveScript,
+                voicemailScript: voicemailScript,
                 talkingPoints: talkingPoints,
                 issueID: issueID,
-                repSlot: target.slot
+                repSlot: slot
             )
-            briefs.append(created)
         }
+
+        if briefs.isEmpty {
+            let liveTemplate = package.scriptCore?.liveScriptCore ?? ""
+            let voicemailTemplate = package.scriptCore?.voicemailScriptCore ?? ""
+            briefs = selectedTargets.enumerated().map { index, target in
+                let repID = stableRepID(for: target.official)
+                let live = renderedScript(
+                    finalScript: "",
+                    coreTemplate: liveTemplate,
+                    officeType: target.officeType,
+                    repName: target.official.name
+                )
+                let voicemail = renderedScript(
+                    finalScript: "",
+                    coreTemplate: voicemailTemplate,
+                    officeType: target.officeType,
+                    repName: target.official.name
+                )
+                return CivicCallBrief(
+                    id: "\(package.packageID)-fallback-\(index)-\(repID)",
+                    repID: repID,
+                    repName: target.official.name,
+                    officeType: target.officeType,
+                    primaryPhoneNumber: target.official.officialPhone ?? "",
+                    localOfficePhoneNumber: nil,
+                    relevanceBadges: fallbackRelevance(for: target, billRef: explicitBillRef),
+                    relatedBills: resolvedBills,
+                    relatedCommittees: [],
+                    liveScript: live,
+                    voicemailScript: voicemail,
+                    talkingPoints: ["Issue: \(title)", "Ask: \(ask.title) \(scriptIssueLine ?? "this issue")"],
+                    issueID: issueID,
+                    repSlot: target.slot
+                )
+            }
+        }
+
+        let allCommittees = Array(
+            Set(briefs.flatMap(\.relatedCommittees).map {
+                $0.trimmingCharacters(in: .whitespacesAndNewlines)
+            }.filter { !$0.isEmpty })
+        ).sorted()
 
         return CivicIssueResolutionResponse(
             issueID: issueID,
@@ -2421,11 +2598,156 @@ final class IssueCallCenterViewModel: ObservableObject {
             issueSummary: summary,
             resolvedEntities: CivicResolvedEntities(
                 bills: resolvedBills,
-                committees: [],
+                committees: allCommittees,
                 agencies: []
             ),
             callBriefs: briefs
         )
+    }
+
+    private func orderedOverlaysForSlots(
+        _ overlays: [CivicScriptPackageOfficeOverlay],
+        selectedSlots: [CivicRepSlot]
+    ) -> [CivicScriptPackageOfficeOverlay] {
+        var remaining = overlays
+        var assignedBySlot: [CivicRepSlot: CivicScriptPackageOfficeOverlay] = [:]
+
+        for overlay in overlays {
+            guard let slot = slotForOverlay(overlay) else { continue }
+            guard assignedBySlot[slot] == nil else { continue }
+            assignedBySlot[slot] = overlay
+            if let index = remaining.firstIndex(where: { $0.repID == overlay.repID && $0.repName == overlay.repName }) {
+                remaining.remove(at: index)
+            }
+        }
+
+        for slot in selectedSlots where assignedBySlot[slot] == nil {
+            if slot == .house {
+                if let index = remaining.firstIndex(where: { $0.chamber.localizedCaseInsensitiveContains("house") }) {
+                    assignedBySlot[slot] = remaining.remove(at: index)
+                }
+                continue
+            }
+            if let index = remaining.firstIndex(where: { $0.chamber.localizedCaseInsensitiveContains("senate") }) {
+                assignedBySlot[slot] = remaining.remove(at: index)
+            }
+        }
+
+        var ordered: [CivicScriptPackageOfficeOverlay] = []
+        for slot in selectedSlots {
+            if let overlay = assignedBySlot[slot] {
+                ordered.append(overlay)
+            }
+        }
+        ordered.append(contentsOf: remaining)
+        return ordered
+    }
+
+    private func slotForOverlay(_ overlay: CivicScriptPackageOfficeOverlay) -> CivicRepSlot? {
+        let repIDKey = overlay.repID.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let slot = slotByRepID[repIDKey] {
+            return slot
+        }
+
+        let nameKey = Self.normalizeNameKey(overlay.repName)
+        if let slot = slotByName[nameKey] {
+            return slot
+        }
+
+        let chamber = overlay.chamber.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if chamber == "house" {
+            return .house
+        }
+        return nil
+    }
+
+    private func officialForOverlay(_ overlay: CivicScriptPackageOfficeOverlay, slot: CivicRepSlot?) -> Official? {
+        let repIDKey = overlay.repID.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let official = officialLookupByRepID[repIDKey] {
+            return official
+        }
+        let nameKey = Self.normalizeNameKey(overlay.repName)
+        if let official = officialLookupByName[nameKey] {
+            return official
+        }
+        if let slot {
+            return officialBySlot[slot]
+        }
+        return nil
+    }
+
+    private func resolvedRepID(for overlay: CivicScriptPackageOfficeOverlay, official: Official?, slot: CivicRepSlot?) -> String {
+        if let official {
+            return stableRepID(for: official)
+        }
+        let trimmed = overlay.repID.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmed.isEmpty {
+            return trimmed
+        }
+        if let slot {
+            return slot.rawValue
+        }
+        return UUID().uuidString
+    }
+
+    private func resolvedRepName(for overlay: CivicScriptPackageOfficeOverlay, official: Official?) -> String {
+        let trimmed = overlay.repName.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmed.isEmpty {
+            return trimmed
+        }
+        if let official {
+            return official.name
+        }
+        return "Congressional Office"
+    }
+
+    private func resolvedOfficeType(for overlay: CivicScriptPackageOfficeOverlay, official: Official?, slot: CivicRepSlot?) -> String {
+        let trimmed = overlay.officeType.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmed.isEmpty {
+            return trimmed
+        }
+        if let title = official?.officeTitle, !title.isEmpty {
+            return title
+        }
+        switch slot {
+        case .house:
+            return "U.S. Representative"
+        case .senate1, .senate2:
+            return "U.S. Senator"
+        case .none:
+            return "Congressional Office"
+        }
+    }
+
+    private func resolvedPrimaryPhone(for overlay: CivicScriptPackageOfficeOverlay, official: Official?, slot: CivicRepSlot?) -> String {
+        if let phone = official?.officialPhone, !phone.isEmpty {
+            return phone
+        }
+        if overlay.chamber.localizedCaseInsensitiveContains("house") || slot == .house {
+            return "(202) 225-3121"
+        }
+        return "(202) 224-3121"
+    }
+
+    private func renderedScript(
+        finalScript: String,
+        coreTemplate: String?,
+        officeType: String,
+        repName: String
+    ) -> String {
+        let trimmedFinal = finalScript.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmedFinal.isEmpty {
+            return trimmedFinal
+        }
+
+        let template = (coreTemplate ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !template.isEmpty else {
+            return "Hi, my name is [Your Name], and I am a constituent calling about this issue."
+        }
+
+        return template
+            .replacingOccurrences(of: "{OFFICE_TYPE}", with: officeType)
+            .replacingOccurrences(of: "{REP_NAME}", with: repName)
     }
 
     private func fallbackResolution(
@@ -2446,12 +2768,6 @@ final class IssueCallCenterViewModel: ObservableObject {
         for target in selectedTargets {
             let repID = stableRepID(for: target.official)
             let selectedBillRef = explicitBillRef
-                ?? suggestedBillReference(
-                    issueTitle: title,
-                    issueSummary: summary,
-                    issueCommittees: [],
-                    target: target
-                )
             if let selectedBillRef, !containsCaseInsensitive(resolvedBills, value: selectedBillRef) {
                 resolvedBills.append(selectedBillRef)
             }
@@ -3018,6 +3334,9 @@ final class IssueCallCenterViewModel: ObservableObject {
         }
         if containsAny(["war powers", "iran", "foreign policy", "military"]) {
             committees.append(contentsOf: ["Foreign Relations", "Armed Services"])
+        }
+        if containsAny(["oversight", "accountability", "executive", "white house", "presidential"]) {
+            committees.append(contentsOf: ["Judiciary", "Oversight and Government Reform", "Homeland Security and Governmental Affairs"])
         }
 
         var ordered: [String] = []
