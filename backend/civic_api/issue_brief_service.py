@@ -262,7 +262,14 @@ class IssueBriefService:
 
         top_issue, top_score = ranked[0]
         second_score = ranked[1][1] if len(ranked) > 1 else -1
-        if second_score >= 0 and top_score - second_score <= 1 and top_score < 4:
+        concern_token_count = len(_tokenize(request.concern_text))
+        # Only block for clarification when signal is truly weak and tied.
+        if (
+            second_score >= 0
+            and top_score - second_score <= 0
+            and top_score <= 1
+            and concern_token_count <= 3
+        ):
             return IssueClassifyResponse(
                 status=BriefStatus.NEEDS_CLARIFICATION,
                 canonical_issue=str(top_issue["canonical_issue"]),
@@ -325,21 +332,33 @@ class IssueBriefService:
             return response
 
         if classify.status is BriefStatus.NEEDS_CLARIFICATION:
-            response = IssueBriefResponse(
-                status=BriefStatus.NEEDS_CLARIFICATION,
-                canonical_issue=classify.canonical_issue,
-                summary_neutral="I need one clarification before drafting the full brief.",
-                current_status="Awaiting issue clarification.",
-                key_facts=[],
-                arguments_by_view=[],
-                unknowns=["The concern text maps to multiple possible issues."],
-                questions_to_consider=["Which issue should this brief focus on first?"],
-                policy_flags=classify.policy_flags,
-                clarification_question=classify.clarification_question,
-                review_prompt="Reply with your preferred issue focus and I will regenerate.",
-            )
-            self._store_brief_response(request_id, request.user_id, safety_identifier, response, now, llm_usage={})
-            return response
+            canonical = (classify.canonical_issue or "").strip().lower()
+            can_auto_select = request.allow_revision and canonical not in {"", "unspecified", "policy_restricted"}
+            if can_auto_select:
+                classify = IssueClassifyResponse(
+                    status=BriefStatus.OK,
+                    canonical_issue=classify.canonical_issue,
+                    confidence=max(0.3, classify.confidence),
+                    clarification_question=classify.clarification_question,
+                    candidate_issues=classify.candidate_issues,
+                    policy_flags=list(dict.fromkeys(classify.policy_flags + ["auto_selected_from_ambiguous"])),
+                )
+            else:
+                response = IssueBriefResponse(
+                    status=BriefStatus.NEEDS_CLARIFICATION,
+                    canonical_issue=classify.canonical_issue,
+                    summary_neutral="I need one clarification before drafting the full brief.",
+                    current_status="Awaiting issue clarification.",
+                    key_facts=[],
+                    arguments_by_view=[],
+                    unknowns=["The concern text maps to multiple possible issues."],
+                    questions_to_consider=["Which issue should this brief focus on first?"],
+                    policy_flags=classify.policy_flags,
+                    clarification_question=classify.clarification_question,
+                    review_prompt="Reply with your preferred issue focus and I will regenerate.",
+                )
+                self._store_brief_response(request_id, request.user_id, safety_identifier, response, now, llm_usage={})
+                return response
 
         issue_core = self._load_issue_core()
         core = next(
