@@ -20,6 +20,69 @@ private struct CivicAssistantResolveRequest: Codable {
     }
 }
 
+enum CivicIssueBriefStatus: String, Codable {
+    case ok
+    case refused
+    case needsClarification = "needs_clarification"
+}
+
+private struct CivicIssueBriefRequest: Codable {
+    let concernText: String
+    let allowRevision: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case concernText = "concern_text"
+        case allowRevision = "allow_revision"
+    }
+}
+
+struct CivicIssueBriefFact: Codable {
+    let fact: String
+    let sourceName: String?
+    let sourceURL: String?
+    let publishedAt: String?
+
+    enum CodingKeys: String, CodingKey {
+        case fact
+        case sourceName = "source_name"
+        case sourceURL = "source_url"
+        case publishedAt = "published_at"
+    }
+}
+
+struct CivicIssueBriefArgument: Codable {
+    let view: String
+    let argument: String
+}
+
+struct CivicIssueBriefResponse: Codable {
+    let status: CivicIssueBriefStatus
+    let canonicalIssue: String
+    let summaryNeutral: String
+    let currentStatus: String
+    let keyFacts: [CivicIssueBriefFact]
+    let argumentsByView: [CivicIssueBriefArgument]
+    let unknowns: [String]
+    let questionsToConsider: [String]
+    let policyFlags: [String]
+    let clarificationQuestion: String?
+    let reviewPrompt: String?
+
+    enum CodingKeys: String, CodingKey {
+        case status
+        case canonicalIssue = "canonical_issue"
+        case summaryNeutral = "summary_neutral"
+        case currentStatus = "current_status"
+        case keyFacts = "key_facts"
+        case argumentsByView = "arguments_by_view"
+        case unknowns
+        case questionsToConsider = "questions_to_consider"
+        case policyFlags = "policy_flags"
+        case clarificationQuestion = "clarification_question"
+        case reviewPrompt = "review_prompt"
+    }
+}
+
 private struct CivicCallLogRequest: Codable {
     let repID: String
     let issueID: String
@@ -72,13 +135,10 @@ private struct CivicCallScoreRecomputePayload: Encodable {
 
 protocol CivicIssueCallAPIClientProtocol {
     func fetchExamples(userID: String, reps: [CivicRepTarget]) async throws -> [CivicExampleIssueCard]
-    func resolve(
+    func createIssueBrief(
         userID: String,
-        concernText: String,
-        selectedAsk: CivicAsk,
-        targetReps: [CivicRepSlot],
-        optionalBillRef: String?
-    ) async throws -> CivicIssueResolutionResponse
+        concernText: String
+    ) async throws -> CivicIssueBriefResponse
     func logCall(
         userID: String,
         repID: String,
@@ -143,27 +203,22 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         return decoded.examples
     }
 
-    func resolve(
+    func createIssueBrief(
         userID _: String,
-        concernText: String,
-        selectedAsk: CivicAsk,
-        targetReps: [CivicRepSlot],
-        optionalBillRef: String?
-    ) async throws -> CivicIssueResolutionResponse {
-        let requestBody = CivicAssistantResolveRequest(
+        concernText: String
+    ) async throws -> CivicIssueBriefResponse {
+        let requestBody = CivicIssueBriefRequest(
             concernText: concernText,
-            selectedAsk: selectedAsk,
-            targetReps: targetReps,
-            optionalBillRef: optionalBillRef
+            allowRevision: true
         )
-        var request = URLRequest(url: endpoint("/api/v1/civic/assistant/resolve"))
+        var request = URLRequest(url: endpoint("/api/issue-brief"))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         try await attachAuthorization(to: &request)
         request.httpBody = try encoder.encode(requestBody)
 
         let data = try await requestData(for: request)
-        return try decoder.decode(CivicIssueResolutionResponse.self, from: data)
+        return try decoder.decode(CivicIssueBriefResponse.self, from: data)
     }
 
     func logCall(
@@ -657,22 +712,38 @@ final class IssueCallCenterViewModel: ObservableObject {
         requiresDraftApproval = false
 
         do {
-            let response = try await apiClient.resolve(
+            let brief = try await apiClient.createIssueBrief(
                 userID: userID,
-                concernText: trimmedConcern,
-                selectedAsk: ask,
-                targetReps: requestRepSlots,
-                optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill
+                concernText: trimmedConcern
             )
-            applyResolution(response)
-            pendingGeneratedResolution = response
-            requiresDraftApproval = true
-            saveSnapshot()
-            selectedRepFilter = .all
-            selectedTab = .assistant
-            isSubmitting = false
-            Task { [userID] in
-                await self.refreshCallScoreData(for: userID)
+
+            switch brief.status {
+            case .ok:
+                let response = resolutionFromIssueBrief(
+                    brief,
+                    concernText: trimmedConcern,
+                    ask: ask,
+                    selectedSlots: requestRepSlots,
+                    optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill
+                )
+                applyResolution(response)
+                pendingGeneratedResolution = response
+                requiresDraftApproval = true
+                saveSnapshot()
+                selectedRepFilter = .all
+                selectedTab = .assistant
+                isSubmitting = false
+                Task { [userID] in
+                    await self.refreshCallScoreData(for: userID)
+                }
+            case .needsClarification:
+                pendingGeneratedResolution = nil
+                requiresDraftApproval = false
+                errorMessage = brief.clarificationQuestion ?? "Please clarify the issue so I can generate the draft."
+            case .refused:
+                pendingGeneratedResolution = nil
+                requiresDraftApproval = false
+                errorMessage = brief.reviewPrompt ?? brief.summaryNeutral
             }
         } catch {
             if isSafetyBlockedError(error) {
@@ -2230,6 +2301,117 @@ final class IssueCallCenterViewModel: ObservableObject {
             }
     }
 
+    private func resolutionFromIssueBrief(
+        _ brief: CivicIssueBriefResponse,
+        concernText: String,
+        ask: CivicAsk,
+        selectedSlots: [CivicRepSlot],
+        optionalBillRef: String?
+    ) -> CivicIssueResolutionResponse {
+        let canonicalIssue = brief.canonicalIssue.trimmingCharacters(in: .whitespacesAndNewlines)
+        let title = canonicalIssueDisplayTitle(from: canonicalIssue).isEmpty
+            ? deriveIssueTitle(from: concernText)
+            : canonicalIssueDisplayTitle(from: canonicalIssue)
+
+        let summaryHeadline = brief.summaryNeutral.trimmingCharacters(in: .whitespacesAndNewlines)
+        let currentStatus = brief.currentStatus.trimmingCharacters(in: .whitespacesAndNewlines)
+        let unknownsLine = brief.unknowns.prefix(2)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .joined(separator: "; ")
+
+        var summaryParts: [String] = []
+        if !summaryHeadline.isEmpty {
+            summaryParts.append(summaryHeadline)
+        }
+        if !currentStatus.isEmpty {
+            summaryParts.append("Current status: \(currentStatus)")
+        }
+        if !unknownsLine.isEmpty {
+            summaryParts.append("Open questions: \(unknownsLine)")
+        }
+        let summary = summaryParts.isEmpty
+            ? concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+            : summaryParts.joined(separator: "\n\n")
+
+        let issueID = resolvedIssueIdentifier(
+            preferredIssueID: canonicalIssue.isEmpty ? nil : canonicalIssue,
+            issueTitle: title,
+            issueSummary: summary
+        )
+
+        let selectedTargets = repTargets.filter { selectedSlots.contains($0.slot) }
+        let explicitBillRef = normalizedBillReference(optionalBillRef)
+        var resolvedBills: [String] = explicitBillRef.map { [$0] } ?? []
+        var briefs: [CivicCallBrief] = []
+
+        let topFact = brief.keyFacts.first?.fact.trimmingCharacters(in: .whitespacesAndNewlines)
+        let topQuestion = brief.questionsToConsider.first?.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        for target in selectedTargets {
+            let repID = stableRepID(for: target.official)
+            let selectedBillRef = explicitBillRef
+                ?? suggestedBillReference(
+                    issueTitle: title,
+                    issueSummary: summary,
+                    issueCommittees: [],
+                    target: target
+                )
+            if let selectedBillRef, !containsCaseInsensitive(resolvedBills, value: selectedBillRef) {
+                resolvedBills.append(selectedBillRef)
+            }
+
+            var reasons = fallbackRelevance(for: target, billRef: selectedBillRef)
+            if let topFact, !topFact.isEmpty {
+                reasons.insert(trimToWordLimit(topFact, maxWords: 16), at: 0)
+            }
+
+            let (live, voicemail, basePoints) = composeScripts(
+                repName: target.official.name,
+                issueTitle: title,
+                ask: ask,
+                billRef: selectedBillRef,
+                zip: userZip,
+                reasons: reasons
+            )
+
+            var talkingPoints = basePoints
+            if let topQuestion, !topQuestion.isEmpty {
+                talkingPoints.append("Follow-up question: \(trimToWordLimit(topQuestion, maxWords: 16))")
+            }
+
+            let created = CivicCallBrief(
+                id: UUID().uuidString,
+                repID: repID,
+                repName: target.official.name,
+                officeType: target.officeType,
+                primaryPhoneNumber: target.official.officialPhone ?? "",
+                localOfficePhoneNumber: nil,
+                relevanceBadges: reasons,
+                relatedBills: selectedBillRef.map { [$0] } ?? [],
+                relatedCommittees: [],
+                liveScript: live,
+                voicemailScript: voicemail,
+                talkingPoints: talkingPoints,
+                issueID: issueID,
+                repSlot: target.slot
+            )
+            briefs.append(created)
+        }
+
+        return CivicIssueResolutionResponse(
+            issueID: issueID,
+            issueTitle: title,
+            issueSummary: summary,
+            resolvedEntities: CivicResolvedEntities(
+                bills: resolvedBills,
+                committees: [],
+                agencies: []
+            ),
+            callBriefs: briefs
+        )
+    }
+
     private func fallbackResolution(
         concernText: String,
         ask: CivicAsk,
@@ -2763,6 +2945,25 @@ final class IssueCallCenterViewModel: ObservableObject {
             }
         }
         return trimToWordLimit(trimmed, maxWords: 9)
+    }
+
+    private func canonicalIssueDisplayTitle(from canonicalIssue: String) -> String {
+        let trimmed = canonicalIssue.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return "" }
+
+        let tokens = trimmed
+            .split(separator: "-")
+            .map(String.init)
+            .filter { !$0.isEmpty }
+
+        guard !tokens.isEmpty else { return "" }
+
+        return tokens.map { token in
+            if token.count <= 3 {
+                return token.uppercased()
+            }
+            return token.prefix(1).uppercased() + token.dropFirst().lowercased()
+        }.joined(separator: " ")
     }
 
     private static func buildRepTargets(from federalReps: [Official]) -> [CivicRepTarget] {

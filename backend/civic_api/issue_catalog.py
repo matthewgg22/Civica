@@ -349,4 +349,68 @@ def baseline_issue_variants() -> list[BaselineIssueVariant]:
             tags=("ai", "digital-rights", "consumer-protection", "states-rights", "tech-policy"),
             template_asks=(Ask.OPPOSE, Ask.ASK_PUBLIC_STATEMENT, Ask.SEEK_OVERSIGHT),
         ),
+        BaselineIssueVariant(
+            slug="fully-fund-hawaii-flood-relief-and-recovery",
+            title="Fully Fund Hawaii Flood Relief and Recovery",
+            category="Disaster Relief",
+            target_chambers=("house", "senate"),
+            primary_ask=Ask.SUPPORT,
+            overview=(
+                "Hawaii is facing some of its worst flooding in more than 20 years, with more than 230 rescues, evacuation "
+                "orders affecting roughly 5,500 residents, and major damage to homes and public infrastructure. Early estimates "
+                "indicate damage could exceed $1 billion across roads, schools, farms, and health facilities, while state and "
+                "county assessments are still ongoing. Governor Josh Green requested a presidential major disaster declaration "
+                "and up to a 90% federal cost share, signaling state and local resources are not enough. This issue asks "
+                "Congress to support rapid federal disaster funding and oversight so recovery is not delayed."
+            ),
+            live_script=(
+                "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\n"
+                "I'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to fully support Hawaii flood recovery by backing "
+                "immediate FEMA Disaster Relief Fund support, fast disaster declaration action, and strong federal cost sharing "
+                "so rebuilding is not delayed.\n\n"
+                "The scale of damage is severe and local resources are not enough. Please push for urgent federal action and "
+                "public accountability so communities can recover quickly.\n\n"
+                "Thank you for your time and consideration."
+            ),
+            voicemail_script=(
+                "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\n"
+                "I'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support urgent federal flood relief for Hawaii through "
+                "FEMA's Disaster Relief Fund and prompt disaster assistance.\n\n"
+                "Please act quickly so families and infrastructure can recover without delay.\n\n"
+                "Thank you."
+            ),
+            tags=("urgent", "hawaii", "flooding", "disaster-relief", "fema", "recovery", "infrastructure"),
+            template_asks=(Ask.SUPPORT, Ask.ASK_PUBLIC_STATEMENT, Ask.SEEK_OVERSIGHT),
+        ),
+        BaselineIssueVariant(
+            slug="strengthen-tsa-staffing-and-reduce-checkpoint-bottlenecks",
+            title="Strengthen TSA Staffing and Reduce Checkpoint Bottlenecks",
+            category="Transportation",
+            target_chambers=("house", "senate"),
+            primary_ask=Ask.SUPPORT,
+            overview=(
+                "U.S. air travel demand remains high and continues to strain TSA screening operations and frontline staffing. "
+                "TSA has faced sustained turnover pressures, including over 1,100 officers leaving in a two-month period in "
+                "late 2025, even as passenger volume stayed elevated. Federal delay data shows disruptions come from multiple "
+                "sources, but stronger TSA staffing is still one of the most direct ways Congress can reduce checkpoint "
+                "bottlenecks, improve traveler experience, and protect safety."
+            ),
+            live_script=(
+                "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\n"
+                "I'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support full TSA staffing and compensation funding to "
+                "reduce checkpoint bottlenecks and improve traveler safety and reliability.\n\n"
+                "Please prioritize appropriations and oversight that stabilize the TSA workforce and strengthen frontline "
+                "operations at high-volume airports.\n\n"
+                "Thank you for your time and consideration."
+            ),
+            voicemail_script=(
+                "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\n"
+                "I'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to fully fund TSA staffing and pay so screening lines move "
+                "more efficiently and safety stays strong during heavy travel demand.\n\n"
+                "Please support urgent action on this.\n\n"
+                "Thank you."
+            ),
+            tags=("urgent", "tsa", "air-travel", "aviation", "staffing", "travel-delays", "airport-security"),
+            template_asks=(Ask.SUPPORT, Ask.ASK_PUBLIC_STATEMENT, Ask.SEEK_OVERSIGHT),
+        ),
     ]
