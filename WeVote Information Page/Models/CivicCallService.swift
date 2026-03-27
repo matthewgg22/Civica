@@ -2342,6 +2342,13 @@ final class IssueCallCenterViewModel: ObservableObject {
 
         let selectedTargets = repTargets.filter { selectedSlots.contains($0.slot) }
         let explicitBillRef = normalizedBillReference(optionalBillRef)
+        let curatedBillRef = curatedIssueBillReference(for: canonicalIssue)
+        let selectedIssueBillRef = explicitBillRef ?? curatedBillRef
+        let issueCommittees = inferredIssueCommittees(
+            canonicalIssue: canonicalIssue,
+            concernText: concernText,
+            currentStatus: currentStatus
+        )
         var resolvedBills: [String] = explicitBillRef.map { [$0] } ?? []
         var briefs: [CivicCallBrief] = []
 
@@ -2350,23 +2357,26 @@ final class IssueCallCenterViewModel: ObservableObject {
 
         for target in selectedTargets {
             let repID = stableRepID(for: target.official)
-            let selectedBillRef = explicitBillRef
-                ?? suggestedBillReference(
-                    issueTitle: title,
-                    issueSummary: summary,
-                    issueCommittees: [],
-                    target: target
-                )
+            let selectedBillRef = selectedIssueBillRef
             if let selectedBillRef, !containsCaseInsensitive(resolvedBills, value: selectedBillRef) {
                 resolvedBills.append(selectedBillRef)
             }
 
-            var reasons = fallbackRelevance(for: target, billRef: selectedBillRef)
+            var reasons = ["This issue matters to me and my community."]
+            reasons.append(contentsOf: fallbackRelevance(for: target, billRef: selectedBillRef))
             if let topFact, !topFact.isEmpty {
                 reasons.insert(trimToWordLimit(topFact, maxWords: 16), at: 0)
             }
 
-            let (live, voicemail, basePoints) = composeScripts(
+            let committeeCallout = committeeJurisdictionCallout(
+                repName: target.official.name,
+                officeType: target.officeType,
+                officialCommittees: target.official.committeeAssignments,
+                issueCommittees: issueCommittees,
+                repRelevance: reasons
+            )
+
+            let (liveBase, voicemailBase, basePoints) = composeScripts(
                 repName: target.official.name,
                 issueTitle: title,
                 ask: ask,
@@ -2374,10 +2384,16 @@ final class IssueCallCenterViewModel: ObservableObject {
                 zip: userZip,
                 reasons: reasons
             )
+            let live = injectCommitteeCallout(committeeCallout, into: liveBase)
+            let voicemail = injectCommitteeCallout(committeeCallout, into: voicemailBase)
 
             var talkingPoints = basePoints
             if let topQuestion, !topQuestion.isEmpty {
                 talkingPoints.append("Follow-up question: \(trimToWordLimit(topQuestion, maxWords: 16))")
+            }
+            if let committeeCallout,
+               !committeeCallout.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                talkingPoints.append("Committee relevance: raise committee-jurisdiction role.")
             }
 
             let created = CivicCallBrief(
@@ -2389,7 +2405,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 localOfficePhoneNumber: nil,
                 relevanceBadges: reasons,
                 relatedBills: selectedBillRef.map { [$0] } ?? [],
-                relatedCommittees: [],
+                relatedCommittees: issueCommittees,
                 liveScript: live,
                 voicemailScript: voicemail,
                 talkingPoints: talkingPoints,
@@ -2915,19 +2931,19 @@ final class IssueCallCenterViewModel: ObservableObject {
         zip: String,
         reasons: [String]
     ) -> (String, String, [String]) {
-        let billFragment = billRef.map { " \($0)" } ?? ""
+        let billFragment = billRef.map { " \($0)" } ?? " this issue"
         let factLine = reasons.first ?? "This issue is currently active in Congress."
 
-        let liveBase = "Hi, my name is [Your Name], and I am a constituent in ZIP \(zip). I am calling about \(issueTitle). I ask that \(repName) \(ask.scriptPhrase)\(billFragment). \(factLine). Could you share the member's current position on this? Thank you for your time."
+        let liveBase = "Hi, my name is [Your Name], and I am a constituent in ZIP \(zip). I am calling about \(issueTitle). I'm urging \(repName) to \(ask.scriptPhrase)\(billFragment). \(factLine). Can you share the member's current position and next step on this issue? Thank you for your time."
 
-        let voicemailBase = "Hi, constituent in ZIP \(zip) calling about \(issueTitle). Please ask \(repName) to \(ask.scriptPhrase)\(billFragment), and please share the member's current position. Thank you."
+        let voicemailBase = "Hi, constituent in ZIP \(zip) calling about \(issueTitle). I'm urging \(repName) to \(ask.scriptPhrase)\(billFragment). Please share the member's current position and next step. Thank you."
 
         let liveScript = trimToWordLimit(liveBase, maxWords: 90)
         let voicemailScript = trimToWordLimit(voicemailBase, maxWords: 50)
 
         let points: [String] = [
             "Constituent location: ZIP \(zip)",
-            "Explicit ask: \(ask.title)\(billRef.map { " \($0)" } ?? "")",
+            "Explicit ask: \(ask.title)\(billRef.map { " \($0)" } ?? " this issue")",
             "Request the office to share the member's current position"
         ]
 
@@ -2964,6 +2980,55 @@ final class IssueCallCenterViewModel: ObservableObject {
             }
             return token.prefix(1).uppercased() + token.dropFirst().lowercased()
         }.joined(separator: " ")
+    }
+
+    private func curatedIssueBillReference(for canonicalIssue: String) -> String? {
+        let key = canonicalIssue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !key.isEmpty else { return nil }
+
+        let mapping: [String: String] = [
+            "oppose-the-save-america-act": "SAVE America Act",
+            "save-america-act": "SAVE America Act",
+            "stop-unauthorized-military-strikes-on-iran": "War Powers Resolution"
+        ]
+        return mapping[key]
+    }
+
+    private func inferredIssueCommittees(
+        canonicalIssue: String,
+        concernText: String,
+        currentStatus: String
+    ) -> [String] {
+        let key = canonicalIssue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let context = "\(key) \(concernText.lowercased()) \(currentStatus.lowercased())"
+
+        func containsAny(_ tokens: [String]) -> Bool {
+            tokens.contains { context.contains($0) }
+        }
+
+        var committees: [String] = []
+        if containsAny(["crypto", "cryptocurrency", "digital asset", "stablecoin", "token"]) {
+            committees.append(contentsOf: ["Banking, Housing, and Urban Affairs", "Financial Services", "Agriculture"])
+        }
+        if containsAny(["tsa", "aviation", "airport", "checkpoint", "travel delays"]) {
+            committees.append(contentsOf: ["Commerce, Science, and Transportation", "Homeland Security"])
+        }
+        if containsAny(["flood", "fema", "disaster", "recovery"]) {
+            committees.append(contentsOf: ["Appropriations", "Homeland Security", "Transportation and Infrastructure"])
+        }
+        if containsAny(["war powers", "iran", "foreign policy", "military"]) {
+            committees.append(contentsOf: ["Foreign Relations", "Armed Services"])
+        }
+
+        var ordered: [String] = []
+        for item in committees {
+            let cleaned = item.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !cleaned.isEmpty else { continue }
+            if !ordered.contains(where: { normalizeCommitteeName($0) == normalizeCommitteeName(cleaned) }) {
+                ordered.append(cleaned)
+            }
+        }
+        return ordered
     }
 
     private static func buildRepTargets(from federalReps: [Official]) -> [CivicRepTarget] {

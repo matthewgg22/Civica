@@ -333,11 +333,18 @@ class IssueBriefService:
 
         if classify.status is BriefStatus.NEEDS_CLARIFICATION:
             canonical = (classify.canonical_issue or "").strip().lower()
-            can_auto_select = request.allow_revision and canonical not in {"", "unspecified", "policy_restricted"}
-            if can_auto_select:
+            if request.allow_revision:
+                if canonical in {"", "unspecified", "policy_restricted"}:
+                    canonical = ""
+                    if classify.candidate_issues:
+                        candidate = str(classify.candidate_issues[0]).strip().lower()
+                        if candidate and candidate not in {"unspecified", "policy_restricted"}:
+                            canonical = candidate
+                    if not canonical:
+                        canonical = "general-civic-issue"
                 classify = IssueClassifyResponse(
                     status=BriefStatus.OK,
-                    canonical_issue=classify.canonical_issue,
+                    canonical_issue=canonical,
                     confidence=max(0.3, classify.confidence),
                     clarification_question=classify.clarification_question,
                     candidate_issues=classify.candidate_issues,
@@ -577,9 +584,13 @@ class IssueBriefService:
             synonyms = [str(value).lower() for value in row.get("synonyms", []) if str(value).strip()]
             canonical = str(row.get("canonical_issue", "")).lower().replace("-", " ")
             haystack_tokens = set(_tokenize(" ".join([title, canonical, *tags, *synonyms])))
-            overlap = len(concern_tokens.intersection(haystack_tokens))
-            phrase_hits = sum(1 for phrase in [title, *synonyms, *tags] if phrase and phrase in cleaned)
-            score = overlap + phrase_hits
+            overlap_tokens = concern_tokens.intersection(haystack_tokens)
+            overlap = len(overlap_tokens)
+            phrase_hits = sum(1 for phrase in [title, *synonyms] if phrase and phrase in cleaned)
+            score = overlap + (2 * phrase_hits)
+            high_signal_tokens = {"crypto", "cryptocurrency", "bitcoin", "stablecoin", "blockchain", "token"}
+            if overlap_tokens.intersection(high_signal_tokens):
+                score += 3
             ranked.append((row, score))
         return sorted(ranked, key=lambda item: item[1], reverse=True)
 
@@ -610,10 +621,37 @@ class IssueBriefService:
                     self.repository.upsert_issue_evidence_item(evidence)
                 except Exception:
                     continue
-            try:
-                existing = self.repository.list_issue_core()
-            except Exception:
-                existing = []
+        else:
+            existing_canonicals = {
+                str(row.get("canonical_issue", "")).strip().lower()
+                for row in existing
+                if str(row.get("canonical_issue", "")).strip()
+            }
+            missing_canonicals: set[str] = set()
+            for row in seed_rows:
+                canonical = str(row.get("canonical_issue", "")).strip().lower()
+                if not canonical or canonical in existing_canonicals:
+                    continue
+                missing_canonicals.add(canonical)
+                try:
+                    self.repository.upsert_issue_core(row)
+                except Exception:
+                    continue
+
+            if missing_canonicals:
+                for evidence in _seed_evidence_rows():
+                    canonical = str(evidence.get("canonical_issue", "")).strip().lower()
+                    if canonical not in missing_canonicals:
+                        continue
+                    try:
+                        self.repository.upsert_issue_evidence_item(evidence)
+                    except Exception:
+                        continue
+
+        try:
+            existing = self.repository.list_issue_core()
+        except Exception:
+            existing = []
         return existing or seed_rows
 
     def _normalize_evidence(self, evidence_items: list[IssueEvidenceItem], now: datetime) -> list[NormalizedEvidence]:
@@ -814,6 +852,25 @@ def _seed_issue_core_rows() -> list[dict[str, Any]]:
     rows.extend(
         [
             {
+                "canonical_issue": "crypto-consumer-protection",
+                "title": "Cryptocurrency Consumer Protection",
+                "category": "Financial Services",
+                "overview": (
+                    "Digital asset users can face fraud, market manipulation, platform insolvency risk, and unclear dispute "
+                    "processes. This issue focuses on stronger consumer protections, clearer disclosure rules, safer custody "
+                    "standards, and better enforcement coordination."
+                ),
+                "tags": ["crypto", "cryptocurrency", "digital assets", "consumer protection", "financial services"],
+                "synonyms": [
+                    "crypto consumer protection",
+                    "cryptocurrency safeguards",
+                    "digital asset consumer safety",
+                    "stablecoin consumer protections",
+                    "exchange transparency and custody",
+                ],
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+            },
+            {
                 "canonical_issue": "hawaii-flood-relief",
                 "title": "Hawaii Flood Relief",
                 "category": "Disaster Response",
@@ -862,6 +919,32 @@ def _seed_evidence_rows() -> list[dict[str, Any]]:
 
     rows.extend(
         [
+            {
+                "evidence_id": str(uuid.uuid4()),
+                "canonical_issue": "crypto-consumer-protection",
+                "source_name": "Federal financial consumer and market oversight context",
+                "source_url": None,
+                "published_at": now_iso,
+                "retrieved_at": now_iso,
+                "claim": (
+                    "Crypto users can be exposed to fraud, insolvency risk, and custody failures when platform disclosures and safeguards are weak."
+                ),
+                "evidence_type": "regulatory_context",
+                "supports_view": "support",
+            },
+            {
+                "evidence_id": str(uuid.uuid4()),
+                "canonical_issue": "crypto-consumer-protection",
+                "source_name": "Digital asset policy coordination context",
+                "source_url": None,
+                "published_at": now_iso,
+                "retrieved_at": now_iso,
+                "claim": (
+                    "Clear standards for disclosures, reserves, custody, and enforcement coordination are frequently identified as core consumer-protection levers."
+                ),
+                "evidence_type": "policy_context",
+                "supports_view": None,
+            },
             {
                 "evidence_id": str(uuid.uuid4()),
                 "canonical_issue": "hawaii-flood-relief",
