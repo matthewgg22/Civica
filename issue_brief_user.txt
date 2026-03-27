@@ -1,0 +1,29 @@
+Create a structured civic issue brief using only the supplied evidence packet.
+
+Concern text:
+{concern_text}
+
+Canonical issue:
+{canonical_issue}
+
+Policy flags:
+{policy_flags}
+
+User stance:
+{user_stance}
+
+Evidence packet JSON:
+{evidence_packet}
+
+Return a JSON object with keys:
+- summary_neutral: string
+- current_status: string
+- key_facts: array of objects with keys {evidence_id, fact}
+- arguments_by_view: array of objects with keys {view, argument}
+- unknowns: string array
+- questions_to_consider: string array
+
+Rules:
+- Include at least 2 viewpoints in arguments_by_view.
+- Use only evidence_id values that appear in the packet.
+- Do not output scripts, templates, or persuasion language.
