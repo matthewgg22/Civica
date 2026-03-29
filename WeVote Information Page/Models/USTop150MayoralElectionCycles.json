@@ -1,0 +1,2457 @@
+[
+  {
+    "rank": 1,
+    "city": "New York",
+    "state_name": "New York",
+    "census_geographic_area": "New York city, New York",
+    "population_est_2024": 8478072,
+    "next_election_year": 2029,
+    "next_primary_date_iso": "2029-06-26",
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year partisan election; projected from the 2025 Democratic primary and November general cycle.",
+    "sources": [
+      "https://ballotpedia.org/Mayoral_election_in_New_York%2C_New_York_%282025%29"
+    ]
+  },
+  {
+    "rank": 2,
+    "city": "Los Angeles",
+    "state_name": "California",
+    "census_geographic_area": "Los Angeles city, California",
+    "population_est_2024": 3878704,
+    "next_election_year": 2026,
+    "next_primary_date_iso": "2026-06-02",
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election with June primary and November general.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Los_Angeles%2C_California"
+    ]
+  },
+  {
+    "rank": 3,
+    "city": "Chicago",
+    "state_name": "Illinois",
+    "census_geographic_area": "Chicago city, Illinois",
+    "population_est_2024": 2721308,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-02-23",
+    "next_runoff_date_iso": "2027-04-06",
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan February municipal election; runoff in April, projected from 2019/2023 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Chicago%2C_Illinois"
+    ]
+  },
+  {
+    "rank": 4,
+    "city": "Houston",
+    "state_name": "Texas",
+    "census_geographic_area": "Houston city, Texas",
+    "population_est_2024": 2390125,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": "2027-12-11",
+    "date_status": "Projected",
+    "cycle_notes": "4-year November general election; runoff in December, projected from 2015/2019/2023 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Houston%2C_Texas"
+    ]
+  },
+  {
+    "rank": 5,
+    "city": "Phoenix",
+    "state_name": "Arizona",
+    "census_geographic_area": "Phoenix city, Arizona",
+    "population_est_2024": 1673164,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": "2029-03-13",
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan November election with March runoff if no candidate wins a majority; projected from 2024 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Mayoral_election_in_Phoenix%2C_Arizona_%282024%29",
+      "https://www.phoenix.gov/cityclerksite/elections"
+    ]
+  },
+  {
+    "rank": 6,
+    "city": "Philadelphia",
+    "state_name": "Pennsylvania",
+    "census_geographic_area": "Philadelphia city, Pennsylvania",
+    "population_est_2024": 1573916,
+    "next_election_year": 2027,
+    "next_primary_date_iso": "2027-05-18",
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Partisan mayoral elections with May primary and November general, projected from regular city cycle.",
+    "sources": [
+      "https://ballotpedia.org/Philadelphia%2C_Pennsylvania"
+    ]
+  },
+  {
+    "rank": 7,
+    "city": "San Antonio",
+    "state_name": "Texas",
+    "census_geographic_area": "San Antonio city, Texas",
+    "population_est_2024": 1526656,
+    "next_election_year": 2029,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2029-05-05",
+    "next_runoff_date_iso": "2029-06-09",
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan May election; runoff in June, projected from 2021/2023/2025 cycle.",
+    "sources": [
+      "https://ballotpedia.org/San_Antonio%2C_Texas"
+    ]
+  },
+  {
+    "rank": 8,
+    "city": "San Diego",
+    "state_name": "California",
+    "census_geographic_area": "San Diego city, California",
+    "population_est_2024": 1404452,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-03-07",
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year election aligned to California statewide cycle; primary in March and general in November, projected from 2020/2024 cycle.",
+    "sources": [
+      "https://ballotpedia.org/San_Diego%2C_California"
+    ]
+  },
+  {
+    "rank": 9,
+    "city": "Dallas",
+    "state_name": "Texas",
+    "census_geographic_area": "Dallas city, Texas",
+    "population_est_2024": 1326087,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-05-01",
+    "next_runoff_date_iso": "2027-06-12",
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan May election; runoff in June, projected from 2019/2023 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Dallas%2C_Texas"
+    ]
+  },
+  {
+    "rank": 10,
+    "city": "Jacksonville",
+    "state_name": "Florida",
+    "census_geographic_area": "Jacksonville city, Florida",
+    "population_est_2024": 1009833,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-03-16",
+    "next_runoff_date_iso": "2027-05-18",
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan spring election in March; runoff in May, projected from 2019/2023 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Jacksonville%2C_Florida"
+    ]
+  },
+  {
+    "rank": 11,
+    "city": "Fort Worth",
+    "state_name": "Texas",
+    "census_geographic_area": "Fort Worth city, Texas",
+    "population_est_2024": 1008106,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-05-01",
+    "next_runoff_date_iso": "2027-06-05",
+    "date_status": "Projected",
+    "cycle_notes": "2-year nonpartisan May election; runoff in June, projected from 2021/2023/2025 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Fort_Worth%2C_Texas"
+    ]
+  },
+  {
+    "rank": 12,
+    "city": "San Jose",
+    "state_name": "California",
+    "census_geographic_area": "San Jose city, California",
+    "population_est_2024": 997368,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-03-07",
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year election aligned to California statewide cycle; primary in March and general in November, projected from 2022/2024 cycle.",
+    "sources": [
+      "https://ballotpedia.org/San_Jose%2C_California"
+    ]
+  },
+  {
+    "rank": 13,
+    "city": "Austin",
+    "state_name": "Texas",
+    "census_geographic_area": "Austin city, Texas",
+    "population_est_2024": 993588,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": "2028-12-16",
+    "date_status": "Projected",
+    "cycle_notes": "4-year November election; runoff in December, projected from 2022/2024 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Austin%2C_Texas"
+    ]
+  },
+  {
+    "rank": 14,
+    "city": "Charlotte",
+    "state_name": "North Carolina",
+    "census_geographic_area": "Charlotte city, North Carolina",
+    "population_est_2024": 943476,
+    "next_election_year": 2027,
+    "next_primary_date_iso": "2027-09-14",
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": "2027-10-12",
+    "date_status": "Projected",
+    "cycle_notes": "Odd-year nonpartisan election with September primary, October runoff if needed, and November general, projected from 2023/2025 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Charlotte%2C_North_Carolina"
+    ]
+  },
+  {
+    "rank": 15,
+    "city": "Columbus",
+    "state_name": "Ohio",
+    "census_geographic_area": "Columbus city, Ohio",
+    "population_est_2024": 933263,
+    "next_election_year": 2027,
+    "next_primary_date_iso": "2027-05-04",
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Partisan election with May primary and November general, projected from 2019/2023 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Columbus%2C_Ohio"
+    ]
+  },
+  {
+    "rank": 16,
+    "city": "Indianapolis",
+    "state_name": "Indiana",
+    "census_geographic_area": "Indianapolis city (balance), Indiana",
+    "population_est_2024": 891484,
+    "next_election_year": 2027,
+    "next_primary_date_iso": "2027-05-04",
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Indiana municipal cycle: May primary and November general in odd-numbered years, projected.",
+    "sources": [
+      "https://ballotpedia.org/Indianapolis%2C_Indiana"
+    ]
+  },
+  {
+    "rank": 17,
+    "city": "San Francisco",
+    "state_name": "California",
+    "census_geographic_area": "San Francisco city, California",
+    "population_est_2024": 827526,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year mayoral election in November using ranked-choice voting; no separate primary.",
+    "sources": [
+      "https://ballotpedia.org/San_Francisco%2C_California"
+    ]
+  },
+  {
+    "rank": 18,
+    "city": "Seattle",
+    "state_name": "Washington",
+    "census_geographic_area": "Seattle city, Washington",
+    "population_est_2024": 780995,
+    "next_election_year": 2029,
+    "next_primary_date_iso": "2029-08-07",
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan election with August primary and November general, projected from 2021/2025 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Seattle%2C_Washington"
+    ]
+  },
+  {
+    "rank": 19,
+    "city": "Denver",
+    "state_name": "Colorado",
+    "census_geographic_area": "Denver city, Colorado",
+    "population_est_2024": 729019,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-04-06",
+    "next_runoff_date_iso": "2027-06-01",
+    "date_status": "Projected",
+    "cycle_notes": "4-year municipal election in spring with April general and June runoff, projected from 2019/2023 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Denver%2C_Colorado"
+    ]
+  },
+  {
+    "rank": 20,
+    "city": "Oklahoma City",
+    "state_name": "Oklahoma",
+    "census_geographic_area": "Oklahoma City city, Oklahoma",
+    "population_est_2024": 712919,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-02-10",
+    "next_runoff_date_iso": "2026-04-07",
+    "date_status": "Scheduled",
+    "cycle_notes": "4-year spring election with February general and April runoff.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Oklahoma_City%2C_Oklahoma"
+    ]
+  },
+  {
+    "rank": 21,
+    "city": "Nashville-Davidson",
+    "state_name": "Tennessee",
+    "census_geographic_area": "Nashville-Davidson metropolitan government (balance), Tennessee",
+    "population_est_2024": 704963,
+    "next_election_year": 2027,
+    "next_primary_date_iso": "2027-08-05",
+    "next_general_date_iso": "2027-09-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Metropolitan government uses August first round and September runoff/general in presidential off-years, projected from 2023 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Nashville%2C_Tennessee"
+    ]
+  },
+  {
+    "rank": 22,
+    "city": "Washington",
+    "state_name": "District of Columbia",
+    "census_geographic_area": "Washington city, District of Columbia",
+    "population_est_2024": 702250,
+    "next_election_year": 2026,
+    "next_primary_date_iso": "2026-06-16",
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Partisan mayoral election with June primary and November general.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Washington%2C_District_of_Columbia"
+    ]
+  },
+  {
+    "rank": 23,
+    "city": "El Paso",
+    "state_name": "Texas",
+    "census_geographic_area": "El Paso city, Texas",
+    "population_est_2024": 681723,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": "2028-12-16",
+    "date_status": "Projected",
+    "cycle_notes": "4-year November election; runoff in December if needed, projected from 2020/2024 cycle.",
+    "sources": [
+      "https://ballotpedia.org/El_Paso%2C_Texas"
+    ]
+  },
+  {
+    "rank": 24,
+    "city": "Las Vegas",
+    "state_name": "Nevada",
+    "census_geographic_area": "Las Vegas city, Nevada",
+    "population_est_2024": 678922,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-06-13",
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan election with June primary and November general, projected from 2019/2024 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Las_Vegas%2C_Nevada"
+    ]
+  },
+  {
+    "rank": 25,
+    "city": "Boston",
+    "state_name": "Massachusetts",
+    "census_geographic_area": "Boston city, Massachusetts",
+    "population_est_2024": 673458,
+    "next_election_year": 2029,
+    "next_primary_date_iso": "2029-09-11",
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan election with September preliminary/primary and November general, projected from 2025 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Mayoral_election_in_Boston%2C_Massachusetts_%282025%29"
+    ]
+  },
+  {
+    "rank": 26,
+    "city": "Detroit",
+    "state_name": "Michigan",
+    "census_geographic_area": "Detroit city, Michigan",
+    "population_est_2024": 645705,
+    "next_election_year": 2029,
+    "next_primary_date_iso": "2029-08-07",
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan election with August primary and November general, projected from 2021/2025 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Detroit%2C_Michigan"
+    ]
+  },
+  {
+    "rank": 27,
+    "city": "Louisville-Jefferson County",
+    "state_name": "Kentucky",
+    "census_geographic_area": "Louisville/Jefferson County metro government (balance), Kentucky",
+    "population_est_2024": 640796,
+    "next_election_year": 2026,
+    "next_primary_date_iso": "2026-05-19",
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Partisan mayoral election with May primary and November general.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Louisville%2C_Kentucky"
+    ]
+  },
+  {
+    "rank": 28,
+    "city": "Portland",
+    "state_name": "Oregon",
+    "census_geographic_area": "Portland city, Oregon",
+    "population_est_2024": 635749,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Single ranked-choice general election in November of presidential years; projected from 2024 charter transition.",
+    "sources": [
+      "https://www.portland.gov/auditor/elections/city-office-candidacy"
+    ]
+  },
+  {
+    "rank": 29,
+    "city": "Memphis",
+    "state_name": "Tennessee",
+    "census_geographic_area": "Memphis city, Tennessee",
+    "population_est_2024": 610919,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-10-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Nonpartisan municipal election on the first Thursday in October, projected from 2023 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Mayoral_election_in_Memphis%2C_Tennessee_%282023%29"
+    ]
+  },
+  {
+    "rank": 30,
+    "city": "Baltimore",
+    "state_name": "Maryland",
+    "census_geographic_area": "Baltimore city, Maryland",
+    "population_est_2024": 568271,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-05-09",
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year partisan election; projected from 2024 Democratic-primary/November-general cycle.",
+    "sources": [
+      "https://ballotpedia.org/Mayoral_election_in_Baltimore%2C_Maryland_%282024%29"
+    ]
+  },
+  {
+    "rank": 31,
+    "city": "Milwaukee",
+    "state_name": "Wisconsin",
+    "census_geographic_area": "Milwaukee city, Wisconsin",
+    "population_est_2024": 563531,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-02-15",
+    "next_general_date_iso": "2028-04-04",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year spring election with February primary and April general, projected from 2020/2024 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Milwaukee%2C_Wisconsin"
+    ]
+  },
+  {
+    "rank": 32,
+    "city": "Albuquerque",
+    "state_name": "New Mexico",
+    "census_geographic_area": "Albuquerque city, New Mexico",
+    "population_est_2024": 560326,
+    "next_election_year": 2029,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": "2029-12-11",
+    "date_status": "Projected",
+    "cycle_notes": "4-year November election with December runoff, projected from 2021/2025 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Albuquerque%2C_New_Mexico"
+    ]
+  },
+  {
+    "rank": 33,
+    "city": "Tucson",
+    "state_name": "Arizona",
+    "census_geographic_area": "Tucson city, Arizona",
+    "population_est_2024": 554013,
+    "next_election_year": 2027,
+    "next_primary_date_iso": "2027-08-03",
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year election with summer primary and November general, projected from 2019/2023 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Tucson%2C_Arizona"
+    ]
+  },
+  {
+    "rank": 34,
+    "city": "Fresno",
+    "state_name": "California",
+    "census_geographic_area": "Fresno city, California",
+    "population_est_2024": 550105,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-03-07",
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year election aligned to California statewide cycle; March primary and November general, projected from 2020/2024 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Fresno%2C_California"
+    ]
+  },
+  {
+    "rank": 35,
+    "city": "Sacramento",
+    "state_name": "California",
+    "census_geographic_area": "Sacramento city, California",
+    "population_est_2024": 535798,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-03-07",
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year election aligned to California statewide cycle; March primary and November general, projected from 2020/2024 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Sacramento%2C_California"
+    ]
+  },
+  {
+    "rank": 36,
+    "city": "Atlanta",
+    "state_name": "Georgia",
+    "census_geographic_area": "Atlanta city, Georgia",
+    "population_est_2024": 520070,
+    "next_election_year": 2029,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": "2029-12-04",
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan election with November general and December runoff, projected from 2021/2025 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Atlanta%2C_Georgia"
+    ]
+  },
+  {
+    "rank": 37,
+    "city": "Mesa",
+    "state_name": "Arizona",
+    "census_geographic_area": "Mesa city, Arizona",
+    "population_est_2024": 517151,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-07-25",
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year election with late-July primary and November general, projected from 2020/2024 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Mesa%2C_Arizona"
+    ]
+  },
+  {
+    "rank": 38,
+    "city": "Kansas City",
+    "state_name": "Missouri",
+    "census_geographic_area": "Kansas City city, Missouri",
+    "population_est_2024": 516032,
+    "next_election_year": 2027,
+    "next_primary_date_iso": "2027-04-06",
+    "next_general_date_iso": "2027-06-22",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan election with April primary and June general, projected from 2019/2023 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Kansas_City%2C_Missouri"
+    ]
+  },
+  {
+    "rank": 39,
+    "city": "Raleigh",
+    "state_name": "North Carolina",
+    "census_geographic_area": "Raleigh city, North Carolina",
+    "population_est_2024": 499825,
+    "next_election_year": 2026,
+    "next_primary_date_iso": "2026-03-03",
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Shortened two-year transition cycle with March primary and November general in 2026.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Raleigh%2C_North_Carolina"
+    ]
+  },
+  {
+    "rank": 40,
+    "city": "Colorado Springs",
+    "state_name": "Colorado",
+    "census_geographic_area": "Colorado Springs city, Colorado",
+    "population_est_2024": 493554,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-04-06",
+    "next_runoff_date_iso": "2027-05-18",
+    "date_status": "Projected",
+    "cycle_notes": "4-year municipal election with April general and May runoff, projected from 2019/2023 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Colorado_Springs%2C_Colorado"
+    ]
+  },
+  {
+    "rank": 41,
+    "city": "Omaha",
+    "state_name": "Nebraska",
+    "census_geographic_area": "Omaha city, Nebraska",
+    "population_est_2024": 489265,
+    "next_election_year": 2029,
+    "next_primary_date_iso": "2029-04-03",
+    "next_general_date_iso": "2029-05-08",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan spring election with April primary and May general, projected from 2021/2025 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Omaha%2C_Nebraska"
+    ]
+  },
+  {
+    "rank": 42,
+    "city": "Miami",
+    "state_name": "Florida",
+    "census_geographic_area": "Miami city, Florida",
+    "population_est_2024": 487014,
+    "next_election_year": 2029,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": "2029-11-20",
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan election with November general and November runoff, projected from 2021/2025 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Miami%2C_Florida"
+    ]
+  },
+  {
+    "rank": 43,
+    "city": "Virginia Beach",
+    "state_name": "Virginia",
+    "census_geographic_area": "Virginia Beach city, Virginia",
+    "population_est_2024": 454808,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year November general election; no separate primary shown on recent city mayoral cycles.",
+    "sources": [
+      "https://ballotpedia.org/Virginia_Beach%2C_Virginia"
+    ]
+  },
+  {
+    "rank": 44,
+    "city": "Long Beach",
+    "state_name": "California",
+    "census_geographic_area": "Long Beach city, California",
+    "population_est_2024": 450901,
+    "next_election_year": 2026,
+    "next_primary_date_iso": "2026-06-02",
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "4-year election with June primary and November general.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Long_Beach%2C_California"
+    ]
+  },
+  {
+    "rank": 45,
+    "city": "Oakland",
+    "state_name": "California",
+    "census_geographic_area": "Oakland city, California",
+    "population_est_2024": 443554,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Next regular mayoral election scheduled for November 2026; no separate primary for mayoral contest shown on city page.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Oakland%2C_California"
+    ]
+  },
+  {
+    "rank": 46,
+    "city": "Minneapolis",
+    "state_name": "Minnesota",
+    "census_geographic_area": "Minneapolis city, Minnesota",
+    "population_est_2024": 428579,
+    "next_election_year": 2029,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year ranked-choice municipal election in November of odd-numbered years; no separate primary.",
+    "sources": [
+      "https://ballotpedia.org/Mayoral_election_in_Minneapolis%2C_Minnesota_%282025%29"
+    ]
+  },
+  {
+    "rank": 47,
+    "city": "Bakersfield",
+    "state_name": "California",
+    "census_geographic_area": "Bakersfield city, California",
+    "population_est_2024": 417468,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-03-07",
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year election aligned to California statewide cycle; March primary and November general, projected from 2024 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Bakersfield%2C_California"
+    ]
+  },
+  {
+    "rank": 48,
+    "city": "Tulsa",
+    "state_name": "Oklahoma",
+    "census_geographic_area": "Tulsa city, Oklahoma",
+    "population_est_2024": 415154,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-08-22",
+    "next_runoff_date_iso": "2028-11-07",
+    "date_status": "Projected",
+    "cycle_notes": "4-year election with late-August general and November runoff if needed, projected from 2020/2024 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Tulsa%2C_Oklahoma"
+    ]
+  },
+  {
+    "rank": 49,
+    "city": "Tampa",
+    "state_name": "Florida",
+    "census_geographic_area": "Tampa city, Florida",
+    "population_est_2024": 414547,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-03-02",
+    "next_runoff_date_iso": "2027-04-27",
+    "date_status": "Scheduled",
+    "cycle_notes": "Nonpartisan first-round city election with runoff if needed.",
+    "sources": [
+      "https://www.votehillsborough.gov/DocumentCenter/View/1032/City-of-Tampa-Fact-Sheet-and-FAQs-PDF"
+    ]
+  },
+  {
+    "rank": 50,
+    "city": "Arlington",
+    "state_name": "Texas",
+    "census_geographic_area": "Arlington city, Texas",
+    "population_est_2024": 403672,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-05-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Next regular mayoral election scheduled for May 2, 2026.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Arlington%2C_Texas"
+    ]
+  },
+  {
+    "rank": 51,
+    "city": "Aurora",
+    "state_name": "Colorado",
+    "census_geographic_area": "Aurora city, Colorado",
+    "population_est_2024": 403130,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year November municipal election; no separate primary shown on recent city cycle.",
+    "sources": [
+      "https://ballotpedia.org/Aurora%2C_Colorado"
+    ]
+  },
+  {
+    "rank": 52,
+    "city": "Wichita",
+    "state_name": "Kansas",
+    "census_geographic_area": "Wichita city, Kansas",
+    "population_est_2024": 400991,
+    "next_election_year": 2027,
+    "next_primary_date_iso": "2027-08-03",
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan cycle with August primary and November general, projected from 2019/2023 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Wichita%2C_Kansas"
+    ]
+  },
+  {
+    "rank": 53,
+    "city": "Cleveland",
+    "state_name": "Ohio",
+    "census_geographic_area": "Cleveland city, Ohio",
+    "population_est_2024": 365379,
+    "next_election_year": 2029,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan November municipal election; no primary noted on recent city page.",
+    "sources": [
+      "https://ballotpedia.org/Cleveland%2C_Ohio"
+    ]
+  },
+  {
+    "rank": 54,
+    "city": "New Orleans",
+    "state_name": "Louisiana",
+    "census_geographic_area": "New Orleans city, Louisiana",
+    "population_est_2024": 362701,
+    "next_election_year": 2029,
+    "next_primary_date_iso": "2029-10-13",
+    "next_general_date_iso": "2029-11-17",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year municipal cycle with October primary and November general, projected from 2017/2021/2025 cycle.",
+    "sources": [
+      "https://ballotpedia.org/New_Orleans%2C_Louisiana"
+    ]
+  },
+  {
+    "rank": 55,
+    "city": "Henderson",
+    "state_name": "Nevada",
+    "census_geographic_area": "Henderson city, Nevada",
+    "population_est_2024": 350039,
+    "next_election_year": 2026,
+    "next_primary_date_iso": "2026-06-09",
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "4-year nonpartisan election with June primary and November general.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Henderson%2C_Nevada"
+    ]
+  },
+  {
+    "rank": 56,
+    "city": "Honolulu",
+    "state_name": "Hawaii",
+    "census_geographic_area": "Urban Honolulu CDP, Hawaii",
+    "population_est_2024": 344967,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-08-12",
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan election with August primary and November general, projected from 2020/2024 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Honolulu%2C_Hawaii"
+    ]
+  },
+  {
+    "rank": 57,
+    "city": "Anaheim",
+    "state_name": "California",
+    "census_geographic_area": "Anaheim city, California",
+    "population_est_2024": 344561,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election scheduled for November 3, 2026.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Anaheim%2C_California"
+    ]
+  },
+  {
+    "rank": 58,
+    "city": "Orlando",
+    "state_name": "Florida",
+    "census_geographic_area": "Orlando city, Florida",
+    "population_est_2024": 334854,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": "2027-12-07",
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan election with November general and December runoff, projected from 2019/2023 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Orlando%2C_Florida"
+    ]
+  },
+  {
+    "rank": 59,
+    "city": "Lexington",
+    "state_name": "Kentucky",
+    "census_geographic_area": "Lexington-Fayette urban county, Kentucky",
+    "population_est_2024": 329437,
+    "next_election_year": 2026,
+    "next_primary_date_iso": "2026-05-19",
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Partisan mayoral election with May primary and November general.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Lexington%2C_Kentucky"
+    ]
+  },
+  {
+    "rank": 60,
+    "city": "Stockton",
+    "state_name": "California",
+    "census_geographic_area": "Stockton city, California",
+    "population_est_2024": 324975,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-03-07",
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year election aligned to California statewide cycle; March primary and November general, projected from 2020/2024 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Stockton%2C_California"
+    ]
+  },
+  {
+    "rank": 61,
+    "city": "Riverside",
+    "state_name": "California",
+    "census_geographic_area": "Riverside city, California",
+    "population_est_2024": 323757,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year November general election; no primary listed on recent city page.",
+    "sources": [
+      "https://ballotpedia.org/Riverside%2C_California"
+    ]
+  },
+  {
+    "rank": 62,
+    "city": "Irvine",
+    "state_name": "California",
+    "census_geographic_area": "Irvine city, California",
+    "population_est_2024": 318683,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election scheduled for November 3, 2026.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Irvine%2C_California"
+    ]
+  },
+  {
+    "rank": 63,
+    "city": "Corpus Christi",
+    "state_name": "Texas",
+    "census_geographic_area": "Corpus Christi city, Texas",
+    "population_est_2024": 317317,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election scheduled for November 3, 2026; runoff possible if no majority.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Corpus_Christi%2C_Texas"
+    ]
+  },
+  {
+    "rank": 64,
+    "city": "Newark",
+    "state_name": "New Jersey",
+    "census_geographic_area": "Newark city, New Jersey",
+    "population_est_2024": 317303,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-05-12",
+    "next_runoff_date_iso": "2026-06-09",
+    "date_status": "Scheduled",
+    "cycle_notes": "4-year nonpartisan municipal election with runoff in June.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Newark%2C_New_Jersey"
+    ]
+  },
+  {
+    "rank": 65,
+    "city": "Santa Ana",
+    "state_name": "California",
+    "census_geographic_area": "Santa Ana city, California",
+    "population_est_2024": 316184,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election scheduled for November 3, 2026.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Santa_Ana%2C_California"
+    ]
+  },
+  {
+    "rank": 66,
+    "city": "Cincinnati",
+    "state_name": "Ohio",
+    "census_geographic_area": "Cincinnati city, Ohio",
+    "population_est_2024": 314915,
+    "next_election_year": 2029,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan November municipal election; no primary noted on recent city page.",
+    "sources": [
+      "https://ballotpedia.org/Cincinnati%2C_Ohio"
+    ]
+  },
+  {
+    "rank": 67,
+    "city": "Pittsburgh",
+    "state_name": "Pennsylvania",
+    "census_geographic_area": "Pittsburgh city, Pennsylvania",
+    "population_est_2024": 307668,
+    "next_election_year": 2029,
+    "next_primary_date_iso": "2029-05-15",
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Partisan mayoral election with May primary and November general, projected from city cycle.",
+    "sources": [
+      "https://ballotpedia.org/Pittsburgh%2C_Pennsylvania"
+    ]
+  },
+  {
+    "rank": 68,
+    "city": "St. Paul",
+    "state_name": "Minnesota",
+    "census_geographic_area": "St. Paul city, Minnesota",
+    "population_est_2024": 307465,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year election on the general ballot in November; no primary.",
+    "sources": [
+      "https://ballotpedia.org/St._Paul%2C_Minnesota"
+    ]
+  },
+  {
+    "rank": 69,
+    "city": "Greensboro",
+    "state_name": "North Carolina",
+    "census_geographic_area": "Greensboro city, North Carolina",
+    "population_est_2024": 307381,
+    "next_election_year": 2029,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan election in odd-numbered years; no primary shown on recent city page.",
+    "sources": [
+      "https://ballotpedia.org/Greensboro%2C_North_Carolina"
+    ]
+  },
+  {
+    "rank": 70,
+    "city": "Jersey City",
+    "state_name": "New Jersey",
+    "census_geographic_area": "Jersey City city, New Jersey",
+    "population_est_2024": 302824,
+    "next_election_year": 2029,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": "2029-12-04",
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan election with December runoff, projected from 2021/2025 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Jersey_City%2C_New_Jersey"
+    ]
+  },
+  {
+    "rank": 71,
+    "city": "Durham",
+    "state_name": "North Carolina",
+    "census_geographic_area": "Durham city, North Carolina",
+    "population_est_2024": 301870,
+    "next_election_year": 2027,
+    "next_primary_date_iso": "2027-10-05",
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Two-year nonpartisan cycle with October primary and November general, projected from 2025 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Mayoral_election_in_Durham%2C_North_Carolina_%282025%29"
+    ]
+  },
+  {
+    "rank": 72,
+    "city": "Lincoln",
+    "state_name": "Nebraska",
+    "census_geographic_area": "Lincoln city, Nebraska",
+    "population_est_2024": 300619,
+    "next_election_year": 2027,
+    "next_primary_date_iso": "2027-04-06",
+    "next_general_date_iso": "2027-05-04",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan spring election with April primary and May general, projected from 2023 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Mayoral_election_in_Lincoln%2C_Nebraska_%282023%29"
+    ]
+  },
+  {
+    "rank": 73,
+    "city": "North Las Vegas",
+    "state_name": "Nevada",
+    "census_geographic_area": "North Las Vegas city, Nevada",
+    "population_est_2024": 294034,
+    "next_election_year": 2026,
+    "next_primary_date_iso": "2026-06-09",
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election with June primary and November general.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/North_Las_Vegas%2C_Nevada"
+    ]
+  },
+  {
+    "rank": 74,
+    "city": "Plano",
+    "state_name": "Texas",
+    "census_geographic_area": "Plano city, Texas",
+    "population_est_2024": 293286,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-05-01",
+    "next_runoff_date_iso": "2027-06-05",
+    "date_status": "Projected",
+    "cycle_notes": "Nonpartisan May election with June runoff if needed, projected from 2025 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Mayoral_election_in_Plano%2C_Texas_%282025%29",
+      "https://www.plano.gov/1402/Elections"
+    ]
+  },
+  {
+    "rank": 75,
+    "city": "Anchorage",
+    "state_name": "Alaska",
+    "census_geographic_area": "Anchorage municipality, Alaska",
+    "population_est_2024": 289600,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-04-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "3-year/4-year municipal spring cycle with April regular election, projected from recent city elections.",
+    "sources": [
+      "https://ballotpedia.org/Anchorage%2C_Alaska"
+    ]
+  },
+  {
+    "rank": 76,
+    "city": "Gilbert",
+    "state_name": "Arizona",
+    "census_geographic_area": "Gilbert town, Arizona",
+    "population_est_2024": 288790,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-07-18",
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Nonpartisan election; 2024 mayor won outright in the primary, so the 2028 July primary date is projected and a November general would be held only if needed.",
+    "sources": [
+      "https://ballotpedia.org/Scott_Anderson_%28Arizona%29",
+      "https://www.gilbertaz.gov/departments/clerk-s-office/primary-elections"
+    ]
+  },
+  {
+    "rank": 77,
+    "city": "Madison",
+    "state_name": "Wisconsin",
+    "census_geographic_area": "Madison city, Wisconsin",
+    "population_est_2024": 285300,
+    "next_election_year": 2027,
+    "next_primary_date_iso": "2027-02-16",
+    "next_general_date_iso": "2027-04-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year spring election with February primary and April general, projected from 2023 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Satya_Rhodes-Conway"
+    ]
+  },
+  {
+    "rank": 78,
+    "city": "Reno",
+    "state_name": "Nevada",
+    "census_geographic_area": "Reno city, Nevada",
+    "population_est_2024": 281714,
+    "next_election_year": 2026,
+    "next_primary_date_iso": "2026-06-09",
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election with June primary and November general.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Reno%2C_Nevada"
+    ]
+  },
+  {
+    "rank": 79,
+    "city": "Chandler",
+    "state_name": "Arizona",
+    "census_geographic_area": "Chandler city, Arizona",
+    "population_est_2024": 281231,
+    "next_election_year": 2026,
+    "next_primary_date_iso": "2026-07-21",
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election with July primary and November general.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Chandler%2C_Arizona"
+    ]
+  },
+  {
+    "rank": 80,
+    "city": "St. Louis",
+    "state_name": "Missouri",
+    "census_geographic_area": "St. Louis city, Missouri",
+    "population_est_2024": 279695,
+    "next_election_year": 2029,
+    "next_primary_date_iso": "2029-03-06",
+    "next_general_date_iso": "2029-04-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan municipal election with March primary and April general, projected from 2021/2025 cycle.",
+    "sources": [
+      "https://ballotpedia.org/St._Louis%2C_Missouri"
+    ]
+  },
+  {
+    "rank": 81,
+    "city": "Chula Vista",
+    "state_name": "California",
+    "census_geographic_area": "Chula Vista city, California",
+    "population_est_2024": 278546,
+    "next_election_year": 2026,
+    "next_primary_date_iso": "2026-06-02",
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election with June primary and November general.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Chula_Vista%2C_California"
+    ]
+  },
+  {
+    "rank": 82,
+    "city": "Buffalo",
+    "state_name": "New York",
+    "census_geographic_area": "Buffalo city, New York",
+    "population_est_2024": 276617,
+    "next_election_year": 2029,
+    "next_primary_date_iso": "2029-06-26",
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year partisan election with June primary and November general, projected from 2025 cycle.",
+    "sources": [
+      "https://en.wikipedia.org/wiki/2025_Buffalo_mayoral_election"
+    ]
+  },
+  {
+    "rank": 83,
+    "city": "Fort Wayne",
+    "state_name": "Indiana",
+    "census_geographic_area": "Fort Wayne city, Indiana",
+    "population_est_2024": 273203,
+    "next_election_year": 2027,
+    "next_primary_date_iso": "2027-05-04",
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Indiana municipal cycle with May primary and November general, projected.",
+    "sources": [
+      "https://ballotpedia.org/Fort_Wayne%2C_Indiana"
+    ]
+  },
+  {
+    "rank": 84,
+    "city": "Lubbock",
+    "state_name": "Texas",
+    "census_geographic_area": "Lubbock city, Texas",
+    "population_est_2024": 272086,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-05-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election scheduled for May 2, 2026.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Lubbock%2C_Texas"
+    ]
+  },
+  {
+    "rank": 85,
+    "city": "St. Petersburg",
+    "state_name": "Florida",
+    "census_geographic_area": "St. Petersburg city, Florida",
+    "population_est_2024": 267102,
+    "next_election_year": 2026,
+    "next_primary_date_iso": "2026-08-18",
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election with August primary and November general.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/St._Petersburg%2C_Florida"
+    ]
+  },
+  {
+    "rank": 86,
+    "city": "Toledo",
+    "state_name": "Ohio",
+    "census_geographic_area": "Toledo city, Ohio",
+    "population_est_2024": 265638,
+    "next_election_year": 2029,
+    "next_primary_date_iso": "2029-05-08",
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Nonpartisan election with May primary and November general, projected from 2025 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Mayoral_election_in_Toledo%2C_Ohio_%282025%29"
+    ]
+  },
+  {
+    "rank": 87,
+    "city": "Laredo",
+    "state_name": "Texas",
+    "census_geographic_area": "Laredo city, Texas",
+    "population_est_2024": 261260,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election scheduled for November 3, 2026.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Laredo%2C_Texas"
+    ]
+  },
+  {
+    "rank": 88,
+    "city": "Port St. Lucie",
+    "state_name": "Florida",
+    "census_geographic_area": "Port St. Lucie city, Florida",
+    "population_est_2024": 258575,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Mayor was elected in a 2021 special election; next regular citywide mayoral election is treated as the 2026 general city election, with city clerk as candidate-qualifying officer.",
+    "sources": [
+      "https://www.cityofpsl.com/Government/Your-City-Government/Departments/City-Clerk/Elections",
+      "https://www.cityofpsl.com/Government/Your-City-Government/Mayor-City-Council/Mayor-Shannon-Martin"
+    ]
+  },
+  {
+    "rank": 89,
+    "city": "Glendale",
+    "state_name": "Arizona",
+    "census_geographic_area": "Glendale city, Arizona",
+    "population_est_2024": 258143,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-07-18",
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Nonpartisan election with July primary and November general, projected from 2024 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Mayoral_election_in_Glendale%2C_Arizona_%282024%29"
+    ]
+  },
+  {
+    "rank": 90,
+    "city": "Irving",
+    "state_name": "Texas",
+    "census_geographic_area": "Irving city, Texas",
+    "population_est_2024": 258060,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-05-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election scheduled for May 2, 2026.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Irving%2C_Texas"
+    ]
+  },
+  {
+    "rank": 91,
+    "city": "Winston-Salem",
+    "state_name": "North Carolina",
+    "census_geographic_area": "Winston-Salem city, North Carolina",
+    "population_est_2024": 255769,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-03-07",
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Partisan cycle with spring primary and November general, projected from 2024 cycle.",
+    "sources": [
+      "https://en.wikipedia.org/wiki/2024_Winston-Salem_mayoral_election"
+    ]
+  },
+  {
+    "rank": 92,
+    "city": "Chesapeake",
+    "state_name": "Virginia",
+    "census_geographic_area": "Chesapeake city, Virginia",
+    "population_est_2024": 254997,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Official city guidance says mayoral elections are held every four years on the first Tuesday after the first Monday in November in even-numbered years.",
+    "sources": [
+      "https://www.cityofchesapeake.net/1177/Council-Mayoral-Elections"
+    ]
+  },
+  {
+    "rank": 93,
+    "city": "Garland",
+    "state_name": "Texas",
+    "census_geographic_area": "Garland city, Texas",
+    "population_est_2024": 250431,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-05-01",
+    "next_runoff_date_iso": "2027-06-05",
+    "date_status": "Projected",
+    "cycle_notes": "Nonpartisan May election with June runoff if needed, projected from 2025 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Mayoral_election_in_Garland%2C_Texas_%282025%29",
+      "https://www.garlandtx.gov/782/Mayor"
+    ]
+  },
+  {
+    "rank": 94,
+    "city": "Scottsdale",
+    "state_name": "Arizona",
+    "census_geographic_area": "Scottsdale city, Arizona",
+    "population_est_2024": 246170,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-07-18",
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Nonpartisan election with July primary and November general, projected from 2024 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Mayoral_election_in_Scottsdale%2C_Arizona_%282024%29",
+      "https://ballotpedia.org/Lisa_Borowsky"
+    ]
+  },
+  {
+    "rank": 95,
+    "city": "Boise",
+    "state_name": "Idaho",
+    "census_geographic_area": "Boise City city, Idaho",
+    "population_est_2024": 237963,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan mayoral election in November of odd-numbered years, projected from 2023 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Lauren_McLean"
+    ]
+  },
+  {
+    "rank": 96,
+    "city": "Hialeah",
+    "state_name": "Florida",
+    "census_geographic_area": "Hialeah city, Florida",
+    "population_est_2024": 235388,
+    "next_election_year": 2029,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": "2029-12-11",
+    "date_status": "Projected",
+    "cycle_notes": "Nonpartisan November election with December runoff if needed, projected from 2025 cycle.",
+    "sources": [
+      "https://en.wikipedia.org/wiki/2025_Hialeah_mayoral_election"
+    ]
+  },
+  {
+    "rank": 97,
+    "city": "Frisco",
+    "state_name": "Texas",
+    "census_geographic_area": "Frisco city, Texas",
+    "population_est_2024": 235208,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-05-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election scheduled for May 2, 2026.",
+    "sources": [
+      "https://www.friscotexas.gov/1692/May-2-2026-General-Election"
+    ]
+  },
+  {
+    "rank": 98,
+    "city": "Richmond",
+    "state_name": "Virginia",
+    "census_geographic_area": "Richmond city, Virginia",
+    "population_est_2024": 233655,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Directly elected mayor; current citywide term runs 2025-2028, so the next regular mayoral election is projected for November 2028.",
+    "sources": [
+      "https://www.rva.gov/richmond-city-council/council-contacts",
+      "https://ballotpedia.org/Richmond%2C_Virginia"
+    ]
+  },
+  {
+    "rank": 99,
+    "city": "Cape Coral",
+    "state_name": "Florida",
+    "census_geographic_area": "Cape Coral city, Florida",
+    "population_est_2024": 233025,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Official city elections page says the city will hold a 2026 election for mayor and district seats.",
+    "sources": [
+      "https://www.capecoral.gov/departments/city_clerk/city_elections.php"
+    ]
+  },
+  {
+    "rank": 100,
+    "city": "Norfolk",
+    "state_name": "Virginia",
+    "census_geographic_area": "Norfolk city, Virginia",
+    "population_est_2024": 231105,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Mayor page says current term runs January 1, 2025 to December 31, 2028; next direct mayoral election is projected for November 2028.",
+    "sources": [
+      "https://www.norfolk.gov/3515/Mayor-Kenneth-Cooper-Alexander-PhD"
+    ]
+  },
+  {
+    "rank": 101,
+    "city": "Spokane",
+    "state_name": "Washington",
+    "census_geographic_area": "Spokane city, Washington",
+    "population_est_2024": 230609,
+    "next_election_year": 2027,
+    "next_primary_date_iso": "2027-08-03",
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year Washington municipal cycle with August primary and November general.",
+    "sources": [
+      "https://ballotpedia.org/Spokane%2C_Washington"
+    ]
+  },
+  {
+    "rank": 102,
+    "city": "Huntsville",
+    "state_name": "Alabama",
+    "census_geographic_area": "Huntsville city, Alabama",
+    "population_est_2024": 230402,
+    "next_election_year": 2029,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2029-08-28",
+    "next_runoff_date_iso": "2029-09-25",
+    "date_status": "Projected",
+    "cycle_notes": "Alabama municipalities shifted to August elections in 2025 and every four years thereafter; runoff projected in late September.",
+    "sources": [
+      "https://www.birminghamal.gov/municipal-elections"
+    ]
+  },
+  {
+    "rank": 103,
+    "city": "Santa Clarita",
+    "state_name": "California",
+    "census_geographic_area": "Santa Clarita city, California",
+    "population_est_2024": 229159,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "No separate mayoral ballot",
+    "cycle_notes": "Mayor is selected by the city council each December; next relevant city council election is November 3, 2026.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://www.santa-clarita.com/city-hall/city-council"
+    ]
+  },
+  {
+    "rank": 104,
+    "city": "Tacoma",
+    "state_name": "Washington",
+    "census_geographic_area": "Tacoma city, Washington",
+    "population_est_2024": 228202,
+    "next_election_year": 2029,
+    "next_primary_date_iso": "2029-08-07",
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan election with August primary and November general, projected from 2025 cycle.",
+    "sources": [
+      "https://www.cityoftacoma.org/government/city_council/mayor_victoria_woodards"
+    ]
+  },
+  {
+    "rank": 105,
+    "city": "Fremont",
+    "state_name": "California",
+    "census_geographic_area": "Fremont city, California",
+    "population_est_2024": 228192,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Mayor Raj Salwan\u2019s current term ends in 2028; next at-large mayoral election is projected for November 2028.",
+    "sources": [
+      "https://ballotpedia.org/Raj_Salwan",
+      "https://www.fremont.gov/government/mayor-city-council"
+    ]
+  },
+  {
+    "rank": 106,
+    "city": "McKinney",
+    "state_name": "Texas",
+    "census_geographic_area": "McKinney city, Texas",
+    "population_est_2024": 227526,
+    "next_election_year": 2029,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2029-05-05",
+    "next_runoff_date_iso": "2029-06-02",
+    "date_status": "Projected",
+    "cycle_notes": "Nonpartisan May election with June runoff if needed, projected from 2025 cycle.",
+    "sources": [
+      "https://www.mckinneytexas.org/2084/2025-Runoff-Election"
+    ]
+  },
+  {
+    "rank": 107,
+    "city": "San Bernardino",
+    "state_name": "California",
+    "census_geographic_area": "San Bernardino city, California",
+    "population_est_2024": 224775,
+    "next_election_year": 2026,
+    "next_primary_date_iso": "2026-06-02",
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election with June primary and November general.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/San_Bernardino%2C_California"
+    ]
+  },
+  {
+    "rank": 108,
+    "city": "Baton Rouge",
+    "state_name": "Louisiana",
+    "census_geographic_area": "Baton Rouge city, Louisiana",
+    "population_est_2024": 220907,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": "2028-12-02",
+    "date_status": "Projected",
+    "cycle_notes": "Louisiana mayor-president election uses a November all-party primary/first round with a December runoff if needed, projected from 2024 cycle.",
+    "sources": [
+      "https://ballotpedia.org/Mayoral_election_in_Baton_Rouge%2C_Louisiana_%282024%29"
+    ]
+  },
+  {
+    "rank": 109,
+    "city": "Modesto",
+    "state_name": "California",
+    "census_geographic_area": "Modesto city, California",
+    "population_est_2024": 220592,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-03-07",
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Mayor Sue Zwahlen was re-elected in the March 2024 primary; next mayoral cycle projected for California statewide dates in 2028.",
+    "sources": [
+      "https://www.modestogov.com/399/City-Election-Information"
+    ]
+  },
+  {
+    "rank": 110,
+    "city": "Fontana",
+    "state_name": "California",
+    "census_geographic_area": "Fontana city, California",
+    "population_est_2024": 218455,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Official city elections page says the office of mayor will be voted upon in 2026.",
+    "sources": [
+      "https://www.fontanaca.gov/3476/November-5-2024-Municipal-Election",
+      "https://www.fontanaca.gov/137/Election-Information"
+    ]
+  },
+  {
+    "rank": 111,
+    "city": "Salt Lake City",
+    "state_name": "Utah",
+    "census_geographic_area": "Salt Lake City city, Utah",
+    "population_est_2024": 217783,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected / TBD",
+    "cycle_notes": "Mayor Erin Mendenhall\u2019s term ends in 2028; next regular mayoral race is in 2027, but Salt Lake City has recently used ranked-choice voting and the city has not yet posted the detailed 2027 calendar.",
+    "sources": [
+      "https://ballotpedia.org/Erin_Mendenhall",
+      "https://www.slc.gov/attorney/recorder/elections/"
+    ]
+  },
+  {
+    "rank": 112,
+    "city": "Moreno Valley",
+    "state_name": "California",
+    "census_geographic_area": "Moreno Valley city, California",
+    "population_est_2024": 213919,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Official city elections pages show the mayor serves a two-year term and the mayor was on the November 2024 ballot; next mayoral election is projected for November 2026.",
+    "sources": [
+      "https://moval.gov/departments/city-clerk/2024-election.html",
+      "https://www.moreno-valley.ca.us/departments/city-clerk/general-election-info.html"
+    ]
+  },
+  {
+    "rank": 113,
+    "city": "Des Moines",
+    "state_name": "Iowa",
+    "census_geographic_area": "Des Moines city, Iowa",
+    "population_est_2024": 213096,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Officially nonpartisan plurality election in November of odd-numbered years; no runoff. Iowa cities can hold an October primary if field size requires.",
+    "sources": [
+      "https://ballotpedia.org/Mayoral_election_in_Des_Moines%2C_Iowa_%282023%29",
+      "https://sos.iowa.gov/elections/pdf/cal3yr.pdf"
+    ]
+  },
+  {
+    "rank": 114,
+    "city": "Worcester",
+    "state_name": "Massachusetts",
+    "census_geographic_area": "Worcester city, Massachusetts",
+    "population_est_2024": 211286,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Popularly elected mayor and councilor-at-large; regular city election in November of odd-numbered years. Any preliminary is contingent on the number of at-large council candidates.",
+    "sources": [
+      "https://www.worcesterma.gov/mayor",
+      "https://en.wikipedia.org/wiki/Mayoral_elections_in_Worcester%2C_Massachusetts"
+    ]
+  },
+  {
+    "rank": 115,
+    "city": "Yonkers",
+    "state_name": "New York",
+    "census_geographic_area": "Yonkers city, New York",
+    "population_est_2024": 211040,
+    "next_election_year": 2027,
+    "next_primary_date_iso": "2027-06-22",
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Mayor Mike Spano won another term in 2023; next citywide mayoral election is projected for 2027 with New York-style June primary and November general.",
+    "sources": [
+      "https://www.cbsnews.com/newyork/news/yonkers-mayor-race-election-mike-spano-anthony-merante/",
+      "https://www.yonkersny.gov/673/About-Mayor-Mike-Spano"
+    ]
+  },
+  {
+    "rank": 116,
+    "city": "Fayetteville",
+    "state_name": "North Carolina",
+    "census_geographic_area": "Fayetteville city, North Carolina",
+    "population_est_2024": 209496,
+    "next_election_year": 2027,
+    "next_primary_date_iso": "2027-10-05",
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Odd-year municipal election with October primary and November general, projected from 2025 cycle.",
+    "sources": [
+      "https://www.fayettevillenc.gov/city-council/mayor"
+    ]
+  },
+  {
+    "rank": 117,
+    "city": "Sioux Falls",
+    "state_name": "South Dakota",
+    "census_geographic_area": "Sioux Falls city, South Dakota",
+    "population_est_2024": 209289,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-06-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular city election for mayor scheduled for June 2, 2026.",
+    "sources": [
+      "https://www.siouxfalls.gov/government/city-clerk/election-information"
+    ]
+  },
+  {
+    "rank": 118,
+    "city": "Grand Prairie",
+    "state_name": "Texas",
+    "census_geographic_area": "Grand Prairie city, Texas",
+    "population_est_2024": 207331,
+    "next_election_year": 2025,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2025-05-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Past / needs update",
+    "cycle_notes": "Official city election document showed the mayor\u2019s term ending in May 2025. I could not verify a later posted regular-cycle mayoral date from an official source during this run, so this row flags the last verified mayoral cycle and should be checked against the city clerk for the next regular race.",
+    "sources": [
+      "https://www.gptx.org/files/sharedassets/public/v/1/departments/city-secretary/documents/elections/2026-election-information_05.01.2025.pdf"
+    ]
+  },
+  {
+    "rank": 119,
+    "city": "Rochester",
+    "state_name": "New York",
+    "census_geographic_area": "Rochester city, New York",
+    "population_est_2024": 207282,
+    "next_election_year": 2029,
+    "next_primary_date_iso": "2029-06-26",
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year partisan election with June primary and November general, projected from 2025 cycle.",
+    "sources": [
+      "https://en.wikipedia.org/wiki/2025_Rochester_mayoral_election"
+    ]
+  },
+  {
+    "rank": 120,
+    "city": "Tallahassee",
+    "state_name": "Florida",
+    "census_geographic_area": "Tallahassee city, Florida",
+    "population_est_2024": 205089,
+    "next_election_year": 2026,
+    "next_primary_date_iso": "2026-08-18",
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election with August primary and November general.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Tallahassee%2C_Florida"
+    ]
+  },
+  {
+    "rank": 121,
+    "city": "Little Rock",
+    "state_name": "Arkansas",
+    "census_geographic_area": "Little Rock city, Arkansas",
+    "population_est_2024": 204774,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": "2026-12-01",
+    "date_status": "Scheduled",
+    "cycle_notes": "Nonpartisan election with December runoff if no majority.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Little_Rock%2C_Arkansas"
+    ]
+  },
+  {
+    "rank": 122,
+    "city": "Amarillo",
+    "state_name": "Texas",
+    "census_geographic_area": "Amarillo city, Texas",
+    "population_est_2024": 203729,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-05-01",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Official city elections page says the 2027 ballot will include mayor and council seats.",
+    "sources": [
+      "https://www.amarillo.gov/city-secretary/city-elections/"
+    ]
+  },
+  {
+    "rank": 123,
+    "city": "Overland Park",
+    "state_name": "Kansas",
+    "census_geographic_area": "Overland Park city, Kansas",
+    "population_est_2024": 202893,
+    "next_election_year": 2029,
+    "next_primary_date_iso": "2029-08-07",
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Official and local coverage show the mayor was on the 2025 ballot; next cycle is 2029. Kansas municipal primaries are held in August if more than two candidates file.",
+    "sources": [
+      "https://www.kcur.org/politics-elections-and-government/2025-11-05/overland-park-reelects-mayor-curt-skoog-and-ousts-incumbent-city-councilmember",
+      "https://www.opkansas.org/city-government/voting/"
+    ]
+  },
+  {
+    "rank": 124,
+    "city": "Columbus",
+    "state_name": "Georgia",
+    "census_geographic_area": "Columbus city, Georgia",
+    "population_est_2024": 201830,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Local coverage says Columbus will elect a new mayor in the 2026 local election cycle.",
+    "sources": [
+      "https://www.columbusga.gov/elections/Elected-Officials/Incumbents",
+      "https://www.couriernews.org/commentary-choosing-the-right-mayor-stewardship-over-self/"
+    ]
+  },
+  {
+    "rank": 125,
+    "city": "Augusta-Richmond County",
+    "state_name": "Georgia",
+    "census_geographic_area": "Augusta-Richmond County consolidated government (balance), Georgia",
+    "population_est_2024": 201737,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Local coverage says Augusta voters will decide the mayor\u2019s race in 2026.",
+    "sources": [
+      "https://www.wrdw.com/2026/01/06/augusta-voters-decide-mayor-commission-races-2026/"
+    ]
+  },
+  {
+    "rank": 126,
+    "city": "Mobile",
+    "state_name": "Alabama",
+    "census_geographic_area": "Mobile city, Alabama",
+    "population_est_2024": 201367,
+    "next_election_year": 2029,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2029-08-28",
+    "next_runoff_date_iso": "2029-09-25",
+    "date_status": "Projected",
+    "cycle_notes": "Alabama municipalities shifted to August elections in 2025 and every four years thereafter; runoff projected in late September.",
+    "sources": [
+      "https://www.birminghamal.gov/municipal-elections"
+    ]
+  },
+  {
+    "rank": 127,
+    "city": "Oxnard",
+    "state_name": "California",
+    "census_geographic_area": "Oxnard city, California",
+    "population_est_2024": 200616,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Official city page shows the mayor elected in 2024 serves a four-year term expiring in 2028.",
+    "sources": [
+      "https://www.oxnard.gov/city-clerks-office/election-information/2024-election-information",
+      "https://www.oxnard.gov/city-council"
+    ]
+  },
+  {
+    "rank": 128,
+    "city": "Grand Rapids",
+    "state_name": "Michigan",
+    "census_geographic_area": "Grand Rapids city, Michigan",
+    "population_est_2024": 200117,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-08-08",
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year election with August primary and November general, projected from 2024 cycle.",
+    "sources": [
+      "https://www.grandrapidsmi.gov/Government/Elected-Officials/Mayor"
+    ]
+  },
+  {
+    "rank": 129,
+    "city": "Peoria",
+    "state_name": "Arizona",
+    "census_geographic_area": "Peoria city, Arizona",
+    "population_est_2024": 199924,
+    "next_election_year": 2026,
+    "next_primary_date_iso": "2026-07-21",
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election with July primary and November general.",
+    "sources": [
+      "https://www.peoriaaz.gov/government/city-clerk/elections"
+    ]
+  },
+  {
+    "rank": 130,
+    "city": "Vancouver",
+    "state_name": "Washington",
+    "census_geographic_area": "Vancouver city, Washington",
+    "population_est_2024": 198992,
+    "next_election_year": 2029,
+    "next_primary_date_iso": "2029-08-07",
+    "next_general_date_iso": "2029-11-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year nonpartisan election with August primary and November general, projected from 2025 cycle.",
+    "sources": [
+      "https://www.cityofvancouver.us/government/department/city-council"
+    ]
+  },
+  {
+    "rank": 131,
+    "city": "Knoxville",
+    "state_name": "Tennessee",
+    "census_geographic_area": "Knoxville city, Tennessee",
+    "population_est_2024": 198722,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-08-31",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Official city page says Knoxville elections are held in odd-numbered years and the mayor was on the 2023 ballot; projected from the 2023 August municipal cycle.",
+    "sources": [
+      "https://www.knoxvilletn.gov/residents/newcomer_information/election_information/2023_go_vote__knoxville",
+      "https://en.wikipedia.org/wiki/Mayoral_elections_in_Knoxville%2C_Tennessee"
+    ]
+  },
+  {
+    "rank": 132,
+    "city": "Birmingham",
+    "state_name": "Alabama",
+    "census_geographic_area": "Birmingham city, Alabama",
+    "population_est_2024": 196357,
+    "next_election_year": 2029,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2029-08-28",
+    "next_runoff_date_iso": "2029-09-25",
+    "date_status": "Projected",
+    "cycle_notes": "Alabama municipalities shifted to August elections in 2025 and every four years thereafter; runoff projected in late September.",
+    "sources": [
+      "https://www.birminghamal.gov/municipal-elections"
+    ]
+  },
+  {
+    "rank": 133,
+    "city": "Montgomery",
+    "state_name": "Alabama",
+    "census_geographic_area": "Montgomery city, Alabama",
+    "population_est_2024": 195818,
+    "next_election_year": 2029,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2029-08-28",
+    "next_runoff_date_iso": "2029-09-25",
+    "date_status": "Projected",
+    "cycle_notes": "Alabama municipalities shifted to August elections in 2025 and every four years thereafter; runoff projected in late September.",
+    "sources": [
+      "https://www.birminghamal.gov/municipal-elections"
+    ]
+  },
+  {
+    "rank": 134,
+    "city": "Providence",
+    "state_name": "Rhode Island",
+    "census_geographic_area": "Providence city, Rhode Island",
+    "population_est_2024": 194706,
+    "next_election_year": 2026,
+    "next_primary_date_iso": "2026-09-08",
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election with September primary and November general.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Providence%2C_Rhode_Island"
+    ]
+  },
+  {
+    "rank": 135,
+    "city": "Huntington Beach",
+    "state_name": "California",
+    "census_geographic_area": "Huntington Beach city, California",
+    "population_est_2024": 193151,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "No separate mayoral ballot",
+    "cycle_notes": "Mayor and mayor pro tem are selected from among elected city council members; next relevant city council election is November 3, 2026.",
+    "sources": [
+      "https://www.huntingtonbeachca.gov/government/elected_officials.php"
+    ]
+  },
+  {
+    "rank": 136,
+    "city": "Brownsville",
+    "state_name": "Texas",
+    "census_geographic_area": "Brownsville city, Texas",
+    "population_est_2024": 191967,
+    "next_election_year": 2029,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2029-05-05",
+    "next_runoff_date_iso": "2029-06-02",
+    "date_status": "Projected",
+    "cycle_notes": "Brownsville held municipal elections in May 2025 for city commission seats; next regular mayoral cycle is projected on the same May uniform-election pattern.",
+    "sources": [
+      "https://www.brownsvilletx.gov/2434/2025-Municipal-Elections",
+      "https://www.brownsvilletx.gov/807/City-Commission"
+    ]
+  },
+  {
+    "rank": 137,
+    "city": "Chattanooga",
+    "state_name": "Tennessee",
+    "census_geographic_area": "Chattanooga city, Tennessee",
+    "population_est_2024": 191496,
+    "next_election_year": 2029,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2029-03-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Tim Kelly won re-election in March 2025; next nonpartisan mayoral election is projected for March 2029.",
+    "sources": [
+      "https://www.wdef.com/mayor-kelly-wins-reelection-in-landslide-celebrates-passage-of-amendment/",
+      "https://en.wikipedia.org/wiki/Mayoral_elections_in_Chattanooga%2C_Tennessee"
+    ]
+  },
+  {
+    "rank": 138,
+    "city": "Fort Lauderdale",
+    "state_name": "Florida",
+    "census_geographic_area": "Fort Lauderdale city, Florida",
+    "population_est_2024": 190641,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Official mayor page says Dean Trantalis was elected to a term in November 2024 and 2024 election coverage identifies the next race as 2028.",
+    "sources": [
+      "https://www.fortlauderdale.gov/government/city-commission/mayor-dean-j-trantalis/about-dean",
+      "https://en.wikipedia.org/wiki/2024_Fort_Lauderdale_mayoral_election"
+    ]
+  },
+  {
+    "rank": 139,
+    "city": "Tempe",
+    "state_name": "Arizona",
+    "census_geographic_area": "Tempe city, Arizona",
+    "population_est_2024": 190114,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-03-14",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year spring election in March, projected from 2024 cycle.",
+    "sources": [
+      "https://www.tempe.gov/government/city-council/mayor-corey-woods"
+    ]
+  },
+  {
+    "rank": 140,
+    "city": "Akron",
+    "state_name": "Ohio",
+    "census_geographic_area": "Akron city, Ohio",
+    "population_est_2024": 189664,
+    "next_election_year": 2027,
+    "next_primary_date_iso": "2027-05-04",
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Partisan primary and November general, projected from 2023 cycle and county elected-official record.",
+    "sources": [
+      "https://en.wikipedia.org/wiki/2023_Akron_mayoral_election",
+      "https://lookup.boe.ohio.gov/vtrapp/summit/cnm.aspx?prsid=106___1&task=voter"
+    ]
+  },
+  {
+    "rank": 141,
+    "city": "Glendale",
+    "state_name": "California",
+    "census_geographic_area": "Glendale city, California",
+    "population_est_2024": 187823,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "No separate mayoral ballot",
+    "cycle_notes": "Glendale\u2019s mayor is chosen from among the five councilmembers; next relevant council election cycle is 2026.",
+    "sources": [
+      "https://www.glendaleca.gov/government/city-council",
+      "https://www.glendaleca.gov/government/city-council/councilmember-ara-najarian"
+    ]
+  },
+  {
+    "rank": 142,
+    "city": "Clarksville",
+    "state_name": "Tennessee",
+    "census_geographic_area": "Clarksville city, Tennessee",
+    "population_est_2024": 185690,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Local coverage says Mayor Joe Pitts\u2019 term expires in 2026 and the next city mayoral election is in 2026.",
+    "sources": [
+      "https://clarksvillenow.com/local/clarksville-mayor-joe-pitts-wont-seek-re-election-in-2026/",
+      "https://en.wikipedia.org/wiki/Mayoral_elections_in_Clarksville%2C_Tennessee"
+    ]
+  },
+  {
+    "rank": 143,
+    "city": "Ontario",
+    "state_name": "California",
+    "census_geographic_area": "Ontario city, California",
+    "population_est_2024": 185285,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Ontario code provides for an at-large elected mayor; 2026 county-administered calendar shows a March 2026 special election in Ontario, but the next regular mayoral cycle is projected for the November 2026 general election.",
+    "sources": [
+      "https://codelibrary.amlegal.com/codes/ontarioca/latest/ontario_ca/0-0-0-68299",
+      "https://www.sos.ca.gov/elections/upcoming-elections/county-administered-elections"
+    ]
+  },
+  {
+    "rank": 144,
+    "city": "Newport News",
+    "state_name": "Virginia",
+    "census_geographic_area": "Newport News city, Virginia",
+    "population_est_2024": 183056,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Official elected-officials page shows the mayor\u2019s term expires December 31, 2026, so the next direct mayoral election is projected for November 2026.",
+    "sources": [
+      "https://www.nnva.gov/465/Elected-Officials"
+    ]
+  },
+  {
+    "rank": 145,
+    "city": "Elk Grove",
+    "state_name": "California",
+    "census_geographic_area": "Elk Grove city, California",
+    "population_est_2024": 182797,
+    "next_election_year": 2028,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "City code provides for a directly elected mayor on the general municipal election cycle.",
+    "sources": [
+      "https://www.codepublishing.com/CA/ElkGrove/html/ElkGrove01/ElkGrove0102.html"
+    ]
+  },
+  {
+    "rank": 146,
+    "city": "Cary",
+    "state_name": "North Carolina",
+    "census_geographic_area": "Cary town, North Carolina",
+    "population_est_2024": 182659,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-11-02",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Odd-year nonpartisan election; town notes elections are typically held in odd-numbered years.",
+    "sources": [
+      "https://www.carync.gov/connect-engage/town-government/mayor-and-council"
+    ]
+  },
+  {
+    "rank": 147,
+    "city": "Aurora",
+    "state_name": "Illinois",
+    "census_geographic_area": "Aurora city, Illinois",
+    "population_est_2024": 180710,
+    "next_election_year": 2027,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2027-04-06",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "Illinois municipal elections are held in the spring of odd-numbered years; Aurora\u2019s next mayoral election is projected for April 2027.",
+    "sources": [
+      "https://www.aurora-il.org/"
+    ]
+  },
+  {
+    "rank": 148,
+    "city": "Salem",
+    "state_name": "Oregon",
+    "census_geographic_area": "Salem city, Oregon",
+    "population_est_2024": 180406,
+    "next_election_year": 2026,
+    "next_primary_date_iso": "2026-05-19",
+    "next_general_date_iso": "2026-11-03",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Regular mayoral election with May primary and November general.",
+    "sources": [
+      "https://ballotpedia.org/United_States_mayoral_elections%2C_2026",
+      "https://ballotpedia.org/Salem%2C_Oregon"
+    ]
+  },
+  {
+    "rank": 149,
+    "city": "Pembroke Pines",
+    "state_name": "Florida",
+    "census_geographic_area": "Pembroke Pines city, Florida",
+    "population_est_2024": 179326,
+    "next_election_year": 2026,
+    "next_primary_date_iso": null,
+    "next_general_date_iso": "2026-03-10",
+    "next_runoff_date_iso": null,
+    "date_status": "Scheduled",
+    "cycle_notes": "Broward County\u2019s municipal-election calendar and city qualifying records show the 2026 Pembroke Pines mayoral race on March 10, 2026.",
+    "sources": [
+      "https://browardvotes.gov/results-information/municipal-election",
+      "https://fl-pembrokepines2.civicplus.com/DocumentCenter/View/25898/James-Henry-Qualifying-01-08-2026"
+    ]
+  },
+  {
+    "rank": 150,
+    "city": "Eugene",
+    "state_name": "Oregon",
+    "census_geographic_area": "Eugene city, Oregon",
+    "population_est_2024": 178786,
+    "next_election_year": 2028,
+    "next_primary_date_iso": "2028-05-16",
+    "next_general_date_iso": "2028-11-07",
+    "next_runoff_date_iso": null,
+    "date_status": "Projected",
+    "cycle_notes": "4-year election with Oregon May primary and November general, projected from 2024 cycle.",
+    "sources": [
+      "https://www.eugene-or.gov/101/Mayor"
+    ]
+  }
+]

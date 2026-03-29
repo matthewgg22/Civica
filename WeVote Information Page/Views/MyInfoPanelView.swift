@@ -4,7 +4,7 @@
 //  WeVote Information Page
 //
 //  Created by Matthew Greer-Gentis on 5/15/25.
-//  Updated by ChatGPT on 05/31/25 — safer dismiss logic and empty ZIP check
+//  Updated by ChatGPT on 05/31/25 — safer dismiss logic and empty location check
 
 import SwiftUI
 
@@ -12,9 +12,12 @@ struct MyInfoPanelView: View {
     private enum LanguageOption: String, CaseIterable {
         case english = "en"
         case spanish = "es"
-        case chinese = "zh-Hans"
+        case mandarinSimplified = "zh-Hans"
+        case mandarinTraditional = "zh-Hant"
         case filipino = "fil"
         case vietnamese = "vi"
+        case french = "fr"
+        case german = "de"
 
         static func fromStoredCode(_ code: String) -> LanguageOption? {
             let normalized = normalizeStoredCode(code)
@@ -30,11 +33,17 @@ struct MyInfoPanelView: View {
             case "tl", "tagalog", "fil-ph":
                 return LanguageOption.filipino.rawValue
             case "zh", "zh-cn", "zh-hans", "zh-hans-cn":
-                return LanguageOption.chinese.rawValue
+                return LanguageOption.mandarinSimplified.rawValue
+            case "zh-tw", "zh-hk", "zh-mo", "zh-hant", "zh-hant-tw", "zh-hant-hk":
+                return LanguageOption.mandarinTraditional.rawValue
             case "vi-vn":
                 return LanguageOption.vietnamese.rawValue
             case "es-es", "es-mx":
                 return LanguageOption.spanish.rawValue
+            case "fr-fr", "fr-ca", "fr-be", "fr-ch":
+                return LanguageOption.french.rawValue
+            case "de-de", "de-at", "de-ch":
+                return LanguageOption.german.rawValue
             case "en-us", "en-gb":
                 return LanguageOption.english.rawValue
             default:
@@ -51,9 +60,11 @@ struct MyInfoPanelView: View {
     @AppStorage("my_info.preferred_language_code")
     private var preferredLanguageCode: String = LanguageOption.english.rawValue
 
-    @State private var zip: String = ""
+    @State private var locationInput: String = ""
     @State private var affiliation: PoliticalParty = .independent
     @State private var showInvalidZipAlert = false
+    @State private var showFeedbackSheet = false
+    @FocusState private var locationFieldFocused: Bool
     private let zipStateResolver = USZipStateResolver()
 
     private var selectedLanguage: LanguageOption {
@@ -64,16 +75,67 @@ struct MyInfoPanelView: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField(
-                        "",
-                        text: $zip,
-                        prompt: Text("my_info.zip.placeholder", tableName: "MyInfoPanel")
-                    )
-                        .keyboardType(.numberPad)
-                        .textFieldStyle(.roundedBorder)
+                    HStack(spacing: 10) {
+                        TextField(
+                            "",
+                            text: $locationInput,
+                            prompt: Text("app.reps.search.placeholder", tableName: "AppShell")
+                        )
+                            .font(.system(size: 18))
+                            .textInputAutocapitalization(.words)
+                            .autocorrectionDisabled()
+                            .submitLabel(.search)
+                            .focused($locationFieldFocused)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 12)
+                            .background(VoteNowColors.surfaceWhite)
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                            )
+                            .onChange(of: locationInput) { _, newValue in
+                                repsVM.handleLocationInputTyping(newValue)
+                            }
+                            .onSubmit {
+                                Task {
+                                    await handleSaveAddressTapped()
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+
+                        Button {
+                            locationInput = ""
+                            repsVM.resetZipEntryState()
+                        } label: {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundColor(.white)
+                                .frame(width: 26, height: 26)
+                                .background(Color.gray.opacity(0.60))
+                                .clipShape(Circle())
+                        }
+                        .buttonStyle(.plain)
+                        .opacity(locationInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.45 : 1.0)
+                        .disabled(locationInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    }
+
                     Text("my_info.zip.helper", tableName: "MyInfoPanel")
                         .font(.footnote)
                         .foregroundColor(VoteNowColors.mutedText)
+
+                    Button {
+                        Task {
+                            await handleSaveAddressTapped()
+                        }
+                    } label: {
+                        Text("my_info.action.show_reps", tableName: "MyInfoPanel")
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(VoteNowColors.infoSurfaceBlue)
+                    .cornerRadius(10)
+                    .foregroundColor(VoteNowColors.richBlue)
                 } header: {
                     Text("my_info.section.zip.header", tableName: "MyInfoPanel")
                         .font(.headline.weight(.bold))
@@ -91,19 +153,6 @@ struct MyInfoPanelView: View {
                         .font(.headline.weight(.bold))
                         .textCase(nil)
                 }
-
-                Button {
-                    Task {
-                        await handleSaveAddressTapped()
-                    }
-                } label: {
-                    Text("my_info.action.show_reps", tableName: "MyInfoPanel")
-                }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(VoteNowColors.infoSurfaceBlue)
-                .cornerRadius(10)
-                .foregroundColor(VoteNowColors.richBlue)
 
                 Section {
                     VStack(alignment: .leading, spacing: 6) {
@@ -137,9 +186,37 @@ struct MyInfoPanelView: View {
                         .font(.headline.weight(.bold))
                         .textCase(nil)
                 }
+
+                Section {
+                    Button {
+                        showFeedbackSheet = true
+                    } label: {
+                        Label(
+                            String(localized: "app.how_to_vote.section.feedback", table: "AppShell"),
+                            systemImage: "bubble.left.and.bubble.right.fill"
+                        )
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(VoteNowColors.primaryCTA)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 7)
+                        .frame(maxWidth: .infinity)
+                        .background(VoteNowColors.surfaceWhite)
+                        .clipShape(Capsule(style: .continuous))
+                        .overlay(
+                            Capsule(style: .continuous)
+                                .stroke(VoteNowColors.primaryCTA.opacity(0.34), lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
             }
             .navigationTitle(Text(l("my_info.navigation.title", "My Information")))
             .navigationBarTitleDisplayMode(.large)
+            .sheet(isPresented: $showFeedbackSheet) {
+                NavigationStack {
+                    FeedbackView()
+                }
+            }
             .onChange(of: affiliation) { _, newValue in
                 planVM.selectedParty = newValue
             }
@@ -158,9 +235,15 @@ struct MyInfoPanelView: View {
                         Text("my_info.action.cancel", tableName: "MyInfoPanel")
                     }
                 }
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button(l("app.reps.action.done", "Done")) {
+                        locationFieldFocused = false
+                    }
+                }
             }
             .onAppear {
-                zip = planVM.zip
+                seedLookupInputIfNeeded()
                 affiliation = planVM.selectedParty
                 preferredLanguageCode = selectedLanguage.rawValue
             }
@@ -174,12 +257,18 @@ struct MyInfoPanelView: View {
             Text("my_info.language.english", tableName: "MyInfoPanel")
         case .spanish:
             Text("my_info.language.spanish", tableName: "MyInfoPanel")
-        case .chinese:
+        case .mandarinSimplified:
             Text("my_info.language.chinese", tableName: "MyInfoPanel")
+        case .mandarinTraditional:
+            Text("my_info.language.traditional_mandarin", tableName: "MyInfoPanel")
         case .filipino:
             Text("my_info.language.filipino", tableName: "MyInfoPanel")
         case .vietnamese:
             Text("my_info.language.vietnamese", tableName: "MyInfoPanel")
+        case .french:
+            Text("my_info.language.french", tableName: "MyInfoPanel")
+        case .german:
+            Text("my_info.language.german", tableName: "MyInfoPanel")
         }
     }
 
@@ -194,29 +283,63 @@ struct MyInfoPanelView: View {
 
     @MainActor
     private func handleSaveAddressTapped() async {
-        let normalizedZip = String(zip.filter(\.isNumber).prefix(5))
-        guard normalizedZip.count == 5 else {
-            print("ZIP is invalid — not proceeding.")
+        let trimmedInput = locationInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedInput.isEmpty else {
             showInvalidZipAlert = true
             return
         }
 
-        planVM.zip = normalizedZip
         planVM.selectedParty = affiliation
-        var updatedAddress = planVM.userAddress
-        if updatedAddress.zip != normalizedZip {
-            updatedAddress.zip = normalizedZip
+
+        if let normalizedZip = USZipInputValidator.normalizedPrimaryZIP(from: trimmedInput) {
+            planVM.zip = normalizedZip
+            var updatedAddress = planVM.userAddress
+            if updatedAddress.zip != normalizedZip {
+                updatedAddress.zip = normalizedZip
+            }
+            if let inferredStateCode = zipStateResolver.stateCode(for: normalizedZip),
+               updatedAddress.state != inferredStateCode {
+                updatedAddress.state = inferredStateCode
+            }
+            planVM.userAddress = updatedAddress
         }
-        if let inferredStateCode = zipStateResolver.stateCode(for: normalizedZip),
-           updatedAddress.state != inferredStateCode {
-            updatedAddress.state = inferredStateCode
-        }
-        planVM.userAddress = updatedAddress
-        repsVM.fetchReps(for: normalizedZip)
+
+        locationFieldFocused = false
+        repsVM.resolveLocationInput(trimmedInput)
 
         // Add slight delay to avoid dismissal race condition
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             dismiss()
+        }
+    }
+
+    private func seedLookupInputIfNeeded() {
+        guard locationInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+
+        if let selection = repsVM.resolvedLocationSelection,
+           let normalized = selection.normalizedAddress,
+           !normalized.isEmpty {
+            locationInput = normalized
+            return
+        }
+
+        let address = [
+            planVM.userAddress.street,
+            planVM.userAddress.city,
+            planVM.userAddress.state,
+            planVM.userAddress.zip
+        ]
+        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        .filter { !$0.isEmpty }
+        .joined(separator: ", ")
+
+        if !address.isEmpty {
+            locationInput = address
+            return
+        }
+
+        if !planVM.zip.isEmpty {
+            locationInput = planVM.zip
         }
     }
 }

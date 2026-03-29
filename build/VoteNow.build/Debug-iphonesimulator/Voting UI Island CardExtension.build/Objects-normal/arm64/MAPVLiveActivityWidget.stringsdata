@@ -1,0 +1,40 @@
+{
+  "source": "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/Voting UI Island Card/MAPVLiveActivityWidget.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Closes %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 29
+        }
+      },
+      {
+        "comment": "",
+        "key": "Closes %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 73
+        }
+      },
+      {
+        "comment": "",
+        "key": "00:00",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 210
+        }
+      },
+      {
+        "comment": "",
+        "key": "24:00",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 212
+        }
+      }
+    ]
+  },
+  "version": 1
+}

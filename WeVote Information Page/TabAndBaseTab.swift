@@ -27,16 +27,35 @@ struct TabAndBaseTab: View {
                 .tabItem { Label("My Reps", systemImage: "person.3.fill") }
                 .tag(Tab.myReps)
 
+            // Call Your Rep
+            NavigationStack {
+                IssueCallCenterView(
+                    federalReps: repsVM.federalReps,
+                    userZip: String(planVM.zip.filter(\.isNumber).prefix(5)),
+                    initialTab: .examples,
+                    showsReturnHomeButton: false,
+                    hidesTabBar: false
+                )
+            }
+                .environmentObject(planVM)
+                .environmentObject(repsVM)
+                .tabItem {
+                    Image(uiImage: VoteNowLogoIcon.tabBarBarsUIImage)
+                        .renderingMode(.original)
+                    Text("Call Your Rep")
+                }
+                .tag(Tab.callYourReps)
+
             // Election Timeline
             ElectionTimelineView()
                 .environmentObject(planVM)
                 .tabItem { Label("Election Timeline", systemImage: "calendar") }
                 .tag(Tab.electionTimeline)
 
-            // Registration
+            // Voting Steps
             VoterRegistrationView()
                 .environmentObject(planVM)
-                .tabItem { Label("Registration", systemImage: "person.badge.plus") }
+                .tabItem { Label("Voting Steps", systemImage: "person.badge.plus") }
                 .tag(Tab.registration)
 
             // Election Guide
@@ -44,16 +63,6 @@ struct TabAndBaseTab: View {
                 .environmentObject(planVM)
                 .tabItem { Label("Election Guide", systemImage: "mappin.and.ellipse") }
                 .tag(Tab.electionGuide)
-
-            // How to Vote
-            MobilizationView()
-                .environmentObject(planVM)
-                .tabItem {
-                    Image(uiImage: VoteNowLogoIcon.tabBarBarsUIImage)
-                        .renderingMode(.original)
-                    Text("How to Vote")
-                }
-                .tag(Tab.howToVote)
 
         }
         .environmentObject(planVM)
@@ -70,6 +79,9 @@ struct TabAndBaseTab: View {
             MyInfoPanelView()
                 .environmentObject(planVM)
                 .environmentObject(repsVM)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .openMyInfoPanel)) { _ in
+            showMyInfoPanel = true
         }
         // add any other sheets here, e.g. scorecard, registration reminder, election detail…
     }

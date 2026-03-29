@@ -8,6 +8,11 @@ private func partyTint(_ party: String?) -> Color {
     return VoteNowColors.mutedText
 }
 
+private func shouldOpenMyInfoFromParty(_ party: String?) -> Bool {
+    let normalized = (party ?? "").lowercased()
+    return normalized.contains("democrat") || normalized.contains("republican")
+}
+
 private func telephoneURL(from raw: String?) -> URL? {
     guard let raw else { return nil }
     let digits = raw.filter { $0.isNumber }
@@ -279,6 +284,7 @@ struct RepRow: View {
                             .foregroundColor(partyTint(party))
                             .lineLimit(1)
                             .minimumScaleFactor(0.72)
+                            .opensMyInfoPanelOnLongPress(when: shouldOpenMyInfoFromParty(party))
                     }
 
                     if let districtLabel {
@@ -469,9 +475,15 @@ struct RepresentativeSection: View {
                UIImage(named: asset) != nil {
                 Image(asset)
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
                     .frame(width: 42, height: 32)
-                    .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 7, style: .continuous)
+                            .stroke(VoteNowColors.primaryCTA.opacity(0.30), lineWidth: 0.9)
+                    )
+                    .shadow(color: VoteNowColors.primaryText.opacity(0.22), radius: 4, x: 0, y: 2)
+                    .opensMyInfoPanelOnLongPress()
             } else {
                 Image(systemName: "map.fill")
                     .font(.system(size: 18, weight: .semibold))

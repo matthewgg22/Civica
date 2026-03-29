@@ -59,7 +59,7 @@ final class AuthStore: ObservableObject {
         } catch is CancellationError {
             return
         } catch {
-            logger.error("OTP sign-in failed: \(error.localizedDescription, privacy: .public)")
+            logger.error("OTP sign-in failed.")
             lastError = error.localizedDescription
         }
         #else
@@ -74,14 +74,22 @@ final class AuthStore: ObservableObject {
         lastError = nil
 
         #if canImport(Supabase)
+        var remoteSignOutError: Error?
         do {
+            await SupabaseManager.shared.disableCurrentUserDeviceTokens()
             try await client.auth.signOut()
-            applyAuthState(session: nil)
         } catch is CancellationError {
-            return
+            remoteSignOutError = CancellationError()
         } catch {
-            logger.error("Sign-out failed: \(error.localizedDescription, privacy: .public)")
-            lastError = error.localizedDescription
+            logger.error("Sign-out failed.")
+            remoteSignOutError = error
+        }
+
+        // Always clear local sensitive state even if remote sign-out fails.
+        clearSensitiveLocalState()
+        applyAuthState(session: nil)
+        if let remoteSignOutError, !(remoteSignOutError is CancellationError) {
+            lastError = remoteSignOutError.localizedDescription
         }
         #else
         applyAuthState(session: nil)
@@ -107,7 +115,7 @@ final class AuthStore: ObservableObject {
             return
         } catch {
             // Keep cached in-memory session on transient errors.
-            logger.error("Session refresh failed: \(error.localizedDescription, privacy: .public)")
+            logger.error("Session refresh failed.")
         }
         #endif
     }
@@ -141,5 +149,32 @@ final class AuthStore: ObservableObject {
         self.user = session?.user
         self.isSignedIn = session != nil
         self.isLoading = false
+        if session == nil {
+            clearSensitiveLocalState()
+        }
+    }
+
+    private func clearSensitiveLocalState() {
+        SupabaseManager.shared.clearCachedSessionState()
+        MAPVPlanStore.shared.clear(endLiveActivity: true)
+        PrivacyDataCleaner.clearSensitiveLocalData()
+    }
+}
+
+private enum PrivacyDataCleaner {
+    static func clearSensitiveLocalData() {
+        let defaults = UserDefaults.standard
+        [
+            "planvm.zip",
+            "planvm.userAddress.state",
+            "planvm.userAddress.zip",
+            "PollingLocations.GeocodeCache.v1",
+            "civic.issue_call.snapshot.v1",
+            "civic.local.user_id.v1"
+        ].forEach { defaults.removeObject(forKey: $0) }
+
+        if let groupDefaults = UserDefaults(suiteName: MAPVPlanStore.appGroupID) {
+            groupDefaults.removeObject(forKey: "mapv.plan.v1")
+        }
     }
 }

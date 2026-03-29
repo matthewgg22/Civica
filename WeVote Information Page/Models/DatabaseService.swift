@@ -103,7 +103,7 @@ final class DatabaseService {
                     .value
             }
         } catch {
-            logger.error("DB select failed table=\(table, privacy: .public) columns=\(columns, privacy: .public) limit=\(String(describing: limit), privacy: .public) error=\(error.localizedDescription, privacy: .public)")
+            logger.error("DB select failed for table=\(table, privacy: .public).")
             throw error
         }
         #else
@@ -130,7 +130,7 @@ final class DatabaseService {
                 .execute()
                 .value
         } catch {
-            logger.error("DB insert failed table=\(table, privacy: .public) error=\(error.localizedDescription, privacy: .public)")
+            logger.error("DB insert failed for table=\(table, privacy: .public).")
             throw error
         }
         #else
@@ -160,7 +160,7 @@ final class DatabaseService {
                 .execute()
                 .value
         } catch {
-            logger.error("DB update failed table=\(table, privacy: .public) filterColumn=\(column, privacy: .public) error=\(error.localizedDescription, privacy: .public)")
+            logger.error("DB update failed for table=\(table, privacy: .public).")
             throw error
         }
         #else
@@ -186,7 +186,7 @@ final class DatabaseService {
                 .eq(column, value: value)
                 .execute()
         } catch {
-            logger.error("DB delete failed table=\(table, privacy: .public) filterColumn=\(column, privacy: .public) error=\(error.localizedDescription, privacy: .public)")
+            logger.error("DB delete failed for table=\(table, privacy: .public).")
             throw error
         }
         #else
@@ -206,7 +206,7 @@ final class DatabaseService {
 
     @discardableResult
     func upsertProfile(_ profile: ProfileRow) async throws -> ProfileRow {
-        logger.debug("Upserting profile \(profile.id.uuidString, privacy: .public)")
+        logger.debug("Upserting profile.")
         #if canImport(Supabase)
         do {
             return try await client
@@ -217,7 +217,7 @@ final class DatabaseService {
                 .execute()
                 .value
         } catch {
-            logger.error("DB upsert failed table=\(SupabaseTable.profiles, privacy: .public) profileID=\(profile.id.uuidString, privacy: .public) error=\(error.localizedDescription, privacy: .public)")
+            logger.error("DB upsert failed for table=\(SupabaseTable.profiles, privacy: .public).")
             throw error
         }
         #else

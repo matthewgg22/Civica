@@ -5,9 +5,22 @@ struct VoterIDGuideCard: View {
     let stateName: String?
     @Environment(\.locale) private var locale
 
-    private struct VoterIDMetric {
-        let category: String
-        let note: String?
+    private struct VoterIDMetric: Decodable {
+        let jurisdiction: String
+        let type: String
+        let ruleCategory: String
+        let status: String
+        let acceptedOptions: String
+        let alternativeIfNoDocument: String
+        let keyCaveat: String
+        let sourceURLs: String
+    }
+
+    private enum RequirementClassification {
+        case photoRequired
+        case nonPhotoAccepted
+        case noDocument
+        case conditional
     }
 
     private var normalizedStateCode: String? {
@@ -21,17 +34,12 @@ struct VoterIDGuideCard: View {
         return Self.metricsByStateCode[code]
     }
 
-    private var photoIDRequirementText: String? {
-        guard let metric else { return nil }
-        if metric.category == "Photo ID required" {
-            return localized("app.voter_id.photo_required", fallback: "Photo ID IS required to vote.")
-        }
-        return localized("app.voter_id.photo_not_required", fallback: "Photo ID IS NOT required to vote.")
-    }
-
     private var resolvedStateName: String {
         if let stateName, !stateName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return stateName
+        }
+        if let metric {
+            return metric.jurisdiction
         }
         if let code = normalizedStateCode {
             return Self.stateNameByCode[code] ?? code
@@ -40,7 +48,172 @@ struct VoterIDGuideCard: View {
     }
 
     private var headerText: String {
-        localized("app.voter_id.requirements.header", fallback: "Voter ID Requirements by State")
+        localized("app.voter_id.requirements.header", fallback: "Voter ID Requirements")
+    }
+
+    private var stateHeaderText: String {
+        let format = localized("app.voter_id.requirements.state_line", fallback: "State: %@")
+        return String(format: format, locale: locale, resolvedStateName)
+    }
+
+    private var requirementSummaryText: String? {
+        guard let metric else { return nil }
+        switch requirementClassification(for: metric) {
+        case .photoRequired:
+            return localized("app.voter_id.requirement.photo", fallback: "Photo ID is required for in-person voting in this state.")
+        case .nonPhotoAccepted:
+            return localized("app.voter_id.requirement.non_photo", fallback: "ID is required, and non-photo documents may be accepted.")
+        case .noDocument:
+            return localized(
+                "app.voter_id.requirement.no_document",
+                fallback: "No ID document is ordinarily required for in-person voting in this jurisdiction."
+            )
+        case .conditional:
+            return localized(
+                "app.voter_id.requirement.conditional",
+                fallback: "ID requirements can be conditional in this jurisdiction. Review accepted options and caveats below."
+            )
+        }
+    }
+
+    private var categoryLabelText: String {
+        guard let metric else { return localized("app.voter_id.requirement.unknown", fallback: "Rule varies") }
+        switch requirementClassification(for: metric) {
+        case .photoRequired:
+            return localized("app.voter_id.category.photo", fallback: "Photo ID required")
+        case .nonPhotoAccepted:
+            return localized("app.voter_id.category.non_photo", fallback: "Non-photo options accepted")
+        case .noDocument:
+            return localized("app.voter_id.category.none", fallback: "No document usually required")
+        case .conditional:
+            return localized("app.voter_id.category.conditional", fallback: "Conditional or limited rule")
+        }
+    }
+
+    private func acceptedOptionsHeadingText(for metric: VoterIDMetric) -> String? {
+        switch requirementClassification(for: metric) {
+        case .noDocument:
+            return nil
+        default:
+            return localized(
+                "app.voter_id.accepted_options.heading.documents",
+                fallback: "Accepted non-photo/documentary options"
+            )
+        }
+    }
+
+    private func acceptedOptionsText(for metric: VoterIDMetric) -> String? {
+        if requirementClassification(for: metric) == .noDocument {
+            return nil
+        }
+
+        let raw = metric.acceptedOptions.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !raw.isEmpty else { return nil }
+
+        let segments = raw
+            .split(separator: ";")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+
+        guard segments.count > 1 else { return raw }
+        return segments.map { "• \($0)" }.joined(separator: "\n")
+    }
+
+    private func supplementalNoteText(for metric: VoterIDMetric) -> String? {
+        let classification = requirementClassification(for: metric)
+        var lines: [String] = []
+
+        let alternative = metric.alternativeIfNoDocument.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !alternative.isEmpty {
+            lines.append("Process: \(conciseDetailLine(alternative))")
+        }
+
+        let caveat = metric.keyCaveat.trimmingCharacters(in: .whitespacesAndNewlines)
+        if classification == .conditional,
+           !caveat.isEmpty,
+           !isClearlyRedundant(caveat, comparedTo: alternative) {
+            lines.append("Note: \(conciseDetailLine(caveat))")
+        }
+
+        guard !lines.isEmpty else { return nil }
+        return lines.joined(separator: "\n\n")
+    }
+
+    private func conciseDetailLine(_ text: String) -> String {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return "" }
+
+        if let range = trimmed.range(of: ". ") {
+            return String(trimmed[..<range.lowerBound]) + "."
+        }
+
+        if trimmed.count > 180 {
+            return String(trimmed.prefix(177)).trimmingCharacters(in: .whitespacesAndNewlines) + "..."
+        }
+        return trimmed
+    }
+
+    private func isClearlyRedundant(_ first: String, comparedTo second: String) -> Bool {
+        let lhs = first.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        let rhs = second.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !lhs.isEmpty, !rhs.isEmpty else { return false }
+        return lhs == rhs || lhs.contains(rhs) || rhs.contains(lhs)
+    }
+
+    private func requirementClassification(for metric: VoterIDMetric) -> RequirementClassification {
+        let rule = metric.ruleCategory.lowercased()
+        let status = metric.status.lowercased()
+
+        if status == "no document" || rule.contains("no-documentary") || rule.contains("signature/photo at vote center") {
+            return .noDocument
+        }
+
+        if status == "conditional" || status == "not identified" || status == "limited" {
+            return .conditional
+        }
+
+        if rule.contains("non-photo") || status == "yes" {
+            return .nonPhotoAccepted
+        }
+
+        if rule.contains("photo") || status == "no" {
+            return .photoRequired
+        }
+
+        return .conditional
+    }
+
+    private func shouldShowRequirementSummary(for metric: VoterIDMetric) -> Bool {
+        // Badge already states "Photo ID required", so avoid repeating the same sentence.
+        requirementClassification(for: metric) != .photoRequired
+    }
+
+    private var categoryAccentColor: Color {
+        guard let metric else { return VoteNowColors.primaryCTA }
+        switch requirementClassification(for: metric) {
+        case .photoRequired:
+            return VoteNowColors.richRed
+        case .nonPhotoAccepted:
+            return VoteNowColors.warningAmber
+        case .noDocument:
+            return VoteNowColors.successGreen
+        case .conditional:
+            return VoteNowColors.primaryCTA
+        }
+    }
+
+    private var categoryIconName: String {
+        guard let metric else { return "person.crop.rectangle" }
+        switch requirementClassification(for: metric) {
+        case .photoRequired:
+            return "camera.fill"
+        case .nonPhotoAccepted:
+            return "person.text.rectangle.fill"
+        case .noDocument:
+            return "checkmark.seal.fill"
+        case .conditional:
+            return "exclamationmark.triangle.fill"
+        }
     }
 
     private var missingStatePromptText: String {
@@ -48,8 +221,7 @@ struct VoterIDGuideCard: View {
     }
 
     private var stateFlagSize: CGSize {
-        let scale: CGFloat = 1.25
-        return CGSize(width: 50 * scale, height: 35 * scale)
+        CGSize(width: 56, height: 38)
     }
 
     private func localized(_ key: String, fallback: String) -> String {
@@ -62,116 +234,160 @@ struct VoterIDGuideCard: View {
     }
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            VStack(alignment: .leading, spacing: 6) {
-                Text(headerText)
-                    .font(.headline)
-                    .foregroundColor(VoteNowColors.primaryText)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "person.text.rectangle.fill")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(VoteNowColors.primaryCTA)
+                        .frame(width: 30, height: 30)
+                        .background(VoteNowColors.primaryCTA.opacity(0.12))
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
-                if let metric, let photoIDRequirementText {
-                    Text("\(resolvedStateName): \(photoIDRequirementText)")
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(headerText)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundColor(VoteNowColors.mutedText)
+                        Text(stateHeaderText)
+                            .font(.headline.weight(.bold))
+                            .foregroundColor(VoteNowColors.primaryText)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+
+                Spacer(minLength: 8)
+
+                stateFlagBadge
+            }
+
+            if let metric, let requirementSummaryText {
+                HStack(spacing: 8) {
+                    Image(systemName: categoryIconName)
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(categoryAccentColor)
+                    Text(categoryLabelText)
+                        .font(.caption.weight(.bold))
+                        .foregroundColor(categoryAccentColor)
+                        .lineLimit(1)
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(categoryAccentColor.opacity(0.12))
+                .overlay(
+                    Capsule()
+                        .stroke(categoryAccentColor.opacity(0.34), lineWidth: 1)
+                )
+                .clipShape(Capsule())
+
+                if shouldShowRequirementSummary(for: metric) {
+                    Text(requirementSummaryText)
                         .font(.subheadline.weight(.semibold))
                         .foregroundColor(VoteNowColors.primaryText)
-                        .padding(.top, 2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
 
-                    if let note = metric.note {
-                        Text(note)
+                if let options = acceptedOptionsText(for: metric) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        if let heading = acceptedOptionsHeadingText(for: metric) {
+                            Text(heading)
+                                .font(.caption.weight(.semibold))
+                                .foregroundColor(VoteNowColors.mutedText)
+                        }
+                        Text(options)
                             .font(.caption)
-                            .foregroundColor(VoteNowColors.mutedText)
+                            .foregroundColor(VoteNowColors.primaryText)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                } else {
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(VoteNowColors.infoSurfaceBlue.opacity(0.35))
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+
+                if let note = supplementalNoteText(for: metric) {
+                    Text(note)
+                        .font(.caption)
+                        .foregroundColor(VoteNowColors.mutedText)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(VoteNowColors.appBackground.opacity(0.88))
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+            } else {
+                HStack(alignment: .top, spacing: 8) {
+                    Image(systemName: "location.slash")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(VoteNowColors.primaryCTA)
                     Text(missingStatePromptText)
                         .font(.subheadline.weight(.semibold))
                         .foregroundColor(VoteNowColors.mutedText)
-                        .padding(.top, 2)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-            }
-
-            Spacer(minLength: 8)
-
-            if let asset = StateFlagCatalog.assetName(for: normalizedStateCode) {
-                Image(asset)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: stateFlagSize.width, height: stateFlagSize.height)
-                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6, style: .continuous)
-                            .stroke(VoteNowColors.borderWarm, lineWidth: 1)
-                    )
-                    .padding(.top, 2)
-            } else {
-                Image(systemName: "location.slash")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(VoteNowColors.primaryCTA)
-                    .padding(.top, 2)
+                .padding(10)
+                .background(VoteNowColors.infoSurfaceBlue.opacity(0.48))
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(VoteNowColors.surfaceWhite)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            VoteNowColors.surfaceWhite,
+                            VoteNowColors.brandSoftBlue.opacity(0.09)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                .stroke(VoteNowColors.primaryCTA.opacity(0.16), lineWidth: 1)
         )
-        .shadow(color: VoteNowColors.primaryText.opacity(0.06), radius: 3, x: 0, y: 1)
+        .shadow(color: VoteNowColors.primaryText.opacity(0.07), radius: 4, x: 0, y: 2)
     }
 
-    private static let metricsByStateCode: [String: VoterIDMetric] = [
-        "AL": .init(category: "Photo ID required", note: nil),
-        "AK": .init(category: "Non-photo ID required", note: nil),
-        "AZ": .init(category: "Non-photo ID required", note: nil),
-        "AR": .init(category: "Photo ID required", note: nil),
-        "CA": .init(category: "No ID required", note: nil),
-        "CO": .init(category: "Non-photo ID required", note: nil),
-        "CT": .init(category: "Non-photo ID required", note: nil),
-        "DE": .init(category: "Non-photo ID required", note: nil),
-        "FL": .init(category: "Photo ID required", note: nil),
-        "GA": .init(category: "Photo ID required", note: nil),
-        "HI": .init(category: "No ID required", note: nil),
-        "ID": .init(category: "Photo ID required", note: nil),
-        "IL": .init(category: "No ID required", note: nil),
-        "IN": .init(category: "Photo ID required", note: nil),
-        "IA": .init(category: "Non-photo ID required", note: nil),
-        "KS": .init(category: "Photo ID required", note: nil),
-        "KY": .init(category: "Photo ID required", note: nil),
-        "LA": .init(category: "Photo ID required", note: nil),
-        "ME": .init(category: "No ID required", note: nil),
-        "MD": .init(category: "No ID required", note: nil),
-        "MA": .init(category: "No ID required", note: nil),
-        "MI": .init(category: "Photo ID required", note: "Affidavit option available."),
-        "MN": .init(category: "No ID required", note: nil),
-        "MS": .init(category: "Photo ID required", note: nil),
-        "MO": .init(category: "Photo ID required", note: nil),
-        "MT": .init(category: "Photo ID required", note: nil),
-        "NE": .init(category: "Photo ID required", note: nil),
-        "NV": .init(category: "No ID required", note: "Question 7 passed in 2024; second approval needed in 2026."),
-        "NH": .init(category: "Photo ID required", note: nil),
-        "NJ": .init(category: "No ID required", note: nil),
-        "NM": .init(category: "No ID required", note: nil),
-        "NY": .init(category: "No ID required", note: nil),
-        "NC": .init(category: "Photo ID required", note: nil),
-        "ND": .init(category: "Non-photo ID required", note: nil),
-        "OH": .init(category: "Photo ID required", note: nil),
-        "OK": .init(category: "Non-photo ID required", note: nil),
-        "OR": .init(category: "No ID required", note: "Vote-by-mail state."),
-        "PA": .init(category: "No ID required", note: nil),
-        "RI": .init(category: "Photo ID required", note: nil),
-        "SC": .init(category: "Photo ID required", note: nil),
-        "SD": .init(category: "Photo ID required", note: nil),
-        "TN": .init(category: "Photo ID required", note: nil),
-        "TX": .init(category: "Photo ID required", note: nil),
-        "UT": .init(category: "Non-photo ID required", note: nil),
-        "VT": .init(category: "No ID required", note: nil),
-        "VA": .init(category: "Non-photo ID required", note: nil),
-        "WA": .init(category: "Non-photo ID required", note: "Vote-by-mail state."),
-        "WV": .init(category: "Photo ID required", note: "Law signed May 1, 2025."),
-        "WI": .init(category: "Photo ID required", note: nil),
-        "WY": .init(category: "Non-photo ID required", note: nil)
-    ]
+    @ViewBuilder
+    private var stateFlagBadge: some View {
+        if let asset = StateFlagCatalog.assetName(for: normalizedStateCode) {
+            Image(asset)
+                .resizable()
+                .scaledToFill()
+                .frame(width: stateFlagSize.width, height: stateFlagSize.height)
+                .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 7, style: .continuous)
+                        .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                )
+                .background(
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(VoteNowColors.surfaceWhite)
+                )
+                .opensMyInfoPanelOnLongPress()
+        } else {
+            Image(systemName: "location.slash")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(VoteNowColors.primaryCTA)
+                .frame(width: 28, height: 28)
+                .background(VoteNowColors.primaryCTA.opacity(0.10))
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        }
+    }
+
+    private static let metricsByStateCode: [String: VoterIDMetric] = {
+        guard let url = Bundle.main.url(forResource: "USVoterIDNonPhotoByJurisdiction", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let decoded = try? JSONDecoder().decode([String: VoterIDMetric].self, from: data) else {
+            return [:]
+        }
+        return decoded
+    }()
 
     private static let stateNameByCode: [String: String] = [
         "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "CA": "California",
@@ -183,7 +399,9 @@ struct VoterIDGuideCard: View {
         "NM": "New Mexico", "NY": "New York", "NC": "North Carolina", "ND": "North Dakota", "OH": "Ohio",
         "OK": "Oklahoma", "OR": "Oregon", "PA": "Pennsylvania", "RI": "Rhode Island", "SC": "South Carolina",
         "SD": "South Dakota", "TN": "Tennessee", "TX": "Texas", "UT": "Utah", "VT": "Vermont",
-        "VA": "Virginia", "WA": "Washington", "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming"
+        "VA": "Virginia", "WA": "Washington", "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming",
+        "DC": "District of Columbia", "AS": "American Samoa", "GU": "Guam",
+        "MP": "Northern Mariana Islands", "PR": "Puerto Rico", "VI": "U.S. Virgin Islands"
     ]
 }
 

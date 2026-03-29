@@ -217,9 +217,11 @@ def test_leaderboard_rollups_use_eligible_verified_calls() -> None:
     assert len(board.entries) >= 2
     first = board.entries[0]
     second = board.entries[1]
-    assert first.user_id == "uA"
+    assert first.user_alias.startswith("voter-")
+    assert first.user_alias != "uA"
     assert first.eligible_verified_call_count == 2
-    assert second.user_id == "uB"
+    assert second.user_alias.startswith("voter-")
+    assert second.user_alias != "uB"
     assert second.eligible_verified_call_count == 1
 
     me = service.get_user_leaderboard_summary(

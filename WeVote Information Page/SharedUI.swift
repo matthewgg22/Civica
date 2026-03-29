@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIKit
+import LinkPresentation
 
 func localizedCatalogString(
     _ key: String,
@@ -55,6 +56,10 @@ func localizedCatalogString(
 
 extension Notification.Name {
     static let toggleWhyVoteOverlay = Notification.Name("toggleWhyVoteOverlay")
+    static let openHowToVoteMailInBallot = Notification.Name("openHowToVoteMailInBallot")
+    static let openMailInBallotRequest = Notification.Name("openMailInBallotRequest")
+    static let openMyInfoPanel = Notification.Name("openMyInfoPanel")
+    static let openHiddenHowToVoteFeatures = Notification.Name("openHiddenHowToVoteFeatures")
 }
 
 private enum WhyVoteOverlayUserInfoKey {
@@ -97,7 +102,65 @@ private extension View {
     }
 }
 
+private struct MyInfoLongPressModifier: ViewModifier {
+    let minimumDuration: Double
+    @GestureState private var isPressing = false
+    @State private var showActivationRing = false
+
+    func body(content: Content) -> some View {
+        content
+            .scaleEffect(isPressing ? 0.97 : 1.0)
+            .overlay {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .stroke(
+                        VoteNowColors.primaryCTA.opacity(showActivationRing ? 0.76 : (isPressing ? 0.34 : 0)),
+                        lineWidth: showActivationRing ? 2 : 1
+                    )
+                    .padding(-2)
+            }
+            .animation(.easeOut(duration: 0.14), value: isPressing)
+            .animation(.easeOut(duration: 0.2), value: showActivationRing)
+            .contentShape(Rectangle())
+            .simultaneousGesture(
+                LongPressGesture(minimumDuration: minimumDuration)
+                    .updating($isPressing) { current, state, _ in
+                        state = current
+                    }
+                    .onEnded { _ in
+                        let feedback = UIImpactFeedbackGenerator(style: .rigid)
+                        feedback.prepare()
+                        feedback.impactOccurred(intensity: 0.95)
+
+                        showActivationRing = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
+                            showActivationRing = false
+                        }
+                        NotificationCenter.default.post(name: .openMyInfoPanel, object: nil)
+                    }
+            )
+    }
+}
+
+extension View {
+    func opensMyInfoPanelOnLongPress(minimumDuration: Double = 0.8) -> some View {
+        modifier(MyInfoLongPressModifier(minimumDuration: minimumDuration))
+    }
+
+    @ViewBuilder
+    func opensMyInfoPanelOnLongPress(
+        when isEnabled: Bool,
+        minimumDuration: Double = 0.8
+    ) -> some View {
+        if isEnabled {
+            opensMyInfoPanelOnLongPress(minimumDuration: minimumDuration)
+        } else {
+            self
+        }
+    }
+}
+
 struct PageHeader: View {
+    @Environment(\.locale) private var locale
     let title: Text
     var iconSize: CGFloat = 56
     @State private var iconFrameInSpreadSpace: CGRect = .zero
@@ -135,7 +198,14 @@ struct PageHeader: View {
                     .reportFrame(in: .named("SpreadSpace"))
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Toggle Why Vote overlay")
+            .accessibilityLabel(
+                localizedCatalogString(
+                    "app.accessibility.why_vote.toggle",
+                    tableName: "AppShell",
+                    locale: locale,
+                    fallback: "Toggle Why Vote overlay"
+                )
+            )
 
             title
                 .font(.largeTitle)
@@ -279,6 +349,7 @@ private struct VoteNowTabBarsIcon: View {
 }
 
 struct WhyVoteFloodOverlay: View {
+    @Environment(\.locale) private var locale
     @Binding var isPresented: Bool
     var originInSpreadSpace: CGPoint?
 
@@ -339,11 +410,39 @@ struct WhyVoteFloodOverlay: View {
                             )
                             .frame(width: logoSize, height: logoSize)
                             .fixedSize(horizontal: true, vertical: true)
+                            .voteNowPillDualOrbit(
+                                redColor: VoteNowColors.ctaRed.opacity(0.94),
+                                blueColor: VoteNowColors.ctaBlue.opacity(0.88),
+                                strokeThickness: 2.4,
+                                loopDuration: 5.2,
+                                glowIntensity: 0.22,
+                                idleOpacity: 0,
+                                borderInset: 0,
+                                segmentLength: 0.50,
+                                separatorThickness: 0,
+                                sliceFadeFactor: 0.93,
+                                speedVariance: 0,
+                                pathStyle: .roundedRect(cornerRadius: logoSize * 0.24)
+                            )
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel("Close Why Vote overlay")
+                        .accessibilityLabel(
+                            localizedCatalogString(
+                                "app.accessibility.why_vote.close",
+                                tableName: "AppShell",
+                                locale: locale,
+                                fallback: "Close Why Vote overlay"
+                            )
+                        )
 
-                        Text("Why Vote?")
+                        Text(
+                            localizedCatalogString(
+                                "app.why_vote.overlay.title",
+                                tableName: "AppShell",
+                                locale: locale,
+                                fallback: "Why Vote?"
+                            )
+                        )
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .lineLimit(1)
@@ -380,6 +479,7 @@ struct WhyVoteFloodOverlay: View {
 }
 
 struct WhyCallFloodOverlay: View {
+    @Environment(\.locale) private var locale
     @Binding var isPresented: Bool
     var originInSpreadSpace: CGPoint?
     var onStartCalling: () -> Void = {}
@@ -388,7 +488,7 @@ struct WhyCallFloodOverlay: View {
     private let accent = Color(red: 223.0 / 255.0, green: 88.0 / 255.0, blue: 69.0 / 255.0)
     private let logoSize: CGFloat = 50
     private let headerHorizontalPadding: CGFloat = 16
-    private let headerTopPadding: CGFloat = 4
+    private let headerTopPadding: CGFloat = 10
     private let duration: Double = 0.86
     private let directionalBias: CGFloat = 0.06
     private let softness: CGFloat = 2.5
@@ -440,11 +540,39 @@ struct WhyCallFloodOverlay: View {
                             )
                             .frame(width: logoSize, height: logoSize)
                             .fixedSize(horizontal: true, vertical: true)
+                            .voteNowPillDualOrbit(
+                                redColor: VoteNowColors.ctaRed.opacity(0.94),
+                                blueColor: VoteNowColors.ctaBlue.opacity(0.88),
+                                strokeThickness: 2.4,
+                                loopDuration: 5.2,
+                                glowIntensity: 0.22,
+                                idleOpacity: 0,
+                                borderInset: 0,
+                                segmentLength: 0.50,
+                                separatorThickness: 0.2,
+                                sliceFadeFactor: 0.93,
+                                speedVariance: 0,
+                                pathStyle: .roundedRect(cornerRadius: logoSize * 0.24)
+                            )
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel("Close Why Call overlay")
+                        .accessibilityLabel(
+                            localizedCatalogString(
+                                "app.accessibility.why_call.close",
+                                tableName: "AppShell",
+                                locale: locale,
+                                fallback: "Close Why Call overlay"
+                            )
+                        )
 
-                        Text("Why Call Your Rep?")
+                        Text(
+                            localizedCatalogString(
+                                "app.why_call.overlay.title",
+                                tableName: "AppShell",
+                                locale: locale,
+                                fallback: "Why calls reps"
+                            )
+                        )
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .lineLimit(1)
@@ -514,22 +642,22 @@ struct WhyCallContent: Hashable {
     static let live = WhyCallContent(
         title: "",
         intro: "",
-        context: "Calling your elected leaders remains one of the fastest, most direct ways to make your view known before a hearing, vote, or other key legislative moments.",
+        context: "Calls are a fast way to show what matters in your community before key votes.",
         stats: [
             WhyCallStat(
-                value: "21.7%–23%",
-                title: "Most people do not reach out",
-                body: "Recent survey findings suggest only a minority of Americans contact Congress or other elected officials in a given year."
+                value: "Only 23% of constituents call their reps annually",
+                title: "",
+                body: "When fewer people call, each call carries more signal."
             ),
             WhyCallStat(
-                value: "86%",
-                title: "Calls matter when it's live",
-                body: "Phone calls have some or a lot of influence when a member is undecided."
+                value: "86% report calls influence undecided members",
+                title: "",
+                body: "Calls help offices understand which issues are urgent, widespread, and personal."
             ),
             WhyCallStat(
-                value: "20% vs 1%",
-                title: "Personal beats copied",
-                body: "Personalized messages are much more influential than identical form messages."
+                value: "20% vs 1% response impact",
+                title: "",
+                body: "Personalized calls are more likely to stand out than form messages."
             )
         ],
         reasons: [
@@ -552,50 +680,108 @@ struct WhyCallContent: Hashable {
 }
 
 struct WhyCallView: View {
+    @Environment(\.locale) private var locale
     let content: WhyCallContent
     let onStartCalling: () -> Void
+    @State private var showFeedbackSheet = false
 
     var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 16) {
-                WhyCallHero(content: content)
+        ZStack {
+            WhyCallSignalBackdrop()
+                .ignoresSafeArea()
 
-                Text(content.context)
-                    .font(.body)
-                    .foregroundStyle(.primary)
-                    .padding(14)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(cardBackground)
-                    .overlay(cardBorder)
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 16) {
+                    WhyCallHero(content: content)
 
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("What research shows")
-                        .font(.headline)
+                    HowCallsBecomeSignalCard()
+
+                    Text(content.context)
+                        .font(.body)
                         .foregroundStyle(.primary)
+                        .padding(14)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(cardBackground)
+                        .overlay(cardBorder)
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
 
-                    ForEach(content.stats) { stat in
-                        WhyCallStatCard(stat: stat)
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text(
+                            localizedCatalogString(
+                                "app.why_call.impact.header",
+                                tableName: "AppShell",
+                                locale: locale,
+                                fallback: "Impact of Calling your Reps"
+                            )
+                        )
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+
+                        ForEach(content.stats) { stat in
+                            WhyCallStatCard(stat: stat)
+                        }
                     }
-                }
 
+                    WhyCallBottomCTA(
+                        note: "",
+                        title: localizedCatalogString(
+                            "app.issue_call.action.call_now",
+                            tableName: "AppShell",
+                            locale: locale,
+                            fallback: "Call your rep now"
+                        ),
+                        action: onStartCalling
+                    )
+
+                    feedbackButton
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 14)
+                .padding(.bottom, 20)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 14)
-            .padding(.bottom, 20)
         }
-        .safeAreaInset(edge: .bottom) {
-            WhyCallBottomCTA(note: content.note, title: content.primaryCTA, action: onStartCalling)
+        .sheet(isPresented: $showFeedbackSheet) {
+            NavigationStack {
+                FeedbackView()
+            }
         }
     }
 
     private var cardBackground: some ShapeStyle {
-        Color(uiColor: .secondarySystemBackground).opacity(0.92)
+        Color(uiColor: .secondarySystemBackground)
     }
 
     private var cardBorder: some View {
         RoundedRectangle(cornerRadius: 14, style: .continuous)
             .stroke(VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
+    }
+
+    private var feedbackButton: some View {
+        Button {
+            showFeedbackSheet = true
+        } label: {
+            Label(
+                localizedCatalogString(
+                    "app.how_to_vote.section.feedback",
+                    tableName: "AppShell",
+                    locale: locale,
+                    fallback: "Feedback"
+                ),
+                systemImage: "bubble.left.and.bubble.right.fill"
+            )
+            .font(.subheadline.weight(.semibold))
+            .foregroundColor(VoteNowColors.primaryCTA)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 7)
+            .background(VoteNowColors.surfaceWhite)
+            .clipShape(Capsule(style: .continuous))
+            .overlay(
+                Capsule(style: .continuous)
+                    .stroke(VoteNowColors.primaryCTA.opacity(0.34), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -628,16 +814,18 @@ private struct WhyCallStatCard: View {
             Text(stat.value)
                 .font(.title2.weight(.bold))
                 .foregroundStyle(VoteNowColors.primaryCTA)
-            Text(stat.title)
-                .font(.headline)
-                .foregroundStyle(.primary)
+            if !stat.title.isEmpty {
+                Text(stat.title)
+                    .font(.headline)
+                    .foregroundStyle(.primary)
+            }
             Text(stat.body)
                 .font(.body)
                 .foregroundStyle(.primary)
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(uiColor: .secondarySystemBackground).opacity(0.92))
+        .background(Color(uiColor: .secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
@@ -661,7 +849,7 @@ private struct WhyCallReasonCard: View {
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(uiColor: .secondarySystemBackground).opacity(0.92))
+        .background(Color(uiColor: .secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
@@ -672,6 +860,7 @@ private struct WhyCallReasonCard: View {
 }
 
 private struct WhyCallBottomCTA: View {
+    @Environment(\.locale) private var locale
     let note: String
     let title: String
     let action: () -> Void
@@ -691,7 +880,14 @@ private struct WhyCallBottomCTA: View {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(VoteNowPrimaryCTAButtonStyle())
-            .accessibilityLabel("Start Calling Reps")
+            .accessibilityLabel(
+                localizedCatalogString(
+                    "app.accessibility.issue_call.start",
+                    tableName: "AppShell",
+                    locale: locale,
+                    fallback: "Start Calling Reps"
+                )
+            )
         }
         .padding(.horizontal, 16)
         .padding(.top, 10)
@@ -804,5 +1000,380 @@ private struct WhyVoteDirectionalRevealMask: Shape {
         }
 
         return required * 1.05
+    }
+}
+
+enum VoteNowShareCardType: String {
+    case election
+    case registration
+    case mapv
+    case civic
+}
+
+enum VoteNowShareTarget: String {
+    case election
+    case registration
+    case mapv
+    case civic
+}
+
+struct VoteNowShareCardPayload {
+    let cardType: VoteNowShareCardType
+    let target: VoteNowShareTarget
+    let title: String
+    let subtitle: String
+    let cta: String
+    let badge: String?
+    let campaign: String?
+    let details: [URLQueryItem]
+
+    init(
+        cardType: VoteNowShareCardType,
+        target: VoteNowShareTarget,
+        title: String,
+        subtitle: String,
+        cta: String,
+        badge: String? = nil,
+        campaign: String? = nil,
+        details: [URLQueryItem] = []
+    ) {
+        self.cardType = cardType
+        self.target = target
+        self.title = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.subtitle = subtitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.cta = cta.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.badge = badge?.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.campaign = campaign?.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.details = details
+    }
+
+    var shareURL: URL? {
+        guard var components = URLComponents(string: "https://votenow.app/share/\(cardType.rawValue)") else {
+            return nil
+        }
+
+        var items: [URLQueryItem] = [URLQueryItem(name: "target", value: target.rawValue)]
+        if let campaign, !campaign.isEmpty {
+            items.append(URLQueryItem(name: "campaign", value: limited(campaign, max: 80)))
+        }
+
+        for item in details {
+            guard let value = item.value?.trimmingCharacters(in: .whitespacesAndNewlines),
+                  !value.isEmpty else {
+                continue
+            }
+            items.append(URLQueryItem(name: item.name, value: limited(value, max: 140)))
+        }
+
+        components.queryItems = items
+        return components.url
+    }
+
+    var deepLinkURL: URL? {
+        var components = URLComponents()
+        components.scheme = "votenow"
+
+        switch target {
+        case .election:
+            components.host = "election"
+            var electionItems = details.filter {
+                ["eid", "type", "day", "state", "state_name"].contains($0.name)
+            }
+            electionItems.append(URLQueryItem(name: "title", value: limited(title, max: 120)))
+            components.queryItems = electionItems
+        case .registration:
+            components.host = "registration"
+        case .mapv:
+            components.host = "mapv"
+        case .civic:
+            components.host = "civic"
+        }
+
+        return components.url
+    }
+
+    var shareMessage: String {
+        [title, subtitle]
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .joined(separator: " - ")
+    }
+
+    private func limited(_ value: String, max: Int) -> String {
+        if value.count <= max { return value }
+        return String(value.prefix(max))
+    }
+}
+
+enum VoteNowShareComposer {
+    static func activityItems(for payload: VoteNowShareCardPayload) -> [Any] {
+        var items: [Any] = []
+        if !payload.shareMessage.isEmpty {
+            items.append(payload.shareMessage)
+        }
+        items.append(VoteNowShareActivityItemSource(payload: payload))
+        return items
+    }
+}
+
+final class VoteNowShareActivityItemSource: NSObject, UIActivityItemSource {
+    private let payload: VoteNowShareCardPayload
+
+    init(payload: VoteNowShareCardPayload) {
+        self.payload = payload
+        super.init()
+    }
+
+    func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
+        payload.shareURL ?? payload.deepLinkURL ?? URL(string: "https://votenow.app")!
+    }
+
+    func activityViewController(
+        _ activityViewController: UIActivityViewController,
+        itemForActivityType activityType: UIActivity.ActivityType?
+    ) -> Any? {
+        payload.shareURL ?? payload.deepLinkURL ?? payload.shareMessage
+    }
+
+    func activityViewController(
+        _ activityViewController: UIActivityViewController,
+        subjectForActivityType activityType: UIActivity.ActivityType?
+    ) -> String {
+        payload.title
+    }
+
+    func activityViewControllerLinkMetadata(_ activityViewController: UIActivityViewController) -> LPLinkMetadata? {
+        let metadata = LPLinkMetadata()
+        metadata.title = payload.title
+        metadata.originalURL = payload.shareURL
+        metadata.url = payload.shareURL
+
+        let previewImage = VoteNowSharePreviewRenderer.image(for: payload)
+        metadata.imageProvider = NSItemProvider(object: previewImage)
+        metadata.iconProvider = NSItemProvider(object: VoteNowSharePreviewRenderer.logoImage)
+        return metadata
+    }
+}
+
+private enum VoteNowSharePreviewRenderer {
+    static let logoImage: UIImage = {
+        if let icons = Bundle.main.infoDictionary?["CFBundleIcons"] as? [String: Any],
+           let primaryIcon = icons["CFBundlePrimaryIcon"] as? [String: Any],
+           let iconFiles = primaryIcon["CFBundleIconFiles"] as? [String],
+           let iconName = iconFiles.last,
+           let icon = UIImage(named: iconName) {
+            return icon
+        }
+        return VoteNowLogoIcon.tabBarUIImage
+    }()
+
+    static func image(for payload: VoteNowShareCardPayload) -> UIImage {
+        let size = CGSize(width: 1200, height: 630)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            let cg = context.cgContext
+            drawBackground(for: payload.cardType, in: CGRect(origin: .zero, size: size), context: cg)
+
+            let isRegistrationCard = payload.cardType == .registration
+            let horizontalInset: CGFloat = isRegistrationCard ? 40 : 56
+            let topInset: CGFloat = isRegistrationCard ? 28 : 40
+            let baseLogoSize: CGFloat = 144
+            let logoScale: CGFloat
+            switch payload.cardType {
+            case .election, .registration:
+                logoScale = 1.25
+            case .mapv, .civic:
+                logoScale = 1.0
+            }
+            let logoSize: CGFloat = baseLogoSize * logoScale
+            let logoRect = CGRect(
+                x: size.width - horizontalInset - logoSize,
+                y: topInset,
+                width: logoSize,
+                height: logoSize
+            )
+
+            let bandHeight: CGFloat = isRegistrationCard ? 142 : 164
+            let bandRect = CGRect(x: 0, y: size.height - bandHeight, width: size.width, height: bandHeight)
+            cg.setFillColor(UIColor(white: 1.0, alpha: 0.18).cgColor)
+            cg.fill(bandRect)
+
+            let hasBadge = (payload.badge?.isEmpty == false)
+            if let badge = payload.badge, !badge.isEmpty {
+                let badgeHeight: CGFloat = isRegistrationCard ? 50 : 44
+                drawChip(
+                    text: badge,
+                    in: CGRect(
+                        x: horizontalInset,
+                        y: topInset,
+                        width: logoRect.minX - horizontalInset - 24,
+                        height: badgeHeight
+                    ),
+                    fill: UIColor(white: 1.0, alpha: 0.22),
+                    textColor: .white
+                )
+            }
+
+            let titleTop = hasBadge ? (topInset + (isRegistrationCard ? 58 : 62)) : topInset
+            let titleBottomPadding: CGFloat = isRegistrationCard ? 8 : 16
+            let titleRect = CGRect(
+                x: horizontalInset,
+                y: titleTop,
+                width: logoRect.minX - horizontalInset - 24,
+                height: bandRect.minY - titleTop - titleBottomPadding
+            )
+            drawText(
+                payload.title,
+                font: titleFont(for: payload.title),
+                color: .white,
+                rect: titleRect,
+                lineBreak: .byWordWrapping
+            )
+
+            let ctaWidth: CGFloat = isRegistrationCard ? 240 : 276
+            let ctaRect = CGRect(
+                x: size.width - horizontalInset - ctaWidth,
+                y: bandRect.minY + (bandHeight - 54) / 2,
+                width: ctaWidth,
+                height: 54
+            )
+
+            drawText(
+                payload.subtitle,
+                font: subtitleFont(for: payload.subtitle),
+                color: UIColor(white: 0.96, alpha: 0.98),
+                rect: CGRect(
+                    x: horizontalInset,
+                    y: bandRect.minY + (isRegistrationCard ? 18 : 24),
+                    width: ctaRect.minX - horizontalInset - 20,
+                    height: bandHeight - (isRegistrationCard ? 36 : 48)
+                ),
+                lineBreak: .byWordWrapping
+            )
+
+            drawChip(
+                text: payload.cta,
+                in: ctaRect,
+                fill: UIColor(red: 0.88, green: 0.34, blue: 0.23, alpha: 1.0),
+                textColor: .white
+            )
+
+            let logoPath = UIBezierPath(roundedRect: logoRect, cornerRadius: logoSize * (28.0 / 144.0))
+            cg.saveGState()
+            logoPath.addClip()
+            logoImage.draw(in: logoRect)
+            cg.restoreGState()
+
+            UIColor(white: 1.0, alpha: 0.42).setStroke()
+            logoPath.lineWidth = 2
+            logoPath.stroke()
+
+            drawText(
+                "VoteNow",
+                font: UIFont.systemFont(ofSize: 32, weight: .bold),
+                color: UIColor(white: 1.0, alpha: 0.98),
+                rect: CGRect(x: logoRect.minX, y: logoRect.maxY + 8, width: logoRect.width, height: 36),
+                lineBreak: .byTruncatingTail,
+                alignment: .center
+            )
+        }
+    }
+
+    private static func titleFont(for title: String) -> UIFont {
+        let count = title.count
+        if count <= 22 { return UIFont.systemFont(ofSize: 82, weight: .heavy) }
+        if count <= 40 { return UIFont.systemFont(ofSize: 72, weight: .bold) }
+        return UIFont.systemFont(ofSize: 62, weight: .bold)
+    }
+
+    private static func subtitleFont(for subtitle: String) -> UIFont {
+        let count = subtitle.count
+        if count <= 75 { return UIFont.systemFont(ofSize: 38, weight: .semibold) }
+        return UIFont.systemFont(ofSize: 34, weight: .semibold)
+    }
+
+    private static func drawBackground(
+        for type: VoteNowShareCardType,
+        in rect: CGRect,
+        context: CGContext
+    ) {
+        let colors: [UIColor]
+        switch type {
+        case .election:
+            colors = [UIColor(red: 0.08, green: 0.23, blue: 0.66, alpha: 1), UIColor(red: 0.28, green: 0.63, blue: 0.93, alpha: 1)]
+        case .registration:
+            colors = [UIColor(red: 0.04, green: 0.40, blue: 0.49, alpha: 1), UIColor(red: 0.16, green: 0.74, blue: 0.62, alpha: 1)]
+        case .mapv:
+            colors = [UIColor(red: 0.14, green: 0.33, blue: 0.52, alpha: 1), UIColor(red: 0.42, green: 0.57, blue: 0.78, alpha: 1)]
+        case .civic:
+            colors = [UIColor(red: 0.11, green: 0.20, blue: 0.45, alpha: 1), UIColor(red: 0.28, green: 0.48, blue: 0.87, alpha: 1)]
+        }
+
+        guard let gradient = CGGradient(
+            colorsSpace: CGColorSpaceCreateDeviceRGB(),
+            colors: colors.map { $0.cgColor } as CFArray,
+            locations: [0.0, 1.0]
+        ) else {
+            context.setFillColor(colors.first?.cgColor ?? UIColor.darkGray.cgColor)
+            context.fill(rect)
+            return
+        }
+
+        context.drawLinearGradient(
+            gradient,
+            start: CGPoint(x: rect.minX, y: rect.minY),
+            end: CGPoint(x: rect.maxX, y: rect.maxY),
+            options: []
+        )
+    }
+
+    private static func drawChip(
+        text: String,
+        in rect: CGRect,
+        fill: UIColor,
+        textColor: UIColor
+    ) {
+        let path = UIBezierPath(roundedRect: rect, cornerRadius: rect.height / 2)
+        fill.setFill()
+        path.fill()
+
+        let font = UIFont.systemFont(ofSize: rect.height >= 48 ? 25 : 24, weight: .semibold)
+        let textHeight = ceil(font.lineHeight)
+        let verticalInset = max(4, (rect.height - textHeight) / 2)
+        drawText(
+            text,
+            font: font,
+            color: textColor,
+            rect: rect.insetBy(dx: 16, dy: verticalInset),
+            lineBreak: .byTruncatingTail,
+            alignment: .center
+        )
+    }
+
+    private static func drawText(
+        _ text: String,
+        font: UIFont,
+        color: UIColor,
+        rect: CGRect,
+        lineBreak: NSLineBreakMode,
+        alignment: NSTextAlignment = .left
+    ) {
+        guard !text.isEmpty else { return }
+        let style = NSMutableParagraphStyle()
+        style.alignment = alignment
+        style.lineBreakMode = lineBreak
+
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: color,
+            .paragraphStyle: style
+        ]
+
+        (text as NSString).draw(
+            with: rect,
+            options: [.usesLineFragmentOrigin, .truncatesLastVisibleLine],
+            attributes: attributes,
+            context: nil
+        )
     }
 }

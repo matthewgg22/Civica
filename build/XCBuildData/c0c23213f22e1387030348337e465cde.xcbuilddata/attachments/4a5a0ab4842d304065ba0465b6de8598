@@ -1,0 +1,4 @@
+module FirebaseAnalyticsTarget {
+umbrella "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/firebase-ios-sdk/SwiftPM-PlatformExclude/FirebaseAnalyticsWrap/include"
+export *
+}

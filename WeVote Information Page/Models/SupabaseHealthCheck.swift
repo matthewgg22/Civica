@@ -38,7 +38,7 @@ enum SupabaseHealthCheck {
                 statusCode: statusCode
             )
         } catch {
-            logger.error("Supabase health check error: \(error.localizedDescription, privacy: .public)")
+            logger.error("Supabase health check request failed.")
             return SupabaseHealthStatus(
                 isHealthy: false,
                 error: error,

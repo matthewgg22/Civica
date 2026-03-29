@@ -152,6 +152,19 @@ struct Election: Identifiable {
     }
 }
 
+private struct TimelineStateElectionRecord: Decodable {
+    let state_name: String
+    let state_code: String
+    let primary_date: String?
+    let primary_runoff_date: String?
+    let general_election_date: String?
+    let registration_deadline_primary: String?
+    let registration_deadline_general: String?
+    let early_voting_primary: String?
+    let early_voting_primary_runoff: String?
+    let early_voting_general: String?
+}
+
 // MARK: – ViewModel
 
 final class PlanViewModel: ObservableObject {
@@ -164,7 +177,10 @@ final class PlanViewModel: ObservableObject {
 
     // MARK: – User Info
     @Published var userAddress: Address = Address() {
-        didSet { persistUserAddress() }
+        didSet {
+            persistUserAddress()
+            refreshUpcomingElectionsFromTimeline()
+        }
     }
     @Published var selectedParty: PoliticalParty = .independent
 
@@ -173,6 +189,7 @@ final class PlanViewModel: ObservableObject {
         didSet {
             UserDefaults.standard.set(zip, forKey: StorageKeys.zip)
             syncAddressFieldsFromZIPIfNeeded()
+            refreshUpcomingElectionsFromTimeline()
         }
     }
 
@@ -184,6 +201,41 @@ final class PlanViewModel: ObservableObject {
 
     /// **Your Plan to Vote** container (method, place, time, ETA, etc.)
     @Published var plan = VotePlan()
+
+    private static let timelineRecordsByState: [String: TimelineStateElectionRecord] = {
+        guard
+            let url = Bundle.main.url(forResource: "USMidterm2026ElectionDates", withExtension: "json"),
+            let data = try? Data(contentsOf: url),
+            let records = try? JSONDecoder().decode([TimelineStateElectionRecord].self, from: data)
+        else {
+            return [:]
+        }
+
+        return Dictionary(uniqueKeysWithValues: records.map { ($0.state_code.uppercased(), $0) })
+    }()
+
+    private static let timelineISODateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
+    private static let stateCodeByName: [String: String] = [
+        "alabama": "AL", "alaska": "AK", "arizona": "AZ", "arkansas": "AR", "california": "CA",
+        "colorado": "CO", "connecticut": "CT", "delaware": "DE", "florida": "FL", "georgia": "GA",
+        "hawaii": "HI", "idaho": "ID", "illinois": "IL", "indiana": "IN", "iowa": "IA",
+        "kansas": "KS", "kentucky": "KY", "louisiana": "LA", "maine": "ME", "maryland": "MD",
+        "massachusetts": "MA", "michigan": "MI", "minnesota": "MN", "mississippi": "MS", "missouri": "MO",
+        "montana": "MT", "nebraska": "NE", "nevada": "NV", "new hampshire": "NH", "new jersey": "NJ",
+        "new mexico": "NM", "new york": "NY", "north carolina": "NC", "north dakota": "ND", "ohio": "OH",
+        "oklahoma": "OK", "oregon": "OR", "pennsylvania": "PA", "rhode island": "RI", "south carolina": "SC",
+        "south dakota": "SD", "tennessee": "TN", "texas": "TX", "utah": "UT", "vermont": "VT",
+        "virginia": "VA", "washington": "WA", "west virginia": "WV", "wisconsin": "WI", "wyoming": "WY",
+        "district of columbia": "DC"
+    ]
 
     init() {
         let savedZip = UserDefaults.standard.string(forKey: StorageKeys.zip) ?? ""
@@ -197,24 +249,7 @@ final class PlanViewModel: ObservableObject {
             state: savedState,
             zip: savedAddressZip.isEmpty ? savedZip : savedAddressZip
         )
-
-        // Fallback seed entries shown when no richer timeline source is available.
-        upcomingElections = [
-            Election(
-                name: "NYC Primary Election",
-                subtitle: "All registered NYC voters",
-                registrationDeadline: Date.from("2025-05-29"),
-                startDate:            Date.from("2025-06-14"),
-                electionDay:          Date.from("2025-06-24")
-            ),
-            Election(
-                name: "General Election",
-                subtitle: "All registered NYC voters",
-                registrationDeadline: Date.from("2025-10-10"),
-                startDate:            Date.from("2025-10-25"),
-                electionDay:          Date.from("2025-11-04")
-            )
-        ]
+        refreshUpcomingElectionsFromTimeline()
     }
 
     private func persistUserAddress() {
@@ -243,6 +278,159 @@ final class PlanViewModel: ObservableObject {
         if hasChanges {
             userAddress = updatedAddress
         }
+    }
+
+    private func refreshUpcomingElectionsFromTimeline(referenceDate: Date = Date()) {
+        guard
+            let stateCode = resolvedTimelineStateCode(),
+            let record = Self.timelineRecordsByState[stateCode]
+        else {
+            upcomingElections = []
+            return
+        }
+
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: referenceDate)
+        let all = buildTimelineElections(for: record)
+        let upcoming = all
+            .filter { calendar.startOfDay(for: $0.electionDay) >= today }
+            .sorted {
+                if $0.electionDay != $1.electionDay { return $0.electionDay < $1.electionDay }
+                return $0.name < $1.name
+            }
+
+        upcomingElections = upcoming
+    }
+
+    private func resolvedTimelineStateCode() -> String? {
+        let normalizedZIP = String(zip.filter(\.isNumber).prefix(5))
+        if normalizedZIP.count == 5, let code = zipStateResolver.stateCode(for: normalizedZIP) {
+            return code
+        }
+
+        let addressZIP = String(userAddress.zip.filter(\.isNumber).prefix(5))
+        if addressZIP.count == 5, let code = zipStateResolver.stateCode(for: addressZIP) {
+            return code
+        }
+
+        let rawState = userAddress.state.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !rawState.isEmpty else { return nil }
+        if rawState.count == 2 {
+            return rawState.uppercased()
+        }
+        return Self.stateCodeByName[rawState.lowercased()]
+    }
+
+    private func buildTimelineElections(for record: TimelineStateElectionRecord) -> [Election] {
+        let stateName = record.state_name
+        let midtermName = "\(stateName) 2026 Midterm"
+        let presidentialName = "\(stateName) 2028 Presidential"
+        var elections: [Election] = []
+
+        appendTimelineElection(
+            to: &elections,
+            record: record,
+            electionName: midtermName,
+            subtitle: "Primary Election",
+            electionISO: record.primary_date,
+            registrationISO: record.registration_deadline_primary,
+            earlyVotingISO: record.early_voting_primary
+        )
+        appendTimelineElection(
+            to: &elections,
+            record: record,
+            electionName: midtermName,
+            subtitle: "Primary Runoff Election",
+            electionISO: record.primary_runoff_date,
+            registrationISO: record.registration_deadline_primary,
+            earlyVotingISO: record.early_voting_primary_runoff ?? record.early_voting_primary
+        )
+        appendTimelineElection(
+            to: &elections,
+            record: record,
+            electionName: midtermName,
+            subtitle: "General Election",
+            electionISO: record.general_election_date,
+            registrationISO: record.registration_deadline_general,
+            earlyVotingISO: record.early_voting_general
+        )
+        appendTimelineElection(
+            to: &elections,
+            record: record,
+            electionName: presidentialName,
+            subtitle: "Presidential Primary Election",
+            electionISO: shiftedISOYear(from: record.primary_date, toYear: 2028) ?? "2028-03-07",
+            registrationISO: shiftedISOYear(from: record.registration_deadline_primary, toYear: 2028),
+            earlyVotingISO: shiftedISOYear(from: record.early_voting_primary, toYear: 2028)
+        )
+        appendTimelineElection(
+            to: &elections,
+            record: record,
+            electionName: presidentialName,
+            subtitle: "Presidential General Election",
+            electionISO: "2028-11-07",
+            registrationISO: "2028-11-07",
+            earlyVotingISO: nil
+        )
+
+        return elections
+    }
+
+    private func appendTimelineElection(
+        to elections: inout [Election],
+        record: TimelineStateElectionRecord,
+        electionName: String,
+        subtitle: String,
+        electionISO: String?,
+        registrationISO: String?,
+        earlyVotingISO: String?
+    ) {
+        guard
+            let electionISO,
+            let electionDay = Self.timelineISODateFormatter.date(from: electionISO)
+        else {
+            return
+        }
+
+        let registration = (registrationISO.flatMap { Self.timelineISODateFormatter.date(from: $0) }) ?? electionDay
+        let start = (earlyVotingISO.flatMap { Self.timelineISODateFormatter.date(from: $0) }) ?? electionDay
+        let earlyVotingText: String? = {
+            guard start < electionDay else { return nil }
+            return "Starts " + Self.timelineISODateFormatter.string(from: start)
+        }()
+
+        elections.append(
+            Election(
+                name: electionName,
+                subtitle: subtitle,
+                registrationDeadline: registration,
+                startDate: start,
+                electionDay: electionDay,
+                earlyVotingText: earlyVotingText,
+                registrationNotes: nil,
+                jurisdictionLevel: "statewide",
+                jurisdictionName: record.state_name,
+                visibility: "public",
+                flags: [],
+                matchConfidence: nil,
+                sourceUrl: nil
+            )
+        )
+    }
+
+    private func shiftedISOYear(from sourceISO: String?, toYear: Int) -> String? {
+        guard
+            let sourceISO,
+            let date = Self.timelineISODateFormatter.date(from: sourceISO)
+        else {
+            return nil
+        }
+
+        let calendar = Calendar(identifier: .gregorian)
+        var components = calendar.dateComponents(in: TimeZone(secondsFromGMT: 0) ?? .current, from: date)
+        components.year = toYear
+        guard let shifted = calendar.date(from: components) else { return nil }
+        return Self.timelineISODateFormatter.string(from: shifted)
     }
 
     // MARK: – Plan Helpers
@@ -303,17 +491,27 @@ final class PlanViewModel: ObservableObject {
         guard let voteTime = plan.voteTime else { return false }
 
         let calendar = Calendar.current
-
-        // Election Day (June 24) hours
-        if calendar.isDate(voteTime, inSameDayAs: Date.from("2025-06-24")) {
+        if upcomingElections.contains(where: { calendar.isDate(voteTime, inSameDayAs: $0.electionDay) }) {
             let start = calendar.date(bySettingHour: 6,  minute: 0,  second: 0, of: voteTime)!
             let end   = calendar.date(bySettingHour: 21, minute: 0,  second: 0, of: voteTime)!
             return !(start...end).contains(voteTime)
         }
 
-        // Early/mail voting window (June 14–22)
-        let earlyStart = Date.from("2025-06-14")
-        let earlyEnd   = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: Date.from("2025-06-22"))!
-        return !(earlyStart...earlyEnd).contains(voteTime)
+        guard let election = upcomingElections
+            .sorted(by: { $0.electionDay < $1.electionDay })
+            .first(where: {
+                let windowEnd = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: $0.electionDay) ?? $0.electionDay
+                return voteTime >= $0.startDate && voteTime <= windowEnd
+            }) else {
+            return false
+        }
+
+        let earlyEnd = calendar.date(byAdding: .day, value: -1, to: election.electionDay) ?? election.electionDay
+        if election.startDate >= earlyEnd {
+            return false
+        }
+
+        let earlyEndDay = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: earlyEnd) ?? earlyEnd
+        return !(election.startDate...earlyEndDay).contains(voteTime)
     }
 }

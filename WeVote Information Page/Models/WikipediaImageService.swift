@@ -67,6 +67,7 @@ actor WikipediaImageService {
         "john royce": "John Joyce (American politician)",
         "james john": "John James (Michigan politician)",
         "josh green": "Josh Green (politician)",
+        "josh greene": "Josh Green (politician)",
         "josh tenorio": "Joshua Tenorio",
         "keith kautz": "Keith Kautz",
         "keith wilson": "Keith Wilson (Portland mayor)",
@@ -100,6 +101,7 @@ actor WikipediaImageService {
         "pablo hernandez": "Pablo Hernández Rivera",
         "pablo hernandez rivera": "Pablo Hernández Rivera",
         "sarah huckabee sanders": "Sarah Huckabee Sanders",
+        "huckabee sanders": "Sarah Huckabee Sanders",
         "susan collins": "Susan Collins"
     ]
 
@@ -227,6 +229,14 @@ actor WikipediaImageService {
             of: #"\s*\([^)]*\)\s*$"#,
             with: "",
             options: .regularExpression
+        )
+
+        // Strip leading role prefixes when passed as part of the display name.
+        // Example: "Governor Mike Dunleavy" -> "Mike Dunleavy".
+        name = name.replacingOccurrences(
+            of: #"^(the\s+honorable\s+)?(u\.?s\.?\s+)?(governor|gov\.?|lieutenant\s+governor|lt\.?\s*governor|senator|sen\.?|representative|rep\.?|congressman|congresswoman|attorney\s+general|ag|mayor)\s+"#,
+            with: "",
+            options: [.regularExpression, .caseInsensitive]
         )
 
         // Collapse doubled whitespace after cleanup.

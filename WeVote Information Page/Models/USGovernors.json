@@ -9,7 +9,8 @@
     "lieutenant_governor": "Nancy Dahlstrom",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "http://ltgov.alaska.gov/",
-    "attorney_general_url": "https://law.alaska.gov/"
+    "attorney_general_url": "https://law.alaska.gov/",
+    "phone": "1-907-465-3500"
   },
   {
     "state_code": "AL",
@@ -21,7 +22,8 @@
     "lieutenant_governor": "Will Ainsworth",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://ltgov.alabama.gov/",
-    "attorney_general_url": "https://www.alabamaag.gov/"
+    "attorney_general_url": "https://www.alabamaag.gov/",
+    "phone": "1-334-242-7100"
   },
   {
     "state_code": "AR",
@@ -33,7 +35,21 @@
     "lieutenant_governor": "Leslie Rutledge",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://ltgovernor.arkansas.gov/",
-    "attorney_general_url": "https://www.arkansasag.gov/"
+    "attorney_general_url": "https://www.arkansasag.gov/",
+    "phone": "1-501-682-2345"
+  },
+  {
+    "state_code": "AS",
+    "state_name": "American Samoa",
+    "name": "Pula'ali'i Nikolao Pula",
+    "party": "Nonpartisan",
+    "url": "https://www.usa.gov/states/american-samoa",
+    "attorney_general": null,
+    "lieutenant_governor": null,
+    "lieutenant_governor_party": null,
+    "lieutenant_governor_url": null,
+    "attorney_general_url": null,
+    "phone": "1-684-633-4116"
   },
   {
     "state_code": "AZ",
@@ -45,7 +61,8 @@
     "lieutenant_governor": null,
     "lieutenant_governor_party": null,
     "lieutenant_governor_url": null,
-    "attorney_general_url": "https://www.azag.gov/"
+    "attorney_general_url": "https://www.azag.gov/",
+    "phone": "1-602-542-4331"
   },
   {
     "state_code": "CA",
@@ -57,7 +74,8 @@
     "lieutenant_governor": "Eleni Kounalakis",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://ltg.ca.gov/",
-    "attorney_general_url": "https://oag.ca.gov/"
+    "attorney_general_url": "https://oag.ca.gov/",
+    "phone": "1-916-445-2841"
   },
   {
     "state_code": "CO",
@@ -69,7 +87,8 @@
     "lieutenant_governor": "Dianne Primavera",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://ltgovernor.colorado.gov/",
-    "attorney_general_url": "https://www.coag.gov/"
+    "attorney_general_url": "https://www.coag.gov/",
+    "phone": "1-303-866-2885"
   },
   {
     "state_code": "CT",
@@ -81,7 +100,8 @@
     "lieutenant_governor": "Susan Bysiewicz",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://portal.ct.gov/Office-of-the-Lt-Governor",
-    "attorney_general_url": "https://portal.ct.gov/en/AG"
+    "attorney_general_url": "https://portal.ct.gov/en/AG",
+    "phone": "1-860-566-4840"
   },
   {
     "state_code": "DE",
@@ -93,7 +113,8 @@
     "lieutenant_governor": "Kyle Evans Gay",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://ltgov.delaware.gov/",
-    "attorney_general_url": "https://attorneygeneral.delaware.gov/"
+    "attorney_general_url": "https://attorneygeneral.delaware.gov/",
+    "phone": "1-302-744-4101"
   },
   {
     "state_code": "FL",
@@ -105,7 +126,8 @@
     "lieutenant_governor": "Jay Collins",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://www.flgov.com/eog/leadership/people/jeanette-nunez",
-    "attorney_general_url": "https://www.myfloridalegal.com/"
+    "attorney_general_url": "https://www.myfloridalegal.com/",
+    "phone": "1-850-717-9337"
   },
   {
     "state_code": "GA",
@@ -117,7 +139,20 @@
     "lieutenant_governor": "Burt Jones",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://ltgov.georgia.gov/",
-    "attorney_general_url": "https://law.georgia.gov/"
+    "attorney_general_url": "https://law.georgia.gov/",
+    "phone": "1-404-656-1776"
+  },
+  {
+    "state_code": "GU",
+    "state_name": "Guam",
+    "name": "Lou Leon Guerrero",
+    "party": "Democratic",
+    "url": "https://governor.guam.gov/",
+    "lieutenant_governor": "Josh Tenorio",
+    "lieutenant_governor_party": "Democratic",
+    "lieutenant_governor_url": "https://governor.guam.gov/about-the-lieutenant-governor/",
+    "attorney_general_url": null,
+    "phone": "1-671-472-8931"
   },
   {
     "state_code": "HI",
@@ -129,7 +164,8 @@
     "lieutenant_governor": "Sylvia Luke",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://ltgov.hawaii.gov/",
-    "attorney_general_url": "https://ag.hawaii.gov/"
+    "attorney_general_url": "https://ag.hawaii.gov/",
+    "phone": "1-808-586-0034"
   },
   {
     "state_code": "IA",
@@ -141,7 +177,8 @@
     "lieutenant_governor": "Chris Cournoyer",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://governor.iowa.gov/about-the-governor/lieutenant-governor",
-    "attorney_general_url": "https://www.iowaattorneygeneral.gov/"
+    "attorney_general_url": "https://www.iowaattorneygeneral.gov/",
+    "phone": "1-515-281-5211"
   },
   {
     "state_code": "ID",
@@ -153,7 +190,8 @@
     "lieutenant_governor": "Scott Bedke",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://lgo.idaho.gov/",
-    "attorney_general_url": "https://www.ag.idaho.gov/"
+    "attorney_general_url": "https://www.ag.idaho.gov/",
+    "phone": "1-208-334-2100"
   },
   {
     "state_code": "IL",
@@ -165,7 +203,8 @@
     "lieutenant_governor": "Juliana Stratton",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://ltgov.illinois.gov/",
-    "attorney_general_url": "https://illinoisattorneygeneral.gov/"
+    "attorney_general_url": "https://illinoisattorneygeneral.gov/",
+    "phone": "1-217-782-0244"
   },
   {
     "state_code": "IN",
@@ -177,7 +216,8 @@
     "lieutenant_governor": "Micah Beckwith",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "http://www.in.gov/lg/",
-    "attorney_general_url": "https://www.in.gov/attorneygeneral/"
+    "attorney_general_url": "https://www.in.gov/attorneygeneral/",
+    "phone": "1-317-232-4567"
   },
   {
     "state_code": "KS",
@@ -189,7 +229,8 @@
     "lieutenant_governor": "David Toland",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://governor.kansas.gov/about-the-office/lt-governor/",
-    "attorney_general_url": "https://ag.ks.gov/"
+    "attorney_general_url": "https://ag.ks.gov/",
+    "phone": "1-785-368-8500"
   },
   {
     "state_code": "KY",
@@ -201,7 +242,8 @@
     "lieutenant_governor": "Jacqueline Coleman",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://governor.ky.gov/about/lt-governor-jacqueline-coleman",
-    "attorney_general_url": "http://ag.ky.gov/"
+    "attorney_general_url": "http://ag.ky.gov/",
+    "phone": "1-502-564-2611"
   },
   {
     "state_code": "LA",
@@ -213,7 +255,8 @@
     "lieutenant_governor": "Billy Nungesser",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://crt.state.la.us/lt-governor/",
-    "attorney_general_url": "https://ag.state.la.us/"
+    "attorney_general_url": "https://ag.state.la.us/",
+    "phone": "1-225-342-0991"
   },
   {
     "state_code": "MA",
@@ -225,7 +268,8 @@
     "lieutenant_governor": "Kim Driscoll",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://www.mass.gov/governor/",
-    "attorney_general_url": "https://www.mass.gov/orgs/office-of-the-attorney-general"
+    "attorney_general_url": "https://www.mass.gov/orgs/office-of-the-attorney-general",
+    "phone": "1-617-725-4005"
   },
   {
     "state_code": "MD",
@@ -237,7 +281,8 @@
     "lieutenant_governor": "Aruna Miller",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://governor.maryland.gov/leadership/ltgovernor/Pages/default.aspx",
-    "attorney_general_url": "https://www.marylandattorneygeneral.gov/"
+    "attorney_general_url": "https://www.marylandattorneygeneral.gov/",
+    "phone": "1-410-974-3901"
   },
   {
     "state_code": "ME",
@@ -249,7 +294,8 @@
     "lieutenant_governor": null,
     "lieutenant_governor_party": null,
     "lieutenant_governor_url": null,
-    "attorney_general_url": "https://www.maine.gov/ag/"
+    "attorney_general_url": "https://www.maine.gov/ag/",
+    "phone": "1-207-287-3531"
   },
   {
     "state_code": "MI",
@@ -261,7 +307,8 @@
     "lieutenant_governor": "Garlin Gilchrist",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://michigan.gov/gilchrist",
-    "attorney_general_url": "http://www.michigan.gov/ag/"
+    "attorney_general_url": "http://www.michigan.gov/ag/",
+    "phone": "1-517-335-7858"
   },
   {
     "state_code": "MN",
@@ -273,7 +320,8 @@
     "lieutenant_governor": "Peggy Flanagan",
     "lieutenant_governor_party": "Democratic (DFL)",
     "lieutenant_governor_url": "https://mn.gov/governor/about-gov/peggyflanagan/",
-    "attorney_general_url": "http://www.ag.state.mn.us/"
+    "attorney_general_url": "http://www.ag.state.mn.us/",
+    "phone": "1-651-201-3400"
   },
   {
     "state_code": "MO",
@@ -285,7 +333,20 @@
     "lieutenant_governor": "David Wasinger",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "http://ltgov.mo.gov/",
-    "attorney_general_url": "https://ago.mo.gov/"
+    "attorney_general_url": "https://ago.mo.gov/",
+    "phone": "1-573-751-3222"
+  },
+  {
+    "state_code": "MP",
+    "state_name": "Northern Mariana Islands",
+    "name": "David M. Apatang",
+    "party": "Republican",
+    "url": "https://governor.gov.mp/",
+    "lieutenant_governor": "Dennis Mendiola",
+    "lieutenant_governor_party": "Republican",
+    "lieutenant_governor_url": null,
+    "attorney_general_url": null,
+    "phone": "1-670-237-2200"
   },
   {
     "state_code": "MS",
@@ -297,7 +358,8 @@
     "lieutenant_governor": "Delbert Hosemann",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://ltgovhosemann.ms.gov/",
-    "attorney_general_url": "https://ago.state.ms.us/"
+    "attorney_general_url": "https://ago.state.ms.us/",
+    "phone": "1-601-359-3150"
   },
   {
     "state_code": "MT",
@@ -309,7 +371,8 @@
     "lieutenant_governor": "Kristen Juras",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://governor.mt.gov/about/LieutenantGovernor",
-    "attorney_general_url": "https://www.dojmt.gov/"
+    "attorney_general_url": "https://www.dojmt.gov/",
+    "phone": "1-406-444-3111"
   },
   {
     "state_code": "NC",
@@ -321,7 +384,8 @@
     "lieutenant_governor": "Rachel Hunt",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://ltgov.nc.gov/",
-    "attorney_general_url": "https://www.ncdoj.gov/"
+    "attorney_general_url": "https://www.ncdoj.gov/",
+    "phone": "1-919-814-2000"
   },
   {
     "state_code": "ND",
@@ -333,7 +397,8 @@
     "lieutenant_governor": "Michelle Strinden",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://www.governor.nd.gov/lt-governor-tammy-miller",
-    "attorney_general_url": "https://attorneygeneral.nd.gov/"
+    "attorney_general_url": "https://attorneygeneral.nd.gov/",
+    "phone": "1-701-328-2200"
   },
   {
     "state_code": "NE",
@@ -345,7 +410,8 @@
     "lieutenant_governor": "Joe Kelly",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://ltgov.nebraska.gov/",
-    "attorney_general_url": "https://ago.nebraska.gov/"
+    "attorney_general_url": "https://ago.nebraska.gov/",
+    "phone": "1-402-471-2244"
   },
   {
     "state_code": "NH",
@@ -357,7 +423,8 @@
     "lieutenant_governor": null,
     "lieutenant_governor_party": null,
     "lieutenant_governor_url": null,
-    "attorney_general_url": "https://www.doj.nh.gov/"
+    "attorney_general_url": "https://www.doj.nh.gov/",
+    "phone": "1-603-271-2121"
   },
   {
     "state_code": "NJ",
@@ -369,7 +436,8 @@
     "lieutenant_governor": "Dale Caldwell",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "http://www.nj.gov/governor/admin/lt/",
-    "attorney_general_url": "https://www.njoag.gov/"
+    "attorney_general_url": "https://www.njoag.gov/",
+    "phone": "1-609-292-6000"
   },
   {
     "state_code": "NM",
@@ -381,7 +449,8 @@
     "lieutenant_governor": "Howie Morales",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://www.ltgov.state.nm.us/",
-    "attorney_general_url": "https://www.nmag.gov/"
+    "attorney_general_url": "https://www.nmag.gov/",
+    "phone": "1-505-476-2200"
   },
   {
     "state_code": "NV",
@@ -393,7 +462,8 @@
     "lieutenant_governor": "Stavros Anthony",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://ltgov.nv.gov/",
-    "attorney_general_url": "http://ag.nv.gov/"
+    "attorney_general_url": "http://ag.nv.gov/",
+    "phone": "1-775-684-5670"
   },
   {
     "state_code": "NY",
@@ -405,7 +475,8 @@
     "lieutenant_governor": "Antonio Delgado",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://www.governor.ny.gov/lt-governor-antonio-delgado",
-    "attorney_general_url": "https://ag.ny.gov/"
+    "attorney_general_url": "https://ag.ny.gov/",
+    "phone": "1-518-474-8390"
   },
   {
     "state_code": "OH",
@@ -417,7 +488,8 @@
     "lieutenant_governor": "Jim Tressel",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://governor.ohio.gov/wps/portal/gov/governor/administration/lt-governor",
-    "attorney_general_url": "https://www.ohioattorneygeneral.gov/"
+    "attorney_general_url": "https://www.ohioattorneygeneral.gov/",
+    "phone": "1-614-644-4357"
   },
   {
     "state_code": "OK",
@@ -429,7 +501,8 @@
     "lieutenant_governor": "Matt Pinnell",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://www.ok.gov/ltgovpinnell/",
-    "attorney_general_url": "http://www.oag.ok.gov/"
+    "attorney_general_url": "http://www.oag.ok.gov/",
+    "phone": "1-405-521-2342"
   },
   {
     "state_code": "OR",
@@ -441,7 +514,8 @@
     "lieutenant_governor": null,
     "lieutenant_governor_party": null,
     "lieutenant_governor_url": null,
-    "attorney_general_url": "https://doj.state.or.us/"
+    "attorney_general_url": "https://doj.state.or.us/",
+    "phone": "1-503-378-4582"
   },
   {
     "state_code": "PA",
@@ -453,7 +527,20 @@
     "lieutenant_governor": "Austin Davis",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://www.ltgov.pa.gov/",
-    "attorney_general_url": "https://www.attorneygeneral.gov/"
+    "attorney_general_url": "https://www.attorneygeneral.gov/",
+    "phone": "1-717-787-2500"
+  },
+  {
+    "state_code": "PR",
+    "state_name": "Puerto Rico",
+    "name": "Jenniffer Gonzalez-Colon",
+    "party": "New Progressive Party",
+    "url": "https://www.fortaleza.pr.gov/",
+    "lieutenant_governor": null,
+    "lieutenant_governor_party": null,
+    "lieutenant_governor_url": null,
+    "attorney_general_url": null,
+    "phone": "1-787-721-7000"
   },
   {
     "state_code": "RI",
@@ -465,7 +552,8 @@
     "lieutenant_governor": "Sabina Matos",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://ltgov.ri.gov/",
-    "attorney_general_url": "https://riag.ri.gov/"
+    "attorney_general_url": "https://riag.ri.gov/",
+    "phone": "1-401-222-2080"
   },
   {
     "state_code": "SC",
@@ -477,7 +565,8 @@
     "lieutenant_governor": "Pamela Evette",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://governor.sc.gov/lieutenant-governor",
-    "attorney_general_url": "https://www.scag.gov/"
+    "attorney_general_url": "https://www.scag.gov/",
+    "phone": "1-803-734-2100"
   },
   {
     "state_code": "SD",
@@ -489,7 +578,8 @@
     "lieutenant_governor": "Tony Venhuizen",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://governor.sd.gov/governor/lt-governor.aspx",
-    "attorney_general_url": "https://atg.sd.gov/"
+    "attorney_general_url": "https://atg.sd.gov/",
+    "phone": "1-605-773-3212"
   },
   {
     "state_code": "TN",
@@ -501,7 +591,8 @@
     "lieutenant_governor": "Randy McNally",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": null,
-    "attorney_general_url": "https://www.tn.gov/attorneygeneral.html"
+    "attorney_general_url": "https://www.tn.gov/attorneygeneral.html",
+    "phone": "1-615-741-2001"
   },
   {
     "state_code": "TX",
@@ -513,7 +604,8 @@
     "lieutenant_governor": "Dan Patrick",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://www.ltgov.texas.gov/",
-    "attorney_general_url": "https://www.texasattorneygeneral.gov/"
+    "attorney_general_url": "https://www.texasattorneygeneral.gov/",
+    "phone": "1-512-463-2000"
   },
   {
     "state_code": "UT",
@@ -525,7 +617,8 @@
     "lieutenant_governor": "Deidre Henderson",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://ltgovernor.utah.gov/",
-    "attorney_general_url": "http://attorneygeneral.utah.gov/"
+    "attorney_general_url": "http://attorneygeneral.utah.gov/",
+    "phone": "1-801-538-1000"
   },
   {
     "state_code": "VA",
@@ -537,7 +630,20 @@
     "lieutenant_governor": "Ghazala Hashmi",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://ltgov.virginia.gov/",
-    "attorney_general_url": "https://oag.state.va.us/"
+    "attorney_general_url": "https://oag.state.va.us/",
+    "phone": "1-804-786-2211"
+  },
+  {
+    "state_code": "VI",
+    "state_name": "U.S. Virgin Islands",
+    "name": "Albert Bryan Jr.",
+    "party": "Democratic",
+    "url": "https://www.vi.gov/",
+    "lieutenant_governor": "Tregenza Roach",
+    "lieutenant_governor_party": "Democratic",
+    "lieutenant_governor_url": null,
+    "attorney_general_url": null,
+    "phone": "1-340-774-0001"
   },
   {
     "state_code": "VT",
@@ -549,7 +655,8 @@
     "lieutenant_governor": "John S. Rodgers",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "http://ltgov.vermont.gov/",
-    "attorney_general_url": "https://ago.vermont.gov/"
+    "attorney_general_url": "https://ago.vermont.gov/",
+    "phone": "1-802-828-3333"
   },
   {
     "state_code": "WA",
@@ -561,7 +668,8 @@
     "lieutenant_governor": "Denny Heck",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://www.ltgov.wa.gov/",
-    "attorney_general_url": "http://www.atg.wa.gov/"
+    "attorney_general_url": "http://www.atg.wa.gov/",
+    "phone": "1-360-902-4111"
   },
   {
     "state_code": "WI",
@@ -573,7 +681,8 @@
     "lieutenant_governor": "Sara Rodriguez",
     "lieutenant_governor_party": "Democratic",
     "lieutenant_governor_url": "https://ltgov.wisconsin.gov/",
-    "attorney_general_url": "https://www.doj.state.wi.us/exec-profile/josh-kaul"
+    "attorney_general_url": "https://www.doj.state.wi.us/exec-profile/josh-kaul",
+    "phone": "1-608-266-1212"
   },
   {
     "state_code": "WV",
@@ -585,7 +694,8 @@
     "lieutenant_governor": "Randy Smith",
     "lieutenant_governor_party": "Republican",
     "lieutenant_governor_url": "https://www.wvlegislature.gov/Senate1/president.cfm",
-    "attorney_general_url": "https://ago.wv.gov/"
+    "attorney_general_url": "https://ago.wv.gov/",
+    "phone": "1-304-558-2000"
   },
   {
     "state_code": "WY",
@@ -597,50 +707,7 @@
     "lieutenant_governor": null,
     "lieutenant_governor_party": null,
     "lieutenant_governor_url": null,
-    "attorney_general_url": "https://attorneygeneral.wyo.gov/"
-  },
-  {
-    "state_code": "PR",
-    "state_name": "Puerto Rico",
-    "name": "Jenniffer Gonzalez-Colon",
-    "party": "New Progressive Party",
-    "url": "https://www.fortaleza.pr.gov/",
-    "lieutenant_governor": null,
-    "lieutenant_governor_party": null,
-    "lieutenant_governor_url": null,
-    "attorney_general_url": null
-  },
-  {
-    "state_code": "GU",
-    "state_name": "Guam",
-    "name": "Lou Leon Guerrero",
-    "party": "Democratic",
-    "url": "https://governor.guam.gov/",
-    "lieutenant_governor": "Josh Tenorio",
-    "lieutenant_governor_party": "Democratic",
-    "lieutenant_governor_url": "https://governor.guam.gov/about-the-lieutenant-governor/",
-    "attorney_general_url": null
-  },
-  {
-    "state_code": "MP",
-    "state_name": "Northern Mariana Islands",
-    "name": "David M. Apatang",
-    "party": "Republican",
-    "url": "https://governor.gov.mp/",
-    "lieutenant_governor": "Dennis Mendiola",
-    "lieutenant_governor_party": "Republican",
-    "lieutenant_governor_url": null,
-    "attorney_general_url": null
-  },
-  {
-    "state_code": "VI",
-    "state_name": "U.S. Virgin Islands",
-    "name": "Albert Bryan Jr.",
-    "party": "Democratic",
-    "url": "https://www.vi.gov/",
-    "lieutenant_governor": "Tregenza Roach",
-    "lieutenant_governor_party": "Democratic",
-    "lieutenant_governor_url": null,
-    "attorney_general_url": null
+    "attorney_general_url": "https://attorneygeneral.wyo.gov/",
+    "phone": "1-307-777-7434"
   }
 ]

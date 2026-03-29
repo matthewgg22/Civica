@@ -927,6 +927,7 @@ struct AbsenteeView: View {
                                         RoundedRectangle(cornerRadius: 7, style: .continuous)
                                             .stroke(VoteNowColors.borderWarm, lineWidth: 1)
                                     )
+                                    .opensMyInfoPanelOnLongPress()
                             }
 
                             Text(lf("app.mapv.absentee.jurisdiction_prefix", "Jurisdiction: %@", jurisdiction.displayName))
@@ -2410,6 +2411,35 @@ struct StepFourView: View {
         "\(Self.timeFormatter.string(from: previewPlan.pollingOpen)) - \(Self.timeFormatter.string(from: previewPlan.pollingClose))"
     }
 
+    private var shareCardPayload: VoteNowShareCardPayload {
+        var details: [URLQueryItem] = [
+            URLQueryItem(name: "election", value: previewPlan.electionTitle),
+            URLQueryItem(name: "day", value: Self.isoDateFormatter.string(from: previewPlan.electionDate)),
+            URLQueryItem(name: "method", value: selectedMethod?.rawValue ?? l("app.mapv.share.method_fallback", "Plan to Vote"))
+        ]
+        if let stateCode = stateCodeFromAddress(previewPlan.pollingPlaceAddress) {
+            details.append(URLQueryItem(name: "state", value: stateCode))
+        }
+
+        return VoteNowShareCardPayload(
+            cardType: .mapv,
+            target: .mapv,
+            title: l("app.mapv.share.headline.plan_now", "Make Your Plan to Vote"),
+            subtitle: l(
+                "app.mapv.share.subtitle.plan_now",
+                "Pick your voting method, review deadlines, and get ready now."
+            ),
+            cta: l("app.mapv.share.cta.plan_now", "Start Your Plan"),
+            badge: formattedDate,
+            campaign: "send-to-friend",
+            details: details
+        )
+    }
+
+    private var shareURL: URL {
+        shareCardPayload.shareURL ?? URL(string: "https://votenow.app/share/mapv?target=mapv")!
+    }
+
     private var calendarPayload: MAPVCalendarPlanPayload {
         let baseLocation = previewPlan.pollingPlaceAddress.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ? previewPlan.pollingPlaceName
@@ -2423,7 +2453,7 @@ struct StepFourView: View {
             endDate: previewPlan.plannedArrival.addingTimeInterval(60 * 60),
             location: baseLocation,
             notes: shareSummaryText,
-            url: URL(string: "votenow://mapv")
+            url: shareURL
         )
     }
 
@@ -2453,7 +2483,7 @@ struct StepFourView: View {
                     )
 
                     ShareLink(
-                        item: shareSummaryText,
+                        item: shareURL,
                         subject: Text(l("app.mapv.share.title", "My Plan to Vote")),
                         message: Text(l("app.mapv.step4.share_message", "Here is my voting plan."))
                     ) {
@@ -2503,6 +2533,27 @@ struct StepFourView: View {
         formatter.timeStyle = .short
         return formatter
     }()
+
+    private static let isoDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
+    private func stateCodeFromAddress(_ address: String) -> String? {
+        let parts = address
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        guard let tail = parts.last else { return nil }
+        let tokens = tail.components(separatedBy: .whitespaces).filter { !$0.isEmpty }
+        if let first = tokens.first, first.count == 2 {
+            return first.uppercased()
+        }
+        return nil
+    }
 
 }
 

@@ -335,6 +335,11 @@ struct CandidateRow: View {
         return .secondary
     }
 
+    private func shouldOpenMyInfoFromParty(_ party: String) -> Bool {
+        let normalized = party.lowercased()
+        return normalized.contains("democratic") || normalized.contains("republican")
+    }
+
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             VStack(alignment: .leading, spacing: 8) {
@@ -351,6 +356,7 @@ struct CandidateRow: View {
                             .background(color(for: party).opacity(0.12))
                             .foregroundColor(color(for: party))
                             .clipShape(Capsule())
+                            .opensMyInfoPanelOnLongPress(when: shouldOpenMyInfoFromParty(party))
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)

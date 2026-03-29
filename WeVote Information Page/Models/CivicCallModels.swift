@@ -480,17 +480,39 @@ struct CivicCallCompletionResponse: Codable, Sendable {
 }
 
 struct CivicLeaderboardEntry: Identifiable, Codable, Sendable {
-    var id: String { userID + "-\(rank)" }
-    let userID: String
+    var id: String { userAlias + "-\(rank)" }
+    let userAlias: String
     let eligibleVerifiedCallCount: Int
     let uniqueOfficeCount: Int
     let rank: Int
 
     enum CodingKeys: String, CodingKey {
-        case userID = "user_id"
+        case userAlias = "user_alias"
+        case legacyUserID = "user_id"
         case eligibleVerifiedCallCount = "eligible_verified_call_count"
         case uniqueOfficeCount = "unique_office_count"
         case rank
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        if let alias = try container.decodeIfPresent(String.self, forKey: .userAlias),
+           !alias.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            userAlias = alias
+        } else {
+            userAlias = try container.decode(String.self, forKey: .legacyUserID)
+        }
+        eligibleVerifiedCallCount = try container.decode(Int.self, forKey: .eligibleVerifiedCallCount)
+        uniqueOfficeCount = try container.decode(Int.self, forKey: .uniqueOfficeCount)
+        rank = try container.decode(Int.self, forKey: .rank)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(userAlias, forKey: .userAlias)
+        try container.encode(eligibleVerifiedCallCount, forKey: .eligibleVerifiedCallCount)
+        try container.encode(uniqueOfficeCount, forKey: .uniqueOfficeCount)
+        try container.encode(rank, forKey: .rank)
     }
 }
 

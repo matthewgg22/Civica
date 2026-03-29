@@ -1,0 +1,93 @@
+{
+  "meta": {
+    "title": "VoteNow Office Examples Rotation Dataset",
+    "lastUpdated": "2026-03-24",
+    "sourceFile": "VoteNow_5_recent_examples_each_office_diverse_federal.xlsx"
+  },
+  "rows": [
+    {
+      "office": "U.S. Senate",
+      "officeKey": "us senate",
+      "context": "Diversified federal examples",
+      "examples": [
+        "Lawmaking — 2026-03-12: Passed a bipartisan housing-supply bill, 89–10.",
+        "Confirmation — 2025-02-13: Confirmed Brooke Rollins as Agriculture secretary, 72–28.",
+        "Oversight — 2026-03-03: Questioned DHS Secretary Kristi Noem at an oversight hearing.",
+        "Budget — 2025-07-23: Voted 90–8 to take up the 2026 VA and military-construction funding bill.",
+        "Agency check — 2025-03-05: Used the CRA to block a CFPB digital-payments rule, 51–47."
+      ]
+    },
+    {
+      "office": "U.S. House",
+      "officeKey": "us house",
+      "context": "Diversified federal examples",
+      "examples": [
+        "Revenue — 2025-05-22: Passed H.R. 1, a major tax-and-spending bill, 215–214.",
+        "Budget — 2026-01-22: Passed the 2026 funding bill H.R. 7147, 220–207.",
+        "Public safety — 2025-02-06: Passed the HALT Fentanyl Act, 312–108.",
+        "Impeachment — 2025-06-24: Voted on a Trump impeachment resolution; a motion to table passed 344–79.",
+        "Oversight — 2025-03-05: Put big-city mayors on the hot seat at a public hearing."
+      ]
+    },
+    {
+      "office": "White House / President",
+      "officeKey": "white house president",
+      "context": "Diversified federal examples",
+      "examples": [
+        "Executive order — 2026-03-16: Created a federal task force aimed at cracking down on fraud.",
+        "Appointments — 2026-03-09: Sent Markwayne Mullin’s DHS nomination to the Senate.",
+        "Foreign policy — 2026-01-07: Ordered the U.S. to leave 66 international organizations, conventions, and treaties.",
+        "Bill signing — 2025-12-11: Signed five joint resolutions into law in one day.",
+        "Commander in chief — 2025-04-11: Ordered a military mission focused on the southern border."
+      ]
+    },
+    {
+      "office": "Governor",
+      "officeKey": "governor",
+      "context": "California Gov. Gavin Newsom (state example)",
+      "examples": [
+        "2026-02-11 — Signed $90 million emergency funding bill for reproductive-care clinics.",
+        "2025-10-13 — Signed chatbot-safety bill for kids.",
+        "2025-10-10 — Signed carbon-capture infrastructure bill.",
+        "2025-10-06 — Signed bill making food-delivery refunds easier to get.",
+        "2025-10-06 — Signed bill cracking down on junk add-ons in car sales."
+      ]
+    },
+    {
+      "office": "State rep",
+      "officeKey": "state rep",
+      "context": "Texas Rep. Brian Harrison (state rep example)",
+      "examples": [
+        "2025-03-17 — Filed school bill creating Victims of Communism Remembrance Day lessons.",
+        "2025-03-05 — Filed budget-transparency bill requiring more documents online.",
+        "2025-03-04 — Filed bill to abolish local property taxes.",
+        "2025-03-03 — Filed bill limiting disaster powers of the governor and other officials.",
+        "2025-02-28 — Filed bill banning private-employer COVID vaccine mandates."
+      ]
+    },
+    {
+      "office": "Attorney general",
+      "officeKey": "state attorney general",
+      "context": "New York AG Letitia James (AG example) | Uses legal actions instead of bills.",
+      "examples": [
+        "2026-03-23 — Sued over new USDA funding conditions.",
+        "2026-03-19 — Sued to block Nexstar’s merger with Tegna.",
+        "2026-03-19 — Led challenge to Trump climate rollback.",
+        "2026-03-19 — Won lawsuit blocking federal attack on transgender health care.",
+        "2026-03-16 — Sued OneMain over costly loan add-ons."
+      ]
+    },
+    {
+      "office": "Mayor",
+      "officeKey": "mayor",
+      "context": "NYC Mayor Zohran Mamdani (mayor example) | Uses city-law implementation / executive action.",
+      "examples": [
+        "2026-03-18 — Announced end to criminal enforcement for minor cyclist and e-bike traffic offenses.",
+        "2026-03-16 — Rolled out 15 MPH school slow zones under Sammy’s Law.",
+        "2026-03-06 — Moved to cut down long-running sidewalk sheds under Local Law 48.",
+        "2026-02-20 — Expanded protected time off as Local Law 145 took effect.",
+        "2026-01-06 — Ordered agencies to comply with city shelter laws and implement Local Law 42."
+      ]
+    }
+  ]
+}

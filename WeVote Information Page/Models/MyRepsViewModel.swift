@@ -176,6 +176,37 @@ private func normalizedUSStateCode(from raw: String?) -> String? {
     return nil
 }
 
+private func isTransientReminderNetworkError(_ error: Error) -> Bool {
+    let nsError = error as NSError
+    if nsError.domain == NSURLErrorDomain {
+        switch nsError.code {
+        case NSURLErrorTimedOut,
+             NSURLErrorNetworkConnectionLost,
+             NSURLErrorNotConnectedToInternet,
+             NSURLErrorCannotFindHost,
+             NSURLErrorCannotConnectToHost,
+             NSURLErrorDNSLookupFailed:
+            return true
+        default:
+            break
+        }
+    }
+    let combined = "\(String(describing: error)) \(error.localizedDescription)".lowercased()
+    return combined.contains("operation timed out")
+        || combined.contains("network connection was lost")
+        || combined.contains("timed out")
+}
+
+private func isReminderNoSessionError(_ error: Error) -> Bool {
+    guard let supabaseError = error as? SupabaseManagerError else { return false }
+    switch supabaseError {
+    case .noSession:
+        return true
+    case .invalidLimit, .dateCalculationFailed:
+        return false
+    }
+}
+
 enum RepsLookupInputKind: Equatable {
     case zip(String)
     case address(String)
@@ -1054,12 +1085,12 @@ final class MyRepsViewModel: ObservableObject {
                 ?? self.registry.resolvedStateCode(for: zip)
 
             guard let normalizedStateCode else {
-                logger.error("Scheduled reminder insert failed: unable to determine state code.")
+                logger.warning("Scheduled reminder insert skipped: unable to determine state code.")
                 return
             }
 
             guard let nextElection = self.nextUpcomingTimelineElection(for: normalizedStateCode) else {
-                logger.error("Scheduled reminder insert failed: no upcoming election found for state \(normalizedStateCode, privacy: .public).")
+                logger.debug("Scheduled reminder insert skipped: no upcoming election found for state \(normalizedStateCode, privacy: .public).")
                 return
             }
 
@@ -1088,12 +1119,25 @@ final class MyRepsViewModel: ObservableObject {
                         electionID: nextElection.electionID,
                         electionDay: nextElection.electionDay,
                         earlyVotingStart: nextElection.earlyVotingStart,
-                        stateCode: normalizedStateCode
+                        stateCode: normalizedStateCode,
+                        latitude: self.resolvedCoordinate?.latitude,
+                        longitude: self.resolvedCoordinate?.longitude
                     )
                 )
                 created = true
                 logger.info("Election reminders scheduled for electionID \(nextElection.electionID, privacy: .public).")
             } catch {
+                if Task.isCancelled {
+                    return
+                }
+                if isReminderNoSessionError(error) {
+                    logger.debug("Scheduled reminder insert skipped: no active Supabase session.")
+                    return
+                }
+                if isTransientReminderNetworkError(error) {
+                    logger.warning("Scheduled reminder insert deferred due to transient network conditions.")
+                    return
+                }
                 logger.error("Scheduled reminder insert failed after address resolution.")
             }
         }

@@ -14,7 +14,7 @@ struct MAPVCardView: View {
     var onChangePlanTapped: (() -> Void)? = nil
 
     @State private var now = Date()
-    @State private var shareImage: UIImage?
+    @State private var shareItems: [Any] = []
     @State private var showingShare = false
     @State private var showingVoteConfirmationPrompt = false
     @State private var lastPromptedSnapshotID: String?
@@ -29,6 +29,7 @@ struct MAPVCardView: View {
                 card(plan: plan)
                     .onReceive(minuteTicker) { input in
                         now = input
+                        mapvPlanStore.refreshLiveActivity(now: input)
                         maybeShowPostPlanPrompt(for: plan, at: input)
                     }
                     .onDisappear {
@@ -57,10 +58,10 @@ struct MAPVCardView: View {
             Text("Your planned voting time has passed. Confirm your completion status.")
         }
         .sheet(isPresented: $showingShare, onDismiss: {
-            shareImage = nil
+            shareItems.removeAll()
         }) {
-            if let shareImage {
-                ShareSheet(items: [shareImage])
+            if !shareItems.isEmpty {
+                ShareSheet(items: shareItems)
             }
         }
     }
@@ -72,7 +73,12 @@ struct MAPVCardView: View {
 
         return VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text(displayElectionHeader(for: plan.electionTitle))
+                Label {
+                    Text(displayElectionHeader(for: plan.electionTitle))
+                } icon: {
+                    VoteNowLogoIcon(size: 16, shadowColor: .clear)
+                        .accessibilityHidden(true)
+                }
                     .font(.title2.weight(.bold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.58)
@@ -90,10 +96,10 @@ struct MAPVCardView: View {
             if completionIsTerminal {
                 completionSummaryCard(status: completionStatus, plan: plan)
             } else {
-                progressSection(plan: plan, presentation: presentation)
+                progressSection(plan: plan)
             }
 
-            if completionIsTerminal == false {
+            if completionIsTerminal == false && !plan.isCompleted {
                 HStack(spacing: 10) {
                     Text(presentation.primaryCountdownText)
                         .font(.subheadline.weight(.semibold))
@@ -118,95 +124,56 @@ struct MAPVCardView: View {
             }
 
             VStack(spacing: 10) {
-                Button(l("app.mapv.card.action.change_plan_to_vote", "Change Plan to Vote")) {
-                    onChangePlanTapped?()
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(VoteNowColors.primaryCTA)
-                .frame(maxWidth: .infinity)
-                .frame(minHeight: 42)
-                .font(.subheadline.weight(.semibold))
-
-                let secondaryColumns = [
-                    GridItem(.adaptive(minimum: 132), spacing: 8)
-                ]
-                LazyVGrid(columns: secondaryColumns, alignment: .leading, spacing: 8) {
-                    Button(l("app.mapv.card.action.confirm_plan", "Confirm")) {
-                        mapvPlanStore.markNotYetVoted()
-                    }
-                    .buttonStyle(.bordered)
-                    .lineLimit(1)
-
-                    Button(l("app.mapv.card.action.add_backup", "Add backup")) {
+                HStack(spacing: 8) {
+                    Button {
                         onChangePlanTapped?()
+                    } label: {
+                        Label(
+                            l("app.mapv.card.action.change_plan_to_vote", "Change Plan to Vote"),
+                            systemImage: "slider.horizontal.3"
+                        )
+                        .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.bordered)
-                    .lineLimit(1)
+                    .buttonStyle(MAPVPrimaryActionButtonStyle())
 
                     if plan.mapsURL != nil {
-                        Button(l("app.mapv.card.action.start_directions", "Start Directions")) {
+                        Button {
                             mapvPlanStore.markEnRoute(true)
                             if let mapsURL = plan.mapsURL {
                                 openURL(mapsURL)
                             }
+                        } label: {
+                            Label(
+                                l("app.mapv.card.action.start_directions", "Start Directions"),
+                                systemImage: "location.fill"
+                            )
+                            .frame(maxWidth: .infinity, alignment: .center)
                         }
-                        .buttonStyle(.bordered)
-                        .lineLimit(1)
+                        .buttonStyle(MAPVSecondaryActionButtonStyle(fill: VoteNowColors.primaryCTA.opacity(0.16), border: VoteNowColors.primaryCTA.opacity(0.65)))
                     }
                 }
-                .font(.caption.weight(.semibold))
 
-                HoldToConfirmButton(
-                    title: l("app.mapv.card.action.voted", "Voted?"),
-                    confirmedTitle: l("app.mapv.card.action.reset", "Reset"),
-                    isConfirmed: plan.isCompleted,
-                    holdDuration: 5.0,
-                    onConfirm: {
-                        guard mapvPlanStore.plan?.isCompleted != true else { return }
-                        mapvPlanStore.markCompleted()
-                        waterfallController.trigger(reduceMotion: reduceMotion)
-                    },
-                    onReset: {
-                        mapvPlanStore.resetCompleted()
-                    }
-                )
-                .frame(maxWidth: .infinity, minHeight: 44)
-                .disabled(!isVotedActionEnabled)
+                if completionIsTerminal || plan.isCompleted {
+                    completionStatusMenuButton
+                } else {
+                    HoldToConfirmButton(
+                        title: l("app.mapv.card.action.voted", "Voted?"),
+                        confirmedTitle: l("app.mapv.card.action.reset", "Reset"),
+                        isConfirmed: false,
+                        holdDuration: 5.0,
+                        onConfirm: {
+                            guard mapvPlanStore.plan?.isCompleted != true else { return }
+                            mapvPlanStore.markCompleted()
+                            waterfallController.trigger(reduceMotion: reduceMotion)
+                        }
+                    )
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .disabled(!isVotedActionEnabled)
 
-                Menu {
-                    Button("I voted") {
-                        mapvPlanStore.markCompleted()
-                    }
-                    Button("My ballot is returned") {
-                        mapvPlanStore.markBallotReturned()
-                    }
-                    Button("My ballot was accepted") {
-                        mapvPlanStore.markBallotAccepted()
-                    }
-                    Button("Undo completion", role: .destructive) {
-                        mapvPlanStore.resetCompleted()
-                    }
-                } label: {
-                    HStack(spacing: 8) {
-                        Label("Update completion status", systemImage: "checkmark.circle")
-                            .lineLimit(1)
-                        Spacer(minLength: 6)
-                        Image(systemName: "chevron.down")
-                            .font(.caption.weight(.bold))
-                    }
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.richBlue)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 10)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 11, style: .continuous)
-                            .fill(VoteNowColors.infoSurfaceBlue.opacity(0.65))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 11, style: .continuous)
-                            .stroke(VoteNowColors.richBlue.opacity(0.25), lineWidth: 1)
-                    )
+                    Text(l("app.mapv.card.action.voted_hint", "Press and hold for 5 seconds to confirm."))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(VoteNowColors.mutedText)
+                        .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
 
@@ -220,12 +187,7 @@ struct MAPVCardView: View {
             .toggleStyle(.switch)
             .disabled(!liveActivitiesAvailable)
 
-            if mapvPlanStore.liveActivityEnabled {
-                Text(l("app.mapv.card.live_activity.enabled_detail", "Live activity updates around open/close windows and plan changes."))
-                    .font(.caption)
-                    .foregroundStyle(VoteNowColors.mutedText)
-                    .transition(.opacity)
-            } else if !liveActivitiesAvailable {
+            if !liveActivitiesAvailable {
                 Text(l("app.mapv.card.live_activity.disabled_detail", "Live Activities are disabled on this device. Enable them in Settings."))
                     .font(.caption)
                     .foregroundStyle(VoteNowColors.mutedText)
@@ -244,14 +206,21 @@ struct MAPVCardView: View {
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: presentation.status)
     }
 
-    private func progressSection(plan: MAPVPlan, presentation: MAPVStatusPresentation) -> some View {
-        VStack(spacing: 6) {
+    private func progressSection(plan: MAPVPlan) -> some View {
+        let dayStart = Calendar.current.startOfDay(for: plan.pollingOpen)
+        let dayEnd = dayStart.addingTimeInterval(24 * 60 * 60)
+        let openProgress = normalizedProgress(for: plan.pollingOpen, start: dayStart, end: dayEnd)
+        let closeProgress = normalizedProgress(for: plan.pollingClose, start: dayStart, end: dayEnd)
+
+        return VStack(spacing: 6) {
             GeometryReader { geo in
                 let width = geo.size.width
-                let clampedNow = max(0, min(presentation.progressNow, 1))
-                let clampedPlan = max(0, min(presentation.progressPlan, 1))
+                let clampedNow = max(0, min(normalizedProgress(for: now, start: dayStart, end: dayEnd), 1))
+                let clampedOpen = max(0, min(openProgress, 1))
+                let clampedClose = max(clampedOpen, min(closeProgress, 1))
                 let nowX = width * clampedNow
-                let planX = width * clampedPlan
+                let openX = width * clampedOpen
+                let closeX = width * clampedClose
 
                 ZStack(alignment: .leading) {
                     Capsule()
@@ -269,12 +238,8 @@ struct MAPVCardView: View {
                                 endPoint: .trailing
                             )
                         )
-                        .frame(width: max(2, planX), height: 9)
-
-                    Capsule()
-                        .fill(Color.orange.opacity(0.92))
-                        .frame(width: max(0, width - planX), height: 9)
-                        .offset(x: min(max(planX, 0), width))
+                        .frame(width: max(0, closeX - openX), height: 9)
+                        .offset(x: openX)
 
                     Text("✉️")
                         .font(.system(size: 15))
@@ -287,7 +252,7 @@ struct MAPVCardView: View {
                                         .stroke(VoteNowColors.primaryText.opacity(0.7), lineWidth: 0.8)
                                 )
                         )
-                        .offset(x: min(max(planX - 10.5, 0), width - 21), y: -4)
+                        .offset(x: min(max(closeX - 10.5, 0), width - 21))
 
                     Circle()
                         .fill(VoteNowColors.surfaceWhite)
@@ -304,13 +269,20 @@ struct MAPVCardView: View {
             .frame(height: 16)
 
             HStack {
-                Text(shortTime(plan.pollingOpen))
+                Text(shortTime(dayStart))
                 Spacer()
-                Text(shortTime(plan.pollingClose))
+                Text(shortTime(dayEnd.addingTimeInterval(-60)))
             }
             .font(.subheadline.weight(.semibold))
             .foregroundStyle(VoteNowColors.primaryText)
         }
+    }
+
+    private func normalizedProgress(for date: Date, start: Date, end: Date) -> CGFloat {
+        let total = end.timeIntervalSince(start)
+        guard total > 0 else { return 0 }
+        let elapsed = date.timeIntervalSince(start)
+        return CGFloat(max(0, min(elapsed / total, 1)))
     }
 
     private var emptyCard: some View {
@@ -400,41 +372,111 @@ struct MAPVCardView: View {
         ActivityAuthorizationInfo().areActivitiesEnabled
     }
 
+    private var completionStatusMenuButton: some View {
+        Menu {
+            Button("I voted") {
+                mapvPlanStore.markCompleted()
+            }
+            Button("My ballot is returned") {
+                mapvPlanStore.markBallotReturned()
+            }
+            Button("My ballot was accepted") {
+                mapvPlanStore.markBallotAccepted()
+            }
+            Button("Undo completion", role: .destructive) {
+                mapvPlanStore.resetCompleted()
+            }
+        } label: {
+            HStack(spacing: 8) {
+                Label("Update completion status", systemImage: "checkmark.circle")
+                    .lineLimit(1)
+                Spacer(minLength: 6)
+                Image(systemName: "chevron.down")
+                    .font(.caption.weight(.bold))
+            }
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(VoteNowColors.primaryText)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 11, style: .continuous)
+                    .fill(VoteNowColors.surfaceWhite.opacity(0.92))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 11, style: .continuous)
+                    .stroke(VoteNowColors.primaryCTA.opacity(0.38), lineWidth: 1)
+            )
+        }
+    }
+
     private func shareMapv() {
         guard let plan = previewPlan ?? mapvPlanStore.plan else { return }
-        let shareSize = CGSize(width: 631, height: 406)
-        let shareCard = VStack(spacing: 0) {
-            MAPVCardView(
-                waterfallController: EmojiWaterfallController(),
-                previewPlan: plan,
-                isVotedActionEnabled: false
-            )
-            .environmentObject(mapvPlanStore)
-            .environment(\.dynamicTypeSize, .accessibility1)
-            .frame(maxWidth: .infinity, alignment: .topLeading)
-            .overlay(alignment: .bottomTrailing) {
-                VoteNowLogoIcon(size: 53, shadowColor: .clear)
-                    .opacity(0.94)
-                    .padding(.trailing, 10)
-                    .padding(.bottom, 10)
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-        }
-        .padding(0)
-        .frame(width: shareSize.width, height: shareSize.height, alignment: .top)
-        .background(VoteNowColors.appBackground)
-        .clipped()
+        let isoDateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.calendar = Calendar(identifier: .gregorian)
+            formatter.locale = Locale(identifier: "en_US_POSIX")
+            formatter.timeZone = TimeZone(secondsFromGMT: 0)
+            formatter.dateFormat = "yyyy-MM-dd"
+            return formatter
+        }()
 
-        if let image = ViewSnapshotter.snapshot(shareCard, size: shareSize) {
-            shareImage = image
-            showingShare = true
+        var details: [URLQueryItem] = [
+            URLQueryItem(name: "election", value: plan.electionTitle),
+            URLQueryItem(name: "day", value: isoDateFormatter.string(from: plan.electionDate)),
+            URLQueryItem(name: "method", value: shareMethodLabel(from: plan))
+        ]
+        if let stateCode = stateCodeFromAddress(plan.pollingPlaceAddress) {
+            details.append(URLQueryItem(name: "state", value: stateCode))
         }
+
+        let payload = VoteNowShareCardPayload(
+            cardType: .mapv,
+            target: .mapv,
+            title: l("app.mapv.share.headline.plan_now", "Make Your Plan to Vote"),
+            subtitle: l(
+                "app.mapv.share.subtitle.plan_now",
+                "Pick your voting method, review deadlines, and get ready now."
+            ),
+            cta: l("app.mapv.share.cta.plan_now", "Start Your Plan"),
+            badge: planDateTime(plan.electionDate),
+            campaign: "send-to-friend",
+            details: details
+        )
+
+        shareItems = VoteNowShareComposer.activityItems(for: payload)
+        showingShare = true
+    }
+
+    private func shareMethodLabel(from plan: MAPVPlan) -> String {
+        switch plan.votingMethodRawValue {
+        case "vote_by_mail":
+            return "Mail ballot"
+        case "early_vote":
+            return "Early vote"
+        case "election_day":
+            return "Election Day"
+        default:
+            return "Plan to vote"
+        }
+    }
+
+    private func stateCodeFromAddress(_ address: String) -> String? {
+        let parts = address
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        guard let tail = parts.last else { return nil }
+        let tokens = tail.components(separatedBy: .whitespaces).filter { !$0.isEmpty }
+        if let first = tokens.first, first.count == 2 {
+            return first.uppercased()
+        }
+        return nil
     }
 
     private func shortTime(_ date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateStyle = .none
-        formatter.timeStyle = .short
+        formatter.locale = locale
+        formatter.dateFormat = "HH:mm"
         return formatter.string(from: date)
     }
 
@@ -483,6 +525,50 @@ struct MAPVCardView: View {
             locale: locale,
             fallback: fallback
         )
+    }
+
+}
+
+private struct MAPVPrimaryActionButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(.white)
+            .lineLimit(1)
+            .minimumScaleFactor(0.78)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 11)
+            .background(
+                RoundedRectangle(cornerRadius: 11, style: .continuous)
+                    .fill(VoteNowColors.primaryCTA)
+                    .opacity(isEnabled ? (configuration.isPressed ? 0.84 : 1) : 0.45)
+            )
+    }
+}
+
+private struct MAPVSecondaryActionButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+    let fill: Color
+    let border: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(VoteNowColors.primaryText)
+            .lineLimit(1)
+            .minimumScaleFactor(0.78)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 9)
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(fill.opacity(isEnabled ? (configuration.isPressed ? 0.75 : 1) : 0.45))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(border.opacity(isEnabled ? 1 : 0.45), lineWidth: 1)
+            )
     }
 }
 

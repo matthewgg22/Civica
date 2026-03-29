@@ -1,6 +1,7 @@
 import Foundation
 import OSLog
 import CryptoKit
+import CoreLocation
 import Supabase
 
 @MainActor
@@ -63,6 +64,36 @@ private enum SupabaseErrorInspector {
             return true
         }
         return false
+    }
+
+    static func isRequestCancelled(_ error: Error) -> Bool {
+        if error is CancellationError {
+            return true
+        }
+        let nsError = error as NSError
+        return nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled
+    }
+
+    static func isTransientNetworkError(_ error: Error) -> Bool {
+        let nsError = error as NSError
+        if nsError.domain == NSURLErrorDomain {
+            switch nsError.code {
+            case NSURLErrorTimedOut,
+                 NSURLErrorNetworkConnectionLost,
+                 NSURLErrorNotConnectedToInternet,
+                 NSURLErrorCannotFindHost,
+                 NSURLErrorCannotConnectToHost,
+                 NSURLErrorDNSLookupFailed:
+                return true
+            default:
+                break
+            }
+        }
+
+        let combined = combinedErrorText(error)
+        return combined.contains("operation timed out")
+            || combined.contains("network connection was lost")
+            || combined.contains("timed out")
     }
 
     private static func hasPostgrestCode(_ error: Error, _ code: String) -> Bool {
@@ -388,6 +419,22 @@ struct ElectionReminderSchedule: Sendable {
     let electionDay: Date
     let earlyVotingStart: Date?
     let stateCode: String
+    let latitude: Double?
+    let longitude: Double?
+}
+
+private struct DeviceTokenUpsertPayload: Encodable, Sendable {
+    let userID: UUID
+    let token: String
+    let apnsEnv: String
+    let isEnabled: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case userID = "user_id"
+        case token
+        case apnsEnv = "apns_env"
+        case isEnabled = "is_enabled"
+    }
 }
 
 enum SupabaseManagerError: LocalizedError {
@@ -424,6 +471,10 @@ final class SupabaseManager {
     private var hasLoggedAddressSearchEventsRLSDenied = false
     private var hasLoggedMAPCCallEventsRLSDenied = false
     private var hasLoggedDeviceTokensRLSDenied = false
+    private var hasLoggedAddressSearchEventsTransientFailure = false
+    private var hasLoggedMAPCCallEventsTransientFailure = false
+    private var hasLoggedMAPCCallSumsTransientFailure = false
+    private var hasLoggedMAPCCallIssueSumsTransientFailure = false
     #if DEBUG
     private var hasInsertedDebugPlanThisLaunch = false
     #endif
@@ -507,10 +558,12 @@ final class SupabaseManager {
         )
 
         do {
-            _ = try await client
-                .from("mapv_plans")
-                .insert(payload)
-                .execute()
+            _ = try await performWriteWithRetry(operation: "mapv_plans insert") {
+                try await client
+                    .from("mapv_plans")
+                    .insert(payload)
+                    .execute()
+            }
             insertedPlanFingerprintsThisLaunch.insert(fingerprint)
         } catch {
             guard isMissingPollingPlaceColumnError(error) else {
@@ -523,10 +576,12 @@ final class SupabaseManager {
                 plannedTime: plannedTime,
                 votingMethod: resolvedVotingMethod
             )
-            _ = try await client
-                .from("mapv_plans")
-                .insert(fallback)
-                .execute()
+            _ = try await performWriteWithRetry(operation: "mapv_plans fallback insert") {
+                try await client
+                    .from("mapv_plans")
+                    .insert(fallback)
+                    .execute()
+            }
             insertedPlanFingerprintsThisLaunch.insert(fingerprint)
         }
     }
@@ -555,10 +610,12 @@ final class SupabaseManager {
             osVersion: payload.osVersion,
             locale: payload.locale
         )
-        _ = try await client
-            .from("feedback")
-            .insert(sanitizedPayload)
-            .execute()
+        _ = try await performWriteWithRetry(operation: "feedback insert") {
+            try await client
+                .from("feedback")
+                .insert(sanitizedPayload)
+                .execute()
+        }
     }
 
     func saveDeviceToken(_ token: String) async {
@@ -572,23 +629,26 @@ final class SupabaseManager {
             let session = try await authenticatedSession()
             let userId = session.user.id
 
-            _ = try await client
-                .from("device_tokens")
-                .insert([
-                    [
-                        "user_id": userId.uuidString,
-                        "token": deviceToken
-                    ]
-                ])
-                .execute()
+            let expectedEnv = expectedAPNSEnvironment()
+            let payload = DeviceTokenUpsertPayload(
+                userID: userId,
+                token: deviceToken,
+                apnsEnv: expectedEnv,
+                isEnabled: true
+            )
+            _ = try await performWriteWithRetry(operation: "device_tokens upsert") {
+                try await client
+                    .from("device_tokens")
+                    .upsert([payload], onConflict: "token")
+                    .execute()
+            }
 
-            logger.info("Device token saved for current user.")
+            logger.info("Device token upserted/rebound for current user.")
         } catch {
-            let message = String(describing: error)
-            if message.contains("23505") && message.contains("device_tokens_token_key") {
-                logger.debug("Device token already exists for current user.")
-            } else if isRLSPermissionDeniedError(error) {
+            if isRLSPermissionDeniedError(error) {
                 logRLSPermissionDeniedOnce(table: "device_tokens", flag: &hasLoggedDeviceTokensRLSDenied)
+            } else if isTransientNetworkError(error) {
+                logger.warning("Device token save deferred due to transient network conditions.")
             } else {
                 logger.error("Failed to save device token.")
             }
@@ -605,6 +665,10 @@ final class SupabaseManager {
         }
         defer { reminderSchedulingKeysInFlight.remove(scheduleKey) }
         var createdAnyReminder = false
+        let reminderTimeZone = await reminderTimeZone(
+            for: schedule.stateCode,
+            coordinate: schedule.coordinate
+        )
 
         logger.debug("Cancelling old pending election reminders for current user.")
         try await cancelPendingElectionReminders(userID: userID)
@@ -619,7 +683,7 @@ final class SupabaseManager {
             } else {
                 let earlyVotingSendAt = try reminderSendAt10_30AM(
                     on: earlyVotingStart,
-                    stateCode: schedule.stateCode
+                    timeZone: reminderTimeZone
                 )
                 let earlyVotingPayload = ScheduledNotificationInsert(
                     userID: userID,
@@ -657,7 +721,7 @@ final class SupabaseManager {
 
         let electionDaySendAt = try reminderSendAt10_30AM(
             on: schedule.electionDay,
-            stateCode: schedule.stateCode
+            timeZone: reminderTimeZone
         )
         let electionDayPayload = ScheduledNotificationInsert(
             userID: userID,
@@ -824,26 +888,32 @@ final class SupabaseManager {
 
             if existing.isEmpty {
                 do {
-                    _ = try await client
-                        .from("user_election_status")
-                        .insert([insertPayload])
-                        .execute()
+                    _ = try await performWriteWithRetry(operation: "user_election_status insert") {
+                        try await client
+                            .from("user_election_status")
+                            .insert([insertPayload])
+                            .execute()
+                    }
                 } catch {
                     guard isUniqueConstraintViolation(error) else { throw error }
-                    _ = try await client
+                    _ = try await performWriteWithRetry(operation: "user_election_status update after conflict") {
+                        try await client
+                            .from("user_election_status")
+                            .update(updatePayload)
+                            .eq("user_id", value: userID.uuidString)
+                            .eq("election_id", value: electionID)
+                            .execute()
+                    }
+                }
+            } else {
+                _ = try await performWriteWithRetry(operation: "user_election_status update") {
+                    try await client
                         .from("user_election_status")
                         .update(updatePayload)
                         .eq("user_id", value: userID.uuidString)
                         .eq("election_id", value: electionID)
                         .execute()
                 }
-            } else {
-                _ = try await client
-                    .from("user_election_status")
-                    .update(updatePayload)
-                    .eq("user_id", value: userID.uuidString)
-                    .eq("election_id", value: electionID)
-                    .execute()
             }
         } catch {
             if isMissingUserElectionStatusTableError(error) {
@@ -892,26 +962,32 @@ final class SupabaseManager {
                     suppressionUpdatedAt: nowISO
                 )
                 do {
-                    _ = try await client
-                        .from("user_election_status")
-                        .insert([insertPayload])
-                        .execute()
+                    _ = try await performWriteWithRetry(operation: "user_election_status undo insert") {
+                        try await client
+                            .from("user_election_status")
+                            .insert([insertPayload])
+                            .execute()
+                    }
                 } catch {
                     guard isUniqueConstraintViolation(error) else { throw error }
-                    _ = try await client
+                    _ = try await performWriteWithRetry(operation: "user_election_status undo update after conflict") {
+                        try await client
+                            .from("user_election_status")
+                            .update(updatePayload)
+                            .eq("user_id", value: userID.uuidString)
+                            .eq("election_id", value: electionID)
+                            .execute()
+                    }
+                }
+            } else {
+                _ = try await performWriteWithRetry(operation: "user_election_status undo update") {
+                    try await client
                         .from("user_election_status")
                         .update(updatePayload)
                         .eq("user_id", value: userID.uuidString)
                         .eq("election_id", value: electionID)
                         .execute()
                 }
-            } else {
-                _ = try await client
-                    .from("user_election_status")
-                    .update(updatePayload)
-                    .eq("user_id", value: userID.uuidString)
-                    .eq("election_id", value: electionID)
-                    .execute()
             }
         } catch {
             if isMissingUserElectionStatusTableError(error) {
@@ -937,21 +1013,25 @@ final class SupabaseManager {
         userID: UUID,
         notificationType: String
     ) async throws {
-        _ = try await client
-            .from("scheduled_notifications")
-            .update(["status": "canceled"])
-            .eq("user_id", value: userID.uuidString)
-            .eq("notification_type", value: notificationType)
-            .eq("status", value: "pending")
-            .execute()
+        _ = try await performWriteWithRetry(operation: "scheduled_notifications cancel pending") {
+            try await client
+                .from("scheduled_notifications")
+                .update(["status": "canceled"])
+                .eq("user_id", value: userID.uuidString)
+                .eq("notification_type", value: notificationType)
+                .eq("status", value: "pending")
+                .execute()
+        }
     }
 
     private func insertScheduledNotificationIdempotent(_ payload: ScheduledNotificationInsert) async throws -> Bool {
         do {
-            _ = try await client
-                .from("scheduled_notifications")
-                .insert([payload])
-                .execute()
+            _ = try await performWriteWithRetry(operation: "scheduled_notifications insert") {
+                try await client
+                    .from("scheduled_notifications")
+                    .insert([payload])
+                    .execute()
+            }
             return true
         } catch {
             guard isUniqueConstraintViolation(error) else {
@@ -968,14 +1048,16 @@ final class SupabaseManager {
                 metadata: payload.metadata
             )
 
-            _ = try await client
-                .from("scheduled_notifications")
-                .update(updatePayload)
-                .eq("user_id", value: payload.userID.uuidString)
-                .eq("election_id", value: payload.electionID)
-                .eq("notification_type", value: payload.notificationType)
-                .eq("status", value: "pending")
-                .execute()
+            _ = try await performWriteWithRetry(operation: "scheduled_notifications update existing pending") {
+                try await client
+                    .from("scheduled_notifications")
+                    .update(updatePayload)
+                    .eq("user_id", value: payload.userID.uuidString)
+                    .eq("election_id", value: payload.electionID)
+                    .eq("notification_type", value: payload.notificationType)
+                    .eq("status", value: "pending")
+                    .execute()
+            }
             return false
         }
     }
@@ -1066,8 +1148,7 @@ final class SupabaseManager {
         logger.warning("user_election_status table is missing (\(context, privacy: .public)). Apply migration 20260308_mapv_notification_suppression.sql in Supabase.")
     }
 
-    private func reminderSendAt10_30AM(on date: Date, stateCode: String) throws -> Date {
-        let timeZone = electionTimeZone(for: stateCode)
+    private func reminderSendAt10_30AM(on date: Date, timeZone: TimeZone) throws -> Date {
         logger.debug("Reminder timezone resolved to \(timeZone.identifier, privacy: .public)")
 
         var utcCalendar = Calendar(identifier: .gregorian)
@@ -1098,6 +1179,27 @@ final class SupabaseManager {
         logger.debug("Computed local 10:30 AM send_at: \(localFormatter.string(from: sendAt), privacy: .public)")
 
         return sendAt
+    }
+
+    private func reminderTimeZone(
+        for stateCode: String,
+        coordinate: CLLocationCoordinate2D?
+    ) async -> TimeZone {
+        if let coordinate, let resolved = await timeZoneFromCoordinate(coordinate) {
+            return resolved
+        }
+        return electionTimeZone(for: stateCode)
+    }
+
+    private func timeZoneFromCoordinate(_ coordinate: CLLocationCoordinate2D) async -> TimeZone? {
+        guard CLLocationCoordinate2DIsValid(coordinate) else { return nil }
+        let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        do {
+            let placemarks = try await CLGeocoder().reverseGeocodeLocation(location)
+            return placemarks.first?.timeZone
+        } catch {
+            return nil
+        }
     }
 
     private func electionTimeZone(for stateCode: String) -> TimeZone {
@@ -1284,13 +1386,21 @@ final class SupabaseManager {
                 fallbackSessionID: addressSearchSessionID
             )
 
-            _ = try await client
-                .from("address_search_events")
-                .insert(payload)
-                .execute()
+            _ = try await performWriteWithRetry(operation: "address_search_events insert") {
+                try await client
+                    .from("address_search_events")
+                    .insert(payload)
+                    .execute()
+            }
         } catch {
-            let nsError = error as NSError
-            if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
+            if isRequestCancelledError(error) {
+                return
+            }
+            if isTransientNetworkError(error) {
+                logTransientNetworkFailureOnce(
+                    operation: "address_search_events insert",
+                    flag: &hasLoggedAddressSearchEventsTransientFailure
+                )
                 return
             }
             if isRLSPermissionDeniedError(error) {
@@ -1312,15 +1422,19 @@ final class SupabaseManager {
             } catch {
                 session = try await client.auth.refreshSession()
             }
-            _ = try await client
-                .from("device_tokens")
-                .update(["is_enabled": false])
-                .eq("user_id", value: session.user.id.uuidString)
-                .eq("apns_env", value: expectedAPNSEnvironment())
-                .execute()
+            _ = try await performWriteWithRetry(operation: "device_tokens disable for user") {
+                try await client
+                    .from("device_tokens")
+                    .update(["is_enabled": false])
+                    .eq("user_id", value: session.user.id.uuidString)
+                    .eq("apns_env", value: expectedAPNSEnvironment())
+                    .execute()
+            }
         } catch {
             if isRLSPermissionDeniedError(error) {
                 logRLSPermissionDeniedOnce(table: "device_tokens", flag: &hasLoggedDeviceTokensRLSDenied)
+            } else if isTransientNetworkError(error) {
+                logger.warning("Device token disable deferred due to transient network conditions.")
             }
         }
     }
@@ -1354,13 +1468,25 @@ final class SupabaseManager {
                 metadata: event.metadata
             )
 
-            _ = try await client
-                .from("mapc_call_events")
-                .insert(payload)
-                .execute()
+            _ = try await performWriteWithRetry(operation: "mapc_call_events insert") {
+                try await client
+                    .from("mapc_call_events")
+                    .insert(payload)
+                    .execute()
+            }
         } catch {
             if isMissingMAPCCallEventsTableError(error) {
                 logMissingMAPCCallEventsTableOnce(context: "insert")
+                return
+            }
+            if isRequestCancelledError(error) {
+                return
+            }
+            if isTransientNetworkError(error) {
+                logTransientNetworkFailureOnce(
+                    operation: "mapc_call_events insert",
+                    flag: &hasLoggedMAPCCallEventsTransientFailure
+                )
                 return
             }
             if isRLSPermissionDeniedError(error) {
@@ -1418,6 +1544,16 @@ final class SupabaseManager {
                 logMissingMAPCCallEventsTableOnce(context: "fetch_sums")
                 return nil
             }
+            if isRequestCancelledError(error) {
+                return nil
+            }
+            if isTransientNetworkError(error) {
+                logTransientNetworkFailureOnce(
+                    operation: "fetchMAPCCallSums",
+                    flag: &hasLoggedMAPCCallSumsTransientFailure
+                )
+                return nil
+            }
             logger.error("fetchMAPCCallSums failed.")
             return nil
         }
@@ -1449,6 +1585,16 @@ final class SupabaseManager {
         } catch {
             if isMissingMAPCCallEventsTableError(error) {
                 logMissingMAPCCallEventsTableOnce(context: "fetch_issue_sums")
+                return nil
+            }
+            if isRequestCancelledError(error) {
+                return nil
+            }
+            if isTransientNetworkError(error) {
+                logTransientNetworkFailureOnce(
+                    operation: "fetchMAPCCallIssueSums",
+                    flag: &hasLoggedMAPCCallIssueSumsTransientFailure
+                )
                 return nil
             }
             logger.error("fetchMAPCCallIssueSums failed.")
@@ -1531,7 +1677,7 @@ final class SupabaseManager {
     private func logMissingMAPCCallEventsTableOnce(context: String) {
         guard !hasLoggedMissingMAPCCallEventsTable else { return }
         hasLoggedMissingMAPCCallEventsTable = true
-        logger.warning("mapc_call_events table is missing (\(context, privacy: .public)). Apply the MAPC call analytics migration in Supabase.")
+        logger.warning("mapc_call_events table is missing (\(context, privacy: .public)). Apply migration 20260327_add_mapc_call_analytics.sql in Supabase.")
     }
 
     private func isMissingPollingPlaceColumnError(_ error: Error) -> Bool {
@@ -1542,8 +1688,56 @@ final class SupabaseManager {
         SupabaseErrorInspector.isUniqueConstraintViolation(error)
     }
 
+    private func isRequestCancelledError(_ error: Error) -> Bool {
+        SupabaseErrorInspector.isRequestCancelled(error)
+    }
+
+    private func isTransientNetworkError(_ error: Error) -> Bool {
+        SupabaseErrorInspector.isTransientNetworkError(error)
+    }
+
     private func isRLSPermissionDeniedError(_ error: Error) -> Bool {
         SupabaseErrorInspector.isRLSPermissionDenied(error)
+    }
+
+    private func writeRetryDelayNanoseconds(forAttempt attempt: Int) -> UInt64 {
+        switch attempt {
+        case 2: return 300_000_000
+        case 3: return 700_000_000
+        default: return 0
+        }
+    }
+
+    private func performWriteWithRetry<T>(
+        operation: String,
+        maxAttempts: Int = 3,
+        _ action: () async throws -> T
+    ) async throws -> T {
+        var attempt = 1
+        while true {
+            do {
+                return try await action()
+            } catch {
+                if isRequestCancelledError(error) {
+                    throw error
+                }
+                guard isTransientNetworkError(error), attempt < maxAttempts else {
+                    throw error
+                }
+                attempt += 1
+                logger.warning("Transient network error during \(operation, privacy: .public). Retrying.")
+                let delay = writeRetryDelayNanoseconds(forAttempt: attempt)
+                if delay > 0 {
+                    try await Task.sleep(nanoseconds: delay)
+                }
+            }
+        }
+    }
+
+    private func logTransientNetworkFailureOnce(operation: String, flag: inout Bool) {
+        guard flag == false else { return }
+        flag = true
+        logger.warning("Transient network failure while \(operation, privacy: .public).")
     }
 
     private func logRLSPermissionDeniedOnce(table: String, flag: inout Bool) {
@@ -1697,6 +1891,13 @@ final class SupabaseManager {
         #else
         return "production"
         #endif
+    }
+}
+
+private extension ElectionReminderSchedule {
+    var coordinate: CLLocationCoordinate2D? {
+        guard let latitude, let longitude else { return nil }
+        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
 }
 

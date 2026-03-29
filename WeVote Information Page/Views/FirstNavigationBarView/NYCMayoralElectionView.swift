@@ -1,19 +1,21 @@
 import SwiftUI
 import UIKit
+import Combine
 
 struct NYCMayoralElectionView: View {
     @EnvironmentObject private var planVM: PlanViewModel
     @Environment(\.locale) private var locale
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var upcomingElection: Election?
     @State private var stateCode: String?
     @State private var stateName: String = ""
     @State private var guideCards: [ElectionGuideInfoCard] = []
     @State private var errorMessage: String?
-    @State private var showRCVDemo = false
-    @State private var showRunoffDemo = false
+    @State private var officeExampleRotationTick = 0
 
     private let stateResolver = USZipStateResolver()
+    private let officeExampleRotationTimer = Timer.publish(every: 15, on: .main, in: .common).autoconnect()
     private static let primaryTypeDataset: ElectionGuidePrimaryTypeDataset? = {
         guard let url = Bundle.main.url(forResource: "ElectionEligibilityDataset", withExtension: "json"),
               let data = try? Data(contentsOf: url),
@@ -67,6 +69,42 @@ struct NYCMayoralElectionView: View {
             return (normalized, row)
         })
     }()
+    private static let officePowerExamplesByKey: [String: [String]] = {
+        guard let url = Bundle.main.url(forResource: "USOfficePowersExamplesByOffice", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let decoded = try? JSONDecoder().decode(ElectionGuideOfficeExamplesDataset.self, from: data) else {
+            return [:]
+        }
+        var mapped: [String: [String]] = [:]
+        for row in decoded.rows {
+            let key = row.officeKey
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .lowercased()
+            let examples = row.examples
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+            if !key.isEmpty, !examples.isEmpty {
+                mapped[key] = examples
+            }
+        }
+        return mapped
+    }()
+    private static let runoffThresholdRulesByStateCode: [String: ElectionGuideRunoffThresholdRule] = {
+        guard let url = Bundle.main.url(forResource: "USRunoffThresholdRulesByState", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let decoded = try? JSONDecoder().decode([String: ElectionGuideRunoffThresholdRule].self, from: data) else {
+            return [:]
+        }
+        return decoded
+    }()
+    private static let rankedChoiceByState2026: [String: ElectionGuideRankedChoiceStateSummary] = {
+        guard let url = Bundle.main.url(forResource: "USRankedChoiceByState2026", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let decoded = try? JSONDecoder().decode(ElectionGuideRankedChoiceByStateDataset.self, from: data) else {
+            return [:]
+        }
+        return decoded.states
+    }()
 
     private func l(_ key: String, _ fallback: String) -> String {
         localizedCatalogString(
@@ -84,21 +122,6 @@ struct NYCMayoralElectionView: View {
 
     var body: some View {
         refreshedGuideView
-            .fullScreenCover(isPresented: $showRCVDemo) {
-            RankedChoiceVotingView(
-                title: l("app.guide.card.special_rules.title.rcv", "Ranked-Choice Voting"),
-                candidateCount: 6,
-                defaultMuted: false,
-                idleTimeoutSeconds: 30
-            )
-            }
-            .fullScreenCover(isPresented: $showRunoffDemo) {
-            RunoffThresholdGateView(
-                title: l("app.guide.card.special_rules.title.runoff", "Runoff Rules"),
-                stateCode: stateCode,
-                stateName: stateName
-            )
-            }
     }
 
     private var refreshedGuideView: some View {
@@ -109,6 +132,15 @@ struct NYCMayoralElectionView: View {
             .onChange(of: planVM.userAddress.zip) { _, _ in refreshGuide() }
             .onChange(of: planVM.selectedParty) { _, _ in refreshGuide() }
             .onChange(of: locale.identifier) { _, _ in refreshGuide() }
+            .onReceive(officeExampleRotationTimer) { _ in
+                if reduceMotion {
+                    officeExampleRotationTick &+= 1
+                } else {
+                    withAnimation(.easeInOut(duration: 0.35)) {
+                        officeExampleRotationTick &+= 1
+                    }
+                }
+            }
     }
 
     private var navigationRootView: some View {
@@ -142,31 +174,32 @@ struct NYCMayoralElectionView: View {
     }
 
     private var guideScrollView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                guideContentView
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    guideContentView(proxy: proxy)
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 24)
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 24)
         }
     }
 
     @ViewBuilder
-    private var guideContentView: some View {
+    private func guideContentView(proxy: ScrollViewProxy) -> some View {
         if let errorMessage {
             Text(errorMessage)
                 .font(.body)
                 .foregroundColor(VoteNowColors.mutedText)
         } else {
-            introLineView
+            introLineView(proxy: proxy)
 
-            VoterIDGuideCard(
-                stateCode: stateCode,
-                stateName: stateName
-            )
+            VoterIDGuideCard(stateCode: stateCode, stateName: stateName)
+                .id(GuideCardAnchor.voterID.rawValue)
 
-            ForEach(guideCards) { card in
+            ForEach(Array(guideCards.enumerated()), id: \.element.id) { index, card in
                 guideCardView(card)
+                    .id(guideCardScrollID(index: index))
             }
         }
     }
@@ -208,6 +241,8 @@ struct NYCMayoralElectionView: View {
                 primaryGuideBodyView(primaryGuide)
             } else if card.kind == .officesInfluence {
                 officesInfluenceBodyView(card.ballotItems ?? [])
+            } else if card.kind == .ballotMeasures {
+                ballotMeasuresBodyView(intro: card.body, items: card.ballotItems ?? [])
             } else {
                 Text(card.body)
                     .font(.subheadline)
@@ -216,42 +251,34 @@ struct NYCMayoralElectionView: View {
             }
 
             if let rcvDemoContext = card.rcvDemoContext {
-                Button {
-                    showRCVDemo = true
-                } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "play.circle.fill")
-                            .font(.subheadline.weight(.semibold))
-                        Text(rcvDemoContext.ctaText)
-                            .font(.subheadline.weight(.semibold))
-                    }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(VoteNowColors.primaryCTA)
-                    .clipShape(Capsule())
+                if !rcvDemoContext.whereSummaryLines.isEmpty {
+                    rankedChoiceWhereSummaryView(lines: rcvDemoContext.whereSummaryLines)
+                    .padding(.top, 6)
                 }
-                .buttonStyle(.plain)
+
+                RankedChoiceVotingView(
+                    title: l("app.guide.card.special_rules.title.rcv", "Ranked-Choice Voting"),
+                    candidateCount: 4,
+                    defaultMuted: false,
+                    idleTimeoutSeconds: 30,
+                    isEmbedded: true
+                )
+                .frame(height: 305)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                )
                 .padding(.top, 6)
             }
 
-            if let runoffDemoContext = card.runoffDemoContext {
-                Button {
-                    showRunoffDemo = true
-                } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "gauge.open.with.lines.needle.33percent")
-                            .font(.subheadline.weight(.semibold))
-                        Text(runoffDemoContext.ctaText)
-                            .font(.subheadline.weight(.semibold))
-                    }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(VoteNowColors.primaryCTA)
-                    .clipShape(Capsule())
-                }
-                .buttonStyle(.plain)
+            if card.runoffDemoContext != nil {
+                RunoffThresholdGateView(
+                    title: l("app.guide.card.special_rules.title.runoff", "Runoff Rules"),
+                    stateCode: stateCode,
+                    stateName: stateName,
+                    isEmbedded: true
+                )
                 .padding(.top, 6)
             }
         }
@@ -268,6 +295,69 @@ struct NYCMayoralElectionView: View {
         .shadow(color: VoteNowColors.primaryText.opacity(0.05), radius: 2, x: 0, y: 1)
     }
 
+    private func rankedChoiceWhereSummaryView(lines: [String]) -> some View {
+        let items = parsedRankedChoiceSummaryItems(from: lines)
+        return VStack(alignment: .leading, spacing: 8) {
+            ForEach(Array(items.enumerated()), id: \.offset) { _, item in
+                HStack(alignment: .top, spacing: 8) {
+                    Text(item.icon)
+                        .font(.caption)
+                        .padding(.top, 1)
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(item.label)
+                            .font(.caption2.weight(.bold))
+                            .foregroundColor(Color(hex: "#5A43B5"))
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 2)
+                            .background(
+                                Capsule()
+                                    .fill(Color(hex: "#EDE7FF"))
+                            )
+
+                        Text(item.value)
+                            .font(.caption)
+                            .foregroundColor(VoteNowColors.primaryText)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+            }
+        }
+        .padding(10)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color(hex: "#F7F4FF"))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(Color(hex: "#D7CCFF"), lineWidth: 1)
+        )
+    }
+
+    private func parsedRankedChoiceSummaryItems(from lines: [String]) -> [(label: String, value: String, icon: String)] {
+        lines.compactMap { line in
+            let parts = line.split(separator: ":", maxSplits: 1).map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
+            guard !parts.isEmpty else { return nil }
+            if parts.count == 1 {
+                return ("Info", parts[0], "ℹ️")
+            }
+            let label = parts[0]
+            let value = parts[1]
+            let icon: String
+            switch label.lowercased() {
+            case "where":
+                icon = "📍"
+            case "examples":
+                icon = "🗳️"
+            case "status":
+                icon = "✅"
+            default:
+                icon = "ℹ️"
+            }
+            return (label, value, icon)
+        }
+    }
+
     private var electionSubtitleText: String {
         guard let upcomingElection else {
             return l("app.guide.subtitle.none", "No upcoming election loaded")
@@ -275,47 +365,115 @@ struct NYCMayoralElectionView: View {
         return displayElectionTitle(for: upcomingElection)
     }
 
-    private var introLineView: some View {
+    private func introLineView(proxy: ScrollViewProxy) -> some View {
         Group {
             if let upcomingElection {
-                let voterLabel = stateName.isEmpty ? l("app.guide.voters.label", "voters") : "\(stateName) \(l("app.guide.voters.label", "voters"))"
-
-                if Calendar.current.isDate(upcomingElection.startDate, inSameDayAs: upcomingElection.electionDay) {
-                    let line =
-                    Text(
-                        lf(
-                            "app.guide.intro.same_day.prefix",
-                            "On %@, %@ are eligible to vote in the ",
-                            formatLongDate(upcomingElection.electionDay),
-                            voterLabel
-                        )
-                    )
-                    + styledElectionDescriptorText(for: upcomingElection)
-                    + styledPrimaryRuleInlineText(for: upcomingElection)
-                    + Text(".")
-                    line
-                } else {
-                    let line =
-                    Text(
-                        lf(
-                            "app.guide.intro.range.prefix",
-                            "Starting %@ through %@, %@ are eligible to vote in the ",
-                            formatLongDate(upcomingElection.startDate),
-                            formatLongDate(upcomingElection.electionDay),
-                            voterLabel
-                        )
-                    )
-                    + styledElectionDescriptorText(for: upcomingElection)
-                    + styledPrimaryRuleInlineText(for: upcomingElection)
-                    + Text(".")
-                    line
+                VStack(alignment: .leading, spacing: 6) {
+                    introMainLineText(for: upcomingElection)
+                    introSupplementalBullets(for: upcomingElection)
                 }
+                .environment(\.openURL, OpenURLAction { url in
+                    handleIntroLink(url, proxy: proxy)
+                    return .handled
+                })
             } else {
                 Text(l("app.guide.error.enter_valid", "Enter a valid state or ZIP to load your upcoming election guide."))
             }
         }
         .font(.body)
         .foregroundColor(VoteNowColors.primaryText)
+    }
+
+    private func introMainLineText(for election: Election) -> Text {
+        let voterLabel = stateName.isEmpty ? l("app.guide.voters.label", "voters") : "\(stateName) \(l("app.guide.voters.label", "voters"))"
+
+        let prefix: String
+        if Calendar.current.isDate(election.startDate, inSameDayAs: election.electionDay) {
+            prefix = lf(
+                "app.guide.intro.same_day.prefix",
+                "On %@, %@ are eligible to vote in the ",
+                formatLongDate(election.electionDay),
+                voterLabel
+            )
+        } else {
+            prefix = lf(
+                "app.guide.intro.range.prefix",
+                "Starting %@ through %@, %@ are eligible to vote in the ",
+                formatLongDate(election.startDate),
+                formatLongDate(election.electionDay),
+                voterLabel
+            )
+        }
+
+        let descriptor = displayElectionTitle(for: election)
+        let primaryPhrase = primaryIntroPhraseWithState(for: election)
+
+        var composed = AttributedString(prefix)
+        composed += linkedDescriptorAttributedText(descriptor)
+        composed += AttributedString(primaryPhrase.prefixText)
+        composed += linkedDescriptorSegment(
+            text: primaryPhrase.highlightedPhrase,
+            color: VoteNowColors.successGreen,
+            target: .primaryGuide
+        )
+        composed += AttributedString(".")
+
+        return Text(composed)
+    }
+
+    @ViewBuilder
+    private func introSupplementalBullets(for election: Election) -> some View {
+        let state = (stateCodeForElection(election) ?? stateCode ?? "").uppercased()
+        let feature = state.isEmpty ? nil : stateVotingFeature(for: state)
+        let hasRankedChoice = feature.map { hasSubstantiveSpecialRule($0.rankedChoiceStatus, kind: .rankedChoice) } ?? false
+        let hasRunoff = feature.map { hasSubstantiveSpecialRule($0.runoffRules, kind: .runoff) } ?? false
+        let ballotMeasureCount = ballotMeasureCountForIntro(for: election)
+
+        if hasRankedChoice, let feature {
+            introBulletLine(
+                descriptor: "Ranked-Choice Voting",
+                descriptorColor: Color(hex: "#1E9C89"),
+                detail: feature.rankedChoiceStatus,
+                target: .specialRules
+            )
+        }
+
+        if hasRunoff, let feature {
+            introBulletLine(
+                descriptor: "Runoff Rules",
+                descriptorColor: Color(hex: "#A45A2A"),
+                detail: feature.runoffRules,
+                target: .specialRules
+            )
+        }
+
+        if ballotMeasureCount > 0 {
+            let measureLabel = ballotMeasureCount == 1 ? "measure" : "measures"
+            introBulletLine(
+                descriptor: "Ballot Measures",
+                descriptorColor: ElectionGuideCardAccent.ballotMeasures.color,
+                detail: "You will vote on \(ballotMeasureCount) statewide \(measureLabel).",
+                target: .ballotMeasures
+            )
+        }
+    }
+
+    private func introBulletLine(
+        descriptor: String,
+        descriptorColor: Color,
+        detail: String,
+        target: GuideCardAnchor
+    ) -> Text {
+        let cleanedDetail = detail.trimmingCharacters(in: .whitespacesAndNewlines)
+        let suffix = cleanedDetail.hasSuffix(".") ? cleanedDetail : "\(cleanedDetail)."
+        var composed = AttributedString("• ")
+        composed += linkedDescriptorSegment(
+            text: descriptor,
+            color: descriptorColor,
+            target: target
+        )
+        composed += AttributedString(": \(suffix)")
+        return Text(composed)
     }
 
     private func styledElectionDescriptorText(for election: Election) -> Text {
@@ -340,6 +498,91 @@ struct NYCMayoralElectionView: View {
             }
 
             return partial + piece
+        }
+    }
+
+    private func linkedDescriptorAttributedText(_ descriptor: String) -> AttributedString {
+        let tokens = descriptor.split(separator: " ", omittingEmptySubsequences: true)
+        guard !tokens.isEmpty else { return AttributedString(descriptor) }
+
+        var composed = AttributedString("")
+        for (offset, token) in tokens.enumerated() {
+            if offset > 0 {
+                composed += AttributedString(" ")
+            }
+
+            let raw = String(token)
+            let normalized = raw.lowercased().trimmingCharacters(in: .punctuationCharacters)
+            if normalized.contains("midterm") {
+                composed += linkedDescriptorSegment(text: raw, color: ElectionGuideCardAccent.midterm.color, target: .mainElection)
+            } else if normalized.contains("primary") {
+                composed += linkedDescriptorSegment(text: raw, color: ElectionGuideCardAccent.primary.color, target: .primaryGuide)
+            } else {
+                composed += AttributedString(raw)
+            }
+        }
+        return composed
+    }
+
+    private func linkedDescriptorSegment(text: String, color: Color, target: GuideCardAnchor) -> AttributedString {
+        var segment = AttributedString(text)
+        segment.foregroundColor = color
+        segment.font = .body.bold().italic()
+        segment.link = guideAnchorURL(for: target)
+        return segment
+    }
+
+    private func primaryIntroPhraseWithState(for election: Election) -> (prefixText: String, highlightedPhrase: String) {
+        guard phaseForElection(election) == .primary, let code = stateCode else {
+            return (prefixText: "", highlightedPhrase: "")
+        }
+
+        let primaryType = primaryTypeLabel(for: election, stateCode: code)
+        let primaryPhrase = primaryTypePhraseForIntro(primaryType)
+        let stateDisplayName = election.jurisdictionName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? (Self.stateNameByCode[code] ?? "This state")
+            : election.jurisdictionName
+        return (prefixText: ". \(stateDisplayName) has ", highlightedPhrase: primaryPhrase)
+    }
+
+    private func guideCardScrollID(index: Int) -> String {
+        "guide-card-\(index)"
+    }
+
+    private func guideAnchorURL(for target: GuideCardAnchor) -> URL {
+        URL(string: "votenow-guide://\(target.rawValue)")!
+    }
+
+    private func handleIntroLink(_ url: URL, proxy: ScrollViewProxy) {
+        guard url.scheme == "votenow-guide", let host = url.host, let target = GuideCardAnchor(rawValue: host) else {
+            return
+        }
+
+        if target == .voterID {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                proxy.scrollTo(GuideCardAnchor.voterID.rawValue, anchor: .top)
+            }
+            return
+        }
+
+        guard let index = targetCardIndex(for: target) else { return }
+        withAnimation(.easeInOut(duration: 0.3)) {
+            proxy.scrollTo(guideCardScrollID(index: index), anchor: .top)
+        }
+    }
+
+    private func targetCardIndex(for target: GuideCardAnchor) -> Int? {
+        switch target {
+        case .mainElection:
+            return guideCards.firstIndex(where: { $0.accent == .midterm || $0.accent == .presidential || $0.accent == .general })
+        case .primaryGuide:
+            return guideCards.firstIndex(where: { $0.primaryGuideContext != nil })
+        case .specialRules:
+            return guideCards.firstIndex(where: { $0.rcvDemoContext != nil || $0.runoffDemoContext != nil })
+        case .ballotMeasures:
+            return guideCards.firstIndex(where: { $0.kind == .ballotMeasures })
+        case .voterID:
+            return nil
         }
     }
 
@@ -646,10 +889,7 @@ struct NYCMayoralElectionView: View {
             cards.append(contentsOf: overviewCards)
         }
 
-        cards.append(officesAndInfluenceGuideCard(for: election))
-        if let specialRulesCard = specialBallotRulesGuideCard(for: election, stateCode: stateCode) {
-            cards.append(specialRulesCard)
-        }
+        cards.append(contentsOf: specialBallotRulesGuideCards(for: election, stateCode: stateCode))
         cards.append(ballotMeasuresGuideCard(for: election))
         return cards
     }
@@ -683,26 +923,17 @@ struct NYCMayoralElectionView: View {
         }
 
         if joined.contains("midterm") {
+            let officeItems = officesAndInfluenceItems(for: election)
             return [
                 ElectionGuideInfoCard(
                     title: l("app.guide.card.midterm.title", "Midterm Elections"),
                     body: l(
-                        "app.guide.card.midterm.body",
-                        "Ballot contents below are pulled from your state timeline, plus statewide/local ballot measures where scheduled. Midterm elections happen every 4 years."
+                        "app.guide.card.midterm.body.reused_offices",
+                        "Offices below are pulled from your state timeline and matched to plain-English responsibilities."
                     ),
                     accent: .midterm,
-                    ballotItems: ballotItemsForOverviewCard(
-                        for: election,
-                        includeStatewideMeasures: true,
-                        ensureStateLegislature: true,
-                        fallback: [
-                            "All U.S. House seats",
-                            "Some U.S. Senate seats",
-                            "Many governor races",
-                            "State legislature races",
-                            "Statewide/local ballot measures"
-                        ]
-                    )
+                    kind: .officesInfluence,
+                    ballotItems: officeItems
                 )
             ]
         }
@@ -985,23 +1216,36 @@ struct NYCMayoralElectionView: View {
         if !officialItems.isEmpty {
             let stateLabel = Self.stateNameByCode[state] ?? "your state"
             introBody = lf(
-                "app.guide.card.ballot_measures.body.official",
-                "Statewide ballot measures currently listed for %@. Ballot measures let voters decide policy directly.",
+                "app.guide.card.ballot_measures.body.official.concise",
+                "In %@, voters can directly vote yes or no on these statewide measures.",
                 stateLabel
             )
         } else {
             introBody = l(
-                "app.guide.card.ballot_measures.body",
-                "Ballot measures are policy questions voters decide directly. They can change laws, funding, or state constitutions."
+                "app.guide.card.ballot_measures.body.concise",
+                "Ballot measures are direct votes on policy questions."
             )
         }
-        let body = combined.isEmpty ? introBody : introBody + "\n\n" + combined.joined(separator: "\n")
 
         return ElectionGuideInfoCard(
-            title: l("app.guide.card.ballot_measures.title", "Ballot Measures and Why They Matter"),
-            body: body,
+            title: l("app.guide.card.ballot_measures.title", "Ballot Measures You Will Decide"),
+            body: introBody,
+            accent: .ballotMeasures,
+            kind: .ballotMeasures,
             ballotItems: combined
         )
+    }
+
+    private func ballotMeasureCountForIntro(for election: Election) -> Int {
+        let state = (stateCodeForElection(election) ?? stateCode ?? "").uppercased()
+        guard !state.isEmpty else { return 0 }
+        let official = officialStatewideMeasureItems(for: election, stateCode: state)
+        if !official.isEmpty {
+            return official.count
+        }
+
+        let timeline = timelineMeasureItems(for: election, includePlaceholder: false)
+        return timeline.count
     }
 
     private func officialStatewideMeasureItems(for election: Election, stateCode: String) -> [String] {
@@ -1070,18 +1314,11 @@ struct NYCMayoralElectionView: View {
         return Array(items.prefix(4))
     }
 
-    private func officesAndInfluenceGuideCard(for election: Election) -> ElectionGuideInfoCard {
+    private func officesAndInfluenceItems(for election: Election) -> [String] {
         let timelineItems = timelineDerivedBallotItems(for: election, includePartyFilter: false)
         let integrated = officePowerLineItems(forTimelineTitles: timelineItems)
         let fallback = framedOfficeInfluenceItems(from: timelineItems)
-        let lineItems = integrated.isEmpty ? fallback : integrated
-
-        return ElectionGuideInfoCard(
-            title: l("app.guide.card.offices_influence.title", "Offices on Your Ballot and Their Influence"),
-            body: lineItems.joined(separator: "\n\n"),
-            kind: .officesInfluence,
-            ballotItems: lineItems
-        )
+        return integrated.isEmpty ? fallback : integrated
     }
 
     private func officePowerLineItems(forTimelineTitles titles: [String]) -> [String] {
@@ -1208,52 +1445,131 @@ struct NYCMayoralElectionView: View {
         return "\(title): affects policy and governance outcomes for your community and representation level."
     }
 
-    private func specialBallotRulesGuideCard(for _: Election, stateCode: String) -> ElectionGuideInfoCard? {
-        guard let feature = stateVotingFeature(for: stateCode) else { return nil }
+    private func specialBallotRulesGuideCards(for _: Election, stateCode: String) -> [ElectionGuideInfoCard] {
+        guard let feature = stateVotingFeature(for: stateCode) else { return [] }
 
         let hasRankedChoice = hasSubstantiveSpecialRule(feature.rankedChoiceStatus, kind: .rankedChoice)
         let hasRunoff = hasSubstantiveSpecialRule(feature.runoffRules, kind: .runoff)
 
-        var bullets: [String] = []
+        var cards: [ElectionGuideInfoCard] = []
+
         if hasRankedChoice {
-            bullets.append("Ranked-choice voting: \(feature.rankedChoiceStatus)")
+            let rcvWhereLines = rankedChoiceWhereSummaryLines(for: stateCode, fallbackStatus: feature.rankedChoiceStatus)
+            cards.append(
+                ElectionGuideInfoCard(
+                    title: l("app.guide.card.special_rules.title.rcv", "Ranked-Choice Voting"),
+                    body: l(
+                        "app.guide.card.special_rules.body",
+                        "Your state has special vote-counting or advancement rules for some contests."
+                    ),
+                    accent: .specialRules,
+                    ballotItems: ["Ranked-choice voting: \(feature.rankedChoiceStatus)"],
+                    rcvDemoContext: ElectionGuideRCVDemoContext(
+                        ctaText: l("app.guide.card.special_rules.rcv.cta", "Watch what happens in a RCV ballot"),
+                        whereSummaryLines: rcvWhereLines
+                    )
+                )
+            )
         }
+
         if hasRunoff {
-            bullets.append("Runoff rules: \(feature.runoffRules)")
+            let runoffBody = runoffSecondElectionBodyText(for: stateCode)
+            cards.append(
+                ElectionGuideInfoCard(
+                    title: l("app.guide.card.special_rules.title.runoff", "Runoff Rules"),
+                    body: runoffBody,
+                    accent: .runoff,
+                    ballotItems: ["Runoff rules: \(feature.runoffRules)"],
+                    runoffDemoContext: ElectionGuideRunoffDemoContext(
+                        ctaText: l("app.guide.card.special_rules.runoff.cta", "Explore the threshold gate runoff demo")
+                    )
+                )
+            )
         }
 
-        guard !bullets.isEmpty else { return nil }
+        return cards
+    }
 
-        let title: String
-        if hasRankedChoice && hasRunoff {
-            title = l("app.guide.card.special_rules.title.both", "Ranked-Choice Voting and Runoff Rules")
-        } else if hasRankedChoice {
-            title = l("app.guide.card.special_rules.title.rcv", "Ranked-Choice Voting")
+    private func rankedChoiceWhereSummaryLines(for stateCode: String, fallbackStatus: String) -> [String] {
+        let code = stateCode.uppercased()
+        guard let row = Self.rankedChoiceByState2026[code] else {
+            let fallback = compactWhereLine(from: fallbackStatus)
+            return fallback.isEmpty ? [] : [fallback]
+        }
+
+        var lines: [String] = []
+        let whereClause = compactWhereLine(from: row.whereApplies)
+        if !whereClause.isEmpty {
+            lines.append("Where: \(whereClause)")
         } else {
-            title = l("app.guide.card.special_rules.title.runoff", "Runoff Rules")
+            let mapClause = compactWhereLine(from: row.mapCategory)
+            if !mapClause.isEmpty {
+                lines.append("Where: \(mapClause)")
+            }
         }
 
-        let rcvDemoContext: ElectionGuideRCVDemoContext? = hasRankedChoice
-            ? ElectionGuideRCVDemoContext(
-                ctaText: l("app.guide.card.special_rules.rcv.cta", "Watch what happens in a RCV ballot")
-            )
-            : nil
-        let runoffDemoContext: ElectionGuideRunoffDemoContext? = hasRunoff
-            ? ElectionGuideRunoffDemoContext(
-                ctaText: l("app.guide.card.special_rules.runoff.cta", "Explore the threshold gate runoff demo")
-            )
-            : nil
+        let officeClause = firstListItem(from: row.explicitOffices)
+        if !officeClause.isEmpty && officeClause.lowercased() != "none" {
+            lines.append("Examples: \(officeClause)")
+        }
 
-        return ElectionGuideInfoCard(
-            title: title,
-            body: l(
-                "app.guide.card.special_rules.body",
-                "Your state has special vote-counting or advancement rules for some contests."
-            ),
-            ballotItems: bullets,
-            rcvDemoContext: rcvDemoContext,
-            runoffDemoContext: runoffDemoContext
-        )
+        let statusClause = compactWhereLine(from: row.statusSnapshot)
+        if !statusClause.isEmpty {
+            lines.append("Status: \(statusClause)")
+        }
+
+        let uniqueLines = lines.reduce(into: [String]()) { partial, line in
+            if !partial.contains(line) { partial.append(line) }
+        }
+        return Array(uniqueLines.prefix(3))
+    }
+
+    private func compactWhereLine(from raw: String) -> String {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return "" }
+        let stripped = trimmed.replacingOccurrences(of: "\n", with: " ")
+        let condensed = stripped.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        if condensed.count <= 110 {
+            return condensed
+        }
+        let limit = 107
+        let cutoffIndex = condensed.index(condensed.startIndex, offsetBy: min(limit, condensed.count))
+        let prefix = condensed[..<cutoffIndex]
+        let truncatedAtWord = prefix.lastIndex(where: { $0.isWhitespace }).map { prefix[..<$0] } ?? prefix
+        return truncatedAtWord.trimmingCharacters(in: .whitespacesAndNewlines) + "..."
+    }
+
+    private func firstListItem(from raw: String) -> String {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return "" }
+        let firstChunk = trimmed
+            .components(separatedBy: ";")
+            .first?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? trimmed
+        return compactWhereLine(from: firstChunk)
+    }
+
+    private func runoffSecondElectionBodyText(for stateCode: String) -> String {
+        let normalized = stateCode.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        let rule = Self.runoffThresholdRulesByStateCode[normalized]
+
+        if let percent = rule?.primaryThresholdPercent {
+            let thresholdText = abs(percent.rounded() - percent) < 0.001
+                ? "\(Int(percent.rounded()))%"
+                : String(format: "%.1f%%", percent)
+            return "If no one gets over \(thresholdText) of the vote, the top candidates compete in a second election."
+        }
+
+        let thresholdLabel = rule?.primaryThresholdLabel.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !thresholdLabel.isEmpty {
+            if thresholdLabel.contains("%") {
+                return "If no one gets over \(thresholdLabel) of the vote, the top candidates compete in a second election."
+            }
+            return "If no one gets over the \(thresholdLabel) threshold, the top candidates compete in a second election."
+        }
+
+        return "If no one gets over 50% of the vote, the top candidates compete in a second election."
     }
 
     private func hasSubstantiveSpecialRule(_ value: String, kind: ElectionGuideSpecialRuleKind) -> Bool {
@@ -1643,37 +1959,292 @@ struct NYCMayoralElectionView: View {
                     .components(separatedBy: .newlines)
                     .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
                     .filter { !$0.isEmpty }
+                let firstLine = lines.first ?? ""
+                let officeName = firstLine.split(separator: ":", maxSplits: 1).first.map(String.init)
+                let rotatingExampleLine = rotatingOfficeExampleLine(forOfficeTitle: officeName)
+                let detailLines = rotatingExampleLine.map { [$0] } ?? Array(lines.dropFirst())
 
                 VStack(alignment: .leading, spacing: 4) {
-                    if let firstLine = lines.first {
-                        if let splitIndex = firstLine.firstIndex(of: ":") {
-                            let office = String(firstLine[..<splitIndex])
-                            let remainder = String(firstLine[splitIndex...])
-                            (
-                                Text(office).bold()
-                                + Text(remainder)
-                            )
+                    if let splitIndex = firstLine.firstIndex(of: ":") {
+                        let office = String(firstLine[..<splitIndex])
+                        let remainder = String(firstLine[splitIndex...])
+                        (
+                            Text(office).bold()
+                            + Text(remainder)
+                        )
+                        .font(.subheadline)
+                        .foregroundColor(VoteNowColors.primaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                    } else {
+                        Text(firstLine)
                             .font(.subheadline)
                             .foregroundColor(VoteNowColors.primaryText)
                             .fixedSize(horizontal: false, vertical: true)
-                        } else {
-                            Text(firstLine)
-                                .font(.subheadline)
-                                .foregroundColor(VoteNowColors.primaryText)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
                     }
 
-                    ForEach(Array(lines.dropFirst().enumerated()), id: \.offset) { _, line in
-                        Text(line)
-                            .font(.subheadline)
-                            .foregroundColor(VoteNowColors.primaryText)
-                            .fixedSize(horizontal: false, vertical: true)
+                    ForEach(Array(detailLines.enumerated()), id: \.offset) { _, line in
+                        officesInfluenceDetailLineView(line)
+                            .id(line)
+                            .transition(.opacity)
+                            .animation(reduceMotion ? nil : .easeInOut(duration: 0.35), value: line)
                             .padding(.leading, 12)
                     }
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private func officesInfluenceDetailLineView(_ line: String) -> some View {
+        let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.hasPrefix("Example:") {
+            let remainder = String(trimmed.dropFirst("Example:".count)).trimmingCharacters(in: .whitespacesAndNewlines)
+            let parsed = parsedOfficeExampleLine(remainder)
+            (
+                Text("Example").bold()
+                + Text(": \(parsed.body)")
+                + (parsed.monthYearSuffix.map { Text(" (\($0))").bold().italic() } ?? Text(""))
+            )
+            .font(.subheadline)
+            .foregroundColor(VoteNowColors.primaryText)
+            .fixedSize(horizontal: false, vertical: true)
+        } else {
+            Text(line)
+                .font(.subheadline)
+                .foregroundColor(VoteNowColors.primaryText)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private func parsedOfficeExampleLine(_ raw: String) -> ElectionGuideOfficeExampleLine {
+        if let parsed = parsedISODateExample(raw) {
+            return parsed
+        }
+        if let parsed = parsedNamedMonthDateExample(raw) {
+            return parsed
+        }
+        return ElectionGuideOfficeExampleLine(
+            body: raw.trimmingCharacters(in: .whitespacesAndNewlines),
+            monthYearSuffix: nil
+        )
+    }
+
+    private func parsedISODateExample(_ raw: String) -> ElectionGuideOfficeExampleLine? {
+        let pattern = #"(\d{4})-(\d{2})-(\d{2})"#
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: raw, range: NSRange(raw.startIndex..., in: raw)),
+              match.numberOfRanges >= 3,
+              let fullRange = Range(match.range(at: 0), in: raw),
+              let yearRange = Range(match.range(at: 1), in: raw),
+              let monthRange = Range(match.range(at: 2), in: raw),
+              let year = Int(raw[yearRange]),
+              let month = Int(raw[monthRange]),
+              let monthYear = monthYearLabel(year: year, month: month) else {
+            return nil
+        }
+
+        var cleaned = raw
+        cleaned.removeSubrange(fullRange)
+        cleaned = cleanupExampleBody(cleaned)
+        return ElectionGuideOfficeExampleLine(body: cleaned, monthYearSuffix: monthYear)
+    }
+
+    private func parsedNamedMonthDateExample(_ raw: String) -> ElectionGuideOfficeExampleLine? {
+        let pattern = #"\(?\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sep\.?|Sept\.?|Oct\.?|Nov\.?|Dec\.?)\s+\d{1,2},\s*(\d{4})\b\)?"#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]),
+              let match = regex.firstMatch(in: raw, range: NSRange(raw.startIndex..., in: raw)),
+              match.numberOfRanges >= 3,
+              let fullRange = Range(match.range(at: 0), in: raw),
+              let monthTokenRange = Range(match.range(at: 1), in: raw),
+              let yearRange = Range(match.range(at: 2), in: raw),
+              let year = Int(raw[yearRange]),
+              let month = monthNumber(fromToken: String(raw[monthTokenRange])),
+              let monthYear = monthYearLabel(year: year, month: month) else {
+            return nil
+        }
+
+        var cleaned = raw
+        cleaned.removeSubrange(fullRange)
+        cleaned = cleanupExampleBody(cleaned)
+        return ElectionGuideOfficeExampleLine(body: cleaned, monthYearSuffix: monthYear)
+    }
+
+    private func cleanupExampleBody(_ raw: String) -> String {
+        var cleaned = raw
+        cleaned = cleaned.replacingOccurrences(
+            of: #"\s*[—-]\s*:\s*"#,
+            with: ": ",
+            options: .regularExpression
+        )
+        cleaned = cleaned.replacingOccurrences(
+            of: #"^\s*[—-]\s*"#,
+            with: "",
+            options: .regularExpression
+        )
+        cleaned = cleaned.replacingOccurrences(
+            of: #"\s{2,}"#,
+            with: " ",
+            options: .regularExpression
+        )
+        cleaned = cleaned.replacingOccurrences(
+            of: #"\(\s*\)"#,
+            with: "",
+            options: .regularExpression
+        )
+        cleaned = cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+        while cleaned.hasPrefix(":") {
+            cleaned.removeFirst()
+            cleaned = cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return cleaned
+    }
+
+    private func monthYearLabel(year: Int, month: Int) -> String? {
+        guard (1...12).contains(month) else { return nil }
+        var components = DateComponents()
+        components.year = year
+        components.month = month
+        components.day = 1
+        guard let date = Calendar(identifier: .gregorian).date(from: components) else { return nil }
+
+        let formatter = DateFormatter()
+        formatter.locale = locale
+        formatter.dateFormat = "LLLL, yyyy"
+        return formatter.string(from: date)
+    }
+
+    private func monthNumber(fromToken rawToken: String) -> Int? {
+        let cleaned = rawToken
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+            .replacingOccurrences(of: ".", with: "")
+
+        let months: [String: Int] = [
+            "january": 1, "jan": 1,
+            "february": 2, "feb": 2,
+            "march": 3, "mar": 3,
+            "april": 4, "apr": 4,
+            "may": 5,
+            "june": 6, "jun": 6,
+            "july": 7, "jul": 7,
+            "august": 8, "aug": 8,
+            "september": 9, "sep": 9, "sept": 9,
+            "october": 10, "oct": 10,
+            "november": 11, "nov": 11,
+            "december": 12, "dec": 12
+        ]
+        return months[cleaned]
+    }
+
+    @ViewBuilder
+    private func ballotMeasuresBodyView(intro: String, items: [String]) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            if !intro.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                Text(intro)
+                    .font(.subheadline)
+                    .foregroundColor(VoteNowColors.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            ForEach(Array(items.enumerated()), id: \.offset) { index, raw in
+                let parsed = parsedBallotMeasureItem(from: raw)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 6) {
+                        Text("Measure \(index + 1)")
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(VoteNowColors.primaryText)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(
+                                Capsule(style: .continuous)
+                                    .fill(Color(red: 0.93, green: 0.58, blue: 0.16).opacity(0.26))
+                            )
+
+                        if let dateText = parsed.dateText {
+                            Text(dateText)
+                                .font(.caption.weight(.semibold))
+                                .foregroundColor(VoteNowColors.mutedText)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(
+                                    Capsule(style: .continuous)
+                                        .fill(Color.black.opacity(0.06))
+                                )
+                        }
+
+                        Spacer(minLength: 0)
+                    }
+
+                    Text(parsed.title)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(VoteNowColors.primaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    if !parsed.summary.isEmpty {
+                        Text(parsed.summary)
+                            .font(.subheadline)
+                            .foregroundColor(VoteNowColors.primaryText)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                .padding(10)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(Color(red: 0.96, green: 0.97, blue: 0.98))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                )
+            }
+
+            Text("Disclosure: Descriptions are pulled from official bill text.")
+                .font(.caption)
+                .foregroundColor(VoteNowColors.mutedText)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 2)
+        }
+    }
+
+    private func parsedBallotMeasureItem(from raw: String) -> ElectionGuideParsedBallotMeasureItem {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            return ElectionGuideParsedBallotMeasureItem(title: "", summary: "", dateText: nil)
+        }
+
+        let parts = trimmed.split(separator: ":", maxSplits: 1, omittingEmptySubsequences: false)
+        let headline = parts.first.map(String.init)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? trimmed
+        let summary = parts.count > 1
+            ? String(parts[1]).trimmingCharacters(in: .whitespacesAndNewlines)
+            : ""
+
+        if let openParen = headline.lastIndex(of: "("),
+           let closeParen = headline.lastIndex(of: ")"),
+           openParen < closeParen {
+            let dateCandidate = String(headline[headline.index(after: openParen)..<closeParen])
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            let title = String(headline[..<openParen]).trimmingCharacters(in: .whitespacesAndNewlines)
+
+            if !dateCandidate.isEmpty, dateCandidate.count <= 28, !title.isEmpty {
+                return ElectionGuideParsedBallotMeasureItem(title: title, summary: summary, dateText: dateCandidate)
+            }
+        }
+
+        return ElectionGuideParsedBallotMeasureItem(title: headline, summary: summary, dateText: nil)
+    }
+
+    private func rotatingOfficeExampleLine(forOfficeTitle officeTitle: String?) -> String? {
+        guard let officeTitle,
+              let key = normalizedOfficePowerKey(from: officeTitle),
+              let examples = Self.officePowerExamplesByKey[key],
+              !examples.isEmpty else {
+            return nil
+        }
+
+        let index = officeExampleRotationTick % examples.count
+        return "Example: \(examples[index])"
     }
 
     @ViewBuilder
@@ -1869,6 +2440,32 @@ private struct ElectionGuideStateVotingFeature: Decodable {
     let mailCategory: String
 }
 
+private struct ElectionGuideRunoffThresholdRule: Decodable {
+    let stateCode: String
+    let state: String
+    let stateEmoji: String
+    let primaryThresholdLabel: String
+    let primaryThresholdPercent: Double?
+    let primaryRunoffRule: String
+    let generalThresholdLabel: String
+    let generalRunoffRule: String
+    let notes: String
+    let sources: String
+}
+
+private struct ElectionGuideRankedChoiceByStateDataset: Decodable {
+    let states: [String: ElectionGuideRankedChoiceStateSummary]
+}
+
+private struct ElectionGuideRankedChoiceStateSummary: Decodable {
+    let state: String
+    let type: String
+    let mapCategory: String
+    let whereApplies: String
+    let explicitOffices: String
+    let statusSnapshot: String
+}
+
 private struct ElectionGuideBallotMeasurePolicy: Decodable {
     let state: String
     let reviewFlag: String
@@ -1905,6 +2502,24 @@ private struct ElectionGuideStatewideBallotMeasure: Decodable {
 private struct ElectionGuideOfficePowersDataset: Decodable {
     let meta: ElectionGuideOfficePowersMeta
     let rows: [ElectionGuideOfficePowerRow]
+}
+
+private struct ElectionGuideOfficeExamplesDataset: Decodable {
+    let meta: ElectionGuideOfficeExamplesMeta
+    let rows: [ElectionGuideOfficeExamplesRow]
+}
+
+private struct ElectionGuideOfficeExamplesMeta: Decodable {
+    let title: String
+    let lastUpdated: String
+    let sourceFile: String
+}
+
+private struct ElectionGuideOfficeExamplesRow: Decodable {
+    let office: String
+    let officeKey: String
+    let context: String
+    let examples: [String]
 }
 
 private struct ElectionGuideOfficePowersMeta: Decodable {
@@ -1972,6 +2587,7 @@ private enum ElectionGuideCardKind {
     case standard
     case partyAffiliation
     case officesInfluence
+    case ballotMeasures
 }
 
 private struct ElectionGuideThreeWaysContext {
@@ -1981,6 +2597,7 @@ private struct ElectionGuideThreeWaysContext {
 
 private struct ElectionGuideRCVDemoContext {
     let ctaText: String
+    let whereSummaryLines: [String]
 }
 
 private struct ElectionGuideRunoffDemoContext {
@@ -1995,9 +2612,28 @@ private struct ElectionGuidePrimaryCardContext {
     let runoffLine: String?
 }
 
+private struct ElectionGuideParsedBallotMeasureItem {
+    let title: String
+    let summary: String
+    let dateText: String?
+}
+
+private struct ElectionGuideOfficeExampleLine {
+    let body: String
+    let monthYearSuffix: String?
+}
+
 private enum ElectionGuideSpecialRuleKind {
     case rankedChoice
     case runoff
+}
+
+private enum GuideCardAnchor: String {
+    case mainElection = "main-election"
+    case primaryGuide = "primary-guide"
+    case specialRules = "special-rules"
+    case ballotMeasures = "ballot-measures"
+    case voterID = "voter-id"
 }
 
 private enum ElectionGuideCardAccent {
@@ -2009,6 +2645,8 @@ private enum ElectionGuideCardAccent {
     case runoff
     case presidential
     case special
+    case specialRules
+    case ballotMeasures
 
     var color: Color {
         switch self {
@@ -2028,6 +2666,10 @@ private enum ElectionGuideCardAccent {
             return VoteNowColors.primaryCTA
         case .special:
             return VoteNowColors.richRed
+        case .specialRules:
+            return Color(hex: "#6A4CCF")
+        case .ballotMeasures:
+            return Color(hex: "#B85C36")
         }
     }
 }

@@ -22,6 +22,11 @@ final class WhyVoteDataStore: ObservableObject {
         return stateDataByCode[stateCode]
     }
 
+    func primaryTurnoutPercent(for stateCode: String?) -> Double? {
+        guard let stateCode = stateCode?.uppercased() else { return nil }
+        return Self.primaryTurnoutByStateCode[stateCode]
+    }
+
     func inferStateCode(from address: String) -> String? {
         Self.inferStateCode(from: address)
     }
@@ -186,5 +191,22 @@ final class WhyVoteDataStore: ObservableObject {
         "VIRGINIA": "VA", "WASHINGTON": "WA", "WEST VIRGINIA": "WV", "WISCONSIN": "WI", "WYOMING": "WY",
         "DISTRICT OF COLUMBIA": "DC", "PUERTO RICO": "PR", "GUAM": "GU", "U S VIRGIN ISLANDS": "VI",
         "US VIRGIN ISLANDS": "VI", "AMERICAN SAMOA": "AS", "NORTHERN MARIANA ISLANDS": "MP"
+    ]
+
+    // 2022 statewide primary turnout percentages (Total_Primary_Turnout_Pct)
+    // sourced from 2022_state_primary_turnout_dem_gop.csv.
+    // Values are percentages in the 0...100 range.
+    // Louisiana is intentionally omitted because the CSV total is blank.
+    private static let primaryTurnoutByStateCode: [String: Double] = [
+        "AL": 24.3, "AK": 36.6, "AZ": 28.6, "AR": 21.1, "CA": 28.6,
+        "CO": 28.1, "CT": 7.9, "DE": 9.9, "FL": 25.1, "GA": 27.2,
+        "HI": 33.5, "ID": 23.6, "IL": 19.4, "IN": 13.3, "IA": 15.2,
+        "KS": 47.7, "KY": 22.4, "ME": 12.6, "MD": 23.8, "MA": 21.1,
+        "MI": 28.5, "MN": 19.1, "MS": 11.9, "MO": 23.9, "MT": 33.7,
+        "NE": 29.8, "NV": 21.1, "NH": 21.9, "NJ": 12.3, "NM": 17.2,
+        "NY": 3.2, "NC": 18.3, "ND": 18.6, "OH": 18.8, "OK": 18.5,
+        "OR": 34.6, "PA": 28.9, "RI": 16.8, "SC": 14.3, "SD": 28.5,
+        "TN": 18.6, "TX": 16.2, "UT": 20.0, "VT": 25.5, "VA": 2.8,
+        "WA": 35.4, "WV": 18.8, "WI": 27.9, "WY": 42.3
     ]
 }

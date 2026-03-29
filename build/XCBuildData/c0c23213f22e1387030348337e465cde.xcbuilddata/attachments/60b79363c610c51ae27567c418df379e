@@ -1,0 +1,4 @@
+module StripePaymentSheet {
+header "StripePaymentSheet-Swift.h"
+export *
+}

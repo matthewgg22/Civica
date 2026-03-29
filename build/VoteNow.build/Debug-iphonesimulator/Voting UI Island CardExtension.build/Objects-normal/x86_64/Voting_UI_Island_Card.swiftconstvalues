@@ -1,0 +1,61 @@
+[
+  {
+    "typeName": "Voting_UI_Island_CardExtension.ConfigurationAppIntent",
+    "mangledTypeName": "30Voting_UI_Island_CardExtension22ConfigurationAppIntentV",
+    "kind": "struct",
+    "file": "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/Voting UI Island Card/AppIntent.swift",
+    "line": 3,
+    "conformances": [
+      "AppIntents.WidgetConfigurationIntent",
+      "AppIntents.AppIntent",
+      "AppIntents.PersistentlyIdentifiable",
+      "AppIntents._SupportsAppDependencies",
+      "Swift.Sendable"
+    ],
+    "allConformances": [
+      {
+        "protocolName": "AppIntents.WidgetConfigurationIntent",
+        "conformanceDefiningModule": "Voting_UI_Island_CardExtension"
+      },
+      {
+        "protocolName": "AppIntents.AppIntent",
+        "conformanceDefiningModule": "Voting_UI_Island_CardExtension"
+      },
+      {
+        "protocolName": "AppIntents.PersistentlyIdentifiable",
+        "conformanceDefiningModule": "Voting_UI_Island_CardExtension"
+      },
+      {
+        "protocolName": "AppIntents._SupportsAppDependencies",
+        "conformanceDefiningModule": "Voting_UI_Island_CardExtension"
+      },
+      {
+        "protocolName": "Swift.Sendable",
+        "conformanceDefiningModule": "Voting_UI_Island_CardExtension"
+      }
+    ],
+    "associatedTypeAliases": [],
+    "properties": [
+      {
+        "label": "smiley",
+        "type": "Voting_UI_Island_CardExtension.ConfigurationAppIntent",
+        "mangledTypeName": "n/a - deprecated",
+        "isStatic": "true",
+        "isComputed": "true",
+        "file": "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/Voting UI Island Card/Voting_UI_Island_Card.swift",
+        "line": 70,
+        "valueKind": "Runtime"
+      },
+      {
+        "label": "starEyes",
+        "type": "Voting_UI_Island_CardExtension.ConfigurationAppIntent",
+        "mangledTypeName": "n/a - deprecated",
+        "isStatic": "true",
+        "isComputed": "true",
+        "file": "/Users/matthewgreer-gentis/Desktop/Swift Coding Folders/VoteNow Primary/VoteNow/Voting UI Island Card/Voting_UI_Island_Card.swift",
+        "line": 76,
+        "valueKind": "Runtime"
+      }
+    ]
+  }
+]

@@ -1,0 +1,4 @@
+module AppCheckCore {
+umbrella header "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/app-check/AppCheckCore/Sources/Public/AppCheckCore/AppCheckCore.h"
+export *
+}

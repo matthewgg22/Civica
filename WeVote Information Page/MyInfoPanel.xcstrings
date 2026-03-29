@@ -33,6 +33,24 @@
             "state": "translated",
             "value": "Hủy"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
         }
       }
     },
@@ -68,6 +86,24 @@
             "state": "translated",
             "value": "Hiển thị đại diện của tôi"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示我的代表"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show My Representatives"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show My Representatives"
+          }
         }
       }
     },
@@ -77,31 +113,49 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Please enter a valid 5-digit U.S. ZIP code before continuing."
+            "value": "Please enter a valid U.S. ZIP, city/state, or full address before continuing."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ingresa un codigo postal valido de 5 digitos de EE. UU. antes de continuar."
+            "value": "Ingresa un ZIP de EE. UU., ciudad/estado o direccion completa validos antes de continuar."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "继续之前请输入有效的美国 5 位邮政编码。"
+            "value": "继续之前请输入有效的美国邮编、城市/州或完整地址。"
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Maglagay muna ng wastong 5-digit U.S. ZIP code bago magpatuloy."
+            "value": "Maglagay ng wastong U.S. ZIP, lungsod/estado, o buong address bago magpatuloy."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vui lòng nhập mã ZIP Hoa Kỳ hợp lệ gồm 5 chữ số trước khi tiếp tục."
+            "value": "Vui lòng nhập ZIP Hoa Kỳ, thành phố/tiểu bang hoặc địa chỉ đầy đủ hợp lệ trước khi tiếp tục."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "继续之前请输入有效的美国邮编、城市/州或完整地址。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please enter a valid U.S. ZIP, city/state, or full address before continuing."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please enter a valid U.S. ZIP, city/state, or full address before continuing."
           }
         }
       }
@@ -138,6 +192,24 @@
             "state": "translated",
             "value": "OK"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "确定"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
         }
       }
     },
@@ -147,31 +219,49 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Invalid ZIP Code"
+            "value": "Invalid Address"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Codigo postal no valido"
+            "value": "Direccion no valida"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "无效的邮政编码"
+            "value": "无效的地址"
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hindi wastong ZIP code"
+            "value": "Hindi wastong address"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mã ZIP không hợp lệ"
+            "value": "Địa chỉ không hợp lệ"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无效的地址"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid Address"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid Address"
           }
         }
       }
@@ -182,31 +272,49 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Chinese"
+            "value": "Mandarin (Simplified)"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Chino"
+            "value": "Mandarín (simplificado)"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "中文"
+            "value": "普通话（简体）"
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tsino"
+            "value": "Mandarin (Pinasimple)"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tiếng Trung"
+            "value": "Quan thoại (Giản thể)"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "普通話（簡體）"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mandarin (simplifié)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mandarin (Vereinfacht)"
           }
         }
       }
@@ -223,22 +331,40 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Proximamente"
+            "value": "Próximamente"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Coming soon"
+            "value": "即将推出"
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Coming soon"
+            "value": "Malapit na"
           }
         },
         "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sắp ra mắt"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "即将推出"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coming soon"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Coming soon"
@@ -278,6 +404,24 @@
             "state": "translated",
             "value": "Các tùy chọn này được dịch từ tiếng Anh và có thể có sai sót."
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这些偏好由英语翻译而来，可能存在不准确之处。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "These preferences were translated from English and may contain inaccuracies."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "These preferences were translated from English and may contain inaccuracies."
+          }
         }
       }
     },
@@ -312,6 +456,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tiếng Anh"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "英语"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "English"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "English"
           }
         }
       }
@@ -348,6 +510,24 @@
             "state": "translated",
             "value": "Tiếng Tây Ban Nha"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "西班牙语"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spanish"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spanish"
+          }
         }
       }
     },
@@ -379,6 +559,24 @@
           }
         },
         "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filipino"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filipino"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filipino"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Filipino"
@@ -418,6 +616,24 @@
             "state": "translated",
             "value": "Tùy chọn ngôn ngữ"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语言选项"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language Options"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language Options"
+          }
         }
       }
     },
@@ -452,6 +668,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tiếng Việt"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "越南语"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vietnamese"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vietnamese"
           }
         }
       }
@@ -488,6 +722,24 @@
             "state": "translated",
             "value": "Thông tin của tôi"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我的信息"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My Information"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My Information"
+          }
         }
       }
     },
@@ -519,6 +771,24 @@
           }
         },
         "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Democrat"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Democrat"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Democrat"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Democrat"
@@ -558,6 +828,24 @@
             "state": "translated",
             "value": "Xác định điều kiện tham gia bầu cử sơ bộ."
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "决定初选资格。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Determines primary election eligibility."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Determines primary election eligibility."
+          }
         }
       }
     },
@@ -589,6 +877,24 @@
           }
         },
         "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Independent"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Independent"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Independent"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Independent"
@@ -628,6 +934,24 @@
             "state": "translated",
             "value": "Republican"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Republican"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Republican"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Republican"
+          }
         }
       }
     },
@@ -662,6 +986,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "TRỢ NĂNG"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无障碍"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ACCESSIBILITY"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ACCESSIBILITY"
           }
         }
       }
@@ -698,6 +1040,24 @@
             "state": "translated",
             "value": "ĐĂNG KÝ ĐẢNG PHÁI"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "政党登记"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PARTY REGISTRATION"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PARTY REGISTRATION"
+          }
         }
       }
     },
@@ -707,31 +1067,49 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "YOUR ZIP CODE"
+            "value": "YOUR ADDRESS"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "TU CODIGO POSTAL"
+            "value": "TU DIRECCION"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "你的邮政编码"
+            "value": "你的地址"
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "IYONG ZIP CODE"
+            "value": "IYONG ADDRESS"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "MÃ ZIP CỦA BẠN"
+            "value": "ĐỊA CHỈ CỦA BẠN"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的地址"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YOUR ADDRESS"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YOUR ADDRESS"
           }
         }
       }
@@ -742,31 +1120,49 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Provides personalized eligible election logistics."
+            "value": "Use ZIP, city/state, or full U.S. address for personalized election logistics."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Proporciona logistica electoral personalizada y elegible."
+            "value": "Usa ZIP, ciudad/estado o direccion completa de EE. UU. para obtener logistica electoral personalizada."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "提供个性化的选举后勤信息。"
+            "value": "使用美国邮编、城市/州或完整地址以获取个性化选举后勤信息。"
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nagbibigay ng personalized na impormasyong pang-halalan na akma sa iyo."
+            "value": "Gamitin ang ZIP, lungsod/estado, o buong U.S. address para sa personalized na logistics sa halalan."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cung cấp thông tin hậu cần bầu cử phù hợp với bạn."
+            "value": "Dung ZIP Hoa Ky, thanh pho/tieu bang hoac dia chi day du de nhan thong tin hau can bau cu duoc ca nhan hoa."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用美国邮编、城市/州或完整地址以获取个性化选举后勤信息。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use ZIP, city/state, or full U.S. address for personalized election logistics."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use ZIP, city/state, or full U.S. address for personalized election logistics."
           }
         }
       }
@@ -803,6 +1199,24 @@
             "state": "translated",
             "value": "ví dụ 10044"
           }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "例如 10044"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e.g. 10044"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e.g. 10044"
+          }
         }
       }
     },
@@ -837,6 +1251,183 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tiếng Filipino"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "菲律宾语"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filipino"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filipino"
+          }
+        }
+      }
+    },
+    "my_info.language.traditional_mandarin": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mandarin (Traditional)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mandarín (tradicional)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "普通话（繁体）"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "普通話（繁體）"
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mandarin (Tradisyonal)"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quan thoại (Phồn thể)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mandarin (traditionnel)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mandarin (Traditionell)"
+          }
+        }
+      }
+    },
+    "my_info.language.french": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "French"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Francés"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "法语"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "法語"
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pranses"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếng Pháp"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Français"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Französisch"
+          }
+        }
+      }
+    },
+    "my_info.language.german": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "German"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alemán"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "德语"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "德語"
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aleman"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếng Đức"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allemand"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deutsch"
           }
         }
       }

@@ -1,0 +1,4 @@
+module GoogleAppMeasurementWithoutAdIdSupportTarget {
+umbrella "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/GoogleAppMeasurement/GoogleAppMeasurementWithoutAdIdSupportWrapper/include"
+export *
+}

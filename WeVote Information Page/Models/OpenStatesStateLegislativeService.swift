@@ -39,12 +39,12 @@ actor OpenStatesStateLegislativeService {
     }
 
     private let session: URLSession
-    private let apiKey: String?
+    private let baseURL: URL
     private var cache: [String: [Official]] = [:]
 
     init(session: URLSession = .shared, bundle: Bundle = .main) {
         self.session = session
-        self.apiKey = Self.readAPIKey(from: bundle)
+        self.baseURL = Self.resolveBaseURL(bundle: bundle)
     }
 
     func lookupStateLegislators(
@@ -52,8 +52,6 @@ actor OpenStatesStateLegislativeService {
         coordinate: RepsGeoCoordinate,
         expectedStateCode: String?
     ) async -> [Official] {
-        guard let apiKey, !apiKey.isEmpty else { return [] }
-
         let normalizedZIP = String(zip.filter(\.isNumber).prefix(5))
         let normalizedState = expectedStateCode?.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         let cacheKey = "\(normalizedZIP)|\(normalizedState ?? "")"
@@ -62,7 +60,10 @@ actor OpenStatesStateLegislativeService {
             return cached
         }
 
-        guard var components = URLComponents(string: "https://v3.openstates.org/people.geo") else {
+        guard var components = URLComponents(
+            url: endpoint("api/v1/openstates/people.geo"),
+            resolvingAgainstBaseURL: false
+        ) else {
             return []
         }
 
@@ -78,7 +79,12 @@ actor OpenStatesStateLegislativeService {
         request.httpMethod = "GET"
         request.timeoutInterval = 8
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue(apiKey, forHTTPHeaderField: "X-API-KEY")
+        do {
+            let token = try await currentAccessToken()
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        } catch {
+            return []
+        }
 
         do {
             let (data, response) = try await session.data(for: request)
@@ -98,6 +104,29 @@ actor OpenStatesStateLegislativeService {
         } catch {
             return []
         }
+    }
+
+    private func currentAccessToken() async throws -> String {
+        do {
+            return try await SupabaseClientProvider.shared.client.auth.session.accessToken
+        } catch {
+            let refreshed = try await SupabaseClientProvider.shared.client.auth.refreshSession()
+            return refreshed.accessToken
+        }
+    }
+
+    private func endpoint(_ path: String) -> URL {
+        baseURL.appendingPathComponent(path.trimmingCharacters(in: CharacterSet(charactersIn: "/")))
+    }
+
+    private static func resolveBaseURL(bundle: Bundle = .main) -> URL {
+        if let configured = (bundle.object(forInfoDictionaryKey: "CIVIC_API_BASE_URL") as? String)?
+            .trimmingCharacters(in: .whitespacesAndNewlines),
+           !configured.isEmpty,
+           let url = URL(string: configured) {
+            return url
+        }
+        return URL(string: "https://votenow-botr.onrender.com")!
     }
 
     private func official(from person: PersonRecord, expectedStateCode: String?) -> Official? {
@@ -196,18 +225,5 @@ actor OpenStatesStateLegislativeService {
         }
 
         return unique
-    }
-
-    private static func readAPIKey(from bundle: Bundle) -> String? {
-        let key = (bundle.object(forInfoDictionaryKey: "OPENSTATES_API_KEY") as? String)?
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-
-        guard let key,
-              !key.isEmpty,
-              key != "YOUR_OPENSTATES_API_KEY" else {
-            return nil
-        }
-
-        return key
     }
 }

@@ -34,7 +34,7 @@ final class GovHelpService {
         try await SupabaseManager.shared.signInAnonymouslyIfNeeded()
 
         let session = try await resolveSession()
-        let endpoint = edgeFunctionURL(functionSlug: "super-function")
+        let endpoint = edgeFunctionURL(functionSlug: SupabaseConfig.current.govHelpFunctionSlug)
 
         let primaryBody = try JSONEncoder().encode(request)
         var result = try await sendHTTP(
@@ -56,7 +56,7 @@ final class GovHelpService {
         }
 
         if (200...299).contains(result.statusCode) == false {
-            logger.error("GovHelp request failed status=\(result.statusCode) endpoint=\(endpoint.absoluteString, privacy: .public)")
+            logger.error("GovHelp request failed status=\(result.statusCode)")
             if let errorPayload = try? JSONDecoder().decode(GovHelpErrorPayload.self, from: result.data) {
                 let detailedMessage: String
                 if let detail = errorPayload.detail?.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -76,7 +76,7 @@ final class GovHelpService {
             let parsed = try decoder.decode(GovHelpResponsePayload.self, from: result.data)
             return parsed
         } catch {
-            logger.error("GovHelp decode failed for response payload: \(error.localizedDescription, privacy: .public)")
+            logger.error("GovHelp decode failed for response payload.")
             throw GovHelpServiceError.invalidResponse
         }
     }
@@ -106,18 +106,51 @@ final class GovHelpService {
         accessToken: String,
         body: Data
     ) async throws -> (statusCode: Int, data: Data) {
-        var urlRequest = URLRequest(url: endpoint)
-        urlRequest.httpMethod = "POST"
-        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest.setValue(SupabaseConfig.current.anonKey, forHTTPHeaderField: "apikey")
-        urlRequest.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
-        urlRequest.httpBody = body
+        let maxAttempts = 3
+        var attempt = 1
+        while true {
+            do {
+                var urlRequest = URLRequest(url: endpoint)
+                urlRequest.httpMethod = "POST"
+                urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                urlRequest.setValue(SupabaseConfig.current.anonKey, forHTTPHeaderField: "apikey")
+                urlRequest.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+                urlRequest.httpBody = body
 
-        let (rawData, response) = try await URLSession.shared.data(for: urlRequest)
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw GovHelpServiceError.invalidResponse
+                let (rawData, response) = try await URLSession.shared.data(for: urlRequest)
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    throw GovHelpServiceError.invalidResponse
+                }
+                return (httpResponse.statusCode, rawData)
+            } catch {
+                let nsError = error as NSError
+                let transientNetworkError: Bool
+                if nsError.domain == NSURLErrorDomain {
+                    switch nsError.code {
+                    case NSURLErrorTimedOut,
+                         NSURLErrorNetworkConnectionLost,
+                         NSURLErrorNotConnectedToInternet,
+                         NSURLErrorCannotConnectToHost,
+                         NSURLErrorCannotFindHost,
+                         NSURLErrorDNSLookupFailed:
+                        transientNetworkError = true
+                    default:
+                        transientNetworkError = false
+                    }
+                } else {
+                    transientNetworkError = false
+                }
+
+                guard transientNetworkError, attempt < maxAttempts else {
+                    throw error
+                }
+
+                attempt += 1
+                let delay = UInt64(250_000_000 * attempt)
+                logger.warning("GovHelp network request failed transiently; retrying.")
+                try await Task.sleep(nanoseconds: delay)
+            }
         }
-        return (httpResponse.statusCode, rawData)
     }
 
     private func legacyFallbackPayload(from request: GovHelpRequestPayload) -> LegacyGovHelpRequestPayload {

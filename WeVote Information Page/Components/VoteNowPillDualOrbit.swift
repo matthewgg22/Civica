@@ -1,5 +1,10 @@
 import SwiftUI
 
+enum VoteNowDualOrbitPathStyle {
+    case automatic
+    case roundedRect(cornerRadius: CGFloat)
+}
+
 /// Reusable always-on CTA border effect for pill buttons.
 /// Two colored segments run the same capsule path with dynamic z-order:
 /// the segment currently "ahead" is rendered last, so it occludes the trailing one.
@@ -13,6 +18,10 @@ struct VoteNowPillDualOrbitModifier: ViewModifier {
     var borderInset: CGFloat = 1
     var segmentLength: Double = 0.34
     var separatorThickness: CGFloat = 0.8
+    var sliceFadeFactor: Double = 0.72
+    /// 0 keeps red/blue exactly opposite (full ring when segmentLength is 0.5).
+    var speedVariance: Double = 0.03
+    var pathStyle: VoteNowDualOrbitPathStyle = .automatic
 
     func body(content: Content) -> some View {
         content.overlay {
@@ -25,7 +34,10 @@ struct VoteNowPillDualOrbitModifier: ViewModifier {
                 idleOpacity: idleOpacity,
                 borderInset: borderInset,
                 segmentLength: segmentLength,
-                separatorThickness: separatorThickness
+                separatorThickness: separatorThickness,
+                sliceFadeFactor: sliceFadeFactor,
+                speedVariance: speedVariance,
+                pathStyle: pathStyle
             )
             .compositingGroup()
             .allowsHitTesting(false)
@@ -43,13 +55,16 @@ private struct VoteNowPillDualOrbitLayer: View {
     let borderInset: CGFloat
     let segmentLength: Double
     let separatorThickness: CGFloat
+    let sliceFadeFactor: Double
+    let speedVariance: Double
+    let pathStyle: VoteNowDualOrbitPathStyle
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         GeometryReader { geo in
-            let orbitPath = capsuleOrbitPath(in: orbitRect(in: geo.size))
-            let separatorPath = capsuleOrbitPath(
+            let orbitPath = orbitOutlinePath(in: orbitRect(in: geo.size))
+            let separatorPath = orbitOutlinePath(
                 in: orbitRect(in: geo.size).insetBy(
                     dx: strokeThickness * 0.55,
                     dy: strokeThickness * 0.55
@@ -64,11 +79,13 @@ private struct VoteNowPillDualOrbitLayer: View {
                     )
 
                 // Thin separator ring between button fill and orbit glow.
-                separatorPath
-                    .stroke(
-                        Color.white.opacity(0.96),
-                        style: StrokeStyle(lineWidth: max(0.55, separatorThickness), lineCap: .round, lineJoin: .round)
-                    )
+                if separatorThickness > 0.001 {
+                    separatorPath
+                        .stroke(
+                            Color.white.opacity(0.96),
+                            style: StrokeStyle(lineWidth: separatorThickness, lineCap: .round, lineJoin: .round)
+                        )
+                }
 
                 if reduceMotion {
                     ZStack {
@@ -82,11 +99,13 @@ private struct VoteNowPillDualOrbitLayer: View {
                         let base = normalized(now / max(loopDuration, 0.2))
 
                         // Slight speed delta creates occasional overtakes on the same path.
-                        let redHead = normalized(base * 1.03)
-                        let blueHead = normalized(base * 0.97 + 0.5)
+                        let clampedVariance = min(max(speedVariance, 0), 0.40)
+                        let redHead = normalized(base * (1 + clampedVariance))
+                        let blueHead = normalized(base * (1 - clampedVariance) + 0.5)
 
                         let delta = normalized(redHead - blueHead)
-                        let redLeading = delta > 0 && delta < 0.5
+                        // Keep a stable z-order rule so the loop boundary does not pop.
+                        let redLeading = (delta > 0 && delta < 0.5)
 
                         ZStack {
                             if redLeading {
@@ -104,13 +123,45 @@ private struct VoteNowPillDualOrbitLayer: View {
     }
 
     private func segment(path: Path, color: Color, head: Double, length: Double) -> some View {
-        let slices = 6
-        let sliceLength = max(length / Double(slices), 0.01)
+        let clampedLength = min(max(length, 0.02), 0.9)
+        let slices = 72
+        let sliceLength = max(clampedLength / Double(slices), 0.002)
+        let tailStart = normalized(head - clampedLength)
+
         return ZStack {
+            // Base continuous trail prevents the "dotted" look between slices.
+            if tailStart <= head {
+                segmentSlice(
+                    path: path,
+                    color: color.opacity(0.22),
+                    from: tailStart,
+                    to: head,
+                    glowScale: 0.22,
+                    lineCap: .round
+                )
+            } else {
+                segmentSlice(
+                    path: path,
+                    color: color.opacity(0.22),
+                    from: 0,
+                    to: head,
+                    glowScale: 0.22,
+                    lineCap: .round
+                )
+                segmentSlice(
+                    path: path,
+                    color: color.opacity(0.22),
+                    from: tailStart,
+                    to: 1,
+                    glowScale: 0.22,
+                    lineCap: .round
+                )
+            }
+
             ForEach(0..<slices, id: \.self) { index in
                 let sliceEnd = normalized(head - (Double(index) * sliceLength))
                 let sliceStart = normalized(sliceEnd - sliceLength)
-                let fade = pow(0.72, Double(index))
+                let fade = pow(min(max(sliceFadeFactor, 0.0), 1.0), Double(index))
                 let glowScale = max(0.28, 1.0 - (Double(index) * 0.12))
 
                 if sliceStart <= sliceEnd {
@@ -119,7 +170,8 @@ private struct VoteNowPillDualOrbitLayer: View {
                         color: color.opacity(fade),
                         from: sliceStart,
                         to: sliceEnd,
-                        glowScale: CGFloat(glowScale)
+                        glowScale: CGFloat(glowScale),
+                        lineCap: .butt
                     )
                 } else {
                     segmentSlice(
@@ -127,26 +179,35 @@ private struct VoteNowPillDualOrbitLayer: View {
                         color: color.opacity(fade),
                         from: 0,
                         to: sliceEnd,
-                        glowScale: CGFloat(glowScale)
+                        glowScale: CGFloat(glowScale),
+                        lineCap: .butt
                     )
                     segmentSlice(
                         path: path,
                         color: color.opacity(fade),
                         from: sliceStart,
                         to: 1,
-                        glowScale: CGFloat(glowScale)
+                        glowScale: CGFloat(glowScale),
+                        lineCap: .butt
                     )
                 }
             }
         }
     }
 
-    private func segmentSlice(path: Path, color: Color, from: Double, to: Double, glowScale: CGFloat) -> some View {
+    private func segmentSlice(
+        path: Path,
+        color: Color,
+        from: Double,
+        to: Double,
+        glowScale: CGFloat,
+        lineCap: CGLineCap
+    ) -> some View {
         path
             .trimmedPath(from: from, to: to)
             .stroke(
                 color,
-                style: StrokeStyle(lineWidth: strokeThickness, lineCap: .round, lineJoin: .round)
+                style: StrokeStyle(lineWidth: strokeThickness, lineCap: lineCap, lineJoin: .round)
             )
             .shadow(color: color.opacity(glowIntensity * Double(glowScale)), radius: strokeThickness * 0.8 * glowScale, x: 0, y: 0)
             .shadow(color: color.opacity(glowIntensity * 0.5 * Double(glowScale)), radius: strokeThickness * 1.5 * glowScale, x: 0, y: 0)
@@ -158,8 +219,23 @@ private struct VoteNowPillDualOrbitLayer: View {
         return outer.insetBy(dx: inset, dy: inset)
     }
 
+    private func orbitOutlinePath(in rect: CGRect) -> Path {
+        guard rect.width > 1, rect.height > 1 else { return Path() }
+
+        switch pathStyle {
+        case .roundedRect(let cornerRadius):
+            let clamped = min(max(0, cornerRadius), min(rect.width, rect.height) / 2)
+            return Path(roundedRect: rect, cornerRadius: clamped, style: .continuous)
+        case .automatic:
+            return capsuleOrbitPath(in: rect)
+        }
+    }
+
     private func capsuleOrbitPath(in rect: CGRect) -> Path {
         guard rect.width > 1, rect.height > 1 else { return Path() }
+        if abs(rect.width - rect.height) <= 0.5 {
+            return Path(ellipseIn: rect)
+        }
 
         let radius = min(rect.height / 2, rect.width / 2)
         let leftCenter = CGPoint(x: rect.minX + radius, y: rect.midY)
@@ -203,7 +279,10 @@ extension View {
         idleOpacity: Double = 0.34,
         borderInset: CGFloat = 1,
         segmentLength: Double = 0.34,
-        separatorThickness: CGFloat = 0.8
+        separatorThickness: CGFloat = 0.8,
+        sliceFadeFactor: Double = 0.72,
+        speedVariance: Double = 0.03,
+        pathStyle: VoteNowDualOrbitPathStyle = .automatic
     ) -> some View {
         modifier(
             VoteNowPillDualOrbitModifier(
@@ -215,7 +294,10 @@ extension View {
                 idleOpacity: idleOpacity,
                 borderInset: borderInset,
                 segmentLength: segmentLength,
-                separatorThickness: separatorThickness
+                separatorThickness: separatorThickness,
+                sliceFadeFactor: sliceFadeFactor,
+                speedVariance: speedVariance,
+                pathStyle: pathStyle
             )
         )
     }
