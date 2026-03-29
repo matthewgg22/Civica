@@ -69,6 +69,8 @@ struct WeVote_Information_PageApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     init() {
+        SupabaseConfig.validateLaunchConfiguration()
+
         guard let publishableKey = Self.stripePublishableKey() else {
             Self.bootstrapLogger.error("Missing STRIPE_PUBLISHABLE_KEY in Info.plist. Stripe features are disabled.")
             STPAPIClient.shared.publishableKey = ""

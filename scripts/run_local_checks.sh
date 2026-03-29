@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
-echo "[1/3] Python syntax compile checks"
+echo "[1/4] Python syntax compile checks"
 python3 - <<'PY'
 from pathlib import Path
 
@@ -21,14 +21,21 @@ for root in python_paths:
 print(f"Compiled {checked} Python files")
 PY
 
-echo "[2/3] Built-in unittest smoke checks"
+echo "[2/4] Built-in unittest smoke checks"
 python3 -m unittest discover -s tests -p 'test_*_unittest.py' -v
 
+echo "[3/4] No print/debug telemetry in app+backend sources"
+if rg -n '\bprint\(|debugPrint\(|NSLog\(' "WeVote Information Page" backend -g '!build/**' >/tmp/votenow_print_hits.txt; then
+  echo "Disallowed print/debug telemetry found:"
+  cat /tmp/votenow_print_hits.txt
+  exit 1
+fi
+
 if [[ "${RUN_XCODEBUILD:-0}" == "1" ]]; then
-  echo "[3/3] Optional Xcode build check"
+  echo "[4/4] Optional Xcode build check"
   set -o pipefail
   xcodebuild -project "VoteNow.xcodeproj" -scheme "VoteNow" -configuration Debug -destination "generic/platform=iOS" build \
     2>&1 | rg -n "BUILD SUCCEEDED|BUILD FAILED|error:|warning:"
 else
-  echo "[3/3] Optional Xcode build check skipped (set RUN_XCODEBUILD=1 to enable)"
+  echo "[4/4] Optional Xcode build check skipped (set RUN_XCODEBUILD=1 to enable)"
 fi
