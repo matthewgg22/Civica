@@ -292,12 +292,22 @@ class IssueBriefService:
 
         if _is_person_antipathy_without_policy(request.concern_text):
             return IssueClassifyResponse(
-                status=BriefStatus.OK,
+                status=BriefStatus.NEEDS_CLARIFICATION,
                 canonical_issue="executive-accountability-and-oversight",
                 confidence=0.42,
-                clarification_question=None,
-                candidate_issues=[],
-                policy_flags=list(dict.fromkeys(policy_flags + ["normalized_personal_antipathy"])),
+                clarification_question=(
+                    "I can help with this. What action do you want Congress to take: oversight hearings, a vote on a bill/nomination, or a public statement?"
+                ),
+                candidate_issues=[
+                    "executive-accountability-and-oversight",
+                    "federal-nominations-and-confirmations",
+                    "general-civic-issue",
+                ],
+                policy_flags=list(
+                    dict.fromkeys(
+                        policy_flags + ["normalized_personal_antipathy", "emotional_input_requires_clarification"]
+                    )
+                ),
             )
 
         if _is_ukraine_policy_signal(request.concern_text):
@@ -396,8 +406,9 @@ class IssueBriefService:
             return response
 
         if classify.status is BriefStatus.NEEDS_CLARIFICATION:
+            requires_manual_clarification = "emotional_input_requires_clarification" in classify.policy_flags
             canonical = (classify.canonical_issue or "").strip().lower()
-            if request.allow_revision:
+            if request.allow_revision and not requires_manual_clarification:
                 if canonical in {"", "unspecified", "policy_restricted"}:
                     canonical = ""
                     if classify.candidate_issues:
@@ -422,11 +433,22 @@ class IssueBriefService:
                     current_status="Awaiting issue clarification.",
                     key_facts=[],
                     arguments_by_view=[],
-                    unknowns=["The concern text maps to multiple possible issues."],
-                    questions_to_consider=["Which issue should this brief focus on first?"],
+                    unknowns=[
+                        "The concern text is emotionally clear but needs one concrete congressional action to target."
+                        if requires_manual_clarification
+                        else "The concern text maps to multiple possible issues."
+                    ],
+                    questions_to_consider=[
+                        "Which congressional action should this focus on: oversight, vote, nomination, or public statement?"
+                        if requires_manual_clarification
+                        else "Which issue should this brief focus on first?"
+                    ],
                     policy_flags=classify.policy_flags,
                     clarification_question=classify.clarification_question,
-                    review_prompt="Reply with your preferred issue focus and I will regenerate.",
+                    review_prompt=(
+                        classify.clarification_question
+                        or "Reply with your preferred issue focus and I will regenerate."
+                    ),
                 )
                 self._store_brief_response(request_id, request.user_id, safety_identifier, response, now, llm_usage={})
                 return response

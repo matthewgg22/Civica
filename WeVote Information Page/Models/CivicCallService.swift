@@ -883,7 +883,12 @@ final class IssueCallCenterViewModel: ObservableObject {
             case .needsClarification:
                 pendingGeneratedResolution = nil
                 requiresDraftApproval = false
-                errorMessage = package.reviewRegenerateHint
+                let hint = package.reviewRegenerateHint.trimmingCharacters(in: .whitespacesAndNewlines)
+                if hint.isEmpty {
+                    errorMessage = "Please clarify your requested congressional action, then try again."
+                } else {
+                    errorMessage = "\(hint)\n\nUpdate your concern with that action, then tap Generate again."
+                }
             case .refused:
                 pendingGeneratedResolution = nil
                 requiresDraftApproval = false
@@ -2484,9 +2489,23 @@ final class IssueCallCenterViewModel: ObservableObject {
             .filter { !$0.isEmpty }
             .prefix(2)
             .map { trimToWordLimit($0, maxWords: 18) }
+        let firstKeyFactBadge = keyFactPoints.first.map { "Issue context: \($0)" }
+        let canonicalBillSource = canonical?.billSource.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         let scriptIssueLine = (canonical?.billDisplayText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false)
             ? canonical?.billDisplayText
             : "this issue"
+        let billTieInBadge: String? = {
+            guard let issueLine = scriptIssueLine?.trimmingCharacters(in: .whitespacesAndNewlines),
+                  !issueLine.isEmpty else { return nil }
+            switch canonicalBillSource {
+            case "user":
+                return "Using your bill reference: \(issueLine)"
+            case "curated":
+                return "Curated tie-in: \(issueLine)"
+            default:
+                return nil
+            }
+        }()
 
         var briefs: [CivicCallBrief] = overlays.enumerated().map { index, overlay in
             let slot = slotForOverlay(overlay)
@@ -2497,20 +2516,43 @@ final class IssueCallCenterViewModel: ObservableObject {
             let phone = resolvedPrimaryPhone(for: overlay, official: official, slot: slot)
 
             var reasons: [String] = []
+            if let billTieInBadge {
+                reasons.append(billTieInBadge)
+            }
             if overlay.committeeMatch.matched {
-                reasons.append("Committee jurisdiction match")
+                reasons.append("Direct committee jurisdiction match")
             }
             if let callout = overlay.committeeMatch.jurisdictionCallout?.trimmingCharacters(in: .whitespacesAndNewlines),
                !callout.isEmpty {
                 reasons.append(callout)
             }
+            if !overlay.relatedCommittees.isEmpty {
+                let committeeSummary = overlay.relatedCommittees
+                    .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                    .filter { !$0.isEmpty }
+                    .prefix(2)
+                    .joined(separator: ", ")
+                if !committeeSummary.isEmpty {
+                    reasons.append("Committee tie-in: \(committeeSummary)")
+                }
+            }
             if overlay.roleOverlays.contains(where: { $0 != "none" }) {
                 reasons.append("Office role relevance")
+            }
+            if let firstKeyFactBadge {
+                reasons.append(firstKeyFactBadge)
+            }
+            if canonical?.evidenceQuality.lowercased() == "limited" {
+                reasons.append("Evidence limited; using broad issue framing")
             }
             if reasons.isEmpty, let slot, let target = repTargets.first(where: { $0.slot == slot }) {
                 reasons.append(contentsOf: fallbackRelevance(for: target, billRef: explicitBillRef))
             } else if reasons.isEmpty {
                 reasons.append("Issue relevance for this office")
+            }
+            reasons = Array(NSOrderedSet(array: reasons).array as? [String] ?? reasons)
+            if reasons.count > 5 {
+                reasons = Array(reasons.prefix(5))
             }
 
             let liveScript = renderedScript(
@@ -2531,6 +2573,24 @@ final class IssueCallCenterViewModel: ObservableObject {
                 "Ask: \(ask.title) \(scriptIssueLine ?? "this issue")"
             ]
             talkingPoints.append(contentsOf: keyFactPoints)
+            if let summaryPlain = canonical?.summaryPlain.trimmingCharacters(in: .whitespacesAndNewlines),
+               !summaryPlain.isEmpty {
+                talkingPoints.append("Summary: \(trimToWordLimit(summaryPlain, maxWords: 22))")
+            }
+            if let warning = canonical?.evidenceWarning?.trimmingCharacters(in: .whitespacesAndNewlines),
+               !warning.isEmpty {
+                talkingPoints.append("Evidence note: \(warning)")
+            }
+            if !overlay.relatedCommittees.isEmpty {
+                let committeePoint = overlay.relatedCommittees
+                    .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                    .filter { !$0.isEmpty }
+                    .prefix(3)
+                    .joined(separator: ", ")
+                if !committeePoint.isEmpty {
+                    talkingPoints.append("Committee path: \(committeePoint)")
+                }
+            }
 
             return CivicCallBrief(
                 id: "\(package.packageID)-\(index)-\(repID)",

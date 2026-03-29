@@ -26,7 +26,16 @@ from .service import CivicService
 _CURATED_BILL_MAP: dict[str, str] = {
     "oppose-the-save-america-act": "SAVE America Act",
     "save-america-act": "SAVE America Act",
-    "stop-unauthorized-military-strikes-on-iran": "War Powers Resolution",
+    "stop-unauthorized-military-strikes-on-iran": "War Powers Resolution on Iran",
+}
+
+_CURATED_ACTION_FOCUS: dict[str, str] = {
+    "crypto-consumer-protection": "stronger consumer safeguards and anti-fraud standards for digital assets",
+    "tsa-staffing-travel-delays": "full TSA staffing and compensation support to reduce checkpoint bottlenecks",
+    "hawaii-flood-relief": "federal disaster support and recovery funding for impacted Hawaii communities",
+    "executive-accountability-and-oversight": "strong congressional oversight and public accountability actions",
+    "ukraine-security-and-humanitarian-support": "continued Ukraine security and humanitarian support with clear congressional oversight",
+    "support-tps-extension-for-haitians": "continued Temporary Protected Status safeguards for Haitian families",
 }
 
 _ISSUE_COMMITTEE_MAP: dict[str, list[str]] = {
@@ -70,6 +79,8 @@ _SCRIPT_PERSONALIZATION_FIELDS = [
     "committee_match",
     "leadership_role",
 ]
+
+_NO_POSITION_BADGE = "No public position found"
 
 
 class ScriptPackageService:
@@ -139,6 +150,32 @@ class ScriptPackageService:
                 policy_flags=brief.policy_flags,
             )
 
+        if brief.status is BriefStatus.NEEDS_CLARIFICATION:
+            clarification_hint = (
+                brief.clarification_question
+                or brief.review_prompt
+                or "I need one clarification before generating your scripts."
+            )
+            return ScriptPackageResponse(
+                status=BriefStatus.NEEDS_CLARIFICATION,
+                package_id=package_id,
+                canonical_context=None,
+                script_core=None,
+                office_overlays=[],
+                review_can_regenerate=True,
+                review_regenerate_hint=clarification_hint,
+                truth_trace=ScriptPackageTruthTrace(
+                    normalized_input=normalized_input,
+                    canonical_issue_id=(brief.canonical_issue or "unspecified").strip().lower() or "unspecified",
+                    classification_reason="requires_user_clarification",
+                    bill_source="none",
+                    personalization_fields_used=[],
+                    fallback_used="clarification_required",
+                    refusal_reason=None,
+                ),
+                policy_flags=brief.policy_flags,
+            )
+
         canonical_issue_id = (
             brief.canonical_issue.strip().lower()
             or classify.canonical_issue.strip().lower()
@@ -163,22 +200,32 @@ class ScriptPackageService:
             evidence_warning = "Evidence is limited; script uses broad issue framing."
 
         common_ask_phrase = _ask_phrase(request.selected_ask)
-        reason_line = (
-            key_facts[0].fact.strip()
-            if key_facts and key_facts[0].fact.strip()
-            else "This issue is directly affecting constituents."
+        action_focus = _issue_action_focus(canonical_issue_id, title)
+        reason_line = _trim_sentence(
+            key_facts[0].fact.strip() if key_facts and key_facts[0].fact.strip() else "",
+            max_words=24,
+        ) or "This issue is directly affecting constituents."
+        current_status_line = _trim_sentence(brief.current_status, max_words=22)
+        secondary_fact_line = _trim_sentence(
+            key_facts[1].fact.strip() if len(key_facts) > 1 and key_facts[1].fact.strip() else "",
+            max_words=20,
+        )
+        action_focus_sentence = (
+            f"The core focus is {action_focus}." if action_focus else ""
         )
         core = ScriptPackageScriptCore(
             live_script_core=(
                 "Hi, my name is [Your Name], and I am a constituent. "
                 f"I am calling about {title}. "
                 f"I'm urging {{OFFICE_TYPE}} {{REP_NAME}} to {common_ask_phrase} {bill_display_text}. "
+                f"{action_focus_sentence} "
                 f"{reason_line} "
                 "Can you share the member's current position and next step on this issue? Thank you."
             ),
             voicemail_script_core=(
                 "Hi, constituent calling about "
                 f"{title}. I'm urging {{OFFICE_TYPE}} {{REP_NAME}} to {common_ask_phrase} {bill_display_text}. "
+                f"{reason_line} "
                 "Please share the member's current position and next step. Thank you."
             ),
         )
@@ -187,22 +234,55 @@ class ScriptPackageService:
         reps = self.civic_service._select_target_reps(request.user_id, selected_targets)
         overlays: list[ScriptPackageOfficeOverlay] = []
         likely_committees = _ISSUE_COMMITTEE_MAP.get(canonical_issue_id, [])
+        rep_committees_by_rep_id = self.civic_service._load_rep_committees_for_examples([rep for _, rep in reps])
         for rep_target, rep in reps:
             scored = self.civic_service._score_rep(
                 rep=rep,
                 issue_title=title,
                 bill_ref=resolved_bill,
             )
-            committee_match = _build_committee_match(scored.reason_badges, likely_committees)
+            committee_match = _build_committee_match(
+                reason_badges=scored.reason_badges,
+                likely_committees=likely_committees,
+                rep_committees=rep_committees_by_rep_id.get(rep.rep_id, []),
+            )
             role_overlays = _role_overlays_for(rep.office_type)
             live_script = core.live_script_core
             voicemail_script = core.voicemail_script_core
             live_script = _render_for_rep(live_script, rep.office_type, rep.rep_name)
             voicemail_script = _render_for_rep(voicemail_script, rep.office_type, rep.rep_name)
 
+            office_action_line = _office_action_line(
+                canonical_issue_id=canonical_issue_id,
+                issue_title=title,
+                chamber=rep.chamber,
+                ask=request.selected_ask,
+            )
+            if office_action_line:
+                live_script = f"{live_script}\n\n{office_action_line}"
+                voicemail_script = f"{voicemail_script}\n\n{office_action_line}"
+
             if committee_match.jurisdiction_callout:
                 live_script = f"{live_script}\n\n{committee_match.jurisdiction_callout}"
                 voicemail_script = f"{voicemail_script}\n\n{committee_match.jurisdiction_callout}"
+
+            additional_context: list[str] = []
+            if current_status_line:
+                additional_context.append(f"Current status: {current_status_line}.")
+            if secondary_fact_line:
+                additional_context.append(f"Additional context: {secondary_fact_line}.")
+            if action_focus:
+                additional_context.append(f"Policy focus: {action_focus}.")
+            representative_tie_in = _representative_tie_in(scored.reason_badges)
+            if representative_tie_in:
+                additional_context.append(f"Office tie-in: {representative_tie_in}.")
+            if additional_context:
+                live_script = f"{live_script}\n\n" + " ".join(additional_context)
+                voicemail_script = f"{voicemail_script}\n\n" + " ".join(additional_context[:2])
+
+            overlay_related_committees = committee_match.matched_committees or likely_committees
+            if not overlay_related_committees:
+                overlay_related_committees = rep_committees_by_rep_id.get(rep.rep_id, [])[:3]
 
             overlays.append(
                 ScriptPackageOfficeOverlay(
@@ -214,7 +294,7 @@ class ScriptPackageService:
                     role_overlays=role_overlays,
                     live_script_final=live_script,
                     voicemail_script_final=voicemail_script,
-                    related_committees=likely_committees,
+                    related_committees=overlay_related_committees,
                 )
             )
 
@@ -344,13 +424,39 @@ def _role_overlays_for(office_type: str) -> list[str]:
     return overlays
 
 
-def _build_committee_match(reason_badges: Iterable[str], likely_committees: list[str]) -> ScriptPackageCommitteeMatch:
+def _build_committee_match(
+    reason_badges: Iterable[str],
+    likely_committees: list[str],
+    rep_committees: list[str],
+) -> ScriptPackageCommitteeMatch:
     normalized_badges = [badge.strip() for badge in reason_badges if badge and badge.strip()]
     matched: list[str] = []
     for committee in likely_committees:
-        c = committee.lower()
+        normalized_committee = _normalize_committee_name(committee)
+        if not normalized_committee:
+            continue
+        for rep_committee in rep_committees:
+            normalized_rep_committee = _normalize_committee_name(rep_committee)
+            if not normalized_rep_committee:
+                continue
+            if (
+                normalized_committee == normalized_rep_committee
+                or normalized_committee in normalized_rep_committee
+                or normalized_rep_committee in normalized_committee
+            ):
+                matched.append(committee)
+                break
+        if committee in matched:
+            continue
         for badge in normalized_badges:
-            if c in badge.lower():
+            normalized_badge = _normalize_committee_name(badge)
+            if not normalized_badge:
+                continue
+            if (
+                normalized_committee == normalized_badge
+                or normalized_committee in normalized_badge
+                or normalized_badge in normalized_committee
+            ):
                 matched.append(committee)
                 break
     deduped = list(dict.fromkeys(matched))
@@ -359,7 +465,108 @@ def _build_committee_match(reason_badges: Iterable[str], likely_committees: list
             matched=True,
             matched_committees=deduped,
             jurisdiction_callout=(
-                f"This office has committee jurisdiction relevance through {', '.join(deduped)}."
+                f"This office has direct committee relevance through {', '.join(deduped)}."
             ),
         )
-    return ScriptPackageCommitteeMatch(matched=False, matched_committees=[], jurisdiction_callout=None)
+
+    fallback_callout = None
+    if likely_committees:
+        fallback_callout = (
+            f"This issue is typically handled in {', '.join(likely_committees[:3])}."
+        )
+    return ScriptPackageCommitteeMatch(
+        matched=False,
+        matched_committees=[],
+        jurisdiction_callout=fallback_callout,
+    )
+
+
+def _trim_sentence(value: str, max_words: int) -> str:
+    text = _normalize_text(value)
+    if not text:
+        return ""
+    words = text.split()
+    if len(words) <= max_words:
+        return text
+    return " ".join(words[:max_words]).rstrip(" ,;:.") + "..."
+
+
+def _office_action_line(canonical_issue_id: str, issue_title: str, chamber: str, ask: Ask) -> str:
+    chamber_key = (chamber or "").strip().lower()
+    ask_key = _ask_label(ask)
+    canonical_key = (canonical_issue_id or "").strip().lower()
+    title_key = (issue_title or "").strip().lower()
+
+    if _is_nomination_issue(canonical_key, title_key):
+        if chamber_key == "senate":
+            return (
+                "This is a Senate confirmation issue."
+                f" Please confirm whether this office will {ask_key} on the nomination."
+            )
+        return (
+            "This issue is primarily decided in the Senate confirmation process."
+            " Please ask this office for a public statement and oversight position."
+        )
+
+    if chamber_key == "house":
+        return (
+            "As a House office, this member can press committee action and shape House floor votes."
+            f" Please share whether they plan to {ask_key} this issue."
+        )
+    return (
+        "As a Senate office, this member can influence hearings, confirmations, and final Senate votes."
+        f" Please share whether they plan to {ask_key} this issue."
+    )
+
+
+def _representative_tie_in(reason_badges: Iterable[str]) -> str:
+    cleaned = [
+        badge.strip()
+        for badge in reason_badges
+        if badge and badge.strip() and badge.strip() != _NO_POSITION_BADGE
+    ]
+    if not cleaned:
+        return ""
+    return cleaned[0]
+
+
+def _issue_action_focus(canonical_issue_id: str, title: str) -> str:
+    curated = _CURATED_ACTION_FOCUS.get(canonical_issue_id, "").strip()
+    if curated:
+        return curated
+    normalized_title = _normalize_text(title).lower()
+    if normalized_title:
+        return f"concrete congressional action on {normalized_title}"
+    return "concrete congressional action"
+
+
+def _ask_label(ask: Ask) -> str:
+    raw = ask.value if hasattr(ask, "value") else str(ask)
+    normalized = raw.strip().replace("_", " ")
+    return normalized or "act on"
+
+
+def _normalize_committee_name(value: str) -> str:
+    lowered = value.lower().strip()
+    lowered = lowered.replace("&", " and ")
+    lowered = lowered.removeprefix("committee on ").strip()
+    lowered = lowered.removeprefix("committee of ").strip()
+    lowered = re.sub(r"[^a-z0-9\s]", " ", lowered)
+    return re.sub(r"\s+", " ", lowered).strip()
+
+
+def _is_nomination_issue(canonical_issue_id: str, issue_title: str) -> bool:
+    combined = f"{canonical_issue_id} {issue_title}".strip().lower()
+    if not combined:
+        return False
+    nomination_markers = (
+        "nomination",
+        "confirm",
+        "confirmation",
+        "surgeon general",
+        "blm director",
+        "director",
+        "for-surgeon-general",
+        "as-blm-director",
+    )
+    return any(marker in combined for marker in nomination_markers)
