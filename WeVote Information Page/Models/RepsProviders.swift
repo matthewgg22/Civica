@@ -491,38 +491,9 @@ final class NewYorkRepsProvider: RepsProvider {
               let reps = allReps else {
             return nil
         }
-
-        let sortedSenatorEntries = reps.federal.us_senators
-            .sorted { lhs, rhs in
-                let lhsRank = senateClassSortRank(lhs.key)
-                let rhsRank = senateClassSortRank(rhs.key)
-                if lhsRank != rhsRank {
-                    return lhsRank < rhsRank
-                }
-                return lhs.value.name.localizedCaseInsensitiveCompare(rhs.value.name) == .orderedAscending
-            }
-
-        var federal = sortedSenatorEntries.map { entry in
-            let official = entry.value
-            return Official(
-                id: official.id,
-                name: official.name,
-                divisionId: official.divisionId,
-                party: official.party,
-                officeTitle: "U.S. Senator",
-                photoURL: official.photoURL,
-                url: official.url,
-                officialPhone: official.officialPhone,
-                websiteURL: official.websiteURL,
-                contactFormURL: official.contactFormURL,
-                committeeAssignments: official.committeeAssignments,
-                level: official.level
-            )
-        }
-
-        if let house = reps.federal.us_representatives[map.congressional] {
-            federal.append(house)
-        }
+        // Federal reps for NY are sourced from canonical US datasets (USSenatorsProvider / USHouseMembersProvider)
+        // to avoid duplicate federal officials and phone gaps in the NYC static roster.
+        let federal: [Official] = []
 
         var state = reps.state.state_senators.values.filter {
             $0.divisionId?.contains(map.state_senate) == true
@@ -1188,9 +1159,22 @@ final class USHouseMembersProvider: RepsProvider {
             return nil
         }
 
-        // Let the dedicated NY provider handle NYC ZIPs with district-level precision.
-        if stateCode == "NY", zipToDistrictMap[zip] != nil {
-            return nil
+        // NYC ZIPs have an explicit ZIP->district mapping in app data.
+        // Use that mapping so we can still return a single House member from the canonical dataset.
+        if stateCode == "NY",
+           let mappedDistrict = zipToDistrictMap[zip]?["congressional"] {
+            let normalizedMappedDistrict = normalizeDistrict(mappedDistrict)
+            if let match = members.first(where: {
+                normalizeDistrict($0.district) == normalizedMappedDistrict
+                    || normalizeDistrict($0.district_key) == normalizedMappedDistrict
+            }) {
+                return RepsLookupResult(
+                    executive: [],
+                    federal: [official(from: match)],
+                    state: [],
+                    city: []
+                )
+            }
         }
 
         if let coordinate = coordinate,

@@ -82,7 +82,6 @@ struct ElectionTimelineView: View {
     @EnvironmentObject private var repsVM: MyRepsViewModel
     @Environment(\.locale) private var locale
 
-    @State private var planElection: Election?
     @State private var allElections: [Election] = []
     @State private var visibleElections: [Election] = []
     @State private var errorMessage: String?
@@ -92,7 +91,6 @@ struct ElectionTimelineView: View {
     @State private var showingFeedbackComposer = false
     @State private var feedbackPrefillMessage = ""
     @State private var expandedCardIDs: Set<String> = []
-    @State private var showingMapvNotificationPrompt = false
     @State private var focusedTimelineElectionID: String?
     @State private var manualFocusedElectionID: String?
     @State private var manualFocusExpiresAt: Date = .distantPast
@@ -110,11 +108,11 @@ struct ElectionTimelineView: View {
         return decoded
     }()
     private static let independentPrimaryTerritoryNotesByCode: [String: String] = [
-        "AS": "Primary type: Nonpartisan / No standard party-primary system verified. Independent voter rule: This is not a normal state-style Dem/GOP primary system in the official materials reviewed. Can choose Democratic or Republican primary ballot: N/A. Note: American Samoa's Election Office describes itself as nonpartisan; a standard territorywide partisan primary access rule for independents was not verified.",
-        "GU": "Primary type: Party-column primary. Independent voter rule: Independent voter chooses one party column or the non-affiliated column; not multiple parties. Can choose Democratic or Republican primary ballot: Usually one choice only. Note: Guam law provides separate party columns and a non-affiliated column if needed.",
-        "MP": "Primary type: Party-rule-driven / Varies. Independent voter rule: No single simple open/closed rule verified for independents; party nomination rules and independent petition access both exist. Can choose Democratic or Republican primary ballot: Varies. Note: Official CNMI election law shows primaries exist and independent candidates can access the general ballot by petition.",
-        "PR": "Primary type: Open or affiliated primary, depending on party format. Independent voter rule: In an open primary, any active voter may vote; in an affiliated primary, voter must affiliate with the party, including immediate affiliation before voting. Can choose Democratic or Republican primary ballot: Sometimes / Depends on party format. Note: Puerto Rico law explicitly distinguishes open and affiliated primaries.",
-        "VI": "Primary type: Closed. Independent voter rule: Non-party affiliates cannot vote in the primary. Can choose Democratic or Republican primary ballot: No. Note: VI VOTE FAQ indicates primary elections are for party members only."
+        "AS": "Primary type: Nonpartisan / No standard party-primary system verified. Independent voter rule: This is not a normal state-style Dem/GOP primary system in the official materials reviewed. Can choose Democrat or Republican primary ballot: N/A. Note: American Samoa's Election Office describes itself as nonpartisan; a standard territorywide partisan primary access rule for independents was not verified.",
+        "GU": "Primary type: Party-column primary. Independent voter rule: Independent voter chooses one party column or the non-affiliated column; not multiple parties. Can choose Democrat or Republican primary ballot: Usually one choice only. Note: Guam law provides separate party columns and a non-affiliated column if needed.",
+        "MP": "Primary type: Party-rule-driven / Varies. Independent voter rule: No single simple open/closed rule verified for independents; party nomination rules and independent petition access both exist. Can choose Democrat or Republican primary ballot: Varies. Note: Official CNMI election law shows primaries exist and independent candidates can access the general ballot by petition.",
+        "PR": "Primary type: Open or affiliated primary, depending on party format. Independent voter rule: In an open primary, any active voter may vote; in an affiliated primary, voter must affiliate with the party, including immediate affiliation before voting. Can choose Democrat or Republican primary ballot: Sometimes / Depends on party format. Note: Puerto Rico law explicitly distinguishes open and affiliated primaries.",
+        "VI": "Primary type: Closed. Independent voter rule: Non-party affiliates cannot vote in the primary. Can choose Democrat or Republican primary ballot: No. Note: VI VOTE FAQ indicates primary elections are for party members only."
     ]
     private let timelineScrollCoordinateSpace = "ElectionTimelineScrollCoordinateSpace"
 
@@ -136,14 +134,31 @@ struct ElectionTimelineView: View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 0) {
                 PageHeader(title: Text("app.page.election_timeline", tableName: "AppShell"))
-                Text(timelineAddressSubtitle)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundColor(VoteNowColors.mutedText)
-                    .padding(.leading, 72)
-                    .padding(.top, -6)
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Text(timelineAddressSubtitle)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(VoteNowColors.mutedText)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.84)
+
+                    Spacer(minLength: 8)
+
+                    Button {
+                        openMyInfoPanel()
+                    } label: {
+                        Text(l("app.reps.action.my_info", "My Info") + "...")
+                            .font(.callout.weight(.semibold))
+                            .italic()
+                            .foregroundColor(VoteNowColors.primaryCTA)
+                            .lineLimit(1)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.leading, 72)
+                .padding(.top, -6)
             }
             .padding(.horizontal, 16)
-            .padding(.top, 16)
+            .padding(.top, 8)
             .padding(.bottom, 8)
             .background(VoteNowColors.appBackground)
 
@@ -198,6 +213,9 @@ struct ElectionTimelineView: View {
                                     totalCount: visibleElections.count,
                                     showYearLabel: priorYear != currentYear,
                                     onCardTap: {
+                                        _ = withAnimation(.easeInOut(duration: 0.2)) {
+                                            expandedCardIDs.insert(election.id)
+                                        }
                                         selectElectionFromTimeline(election.id)
                                     }
                                 )
@@ -261,10 +279,6 @@ struct ElectionTimelineView: View {
         }
         .background(VoteNowColors.appBackground.ignoresSafeArea())
         .navigationTitle(Text("app.page.election_timeline", tableName: "AppShell"))
-        .sheet(item: $planElection) { _ in
-            MultiStepFormView()
-                .environmentObject(planVM)
-        }
         .sheet(isPresented: $showingShareSheet) {
             shareItems.removeAll()
         } content: {
@@ -304,19 +318,6 @@ struct ElectionTimelineView: View {
                 }
                 pendingFlagElection = nil
             }
-        }
-        .alert(
-            l("app.timeline.mapv.notifications.title", "Turn On Notifications"),
-            isPresented: $showingMapvNotificationPrompt
-        ) {
-            Button(l("app.timeline.mapv.notifications.ok", "OK"), role: .cancel) {}
-        } message: {
-            Text(
-                l(
-                    "app.timeline.mapv.notifications.message",
-                    "Turn on notifications to ensure you don't miss your next chance to vote."
-                )
-            )
         }
         .onAppear {
             loadElectionsIfNeeded()
@@ -376,7 +377,7 @@ struct ElectionTimelineView: View {
 
         VStack(alignment: .leading, spacing: 2) {
             GeometryReader { proxy in
-                let chartHeight: CGFloat = 90
+                let chartHeight: CGFloat = 84
                 let lineY: CGFloat = 34
                 let xPadding: CGFloat = 24
                 let calendar = Calendar.current
@@ -513,19 +514,19 @@ struct ElectionTimelineView: View {
                         } label: {
                             ZStack {
                                 Circle()
-                                    .fill(isFocused ? VoteNowColors.richRed : VoteNowColors.primaryCTA)
+                                    .fill(isFocused ? VoteNowColors.warningAmber : VoteNowColors.primaryCTA)
                                 Circle()
                                     .stroke(Color.white, lineWidth: 2)
                                 if isFocused {
                                     Circle()
-                                        .stroke(VoteNowColors.richRed.opacity(0.35), lineWidth: 3)
+                                        .stroke(VoteNowColors.warningAmber.opacity(0.35), lineWidth: 3)
                                         .scaleEffect(1.55)
                                 }
                             }
                             .frame(width: isFocused ? 15 : 12, height: isFocused ? 15 : 12)
                         }
                         .buttonStyle(.plain)
-                        .frame(width: 36, height: 36)
+                        .frame(width: 24, height: 24)
                         .opacity(dotOpacity)
                         .position(x: pointX, y: lineY)
                         .contentShape(Rectangle())
@@ -534,7 +535,7 @@ struct ElectionTimelineView: View {
 
                         Text(Self.timelineMonthDayFormatter.string(from: point.election.electionDay))
                             .font(.footnote.weight(.semibold))
-                            .foregroundColor(VoteNowColors.primaryText)
+                            .foregroundColor(VoteNowColors.warningAmber)
                             .lineLimit(1)
                             .minimumScaleFactor(0.85)
                             .allowsTightening(true)
@@ -549,18 +550,39 @@ struct ElectionTimelineView: View {
                             }
                             .animation(.easeInOut(duration: 0.14), value: focusedTimelineElectionID)
                     }
+
                 }
+                .contentShape(Rectangle())
+                .highPriorityGesture(
+                    SpatialTapGesture().onEnded { tap in
+                        let tapY = tap.location.y
+                        guard abs(tapY - lineY) <= 38 else { return }
+                        guard let nearest = plotPoints.min(by: { lhs, rhs in
+                            let lhsX = lhs.electionX + lhs.pointOffsetX
+                            let rhsX = rhs.electionX + rhs.pointOffsetX
+                            return abs(lhsX - tap.location.x) < abs(rhsX - tap.location.x)
+                        }) else { return }
+                        onElectionTap(nearest.election.id)
+                    }
+                )
                 .frame(width: contentWidth, height: chartHeight, alignment: .topLeading)
             }
-            .frame(height: 90)
+            .frame(height: 84)
 
-            Text("\(chancesToVoteUntilNextPresident(in: sorted)) Chances to Vote before the next Presidential Election!")
+            Text(
+                lf(
+                    "app.timeline.chances.before_presidential",
+                    "%d Chances to Vote before the next Presidential Election!",
+                    chancesToVoteUntilNextPresident(in: sorted)
+                )
+            )
                 .font(.footnote.weight(.semibold))
                 .italic()
                 .foregroundColor(VoteNowColors.primaryText)
                 .lineLimit(1)
                 .minimumScaleFactor(0.55)
                 .allowsTightening(true)
+                .padding(.top, -2)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.horizontal, 6)
@@ -588,7 +610,7 @@ struct ElectionTimelineView: View {
     ) -> some View {
         Text(text)
             .font(.footnote.weight(.semibold))
-            .foregroundColor(VoteNowColors.richRed)
+            .foregroundColor(VoteNowColors.warningAmber)
             .lineLimit(1)
             .truncationMode(.tail)
             .multilineTextAlignment(.center)
@@ -666,7 +688,7 @@ struct ElectionTimelineView: View {
     private func electionCard(_ election: Election, index: Int) -> some View {
         let selectedID = focusedTimelineElectionID ?? visibleElections.first?.id
         let isSelected = selectedID == election.id
-        let mapvStatus = mapvAvailability(for: election)
+        let isMostUpcoming = election.id == mostUpcomingElectionID
         let advisoryLines = advisoryMessages(for: election)
 
         VStack(alignment: .leading, spacing: 12) {
@@ -698,18 +720,31 @@ struct ElectionTimelineView: View {
                 Spacer(minLength: 8)
 
                 Button(action: { handleFlagTap(for: election) }) {
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 13, weight: .semibold))
+                    Image(systemName: "arrowshape.turn.up.right.circle.fill")
+                        .font(.system(size: 26, weight: .regular))
                         .foregroundColor(VoteNowColors.primaryCTA)
                         .frame(width: 30, height: 30)
-                        .background(
-                            Circle()
-                                .fill(VoteNowColors.infoSurfaceBlue)
-                        )
                 }
                 .buttonStyle(.plain)
                 .contentShape(Circle())
                 .accessibilityLabel(l("app.timeline.action.accessibility", "Election actions"))
+            }
+
+            if isMostUpcoming {
+                HStack(alignment: .center, spacing: 8) {
+                    Text(registrationDeadlinePillText(for: election))
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(countdownForegroundColor(for: election))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(countdownBackgroundColor(for: election))
+                        .clipShape(Capsule())
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.74)
+                        .allowsTightening(true)
+
+                    Spacer(minLength: 8)
+                }
             }
 
             HStack(alignment: .top, spacing: 10) {
@@ -753,37 +788,23 @@ struct ElectionTimelineView: View {
                 Spacer(minLength: 8)
             }
 
-            if index == 0 {
+            if isMostUpcoming {
                 Button {
-                    if mapvStatus.isEnabled {
-                        planElection = election
-                    } else {
-                        showingMapvNotificationPrompt = true
-                    }
+                    openVotingStepsTab()
                 } label: {
-                    Text(mapvButtonTitle(for: mapvStatus))
-                        .font(.subheadline.weight(.semibold))
+                    Text(l("app.timeline.action.how_to_vote", "How to Vote"))
+                        .font(.title3.weight(.semibold))
+                        .foregroundColor(VoteNowColors.primaryText)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(VoteNowColors.infoSurfaceBlue)
+                        )
                 }
                 .buttonStyle(.plain)
-                .foregroundColor(mapvStatus.isEnabled ? .white : VoteNowColors.primaryText.opacity(0.75))
-                .background(
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(mapvStatus.isEnabled ? VoteNowColors.primaryCTA : VoteNowColors.infoSurfaceBlue)
-                )
-
-                if case .pending(let activationDate) = mapvStatus {
-                    Text(
-                        lf(
-                            "app.timeline.mapv.pending_message",
-                            "MAPV becomes active on %@.",
-                            formattedDateText(activationDate)
-                        )
-                    )
-                        .font(.caption)
-                        .foregroundColor(VoteNowColors.mutedText)
-                }
+                .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .accessibilityLabel(l("app.timeline.action.how_to_vote", "How to Vote"))
             }
 
             if let ballotContent = ballotDisclosureContent(for: election) {
@@ -866,20 +887,24 @@ struct ElectionTimelineView: View {
                 .fill(VoteNowColors.surfaceWhite)
                 .overlay(
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(index == 0 ? VoteNowColors.warningAmber.opacity(0.08) : .clear)
+                        .fill(
+                            isSelected
+                                ? VoteNowColors.warningAmber.opacity(0.07)
+                                : (index == 0 ? VoteNowColors.warningAmber.opacity(0.08) : .clear)
+                        )
                 )
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .stroke(
                     isSelected
-                        ? VoteNowColors.richRed.opacity(0.82)
+                        ? VoteNowColors.warningAmber.opacity(0.82)
                         : (index == 0 ? VoteNowColors.warningAmber.opacity(0.34) : VoteNowColors.borderWarm),
                     lineWidth: isSelected ? 1.8 : 1
                 )
         )
         .shadow(
-            color: (isSelected ? VoteNowColors.richRed : VoteNowColors.primaryText).opacity(isSelected ? 0.22 : 0.06),
+            color: (isSelected ? VoteNowColors.warningAmber : VoteNowColors.primaryText).opacity(isSelected ? 0.22 : 0.06),
             radius: isSelected ? 6 : 3,
             x: 0,
             y: isSelected ? 3 : 1
@@ -1152,7 +1177,8 @@ struct ElectionTimelineView: View {
         if normalized.hasPrefix(prefix) {
             let start = trimmed.index(trimmed.startIndex, offsetBy: prefix.count)
             let remainder = trimmed[start...].trimmingCharacters(in: .whitespacesAndNewlines)
-            return Text("Primary Type: ").bold() + Text(remainder)
+            let localizedPrefix = l("app.timeline.ballot.primary_type.label", "Primary Type")
+            return Text("\(localizedPrefix): ").bold() + Text(remainder)
         }
 
         return Text(trimmed)
@@ -1872,8 +1898,14 @@ struct ElectionTimelineView: View {
             return [
                 BallotDisclosureItem(
                     id: "state-leg-\(stateCode.lowercased())-\(stageID(stage))",
-                    title: stageAwareStateLegislativeTitle(base: "State Legislature", stage: stage),
-                    detail: "District-based State Senate and State House/Assembly races when scheduled.",
+                    title: stageAwareStateLegislativeTitle(
+                        base: l("app.timeline.office.state_legislature", "State Legislature"),
+                        stage: stage
+                    ),
+                    detail: l(
+                        "app.timeline.ballot.state_legislature.detail",
+                        "District-based State Senate and State House/Assembly races when scheduled."
+                    ),
                     party: nil,
                     officeIcon: nil,
                     incumbent: nil
@@ -1891,11 +1923,17 @@ struct ElectionTimelineView: View {
             items.append(
                 BallotDisclosureItem(
                     id: "state-senate-\(stateCode.lowercased())-\(stageID(stage))",
-                    title: stageAwareStateLegislativeTitle(base: "State Senate", stage: stage),
-                    detail: stateLegislativeDetail(for: upper, fallback: "State Senate district race."),
+                    title: stageAwareStateLegislativeTitle(
+                        base: l("app.timeline.office.state_senate", "State Senate"),
+                        stage: stage
+                    ),
+                    detail: stateLegislativeDetail(
+                        for: upper,
+                        fallback: l("app.timeline.ballot.state_senate.detail", "State Senate district race.")
+                    ),
                     party: nil,
                     officeIcon: nil,
-                    incumbent: "Incumbent: \(incumbentName(upper))\(incumbentPartySuffix(upper))"
+                    incumbent: "\(l("app.timeline.ballot.incumbent.label", "Incumbent")): \(incumbentName(upper))\(incumbentPartySuffix(upper))"
                 )
             )
         }
@@ -1908,10 +1946,13 @@ struct ElectionTimelineView: View {
                         base: stateLegislativeLowerChamberLabel(for: lower),
                         stage: stage
                     ),
-                    detail: stateLegislativeDetail(for: lower, fallback: "State House/Assembly district race."),
+                    detail: stateLegislativeDetail(
+                        for: lower,
+                        fallback: l("app.timeline.ballot.state_house_assembly.detail", "State House/Assembly district race.")
+                    ),
                     party: nil,
                     officeIcon: nil,
-                    incumbent: "Incumbent: \(incumbentName(lower))\(incumbentPartySuffix(lower))"
+                    incumbent: "\(l("app.timeline.ballot.incumbent.label", "Incumbent")): \(incumbentName(lower))\(incumbentPartySuffix(lower))"
                 )
             )
         }
@@ -1920,8 +1961,14 @@ struct ElectionTimelineView: View {
             return [
                 BallotDisclosureItem(
                     id: "state-leg-\(stateCode.lowercased())-\(stageID(stage))",
-                    title: stageAwareStateLegislativeTitle(base: "State Legislature", stage: stage),
-                    detail: "District-based State Senate and State House/Assembly races when scheduled.",
+                    title: stageAwareStateLegislativeTitle(
+                        base: l("app.timeline.office.state_legislature", "State Legislature"),
+                        stage: stage
+                    ),
+                    detail: l(
+                        "app.timeline.ballot.state_legislature.detail",
+                        "District-based State Senate and State House/Assembly races when scheduled."
+                    ),
                     party: nil,
                     officeIcon: nil,
                     incumbent: nil
@@ -1933,6 +1980,12 @@ struct ElectionTimelineView: View {
     }
 
     private func hasStateLegislativeItem(_ items: [BallotDisclosureItem]) -> Bool {
+        if items.contains(where: { item in
+            item.id.contains("state-leg") || item.id.contains("state-senate") || item.id.contains("state-lower")
+        }) {
+            return true
+        }
+
         let keywords = [
             "state senate",
             "state house",
@@ -1970,12 +2023,12 @@ struct ElectionTimelineView: View {
     private func stateLegislativeLowerChamberLabel(for official: Official) -> String {
         let title = (official.officeTitle ?? "").lowercased()
         if title.contains("house of delegates") || title.contains("delegate") {
-            return "State House of Delegates"
+            return l("app.timeline.office.state_house_of_delegates", "State House of Delegates")
         }
         if title.contains("assembly") {
-            return "State Assembly"
+            return l("app.timeline.office.state_assembly", "State Assembly")
         }
-        return "State House"
+        return l("app.timeline.office.state_house", "State House")
     }
 
     private func stateLegislativeDetail(for official: Official, fallback: String) -> String {
@@ -2106,20 +2159,43 @@ struct ElectionTimelineView: View {
 
         var parts: [String] = []
         if let primaryType, !primaryType.isEmpty {
-            parts.append("Primary Type: \(normalizedPartyWording(in: primaryType)).")
+            parts.append(
+                "\(l("app.timeline.ballot.primary_type.label", "Primary Type")): \(normalizedPartyWording(in: primaryType))."
+            )
         }
         if let independentRule, !independentRule.isEmpty {
-            parts.append("Independent voter rule: \(normalizedPartyWording(in: independentRule)).")
+            parts.append(
+                "\(l("app.timeline.ballot.independent_rule.label", "Independent voter rule")): \(normalizedPartyWording(in: independentRule))."
+            )
         }
         if let note, !note.isEmpty {
             let normalizedNote = normalizedPartyWording(in: note)
             if !shouldSuppressIndependentPrimaryClosingNote(normalizedNote) {
-                parts.append("Note: \(normalizedNote).")
+                parts.append("\(l("app.timeline.ballot.note.label", "Note")): \(normalizedNote).")
             }
         }
 
         if parts.isEmpty {
-            return normalizedPartyWording(in: raw.replacingOccurrences(of: "Primary type:", with: "Primary Type:"))
+            let primaryTypeLabel = l("app.timeline.ballot.primary_type.label", "Primary Type")
+            let independentRuleLabel = l("app.timeline.ballot.independent_rule.label", "Independent voter rule")
+            let noteLabel = l("app.timeline.ballot.note.label", "Note")
+            let localized = raw
+                .replacingOccurrences(
+                    of: "(?i)primary\\s*type\\s*:",
+                    with: "\(primaryTypeLabel):",
+                    options: .regularExpression
+                )
+                .replacingOccurrences(
+                    of: "(?i)independent\\s+voter\\s+rule\\s*:",
+                    with: "\(independentRuleLabel):",
+                    options: .regularExpression
+                )
+                .replacingOccurrences(
+                    of: "(?i)note\\s*:",
+                    with: "\(noteLabel):",
+                    options: .regularExpression
+                )
+            return normalizedPartyWording(in: localized)
         }
 
         return parts.joined(separator: " ")
@@ -2252,9 +2328,9 @@ struct ElectionTimelineView: View {
     private func normalizedPartyLabel(_ rawParty: String) -> String {
         switch rawParty.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
         case "democratic":
-            return "Democrat"
+            return l("app.timeline.party.democrat", "Democrat")
         case "republican":
-            return "Republican"
+            return l("app.timeline.party.republican", "Republican")
         default:
             return ""
         }
@@ -2263,26 +2339,36 @@ struct ElectionTimelineView: View {
     private func stageLabel(for stage: BallotStageContext) -> String {
         switch stage {
         case .primary:
-            return "Primary"
+            return l("app.timeline.stage.primary", "Primary")
         case .runoff:
-            return "Runoff"
+            return l("app.timeline.stage.runoff", "Runoff")
         case .general:
-            return "General"
+            return l("app.timeline.stage.general", "General")
         }
     }
 
     private func officeTitleWithContextEmoji(for officeFamily: String) -> String {
         switch officeFamily.lowercased() {
         case "president":
-            return "Presidential (White House)"
+            return l("app.timeline.office.presidential.white_house", "Presidential (White House)")
         case "governor":
-            return "Governor"
+            return l("app.timeline.office.governor", "Governor")
         case "us_senate":
-            return "U.S. Senate (Congress)"
+            return l("app.timeline.office.us_senate.congress", "U.S. Senate (Congress)")
         case "us_house":
-            return "U.S. House (Congress)"
+            return l("app.timeline.office.us_house.congress", "U.S. House (Congress)")
+        case "state_legislature":
+            return l("app.timeline.office.state_legislature", "State Legislature")
+        case "statewide_exec":
+            return l("app.guide.office.statewide_exec", "Statewide Executive Offices")
+        case "judicial":
+            return l("app.guide.office.judicial", "Judicial Offices")
+        case "local":
+            return l("app.guide.office.local", "Local Offices")
+        case "ballot_measures":
+            return l("app.guide.office.ballot_measures", "Ballot Measures")
         default:
-            return "Election"
+            return l("app.timeline.office.election", "Election")
         }
     }
 
@@ -2312,25 +2398,25 @@ struct ElectionTimelineView: View {
         switch normalizedOffice {
         case "president":
             guard let official = incumbentPresident() else { return nil }
-            return "Incumbent: \(incumbentName(official))\(incumbentPartySuffix(official))"
+            return "\(l("app.timeline.ballot.incumbent.label", "Incumbent")): \(incumbentName(official))\(incumbentPartySuffix(official))"
         case "governor":
             guard let official = incumbentGovernor(for: stateCode) else { return nil }
-            return "Incumbent: \(incumbentName(official))\(incumbentPartySuffix(official))"
+            return "\(l("app.timeline.ballot.incumbent.label", "Incumbent")): \(incumbentName(official))\(incumbentPartySuffix(official))"
         case "us_house":
             guard let official = incumbentUSHouse(for: stateCode) else { return nil }
-            return "Incumbent: \(incumbentName(official))\(incumbentUSHousePartyDistrictSuffix(official))"
+            return "\(l("app.timeline.ballot.incumbent.label", "Incumbent")): \(incumbentName(official))\(incumbentUSHousePartyDistrictSuffix(official))"
         case "us_senate":
             let officials = incumbentUSSenators(for: stateCode)
             guard !officials.isEmpty else { return nil }
             let targetClass = senateClass(from: row.cycle_rule) ?? senateClass(forElectionYear: electionYear)
             if let targetClass,
                let matched = officials.first(where: { senateClass(from: $0) == targetClass }) {
-                return "Incumbent: \(incumbentName(matched))\(incumbentPartySuffix(matched))"
+                return "\(l("app.timeline.ballot.incumbent.label", "Incumbent")): \(incumbentName(matched))\(incumbentPartySuffix(matched))"
             }
 
             let fallback = officials.sorted(by: senateIncumbentSort).first
             guard let fallback else { return nil }
-            return "Incumbent: \(incumbentName(fallback))\(incumbentPartySuffix(fallback))"
+            return "\(l("app.timeline.ballot.incumbent.label", "Incumbent")): \(incumbentName(fallback))\(incumbentPartySuffix(fallback))"
         default:
             return nil
         }
@@ -2784,6 +2870,9 @@ struct ElectionTimelineView: View {
         var lastPointOffsetX: CGFloat = 0
         var titleLaneLastX = Array(repeating: -CGFloat.greatestFiniteMagnitude, count: 5)
         var bottomLaneLastX = Array(repeating: -CGFloat.greatestFiniteMagnitude, count: 3)
+        let pointMinSeparation: CGFloat = 24
+        let minPointX = xPadding + 3
+        let maxPointX = xPadding + usableWidth - 3
         let titleMinSeparation: CGFloat = 56
         let bottomMinSeparation: CGFloat = 48
         let titleLaneOffsets: [CGFloat] = [0, 10, -10, 16, -16]
@@ -2798,9 +2887,13 @@ struct ElectionTimelineView: View {
                 xPadding: xPadding
             )
 
-            let pointCollision = abs(baseX - lastPlacedX) < 10
-            let pointOffsetX: CGFloat = pointCollision ? (lastPointOffsetX <= 0 ? 5 : -5) : 0
-            let pointX = baseX + pointOffsetX
+            var pointX = baseX
+            if abs(pointX - lastPlacedX) < pointMinSeparation {
+                let direction: CGFloat = lastPointOffsetX <= 0 ? 1 : -1
+                pointX = lastPlacedX + (direction * pointMinSeparation)
+            }
+            pointX = min(max(pointX, minPointX), maxPointX)
+            let pointOffsetX = pointX - baseX
 
             let titleLane = selectLane(
                 for: pointX,
@@ -3965,11 +4058,30 @@ struct ElectionTimelineView: View {
         return mapping
     }()
 
+    private var mostUpcomingElectionID: String? {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        if let upcoming = visibleElections.first(where: {
+            calendar.startOfDay(for: $0.electionDay) >= today
+        }) {
+            return upcoming.id
+        }
+        return visibleElections.first?.id
+    }
+
     private func registrationDeadlineText(for election: Election) -> String {
         election.flags
             .first(where: { $0.hasPrefix("REGISTRATION_DEADLINE_TEXT:") })?
             .replacingOccurrences(of: "REGISTRATION_DEADLINE_TEXT:", with: "")
             ?? Self.formatCardDate(election.registrationDeadline)
+    }
+
+    private func registrationDeadlinePillText(for election: Election) -> String {
+        lf(
+            "app.timeline.registration_deadline.pill",
+            "Voter Registration Deadline: %@",
+            registrationDeadlineText(for: election)
+        )
     }
 
     private func earlyVotingText(for election: Election) -> String {
@@ -4004,6 +4116,10 @@ struct ElectionTimelineView: View {
         .white
     }
 
+    private func openVotingStepsTab() {
+        NotificationCenter.default.post(name: .openVotingStepsTab, object: nil)
+    }
+
     private func isPrimaryElection(_ election: Election) -> Bool {
         if let type = election.flags
             .first(where: { $0.hasPrefix("ELECTION_TYPE:") })?
@@ -4013,42 +4129,6 @@ struct ElectionTimelineView: View {
         return election.subtitle.lowercased().contains("primary")
     }
 
-    private enum MAPVAvailability {
-        case active
-        case pending(startDate: Date)
-        case closed
-
-        var isEnabled: Bool {
-            if case .active = self {
-                return true
-            }
-            return false
-        }
-    }
-
-    private func mapvAvailability(for election: Election) -> MAPVAvailability {
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        let electionDay = calendar.startOfDay(for: election.electionDay)
-        let activationDate = calendar.date(byAdding: .day, value: -14, to: electionDay) ?? electionDay
-
-        if today > electionDay {
-            return .closed
-        }
-        if today >= activationDate {
-            return .active
-        }
-        return .pending(startDate: activationDate)
-    }
-
-    private func mapvButtonTitle(for availability: MAPVAvailability) -> String {
-        switch availability {
-        case .active, .pending:
-            return l("app.timeline.mapv.button.make_plan", "Make a Plan to Vote")
-        case .closed:
-            return l("app.timeline.mapv.button.passed", "Election Day Passed")
-        }
-    }
 }
 
 struct ElectionTimelineView_Previews: PreviewProvider {

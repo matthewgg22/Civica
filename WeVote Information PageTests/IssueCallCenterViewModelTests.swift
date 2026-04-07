@@ -19,7 +19,10 @@ struct IssueCallCenterViewModelTests {
             concernText: String,
             selectedAsk: CivicAsk,
             targetReps: [CivicRepSlot],
-            optionalBillRef: String?
+            repTargets _: [CivicRepTarget],
+            optionalBillRef: String?,
+            userZip _: String?,
+            userState _: String?
         ) async throws -> CivicScriptPackageResponse {
             let billText = optionalBillRef ?? resolveResponse.resolvedEntities.bills.first ?? "this issue"
             let overlays = resolveResponse.callBriefs.map { brief in

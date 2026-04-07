@@ -104,6 +104,19 @@ class CivicAPISmokeTests(unittest.TestCase):
         self.assertIn("examples", response)
         self.assertGreaterEqual(len(response["examples"]), 1)
 
+    def test_confirm_without_launch_event_is_non_fatal(self) -> None:
+        user_id = "unittest-missing-launch"
+        confirm = post_calls_confirm(
+            {
+                "launch_event_id": "missing-launch-id",
+                "completed": True,
+            },
+            user_id=user_id,
+        )
+        self.assertTrue(confirm["ok"])
+        self.assertFalse(confirm["call_logged"])
+        self.assertEqual(confirm["scoring_ineligibility_reason"], "launch_event_missing")
+
 
 if __name__ == "__main__":
     unittest.main()

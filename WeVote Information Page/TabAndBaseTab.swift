@@ -31,7 +31,14 @@ struct TabAndBaseTab: View {
             NavigationStack {
                 IssueCallCenterView(
                     federalReps: repsVM.federalReps,
-                    userZip: String(planVM.zip.filter(\.isNumber).prefix(5)),
+                    userZip: {
+                        let resolvedAddressZip = String((repsVM.resolvedLocationSelection?.postalCode ?? "").filter(\.isNumber).prefix(5))
+                        if resolvedAddressZip.count == 5 { return resolvedAddressZip }
+                        let addressZip = String(planVM.userAddress.zip.filter(\.isNumber).prefix(5))
+                        if addressZip.count == 5 { return addressZip }
+                        let fallbackZip = String(planVM.zip.filter(\.isNumber).prefix(5))
+                        return fallbackZip.count == 5 ? fallbackZip : ""
+                    }(),
                     initialTab: .examples,
                     showsReturnHomeButton: false,
                     hidesTabBar: false

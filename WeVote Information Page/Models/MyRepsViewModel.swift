@@ -579,13 +579,22 @@ final class MyRepsViewModel: ObservableObject {
             return
         }
 
+        let coordinateForLookup = zipCoordinateCache[lookupZIP]
         performLookup(
             zip: lookupZIP,
-            coordinate: nil,
+            coordinate: coordinateForLookup,
             locality: nil,
             scope: .stateLevelOnly,
             token: token
         )
+
+        if coordinateForLookup == nil {
+            loadStateLegislatorsForStateTap(
+                zip: lookupZIP,
+                stateCode: normalizedCode,
+                token: token
+            )
+        }
     }
 
     func representativeZIP(for stateCode: String) -> String? {
@@ -1126,6 +1135,11 @@ final class MyRepsViewModel: ObservableObject {
                 )
                 created = true
                 logger.info("Election reminders scheduled for electionID \(nextElection.electionID, privacy: .public).")
+                // Secondary review signal: successful reminder creation.
+                ReviewPromptManager.shared.markReminderCreated(
+                    isInErrorState: self.errorMessage != nil,
+                    isFlowInterrupted: false
+                )
             } catch {
                 if Task.isCancelled {
                     return
@@ -1282,13 +1296,15 @@ final class MyRepsViewModel: ObservableObject {
             switch scope {
             case .allReps:
                 executiveReps = applyLevel(.federal, to: result.executive)
-                federalReps = applyLevel(.federal, to: result.federal)
+                federalReps = dedupedOfficials(applyLevel(.federal, to: result.federal))
                 stateReps = applyLevel(.state, to: result.state)
                 cityReps = applyLevel(.local, to: result.city)
                 isGeneralLocationSearchResult = false
             case .stateLevelOnly:
                 executiveReps = applyLevel(.federal, to: result.executive)
-                federalReps = applyLevel(.federal, to: result.federal).filter(isStatewideFederalOfficial)
+                federalReps = dedupedOfficials(
+                    applyLevel(.federal, to: result.federal).filter(isStatewideFederalOfficial)
+                )
                 stateReps = applyLevel(.state, to: result.state).filter(isStatewideStateOfficial)
                 cityReps = []
                 isGeneralLocationSearchResult = true
@@ -1298,9 +1314,18 @@ final class MyRepsViewModel: ObservableObject {
                 zipMapLookupState = .resolvedUSCoordinate
             }
 
-            if scope == .stateLevelOnly {
-                isLoading = false
-                return
+            let didResolveAnyReps = !executiveReps.isEmpty
+                || !federalReps.isEmpty
+                || !stateReps.isEmpty
+                || !cityReps.isEmpty
+            if didResolveAnyReps {
+                // Secondary review signal: successful representative lookup.
+                Task { @MainActor in
+                    ReviewPromptManager.shared.markRepLookupSuccess(
+                        isInErrorState: self.errorMessage != nil,
+                        isFlowInterrupted: self.isLoading
+                    )
+                }
             }
 
             guard let coordinate else {
@@ -1341,6 +1366,71 @@ final class MyRepsViewModel: ObservableObject {
             }
             clearReps()
             isLoading = false
+        }
+    }
+
+    private func loadStateLegislatorsForStateTap(
+        zip: String,
+        stateCode: String,
+        token: UUID
+    ) {
+        Task { [weak self] in
+            guard let self else { return }
+            if Task.isCancelled { return }
+
+            let coordinate: RepsGeoCoordinate?
+            if let cached = await MainActor.run(resultType: RepsGeoCoordinate?.self, body: { self.zipCoordinateCache[zip] }) {
+                coordinate = cached
+            } else {
+                do {
+                    let placemark = try await self.resolvePlacemarkForZIP(zip)
+                    guard let clCoordinate = placemark.location?.coordinate else {
+                        await MainActor.run {
+                            guard token == self.lookupToken else { return }
+                            self.isLoading = false
+                        }
+                        return
+                    }
+
+                    let resolvedCoordinate = RepsGeoCoordinate(
+                        latitude: clCoordinate.latitude,
+                        longitude: clCoordinate.longitude
+                    )
+                    await MainActor.run {
+                        self.zipCoordinateCache[zip] = resolvedCoordinate
+                    }
+                    coordinate = resolvedCoordinate
+                } catch {
+                    await MainActor.run {
+                        guard token == self.lookupToken else { return }
+                        self.isLoading = false
+                    }
+                    return
+                }
+            }
+
+            guard let coordinate else {
+                await MainActor.run {
+                    guard token == self.lookupToken else { return }
+                    self.isLoading = false
+                }
+                return
+            }
+
+            let officials = await self.openStatesService.lookupStateLegislators(
+                zip: zip,
+                coordinate: coordinate,
+                expectedStateCode: stateCode
+            )
+            if Task.isCancelled { return }
+
+            await MainActor.run {
+                guard token == self.lookupToken else { return }
+                self.stateReps = self.dedupedOfficials(
+                    self.stateReps + self.applyLevel(.state, to: officials)
+                )
+                self.isLoading = false
+            }
         }
     }
 
@@ -1404,6 +1494,7 @@ final class MyRepsViewModel: ObservableObject {
         var keys: [String] = []
         let normalizedName = normalizedDedupeText(official.name)
         let normalizedDivision = normalizedDedupeText(official.divisionId)
+        let normalizedOfficeTitle = normalizedDedupeText(official.officeTitle)
 
         if !normalizedName.isEmpty && !normalizedDivision.isEmpty {
             keys.append("name+division|\(normalizedName)|\(normalizedDivision)")
@@ -1415,6 +1506,14 @@ final class MyRepsViewModel: ObservableObject {
             || normalizedDivision.contains("/cd:")
         ) {
             keys.append("seat|\(normalizedDivision)")
+        }
+
+        // Some lookup providers can return duplicate statewide senator records with
+        // slightly different division/url metadata; collapse those to one person/state.
+        if normalizedOfficeTitle.contains("senator"),
+           !normalizedName.isEmpty,
+           let stateCode = stateCodeFromDivisionID((official.divisionId ?? "").lowercased()) {
+            keys.append("senator+state+name|\(stateCode.lowercased())|\(normalizedName)")
         }
 
         if let normalizedURL = normalizedDedupeURL(official.url) {

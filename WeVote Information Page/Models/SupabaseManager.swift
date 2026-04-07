@@ -223,6 +223,20 @@ private struct MAPCCallSumsRPCRow: Decodable {
     }
 }
 
+private struct MAPCCallIssueSumsRPCRow: Decodable {
+    let issueID: String
+    let totalCompletedCalls: Int
+
+    enum CodingKeys: String, CodingKey {
+        case issueID = "issue_id"
+        case totalCompletedCalls = "total_completed_calls"
+    }
+}
+
+private struct MAPCCallIssueSumsRPCParams: Encodable {
+    let issue_ids: [String]
+}
+
 struct MapvPlanInsert: Encodable, Sendable {
     typealias VotingMethod = MapvPlan.VotingMethod
 
@@ -1571,6 +1585,10 @@ final class SupabaseManager {
                 throw SupabaseManagerError.noSession
             }
 
+            if let rpcIssueSums = try? await fetchMAPCCallIssueSumsViaRPC(issueIDs: normalizedIssueIDs) {
+                return rpcIssueSums
+            }
+
             var countsByIssueID: [String: Int] = [:]
             for issueID in normalizedIssueIDs {
                 let count = try await countMAPCCallEvents(
@@ -1600,6 +1618,37 @@ final class SupabaseManager {
             logger.error("fetchMAPCCallIssueSums failed.")
             return nil
         }
+    }
+
+    private func fetchMAPCCallIssueSumsViaRPC(issueIDs: [String]) async throws -> MAPCCallIssueSums? {
+        let response = try await client
+            .rpc(
+                "mapc_call_issue_sums",
+                params: MAPCCallIssueSumsRPCParams(issue_ids: issueIDs)
+            )
+            .execute()
+
+        let decoder = JSONDecoder()
+        let rows: [MAPCCallIssueSumsRPCRow]
+        if let decodedRows = try? decoder.decode([MAPCCallIssueSumsRPCRow].self, from: response.data) {
+            rows = decodedRows
+        } else if let singleRow = try? decoder.decode(MAPCCallIssueSumsRPCRow.self, from: response.data) {
+            rows = [singleRow]
+        } else {
+            return nil
+        }
+
+        var countsByIssueID = Dictionary(
+            uniqueKeysWithValues: issueIDs.map { ($0, 0) }
+        )
+
+        for row in rows {
+            let normalizedIssueID = row.issueID.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !normalizedIssueID.isEmpty else { continue }
+            countsByIssueID[normalizedIssueID] = max(0, row.totalCompletedCalls)
+        }
+
+        return MAPCCallIssueSums(appCompletedCallsByIssueID: countsByIssueID)
     }
 
     private func fetchMAPCCallSumsViaRPC() async throws -> MAPCCallSums? {

@@ -48,7 +48,7 @@ struct VoterIDGuideCard: View {
     }
 
     private var headerText: String {
-        localized("app.voter_id.requirements.header", fallback: "Voter ID Requirements")
+        localized("app.voter_id.requirements.header.short", fallback: "Voter ID Requirements")
     }
 
     private var stateHeaderText: String {

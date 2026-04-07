@@ -89,7 +89,7 @@ def test_trailing_window_boundaries_are_inclusive_on_cutoffs() -> None:
     assert snapshot.momentum_points >= 10     # includes week 8 cutoff
 
 
-def test_duplicate_suppression_with_issue_id() -> None:
+def test_repeated_calls_with_same_issue_still_count() -> None:
     repo = InMemoryCivicRepository()
     service = CivicService(repository=repo)
 
@@ -128,14 +128,14 @@ def test_duplicate_suppression_with_issue_id() -> None:
         )
     )
 
-    assert confirm_2.scoring_eligible_boolean is False
-    assert "past 7 days" in (confirm_2.scoring_ineligibility_reason or "")
+    assert confirm_2.scoring_eligible_boolean is True
+    assert confirm_2.scoring_ineligibility_reason is None
 
     eligible_calls = repo.list_call_events("dup-user", eligible_only=True)
-    assert len(eligible_calls) == 1
+    assert len(eligible_calls) == 2
 
 
-def test_duplicate_suppression_without_issue_id_dedupes_by_office_only() -> None:
+def test_repeated_calls_without_issue_id_still_count() -> None:
     repo = InMemoryCivicRepository()
     service = CivicService(repository=repo)
 
@@ -166,8 +166,8 @@ def test_duplicate_suppression_without_issue_id_dedupes_by_office_only() -> None
         CallCompletionRequest(user_id="dup-user-2", launch_event_id=second["launch_event_id"], completed=True)
     )
 
-    assert second_confirm.scoring_eligible_boolean is False
-    assert "office" in (second_confirm.scoring_ineligibility_reason or "").lower()
+    assert second_confirm.scoring_eligible_boolean is True
+    assert second_confirm.scoring_ineligibility_reason is None
 
 
 def test_recompute_after_call_completion_crosses_baseline() -> None:
@@ -205,7 +205,7 @@ def test_leaderboard_rollups_use_eligible_verified_calls() -> None:
     repo.insert_call_event(_event(user_id="uA", office_id="o1", issue_id="i1", days_ago=0, event_id="ua1"))
     repo.insert_call_event(_event(user_id="uA", office_id="o2", issue_id="i2", days_ago=0, event_id="ua2"))
     repo.insert_call_event(_event(user_id="uB", office_id="o3", issue_id="i3", days_ago=0, event_id="ub1"))
-    repo.insert_call_event(_event(user_id="uB", office_id="o3", issue_id="i4", days_ago=0, event_id="ub2", eligible=False, reason="duplicate"))
+    repo.insert_call_event(_event(user_id="uB", office_id="o3", issue_id="i4", days_ago=0, event_id="ub2"))
 
     service.recompute_call_score("uA")
     service.recompute_call_score("uB")
@@ -222,7 +222,7 @@ def test_leaderboard_rollups_use_eligible_verified_calls() -> None:
     assert first.eligible_verified_call_count == 2
     assert second.user_alias.startswith("voter-")
     assert second.user_alias != "uB"
-    assert second.eligible_verified_call_count == 1
+    assert second.eligible_verified_call_count == 2
 
     me = service.get_user_leaderboard_summary(
         user_id="uA",

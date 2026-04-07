@@ -11,23 +11,25 @@ struct IssueCallCenterView: View {
     @StateObject private var waterfallController = EmojiWaterfallController()
     @AppStorage("feature.call_score_v1_enabled") private var callScoreV1Enabled = true
     @FocusState private var focusedField: FocusedField?
-    @State private var showWhyCallOverlay = false
     @State private var shareItems: [Any] = []
     @State private var showingShareSheet = false
     @State private var didCompleteMAPC = false
     @State private var isTalkingPointsExpanded = false
-    @State private var logoFrameInSpreadSpace: CGRect = .zero
-    @State private var overlayOriginInSpreadSpace: CGPoint?
     @State private var lastPromptedLaunchEventID: String?
     @State private var selectedExampleCategory: String = Self.allExamplesFilterLabel
     @State private var expandedVoicemailBriefIDs: Set<String> = []
     @State private var expandedLiveBriefIDs: Set<String> = []
     @State private var mapcSessionLoggedBriefIDs: Set<String> = []
+    @State private var mapcOptimisticIssueGains: [String: MAPCIssueGainState] = [:]
     @State private var mapcBriefsSignature: String = ""
     @State private var animatedTotalVoteNowCalls: Int?
     @State private var animatedUserCallCount: Int?
     @State private var animatedMapcCallGain: Int = 0
     @State private var showMapcCallGainBadge = false
+    @State private var mapcForwardSlideTransition = true
+    @State private var isMAPCCardTransitioning = false
+    @State private var mapcTransitionResetTask: Task<Void, Never>?
+    @State private var exampleSearchQuery: String = ""
     private let userAddressLine: String
     private let residencyNotice: String
     private let initialTab: CivicIssueCallTab
@@ -39,14 +41,25 @@ struct IssueCallCenterView: View {
         case billRef
     }
 
-    private struct LogoFramePreferenceKey: PreferenceKey {
-        static var defaultValue: CGRect = .zero
-        static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
-            let next = nextValue()
-            if next != .zero {
-                value = next
-            }
-        }
+    private struct MAPCIssueGainState: Sendable {
+        let baseline: Int
+        var gain: Int
+    }
+
+    private var mapcCardTransition: AnyTransition {
+        let travelDistance = UIScreen.main.bounds.width * 0.86
+        let insertionX = mapcForwardSlideTransition ? travelDistance : -travelDistance
+        let removalX = mapcForwardSlideTransition ? -travelDistance : travelDistance
+        return .asymmetric(
+            insertion: .offset(x: insertionX).combined(with: .opacity),
+            removal: .offset(x: removalX).combined(with: .opacity)
+        )
+    }
+
+    private var mapcCardAnimation: Animation {
+        reduceMotion
+        ? .easeInOut(duration: 0.24)
+        : .interactiveSpring(response: 0.44, dampingFraction: 0.9, blendDuration: 0.18)
     }
 
     init(
@@ -122,7 +135,10 @@ struct IssueCallCenterView: View {
     }
 
     private var isMAPCMode: Bool {
-        !didCompleteMAPC && !viewModel.callBriefs.isEmpty && viewModel.activeBrief != nil
+        !didCompleteMAPC
+            && !viewModel.requiresDraftApproval
+            && !viewModel.callBriefs.isEmpty
+            && viewModel.activeBrief != nil
     }
 
     private var visibleTabs: [CivicIssueCallTab] {
@@ -131,6 +147,7 @@ struct IssueCallCenterView: View {
 
     private static let allExamplesFilterLabel = "All"
     private static let urgentExamplesFilterLabel = "Urgent"
+    private static let searchExamplesFilterLabel = "Search issues"
 
     private var exampleCategoryOptions: [String] {
         var seen = Set<String>()
@@ -142,26 +159,39 @@ struct IssueCallCenterView: View {
             guard !category.isEmpty else { continue }
             if category.caseInsensitiveCompare(Self.allExamplesFilterLabel) == .orderedSame { continue }
             if category.caseInsensitiveCompare(Self.urgentExamplesFilterLabel) == .orderedSame { continue }
+            if category.caseInsensitiveCompare(Self.searchExamplesFilterLabel) == .orderedSame { continue }
             if seen.insert(category).inserted {
                 categories.append(category)
             }
         }
 
-        return [Self.allExamplesFilterLabel, Self.urgentExamplesFilterLabel] + categories
+        return [Self.allExamplesFilterLabel, Self.urgentExamplesFilterLabel, Self.searchExamplesFilterLabel] + categories
     }
 
     private var filteredExamples: [CivicExampleIssueCard] {
+        let baseExamples: [CivicExampleIssueCard]
         if selectedExampleCategory.caseInsensitiveCompare(Self.allExamplesFilterLabel) == .orderedSame {
-            return viewModel.examples
+            baseExamples = viewModel.examples
+        } else if selectedExampleCategory.caseInsensitiveCompare(Self.urgentExamplesFilterLabel) == .orderedSame {
+            baseExamples = viewModel.examples.filter(isUrgentExample)
+        } else if selectedExampleCategory.caseInsensitiveCompare(Self.searchExamplesFilterLabel) == .orderedSame {
+            baseExamples = viewModel.examples
+        } else {
+            baseExamples = viewModel.examples.filter { card in
+                let category = (card.category ?? "")
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                return category.caseInsensitiveCompare(selectedExampleCategory) == .orderedSame
+            }
         }
-        if selectedExampleCategory.caseInsensitiveCompare(Self.urgentExamplesFilterLabel) == .orderedSame {
-            return viewModel.examples.filter(isUrgentExample)
+
+        if selectedExampleCategory.caseInsensitiveCompare(Self.searchExamplesFilterLabel) == .orderedSame {
+            let query = exampleSearchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !query.isEmpty else { return baseExamples }
+            return baseExamples.filter { example in
+                premadeExampleMatchesSearch(example, query: query)
+            }
         }
-        return viewModel.examples.filter { card in
-            let category = (card.category ?? "")
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-            return category.caseInsensitiveCompare(selectedExampleCategory) == .orderedSame
-        }
+        return baseExamples
     }
 
     private var exampleCategoryColorMap: [String: Color] {
@@ -186,11 +216,13 @@ struct IssueCallCenterView: View {
 
         var map: [String: Color] = [
             Self.allExamplesFilterLabel.lowercased(): VoteNowColors.primaryCTA,
-            Self.urgentExamplesFilterLabel.lowercased(): VoteNowColors.urgentCTA
+            Self.urgentExamplesFilterLabel.lowercased(): VoteNowColors.urgentCTA,
+            Self.searchExamplesFilterLabel.lowercased(): Color(hex: "#0F766E")
         ]
         let categories = exampleCategoryOptions.filter {
             $0.caseInsensitiveCompare(Self.allExamplesFilterLabel) != .orderedSame &&
-            $0.caseInsensitiveCompare(Self.urgentExamplesFilterLabel) != .orderedSame
+            $0.caseInsensitiveCompare(Self.urgentExamplesFilterLabel) != .orderedSame &&
+            $0.caseInsensitiveCompare(Self.searchExamplesFilterLabel) != .orderedSame
         }
         for (index, category) in categories.enumerated() {
             let key = category.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
@@ -213,6 +245,7 @@ struct IssueCallCenterView: View {
                     } else {
                         VStack(spacing: 12) {
                             headerSection
+                            topTabSelector
                             Group {
                                 switch viewModel.selectedTab {
                                 case .assistant:
@@ -222,7 +255,7 @@ struct IssueCallCenterView: View {
                                 case .civicScore:
                                     civicScoreTab
                                 case .history:
-                                    civicScoreTab
+                                    rulesTab
                                 }
                             }
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -239,26 +272,6 @@ struct IssueCallCenterView: View {
                 .zIndex(11)
                 .allowsHitTesting(false)
 
-            if showWhyCallOverlay {
-                WhyCallFloodOverlay(
-                    isPresented: $showWhyCallOverlay,
-                    originInSpreadSpace: overlayOriginInSpreadSpace,
-                    onStartCalling: {
-                        focusedField = nil
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            viewModel.selectedTab = .assistant
-                        }
-                    }
-                )
-                    .transition(.identity)
-                    .zIndex(20)
-            }
-        }
-        .coordinateSpace(name: "SpreadSpace")
-        .safeAreaInset(edge: .bottom) {
-            if !isMAPCMode && !showWhyCallOverlay {
-                bottomTabSelector
-            }
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
@@ -294,10 +307,6 @@ struct IssueCallCenterView: View {
         .onTapGesture {
             focusedField = nil
         }
-        .onPreferenceChange(LogoFramePreferenceKey.self) { newFrame in
-            guard newFrame != .zero else { return }
-            logoFrameInSpreadSpace = newFrame
-        }
         .onAppear {
             if !isMAPCMode {
                 viewModel.selectedTab = initialTab
@@ -307,11 +316,13 @@ struct IssueCallCenterView: View {
             }
         }
         .onDisappear {
+            mapcTransitionResetTask?.cancel()
+            isMAPCCardTransitioning = false
             viewModel.persistDraftState()
         }
         .onChange(of: viewModel.selectedTab) { _, newTab in
             viewModel.persistDraftState()
-            if newTab == .civicScore || newTab == .history {
+            if newTab == .civicScore {
                 Task {
                     await viewModel.refreshCallScoreData()
                 }
@@ -328,6 +339,13 @@ struct IssueCallCenterView: View {
             guard viewModel.selectedTab == .assistant else { return }
             guard newID != nil else { return }
             didCompleteMAPC = false
+        }
+        .onChange(of: viewModel.requiresDraftApproval) { _, requiresApproval in
+            guard requiresApproval else { return }
+            didCompleteMAPC = false
+            if viewModel.selectedTab != .assistant {
+                viewModel.selectedTab = .assistant
+            }
         }
         .onChange(of: scenePhase) { _, newValue in
             guard newValue == .active else { return }
@@ -355,6 +373,7 @@ struct IssueCallCenterView: View {
             if signature != mapcBriefsSignature {
                 mapcBriefsSignature = signature
                 mapcSessionLoggedBriefIDs.removeAll()
+                mapcOptimisticIssueGains.removeAll()
             }
         }
         .onChange(of: viewModel.callStats.totalVoteNowCalls) { _, newValue in
@@ -366,6 +385,9 @@ struct IssueCallCenterView: View {
             if let animated = animatedUserCallCount, newValue >= animated {
                 animatedUserCallCount = nil
             }
+        }
+        .onChange(of: viewModel.appWideCompletedCallsByIssueID) { _, _ in
+            pruneResolvedOptimisticIssueGains()
         }
     }
 
@@ -390,11 +412,8 @@ struct IssueCallCenterView: View {
                             shareActionButton
                         }
                     }
-
-                    if !residencyNotice.isEmpty {
-                        residencyNoticeView
-                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
                 .padding(.top, 10)
             } else {
@@ -411,43 +430,8 @@ struct IssueCallCenterView: View {
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 2) {
             HStack(alignment: .center, spacing: 12) {
-                Button {
-                    if logoFrameInSpreadSpace != .zero {
-                        overlayOriginInSpreadSpace = CGPoint(
-                            x: logoFrameInSpreadSpace.midX,
-                            y: logoFrameInSpreadSpace.midY
-                        )
-                    } else {
-                        overlayOriginInSpreadSpace = nil
-                    }
-                    showWhyCallOverlay = true
-                } label: {
-                    VoteNowLogoIcon(size: 50)
-                        .frame(width: 50, height: 50)
-                        .voteNowPillDualOrbit(
-                            redColor: VoteNowColors.ctaRed.opacity(0.94),
-                            blueColor: VoteNowColors.ctaBlue.opacity(0.88),
-                            strokeThickness: 2.6,
-                            loopDuration: 4.9,
-                            glowIntensity: 0.26,
-                            idleOpacity: 0.24,
-                            borderInset: 0.65,
-                            segmentLength: 0.50,
-                            separatorThickness: 0.75,
-                            speedVariance: 0,
-                            pathStyle: .roundedRect(cornerRadius: 12)
-                        )
-                        .background(
-                            GeometryReader { geo in
-                                Color.clear.preference(
-                                    key: LogoFramePreferenceKey.self,
-                                    value: geo.frame(in: .named("SpreadSpace"))
-                                )
-                            }
-                        )
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(l("app.issue_call.action.why_call", "Open Why Call"))
+                VoteNowLogoIcon(size: 50)
+                    .frame(width: 50, height: 50)
 
                 Text(l("app.issue_call.title", "Call my Rep"))
                     .font(.system(size: 38, weight: .bold))
@@ -477,20 +461,38 @@ struct IssueCallCenterView: View {
 
             if !userAddressLine.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(userAddressLine)
-                        .font(.subheadline)
-                        .foregroundColor(VoteNowColors.mutedText)
-                        .lineLimit(2)
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text(userAddressLine)
+                            .font(.subheadline)
+                            .foregroundColor(VoteNowColors.mutedText)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.84)
+                            .truncationMode(.tail)
+
+                        Spacer(minLength: 8)
+
+                        Button {
+                            openMyInfoPanel()
+                        } label: {
+                            Text(l("app.reps.action.my_info", "My Info") + "...")
+                                .font(.callout.weight(.semibold))
+                                .italic()
+                                .foregroundColor(VoteNowColors.primaryCTA)
+                                .lineLimit(1)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.leading, 62)
 
                     if !residencyNotice.isEmpty {
                         residencyNoticeView
                     }
                 }
-                .padding(.leading, 62)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
         .padding(.horizontal, 16)
-        .padding(.top, 10)
+        .padding(.top, 8)
     }
 
     private var residencyNoticeView: some View {
@@ -499,11 +501,24 @@ struct IssueCallCenterView: View {
                 .font(.caption.weight(.bold))
                 .foregroundColor(Color(hex: "#9A6500"))
                 .padding(.top, 1)
-            Text(residencyNotice)
-                .font(.caption.weight(.semibold))
-                .foregroundColor(Color(hex: "#6E4A00"))
+            Button {
+                openMyInfoPanel()
+            } label: {
+                (
+                    Text("\(residencyNotice) ")
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(Color(hex: "#6E4A00"))
+                    + Text(l("app.issue_call.location.change_address", "Change to your Address..."))
+                        .font(.caption.weight(.bold))
+                        .italic()
+                        .foregroundColor(VoteNowColors.primaryCTA)
+                )
                 .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .buttonStyle(.plain)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
         .background(Color(hex: "#FFF3D6"))
@@ -512,6 +527,10 @@ struct IssueCallCenterView: View {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .stroke(Color(hex: "#F2D38B"), lineWidth: 1)
         )
+    }
+
+    private func openMyInfoPanel() {
+        NotificationCenter.default.post(name: .openMyInfoPanel, object: nil)
     }
 
     private var repProgressRow: some View {
@@ -550,21 +569,59 @@ struct IssueCallCenterView: View {
         .padding(.horizontal, 16)
     }
 
-    private var bottomTabSelector: some View {
-        Picker("", selection: $viewModel.selectedTab) {
-            ForEach(visibleTabs) { tab in
-                Text(tab.title).tag(tab)
+    private var topTabSelector: some View {
+        HStack(spacing: 0) {
+            Spacer(minLength: 0)
+            HStack(spacing: 10) {
+                ForEach(Array(visibleTabs.enumerated()), id: \.offset) { index, tab in
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.18)) {
+                            viewModel.selectedTab = tab
+                        }
+                    } label: {
+                        Text(tabNavigationTitle(for: tab))
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundColor(viewModel.selectedTab == tab ? VoteNowColors.warningAmber.opacity(0.92) : VoteNowColors.primaryText)
+                            .padding(.vertical, 2)
+                            .overlay(alignment: .bottom) {
+                                Capsule()
+                                    .fill(viewModel.selectedTab == tab ? VoteNowColors.primaryCTA : .clear)
+                                    .frame(height: 2)
+                                    .offset(y: 5)
+                            }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("issue_call.tabs.\(tab.rawValue)")
+
+                    if index < visibleTabs.count - 1 {
+                        Text("|")
+                            .font(.subheadline.weight(.bold))
+                            .foregroundColor(VoteNowColors.mutedText.opacity(0.7))
+                            .padding(.vertical, 1)
+                    }
+                }
             }
+            Spacer(minLength: 0)
         }
-        .pickerStyle(.segmented)
+        .frame(maxWidth: .infinity, alignment: .center)
         .padding(.horizontal, 16)
-        .padding(.top, 8)
-        .padding(.bottom, 10)
-        .background(
-            VoteNowColors.brandSoftBlue.opacity(0.96)
-                .ignoresSafeArea(edges: .bottom)
-        )
+        .padding(.top, 2)
+        .padding(.bottom, 2)
+        .background(VoteNowColors.brandSoftBlue)
         .accessibilityIdentifier("issue_call.tabs")
+    }
+
+    private func tabNavigationTitle(for tab: CivicIssueCallTab) -> String {
+        switch tab {
+        case .assistant:
+            return "Build Script"
+        case .examples:
+            return "Premade Script"
+        case .history:
+            return "Rules"
+        case .civicScore:
+            return "Civic Score"
+        }
     }
 
     private var scriptFocusModeContent: some View {
@@ -577,8 +634,14 @@ struct IssueCallCenterView: View {
                 issueSummaryCard
 
                 if let brief = viewModel.activeBrief {
-                    repBriefCard(brief, condensedForMAPC: true)
-                        .id(brief.id)
+                    ZStack {
+                        repBriefCard(brief, condensedForMAPC: true)
+                            .id("mapc-card-\(brief.id)")
+                            .compositingGroup()
+                            .transition(mapcCardTransition)
+                    }
+                    .clipped()
+                    .animation(mapcCardAnimation, value: viewModel.activeBriefID)
                 } else {
                     Text(l("app.issue_call.empty.filtered", "No briefs match this representative filter."))
                         .font(.subheadline)
@@ -596,7 +659,7 @@ struct IssueCallCenterView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
-                    let showComposerOnly = didCompleteMAPC
+                    let showComposerOnly = didCompleteMAPC || viewModel.isSubmitting
                     let awaitingDraftApproval = viewModel.requiresDraftApproval
 
                     if viewModel.lastCompletionResult != nil {
@@ -725,8 +788,9 @@ struct IssueCallCenterView: View {
 
             Button {
                 focusedField = nil
-                didCompleteMAPC = false
                 isTalkingPointsExpanded = false
+                didCompleteMAPC = false
+                viewModel.prepareForFreshGeneration()
                 Task {
                     await viewModel.submitAssistantRequest()
                 }
@@ -769,19 +833,6 @@ struct IssueCallCenterView: View {
 
             HStack(spacing: 8) {
                 Button {
-                    viewModel.approveGeneratedDraft()
-                } label: {
-                    Text("Looks good")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                        .background(VoteNowColors.primaryCTA)
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                }
-                .buttonStyle(.plain)
-
-                Button {
                     viewModel.reviseGeneratedDraft()
                     focusedField = .concern
                 } label: {
@@ -796,6 +847,19 @@ struct IssueCallCenterView: View {
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
                                 .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
                         )
+                }
+                .buttonStyle(.plain)
+
+                Button {
+                    viewModel.approveGeneratedDraft()
+                } label: {
+                    Text("Looks good")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(VoteNowColors.primaryCTA)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
                 .buttonStyle(.plain)
             }
@@ -848,7 +912,7 @@ struct IssueCallCenterView: View {
             }
 
             if !isMAPCMode, !isIssueSummaryDuplicate {
-                Text(viewModel.issueSummary)
+                Text(cleanedIssueSummaryForTopCard(viewModel.issueSummary))
                     .font(.subheadline)
                     .foregroundColor(VoteNowColors.primaryText)
             }
@@ -892,17 +956,49 @@ struct IssueCallCenterView: View {
 
     private var isIssueSummaryDuplicate: Bool {
         let title = viewModel.issueTitle.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        let summary = viewModel.issueSummary.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let summary = cleanedIssueSummaryForTopCard(viewModel.issueSummary)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
         guard !title.isEmpty, !summary.isEmpty else { return false }
         return title == summary
+    }
+
+    private func cleanedIssueSummaryForTopCard(_ text: String) -> String {
+        var cleaned = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        cleaned = cleaned.replacingOccurrences(
+            of: #"^\s*why\s+it\s+matters\s*:?\s*"#,
+            with: "",
+            options: [.regularExpression, .caseInsensitive]
+        )
+        cleaned = cleaned.replacingOccurrences(
+            of: #"^\s*issue\s+explanation\s*:?\s*"#,
+            with: "",
+            options: [.regularExpression, .caseInsensitive]
+        )
+        cleaned = cleaned.replacingOccurrences(
+            of: #"^\s*issue\s+summary\s*:?\s*"#,
+            with: "",
+            options: [.regularExpression, .caseInsensitive]
+        )
+        return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     @ViewBuilder
     private func repBriefCard(_ brief: CivicCallBrief, condensedForMAPC: Bool = false) -> some View {
         let isActive = viewModel.activeBriefID == brief.id
         let official = viewModel.official(for: brief)
+        let displayRepName: String = {
+            let officialName = official?.name.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if !officialName.isEmpty { return officialName }
+            return brief.repName
+        }()
+        let displayOfficeType: String = {
+            let officialTitle = official?.officeTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if !officialTitle.isEmpty { return officialTitle }
+            return brief.officeType
+        }()
         let primaryCallURL = callURL(primary: brief.primaryPhoneNumber, fallback: official?.officialPhone)
-        let shouldShowCallPillOrbit = condensedForMAPC && primaryCallURL != nil
+        let shouldShowCallPillOrbit = condensedForMAPC && !isMAPCCardTransitioning && primaryCallURL != nil
         let isLastBrief = viewModel.isLastBrief(brief)
         let briefIndex = viewModel.callBriefs.firstIndex(where: { $0.id == brief.id }) ?? 0
         let isFirstBrief = briefIndex == 0
@@ -918,9 +1014,9 @@ struct IssueCallCenterView: View {
                     .clipShape(Circle())
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(brief.repName)
+                    Text(displayRepName)
                         .font(.headline)
-                    Text(brief.officeType)
+                    Text(displayOfficeType)
                         .font(.subheadline)
                         .foregroundColor(VoteNowColors.mutedText)
             if let official, let district = official.district {
@@ -936,17 +1032,27 @@ struct IssueCallCenterView: View {
             HStack(spacing: 8) {
                 Button {
                     guard let url = primaryCallURL else { return }
-                    Task {
-                        if callScoreV1Enabled {
-                            await viewModel.beginCallLaunch(for: brief, sourceScreen: "issue_call_center")
+                    openURL(url) { accepted in
+                        guard accepted else {
+                            viewModel.errorMessage = l(
+                                "app.reps.alert.phone_unavailable.generic",
+                                "This device cannot place calls."
+                            )
+                            return
                         }
-                        openURL(url)
+
+                        if callScoreV1Enabled {
+                            // Never block dialing on network logging.
+                            Task {
+                                await viewModel.beginCallLaunch(for: brief, sourceScreen: "issue_call_center")
+                            }
+                        }
                     }
                 } label: {
                     Group {
                         if shouldShowCallPillOrbit {
                             Label(
-                                callButtonTitle(for: brief),
+                                callButtonTitle(for: brief, official: official),
                                 systemImage: "phone.fill"
                             )
                             .font(.subheadline.weight(.semibold))
@@ -968,7 +1074,7 @@ struct IssueCallCenterView: View {
                             )
                         } else {
                             Label(
-                                callButtonTitle(for: brief),
+                                callButtonTitle(for: brief, official: official),
                                 systemImage: "phone.fill"
                             )
                             .font(.subheadline.weight(.semibold))
@@ -1055,7 +1161,10 @@ struct IssueCallCenterView: View {
                     Button {
                         if selectedOutcome != .voicemail {
                             if isMAPCMode {
-                                mapcSessionLoggedBriefIDs.insert(brief.id)
+                                let inserted = mapcSessionLoggedBriefIDs.insert(brief.id).inserted
+                                if inserted {
+                                    noteOptimisticIssueGain(for: brief.issueID)
+                                }
                             }
                             Task {
                                 await viewModel.logOutcome(for: brief, outcome: .voicemail)
@@ -1109,7 +1218,9 @@ struct IssueCallCenterView: View {
                             if isFirstBrief {
                                 dismiss()
                             } else {
-                                withAnimation(.easeInOut(duration: 0.2)) {
+                                beginMAPCCardTransition()
+                                withAnimation(mapcCardAnimation) {
+                                    mapcForwardSlideTransition = false
                                     viewModel.retreatToPreviousRep(before: brief)
                                 }
                             }
@@ -1145,10 +1256,6 @@ struct IssueCallCenterView: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(isActive ? VoteNowColors.primaryCTA : VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
         )
-        .transition(.asymmetric(
-            insertion: .move(edge: .trailing).combined(with: .opacity),
-            removal: .move(edge: .leading).combined(with: .opacity)
-        ))
     }
 
     private func nextRepButton(for brief: CivicCallBrief, isLastBrief: Bool) -> some View {
@@ -1156,7 +1263,7 @@ struct IssueCallCenterView: View {
 
         return Button {
             let mapcGain = mapcSessionLoggedBriefIDs.count
-            withAnimation(.easeInOut(duration: 0.28)) {
+            withAnimation(mapcCardAnimation) {
                 if isLastBrief {
                     waterfallController.trigger(reduceMotion: reduceMotion)
                     viewModel.finishScript()
@@ -1164,11 +1271,18 @@ struct IssueCallCenterView: View {
                         withAnimation(.easeInOut(duration: 0.22)) {
                             didCompleteMAPC = true
                             viewModel.selectedTab = .civicScore
+                            // Primary review signal: successful MAPC completion.
+                            ReviewPromptManager.shared.markMAPCCompleted(
+                                isInErrorState: viewModel.errorMessage != nil,
+                                isFlowInterrupted: showingShareSheet
+                            )
                             startMAPCCallGainAnimation(gain: mapcGain)
                             mapcSessionLoggedBriefIDs.removeAll()
                         }
                     }
                 } else {
+                    beginMAPCCardTransition()
+                    mapcForwardSlideTransition = true
                     viewModel.advanceToNextRep(after: brief)
                 }
             }
@@ -1207,12 +1321,19 @@ struct IssueCallCenterView: View {
                             Button {
                                 selectedExampleCategory = category
                             } label: {
-                                Text(exampleCategoryDisplayName(for: category))
-                                    .font(.caption.weight(.semibold))
-                                    .foregroundColor(.white)
-                                    .lineLimit(1)
-                                    .multilineTextAlignment(.center)
-                                    .minimumScaleFactor(0.78)
+                                HStack(spacing: 5) {
+                                    if category.caseInsensitiveCompare(Self.searchExamplesFilterLabel) == .orderedSame {
+                                        Image(systemName: "magnifyingglass")
+                                            .font(.caption2.weight(.bold))
+                                            .foregroundColor(.white)
+                                    }
+                                    Text(exampleCategoryDisplayName(for: category))
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundColor(.white)
+                                        .lineLimit(1)
+                                        .multilineTextAlignment(.center)
+                                        .minimumScaleFactor(0.78)
+                                }
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
                                     .background(
@@ -1247,14 +1368,75 @@ struct IssueCallCenterView: View {
                     .padding(.top, 4)
                 }
 
+                if selectedExampleCategory.caseInsensitiveCompare(Self.searchExamplesFilterLabel) == .orderedSame {
+                    HStack(spacing: 8) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(VoteNowColors.mutedText)
+                        TextField(
+                            l("app.issue_call.examples.search_placeholder", "Search premade scripts"),
+                            text: $exampleSearchQuery
+                        )
+                        .textInputAutocapitalization(.sentences)
+                        .disableAutocorrection(false)
+                        .font(.subheadline)
+                        .accessibilityIdentifier("issue_call.examples.search_input")
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
+                    .background(VoteNowColors.surfaceWhite)
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+                    )
+                }
+
                 if viewModel.examples.isEmpty {
                     Text(l("app.issue_call.examples.empty", "No example cards are available right now."))
                         .font(.subheadline)
                         .foregroundColor(VoteNowColors.mutedText)
                 } else if filteredExamples.isEmpty {
-                    Text(l("app.issue_call.examples.empty_for_category", "No examples match this category yet."))
-                        .font(.subheadline)
-                        .foregroundColor(VoteNowColors.mutedText)
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text(l("app.issue_call.examples.empty_for_category", "No examples match this category yet."))
+                            .font(.subheadline)
+                            .foregroundColor(VoteNowColors.mutedText)
+
+                        if selectedExampleCategory.caseInsensitiveCompare(Self.searchExamplesFilterLabel) == .orderedSame {
+                            Button {
+                                focusedField = nil
+                                didCompleteMAPC = false
+                                let query = exampleSearchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+                                if !query.isEmpty {
+                                    viewModel.concernText = query
+                                }
+                                withAnimation(.easeInOut(duration: 0.22)) {
+                                    viewModel.selectedTab = .assistant
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+                                    focusedField = .concern
+                                }
+                            } label: {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "sparkles")
+                                        .font(.caption.weight(.semibold))
+                                    Text(l("app.issue_call.examples.build_script", "Build this script"))
+                                        .font(.subheadline.weight(.semibold))
+                                    Spacer(minLength: 0)
+                                    Image(systemName: "arrow.right")
+                                        .font(.caption.weight(.semibold))
+                                }
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 10)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(VoteNowColors.primaryCTA)
+                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("issue_call.examples.build_from_search")
+                        }
+                    }
                 }
 
                 ForEach(filteredExamples) { example in
@@ -1319,7 +1501,11 @@ struct IssueCallCenterView: View {
 
                         exampleScriptBlock(
                             title: "Live-call Script",
-                            text: condensedPremadeScriptPlaceholderText(example.liveScript)
+                            text: example.liveScript
+                        )
+                        exampleScriptBlock(
+                            title: "Voicemail Script",
+                            text: example.voicemailScript
                         )
 
                         Button {
@@ -1364,6 +1550,39 @@ struct IssueCallCenterView: View {
                 }
                 civicScoreSummaryCard
                 historyTrackerSection
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 20)
+        }
+    }
+
+    private var rulesTab: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("MAPC Rules")
+                        .font(.headline)
+                        .foregroundColor(VoteNowColors.primaryText)
+                    Text("1. Keep your issue specific so the script is clear and actionable.")
+                        .font(.subheadline)
+                        .foregroundColor(VoteNowColors.primaryText)
+                    Text("2. Include a concrete congressional action (support, oppose, fund, vote, or oversight).")
+                        .font(.subheadline)
+                        .foregroundColor(VoteNowColors.primaryText)
+                    Text("3. Add a bill, program, or agency when possible to improve personalization.")
+                        .font(.subheadline)
+                        .foregroundColor(VoteNowColors.primaryText)
+                    Text("4. Use the generated script as a guide, then personalize your opening line and local impact.")
+                        .font(.subheadline)
+                        .foregroundColor(VoteNowColors.primaryText)
+                }
+                .padding(12)
+                .background(VoteNowColors.surfaceWhite)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+                )
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 20)
@@ -1502,7 +1721,12 @@ struct IssueCallCenterView: View {
             } else {
                 ForEach(trackerGroups.prefix(4)) { group in
                     let outcomeRows = trackerOutcomeRows(for: group)
-                    let appWideCompletedCalls = trackerAppWideCompletedCalls(for: group)
+                    let persistedCompletedCalls = trackerPersistedCompletedCalls(for: group)
+                    let optimisticGain = trackerOptimisticGain(
+                        for: group,
+                        persistedCompletedCalls: persistedCompletedCalls
+                    )
+                    let displayedCompletedCalls = persistedCompletedCalls + optimisticGain
                     let displayIssueTitle = trackerDisplayIssueTitle(for: group)
 
                     VStack(alignment: .leading, spacing: 8) {
@@ -1522,12 +1746,17 @@ struct IssueCallCenterView: View {
 
                             Spacer(minLength: 0)
 
-                            Text(trackerProgressSummaryText(completedCalls: appWideCompletedCalls))
+                            Text(
+                                trackerProgressSummaryText(
+                                    completedCalls: displayedCompletedCalls,
+                                    optimisticGain: optimisticGain
+                                )
+                            )
                                 .font(.caption2.weight(.semibold))
                                 .foregroundColor(VoteNowColors.mutedText)
                         }
 
-                        trackerIssueProgressBar(completedCalls: appWideCompletedCalls)
+                        trackerIssueProgressBar(completedCalls: displayedCompletedCalls)
 
                         if !outcomeRows.isEmpty {
                             VStack(alignment: .leading, spacing: 4) {
@@ -1565,6 +1794,7 @@ struct IssueCallCenterView: View {
                         Button {
                             didCompleteMAPC = false
                             mapcSessionLoggedBriefIDs.removeAll()
+                            mapcOptimisticIssueGains.removeAll()
                             viewModel.reopen(historyGroup: group.representativeGroup)
                         } label: {
                             Text(l("app.issue_call.history.reopen", "Repeat Script"))
@@ -1703,7 +1933,7 @@ struct IssueCallCenterView: View {
         .accessibilityLabel("Issue call progress \(min(safeCompleted, safeGoal)) of \(safeGoal)")
     }
 
-    private func trackerAppWideCompletedCalls(for group: TrackerIssueGroup) -> Int {
+    private func trackerPersistedCompletedCalls(for group: TrackerIssueGroup) -> Int {
         if let perIssueCount = viewModel.appWideCompletedCalls(forIssueID: group.representativeGroup.issueID) {
             return perIssueCount
         }
@@ -1716,7 +1946,16 @@ struct IssueCallCenterView: View {
         return 0
     }
 
-    private func trackerProgressSummaryText(completedCalls: Int) -> String {
+    private func trackerOptimisticGain(for group: TrackerIssueGroup, persistedCompletedCalls: Int) -> Int {
+        guard let issueKey = normalizedIssueKey(group.representativeGroup.issueID),
+              let gainState = mapcOptimisticIssueGains[issueKey] else {
+            return 0
+        }
+        let target = gainState.baseline + gainState.gain
+        return max(0, target - max(0, persistedCompletedCalls))
+    }
+
+    private func trackerProgressSummaryText(completedCalls: Int, optimisticGain: Int) -> String {
         let safeGoal = max(1, trackerProgressGoalCalls)
         let safeCompleted = max(0, completedCalls)
         let completedText: String
@@ -1724,6 +1963,9 @@ struct IssueCallCenterView: View {
             completedText = "\(safeGoal.formatted(.number))+"
         } else {
             completedText = safeCompleted.formatted(.number)
+        }
+        if optimisticGain > 0 {
+            return "\(completedText) / \(safeGoal.formatted(.number)) calls (+\(optimisticGain))"
         }
         return "\(completedText) / \(safeGoal.formatted(.number)) calls"
     }
@@ -1799,7 +2041,13 @@ struct IssueCallCenterView: View {
         if !preferred.isEmpty, preferred.caseInsensitiveCompare(l("app.issue_call.issue.default", "Issue")) != .orderedSame {
             return preferred
         }
-        return ""
+
+        let concern = viewModel.concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !concern.isEmpty {
+            return conciseIssueHeadline(concern)
+        }
+
+        return l("app.issue_call.title", "Call my Rep")
     }
 
     private var shareActionButton: some View {
@@ -1818,7 +2066,6 @@ struct IssueCallCenterView: View {
                 )
         }
         .buttonStyle(.plain)
-        .disabled(shareHeadlineText().isEmpty)
         .accessibilityIdentifier("issue_call.share")
     }
 
@@ -1874,6 +2121,31 @@ struct IssueCallCenterView: View {
         }
 
         return false
+    }
+
+    private func normalizedIssueKey(_ issueID: String) -> String? {
+        let normalized = issueID
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+        return normalized.isEmpty ? nil : normalized
+    }
+
+    private func noteOptimisticIssueGain(for issueID: String) {
+        guard let issueKey = normalizedIssueKey(issueID) else { return }
+        let baseline = max(0, viewModel.appWideCompletedCalls(forIssueID: issueID) ?? 0)
+        if var existing = mapcOptimisticIssueGains[issueKey] {
+            existing.gain += 1
+            mapcOptimisticIssueGains[issueKey] = existing
+        } else {
+            mapcOptimisticIssueGains[issueKey] = MAPCIssueGainState(baseline: baseline, gain: 1)
+        }
+    }
+
+    private func pruneResolvedOptimisticIssueGains() {
+        mapcOptimisticIssueGains = mapcOptimisticIssueGains.filter { issueKey, gainState in
+            let persisted = max(0, viewModel.appWideCompletedCalls(forIssueID: issueKey) ?? 0)
+            return persisted < (gainState.baseline + gainState.gain)
+        }
     }
 
     private func trackerIssueTitleFromIssueID(_ issueID: String) -> String? {
@@ -2150,15 +2422,15 @@ struct IssueCallCenterView: View {
         isVoicemailLocked: Bool
     ) -> some View {
         let selectableOutcomes: [CivicCallOutcome] = [
+            .undecided,
+            .voicemail,
             .supportive,
             .opposed,
-            .undecided,
-            .other
         ]
 
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
-                Text(l("app.issue_call.outcomes", "Log outcome"))
+                Text(logOutcomeTitle(for: brief))
                     .font(.subheadline.weight(.semibold))
                 Spacer(minLength: 0)
                 if isVoicemailLocked {
@@ -2175,14 +2447,23 @@ struct IssueCallCenterView: View {
                 ForEach(selectableOutcomes) { outcome in
                     Button {
                         guard !isVoicemailLocked else { return }
+                        if outcome == .voicemail {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                expandedVoicemailBriefIDs.insert(brief.id)
+                                expandedLiveBriefIDs.remove(brief.id)
+                            }
+                        }
                         if isMAPCMode {
-                            mapcSessionLoggedBriefIDs.insert(brief.id)
+                            let inserted = mapcSessionLoggedBriefIDs.insert(brief.id).inserted
+                            if inserted {
+                                noteOptimisticIssueGain(for: brief.issueID)
+                            }
                         }
                         Task {
                             await viewModel.logOutcome(for: brief, outcome: outcome)
                         }
                     } label: {
-                        Text(outcome.title)
+                        Text(outcomeDisplayTitle(for: outcome))
                             .font(.body.weight(.semibold))
                             .foregroundColor(selectedOutcome == outcome ? .white : VoteNowColors.primaryText)
                             .frame(maxWidth: .infinity)
@@ -2206,6 +2487,48 @@ struct IssueCallCenterView: View {
         }
     }
 
+    private func outcomeDisplayTitle(for outcome: CivicCallOutcome) -> String {
+        switch outcome {
+        case .undecided:
+            return "Recorded"
+        case .voicemail:
+            return "Voicemail"
+        default:
+            return outcome.title
+        }
+    }
+
+    private func logOutcomeTitle(for brief: CivicCallBrief) -> String {
+        let member = memberTitleAndLastName(for: brief)
+        guard !member.isEmpty else {
+            return l("app.issue_call.outcomes", "Log outcome")
+        }
+        return "\(member)\(possessiveSuffix(for: member)) response"
+    }
+
+    private func memberTitleAndLastName(for brief: CivicCallBrief) -> String {
+        let lastName = trackerDisplayLastName(from: brief.repName.trimmingCharacters(in: .whitespacesAndNewlines))
+        let office = brief.officeType.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+
+        if office.contains("senator") {
+            return "Senator \(lastName)"
+        }
+        if office.contains("representative") || office.contains("house") || brief.repSlot == .house {
+            return "Representative \(lastName)"
+        }
+        if office.contains("governor") {
+            return "Governor \(lastName)"
+        }
+        if office.contains("mayor") {
+            return "Mayor \(lastName)"
+        }
+        return lastName
+    }
+
+    private func possessiveSuffix(for value: String) -> String {
+        value.lowercased().hasSuffix("s") ? "'" : "'s"
+    }
+
     private func outcomeColor(for outcome: CivicCallOutcome) -> Color {
         switch outcome {
         case .voicemail:
@@ -2227,9 +2550,20 @@ struct IssueCallCenterView: View {
         }
     }
 
-    private func callButtonTitle(for brief: CivicCallBrief) -> String {
-        let lastName = trackerDisplayLastName(from: brief.repName)
-        let office = brief.officeType.lowercased()
+    private func callButtonTitle(for brief: CivicCallBrief, official: Official?) -> String {
+        let displayName = {
+            let officialName = official?.name.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if !officialName.isEmpty { return officialName }
+            return brief.repName
+        }()
+        let displayOffice = {
+            let officialTitle = official?.officeTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if !officialTitle.isEmpty { return officialTitle }
+            return brief.officeType
+        }()
+
+        let lastName = trackerDisplayLastName(from: displayName)
+        let office = displayOffice.lowercased()
 
         if office.contains("senator") {
             return "Call Senator \(lastName)"
@@ -2297,10 +2631,31 @@ struct IssueCallCenterView: View {
         if category.caseInsensitiveCompare("Government Oversight") == .orderedSame {
             return "Gov. Oversight"
         }
+        if category.caseInsensitiveCompare(Self.searchExamplesFilterLabel) == .orderedSame {
+            return "Search issues"
+        }
         if category.caseInsensitiveCompare(Self.urgentExamplesFilterLabel) == .orderedSame {
             return Self.urgentExamplesFilterLabel
         }
         return category
+    }
+
+    private func premadeExampleMatchesSearch(_ example: CivicExampleIssueCard, query: String) -> Bool {
+        let needle = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !needle.isEmpty else { return true }
+
+        let haystacks: [String] = [
+            example.title,
+            example.summary,
+            example.category ?? "",
+            example.slug ?? "",
+            example.liveScript,
+            example.voicemailScript
+        ] + example.relatedBills + example.tags + example.templateAsks.map(\.title)
+
+        return haystacks.contains { value in
+            value.lowercased().contains(needle)
+        }
     }
 
     private func isUrgentExample(_ example: CivicExampleIssueCard) -> Bool {
@@ -2409,6 +2764,16 @@ struct IssueCallCenterView: View {
     private func synchronizeScriptAccordionState(for briefID: String) {
         if !expandedLiveBriefIDs.contains(briefID) && !expandedVoicemailBriefIDs.contains(briefID) {
             expandedLiveBriefIDs.insert(briefID)
+        }
+    }
+
+    private func beginMAPCCardTransition() {
+        isMAPCCardTransitioning = true
+        mapcTransitionResetTask?.cancel()
+        mapcTransitionResetTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 560_000_000)
+            guard !Task.isCancelled else { return }
+            isMAPCCardTransitioning = false
         }
     }
 

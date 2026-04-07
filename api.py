@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import math
 import os
 from datetime import datetime, timezone
@@ -26,6 +27,8 @@ from .issue_brief_service import IssueBriefService
 from .repository import CivicRepository, InMemoryCivicRepository, SupabaseCivicRepository
 from .service import CivicService
 
+logger = logging.getLogger(__name__)
+
 def _is_production_env() -> bool:
     for key in ("VOTENOW_ENV", "APP_ENV", "ENV"):
         value = os.environ.get(key, "").strip().lower()
@@ -38,6 +41,14 @@ def _configured_repository_backend() -> str:
     configured = os.environ.get("VOTENOW_CIVIC_REPOSITORY", "").strip().lower()
     if configured:
         return configured
+    # Prefer Supabase whenever required credentials are present, even if
+    # VOTENOW_ENV is not explicitly marked as production.
+    has_supabase_creds = bool(
+        os.environ.get("SUPABASE_URL", "").strip()
+        and os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+    )
+    if has_supabase_creds:
+        return "supabase"
     return "supabase" if _is_production_env() else "inmemory"
 
 
@@ -59,6 +70,15 @@ def _build_repository() -> CivicRepository:
         f"Unsupported VOTENOW_CIVIC_REPOSITORY={backend!r}. Expected 'supabase' or 'inmemory'."
     )
 
+
+resolved_backend = _configured_repository_backend()
+logger.info(
+    "Civic API backend mode resolved to '%s' (production=%s, has_supabase_url=%s, has_service_key=%s).",
+    resolved_backend,
+    _is_production_env(),
+    bool(os.environ.get("SUPABASE_URL", "").strip()),
+    bool(os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "").strip()),
+)
 
 service = CivicService(repository=_build_repository())
 issue_brief_service = IssueBriefService(repository=service.repository)
@@ -105,7 +125,10 @@ def parse_completion_request(payload: dict[str, Any], user_id: str) -> CallCompl
 
 
 def parse_period_type(raw: str) -> LeaderboardPeriodType:
-    return LeaderboardPeriodType(raw)
+    normalized = raw.strip().lower()
+    if normalized == "all_time":
+        normalized = LeaderboardPeriodType.ANNUAL.value
+    return LeaderboardPeriodType(normalized)
 
 
 def parse_issue_classify_request(payload: dict[str, Any], user_id: str) -> IssueClassifyRequest:
@@ -436,15 +459,20 @@ def _extract_bearer_token(authorization_header: str | None) -> str:
 def _resolve_authenticated_user_id(access_token: str) -> str:
     supabase_url = os.environ.get("SUPABASE_URL", "").rstrip("/")
     supabase_anon_key = os.environ.get("SUPABASE_ANON_KEY", "").strip()
-    if not supabase_url or not supabase_anon_key:
-        raise HTTPException(status_code=500, detail="Supabase auth verification is not configured.")
+    supabase_service_role_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+    auth_apikey = supabase_anon_key or supabase_service_role_key
+    if not supabase_url or not auth_apikey:
+        raise HTTPException(
+            status_code=500,
+            detail="Supabase auth verification is not configured (requires SUPABASE_URL plus SUPABASE_ANON_KEY or SUPABASE_SERVICE_ROLE_KEY).",
+        )
 
     request = urllib.request.Request(
         f"{supabase_url}/auth/v1/user",
         method="GET",
         headers={
             "Authorization": f"Bearer {access_token}",
-            "apikey": supabase_anon_key,
+            "apikey": auth_apikey,
             "Accept": "application/json",
         },
     )
@@ -467,6 +495,15 @@ def _resolve_authenticated_user_id(access_token: str) -> str:
 def require_authenticated_user_id(request: Request) -> str:
     access_token = _extract_bearer_token(request.headers.get("authorization"))
     return _resolve_authenticated_user_id(access_token)
+
+
+def resolve_authenticated_or_anonymous_user_id(request: Request) -> str:
+    try:
+        return require_authenticated_user_id(request)
+    except HTTPException as exc:
+        if getattr(exc, "status_code", None) in {401, 403, 500, 502}:
+            return "anonymous"
+        raise
 
 
 def get_openstates_people_geo(lat: float, lng: float, include: str | None = "links") -> dict[str, Any]:
@@ -511,6 +548,18 @@ def get_openstates_people_geo(lat: float, lng: float, include: str | None = "lin
 
 if FastAPI is not None:
     app = FastAPI(title="VoteNow Civic API", version="1.0.0")
+
+    @app.get("/")
+    def root_status() -> dict[str, Any]:
+        return {
+            "ok": True,
+            "service": "VoteNow Civic API",
+            "version": "1.0.0",
+        }
+
+    @app.get("/healthz")
+    def healthz() -> dict[str, bool]:
+        return {"ok": True}
 
     @app.get("/api/v1/civic/examples")
     def civic_examples(request: Request) -> dict[str, Any]:
@@ -688,7 +737,7 @@ if FastAPI is not None:
         include: str = "links",
     ) -> dict[str, Any]:
         try:
-            _ = require_authenticated_user_id(request)
+            _ = resolve_authenticated_or_anonymous_user_id(request)
             return get_openstates_people_geo(lat=lat, lng=lng, include=include)
         except HTTPException:
             raise

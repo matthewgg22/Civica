@@ -373,6 +373,9 @@ class RepContext:
     state: str | None
     primary_phone_number: str
     local_office_phone_number: str | None = None
+    city: str | None = None
+    zip_code: str | None = None
+    full_address: str | None = None
 
 
 @dataclass
@@ -591,8 +594,14 @@ class ScriptPackageRequest:
     concern_text: str
     selected_ask: Ask
     target_reps: list[RepTarget]
+    rep_contexts: list[RepContext] = field(default_factory=list)
     optional_bill_ref: str | None = None
     allow_revision: bool = True
+    user_zip: str | None = None
+    user_city: str | None = None
+    user_state: str | None = None
+    user_address: str | None = None
+    include_full_address_in_script: bool = False
 
 
 @dataclass
@@ -643,6 +652,7 @@ class ScriptPackageTruthTrace:
     bill_source: str
     personalization_fields_used: list[str]
     fallback_used: str
+    raw_user_input: str | None = None
     refusal_reason: str | None = None
 
 
@@ -655,6 +665,9 @@ class ScriptPackageResponse:
     office_overlays: list[ScriptPackageOfficeOverlay] = field(default_factory=list)
     review_can_regenerate: bool = True
     review_regenerate_hint: str = "Tell me what to change and I can regenerate."
+    clarification_question: str | None = None
+    candidate_issues: list[str] = field(default_factory=list)
+    script_generation_source: str | None = None
     truth_trace: ScriptPackageTruthTrace | None = None
     policy_flags: list[str] = field(default_factory=list)
 

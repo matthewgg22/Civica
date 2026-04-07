@@ -4,6 +4,7 @@ import json
 import logging
 import math
 import os
+import uuid
 from datetime import datetime, timezone
 from html import escape
 from typing import Any, Callable
@@ -21,6 +22,7 @@ from .models import (
     IssueBriefRequest,
     IssueClassifyRequest,
     LeaderboardPeriodType,
+    RepContext,
     RepTarget,
     ScriptPackageRequest,
 )
@@ -30,6 +32,19 @@ from .script_package_service import ScriptPackageService
 from .service import CivicService
 
 logger = logging.getLogger(__name__)
+
+
+def _log_marker(marker: str, payload: Any | None = None) -> None:
+    if payload is None:
+        logger.info(marker)
+        return
+    try:
+        if isinstance(payload, str):
+            logger.info("%s %s", marker, payload)
+        else:
+            logger.info("%s %s", marker, json.dumps(payload, ensure_ascii=False, default=str))
+    except Exception:
+        logger.info("%s %s", marker, str(payload))
 
 
 def _is_production_env() -> bool:
@@ -44,6 +59,14 @@ def _configured_repository_backend() -> str:
     configured = os.environ.get("VOTENOW_CIVIC_REPOSITORY", "").strip().lower()
     if configured:
         return configured
+    # Prefer Supabase whenever required credentials are present, even if
+    # VOTENOW_ENV is not explicitly marked as production.
+    has_supabase_creds = bool(
+        os.environ.get("SUPABASE_URL", "").strip()
+        and os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+    )
+    if has_supabase_creds:
+        return "supabase"
     return "supabase" if _is_production_env() else "inmemory"
 
 
@@ -65,6 +88,15 @@ def _build_repository() -> CivicRepository:
         f"Unsupported VOTENOW_CIVIC_REPOSITORY={backend!r}. Expected 'supabase' or 'inmemory'."
     )
 
+
+resolved_backend = _configured_repository_backend()
+logger.info(
+    "Civic API backend mode resolved to '%s' (production=%s, has_supabase_url=%s, has_service_key=%s).",
+    resolved_backend,
+    _is_production_env(),
+    bool(os.environ.get("SUPABASE_URL", "").strip()),
+    bool(os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "").strip()),
+)
 
 service = CivicService(repository=_build_repository())
 issue_brief_service = IssueBriefService(repository=service.repository)
@@ -119,6 +151,44 @@ def _coerce_rep_targets(payload: dict[str, Any]) -> list[RepTarget]:
     return normalized
 
 
+def _coerce_rep_contexts(payload: dict[str, Any]) -> list[RepContext]:
+    raw_contexts = payload.get("rep_contexts", [])
+    if raw_contexts is None:
+        return []
+    if not isinstance(raw_contexts, list):
+        raise ValueError("rep_contexts must be an array.")
+
+    normalized: list[RepContext] = []
+    for raw in raw_contexts:
+        if not isinstance(raw, dict):
+            continue
+        rep_id = str(raw.get("rep_id", "")).strip()
+        rep_name = str(raw.get("rep_name", "")).strip()
+        office_type = str(raw.get("office_type", "")).strip()
+        chamber = str(raw.get("chamber", "")).strip().lower()
+        primary_phone_number = str(raw.get("primary_phone_number", "")).strip()
+        if not rep_id or not rep_name or not office_type or not chamber:
+            continue
+        if chamber not in {"house", "senate"}:
+            continue
+        normalized.append(
+            RepContext(
+                rep_id=rep_id,
+                rep_name=rep_name,
+                office_type=office_type,
+                chamber=chamber,
+                district=_optional_string(raw, "district"),
+                state=_optional_string(raw, "state"),
+                primary_phone_number=primary_phone_number or "(202) 225-3121",
+                local_office_phone_number=_optional_string(raw, "local_office_phone_number"),
+                city=_optional_string(raw, "city"),
+                zip_code=_optional_string(raw, "zip_code") or _optional_string(raw, "zip"),
+                full_address=_optional_string(raw, "full_address") or _optional_string(raw, "address"),
+            )
+        )
+    return normalized
+
+
 def parse_resolve_request(payload: dict[str, Any], user_id: str) -> AssistantResolveRequest:
     return AssistantResolveRequest(
         user_id=user_id,
@@ -160,7 +230,10 @@ def parse_completion_request(payload: dict[str, Any], user_id: str) -> CallCompl
 
 
 def parse_period_type(raw: str) -> LeaderboardPeriodType:
-    return LeaderboardPeriodType(raw)
+    normalized = raw.strip().lower()
+    if normalized == "all_time":
+        normalized = LeaderboardPeriodType.ANNUAL.value
+    return LeaderboardPeriodType(normalized)
 
 
 def parse_issue_classify_request(payload: dict[str, Any], user_id: str) -> IssueClassifyRequest:
@@ -186,8 +259,18 @@ def parse_script_package_request(payload: dict[str, Any], user_id: str) -> Scrip
         concern_text=_required_string(payload, "concern_text"),
         selected_ask=Ask(_required_string(payload, "selected_ask")),
         target_reps=_coerce_rep_targets(payload),
+        rep_contexts=_coerce_rep_contexts(payload),
         optional_bill_ref=_optional_string(payload, "optional_bill_ref"),
         allow_revision=_coerce_bool(payload.get("allow_revision"), "allow_revision", default=True),
+        user_zip=_optional_string(payload, "user_zip") or _optional_string(payload, "zip"),
+        user_city=_optional_string(payload, "user_city") or _optional_string(payload, "city"),
+        user_state=_optional_string(payload, "user_state") or _optional_string(payload, "state"),
+        user_address=_optional_string(payload, "user_address") or _optional_string(payload, "address"),
+        include_full_address_in_script=_coerce_bool(
+            payload.get("include_full_address_in_script"),
+            "include_full_address_in_script",
+            default=False,
+        ),
     )
 
 
@@ -274,7 +357,30 @@ def post_issue_brief(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
 
 
 def post_script_package(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
-    response = script_package_service.create_package(parse_script_package_request(payload, user_id))
+    parsed = parse_script_package_request(payload, user_id)
+
+    _log_marker("=== PARSED SCRIPT PACKAGE REQUEST START ===")
+    _log_marker(
+        "=== PARSED SCRIPT PACKAGE REQUEST PAYLOAD ===",
+        parsed.model_dump() if hasattr(parsed, "model_dump")
+        else parsed.dict() if hasattr(parsed, "dict")
+        else parsed.to_dict() if hasattr(parsed, "to_dict")
+        else parsed.__dict__
+    )
+    _log_marker("=== PARSED SCRIPT PACKAGE REQUEST END ===")
+
+    response = script_package_service.create_package(parsed)
+
+    _log_marker("=== SCRIPT PACKAGE RESPONSE START ===")
+    _log_marker(
+        "=== SCRIPT PACKAGE RESPONSE PAYLOAD ===",
+        response.model_dump() if hasattr(response, "model_dump")
+        else response.dict() if hasattr(response, "dict")
+        else response.to_dict() if hasattr(response, "to_dict")
+        else response.__dict__
+    )
+    _log_marker("=== SCRIPT PACKAGE RESPONSE END ===")
+
     return response.to_dict()
 
 
@@ -507,15 +613,20 @@ def _extract_bearer_token(authorization_header: str | None) -> str:
 def _resolve_authenticated_user_id(access_token: str) -> str:
     supabase_url = os.environ.get("SUPABASE_URL", "").rstrip("/")
     supabase_anon_key = os.environ.get("SUPABASE_ANON_KEY", "").strip()
-    if not supabase_url or not supabase_anon_key:
-        raise HTTPException(status_code=500, detail="Supabase auth verification is not configured.")
+    supabase_service_role_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+    auth_apikey = supabase_anon_key or supabase_service_role_key
+    if not supabase_url or not auth_apikey:
+        raise HTTPException(
+            status_code=500,
+            detail="Supabase auth verification is not configured (requires SUPABASE_URL plus SUPABASE_ANON_KEY or SUPABASE_SERVICE_ROLE_KEY).",
+        )
 
     request = urllib.request.Request(
         f"{supabase_url}/auth/v1/user",
         method="GET",
         headers={
             "Authorization": f"Bearer {access_token}",
-            "apikey": supabase_anon_key,
+            "apikey": auth_apikey,
             "Accept": "application/json",
         },
     )
@@ -538,6 +649,16 @@ def _resolve_authenticated_user_id(access_token: str) -> str:
 def require_authenticated_user_id(request: Request) -> str:
     access_token = _extract_bearer_token(request.headers.get("authorization"))
     return _resolve_authenticated_user_id(access_token)
+
+
+def resolve_authenticated_or_anonymous_user_id(request: Request) -> str:
+    try:
+        return require_authenticated_user_id(request)
+    except HTTPException as exc:
+        if getattr(exc, "status_code", None) in {401, 403, 500, 502}:
+            logger.warning("[civic] falling back to anonymous user context status=%s", exc.status_code)
+            return str(uuid.uuid4())
+        raise
 
 
 def _internal_server_error(exc: Exception) -> HTTPException:
@@ -604,9 +725,21 @@ if FastAPI is not None:
     app = FastAPI(title="VoteNow Civic API", version="1.0.0")
     bad_request = (ValueError, TypeError)
 
+    @app.get("/")
+    def root_status() -> dict[str, Any]:
+        return {
+            "ok": True,
+            "service": "VoteNow Civic API",
+            "version": "1.0.0",
+        }
+
+    @app.get("/healthz")
+    def healthz() -> dict[str, bool]:
+        return {"ok": True}
+
     @app.get("/api/v1/civic/examples")
     def civic_examples(request: Request) -> dict[str, Any]:
-        return _run_endpoint(lambda: get_examples(require_authenticated_user_id(request)))
+        return _run_endpoint(lambda: get_examples(resolve_authenticated_or_anonymous_user_id(request)))
 
     @app.post("/api/v1/civic/assistant/resolve")
     def civic_resolve(payload: dict[str, Any], request: Request) -> dict[str, Any]:
@@ -631,8 +764,11 @@ if FastAPI is not None:
 
     @app.post("/api/v1/civic/script-package")
     def civic_script_package(payload: dict[str, Any], request: Request) -> dict[str, Any]:
+        _log_marker("=== SCRIPT PACKAGE RAW PAYLOAD START ===")
+        _log_marker("=== SCRIPT PACKAGE RAW PAYLOAD DATA ===", payload)
+        _log_marker("=== SCRIPT PACKAGE RAW PAYLOAD END ===")
         return _run_endpoint(
-            lambda: post_script_package(payload, require_authenticated_user_id(request)),
+            lambda: post_script_package(payload, resolve_authenticated_or_anonymous_user_id(request)),
             bad_request_exceptions=bad_request,
         )
 
@@ -719,7 +855,7 @@ if FastAPI is not None:
         include: str = "links",
     ) -> dict[str, Any]:
         def handler() -> dict[str, Any]:
-            _ = require_authenticated_user_id(request)
+            _ = resolve_authenticated_or_anonymous_user_id(request)
             return get_openstates_people_geo(lat=lat, lng=lng, include=include)
 
         return _run_endpoint(handler, bad_request_exceptions=bad_request)

@@ -2,6 +2,30 @@ import SwiftUI
 import UIKit
 import Combine
 
+private struct GuideSectionFramesPreferenceKey: PreferenceKey {
+    static var defaultValue: [GuideMiniNavSection: CGRect] = [:]
+
+    static func reduce(value: inout [GuideMiniNavSection: CGRect], nextValue: () -> [GuideMiniNavSection: CGRect]) {
+        value.merge(nextValue(), uniquingKeysWith: { _, new in new })
+    }
+}
+
+private struct GuideCardFramesPreferenceKey: PreferenceKey {
+    static var defaultValue: [Int: CGRect] = [:]
+
+    static func reduce(value: inout [Int: CGRect], nextValue: () -> [Int: CGRect]) {
+        value.merge(nextValue(), uniquingKeysWith: { _, new in new })
+    }
+}
+
+private struct GuideViewportPreferenceKey: PreferenceKey {
+    static var defaultValue: CGRect = .zero
+
+    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
+        value = nextValue()
+    }
+}
+
 struct NYCMayoralElectionView: View {
     @EnvironmentObject private var planVM: PlanViewModel
     @Environment(\.locale) private var locale
@@ -13,8 +37,15 @@ struct NYCMayoralElectionView: View {
     @State private var guideCards: [ElectionGuideInfoCard] = []
     @State private var errorMessage: String?
     @State private var officeExampleRotationTick = 0
+    @State private var expandedBallotMeasureKeys: Set<String> = []
+    @State private var selectedGuideMiniNavSection: GuideMiniNavSection = .snapshot
+    @State private var guideSectionFrames: [GuideMiniNavSection: CGRect] = [:]
+    @State private var guideCardFrames: [Int: CGRect] = [:]
+    @State private var guideViewportFrame: CGRect = .zero
+    @State private var focusedGuideCardIndex: Int?
 
     private let stateResolver = USZipStateResolver()
+    private let guideScrollCoordinateSpace = "ElectionGuideScrollCoordinateSpace"
     private let officeExampleRotationTimer = Timer.publish(every: 15, on: .main, in: .common).autoconnect()
     private static let primaryTypeDataset: ElectionGuidePrimaryTypeDataset? = {
         guard let url = Bundle.main.url(forResource: "ElectionEligibilityDataset", withExtension: "json"),
@@ -153,36 +184,100 @@ struct NYCMayoralElectionView: View {
     private var mainContentView: some View {
         VStack(spacing: 0) {
             headerSectionView
-            guideScrollView
+            ScrollViewReader { proxy in
+                VStack(spacing: 0) {
+                    if errorMessage == nil {
+                        guideMiniNavView(proxy: proxy)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 2)
+                            .padding(.bottom, 6)
+                            .background(VoteNowColors.appBackground)
+                    }
+
+                    guideScrollView(proxy: proxy)
+                }
+            }
         }
         .background(VoteNowColors.appBackground.ignoresSafeArea())
+    }
+
+    private var shouldShowBallotMeasuresMiniNav: Bool {
+        guideCards.contains(where: { $0.kind == .ballotMeasures })
+    }
+
+    private var guideMiniNavSections: [GuideMiniNavSection] {
+        var sections: [GuideMiniNavSection] = [.snapshot, .voterID, .electionType]
+        if shouldShowBallotMeasuresMiniNav {
+            sections.append(.ballotMeasures)
+        }
+        return sections
     }
 
     private var headerSectionView: some View {
         VStack(alignment: .leading, spacing: 0) {
             PageHeader(title: Text("app.page.election_guide", tableName: "AppShell"))
-            Text(electionSubtitleText)
-                .font(.subheadline.weight(.semibold))
-                .foregroundColor(VoteNowColors.mutedText)
-                .padding(.leading, 72)
-                .padding(.top, -6)
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text(electionSubtitleText)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(VoteNowColors.mutedText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.84)
+
+                Spacer(minLength: 8)
+
+                Button {
+                    openMyInfoPanel()
+                } label: {
+                    Text(l("app.reps.action.my_info", "My Info") + "...")
+                        .font(.callout.weight(.semibold))
+                        .italic()
+                        .foregroundColor(VoteNowColors.primaryCTA)
+                        .lineLimit(1)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.leading, 72)
+            .padding(.top, -6)
         }
         .padding(.horizontal, 16)
-        .padding(.top, 16)
+        .padding(.top, 8)
         .padding(.bottom, 8)
         .background(VoteNowColors.appBackground)
     }
 
-    private var guideScrollView: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    guideContentView(proxy: proxy)
-                }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 24)
+    private func guideScrollView(proxy: ScrollViewProxy) -> some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                guideContentView(proxy: proxy)
             }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 24)
         }
+        .coordinateSpace(name: guideScrollCoordinateSpace)
+        .background(
+            GeometryReader { proxy in
+                Color.clear.preference(
+                    key: GuideViewportPreferenceKey.self,
+                    value: proxy.frame(in: .named(guideScrollCoordinateSpace))
+                )
+            }
+        )
+        .onPreferenceChange(GuideSectionFramesPreferenceKey.self) { frames in
+            guideSectionFrames = frames
+            updateGuideScrollDerivedState()
+        }
+        .onPreferenceChange(GuideCardFramesPreferenceKey.self) { frames in
+            guideCardFrames = frames
+            updateGuideScrollDerivedState()
+        }
+        .onPreferenceChange(GuideViewportPreferenceKey.self) { frame in
+            guideViewportFrame = frame
+            updateGuideScrollDerivedState()
+        }
+    }
+
+    private func openMyInfoPanel() {
+        NotificationCenter.default.post(name: .openMyInfoPanel, object: nil)
     }
 
     @ViewBuilder
@@ -192,20 +287,147 @@ struct NYCMayoralElectionView: View {
                 .font(.body)
                 .foregroundColor(VoteNowColors.mutedText)
         } else {
+            guideSectionAnchorView(.snapshot)
+
             introLineView(proxy: proxy)
+
+            guideSectionAnchorView(.voterID)
 
             VoterIDGuideCard(stateCode: stateCode, stateName: stateName)
                 .id(GuideCardAnchor.voterID.rawValue)
+                .background(
+                    GeometryReader { proxy in
+                        Color.clear.preference(
+                            key: GuideCardFramesPreferenceKey.self,
+                            value: [-1: proxy.frame(in: .named(guideScrollCoordinateSpace))]
+                        )
+                    }
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .stroke(
+                            focusedGuideCardIndex == -1 ? GuideMiniNavSection.voterID.selectedBorderColor : Color.clear,
+                            lineWidth: 1
+                        )
+                )
+                .shadow(
+                    color: focusedGuideCardIndex == -1
+                        ? GuideMiniNavSection.voterID.selectedBackgroundColor
+                        : Color.clear,
+                    radius: focusedGuideCardIndex == -1 ? 8 : 0,
+                    x: 0,
+                    y: focusedGuideCardIndex == -1 ? 4 : 0
+                )
 
+            let electionTypeSectionIndex = guideMiniNavCardIndex(for: .electionType)
+            let ballotMeasuresSectionIndex = guideMiniNavCardIndex(for: .ballotMeasures)
             ForEach(Array(guideCards.enumerated()), id: \.element.id) { index, card in
-                guideCardView(card)
-                    .id(guideCardScrollID(index: index))
+                VStack(spacing: 0) {
+                    if index == electionTypeSectionIndex {
+                        guideSectionAnchorView(.electionType)
+                    }
+
+                    if index == ballotMeasuresSectionIndex {
+                        guideSectionAnchorView(.ballotMeasures)
+                    }
+
+                    guideCardView(card, index: index)
+                        .id(guideCardScrollID(index: index))
+                        .background(
+                            GeometryReader { proxy in
+                                Color.clear.preference(
+                                    key: GuideCardFramesPreferenceKey.self,
+                                    value: [index: proxy.frame(in: .named(guideScrollCoordinateSpace))]
+                                )
+                            }
+                        )
+                }
             }
         }
     }
 
+    private func guideSectionAnchorView(_ section: GuideMiniNavSection) -> some View {
+        Color.clear
+            .frame(height: 1)
+            .id(section.anchorID)
+            .background(
+                GeometryReader { proxy in
+                    Color.clear.preference(
+                        key: GuideSectionFramesPreferenceKey.self,
+                        value: [section: proxy.frame(in: .named(guideScrollCoordinateSpace))]
+                    )
+                }
+            )
+    }
+
+    private func guideMiniNavView(proxy: ScrollViewProxy) -> some View {
+        HStack(spacing: 0) {
+            ForEach(Array(guideMiniNavSections.enumerated()), id: \.element) { index, section in
+                let hasTarget = guideMiniNavSectionHasTarget(section)
+                Button {
+                    selectedGuideMiniNavSection = section
+                    scrollToGuideMiniNavSection(section, proxy: proxy)
+                } label: {
+                    Text(section.title)
+                        .font(.callout.weight(.semibold))
+                        .foregroundColor(
+                            selectedGuideMiniNavSection == section ? section.tintColor : VoteNowColors.mutedText
+                        )
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.74)
+                        .allowsTightening(true)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 9)
+                        .background(
+                            Group {
+                                if selectedGuideMiniNavSection == section {
+                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                        .fill(section.selectedBackgroundColor)
+                                } else {
+                                    Color.clear
+                                }
+                            }
+                        )
+                        .overlay(
+                            Group {
+                                if selectedGuideMiniNavSection == section {
+                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                        .stroke(section.selectedBorderColor, lineWidth: 1.1)
+                                } else {
+                                    Color.clear
+                                }
+                            }
+                        )
+                }
+                .buttonStyle(.plain)
+                .disabled(!hasTarget)
+                .opacity(hasTarget ? 1 : 0.55)
+
+                if index < guideMiniNavSections.count - 1 {
+                    guideMiniNavEarmarker()
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 2)
+        .padding(.vertical, 2)
+    }
+
+    private func guideMiniNavEarmarker() -> some View {
+        Text("|")
+            .font(.footnote.weight(.semibold))
+            .foregroundColor(VoteNowColors.mutedText.opacity(0.72))
+            .padding(.horizontal, 2)
+            .accessibilityHidden(true)
+    }
+
     @ViewBuilder
-    private func guideCardView(_ card: ElectionGuideInfoCard) -> some View {
+    private func guideCardView(_ card: ElectionGuideInfoCard, index: Int) -> some View {
+        let section = guideSectionForCardIndex(index)
+        let isFocused = focusedGuideCardIndex == index
+        let shadowColor = isFocused ? section.selectedBackgroundColor : VoteNowColors.primaryText.opacity(0.05)
+
         VStack(alignment: .leading, spacing: 8) {
             if let flagCode = card.flagStateCode,
                let assetName = StateFlagCatalog.assetName(for: flagCode),
@@ -290,9 +512,9 @@ struct NYCMayoralElectionView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                .stroke(isFocused ? section.selectedBorderColor : VoteNowColors.borderWarm, lineWidth: 1)
         )
-        .shadow(color: VoteNowColors.primaryText.opacity(0.05), radius: 2, x: 0, y: 1)
+        .shadow(color: shadowColor, radius: isFocused ? 8 : 2, x: 0, y: isFocused ? 4 : 1)
     }
 
     private func rankedChoiceWhereSummaryView(lines: [String]) -> some View {
@@ -559,16 +781,109 @@ struct NYCMayoralElectionView: View {
         }
 
         if target == .voterID {
-            withAnimation(.easeInOut(duration: 0.3)) {
+            withAnimation(.easeOut(duration: 0.18)) {
                 proxy.scrollTo(GuideCardAnchor.voterID.rawValue, anchor: .top)
             }
             return
         }
 
         guard let index = targetCardIndex(for: target) else { return }
-        withAnimation(.easeInOut(duration: 0.3)) {
+        withAnimation(.easeOut(duration: 0.18)) {
             proxy.scrollTo(guideCardScrollID(index: index), anchor: .top)
         }
+    }
+
+    private func scrollToGuideMiniNavSection(_ section: GuideMiniNavSection, proxy: ScrollViewProxy) {
+        let target = guideMiniNavTargetID(for: section)
+        withAnimation(.easeOut(duration: 0.18)) {
+            proxy.scrollTo(target, anchor: .top)
+        }
+    }
+
+    private func guideMiniNavTargetID(for section: GuideMiniNavSection) -> String {
+        switch section {
+        case .snapshot, .voterID:
+            return section.anchorID
+        case .electionType, .ballotMeasures:
+            return guideMiniNavCardIndex(for: section) != nil
+                ? section.anchorID
+                : GuideMiniNavSection.snapshot.anchorID
+        }
+    }
+
+    private func guideMiniNavSectionHasTarget(_ section: GuideMiniNavSection) -> Bool {
+        switch section {
+        case .snapshot, .voterID:
+            return true
+        case .electionType, .ballotMeasures:
+            return guideMiniNavCardIndex(for: section) != nil
+        }
+    }
+
+    private func guideMiniNavCardIndex(for section: GuideMiniNavSection) -> Int? {
+        switch section {
+        case .snapshot, .voterID:
+            return nil
+        case .electionType:
+            return guideCards.firstIndex(where: { card in
+                card.accent == .midterm
+                    || card.accent == .presidential
+                    || card.accent == .general
+                    || card.primaryGuideContext != nil
+                    || card.title.lowercased().contains("election")
+                    || card.title.lowercased().contains("primary")
+            }) ?? guideCards.indices.first
+        case .ballotMeasures:
+            return guideCards.firstIndex(where: { card in
+                card.kind == .ballotMeasures
+            })
+        }
+    }
+
+    private func updateGuideScrollDerivedState() {
+        updateSelectedGuideSectionFromScroll()
+        updateFocusedGuideCardFromScroll()
+    }
+
+    private func updateSelectedGuideSectionFromScroll() {
+        let ordered = guideMiniNavSections.compactMap { section -> (GuideMiniNavSection, CGFloat)? in
+            guard let frame = guideSectionFrames[section] else { return nil }
+            return (section, frame.minY)
+        }
+        .sorted { $0.1 < $1.1 }
+
+        guard !ordered.isEmpty else { return }
+
+        let referenceY = guideViewportFrame.minY + 12
+        let active = ordered.last(where: { $0.1 <= referenceY })?.0 ?? ordered.first!.0
+        if selectedGuideMiniNavSection != active {
+            selectedGuideMiniNavSection = active
+        }
+    }
+
+    private func updateFocusedGuideCardFromScroll() {
+        let visibleCards = guideCardFrames.filter { _, frame in
+            frame.maxY >= guideViewportFrame.minY && frame.minY <= guideViewportFrame.maxY
+        }
+
+        guard !visibleCards.isEmpty else {
+            focusedGuideCardIndex = nil
+            return
+        }
+
+        let targetY = guideViewportFrame.minY + min(max(110, guideViewportFrame.height * 0.32), 210)
+        let best = visibleCards.min { lhs, rhs in
+            abs(lhs.value.midY - targetY) < abs(rhs.value.midY - targetY)
+        }
+
+        focusedGuideCardIndex = best?.key
+    }
+
+    private func guideSectionForCardIndex(_ index: Int) -> GuideMiniNavSection {
+        if index < 0 { return .voterID }
+        if let measuresIndex = guideMiniNavCardIndex(for: .ballotMeasures), index >= measuresIndex { return .ballotMeasures }
+        if let electionTypeIndex = guideMiniNavCardIndex(for: .electionType), index >= electionTypeIndex { return .electionType }
+        return .electionType
     }
 
     private func targetCardIndex(for target: GuideCardAnchor) -> Int? {
@@ -612,6 +927,11 @@ struct NYCMayoralElectionView: View {
         stateName = nextElection.jurisdictionName
         upcomingElection = nextElection
         guideCards = buildGuideCards(for: nextElection, stateCode: resolvedStateCode, elections: candidates)
+        selectedGuideMiniNavSection = .snapshot
+        focusedGuideCardIndex = nil
+        guideSectionFrames.removeAll()
+        guideCardFrames.removeAll()
+        guideViewportFrame = .zero
         errorMessage = nil
     }
 
@@ -620,6 +940,11 @@ struct NYCMayoralElectionView: View {
         stateCode = nil
         stateName = ""
         guideCards = []
+        selectedGuideMiniNavSection = .snapshot
+        focusedGuideCardIndex = nil
+        guideSectionFrames.removeAll()
+        guideCardFrames.removeAll()
+        guideViewportFrame = .zero
         errorMessage = message
     }
 
@@ -890,7 +1215,9 @@ struct NYCMayoralElectionView: View {
         }
 
         cards.append(contentsOf: specialBallotRulesGuideCards(for: election, stateCode: stateCode))
-        cards.append(ballotMeasuresGuideCard(for: election))
+        if hasDisplayableBallotMeasures(for: election) {
+            cards.append(ballotMeasuresGuideCard(for: election))
+        }
         return cards
     }
 
@@ -912,10 +1239,13 @@ struct NYCMayoralElectionView: View {
                         for: election,
                         includeStatewideMeasures: true,
                         fallback: [
-                            "President and Vice President",
-                            "All U.S. House seats",
-                            "Some U.S. Senate seats",
-                            "State/local offices and ballot measures (where scheduled)"
+                            l("app.guide.ballot_item.president_vice_president", "President and Vice President"),
+                            l("app.guide.ballot_item.all_us_house_seats", "All U.S. House seats"),
+                            l("app.guide.ballot_item.some_us_senate_seats", "Some U.S. Senate seats"),
+                            l(
+                                "app.guide.ballot_item.state_local_offices_ballot_measures_scheduled",
+                                "State/local offices and ballot measures (where scheduled)"
+                            )
                         ]
                     )
                 )
@@ -946,9 +1276,9 @@ struct NYCMayoralElectionView: View {
                     ballotItems: ballotItemsForOverviewCard(
                         for: election,
                         fallback: [
-                            "Mayor",
-                            "City council or other city offices",
-                            "Local ballot questions (if applicable)"
+                            l("app.guide.ballot_item.mayor", "Mayor"),
+                            l("app.guide.ballot_item.city_council_or_other_city_offices", "City council or other city offices"),
+                            l("app.guide.ballot_item.local_ballot_questions_if_applicable", "Local ballot questions (if applicable)")
                         ]
                     )
                 )
@@ -969,15 +1299,17 @@ struct NYCMayoralElectionView: View {
             items = fallback
         }
 
-        if includeStatewideMeasures &&
-            !items.contains(where: { $0.localizedCaseInsensitiveContains("ballot measure") }) {
-            items.append("Statewide/local ballot measures (where scheduled)")
+        if includeStatewideMeasures && !containsBallotMeasureItem(items) {
+            items.append(
+                l(
+                    "app.guide.ballot_item.statewide_local_ballot_measures_scheduled",
+                    "Statewide/local ballot measures (where scheduled)"
+                )
+            )
         }
 
-        if ensureStateLegislature &&
-            stateHasStateLegislatureOnBallot(for: election) &&
-            !items.contains(where: { $0.localizedCaseInsensitiveContains("state legislature") }) {
-            items.append("State Legislature")
+        if ensureStateLegislature && stateHasStateLegislatureOnBallot(for: election) && !containsStateLegislatureItem(items) {
+            items.append(l("app.guide.office.state_legislature", "State Legislature"))
         }
 
         return dedupedAndAnnotatedOverviewItems(items)
@@ -993,7 +1325,7 @@ struct NYCMayoralElectionView: View {
         let state = rawStateCode.uppercased()
         let phase = phaseForElection(election)
         let stage = (phase == .general) ? "general" : "primary"
-        let stageLabel = phase == .general ? "General" : (phase == .runoff ? "Runoff" : "Primary")
+        let stageLabel = localizedStageLabel(for: phase)
 
         let rows = dataset.timeline_dataset
             .filter { row in
@@ -1066,6 +1398,35 @@ struct NYCMayoralElectionView: View {
         }
     }
 
+    private func containsBallotMeasureItem(_ items: [String]) -> Bool {
+        let localizedToken = l("app.guide.office.ballot_measures", "Ballot Measures").lowercased()
+        return items.contains { item in
+            let lower = item.lowercased()
+            return lower.contains("ballot measure") || lower.contains(localizedToken)
+        }
+    }
+
+    private func containsStateLegislatureItem(_ items: [String]) -> Bool {
+        let localizedToken = l("app.guide.office.state_legislature", "State Legislature").lowercased()
+        return items.contains { item in
+            let lower = item.lowercased()
+            return lower.contains("state legislature") || lower.contains(localizedToken)
+        }
+    }
+
+    private func localizedStageLabel(for phase: ElectionGuidePhase) -> String {
+        switch phase {
+        case .general:
+            return l("app.timeline.stage.general", "General")
+        case .runoff:
+            return l("app.timeline.stage.runoff", "Runoff")
+        case .primary:
+            return l("app.timeline.stage.primary", "Primary")
+        case .special, .unknown:
+            return l("app.timeline.stage.primary", "Primary")
+        }
+    }
+
     private func dedupedAndAnnotatedOverviewItems(_ items: [String]) -> [String] {
         var seen = Set<String>()
         var output: [String] = []
@@ -1082,14 +1443,18 @@ struct NYCMayoralElectionView: View {
         let lower = item.lowercased()
         guard !lower.contains("every ") else { return item }
 
-        if lower.contains("u.s. senate") {
-            return "\(item) (every 6 years)"
+        if lower.contains("u.s. senate")
+            || lower.contains(l("app.guide.office.us_senate", "U.S. Senate").lowercased()) {
+            return "\(item) (\(l("app.guide.office.cycle.every_6_years", "every 6 years")))"
         }
-        if lower.contains("u.s. house") {
-            return "\(item) (every 2 years)"
+        if lower.contains("u.s. house")
+            || lower.contains(l("app.guide.office.us_house", "U.S. House").lowercased()) {
+            return "\(item) (\(l("app.guide.office.cycle.every_2_years", "every 2 years")))"
         }
-        if lower.contains("president and vice president") || lower.contains("president") {
-            return "\(item) (every 4 years)"
+        if lower.contains("president and vice president")
+            || lower.contains("president")
+            || lower.contains(l("app.guide.office.president_vice_president", "President and Vice President").lowercased()) {
+            return "\(item) (\(l("app.guide.office.cycle.every_4_years", "every 4 years")))"
         }
         return item
     }
@@ -1150,23 +1515,23 @@ struct NYCMayoralElectionView: View {
     private func ballotOfficeTitle(for officeFamily: String) -> String {
         switch officeFamily.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
         case "president":
-            return "President and Vice President"
+            return l("app.guide.office.president_vice_president", "President and Vice President")
         case "us_senate":
-            return "U.S. Senate"
+            return l("app.guide.office.us_senate", "U.S. Senate")
         case "us_house":
-            return "U.S. House"
+            return l("app.guide.office.us_house", "U.S. House")
         case "governor":
-            return "Governor"
+            return l("app.guide.office.governor", "Governor")
         case "state_legislature":
-            return "State Legislature"
+            return l("app.guide.office.state_legislature", "State Legislature")
         case "statewide_exec":
-            return "Statewide Executive Offices"
+            return l("app.guide.office.statewide_exec", "Statewide Executive Offices")
         case "judicial":
-            return "Judicial Offices"
+            return l("app.guide.office.judicial", "Judicial Offices")
         case "local":
-            return "Local Offices"
+            return l("app.guide.office.local", "Local Offices")
         case "ballot_measures":
-            return "Ballot Measures"
+            return l("app.guide.office.ballot_measures", "Ballot Measures")
         default:
             return officeFamily
                 .replacingOccurrences(of: "_", with: " ")
@@ -1179,9 +1544,9 @@ struct NYCMayoralElectionView: View {
     private func normalizedPartyLabel(for party: String) -> String {
         switch party.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
         case "democratic":
-            return "Democrat"
+            return l("app.timeline.party.democrat", "Democrat")
         case "republican":
-            return "Republican"
+            return l("app.timeline.party.republican", "Republican")
         default:
             return ""
         }
@@ -1190,27 +1555,7 @@ struct NYCMayoralElectionView: View {
     private func ballotMeasuresGuideCard(for election: Election) -> ElectionGuideInfoCard {
         let state = (stateCodeForElection(election) ?? stateCode ?? "").uppercased()
         let officialItems = officialStatewideMeasureItems(for: election, stateCode: state)
-        let timelineItems = timelineMeasureItems(for: election, includePlaceholder: false)
-        let policy = ballotMeasurePolicy(forStateCode: state)
-        let policyItems = ballotMeasurePolicyItems(policy, stateCode: state)
-
-        var combined: [String] = []
-        if !officialItems.isEmpty {
-            combined.append(contentsOf: officialItems)
-        } else if !timelineItems.isEmpty {
-            combined.append(contentsOf: timelineItems)
-        } else if !policyItems.isEmpty {
-            combined.append(contentsOf: policyItems)
-        }
-
-        if combined.isEmpty {
-            combined.append(
-                l(
-                    "app.guide.card.ballot_measures.placeholder",
-                    "Specific measure titles for your ballot are being integrated."
-                )
-            )
-        }
+        let combined = displayableBallotMeasureItems(for: election)
 
         let introBody: String
         if !officialItems.isEmpty {
@@ -1219,6 +1564,11 @@ struct NYCMayoralElectionView: View {
                 "app.guide.card.ballot_measures.body.official.concise",
                 "In %@, voters can directly vote yes or no on these statewide measures.",
                 stateLabel
+            )
+        } else if !combined.isEmpty {
+            introBody = l(
+                "app.guide.card.ballot_measures.body.concise",
+                "Ballot measures are direct votes on policy questions."
             )
         } else {
             introBody = l(
@@ -1236,16 +1586,48 @@ struct NYCMayoralElectionView: View {
         )
     }
 
-    private func ballotMeasureCountForIntro(for election: Election) -> Int {
+    private func isGenericMeasureLabel(_ raw: String) -> Bool {
+        let normalized = raw
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+        guard !normalized.isEmpty else { return true }
+
+        if normalized == "none" || normalized == "n/a" {
+            return true
+        }
+
+        let patterns = [
+            #"^measure\s*\d+\b"#,
+            #"^amendment\s*\d+\b"#,
+            #"^proposition\s*[a-z0-9]+\b"#,
+            #"^public question\s*\d+\b"#,
+            #"^question\s*\d+\b"#
+        ]
+        return patterns.contains { pattern in
+            normalized.range(of: pattern, options: .regularExpression) != nil
+        }
+    }
+
+    private func displayableBallotMeasureItems(for election: Election) -> [String] {
         let state = (stateCodeForElection(election) ?? stateCode ?? "").uppercased()
-        guard !state.isEmpty else { return 0 }
+        guard !state.isEmpty else { return [] }
+
         let official = officialStatewideMeasureItems(for: election, stateCode: state)
         if !official.isEmpty {
-            return official.count
+            return official
         }
 
         let timeline = timelineMeasureItems(for: election, includePlaceholder: false)
-        return timeline.count
+            .filter { !isGenericMeasureLabel($0) }
+        return timeline
+    }
+
+    private func hasDisplayableBallotMeasures(for election: Election) -> Bool {
+        !displayableBallotMeasureItems(for: election).isEmpty
+    }
+
+    private func ballotMeasureCountForIntro(for election: Election) -> Int {
+        displayableBallotMeasureItems(for: election).count
     }
 
     private func officialStatewideMeasureItems(for election: Election, stateCode: String) -> [String] {
@@ -1297,16 +1679,14 @@ struct NYCMayoralElectionView: View {
         guard let policy else { return [] }
 
         var items: [String] = []
-        let stateLabel = policy.state.isEmpty ? stateCode : policy.state
-
         if !policy.citizenProcess.isEmpty {
-            items.append("\(stateLabel): citizen petition process is \(policy.citizenProcess).")
+            items.append("Citizen process: \(policy.citizenProcess).")
         }
         if !policy.vetoReferendum.isEmpty {
-            items.append("Referendum to challenge a law: \(policy.vetoReferendum).")
+            items.append("Veto referendum: \(policy.vetoReferendum).")
         }
         if !policy.constitutionalAmendmentApprovalRequired.isEmpty {
-            items.append("Constitution changes require voter approval: \(policy.constitutionalAmendmentApprovalRequired).")
+            items.append("Constitutional amendment approval: \(policy.constitutionalAmendmentApprovalRequired).")
         }
         if items.isEmpty, !policy.explicitPolicySummary.isEmpty {
             items.append(policy.explicitPolicySummary)
@@ -1324,13 +1704,13 @@ struct NYCMayoralElectionView: View {
     private func officePowerLineItems(forTimelineTitles titles: [String]) -> [String] {
         let source = titles.isEmpty
             ? [
-                "President and Vice President",
-                "U.S. Senate",
-                "U.S. House",
-                "Governor",
-                "State Legislature",
-                "Statewide Executive Offices",
-                "Local Offices"
+                l("app.guide.office.president_vice_president", "President and Vice President"),
+                l("app.guide.office.us_senate", "U.S. Senate"),
+                l("app.guide.office.us_house", "U.S. House"),
+                l("app.guide.office.governor", "Governor"),
+                l("app.guide.office.state_legislature", "State Legislature"),
+                l("app.guide.office.statewide_exec", "Statewide Executive Offices"),
+                l("app.guide.office.local", "Local Offices")
             ]
             : titles
 
@@ -1361,6 +1741,43 @@ struct NYCMayoralElectionView: View {
     }
 
     private func normalizedOfficePowerKey(from title: String) -> String? {
+        let lower = title.lowercased()
+        if lower.contains(l("app.guide.office.president_vice_president", "President and Vice President").lowercased())
+            || lower.contains("white house")
+            || lower.contains("president") {
+            return "white house president"
+        }
+        if lower.contains(l("app.guide.office.us_senate", "U.S. Senate").lowercased())
+            || lower.contains("u.s. senate")
+            || lower.contains("senate") {
+            return "us senate"
+        }
+        if lower.contains(l("app.guide.office.us_house", "U.S. House").lowercased())
+            || lower.contains("u.s. house")
+            || lower.contains("us house") {
+            return "us house"
+        }
+        if lower.contains(l("app.guide.office.governor", "Governor").lowercased())
+            || lower.contains("governor") {
+            return "governor"
+        }
+        if lower.contains(l("app.guide.office.state_legislature", "State Legislature").lowercased())
+            || lower.contains("state legislature")
+            || lower.contains("state rep") {
+            return "state rep"
+        }
+        if lower.contains(l("app.guide.office.statewide_exec", "Statewide Executive Offices").lowercased())
+            || lower.contains("attorney general")
+            || lower.contains("statewide executive") {
+            return "state attorney general"
+        }
+        if lower.contains(l("app.guide.office.local", "Local Offices").lowercased())
+            || lower.contains("mayor")
+            || lower.contains("local offices")
+            || lower.contains("local office") {
+            return "mayor"
+        }
+
         let normalized = title
             .lowercased()
             .replacingOccurrences(of: "[^a-z0-9 ]", with: " ", options: .regularExpression)
@@ -1395,12 +1812,12 @@ struct NYCMayoralElectionView: View {
     private func framedOfficeInfluenceItems(from titles: [String]) -> [String] {
         let source = titles.isEmpty
             ? [
-                "President and Vice President",
-                "U.S. Senate",
-                "U.S. House",
-                "Governor",
-                "State Legislature",
-                "Local Offices"
+                l("app.guide.office.president_vice_president", "President and Vice President"),
+                l("app.guide.office.us_senate", "U.S. Senate"),
+                l("app.guide.office.us_house", "U.S. House"),
+                l("app.guide.office.governor", "Governor"),
+                l("app.guide.office.state_legislature", "State Legislature"),
+                l("app.guide.office.local", "Local Offices")
             ]
             : titles
 
@@ -1418,31 +1835,76 @@ struct NYCMayoralElectionView: View {
 
     private func frameInfluenceText(forOfficeTitle title: String) -> String {
         let lower = title.lowercased()
-        if lower.contains("president") {
-            return "\(title): sets national executive priorities, federal agency direction, and veto/sign authority."
+        let presidentToken = l("app.guide.office.president_vice_president", "President and Vice President").lowercased()
+        let senateToken = l("app.guide.office.us_senate", "U.S. Senate").lowercased()
+        let houseToken = l("app.guide.office.us_house", "U.S. House").lowercased()
+        let governorToken = l("app.guide.office.governor", "Governor").lowercased()
+        let stateLegToken = l("app.guide.office.state_legislature", "State Legislature").lowercased()
+        let judicialToken = l("app.guide.office.judicial", "Judicial Offices").lowercased()
+        let localToken = l("app.guide.office.local", "Local Offices").lowercased()
+        let ballotMeasuresToken = l("app.guide.office.ballot_measures", "Ballot Measures").lowercased()
+
+        if lower.contains("president") || lower.contains(presidentToken) {
+            return lf(
+                "app.guide.office_influence.president",
+                "%@: sets national executive priorities, federal agency direction, and veto/sign authority.",
+                title
+            )
         }
-        if lower.contains("u.s. senate") || lower.contains("senate") {
-            return "\(title): shapes federal law, confirms judges/appointments, and approves treaties."
+        if lower.contains("u.s. senate") || lower.contains("senate") || lower.contains(senateToken) {
+            return lf(
+                "app.guide.office_influence.senate",
+                "%@: shapes federal law, confirms judges/appointments, and approves treaties.",
+                title
+            )
         }
-        if lower.contains("u.s. house") || lower.contains("house") {
-            return "\(title): initiates budget/tax bills and represents district interests in federal legislation."
+        if lower.contains("u.s. house") || lower.contains("house") || lower.contains(houseToken) {
+            return lf(
+                "app.guide.office_influence.house",
+                "%@: initiates budget/tax bills and represents district interests in federal legislation.",
+                title
+            )
         }
-        if lower.contains("governor") {
-            return "\(title): leads state executive branch, signs/vetoes state laws, and sets state policy direction."
+        if lower.contains("governor") || lower.contains(governorToken) {
+            return lf(
+                "app.guide.office_influence.governor",
+                "%@: leads state executive branch, signs/vetoes state laws, and sets state policy direction.",
+                title
+            )
         }
-        if lower.contains("state legislature") {
-            return "\(title): passes state laws, budgets, and policy frameworks that affect statewide programs."
+        if lower.contains("state legislature") || lower.contains(stateLegToken) {
+            return lf(
+                "app.guide.office_influence.state_legislature",
+                "%@: passes state laws, budgets, and policy frameworks that affect statewide programs.",
+                title
+            )
         }
-        if lower.contains("judicial") {
-            return "\(title): interprets laws and legal disputes, affecting rights and policy application."
+        if lower.contains("judicial") || lower.contains(judicialToken) {
+            return lf(
+                "app.guide.office_influence.judicial",
+                "%@: interprets laws and legal disputes, affecting rights and policy application.",
+                title
+            )
         }
-        if lower.contains("local") || lower.contains("council") || lower.contains("mayor") {
-            return "\(title): impacts city/county budgets, schools, zoning, transportation, and public safety decisions."
+        if lower.contains("local") || lower.contains("council") || lower.contains("mayor") || lower.contains(localToken) {
+            return lf(
+                "app.guide.office_influence.local",
+                "%@: impacts city/county budgets, schools, zoning, transportation, and public safety decisions.",
+                title
+            )
         }
-        if lower.contains("ballot measure") {
-            return "\(title): allows direct voter decisions on policy, funding, or constitutional/statutory changes."
+        if lower.contains("ballot measure") || lower.contains(ballotMeasuresToken) {
+            return lf(
+                "app.guide.office_influence.ballot_measures",
+                "%@: allows direct voter decisions on policy, funding, or constitutional/statutory changes.",
+                title
+            )
         }
-        return "\(title): affects policy and governance outcomes for your community and representation level."
+        return lf(
+            "app.guide.office_influence.generic",
+            "%@: affects policy and governance outcomes for your community and representation level.",
+            title
+        )
     }
 
     private func specialBallotRulesGuideCards(for _: Election, stateCode: String) -> [ElectionGuideInfoCard] {
@@ -2146,45 +2608,65 @@ struct NYCMayoralElectionView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
 
-            ForEach(Array(items.enumerated()), id: \.offset) { index, raw in
+            ForEach(Array(items.enumerated()), id: \.offset) { _, raw in
                 let parsed = parsedBallotMeasureItem(from: raw)
+                let itemKey = ballotMeasureItemKey(for: parsed)
+                let isExpanded = expandedBallotMeasureKeys.contains(itemKey)
                 VStack(alignment: .leading, spacing: 6) {
-                    HStack(spacing: 6) {
-                        Text("Measure \(index + 1)")
-                            .font(.caption.weight(.semibold))
-                            .foregroundColor(VoteNowColors.primaryText)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
-                            .background(
-                                Capsule(style: .continuous)
-                                    .fill(Color(red: 0.93, green: 0.58, blue: 0.16).opacity(0.26))
-                            )
-
-                        if let dateText = parsed.dateText {
-                            Text(dateText)
-                                .font(.caption.weight(.semibold))
-                                .foregroundColor(VoteNowColors.mutedText)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(
-                                    Capsule(style: .continuous)
-                                        .fill(Color.black.opacity(0.06))
-                                )
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            if isExpanded {
+                                expandedBallotMeasureKeys.remove(itemKey)
+                            } else {
+                                expandedBallotMeasureKeys.insert(itemKey)
+                            }
                         }
+                    } label: {
+                        HStack(alignment: .top, spacing: 8) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(parsed.title)
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundColor(VoteNowColors.primaryText)
+                                    .multilineTextAlignment(.leading)
+                                    .lineLimit(isExpanded ? nil : 2)
+                                    .fixedSize(horizontal: false, vertical: true)
 
-                        Spacer(minLength: 0)
+                                if let dateText = parsed.dateText {
+                                    Text(dateText)
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundColor(VoteNowColors.mutedText)
+                                }
+
+                                Text(isExpanded ? "Tap to collapse" : "Tap to expand")
+                                    .font(.caption2.weight(.semibold))
+                                    .foregroundColor(VoteNowColors.primaryCTA)
+                            }
+
+                            Spacer(minLength: 8)
+
+                            Image(systemName: isExpanded ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
+                                .font(.subheadline)
+                                .foregroundColor(VoteNowColors.primaryCTA.opacity(0.9))
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
+                    .buttonStyle(.plain)
 
-                    Text(parsed.title)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(VoteNowColors.primaryText)
-                        .fixedSize(horizontal: false, vertical: true)
+                    if isExpanded {
+                        VStack(alignment: .leading, spacing: 6) {
+                            if !parsed.summary.isEmpty {
+                                Text(parsed.summary)
+                                    .font(.subheadline)
+                                    .foregroundColor(VoteNowColors.primaryText)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
 
-                    if !parsed.summary.isEmpty {
-                        Text(parsed.summary)
-                            .font(.subheadline)
-                            .foregroundColor(VoteNowColors.primaryText)
-                            .fixedSize(horizontal: false, vertical: true)
+                            Text(deeperBallotMeasureContext(for: parsed))
+                                .font(.caption)
+                                .foregroundColor(VoteNowColors.mutedText)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .transition(.opacity.combined(with: .move(edge: .top)))
                     }
                 }
                 .padding(10)
@@ -2205,6 +2687,24 @@ struct NYCMayoralElectionView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 2)
         }
+    }
+
+    private func ballotMeasureItemKey(for parsed: ElectionGuideParsedBallotMeasureItem) -> String {
+        "\(parsed.title)|\(parsed.dateText ?? "")"
+    }
+
+    private func deeperBallotMeasureContext(for parsed: ElectionGuideParsedBallotMeasureItem) -> String {
+        let title = parsed.title.lowercased()
+        if title.contains("amendment") {
+            return "If approved, this can change the state constitution, which is usually harder to revise than ordinary law."
+        }
+        if title.contains("referendum") {
+            return "This gives voters a direct yes/no decision on whether a law should take effect or stay in place."
+        }
+        if title.contains("initiative") || title.contains("measure") || title.contains("proposition") {
+            return "This is direct lawmaking by voters. A yes vote can create or change statewide policy without waiting for a future legislative vote."
+        }
+        return "This appears on your statewide ballot as a direct policy decision for voters."
     }
 
     private func parsedBallotMeasureItem(from raw: String) -> ElectionGuideParsedBallotMeasureItem {
@@ -2626,6 +3126,51 @@ private struct ElectionGuideOfficeExampleLine {
 private enum ElectionGuideSpecialRuleKind {
     case rankedChoice
     case runoff
+}
+
+private enum GuideMiniNavSection: String, CaseIterable {
+    case snapshot
+    case voterID
+    case electionType
+    case ballotMeasures
+
+    var title: String {
+        switch self {
+        case .snapshot:
+            return "Snapshot"
+        case .voterID:
+            return "Voter ID"
+        case .electionType:
+            return "Rules"
+        case .ballotMeasures:
+            return "Ballot Measure"
+        }
+    }
+
+    var anchorID: String {
+        "guide-mini-nav-\(rawValue)"
+    }
+
+    var tintColor: Color {
+        switch self {
+        case .snapshot:
+            return Color(hex: "#2E7DDE")
+        case .voterID:
+            return Color(hex: "#3E79A8")
+        case .electionType:
+            return Color(hex: "#C58A1A")
+        case .ballotMeasures:
+            return Color(hex: "#B85C36")
+        }
+    }
+
+    var selectedBackgroundColor: Color {
+        tintColor.opacity(0.22)
+    }
+
+    var selectedBorderColor: Color {
+        tintColor.opacity(0.5)
+    }
 }
 
 private enum GuideCardAnchor: String {

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TurnoutExplorer: View {
     let onSeeHowToVote: () -> Void
+    let onTurnoutCueColorChange: (Color) -> Void
 
     @StateObject private var store = TurnoutExplorerStore()
     @State private var selectedElectionType: TurnoutElectionType = .presidential
@@ -9,8 +10,12 @@ struct TurnoutExplorer: View {
     @State private var showMethodologySheet = false
     @State private var didApplyDatasetDefaults = false
 
-    init(onSeeHowToVote: @escaping () -> Void = {}) {
+    init(
+        onSeeHowToVote: @escaping () -> Void = {},
+        onTurnoutCueColorChange: @escaping (Color) -> Void = { _ in }
+    ) {
         self.onSeeHowToVote = onSeeHowToVote
+        self.onTurnoutCueColorChange = onTurnoutCueColorChange
     }
 
     var body: some View {
@@ -24,7 +29,12 @@ struct TurnoutExplorer: View {
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(VoteNowColors.surfaceWhite.opacity(0.82))
+        .background(
+            ZStack {
+                turnoutCueColor.opacity(0.16)
+                VoteNowColors.surfaceWhite.opacity(0.86)
+            }
+        )
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
@@ -38,6 +48,16 @@ struct TurnoutExplorer: View {
             if let adapter = store.adapter {
                 applyDefaults(from: adapter)
             }
+            publishTurnoutCueColor()
+        }
+        .onChange(of: selectedElectionType) { _, _ in
+            publishTurnoutCueColor()
+        }
+        .onChange(of: selectedRange) { _, _ in
+            publishTurnoutCueColor()
+        }
+        .onAppear {
+            publishTurnoutCueColor()
         }
     }
 
@@ -90,6 +110,7 @@ struct TurnoutExplorer: View {
                     selectedRange: activeRange,
                     eligiblePopulationThousands: summary?.citizenPopulationThousands,
                     votedThousands: summary?.votedThousands,
+                    turnoutRatePct: summary?.turnoutRatePct,
                     representationGapPoints: summary?.representationGapPoints,
                     onRangeChange: { newRange in
                         selectedRange = clampedRange(newRange, within: stops)
@@ -191,6 +212,7 @@ struct TurnoutExplorer: View {
         let stops = adapter.sliderStops(for: selectedElectionType)
         selectedRange = clampedRange(adapter.defaultRange(for: selectedElectionType), within: stops)
         didApplyDatasetDefaults = true
+        publishTurnoutCueColor()
     }
 
     private func clampedRange(_ range: ClosedRange<Int>, within stops: [TurnoutAgeStop]) -> ClosedRange<Int> {
@@ -266,6 +288,28 @@ struct TurnoutExplorer: View {
         return "~\(TurnoutExplorerFormatters.wholeNumber(value / 100_000)) close statewide margins"
     }
 
+    private var turnoutCueColor: Color {
+        guard let adapter = store.adapter else {
+            return VoteNowColors.primaryCTA
+        }
+
+        let stops = adapter.sliderStops(for: selectedElectionType)
+        guard !stops.isEmpty else {
+            return VoteNowColors.primaryCTA
+        }
+
+        let activeRange = clampedRange(selectedRange, within: stops)
+        if let turnoutRate = adapter.selectionSummary(for: selectedElectionType, range: activeRange)?.turnoutRatePct {
+            return TurnoutGraphPalette.palette(forTurnoutRate: turnoutRate).votedColor
+        }
+
+        return VoteNowColors.primaryCTA
+    }
+
+    private func publishTurnoutCueColor() {
+        onTurnoutCueColorChange(turnoutCueColor)
+    }
+
     private func representationCardColor(for gapPoints: Double) -> Color {
         if gapPoints < -0.2 {
             return VoteNowColors.urgentCTA
@@ -318,6 +362,7 @@ private struct AgeTurnoutBandSlider: View {
     let selectedRange: ClosedRange<Int>
     let eligiblePopulationThousands: Double?
     let votedThousands: Double?
+    let turnoutRatePct: Double?
     let representationGapPoints: Double?
     let onRangeChange: (ClosedRange<Int>) -> Void
 
@@ -386,14 +431,26 @@ private struct AgeTurnoutBandSlider: View {
                         .padding(.horizontal, sideInset)
 
                     Capsule(style: .continuous)
-                        .fill(selectionFillColor(for: representationGapPoints))
+                        .fill(selectionFillColor(turnoutRatePct: turnoutRatePct, gapPoints: representationGapPoints))
                         .frame(width: max(0, upperX - lowerX), height: 6)
                         .padding(.leading, lowerX)
 
-                    thumb(at: lowerX, y: centerY, visualSize: thumbVisualSize, touchSize: thumbTouchSize)
+                    thumb(
+                        at: lowerX,
+                        y: centerY,
+                        visualSize: thumbVisualSize,
+                        touchSize: thumbTouchSize,
+                        fillColor: sliderCueColor(turnoutRatePct: turnoutRatePct)
+                    )
                         .allowsHitTesting(false)
 
-                    thumb(at: upperX, y: centerY, visualSize: thumbVisualSize, touchSize: thumbTouchSize)
+                    thumb(
+                        at: upperX,
+                        y: centerY,
+                        visualSize: thumbVisualSize,
+                        touchSize: thumbTouchSize,
+                        fillColor: sliderCueColor(turnoutRatePct: turnoutRatePct)
+                    )
                         .allowsHitTesting(false)
                 }
                 .frame(height: thumbTouchSize)
@@ -442,14 +499,14 @@ private struct AgeTurnoutBandSlider: View {
         }
     }
 
-    private func thumb(at x: CGFloat, y: CGFloat, visualSize: CGFloat, touchSize: CGFloat) -> some View {
+    private func thumb(at x: CGFloat, y: CGFloat, visualSize: CGFloat, touchSize: CGFloat, fillColor: Color) -> some View {
         ZStack {
             Circle()
                 .fill(Color.clear)
                 .frame(width: touchSize, height: touchSize)
 
             Circle()
-                .fill(VoteNowColors.primaryCTA)
+                .fill(fillColor)
                 .frame(width: visualSize, height: visualSize)
                 .overlay(Circle().stroke(.white, lineWidth: 2))
                 .shadow(color: VoteNowColors.primaryText.opacity(0.18), radius: 3, x: 0, y: 1)
@@ -516,21 +573,18 @@ private struct AgeTurnoutBandSlider: View {
         return eligibleLabel
     }
 
-    private func selectionFillColor(for gapPoints: Double?) -> Color {
-        guard let gapPoints else {
-            return VoteNowColors.primaryCTA.opacity(0.30)
+    private func sliderCueColor(turnoutRatePct: Double?) -> Color {
+        guard let turnoutRatePct else {
+            return VoteNowColors.primaryCTA
         }
+        return TurnoutGraphPalette.palette(forTurnoutRate: turnoutRatePct).votedColor
+    }
 
-        let magnitude = min(max(abs(gapPoints) / 8, 0), 1)
-        let baseOpacity = 0.30 + (0.35 * magnitude)
-
-        if gapPoints < -0.2 {
-            return VoteNowColors.urgentCTA.opacity(baseOpacity)
-        }
-        if gapPoints > 0.2 {
-            return VoteNowColors.richBlue.opacity(baseOpacity)
-        }
-        return VoteNowColors.warningAmber.opacity(0.32)
+    private func selectionFillColor(turnoutRatePct: Double?, gapPoints: Double?) -> Color {
+        let base = sliderCueColor(turnoutRatePct: turnoutRatePct)
+        let magnitude = min(max(abs(gapPoints ?? 0) / 8, 0), 1)
+        let opacity = 0.30 + (0.30 * magnitude)
+        return base.opacity(opacity)
     }
 }
 

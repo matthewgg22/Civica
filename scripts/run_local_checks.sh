@@ -39,3 +39,10 @@ if [[ "${RUN_XCODEBUILD:-0}" == "1" ]]; then
 else
   echo "[4/4] Optional Xcode build check skipped (set RUN_XCODEBUILD=1 to enable)"
 fi
+
+if [[ "${RUN_REPS_DATA_CHECKS:-0}" == "1" ]]; then
+  echo "[5/5] Optional reps data checks"
+  ./scripts/run_reps_data_checks.sh
+else
+  echo "[5/5] Optional reps data checks skipped (set RUN_REPS_DATA_CHECKS=1 to enable)"
+fi

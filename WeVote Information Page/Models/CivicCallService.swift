@@ -37,18 +37,46 @@ private struct CivicIssueBriefRequest: Codable {
 }
 
 private struct CivicScriptPackageRequest: Codable {
+    struct RepContextPayload: Codable {
+        let repID: String
+        let repName: String
+        let officeType: String
+        let chamber: String
+        let district: String?
+        let state: String?
+        let primaryPhoneNumber: String
+        let localOfficePhoneNumber: String?
+
+        enum CodingKeys: String, CodingKey {
+            case repID = "rep_id"
+            case repName = "rep_name"
+            case officeType = "office_type"
+            case chamber
+            case district
+            case state
+            case primaryPhoneNumber = "primary_phone_number"
+            case localOfficePhoneNumber = "local_office_phone_number"
+        }
+    }
+
     let concernText: String
     let selectedAsk: CivicAsk
     let targetReps: [CivicRepSlot]
+    let repContexts: [RepContextPayload]
     let optionalBillRef: String?
     let allowRevision: Bool
+    let userZip: String?
+    let userState: String?
 
     enum CodingKeys: String, CodingKey {
         case concernText = "concern_text"
         case selectedAsk = "selected_ask"
         case targetReps = "target_reps"
+        case repContexts = "rep_contexts"
         case optionalBillRef = "optional_bill_ref"
         case allowRevision = "allow_revision"
+        case userZip = "user_zip"
+        case userState = "user_state"
     }
 }
 
@@ -111,6 +139,15 @@ struct CivicScriptPackageCommitteeMatch: Codable {
     }
 }
 
+extension CivicScriptPackageCommitteeMatch {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        matched = try container.decodeIfPresent(Bool.self, forKey: .matched) ?? false
+        matchedCommittees = try container.decodeIfPresent([String].self, forKey: .matchedCommittees) ?? []
+        jurisdictionCallout = try container.decodeIfPresent(String.self, forKey: .jurisdictionCallout)
+    }
+}
+
 struct CivicScriptPackageOfficeOverlay: Codable {
     let repID: String
     let repName: String
@@ -132,6 +169,22 @@ struct CivicScriptPackageOfficeOverlay: Codable {
         case liveScriptFinal = "live_script_final"
         case voicemailScriptFinal = "voicemail_script_final"
         case relatedCommittees = "related_committees"
+    }
+}
+
+extension CivicScriptPackageOfficeOverlay {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        repID = try container.decodeIfPresent(String.self, forKey: .repID) ?? ""
+        repName = try container.decodeIfPresent(String.self, forKey: .repName) ?? "Congressional Office"
+        officeType = try container.decodeIfPresent(String.self, forKey: .officeType) ?? "Congressional Office"
+        chamber = try container.decodeIfPresent(String.self, forKey: .chamber) ?? ""
+        committeeMatch = try container.decodeIfPresent(CivicScriptPackageCommitteeMatch.self, forKey: .committeeMatch)
+            ?? CivicScriptPackageCommitteeMatch(matched: false, matchedCommittees: [], jurisdictionCallout: nil)
+        roleOverlays = try container.decodeIfPresent([String].self, forKey: .roleOverlays) ?? []
+        liveScriptFinal = try container.decodeIfPresent(String.self, forKey: .liveScriptFinal) ?? ""
+        voicemailScriptFinal = try container.decodeIfPresent(String.self, forKey: .voicemailScriptFinal) ?? ""
+        relatedCommittees = try container.decodeIfPresent([String].self, forKey: .relatedCommittees) ?? []
     }
 }
 
@@ -161,6 +214,22 @@ struct CivicScriptPackageCanonicalContext: Codable {
     }
 }
 
+extension CivicScriptPackageCanonicalContext {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        issueID = try container.decodeIfPresent(String.self, forKey: .issueID) ?? UUID().uuidString
+        title = try container.decodeIfPresent(String.self, forKey: .title) ?? "Constituent issue"
+        summaryPlain = try container.decodeIfPresent(String.self, forKey: .summaryPlain) ?? ""
+        commonAsk = try container.decodeIfPresent(String.self, forKey: .commonAsk) ?? CivicAsk.support.rawValue
+        relatedBills = try container.decodeIfPresent([String].self, forKey: .relatedBills) ?? []
+        billSource = try container.decodeIfPresent(String.self, forKey: .billSource) ?? "none"
+        billDisplayText = try container.decodeIfPresent(String.self, forKey: .billDisplayText) ?? "this issue"
+        evidenceQuality = try container.decodeIfPresent(String.self, forKey: .evidenceQuality) ?? "limited"
+        evidenceWarning = try container.decodeIfPresent(String.self, forKey: .evidenceWarning)
+        keyFacts = try container.decodeIfPresent([CivicIssueBriefFact].self, forKey: .keyFacts) ?? []
+    }
+}
+
 struct CivicScriptPackageScriptCore: Codable {
     let liveScriptCore: String
     let voicemailScriptCore: String
@@ -168,6 +237,16 @@ struct CivicScriptPackageScriptCore: Codable {
     enum CodingKeys: String, CodingKey {
         case liveScriptCore = "live_script_core"
         case voicemailScriptCore = "voicemail_script_core"
+    }
+}
+
+extension CivicScriptPackageScriptCore {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        liveScriptCore = try container.decodeIfPresent(String.self, forKey: .liveScriptCore)
+            ?? "Hi, my name is [Your Name], and I am a constituent calling about this issue."
+        voicemailScriptCore = try container.decodeIfPresent(String.self, forKey: .voicemailScriptCore)
+            ?? "Hi, constituent calling about this issue. Please share the member's current position and next step."
     }
 }
 
@@ -188,6 +267,19 @@ struct CivicScriptPackageTruthTrace: Codable {
         case personalizationFieldsUsed = "personalization_fields_used"
         case fallbackUsed = "fallback_used"
         case refusalReason = "refusal_reason"
+    }
+}
+
+extension CivicScriptPackageTruthTrace {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        normalizedInput = try container.decodeIfPresent(String.self, forKey: .normalizedInput) ?? ""
+        canonicalIssueID = try container.decodeIfPresent(String.self, forKey: .canonicalIssueID) ?? "general-civic-issue"
+        classificationReason = try container.decodeIfPresent(String.self, forKey: .classificationReason) ?? "unknown"
+        billSource = try container.decodeIfPresent(String.self, forKey: .billSource) ?? "none"
+        personalizationFieldsUsed = try container.decodeIfPresent([String].self, forKey: .personalizationFieldsUsed) ?? []
+        fallbackUsed = try container.decodeIfPresent(String.self, forKey: .fallbackUsed) ?? "none"
+        refusalReason = try container.decodeIfPresent(String.self, forKey: .refusalReason)
     }
 }
 
@@ -212,6 +304,23 @@ struct CivicScriptPackageResponse: Codable {
         case reviewRegenerateHint = "review_regenerate_hint"
         case truthTrace = "truth_trace"
         case policyFlags = "policy_flags"
+    }
+}
+
+extension CivicScriptPackageResponse {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let rawStatus = try container.decodeIfPresent(String.self, forKey: .status)?.trimmingCharacters(in: .whitespacesAndNewlines)
+        status = CivicIssueBriefStatus(rawValue: rawStatus ?? "") ?? .ok
+        packageID = try container.decodeIfPresent(String.self, forKey: .packageID) ?? UUID().uuidString
+        canonicalContext = try container.decodeIfPresent(CivicScriptPackageCanonicalContext.self, forKey: .canonicalContext)
+        scriptCore = try container.decodeIfPresent(CivicScriptPackageScriptCore.self, forKey: .scriptCore)
+        officeOverlays = try container.decodeIfPresent([CivicScriptPackageOfficeOverlay].self, forKey: .officeOverlays) ?? []
+        reviewCanRegenerate = try container.decodeIfPresent(Bool.self, forKey: .reviewCanRegenerate) ?? true
+        reviewRegenerateHint = try container.decodeIfPresent(String.self, forKey: .reviewRegenerateHint)
+            ?? "Tell me what to change and I can regenerate."
+        truthTrace = try container.decodeIfPresent(CivicScriptPackageTruthTrace.self, forKey: .truthTrace)
+        policyFlags = try container.decodeIfPresent([String].self, forKey: .policyFlags) ?? []
     }
 }
 
@@ -272,7 +381,10 @@ protocol CivicIssueCallAPIClientProtocol {
         concernText: String,
         selectedAsk: CivicAsk,
         targetReps: [CivicRepSlot],
-        optionalBillRef: String?
+        repTargets: [CivicRepTarget],
+        optionalBillRef: String?,
+        userZip: String?,
+        userState: String?
     ) async throws -> CivicScriptPackageResponse
     func logCall(
         userID: String,
@@ -309,7 +421,9 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
     private let session: URLSession
     private let encoder = JSONEncoder()
     private let decoder: JSONDecoder
-    private let requestTimeout: TimeInterval = 35
+    private let logger = Logger(subsystem: "VoteNow", category: "CivicIssueCallAPIClient")
+    // Render free instances can cold-start slowly; allow enough time before failing.
+    private let requestTimeout: TimeInterval = 65
 
     init(baseURL: URL = CivicIssueCallAPIClient.resolveBaseURL(), session: URLSession = .shared) {
         self.baseURL = baseURL
@@ -331,9 +445,9 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        try await attachAuthorization(to: &request)
+        await attachAuthorizationIfAvailable(to: &request)
 
-        let data = try await requestData(for: request)
+        let data = try await requestData(for: request, timeout: 12, allowTimeoutRetry: false)
         let decoded = try decoder.decode(CivicExamplesResponse.self, from: data)
         return decoded.examples
     }
@@ -343,23 +457,62 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         concernText: String,
         selectedAsk: CivicAsk,
         targetReps: [CivicRepSlot],
-        optionalBillRef: String?
+        repTargets: [CivicRepTarget],
+        optionalBillRef: String?,
+        userZip: String?,
+        userState: String?
     ) async throws -> CivicScriptPackageResponse {
+        let repContextPayload = targetReps.compactMap { slot -> CivicScriptPackageRequest.RepContextPayload? in
+            guard let target = repTargets.first(where: { $0.slot == slot }) else {
+                return nil
+            }
+            let officeType = target.officeType.trimmingCharacters(in: .whitespacesAndNewlines)
+            let chamber: String = slot == .house ? "house" : "senate"
+            let district = target.official.district?.trimmingCharacters(in: .whitespacesAndNewlines)
+            let primaryPhone = (target.official.officialPhone ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            return CivicScriptPackageRequest.RepContextPayload(
+                repID: stableRepID(for: target.official),
+                repName: target.official.name,
+                officeType: officeType.isEmpty ? (slot == .house ? "U.S. Representative" : "U.S. Senator") : officeType,
+                chamber: chamber,
+                district: (district?.isEmpty == true) ? nil : district,
+                state: stateCodeFromDivisionID(target.official.divisionId),
+                primaryPhoneNumber: primaryPhone.isEmpty ? (slot == .house ? "(202) 225-3121" : "(202) 224-3121") : primaryPhone,
+                localOfficePhoneNumber: nil
+            )
+        }
+
         let requestBody = CivicScriptPackageRequest(
             concernText: concernText,
             selectedAsk: selectedAsk,
             targetReps: targetReps,
+            repContexts: repContextPayload,
             optionalBillRef: optionalBillRef,
-            allowRevision: true
+            allowRevision: true,
+            userZip: userZip,
+            userState: userState
         )
         var request = URLRequest(url: endpoint("/api/v1/civic/script-package"))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        try await attachAuthorization(to: &request)
+        await attachAuthorizationIfAvailable(to: &request)
         request.httpBody = try encoder.encode(requestBody)
 
         let data = try await requestData(for: request)
-        return try decoder.decode(CivicScriptPackageResponse.self, from: data)
+        do {
+            return try decoder.decode(CivicScriptPackageResponse.self, from: data)
+        } catch {
+            let rawPayload = String(data: data, encoding: .utf8) ?? "<non-utf8-payload>"
+            let snippet = String(rawPayload.prefix(900))
+            logger.error("Failed to decode script-package payload. Error: \(String(describing: error), privacy: .public) Payload: \(snippet, privacy: .public)")
+            throw NSError(
+                domain: "CivicIssueCallAPIClient",
+                code: -2,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "Received an unexpected script payload from civic API."
+                ]
+            )
+        }
     }
 
     func logCall(
@@ -523,7 +676,16 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
     }
 
+    private func attachAuthorizationIfAvailable(to request: inout URLRequest) async {
+        if let token = try? await currentAccessToken() {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+    }
+
     private func currentAccessToken() async throws -> String {
+        // Ensure an anon session exists before requesting a bearer token.
+        try? await SupabaseManager.shared.signInAnonymouslyIfNeeded()
+
         do {
             return try await SupabaseClientProvider.shared.client.auth.session.accessToken
         } catch {
@@ -540,29 +702,52 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         }
     }
 
-    private func requestData(for request: URLRequest) async throws -> Data {
-        var timedRequest = request
-        timedRequest.timeoutInterval = requestTimeout
+    private func requestData(
+        for request: URLRequest,
+        timeout: TimeInterval? = nil,
+        allowTimeoutRetry: Bool = true
+    ) async throws -> Data {
+        var firstAttempt = request
+        if let timeout {
+            firstAttempt.timeoutInterval = timeout
+        } else if firstAttempt.timeoutInterval <= 0 {
+            firstAttempt.timeoutInterval = requestTimeout
+        }
 
         do {
-            let (data, response) = try await session.data(for: timedRequest)
-            guard let http = response as? HTTPURLResponse else { throw URLError(.badServerResponse) }
-            guard (200...299).contains(http.statusCode) else {
-                throw NSError(domain: "CivicIssueCallAPIClient", code: http.statusCode, userInfo: [
-                    NSLocalizedDescriptionKey: String(data: data, encoding: .utf8) ?? "API request failed with status \(http.statusCode)"
-                ])
-            }
-            return data
+            return try await performRequest(firstAttempt)
         } catch {
-            if let urlError = error as? URLError, urlError.code == .timedOut {
-                throw NSError(
-                    domain: "CivicIssueCallAPIClient",
-                    code: urlError.errorCode,
-                    userInfo: [NSLocalizedDescriptionKey: "The civic API request timed out."]
-                )
+            // Retry once on timeout in case the backend is waking from cold start.
+            if allowTimeoutRetry, let urlError = error as? URLError, urlError.code == .timedOut {
+                var retryAttempt = request
+                let baselineTimeout = timeout ?? requestTimeout
+                retryAttempt.timeoutInterval = max(baselineTimeout, 75)
+                do {
+                    return try await performRequest(retryAttempt)
+                } catch {
+                    throw NSError(
+                        domain: "CivicIssueCallAPIClient",
+                        code: urlError.errorCode,
+                        userInfo: [NSLocalizedDescriptionKey: "The civic API request timed out."]
+                    )
+                }
             }
             throw error
         }
+    }
+
+    private func performRequest(_ request: URLRequest) async throws -> Data {
+        let (data, response) = try await session.data(for: request)
+        guard let http = response as? HTTPURLResponse else { throw URLError(.badServerResponse) }
+        guard (200...299).contains(http.statusCode) else {
+            let responseBody = String(data: data, encoding: .utf8) ?? ""
+            throw NSError(domain: "CivicIssueCallAPIClient", code: http.statusCode, userInfo: [
+                NSLocalizedDescriptionKey: responseBody.isEmpty
+                ? "API request failed with status \(http.statusCode)"
+                : "status \(http.statusCode): \(responseBody)"
+            ])
+        }
+        return data
     }
 
     private func endpoint(_ path: String) -> URL {
@@ -741,8 +926,10 @@ final class IssueCallCenterViewModel: ObservableObject {
     private let cacheStore: CivicCallBriefCacheStore
     private let supabaseManager: SupabaseManager
     private let logger = Logger(subsystem: "VoteNow", category: "IssueCallCenter")
+    private var deferredSnapshotTask: Task<Void, Never>?
     private var activeMAPCSessionID: UUID?
     private var pendingGeneratedResolution: CivicIssueResolutionResponse?
+    private let zipFallbackToken = "[ZIPCODE]"
 
     init(
         federalReps: [Official],
@@ -782,6 +969,29 @@ final class IssueCallCenterViewModel: ObservableObject {
         selectedRepFilter = .all
     }
 
+    private var resolvedUserZip: String {
+        let normalized = String(userZip.filter(\.isNumber).prefix(5))
+        return normalized.count == 5 ? normalized : zipFallbackToken
+    }
+
+    private var requestUserZip: String? {
+        let normalized = String(userZip.filter(\.isNumber).prefix(5))
+        return normalized.count == 5 ? normalized : nil
+    }
+
+    private var resolvedUserState: String? {
+        if let requestUserZip,
+           let stateFromZip = USZipStateResolver().stateCode(for: requestUserZip) {
+            return stateFromZip
+        }
+        for target in repTargets {
+            if let state = stateCodeFromDivisionID(target.official.divisionId) {
+                return state
+            }
+        }
+        return nil
+    }
+
     var availableFilters: [CivicRepFilter] {
         var filters: [CivicRepFilter] = [.all]
         if repTargets.contains(where: { $0.slot == .house }) { filters.append(.house) }
@@ -816,20 +1026,95 @@ final class IssueCallCenterViewModel: ObservableObject {
 
     func loadExamplesAndHistory() async {
         let userID = await userIDForRequest()
+        let localFallback = fallbackExamples()
+        if examples.isEmpty, !localFallback.isEmpty {
+            examples = localFallback
+        }
+
+        async let remoteExamplesTask: [CivicExampleIssueCard] = apiClient.fetchExamples(userID: userID, reps: repTargets)
+        async let historyTask: [CivicHistoryGroup] = apiClient.fetchHistory(userID: userID)
+
         do {
-            examples = try await apiClient.fetchExamples(userID: userID, reps: repTargets)
+            let remoteExamples = try await remoteExamplesTask
+            let mergedExamples = mergePremadeExamples(remote: remoteExamples, local: localFallback)
+            if !mergedExamples.isEmpty || examples.isEmpty {
+                examples = mergedExamples
+            }
         } catch {
-            examples = fallbackExamples()
+            if examples.isEmpty {
+                examples = localFallback
+            }
         }
 
         do {
-            historyGroups = try await apiClient.fetchHistory(userID: userID)
+            historyGroups = try await historyTask
             saveSnapshot()
         } catch {
             // Keep local snapshot history as offline fallback.
         }
 
         await refreshCallScoreData(for: userID)
+    }
+
+    private func mergePremadeExamples(
+        remote: [CivicExampleIssueCard],
+        local: [CivicExampleIssueCard]
+    ) -> [CivicExampleIssueCard] {
+        var mergedByKey: [String: CivicExampleIssueCard] = [:]
+        var orderedKeys: [String] = []
+
+        for card in remote + local {
+            let key = premadeExampleMergeKey(for: card)
+            guard !key.isEmpty else { continue }
+
+            if let existing = mergedByKey[key] {
+                if premadeExampleQualityScore(card) > premadeExampleQualityScore(existing) {
+                    mergedByKey[key] = card
+                }
+                continue
+            }
+
+            mergedByKey[key] = card
+            orderedKeys.append(key)
+        }
+
+        return orderedKeys.compactMap { mergedByKey[$0] }
+    }
+
+    private func premadeExampleMergeKey(for card: CivicExampleIssueCard) -> String {
+        let slug = card.slug?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() ?? ""
+        if !slug.isEmpty { return slug }
+
+        let issueID = card.id.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if !issueID.isEmpty { return issueID }
+
+        return card.title.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+
+    private func premadeExampleQualityScore(_ card: CivicExampleIssueCard) -> Int {
+        var score = 0
+        score += premadeWordCount(card.liveScript) * 2
+        score += premadeWordCount(card.voicemailScript)
+        score += premadeWordCount(card.summary)
+        score += card.relatedBills.count * 14
+        score += card.tags.count * 4
+        if let supporter = card.supporterVariant, !supporter.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            score += 8
+        }
+        if let undecided = card.undecidedVariant, !undecided.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            score += 8
+        }
+        if let staffer = card.stafferVariant, !staffer.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            score += 8
+        }
+        if let footer = card.voicemailFooter, !footer.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            score += 6
+        }
+        return score
+    }
+
+    private func premadeWordCount(_ text: String) -> Int {
+        text.split { $0.isWhitespace || $0.isNewline }.count
     }
 
     func submitAssistantRequest() async {
@@ -849,8 +1134,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         let trimmedConcern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedBill = optionalBillRef.trimmingCharacters(in: .whitespacesAndNewlines)
         let userID = await userIDForRequest()
-        pendingGeneratedResolution = nil
-        requiresDraftApproval = false
+        prepareForFreshGeneration()
 
         do {
             let package = try await apiClient.createScriptPackage(
@@ -858,7 +1142,10 @@ final class IssueCallCenterViewModel: ObservableObject {
                 concernText: trimmedConcern,
                 selectedAsk: ask,
                 targetReps: requestRepSlots,
-                optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill
+                repTargets: repTargets,
+                optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill,
+                userZip: requestUserZip,
+                userState: resolvedUserState
             )
 
             switch package.status {
@@ -870,8 +1157,24 @@ final class IssueCallCenterViewModel: ObservableObject {
                     selectedSlots: requestRepSlots,
                     optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill
                 )
-                applyResolution(response)
-                pendingGeneratedResolution = response
+                let vetted = vettedGeneratedResolution(
+                    response,
+                    concernText: trimmedConcern,
+                    ask: ask,
+                    selectedSlots: requestRepSlots,
+                    optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill
+                )
+                let finalResponse = vetted.resolution
+                if vetted.usedFallback {
+                    logger.warning("Discarded off-topic or unsafe MAPC package and rebuilt a local draft.")
+                    errorMessage = clarificationPromptForConcern(
+                        trimmedConcern,
+                        optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill,
+                        selectedAsk: ask
+                    )
+                }
+                applyResolution(finalResponse)
+                pendingGeneratedResolution = finalResponse
                 requiresDraftApproval = true
                 saveSnapshot()
                 selectedRepFilter = .all
@@ -919,6 +1222,25 @@ final class IssueCallCenterViewModel: ObservableObject {
                 await self.refreshCallScoreData(for: userID)
             }
         }
+    }
+
+    private func clearDisplayedDraftBeforeNewGeneration() {
+        issueTitle = ""
+        issueSummary = ""
+        resolvedEntities = .empty
+        callBriefs = []
+        activeBriefID = nil
+        loggedOutcomeByBriefID = [:]
+        pendingCallLaunch = nil
+        lastCompletionResult = nil
+    }
+
+    func prepareForFreshGeneration() {
+        clearDisplayedDraftBeforeNewGeneration()
+        pendingGeneratedResolution = nil
+        requiresDraftApproval = false
+        activeMAPCSessionID = nil
+        selectedRepFilter = .all
     }
 
     func approveGeneratedDraft() {
@@ -1099,9 +1421,6 @@ final class IssueCallCenterViewModel: ObservableObject {
                     "launch_event_id": pending.launchEventID
                 ]
             )
-            if completed {
-                errorMessage = "Could not confirm the call right now. Please try again."
-            }
         }
     }
 
@@ -1460,6 +1779,9 @@ final class IssueCallCenterViewModel: ObservableObject {
         if let official = officialLookupByName[normalizedName] {
             return official
         }
+        if let placeholderMatch = fallbackOfficialForPlaceholder(brief: brief) {
+            return placeholderMatch
+        }
         if let idx = callBriefs.firstIndex(where: { $0.id == brief.id }),
            repTargets.indices.contains(idx) {
             return repTargets[idx].official
@@ -1493,7 +1815,6 @@ final class IssueCallCenterViewModel: ObservableObject {
             resolvedBills.append(explicitBill)
         }
 
-        let issueCommittees = response.resolvedEntities.committees
         let updatedBriefs = response.callBriefs.map { brief in
             let cleanedBriefBills = brief.relatedBills.compactMap(normalizedBillReference)
             let selectedBill = cleanedBriefBills.first ?? explicitBill
@@ -1611,7 +1932,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 repID: stableRepID(for: target.official),
                 repName: repName,
                 officeType: target.officeType,
-                primaryPhoneNumber: target.official.officialPhone ?? "",
+                primaryPhoneNumber: resolvedPrimaryPhone(for: target),
                 localOfficePhoneNumber: nil,
                 relevanceBadges: relevance,
                 relatedBills: briefRelatedBills,
@@ -1702,7 +2023,7 @@ final class IssueCallCenterViewModel: ObservableObject {
             .replacingOccurrences(of: "[OFFICIAL_TITLE]", with: officialTitle)
             .replacingOccurrences(of: "[OFFICIAL_LAST]", with: officialLastName)
             .replacingOccurrences(of: "[BILL_OR_RESOLUTION]", with: billText)
-            .replacingOccurrences(of: "[ZIP]", with: userZip)
+            .replacingOccurrences(of: "[ZIP]", with: resolvedUserZip)
     }
 
     private func interpolateBillPlaceholder(in script: String, billReference: String?) -> String {
@@ -2046,10 +2367,10 @@ final class IssueCallCenterViewModel: ObservableObject {
         let nextIndex = scoped.index(after: currentIndex)
         if nextIndex < scoped.endIndex {
             activeBriefID = scoped[nextIndex].id
-            saveSnapshot()
+            scheduleDeferredSnapshotPersistence()
         } else {
             activeBriefID = scoped[currentIndex].id
-            saveSnapshot()
+            scheduleDeferredSnapshotPersistence()
         }
     }
 
@@ -2062,13 +2383,22 @@ final class IssueCallCenterViewModel: ObservableObject {
 
         guard currentIndex > scoped.startIndex else {
             activeBriefID = scoped[currentIndex].id
-            saveSnapshot()
+            scheduleDeferredSnapshotPersistence()
             return
         }
 
         let previousIndex = scoped.index(before: currentIndex)
         activeBriefID = scoped[previousIndex].id
-        saveSnapshot()
+        scheduleDeferredSnapshotPersistence()
+    }
+
+    private func scheduleDeferredSnapshotPersistence(delayNanoseconds: UInt64 = 300_000_000) {
+        deferredSnapshotTask?.cancel()
+        deferredSnapshotTask = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: delayNanoseconds)
+            guard let self, !Task.isCancelled else { return }
+            self.saveSnapshot()
+        }
     }
 
     private func fallbackExamples() -> [CivicExampleIssueCard] {
@@ -2104,7 +2434,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Foreign Affairs",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "Congress-not the president acting alone-holds the constitutional power to declare war, and the War Powers Resolution says unauthorized hostilities must end within 60 days unless Congress approves them. Even so, in early March 2026 both the Senate and House rejected resolutions that would have required congressional authorization for hostilities against Iran, even as Reuters reported Pentagon briefers told Congress there was no intelligence that Iran planned to attack U.S. forces first. This issue asks lawmakers to reassert Congress's war powers, oppose further unauthorized escalation, and require a vote before any expanded military action.",
+                summary: "On March 4-5, 2026, the Senate voted 53-47 and the House voted 219-212 against war-powers measures that would have required congressional authorization for hostilities against Iran. Reuters noted that the 1973 War Powers Resolution still gives the administration only 60 days to continue unauthorized military action, putting a deadline at the end of April 2026 unless Congress approves it. The issue is whether Congress will reassert its constitutional role before the conflict widens.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support [BILL_OR_RESOLUTION] and oppose any unauthorized U.S. war with Iran. Congress must reassert its constitutional authority and prevent further escalation without a vote.\n\nPlease speak out publicly, support immediate de-escalation, and vote to block any continued military action that has not been authorized by Congress.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, my name is [YOUR_NAME], and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support [BILL_OR_RESOLUTION] and oppose unauthorized military action against Iran. The United States should not be pulled deeper into another war without congressional approval.\n\nPlease take public action to defend Congress's war powers and push for de-escalation.\n\nThank you.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -2117,7 +2447,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "LGBTQ",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "oppose",
-                summary: "State restrictions remain widespread: KFF's latest tracker counted 27 states with laws or policies limiting youth access to gender-affirming care, 24 penalizing providers, and about half of trans youth ages 13 to 17 living in affected states. At the same time, major medical organizations continue to back evidence-based care: the APA supports unobstructed access to evidence-based clinical care, the Endocrine Society says this care is needed and often life-saving, and a federal judge this month blocked HHS from punishing providers who offer it. This issue asks Congress to oppose anti-trans restrictions, reject political interference in medicine, and protect equal treatment and clinically grounded care.",
+                summary: "Kansas became the 27th state to enact restrictions on gender-affirming care for minors, even as the APA continues to support \"unobstructed access\" to evidence-based care and the Endocrine Society says this care is \"needed and often life-saving.\" On March 19, 2026, a federal judge said he would block HHS from using RFK Jr.'s declaration to threaten providers, in a case brought by 19 states and Washington, D.C.; those states said three hospitals had already been referred to HHS's inspector general. The issue is whether federal policy will override major medical guidance and state protections.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to defend transgender people and oppose federal attacks on gender-affirming care. Please oppose any ban on care, reject anti-trans censorship bills like [BILL_OR_RESOLUTION], and fight policies that strip trans people of safety, dignity, and medically necessary treatment.\n\nTrans people deserve evidence-based care and equal protection under the law, not political targeting.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm asking [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect trans rights and oppose new federal restrictions on gender-affirming care and anti-LGBTQ censorship. Please speak out publicly and vote against measures that harm transgender people and their families.\n\nThank you.",
                 templateAsks: [.oppose, .askPublicStatement, .support],
@@ -2130,7 +2460,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Government Oversight",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "seek_oversight",
-                summary: "Recent developments have intensified scrutiny of FBI leadership and public trust. Reuters reported whistleblower allegations that Patel's personal travel and decision-making hampered investigations, two former FBI agents are suing and allege they were fired over work on the Trump election case, and newly released records show a broader special-counsel probe of Patel as a private citizen than previously known, though Reuters said the exact nature of any allegations was unclear. This issue asks Congress to treat the matter as an accountability crisis: demand transparency, investigate potential misuse of power or resources, and press for Patel's resignation and other formal remedies if warranted.",
+                summary: "In March 2026, Reuters reported that a special-counsel probe had sought more than two years of Patel's phone records, text logs, IP data, and financial information, with subpoenas covering periods from October 1, 2020, to February 22, 2023, and from January 1, 2021, to November 23, 2023. Days earlier, two former FBI agents sued Patel, saying they were fired over work on the \"Arctic Frost\" election investigation and had been unable to find new employment since. The issue is whether Congress treats this as an oversight crisis involving retaliation, management, or both.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to demand FBI Director Kash Patel's resignation and support aggressive oversight into his conduct. Reports about misuse of government resources, retaliation, and mismanagement at the FBI are serious and demand a response.\n\nIf Patel refuses to resign, [OFFICIAL_TITLE] [OFFICIAL_LAST] should support formal investigations and pursue every available accountability measure.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to call for Kash Patel's resignation and back immediate oversight of his conduct as FBI director. The bureau should never be used as a tool for personal privilege or political retaliation.\n\nPlease take public action on this issue.\n\nThank you.",
                 templateAsks: [.seekOversight, .askPublicStatement, .oppose],
@@ -2143,7 +2473,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Nominations",
                 targetChambers: ["senate"],
                 primaryAsk: "vote_no",
-                summary: "The Bureau of Land Management oversees 245 million acres of public land and 700 million acres of mineral estate under a mission that includes both multiple use and conservation. Pearce has long supported expanded domestic oil production, previously owned an oilfield services company, and would oversee major leasing decisions affecting drilling, mining, grazing, recreation, and renewable energy if confirmed; while he told senators he would not recommend broad-scale public-land selloffs, his record still points toward extraction-first management. This issue asks senators to oppose his nomination and insist on BLM leadership centered on stewardship, public access, and balanced land management.",
+                summary: "Trump nominated Stevan Pearce on November 5, 2025 to run the Bureau of Land Management, the agency that oversees 245 million acres of public land. Reuters noted Pearce, 78, comes from New Mexico, has long backed expanded oil production, and previously owned an oilfield services company; as BLM director he would oversee leasing for oil and gas, mining, grazing, and renewable energy. The issue is whether the Senate wants a BLM chief aligned more with extraction or stewardship.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge Senator [OFFICIAL_LAST] to oppose Steve Pearce's confirmation as Director of the Bureau of Land Management. His record shows too much alignment with oil and gas interests and too little commitment to protecting public lands for future generations.\n\nPlease vote no on his confirmation and speak out in defense of our public lands.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to ask Senator [OFFICIAL_LAST] to oppose Steve Pearce for BLM director. This position should go to someone committed to stewardship of public lands, not someone whose record raises concerns about extraction and selloffs.\n\nThank you.",
                 templateAsks: [.voteNo, .oppose, .askPublicStatement],
@@ -2156,7 +2486,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Voter Rights",
                 targetChambers: ["senate"],
                 primaryAsk: "oppose",
-                summary: "The House passed the SAVE America Act in February 2026, and the bill would require documentary proof of citizenship to register for federal elections while adding stricter ID rules. Independent analysis from the Bipartisan Policy Center estimates about 12% of registered voters do not have ready access to the documents most likely to satisfy those requirements, and because only five states issue Real IDs that indicate citizenship, most eligible voters would need a valid passport or a birth certificate paired with photo ID. This issue asks senators to reject the bill because it would add federal paperwork barriers for eligible voters instead of improving election administration and ballot access.",
+                summary: "On February 11, 2026, the House passed the SAVE America Act by 218-213, and Reuters said it then faced a likely 60-vote Senate hurdle. Reuters also reported that about 12% of Americans do not have easy access to either a passport or birth certificate, and about 21 million eligible voters lack easy access to citizenship documents; AP noted that only five states issue enhanced driver's licenses that prove citizenship. The issue is whether proof-of-citizenship rules solve a meaningful problem or create documentation barriers for eligible voters.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge Senator [OFFICIAL_LAST] to oppose the SAVE America Act and any effort to force it through the Senate. This bill would create unnecessary documentation barriers that make it harder for eligible citizens to register and vote.\n\nPlease defend voting rights, reject this bill, and oppose any attempt to make voting less accessible for lawful voters.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm calling to ask Senator [OFFICIAL_LAST] to oppose the SAVE America Act. Eligible Americans should not lose access to the ballot because of burdensome paperwork requirements.\n\nPlease vote no and speak out against this bill.\n\nThank you.",
                 templateAsks: [.oppose, .voteNo, .askPublicStatement],
@@ -2169,7 +2499,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Nominations",
                 targetChambers: ["senate"],
                 primaryAsk: "vote_no",
-                summary: "The surgeon general's effectiveness depends on public trust and clear, science-based communication. Casey Means's nomination has stalled after senators in both parties questioned her experience, inactive medical license, and reluctance at hearing to clearly urge routine vaccination against illnesses like flu and measles; Reuters also described her confirmation hearing as focused on contentious positions on vaccines and birth control. This issue asks senators to reject the nomination and support public-health leadership grounded in evidence, vaccine confidence, and medical credibility.",
+                summary: "Casey Means's nomination has stalled after a February hearing where Reuters reported her Oregon medical license is inactive, she left her surgical residency early, and she declined to disavow RFK Jr.'s debunked autism-vaccine claim even while expressing support for measles vaccination. AP reported that senators from both parties questioned her qualifications and vaccine views, and that the confirmation process had stretched to roughly 300 days. The issue is whether the Senate wants a surgeon general with traditional public-health credentials or a more heterodox wellness profile.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge Senator [OFFICIAL_LAST] to oppose Casey Means for U.S. Surgeon General. This role should go to someone with strong public health credibility, clear support for evidence-based medicine, and full public trust.\n\nPlease vote no on this nomination and speak out for qualified, science-based public health leadership.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm calling to ask Senator [OFFICIAL_LAST] to oppose Casey Means for Surgeon General. The country needs trusted, evidence-based public health leadership in this role.\n\nPlease vote no on this nomination.\n\nThank you.",
                 templateAsks: [.voteNo, .oppose, .askPublicStatement],
@@ -2182,7 +2512,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Immigration",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "Temporary Protected Status exists for countries facing extraordinary conditions, and the Supreme Court has kept in place lower-court orders that, for now, preserve protections for more than 350,000 Haitians living and working in the United States. The State Department continues to warn Americans not to travel to Haiti because of kidnapping, crime, terrorist activity, civil unrest, and limited healthcare, while Reuters and the U.N. report more than 1.4 million Haitians displaced and at least 5,519 people killed between March 2025 and January 2026. This issue asks lawmakers to defend TPS for Haitians and support stability for families who cannot safely be returned to a country in deep crisis.",
+                summary: "On March 16, 2026, the Supreme Court agreed to hear the administration's attempt to end TPS for more than 350,000 Haitians, but left lower-court protections in place for now. Reuters notes that the State Department still warns Americans not to travel to Haiti because of kidnapping, crime, terrorist activity, civil unrest, and limited healthcare; meanwhile, the U.N. reported 5,519 people killed between March 1, 2025, and January 15, 2026, and IOM reported that more than 1.4 million people have been displaced. The issue is whether the U.S. should withdraw protections while conditions remain this severe.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support continued Temporary Protected Status for Haitians and oppose any effort to strip those protections away.\n\nPlease speak out publicly, support every available legislative and oversight tool to protect Haitian TPS holders, and reject deportation policies that would put families at risk.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support TPS protections for Haitians and oppose efforts to end them. Haitian families deserve stability and protection, not more fear and uncertainty.\n\nThank you.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -2195,7 +2525,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Environment",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "oppose",
-                summary: "The EPA's 2009 endangerment finding concluded that six key greenhouse gases threaten public health and welfare and served as the legal prerequisite for federal greenhouse-gas standards. On February 12, 2026, EPA finalized rescission of that finding and repeal of related vehicle greenhouse-gas rules, and 23 states plus cities and counties have already sued to overturn the rollback. This issue asks Congress to oppose dismantling the scientific and legal foundation of climate regulation and to defend protections against dangerous pollution.",
+                summary: "On February 12, 2026, EPA repealed the 2009 endangerment finding that underpins federal greenhouse-gas regulation. On March 19, 2026, 23 states and 14 cities and counties sued to reverse the move, and Reuters noted the rollback also swept in vehicle greenhouse-gas rules for model years 2012 through 2027. The issue is whether Congress and the courts will allow the federal government to dismantle the legal basis for national climate rules.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to oppose the repeal of the EPA's endangerment finding and defend strong federal climate protections.\n\nPlease support aggressive oversight and legislation to restore meaningful greenhouse-gas standards and protect communities from dangerous pollution.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm asking [OFFICIAL_TITLE] [OFFICIAL_LAST] to oppose the repeal of the EPA's endangerment finding and defend strong climate and public-health protections.\n\nPlease take public action on this issue.\n\nThank you.",
                 templateAsks: [.oppose, .seekOversight, .askPublicStatement],
@@ -2208,7 +2538,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Foreign Affairs",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "oppose",
-                summary: "Earlier this year, the White House said Trump was discussing options to acquire Greenland, including purchase and even potential use of the U.S. military, despite clear opposition from Greenland and Denmark. Reuters also reported bipartisan concern in Congress, including proposals to block federal funds from being used for any takeover attempt, and Greenland's prime minister warned that continued U.S. efforts toward ownership or control were \"completely unacceptable.\" This issue asks Congress to reject any funding or authorization for coercion and to defend allied sovereignty, Arctic stability, and NATO cohesion.",
+                summary: "On February 2, 2026, Greenland Prime Minister Jens-Frederik Nielsen said Washington still fundamentally sought control of Greenland and called the pressure \"completely unacceptable.\" Reuters also reported the standoff was serious enough to show up in a Greenland mental-health survey measuring anxiety over U.S. pressure. The issue is whether Congress should block any funding or authorization for coercive action against an autonomous Danish territory and NATO partner.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to reject any attempt by the administration to seize, pressure, or coerce Greenland.\n\nThe United States should respect Greenlandic and Danish sovereignty, protect our alliances, and make clear that Congress will not support reckless attempts to take control of allied territory.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to oppose any U.S. attempt to take control of Greenland and to defend allied sovereignty and international stability.\n\nPlease speak out publicly on this issue.\n\nThank you.",
                 templateAsks: [.oppose, .askPublicStatement, .support],
@@ -2221,7 +2551,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Digital Rights",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "oppose",
-                summary: "The White House's March 2026 AI framework explicitly urges Congress to preempt state AI laws, following Trump's December threat to withhold broadband funding from states whose AI rules his administration says hinder innovation. But states are already filling real gaps: NCSL says all 50 states introduced AI legislation in 2025, 38 enacted about 100 measures, lawmakers advanced rules on transparency, health care, chatbot safety, and algorithmic discrimination, and the Senate voted 99 to 1 last year to strip a proposed 10-year moratorium on state and local AI laws. This issue asks Congress to preserve state authority to regulate AI systems until strong, enforceable federal protections actually exist.",
+                summary: "On March 20, 2026, the White House released a national AI framework that explicitly calls on Congress to preempt state AI rules, after Trump had already threatened in December 2025 to withhold federal broadband funds from states whose AI laws the administration views as too restrictive. NCSL says all 50 states introduced AI legislation in 2025 and 38 states enacted about 100 measures; Reuters also reported the Senate voted 99-1 in July 2025 to strip a proposed 10-year federal moratorium on state AI laws. The issue is whether states keep regulating AI until Congress passes a durable federal standard.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect states' ability to regulate artificial intelligence and oppose any federal effort to punish states for passing basic AI safeguards.\n\nCongress should not strip states of the power to enact consumer protections while federal law remains incomplete. Please oppose preemption and any funding threats tied to state AI regulation.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP].\n\nI'm asking [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect state authority to regulate AI and oppose efforts to override state safeguards or threaten funding.\n\nPlease defend the ability of states to protect their residents.\n\nThank you.",
                 templateAsks: [.oppose, .askPublicStatement, .seekOversight],
@@ -2234,7 +2564,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Agriculture",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "Federal farm legislation shapes agricultural subsidies, food-assistance programs, and rural economic policy across the United States. Negotiations over new farm bills often involve balancing support for farmers with nutrition assistance programs such as SNAP. Because the legislation governs billions of dollars in spending and affects food security nationwide, even small policy adjustments can have significant economic and social impacts.",
+                summary: "Starting October 1, 2026, states' share of SNAP administrative costs rises to 75% from 50%, and starting October 1, 2027, states with payment-error rates above 6% can be required to cover 5% to 15% of SNAP benefits that the federal government had previously paid in full. Reuters estimated those changes could shift about $22 billion in SNAP costs to states and localities, and the program serves more than 41 million people. At the same time, USDA forecasts 2026 net farm income at $153.4 billion, down 0.7%, even with $44.3 billion in direct government payments that are expected to account for nearly 29% of farm income. The issue is whether Congress can protect both food assistance and family-farm stability without pushing more of the cost onto states or low-income households.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support a farm bill that protects SNAP, strengthens food security, and helps family farmers rather than shifting big new costs to states.\n\nPlease oppose harmful cuts or cost-shifts and support a final bill that keeps food assistance strong and rural communities stable.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support a farm bill that protects SNAP, strengthens food security, and helps family farmers instead of shifting new costs to states.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -2247,7 +2577,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Education",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "Federal student-aid programs, including Pell Grants, play a central role in helping students afford higher education and workforce training. Changes to eligibility rules, funding levels, or loan structures can influence college access, debt levels, and long-term economic mobility. Policymakers frequently debate how best to balance affordability, fiscal sustainability, and workforce development goals.",
+                summary: "In February 2026, CBO-based projections showed the Pell Grant program facing a $5.4 billion funding gap in FY2026 and nearly an $11.5 billion shortfall in FY2027, even after a $10.5 billion one-time funding injection in the 2025 law. TICAS says more than 7 million students rely on Pell each year, and CRFB says the cumulative 10-year shortfall could reach $104 billion to $132 billion, with the risk of disrupting full awards by the 2028-2029 school year if Congress does not act. The policy question is whether lawmakers close the gap with new funding or by cutting award amounts or eligibility.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect Pell Grants and student-aid programs and avoid changes that make college or job training harder to afford.\n\nStudents and working adults need real access to education and job training, not new barriers or higher costs.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to protect Pell Grants and student-aid programs and avoid changes that make college or job training harder to afford.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -2260,7 +2590,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Environment",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "Extreme weather events and climate-related disasters have placed growing pressure on insurance markets, infrastructure systems, and local government budgets. Policymakers are increasingly examining how federal investments in resilience, grid modernization, and disaster preparedness might reduce long-term economic risks. Decisions in this area could shape how communities prepare for natural disasters and how insurance systems adapt to rising climate-related costs.",
+                summary: "NOAA counts 403 U.S. weather and climate disasters with losses above $1 billion from 1980 through 2024, and the annual average has risen to 23 events over the last five years versus 9 over the full period. Swiss Re projects global insured catastrophe losses of about $148 billion in 2026, with a severe-year scenario as high as $320 billion, while NERC says winter peak electricity demand in the U.S. and Canada is expected to grow by 245 gigawatts over the next decade. After a court order, FEMA reopened its BRIC resilience program on March 26, 2026 with $1 billion in grants, reversing a cancellation that had frozen about $3.6 billion. The issue is whether federal policy keeps paying mainly after disasters or invests earlier in resilience, grid reliability, and insurance-market stability.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to invest in resilience, grid reliability, and insurance-market stability so disaster costs do not keep falling on households.\n\nPlease support policies that help communities prepare for climate disasters instead of leaving families to absorb the damage alone.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to invest in resilience, grid reliability, and insurance-market stability so disaster costs do not keep falling on households.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -2273,7 +2603,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Democracy",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "Redistricting and election-administration rules play a significant role in determining how voters are represented in federal and state government. Debates over district boundaries, transparency, and election procedures often focus on whether political incentives influence how electoral maps are drawn. Changes to these systems can affect representation, competition between parties, and public confidence in the electoral process.",
+                summary: "In March 2026, Reuters described a national mid-decade redistricting fight after Trump pressed Republican-led states to redraw congressional maps ahead of the midterms. On March 25, 2026, the Missouri Supreme Court upheld a new congressional map in a 4-3 decision; Missouri had previously elected 6 Republicans and 2 Democrats under its post-2020 map, and opponents submitted more than 300,000 signatures seeking to force a statewide vote on the redraw. AP also reported that Utah's Trump-backed effort to repeal the state's 2018 anti-gerrymandering law failed to make the 2026 ballot, leaving a court-imposed map in place for now. The debate is whether states should be allowed to rewrite the rules mid-cycle for partisan gain or whether stronger guardrails are needed around maps and election administration.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support fair maps, transparent election administration, and guardrails against mid-cycle partisan redistricting.\n\nVoters deserve stable rules, equal representation, and a democracy that is not manipulated for partisan advantage.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support fair maps, transparent election administration, and guardrails against mid-cycle partisan redistricting.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -2286,7 +2616,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Retirement Security",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "Social Security and Medicare provide retirement and health benefits to tens of millions of Americans, making their long-term financial sustainability a central policy concern. Demographic shifts, rising health-care costs, and longer life expectancies have prompted discussions about how the programs should be financed in future decades. Policymakers face difficult trade-offs involving taxes, benefits, and eligibility rules as they consider options to maintain the programs' stability.",
+                summary: "The 2025 trustees projected that Social Security's Old-Age and Survivors Insurance trust fund can pay full scheduled benefits until 2033, with 77% payable after that, while the combined OASDI funds can pay full benefits until 2034 and Medicare's Hospital Insurance trust fund until 2033, with 89% payable thereafter. SSA says about 75 million Americans will receive Social Security or SSI payments in 2026, and CMS says Medicare covers about 68 million people. The debate is no longer whether these programs matter; it is whether Congress acts early enough to avoid across-the-board cuts or abrupt financing changes.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to advance a bipartisan Social Security and Medicare solvency plan now so any changes are gradual and not sudden benefit cuts.\n\nPlease protect earned benefits and work across the aisle on a long-term solution before the choices become more painful.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to advance a bipartisan Social Security and Medicare solvency plan now so any changes are gradual and not sudden benefit cuts.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement],
@@ -2299,7 +2629,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Housing",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "Housing affordability has become a major economic challenge in many parts of the United States as supply shortages push rents and home prices upward. Policymakers are exploring a range of approaches, including zoning reforms, housing subsidies, and incentives to encourage new construction. Federal policy decisions can influence how quickly housing supply expands and how communities respond to rising homelessness.",
+                summary: "Reuters reported in March 2026 that Congress is debating housing legislation against an estimated national shortage of 4 million homes, with home prices up about 60% since 2019. NLIHC's 2026 Gap report found an even sharper crunch at the low end: 11 million extremely low-income renter households are facing a shortage of 7.2 million affordable and available homes, leaving only 35 homes for every 100 households, and 74% of those renters are severely cost-burdened. The issue is whether federal policy focuses only on abstract supply growth or also addresses the affordability and homelessness pressures hitting the lowest-income renters.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support more housing supply, more rental relief, and federal incentives for states and cities to allow more homes near jobs and transit.\n\nPlease treat housing affordability and homelessness as urgent national issues and back policies that make it easier to build and keep people housed.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support more housing supply, more rental relief, and federal incentives for states and cities to allow more homes near jobs and transit.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -2312,7 +2642,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Health Care",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "Medicaid provides health coverage to millions of low-income Americans, and proposals to introduce work or reporting requirements have generated significant policy debate. Supporters argue such requirements encourage workforce participation, while critics warn they may lead eligible individuals to lose coverage due to administrative complexity. The outcome of these discussions could influence access to health care and the structure of public health-insurance programs.",
+                summary: "The 2025 reconciliation law, signed on July 4, 2025, makes work requirements a condition of Medicaid eligibility for ACA expansion adults starting January 1, 2027. KFF says 41 states including D.C. have expanded Medicaid up to 138% of the federal poverty level, and its March 2026 tracker says coverage losses from work requirements account for more than half of the projected increase in the uninsured, or about 5.3 million people. The policy fight is whether lawmakers are improving program integrity or creating large coverage losses through reporting rules and paperwork.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to prevent avoidable coverage losses by restoring affordability and rejecting Medicaid work requirements and other paperwork rules that push eligible people off insurance.\n\nPlease protect access to care and do not let eligible families lose coverage because of higher costs or red tape.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to restore affordable coverage and reject Medicaid work requirements and other paperwork rules that push eligible people off insurance.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .oppose, .askPublicStatement],
@@ -2325,7 +2655,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Health Care",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "Health-care affordability remains a major concern for households, employers, and governments as insurance premiums, deductibles, and prescription-drug prices continue to rise. Policymakers are examining strategies ranging from market competition and price transparency to federal negotiation authority and regulatory reform. The direction of federal policy could affect both the cost and accessibility of medical care nationwide.",
+                summary: "For 2026, CMS raised the standard Medicare Part B premium to $202.90 a month from $185.00 and the annual deductible to $283 from $257, while BLS reported medical care prices were up 3.4% year over year in February 2026. At the same time, CMS says 23.1 million people selected or were automatically re-enrolled in marketplace coverage for 2026. The central question is how lawmakers bring down premiums, deductibles, and out-of-pocket costs without shrinking coverage or destabilizing the insurance market.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to prioritize lower premiums, deductibles, and drug costs while protecting coverage.\n\nHealth care has to be more affordable for families without forcing people to give up access or benefits.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to lower premiums, deductibles, and drug costs while protecting coverage.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -2338,7 +2668,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Reproductive Rights",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "Federal policy plays an important role in shaping access to reproductive health services through funding programs, regulatory standards, and health-care coverage rules. Debates in Congress often focus on how federal programs such as Medicaid and Title X should support or regulate reproductive health services. These decisions can influence health-care availability, funding for clinics, and how medical providers deliver services across different states.",
+                summary: "Title X provides $286 million a year to a network of nearly 4,000 clinics and served 2.8 million people in 2023, but the program has faced repeated federal disruption. KFF says the administration withheld $65.8 million in year-four funding from 16 of 86 Title X grants in April 2025, and Reuters reported that a federal judge later blocked Medicaid funding cuts to abortion-providing nonprofits in 22 states and Washington, D.C., after the law had already contributed to at least 20 health-center closures since September 2025. The issue is whether Congress protects reproductive health access through stable Medicaid and Title X funding or allows ongoing legal and administrative instability to keep shrinking the provider network.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to state clearly whether they support federal protections and funding for reproductive health care, and to vote to protect that care.\n\nCongress still shapes access through Medicaid, Title X, appropriations, and broader health-funding laws, so this position should be explicit.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to state clearly whether they support federal protections and funding for reproductive health care, and to vote to protect that care.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement],
@@ -2351,7 +2681,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Labor",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "Economic downturns and industry restructuring periodically lead to layoffs that affect workers, local communities, and regional economies. Policymakers often examine whether federal programs should provide stronger worker protections, retraining opportunities, or transition assistance during periods of job loss. Decisions in this area can shape how effectively workers adapt to economic change and how quickly communities recover.",
+                summary: "Reuters reported that the U.S. lost 92,000 jobs in February 2026 and the unemployment rate rose to 4.4%. The latest JOLTS data showed 6.9 million job openings in January, 3.1 million quits, and 1.6 million layoffs and discharges, while Reuters separately reported private payroll growth has averaged just 18,000 a month over the last three months and the federal civilian workforce shrank 12% between September 2024 and January 2026. The policy question is whether lawmakers respond to a cooling labor market with better retraining, transition support, and layoff planning before job losses deepen.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to support worker protections, retraining, and transparent impact assessments for layoffs and federal workforce cuts.\n\nFamilies need job security, honest planning, and real support when the labor market starts to cool.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to support worker protections, retraining, and transparent impact assessments for layoffs and federal workforce cuts.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -2364,7 +2694,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 category: "Economy",
                 targetChambers: ["house", "senate"],
                 primaryAsk: "support",
-                summary: "Rising prices for housing, food, energy, and other everyday expenses have made cost-of-living pressures a central economic concern for many households. Policymakers are debating how federal fiscal, regulatory, and economic policies influence inflation and affordability. The broader challenge involves balancing economic growth, consumer protection, and financial stability while addressing household budget pressures.",
+                summary: "BLS reported that consumer prices were up 2.4% year over year in February 2026, but the pressure on household essentials remained uneven: food was up 3.1%, shelter 3.0%, medical care 3.4%, household furnishings and operations 3.9%, full-service meals 4.6%, electricity 4.8%, and natural gas 10.9%. Reuters also noted in March that economists expected the Iran-driven oil shock and tariffs to add new inflation pressure even after relatively moderate core CPI readings. The issue is which mix of housing, food, energy, wage, and tax policy can actually lower day-to-day costs without creating new supply shocks.",
                 liveScript: "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].\n\nI'm calling to urge [OFFICIAL_TITLE] [OFFICIAL_LAST] to back policies that lower everyday costs for families without adding new hidden taxes or supply shocks.\n\nPlease focus on affordability in the real economy, especially food, housing, and other essential household costs.\n\nThank you for your time and consideration.",
                 voicemailScript: "Hi, this is [YOUR_NAME] from [CITY], [ZIP].\n\nI'm calling to ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to back policies that lower everyday costs for families without adding hidden taxes or supply shocks.\n\nThank you for your time and consideration.",
                 templateAsks: [.support, .askPublicStatement, .seekOversight],
@@ -2507,11 +2837,21 @@ final class IssueCallCenterViewModel: ObservableObject {
             }
         }()
 
-        var briefs: [CivicCallBrief] = overlays.enumerated().map { index, overlay in
+        var briefs: [CivicCallBrief] = []
+        var usedResolvedSlots = Set<CivicRepSlot>()
+        for (index, overlay) in overlays.enumerated() {
             let slot = slotForOverlay(overlay)
+                ?? fallbackSlotForOverlay(
+                    overlay,
+                    selectedSlots: selectedSlots,
+                    usedSlots: usedResolvedSlots
+                )
+            if let slot {
+                usedResolvedSlots.insert(slot)
+            }
             let official = officialForOverlay(overlay, slot: slot)
             let repID = resolvedRepID(for: overlay, official: official, slot: slot)
-            let repName = resolvedRepName(for: overlay, official: official)
+            let repName = resolvedRepName(for: overlay, official: official, slot: slot)
             let officeType = resolvedOfficeType(for: overlay, official: official, slot: slot)
             let phone = resolvedPrimaryPhone(for: overlay, official: official, slot: slot)
 
@@ -2592,7 +2932,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 }
             }
 
-            return CivicCallBrief(
+            let brief = CivicCallBrief(
                 id: "\(package.packageID)-\(index)-\(repID)",
                 repID: repID,
                 repName: repName,
@@ -2608,12 +2948,24 @@ final class IssueCallCenterViewModel: ObservableObject {
                 issueID: issueID,
                 repSlot: slot
             )
+            briefs.append(brief)
         }
 
-        if briefs.isEmpty {
+        let existingSlotSet = Set(briefs.compactMap(\.repSlot))
+        let existingNameKeys = Set(briefs.map { Self.normalizeNameKey($0.repName) })
+        let missingTargets = selectedTargets.filter { target in
+            if existingSlotSet.contains(target.slot) {
+                return false
+            }
+            let key = Self.normalizeNameKey(target.official.name)
+            return !existingNameKeys.contains(key)
+        }
+
+        if !missingTargets.isEmpty {
             let liveTemplate = package.scriptCore?.liveScriptCore ?? ""
             let voicemailTemplate = package.scriptCore?.voicemailScriptCore ?? ""
-            briefs = selectedTargets.enumerated().map { index, target in
+            let startIndex = briefs.count
+            let fallbackBriefs = missingTargets.enumerated().map { offset, target in
                 let repID = stableRepID(for: target.official)
                 let live = renderedScript(
                     finalScript: "",
@@ -2628,11 +2980,11 @@ final class IssueCallCenterViewModel: ObservableObject {
                     repName: target.official.name
                 )
                 return CivicCallBrief(
-                    id: "\(package.packageID)-fallback-\(index)-\(repID)",
+                    id: "\(package.packageID)-fallback-\(startIndex + offset)-\(repID)",
                     repID: repID,
                     repName: target.official.name,
                     officeType: target.officeType,
-                    primaryPhoneNumber: target.official.officialPhone ?? "",
+                    primaryPhoneNumber: resolvedPrimaryPhone(for: target),
                     localOfficePhoneNumber: nil,
                     relevanceBadges: fallbackRelevance(for: target, billRef: explicitBillRef),
                     relatedBills: resolvedBills,
@@ -2644,6 +2996,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                     repSlot: target.slot
                 )
             }
+            briefs.append(contentsOf: fallbackBriefs)
         }
 
         let allCommittees = Array(
@@ -2703,10 +3056,41 @@ final class IssueCallCenterViewModel: ObservableObject {
         return ordered
     }
 
+    private func fallbackSlotForOverlay(
+        _ overlay: CivicScriptPackageOfficeOverlay,
+        selectedSlots: [CivicRepSlot],
+        usedSlots: Set<CivicRepSlot>
+    ) -> CivicRepSlot? {
+        let chamber = overlay.chamber.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+
+        if chamber.contains("house") {
+            return selectedSlots.first(where: { $0 == .house && !usedSlots.contains($0) })
+                ?? selectedSlots.first(where: { $0 == .house })
+        }
+
+        if chamber.contains("senate") {
+            return selectedSlots.first(where: {
+                ($0 == .senate1 || $0 == .senate2) && !usedSlots.contains($0)
+            }) ?? selectedSlots.first(where: { $0 == .senate1 || $0 == .senate2 })
+        }
+
+        return selectedSlots.first(where: { !usedSlots.contains($0) }) ?? selectedSlots.first
+    }
+
     private func slotForOverlay(_ overlay: CivicScriptPackageOfficeOverlay) -> CivicRepSlot? {
         let repIDKey = overlay.repID.trimmingCharacters(in: .whitespacesAndNewlines)
         if let slot = slotByRepID[repIDKey] {
             return slot
+        }
+        let repIDLower = repIDKey.lowercased()
+        if repIDLower.contains("house-local") {
+            return .house
+        }
+        if repIDLower.contains("senate-local-1") {
+            return .senate1
+        }
+        if repIDLower.contains("senate-local-2") {
+            return .senate2
         }
 
         let nameKey = Self.normalizeNameKey(overlay.repName)
@@ -2750,8 +3134,19 @@ final class IssueCallCenterViewModel: ObservableObject {
         return UUID().uuidString
     }
 
-    private func resolvedRepName(for overlay: CivicScriptPackageOfficeOverlay, official: Official?) -> String {
+    private func resolvedRepName(for overlay: CivicScriptPackageOfficeOverlay, official: Official?, slot: CivicRepSlot?) -> String {
         let trimmed = overlay.repName.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let official, (trimmed.isEmpty || isGenericOverlayRepName(trimmed)) {
+            return official.name
+        }
+        if isGenericOverlayRepName(trimmed) {
+            if let slot, let slotOfficial = officialBySlot[slot] {
+                return slotOfficial.name
+            }
+            if let slot, let target = repTargets.first(where: { $0.slot == slot }) {
+                return target.official.name
+            }
+        }
         if !trimmed.isEmpty {
             return trimmed
         }
@@ -2763,7 +3158,7 @@ final class IssueCallCenterViewModel: ObservableObject {
 
     private func resolvedOfficeType(for overlay: CivicScriptPackageOfficeOverlay, official: Official?, slot: CivicRepSlot?) -> String {
         let trimmed = overlay.officeType.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !trimmed.isEmpty {
+        if !trimmed.isEmpty, !isGenericOverlayOfficeType(trimmed) {
             return trimmed
         }
         if let title = official?.officeTitle, !title.isEmpty {
@@ -2789,6 +3184,14 @@ final class IssueCallCenterViewModel: ObservableObject {
         return "(202) 224-3121"
     }
 
+    private func resolvedPrimaryPhone(for target: CivicRepTarget) -> String {
+        let explicitPhone = (target.official.officialPhone ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        if !explicitPhone.isEmpty {
+            return explicitPhone
+        }
+        return target.slot == .house ? "(202) 225-3121" : "(202) 224-3121"
+    }
+
     private func renderedScript(
         finalScript: String,
         coreTemplate: String?,
@@ -2797,7 +3200,7 @@ final class IssueCallCenterViewModel: ObservableObject {
     ) -> String {
         let trimmedFinal = finalScript.trimmingCharacters(in: .whitespacesAndNewlines)
         if !trimmedFinal.isEmpty {
-            return trimmedFinal
+            return normalizedOverlayScript(trimmedFinal, officeType: officeType, repName: repName)
         }
 
         let template = (coreTemplate ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
@@ -2805,9 +3208,142 @@ final class IssueCallCenterViewModel: ObservableObject {
             return "Hi, my name is [Your Name], and I am a constituent calling about this issue."
         }
 
-        return template
+        let rendered = template
             .replacingOccurrences(of: "{OFFICE_TYPE}", with: officeType)
             .replacingOccurrences(of: "{REP_NAME}", with: repName)
+        return normalizedOverlayScript(rendered, officeType: officeType, repName: repName)
+    }
+
+    private func normalizedOverlayScript(_ raw: String, officeType: String, repName: String) -> String {
+        var normalized = raw
+        let fullOfficeName = "\(officeType) \(repName)"
+
+        let replacements: [(pattern: String, replacement: String)] = [
+            (#"(?i)\bu\.?\s*s\.?\s*representative\s+house office\b"#, fullOfficeName),
+            (#"(?i)\bu\.?\s*s\.?\s*senator\s+senate office\s*\d+\b"#, fullOfficeName),
+            (#"(?i)\bu\.?\s*s\.?\s*senator\s+senate office\b"#, fullOfficeName),
+            (#"(?i)\bhouse office\b"#, repName),
+            (#"(?i)\bsenate office\s+\d+\b"#, repName),
+            (#"(?i)\bsenate office\b"#, repName),
+            (#"(?i)\bcongressional office\b"#, repName),
+            (#"(?i)\bcall\s+congress(?:man|woman)?\s+office\b"#, "Call \(repName)"),
+            (#"(?i)\bcall\s+congressional\s+office\b"#, "Call \(repName)"),
+        ]
+
+        for entry in replacements {
+            normalized = normalized.replacingOccurrences(
+                of: entry.pattern,
+                with: entry.replacement,
+                options: .regularExpression
+            )
+        }
+
+        let escapedRepName = NSRegularExpression.escapedPattern(for: repName)
+        if officeType.lowercased().contains("senator") {
+            normalized = normalized.replacingOccurrences(
+                of: #"(?i)\bas a\s+\#(escapedRepName),\s*this member can influence"#,
+                with: "In the Senate, this member can influence",
+                options: .regularExpression
+            )
+            normalized = normalized.replacingOccurrences(
+                of: #"(?i)\bas a[n]?\s+[^,]{1,80},\s*this member can influence hearings, confirmations, and final senate votes"#,
+                with: "In the Senate, this member can influence hearings, confirmations, and final Senate votes",
+                options: .regularExpression
+            )
+        } else if officeType.lowercased().contains("representative") || officeType.lowercased().contains("house") {
+            normalized = normalized.replacingOccurrences(
+                of: #"(?i)\bas a\s+\#(escapedRepName),\s*this member can press committee action and shape house floor votes"#,
+                with: "In the House, this member can press committee action and shape House floor votes",
+                options: .regularExpression
+            )
+            normalized = normalized.replacingOccurrences(
+                of: #"(?i)\bas a[n]?\s+[^,]{1,80},\s*this member can press committee action and shape house floor votes"#,
+                with: "In the House, this member can press committee action and shape House floor votes",
+                options: .regularExpression
+            )
+        }
+        return normalized
+    }
+
+    private func isGenericOverlayOfficeType(_ raw: String) -> Bool {
+        let lowered = raw
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+        if lowered.isEmpty { return true }
+
+        if lowered == "congressional office" || lowered == "house office" || lowered == "senate office" {
+            return true
+        }
+        if lowered.hasPrefix("senate office") || lowered.hasPrefix("house office") {
+            return true
+        }
+        return false
+    }
+
+    private func isGenericOverlayRepName(_ raw: String) -> Bool {
+        let lowered = raw
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+        if lowered.isEmpty { return true }
+
+        if lowered == "house office" || lowered == "congressional office" || lowered == "senate office" {
+            return true
+        }
+        if lowered.hasPrefix("senate office")
+            || lowered.contains("house office")
+            || lowered.contains("congressman office")
+            || lowered.contains("congresswoman office")
+            || lowered.contains("congressional office") {
+            return true
+        }
+        return false
+    }
+
+    private func fallbackOfficialForPlaceholder(brief: CivicCallBrief) -> Official? {
+        let repIDLower = brief.repID.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let repNameLower = brief.repName.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let officeLower = brief.officeType.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+
+        if repIDLower.contains("house-local")
+            || repNameLower == "house office"
+            || (brief.repSlot == .house)
+            || officeLower.contains("representative") {
+            if let match = repTargets.first(where: { $0.slot == .house }) {
+                return match.official
+            }
+        }
+
+        if repIDLower.contains("senate-local-1")
+            || repNameLower == "senate office 1"
+            || brief.repSlot == .senate1 {
+            if let match = repTargets.first(where: { $0.slot == .senate1 }) {
+                return match.official
+            }
+            let senateTargets = repTargets.filter { $0.slot == .senate1 || $0.slot == .senate2 }
+            return senateTargets.first?.official
+        }
+
+        if repIDLower.contains("senate-local-2")
+            || repNameLower == "senate office 2"
+            || brief.repSlot == .senate2 {
+            if let match = repTargets.first(where: { $0.slot == .senate2 }) {
+                return match.official
+            }
+            let senateTargets = repTargets.filter { $0.slot == .senate1 || $0.slot == .senate2 }
+            if senateTargets.count >= 2 {
+                return senateTargets[1].official
+            }
+            return senateTargets.first?.official
+        }
+
+        if repNameLower.hasPrefix("senate office") || officeLower.contains("senator") {
+            if let match = repTargets.first(where: { $0.slot == .senate1 }) {
+                return match.official
+            }
+            return repTargets.first(where: { $0.slot == .senate2 })?.official
+        }
+
+        return nil
     }
 
     private func fallbackResolution(
@@ -2838,7 +3374,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 issueTitle: title,
                 ask: ask,
                 billRef: selectedBillRef,
-                zip: userZip,
+                zip: resolvedUserZip,
                 reasons: reasons
             )
 
@@ -2847,7 +3383,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 repID: repID,
                 repName: target.official.name,
                 officeType: target.officeType,
-                primaryPhoneNumber: target.official.officialPhone ?? "",
+                primaryPhoneNumber: resolvedPrimaryPhone(for: target),
                 localOfficePhoneNumber: nil,
                 relevanceBadges: reasons,
                 relatedBills: selectedBillRef.map { [$0] } ?? [],
@@ -2873,6 +3409,576 @@ final class IssueCallCenterViewModel: ObservableObject {
             ),
             callBriefs: briefs
         )
+    }
+
+    private func vettedGeneratedResolution(
+        _ response: CivicIssueResolutionResponse,
+        concernText: String,
+        ask: CivicAsk,
+        selectedSlots: [CivicRepSlot],
+        optionalBillRef: String?
+    ) -> (resolution: CivicIssueResolutionResponse, usedFallback: Bool) {
+        let sanitized = sanitizedGeneratedResolution(response)
+        let shouldFallback = containsDisallowedScriptMeta(in: sanitized)
+            || isLikelyOffTopic(response: sanitized, concernText: concernText, optionalBillRef: optionalBillRef)
+            || !hasReadableCallScripts(
+                in: sanitized,
+                ask: ask,
+                concernText: concernText,
+                optionalBillRef: optionalBillRef
+            )
+        if shouldFallback {
+            let fallback = fallbackResolution(
+                concernText: concernText,
+                ask: ask,
+                selectedSlots: selectedSlots,
+                optionalBillRef: optionalBillRef
+            )
+            return (fallback, true)
+        }
+        return (sanitized, false)
+    }
+
+    private func sanitizedGeneratedResolution(_ response: CivicIssueResolutionResponse) -> CivicIssueResolutionResponse {
+        let cleanedTitle = normalizeIssueTitle(response.issueTitle)
+        let cleanedSummary = normalizeScriptText(response.issueSummary, maxWords: 90)
+        let cleanedBriefs = response.callBriefs.map { brief in
+            let cleanedTalkingPoints = brief.talkingPoints
+                .map { normalizeScriptText($0, maxWords: 28) }
+                .filter { !$0.isEmpty }
+            return CivicCallBrief(
+                id: brief.id,
+                repID: brief.repID,
+                repName: brief.repName,
+                officeType: brief.officeType,
+                primaryPhoneNumber: brief.primaryPhoneNumber,
+                localOfficePhoneNumber: brief.localOfficePhoneNumber,
+                relevanceBadges: brief.relevanceBadges,
+                relatedBills: brief.relatedBills,
+                relatedCommittees: brief.relatedCommittees,
+                liveScript: normalizeScriptText(brief.liveScript, maxWords: 95),
+                voicemailScript: normalizeScriptText(brief.voicemailScript, maxWords: 55),
+                talkingPoints: cleanedTalkingPoints.isEmpty ? brief.talkingPoints.map { trimToWordLimit($0, maxWords: 28) } : cleanedTalkingPoints,
+                issueID: brief.issueID,
+                repSlot: brief.repSlot
+            )
+        }
+
+        return CivicIssueResolutionResponse(
+            issueID: response.issueID,
+            issueTitle: cleanedTitle,
+            issueSummary: cleanedSummary,
+            resolvedEntities: response.resolvedEntities,
+            callBriefs: cleanedBriefs
+        )
+    }
+
+    private func normalizeIssueTitle(_ raw: String) -> String {
+        let cleaned = raw
+            .replacingOccurrences(of: "\r\n", with: " ")
+            .replacingOccurrences(of: "\r", with: " ")
+            .replacingOccurrences(of: "\n", with: " ")
+            .replacingOccurrences(of: "```", with: "")
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleaned.isEmpty else { return "Constituent issue" }
+        return trimToWordLimit(cleaned, maxWords: 12)
+    }
+
+    private func normalizeScriptText(_ raw: String, maxWords: Int) -> String {
+        let trimmed = raw
+            .replacingOccurrences(of: "\r\n", with: "\n")
+            .replacingOccurrences(of: "\r", with: "\n")
+            .replacingOccurrences(of: "```", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        var paragraphs: [String] = []
+        var currentParagraphLines: [String] = []
+        for rawLine in trimmed.components(separatedBy: .newlines) {
+            let line = rawLine.trimmingCharacters(in: .whitespacesAndNewlines)
+            if line.isEmpty {
+                if !currentParagraphLines.isEmpty {
+                    paragraphs.append(currentParagraphLines.joined(separator: " "))
+                    currentParagraphLines = []
+                }
+                continue
+            }
+            let lower = line.lowercased()
+            if lower.hasPrefix("assistant:")
+                || lower.hasPrefix("system:")
+                || lower.hasPrefix("developer:")
+                || lower.hasPrefix("user:") {
+                continue
+            }
+            let collapsedLine = line
+                .replacingOccurrences(of: "[ \\t]+", with: " ", options: .regularExpression)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            if !collapsedLine.isEmpty {
+                currentParagraphLines.append(collapsedLine)
+            }
+        }
+        if !currentParagraphLines.isEmpty {
+            paragraphs.append(currentParagraphLines.joined(separator: " "))
+        }
+
+        var collapsed = paragraphs.joined(separator: "\n\n")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Remove low-value boilerplate labels that make scripts feel machine-generated.
+        let boilerplatePatterns = [
+            #"(?i)\bcurrent status:\s*[^\n]*"#,
+            #"(?i)\badditional context:\s*[^\n]*"#,
+            #"(?i)\bpolicy focus:\s*[^\n]*"#,
+            #"(?i)\boffice tie-in:\s*[^\n]*"#,
+            #"(?i)\blatest item:\s*[^\n]*"#,
+            #"(?i)\bthis issue is typically handled in[^\n]*"#,
+            #"(?i)\bno verified evidence items are available yet[^\n]*"#,
+            #"(?i)\bmost recent evidence points to ongoing activity[^\n]*"#,
+        ]
+        for pattern in boilerplatePatterns {
+            collapsed = collapsed.replacingOccurrences(
+                of: pattern,
+                with: "",
+                options: .regularExpression
+            )
+        }
+        collapsed = collapsed
+            .replacingOccurrences(of: "\\n{3,}", with: "\n\n", options: .regularExpression)
+            .replacingOccurrences(of: " {2,}", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !collapsed.isEmpty else {
+            return "Hi, my name is [Your Name], and I am a constituent calling about this issue."
+        }
+
+        return trimToWordLimit(collapsed, maxWords: maxWords)
+    }
+
+    private func clarificationPromptForConcern(
+        _ concernText: String,
+        optionalBillRef: String?,
+        selectedAsk: CivicAsk?
+    ) -> String? {
+        if let requiredPrompt = requiredMAPCFollowUpPrompt(
+            concernText: concernText,
+            optionalBillRef: optionalBillRef,
+            selectedAsk: selectedAsk
+        ) {
+            return requiredPrompt
+        }
+
+        if normalizedBillReference(optionalBillRef) != nil {
+            return nil
+        }
+
+        let normalizedConcern = concernText
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+        guard !normalizedConcern.isEmpty else {
+            return "Please describe the issue in one sentence and include the action you want Congress to take."
+        }
+
+        let words = normalizedConcern
+            .split(whereSeparator: { !$0.isLetter && !$0.isNumber })
+            .map(String.init)
+        let wordSet = Set(words)
+
+        let knownIssueSignals: Set<String> = [
+            "crypto", "ukraine", "iran", "housing", "lihtc", "snap", "medicaid", "medicare",
+            "social", "security", "immigration", "climate", "voting", "election", "reproductive",
+            "labor", "workers", "health", "ai", "trans", "tps", "farm", "pell", "student"
+        ]
+        let policyActionSignals = [
+            "bill", "act", "resolution", "funding", "appropriations", "regulation",
+            "oversight", "confirm", "nomination", "vote", "support", "oppose", "amendment"
+        ]
+
+        let hasKnownIssueSignal = !wordSet.intersection(knownIssueSignals).isEmpty
+        let hasPolicyActionSignal = policyActionSignals.contains(where: { normalizedConcern.contains($0) })
+
+        if hasKnownIssueSignal || hasPolicyActionSignal || words.count >= 3 {
+            return nil
+        }
+
+        return "Please add one specific policy action so I can generate a stronger script. Example: 'Support federal funding to protect wild horse habitats' or include a bill/resolution."
+    }
+
+    private func requiredMAPCFollowUpPrompt(
+        concernText: String,
+        optionalBillRef: String?,
+        selectedAsk: CivicAsk?
+    ) -> String? {
+        let concern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if concern.isEmpty {
+            return nil
+        }
+
+        let lowered = concern.lowercased()
+        let hasAction = selectedAsk != nil || hasCongressionalActionSignal(in: lowered)
+        let hasReference = hasBillProgramAgencySignal(in: concern, optionalBillRef: optionalBillRef)
+        let hasKnownTopic = hasKnownIssueTopicSignal(in: lowered)
+        let wordCount = concern
+            .split(whereSeparator: { !$0.isLetter && !$0.isNumber })
+            .count
+
+        let isVeryVague = wordCount <= 1 && !hasKnownTopic && !hasReference
+        if hasAction && !isVeryVague {
+            return nil
+        }
+        if wordCount >= 2 || hasKnownTopic || hasReference {
+            return nil
+        }
+
+        return """
+        For short or broad prompts, please add:
+        1) What exact action should Congress take?
+        2) Is there a bill, program, or agency tied to this?
+
+        Example: "Please support VA pilot grant funding for therapeutic riding programs for veterans through appropriations."
+        """
+    }
+
+    private func hasCongressionalActionSignal(in loweredConcern: String) -> Bool {
+        let actionSignals = [
+            "support", "oppose", "cosponsor", "vote yes", "vote no", "fund", "increase funding",
+            "cut funding", "block", "pass", "reject", "repeal", "amend", "oversight",
+            "hold a hearing", "confirm", "delay", "protect", "expand", "extend", "enforce"
+        ]
+        return actionSignals.contains(where: { loweredConcern.contains($0) })
+    }
+
+    private func hasBillProgramAgencySignal(in concernText: String, optionalBillRef: String?) -> Bool {
+        if normalizedBillReference(optionalBillRef) != nil {
+            return true
+        }
+
+        let lowered = concernText.lowercased()
+        let namedEntitySignals = [
+            "bill", "act", "resolution", "program", "grant", "pilot", "appropriations", "appropriation",
+            "agency", "department", "administration", "office", "va", "veterans affairs", "usda",
+            "hud", "epa", "fema", "cms", "hhs", "irs", "snap", "medicaid", "medicare", "pell",
+        ]
+        if namedEntitySignals.contains(where: { lowered.contains($0) }) {
+            return true
+        }
+
+        let patterns = [
+            #"(?i)\b(?:h\.?\s?r\.?|s\.?|h\.?\s?j\.?\s?res\.?|s\.?\s?j\.?\s?res\.?)\s*\d+\b"#,
+            #"(?i)\btitle\s+[ivx0-9]+\b"#,
+        ]
+        return patterns.contains { pattern in
+            lowered.range(of: pattern, options: .regularExpression) != nil
+        }
+    }
+
+    private func hasKnownIssueTopicSignal(in loweredConcern: String) -> Bool {
+        let topicSignals = [
+            "gun", "guns", "gun control", "firearm", "firearms", "background check", "assault weapon",
+            "abortion", "reproductive", "immigration", "border", "climate", "environment", "housing",
+            "healthcare", "health care", "medicaid", "medicare", "snap", "farm", "student", "pell",
+            "ukraine", "iran", "crypto", "digital assets", "voting", "election", "social security"
+        ]
+        return topicSignals.contains(where: { loweredConcern.contains($0) })
+    }
+
+    private func containsDisallowedScriptMeta(in response: CivicIssueResolutionResponse) -> Bool {
+        let combined = [
+            response.issueTitle,
+            response.issueSummary
+        ] + response.callBriefs.flatMap { brief in
+            [brief.liveScript, brief.voicemailScript] + brief.talkingPoints
+        }
+        let text = combined.joined(separator: "\n").lowercased()
+
+        let blockedMarkers = [
+            "as an ai",
+            "language model",
+            "you are chatgpt",
+            "openai policy",
+            "system prompt",
+            "developer message",
+            "developer instruction",
+            "internal note",
+            "policy requires",
+            "ignore previous instructions",
+            "do not reveal",
+            "do not disclose",
+            "for internal use",
+            "tool output",
+            "prompt injection",
+            "chain of thought",
+            "i cannot help with",
+            "i can't help with",
+            "unable to assist with that request",
+            "the user should",
+            "issue packet",
+            "briefing packet",
+            "policy packet"
+        ]
+        return blockedMarkers.contains(where: { text.contains($0) })
+    }
+
+    private func hasReadableCallScripts(
+        in response: CivicIssueResolutionResponse,
+        ask: CivicAsk,
+        concernText: String,
+        optionalBillRef: String?
+    ) -> Bool {
+        guard !response.callBriefs.isEmpty else { return false }
+
+        let askSignals = askSignalPhrases(for: ask)
+        let concernContext = "\(concernText) \(optionalBillRef ?? "")"
+        let concernTokens = semanticTopicTokens(in: concernContext)
+        let concernAcronyms = uppercaseAcronyms(in: concernContext)
+        let concernDomainAnchors = domainAnchors(in: concernContext)
+
+        for brief in response.callBriefs {
+            let live = brief.liveScript.trimmingCharacters(in: .whitespacesAndNewlines)
+            let voicemail = brief.voicemailScript.trimmingCharacters(in: .whitespacesAndNewlines)
+            if live.isEmpty || voicemail.isEmpty {
+                return false
+            }
+            if wordCount(in: live) < 12 || wordCount(in: voicemail) < 8 {
+                return false
+            }
+
+            let combined = "\(live) \(voicemail)".lowercased()
+            let hasConstituentSignal = [
+                "constituent",
+                "[your name]",
+                "my name is",
+                "calling from",
+                "zip"
+            ].contains(where: { combined.contains($0) })
+            if !hasConstituentSignal {
+                return false
+            }
+
+            let hasAskSignal = askSignals.contains(where: { combined.contains($0) })
+            if !hasAskSignal {
+                return false
+            }
+
+            if !concernDomainAnchors.isEmpty {
+                let hasDomainAnchor = concernDomainAnchors.contains { combined.contains($0) }
+                if !hasDomainAnchor {
+                    return false
+                }
+            }
+
+            if !concernTokens.isEmpty {
+                let scriptTokens = semanticTopicTokens(in: combined)
+                if concernTokens.intersection(scriptTokens).isEmpty {
+                    return false
+                }
+            }
+
+            if !concernAcronyms.isEmpty {
+                let scriptUpper = combined.uppercased()
+                let anyAcronymMatched = concernAcronyms.contains(where: { scriptUpper.contains($0) })
+                if !anyAcronymMatched {
+                    return false
+                }
+            }
+        }
+
+        return true
+    }
+
+    private func askSignalPhrases(for ask: CivicAsk) -> [String] {
+        switch ask {
+        case .support:
+            return ["support", "back", "in favor"]
+        case .oppose:
+            return ["oppose", "reject", "against"]
+        case .cosponsor:
+            return ["cosponsor", "co-sponsor"]
+        case .voteYes:
+            return ["vote yes", "yes on"]
+        case .voteNo:
+            return ["vote no", "no on"]
+        case .seekOversight:
+            return ["oversight", "investigate", "investigation"]
+        case .askPublicStatement:
+            return ["public statement", "speak out", "publicly"]
+        case .askAmendment:
+            return ["amendment", "amend"]
+        }
+    }
+
+    private func isLikelyOffTopic(
+        response: CivicIssueResolutionResponse,
+        concernText: String,
+        optionalBillRef: String?
+    ) -> Bool {
+        let concern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !concern.isEmpty else { return false }
+
+        let responseText = [
+            response.issueTitle,
+            response.issueSummary
+        ] + response.callBriefs.flatMap { brief in
+            [brief.liveScript, brief.voicemailScript] + brief.relatedBills + brief.talkingPoints
+        }
+        let responseBlob = responseText.joined(separator: " ")
+
+        let concernTokens = semanticTopicTokens(in: concern + " " + (optionalBillRef ?? ""))
+        let responseTokens = semanticTopicTokens(in: responseBlob)
+        let concernAnchors = highSignalTopicTokens(in: concern + " " + (optionalBillRef ?? ""))
+
+        if !concernAnchors.isEmpty {
+            let anchorOverlap = concernAnchors.intersection(responseTokens)
+            if anchorOverlap.isEmpty {
+                let responseLower = responseBlob.lowercased()
+                if !hasKnownAcronymExpansionMatch(concernText: concern, responseLower: responseLower) {
+                    return true
+                }
+            }
+        }
+
+        if !concernTokens.isEmpty {
+            let overlap = concernTokens.intersection(responseTokens).count
+            let overlapRatio = Double(overlap) / Double(concernTokens.count)
+            if concernTokens.count >= 2 && overlapRatio < 0.20 {
+                return true
+            }
+        }
+
+        let concernAcronyms = uppercaseAcronyms(in: concern + " " + (optionalBillRef ?? ""))
+        if !concernAcronyms.isEmpty {
+            let responseUpper = responseBlob.uppercased()
+            let anyAcronymMatched = concernAcronyms.contains(where: { responseUpper.contains($0) })
+            if !anyAcronymMatched {
+                return true
+            }
+        }
+
+        let concernLower = concern.lowercased()
+        let billLower = (optionalBillRef ?? "").lowercased()
+        let responseLower = responseBlob.lowercased()
+        if responseLower.contains("iran")
+            && !concernLower.contains("iran")
+            && !billLower.contains("iran") {
+            return true
+        }
+
+        if responseLower.contains("nomination")
+            && !concernLower.contains("nomination")
+            && !concernLower.contains("nominee")
+            && !billLower.contains("nomination") {
+            return true
+        }
+
+        return false
+    }
+
+    private func highSignalTopicTokens(in raw: String) -> Set<String> {
+        let words = raw.lowercased()
+            .split(whereSeparator: { !$0.isLetter && !$0.isNumber })
+            .map(String.init)
+            .filter { $0.count >= 5 }
+
+        let stopWords: Set<String> = [
+            "about", "would", "should", "could", "please", "issue", "support",
+            "oppose", "urgent", "federal", "state", "congress", "member",
+            "office", "people", "their", "them", "these", "those", "which",
+            "where", "while", "there", "because", "after", "before", "under",
+            "over", "between", "against", "around", "request", "asking", "asked",
+            "needs", "need", "action"
+        ]
+        return Set(words.filter { !stopWords.contains($0) })
+    }
+
+    private func hasKnownAcronymExpansionMatch(concernText: String, responseLower: String) -> Bool {
+        let concernLower = concernText.lowercased()
+        let knownAcronyms: [String: [String]] = [
+            "lihtc": ["low-income housing tax credit", "low income housing tax credit", "housing tax credit"],
+            "snap": ["supplemental nutrition assistance program", "snap benefits"],
+            "aca": ["affordable care act", "obamacare"],
+            "epa": ["environmental protection agency"]
+        ]
+
+        for (acronym, expansions) in knownAcronyms where concernLower.contains(acronym) {
+            if expansions.contains(where: { responseLower.contains($0) }) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private func semanticTopicTokens(in raw: String) -> Set<String> {
+        let lower = raw.lowercased()
+        let words = lower
+            .split(whereSeparator: { !$0.isLetter && !$0.isNumber })
+            .map(String.init)
+            .filter { $0.count >= 4 }
+
+        let stopWords: Set<String> = [
+            "that", "this", "with", "from", "about", "would", "should", "could",
+            "please", "issue", "support", "oppose", "urgent", "federal", "state",
+            "congress", "member", "office", "people", "their", "them", "into",
+            "over", "under", "have", "been", "were", "will", "your", "public"
+        ]
+        let filtered = words.filter { !stopWords.contains($0) }
+        return Set(filtered)
+    }
+
+    private func domainAnchors(in raw: String) -> Set<String> {
+        let lower = raw.lowercased()
+        var anchors = Set<String>()
+
+        let waterAnchors = [
+            "water",
+            "drinking water",
+            "clean water",
+            "wastewater",
+            "pfas",
+            "lead pipes",
+            "lead pipe"
+        ]
+
+        let transitAnchors = [
+            "transportation",
+            "transit",
+            "public transit",
+            "public transportation",
+            "bus",
+            "rail",
+            "train",
+            "subway",
+            "metro"
+        ]
+
+        for token in waterAnchors where lower.contains(token) {
+            anchors.insert(token)
+        }
+        for token in transitAnchors where lower.contains(token) {
+            anchors.insert(token)
+        }
+
+        return anchors
+    }
+
+    private func uppercaseAcronyms(in raw: String) -> Set<String> {
+        let parts = raw.split(whereSeparator: { !$0.isLetter && !$0.isNumber })
+        var tokens = Set<String>()
+        tokens.reserveCapacity(parts.count)
+
+        for part in parts {
+            let token = String(part)
+            if token.count < 3 { continue }
+            if token != token.uppercased() { continue }
+            if token.rangeOfCharacter(from: .letters) == nil { continue }
+            tokens.insert(token)
+        }
+
+        return tokens
+    }
+
+    private func wordCount(in text: String) -> Int {
+        text
+            .split(whereSeparator: { $0.isWhitespace || $0 == "\n" || $0 == "\t" })
+            .count
     }
 
     private func fallbackRelevance(for target: CivicRepTarget, billRef: String?) -> [String] {
@@ -3426,6 +4532,12 @@ final class IssueCallCenterViewModel: ObservableObject {
                 }
                 return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
             }
+        var seenSenatorNameKeys = Set<String>()
+        let uniqueSenators = senators.filter { senator in
+            let nameKey = Self.normalizeNameKey(senator.name)
+            guard !nameKey.isEmpty else { return true }
+            return seenSenatorNameKeys.insert(nameKey).inserted
+        }
 
         let house = federalReps.first {
             let title = ($0.officeTitle ?? "").lowercased()
@@ -3439,11 +4551,11 @@ final class IssueCallCenterViewModel: ObservableObject {
         if let house {
             targets.append(CivicRepTarget(slot: .house, official: house))
         }
-        if senators.indices.contains(0) {
-            targets.append(CivicRepTarget(slot: .senate1, official: senators[0]))
+        if uniqueSenators.indices.contains(0) {
+            targets.append(CivicRepTarget(slot: .senate1, official: uniqueSenators[0]))
         }
-        if senators.indices.contains(1) {
-            targets.append(CivicRepTarget(slot: .senate2, official: senators[1]))
+        if uniqueSenators.indices.contains(1) {
+            targets.append(CivicRepTarget(slot: .senate2, official: uniqueSenators[1]))
         }
 
         if targets.isEmpty {
@@ -3600,6 +4712,11 @@ final class IssueCallCenterViewModel: ObservableObject {
         let raw = (error as NSError).localizedDescription
         let lower = raw.lowercased()
 
+        if lower.contains("unexpected script payload")
+            || lower.contains("decode")
+            || lower.contains("invalid response format") {
+            return "The civic API responded, but in an unexpected format. Using a safe local draft for now."
+        }
         if lower.contains("requested path is invalid")
             || lower.contains("status 404")
             || lower.contains("badurl") {
@@ -3607,6 +4724,12 @@ final class IssueCallCenterViewModel: ObservableObject {
         }
         if lower.contains("timed out") || lower.contains("timeout") {
             return "The civic API took too long to respond. Using offline call briefs for now."
+        }
+        if lower.contains("authentication required")
+            || lower.contains("invalid or expired token")
+            || lower.contains("status 401")
+            || lower.contains("status 403") {
+            return "Session expired. Please reopen VoteNow and try generating again."
         }
 
         return "Using offline call briefs while the civic API is unavailable."
@@ -3631,6 +4754,17 @@ func stableRepID(for official: Official) -> String {
         .replacingOccurrences(of: ":", with: "_")
         .replacingOccurrences(of: ",", with: "_")
         .replacingOccurrences(of: ".", with: "_")
+}
+
+func stateCodeFromDivisionID(_ divisionID: String?) -> String? {
+    guard let divisionID,
+          let stateRange = divisionID.lowercased().range(of: "/state:") else {
+        return nil
+    }
+    let suffix = divisionID[stateRange.upperBound...]
+    let code = suffix.prefix { $0.isLetter }
+    guard code.count == 2 else { return nil }
+    return String(code).uppercased()
 }
 
 func trimToWordLimit(_ text: String, maxWords: Int) -> String {

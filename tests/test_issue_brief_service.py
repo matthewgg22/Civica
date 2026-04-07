@@ -14,7 +14,7 @@ def test_ambiguous_issue_resolution_requests_clarification() -> None:
     response = service.classify(
         IssueClassifyRequest(
             user_id="user-1",
-            concern_text="I care about schools and immigration enforcement and want an update.",
+            concern_text="I care about schools and transit operations and want an update.",
             requested_output=None,
         )
     )
@@ -22,6 +22,42 @@ def test_ambiguous_issue_resolution_requests_clarification() -> None:
     assert response.status is BriefStatus.NEEDS_CLARIFICATION
     assert response.clarification_question
     assert "ambiguous_issue" in response.policy_flags
+
+
+def test_medicaid_classification_override() -> None:
+    repo = InMemoryCivicRepository()
+    service = IssueBriefService(repository=repo)
+
+    response = service.classify(
+        IssueClassifyRequest(
+            user_id="user-medicaid",
+            concern_text="Expand Medicaid",
+            requested_output="script_package",
+        )
+    )
+
+    assert response.status is BriefStatus.OK
+    assert response.canonical_issue == "healthcare_medicaid_expansion"
+    assert response.canonical_issue != "general-civic-issue"
+    assert response.confidence >= 0.9
+
+
+def test_no_general_fallback_for_medicaid() -> None:
+    repo = InMemoryCivicRepository()
+    service = IssueBriefService(repository=repo)
+
+    response = service.create_brief(
+        IssueBriefRequest(
+            user_id="user-medicaid-brief",
+            concern_text="Expand Medicaid",
+            requested_output="script_package",
+            allow_revision=True,
+        )
+    )
+
+    assert response.status is BriefStatus.OK
+    assert response.canonical_issue == "healthcare_medicaid_expansion"
+    assert response.canonical_issue != "general-civic-issue"
 
 
 def test_refusal_on_script_requests() -> None:
@@ -107,3 +143,41 @@ def test_no_invention_of_bill_numbers_or_quotes() -> None:
     )
     assert not re.search(r"\b(?:H\.R\.|S\.)\s*\d+\b", all_text)
     assert "\"" not in all_text
+
+
+def test_ambiguous_brief_with_allow_revision_uses_general_issue_not_random_autopick() -> None:
+    repo = InMemoryCivicRepository()
+    service = IssueBriefService(repository=repo)
+
+    response = service.create_brief(
+        IssueBriefRequest(
+            user_id="user-6",
+            concern_text="Support horses",
+            requested_output="script_package",
+            allow_revision=True,
+        )
+    )
+
+    assert response.status is BriefStatus.OK
+    assert response.canonical_issue == "general-civic-issue"
+    assert "ambiguous_issue" in response.policy_flags
+    assert "ambiguous_generalized" in response.policy_flags
+
+
+def test_novel_veterans_prompt_does_not_map_to_unrelated_curated_issue() -> None:
+    repo = InMemoryCivicRepository()
+    service = IssueBriefService(repository=repo)
+
+    response = service.create_brief(
+        IssueBriefRequest(
+            user_id="user-7",
+            concern_text="Support federal funding for therapeutic riding programs for veterans through VA pilot grants",
+            requested_output="script_package",
+            allow_revision=True,
+        )
+    )
+
+    assert response.status is BriefStatus.OK
+    assert response.canonical_issue == "general-civic-issue"
+    assert "ambiguous_issue" in response.policy_flags
+    assert "ambiguous_generalized" in response.policy_flags

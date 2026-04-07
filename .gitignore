@@ -1,0 +1,9 @@
+build/
+*.mov
+*.mp4
+*.zip
+*.xlsx
+.DS_Store
+*.tmp
+**/xcuserdata/
+WeVote Information Page 2/

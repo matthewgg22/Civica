@@ -58,6 +58,7 @@ extension Notification.Name {
     static let toggleWhyVoteOverlay = Notification.Name("toggleWhyVoteOverlay")
     static let openHowToVoteMailInBallot = Notification.Name("openHowToVoteMailInBallot")
     static let openMailInBallotRequest = Notification.Name("openMailInBallotRequest")
+    static let openVotingStepsTab = Notification.Name("openVotingStepsTab")
     static let openMyInfoPanel = Notification.Name("openMyInfoPanel")
     static let openHiddenHowToVoteFeatures = Notification.Name("openHiddenHowToVoteFeatures")
 }
@@ -163,49 +164,59 @@ struct PageHeader: View {
     @Environment(\.locale) private var locale
     let title: Text
     var iconSize: CGFloat = 56
+    var enableWhyVoteTap: Bool = false
     @State private var iconFrameInSpreadSpace: CGRect = .zero
 
-    init(title: Text, iconSize: CGFloat = 56) {
+    init(title: Text, iconSize: CGFloat = 56, enableWhyVoteTap: Bool = false) {
         self.title = title
         self.iconSize = iconSize
+        self.enableWhyVoteTap = enableWhyVoteTap
     }
 
-    init(title: String, iconSize: CGFloat = 56) {
+    init(title: String, iconSize: CGFloat = 56, enableWhyVoteTap: Bool = false) {
         self.title = Text(verbatim: title)
         self.iconSize = iconSize
+        self.enableWhyVoteTap = enableWhyVoteTap
     }
 
     var body: some View {
         HStack(alignment: .top, spacing: 14) {
-            Button {
-                guard iconFrameInSpreadSpace != .zero else { return }
-                let origin = CGPoint(
-                    x: iconFrameInSpreadSpace.midX,
-                    y: iconFrameInSpreadSpace.maxY + WhyVoteSpreadOrigin.yOffset
+            if enableWhyVoteTap {
+                Button {
+                    guard iconFrameInSpreadSpace != .zero else { return }
+                    let origin = CGPoint(
+                        x: iconFrameInSpreadSpace.midX,
+                        y: iconFrameInSpreadSpace.maxY + WhyVoteSpreadOrigin.yOffset
+                    )
+                    NotificationCenter.default.post(
+                        name: .toggleWhyVoteOverlay,
+                        object: nil,
+                        userInfo: [
+                            WhyVoteOverlayUserInfoKey.originX: origin.x,
+                            WhyVoteOverlayUserInfoKey.originY: origin.y
+                        ]
+                    )
+                } label: {
+                    VoteNowLogoIcon(size: iconSize)
+                        .frame(width: iconSize, height: iconSize)
+                        .fixedSize(horizontal: true, vertical: true)
+                        .reportFrame(in: .named("SpreadSpace"))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(
+                    localizedCatalogString(
+                        "app.accessibility.why_vote.toggle",
+                        tableName: "AppShell",
+                        locale: locale,
+                        fallback: "Toggle Why Vote overlay"
+                    )
                 )
-                NotificationCenter.default.post(
-                    name: .toggleWhyVoteOverlay,
-                    object: nil,
-                    userInfo: [
-                        WhyVoteOverlayUserInfoKey.originX: origin.x,
-                        WhyVoteOverlayUserInfoKey.originY: origin.y
-                    ]
-                )
-            } label: {
+            } else {
                 VoteNowLogoIcon(size: iconSize)
                     .frame(width: iconSize, height: iconSize)
                     .fixedSize(horizontal: true, vertical: true)
-                    .reportFrame(in: .named("SpreadSpace"))
+                    .accessibilityHidden(true)
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel(
-                localizedCatalogString(
-                    "app.accessibility.why_vote.toggle",
-                    tableName: "AppShell",
-                    locale: locale,
-                    fallback: "Toggle Why Vote overlay"
-                )
-            )
 
             title
                 .font(.largeTitle)
@@ -295,7 +306,7 @@ extension VoteNowLogoIcon {
     }()
 
     static let tabBarBarsUIImage: UIImage = {
-        let renderer = ImageRenderer(content: VoteNowTabBarsIcon(size: 28))
+        let renderer = ImageRenderer(content: VoteNowTabBarsIcon(size: 22))
         renderer.scale = UIScreen.main.scale
         return (renderer.uiImage ?? UIImage()).withRenderingMode(.alwaysOriginal)
     }()
@@ -353,7 +364,7 @@ struct WhyVoteFloodOverlay: View {
     @Binding var isPresented: Bool
     var originInSpreadSpace: CGPoint?
 
-    private let floodColor = Color(red: 173.0 / 255.0, green: 215.0 / 255.0, blue: 229.0 / 255.0) // #ADD7E5
+    @State private var dynamicFloodColor: Color = VoteNowColors.brandSoftBlue
     private let accent = Color(red: 223.0 / 255.0, green: 88.0 / 255.0, blue: 69.0 / 255.0) // #DF5845
     private let logoSize: CGFloat = 50
     private let headerHorizontalPadding: CGFloat = 16
@@ -379,7 +390,7 @@ struct WhyVoteFloodOverlay: View {
             )
 
             ZStack(alignment: .topLeading) {
-                floodColor
+                dynamicFloodColor
                     .mask {
                         WhyVoteDirectionalRevealMask(
                             origin: localOrigin,
@@ -447,7 +458,7 @@ struct WhyVoteFloodOverlay: View {
                             .fontWeight(.bold)
                             .lineLimit(1)
                             .frame(height: logoSize, alignment: .center)
-                            .foregroundColor(accent)
+                            .foregroundColor(.white)
                             .opacity(spread > 0.65 ? 1 : 0)
 
                         Spacer(minLength: 0)
@@ -455,7 +466,11 @@ struct WhyVoteFloodOverlay: View {
                     .padding(.horizontal, headerHorizontalPadding)
                     .padding(.top, headerTopPadding)
 
-                    WhyVoteView()
+                    WhyVoteView { cueColor in
+                        withAnimation(.easeInOut(duration: 0.22)) {
+                            dynamicFloodColor = cueColor
+                        }
+                    }
                         .opacity(spread > 0.72 ? 1 : 0)
                 }
             }
@@ -463,6 +478,7 @@ struct WhyVoteFloodOverlay: View {
             .onAppear {
                 spread = 0.001
                 resolvedOriginInSpreadSpace = nil
+                dynamicFloodColor = VoteNowColors.brandSoftBlue
                 DispatchQueue.main.async {
                     if let provided = originInSpreadSpace, provided != .zero {
                         resolvedOriginInSpreadSpace = provided
@@ -686,74 +702,49 @@ struct WhyCallView: View {
     @State private var showFeedbackSheet = false
 
     var body: some View {
-        ZStack {
-            WhyCallSignalBackdrop()
-                .ignoresSafeArea()
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 16) {
+                WhyCallHero(content: content)
 
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 16) {
-                    WhyCallHero(content: content)
-
-                    HowCallsBecomeSignalCard()
-
-                    Text(content.context)
-                        .font(.body)
-                        .foregroundStyle(.primary)
-                        .padding(14)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(cardBackground)
-                        .overlay(cardBorder)
-                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text(
-                            localizedCatalogString(
-                                "app.why_call.impact.header",
-                                tableName: "AppShell",
-                                locale: locale,
-                                fallback: "Impact of Calling your Reps"
-                            )
-                        )
-                            .font(.headline)
-                            .foregroundStyle(.primary)
-
-                        ForEach(content.stats) { stat in
-                            WhyCallStatCard(stat: stat)
-                        }
-                    }
-
-                    WhyCallBottomCTA(
-                        note: "",
-                        title: localizedCatalogString(
-                            "app.issue_call.action.call_now",
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(
+                        localizedCatalogString(
+                            "app.why_call.impact.header",
                             tableName: "AppShell",
                             locale: locale,
-                            fallback: "Call your rep now"
-                        ),
-                        action: onStartCalling
+                            fallback: "Impact of Calling your Reps"
+                        )
                     )
+                        .font(.headline)
+                        .foregroundStyle(.primary)
 
-                    feedbackButton
+                    ForEach(content.stats) { stat in
+                        WhyCallStatCard(stat: stat)
+                    }
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 14)
-                .padding(.bottom, 20)
+
+                WhyCallBottomCTA(
+                    note: "",
+                    title: localizedCatalogString(
+                        "app.issue_call.action.call_now",
+                        tableName: "AppShell",
+                        locale: locale,
+                        fallback: "Call your rep now"
+                    ),
+                    action: onStartCalling
+                )
+
+                feedbackButton
             }
+            .padding(.horizontal, 16)
+            .padding(.top, 14)
+            .padding(.bottom, 20)
         }
         .sheet(isPresented: $showFeedbackSheet) {
             NavigationStack {
                 FeedbackView()
             }
         }
-    }
-
-    private var cardBackground: some ShapeStyle {
-        Color(uiColor: .secondarySystemBackground)
-    }
-
-    private var cardBorder: some View {
-        RoundedRectangle(cornerRadius: 14, style: .continuous)
-            .stroke(VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
     }
 
     private var feedbackButton: some View {

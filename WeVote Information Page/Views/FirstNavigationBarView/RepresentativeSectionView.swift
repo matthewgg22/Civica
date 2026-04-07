@@ -220,8 +220,12 @@ struct RepRow: View {
         guard let party = rep.party?.trimmingCharacters(in: .whitespacesAndNewlines), !party.isEmpty else {
             return nil
         }
-        if party.caseInsensitiveCompare("Democratic") == .orderedSame {
+        let normalized = party.lowercased()
+        if normalized.contains("democrat") {
             return l("app.reps.party.democrat", "Democrat")
+        }
+        if normalized.contains("republican") {
+            return l("app.guide.party.republican", "Republican")
         }
         return party
     }

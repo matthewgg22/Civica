@@ -25,6 +25,7 @@ enum GovHelpServiceError: LocalizedError {
 final class GovHelpService {
     private let client: AppSupabaseClient
     private let logger = Logger(subsystem: "VoteNow", category: "GovHelpService")
+    private let legacyFunctionSlug = "super-function"
 
     init(client: AppSupabaseClient = SupabaseClientProvider.shared.client) {
         self.client = client
@@ -34,14 +35,29 @@ final class GovHelpService {
         try await SupabaseManager.shared.signInAnonymouslyIfNeeded()
 
         let session = try await resolveSession()
-        let endpoint = edgeFunctionURL(functionSlug: SupabaseConfig.current.govHelpFunctionSlug)
+        let configuredFunctionSlug = SupabaseConfig.current.govHelpFunctionSlug
+        let configuredEndpoint = edgeFunctionURL(functionSlug: configuredFunctionSlug)
+        var activeEndpoint = configuredEndpoint
 
         let primaryBody = try JSONEncoder().encode(request)
         var result = try await sendHTTP(
-            endpoint: endpoint,
+            endpoint: activeEndpoint,
             accessToken: session.accessToken,
             body: primaryBody
         )
+
+        if result.statusCode == 404,
+           configuredFunctionSlug != legacyFunctionSlug,
+           isFunctionNotFoundResponse(result.data) {
+            logger.warning("GovHelp function slug '\(configuredFunctionSlug, privacy: .public)' not found; retrying legacy slug.")
+            let legacyEndpoint = edgeFunctionURL(functionSlug: legacyFunctionSlug)
+            activeEndpoint = legacyEndpoint
+            result = try await sendHTTP(
+                endpoint: activeEndpoint,
+                accessToken: session.accessToken,
+                body: primaryBody
+            )
+        }
 
         if result.statusCode == 400,
            let errorPayload = try? JSONDecoder().decode(GovHelpErrorPayload.self, from: result.data),
@@ -49,7 +65,7 @@ final class GovHelpService {
             logger.debug("GovHelp fallback payload path triggered after 400 response.")
             let fallbackBody = try JSONEncoder().encode(legacyFallbackPayload(from: request))
             result = try await sendHTTP(
-                endpoint: endpoint,
+                endpoint: activeEndpoint,
                 accessToken: session.accessToken,
                 body: fallbackBody
             )
@@ -66,6 +82,11 @@ final class GovHelpService {
                     detailedMessage = errorPayload.error
                 }
                 throw GovHelpServiceError.serverMessage(detailedMessage)
+            }
+            if result.statusCode == 404, isFunctionNotFoundResponse(result.data) {
+                throw GovHelpServiceError.serverMessage(
+                    "Government help service is not deployed yet for this Supabase project. Deploy edge function 'govhelp' (or keep legacy slug 'super-function')."
+                )
             }
             let rawMessage = String(data: result.data, encoding: .utf8) ?? ""
             throw GovHelpServiceError.httpStatus(result.statusCode, rawMessage)
@@ -167,6 +188,25 @@ final class GovHelpService {
             },
             messages: request.messages
         )
+    }
+
+    private func isFunctionNotFoundResponse(_ data: Data) -> Bool {
+        struct SupabaseFunctionErrorPayload: Decodable {
+            let code: String?
+            let message: String?
+        }
+
+        if let payload = try? JSONDecoder().decode(SupabaseFunctionErrorPayload.self, from: data) {
+            if payload.code?.uppercased() == "NOT_FOUND" {
+                return true
+            }
+            if payload.message?.localizedCaseInsensitiveContains("not found") == true {
+                return true
+            }
+        }
+
+        let raw = String(data: data, encoding: .utf8)?.lowercased() ?? ""
+        return raw.contains("not found")
     }
 }
 

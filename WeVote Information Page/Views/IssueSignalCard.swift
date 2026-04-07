@@ -35,86 +35,146 @@ struct HowCallsBecomeSignalCard: View {
 }
 
 struct WhyCallSignalBackdrop: View {
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    private let issueEmojiTokens: [String] = ["👨‍👩‍👧", "🩺", "🌿", "🐾", "💵", "🏫", "🚇", "🏘️", "🍽️", "🧒"]
-    private let tokenCount = 6
+    private static let issueEmojiTokens: [String] = ["👪", "🩺", "🌿", "🐾", "💵", "🏫", "🚍", "🏠", "🍽️", "🧒"]
+    private static let flowTokens: [EmojiFlowToken] = makeFlowTokens()
+    @State private var phase: CGFloat = 0
 
     var body: some View {
-        TimelineView(
-            .animation(
-                minimumInterval: reduceMotion ? 1.0 : (1.0 / 12.0),
-                paused: reduceMotion
-            )
-        ) { context in
-            GeometryReader { geo in
-                let time = context.date.timeIntervalSinceReferenceDate
-                ZStack {
-                    ForEach(0..<tokenCount, id: \.self) { index in
-                        let position = backdropFlowPosition(index: index, in: geo.size, time: time)
-                        IssueEmojiGlyph(
-                            emoji: issueEmojiTokens[index % issueEmojiTokens.count],
-                            size: 13
-                        )
-                            .position(position)
-                    }
+        GeometryReader { geo in
+            let choke = CGPoint(x: geo.size.width * 0.5, y: chokeY(in: geo.size))
+
+            ZStack {
+                ForEach(Self.flowTokens) { token in
+                    IssueEmojiGlyph(emoji: token.emoji, size: token.size)
+                        .position(flowPosition(token: token, in: geo.size, choke: choke, globalPhase: phase))
                 }
             }
         }
         .allowsHitTesting(false)
         .accessibilityHidden(true)
+        .onAppear {
+            phase = 0
+            withAnimation(.linear(duration: 13).repeatForever(autoreverses: false)) {
+                phase = 1
+            }
+        }
     }
 
-    private func backdropFlowPosition(index: Int, in size: CGSize, time: TimeInterval) -> CGPoint {
-        let t = flowProgress(
-            time: time,
-            speed: 0.14 + seededUnit(index, salt: 59) * 0.04,
-            offset: seededUnit(index, salt: 61)
-        )
-        let entry = offscreenEntryPoint(index: index, in: size)
-        let exit = CGPoint(
-            x: size.width * (0.44 + seededUnit(index, salt: 67) * 0.12),
-            y: size.height + 120
+    private func chokeY(in size: CGSize) -> CGFloat {
+        min(max(250, size.height * 0.37), 350)
+    }
+
+    private static func makeFlowTokens() -> [EmojiFlowToken] {
+        var tokens: [EmojiFlowToken] = []
+        tokens.reserveCapacity(24)
+
+        for index in 0..<24 {
+            let emoji = issueEmojiTokens[index % issueEmojiTokens.count]
+            let lane = index % 7
+            let branch = index % 5
+            let offset = CGFloat((index * 9) % 100) / 100.0
+            let size = 15 + CGFloat((index + 1) % 3)
+
+            tokens.append(
+                EmojiFlowToken(
+                    id: index,
+                    emoji: emoji,
+                    lane: lane,
+                    branch: branch,
+                    offset: offset,
+                    size: size
+                )
+            )
+        }
+
+        return tokens
+    }
+
+    private func flowPosition(token: EmojiFlowToken, in size: CGSize, choke: CGPoint, globalPhase: CGFloat) -> CGPoint {
+        let t = wrapped(globalPhase + token.offset)
+
+        if t < 0.56 {
+            let u = eased(t / 0.56)
+            let entry = entryPoint(token: token, in: size, choke: choke)
+            let control1 = CGPoint(
+                x: entry.x + (choke.x - entry.x) * 0.30,
+                y: entry.y + (choke.y - entry.y) * 0.43
+            )
+            let control2 = CGPoint(
+                x: choke.x + laneX(token) * 7,
+                y: choke.y - 24
+            )
+            return cubicBezier(t: u, p0: entry, p1: control1, p2: control2, p3: choke)
+        }
+
+        let v = eased((t - 0.56) / 0.44)
+        let lane = laneX(token)
+        let spread = 10 + v * 24
+        let end = CGPoint(
+            x: choke.x + lane * spread,
+            y: size.height + 130
         )
         let control1 = CGPoint(
-            x: entry.x + (exit.x - entry.x) * 0.35,
-            y: max(0, entry.y) + size.height * 0.18
+            x: choke.x + lane * 4,
+            y: choke.y + size.height * 0.10
         )
         let control2 = CGPoint(
-            x: exit.x + CGFloat(sin(Double(index) * 0.61)) * 20,
+            x: choke.x + lane * spread * 0.90,
             y: size.height * 0.72
         )
-        return cubicBezier(t: t, p0: entry, p1: control1, p2: control2, p3: exit)
+        return cubicBezier(t: v, p0: choke, p1: control1, p2: control2, p3: end)
     }
 
-    private func flowProgress(time: TimeInterval, speed: CGFloat, offset: CGFloat) -> CGFloat {
-        let raw = CGFloat(time) * speed + offset
-        return raw - floor(raw)
+    private func laneX(_ token: EmojiFlowToken) -> CGFloat {
+        CGFloat(token.lane - 3)
     }
 
-    private func seededUnit(_ index: Int, salt: Int) -> CGFloat {
-        let value = sin(Double(index * 137 + salt * 97)) * 43758.5453
-        return CGFloat(value - floor(value))
-    }
+    private func entryPoint(token: EmojiFlowToken, in size: CGSize, choke: CGPoint) -> CGPoint {
+        let jitterX = seededUnit(token: token, salt: 31) * 24
+        let jitterY = seededUnit(token: token, salt: 37) * 30
 
-    private func offscreenEntryPoint(index: Int, in size: CGSize) -> CGPoint {
-        let branch = index % 3
-        switch branch {
+        switch token.branch {
         case 0:
             return CGPoint(
-                x: size.width * (0.30 + seededUnit(index, salt: 71) * 0.40),
-                y: -30 - seededUnit(index, salt: 73) * 52
+                x: -42,
+                y: choke.y * (0.32 + seededUnit(token: token, salt: 41) * 0.18) + jitterY
             )
         case 1:
             return CGPoint(
-                x: -26 - seededUnit(index, salt: 79) * 40,
-                y: size.height * (0.02 + seededUnit(index, salt: 83) * 0.14)
+                x: size.width * (0.17 + seededUnit(token: token, salt: 43) * 0.20),
+                y: -50 - jitterY
+            )
+        case 2:
+            return CGPoint(
+                x: size.width * (0.83 - seededUnit(token: token, salt: 47) * 0.20),
+                y: -50 - jitterY
+            )
+        case 3:
+            return CGPoint(
+                x: size.width + 42,
+                y: choke.y * (0.32 + seededUnit(token: token, salt: 53) * 0.18) + jitterY
             )
         default:
             return CGPoint(
-                x: size.width + 26 + seededUnit(index, salt: 89) * 40,
-                y: size.height * (0.02 + seededUnit(index, salt: 97) * 0.14)
+                x: size.width * (0.50 + (seededUnit(token: token, salt: 59) - 0.5) * 0.30) + jitterX,
+                y: -52 - jitterY
             )
         }
+    }
+
+    private func seededUnit(token: EmojiFlowToken, salt: Int) -> CGFloat {
+        let value = sin(Double(token.id * 137 + salt * 97)) * 43758.5453
+        return CGFloat(value - floor(value))
+    }
+
+    private func wrapped(_ value: CGFloat) -> CGFloat {
+        let raw = value - floor(value)
+        return raw < 0 ? raw + 1 : raw
+    }
+
+    private func eased(_ t: CGFloat) -> CGFloat {
+        let clamped = max(0, min(1, t))
+        return clamped * clamped * (3 - 2 * clamped)
     }
 
     private func cubicBezier(t: CGFloat, p0: CGPoint, p1: CGPoint, p2: CGPoint, p3: CGPoint) -> CGPoint {
@@ -130,179 +190,27 @@ struct WhyCallSignalBackdrop: View {
     }
 }
 
+private struct EmojiFlowToken: Identifiable, Hashable {
+    let id: Int
+    let emoji: String
+    let lane: Int
+    let branch: Int
+    let offset: CGFloat
+    let size: CGFloat
+}
+
 private struct SignalChokepointView: View {
     let issues: [IssueSignal]
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    private let issueEmojiTokens: [String] = ["👨‍👩‍👧", "🩺", "🌿", "🐾", "💵", "🏫", "🚇", "🏘️", "🍽️", "🧒"]
-    private let topTokenCount = 6
-    private let convergeTokenCount = 7
-    private let postGateTokenCount = 8
 
     var body: some View {
-        TimelineView(
-            .animation(
-                minimumInterval: reduceMotion ? 1.0 : (1.0 / 20.0),
-                paused: reduceMotion
-            )
-        ) { context in
-            GeometryReader { geo in
-                let time = context.date.timeIntervalSinceReferenceDate
+        GeometryReader { geo in
+            let center = CGPoint(x: geo.size.width * 0.5, y: geo.size.height * 0.48)
 
-                ZStack {
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .fill(VoteNowColors.brandSoftBlue.opacity(0.56))
-
-                    ForEach(0..<topTokenCount, id: \.self) { index in
-                        let point = chaoticPosition(index: index, in: geo.size, time: time)
-                        let size = chaoticSize(index: index)
-                        IssueEmojiGlyph(
-                            emoji: issueEmojiTokens[index % issueEmojiTokens.count],
-                            size: size
-                        )
-                            .position(point)
-                    }
-
-                    ForEach(0..<convergeTokenCount, id: \.self) { index in
-                        let point = convergingPosition(index: index, in: geo.size, time: time)
-                        IssueEmojiGlyph(
-                            emoji: issueEmojiTokens[(index + 3) % issueEmojiTokens.count],
-                            size: 16
-                        )
-                            .position(point)
-                    }
-
-                    ForEach(0..<postGateTokenCount, id: \.self) { index in
-                        let point = postGateIssueFallPosition(index: index, in: geo.size, time: time)
-                        IssueEmojiGlyph(
-                            emoji: issueEmojiTokens[(index + 5) % issueEmojiTokens.count],
-                            size: 14
-                        )
-                            .position(point)
-                    }
-
-                    bottleneckCongressGate(in: geo.size, time: time)
-                }
-            }
+            CongressTokenGlyph(size: 153)
+                .position(center)
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Animated constituent call signal flow")
-    }
-
-    private func bottleneckCongressGate(in size: CGSize, time: TimeInterval) -> some View {
-        return CongressTokenGlyph(size: 153)
-        .position(x: size.width * 0.5, y: size.height * 0.48)
-    }
-
-    private func chaoticPosition(index: Int, in size: CGSize, time: TimeInterval) -> CGPoint {
-        let progress = flowProgress(
-            time: time,
-            speed: 0.075 + seededUnit(index, salt: 7) * 0.03,
-            offset: seededUnit(index, salt: 13)
-        )
-        let source = offscreenEntryPoint(index: index, in: size)
-        let target = CGPoint(
-            x: size.width * (0.14 + seededUnit(index, salt: 2) * 0.72),
-            y: size.height * (0.09 + seededUnit(index, salt: 5) * 0.20)
-        )
-        let settle = min(1, progress * 1.4)
-        let eased = easeOut(settle)
-        let swayX = CGFloat(sin(time * 0.66 + Double(index) * 0.53)) * 3.2
-        let swayY = CGFloat(sin(time * 0.45 + Double(index) * 0.37)) * 1.2
-        return CGPoint(
-            x: lerp(source.x, target.x, eased) + swayX,
-            y: lerp(source.y, target.y, eased) + swayY
-        )
-    }
-
-    private func convergingPosition(index: Int, in size: CGSize, time: TimeInterval) -> CGPoint {
-        let t = flowProgress(
-            time: time,
-            speed: 0.18 + seededUnit(index, salt: 17) * 0.05,
-            offset: seededUnit(index, salt: 23)
-        )
-        let start = offscreenEntryPoint(index: index + 300, in: size)
-        let gate = CGPoint(x: size.width * 0.5, y: size.height * 0.48)
-        let control1 = CGPoint(
-            x: start.x + (gate.x - start.x) * (0.34 + seededUnit(index, salt: 11) * 0.22),
-            y: start.y + size.height * (0.12 + seededUnit(index, salt: 29) * 0.10)
-        )
-        let control2 = CGPoint(
-            x: gate.x + CGFloat(sin(Double(index) * 0.9)) * 8,
-            y: gate.y - size.height * (0.02 + seededUnit(index, salt: 19) * 0.06)
-        )
-        return cubicBezier(t: t, p0: start, p1: control1, p2: control2, p3: gate)
-    }
-
-    private func postGateIssueFallPosition(index: Int, in size: CGSize, time: TimeInterval) -> CGPoint {
-        let t = flowProgress(
-            time: time,
-            speed: 0.22 + seededUnit(index, salt: 31) * 0.05,
-            offset: seededUnit(index, salt: 37)
-        )
-        let lane = CGFloat(index % 3) - 1
-        let neckSpread: CGFloat = 7
-        let widening = pow(t, 1.15) * 12
-        let laneCenterX = size.width * 0.5 + lane * (neckSpread + widening)
-        let x = laneCenterX + CGFloat(sin(time * 0.5 + Double(index) * 0.43)) * 1.2
-        let startY = size.height * 0.54
-        let y = startY + t * size.height * 0.50
-
-        return CGPoint(x: x, y: y)
-    }
-
-    private func chaoticSize(index: Int) -> CGFloat {
-        CGFloat(20 + (index % 3) * 4)
-    }
-
-    private func flowProgress(time: TimeInterval, speed: CGFloat, offset: CGFloat) -> CGFloat {
-        let raw = CGFloat(time) * speed + offset
-        return raw - floor(raw)
-    }
-
-    private func seededUnit(_ index: Int, salt: Int) -> CGFloat {
-        let value = sin(Double(index * 137 + salt * 97)) * 43758.5453
-        return CGFloat(value - floor(value))
-    }
-
-    private func offscreenEntryPoint(index: Int, in size: CGSize) -> CGPoint {
-        let branch = index % 3
-        switch branch {
-        case 0:
-            return CGPoint(
-                x: size.width * (0.34 + seededUnit(index, salt: 67) * 0.32),
-                y: -28 - seededUnit(index, salt: 71) * 48
-            )
-        case 1:
-            return CGPoint(
-                x: -26 - seededUnit(index, salt: 73) * 42,
-                y: size.height * (0.02 + seededUnit(index, salt: 79) * 0.16)
-            )
-        default:
-            return CGPoint(
-                x: size.width + 26 + seededUnit(index, salt: 83) * 42,
-                y: size.height * (0.02 + seededUnit(index, salt: 89) * 0.16)
-            )
-        }
-    }
-
-    private func lerp(_ a: CGFloat, _ b: CGFloat, _ t: CGFloat) -> CGFloat {
-        a + (b - a) * t
-    }
-
-    private func easeOut(_ t: CGFloat) -> CGFloat {
-        1 - pow(1 - t, 3)
-    }
-
-    private func cubicBezier(t: CGFloat, p0: CGPoint, p1: CGPoint, p2: CGPoint, p3: CGPoint) -> CGPoint {
-        let inv = 1 - t
-        let a = inv * inv * inv
-        let b = 3 * inv * inv * t
-        let c = 3 * inv * t * t
-        let d = t * t * t
-        return CGPoint(
-            x: a * p0.x + b * p1.x + c * p2.x + d * p3.x,
-            y: a * p0.y + b * p1.y + c * p2.y + d * p3.y
-        )
+        .accessibilityLabel("Constituent concerns converge through a congressional office chokepoint")
     }
 }
 
@@ -332,7 +240,7 @@ private struct IssueEmojiGlyph: View {
 
     var body: some View {
         Text(emoji)
-            .font(.system(size: size * 0.66))
+            .font(.system(size: size))
             .frame(width: size, height: size)
             .accessibilityHidden(true)
     }
@@ -353,7 +261,7 @@ struct HowCallsBecomeSignalCardDemo: View {
                 }
                 .padding(14)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color(uiColor: .secondarySystemBackground).opacity(0.92))
+                .background(Color(uiColor: .secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
             .padding(16)

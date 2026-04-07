@@ -25,6 +25,7 @@ struct PollingLocationsView: View {
     @State private var pollingLocations     = pollingPlaces
     @State private var showFullMap          = false
     @State private var isGeocoding          = false
+    @State private var hasTrackedPollingLookupSuccess = false
     @State private var pendingSortTask: Task<Void, Never>?
     @State private var geocodeTask: Task<Void, Never>?
     
@@ -59,6 +60,7 @@ struct PollingLocationsView: View {
             deferToNextRunLoop {
                 hydrateCoordinatesFromCache()
                 startGeocodingMissingAddressesIfNeeded()
+                trackPollingLookupSuccessIfNeeded()
             }
         }
         .onChange(of: isActive) { _, active in
@@ -66,6 +68,7 @@ struct PollingLocationsView: View {
                 deferToNextRunLoop {
                     hydrateCoordinatesFromCache()
                     startGeocodingMissingAddressesIfNeeded()
+                    trackPollingLookupSuccessIfNeeded()
                 }
             } else {
                 pendingSortTask?.cancel()
@@ -457,6 +460,19 @@ struct PollingLocationsView: View {
 
     private func deferToNextRunLoop(_ action: @escaping () -> Void) {
         DispatchQueue.main.async(execute: action)
+    }
+
+    private func trackPollingLookupSuccessIfNeeded() {
+        guard isActive else { return }
+        guard !hasTrackedPollingLookupSuccess else { return }
+        guard !pollingLocations.isEmpty else { return }
+        hasTrackedPollingLookupSuccess = true
+
+        // Secondary review signal: successful polling-place lookup.
+        ReviewPromptManager.shared.markPollingPlaceLookupSuccess(
+            isInErrorState: false,
+            isFlowInterrupted: false
+        )
     }
 }
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import os
 import re
 import uuid
@@ -24,6 +25,8 @@ from .models import (
     IssueFact,
 )
 from .repository import CivicRepository
+
+logger = logging.getLogger(__name__)
 
 
 _SCRIPT_REQUEST_PATTERNS = (
@@ -116,6 +119,95 @@ _POLICY_SIGNAL_TOKENS = (
     "war",
     "iran",
 )
+
+_KEYWORD_CLASSIFICATION_OVERRIDES: tuple[tuple[str, str], ...] = (
+    ("medicaid", "healthcare_medicaid_expansion"),
+    ("medicare", "healthcare_medicare_expansion"),
+    ("social security", "social-security-protection"),
+    ("housing", "expand-housing-supply-and-prevent-homelessness"),
+    ("immigration", "immigration-policy-and-border-security"),
+    ("crypto", "crypto-consumer-protection"),
+    ("defense", "national-defense-and-readiness"),
+)
+
+_LOW_SIGNAL_CLASSIFICATION_TOKENS = {
+    "about",
+    "across",
+    "action",
+    "after",
+    "against",
+    "also",
+    "among",
+    "and",
+    "any",
+    "are",
+    "before",
+    "between",
+    "but",
+    "call",
+    "can",
+    "could",
+    "during",
+    "federal",
+    "for",
+    "from",
+    "had",
+    "has",
+    "have",
+    "help",
+    "how",
+    "into",
+    "issue",
+    "just",
+    "least",
+    "less",
+    "make",
+    "making",
+    "more",
+    "most",
+    "need",
+    "not",
+    "onto",
+    "oppose",
+    "our",
+    "out",
+    "over",
+    "policies",
+    "policy",
+    "should",
+    "support",
+    "take",
+    "taking",
+    "than",
+    "that",
+    "the",
+    "their",
+    "them",
+    "then",
+    "these",
+    "this",
+    "those",
+    "through",
+    "under",
+    "urge",
+    "urging",
+    "upon",
+    "vote",
+    "want",
+    "were",
+    "what",
+    "when",
+    "where",
+    "which",
+    "while",
+    "who",
+    "why",
+    "will",
+    "with",
+    "would",
+    "you",
+    "your",
+}
 
 _PROMPTS_DIR = Path(__file__).resolve().parent / "prompts"
 
@@ -310,6 +402,17 @@ class IssueBriefService:
                 ),
             )
 
+        override_issue = _keyword_classification_override(request.concern_text)
+        if override_issue:
+            return IssueClassifyResponse(
+                status=BriefStatus.OK,
+                canonical_issue=override_issue,
+                confidence=0.95,
+                clarification_question=None,
+                candidate_issues=[],
+                policy_flags=list(dict.fromkeys(policy_flags + ["keyword_override"])),
+            )
+
         if _is_ukraine_policy_signal(request.concern_text):
             return IssueClassifyResponse(
                 status=BriefStatus.OK,
@@ -318,6 +421,16 @@ class IssueBriefService:
                 clarification_question=None,
                 candidate_issues=[],
                 policy_flags=list(dict.fromkeys(policy_flags + ["normalized_ukraine_signal"])),
+            )
+
+        if _is_housing_policy_signal(request.concern_text):
+            return IssueClassifyResponse(
+                status=BriefStatus.OK,
+                canonical_issue="expand-housing-supply-and-prevent-homelessness",
+                confidence=0.86,
+                clarification_question=None,
+                candidate_issues=[],
+                policy_flags=list(dict.fromkeys(policy_flags + ["normalized_housing_signal"])),
             )
 
         issue_core = self._load_issue_core()
@@ -336,13 +449,14 @@ class IssueBriefService:
 
         top_issue, top_score = ranked[0]
         second_score = ranked[1][1] if len(ranked) > 1 else -1
-        concern_token_count = len(_tokenize(request.concern_text))
-        # Only block for clarification when signal is truly weak and tied.
+        # Require clarification for weak-signal matches to avoid off-topic autopicks.
         if (
-            second_score >= 0
-            and top_score - second_score <= 0
-            and top_score <= 1
-            and concern_token_count <= 3
+            top_score <= 1
+            or (
+                second_score >= 0
+                and top_score <= 2
+                and top_score - second_score <= 1
+            )
         ):
             return IssueClassifyResponse(
                 status=BriefStatus.NEEDS_CLARIFICATION,
@@ -408,22 +522,30 @@ class IssueBriefService:
         if classify.status is BriefStatus.NEEDS_CLARIFICATION:
             requires_manual_clarification = "emotional_input_requires_clarification" in classify.policy_flags
             canonical = (classify.canonical_issue or "").strip().lower()
+            override_issue = _keyword_classification_override(request.concern_text)
             if request.allow_revision and not requires_manual_clarification:
-                if canonical in {"", "unspecified", "policy_restricted"}:
-                    canonical = ""
-                    if classify.candidate_issues:
-                        candidate = str(classify.candidate_issues[0]).strip().lower()
-                        if candidate and candidate not in {"unspecified", "policy_restricted"}:
-                            canonical = candidate
-                    if not canonical:
-                        canonical = "general-civic-issue"
+                # For ambiguous prompts, preserve user intent with a neutral generic issue
+                # instead of auto-picking an unrelated canonical issue.
+                if override_issue in {"healthcare_medicaid_expansion", "healthcare_medicare_expansion"}:
+                    canonical = override_issue
+                elif canonical in {"", "unspecified", "policy_restricted"} or "ambiguous_issue" in classify.policy_flags:
+                    canonical = "general-civic-issue"
                 classify = IssueClassifyResponse(
                     status=BriefStatus.OK,
                     canonical_issue=canonical,
-                    confidence=max(0.3, classify.confidence),
+                    confidence=max(0.9 if override_issue else 0.3, classify.confidence),
                     clarification_question=classify.clarification_question,
                     candidate_issues=classify.candidate_issues,
-                    policy_flags=list(dict.fromkeys(classify.policy_flags + ["auto_selected_from_ambiguous"])),
+                    policy_flags=list(
+                        dict.fromkeys(
+                            classify.policy_flags
+                            + (
+                                ["force_policy_context"]
+                                if override_issue in {"healthcare_medicaid_expansion", "healthcare_medicare_expansion"}
+                                else ["ambiguous_generalized"]
+                            )
+                        )
+                    ),
                 )
             else:
                 response = IssueBriefResponse(
@@ -662,14 +784,14 @@ class IssueBriefService:
 
     def _rank_issues(self, concern_text: str, issue_core: list[dict[str, Any]]) -> list[tuple[dict[str, Any], int]]:
         cleaned = _normalize_space(concern_text.lower())
-        concern_tokens = _tokenize(cleaned)
+        concern_tokens = _tokenize_for_issue_ranking(cleaned)
         ranked: list[tuple[dict[str, Any], int]] = []
         for row in issue_core:
             title = _normalize_space(str(row.get("title", "")).lower())
             tags = [str(value).lower() for value in row.get("tags", []) if str(value).strip()]
             synonyms = [str(value).lower() for value in row.get("synonyms", []) if str(value).strip()]
             canonical = str(row.get("canonical_issue", "")).lower().replace("-", " ")
-            haystack_tokens = set(_tokenize(" ".join([title, canonical, *tags, *synonyms])))
+            haystack_tokens = set(_tokenize_for_issue_ranking(" ".join([title, canonical, *tags, *synonyms])))
             overlap_tokens = concern_tokens.intersection(haystack_tokens)
             overlap = len(overlap_tokens)
             phrase_hits = sum(1 for phrase in [title, *synonyms] if phrase and phrase in cleaned)
@@ -788,7 +910,8 @@ class IssueBriefService:
         }
         try:
             self.repository.insert_brief_request(row)
-        except Exception:
+        except Exception as exc:
+            logger.warning("brief_request persistence failed: %s", type(exc).__name__)
             return
 
     def _store_brief_response(
@@ -814,7 +937,8 @@ class IssueBriefService:
         }
         try:
             self.repository.insert_brief_response(row)
-        except Exception:
+        except Exception as exc:
+            logger.warning("brief_response persistence failed: %s", type(exc).__name__)
             return
 
     def _store_issue_snapshot(
@@ -837,7 +961,8 @@ class IssueBriefService:
         }
         try:
             self.repository.insert_issue_snapshot(row)
-        except Exception:
+        except Exception as exc:
+            logger.warning("issue_snapshot persistence failed: %s", type(exc).__name__)
             return
 
     def _store_policy_event(
@@ -860,7 +985,8 @@ class IssueBriefService:
         }
         try:
             self.repository.insert_policy_event(row)
-        except Exception:
+        except Exception as exc:
+            logger.warning("policy_event persistence failed: %s", type(exc).__name__)
             return
 
     def _safety_identifier(self, user_id: str) -> str:
@@ -932,6 +1058,28 @@ def _is_ukraine_policy_signal(concern_text: str) -> bool:
             "kyiv",
             "zelensky",
             "ukrainian",
+        )
+    )
+
+
+def _is_housing_policy_signal(concern_text: str) -> bool:
+    text = _normalize_space(concern_text.lower())
+    if not text:
+        return False
+    return any(
+        token in text
+        for token in (
+            "lihtc",
+            "low-income housing tax credit",
+            "low income housing tax credit",
+            "affordable housing tax credit",
+            "section 42 housing",
+            "housing supply",
+            "housing shortage",
+            "housing affordability",
+            "prevent homelessness",
+            "rent burden",
+            "renter affordability",
         )
     )
 
@@ -1046,6 +1194,27 @@ def _seed_issue_core_rows() -> list[dict[str, Any]]:
                     "russia ukraine war",
                     "ukraine humanitarian support",
                     "ukraine security assistance",
+                ],
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+            },
+            {
+                "canonical_issue": "expand-housing-supply-and-prevent-homelessness",
+                "title": "Expand Housing Supply and Prevent Homelessness",
+                "category": "Housing",
+                "overview": (
+                    "This issue focuses on expanding affordable housing supply, strengthening renter stability, and reducing "
+                    "homelessness pressure for low-income households. It includes finance levers like LIHTC plus broader "
+                    "supply and affordability policy actions."
+                ),
+                "tags": ["housing", "affordability", "homelessness", "renters", "lihtc", "supply"],
+                "synonyms": [
+                    "low-income housing tax credit",
+                    "low income housing tax credit",
+                    "lihtc expansion",
+                    "affordable housing supply",
+                    "housing shortage",
+                    "prevent homelessness",
+                    "rental affordability",
                 ],
                 "updated_at": datetime.now(timezone.utc).isoformat(),
             },
@@ -1204,6 +1373,34 @@ def _seed_evidence_rows() -> list[dict[str, Any]]:
                 "evidence_type": "civic_process",
                 "supports_view": "support",
             },
+            {
+                "evidence_id": str(uuid.uuid4()),
+                "canonical_issue": "expand-housing-supply-and-prevent-homelessness",
+                "source_name": "Housing affordability policy context",
+                "source_url": None,
+                "published_at": now_iso,
+                "retrieved_at": now_iso,
+                "claim": (
+                    "Federal housing debates often focus on the affordable-home shortage, rent burden, and financing tools "
+                    "such as LIHTC to support production and preservation."
+                ),
+                "evidence_type": "policy_context",
+                "supports_view": "support",
+            },
+            {
+                "evidence_id": str(uuid.uuid4()),
+                "canonical_issue": "expand-housing-supply-and-prevent-homelessness",
+                "source_name": "Constituent housing stability framing",
+                "source_url": None,
+                "published_at": now_iso,
+                "retrieved_at": now_iso,
+                "claim": (
+                    "Constituents can ask Congress for combined supply and affordability actions that lower housing cost "
+                    "pressure and reduce homelessness risk."
+                ),
+                "evidence_type": "civic_process",
+                "supports_view": "support",
+            },
         ]
     )
     return rows
@@ -1227,6 +1424,14 @@ def _read_prompt(filename: str, fallback: str) -> str:
         return text or fallback
     except Exception:
         return fallback
+
+
+def _keyword_classification_override(concern_text: str) -> str | None:
+    lowered = concern_text.lower()
+    for keyword, canonical_issue in _KEYWORD_CLASSIFICATION_OVERRIDES:
+        if keyword in lowered:
+            return canonical_issue
+    return None
 
 
 def _parse_json(raw: str) -> Any:
@@ -1253,6 +1458,10 @@ def _normalize_space(value: str) -> str:
 
 def _tokenize(value: str) -> set[str]:
     return {token for token in re.split(r"[^a-z0-9]+", value.lower()) if len(token) >= 3}
+
+
+def _tokenize_for_issue_ranking(value: str) -> set[str]:
+    return {token for token in _tokenize(value) if token not in _LOW_SIGNAL_CLASSIFICATION_TOKENS}
 
 
 def _validate_llm_payload(payload: dict[str, Any]) -> _LLMBriefPayload | None:

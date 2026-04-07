@@ -67,7 +67,7 @@
     "jurisdiction": "California",
     "type": "State",
     "primarySystem": "Top-two primary — all candidates appear on one primary ballot and two advance.",
-    "rankedChoiceStatus": "Local RCV — no statewide RCV, but some local jurisdictions may use it.",
+    "rankedChoiceStatus": "No statewide RCV, but used in some local elections.",
     "runoffRules": "No standard statewide runoff.",
     "mailModel": "All-mail — every registered voter is mailed a ballot for every election.",
     "notableRule": "The top-two system can send two candidates from the same party to the general election; some local jurisdictions may also use RCV.",

@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct WhyVoteView: View {
+    let onHeaderCueColorChange: (Color) -> Void
+
     @EnvironmentObject private var planVM: PlanViewModel
     @EnvironmentObject private var repsVM: MyRepsViewModel
     @Environment(\.locale) private var locale
@@ -8,9 +10,14 @@ struct WhyVoteView: View {
     @StateObject private var dataStore = WhyVoteDataStore()
     @State private var selectedWhyCareCard = 0
     @State private var showFeedbackSheet = false
+    @State private var turnoutBackdropColor: Color = VoteNowColors.brandSoftBlue
 
     private let zipStateResolver = USZipStateResolver()
     private let powerOfVoteTimer = Timer.publish(every: 3.4, on: .main, in: .common).autoconnect()
+
+    init(onHeaderCueColorChange: @escaping (Color) -> Void = { _ in }) {
+        self.onHeaderCueColorChange = onHeaderCueColorChange
+    }
 
     private func l(_ key: String, _ fallback: String) -> String {
         localizedCatalogString(
@@ -24,6 +31,37 @@ struct WhyVoteView: View {
     private func lf(_ key: String, _ fallback: String, _ args: CVarArg...) -> String {
         let format = l(key, fallback)
         return String(format: format, locale: locale, arguments: args)
+    }
+
+    private func softenedHeaderBackgroundColor(from cueColor: Color) -> Color {
+        blend(cueColor, with: .white, amount: 0.42)
+    }
+
+    private func blend(_ first: Color, with second: Color, amount: CGFloat) -> Color {
+        let clamped = min(max(amount, 0), 1)
+        let a = UIColor(first)
+        let b = UIColor(second)
+
+        var ar: CGFloat = 0
+        var ag: CGFloat = 0
+        var ab: CGFloat = 0
+        var aa: CGFloat = 0
+        var br: CGFloat = 0
+        var bg: CGFloat = 0
+        var bb: CGFloat = 0
+        var ba: CGFloat = 0
+
+        guard a.getRed(&ar, green: &ag, blue: &ab, alpha: &aa),
+              b.getRed(&br, green: &bg, blue: &bb, alpha: &ba) else {
+            return first
+        }
+
+        return Color(
+            red: ar + ((br - ar) * clamped),
+            green: ag + ((bg - ag) * clamped),
+            blue: ab + ((bb - ab) * clamped),
+            opacity: aa + ((ba - aa) * clamped)
+        )
     }
 
     private var resolvedZipForState: String? {
@@ -128,22 +166,36 @@ struct WhyVoteView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                TurnoutExplorer {
-                    NotificationCenter.default.post(name: .openHiddenHowToVoteFeatures, object: nil)
+        ZStack {
+            turnoutBackdropColor.opacity(0.28)
+                .ignoresSafeArea()
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    TurnoutExplorer(
+                        onSeeHowToVote: {
+                            NotificationCenter.default.post(name: .openHiddenHowToVoteFeatures, object: nil)
+                        },
+                        onTurnoutCueColorChange: { cueColor in
+                            let softenedCue = softenedHeaderBackgroundColor(from: cueColor)
+                            withAnimation(.easeInOut(duration: 0.22)) {
+                                turnoutBackdropColor = softenedCue
+                            }
+                            onHeaderCueColorChange(softenedCue)
+                        }
+                    )
+
+                    outOfTenSection
+                    powerOfVoteSection
+                    feedbackButton
+
+                    Color.clear
+                        .frame(height: 24)
                 }
-
-                outOfTenSection
-                powerOfVoteSection
-                feedbackButton
-
-                Color.clear
-                    .frame(height: 24)
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+                .padding(.bottom, 12)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 16)
-            .padding(.bottom, 12)
         }
         .navigationTitle(l("app.page.why_vote.turnout_combined", "Why Vote? Historical Turnout by Age"))
         .navigationBarTitleDisplayMode(.inline)

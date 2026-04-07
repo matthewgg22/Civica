@@ -123,3 +123,11 @@ Notes:
 - Replace the XLSX first, then run the conversion command, then commit both JSON files.
 - Empty spreadsheet cells are converted to `null`.
 - Explicit `N/A` values are preserved as `"N/A"`.
+
+## Open States Legislator Sync (Supabase Serving Layer)
+
+For current state legislators sourced from Open States:
+
+- See [`docs/openstates_legislator_sync.md`](./openstates_legislator_sync.md)
+- Ingest script: `scripts/ingest_openstates_legislators.py`
+- Upsert script: `scripts/upsert_openstates_legislators.py`

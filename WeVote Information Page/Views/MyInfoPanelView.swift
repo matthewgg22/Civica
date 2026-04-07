@@ -64,6 +64,7 @@ struct MyInfoPanelView: View {
     @State private var affiliation: PoliticalParty = .independent
     @State private var showInvalidZipAlert = false
     @State private var showFeedbackSheet = false
+    @State private var isResolvingCurrentAddress = false
     @FocusState private var locationFieldFocused: Bool
     private let zipStateResolver = USZipStateResolver()
 
@@ -123,6 +124,27 @@ struct MyInfoPanelView: View {
                     Text("my_info.zip.helper", tableName: "MyInfoPanel")
                         .font(.footnote)
                         .foregroundColor(VoteNowColors.mutedText)
+
+                    Button {
+                        useCurrentAddressTapped()
+                    } label: {
+                        Label(
+                            isResolvingCurrentAddress
+                            ? l("my_info.action.current_address.loading", "Locating Current Address...")
+                            : l("my_info.action.current_address", "Current Address"),
+                            systemImage: "location.fill"
+                        )
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(VoteNowColors.surfaceWhite)
+                    .cornerRadius(10)
+                    .foregroundColor(VoteNowColors.primaryCTA)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .stroke(VoteNowColors.primaryCTA.opacity(0.28), lineWidth: 1)
+                    )
+                    .disabled(isResolvingCurrentAddress)
 
                     Button {
                         Task {
@@ -247,6 +269,22 @@ struct MyInfoPanelView: View {
                 affiliation = planVM.selectedParty
                 preferredLanguageCode = selectedLanguage.rawValue
             }
+            .onChange(of: repsVM.resolvedLocationSelection) { _, _ in
+                guard isResolvingCurrentAddress else { return }
+                if applyCurrentAddressToInput(includeFallback: false) {
+                    syncPlanAddressFromResolvedSelection()
+                    isResolvingCurrentAddress = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                        dismiss()
+                    }
+                }
+            }
+            .onChange(of: repsVM.isLoading) { _, isLoading in
+                guard isResolvingCurrentAddress else { return }
+                if !isLoading {
+                    isResolvingCurrentAddress = false
+                }
+            }
         }
     }
 
@@ -254,7 +292,8 @@ struct MyInfoPanelView: View {
     private func languageLabel(for option: LanguageOption) -> some View {
         switch option {
         case .english:
-            Text("my_info.language.english", tableName: "MyInfoPanel")
+            // Keep English label fixed across all app locales.
+            Text(verbatim: "English")
         case .spanish:
             Text("my_info.language.spanish", tableName: "MyInfoPanel")
         case .mandarinSimplified:
@@ -340,6 +379,100 @@ struct MyInfoPanelView: View {
 
         if !planVM.zip.isEmpty {
             locationInput = planVM.zip
+        }
+    }
+
+    private func useCurrentAddressTapped() {
+        locationFieldFocused = false
+        isResolvingCurrentAddress = true
+        repsVM.centerOnCurrentLocation()
+    }
+
+    @discardableResult
+    private func applyCurrentAddressToInput(includeFallback: Bool = true) -> Bool {
+        if let selection = repsVM.resolvedLocationSelection {
+            if let normalized = selection.normalizedAddress?.trimmingCharacters(in: .whitespacesAndNewlines),
+               !normalized.isEmpty {
+                locationInput = normalized
+                return true
+            }
+
+            let city = (selection.city ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            let state = (selection.administrativeArea ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            let zip = (selection.postalCode ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            if !city.isEmpty || !state.isEmpty || !zip.isEmpty {
+                var composed = ""
+                if !city.isEmpty && !state.isEmpty && !zip.isEmpty {
+                    composed = "\(city), \(state) \(zip)"
+                } else if !state.isEmpty && !zip.isEmpty {
+                    composed = "\(state), \(zip)"
+                } else if !city.isEmpty && !state.isEmpty {
+                    composed = "\(city), \(state)"
+                } else {
+                    composed = [city, state, zip]
+                        .filter { !$0.isEmpty }
+                        .joined(separator: ", ")
+                }
+                if !composed.isEmpty {
+                    locationInput = composed
+                    return true
+                }
+            }
+        }
+
+        guard includeFallback else {
+            return false
+        }
+
+        let address = [
+            planVM.userAddress.street,
+            planVM.userAddress.city,
+            planVM.userAddress.state,
+            planVM.userAddress.zip
+        ]
+        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        .filter { !$0.isEmpty }
+        .joined(separator: ", ")
+
+        if !address.isEmpty {
+            locationInput = address
+            return true
+        }
+
+        let normalizedZip = String(planVM.zip.filter(\.isNumber).prefix(5))
+        if normalizedZip.count == 5 {
+            locationInput = normalizedZip
+            return true
+        }
+
+        return false
+    }
+
+    private func syncPlanAddressFromResolvedSelection() {
+        guard let selection = repsVM.resolvedLocationSelection else { return }
+
+        var updatedAddress = planVM.userAddress
+        if let city = selection.city?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !city.isEmpty {
+            updatedAddress.city = city
+        }
+        if let state = selection.administrativeArea?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !state.isEmpty {
+            updatedAddress.state = state
+        }
+        if let postalCode = selection.postalCode?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !postalCode.isEmpty {
+            let normalizedZip = String(postalCode.filter(\.isNumber).prefix(5))
+            if normalizedZip.count == 5 {
+                updatedAddress.zip = normalizedZip
+                planVM.zip = normalizedZip
+            }
+        }
+
+        planVM.userAddress = updatedAddress
+        let normalizedInput = locationInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !normalizedInput.isEmpty {
+            planVM.homeAddress = normalizedInput
         }
     }
 }

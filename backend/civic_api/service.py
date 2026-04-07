@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import os
 import re
@@ -9,7 +10,14 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from .congress_client import CongressGovClient
-from .issue_catalog import baseline_issue_variants
+from .issue_catalog import (
+    SHARED_STAFFER_VARIANT,
+    SHARED_SUPPORTER_VARIANT,
+    SHARED_UNDECIDED_VARIANT,
+    SHARED_VOICEMAIL_FOOTER,
+    SUPPORTED_PLACEHOLDERS,
+    baseline_issue_variants,
+)
 from .models import (
     Ask,
     AssistantResolveRequest,
@@ -57,6 +65,7 @@ class CivicService:
         self.call_score_enabled = _env_flag("VOTENOW_ENABLE_CALL_SCORE_V1", default=True)
         self.openai_assistant = OpenAICivicAssistant.from_env()
         self.openai_assistant_enabled = _env_flag("VOTENOW_ENABLE_OPENAI_ASSISTANT", default=True)
+        self.examples_fallback_enabled = _env_flag("VOTENOW_ENABLE_BASELINE_EXAMPLE_FALLBACK", default=True)
 
     def get_examples(self, user_id: str) -> ExamplesResponse:
         reps = self._load_user_reps(user_id)
@@ -64,45 +73,36 @@ class CivicService:
             return ExamplesResponse(examples=[])
         rep_committees_by_rep_id = self._load_rep_committees_for_examples(reps)
 
-        available_chambers = {rep.chamber for rep in reps}
-        cards: list[ExampleIssueCard] = []
-        for variant in baseline_issue_variants():
-            if not available_chambers.intersection(set(variant.target_chambers)):
+        db_cards = self._load_active_database_example_cards(
+            reps=reps,
+            rep_committees_by_rep_id=rep_committees_by_rep_id,
+        )
+        if not self.examples_fallback_enabled:
+            return ExamplesResponse(examples=db_cards)
+
+        baseline_cards = self._baseline_example_cards(
+            reps=reps,
+            rep_committees_by_rep_id=rep_committees_by_rep_id,
+        )
+
+        # Merge DB + baseline examples while preferring richer script content.
+        # This prevents thin DB rows from overriding detailed baseline cards.
+        merged_by_key: dict[str, ExampleIssueCard] = {}
+        ordered_keys: list[str] = []
+        for card in db_cards + baseline_cards:
+            key = (card.slug or card.issue_id or card.title).strip().lower()
+            if not key:
                 continue
+            existing = merged_by_key.get(key)
+            if existing is None:
+                merged_by_key[key] = card
+                ordered_keys.append(key)
+                continue
+            if self._example_card_quality_score(card) > self._example_card_quality_score(existing):
+                merged_by_key[key] = card
 
-            cards.append(
-                ExampleIssueCard(
-                    issue_id=variant.slug,
-                    slug=variant.slug,
-                    title=variant.title,
-                    category=variant.category,
-                    target_chambers=list(variant.target_chambers),
-                    primary_ask=variant.primary_ask.value,
-                    summary=variant.overview,
-                    related_bills=list(variant.related_bills),
-                    rep_relevance=self._build_rep_relevance(
-                        target_chambers=variant.target_chambers,
-                        reps=reps,
-                        issue_tags=variant.tags,
-                        rep_committees_by_rep_id=rep_committees_by_rep_id,
-                    ),
-                    template_asks=list(variant.template_asks) or [
-                        variant.primary_ask,
-                        Ask.ASK_PUBLIC_STATEMENT,
-                        Ask.SEEK_OVERSIGHT,
-                    ],
-                    live_script=variant.live_script,
-                    voicemail_script=variant.voicemail_script,
-                    supporter_variant=variant.supporter_variant,
-                    undecided_variant=variant.undecided_variant,
-                    staffer_variant=variant.staffer_variant,
-                    voicemail_footer=variant.voicemail_footer,
-                    placeholders=list(variant.placeholders),
-                    tags=list(variant.tags),
-                )
-            )
-
-        return ExamplesResponse(examples=cards)
+        merged: list[ExampleIssueCard] = [merged_by_key[key] for key in ordered_keys if key in merged_by_key]
+        return ExamplesResponse(examples=merged)
 
     def resolve_assistant(self, request: AssistantResolveRequest) -> AssistantResolveResponse:
         if self.openai_assistant_enabled and self.openai_assistant is not None:
@@ -293,7 +293,23 @@ class CivicService:
     def confirm_call_completion(self, request: CallCompletionRequest) -> CallCompletionResponse:
         launch = self.repository.get_call_launch_event(request.user_id, request.launch_event_id)
         if launch is None:
-            raise ValueError("Unknown launch_event_id for this user.")
+            logger.warning(
+                "Call completion received without launch event; returning non-fatal response. user_id=%s launch_event_id=%s",
+                request.user_id,
+                request.launch_event_id,
+            )
+            return CallCompletionResponse(
+                ok=True,
+                launch_event_id=request.launch_event_id,
+                call_logged=False,
+                call_event_id=None,
+                scoring_eligible_boolean=None,
+                scoring_ineligibility_reason="launch_event_missing",
+                call_score_snapshot=self.repository.get_call_score_snapshot(request.user_id),
+                changed_components=[],
+                baseline_crossed=False,
+                tier_changed=False,
+            )
 
         if not request.completed:
             return CallCompletionResponse(
@@ -310,17 +326,10 @@ class CivicService:
             )
 
         now = datetime.now(timezone.utc)
-        duplicate_reason: str | None = None
+        ineligibility_reason: str | None = None
         if not self.call_score_enabled:
-            duplicate_reason = "Call score rollout is disabled."
-        else:
-            duplicate_reason = self._duplicate_reason(
-                user_id=request.user_id,
-                office_id=launch.office_id,
-                issue_id=launch.issue_id,
-                now=now,
-            )
-        scoring_eligible = duplicate_reason is None
+            ineligibility_reason = "Call score rollout is disabled."
+        scoring_eligible = ineligibility_reason is None
 
         call_event = CallEvent(
             id=str(uuid.uuid4()),
@@ -331,7 +340,7 @@ class CivicService:
             completed_confirmed_at=now,
             verification_method=VerificationMethod.APP_INITIATED_SELF_CONFIRMED,
             scoring_eligible_boolean=scoring_eligible,
-            scoring_ineligibility_reason=duplicate_reason,
+            scoring_ineligibility_reason=ineligibility_reason,
         )
         self.repository.insert_call_event(call_event)
         self._track(
@@ -348,7 +357,7 @@ class CivicService:
                 user_id=request.user_id,
                 office_id=launch.office_id,
                 issue_id=launch.issue_id,
-                reason=duplicate_reason,
+                reason=ineligibility_reason,
             )
 
         snapshot, changed_components, baseline_crossed, tier_changed = self.recompute_call_score(request.user_id)
@@ -363,7 +372,7 @@ class CivicService:
             call_logged=True,
             call_event_id=call_event.id,
             scoring_eligible_boolean=scoring_eligible,
-            scoring_ineligibility_reason=duplicate_reason,
+            scoring_ineligibility_reason=ineligibility_reason,
             call_score_snapshot=snapshot,
             changed_components=changed_components,
             baseline_crossed=baseline_crossed,
@@ -426,7 +435,7 @@ class CivicService:
             "call_score": snapshot.call_score,
             "tier_name": snapshot.tier_name,
             "updated_at": snapshot.updated_at.isoformat(),
-            "explanation": "Call score reflects verified, non-duplicate calls over recent time windows.",
+            "explanation": "Call score reflects verified calls over recent time windows.",
             "enabled": True,
         }
 
@@ -668,24 +677,6 @@ class CivicService:
             updated_at=now,
         )
 
-    def _duplicate_reason(
-        self,
-        user_id: str,
-        office_id: str,
-        issue_id: str | None,
-        now: datetime,
-    ) -> str | None:
-        since = now - timedelta(days=7)
-        recent_events = self.repository.list_call_events(user_id=user_id, since=since, eligible_only=True)
-        for event in recent_events:
-            if event.office_id != office_id:
-                continue
-            if issue_id is None:
-                return "Recent call to this office already counted in the past 7 days."
-            if event.issue_id == issue_id:
-                return "Recent call on this issue to this office already counted in the past 7 days."
-        return None
-
     def _build_rollups_for_user(self, user_id: str, now: datetime) -> list[LeaderboardCallRollup]:
         events = self.repository.list_call_events(user_id=user_id, eligible_only=True)
         daily_buckets: dict[datetime, list[CallEvent]] = {}
@@ -758,7 +749,11 @@ class CivicService:
         return f"voter-{digest[:16]}"
 
     def _load_user_reps(self, user_id: str) -> list[RepContext]:
-        reps = self.repository.list_rep_context(user_id)
+        try:
+            reps = self.repository.list_rep_context(user_id)
+        except Exception as exc:
+            logger.warning("[civic] failed to load user reps for user_id=%s: %s", user_id, exc)
+            reps = []
         if reps:
             return reps
 
@@ -930,6 +925,28 @@ class CivicService:
             return primary
         return context
 
+    def _example_card_quality_score(self, card: ExampleIssueCard) -> int:
+        def _words(value: str | None) -> int:
+            if not value:
+                return 0
+            return len(re.findall(r"[A-Za-z0-9']+", value))
+
+        score = 0
+        score += _words(card.live_script) * 2
+        score += _words(card.voicemail_script)
+        score += _words(card.summary)
+        score += len(card.related_bills) * 14
+        score += len(card.tags) * 4
+        if card.supporter_variant:
+            score += 8
+        if card.undecided_variant:
+            score += 8
+        if card.staffer_variant:
+            score += 8
+        if card.voicemail_footer:
+            score += 6
+        return score
+
     def _render_draft_template(
         self,
         template: str,
@@ -1008,6 +1025,153 @@ class CivicService:
             "This issue can be raised with both House and Senate offices.",
             *rep_lines,
         ]
+
+    def _baseline_example_cards(
+        self,
+        reps: list[RepContext],
+        rep_committees_by_rep_id: dict[str, list[str]],
+    ) -> list[ExampleIssueCard]:
+        available_chambers = {rep.chamber for rep in reps}
+        cards: list[ExampleIssueCard] = []
+
+        for variant in baseline_issue_variants():
+            if not available_chambers.intersection(set(variant.target_chambers)):
+                continue
+
+            cards.append(
+                ExampleIssueCard(
+                    issue_id=variant.slug,
+                    slug=variant.slug,
+                    title=variant.title,
+                    category=variant.category,
+                    target_chambers=list(variant.target_chambers),
+                    primary_ask=variant.primary_ask.value,
+                    summary=variant.overview,
+                    related_bills=list(variant.related_bills),
+                    rep_relevance=self._build_rep_relevance(
+                        target_chambers=variant.target_chambers,
+                        reps=reps,
+                        issue_tags=variant.tags,
+                        rep_committees_by_rep_id=rep_committees_by_rep_id,
+                    ),
+                    template_asks=list(variant.template_asks) or [
+                        variant.primary_ask,
+                        Ask.ASK_PUBLIC_STATEMENT,
+                        Ask.SEEK_OVERSIGHT,
+                    ],
+                    live_script=variant.live_script,
+                    voicemail_script=variant.voicemail_script,
+                    supporter_variant=variant.supporter_variant,
+                    undecided_variant=variant.undecided_variant,
+                    staffer_variant=variant.staffer_variant,
+                    voicemail_footer=variant.voicemail_footer,
+                    placeholders=list(variant.placeholders),
+                    tags=list(variant.tags),
+                )
+            )
+
+        return cards
+
+    def _load_active_database_example_cards(
+        self,
+        reps: list[RepContext],
+        rep_committees_by_rep_id: dict[str, list[str]],
+    ) -> list[ExampleIssueCard]:
+        try:
+            rows = self.repository.list_example_templates()
+        except Exception as exc:
+            logger.warning("[civic] unable to load DB example templates: %s", exc)
+            return []
+
+        now = datetime.now(timezone.utc)
+        available_chambers = {rep.chamber for rep in reps}
+        ordered_rows = sorted(
+            rows,
+            key=lambda row: (
+                _safe_int(row.get("display_order"), default=1000),
+                -_datetime_to_sort_value(_coerce_optional_datetime(row.get("updated_at"))),
+            ),
+        )
+
+        cards: list[ExampleIssueCard] = []
+        for row in ordered_rows:
+            card = self._template_row_to_example_card(
+                row=row,
+                now=now,
+                available_chambers=available_chambers,
+                reps=reps,
+                rep_committees_by_rep_id=rep_committees_by_rep_id,
+            )
+            if card is not None:
+                cards.append(card)
+        return cards
+
+    def _template_row_to_example_card(
+        self,
+        row: dict[str, Any],
+        now: datetime,
+        available_chambers: set[str],
+        reps: list[RepContext],
+        rep_committees_by_rep_id: dict[str, list[str]],
+    ) -> ExampleIssueCard | None:
+        if not _coerce_optional_bool(row.get("is_active"), default=True):
+            return None
+
+        starts_at = _coerce_optional_datetime(row.get("starts_at"))
+        if starts_at is not None and starts_at > now:
+            return None
+
+        ends_at = _coerce_optional_datetime(row.get("ends_at"))
+        if ends_at is not None and ends_at < now:
+            return None
+
+        issue_id = str(row.get("issue_id", "")).strip()
+        if not issue_id:
+            return None
+
+        target_chambers = _normalize_chambers(row.get("target_chambers"))
+        if not target_chambers:
+            target_chambers = ("house", "senate")
+        if not available_chambers.intersection(set(target_chambers)):
+            return None
+
+        title = str(row.get("title", "")).strip()
+        summary = str(row.get("summary", "")).strip()
+        live_script = str(row.get("live_script", "")).strip()
+        voicemail_script = str(row.get("voicemail_script", "")).strip()
+        if not title or not summary or not live_script or not voicemail_script:
+            logger.warning("[civic] skipping malformed example template row issue_id=%s", issue_id)
+            return None
+
+        primary_ask = _normalize_ask_value(row.get("primary_ask"), default=Ask.SUPPORT)
+        template_asks = _normalize_template_asks(row.get("template_asks"), fallback_primary=primary_ask)
+        tags = _normalize_text_array(row.get("tags"))
+
+        return ExampleIssueCard(
+            issue_id=issue_id,
+            slug=str(row.get("slug", "")).strip() or issue_id,
+            title=title,
+            category=str(row.get("category") or "General").strip() or "General",
+            target_chambers=list(target_chambers),
+            primary_ask=primary_ask.value,
+            summary=summary,
+            related_bills=_normalize_text_array(row.get("related_bills")),
+            rep_relevance=self._build_rep_relevance(
+                target_chambers=target_chambers,
+                reps=reps,
+                issue_tags=tuple(tags),
+                rep_committees_by_rep_id=rep_committees_by_rep_id,
+            ),
+            template_asks=template_asks,
+            live_script=live_script,
+            voicemail_script=voicemail_script,
+            supporter_variant=_normalize_optional_text(row.get("supporter_variant")) or SHARED_SUPPORTER_VARIANT,
+            undecided_variant=_normalize_optional_text(row.get("undecided_variant")) or SHARED_UNDECIDED_VARIANT,
+            staffer_variant=_normalize_optional_text(row.get("staffer_variant")) or SHARED_STAFFER_VARIANT,
+            voicemail_footer=_normalize_optional_text(row.get("voicemail_footer")) or SHARED_VOICEMAIL_FOOTER,
+            placeholders=_normalize_text_array(row.get("placeholders")) or list(SUPPORTED_PLACEHOLDERS),
+            tags=tags,
+        )
 
     def _load_rep_committees_for_examples(self, reps: list[RepContext]) -> dict[str, list[str]]:
         if not getattr(self.congress, "is_configured", False):
@@ -1191,6 +1355,121 @@ def _env_flag(name: str, default: bool) -> bool:
     if normalized in {"0", "false", "no", "off"}:
         return False
     return default
+
+
+def _normalize_optional_text(value: Any) -> str | None:
+    if value is None:
+        return None
+    text = str(value).strip()
+    return text or None
+
+
+def _normalize_text_array(value: Any) -> list[str]:
+    if value is None:
+        return []
+
+    raw_items: list[Any]
+    if isinstance(value, list):
+        raw_items = value
+    elif isinstance(value, tuple):
+        raw_items = list(value)
+    elif isinstance(value, str):
+        trimmed = value.strip()
+        if not trimmed:
+            return []
+        if trimmed.startswith("[") and trimmed.endswith("]"):
+            try:
+                decoded = json.loads(trimmed)
+                if isinstance(decoded, list):
+                    raw_items = decoded
+                else:
+                    raw_items = [trimmed]
+            except json.JSONDecodeError:
+                raw_items = [part.strip() for part in trimmed.split(",")]
+        else:
+            raw_items = [part.strip() for part in trimmed.split(",")]
+    else:
+        return []
+
+    normalized: list[str] = []
+    for item in raw_items:
+        text = str(item).strip()
+        if text:
+            normalized.append(text)
+    return normalized
+
+
+def _normalize_chambers(value: Any) -> tuple[str, ...]:
+    normalized: list[str] = []
+    for entry in _normalize_text_array(value):
+        chamber = entry.strip().lower()
+        if chamber in {"house", "senate"}:
+            normalized.append(chamber)
+    return tuple(dict.fromkeys(normalized))
+
+
+def _normalize_ask_value(value: Any, default: Ask) -> Ask:
+    if isinstance(value, Ask):
+        return value
+    candidate = str(value or "").strip()
+    try:
+        return Ask(candidate)
+    except ValueError:
+        return default
+
+
+def _normalize_template_asks(value: Any, fallback_primary: Ask) -> list[Ask]:
+    asks: list[Ask] = []
+    for item in _normalize_text_array(value):
+        try:
+            asks.append(Ask(item))
+        except ValueError:
+            continue
+    if asks:
+        return asks
+    return [fallback_primary, Ask.ASK_PUBLIC_STATEMENT, Ask.SEEK_OVERSIGHT]
+
+
+def _coerce_optional_datetime(value: Any) -> datetime | None:
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value.astimezone(timezone.utc)
+    text = str(value).strip()
+    if not text:
+        return None
+    try:
+        return datetime.fromisoformat(text.replace("Z", "+00:00")).astimezone(timezone.utc)
+    except ValueError:
+        return None
+
+
+def _coerce_optional_bool(value: Any, default: bool) -> bool:
+    if value is None:
+        return default
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, int):
+        return value != 0
+    text = str(value).strip().lower()
+    if text in {"true", "1", "yes", "on", "t"}:
+        return True
+    if text in {"false", "0", "no", "off", "f"}:
+        return False
+    return default
+
+
+def _safe_int(value: Any, default: int) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def _datetime_to_sort_value(value: datetime | None) -> float:
+    if value is None:
+        return 0.0
+    return value.timestamp()
 
 
 def _changed_score_components(previous: CallScoreSnapshot | None, current: CallScoreSnapshot) -> list[str]:

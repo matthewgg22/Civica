@@ -11,6 +11,7 @@
 import SwiftUI
 import UIKit   // only needed if you reference UITabBar dimensions elsewhere
 import CoreLocation
+import StoreKit
 
 // MARK: – Safe-Indexing Helper
 extension Collection {
@@ -50,9 +51,11 @@ enum Tab: CaseIterable {
 
 // MARK: – Root Content View
 struct ContentView: View {
+    @Environment(\.requestReview) private var requestReview
     @EnvironmentObject private var planVM: PlanViewModel
     @EnvironmentObject private var repsVM: MyRepsViewModel
     @StateObject private var mapvPlanStore = MAPVPlanStore.shared
+    @StateObject private var reviewPromptManager = ReviewPromptManager.shared
     @Environment(\.scenePhase) private var scenePhase
     private let zipStateResolver = USZipStateResolver()
 
@@ -521,6 +524,11 @@ struct ContentView: View {
                 openCallYourRepsTab()
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .openVotingStepsTab)) { _ in
+            DispatchQueue.main.async {
+                selectedTab = .registration
+            }
+        }
         .onReceive(NotificationCenter.default.publisher(for: .openHiddenHowToVoteFeatures)) { _ in
             DispatchQueue.main.async {
                 openCallYourRepsTab()
@@ -555,6 +563,27 @@ struct ContentView: View {
             ElectionTabView(election: election)
                 .environmentObject(planVM)
         }
+        .sheet(
+            isPresented: Binding(
+                get: { reviewPromptManager.isPrePromptPresented },
+                set: { isPresented in
+                    if !isPresented {
+                        reviewPromptManager.dismissPrePrompt()
+                    }
+                }
+            )
+        ) {
+            ReviewPromptView(
+                onRateApp: {
+                    reviewPromptManager.handleRateTapped()
+                    requestReview()
+                },
+                onNotNow: {
+                    reviewPromptManager.handleNotNowTapped()
+                }
+            )
+            .interactiveDismissDisabled()
+        }
 
     }
 }
@@ -564,9 +593,15 @@ private struct CallYourRepsTabView: View {
     @StateObject private var locationProbe = CallTabLocationProbe()
 
     private var normalizedZip: String {
-        let primary = String(planVM.zip.filter(\.isNumber).prefix(5))
-        if primary.count == 5 { return primary }
-        let fallback = String(planVM.userAddress.zip.filter(\.isNumber).prefix(5))
+        // Prioritize ZIP derived from the explicit address fields.
+        let addressZip = String(planVM.userAddress.zip.filter(\.isNumber).prefix(5))
+        if addressZip.count == 5 { return addressZip }
+
+        // Next prefer ZIP resolved from geocoded address selection.
+        let resolvedAddressZip = String((repsVM.resolvedLocationSelection?.postalCode ?? "").filter(\.isNumber).prefix(5))
+        if resolvedAddressZip.count == 5 { return resolvedAddressZip }
+
+        let fallback = String(planVM.zip.filter(\.isNumber).prefix(5))
         return fallback.count == 5 ? fallback : ""
     }
 
@@ -602,7 +637,7 @@ private struct CallYourRepsTabView: View {
         guard miles >= 50 else { return "" }
 
         let roundedMiles = Int(miles.rounded())
-        return "You appear to be about \(roundedMiles) miles from your selected address. Representation is generally based on your legal residence and voter registration address."
+        return "You appear to be ~\(roundedMiles) miles from your selected address. Representation is based on your residence."
     }
 
     private var callRepsContextKey: String {

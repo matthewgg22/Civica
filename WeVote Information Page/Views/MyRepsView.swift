@@ -10,6 +10,7 @@ struct MyRepsView: View {
 
     @FocusState private var locationFieldFocused: Bool
     @State private var locationInput: String = ""
+    @State private var suppressLocationInputTypingHandler = false
     @State private var showMyInfoSheet = false
     @State private var showGovHelpChat = false
     @State private var showFullScreenMap = false
@@ -73,11 +74,19 @@ struct MyRepsView: View {
                 VoteNowColors.appBackground.ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    PageHeader(title: Text("app.page.my_reps", tableName: "AppShell"))
-                        .padding(.horizontal, 16)
-                        .padding(.top, 16)
-                        .padding(.bottom, 8)
-                        .background(VoteNowColors.appBackground)
+                    VStack(alignment: .leading, spacing: 0) {
+                        PageHeader(title: Text("app.page.my_reps", tableName: "AppShell"))
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                            Spacer(minLength: 8)
+                            myInfoQuickAction
+                        }
+                        .padding(.leading, 72)
+                        .padding(.top, -6)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 8)
+                    .background(VoteNowColors.appBackground)
 
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
@@ -173,7 +182,7 @@ struct MyRepsView: View {
                 }
                 let display = displayAddressInput(for: selection)
                 if !display.isEmpty {
-                    locationInput = display
+                    setLocationInputSilently(display)
                 }
             }
         }
@@ -228,56 +237,64 @@ struct MyRepsView: View {
 
     private var searchCard: some View {
         HStack(spacing: 10) {
-            TextField(
-                "",
-                text: $locationInput,
-                prompt: Text("app.reps.search.placeholder", tableName: "AppShell")
-            )
-                .font(.system(size: 18))
-                .textInputAutocapitalization(.words)
-                .autocorrectionDisabled()
-                .submitLabel(.search)
-                .focused($locationFieldFocused)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 12)
-                .background(VoteNowColors.surfaceWhite)
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+            ZStack(alignment: .trailing) {
+                TextField(
+                    "",
+                    text: $locationInput,
+                    prompt: Text("app.reps.search.placeholder", tableName: "AppShell")
                 )
-                .onChange(of: locationInput) { _, newValue in
-                    repsVM.handleLocationInputTyping(newValue)
-                }
-                .onSubmit {
-                    submitLookup()
-                }
-                .toolbar {
-                    ToolbarItemGroup(placement: .keyboard) {
-                        Spacer()
-                        Button(l("app.reps.action.done", "Done")) {
-                            locationFieldFocused = false
+                    .font(.system(size: 18))
+                    .textInputAutocapitalization(.words)
+                    .autocorrectionDisabled()
+                    .submitLabel(.search)
+                    .focused($locationFieldFocused)
+                    .padding(.leading, 12)
+                    .padding(.trailing, 44)
+                    .padding(.vertical, 12)
+                    .background(VoteNowColors.surfaceWhite)
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                    )
+                    .onChange(of: locationInput) { _, newValue in
+                        if suppressLocationInputTypingHandler {
+                            suppressLocationInputTypingHandler = false
+                            return
+                        }
+                        repsVM.handleLocationInputTyping(newValue)
+                    }
+                    .onSubmit {
+                        submitLookup()
+                    }
+                    .toolbar {
+                        ToolbarItemGroup(placement: .keyboard) {
+                            Spacer()
+                            Button(l("app.reps.action.done", "Done")) {
+                                locationFieldFocused = false
+                            }
                         }
                     }
-                }
-                .frame(maxWidth: .infinity)
 
-            Button {
-                locationInput = ""
-                planVM.zip = ""
-                planVM.userAddress.zip = ""
-                repsVM.resetZipEntryState()
-            } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.white)
-                    .frame(width: 26, height: 26)
-                    .background(Color.gray.opacity(0.60))
-                    .clipShape(Circle())
+                Button {
+                    locationInput = ""
+                    planVM.zip = ""
+                    planVM.userAddress.zip = ""
+                    repsVM.resetZipEntryState()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(width: 22, height: 22)
+                        .background(Color.gray.opacity(0.60))
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
+                .padding(.trailing, 10)
+                .opacity(locationInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.45 : 1.0)
+                .disabled(locationInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
-            .buttonStyle(.plain)
-            .opacity(locationInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.45 : 1.0)
-            .disabled(locationInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            .frame(maxWidth: .infinity)
 
             Button {
                 locationFieldFocused = false
@@ -293,21 +310,21 @@ struct MyRepsView: View {
             .buttonStyle(.plain)
             .accessibilityLabel(l("app.reps.action.use_location", "Use my location"))
             .disabled(repsVM.isLoading)
-
-            Button {
-                locationFieldFocused = false
-                showMyInfoSheet = true
-            } label: {
-                Text(l("app.reps.action.my_info", "My Info"))
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 11)
-                    .background(VoteNowColors.primaryCTA)
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            }
-            .buttonStyle(.plain)
         }
+    }
+
+    private var myInfoQuickAction: some View {
+        Button {
+            locationFieldFocused = false
+            showMyInfoSheet = true
+        } label: {
+            Text(l("app.reps.action.my_info", "My Info") + "...")
+                .font(.callout.weight(.semibold))
+                .italic()
+                .foregroundColor(VoteNowColors.primaryCTA)
+                .lineLimit(1)
+        }
+        .buttonStyle(.plain)
     }
 
     @ViewBuilder
@@ -381,7 +398,7 @@ struct MyRepsView: View {
         if let selection = repsVM.resolvedLocationSelection,
            let normalized = selection.normalizedAddress,
            !normalized.isEmpty {
-            locationInput = normalized
+            setLocationInputSilently(normalized)
             return
         }
 
@@ -396,12 +413,12 @@ struct MyRepsView: View {
         .joined(separator: ", ")
 
         if !address.isEmpty {
-            locationInput = address
+            setLocationInputSilently(address)
             return
         }
 
         if !normalizedZip.isEmpty {
-            locationInput = normalizedZip
+            setLocationInputSilently(normalizedZip)
         }
     }
 
@@ -441,7 +458,7 @@ struct MyRepsView: View {
         guard tappedCode.count == 2 else { return }
 
         let displayName = Self.stateCodeToName[tappedCode] ?? tappedCode
-        locationInput = "\(tappedCode) - \(displayName)"
+        setLocationInputSilently("\(tappedCode) - \(displayName)")
         locationFieldFocused = false
 
         repsVM.focusMapStateFromTap(tappedCode)
@@ -452,6 +469,12 @@ struct MyRepsView: View {
             planVM.zip = zip
             planVM.userAddress.zip = zip
         }
+    }
+
+    private func setLocationInputSilently(_ value: String) {
+        guard locationInput != value else { return }
+        suppressLocationInputTypingHandler = true
+        locationInput = value
     }
 }
 
@@ -1396,7 +1419,9 @@ private struct MyRepsCoverageMapView: UIViewRepresentable {
         func installTapInteractionIfNeeded(on mapView: MKMapView) {
             guard tapRecognizer == nil else { return }
             let recognizer = UITapGestureRecognizer(target: self, action: #selector(handleMapTap(_:)))
-            recognizer.cancelsTouchesInView = false
+            // Prevent MapKit's default tap-selection pipeline from also handling
+            // state taps, which can produce an audible click on some devices.
+            recognizer.cancelsTouchesInView = true
             mapView.addGestureRecognizer(recognizer)
             tapRecognizer = recognizer
         }
@@ -1405,6 +1430,10 @@ private struct MyRepsCoverageMapView: UIViewRepresentable {
         private func handleMapTap(_ recognizer: UITapGestureRecognizer) {
             guard recognizer.state == .ended else { return }
             guard let mapView = recognizer.view as? MKMapView else { return }
+
+            if let selected = mapView.selectedAnnotations.first {
+                mapView.deselectAnnotation(selected, animated: false)
+            }
 
             let tapPoint = recognizer.location(in: mapView)
             let coordinate = mapView.convert(tapPoint, toCoordinateFrom: mapView)
@@ -1799,7 +1828,8 @@ private struct MyRepsCoverageMapView: UIViewRepresentable {
                     annotationView.annotation = annotation
                 } else {
                     annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-                    annotationView.canShowCallout = true
+                    // Avoid callout activation sound when tapping around state overlays.
+                    annotationView.canShowCallout = false
                     annotationView.displayPriority = .required
                     annotationView.centerOffset = CGPoint(x: 0, y: -16)
                     annotationView.image = brandedPinImage()

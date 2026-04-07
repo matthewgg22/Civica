@@ -56,6 +56,7 @@ Defined in `backend/civic_api/api.py`:
 - `repository.py`: in-memory repo and Supabase PostgREST repo adapter
 - `jobs/sync_congress_data.py`: scheduled sync job scaffold
 - `jobs/member_statement_ingest_stub.py`: phase-2 source ingest placeholder
+- Premade examples source: `public.civic_example_templates` (Supabase-managed content)
 
 ## Database migration
 Migration file:
@@ -98,10 +99,16 @@ Swift tests:
   - `SUPABASE_SERVICE_ROLE_KEY`
   - `CONGRESS_GOV_API_KEY`
   - `VOTENOW_ENABLE_CALL_SCORE_V1` (`true`/`false`, defaults to `true`)
+  - `VOTENOW_ENABLE_BASELINE_EXAMPLE_FALLBACK` (`true`/`false`, defaults to `true`)
 - Run scheduled sync job to pre-cache member/bill metadata and reduce runtime fanout.
+
+### Premade content operations
+- Manage publish/unpublish in Supabase table editor via `public.civic_example_templates`.
+- `is_active`, `starts_at`, and `ends_at` control card visibility without shipping an iOS app update.
+- See `docs/civic_example_templates_ops.md` for operator steps.
 
 ## Rollout plan (safe)
 1. Deploy migration + backend endpoints with `VOTENOW_ENABLE_CALL_SCORE_V1=false`.
 2. Enable internal QA users first via app-side toggle (`feature.call_score_v1_enabled`) and backend flag.
-3. Verify duplicate suppression + score stability + leaderboard period totals.
+3. Verify repeated confirmed calls count correctly + score stability + leaderboard period totals.
 4. Enable for all users after monitoring call completion and scoring analytics events.

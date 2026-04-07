@@ -17,11 +17,10 @@ struct Candidate: Identifiable, Hashable {
     
     // Party color: blue for Dems, red for Repubs, default for others
     var partyColor: Color {
-        switch party {
-        case "Democratic Party":   return VoteNowColors.richBlue
-        case "Republican Party":   return VoteNowColors.richRed
-        default:                   return .primary
-        }
+        let normalized = party.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if normalized.contains("democrat") { return VoteNowColors.richBlue }
+        if normalized.contains("republican") { return VoteNowColors.richRed }
+        return .primary
     }
 }
 
@@ -36,27 +35,27 @@ let sampleRaces: [BallotRace] = [
     BallotRace(
         office: "Mayor of New York",
         candidates: [
-            Candidate(name: "Adrienne Adams", party: "Democratic Party",
+            Candidate(name: "Adrienne Adams", party: "Democrat",
                       website: URL(string: "https://adrienneforthepeople.com")),
-            Candidate(name: "Selma Bartholomew", party: "Democratic Party",
+            Candidate(name: "Selma Bartholomew", party: "Democrat",
                       website: URL(string: "https://drselmabartholomew.com")),
-            Candidate(name: "Michael Blake", party: "Democratic Party",
+            Candidate(name: "Michael Blake", party: "Democrat",
                       website: URL(string: "https://blakefornyc.com")),
-            Candidate(name: "Andrew Cuomo", party: "Democratic Party",
+            Candidate(name: "Andrew Cuomo", party: "Democrat",
                       website: URL(string: "https://www.andrewcuomo.com")),
-            Candidate(name: "Brad Lander", party: "Democratic Party",
+            Candidate(name: "Brad Lander", party: "Democrat",
                       website: URL(string: "https://landerfornyc.com/about")),
-            Candidate(name: "Zohran Kwame Mamdani", party: "Democratic Party",
+            Candidate(name: "Zohran Kwame Mamdani", party: "Democrat",
                       website: URL(string: "https://www.zohranfornyc.com")),
-            Candidate(name: "Zellnor Myrie", party: "Democratic Party",
+            Candidate(name: "Zellnor Myrie", party: "Democrat",
                       website: URL(string: "https://www.zellnor.nyc/endorsements")),
-            Candidate(name: "Paperboy Prince", party: "Democratic Party",
+            Candidate(name: "Paperboy Prince", party: "Democrat",
                       website: URL(string: "https://paperboy.nyc")),
-            Candidate(name: "Jessica Ramos", party: "Democratic Party",
+            Candidate(name: "Jessica Ramos", party: "Democrat",
                       website: URL(string: "https://www.ramosfornyc.com")),
-            Candidate(name: "Scott Stringer", party: "Democratic Party",
+            Candidate(name: "Scott Stringer", party: "Democrat",
                       website: URL(string: "https://scottstringernyc.com")),
-            Candidate(name: "Whitney Tilson", party: "Democratic Party",
+            Candidate(name: "Whitney Tilson", party: "Democrat",
                       website: URL(string: "https://www.whitneyformayor.com")),
             Candidate(name: "Curtis Sliwa", party: "Republican Party",
                       website: URL(string: "https://www.sliwafornyc.com")),
@@ -71,13 +70,13 @@ let sampleRaces: [BallotRace] = [
     BallotRace(
         office: "New York City Comptroller",
         candidates: [
-            Candidate(name: "Justin Brannan", party: "Democratic Party",
+            Candidate(name: "Justin Brannan", party: "Democrat",
                       website: URL(string: "https://justinbrannan.com")),
-            Candidate(name: "Mark Levine", party: "Democratic Party",
+            Candidate(name: "Mark Levine", party: "Democrat",
                       website: URL(string: "https://www.votemarklevine.com")),
-            Candidate(name: "Ismael Malave", party: "Democratic Party",
+            Candidate(name: "Ismael Malave", party: "Democrat",
                       website: URL(string: "https://malavefornyc.com")),
-            Candidate(name: "Kevin Parker", party: "Democratic Party",
+            Candidate(name: "Kevin Parker", party: "Democrat",
                       website: URL(string: "https://www.kevinparkernyc.com")),
             Candidate(name: "Peter Kefalas", party: "Republican Party",
                       website: URL(string: "https://www.peterkefalas.com")),
@@ -94,13 +93,13 @@ let sampleRaces: [BallotRace] = [
     BallotRace(
         office: "New York City Public Advocate",
         candidates: [
-            Candidate(name: "Jumaane Williams (Incumbent)", party: "Democratic Party",
+            Candidate(name: "Jumaane Williams (Incumbent)", party: "Democrat",
                       website: URL(string: "https://jumaanewilliams.com/about")),
             Candidate(name: "Jumaane Williams (Incumbent)", party: "Working Families Party",
                       website: URL(string: "https://jumaanewilliams.com/about")),
-            Candidate(name: "Martin Dolan", party: "Democratic Party",
+            Candidate(name: "Martin Dolan", party: "Democrat",
                       website: URL(string: "https://www.martydolan.org")),
-            Candidate(name: "Jenifer Rajkumar", party: "Democratic Party",
+            Candidate(name: "Jenifer Rajkumar", party: "Democrat",
                       website: URL(string: "https://www.jeniferforny.com/?gad_source=1&gad_campaignid=22497745612&amp;gbraid=0AAAAACP36i9_-5PIeNjLQFffV0wOjlQhv&gclid=Cj0KCQjw0LDBBhCnARIsAMpYlAp7IhfcSAoFkwDtkkXzixYIJCHDlfnsdx2Z8Iwft5HVLob8Y7mMSfYaAuBvEALw_wcB")),
             Candidate(name: "Gonzalo Duran", party: "Republican Party",
                       website: URL(string: "https://www.gonzaloduran.nyc")),
@@ -135,14 +134,14 @@ struct SampleBallotView: View {
     }
 
     private func partyMatchesRegistration(_ candidateParty: String) -> Bool {
+        let normalized = candidateParty.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         switch planVM.selectedParty {
         case .democrat:
-            return candidateParty.localizedCaseInsensitiveContains("Democratic")
+            return normalized.contains("democrat")
         case .republican:
-            return candidateParty.localizedCaseInsensitiveContains("Republican")
+            return normalized.contains("republican")
         case .independent:
-            return candidateParty.localizedCaseInsensitiveContains("Independent")
-                || candidateParty.localizedCaseInsensitiveContains("Nonpartisan")
+            return normalized.contains("independent") || normalized.contains("nonpartisan")
         }
     }
 
@@ -330,14 +329,26 @@ struct CandidateRow: View {
     @Binding var rankSelection: Int
 
     private func color(for party: String) -> Color {
-        if party.contains("Democratic") { return VoteNowColors.richBlue }
-        if party.contains("Republican") { return VoteNowColors.richRed }
+        let normalized = party.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if normalized.contains("democrat") { return VoteNowColors.richBlue }
+        if normalized.contains("republican") { return VoteNowColors.richRed }
         return .secondary
     }
 
     private func shouldOpenMyInfoFromParty(_ party: String) -> Bool {
-        let normalized = party.lowercased()
-        return normalized.contains("democratic") || normalized.contains("republican")
+        let normalized = party.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return normalized.contains("democrat") || normalized.contains("republican")
+    }
+
+    private func displayPartyLabel(_ party: String) -> String {
+        let normalized = party.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if normalized.contains("democrat") {
+            return l("app.guide.party.democrat", "Democrat")
+        }
+        if normalized.contains("republican") {
+            return l("app.guide.party.republican", "Republican")
+        }
+        return party.replacingOccurrences(of: " Party", with: "")
     }
 
     var body: some View {
@@ -349,7 +360,7 @@ struct CandidateRow: View {
 
                 HStack(spacing: 6) {
                     ForEach(summary.parties, id: \.self) { party in
-                        Text(party.replacingOccurrences(of: " Party", with: ""))
+                        Text(displayPartyLabel(party))
                             .font(.caption2.weight(.semibold))
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)

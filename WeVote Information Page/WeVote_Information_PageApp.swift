@@ -110,6 +110,10 @@ struct WeVote_Information_PageApp: App {
                 .environmentObject(planVM)
                 .environmentObject(repsVM)
                 .task {
+                    // Review prompt integration point: call on each fresh app launch/session start.
+                    await MainActor.run {
+                        ReviewPromptManager.shared.onAppLaunch()
+                    }
                     do {
                         try await SupabaseManager.shared.signInAnonymouslyIfNeeded()
                     } catch {

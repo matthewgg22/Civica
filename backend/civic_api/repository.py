@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import time
 import urllib.error
@@ -27,10 +28,16 @@ from .models import (
     VerificationMethod,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class CivicRepository(ABC):
     @abstractmethod
     def list_rep_context(self, user_id: str) -> list[RepContext]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def list_example_templates(self) -> list[dict[str, Any]]:
         raise NotImplementedError
 
     @abstractmethod
@@ -141,6 +148,7 @@ class CivicRepository(ABC):
 class InMemoryCivicRepository(CivicRepository):
     def __init__(self) -> None:
         self._rep_context_by_user: dict[str, list[RepContext]] = defaultdict(list)
+        self._example_templates: list[dict[str, Any]] = []
         self._issues: dict[str, dict[str, Any]] = {}
         self._signals: list[dict[str, Any]] = []
         self._briefs_by_user_issue: dict[tuple[str, str], list[CallBrief]] = defaultdict(list)
@@ -161,6 +169,12 @@ class InMemoryCivicRepository(CivicRepository):
 
     def list_rep_context(self, user_id: str) -> list[RepContext]:
         return list(self._rep_context_by_user.get(user_id, []))
+
+    def seed_example_templates(self, rows: list[dict[str, Any]]) -> None:
+        self._example_templates = [dict(row) for row in rows]
+
+    def list_example_templates(self) -> list[dict[str, Any]]:
+        return [dict(row) for row in self._example_templates]
 
     def upsert_issue_catalog(self, issue_row: dict[str, Any]) -> None:
         issue_id = str(issue_row["issue_id"])
@@ -349,7 +363,13 @@ class SupabaseCivicRepository(CivicRepository):
 
     def list_rep_context(self, user_id: str) -> list[RepContext]:
         params = urllib.parse.urlencode({"user_id": f"eq.{user_id}"})
-        payload = self._request_json("GET", f"/rest/v1/user_federal_reps?{params}")
+        try:
+            payload = self._request_json("GET", f"/rest/v1/user_federal_reps?{params}")
+        except urllib.error.HTTPError as exc:
+            # Invalid UUID filters or rollout races should not block civic flows.
+            if exc.code in {400, 404}:
+                return []
+            raise
         reps: list[RepContext] = []
         for row in payload:
             reps.append(
@@ -365,6 +385,16 @@ class SupabaseCivicRepository(CivicRepository):
                 )
             )
         return reps
+
+    def list_example_templates(self) -> list[dict[str, Any]]:
+        params = urllib.parse.urlencode({"order": "display_order.asc,updated_at.desc"})
+        try:
+            return self._request_json("GET", f"/rest/v1/civic_example_templates?{params}")
+        except urllib.error.HTTPError as exc:
+            # Allow zero-downtime rollout while the new table migration propagates.
+            if exc.code in {400, 404}:
+                return []
+            raise
 
     def upsert_issue_catalog(self, issue_row: dict[str, Any]) -> None:
         self._request_json("POST", "/rest/v1/issue_catalog", body=[issue_row], prefer="resolution=merge-duplicates")
@@ -385,12 +415,25 @@ class SupabaseCivicRepository(CivicRepository):
         row = asdict(record)
         row["created_at"] = record.created_at.astimezone(timezone.utc).isoformat()
         row["outcome"] = record.outcome.value if isinstance(record.outcome, CallOutcome) else str(record.outcome)
-        self._request_json("POST", "/rest/v1/call_logs", body=[row])
+        try:
+            self._request_json("POST", "/rest/v1/call_logs", body=[row])
+        except urllib.error.HTTPError as exc:
+            # Allow rollout when call log table is not yet migrated.
+            if exc.code in {400, 404}:
+                return
+            raise
 
     def insert_call_launch_event(self, event: CallLaunchEvent) -> None:
         row = asdict(event)
         row["launched_at"] = event.launched_at.astimezone(timezone.utc).isoformat()
-        self._request_json("POST", "/rest/v1/call_launch_events", body=[row])
+        try:
+            self._request_json("POST", "/rest/v1/call_launch_events", body=[row])
+        except urllib.error.HTTPError as exc:
+            # Allow zero-downtime rollout while call launch tables migrate.
+            if exc.code in {400, 404}:
+                logger.warning("Skipping call_launch_events insert during rollout (status=%s).", exc.code)
+                return
+            raise
 
     def get_call_launch_event(self, user_id: str, launch_event_id: str) -> CallLaunchEvent | None:
         params = urllib.parse.urlencode(
@@ -400,7 +443,13 @@ class SupabaseCivicRepository(CivicRepository):
                 "limit": "1",
             }
         )
-        rows = self._request_json("GET", f"/rest/v1/call_launch_events?{params}")
+        try:
+            rows = self._request_json("GET", f"/rest/v1/call_launch_events?{params}")
+        except urllib.error.HTTPError as exc:
+            if exc.code in {400, 404}:
+                logger.warning("call_launch_events unavailable during lookup (status=%s).", exc.code)
+                return None
+            raise
         if not rows:
             return None
         row = rows[0]
@@ -420,7 +469,13 @@ class SupabaseCivicRepository(CivicRepository):
         verification = row.get("verification_method")
         if isinstance(verification, VerificationMethod):
             row["verification_method"] = verification.value
-        self._request_json("POST", "/rest/v1/call_events", body=[row])
+        try:
+            self._request_json("POST", "/rest/v1/call_events", body=[row])
+        except urllib.error.HTTPError as exc:
+            if exc.code in {400, 404}:
+                logger.warning("Skipping call_events insert during rollout (status=%s).", exc.code)
+                return
+            raise
 
     def find_recent_scoring_eligible_call(
         self,
@@ -441,7 +496,12 @@ class SupabaseCivicRepository(CivicRepository):
             params["issue_id"] = "is.null"
         else:
             params["issue_id"] = f"eq.{issue_id}"
-        rows = self._request_json("GET", f"/rest/v1/call_events?{urllib.parse.urlencode(params)}")
+        try:
+            rows = self._request_json("GET", f"/rest/v1/call_events?{urllib.parse.urlencode(params)}")
+        except urllib.error.HTTPError as exc:
+            if exc.code in {400, 404}:
+                return None
+            raise
         if not rows:
             return None
         return _row_to_call_event(rows[0])
@@ -461,17 +521,33 @@ class SupabaseCivicRepository(CivicRepository):
         if eligible_only:
             params["scoring_eligible_boolean"] = "eq.true"
 
-        rows = self._request_json("GET", f"/rest/v1/call_events?{urllib.parse.urlencode(params)}")
+        try:
+            rows = self._request_json("GET", f"/rest/v1/call_events?{urllib.parse.urlencode(params)}")
+        except urllib.error.HTTPError as exc:
+            if exc.code in {400, 404}:
+                return []
+            raise
         return [_row_to_call_event(row) for row in rows]
 
     def upsert_call_score_snapshot(self, snapshot: CallScoreSnapshot) -> None:
         row = asdict(snapshot)
         row["updated_at"] = snapshot.updated_at.astimezone(timezone.utc).isoformat()
-        self._request_json("POST", "/rest/v1/call_score_snapshots", body=[row], prefer="resolution=merge-duplicates")
+        try:
+            self._request_json("POST", "/rest/v1/call_score_snapshots", body=[row], prefer="resolution=merge-duplicates")
+        except urllib.error.HTTPError as exc:
+            # Allow rollout when score tables are not yet migrated.
+            if exc.code in {400, 404}:
+                return
+            raise
 
     def get_call_score_snapshot(self, user_id: str) -> CallScoreSnapshot | None:
         params = urllib.parse.urlencode({"user_id": f"eq.{user_id}", "limit": "1"})
-        rows = self._request_json("GET", f"/rest/v1/call_score_snapshots?{params}")
+        try:
+            rows = self._request_json("GET", f"/rest/v1/call_score_snapshots?{params}")
+        except urllib.error.HTTPError as exc:
+            if exc.code in {400, 404}:
+                return None
+            raise
         if not rows:
             return None
         row = rows[0]
@@ -502,12 +578,18 @@ class SupabaseCivicRepository(CivicRepository):
                     "updated_at": rollup.updated_at.astimezone(timezone.utc).isoformat(),
                 }
             )
-        self._request_json(
-            "POST",
-            "/rest/v1/leaderboard_call_rollups",
-            body=rows,
-            prefer="resolution=merge-duplicates",
-        )
+        try:
+            self._request_json(
+                "POST",
+                "/rest/v1/leaderboard_call_rollups",
+                body=rows,
+                prefer="resolution=merge-duplicates",
+            )
+        except urllib.error.HTTPError as exc:
+            if exc.code in {400, 404}:
+                return
+            raise
+
 
     def list_leaderboard_rollups(
         self,
@@ -520,7 +602,12 @@ class SupabaseCivicRepository(CivicRepository):
                 "period_start": f"eq.{period_start.astimezone(timezone.utc).isoformat()}",
             }
         )
-        rows = self._request_json("GET", f"/rest/v1/leaderboard_call_rollups?{params}")
+        try:
+            rows = self._request_json("GET", f"/rest/v1/leaderboard_call_rollups?{params}")
+        except urllib.error.HTTPError as exc:
+            if exc.code in {400, 404}:
+                return []
+            raise
         return [_row_to_leaderboard_rollup(row) for row in rows]
 
     def get_user_leaderboard_rollup(
@@ -537,14 +624,24 @@ class SupabaseCivicRepository(CivicRepository):
                 "limit": "1",
             }
         )
-        rows = self._request_json("GET", f"/rest/v1/leaderboard_call_rollups?{params}")
+        try:
+            rows = self._request_json("GET", f"/rest/v1/leaderboard_call_rollups?{params}")
+        except urllib.error.HTTPError as exc:
+            if exc.code in {400, 404}:
+                return None
+            raise
         if not rows:
             return None
         return _row_to_leaderboard_rollup(rows[0])
 
     def load_history(self, user_id: str) -> list[HistoryGroup]:
         logs_params = urllib.parse.urlencode({"user_id": f"eq.{user_id}", "order": "created_at.desc"})
-        logs = self._request_json("GET", f"/rest/v1/call_logs?{logs_params}")
+        try:
+            logs = self._request_json("GET", f"/rest/v1/call_logs?{logs_params}")
+        except urllib.error.HTTPError as exc:
+            if exc.code in {400, 404}:
+                return []
+            raise
 
         issue_ids = {str(row.get("issue_id")) for row in logs if row.get("issue_id")}
         if not issue_ids:
