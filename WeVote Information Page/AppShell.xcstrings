@@ -24864,7 +24864,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Complications happen, which is why every state is required to offer a provisional ballot if requested; they can help resolve:"
+            "value": "If complications arise, states must offer a provisional ballot upon request to address:"
           }
         },
         "es": {
@@ -24900,13 +24900,13 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Complications happen, which is why every state is required to offer a provisional ballot if requested; they can help resolve:"
+            "value": "If complications arise, states must offer a provisional ballot upon request to address:"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Complications happen, which is why every state is required to offer a provisional ballot if requested; they can help resolve:"
+            "value": "If complications arise, states must offer a provisional ballot upon request to address:"
           }
         }
       }
@@ -27514,7 +27514,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "3. Ask for a receipt or tracking method and confirm any cure deadline before leaving."
+            "value": "Get a receipt or tracking and confirm cure deadlines before leaving."
           }
         },
         "es": {
@@ -27550,13 +27550,13 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "3. Ask for a receipt or tracking method and confirm any cure deadline before leaving."
+            "value": "Get a receipt or tracking and confirm cure deadlines before leaving."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "3. Ask for a receipt or tracking method and confirm any cure deadline before leaving."
+            "value": "Get a receipt or tracking and confirm cure deadlines before leaving."
           }
         }
       }

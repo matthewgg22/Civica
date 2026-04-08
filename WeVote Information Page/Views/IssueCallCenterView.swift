@@ -711,28 +711,26 @@ struct IssueCallCenterView: View {
             Text(l("app.issue_call.concern.header", "Build your Script"))
                 .font(.headline)
 
-            ZStack(alignment: .topLeading) {
-                if viewModel.concernText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                    Text(l(
-                        "app.issue_call.concern.subheader",
-                        "Write what issue you want to inform Congress and we will generate a script!"
-                    ))
-                        .foregroundColor(VoteNowColors.mutedText.opacity(0.64))
-                        .font(.subheadline)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 12)
-                        .padding(.leading, 8)
-                        .padding(.trailing, 10)
-                        .allowsHitTesting(false)
-                }
-
-                TextEditor(text: $viewModel.concernText)
-                    .frame(minHeight: 90)
-                    .padding(4)
-                    .background(Color.clear)
-                    .focused($focusedField, equals: .concern)
-                    .accessibilityIdentifier("issue_call.concern_input")
+            TextField(
+                "",
+                text: $viewModel.concernText,
+                prompt: Text(l(
+                    "app.issue_call.concern.subheader",
+                    "Write what issue you want to inform Congress and we will generate a script!"
+                )),
+                axis: .vertical
+            )
+            .lineLimit(3...7)
+            .textInputAutocapitalization(.sentences)
+            .focused($focusedField, equals: .concern)
+            .submitLabel(.send)
+            .onSubmit {
+                submitScriptDraft()
             }
+            .frame(minHeight: 90, alignment: .topLeading)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 10)
+            .accessibilityIdentifier("issue_call.concern_input")
             .background(VoteNowColors.surfaceWhite)
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             .overlay(
@@ -776,6 +774,10 @@ struct IssueCallCenterView: View {
             .textInputAutocapitalization(.characters)
             .autocorrectionDisabled()
             .focused($focusedField, equals: .billRef)
+            .submitLabel(.send)
+            .onSubmit {
+                submitScriptDraft()
+            }
             .padding(.horizontal, 10)
             .padding(.vertical, 10)
             .background(VoteNowColors.surfaceWhite)
@@ -787,13 +789,7 @@ struct IssueCallCenterView: View {
             .accessibilityIdentifier("issue_call.bill_input")
 
             Button {
-                focusedField = nil
-                isTalkingPointsExpanded = false
-                didCompleteMAPC = false
-                viewModel.prepareForFreshGeneration()
-                Task {
-                    await viewModel.submitAssistantRequest()
-                }
+                submitScriptDraft()
             } label: {
                 HStack {
                     if viewModel.isSubmitting {
@@ -820,6 +816,17 @@ struct IssueCallCenterView: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
         )
+    }
+
+    private func submitScriptDraft() {
+        guard !viewModel.isSubmitting, viewModel.canSubmit else { return }
+        focusedField = nil
+        isTalkingPointsExpanded = false
+        didCompleteMAPC = false
+        viewModel.prepareForFreshGeneration()
+        Task {
+            await viewModel.submitAssistantRequest()
+        }
     }
 
     private var draftApprovalCard: some View {
@@ -1219,10 +1226,8 @@ struct IssueCallCenterView: View {
                                 dismiss()
                             } else {
                                 beginMAPCCardTransition()
-                                withAnimation(mapcCardAnimation) {
-                                    mapcForwardSlideTransition = false
-                                    viewModel.retreatToPreviousRep(before: brief)
-                                }
+                                mapcForwardSlideTransition = false
+                                viewModel.retreatToPreviousRep(before: brief)
                             }
                         } label: {
                             Text(
@@ -1263,28 +1268,28 @@ struct IssueCallCenterView: View {
 
         return Button {
             let mapcGain = mapcSessionLoggedBriefIDs.count
-            withAnimation(mapcCardAnimation) {
-                if isLastBrief {
+            if isLastBrief {
+                withAnimation(mapcCardAnimation) {
                     waterfallController.trigger(reduceMotion: reduceMotion)
                     viewModel.finishScript()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.05) {
-                        withAnimation(.easeInOut(duration: 0.22)) {
-                            didCompleteMAPC = true
-                            viewModel.selectedTab = .civicScore
-                            // Primary review signal: successful MAPC completion.
-                            ReviewPromptManager.shared.markMAPCCompleted(
-                                isInErrorState: viewModel.errorMessage != nil,
-                                isFlowInterrupted: showingShareSheet
-                            )
-                            startMAPCCallGainAnimation(gain: mapcGain)
-                            mapcSessionLoggedBriefIDs.removeAll()
-                        }
-                    }
-                } else {
-                    beginMAPCCardTransition()
-                    mapcForwardSlideTransition = true
-                    viewModel.advanceToNextRep(after: brief)
                 }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.05) {
+                    withAnimation(.easeInOut(duration: 0.22)) {
+                        didCompleteMAPC = true
+                        viewModel.selectedTab = .civicScore
+                        // Primary review signal: successful MAPC completion.
+                        ReviewPromptManager.shared.markMAPCCompleted(
+                            isInErrorState: viewModel.errorMessage != nil,
+                            isFlowInterrupted: showingShareSheet
+                        )
+                        startMAPCCallGainAnimation(gain: mapcGain)
+                        mapcSessionLoggedBriefIDs.removeAll()
+                    }
+                }
+            } else {
+                beginMAPCCardTransition()
+                mapcForwardSlideTransition = true
+                viewModel.advanceToNextRep(after: brief)
             }
         } label: {
             HStack {
@@ -1501,11 +1506,7 @@ struct IssueCallCenterView: View {
 
                         exampleScriptBlock(
                             title: "Live-call Script",
-                            text: example.liveScript
-                        )
-                        exampleScriptBlock(
-                            title: "Voicemail Script",
-                            text: example.voicemailScript
+                            text: condensedPremadeScriptPlaceholderText(example.liveScript)
                         )
 
                         Button {
@@ -2719,7 +2720,7 @@ struct IssueCallCenterView: View {
 
         // Remove setup and sign-off lines in selection cards to make scripts easier to skim.
         preview = preview.replacingOccurrences(
-            of: #"(?im)^\s*hi,?\s*my name is.*constituent from.*$\n?"#,
+            of: #"(?i)^\s*hi,?\s*my name is[^.!?]*constituent from[^.!?]*[.!?]\s*"#,
             with: "",
             options: .regularExpression
         )

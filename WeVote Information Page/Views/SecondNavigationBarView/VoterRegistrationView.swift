@@ -16,11 +16,11 @@ private struct StickyHeaderHeightPreferenceKey: PreferenceKey {
     }
 }
 
-private struct ReadinessPanelBottomPreferenceKey: PreferenceKey {
+private struct RegistrationGuideStripMinYPreferenceKey: PreferenceKey {
     static var defaultValue: CGFloat = .greatestFiniteMagnitude
 
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
+        value = min(value, nextValue())
     }
 }
 
@@ -71,7 +71,7 @@ struct VoterRegistrationView: View {
     @State private var showMailInBallotPage = false
     @State private var showingDeadlineActions = false
     @State private var measuredStickyHeaderHeight: CGFloat = 0
-    @State private var readinessPanelBottomY: CGFloat = .greatestFiniteMagnitude
+    @State private var registrationGuideStripMinY: CGFloat = .greatestFiniteMagnitude
     @State private var showStepOneWhyRegisterDropdown = false
     @State private var showStepTwoPollIssuesDropdown = false
     @State private var showStepThreeBallotErrorDropdown = false
@@ -101,6 +101,9 @@ struct VoterRegistrationView: View {
         }
         return decoded
     }()
+    private var dropdownRevealAnimation: Animation {
+        .interactiveSpring(response: 0.34, dampingFraction: 0.9, blendDuration: 0.18)
+    }
 
     private func l(_ key: String, _ fallback: String) -> String {
         localizedCatalogString(
@@ -342,7 +345,7 @@ struct VoterRegistrationView: View {
                 phase: .duringElection,
                 stepLabel: l("app.registration.step.2.reshuffle", "STEP 2"),
                 title: l("app.registration.card.then_vote.title.get_out.short", "Get Out to Vote!"),
-                summary: l("app.registration.card.then_vote.summary", "Once your registration is set, move straight into your voting plan."),
+                summary: "",
                 bullets: [
                     l("app.registration.card.then_vote.bullet_1", "Make a plan for when/where you vote"),
                     l("app.registration.card.then_vote.bullet_2.capitalized", "See what’s on your ballot in advance"),
@@ -397,21 +400,21 @@ struct VoterRegistrationView: View {
                 .preElection,
                 prePhaseHeaderText,
                 l("app.registration.phase.pre.subtitle", "Confirm your registration details before voting starts"),
-                preSectionBackgroundColor,
+                VoteNowColors.appBackground,
                 VoteNowColors.primaryCTA.opacity(0.68)
             ),
             (
                 .duringElection,
                 duringPhaseHeaderText,
-                l("app.registration.card.then_vote.summary", "Once your registration is set, move straight into your voting plan."),
-                VoteNowColors.warningAmber.opacity(0.28),
+                "",
+                VoteNowColors.appBackground,
                 VoteNowColors.warningAmber.opacity(0.78)
             ),
             (
                 .postElection,
                 postPhaseHeaderText,
                 l("app.registration.phase.post.subtitle", "Track and protect your vote if follow-up is needed."),
-                postSectionBackgroundColor,
+                VoteNowColors.appBackground,
                 VoteNowColors.urgentCTA.opacity(0.72)
             )
         ]
@@ -447,7 +450,7 @@ struct VoterRegistrationView: View {
                                         .padding(.bottom, 10)
                                 }
                                 .frame(maxWidth: .infinity)
-                                .background(preSectionBackgroundColor)
+                                .background(VoteNowColors.appBackground)
 
                                 ForEach(groupedSections) { section in
                                     sectionTimeline(section)
@@ -512,8 +515,8 @@ struct VoterRegistrationView: View {
                         guard height > 0 else { return }
                         measuredStickyHeaderHeight = height
                     }
-                    .onPreferenceChange(ReadinessPanelBottomPreferenceKey.self) { bottomY in
-                        readinessPanelBottomY = bottomY
+                    .onPreferenceChange(RegistrationGuideStripMinYPreferenceKey.self) { minY in
+                        registrationGuideStripMinY = minY
                     }
                 }
             }
@@ -549,10 +552,12 @@ struct VoterRegistrationView: View {
                 Text(section.title)
                     .font(.subheadline.weight(.bold))
                     .foregroundColor(VoteNowColors.primaryCTA)
-                Text(section.subtitle)
-                    .font(.callout.weight(.semibold))
-                    .foregroundColor(VoteNowColors.mutedText)
-                    .fixedSize(horizontal: false, vertical: true)
+                if !section.subtitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    Text(section.subtitle)
+                        .font(.callout.weight(.semibold))
+                        .foregroundColor(VoteNowColors.mutedText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
 
             VStack(spacing: 10) {
@@ -564,7 +569,7 @@ struct VoterRegistrationView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(section.backgroundTint)
+        .background(VoteNowColors.appBackground)
     }
 
     @ViewBuilder
@@ -572,10 +577,12 @@ struct VoterRegistrationView: View {
         VStack(alignment: .leading, spacing: 10) {
             registrationCardHeading(card)
 
-            Text(card.summary)
-                .font(.body)
-                .foregroundColor(VoteNowColors.mutedText)
-                .fixedSize(horizontal: false, vertical: true)
+            if !card.summary.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                Text(card.summary)
+                    .font(.body)
+                    .foregroundColor(VoteNowColors.mutedText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
 
             if card.kind == .whyRegister {
                 primaryBallotGuidancePanel
@@ -718,7 +725,7 @@ struct VoterRegistrationView: View {
     private var stepOneWhyRegisterDropdown: some View {
         VStack(alignment: .leading, spacing: 8) {
             Button {
-                withAnimation(.easeInOut(duration: 0.22)) {
+                withAnimation(dropdownRevealAnimation) {
                     showStepOneWhyRegisterDropdown.toggle()
                 }
             } label: {
@@ -730,33 +737,92 @@ struct VoterRegistrationView: View {
 
                     Spacer(minLength: 8)
 
-                    Image(systemName: showStepOneWhyRegisterDropdown ? "chevron.up" : "chevron.down")
+                    Image(systemName: "chevron.down")
                         .font(.caption.weight(.bold))
                         .foregroundColor(VoteNowColors.primaryCTA)
+                        .rotationEffect(.degrees(showStepOneWhyRegisterDropdown ? 180 : 0))
+                        .animation(dropdownRevealAnimation, value: showStepOneWhyRegisterDropdown)
                 }
             }
             .buttonStyle(.plain)
+            .contentShape(Rectangle())
 
             if showStepOneWhyRegisterDropdown {
-                Text(
-                    l(
-                        "app.registration.dropdown.why_register.full",
-                        "The Democrat and Republican parties are the two largest in the United States. In many states, primary ballot eligibility depends on your current party registration. Example: in a closed primary, a voter registered as Independent may not be able to vote in either the Democrat or Republican primary unless they change party registration before the state deadline."
+                VStack(alignment: .leading, spacing: 8) {
+                    (
+                        Text(l("app.registration.dropdown.why_register.intro.prefix", "The "))
+                        + Text(l("app.guide.party.democrat", "Democrat"))
+                            .foregroundColor(VoteNowColors.richBlue)
+                            .fontWeight(.semibold)
+                        + Text(l("app.registration.dropdown.why_register.intro.middle", " and "))
+                        + Text(l("app.guide.party.republican", "Republican"))
+                            .foregroundColor(VoteNowColors.richRed)
+                            .fontWeight(.semibold)
+                        + Text(
+                            l(
+                                "app.registration.dropdown.why_register.intro.suffix",
+                                " parties are the two largest in the United States. In many states, primary ballot eligibility depends on your current party registration."
+                            )
+                        )
+                    )
+                    .font(.callout)
+                    .foregroundColor(VoteNowColors.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                    Text(
+                        l(
+                            "app.registration.dropdown.why_register.example.p1",
+                            "Example: In a closed primary, a voter registered as Independent may not be able to vote in either party primary."
+                        )
+                    )
+                    .font(.callout)
+                    .foregroundColor(VoteNowColors.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                    (
+                        Text(
+                            l(
+                                "app.registration.dropdown.why_register.example.p2.prefix",
+                                "That can include both the "
+                            )
+                        )
+                        + Text(l("app.guide.party.democrat", "Democrat"))
+                            .foregroundColor(VoteNowColors.richBlue)
+                            .fontWeight(.semibold)
+                        + Text(l("app.registration.dropdown.why_register.example.p2.middle", " and "))
+                        + Text(l("app.guide.party.republican", "Republican"))
+                            .foregroundColor(VoteNowColors.richRed)
+                            .fontWeight(.semibold)
+                        + Text(
+                            l(
+                                "app.registration.dropdown.why_register.example.p2.suffix",
+                                " primaries unless they change party registration before the state deadline."
+                            )
+                        )
+                    )
+                    .font(.callout)
+                    .foregroundColor(VoteNowColors.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.top, 2)
+                .transition(
+                    .asymmetric(
+                        insertion: .opacity
+                            .combined(with: .move(edge: .top))
+                            .combined(with: .scale(scale: 0.985, anchor: .top)),
+                        removal: .opacity.combined(with: .scale(scale: 0.985, anchor: .top))
                     )
                 )
-                .font(.callout)
-                .foregroundColor(VoteNowColors.primaryText)
-                .fixedSize(horizontal: false, vertical: true)
-                .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
         .padding(.top, 4)
+        .animation(dropdownRevealAnimation, value: showStepOneWhyRegisterDropdown)
     }
 
     private var stepTwoPollIssuesDropdown: some View {
         VStack(alignment: .leading, spacing: 8) {
             Button {
-                withAnimation(.easeInOut(duration: 0.22)) {
+                withAnimation(dropdownRevealAnimation) {
                     showStepTwoPollIssuesDropdown.toggle()
                 }
             } label: {
@@ -764,7 +830,7 @@ struct VoterRegistrationView: View {
                     Text(
                         l(
                             "app.registration.step2.poll_issues.dropdown.title",
-                            "How to Resolve Issues at the Polling Site"
+                            "If Issues Emerge at the Polls"
                         )
                     )
                     .font(.callout.weight(.semibold))
@@ -773,19 +839,18 @@ struct VoterRegistrationView: View {
 
                     Spacer(minLength: 8)
 
-                    Image(systemName: showStepTwoPollIssuesDropdown ? "chevron.up" : "chevron.down")
+                    Image(systemName: "chevron.down")
                         .font(.caption.weight(.bold))
                         .foregroundColor(VoteNowColors.primaryCTA)
+                        .rotationEffect(.degrees(showStepTwoPollIssuesDropdown ? 180 : 0))
+                        .animation(dropdownRevealAnimation, value: showStepTwoPollIssuesDropdown)
                 }
             }
             .buttonStyle(.plain)
+            .contentShape(Rectangle())
 
             if showStepTwoPollIssuesDropdown {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text(l("app.registration.step.2_1.reshuffle", "STEP 2.1"))
-                        .font(.caption.weight(.bold))
-                        .foregroundColor(VoteNowColors.primaryCTA)
-
                     Text(
                         l(
                             "app.registration.card.provisional.title",
@@ -836,19 +901,24 @@ struct VoterRegistrationView: View {
                     .font(.subheadline.weight(.semibold))
                     .padding(.horizontal, 16)
                     .padding(.vertical, 9)
-                    .foregroundColor(VoteNowColors.primaryCTA)
-                    .background(VoteNowColors.primaryCTA.opacity(0.10))
-                    .overlay(
-                        Capsule()
-                            .stroke(VoteNowColors.primaryCTA.opacity(0.34), lineWidth: 1)
-                    )
+                    .foregroundColor(.white)
+                    .background(VoteNowColors.primaryCTA)
                     .clipShape(Capsule())
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .center)
                 }
-                .transition(.opacity.combined(with: .move(edge: .top)))
+                .padding(.top, 2)
+                .transition(
+                    .asymmetric(
+                        insertion: .opacity
+                            .combined(with: .move(edge: .top))
+                            .combined(with: .scale(scale: 0.985, anchor: .top)),
+                        removal: .opacity.combined(with: .scale(scale: 0.985, anchor: .top))
+                    )
+                )
             }
         }
         .padding(.top, 6)
+        .animation(dropdownRevealAnimation, value: showStepTwoPollIssuesDropdown)
     }
 
     private var stepThreeBallotErrorDropdown: some View {
@@ -995,17 +1065,6 @@ struct VoterRegistrationView: View {
             .clipShape(Capsule())
         }
         .buttonStyle(.plain)
-        .voteNowPillDualOrbit(
-            redColor: VoteNowColors.ctaRed.opacity(0.94),
-            blueColor: VoteNowColors.ctaBlue.opacity(0.88),
-            strokeThickness: 2.8,
-            loopDuration: 4.95,
-            glowIntensity: 0.28,
-            idleOpacity: 0.24,
-            borderInset: 0.65,
-            segmentLength: 0.34,
-            separatorThickness: 0.75
-        )
     }
 
     private func ballotStatusPrimaryButton(
@@ -1316,9 +1375,9 @@ struct VoterRegistrationView: View {
             upcomingElectionTimelinePreviewCard
 
             checkRegistrationPrimaryButton(
-                l("app.timeline.action.how_to_vote", "How to Vote")
+                l("app.registration.guide.step.register", "Register")
             ) {
-                handleCardAction(.goToHowToVoteTab)
+                handleCardAction(.openURL(registrationPortalURL))
             }
             .padding(.top, 2)
 
@@ -1328,6 +1387,14 @@ struct VoterRegistrationView: View {
 
             registrationGuideStripContent(proxy: proxy)
                 .padding(.top, 2)
+                .background(
+                    GeometryReader { geo in
+                        Color.clear.preference(
+                            key: RegistrationGuideStripMinYPreferenceKey.self,
+                            value: geo.frame(in: .named("VoterRegistrationScroll")).minY
+                        )
+                    }
+                )
         }
         .padding(12)
         .background(
@@ -1337,14 +1404,6 @@ struct VoterRegistrationView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .stroke(VoteNowColors.primaryCTA.opacity(0.12), lineWidth: 1)
-        )
-        .background(
-            GeometryReader { geo in
-                Color.clear.preference(
-                    key: ReadinessPanelBottomPreferenceKey.self,
-                    value: geo.frame(in: .named("VoterRegistrationScroll")).maxY
-                )
-            }
         )
     }
 
@@ -1541,7 +1600,7 @@ struct VoterRegistrationView: View {
     }
 
     private var preSectionBackgroundColor: Color {
-        VoteNowColors.brandSoftBlue.opacity(0.58)
+        VoteNowColors.appBackground
     }
 
     private var stickyHeaderOffset: CGFloat {
@@ -1550,22 +1609,11 @@ struct VoterRegistrationView: View {
     }
 
     private var postSectionBackgroundColor: Color {
-        VoteNowColors.infoSurfaceRed.opacity(0.40)
+        VoteNowColors.appBackground
     }
 
     private var overscrollBackground: some View {
-        ZStack {
-            VoteNowColors.appBackground
-
-            VStack(spacing: 0) {
-                preSectionBackgroundColor
-                    .frame(height: 160)
-                Spacer(minLength: 0)
-                postSectionBackgroundColor
-                    .frame(height: 160)
-            }
-        }
-        .ignoresSafeArea()
+        VoteNowColors.appBackground.ignoresSafeArea()
     }
 
     private var registrationStateDisplayName: String {
@@ -1616,7 +1664,7 @@ struct VoterRegistrationView: View {
     }
 
     private var shouldShowStickyGuideStrip: Bool {
-        readinessPanelBottomY <= stickyHeaderOffset + 16
+        registrationGuideStripMinY <= stickyHeaderOffset + 2
     }
 
     private func openMyInfoPanel() {
@@ -1683,7 +1731,7 @@ struct VoterRegistrationView: View {
         [
             l(
                 "app.registration.card.provisional.bullet_3.updated",
-                "Complications happen, which is why every state is required to offer a provisional ballot if requested; they can help resolve:"
+                "If complications arise, states must offer a provisional ballot upon request to address:"
             ),
             l(
                 "app.registration.card.provisional.bullet_4",
@@ -1766,12 +1814,11 @@ struct VoterRegistrationView: View {
                 requestStepLine(
                     l(
                         "app.registration.provisional.request.step_3.reindexed",
-                        "3. Ask for a receipt or tracking method and confirm any cure deadline before leaving."
+                        "Get a receipt or tracking and confirm cure deadlines before leaving."
                     )
                 )
             }
-        }
-        .padding(12)
+        };
         .background(VoteNowColors.infoSurfaceBlue.opacity(0.72))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)

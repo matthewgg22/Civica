@@ -793,17 +793,34 @@ struct ElectionTimelineView: View {
                     openVotingStepsTab()
                 } label: {
                     Text(l("app.timeline.action.how_to_vote", "How to Vote"))
-                        .font(.title3.weight(.semibold))
+                        .font(.callout.weight(.semibold))
                         .foregroundColor(VoteNowColors.primaryText)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.vertical, 6)
+                        .padding(.horizontal, 12)
                         .background(
-                            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .fill(VoteNowColors.infoSurfaceBlue)
+                            Capsule(style: .continuous)
+                                .fill(VoteNowColors.brandSoftBlue.opacity(0.95))
+                        )
+                        .overlay(
+                            Capsule(style: .continuous)
+                                .stroke(VoteNowColors.primaryCTA.opacity(0.32), lineWidth: 1)
                         )
                 }
                 .buttonStyle(.plain)
-                .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .voteNowPillDualOrbit(
+                    redColor: VoteNowColors.ctaRed.opacity(0.94),
+                    blueColor: VoteNowColors.ctaBlue.opacity(0.88),
+                    strokeThickness: 2.8,
+                    loopDuration: 4.95,
+                    glowIntensity: 0.28,
+                    idleOpacity: 0.24,
+                    borderInset: 0.65,
+                    segmentLength: 0.34,
+                    separatorThickness: 0.75
+                )
+                .shadow(color: VoteNowColors.primaryCTA.opacity(0.14), radius: 3, x: 0, y: 1)
+                .contentShape(Capsule(style: .continuous))
                 .accessibilityLabel(l("app.timeline.action.how_to_vote", "How to Vote"))
             }
 

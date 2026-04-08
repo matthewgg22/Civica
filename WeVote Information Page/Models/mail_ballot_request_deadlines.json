@@ -75,7 +75,7 @@
     "jurisdiction": "Connecticut",
     "methods": {
       "in_person": "Received 1 day before Election Day",
-      "by_mail": "Received 1 day before Election Day, but we recommend applying at least 7 days before Election Day.",
+      "by_mail": "Received 1 day before Election Day.",
       "online_email": "N/A"
     },
     "conventions": null,
@@ -237,7 +237,7 @@
     "jurisdiction": "Massachusetts",
     "methods": {
       "in_person": "Received by 5pm, 5 business days before Election Day.",
-      "by_mail": "Received by 5pm, 5 business days before Election Day, but we recommend applying at least 7 days before Election Day.",
+      "by_mail": "Received by 5pm, 5 business days before Election Day.",
       "online_email": "Received by 5pm, 5 business days before Election Day."
     },
     "conventions": null,
@@ -287,7 +287,7 @@
     "jurisdiction": "Montana",
     "methods": {
       "in_person": "Received by noon, 1 day before Election Day.",
-      "by_mail": "Received by noon, 1 day before before Election Day, but we recommend applying at least 7 days before Election Day.",
+      "by_mail": "Received by noon, 1 day before before Election Day.",
       "online_email": "N/A"
     },
     "conventions": null,
@@ -460,8 +460,8 @@
   {
     "jurisdiction": "South Dakota",
     "methods": {
-      "in_person": "1 day before Election Day, but we recommend applying at least 7 days before Election Day.",
-      "by_mail": "Received 1 day before Election Day, but we recommend applying at least 7 days before Election Day.",
+      "in_person": "1 day before Election Day.",
+      "by_mail": "Received 1 day before Election Day.",
       "online_email": "N/A"
     },
     "conventions": null,
@@ -501,7 +501,7 @@
     "jurisdiction": "Vermont",
     "methods": {
       "in_person": "Received 1 day before Election Day.",
-      "by_mail": "Received 1 day before Election Day, but we recommend applying at least 7 days before Election Day.",
+      "by_mail": "Received 1 day before Election Day.",
       "online_email": "Received 1 day before Election Day."
     },
     "conventions": null,
@@ -563,7 +563,7 @@
     "jurisdiction": "Wyoming",
     "methods": {
       "in_person": "Received 1 day before Election Day.",
-      "by_mail": "Received 1 day before Election Day, but we recommend applying at least 7 days before Election Day.",
+      "by_mail": "Received 1 day before Election Day.",
       "online_email": "N/A"
     },
     "conventions": null,

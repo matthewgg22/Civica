@@ -355,12 +355,6 @@ private struct StarterElectionGuideContentProvider {
             ))
         }
 
-        topics.append(ElectionGuideTopic(
-            id: "where-to-check",
-            title: "Where to Confirm Official Rules",
-            body: "Use your state election office website to verify final deadlines, ballot type, and district-specific rules."
-        ))
-
         return ElectionGuideContent(
             title: title(for: context),
             summary: summary(for: context),

@@ -135,9 +135,9 @@ struct MyInfoPanelView: View {
                             systemImage: "location.fill"
                         )
                         .font(.subheadline.weight(.semibold))
-                        .frame(maxWidth: .infinity)
+                        .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.horizontal, 12)
-                        .padding(.vertical, 10)
+                        .padding(.vertical, 8)
                     }
                     .background(VoteNowColors.surfaceWhite)
                     .foregroundColor(VoteNowColors.primaryCTA)
@@ -156,16 +156,16 @@ struct MyInfoPanelView: View {
                     } label: {
                         Text("my_info.action.show_reps", tableName: "MyInfoPanel")
                             .font(.subheadline.weight(.semibold))
-                            .frame(maxWidth: .infinity)
+                            .frame(maxWidth: .infinity, alignment: .center)
                             .padding(.horizontal, 12)
-                            .padding(.vertical, 10)
+                            .padding(.vertical, 8)
                     }
                     .background(VoteNowColors.infoSurfaceBlue)
                     .foregroundColor(VoteNowColors.richBlue)
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(VoteNowColors.richBlue.opacity(0.24), lineWidth: 1)
+                            .stroke(VoteNowColors.richBlue.opacity(0.28), lineWidth: 1)
                     )
                     .buttonStyle(.plain)
                 } header: {

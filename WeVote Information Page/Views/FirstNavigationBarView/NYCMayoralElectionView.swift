@@ -29,14 +29,12 @@ private struct GuideViewportPreferenceKey: PreferenceKey {
 struct NYCMayoralElectionView: View {
     @EnvironmentObject private var planVM: PlanViewModel
     @Environment(\.locale) private var locale
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var upcomingElection: Election?
     @State private var stateCode: String?
     @State private var stateName: String = ""
     @State private var guideCards: [ElectionGuideInfoCard] = []
     @State private var errorMessage: String?
-    @State private var officeExampleRotationTick = 0
     @State private var expandedBallotMeasureKeys: Set<String> = []
     @State private var selectedGuideMiniNavSection: GuideMiniNavSection = .snapshot
     @State private var guideSectionFrames: [GuideMiniNavSection: CGRect] = [:]
@@ -46,7 +44,6 @@ struct NYCMayoralElectionView: View {
 
     private let stateResolver = USZipStateResolver()
     private let guideScrollCoordinateSpace = "ElectionGuideScrollCoordinateSpace"
-    private let officeExampleRotationTimer = Timer.publish(every: 15, on: .main, in: .common).autoconnect()
     private static let primaryTypeDataset: ElectionGuidePrimaryTypeDataset? = {
         guard let url = Bundle.main.url(forResource: "ElectionEligibilityDataset", withExtension: "json"),
               let data = try? Data(contentsOf: url),
@@ -100,26 +97,6 @@ struct NYCMayoralElectionView: View {
             return (normalized, row)
         })
     }()
-    private static let officePowerExamplesByKey: [String: [String]] = {
-        guard let url = Bundle.main.url(forResource: "USOfficePowersExamplesByOffice", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let decoded = try? JSONDecoder().decode(ElectionGuideOfficeExamplesDataset.self, from: data) else {
-            return [:]
-        }
-        var mapped: [String: [String]] = [:]
-        for row in decoded.rows {
-            let key = row.officeKey
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-                .lowercased()
-            let examples = row.examples
-                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                .filter { !$0.isEmpty }
-            if !key.isEmpty, !examples.isEmpty {
-                mapped[key] = examples
-            }
-        }
-        return mapped
-    }()
     private static let runoffThresholdRulesByStateCode: [String: ElectionGuideRunoffThresholdRule] = {
         guard let url = Bundle.main.url(forResource: "USRunoffThresholdRulesByState", withExtension: "json"),
               let data = try? Data(contentsOf: url),
@@ -163,15 +140,6 @@ struct NYCMayoralElectionView: View {
             .onChange(of: planVM.userAddress.zip) { _, _ in refreshGuide() }
             .onChange(of: planVM.selectedParty) { _, _ in refreshGuide() }
             .onChange(of: locale.identifier) { _, _ in refreshGuide() }
-            .onReceive(officeExampleRotationTimer) { _ in
-                if reduceMotion {
-                    officeExampleRotationTick &+= 1
-                } else {
-                    withAnimation(.easeInOut(duration: 0.35)) {
-                        officeExampleRotationTick &+= 1
-                    }
-                }
-            }
     }
 
     private var navigationRootView: some View {
@@ -377,7 +345,7 @@ struct NYCMayoralElectionView: View {
                         .minimumScaleFactor(0.74)
                         .allowsTightening(true)
                         .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal, guideMiniNavHorizontalPadding(for: section))
                         .padding(.vertical, 9)
                         .background(
                             Group {
@@ -409,8 +377,8 @@ struct NYCMayoralElectionView: View {
                 }
             }
         }
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, 2)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 0)
         .padding(.vertical, 2)
     }
 
@@ -418,8 +386,17 @@ struct NYCMayoralElectionView: View {
         Text("|")
             .font(.footnote.weight(.semibold))
             .foregroundColor(VoteNowColors.mutedText.opacity(0.72))
-            .padding(.horizontal, 2)
+            .padding(.horizontal, 0)
             .accessibilityHidden(true)
+    }
+
+    private func guideMiniNavHorizontalPadding(for section: GuideMiniNavSection) -> CGFloat {
+        switch section {
+        case .snapshot, .voterID, .electionType:
+            return 2
+        case .ballotMeasures:
+            return 4
+        }
     }
 
     @ViewBuilder
@@ -1258,8 +1235,8 @@ struct NYCMayoralElectionView: View {
                 ElectionGuideInfoCard(
                     title: l("app.guide.card.midterm.title", "Midterm Elections"),
                     body: l(
-                        "app.guide.card.midterm.body.reused_offices",
-                        "Offices below are pulled from your state timeline and matched to plain-English responsibilities."
+                        "app.guide.card.midterm.body.concise_halfway",
+                        "A midterm election is a U.S. election that happens halfway through a president’s 4-year term"
                     ),
                     accent: .midterm,
                     kind: .officesInfluence,
@@ -1698,7 +1675,44 @@ struct NYCMayoralElectionView: View {
         let timelineItems = timelineDerivedBallotItems(for: election, includePartyFilter: false)
         let integrated = officePowerLineItems(forTimelineTitles: timelineItems)
         let fallback = framedOfficeInfluenceItems(from: timelineItems)
-        return integrated.isEmpty ? fallback : integrated
+        let source = integrated.isEmpty ? fallback : integrated
+        return coreMidtermOfficeItems(from: source)
+    }
+
+    private func coreMidtermOfficeItems(from items: [String]) -> [String] {
+        let orderedKeys = ["us senate", "us house", "governor"]
+        var matchedByKey: [String: String] = [:]
+
+        for item in items {
+            guard let key = officeKeyForInfluenceItem(item),
+                  orderedKeys.contains(key),
+                  matchedByKey[key] == nil else {
+                continue
+            }
+            matchedByKey[key] = item
+        }
+
+        let ordered = orderedKeys.compactMap { matchedByKey[$0] }
+        if !ordered.isEmpty {
+            return ordered
+        }
+
+        return Array(items.prefix(3))
+    }
+
+    private func officeKeyForInfluenceItem(_ item: String) -> String? {
+        let firstLine = item
+            .components(separatedBy: .newlines)
+            .first?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        guard !firstLine.isEmpty else { return nil }
+
+        let title = firstLine
+            .split(separator: ":", maxSplits: 1)
+            .first
+            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) } ?? firstLine
+
+        return normalizedOfficePowerKey(from: title)
     }
 
     private func officePowerLineItems(forTimelineTitles titles: [String]) -> [String] {
@@ -1719,7 +1733,7 @@ struct NYCMayoralElectionView: View {
 
         for title in source {
             if let row = officePowerRow(forOfficeTitle: title) {
-                let line = "\(row.office): \(row.plainEnglishResponsibility)\n    Example: \(row.currentExample)"
+                let line = "\(row.office): \(row.plainEnglishResponsibility)"
                 if seen.insert(line).inserted {
                     output.append(line)
                 }
@@ -2422,9 +2436,7 @@ struct NYCMayoralElectionView: View {
                     .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
                     .filter { !$0.isEmpty }
                 let firstLine = lines.first ?? ""
-                let officeName = firstLine.split(separator: ":", maxSplits: 1).first.map(String.init)
-                let rotatingExampleLine = rotatingOfficeExampleLine(forOfficeTitle: officeName)
-                let detailLines = rotatingExampleLine.map { [$0] } ?? Array(lines.dropFirst())
+                let detailLines = Array(lines.dropFirst())
 
                 VStack(alignment: .leading, spacing: 4) {
                     if let splitIndex = firstLine.firstIndex(of: ":") {
@@ -2446,9 +2458,6 @@ struct NYCMayoralElectionView: View {
 
                     ForEach(Array(detailLines.enumerated()), id: \.offset) { _, line in
                         officesInfluenceDetailLineView(line)
-                            .id(line)
-                            .transition(.opacity)
-                            .animation(reduceMotion ? nil : .easeInOut(duration: 0.35), value: line)
                             .padding(.leading, 12)
                     }
                 }
@@ -2733,18 +2742,6 @@ struct NYCMayoralElectionView: View {
         }
 
         return ElectionGuideParsedBallotMeasureItem(title: headline, summary: summary, dateText: nil)
-    }
-
-    private func rotatingOfficeExampleLine(forOfficeTitle officeTitle: String?) -> String? {
-        guard let officeTitle,
-              let key = normalizedOfficePowerKey(from: officeTitle),
-              let examples = Self.officePowerExamplesByKey[key],
-              !examples.isEmpty else {
-            return nil
-        }
-
-        let index = officeExampleRotationTick % examples.count
-        return "Example: \(examples[index])"
     }
 
     @ViewBuilder
