@@ -134,16 +134,19 @@ struct MyInfoPanelView: View {
                             : l("my_info.action.current_address", "Current Address"),
                             systemImage: "location.fill"
                         )
+                        .font(.subheadline.weight(.semibold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding()
                     .background(VoteNowColors.surfaceWhite)
-                    .cornerRadius(10)
                     .foregroundColor(VoteNowColors.primaryCTA)
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
                             .stroke(VoteNowColors.primaryCTA.opacity(0.28), lineWidth: 1)
                     )
+                    .buttonStyle(.plain)
                     .disabled(isResolvingCurrentAddress)
 
                     Button {
@@ -152,12 +155,19 @@ struct MyInfoPanelView: View {
                         }
                     } label: {
                         Text("my_info.action.show_reps", tableName: "MyInfoPanel")
+                            .font(.subheadline.weight(.semibold))
+                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 10)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding()
                     .background(VoteNowColors.infoSurfaceBlue)
-                    .cornerRadius(10)
                     .foregroundColor(VoteNowColors.richBlue)
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .stroke(VoteNowColors.richBlue.opacity(0.24), lineWidth: 1)
+                    )
+                    .buttonStyle(.plain)
                 } header: {
                     Text("my_info.section.zip.header", tableName: "MyInfoPanel")
                         .font(.headline.weight(.bold))
