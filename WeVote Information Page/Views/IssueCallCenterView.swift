@@ -30,6 +30,7 @@ struct IssueCallCenterView: View {
     @State private var isMAPCCardTransitioning = false
     @State private var mapcTransitionResetTask: Task<Void, Never>?
     @State private var exampleSearchQuery: String = ""
+    @State private var showAllPremadeExamples = false
     private let userAddressLine: String
     private let residencyNotice: String
     private let initialTab: CivicIssueCallTab
@@ -148,6 +149,7 @@ struct IssueCallCenterView: View {
     private static let allExamplesFilterLabel = "All"
     private static let urgentExamplesFilterLabel = "Urgent"
     private static let searchExamplesFilterLabel = "Search issues"
+    private static let premadeCollapsedCardLimit = 3
 
     private var exampleCategoryOptions: [String] {
         var seen = Set<String>()
@@ -192,6 +194,17 @@ struct IssueCallCenterView: View {
             }
         }
         return baseExamples
+    }
+
+    private var visiblePremadeExamples: [CivicExampleIssueCard] {
+        if showAllPremadeExamples {
+            return filteredExamples
+        }
+        return Array(filteredExamples.prefix(Self.premadeCollapsedCardLimit))
+    }
+
+    private var hasHiddenPremadeExamples: Bool {
+        filteredExamples.count > Self.premadeCollapsedCardLimit
     }
 
     private var exampleCategoryColorMap: [String: Color] {
@@ -285,7 +298,7 @@ struct IssueCallCenterView: View {
             }
         }
         .task {
-            await viewModel.loadExamplesAndHistory()
+            await viewModel.loadExamplesAndHistoryIfNeeded()
         }
         .alert(l("app.issue_call.alert.error", "Issue Call"), isPresented: Binding(
             get: { viewModel.errorMessage != nil },
@@ -367,6 +380,13 @@ struct IssueCallCenterView: View {
             if !exampleCategoryOptions.contains(selectedExampleCategory) {
                 selectedExampleCategory = Self.allExamplesFilterLabel
             }
+            showAllPremadeExamples = false
+        }
+        .onChange(of: selectedExampleCategory) { _, _ in
+            showAllPremadeExamples = false
+        }
+        .onChange(of: exampleSearchQuery) { _, _ in
+            showAllPremadeExamples = false
         }
         .onChange(of: viewModel.callBriefs.map(\.id)) { _, ids in
             let signature = ids.joined(separator: "|")
@@ -1444,7 +1464,7 @@ struct IssueCallCenterView: View {
                     }
                 }
 
-                ForEach(filteredExamples) { example in
+                ForEach(visiblePremadeExamples) { example in
                     VStack(alignment: .leading, spacing: 8) {
                         VStack(alignment: .leading, spacing: 6) {
                             HStack(alignment: .firstTextBaseline, spacing: 8) {
@@ -1536,6 +1556,34 @@ struct IssueCallCenterView: View {
                             .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
                     )
                 }
+
+                if hasHiddenPremadeExamples {
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.24)) {
+                            showAllPremadeExamples.toggle()
+                        }
+                    } label: {
+                        HStack(spacing: 8) {
+                            Text(showAllPremadeExamples ? "Show less" : "More...")
+                                .font(.subheadline.weight(.semibold))
+                            Spacer(minLength: 0)
+                            Image(systemName: showAllPremadeExamples ? "chevron.up" : "chevron.down")
+                                .font(.caption.weight(.semibold))
+                        }
+                        .foregroundColor(VoteNowColors.primaryCTA)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(VoteNowColors.surfaceWhite)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("issue_call.examples.toggle_more")
+                }
             }
             .padding(.horizontal, 16)
             .padding(.top, 6)
@@ -1592,6 +1640,7 @@ struct IssueCallCenterView: View {
 
     private var civicScoreSummaryCard: some View {
         let stats = viewModel.callStats
+        let outcomeBreakdown = viewModel.outcomeBreakdown
         let displayedTotalCalls = max(stats.totalVoteNowCalls, animatedTotalVoteNowCalls ?? 0)
         let displayedUserCalls = max(stats.userCallCount, animatedUserCallCount ?? 0)
 
@@ -1629,6 +1678,16 @@ struct IssueCallCenterView: View {
                     label: l("app.issue_call.score.stats.user_calls", "Your number of calls"),
                     value: displayedUserCalls
                 )
+
+                Text(
+                    "\(outcomeBreakdown.contacted.formatted(.number)) Contacted, " +
+                        "\(outcomeBreakdown.voicemail.formatted(.number)) Voicemail, " +
+                        "\(outcomeBreakdown.unavailable.formatted(.number)) Unavailable"
+                )
+                .font(.caption.weight(.semibold))
+                .foregroundColor(VoteNowColors.secondaryText)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
             }
         }
         .padding(12)

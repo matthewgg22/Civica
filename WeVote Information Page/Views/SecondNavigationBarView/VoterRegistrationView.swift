@@ -24,6 +24,27 @@ private struct RegistrationGuideStripMinYPreferenceKey: PreferenceKey {
     }
 }
 
+private struct RegistrationSectionMinYPreferenceKey: PreferenceKey {
+    static var defaultValue: [String: CGFloat] = [:]
+
+    static func reduce(value: inout [String: CGFloat], nextValue: () -> [String: CGFloat]) {
+        value.merge(nextValue(), uniquingKeysWith: { _, new in new })
+    }
+}
+
+private struct BottomRoundedRectangle: Shape {
+    let radius: CGFloat
+
+    func path(in rect: CGRect) -> Path {
+        let bezier = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: [.bottomLeft, .bottomRight],
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        return Path(bezier.cgPath)
+    }
+}
+
 private struct VoterRegistrationCard: Identifiable {
     enum Action {
         case openURL(URL)
@@ -72,6 +93,7 @@ struct VoterRegistrationView: View {
     @State private var showingDeadlineActions = false
     @State private var measuredStickyHeaderHeight: CGFloat = 0
     @State private var registrationGuideStripMinY: CGFloat = .greatestFiniteMagnitude
+    @State private var currentlyViewedPhase: VoterRegistrationCard.Phase?
     @State private var showStepOneWhyRegisterDropdown = false
     @State private var showStepTwoPollIssuesDropdown = false
     @State private var showStepThreeBallotErrorDropdown = false
@@ -331,7 +353,7 @@ struct VoterRegistrationView: View {
                 phase: .preElection,
                 stepLabel: l("app.registration.step.1.reshuffle", "STEP 1"),
                 title: l("app.registration.card.deadline.title", "Register before the deadline"),
-                summary: l("app.registration.card.deadline.summary", "Each State has its own deadlines and requirements."),
+                summary: "",
                 bullets: [],
                 primaryActionTitle: l("app.registration.action.start_registration", "Start registration"),
                 primaryAction: .openURL(registrationPortalURL),
@@ -399,7 +421,7 @@ struct VoterRegistrationView: View {
             (
                 .preElection,
                 prePhaseHeaderText,
-                l("app.registration.phase.pre.subtitle", "Confirm your registration details before voting starts"),
+                l("app.registration.phase.pre.subtitle", "Confirm your details before voting starts"),
                 VoteNowColors.appBackground,
                 VoteNowColors.primaryCTA.opacity(0.68)
             ),
@@ -518,6 +540,9 @@ struct VoterRegistrationView: View {
                     .onPreferenceChange(RegistrationGuideStripMinYPreferenceKey.self) { minY in
                         registrationGuideStripMinY = minY
                     }
+                    .onPreferenceChange(RegistrationSectionMinYPreferenceKey.self) { positions in
+                        updateCurrentlyViewedPhase(with: positions)
+                    }
                 }
             }
             .navigationBarHidden(true)
@@ -570,6 +595,14 @@ struct VoterRegistrationView: View {
         .padding(.vertical, 10)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(VoteNowColors.appBackground)
+        .background(
+            GeometryReader { geo in
+                Color.clear.preference(
+                    key: RegistrationSectionMinYPreferenceKey.self,
+                    value: [section.id: geo.frame(in: .named("VoterRegistrationScroll")).minY]
+                )
+            }
+        )
     }
 
     @ViewBuilder
@@ -1567,16 +1600,17 @@ struct VoterRegistrationView: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                BottomRoundedRectangle(radius: 12)
                     .fill(VoteNowColors.surfaceWhite)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(VoteNowColors.primaryCTA.opacity(0.12), lineWidth: 1)
+                BottomRoundedRectangle(radius: 12)
+                    .stroke(VoteNowColors.primaryCTA.opacity(0.22), lineWidth: 2)
             )
+            .clipShape(BottomRoundedRectangle(radius: 12))
             .shadow(color: VoteNowColors.primaryText.opacity(0.06), radius: 6, x: 0, y: 2)
             .padding(.horizontal, 16)
-            .padding(.top, 2)
+            .padding(.top, 0)
             .padding(.bottom, 6)
     }
 
@@ -1585,18 +1619,37 @@ struct VoterRegistrationView: View {
         phase: VoterRegistrationCard.Phase,
         proxy: ScrollViewProxy
     ) -> some View {
+        let isActive = phase == activeGuidePhase
         return Button {
+            currentlyViewedPhase = phase
             withAnimation(.interactiveSpring(response: 0.72, dampingFraction: 0.9, blendDuration: 0.2)) {
                 proxy.scrollTo(phase, anchor: .top)
             }
         } label: {
             Text(title)
-                .font(.headline.weight(phase == phaseForNow ? .bold : .semibold))
-                .foregroundColor(phase == phaseForNow ? VoteNowColors.primaryCTA : VoteNowColors.primaryText)
+                .font(.headline.weight(isActive ? .bold : .semibold))
+                .foregroundColor(isActive ? .white : VoteNowColors.primaryText)
                 .lineLimit(1)
                 .minimumScaleFactor(0.86)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(
+                    Capsule(style: .continuous)
+                        .fill(isActive ? guidePhaseHighlightColor(for: phase) : .clear)
+                )
         }
         .buttonStyle(.plain)
+    }
+
+    private func guidePhaseHighlightColor(for phase: VoterRegistrationCard.Phase) -> Color {
+        switch phase {
+        case .preElection:
+            return VoteNowColors.primaryCTA
+        case .duringElection:
+            return VoteNowColors.warningAmber
+        case .postElection:
+            return VoteNowColors.urgentCTA
+        }
     }
 
     private var preSectionBackgroundColor: Color {
@@ -1665,6 +1718,27 @@ struct VoterRegistrationView: View {
 
     private var shouldShowStickyGuideStrip: Bool {
         registrationGuideStripMinY <= stickyHeaderOffset + 2
+    }
+
+    private var activeGuidePhase: VoterRegistrationCard.Phase {
+        currentlyViewedPhase ?? phaseForNow
+    }
+
+    private func updateCurrentlyViewedPhase(with positions: [String: CGFloat]) {
+        let tracked = groupedSections.compactMap { section -> (phase: VoterRegistrationCard.Phase, minY: CGFloat)? in
+            guard let minY = positions[section.id] else { return nil }
+            return (phase: section.phase, minY: minY)
+        }
+        guard !tracked.isEmpty else { return }
+
+        let targetY = stickyHeaderOffset + 8
+        let sorted = tracked.sorted { $0.minY < $1.minY }
+
+        if let visible = sorted.last(where: { $0.minY <= targetY }) {
+            currentlyViewedPhase = visible.phase
+        } else {
+            currentlyViewedPhase = sorted.first?.phase
+        }
     }
 
     private func openMyInfoPanel() {

@@ -16,7 +16,7 @@ struct ElectionsRowView: View {
     @EnvironmentObject var planVM: PlanViewModel
     @State private var now = Date()
     @State private var showSurvey = false
-    private let timer = Timer.publish(every: 1, on: .main, in: .common)
+    private let timer = Timer.publish(every: 60, on: .main, in: .common)
         .autoconnect()
 
     var body: some View {
@@ -101,9 +101,8 @@ struct ElectionsRowView: View {
         let days  = Int(interval) / 86_400
         let hours = (Int(interval) % 86_400) / 3_600
         let mins  = (Int(interval) % 3_600) / 60
-        let secs  = Int(interval) % 60
-        return String(format: "%02dd %02dh %02dm %02ds",
-                      days, hours, mins, secs)
+        return String(format: "%02dd %02dh %02dm",
+                      days, hours, mins)
     }
 
     // Medium‐style date only

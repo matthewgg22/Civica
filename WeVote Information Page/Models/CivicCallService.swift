@@ -881,6 +881,14 @@ final class IssueCallCenterViewModel: ObservableObject {
         )
     }
 
+    struct CivicOutcomeBreakdown: Sendable {
+        let contacted: Int
+        let voicemail: Int
+        let unavailable: Int
+
+        static let empty = CivicOutcomeBreakdown(contacted: 0, voicemail: 0, unavailable: 0)
+    }
+
     struct PendingCallLaunch: Sendable {
         let launchEventID: String
         let briefID: String
@@ -915,6 +923,37 @@ final class IssueCallCenterViewModel: ObservableObject {
     @Published var pendingCallLaunch: PendingCallLaunch?
     @Published var requiresDraftApproval = false
 
+    var outcomeBreakdown: CivicOutcomeBreakdown {
+        var contacted = 0
+        var voicemail = 0
+        var unavailable = 0
+        var seenLogIDs = Set<String>()
+
+        for group in historyGroups {
+            for log in group.logs {
+                let logID = log.id.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !logID.isEmpty, !seenLogIDs.insert(logID).inserted {
+                    continue
+                }
+
+                switch log.outcome {
+                case .voicemail:
+                    voicemail += 1
+                case .unavailable:
+                    unavailable += 1
+                case .stafferReached, .supportive, .opposed, .undecided, .followUpRequested, .other:
+                    contacted += 1
+                }
+            }
+        }
+
+        return CivicOutcomeBreakdown(
+            contacted: contacted,
+            voicemail: voicemail,
+            unavailable: unavailable
+        )
+    }
+
     let repTargets: [CivicRepTarget]
     private let officialLookupByRepID: [String: Official]
     private let officialLookupByName: [String: Official]
@@ -927,6 +966,11 @@ final class IssueCallCenterViewModel: ObservableObject {
     private let supabaseManager: SupabaseManager
     private let logger = Logger(subsystem: "VoteNow", category: "IssueCallCenter")
     private var deferredSnapshotTask: Task<Void, Never>?
+    private var hasLoadedExamplesAndHistoryThisSession = false
+    private var callScoreRefreshTask: Task<Void, Never>?
+    private var lastCallScoreRefreshAt: Date = .distantPast
+    private var lastCallScoreRefreshUserID: String?
+    private let callScoreRefreshCooldown: TimeInterval = 8
     private var activeMAPCSessionID: UUID?
     private var pendingGeneratedResolution: CivicIssueResolutionResponse?
     private let zipFallbackToken = "[ZIPCODE]"
@@ -1054,6 +1098,12 @@ final class IssueCallCenterViewModel: ObservableObject {
         }
 
         await refreshCallScoreData(for: userID)
+    }
+
+    func loadExamplesAndHistoryIfNeeded(force: Bool = false) async {
+        guard force || !hasLoadedExamplesAndHistoryThisSession else { return }
+        hasLoadedExamplesAndHistoryThisSession = true
+        await loadExamplesAndHistory()
     }
 
     private func mergePremadeExamples(
@@ -1404,7 +1454,7 @@ final class IssueCallCenterViewModel: ObservableObject {
             if completed {
                 lastCompletionResult = response
                 pendingCallLaunch = nil
-                await refreshCallScoreData(for: userID)
+                await refreshCallScoreData(for: userID, force: true)
             } else {
                 lastCompletionResult = nil
             }
@@ -1511,7 +1561,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         saveSnapshot()
     }
 
-    func refreshCallScoreData(for userID: String? = nil) async {
+    func refreshCallScoreData(for userID: String? = nil, force: Bool = false) async {
         let resolvedUserID: String
         if let userID {
             resolvedUserID = userID
@@ -1519,6 +1569,32 @@ final class IssueCallCenterViewModel: ObservableObject {
             resolvedUserID = await userIDForRequest()
         }
 
+        if let inFlight = callScoreRefreshTask {
+            await inFlight.value
+            if !force { return }
+        }
+
+        let now = Date()
+        if !force,
+           lastCallScoreRefreshUserID == resolvedUserID,
+           now.timeIntervalSince(lastCallScoreRefreshAt) < callScoreRefreshCooldown {
+            return
+        }
+
+        lastCallScoreRefreshAt = now
+        lastCallScoreRefreshUserID = resolvedUserID
+
+        let refreshTask = Task { [weak self] in
+            guard let self else { return }
+            await self.performCallScoreRefreshData(for: resolvedUserID)
+        }
+
+        callScoreRefreshTask = refreshTask
+        await refreshTask.value
+        callScoreRefreshTask = nil
+    }
+
+    private func performCallScoreRefreshData(for resolvedUserID: String) async {
         async let summaryTask = apiClient.fetchCallScoreSummary(userID: resolvedUserID)
         async let breakdownTask = apiClient.fetchCallScoreBreakdown(userID: resolvedUserID)
         async let historyTask = apiClient.fetchCallScoreHistory(userID: resolvedUserID, limit: 30)

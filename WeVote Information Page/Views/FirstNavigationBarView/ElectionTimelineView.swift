@@ -214,7 +214,11 @@ struct ElectionTimelineView: View {
                                     showYearLabel: priorYear != currentYear,
                                     onCardTap: {
                                         _ = withAnimation(.easeInOut(duration: 0.2)) {
-                                            expandedCardIDs.insert(election.id)
+                                            if expandedCardIDs.contains(election.id) {
+                                                expandedCardIDs.remove(election.id)
+                                            } else {
+                                                expandedCardIDs.insert(election.id)
+                                            }
                                         }
                                         selectElectionFromTimeline(election.id)
                                     }
@@ -792,32 +796,18 @@ struct ElectionTimelineView: View {
                 Button {
                     openVotingStepsTab()
                 } label: {
-                    Text(l("app.timeline.action.how_to_vote", "How to Vote"))
-                        .font(.callout.weight(.semibold))
-                        .foregroundColor(VoteNowColors.primaryText)
+                    Label(l("app.timeline.action.how_to_vote", "How to Vote"), systemImage: "list.bullet.clipboard.fill")
+                        .font(.subheadline.weight(.semibold))
                         .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.vertical, 6)
-                        .padding(.horizontal, 12)
-                        .background(
-                            Capsule(style: .continuous)
-                                .fill(VoteNowColors.brandSoftBlue.opacity(0.95))
-                        )
-                        .overlay(
-                            Capsule(style: .continuous)
-                                .stroke(VoteNowColors.primaryCTA.opacity(0.32), lineWidth: 1)
-                        )
+                        .padding(.vertical, 4)
                 }
-                .buttonStyle(.plain)
-                .voteNowPillDualOrbit(
-                    redColor: VoteNowColors.ctaRed.opacity(0.94),
-                    blueColor: VoteNowColors.ctaBlue.opacity(0.88),
-                    strokeThickness: 2.8,
-                    loopDuration: 4.95,
-                    glowIntensity: 0.28,
-                    idleOpacity: 0.24,
-                    borderInset: 0.65,
-                    segmentLength: 0.34,
-                    separatorThickness: 0.75
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
+                .tint(VoteNowColors.brandSoftBlue.opacity(0.95))
+                .foregroundStyle(VoteNowColors.primaryText)
+                .overlay(
+                    Capsule(style: .continuous)
+                        .stroke(VoteNowColors.primaryCTA.opacity(0.32), lineWidth: 1)
                 )
                 .shadow(color: VoteNowColors.primaryCTA.opacity(0.14), radius: 3, x: 0, y: 1)
                 .contentShape(Capsule(style: .continuous))

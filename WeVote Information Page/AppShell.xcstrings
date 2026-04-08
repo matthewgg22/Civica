@@ -3187,7 +3187,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deadlines vary by state and method. Register early so you have time to fix any issues before polls open."
+            "value": "Each State has its own deadlines and requirements."
           }
         },
         "es": {
@@ -3223,13 +3223,13 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deadlines vary by state and method. Register early so you have time to fix any issues before polls open."
+            "value": "Each State has its own deadlines and requirements."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deadlines vary by state and method. Register early so you have time to fix any issues before polls open."
+            "value": "Each State has its own deadlines and requirements."
           }
         }
       }
@@ -25712,7 +25712,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Confirm your registration details before voting starts"
+            "value": "Confirm your details before voting starts"
           }
         },
         "es": {
@@ -25748,13 +25748,13 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Confirm your registration details before voting starts"
+            "value": "Confirm your details before voting starts"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Confirm your registration details before voting starts"
+            "value": "Confirm your details before voting starts"
           }
         }
       }
