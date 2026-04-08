@@ -36,7 +36,6 @@ enum Tab: CaseIterable {
     case callYourReps
     case electionTimeline
     case registration
-    case electionGuide
 
     var iconName: String {
         switch self {
@@ -44,7 +43,6 @@ enum Tab: CaseIterable {
         case .callYourReps:       return "phone.fill"
         case .electionTimeline:   return "calendar"
         case .registration:       return "person.badge.plus"
-        case .electionGuide:      return "mappin.and.ellipse"
         }
     }
 }
@@ -447,16 +445,6 @@ struct ContentView: View {
                 }
                 .tag(Tab.registration)
 
-            // 5. Election Guide
-            NYCMayoralElectionView()
-                .tabItem {
-                    Label {
-                        Text("app.tab.election_guide", tableName: "AppShell")
-                    } icon: {
-                        Image(systemName: Tab.electionGuide.iconName)
-                    }
-                }
-                .tag(Tab.electionGuide)
         }
         .environmentObject(mapvPlanStore)
         .coordinateSpace(name: "SpreadSpace")

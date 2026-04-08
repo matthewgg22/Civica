@@ -21737,7 +21737,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Call my Rep"
+            "value": "Call Your Reps"
           }
         },
         "es": {
@@ -21773,13 +21773,13 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Call my Rep"
+            "value": "Call Your Reps"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Call my Rep"
+            "value": "Call Your Reps"
           }
         }
       }
@@ -22744,7 +22744,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Next Representative"
+            "value": "Call Next Representative"
           }
         },
         "es": {
@@ -22780,13 +22780,13 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Next Representative"
+            "value": "Call Next Representative"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Next Representative"
+            "value": "Call Next Representative"
           }
         }
       }

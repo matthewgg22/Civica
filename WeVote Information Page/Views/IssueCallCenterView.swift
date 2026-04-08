@@ -31,6 +31,12 @@ struct IssueCallCenterView: View {
     @State private var mapcTransitionResetTask: Task<Void, Never>?
     @State private var exampleSearchQuery: String = ""
     @State private var showAllPremadeExamples = false
+    @State private var assistantComposerText: String = ""
+    @State private var assistantMessages: [AssistantChatMessage] = []
+    @State private var assistantIsThinking = false
+    @State private var assistantFlowStage: AssistantFlowStage = .awaitingPrompt
+    @State private var hasPostedCurrentDraftBackground = false
+    @State private var animatedAssistantMessageIDs: Set<UUID> = []
     private let userAddressLine: String
     private let residencyNotice: String
     private let initialTab: CivicIssueCallTab
@@ -40,6 +46,62 @@ struct IssueCallCenterView: View {
     private enum FocusedField: Hashable {
         case concern
         case billRef
+    }
+
+    private enum AssistantFlowStage {
+        case awaitingPrompt
+        case awaitingBackgroundApproval
+        case awaitingMapcStart
+    }
+
+    private struct AssistantRefinementSnapshot: Codable {
+        let rawUserInput: String
+        let normalizedIssue: String
+        let briefBackground: String
+        let commonInterpretations: [String]
+        let clarifyingQuestions: [String]
+        let recommendedPrompt: String
+        let mapcSections: [String: String]
+        let confidence: String
+        let groundingType: String
+
+        enum CodingKeys: String, CodingKey {
+            case rawUserInput = "raw_user_input"
+            case normalizedIssue = "normalized_issue"
+            case briefBackground = "brief_background"
+            case commonInterpretations = "common_interpretations"
+            case clarifyingQuestions = "clarifying_questions"
+            case recommendedPrompt = "recommended_prompt"
+            case mapcSections = "mapc_sections"
+            case confidence
+            case groundingType = "grounding_type"
+        }
+    }
+
+    private struct AssistantChatMessage: Identifiable {
+        enum Role {
+            case user
+            case assistant
+        }
+
+        enum MessageKind {
+            case plain
+            case structured
+            case script
+        }
+
+        let id: UUID
+        let role: Role
+        let text: String
+        let kind: MessageKind
+
+        static func user(_ text: String) -> AssistantChatMessage {
+            AssistantChatMessage(id: UUID(), role: .user, text: text, kind: .plain)
+        }
+
+        static func assistant(_ text: String, kind: MessageKind = .plain) -> AssistantChatMessage {
+            AssistantChatMessage(id: UUID(), role: .assistant, text: text, kind: kind)
+        }
     }
 
     private struct MAPCIssueGainState: Sendable {
@@ -258,7 +320,10 @@ struct IssueCallCenterView: View {
                     } else {
                         VStack(spacing: 12) {
                             headerSection
-                            topTabSelector
+                            if focusedField == nil {
+                                topTabSelector
+                                    .transition(.move(edge: .top).combined(with: .opacity))
+                            }
                             Group {
                                 switch viewModel.selectedTab {
                                 case .assistant:
@@ -453,7 +518,7 @@ struct IssueCallCenterView: View {
                 VoteNowLogoIcon(size: 50)
                     .frame(width: 50, height: 50)
 
-                Text(l("app.issue_call.title", "Call my Rep"))
+                Text(l("app.issue_call.title", "Call Your Reps"))
                     .font(.system(size: 38, weight: .bold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.84)
@@ -592,43 +657,71 @@ struct IssueCallCenterView: View {
     private var topTabSelector: some View {
         HStack(spacing: 0) {
             Spacer(minLength: 0)
-            HStack(spacing: 10) {
-                ForEach(Array(visibleTabs.enumerated()), id: \.offset) { index, tab in
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.18)) {
-                            viewModel.selectedTab = tab
-                        }
-                    } label: {
-                        Text(tabNavigationTitle(for: tab))
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundColor(viewModel.selectedTab == tab ? VoteNowColors.warningAmber.opacity(0.92) : VoteNowColors.primaryText)
-                            .padding(.vertical, 2)
-                            .overlay(alignment: .bottom) {
-                                Capsule()
-                                    .fill(viewModel.selectedTab == tab ? VoteNowColors.primaryCTA : .clear)
-                                    .frame(height: 2)
-                                    .offset(y: 5)
-                            }
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("issue_call.tabs.\(tab.rawValue)")
-
-                    if index < visibleTabs.count - 1 {
-                        Text("|")
-                            .font(.subheadline.weight(.bold))
-                            .foregroundColor(VoteNowColors.mutedText.opacity(0.7))
-                            .padding(.vertical, 1)
-                    }
+            HStack(spacing: 8) {
+                ForEach(visibleTabs, id: \.self) { tab in
+                    issueCallTopTabButton(tab)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .center)
+            .padding(.horizontal, 2)
+            .padding(.vertical, 2)
             Spacer(minLength: 0)
         }
-        .frame(maxWidth: .infinity, alignment: .center)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 5)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(VoteNowColors.surfaceWhite)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(VoteNowColors.primaryCTA.opacity(0.22), lineWidth: 2)
+        )
+        .shadow(color: VoteNowColors.primaryText.opacity(0.06), radius: 6, x: 0, y: 2)
         .padding(.horizontal, 16)
-        .padding(.top, 2)
-        .padding(.bottom, 2)
+        .padding(.top, 0)
+        .padding(.bottom, 4)
         .background(VoteNowColors.brandSoftBlue)
         .accessibilityIdentifier("issue_call.tabs")
+    }
+
+    private func issueCallTopTabButton(_ tab: CivicIssueCallTab) -> some View {
+        let isActive = viewModel.selectedTab == tab
+        return Button {
+            withAnimation(.interactiveSpring(response: 0.24, dampingFraction: 0.92, blendDuration: 0.16)) {
+                viewModel.selectedTab = tab
+            }
+        } label: {
+            Text(tabNavigationTitle(for: tab))
+                .font(.caption.weight(isActive ? .bold : .semibold))
+                .foregroundColor(isActive ? .white : VoteNowColors.primaryText)
+                .lineLimit(1)
+                .minimumScaleFactor(0.68)
+                .allowsTightening(true)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity, minHeight: 30, alignment: .center)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(
+                    Capsule(style: .continuous)
+                        .fill(isActive ? issueCallTopTabHighlightColor(for: tab) : .clear)
+                )
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("issue_call.tabs.\(tab.rawValue)")
+    }
+
+    private func issueCallTopTabHighlightColor(for tab: CivicIssueCallTab) -> Color {
+        switch tab {
+        case .assistant:
+            return VoteNowColors.primaryCTA
+        case .examples:
+            return VoteNowColors.warningAmber
+        case .civicScore:
+            return VoteNowColors.urgentCTA
+        case .history:
+            return VoteNowColors.primaryCTA
+        }
     }
 
     private func tabNavigationTitle(for tab: CivicIssueCallTab) -> String {
@@ -640,7 +733,7 @@ struct IssueCallCenterView: View {
         case .history:
             return "Rules"
         case .civicScore:
-            return "Civic Score"
+            return "Your Activity"
         }
     }
 
@@ -676,54 +769,276 @@ struct IssueCallCenterView: View {
     }
 
     private var assistantTab: some View {
+        VStack(spacing: 0) {
+            assistantChatBody
+            assistantChatComposer
+        }
+        .background(VoteNowColors.background.opacity(0.2))
+        .onAppear {
+            seedAssistantChatIfNeeded()
+            if assistantComposerText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                assistantComposerText = viewModel.concernText
+            }
+        }
+    }
+
+    private var assistantChatBody: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                VStack(alignment: .leading, spacing: 14) {
-                    let showComposerOnly = didCompleteMAPC || viewModel.isSubmitting
-                    let awaitingDraftApproval = viewModel.requiresDraftApproval
-
+                LazyVStack(alignment: .leading, spacing: 12) {
                     if viewModel.lastCompletionResult != nil {
                         completionFeedbackCard
                     }
 
-                    if showComposerOnly || viewModel.issueTitle.isEmpty {
-                        concernComposerCard
-                    } else {
-                        issueSummaryCard
+                    ForEach(assistantMessages) { message in
+                        assistantMessageRow(message)
+                            .id(message.id)
                     }
 
-                    if !showComposerOnly,
-                       !awaitingDraftApproval,
-                       viewModel.filteredBriefs.isEmpty,
-                       !viewModel.issueTitle.isEmpty {
-                        Text(l("app.issue_call.empty.filtered", "No briefs match this representative filter."))
-                            .font(.subheadline)
-                            .foregroundColor(VoteNowColors.mutedText)
-                    }
-
-                    if !showComposerOnly, awaitingDraftApproval {
-                        draftApprovalCard
-                        if let brief = viewModel.activeBrief {
-                            draftPreviewCard(brief)
-                                .id(brief.id)
+                    if assistantIsThinking {
+                        HStack(spacing: 8) {
+                            AssistantThinkingLogoView()
+                            Text("Building background + script preview…")
+                                .font(.footnote)
+                                .foregroundColor(VoteNowColors.mutedText)
                         }
-                    } else if !showComposerOnly, let brief = viewModel.activeBrief {
-                        repBriefCard(brief)
-                            .id(brief.id)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 10)
+                        .background(VoteNowColors.surfaceWhite)
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                        )
+                        .id("assistant-typing")
+                    }
+
+                    if assistantFlowStage == .awaitingBackgroundApproval {
+                        assistantBackgroundActions
+                            .id("assistant-background-actions")
+                    } else if assistantFlowStage == .awaitingMapcStart {
+                        assistantStartMAPCActions
+                            .id("assistant-mapc-actions")
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.bottom, 24)
+                .padding(.top, 8)
+                .padding(.bottom, 20)
             }
             .scrollDismissesKeyboard(.interactively)
-            .onChange(of: viewModel.activeBriefID) { _, id in
-                guard let id else { return }
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    proxy.scrollTo(id, anchor: .top)
+            .onChange(of: assistantMessages.count) { _, _ in
+                guard let lastID = assistantMessages.last?.id else { return }
+                withAnimation(.easeOut(duration: 0.18)) {
+                    proxy.scrollTo(lastID, anchor: .bottom)
                 }
             }
-            .animation(.easeInOut(duration: 0.28), value: viewModel.activeBriefID)
+            .onChange(of: assistantIsThinking) { _, thinking in
+                guard thinking else { return }
+                withAnimation(.easeOut(duration: 0.18)) {
+                    proxy.scrollTo("assistant-typing", anchor: .bottom)
+                }
+            }
+            .onChange(of: assistantFlowStage) { _, stage in
+                let anchorID: String
+                switch stage {
+                case .awaitingBackgroundApproval:
+                    anchorID = "assistant-background-actions"
+                case .awaitingMapcStart:
+                    anchorID = "assistant-mapc-actions"
+                case .awaitingPrompt:
+                    return
+                }
+                withAnimation(.easeOut(duration: 0.18)) {
+                    proxy.scrollTo(anchorID, anchor: .bottom)
+                }
+            }
         }
+    }
+
+    @ViewBuilder
+    private func assistantMessageRow(_ message: AssistantChatMessage) -> some View {
+        let isUser = message.role == .user
+
+        HStack {
+            if isUser { Spacer(minLength: 28) }
+            VStack(alignment: .leading, spacing: 6) {
+                if message.kind == .structured {
+                    Text("Issue Snapshot")
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(VoteNowColors.mutedText)
+                } else if message.kind == .script {
+                    Text("Script Preview")
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(VoteNowColors.mutedText)
+                }
+
+                if isUser {
+                    Text(message.text)
+                        .font(message.kind == .structured ? .system(.footnote, design: .monospaced) : .body)
+                        .foregroundColor(.white)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .textSelection(.enabled)
+                } else {
+                    AssistantTypewriterText(
+                        text: message.text,
+                        animate: !reduceMotion && !animatedAssistantMessageIDs.contains(message.id),
+                        onFinished: {
+                            animatedAssistantMessageIDs.insert(message.id)
+                        }
+                    )
+                    .font(message.kind == .structured ? .system(.footnote, design: .monospaced) : .body)
+                    .foregroundColor(VoteNowColors.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .textSelection(.enabled)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(isUser ? VoteNowColors.primaryCTA : VoteNowColors.surfaceWhite)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(isUser ? .clear : VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+            )
+            .frame(maxWidth: .infinity, alignment: isUser ? .trailing : .leading)
+            if !isUser { Spacer(minLength: 28) }
+        }
+    }
+
+    private var assistantChatComposer: some View {
+        VStack(spacing: 8) {
+            HStack(spacing: 8) {
+                TextField(
+                    "Describe the issue in plain words (example: expand medicaid).",
+                    text: $assistantComposerText,
+                    axis: .vertical
+                )
+                .lineLimit(1...5)
+                .textInputAutocapitalization(.sentences)
+                .focused($focusedField, equals: .concern)
+                .submitLabel(.send)
+                .onSubmit {
+                    submitScriptDraft()
+                }
+                .disabled(assistantIsThinking || viewModel.isSubmitting)
+
+                Button {
+                    submitScriptDraft()
+                } label: {
+                    Image(systemName: "paperplane.fill")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(width: 36, height: 36)
+                        .background(VoteNowColors.primaryCTA)
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
+                .disabled(assistantComposerText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || assistantIsThinking || viewModel.isSubmitting)
+                .opacity((assistantComposerText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || assistantIsThinking || viewModel.isSubmitting) ? 0.45 : 1.0)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(VoteNowColors.surfaceWhite)
+        .overlay(alignment: .top) {
+            Divider()
+        }
+    }
+
+    private var assistantBackgroundActions: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Does this issue background match what you meant?")
+                .font(.subheadline.weight(.semibold))
+                .foregroundColor(VoteNowColors.primaryText)
+
+            HStack(spacing: 8) {
+                Button {
+                    reviseGeneratedDraftInChat()
+                } label: {
+                    Text("Revise")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(VoteNowColors.primaryText)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(VoteNowColors.surfaceWhite)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                        )
+                }
+                .buttonStyle(.plain)
+
+                Button {
+                    approveBackgroundInChat()
+                } label: {
+                    Text("Looks right")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(VoteNowColors.primaryCTA)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(12)
+        .background(VoteNowColors.surfaceWhite.opacity(0.6))
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+        )
+    }
+
+    private var assistantStartMAPCActions: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("If this script looks good, launch MAPC call flow.")
+                .font(.subheadline.weight(.semibold))
+                .foregroundColor(VoteNowColors.primaryText)
+
+            HStack(spacing: 8) {
+                Button {
+                    reviseGeneratedDraftInChat()
+                } label: {
+                    Text("Revise")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(VoteNowColors.primaryText)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(VoteNowColors.surfaceWhite)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                        )
+                }
+                .buttonStyle(.plain)
+
+                Button {
+                    startMAPCFromChat()
+                } label: {
+                    Text("Start MAPC")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(VoteNowColors.primaryCTA)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(12)
+        .background(VoteNowColors.surfaceWhite.opacity(0.6))
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+        )
     }
 
     private var concernComposerCard: some View {
@@ -839,14 +1154,310 @@ struct IssueCallCenterView: View {
     }
 
     private func submitScriptDraft() {
-        guard !viewModel.isSubmitting, viewModel.canSubmit else { return }
+        let prompt = assistantComposerText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !prompt.isEmpty else { return }
+        guard !viewModel.isSubmitting, !assistantIsThinking else { return }
+
+        if viewModel.selectedAsk == nil {
+            viewModel.selectedAsk = inferredAsk(from: prompt) ?? .support
+        }
+        if viewModel.optionalBillRef.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+           let extractedBill = extractedBillReference(from: prompt) {
+            viewModel.optionalBillRef = extractedBill
+        }
+        viewModel.concernText = prompt
+
+        guard viewModel.canSubmit else { return }
+
+        assistantMessages.append(.user(prompt))
+        assistantComposerText = ""
+        hasPostedCurrentDraftBackground = false
+        assistantFlowStage = .awaitingPrompt
+        assistantIsThinking = true
         focusedField = nil
         isTalkingPointsExpanded = false
         didCompleteMAPC = false
         viewModel.prepareForFreshGeneration()
+
         Task {
             await viewModel.submitAssistantRequest()
+            await MainActor.run {
+                assistantIsThinking = false
+                processAssistantGenerationResult()
+            }
         }
+    }
+
+    private func processAssistantGenerationResult() {
+        if viewModel.requiresDraftApproval {
+            postStructuredBackgroundIfNeeded()
+            viewModel.errorMessage = nil
+            return
+        }
+
+        if let error = viewModel.errorMessage?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !error.isEmpty {
+            assistantMessages.append(.assistant(error))
+            viewModel.errorMessage = nil
+        } else {
+            assistantMessages.append(.assistant("I couldn’t produce a draft yet. Send one more line with the exact action you want Congress to take."))
+        }
+        assistantFlowStage = .awaitingPrompt
+    }
+
+    private func postStructuredBackgroundIfNeeded() {
+        guard !hasPostedCurrentDraftBackground else { return }
+        let snapshot = assistantRefinementSnapshot()
+        let laymanBackground = laymanBackgroundMessage(from: snapshot)
+
+        assistantMessages.append(.assistant(
+            laymanBackground,
+            kind: .plain
+        ))
+        assistantFlowStage = .awaitingPrompt
+        hasPostedCurrentDraftBackground = true
+    }
+
+    private func approveBackgroundInChat() {
+        guard assistantFlowStage == .awaitingBackgroundApproval else { return }
+        guard let brief = viewModel.activeBrief else {
+            assistantMessages.append(.assistant("I lost the draft state. Send your issue again and I’ll regenerate it."))
+            assistantFlowStage = .awaitingPrompt
+            hasPostedCurrentDraftBackground = false
+            return
+        }
+
+        assistantMessages.append(.assistant(formattedScriptPreview(for: brief), kind: .script))
+        assistantFlowStage = .awaitingMapcStart
+    }
+
+    private func startMAPCFromChat() {
+        guard assistantFlowStage == .awaitingMapcStart else { return }
+        viewModel.approveGeneratedDraft()
+        assistantMessages.append(.assistant("Approved. Moving this into MAPC call flow now."))
+        assistantFlowStage = .awaitingPrompt
+        hasPostedCurrentDraftBackground = false
+    }
+
+    private func reviseGeneratedDraftInChat() {
+        viewModel.reviseGeneratedDraft()
+        assistantFlowStage = .awaitingPrompt
+        hasPostedCurrentDraftBackground = false
+        assistantMessages.append(.assistant("Tell me what to change and I’ll regenerate the background + script before MAPC."))
+        focusedField = .concern
+    }
+
+    private func seedAssistantChatIfNeeded() {
+        guard assistantMessages.isEmpty else { return }
+        assistantMessages = [
+            .assistant(
+                "Describe the issue in plain English. I’ll first give background + a refined prompt, then generate the script."
+            )
+        ]
+    }
+
+    private func inferredAsk(from prompt: String) -> CivicAsk? {
+        let lowered = prompt.lowercased()
+        if lowered.contains("vote no") { return .voteNo }
+        if lowered.contains("vote yes") { return .voteYes }
+        if lowered.contains("oppose") || lowered.contains("block") || lowered.contains("stop") || lowered.contains("reject") {
+            return .oppose
+        }
+        if lowered.contains("oversight") || lowered.contains("investigate") || lowered.contains("hearing") {
+            return .seekOversight
+        }
+        if lowered.contains("statement") || lowered.contains("speak out") || lowered.contains("publicly") {
+            return .askPublicStatement
+        }
+        if lowered.contains("support") || lowered.contains("protect") || lowered.contains("expand") {
+            return .support
+        }
+        return nil
+    }
+
+    private func extractedBillReference(from prompt: String) -> String? {
+        let patterns = [
+            #"\bH\.?\s*R\.?\s*\d+\b"#,
+            #"\bS\.?\s*\d+\b"#,
+            #"\bH\.?\s*J\.?\s*Res\.?\s*\d+\b"#,
+            #"\bS\.?\s*J\.?\s*Res\.?\s*\d+\b"#
+        ]
+
+        for pattern in patterns {
+            guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else { continue }
+            let range = NSRange(prompt.startIndex..<prompt.endIndex, in: prompt)
+            guard let match = regex.firstMatch(in: prompt, options: [], range: range),
+                  let swiftRange = Range(match.range, in: prompt) else { continue }
+            return prompt[swiftRange]
+                .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+                .uppercased()
+        }
+        return nil
+    }
+
+    private func assistantRefinementSnapshot() -> AssistantRefinementSnapshot {
+        let normalizedIssue = mapcIssueHeadline
+        let background = condensedAssistantBackground(from: viewModel.issueSummary, fallbackIssue: normalizedIssue)
+
+        var interpretations: [String] = []
+        if let selectedAsk = viewModel.selectedAsk {
+            interpretations.append("Likely intent: \(selectedAsk.title.lowercased()) congressional action on \(normalizedIssue.lowercased()).")
+        }
+        if let bill = normalizedBillInput() {
+            interpretations.append("Potential policy anchor: \(bill).")
+        } else if let firstBill = viewModel.resolvedEntities.bills.first {
+            interpretations.append("Possible tie-in from issue data: \(firstBill).")
+        } else {
+            interpretations.append("This appears to be a broad civic advocacy request that may need scope confirmation.")
+        }
+        interpretations.append("MAPC can target House + Senate offices with office-specific scripts.")
+        interpretations = Array(interpretations.prefix(3))
+
+        var questions: [String] = []
+        if normalizedBillInput() == nil && viewModel.resolvedEntities.bills.isEmpty {
+            questions.append("Is there a specific bill, program, or agency you want referenced?")
+        }
+        questions.append("What exact action should Congress take first?")
+        questions.append("Should the script prioritize funding, oversight, or voting action?")
+        questions.append("Do you want a stronger economic, safety, rights, or local-impact framing?")
+        questions = Array(questions.prefix(4))
+
+        let recommendedPrompt = recommendedPromptText(for: normalizedIssue)
+
+        let repTargets = viewModel.callBriefs.map { memberTitleAndLastName(for: $0) }.joined(separator: ", ")
+
+        let sections: [String: String] = [
+            "issue_title": normalizedIssue,
+            "explicit_ask": (viewModel.selectedAsk ?? .support).title,
+            "target_reps": repTargets
+        ]
+
+        return AssistantRefinementSnapshot(
+            rawUserInput: viewModel.concernText,
+            normalizedIssue: normalizedIssue,
+            briefBackground: background,
+            commonInterpretations: interpretations,
+            clarifyingQuestions: questions,
+            recommendedPrompt: recommendedPrompt,
+            mapcSections: sections,
+            confidence: confidenceLabel(),
+            groundingType: groundingTypeLabel()
+        )
+    }
+
+    private func laymanBackgroundMessage(from snapshot: AssistantRefinementSnapshot) -> String {
+        let evidenceLine = laymanEvidenceLines().first
+        return AssistantBackgroundFirstResponseFormatter.format(
+            rawInput: snapshot.rawUserInput,
+            normalizedIssue: snapshot.normalizedIssue,
+            briefBackground: snapshot.briefBackground,
+            commonInterpretations: snapshot.commonInterpretations,
+            evidenceLine: evidenceLine
+        )
+    }
+
+    private func laymanEvidenceLines() -> [String] {
+        var items: [String] = []
+
+        if let activeBrief = viewModel.activeBrief {
+            for point in activeBrief.talkingPoints {
+                var cleaned = point.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !cleaned.isEmpty else { continue }
+                guard !cleaned.hasPrefix("Issue:") else { continue }
+                guard !cleaned.hasPrefix("Ask:") else { continue }
+
+                cleaned = cleaned
+                    .replacingOccurrences(of: "Issue context:", with: "")
+                    .replacingOccurrences(of: "Summary:", with: "")
+                    .replacingOccurrences(of: "Evidence note:", with: "")
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+
+                if cleaned.isEmpty { continue }
+                if items.contains(where: { $0.caseInsensitiveCompare(cleaned) == .orderedSame }) { continue }
+                items.append(cleaned)
+                if items.count >= 2 { break }
+            }
+        }
+
+        if items.isEmpty,
+           let bill = normalizedBillInput() ?? viewModel.resolvedEntities.bills.first {
+            items.append("A policy anchor in current context is \(bill).")
+        }
+
+        return items
+    }
+
+    private func serializedRefinementSnapshot(_ snapshot: AssistantRefinementSnapshot) -> String {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        guard let data = try? encoder.encode(snapshot),
+              let text = String(data: data, encoding: .utf8) else {
+            return """
+            {"normalized_issue":"\(snapshot.normalizedIssue)","brief_background":"\(snapshot.briefBackground)"}
+            """
+        }
+        return text
+    }
+
+    private func condensedAssistantBackground(from summary: String, fallbackIssue: String) -> String {
+        let trimmed = summary.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            return "This request concerns \(fallbackIssue.lowercased()) and needs a clear congressional ask with one concrete policy action."
+        }
+        let firstParagraph = trimmed
+            .components(separatedBy: "\n\n")
+            .first?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? trimmed
+        return concisePreview(firstParagraph, maxWords: 42)
+    }
+
+    private func concisePreview(_ text: String, maxWords: Int = 36) -> String {
+        let collapsed = text
+            .replacingOccurrences(of: "\n", with: " ")
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let words = collapsed.split(whereSeparator: \.isWhitespace).map(String.init)
+        guard words.count > maxWords else { return collapsed }
+        return words.prefix(maxWords).joined(separator: " ") + "..."
+    }
+
+    private func recommendedPromptText(for issue: String) -> String {
+        let ask = (viewModel.selectedAsk ?? .support).title.lowercased()
+        if let bill = normalizedBillInput() {
+            return "Please generate a phone-ready script to \(ask) \(issue.lowercased()), tied to \(bill), with one concrete policy action and one real-world impact."
+        }
+        return "Please generate a phone-ready script to \(ask) \(issue.lowercased()) with one concrete policy action, one real-world impact, and language natural for speaking to a congressional office."
+    }
+
+    private func confidenceLabel() -> String {
+        let loweredSummary = viewModel.issueSummary.lowercased()
+        if loweredSummary.contains("evidence is limited") || loweredSummary.contains("no verified evidence") {
+            return "low"
+        }
+        if !viewModel.resolvedEntities.bills.isEmpty || !viewModel.resolvedEntities.committees.isEmpty {
+            return "high"
+        }
+        return "medium"
+    }
+
+    private func groundingTypeLabel() -> String {
+        if normalizedBillInput() != nil || !viewModel.resolvedEntities.bills.isEmpty {
+            return "web"
+        }
+        return "general"
+    }
+
+    private func normalizedBillInput() -> String? {
+        let value = viewModel.optionalBillRef.trimmingCharacters(in: .whitespacesAndNewlines)
+        return value.isEmpty ? nil : value
+    }
+
+    private func formattedScriptPreview(for brief: CivicCallBrief) -> String {
+        let live = brief.liveScript.trimmingCharacters(in: .whitespacesAndNewlines)
+        return """
+        Draft script:
+        \(live)
+        """
     }
 
     private var draftApprovalCard: some View {
@@ -1313,7 +1924,7 @@ struct IssueCallCenterView: View {
             }
         } label: {
             HStack {
-                Text(isLastBrief ? l("app.issue_call.action.finish_script", "Finish Script!") : l("app.issue_call.action.next_rep", "Next Representative"))
+                Text(isLastBrief ? l("app.issue_call.action.finish_script", "Finish Script!") : l("app.issue_call.action.next_rep", "Call Next Representative"))
                     .font(.headline.weight(.semibold))
                 Spacer(minLength: 0)
                 Image(systemName: isLastBrief ? "checkmark.circle.fill" : "arrow.right.circle.fill")
@@ -1555,6 +2166,7 @@ struct IssueCallCenterView: View {
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
                             .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
                     )
+                    .transition(.move(edge: .top).combined(with: .opacity))
                 }
 
                 if hasHiddenPremadeExamples {
@@ -1643,33 +2255,18 @@ struct IssueCallCenterView: View {
         let outcomeBreakdown = viewModel.outcomeBreakdown
         let displayedTotalCalls = max(stats.totalVoteNowCalls, animatedTotalVoteNowCalls ?? 0)
         let displayedUserCalls = max(stats.userCallCount, animatedUserCallCount ?? 0)
+        let showGainBadge = showMapcCallGainBadge && animatedMapcCallGain > 0
+        let contactedCountText = outcomeBreakdown.contacted.formatted(.number)
+        let voicemailCountText = outcomeBreakdown.voicemail.formatted(.number)
+        let unavailableCountText = outcomeBreakdown.unavailable.formatted(.number)
+        let outcomeSummaryLine = "\(contactedCountText) Contacted, \(voicemailCountText) Voicemail, \(unavailableCountText) Unavailable"
 
         return VStack(alignment: .center, spacing: 12) {
-            VStack(alignment: .center, spacing: 4) {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Spacer(minLength: 0)
-                    Text("\(displayedTotalCalls.formatted(.number)) Total Calls")
-                        .font(.system(size: 36, weight: .bold, design: .rounded))
-                        .foregroundColor(VoteNowColors.primaryCTA)
-
-                    if showMapcCallGainBadge && animatedMapcCallGain > 0 {
-                        Text("+\(animatedMapcCallGain)")
-                            .font(.title3.weight(.bold))
-                            .foregroundColor(VoteNowColors.successGreen)
-                            .transition(.move(edge: .top).combined(with: .opacity))
-                    }
-                    Spacer(minLength: 0)
-                }
-                .animation(.easeInOut(duration: 0.2), value: showMapcCallGainBadge)
-                .frame(maxWidth: .infinity, alignment: .center)
-
-                if showMapcCallGainBadge && animatedMapcCallGain > 0 {
-                    Text("+\(animatedMapcCallGain) added to Calls to Congress")
-                        .font(.caption.weight(.semibold))
-                        .foregroundColor(VoteNowColors.successGreen)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                }
-            }
+            civicScoreHeadline(
+                displayedTotalCalls: displayedTotalCalls,
+                showGainBadge: showGainBadge,
+                gain: animatedMapcCallGain
+            )
 
             Divider()
 
@@ -1679,13 +2276,9 @@ struct IssueCallCenterView: View {
                     value: displayedUserCalls
                 )
 
-                Text(
-                    "\(outcomeBreakdown.contacted.formatted(.number)) Contacted, " +
-                        "\(outcomeBreakdown.voicemail.formatted(.number)) Voicemail, " +
-                        "\(outcomeBreakdown.unavailable.formatted(.number)) Unavailable"
-                )
+                Text(outcomeSummaryLine)
                 .font(.caption.weight(.semibold))
-                .foregroundColor(VoteNowColors.secondaryText)
+                .foregroundColor(VoteNowColors.mutedText)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
             }
@@ -1698,6 +2291,39 @@ struct IssueCallCenterView: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
         )
+    }
+
+    @ViewBuilder
+    private func civicScoreHeadline(
+        displayedTotalCalls: Int,
+        showGainBadge: Bool,
+        gain: Int
+    ) -> some View {
+        VStack(alignment: .center, spacing: 4) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Spacer(minLength: 0)
+                Text("\(displayedTotalCalls.formatted(.number)) Total Calls")
+                    .font(.system(size: 36, weight: .bold, design: .rounded))
+                    .foregroundColor(VoteNowColors.primaryCTA)
+
+                if showGainBadge {
+                    Text("+\(gain)")
+                        .font(.title3.weight(.bold))
+                        .foregroundColor(VoteNowColors.successGreen)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                }
+                Spacer(minLength: 0)
+            }
+            .animation(.easeInOut(duration: 0.2), value: showGainBadge)
+            .frame(maxWidth: .infinity, alignment: .center)
+
+            if showGainBadge {
+                Text("+\(gain) added to Calls to Congress")
+                    .font(.caption.weight(.semibold))
+                    .foregroundColor(VoteNowColors.successGreen)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            }
+        }
     }
 
     private func scoreStatLine(label: String, value: Int) -> some View {
@@ -2107,7 +2733,7 @@ struct IssueCallCenterView: View {
             return conciseIssueHeadline(concern)
         }
 
-        return l("app.issue_call.title", "Call my Rep")
+        return l("app.issue_call.title", "Call Your Reps")
     }
 
     private var shareActionButton: some View {
@@ -2525,13 +3151,13 @@ struct IssueCallCenterView: View {
                     } label: {
                         Text(outcomeDisplayTitle(for: outcome))
                             .font(.body.weight(.semibold))
-                            .foregroundColor(selectedOutcome == outcome ? .white : VoteNowColors.primaryText)
+                            .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
                             .background(
                                 selectedOutcome == outcome
                                 ? outcomeColor(for: outcome)
-                                : VoteNowColors.infoSurfaceBlue.opacity(0.95)
+                                : VoteNowColors.primaryCTA
                             )
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                             .overlay(
@@ -2550,7 +3176,7 @@ struct IssueCallCenterView: View {
     private func outcomeDisplayTitle(for outcome: CivicCallOutcome) -> String {
         switch outcome {
         case .undecided:
-            return "Recorded"
+            return "Connected"
         case .voicemail:
             return "Voicemail"
         default:
@@ -2629,7 +3255,7 @@ struct IssueCallCenterView: View {
             return "Call Senator \(lastName)"
         }
         if office.contains("representative") || office.contains("house") || brief.repSlot == .house {
-            return "Call Congressman \(lastName)"
+            return "Call Representative \(lastName)"
         }
         return "Call \(lastName)"
     }
@@ -2846,6 +3472,71 @@ struct IssueCallCenterView: View {
     }
 }
 
+private struct AssistantThinkingLogoView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var scale: CGFloat = 0.96
+    @State private var opacity: Double = 0.9
+    @State private var cycleDuration: Double = 0.42
+    @State private var peakScale: CGFloat = 1.02
+    @State private var animationTask: Task<Void, Never>?
+
+    var body: some View {
+        VoteNowLogoIcon(size: 20)
+            .aspectRatio(1, contentMode: .fit)
+            .frame(width: 24, height: 24, alignment: .center)
+            .scaleEffect(scale)
+            .opacity(opacity)
+            .fixedSize()
+            .layoutPriority(2)
+            .onAppear {
+                startAnimationLoop()
+            }
+            .onDisappear {
+                animationTask?.cancel()
+                animationTask = nil
+            }
+    }
+
+    private func startAnimationLoop() {
+        animationTask?.cancel()
+        animationTask = nil
+
+        guard !reduceMotion else {
+            scale = 1.0
+            opacity = 1.0
+            return
+        }
+
+        animationTask = Task {
+            while !Task.isCancelled {
+                let duration = cycleDuration
+                let upNs = UInt64(duration * 1_000_000_000)
+
+                await MainActor.run {
+                    withAnimation(.easeInOut(duration: duration)) {
+                        scale = peakScale
+                        opacity = 1.0
+                    }
+                }
+                try? await Task.sleep(nanoseconds: upNs)
+
+                await MainActor.run {
+                    withAnimation(.easeInOut(duration: duration)) {
+                        scale = 0.96
+                        opacity = 0.84
+                    }
+                }
+                try? await Task.sleep(nanoseconds: upNs)
+
+                await MainActor.run {
+                    cycleDuration = min(cycleDuration + 0.08, 1.15)
+                    peakScale = min(peakScale + 0.02, 1.18)
+                }
+            }
+        }
+    }
+}
+
 private struct ChipFlowLayout: Layout {
     var itemSpacing: CGFloat = 8
     var rowSpacing: CGFloat = 8
@@ -3001,6 +3692,302 @@ private struct IssueCallRepHeadshotView: View {
         } catch {
             return
         }
+    }
+}
+
+private struct AssistantTypewriterText: View {
+    let text: String
+    let animate: Bool
+    var onFinished: (() -> Void)? = nil
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var displayedText = ""
+    @State private var typingTask: Task<Void, Never>?
+
+    var body: some View {
+        Text(displayedText)
+            .onAppear {
+                runAnimationIfNeeded()
+            }
+            .onChange(of: text) { _, _ in
+                runAnimationIfNeeded()
+            }
+            .onChange(of: animate) { _, _ in
+                runAnimationIfNeeded()
+            }
+            .onDisappear {
+                typingTask?.cancel()
+                typingTask = nil
+            }
+    }
+
+    private func runAnimationIfNeeded() {
+        typingTask?.cancel()
+        typingTask = nil
+
+        let shouldAnimate = animate && !reduceMotion && !text.isEmpty
+        guard shouldAnimate else {
+            displayedText = text
+            onFinished?()
+            return
+        }
+
+        displayedText = ""
+
+        let targetDurationSeconds = min(max(Double(text.count) * 0.012, 0.65), 4.6)
+        let perCharacterDelayNs = UInt64((targetDurationSeconds / Double(max(text.count, 1))) * 1_000_000_000)
+        let newlineDelayNs: UInt64 = 95_000_000
+
+        typingTask = Task {
+            var running = ""
+            for character in text {
+                if Task.isCancelled { return }
+                running.append(character)
+                await MainActor.run {
+                    displayedText = running
+                }
+                let delay = character == "\n" ? newlineDelayNs : perCharacterDelayNs
+                try? await Task.sleep(nanoseconds: delay)
+            }
+            await MainActor.run {
+                onFinished?()
+            }
+        }
+    }
+}
+
+struct AssistantBackgroundFirstResponseFormatter {
+    static func format(
+        rawInput: String,
+        normalizedIssue: String,
+        briefBackground: String,
+        commonInterpretations: [String],
+        evidenceLine: String?
+    ) -> String {
+        let translation = translationSentence(rawInput: rawInput, normalizedIssue: normalizedIssue)
+        let background = backgroundParagraph(
+            rawInput: rawInput,
+            normalizedIssue: normalizedIssue,
+            briefBackground: briefBackground,
+            evidenceLine: evidenceLine
+        )
+        let bullets = interpretationBullets(
+            rawInput: rawInput,
+            normalizedIssue: normalizedIssue,
+            seeded: commonInterpretations
+        )
+        let bulletBlock = bullets.map { "- \($0)" }.joined(separator: "\n")
+
+        return """
+        \(translation)
+
+        \(background)
+
+        People usually mean one of a few things when they say this:
+        \(bulletBlock)
+        """
+    }
+
+    private static func translationSentence(rawInput: String, normalizedIssue: String) -> String {
+        let input = compact(rawInput)
+        let issue = compact(normalizedIssue)
+        if !issue.isEmpty {
+            return "It sounds like you’re asking about \(issue.lowercased())."
+        }
+        if !input.isEmpty {
+            return "It sounds like you’re asking about \(input.lowercased())."
+        }
+        return "It sounds like you’re asking about a public policy issue that needs congressional action."
+    }
+
+    private static func backgroundParagraph(
+        rawInput: String,
+        normalizedIssue: String,
+        briefBackground: String,
+        evidenceLine: String?
+    ) -> String {
+        let lowered = compact("\(rawInput) \(normalizedIssue)").lowercased()
+        let explanation = plainEnglishExplanation(for: lowered)
+        let mechanism = whyItHappensSentence(for: lowered)
+        let impact = whyItMattersSentence(for: lowered)
+        let evidence = singleEvidenceSentence(
+            candidate: evidenceLine,
+            contextKey: lowered
+        )
+        return [explanation, mechanism, evidence, impact]
+            .filter { !$0.isEmpty }
+            .prefix(4)
+            .joined(separator: " ")
+    }
+
+    private static func interpretationBullets(rawInput: String, normalizedIssue: String, seeded: [String]) -> [String] {
+        let lowered = compact("\(rawInput) \(normalizedIssue)").lowercased()
+        var mapped: [String]
+
+        if lowered.contains("shutdown") {
+            mapped = [
+                "Pass a short-term funding bill to avoid immediate disruption",
+                "Negotiate a full-year budget agreement",
+                "Separate urgent services from broader policy disputes",
+                "Reform budget rules so shutdowns are less likely"
+            ]
+        } else if lowered.contains("gun") || lowered.contains("firearm") || lowered.contains("assault weapon") {
+            mapped = [
+                "Universal background checks for most gun sales",
+                "Restrictions on assault-style weapons and high-capacity magazines",
+                "Red-flag and safe-storage policies to reduce preventable harm",
+                "Funding for community violence prevention and enforcement"
+            ]
+        } else if lowered.contains("iran") || lowered.contains("war") {
+            mapped = [
+                "Require a congressional vote before major military escalation",
+                "Use oversight to limit unauthorized military action",
+                "Prioritize diplomacy and regional de-escalation",
+                "Protect U.S. personnel while avoiding a wider conflict"
+            ]
+        } else if lowered.contains("wildfire") || lowered.contains("fire") {
+            mapped = [
+                "Invest in forest management and prescribed burns",
+                "Strengthen firefighter staffing and emergency response",
+                "Harden power grids and infrastructure in high-risk areas",
+                "Expand disaster relief and recovery support"
+            ]
+        } else if lowered.contains("rent") || lowered.contains("housing") {
+            mapped = [
+                "Increase housing supply through zoning and permitting reforms",
+                "Expand rental assistance for cost-burdened households",
+                "Support affordable-housing construction and preservation",
+                "Strengthen tenant protections against sudden displacement"
+            ]
+        } else {
+            mapped = seeded
+                .map { compact($0).replacingOccurrences(of: "^Likely intent:\\s*", with: "", options: .regularExpression) }
+                .filter { !$0.isEmpty }
+        }
+
+        if mapped.isEmpty {
+            mapped = [
+                "Define the exact action you want Congress to take",
+                "Tie the issue to a bill, program, or agency if possible",
+                "Highlight who is most affected and why",
+                "Ask for a clear public position from the member’s office"
+            ]
+        }
+        return Array(mapped.prefix(5))
+    }
+
+    private static func plainEnglishExplanation(for lowered: String) -> String {
+        if lowered.contains("shutdown") {
+            return "A government shutdown happens when Congress and the president do not finalize funding in time, so parts of the federal government pause operations."
+        }
+        if lowered.contains("gun") || lowered.contains("firearm") || lowered.contains("assault weapon") {
+            return "Gun policy debates are about balancing public safety, constitutional rights, and how to reduce shootings while keeping laws enforceable."
+        }
+        if lowered.contains("iran") || lowered.contains("war") {
+            return "This issue is about whether the U.S. should expand military action and how much authority Congress should exercise over war decisions."
+        }
+        if lowered.contains("wildfire") || lowered.contains("fire") {
+            return "Wildfire policy focuses on prevention, emergency response, and recovery as hotter, drier conditions increase fire risk in many regions."
+        }
+        if lowered.contains("rent") || lowered.contains("housing") {
+            return "High rent usually reflects a shortage of affordable homes, rising costs, and wages that are not keeping pace with housing prices."
+        }
+        return "This issue affects how Congress sets policy, funds programs, and oversees agencies that directly impact daily life."
+    }
+
+    private static func whyItHappensSentence(for lowered: String) -> String {
+        if lowered.contains("shutdown") {
+            return "Shutdowns usually occur when lawmakers disagree on spending totals or policy conditions attached to budget bills."
+        }
+        if lowered.contains("gun") || lowered.contains("firearm") {
+            return "Policy disagreements often center on background checks, weapon access, enforcement, and how to prevent harm without broad overreach."
+        }
+        if lowered.contains("iran") || lowered.contains("war") {
+            return "Tension rises when executive actions move faster than congressional debate about legal authority, cost, and long-term strategy."
+        }
+        if lowered.contains("wildfire") || lowered.contains("fire") {
+            return "Risk grows from drought, fuel buildup, development in fire-prone areas, and limited mitigation capacity."
+        }
+        if lowered.contains("rent") || lowered.contains("housing") {
+            return "The problem is often driven by limited supply, restrictive zoning, and financing barriers for new affordable construction."
+        }
+        return "It usually becomes contentious when timelines, funding, and policy tradeoffs are not aligned."
+    }
+
+    private static func whyItMattersSentence(for lowered: String) -> String {
+        if lowered.contains("shutdown") {
+            return "It matters because service disruptions can affect families, paychecks, and confidence in basic government functions."
+        }
+        if lowered.contains("gun") || lowered.contains("firearm") {
+            return "It matters because communities want fewer preventable deaths and injuries while keeping clear, workable rules."
+        }
+        if lowered.contains("iran") || lowered.contains("war") {
+            return "It matters because military escalation can cost lives, increase regional instability, and commit the U.S. to prolonged conflict."
+        }
+        if lowered.contains("wildfire") || lowered.contains("fire") {
+            return "It matters because severe fires can threaten homes, health, local economies, and public infrastructure."
+        }
+        if lowered.contains("rent") || lowered.contains("housing") {
+            return "It matters because housing costs shape household stability, family budgets, and local economic mobility."
+        }
+        return "It matters because the decisions made here affect costs, safety, and trust in public institutions."
+    }
+
+    private static func singleEvidenceSentence(candidate: String?, contextKey: String) -> String {
+        let cleanedCandidate = compact(candidate ?? "")
+        if !cleanedCandidate.isEmpty {
+            let oneSentence = cleanedCandidate
+                .components(separatedBy: CharacterSet(charactersIn: ".!?"))
+                .map(compact)
+                .first(where: { !$0.isEmpty }) ?? cleanedCandidate
+            if containsConcreteExample(oneSentence) {
+                return ensureSentenceEnd(oneSentence)
+            }
+        }
+        return ensureSentenceEnd(defaultConcreteExample(for: contextKey))
+    }
+
+    private static func defaultConcreteExample(for contextKey: String) -> String {
+        if contextKey.contains("shutdown") {
+            return "For example, the 2018–2019 federal shutdown lasted 35 days and affected about 800,000 federal workers."
+        }
+        if contextKey.contains("gun") || contextKey.contains("firearm") {
+            return "For example, the U.S. has recorded more than 40,000 gun deaths per year in recent years."
+        }
+        if contextKey.contains("iran") || contextKey.contains("war") {
+            return "For example, Congress has not issued a formal declaration of war against Iran, which is why war-powers oversight keeps coming up."
+        }
+        if contextKey.contains("wildfire") || contextKey.contains("fire") {
+            return "For example, wildfire smoke events have repeatedly pushed air quality to unhealthy levels for millions of people."
+        }
+        if contextKey.contains("rent") || contextKey.contains("housing") {
+            return "For example, many renters now spend more than 30% of income on housing, which is considered cost-burdened."
+        }
+        return "For example, one delayed funding decision can quickly ripple into higher costs and reduced services for families."
+    }
+
+    private static func containsConcreteExample(_ text: String) -> Bool {
+        let lowered = text.lowercased()
+        let hasNumber = text.range(of: #"\d"#, options: .regularExpression) != nil
+        if hasNumber { return true }
+        if lowered.contains("for example") { return true }
+        if lowered.contains("example") { return true }
+        return false
+    }
+
+    private static func compact(_ text: String) -> String {
+        text
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private static func ensureSentenceEnd(_ text: String) -> String {
+        let trimmed = compact(text)
+        guard !trimmed.isEmpty else { return "" }
+        if trimmed.hasSuffix(".") || trimmed.hasSuffix("!") || trimmed.hasSuffix("?") {
+            return trimmed
+        }
+        return "\(trimmed)."
     }
 }
 

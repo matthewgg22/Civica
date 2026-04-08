@@ -421,7 +421,7 @@ struct VoterRegistrationView: View {
             (
                 .preElection,
                 prePhaseHeaderText,
-                l("app.registration.phase.pre.subtitle", "Confirm your details before voting starts"),
+                "",
                 VoteNowColors.appBackground,
                 VoteNowColors.primaryCTA.opacity(0.68)
             ),
@@ -435,7 +435,7 @@ struct VoterRegistrationView: View {
             (
                 .postElection,
                 postPhaseHeaderText,
-                l("app.registration.phase.post.subtitle", "Track and protect your vote if follow-up is needed."),
+                "",
                 VoteNowColors.appBackground,
                 VoteNowColors.urgentCTA.opacity(0.72)
             )
@@ -538,6 +538,9 @@ struct VoterRegistrationView: View {
                         measuredStickyHeaderHeight = height
                     }
                     .onPreferenceChange(RegistrationGuideStripMinYPreferenceKey.self) { minY in
+                        // LazyVStack can temporarily recycle the source view and emit an outlier value.
+                        // Ignore those resets so the docked strip stays pinned once activated.
+                        guard minY > -100_000, minY < 100_000 else { return }
                         registrationGuideStripMinY = minY
                     }
                     .onPreferenceChange(RegistrationSectionMinYPreferenceKey.self) { positions in
@@ -816,7 +819,7 @@ struct VoterRegistrationView: View {
                         Text(
                             l(
                                 "app.registration.dropdown.why_register.example.p2.prefix",
-                                "That can include both the "
+                                "They may not be able to vote in either the "
                             )
                         )
                         + Text(l("app.guide.party.democrat", "Democrat"))
@@ -829,7 +832,7 @@ struct VoterRegistrationView: View {
                         + Text(
                             l(
                                 "app.registration.dropdown.why_register.example.p2.suffix",
-                                " primaries unless they change party registration before the state deadline."
+                                " primary unless they change party registration before the state deadline."
                             )
                         )
                     )
@@ -983,10 +986,6 @@ struct VoterRegistrationView: View {
 
             if showStepThreeBallotErrorDropdown {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text(l("app.registration.step.3_1.reshuffle", "STEP 3.1"))
-                        .font(.caption.weight(.bold))
-                        .foregroundColor(VoteNowColors.primaryCTA)
-
                     Text(l("app.registration.card.ballot_cure.title.updated", "Absentee Ballot Cure Process"))
                         .font(.subheadline.weight(.bold))
                         .foregroundColor(VoteNowColors.primaryText)
@@ -1404,22 +1403,15 @@ struct VoterRegistrationView: View {
     }
 
     private func registrationReadinessPanel(proxy: ScrollViewProxy) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 8) {
             upcomingElectionTimelinePreviewCard
-
-            checkRegistrationPrimaryButton(
-                l("app.registration.guide.step.register", "Register")
-            ) {
-                handleCardAction(.openURL(registrationPortalURL))
-            }
-            .padding(.top, 2)
 
             Divider()
                 .overlay(VoteNowColors.primaryCTA.opacity(0.16))
-                .padding(.top, 2)
+                .padding(.top, 1)
 
             registrationGuideStripContent(proxy: proxy)
-                .padding(.top, 2)
+                .padding(.top, 0)
                 .background(
                     GeometryReader { geo in
                         Color.clear.preference(
@@ -1591,14 +1583,14 @@ struct VoterRegistrationView: View {
         }
         .frame(maxWidth: .infinity, alignment: .center)
         .padding(.horizontal, 2)
-        .padding(.vertical, 4)
+        .padding(.vertical, 2)
     }
 
     @ViewBuilder
     private func stickyGuideStripDock(proxy: ScrollViewProxy) -> some View {
         registrationGuideStripContent(proxy: proxy)
             .padding(.horizontal, 12)
-            .padding(.vertical, 8)
+            .padding(.vertical, 5)
             .background(
                 BottomRoundedRectangle(radius: 12)
                     .fill(VoteNowColors.surfaceWhite)
@@ -1611,7 +1603,7 @@ struct VoterRegistrationView: View {
             .shadow(color: VoteNowColors.primaryText.opacity(0.06), radius: 6, x: 0, y: 2)
             .padding(.horizontal, 16)
             .padding(.top, 0)
-            .padding(.bottom, 6)
+            .padding(.bottom, 4)
     }
 
     private func registrationGuideStripButton(
@@ -1632,7 +1624,7 @@ struct VoterRegistrationView: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.86)
                 .padding(.horizontal, 10)
-                .padding(.vertical, 4)
+                .padding(.vertical, 3)
                 .background(
                     Capsule(style: .continuous)
                         .fill(isActive ? guidePhaseHighlightColor(for: phase) : .clear)
@@ -1872,7 +1864,7 @@ struct VoterRegistrationView: View {
     }
 
     private var provisionalRequestPanel: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        return VStack(alignment: .leading, spacing: 8) {
             Text(l("app.registration.provisional.request.title", "How to request a provisional ballot"))
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(VoteNowColors.primaryText)
@@ -1888,11 +1880,12 @@ struct VoterRegistrationView: View {
                 requestStepLine(
                     l(
                         "app.registration.provisional.request.step_3.reindexed",
-                        "Get a receipt or tracking and confirm cure deadlines before leaving."
+                        "3. Get a receipt or tracking and confirm cure deadlines before leaving."
                     )
                 )
             }
-        };
+        }
+        .padding(12)
         .background(VoteNowColors.infoSurfaceBlue.opacity(0.72))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)

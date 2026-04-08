@@ -65,12 +65,6 @@ struct TabAndBaseTab: View {
                 .tabItem { Label("Voting Steps", systemImage: "person.badge.plus") }
                 .tag(Tab.registration)
 
-            // Election Guide
-            NYCMayoralElectionView()
-                .environmentObject(planVM)
-                .tabItem { Label("Election Guide", systemImage: "mappin.and.ellipse") }
-                .tag(Tab.electionGuide)
-
         }
         .environmentObject(planVM)
         .environmentObject(repsVM)
