@@ -31,12 +31,17 @@ struct IssueCallCenterView: View {
     @State private var mapcTransitionResetTask: Task<Void, Never>?
     @State private var exampleSearchQuery: String = ""
     @State private var showAllPremadeExamples = false
+    @State private var showAllExampleCategoryChips = false
     @State private var assistantComposerText: String = ""
     @State private var assistantMessages: [AssistantChatMessage] = []
     @State private var assistantIsThinking = false
     @State private var assistantFlowStage: AssistantFlowStage = .awaitingPrompt
     @State private var hasPostedCurrentDraftBackground = false
     @State private var animatedAssistantMessageIDs: Set<UUID> = []
+    @State private var isKeyboardVisible = false
+    @State private var nonMapcTabSlidesForward = true
+    @State private var previousNonMapcTab: CivicIssueCallTab = .assistant
+    @Namespace private var topTabSelectionNamespace
     private let userAddressLine: String
     private let residencyNotice: String
     private let initialTab: CivicIssueCallTab
@@ -125,6 +130,16 @@ struct IssueCallCenterView: View {
         : .interactiveSpring(response: 0.44, dampingFraction: 0.9, blendDuration: 0.18)
     }
 
+    private var nonMapcTabTransition: AnyTransition {
+        let travelDistance = UIScreen.main.bounds.width * 0.32
+        let insertionX = nonMapcTabSlidesForward ? travelDistance : -travelDistance
+        let removalX = nonMapcTabSlidesForward ? -travelDistance : travelDistance
+        return .asymmetric(
+            insertion: .offset(x: insertionX).combined(with: .opacity),
+            removal: .offset(x: removalX).combined(with: .opacity)
+        )
+    }
+
     init(
         federalReps: [Official],
         userZip: String,
@@ -211,7 +226,9 @@ struct IssueCallCenterView: View {
     private static let allExamplesFilterLabel = "All"
     private static let urgentExamplesFilterLabel = "Urgent"
     private static let searchExamplesFilterLabel = "Search issues"
+    private static let moreExamplesFilterToken = "__more_examples_filter__"
     private static let premadeCollapsedCardLimit = 3
+    private static let premadeCollapsedCategoryRowLimit = 3
 
     private var exampleCategoryOptions: [String] {
         var seen = Set<String>()
@@ -229,7 +246,7 @@ struct IssueCallCenterView: View {
             }
         }
 
-        return [Self.allExamplesFilterLabel, Self.urgentExamplesFilterLabel, Self.searchExamplesFilterLabel] + categories
+        return [Self.urgentExamplesFilterLabel, Self.searchExamplesFilterLabel] + categories
     }
 
     private var filteredExamples: [CivicExampleIssueCard] {
@@ -267,6 +284,87 @@ struct IssueCallCenterView: View {
 
     private var hasHiddenPremadeExamples: Bool {
         filteredExamples.count > Self.premadeCollapsedCardLimit
+    }
+
+    private var collapsedExampleCategoryOptions: [String] {
+        var collapsed = fittedCategoryOptionsForCollapsedRows(
+            from: exampleCategoryOptions,
+            maxRows: Self.premadeCollapsedCategoryRowLimit
+        )
+        if !containsCategory(collapsed, selectedExampleCategory),
+           let selected = exampleCategoryOptions.first(where: { $0.caseInsensitiveCompare(selectedExampleCategory) == .orderedSame }) {
+            if !collapsed.isEmpty {
+                collapsed.removeLast()
+            }
+            collapsed.append(selected)
+        }
+        return collapsed
+    }
+
+    private var hasHiddenExampleCategoryOptions: Bool {
+        collapsedExampleCategoryOptions.count < exampleCategoryOptions.count
+    }
+
+    private var visibleExampleCategoryOptions: [String] {
+        if showAllExampleCategoryChips {
+            if hasHiddenExampleCategoryOptions {
+                return exampleCategoryOptions + [Self.moreExamplesFilterToken]
+            }
+            return exampleCategoryOptions
+        }
+
+        guard hasHiddenExampleCategoryOptions else {
+            return collapsedExampleCategoryOptions
+        }
+
+        var withMore = fittedCategoryOptionsForCollapsedRows(
+            from: collapsedExampleCategoryOptions + [Self.moreExamplesFilterToken],
+            maxRows: Self.premadeCollapsedCategoryRowLimit
+        )
+        if !containsCategory(withMore, Self.moreExamplesFilterToken), !withMore.isEmpty {
+            withMore.removeLast()
+            withMore.append(Self.moreExamplesFilterToken)
+        }
+        return withMore
+    }
+
+    private func fittedCategoryOptionsForCollapsedRows(from options: [String], maxRows: Int) -> [String] {
+        guard maxRows > 0 else { return [] }
+        let horizontalPadding: CGFloat = 16
+        let availableWidth = max(220, UIScreen.main.bounds.width - (horizontalPadding * 2))
+        let chipSpacing: CGFloat = 8
+        var rowsUsed = 1
+        var currentRowWidth: CGFloat = 0
+        var visible: [String] = []
+
+        for category in options {
+            let chipWidth = estimatedCategoryChipWidth(for: category)
+            let proposedWidth = currentRowWidth == 0 ? chipWidth : currentRowWidth + chipSpacing + chipWidth
+            if proposedWidth <= availableWidth {
+                visible.append(category)
+                currentRowWidth = proposedWidth
+                continue
+            }
+
+            guard rowsUsed < maxRows else { break }
+            rowsUsed += 1
+            visible.append(category)
+            currentRowWidth = chipWidth
+        }
+
+        return visible
+    }
+
+    private func estimatedCategoryChipWidth(for category: String) -> CGFloat {
+        let label = exampleCategoryDisplayName(for: category)
+        let iconAllowance: CGFloat = category.caseInsensitiveCompare(Self.searchExamplesFilterLabel) == .orderedSame ? 16 : 0
+        let characterWidthEstimate: CGFloat = 7.3
+        let textWidth = CGFloat(label.count) * characterWidthEstimate
+        return max(72, min(210, textWidth + 24 + iconAllowance))
+    }
+
+    private func containsCategory(_ list: [String], _ candidate: String) -> Bool {
+        list.contains { $0.caseInsensitiveCompare(candidate) == .orderedSame }
     }
 
     private var exampleCategoryColorMap: [String: Color] {
@@ -320,22 +418,16 @@ struct IssueCallCenterView: View {
                     } else {
                         VStack(spacing: 12) {
                             headerSection
-                            if focusedField == nil {
+                            if focusedField == nil && !isKeyboardVisible {
                                 topTabSelector
                                     .transition(.move(edge: .top).combined(with: .opacity))
                             }
-                            Group {
-                                switch viewModel.selectedTab {
-                                case .assistant:
-                                    assistantTab
-                                case .examples:
-                                    examplesTab
-                                case .civicScore:
-                                    civicScoreTab
-                                case .history:
-                                    rulesTab
-                                }
+                            ZStack {
+                                nonMapcTabContent(for: viewModel.selectedTab)
+                                    .id(viewModel.selectedTab)
+                                    .transition(nonMapcTabTransition)
                             }
+                            .animation(.easeInOut(duration: 0.26), value: viewModel.selectedTab)
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                         }
                         .transition(.move(edge: .leading).combined(with: .opacity))
@@ -377,10 +469,21 @@ struct IssueCallCenterView: View {
         .onTapGesture {
             focusedField = nil
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+            withAnimation(.easeInOut(duration: 0.18)) {
+                isKeyboardVisible = true
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            withAnimation(.easeInOut(duration: 0.18)) {
+                isKeyboardVisible = false
+            }
+        }
         .onAppear {
             if !isMAPCMode {
                 viewModel.selectedTab = initialTab
             }
+            previousNonMapcTab = viewModel.selectedTab
             if let activeID = viewModel.activeBriefID {
                 synchronizeScriptAccordionState(for: activeID)
             }
@@ -391,6 +494,9 @@ struct IssueCallCenterView: View {
             viewModel.persistDraftState()
         }
         .onChange(of: viewModel.selectedTab) { _, newTab in
+            let prior = previousNonMapcTab
+            nonMapcTabSlidesForward = tabIndex(for: newTab) >= tabIndex(for: prior)
+            previousNonMapcTab = newTab
             viewModel.persistDraftState()
             if newTab == .civicScore {
                 Task {
@@ -438,6 +544,7 @@ struct IssueCallCenterView: View {
                 selectedExampleCategory = Self.allExamplesFilterLabel
             }
             showAllPremadeExamples = false
+            showAllExampleCategoryChips = false
         }
         .onChange(of: selectedExampleCategory) { _, _ in
             showAllPremadeExamples = false
@@ -695,12 +802,44 @@ struct IssueCallCenterView: View {
                 .padding(.horizontal, 6)
                 .padding(.vertical, 2)
                 .background(
-                    Capsule(style: .continuous)
-                        .fill(isActive ? issueCallTopTabHighlightColor(for: tab) : .clear)
+                    ZStack {
+                        if isActive {
+                            Capsule(style: .continuous)
+                                .fill(issueCallTopTabHighlightColor(for: tab))
+                                .matchedGeometryEffect(id: "issue_call_top_tab_highlight", in: topTabSelectionNamespace)
+                        }
+                    }
                 )
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("issue_call.tabs.\(tab.rawValue)")
+    }
+
+    @ViewBuilder
+    private func nonMapcTabContent(for tab: CivicIssueCallTab) -> some View {
+        switch tab {
+        case .assistant:
+            assistantTab
+        case .examples:
+            examplesTab
+        case .civicScore:
+            civicScoreTab
+        case .history:
+            rulesTab
+        }
+    }
+
+    private func tabIndex(for tab: CivicIssueCallTab) -> Int {
+        switch tab {
+        case .assistant:
+            return 0
+        case .examples:
+            return 1
+        case .civicScore:
+            return 2
+        case .history:
+            return 3
+        }
     }
 
     private func issueCallTopTabHighlightColor(for tab: CivicIssueCallTab) -> Color {
@@ -765,7 +904,7 @@ struct IssueCallCenterView: View {
             assistantChatBody
             assistantChatComposer
         }
-        .background(VoteNowColors.background.opacity(0.2))
+        .background(VoteNowColors.brandSoftBlue)
         .onAppear {
             seedAssistantChatIfNeeded()
             if assistantComposerText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -900,48 +1039,53 @@ struct IssueCallCenterView: View {
     }
 
     private var assistantChatComposer: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 8) {
-                TextField(
-                    "Describe the issue in plain words (example: expand medicaid).",
-                    text: $assistantComposerText,
-                    axis: .vertical
-                )
-                .lineLimit(1...5)
-                .textInputAutocapitalization(.sentences)
-                .focused($focusedField, equals: .concern)
-                .submitLabel(.send)
-                .onSubmit {
-                    submitScriptDraft()
-                }
-                .disabled(assistantIsThinking || viewModel.isSubmitting)
-
-                Button {
-                    submitScriptDraft()
-                } label: {
-                    Image(systemName: "paperplane.fill")
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(width: 36, height: 36)
-                        .background(VoteNowColors.primaryCTA)
-                        .clipShape(Circle())
-                }
-                .buttonStyle(.plain)
-                .disabled(assistantComposerText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || assistantIsThinking || viewModel.isSubmitting)
-                .opacity((assistantComposerText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || assistantIsThinking || viewModel.isSubmitting) ? 0.45 : 1.0)
+        HStack(spacing: 8) {
+            TextField(
+                "Describe the issue in plain words (example: expand medicaid).",
+                text: $assistantComposerText,
+                axis: .vertical
+            )
+            .lineLimit(1...5)
+            .textInputAutocapitalization(.sentences)
+            .focused($focusedField, equals: .concern)
+            .submitLabel(.send)
+            .onSubmit {
+                submitScriptDraft()
             }
+            .disabled(assistantIsThinking || viewModel.isSubmitting)
+
+            Button {
+                submitScriptDraft()
+            } label: {
+                Image(systemName: "paperplane.fill")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(.white)
+                    .frame(width: 36, height: 36)
+                    .background(VoteNowColors.primaryCTA)
+                    .clipShape(Circle())
+            }
+            .buttonStyle(.plain)
+            .disabled(assistantComposerText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || assistantIsThinking || viewModel.isSubmitting)
+            .opacity((assistantComposerText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || assistantIsThinking || viewModel.isSubmitting) ? 0.45 : 1.0)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
-        .background(VoteNowColors.surfaceWhite)
-        .overlay(alignment: .top) {
-            Divider()
-        }
+        .background(
+            Capsule(style: .continuous)
+                .fill(VoteNowColors.surfaceWhite)
+        )
+        .overlay(
+            Capsule(style: .continuous)
+                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+        )
+        .shadow(color: VoteNowColors.primaryText.opacity(0.05), radius: 5, x: 0, y: 2)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
     }
 
     private var assistantBackgroundActions: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Does this issue background match what you meant?")
+            Text("Does this match what you meant?")
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(VoteNowColors.primaryText)
 
@@ -1252,7 +1396,7 @@ struct IssueCallCenterView: View {
         guard assistantMessages.isEmpty else { return }
         assistantMessages = [
             .assistant(
-                "Describe the issue in plain English. I’ll first give background + a refined prompt, then generate the script."
+                "Describe the issue in plain English. I’ll first give background & a refined prompt, then generate the script."
             )
         ]
     }
@@ -1643,7 +1787,6 @@ struct IssueCallCenterView: View {
         let isFirstBrief = briefIndex == 0
         let isVoicemailExpanded = expandedVoicemailBriefIDs.contains(brief.id)
         let selectedOutcome = viewModel.loggedOutcomeByBriefID[brief.id]
-        let isVoicemailOutcomeLocked = condensedForMAPC && isVoicemailExpanded
         let liveScriptText = brief.liveScript
 
         VStack(alignment: .leading, spacing: 10) {
@@ -1779,7 +1922,8 @@ struct IssueCallCenterView: View {
                         scriptBlock(
                             title: "Live-call Script",
                             text: liveScriptText,
-                            showScriptInputsToggle: false
+                            showScriptInputsToggle: false,
+                            showTitle: false
                         )
                     }
                 }
@@ -1798,17 +1942,6 @@ struct IssueCallCenterView: View {
             if condensedForMAPC {
                 VStack(alignment: .leading, spacing: 4) {
                     Button {
-                        if selectedOutcome != .voicemail {
-                            if isMAPCMode {
-                                let inserted = mapcSessionLoggedBriefIDs.insert(brief.id).inserted
-                                if inserted {
-                                    noteOptimisticIssueGain(for: brief.issueID)
-                                }
-                            }
-                            Task {
-                                await viewModel.logOutcome(for: brief, outcome: .voicemail)
-                            }
-                        }
                         withAnimation(.easeInOut(duration: 0.2)) {
                             if isVoicemailExpanded {
                                 expandedVoicemailBriefIDs.remove(brief.id)
@@ -1847,7 +1980,7 @@ struct IssueCallCenterView: View {
             outcomeButtons(
                 brief,
                 selectedOutcome: selectedOutcome,
-                isVoicemailLocked: isVoicemailOutcomeLocked
+                isVoicemailLocked: false
             )
 
             if condensedForMAPC {
@@ -1858,7 +1991,7 @@ struct IssueCallCenterView: View {
                                 dismiss()
                             } else {
                                 beginMAPCCardTransition()
-                                mapcForwardSlideTransition = false
+                                mapcForwardSlideTransition = true
                                 viewModel.retreatToPreviousRep(before: brief)
                             }
                         } label: {
@@ -1952,15 +2085,27 @@ struct IssueCallCenterView: View {
             VStack(alignment: .leading, spacing: 12) {
                 if !exampleCategoryOptions.isEmpty {
                     ChipFlowLayout(itemSpacing: 8, rowSpacing: 8) {
-                        ForEach(exampleCategoryOptions, id: \.self) { category in
-                            let isSelected = category.caseInsensitiveCompare(selectedExampleCategory) == .orderedSame
+                        ForEach(visibleExampleCategoryOptions, id: \.self) { category in
+                            let isMoreToggle = category.caseInsensitiveCompare(Self.moreExamplesFilterToken) == .orderedSame
+                            let isSelected = !isMoreToggle && category.caseInsensitiveCompare(selectedExampleCategory) == .orderedSame
                             let categoryColor = exampleCategoryColor(for: category)
                             Button {
-                                selectedExampleCategory = category
+                                if isMoreToggle {
+                                    withAnimation(.easeInOut(duration: 0.22)) {
+                                        showAllExampleCategoryChips.toggle()
+                                    }
+                                } else {
+                                    selectedExampleCategory = category
+                                }
                             } label: {
                                 HStack(spacing: 5) {
                                     if category.caseInsensitiveCompare(Self.searchExamplesFilterLabel) == .orderedSame {
                                         Image(systemName: "magnifyingglass")
+                                            .font(.caption2.weight(.bold))
+                                            .foregroundColor(.white)
+                                    }
+                                    if isMoreToggle {
+                                        Image(systemName: showAllExampleCategoryChips ? "chevron.up" : "chevron.down")
                                             .font(.caption2.weight(.bold))
                                             .foregroundColor(.white)
                                     }
@@ -2041,18 +2186,8 @@ struct IssueCallCenterView: View {
 
                         if selectedExampleCategory.caseInsensitiveCompare(Self.searchExamplesFilterLabel) == .orderedSame {
                             Button {
-                                focusedField = nil
-                                didCompleteMAPC = false
                                 let query = exampleSearchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
-                                if !query.isEmpty {
-                                    viewModel.concernText = query
-                                }
-                                withAnimation(.easeInOut(duration: 0.22)) {
-                                    viewModel.selectedTab = .assistant
-                                }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
-                                    focusedField = .concern
-                                }
+                                transitionToAssistantFromPremade(prefillConcern: query)
                             } label: {
                                 HStack(spacing: 8) {
                                     Image(systemName: "sparkles")
@@ -2201,6 +2336,23 @@ struct IssueCallCenterView: View {
             .padding(.horizontal, 16)
             .padding(.top, 6)
             .padding(.bottom, 20)
+        }
+    }
+
+    private func transitionToAssistantFromPremade(prefillConcern: String?) {
+        focusedField = nil
+        didCompleteMAPC = false
+        if let prefillConcern {
+            let query = prefillConcern.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !query.isEmpty {
+                viewModel.concernText = query
+            }
+        }
+        withAnimation(.interactiveSpring(response: 0.36, dampingFraction: 0.9, blendDuration: 0.2)) {
+            viewModel.selectedTab = .assistant
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.24) {
+            focusedField = .concern
         }
     }
 
@@ -2955,18 +3107,23 @@ struct IssueCallCenterView: View {
         title: String,
         text: String,
         showScriptInputsToggle: Bool = false,
+        showTitle: Bool = true,
         textLineLimit: Int? = nil
     ) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            ZStack {
-                Text(title)
-                    .font(.subheadline.weight(.semibold))
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .multilineTextAlignment(.center)
-                if showScriptInputsToggle {
-                    HStack {
-                        Spacer(minLength: 0)
-                        scriptInputsToggleButton
+            if showTitle || showScriptInputsToggle {
+                ZStack {
+                    if showTitle {
+                        Text(title)
+                            .font(.subheadline.weight(.semibold))
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .multilineTextAlignment(.center)
+                    }
+                    if showScriptInputsToggle {
+                        HStack {
+                            Spacer(minLength: 0)
+                            scriptInputsToggleButton
+                        }
                     }
                 }
             }
@@ -3315,6 +3472,9 @@ struct IssueCallCenterView: View {
     }
 
     private func exampleCategoryDisplayName(for category: String) -> String {
+        if category.caseInsensitiveCompare(Self.moreExamplesFilterToken) == .orderedSame {
+            return showAllExampleCategoryChips ? "Close" : "More..."
+        }
         if category.caseInsensitiveCompare("Government Oversight") == .orderedSame {
             return "Gov. Oversight"
         }
@@ -3475,20 +3635,20 @@ struct IssueCallCenterView: View {
 
 private struct AssistantThinkingLogoView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var scale: CGFloat = 0.96
+    @State private var scale: CGFloat = 0.98
     @State private var opacity: Double = 0.9
     @State private var cycleDuration: Double = 0.42
-    @State private var peakScale: CGFloat = 1.02
+    @State private var peakScale: CGFloat = 1.03
     @State private var animationTask: Task<Void, Never>?
 
     var body: some View {
-        VoteNowLogoIcon(
-            size: 22,
-            borderWidth: 0.5,
-            shadowColor: .clear
-        )
+        Image(uiImage: VoteNowLogoIcon.tabBarUIImage)
+            .renderingMode(.original)
+            .resizable()
+            .interpolation(.high)
+            .antialiased(true)
             .aspectRatio(1, contentMode: .fit)
-            .frame(width: 26, height: 26, alignment: .center)
+            .frame(width: 24, height: 24, alignment: .center)
             .scaleEffect(scale)
             .opacity(opacity)
             .fixedSize()
@@ -3527,7 +3687,7 @@ private struct AssistantThinkingLogoView: View {
 
                 await MainActor.run {
                     withAnimation(.easeInOut(duration: duration)) {
-                        scale = 0.96
+                        scale = 0.98
                         opacity = 0.84
                     }
                 }
@@ -3535,7 +3695,7 @@ private struct AssistantThinkingLogoView: View {
 
                 await MainActor.run {
                     cycleDuration = min(cycleDuration + 0.08, 1.15)
-                    peakScale = min(peakScale + 0.02, 1.18)
+                    peakScale = min(peakScale + 0.015, 1.14)
                 }
             }
         }
@@ -3710,7 +3870,16 @@ private struct AssistantTypewriterText: View {
     @State private var typingTask: Task<Void, Never>?
 
     var body: some View {
-        Text(displayedText)
+        Group {
+            if let attributed = try? AttributedString(
+                markdown: displayedText,
+                options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+            ) {
+                Text(attributed)
+            } else {
+                Text(displayedText)
+            }
+        }
             .onAppear {
                 runAnimationIfNeeded()
             }
@@ -3739,9 +3908,9 @@ private struct AssistantTypewriterText: View {
 
         displayedText = ""
 
-        let targetDurationSeconds = min(max(Double(text.count) * 0.012, 0.65), 4.6)
+        let targetDurationSeconds = min(max(Double(text.count) * 0.019, 0.9), 7.2)
         let perCharacterDelayNs = UInt64((targetDurationSeconds / Double(max(text.count, 1))) * 1_000_000_000)
-        let newlineDelayNs: UInt64 = 95_000_000
+        let newlineDelayNs: UInt64 = 160_000_000
 
         typingTask = Task {
             var running = ""
@@ -3781,14 +3950,14 @@ struct AssistantBackgroundFirstResponseFormatter {
             normalizedIssue: normalizedIssue,
             seeded: commonInterpretations
         )
-        let bulletBlock = bullets.map { "- \($0)" }.joined(separator: "\n")
+        let bulletBlock = bullets.map { "• \($0)" }.joined(separator: "\n")
 
         return """
-        \(translation)
+        ***\(translation)***
 
         \(background)
 
-        People usually mean one of a few things when they say this:
+        ***People usually mean one of a few things when they say this:***
         \(bulletBlock)
         """
     }
