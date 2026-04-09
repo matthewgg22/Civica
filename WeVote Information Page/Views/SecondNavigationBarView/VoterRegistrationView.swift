@@ -1734,12 +1734,14 @@ struct VoterRegistrationView: View {
 
         let targetY = stickyHeaderOffset + 8
         let sorted = tracked.sorted { $0.minY < $1.minY }
-
-        if let visible = sorted.last(where: { $0.minY <= targetY }) {
-            currentlyViewedPhase = visible.phase
-        } else {
-            currentlyViewedPhase = sorted.first?.phase
-        }
+        let nextPhase: VoterRegistrationCard.Phase? = {
+            if let visible = sorted.last(where: { $0.minY <= targetY }) {
+                return visible.phase
+            }
+            return sorted.first?.phase
+        }()
+        guard nextPhase != currentlyViewedPhase else { return }
+        currentlyViewedPhase = nextPhase
     }
 
     private func openMyInfoPanel() {

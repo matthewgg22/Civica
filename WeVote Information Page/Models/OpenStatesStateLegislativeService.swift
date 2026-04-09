@@ -109,7 +109,7 @@ actor OpenStatesStateLegislativeService {
 
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.timeoutInterval = 8
+        request.timeoutInterval = 5
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         if let token = try? await currentAccessToken() {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -132,6 +132,11 @@ actor OpenStatesStateLegislativeService {
                 }
             }
         } catch {
+            if let urlError = error as? URLError, urlError.code == .timedOut {
+                // Keep UI responsive: if this optional enrichment endpoint times out,
+                // skip the slower fallback chain and return immediately.
+                return []
+            }
             // Fall through to Supabase fallback.
         }
 

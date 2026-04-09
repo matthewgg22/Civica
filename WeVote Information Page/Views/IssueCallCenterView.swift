@@ -44,6 +44,7 @@ struct IssueCallCenterView: View {
     @State private var isScriptPreviewReadyForMAPCActions = false
     @State private var currentBackgroundDiscussionOptions: [String] = []
     @State private var hasPickedDiscussionOptionInCurrentCycle = false
+    @State private var suppressTranslationForNextBackground = false
     @State private var isKeyboardVisible = false
     @State private var nonMapcTabSlidesForward = true
     @State private var previousNonMapcTab: CivicIssueCallTab = .assistant
@@ -536,7 +537,13 @@ struct IssueCallCenterView: View {
             guard requiresApproval else { return }
             didCompleteMAPC = false
             if viewModel.selectedTab != .assistant {
-                viewModel.selectedTab = .assistant
+                // Avoid mutating another @Published property during the same
+                // render pass that observed `requiresDraftApproval`.
+                DispatchQueue.main.async {
+                    if viewModel.requiresDraftApproval {
+                        viewModel.selectedTab = .assistant
+                    }
+                }
             }
         }
         .onChange(of: scenePhase) { _, newValue in
@@ -1349,10 +1356,11 @@ struct IssueCallCenterView: View {
         )
     }
 
-    private func submitScriptDraft() {
+    private func submitScriptDraft(fromDiscussionOption: Bool = false) {
         let prompt = assistantComposerText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !prompt.isEmpty else { return }
         guard !viewModel.isSubmitting, !assistantIsThinking else { return }
+        suppressTranslationForNextBackground = fromDiscussionOption
 
         let wasRefinementStage = assistantFlowStage == .awaitingBackgroundApproval || assistantFlowStage == .awaitingMapcStart
         let priorConcern = viewModel.concernText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -1452,6 +1460,7 @@ struct IssueCallCenterView: View {
         isBackgroundMessageReadyForActions = false
         assistantFlowStage = .awaitingBackgroundApproval
         hasPostedCurrentDraftBackground = true
+        suppressTranslationForNextBackground = false
     }
 
     private func approveBackgroundInChat() {
@@ -1498,6 +1507,7 @@ struct IssueCallCenterView: View {
         pendingScriptPreviewMessageID = nil
         isScriptPreviewReadyForMAPCActions = false
         currentBackgroundDiscussionOptions = []
+        suppressTranslationForNextBackground = false
     }
 
     private func reviseGeneratedDraftInChat() {
@@ -1510,6 +1520,7 @@ struct IssueCallCenterView: View {
         pendingScriptPreviewMessageID = nil
         isScriptPreviewReadyForMAPCActions = false
         currentBackgroundDiscussionOptions = []
+        suppressTranslationForNextBackground = false
         appendAssistantBotMessage(
             "Tell me what to change and I’ll regenerate the background + script before MAPC.",
             kind: .plain,
@@ -1526,7 +1537,7 @@ struct IssueCallCenterView: View {
         guard !assistantIsThinking, !viewModel.isSubmitting else { return }
         hasPickedDiscussionOptionInCurrentCycle = true
         assistantComposerText = option
-        submitScriptDraft()
+        submitScriptDraft(fromDiscussionOption: true)
     }
 
     private func generalDiscussionOptionText(from rawInput: String, normalizedIssue: String) -> String? {
@@ -1668,7 +1679,8 @@ struct IssueCallCenterView: View {
             normalizedIssue: snapshot.normalizedIssue,
             briefBackground: snapshot.briefBackground,
             commonInterpretations: snapshot.commonInterpretations,
-            evidenceLine: evidenceLine
+            evidenceLine: evidenceLine,
+            includeTranslation: !suppressTranslationForNextBackground
         )
     }
 
@@ -2279,10 +2291,12 @@ struct IssueCallCenterView: View {
                         didCompleteMAPC = true
                         viewModel.selectedTab = .civicScore
                         // Primary review signal: successful MAPC completion.
-                        ReviewPromptManager.shared.markMAPCCompleted(
-                            isInErrorState: viewModel.errorMessage != nil,
-                            isFlowInterrupted: showingShareSheet
-                        )
+                        DispatchQueue.main.async {
+                            ReviewPromptManager.shared.markMAPCCompleted(
+                                isInErrorState: viewModel.errorMessage != nil,
+                                isFlowInterrupted: showingShareSheet
+                            )
+                        }
                         startMAPCCallGainAnimation(gain: mapcGain)
                         mapcSessionLoggedBriefIDs.removeAll()
                     }
@@ -3356,6 +3370,7 @@ struct IssueCallCenterView: View {
         isScriptPreviewReadyForMAPCActions = false
         currentBackgroundDiscussionOptions = []
         hasPickedDiscussionOptionInCurrentCycle = false
+        suppressTranslationForNextBackground = false
         animatedAssistantMessageIDs.removeAll()
         viewModel.resetScriptChatSession()
     }
@@ -3922,8 +3937,6 @@ private struct AssistantThinkingLogoView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var scale: CGFloat = 0.98
     @State private var opacity: Double = 0.9
-    @State private var cycleDuration: Double = 0.42
-    @State private var peakScale: CGFloat = 1.03
     @State private var animationTask: Task<Void, Never>?
 
     var body: some View {
@@ -3951,12 +3964,15 @@ private struct AssistantThinkingLogoView: View {
         }
 
         animationTask = Task {
-            while !Task.isCancelled {
-                let duration = cycleDuration
-                let upNs = UInt64(duration * 1_000_000_000)
+            let cycleDuration = 0.55
+            let peakScale: CGFloat = 1.03
+            let valleyScale: CGFloat = 0.98
+            let valleyOpacity: Double = 0.84
+            let upNs = UInt64(cycleDuration * 1_000_000_000)
 
+            while !Task.isCancelled {
                 await MainActor.run {
-                    withAnimation(.easeInOut(duration: duration)) {
+                    withAnimation(.easeInOut(duration: cycleDuration)) {
                         scale = peakScale
                         opacity = 1.0
                     }
@@ -3964,17 +3980,12 @@ private struct AssistantThinkingLogoView: View {
                 try? await Task.sleep(nanoseconds: upNs)
 
                 await MainActor.run {
-                    withAnimation(.easeInOut(duration: duration)) {
-                        scale = 0.98
-                        opacity = 0.84
+                    withAnimation(.easeInOut(duration: cycleDuration)) {
+                        scale = valleyScale
+                        opacity = valleyOpacity
                     }
                 }
                 try? await Task.sleep(nanoseconds: upNs)
-
-                await MainActor.run {
-                    cycleDuration = min(cycleDuration + 0.08, 1.15)
-                    peakScale = min(peakScale + 0.015, 1.14)
-                }
             }
         }
     }
@@ -4214,7 +4225,8 @@ struct AssistantBackgroundFirstResponseFormatter {
         normalizedIssue: String,
         briefBackground: String,
         commonInterpretations: [String],
-        evidenceLine: String?
+        evidenceLine: String?,
+        includeTranslation: Bool = true
     ) -> String {
         let translation = translationSentence(rawInput: rawInput, normalizedIssue: normalizedIssue)
         let background = backgroundParagraph(
@@ -4223,6 +4235,10 @@ struct AssistantBackgroundFirstResponseFormatter {
             briefBackground: briefBackground,
             evidenceLine: evidenceLine
         )
+
+        if !includeTranslation {
+            return background
+        }
 
         return """
         ***\(translation)***

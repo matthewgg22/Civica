@@ -837,14 +837,42 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse else { throw URLError(.badServerResponse) }
         guard (200...299).contains(http.statusCode) else {
-            let responseBody = String(data: data, encoding: .utf8) ?? ""
+            let compactMessage = compactHTTPErrorMessage(statusCode: http.statusCode, responseData: data)
             throw NSError(domain: "CivicIssueCallAPIClient", code: http.statusCode, userInfo: [
-                NSLocalizedDescriptionKey: responseBody.isEmpty
-                ? "API request failed with status \(http.statusCode)"
-                : "status \(http.statusCode): \(responseBody)"
+                NSLocalizedDescriptionKey: compactMessage
             ])
         }
         return data
+    }
+
+    private func compactHTTPErrorMessage(statusCode: Int, responseData: Data) -> String {
+        guard !responseData.isEmpty else {
+            return "API request failed with status \(statusCode)"
+        }
+
+        let maxPreviewBytes = 2048
+        let rawPreview = String(decoding: responseData.prefix(maxPreviewBytes), as: UTF8.self)
+        var normalized = rawPreview.replacingOccurrences(
+            of: "\\s+",
+            with: " ",
+            options: .regularExpression
+        )
+        normalized = normalized.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !normalized.isEmpty else {
+            return "API request failed with status \(statusCode)"
+        }
+
+        let lowerPreview = normalized.lowercased()
+        if lowerPreview.contains("<!doctype html") || lowerPreview.contains("<html") {
+            return "status \(statusCode): upstream HTML error page"
+        }
+
+        let maxPreviewChars = 240
+        let snippet = String(normalized.prefix(maxPreviewChars))
+        if normalized.count > maxPreviewChars || responseData.count > maxPreviewBytes {
+            return "status \(statusCode): \(snippet)..."
+        }
+        return "status \(statusCode): \(snippet)"
     }
 
     private func endpoint(_ path: String) -> URL {
@@ -1423,7 +1451,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                     messageType: (normalizedType?.isEmpty == false) ? normalizedType : nil
                 )
             } catch {
-                self.logger.error("Failed to log script chat turn: \(String(describing: error), privacy: .public)")
+                self.logger.error("Failed to log script chat turn: \(self.compactLogError(error), privacy: .public)")
             }
         }
     }
@@ -1457,7 +1485,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                         finalScript: finalScript
                     )
                 } catch {
-                    self.logger.error("Failed to log script feedback (accurate): \(String(describing: error), privacy: .public)")
+                    self.logger.error("Failed to log script feedback (accurate): \(self.compactLogError(error), privacy: .public)")
                 }
             }
         }
@@ -1490,7 +1518,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                         finalScript: finalScript
                     )
                 } catch {
-                    self.logger.error("Failed to log script feedback (revise): \(String(describing: error), privacy: .public)")
+                    self.logger.error("Failed to log script feedback (revise): \(self.compactLogError(error), privacy: .public)")
                 }
             }
         }
@@ -5006,6 +5034,18 @@ final class IssueCallCenterViewModel: ObservableObject {
         }
 
         return "Using offline call briefs while the civic API is unavailable."
+    }
+
+    private func compactLogError(_ error: Error) -> String {
+        let nsError = error as NSError
+        let compact = nsError.localizedDescription
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let snippet = String(compact.prefix(240))
+        if compact.count > 240 {
+            return "\(nsError.domain)#\(nsError.code) \(snippet)..."
+        }
+        return "\(nsError.domain)#\(nsError.code) \(snippet)"
     }
 
     private func userIDForRequest() async -> String {

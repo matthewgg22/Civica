@@ -55,7 +55,7 @@ def _seed_real_reps(repo: InMemoryCivicRepository, user_id: str) -> None:
     )
 
 
-def test_gun_control_returns_needs_clarification_and_no_final_script() -> None:
+def test_gun_control_bypasses_clarification_and_generates_general_fallback() -> None:
     repo = InMemoryCivicRepository()
     _seed_real_reps(repo, "user-1")
     civic_service = CivicService(repository=repo)
@@ -72,16 +72,16 @@ def test_gun_control_returns_needs_clarification_and_no_final_script() -> None:
         )
     )
 
-    assert response.status.value == "needs_clarification"
-    assert response.canonical_context is None
-    assert response.script_core is None
-    assert response.office_overlays == []
-    assert response.candidate_issues
-    assert response.clarification_question is not None
-    assert "background checks" in response.clarification_question.lower()
+    assert response.status.value == "ok"
+    assert response.canonical_context is not None
+    assert response.canonical_context.issue_id == "general-civic-issue"
+    assert response.office_overlays
+    assert response.candidate_issues == []
+    assert response.clarification_question is None
     assert response.truth_trace is not None
-    assert response.truth_trace.classification_reason == "needs_clarification"
-    assert response.script_generation_source is None
+    assert response.truth_trace.classification_reason == "fallback_general"
+    assert response.truth_trace.fallback_used == "general_issue_fallback"
+    assert response.script_generation_source == "template_only"
 
 
 class _StubAssistant:
@@ -489,9 +489,16 @@ def test_script_package_strips_metadata_and_placeholder_names() -> None:
         )
     )
 
-    assert response.status.value == "needs_clarification"
-    assert response.office_overlays == []
-    assert response.script_generation_source is None
+    assert response.status.value == "ok"
+    assert response.script_generation_source == "llm_full"
+    assert response.office_overlays
+    for overlay in response.office_overlays:
+        combined = f"{overlay.live_script_final}\n{overlay.voicemail_script_final}".lower()
+        assert "house office" not in combined
+        assert "senate office" not in combined
+        assert "current status:" not in combined
+        assert "latest item:" not in combined
+        assert "policy focus:" not in combined
 
 
 class _UnreadableTemplateAssistant:
@@ -535,9 +542,15 @@ def test_script_package_falls_back_when_template_is_not_phone_readable() -> None
         )
     )
 
-    assert response.status.value == "needs_clarification"
-    assert response.office_overlays == []
-    assert response.script_generation_source is None
+    assert response.status.value == "ok"
+    assert response.script_generation_source == "llm_full"
+    assert response.office_overlays
+    for overlay in response.office_overlays:
+        combined = f"{overlay.live_script_final}\n{overlay.voicemail_script_final}".lower()
+        assert "house office" not in combined
+        assert "senate office" not in combined
+        assert "support this now." not in combined
+        assert "support this." not in combined
 
 
 def test_script_package_general_fallback_keeps_concrete_user_policy_text() -> None:
@@ -558,9 +571,13 @@ def test_script_package_general_fallback_keeps_concrete_user_policy_text() -> No
         )
     )
 
-    assert response.status.value == "needs_clarification"
-    assert response.office_overlays == []
-    assert response.script_generation_source is None
+    assert response.status.value == "ok"
+    assert response.script_generation_source == "template_only"
+    assert response.office_overlays
+    for overlay in response.office_overlays:
+        combined = f"{overlay.live_script_final}\n{overlay.voicemail_script_final}".lower()
+        assert "therapeutic riding programs for veterans" in combined
+        assert "va pilot grants" in combined
 
 
 def test_script_package_prefers_rep_contexts_in_request_for_anonymous_users() -> None:
@@ -755,6 +772,7 @@ def test_non_health_issue_unchanged() -> None:
         )
     )
 
-    assert response.status.value == "needs_clarification"
-    assert response.canonical_context is None
-    assert response.script_generation_source is None
+    assert response.status.value == "ok"
+    assert response.canonical_context is not None
+    assert response.canonical_context.issue_id == "general-civic-issue"
+    assert response.script_generation_source == "template_only"

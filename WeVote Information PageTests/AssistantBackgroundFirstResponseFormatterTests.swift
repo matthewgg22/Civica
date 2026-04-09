@@ -72,6 +72,22 @@ struct AssistantBackgroundFirstResponseFormatterTests {
         #expect(!output.localizedCaseInsensitiveContains("revise"))
         #expect(output.wordCount <= 260)
     }
+
+    @Test
+    func formatCanSuppressTranslationPrefixForOptionRefinements() {
+        let output = AssistantBackgroundFirstResponseFormatter.format(
+            rawInput: "General: End or prevent a federal government shutdown",
+            normalizedIssue: "End Government Shutdown",
+            briefBackground: "Congress has not finalized appropriations.",
+            commonInterpretations: [],
+            evidenceLine: nil,
+            includeTranslation: false
+        )
+
+        #expect(!output.contains("It sounds like you’re asking about"))
+        #expect(!output.contains("***"))
+        #expect(!output.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+    }
 }
 
 private extension String {
