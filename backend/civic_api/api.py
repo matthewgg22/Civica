@@ -24,6 +24,7 @@ from .models import (
     LeaderboardPeriodType,
     RepContext,
     RepTarget,
+    ScriptChatTurnRequest,
     ScriptPackageFeedbackRequest,
     ScriptPackageRequest,
 )
@@ -289,6 +290,28 @@ def parse_script_feedback_request(payload: dict[str, Any], user_id: str) -> Scri
     )
 
 
+def parse_script_chat_turn_request(payload: dict[str, Any], user_id: str) -> ScriptChatTurnRequest:
+    role = _required_string(payload, "role").strip().lower()
+    if role not in {"user", "assistant"}:
+        raise ValueError("role must be one of: user, assistant.")
+    turn_index_raw = payload.get("turn_index")
+    try:
+        turn_index = int(turn_index_raw)
+    except (TypeError, ValueError):
+        raise ValueError("turn_index must be an integer.") from None
+    if turn_index < 1:
+        raise ValueError("turn_index must be >= 1.")
+    return ScriptChatTurnRequest(
+        user_id=user_id,
+        session_id=_required_string(payload, "session_id"),
+        role=role,
+        message_text=_required_string(payload, "message_text"),
+        turn_index=turn_index,
+        package_id=_optional_string(payload, "package_id"),
+        message_type=_optional_string(payload, "message_type"),
+    )
+
+
 def get_examples(user_id: str) -> dict[str, Any]:
     return service.get_examples(user_id).to_dict()
 
@@ -412,6 +435,12 @@ def post_script_package(payload: dict[str, Any], user_id: str) -> dict[str, Any]
 def post_script_feedback(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
     parsed = parse_script_feedback_request(payload, user_id)
     script_package_service.record_feedback(parsed)
+    return {"ok": True}
+
+
+def post_script_chat_turn(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+    parsed = parse_script_chat_turn_request(payload, user_id)
+    script_package_service.record_chat_turn(parsed)
     return {"ok": True}
 
 
@@ -807,6 +836,13 @@ if FastAPI is not None:
     def civic_script_feedback(payload: dict[str, Any], request: Request) -> dict[str, Any]:
         return _run_endpoint(
             lambda: post_script_feedback(payload, resolve_authenticated_or_anonymous_user_id(request)),
+            bad_request_exceptions=bad_request,
+        )
+
+    @app.post("/api/v1/civic/script-chat-turn")
+    def civic_script_chat_turn(payload: dict[str, Any], request: Request) -> dict[str, Any]:
+        return _run_endpoint(
+            lambda: post_script_chat_turn(payload, resolve_authenticated_or_anonymous_user_id(request)),
             bad_request_exceptions=bad_request,
         )
 

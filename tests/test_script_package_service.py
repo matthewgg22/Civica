@@ -10,6 +10,7 @@ from backend.civic_api.models import (
     IssueClassifyResponse,
     RepContext,
     RepTarget,
+    ScriptChatTurnRequest,
     ScriptPackageFeedbackRequest,
     ScriptPackageRequest,
 )
@@ -350,6 +351,34 @@ def test_feedback_and_mapc_completion_events_logged() -> None:
         and row.get("metadata", {}).get("launch_event_id") == "launch-1"
         for row in rows
     )
+
+
+def test_script_chat_turn_logged_to_repository() -> None:
+    repo = InMemoryCivicRepository()
+    _seed_real_reps(repo, "user-chat")
+    civic_service = CivicService(repository=repo)
+    brief_service = IssueBriefService(repository=repo)
+    script_service = ScriptPackageService(civic_service=civic_service, issue_brief_service=brief_service)
+
+    script_service.record_chat_turn(
+        ScriptChatTurnRequest(
+            user_id="user-chat",
+            session_id="session-123",
+            role="user",
+            message_text="Expand Medicaid coverage",
+            turn_index=1,
+            package_id="pkg-123",
+            message_type="user_prompt",
+        )
+    )
+
+    rows = getattr(repo, "_script_chat_turns")
+    assert len(rows) == 1
+    assert rows[0]["user_id"] == "user-chat"
+    assert rows[0]["session_id"] == "session-123"
+    assert rows[0]["role"] == "user"
+    assert rows[0]["turn_index"] == 1
+    assert rows[0]["message_text"] == "Expand Medicaid coverage"
 
 
 def test_specific_issue_attempts_llm_when_assistant_available() -> None:

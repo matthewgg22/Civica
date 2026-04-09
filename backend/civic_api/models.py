@@ -692,3 +692,14 @@ class ScriptPackageFeedbackRequest:
     decision: str
     chosen_option: str | None = None
     final_script: str | None = None
+
+
+@dataclass
+class ScriptChatTurnRequest:
+    user_id: str
+    session_id: str
+    role: str
+    message_text: str
+    turn_index: int
+    package_id: str | None = None
+    message_type: str | None = None

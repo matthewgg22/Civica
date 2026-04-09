@@ -591,6 +591,7 @@ struct VoterRegistrationView: View {
             VStack(spacing: 10) {
                 ForEach(section.cards) { card in
                     registrationCard(card)
+                        .id(card.id)
                 }
             }
         }
@@ -1614,8 +1615,9 @@ struct VoterRegistrationView: View {
         let isActive = phase == activeGuidePhase
         return Button {
             currentlyViewedPhase = phase
+            let target = preferredScrollTarget(for: phase)
             withAnimation(.interactiveSpring(response: 0.72, dampingFraction: 0.9, blendDuration: 0.2)) {
-                proxy.scrollTo(phase, anchor: .top)
+                proxy.scrollTo(target, anchor: .top)
             }
         } label: {
             Text(title)
@@ -1631,6 +1633,13 @@ struct VoterRegistrationView: View {
                 )
         }
         .buttonStyle(.plain)
+    }
+
+    private func preferredScrollTarget(for phase: VoterRegistrationCard.Phase) -> AnyHashable {
+        if let primaryCard = cards.first(where: { $0.phase == phase }) {
+            return AnyHashable(primaryCard.id)
+        }
+        return AnyHashable(phase)
     }
 
     private func guidePhaseHighlightColor(for phase: VoterRegistrationCard.Phase) -> Color {

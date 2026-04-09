@@ -96,6 +96,24 @@ private struct CivicScriptFeedbackRequest: Codable {
     }
 }
 
+private struct CivicScriptChatTurnRequest: Codable {
+    let sessionID: String
+    let packageID: String?
+    let role: String
+    let turnIndex: Int
+    let messageText: String
+    let messageType: String?
+
+    enum CodingKeys: String, CodingKey {
+        case sessionID = "session_id"
+        case packageID = "package_id"
+        case role
+        case turnIndex = "turn_index"
+        case messageText = "message_text"
+        case messageType = "message_type"
+    }
+}
+
 struct CivicIssueBriefFact: Codable {
     let fact: String
     let sourceName: String?
@@ -409,6 +427,15 @@ protocol CivicIssueCallAPIClientProtocol {
         chosenOption: String?,
         finalScript: String?
     ) async throws
+    func logScriptChatTurn(
+        userID: String,
+        sessionID: String,
+        packageID: String?,
+        role: String,
+        turnIndex: Int,
+        messageText: String,
+        messageType: String?
+    ) async throws
     func logCall(
         userID: String,
         repID: String,
@@ -553,6 +580,31 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             finalScript: finalScript
         )
         var request = URLRequest(url: endpoint("/api/v1/civic/script-feedback"))
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        await attachAuthorizationIfAvailable(to: &request)
+        request.httpBody = try encoder.encode(payload)
+        _ = try await requestData(for: request)
+    }
+
+    func logScriptChatTurn(
+        userID _: String,
+        sessionID: String,
+        packageID: String?,
+        role: String,
+        turnIndex: Int,
+        messageText: String,
+        messageType: String?
+    ) async throws {
+        let payload = CivicScriptChatTurnRequest(
+            sessionID: sessionID,
+            packageID: packageID,
+            role: role,
+            turnIndex: turnIndex,
+            messageText: messageText,
+            messageType: messageType
+        )
+        var request = URLRequest(url: endpoint("/api/v1/civic/script-chat-turn"))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         await attachAuthorizationIfAvailable(to: &request)
@@ -1019,6 +1071,8 @@ final class IssueCallCenterViewModel: ObservableObject {
     private var activeMAPCSessionID: UUID?
     private var pendingGeneratedResolution: CivicIssueResolutionResponse?
     private var lastGeneratedPackageID: String?
+    private var scriptChatSessionID: UUID?
+    private var scriptChatTurnIndex: Int = 0
     private let zipFallbackToken = "[ZIPCODE]"
 
     init(
@@ -1342,6 +1396,41 @@ final class IssueCallCenterViewModel: ObservableObject {
         requiresDraftApproval = false
         activeMAPCSessionID = nil
         selectedRepFilter = .all
+    }
+
+    func logScriptChatTurn(role: String, messageText: String, messageType: String?) {
+        let normalizedRole = role.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard normalizedRole == "user" || normalizedRole == "assistant" else { return }
+        let normalizedText = messageText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !normalizedText.isEmpty else { return }
+
+        let sessionID = ensureScriptChatSessionID().uuidString
+        scriptChatTurnIndex += 1
+        let turnIndex = scriptChatTurnIndex
+        let packageID = lastGeneratedPackageID
+        let normalizedType = messageType?.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        Task { [apiClient] in
+            let userID = await self.userIDForRequest()
+            do {
+                try await apiClient.logScriptChatTurn(
+                    userID: userID,
+                    sessionID: sessionID,
+                    packageID: packageID,
+                    role: normalizedRole,
+                    turnIndex: turnIndex,
+                    messageText: normalizedText,
+                    messageType: (normalizedType?.isEmpty == false) ? normalizedType : nil
+                )
+            } catch {
+                self.logger.error("Failed to log script chat turn: \(String(describing: error), privacy: .public)")
+            }
+        }
+    }
+
+    func resetScriptChatSession() {
+        scriptChatSessionID = nil
+        scriptChatTurnIndex = 0
     }
 
     func approveGeneratedDraft() {
@@ -1834,6 +1923,15 @@ final class IssueCallCenterViewModel: ObservableObject {
         }
         let generated = UUID()
         activeMAPCSessionID = generated
+        return generated
+    }
+
+    private func ensureScriptChatSessionID() -> UUID {
+        if let scriptChatSessionID {
+            return scriptChatSessionID
+        }
+        let generated = UUID()
+        scriptChatSessionID = generated
         return generated
     }
 

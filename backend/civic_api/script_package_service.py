@@ -16,6 +16,7 @@ from .models import (
     RepTarget,
     ScriptPackageCanonicalContext,
     ScriptPackageCommitteeMatch,
+    ScriptChatTurnRequest,
     ScriptPackageFeedbackRequest,
     ScriptPackageOfficeOverlay,
     ScriptPackageRequest,
@@ -761,6 +762,22 @@ class ScriptPackageService:
             self.civic_service.repository.insert_script_generation_event(row)
         except Exception as exc:
             logger.warning("script generation event insert failed: %s", type(exc).__name__)
+
+    def record_chat_turn(self, request: ScriptChatTurnRequest) -> None:
+        row = {
+            "user_id": request.user_id,
+            "session_id": _trim_for_event(request.session_id, 180),
+            "package_id": _trim_for_event(request.package_id, 180) or None,
+            "role": request.role,
+            "turn_index": max(1, int(request.turn_index)),
+            "message_text": _trim_for_event(request.message_text, 6000),
+            "message_type": _trim_for_event(request.message_type, 120) or None,
+            "metadata": {},
+        }
+        try:
+            self.civic_service.repository.insert_script_chat_turn(row)
+        except Exception as exc:
+            logger.warning("script chat turn insert failed: %s", type(exc).__name__)
 
     def _generate_llm_draft_if_needed(
         self,

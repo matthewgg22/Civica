@@ -38,6 +38,12 @@ struct IssueCallCenterView: View {
     @State private var assistantFlowStage: AssistantFlowStage = .awaitingPrompt
     @State private var hasPostedCurrentDraftBackground = false
     @State private var animatedAssistantMessageIDs: Set<UUID> = []
+    @State private var pendingBackgroundMessageID: UUID?
+    @State private var isBackgroundMessageReadyForActions = false
+    @State private var pendingScriptPreviewMessageID: UUID?
+    @State private var isScriptPreviewReadyForMAPCActions = false
+    @State private var currentBackgroundDiscussionOptions: [String] = []
+    @State private var hasPickedDiscussionOptionInCurrentCycle = false
     @State private var isKeyboardVisible = false
     @State private var nonMapcTabSlidesForward = true
     @State private var previousNonMapcTab: CivicIssueCallTab = .assistant
@@ -126,8 +132,8 @@ struct IssueCallCenterView: View {
 
     private var mapcCardAnimation: Animation {
         reduceMotion
-        ? .easeInOut(duration: 0.24)
-        : .interactiveSpring(response: 0.44, dampingFraction: 0.9, blendDuration: 0.18)
+        ? .easeInOut(duration: 0.3)
+        : .interactiveSpring(response: 0.52, dampingFraction: 0.9, blendDuration: 0.22)
     }
 
     private var nonMapcTabTransition: AnyTransition {
@@ -221,6 +227,10 @@ struct IssueCallCenterView: View {
 
     private var visibleTabs: [CivicIssueCallTab] {
         [.assistant, .examples, .civicScore]
+    }
+
+    private var shouldHideTopTabSelector: Bool {
+        focusedField != nil || isKeyboardVisible
     }
 
     private static let allExamplesFilterLabel = "All"
@@ -418,10 +428,17 @@ struct IssueCallCenterView: View {
                     } else {
                         VStack(spacing: 12) {
                             headerSection
-                            if focusedField == nil && !isKeyboardVisible {
-                                topTabSelector
-                                    .transition(.move(edge: .top).combined(with: .opacity))
-                            }
+                            topTabSelector
+                                .offset(y: shouldHideTopTabSelector ? -16 : 0)
+                                .opacity(shouldHideTopTabSelector ? 0 : 1)
+                                .frame(height: shouldHideTopTabSelector ? 0 : nil, alignment: .top)
+                                .clipped()
+                                .allowsHitTesting(!shouldHideTopTabSelector)
+                                .accessibilityHidden(shouldHideTopTabSelector)
+                                .animation(
+                                    .interactiveSpring(response: 0.26, dampingFraction: 0.9, blendDuration: 0.12),
+                                    value: shouldHideTopTabSelector
+                                )
                             ZStack {
                                 nonMapcTabContent(for: viewModel.selectedTab)
                                     .id(viewModel.selectedTab)
@@ -493,9 +510,8 @@ struct IssueCallCenterView: View {
             isMAPCCardTransitioning = false
             viewModel.persistDraftState()
         }
-        .onChange(of: viewModel.selectedTab) { _, newTab in
-            let prior = previousNonMapcTab
-            nonMapcTabSlidesForward = tabIndex(for: newTab) >= tabIndex(for: prior)
+        .onChange(of: viewModel.selectedTab) { oldTab, newTab in
+            nonMapcTabSlidesForward = tabIndex(for: newTab) >= tabIndex(for: oldTab)
             previousNonMapcTab = newTab
             viewModel.persistDraftState()
             if newTab == .civicScore {
@@ -787,6 +803,9 @@ struct IssueCallCenterView: View {
     private func issueCallTopTabButton(_ tab: CivicIssueCallTab) -> some View {
         let isActive = viewModel.selectedTab == tab
         return Button {
+            let currentTab = viewModel.selectedTab
+            nonMapcTabSlidesForward = tabIndex(for: tab) >= tabIndex(for: currentTab)
+            previousNonMapcTab = currentTab
             withAnimation(.interactiveSpring(response: 0.24, dampingFraction: 0.92, blendDuration: 0.16)) {
                 viewModel.selectedTab = tab
             }
@@ -849,7 +868,7 @@ struct IssueCallCenterView: View {
         case .examples:
             return VoteNowColors.warningAmber
         case .civicScore:
-            return VoteNowColors.urgentCTA
+            return VoteNowColors.successGreen
         case .history:
             return VoteNowColors.primaryCTA
         }
@@ -944,10 +963,10 @@ struct IssueCallCenterView: View {
                         .id("assistant-typing")
                     }
 
-                    if assistantFlowStage == .awaitingBackgroundApproval {
+                    if assistantFlowStage == .awaitingBackgroundApproval && isBackgroundMessageReadyForActions {
                         assistantBackgroundActions
                             .id("assistant-background-actions")
-                    } else if assistantFlowStage == .awaitingMapcStart {
+                    } else if assistantFlowStage == .awaitingMapcStart && isScriptPreviewReadyForMAPCActions {
                         assistantStartMAPCActions
                             .id("assistant-mapc-actions")
                     }
@@ -1015,6 +1034,18 @@ struct IssueCallCenterView: View {
                         animate: !reduceMotion && !animatedAssistantMessageIDs.contains(message.id),
                         onFinished: {
                             animatedAssistantMessageIDs.insert(message.id)
+                            if pendingBackgroundMessageID == message.id {
+                                pendingBackgroundMessageID = nil
+                                withAnimation(.easeOut(duration: 0.18)) {
+                                    isBackgroundMessageReadyForActions = true
+                                }
+                            }
+                            if pendingScriptPreviewMessageID == message.id {
+                                pendingScriptPreviewMessageID = nil
+                                withAnimation(.easeOut(duration: 0.18)) {
+                                    isScriptPreviewReadyForMAPCActions = true
+                                }
+                            }
                         }
                     )
                     .font(message.kind == .structured ? .system(.footnote, design: .monospaced) : .body)
@@ -1041,7 +1072,7 @@ struct IssueCallCenterView: View {
     private var assistantChatComposer: some View {
         HStack(spacing: 8) {
             TextField(
-                "Describe the issue in plain words (example: expand medicaid).",
+                "Describe the issue...",
                 text: $assistantComposerText,
                 axis: .vertical
             )
@@ -1088,6 +1119,35 @@ struct IssueCallCenterView: View {
             Text("Does this match what you meant?")
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(VoteNowColors.primaryText)
+
+            if !hasPickedDiscussionOptionInCurrentCycle && !discussionOptionsForCurrentBackground.isEmpty {
+                Text("Tap any option to build the script around it:")
+                    .font(.caption.weight(.semibold))
+                    .foregroundColor(VoteNowColors.mutedText)
+
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 165), spacing: 8)], spacing: 8) {
+                    ForEach(discussionOptionsForCurrentBackground, id: \.self) { option in
+                        Button {
+                            selectDiscussionOptionInChat(option)
+                        } label: {
+                            Text(option)
+                                .font(.caption.weight(.semibold))
+                                .foregroundColor(VoteNowColors.primaryText)
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 9)
+                                .background(VoteNowColors.surfaceWhite)
+                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                        .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                                )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
 
             HStack(spacing: 8) {
                 Button {
@@ -1298,9 +1358,10 @@ struct IssueCallCenterView: View {
         let priorConcern = viewModel.concernText.trimmingCharacters(in: .whitespacesAndNewlines)
         let combinedPrompt: String
         if wasRefinementStage, !priorConcern.isEmpty {
-            combinedPrompt = "\(priorConcern)\n\nFocus refinement: \(prompt)"
+            combinedPrompt = mergedConcernText(base: priorConcern, refinement: prompt)
         } else {
             combinedPrompt = prompt
+            hasPickedDiscussionOptionInCurrentCycle = false
         }
 
         if viewModel.selectedAsk == nil {
@@ -1314,9 +1375,14 @@ struct IssueCallCenterView: View {
 
         guard viewModel.canSubmit else { return }
 
-        assistantMessages.append(.user(prompt))
+        appendAssistantUserMessage(prompt, messageType: "user_prompt")
         assistantComposerText = ""
         hasPostedCurrentDraftBackground = false
+        pendingBackgroundMessageID = nil
+        isBackgroundMessageReadyForActions = false
+        pendingScriptPreviewMessageID = nil
+        isScriptPreviewReadyForMAPCActions = false
+        currentBackgroundDiscussionOptions = []
         assistantFlowStage = .awaitingPrompt
         assistantIsThinking = true
         focusedField = nil
@@ -1342,11 +1408,18 @@ struct IssueCallCenterView: View {
 
         if let error = viewModel.errorMessage?.trimmingCharacters(in: .whitespacesAndNewlines),
            !error.isEmpty {
-            assistantMessages.append(.assistant(error))
+            appendAssistantBotMessage(error, kind: .plain, messageType: "error")
             viewModel.errorMessage = nil
         } else {
-            assistantMessages.append(.assistant("I couldn’t produce a draft yet. Send one more line with the exact action you want Congress to take."))
+            appendAssistantBotMessage(
+                "I couldn’t produce a draft yet. Send one more line with the exact action you want Congress to take.",
+                kind: .plain,
+                messageType: "fallback_prompt"
+            )
         }
+        pendingBackgroundMessageID = nil
+        isBackgroundMessageReadyForActions = false
+        currentBackgroundDiscussionOptions = []
         assistantFlowStage = .awaitingPrompt
     }
 
@@ -1354,11 +1427,29 @@ struct IssueCallCenterView: View {
         guard !hasPostedCurrentDraftBackground else { return }
         let snapshot = assistantRefinementSnapshot()
         let laymanBackground = laymanBackgroundMessage(from: snapshot)
+        var options = AssistantBackgroundFirstResponseFormatter.discussionOptions(
+            rawInput: snapshot.rawUserInput,
+            normalizedIssue: snapshot.normalizedIssue,
+            seeded: snapshot.commonInterpretations
+        )
+        if let generalOption = generalDiscussionOptionText(from: snapshot.rawUserInput, normalizedIssue: snapshot.normalizedIssue) {
+            options.removeAll { $0.caseInsensitiveCompare(generalOption) == .orderedSame }
+            options.insert(generalOption, at: 0)
+        }
+        currentBackgroundDiscussionOptions = options
 
-        assistantMessages.append(.assistant(
+        let backgroundMessage = AssistantChatMessage.assistant(
             laymanBackground,
             kind: .plain
-        ))
+        )
+        assistantMessages.append(backgroundMessage)
+        viewModel.logScriptChatTurn(
+            role: "assistant",
+            messageText: laymanBackground,
+            messageType: "background"
+        )
+        pendingBackgroundMessageID = backgroundMessage.id
+        isBackgroundMessageReadyForActions = false
         assistantFlowStage = .awaitingBackgroundApproval
         hasPostedCurrentDraftBackground = true
     }
@@ -1366,39 +1457,120 @@ struct IssueCallCenterView: View {
     private func approveBackgroundInChat() {
         guard assistantFlowStage == .awaitingBackgroundApproval else { return }
         guard let brief = viewModel.activeBrief else {
-            assistantMessages.append(.assistant("I lost the draft state. Send your issue again and I’ll regenerate it."))
+            appendAssistantBotMessage(
+                "I lost the draft state. Send your issue again and I’ll regenerate it.",
+                kind: .plain,
+                messageType: "error"
+            )
             assistantFlowStage = .awaitingPrompt
             hasPostedCurrentDraftBackground = false
             return
         }
 
-        assistantMessages.append(.assistant(formattedScriptPreview(for: brief), kind: .script))
+        appendAssistantUserMessage("Selected: Accurate", messageType: "approval")
+        isScriptPreviewReadyForMAPCActions = false
+        let scriptPreviewMessage = AssistantChatMessage.assistant(formattedScriptPreview(for: brief), kind: .script)
+        assistantMessages.append(scriptPreviewMessage)
+        viewModel.logScriptChatTurn(
+            role: "assistant",
+            messageText: scriptPreviewMessage.text,
+            messageType: "script_preview"
+        )
+        pendingScriptPreviewMessageID = scriptPreviewMessage.id
+        pendingBackgroundMessageID = nil
+        isBackgroundMessageReadyForActions = false
+        currentBackgroundDiscussionOptions = []
         assistantFlowStage = .awaitingMapcStart
     }
 
     private func startMAPCFromChat() {
         guard assistantFlowStage == .awaitingMapcStart else { return }
         viewModel.approveGeneratedDraft()
-        assistantMessages.append(.assistant("Approved. Moving this into MAPC call flow now."))
+        appendAssistantBotMessage(
+            "Approved. Moving this into MAPC call flow now.",
+            kind: .plain,
+            messageType: "mapc_launch"
+        )
         assistantFlowStage = .awaitingPrompt
         hasPostedCurrentDraftBackground = false
+        pendingBackgroundMessageID = nil
+        isBackgroundMessageReadyForActions = false
+        pendingScriptPreviewMessageID = nil
+        isScriptPreviewReadyForMAPCActions = false
+        currentBackgroundDiscussionOptions = []
     }
 
     private func reviseGeneratedDraftInChat() {
+        appendAssistantUserMessage("Selected: Revise", messageType: "revise")
         viewModel.reviseGeneratedDraft()
         assistantFlowStage = .awaitingPrompt
         hasPostedCurrentDraftBackground = false
-        assistantMessages.append(.assistant("Tell me what to change and I’ll regenerate the background + script before MAPC."))
+        pendingBackgroundMessageID = nil
+        isBackgroundMessageReadyForActions = false
+        pendingScriptPreviewMessageID = nil
+        isScriptPreviewReadyForMAPCActions = false
+        currentBackgroundDiscussionOptions = []
+        appendAssistantBotMessage(
+            "Tell me what to change and I’ll regenerate the background + script before MAPC.",
+            kind: .plain,
+            messageType: "revise_prompt"
+        )
         focusedField = .concern
+    }
+
+    private var discussionOptionsForCurrentBackground: [String] {
+        currentBackgroundDiscussionOptions
+    }
+
+    private func selectDiscussionOptionInChat(_ option: String) {
+        guard !assistantIsThinking, !viewModel.isSubmitting else { return }
+        hasPickedDiscussionOptionInCurrentCycle = true
+        assistantComposerText = option
+        submitScriptDraft()
+    }
+
+    private func generalDiscussionOptionText(from rawInput: String, normalizedIssue: String) -> String? {
+        let baseInput = rawInput
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let labelSource = baseInput.isEmpty
+            ? normalizedIssue.trimmingCharacters(in: .whitespacesAndNewlines)
+            : baseInput
+        guard !labelSource.isEmpty else { return nil }
+
+        let compact = labelSource
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !compact.isEmpty else { return nil }
+        return "General: \(compact)"
+    }
+
+    private func mergedConcernText(base: String, refinement: String) -> String {
+        let cleanBase = base.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let cleanRefinement = refinement.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !cleanBase.isEmpty else { return cleanRefinement }
+        guard !cleanRefinement.isEmpty else { return cleanBase }
+
+        let baseLower = cleanBase.lowercased()
+        let refinementLower = cleanRefinement.lowercased()
+        if baseLower.contains(refinementLower) { return cleanBase }
+        if refinementLower.contains(baseLower) { return cleanRefinement }
+
+        let normalizedBase = cleanBase.hasSuffix(".") ? String(cleanBase.dropLast()) : cleanBase
+        return "\(normalizedBase). \(cleanRefinement)"
     }
 
     private func seedAssistantChatIfNeeded() {
         guard assistantMessages.isEmpty else { return }
-        assistantMessages = [
-            .assistant(
-                "Describe the issue in plain English. I’ll first give background & a refined prompt, then generate the script."
-            )
-        ]
+        let intro = "Describe the issue in plain English. I’ll first give background & a refined prompt, then generate the script."
+        assistantMessages = [.assistant(intro)]
+        viewModel.logScriptChatTurn(
+            role: "assistant",
+            messageText: intro,
+            messageType: "intro"
+        )
     }
 
     private func inferredAsk(from prompt: String) -> CivicAsk? {
@@ -1455,7 +1627,6 @@ struct IssueCallCenterView: View {
         } else {
             interpretations.append("This appears to be a broad civic advocacy request that may need scope confirmation.")
         }
-        interpretations.append("MAPC can target House + Senate offices with office-specific scripts.")
         interpretations = Array(interpretations.prefix(3))
 
         var questions: [String] = []
@@ -1598,11 +1769,47 @@ struct IssueCallCenterView: View {
     }
 
     private func formattedScriptPreview(for brief: CivicCallBrief) -> String {
-        let live = brief.liveScript.trimmingCharacters(in: .whitespacesAndNewlines)
+        let live = maskedRepresentativePreviewText(
+            brief.liveScript.trimmingCharacters(in: .whitespacesAndNewlines),
+            brief: brief
+        )
         return """
         Draft script:
         \(live)
         """
+    }
+
+    private func maskedRepresentativePreviewText(_ text: String, brief: CivicCallBrief) -> String {
+        var masked = text
+        let fullName = brief.repName.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !fullName.isEmpty {
+            masked = masked.replacingOccurrences(
+                of: NSRegularExpression.escapedPattern(for: fullName),
+                with: "[REPRESENTATIVE]",
+                options: [.regularExpression, .caseInsensitive]
+            )
+        }
+
+        let lastName = trackerDisplayLastName(from: fullName).trimmingCharacters(in: .whitespacesAndNewlines)
+        if !lastName.isEmpty {
+            let escapedLast = NSRegularExpression.escapedPattern(for: lastName)
+            let titledPatterns = [
+                #"(?i)\bU\.?\s*S\.?\s*Senator\s+\#(escapedLast)\b"#,
+                #"(?i)\bU\.?\s*S\.?\s*Representative\s+\#(escapedLast)\b"#,
+                #"(?i)\bSenator\s+\#(escapedLast)\b"#,
+                #"(?i)\bRepresentative\s+\#(escapedLast)\b"#,
+                #"(?i)\bCongress(?:man|woman)\s+\#(escapedLast)\b"#
+            ]
+            for pattern in titledPatterns {
+                masked = masked.replacingOccurrences(
+                    of: pattern,
+                    with: "[REPRESENTATIVE]",
+                    options: .regularExpression
+                )
+            }
+        }
+
+        return masked
     }
 
     private var draftApprovalCard: some View {
@@ -1658,12 +1865,12 @@ struct IssueCallCenterView: View {
 
     private func draftPreviewCard(_ brief: CivicCallBrief) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Draft preview for \(brief.repName)")
+            Text("Draft preview for [REPRESENTATIVE]")
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(VoteNowColors.primaryText)
 
-            scriptBlock(title: "Live-call Script (Draft)", text: brief.liveScript)
-            scriptBlock(title: "Voicemail Script (Draft)", text: brief.voicemailScript)
+            scriptBlock(title: "Live-call Script (Draft)", text: maskedRepresentativePreviewText(brief.liveScript, brief: brief))
+            scriptBlock(title: "Voicemail Script (Draft)", text: maskedRepresentativePreviewText(brief.voicemailScript, brief: brief))
         }
         .padding(12)
         .background(VoteNowColors.surfaceWhite)
@@ -1794,6 +2001,11 @@ struct IssueCallCenterView: View {
                 IssueCallRepHeadshotView(official: official)
                     .frame(width: 65, height: 65)
                     .clipShape(Circle())
+                    .overlay(
+                        Circle()
+                            .stroke(VoteNowColors.borderWarm.opacity(0.9), lineWidth: 1)
+                    )
+                    .shadow(color: VoteNowColors.primaryText.opacity(0.06), radius: 2, x: 0, y: 1)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(displayRepName)
@@ -1913,8 +2125,12 @@ struct IssueCallCenterView: View {
                         .padding(.horizontal, 10)
                         .padding(.vertical, 8)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(VoteNowColors.infoSurfaceBlue)
+                        .background(VoteNowColors.surfaceWhite)
                         .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 9, style: .continuous)
+                                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                        )
                     }
                     .buttonStyle(.plain)
 
@@ -1923,7 +2139,8 @@ struct IssueCallCenterView: View {
                             title: "Live-call Script",
                             text: liveScriptText,
                             showScriptInputsToggle: false,
-                            showTitle: false
+                            showTitle: false,
+                            usesMapcCardChrome: true
                         )
                     }
                 }
@@ -1935,7 +2152,7 @@ struct IssueCallCenterView: View {
                 )
             }
             if condensedForMAPC, isTalkingPointsExpanded, !brief.talkingPoints.isEmpty {
-                scriptInputsExpandedBlock(brief.talkingPoints)
+                scriptInputsExpandedBlock(brief.talkingPoints, usesMapcCardChrome: true)
                     .padding(.leading, 8)
             }
 
@@ -1964,13 +2181,21 @@ struct IssueCallCenterView: View {
                         .padding(.horizontal, 10)
                         .padding(.vertical, 8)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(VoteNowColors.infoSurfaceBlue)
+                        .background(VoteNowColors.surfaceWhite)
                         .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 9, style: .continuous)
+                                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                        )
                     }
                     .buttonStyle(.plain)
 
                     if isVoicemailExpanded {
-                        scriptBlock(title: "Voicemail Script", text: brief.voicemailScript)
+                        scriptBlock(
+                            title: "Voicemail Script",
+                            text: brief.voicemailScript,
+                            usesMapcCardChrome: true
+                        )
                     }
                 }
             } else {
@@ -2022,9 +2247,20 @@ struct IssueCallCenterView: View {
         .id(brief.id)
         .background(VoteNowColors.surfaceWhite)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .shadow(
+            color: condensedForMAPC ? VoteNowColors.primaryText.opacity(0.08) : .clear,
+            radius: condensedForMAPC ? 6 : 0,
+            x: 0,
+            y: condensedForMAPC ? 2 : 0
+        )
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(isActive ? VoteNowColors.primaryCTA : VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+                .stroke(
+                    condensedForMAPC
+                    ? VoteNowColors.borderWarm.opacity(0.5)
+                    : (isActive ? VoteNowColors.primaryCTA : VoteNowColors.borderWarm.opacity(0.7)),
+                    lineWidth: condensedForMAPC ? 0.9 : 1
+                )
         )
     }
 
@@ -2050,6 +2286,7 @@ struct IssueCallCenterView: View {
                         startMAPCCallGainAnimation(gain: mapcGain)
                         mapcSessionLoggedBriefIDs.removeAll()
                     }
+                    resetAssistantConversationAfterMAPCCompletion()
                 }
             } else {
                 beginMAPCCardTransition()
@@ -2189,21 +2426,26 @@ struct IssueCallCenterView: View {
                                 let query = exampleSearchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
                                 transitionToAssistantFromPremade(prefillConcern: query)
                             } label: {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "sparkles")
-                                        .font(.caption.weight(.semibold))
-                                    Text(l("app.issue_call.examples.build_script", "Build this script"))
-                                        .font(.subheadline.weight(.semibold))
-                                    Spacer(minLength: 0)
-                                    Image(systemName: "arrow.right")
-                                        .font(.caption.weight(.semibold))
-                                }
+                                Text(l("app.issue_call.examples.build_script", "Build this script"))
+                                    .font(.subheadline.weight(.semibold))
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 10)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .frame(maxWidth: .infinity, alignment: .center)
                                 .background(VoteNowColors.primaryCTA)
                                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                .voteNowPillDualOrbit(
+                                    redColor: VoteNowColors.ctaRed.opacity(0.94),
+                                    blueColor: VoteNowColors.ctaBlue.opacity(0.88),
+                                    strokeThickness: 2.4,
+                                    loopDuration: 4.9,
+                                    glowIntensity: 0.24,
+                                    idleOpacity: 0.2,
+                                    borderInset: 0.6,
+                                    segmentLength: 0.36,
+                                    separatorThickness: 0.7,
+                                    pathStyle: .roundedRect(cornerRadius: 10)
+                                )
                             }
                             .buttonStyle(.plain)
                             .accessibilityIdentifier("issue_call.examples.build_from_search")
@@ -3102,13 +3344,44 @@ struct IssueCallCenterView: View {
         return trimmed.joined(separator: " ")
     }
 
+    private func resetAssistantConversationAfterMAPCCompletion() {
+        assistantMessages = []
+        assistantComposerText = ""
+        assistantIsThinking = false
+        assistantFlowStage = .awaitingPrompt
+        hasPostedCurrentDraftBackground = false
+        pendingBackgroundMessageID = nil
+        isBackgroundMessageReadyForActions = false
+        pendingScriptPreviewMessageID = nil
+        isScriptPreviewReadyForMAPCActions = false
+        currentBackgroundDiscussionOptions = []
+        hasPickedDiscussionOptionInCurrentCycle = false
+        animatedAssistantMessageIDs.removeAll()
+        viewModel.resetScriptChatSession()
+    }
+
+    private func appendAssistantUserMessage(_ text: String, messageType: String) {
+        assistantMessages.append(.user(text))
+        viewModel.logScriptChatTurn(role: "user", messageText: text, messageType: messageType)
+    }
+
+    private func appendAssistantBotMessage(
+        _ text: String,
+        kind: AssistantChatMessage.MessageKind = .plain,
+        messageType: String
+    ) {
+        assistantMessages.append(.assistant(text, kind: kind))
+        viewModel.logScriptChatTurn(role: "assistant", messageText: text, messageType: messageType)
+    }
+
     @ViewBuilder
     private func scriptBlock(
         title: String,
         text: String,
         showScriptInputsToggle: Bool = false,
         showTitle: Bool = true,
-        textLineLimit: Int? = nil
+        textLineLimit: Int? = nil,
+        usesMapcCardChrome: Bool = false
     ) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             if showTitle || showScriptInputsToggle {
@@ -3134,12 +3407,18 @@ struct IssueCallCenterView: View {
         }
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(VoteNowColors.infoSurfaceBlue)
+        .background(usesMapcCardChrome ? VoteNowColors.surfaceWhite : VoteNowColors.infoSurfaceBlue)
         .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+        .overlay {
+            if usesMapcCardChrome {
+                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                    .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+            }
+        }
     }
 
     @ViewBuilder
-    private func scriptInputsExpandedBlock(_ talkingPoints: [String]) -> some View {
+    private func scriptInputsExpandedBlock(_ talkingPoints: [String], usesMapcCardChrome: Bool = false) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(l("app.issue_call.script.inputs", "Script inputs"))
                 .font(.subheadline.weight(.semibold))
@@ -3154,8 +3433,14 @@ struct IssueCallCenterView: View {
         }
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(VoteNowColors.infoSurfaceBlue)
+        .background(usesMapcCardChrome ? VoteNowColors.surfaceWhite : VoteNowColors.infoSurfaceBlue)
         .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+        .overlay {
+            if usesMapcCardChrome {
+                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                    .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+            }
+        }
     }
 
     @ViewBuilder
@@ -3382,7 +3667,7 @@ struct IssueCallCenterView: View {
         case .opposed:
             return VoteNowColors.urgentCTA
         case .undecided:
-            return Color(hex: "#5D6B75")
+            return Color(hex: "#7A59C2")
         case .followUpRequested:
             return Color(hex: "#6A4FB3")
         case .other:
@@ -3618,7 +3903,7 @@ struct IssueCallCenterView: View {
         isMAPCCardTransitioning = true
         mapcTransitionResetTask?.cancel()
         mapcTransitionResetTask = Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 560_000_000)
+            try? await Task.sleep(nanoseconds: 680_000_000)
             guard !Task.isCancelled else { return }
             isMAPCCardTransitioning = false
         }
@@ -3642,16 +3927,9 @@ private struct AssistantThinkingLogoView: View {
     @State private var animationTask: Task<Void, Never>?
 
     var body: some View {
-        Image(uiImage: VoteNowLogoIcon.tabBarUIImage)
-            .renderingMode(.original)
-            .resizable()
-            .interpolation(.high)
-            .antialiased(true)
-            .aspectRatio(1, contentMode: .fit)
-            .frame(width: 24, height: 24, alignment: .center)
+        VoteNowLogoIcon(size: 24, shadowColor: .clear)
             .scaleEffect(scale)
             .opacity(opacity)
-            .fixedSize()
             .layoutPriority(2)
             .onAppear {
                 startAnimationLoop()
@@ -3908,9 +4186,9 @@ private struct AssistantTypewriterText: View {
 
         displayedText = ""
 
-        let targetDurationSeconds = min(max(Double(text.count) * 0.019, 0.9), 7.2)
+        let targetDurationSeconds = min(max(Double(text.count) * 0.028, 1.2), 10.5)
         let perCharacterDelayNs = UInt64((targetDurationSeconds / Double(max(text.count, 1))) * 1_000_000_000)
-        let newlineDelayNs: UInt64 = 160_000_000
+        let newlineDelayNs: UInt64 = 240_000_000
 
         typingTask = Task {
             var running = ""
@@ -3945,21 +4223,24 @@ struct AssistantBackgroundFirstResponseFormatter {
             briefBackground: briefBackground,
             evidenceLine: evidenceLine
         )
-        let bullets = interpretationBullets(
-            rawInput: rawInput,
-            normalizedIssue: normalizedIssue,
-            seeded: commonInterpretations
-        )
-        let bulletBlock = bullets.map { "• \($0)" }.joined(separator: "\n")
 
         return """
         ***\(translation)***
 
         \(background)
-
-        ***People usually mean one of a few things when they say this:***
-        \(bulletBlock)
         """
+    }
+
+    static func discussionOptions(
+        rawInput: String,
+        normalizedIssue: String,
+        seeded: [String]
+    ) -> [String] {
+        interpretationBullets(
+            rawInput: rawInput,
+            normalizedIssue: normalizedIssue,
+            seeded: seeded
+        )
     }
 
     private static func translationSentence(rawInput: String, normalizedIssue: String) -> String {
@@ -3996,58 +4277,87 @@ struct AssistantBackgroundFirstResponseFormatter {
 
     private static func interpretationBullets(rawInput: String, normalizedIssue: String, seeded: [String]) -> [String] {
         let lowered = compact("\(rawInput) \(normalizedIssue)").lowercased()
+        let issueLabel = compact(normalizedIssue).isEmpty ? compact(rawInput) : compact(normalizedIssue)
+        let issueLabelLower = issueLabel.lowercased()
         var mapped: [String]
 
         if lowered.contains("shutdown") {
             mapped = [
-                "Pass a short-term funding bill to avoid immediate disruption",
-                "Negotiate a full-year budget agreement",
-                "Separate urgent services from broader policy disputes",
-                "Reform budget rules so shutdowns are less likely"
+                "General: End or prevent a federal government shutdown",
+                "Congressional action: Sponsor or cosponsor a bill or resolution to keep the government funded",
+                "Priority: Protect federal workers and essential services from disruption",
+                "Priority: Remove unrelated riders blocking a clean funding agreement"
             ]
         } else if lowered.contains("gun") || lowered.contains("firearm") || lowered.contains("assault weapon") {
             mapped = [
-                "Universal background checks for most gun sales",
-                "Restrictions on assault-style weapons and high-capacity magazines",
-                "Red-flag and safe-storage policies to reduce preventable harm",
-                "Funding for community violence prevention and enforcement"
+                "General: Reduce gun violence while keeping laws enforceable",
+                "Congressional action: Sponsor or cosponsor a bill or resolution for stronger gun safety standards",
+                "Priority: Universal background checks and safer storage standards",
+                "Priority: Focus on preventing mass-casualty incidents and community harm"
+            ]
+        } else if (lowered.contains("veteran") || lowered.contains("veterans")) && (lowered.contains("deport") || lowered.contains("deportation") || lowered.contains("immigration")) {
+            mapped = [
+                "General: Protect veterans from deportation and sudden family separation",
+                "Congressional action: Sponsor or cosponsor a bill or resolution that protects non-citizen veterans from deportation",
+                "Priority: Keep due process and legal support in place during immigration proceedings",
+                "Priority: Preserve access to VA care and stability for affected families"
             ]
         } else if lowered.contains("iran") || lowered.contains("war") {
             mapped = [
-                "Require a congressional vote before major military escalation",
-                "Use oversight to limit unauthorized military action",
-                "Prioritize diplomacy and regional de-escalation",
-                "Protect U.S. personnel while avoiding a wider conflict"
+                "General: Prevent unauthorized military escalation",
+                "Congressional action: Sponsor or cosponsor a bill or resolution requiring congressional approval before escalation",
+                "Priority: Reinforce war-powers limits and public accountability",
+                "Priority: Support de-escalation to avoid a wider conflict"
             ]
         } else if lowered.contains("wildfire") || lowered.contains("fire") {
             mapped = [
-                "Invest in forest management and prescribed burns",
-                "Strengthen firefighter staffing and emergency response",
-                "Harden power grids and infrastructure in high-risk areas",
-                "Expand disaster relief and recovery support"
+                "General: Prevent severe wildfire damage and improve response",
+                "Congressional action: Sponsor or cosponsor a bill or resolution for wildfire prevention and resilience funding",
+                "Priority: Expand forest management and prescribed-burn capacity",
+                "Priority: Strengthen response staffing and long-term recovery support"
             ]
         } else if lowered.contains("rent") || lowered.contains("housing") {
             mapped = [
-                "Increase housing supply through zoning and permitting reforms",
-                "Expand rental assistance for cost-burdened households",
-                "Support affordable-housing construction and preservation",
-                "Strengthen tenant protections against sudden displacement"
+                "General: Lower housing costs and reduce displacement pressure",
+                "Congressional action: Sponsor or cosponsor a bill or resolution to expand affordable housing supply",
+                "Priority: Increase rental assistance for cost-burdened households",
+                "Priority: Support construction, preservation, and tenant protections"
             ]
         } else {
-            mapped = seeded
+            let seededClean = seeded
                 .map { compact($0).replacingOccurrences(of: "^Likely intent:\\s*", with: "", options: .regularExpression) }
                 .filter { !$0.isEmpty }
+                .filter { !$0.lowercased().contains("mapc can target house + senate offices") }
+            mapped = [
+                "General: \(issueLabel.isEmpty ? "Address this issue clearly" : issueLabel)",
+                "Congressional action: Sponsor or cosponsor a bill or resolution on \(issueLabelLower.isEmpty ? "this issue" : issueLabelLower)"
+            ] + seededClean
         }
 
         if mapped.isEmpty {
             mapped = [
-                "Define the exact action you want Congress to take",
-                "Tie the issue to a bill, program, or agency if possible",
-                "Highlight who is most affected and why",
-                "Ask for a clear public position from the member’s office"
+                "General: Address this issue with a clear federal plan",
+                "Congressional action: Sponsor or cosponsor a bill or resolution on this issue",
+                "Priority: Tie the ask to one concrete policy change",
+                "Priority: Focus on direct impact for families and communities"
             ]
         }
-        return Array(mapped.prefix(5))
+
+        return Array(uniquePreservingOrder(mapped).prefix(4))
+    }
+
+    private static func uniquePreservingOrder(_ values: [String]) -> [String] {
+        var seen: Set<String> = []
+        var ordered: [String] = []
+        for value in values {
+            let cleaned = compact(value)
+            guard !cleaned.isEmpty else { continue }
+            let key = cleaned.lowercased()
+            if seen.contains(key) { continue }
+            seen.insert(key)
+            ordered.append(cleaned)
+        }
+        return ordered
     }
 
     private static func plainEnglishExplanation(for lowered: String) -> String {
@@ -4056,6 +4366,9 @@ struct AssistantBackgroundFirstResponseFormatter {
         }
         if lowered.contains("gun") || lowered.contains("firearm") || lowered.contains("assault weapon") {
             return "Gun policy debates are about balancing public safety, constitutional rights, and how to reduce shootings while keeping laws enforceable."
+        }
+        if (lowered.contains("veteran") || lowered.contains("veterans")) && (lowered.contains("deport") || lowered.contains("deportation") || lowered.contains("immigration")) {
+            return "This issue is about military veterans who face immigration enforcement and possible deportation, even after serving in the U.S. armed forces."
         }
         if lowered.contains("iran") || lowered.contains("war") {
             return "This issue is about whether the U.S. should expand military action and how much authority Congress should exercise over war decisions."
@@ -4076,6 +4389,9 @@ struct AssistantBackgroundFirstResponseFormatter {
         if lowered.contains("gun") || lowered.contains("firearm") {
             return "Policy disagreements often center on background checks, weapon access, enforcement, and how to prevent harm without broad overreach."
         }
+        if (lowered.contains("veteran") || lowered.contains("veterans")) && (lowered.contains("deport") || lowered.contains("deportation") || lowered.contains("immigration")) {
+            return "The problem usually comes from gaps between immigration law, military service pathways, and access to legal support after discharge."
+        }
         if lowered.contains("iran") || lowered.contains("war") {
             return "Tension rises when executive actions move faster than congressional debate about legal authority, cost, and long-term strategy."
         }
@@ -4094,6 +4410,9 @@ struct AssistantBackgroundFirstResponseFormatter {
         }
         if lowered.contains("gun") || lowered.contains("firearm") {
             return "It matters because communities want fewer preventable deaths and injuries while keeping clear, workable rules."
+        }
+        if (lowered.contains("veteran") || lowered.contains("veterans")) && (lowered.contains("deport") || lowered.contains("deportation") || lowered.contains("immigration")) {
+            return "It matters because deporting veterans can separate families, disrupt access to benefits, and undermine trust in service commitments."
         }
         if lowered.contains("iran") || lowered.contains("war") {
             return "It matters because military escalation can cost lives, increase regional instability, and commit the U.S. to prolonged conflict."
@@ -4127,6 +4446,9 @@ struct AssistantBackgroundFirstResponseFormatter {
         }
         if contextKey.contains("gun") || contextKey.contains("firearm") {
             return "For example, the U.S. has recorded more than 40,000 gun deaths per year in recent years."
+        }
+        if (contextKey.contains("veteran") || contextKey.contains("veterans")) && (contextKey.contains("deport") || contextKey.contains("deportation") || contextKey.contains("immigration")) {
+            return "For example, national advocacy groups have documented deported veterans separated from U.S.-based families after military service."
         }
         if contextKey.contains("iran") || contextKey.contains("war") {
             return "For example, Congress has not issued a formal declaration of war against Iran, which is why war-powers oversight keeps coming up."
