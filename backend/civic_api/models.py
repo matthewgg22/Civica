@@ -602,6 +602,7 @@ class ScriptPackageRequest:
     user_state: str | None = None
     user_address: str | None = None
     include_full_address_in_script: bool = False
+    chosen_option: str | None = None
 
 
 @dataclass
@@ -682,3 +683,12 @@ class ScriptPackageResponse:
         if isinstance(common_ask, Enum):
             payload["canonical_context"]["common_ask"] = common_ask.value
         return payload
+
+
+@dataclass
+class ScriptPackageFeedbackRequest:
+    user_id: str
+    package_id: str
+    decision: str
+    chosen_option: str | None = None
+    final_script: str | None = None

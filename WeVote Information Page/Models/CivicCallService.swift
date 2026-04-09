@@ -67,6 +67,7 @@ private struct CivicScriptPackageRequest: Codable {
     let allowRevision: Bool
     let userZip: String?
     let userState: String?
+    let chosenOption: String?
 
     enum CodingKeys: String, CodingKey {
         case concernText = "concern_text"
@@ -77,6 +78,21 @@ private struct CivicScriptPackageRequest: Codable {
         case allowRevision = "allow_revision"
         case userZip = "user_zip"
         case userState = "user_state"
+        case chosenOption = "chosen_option"
+    }
+}
+
+private struct CivicScriptFeedbackRequest: Codable {
+    let packageID: String
+    let decision: String
+    let chosenOption: String?
+    let finalScript: String?
+
+    enum CodingKeys: String, CodingKey {
+        case packageID = "package_id"
+        case decision
+        case chosenOption = "chosen_option"
+        case finalScript = "final_script"
     }
 }
 
@@ -386,6 +402,13 @@ protocol CivicIssueCallAPIClientProtocol {
         userZip: String?,
         userState: String?
     ) async throws -> CivicScriptPackageResponse
+    func logScriptFeedback(
+        userID: String,
+        packageID: String,
+        decision: String,
+        chosenOption: String?,
+        finalScript: String?
+    ) async throws
     func logCall(
         userID: String,
         repID: String,
@@ -490,7 +513,8 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             optionalBillRef: optionalBillRef,
             allowRevision: true,
             userZip: userZip,
-            userState: userState
+            userState: userState,
+            chosenOption: concernText
         )
         var request = URLRequest(url: endpoint("/api/v1/civic/script-package"))
         request.httpMethod = "POST"
@@ -513,6 +537,27 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 ]
             )
         }
+    }
+
+    func logScriptFeedback(
+        userID _: String,
+        packageID: String,
+        decision: String,
+        chosenOption: String?,
+        finalScript: String?
+    ) async throws {
+        let payload = CivicScriptFeedbackRequest(
+            packageID: packageID,
+            decision: decision,
+            chosenOption: chosenOption,
+            finalScript: finalScript
+        )
+        var request = URLRequest(url: endpoint("/api/v1/civic/script-feedback"))
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        await attachAuthorizationIfAvailable(to: &request)
+        request.httpBody = try encoder.encode(payload)
+        _ = try await requestData(for: request)
     }
 
     func logCall(
@@ -973,6 +1018,7 @@ final class IssueCallCenterViewModel: ObservableObject {
     private let callScoreRefreshCooldown: TimeInterval = 8
     private var activeMAPCSessionID: UUID?
     private var pendingGeneratedResolution: CivicIssueResolutionResponse?
+    private var lastGeneratedPackageID: String?
     private let zipFallbackToken = "[ZIPCODE]"
 
     init(
@@ -1225,6 +1271,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 }
                 applyResolution(finalResponse)
                 pendingGeneratedResolution = finalResponse
+                lastGeneratedPackageID = package.packageID
                 requiresDraftApproval = true
                 saveSnapshot()
                 selectedRepFilter = .all
@@ -1235,6 +1282,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 }
             case .needsClarification:
                 pendingGeneratedResolution = nil
+                lastGeneratedPackageID = nil
                 requiresDraftApproval = false
                 let hint = package.reviewRegenerateHint.trimmingCharacters(in: .whitespacesAndNewlines)
                 if hint.isEmpty {
@@ -1244,6 +1292,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 }
             case .refused:
                 pendingGeneratedResolution = nil
+                lastGeneratedPackageID = nil
                 requiresDraftApproval = false
                 errorMessage = package.truthTrace?.refusalReason ?? package.reviewRegenerateHint
             }
@@ -1263,6 +1312,7 @@ final class IssueCallCenterViewModel: ObservableObject {
             )
             applyResolution(fallback)
             pendingGeneratedResolution = fallback
+            lastGeneratedPackageID = nil
             requiresDraftApproval = true
             saveSnapshot()
             selectedRepFilter = .all
@@ -1283,6 +1333,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         loggedOutcomeByBriefID = [:]
         pendingCallLaunch = nil
         lastCompletionResult = nil
+        lastGeneratedPackageID = nil
     }
 
     func prepareForFreshGeneration() {
@@ -1294,17 +1345,42 @@ final class IssueCallCenterViewModel: ObservableObject {
     }
 
     func approveGeneratedDraft() {
+        let packageID = lastGeneratedPackageID
+        let chosenOption = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let finalScript = pendingGeneratedResolution?.callBriefs.first?.liveScript
         if let pendingGeneratedResolution {
             appendHistory(for: pendingGeneratedResolution)
         }
         pendingGeneratedResolution = nil
         requiresDraftApproval = false
+        lastGeneratedPackageID = nil
         saveSnapshot()
+
+        if let packageID, !packageID.isEmpty {
+            Task { [apiClient] in
+                let userID = await self.userIDForRequest()
+                do {
+                    try await apiClient.logScriptFeedback(
+                        userID: userID,
+                        packageID: packageID,
+                        decision: "accurate",
+                        chosenOption: chosenOption.isEmpty ? nil : chosenOption,
+                        finalScript: finalScript
+                    )
+                } catch {
+                    self.logger.error("Failed to log script feedback (accurate): \(String(describing: error), privacy: .public)")
+                }
+            }
+        }
     }
 
     func reviseGeneratedDraft() {
+        let packageID = lastGeneratedPackageID
+        let chosenOption = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let finalScript = pendingGeneratedResolution?.callBriefs.first?.liveScript
         pendingGeneratedResolution = nil
         requiresDraftApproval = false
+        lastGeneratedPackageID = nil
         issueTitle = ""
         issueSummary = ""
         resolvedEntities = .empty
@@ -1312,6 +1388,23 @@ final class IssueCallCenterViewModel: ObservableObject {
         activeBriefID = nil
         selectedTab = .assistant
         saveSnapshot()
+
+        if let packageID, !packageID.isEmpty {
+            Task { [apiClient] in
+                let userID = await self.userIDForRequest()
+                do {
+                    try await apiClient.logScriptFeedback(
+                        userID: userID,
+                        packageID: packageID,
+                        decision: "revise",
+                        chosenOption: chosenOption.isEmpty ? nil : chosenOption,
+                        finalScript: finalScript
+                    )
+                } catch {
+                    self.logger.error("Failed to log script feedback (revise): \(String(describing: error), privacy: .public)")
+                }
+            }
+        }
     }
 
     func startMAPC(from example: CivicExampleIssueCard) {
@@ -3605,6 +3698,7 @@ final class IssueCallCenterViewModel: ObservableObject {
             #"(?i)\bcurrent status:\s*[^\n]*"#,
             #"(?i)\badditional context:\s*[^\n]*"#,
             #"(?i)\bpolicy focus:\s*[^\n]*"#,
+            #"(?i)\bfocus refinement:\s*[^\n]*"#,
             #"(?i)\boffice tie-in:\s*[^\n]*"#,
             #"(?i)\blatest item:\s*[^\n]*"#,
             #"(?i)\bthis issue is typically handled in[^\n]*"#,
@@ -3622,6 +3716,11 @@ final class IssueCallCenterViewModel: ObservableObject {
             .replacingOccurrences(of: "\\n{3,}", with: "\n\n", options: .regularExpression)
             .replacingOccurrences(of: " {2,}", with: " ", options: .regularExpression)
             .trimmingCharacters(in: .whitespacesAndNewlines)
+        collapsed = collapsed.replacingOccurrences(
+            of: #"(?i)\bto\s+(support|oppose|protect|fund|expand|reject|block)\s+(?:and\s+)?\1\b"#,
+            with: "to $1",
+            options: .regularExpression
+        )
 
         guard !collapsed.isEmpty else {
             return "Hi, my name is [Your Name], and I am a constituent calling about this issue."

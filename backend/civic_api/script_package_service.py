@@ -16,6 +16,7 @@ from .models import (
     RepTarget,
     ScriptPackageCanonicalContext,
     ScriptPackageCommitteeMatch,
+    ScriptPackageFeedbackRequest,
     ScriptPackageOfficeOverlay,
     ScriptPackageRequest,
     ScriptPackageResponse,
@@ -157,6 +158,11 @@ class ScriptPackageService:
     def create_package(self, request: ScriptPackageRequest) -> ScriptPackageResponse:
         package_id = str(uuid.uuid4())
         normalized_input = _normalize_text(request.concern_text)
+
+        def finalize(response: ScriptPackageResponse) -> ScriptPackageResponse:
+            self._record_generation_outcome(request, response)
+            return response
+
         classify = self.issue_brief_service.classify(
             IssueClassifyRequest(
                 user_id=request.user_id,
@@ -175,7 +181,7 @@ class ScriptPackageService:
         _log_marker("=== ISSUE CLASSIFY END ===")
 
         if classify.status is BriefStatus.REFUSED:
-            return ScriptPackageResponse(
+            return finalize(ScriptPackageResponse(
                 status=BriefStatus.REFUSED,
                 package_id=package_id,
                 canonical_context=None,
@@ -195,7 +201,7 @@ class ScriptPackageService:
                     refusal_reason="Request asked for disallowed campaign/endorsement or harmful content.",
                 ),
                 policy_flags=classify.policy_flags,
-            )
+            ))
 
         if classify.status is BriefStatus.NEEDS_CLARIFICATION:
             if _should_force_generation_after_clarification(
@@ -227,7 +233,7 @@ class ScriptPackageService:
                         "script_generation_source": None,
                     }
                 )
-                return ScriptPackageResponse(
+                return finalize(ScriptPackageResponse(
                     status=BriefStatus.NEEDS_CLARIFICATION,
                     package_id=package_id,
                     canonical_context=None,
@@ -249,7 +255,7 @@ class ScriptPackageService:
                         refusal_reason=None,
                     ),
                     policy_flags=classify.policy_flags,
-                )
+                ))
 
         brief = self.issue_brief_service.create_brief(
             IssueBriefRequest(
@@ -270,7 +276,7 @@ class ScriptPackageService:
         _log_marker("=== ISSUE BRIEF END ===")
 
         if brief.status is BriefStatus.REFUSED:
-            return ScriptPackageResponse(
+            return finalize(ScriptPackageResponse(
                 status=BriefStatus.REFUSED,
                 package_id=package_id,
                 canonical_context=None,
@@ -290,7 +296,7 @@ class ScriptPackageService:
                     refusal_reason=brief.summary_neutral,
                 ),
                 policy_flags=brief.policy_flags,
-            )
+            ))
 
         if brief.status is BriefStatus.NEEDS_CLARIFICATION:
             clarification_hint = (
@@ -298,7 +304,7 @@ class ScriptPackageService:
                 or brief.review_prompt
                 or "I need one clarification before generating your scripts."
             )
-            return ScriptPackageResponse(
+            return finalize(ScriptPackageResponse(
                 status=BriefStatus.NEEDS_CLARIFICATION,
                 package_id=package_id,
                 canonical_context=None,
@@ -320,7 +326,7 @@ class ScriptPackageService:
                     refusal_reason=None,
                 ),
                 policy_flags=brief.policy_flags,
-            )
+            ))
 
         canonical_issue_id = (
             brief.canonical_issue.strip().lower()
@@ -653,7 +659,7 @@ class ScriptPackageService:
             }
         )
 
-        return ScriptPackageResponse(
+        return finalize(ScriptPackageResponse(
             status=BriefStatus.OK,
             package_id=package_id,
             canonical_context=canonical_context,
@@ -673,7 +679,88 @@ class ScriptPackageService:
                 refusal_reason=None,
             ),
             policy_flags=brief.policy_flags,
-        )
+        ))
+
+    def record_feedback(self, request: ScriptPackageFeedbackRequest) -> None:
+        row = {
+            "user_id": request.user_id,
+            "package_id": request.package_id,
+            "event_type": "feedback",
+            "concern_text": None,
+            "selected_ask": None,
+            "chosen_option": _trim_for_event(request.chosen_option, 300),
+            "final_script": _trim_for_event(request.final_script, 6000),
+            "decision": request.decision,
+            "mapc_completed": None,
+            "script_generation_source": None,
+            "canonical_issue_id": None,
+            "fallback_used": None,
+            "metadata": {},
+        }
+        try:
+            self.civic_service.repository.insert_script_generation_event(row)
+        except Exception as exc:
+            logger.warning("script feedback event insert failed: %s", type(exc).__name__)
+
+    def record_mapc_completion(
+        self,
+        user_id: str,
+        launch_event_id: str,
+        completed: bool,
+        issue_id: str | None = None,
+        session_id: str | None = None,
+    ) -> None:
+        row = {
+            "user_id": user_id,
+            "package_id": None,
+            "session_id": session_id,
+            "event_type": "mapc_completion",
+            "concern_text": None,
+            "selected_ask": None,
+            "chosen_option": None,
+            "final_script": None,
+            "decision": None,
+            "mapc_completed": bool(completed),
+            "script_generation_source": None,
+            "canonical_issue_id": issue_id,
+            "fallback_used": None,
+            "metadata": {
+                "launch_event_id": launch_event_id,
+            },
+        }
+        try:
+            self.civic_service.repository.insert_script_generation_event(row)
+        except Exception as exc:
+            logger.warning("mapc completion event insert failed: %s", type(exc).__name__)
+
+    def _record_generation_outcome(self, request: ScriptPackageRequest, response: ScriptPackageResponse) -> None:
+        final_script = ""
+        if response.office_overlays:
+            final_script = _normalize_text(response.office_overlays[0].live_script_final)
+        if not final_script and response.script_core is not None:
+            final_script = _normalize_text(response.script_core.live_script_core)
+
+        row = {
+            "user_id": request.user_id,
+            "package_id": response.package_id,
+            "event_type": "generated",
+            "concern_text": _trim_for_event(request.concern_text, 1200),
+            "selected_ask": request.selected_ask.value,
+            "chosen_option": _trim_for_event(request.chosen_option, 300),
+            "final_script": _trim_for_event(final_script, 6000) or None,
+            "decision": None,
+            "mapc_completed": None,
+            "script_generation_source": response.script_generation_source,
+            "canonical_issue_id": response.truth_trace.canonical_issue_id if response.truth_trace is not None else None,
+            "fallback_used": response.truth_trace.fallback_used if response.truth_trace is not None else None,
+            "metadata": {
+                "status": response.status.value,
+            },
+        }
+        try:
+            self.civic_service.repository.insert_script_generation_event(row)
+        except Exception as exc:
+            logger.warning("script generation event insert failed: %s", type(exc).__name__)
 
     def _generate_llm_draft_if_needed(
         self,
@@ -850,6 +937,13 @@ def _preview_for_log(value: str | None, max_chars: int = 240) -> str:
     text = _normalize_text(value or "")
     if not text:
         return ""
+    if len(text) <= max_chars:
+        return text
+    return text[: max_chars - 3] + "..."
+
+
+def _trim_for_event(value: str | None, max_chars: int) -> str:
+    text = _normalize_text(value or "")
     if len(text) <= max_chars:
         return text
     return text[: max_chars - 3] + "..."
@@ -1437,7 +1531,6 @@ def _fallback_spoken_script(
 
     return (
         "Hi, my name is [Your Name], and I am a constituent. "
-        f"I am calling to discuss {title_text}. "
         f"I'm asking {spoken_member} to {ask_phrase} {target_text}.{focus_text} "
         f"{reason_text} "
         f"{community_line} "
@@ -1635,6 +1728,21 @@ def _contains_banned_robotic_phrase(text: str) -> bool:
 
 def _cleanup_robotic_script_text(script: str, issue_title: str) -> str:
     text = _normalize_text(script)
+    text = re.sub(
+        r"(?i)\bfocus refinement:\s*",
+        "",
+        text,
+    )
+    text = re.sub(
+        r"(?i)\bi am calling to discuss\s+general civic issue\.?\s*",
+        "",
+        text,
+    )
+    text = re.sub(
+        r"(?i)\bi am calling about\s+general civic issue\.?\s*",
+        "",
+        text,
+    )
     text = re.sub(r"(?i)\bthis request focuses on\b", "The issue is", text)
     text = re.sub(r"(?i)\bthis directly affects people in my community\.?", "This has a real impact on families and communities.", text)
     text = re.sub(
@@ -1645,6 +1753,11 @@ def _cleanup_robotic_script_text(script: str, issue_title: str) -> str:
     text = re.sub(
         r"(?i)\bi am calling about support ([^.]+)\.?",
         r"I am calling to ask for support on \1.",
+        text,
+    )
+    text = re.sub(
+        r"(?i)\bto\s+(support|oppose|protect|fund|expand|reject|block)\s+(?:and\s+)?\1\b",
+        r"to \1",
         text,
     )
     text = re.sub(r"(?i)\bto support support\b", "to support", text)

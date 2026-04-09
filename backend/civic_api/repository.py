@@ -144,6 +144,9 @@ class CivicRepository(ABC):
     def insert_policy_event(self, policy_row: dict[str, Any]) -> None:
         raise NotImplementedError
 
+    def insert_script_generation_event(self, event_row: dict[str, Any]) -> None:
+        raise NotImplementedError
+
 
 class InMemoryCivicRepository(CivicRepository):
     def __init__(self) -> None:
@@ -163,6 +166,7 @@ class InMemoryCivicRepository(CivicRepository):
         self._brief_requests: list[dict[str, Any]] = []
         self._brief_responses: list[dict[str, Any]] = []
         self._policy_events: list[dict[str, Any]] = []
+        self._script_generation_events: list[dict[str, Any]] = []
 
     def seed_reps(self, user_id: str, reps: list[RepContext]) -> None:
         self._rep_context_by_user[user_id] = reps
@@ -344,6 +348,9 @@ class InMemoryCivicRepository(CivicRepository):
 
     def insert_policy_event(self, policy_row: dict[str, Any]) -> None:
         self._policy_events.append(dict(policy_row))
+
+    def insert_script_generation_event(self, event_row: dict[str, Any]) -> None:
+        self._script_generation_events.append(dict(event_row))
 
 
 class SupabaseCivicRepository(CivicRepository):
@@ -764,6 +771,15 @@ class SupabaseCivicRepository(CivicRepository):
 
     def insert_policy_event(self, policy_row: dict[str, Any]) -> None:
         self._request_json("POST", "/rest/v1/policy_event", body=[policy_row])
+
+    def insert_script_generation_event(self, event_row: dict[str, Any]) -> None:
+        try:
+            self._request_json("POST", "/rest/v1/mapc_script_generation_events", body=[event_row])
+        except urllib.error.HTTPError as exc:
+            if exc.code in {400, 404}:
+                logger.warning("Skipping mapc_script_generation_events insert during rollout (status=%s).", exc.code)
+                return
+            raise
 
     def _request_json(
         self,

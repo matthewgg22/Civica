@@ -10,6 +10,7 @@ from backend.civic_api.models import (
     IssueClassifyResponse,
     RepContext,
     RepTarget,
+    ScriptPackageFeedbackRequest,
     ScriptPackageRequest,
 )
 from backend.civic_api.openai_assistant import GeneratedDraft
@@ -284,6 +285,71 @@ def test_script_generation_source_present_on_ok_response() -> None:
     assert response.canonical_context.issue_id == "healthcare_medicaid_expansion"
     assert response.truth_trace is not None
     assert response.script_generation_source in {"template_only", "llm_rewrite", "llm_full"}
+
+
+def test_script_generation_event_logged_to_repository() -> None:
+    repo = InMemoryCivicRepository()
+    _seed_real_reps(repo, "user-analytics")
+    civic_service = CivicService(repository=repo)
+    brief_service = IssueBriefService(repository=repo)
+    script_service = ScriptPackageService(civic_service=civic_service, issue_brief_service=brief_service)
+
+    response = script_service.create_package(
+        ScriptPackageRequest(
+            user_id="user-analytics",
+            concern_text="Expand Medicaid",
+            selected_ask=Ask.SUPPORT,
+            target_reps=[RepTarget.HOUSE],
+            allow_revision=True,
+        )
+    )
+
+    assert response.package_id
+    assert getattr(repo, "_script_generation_events")
+    generated_events = [
+        row for row in getattr(repo, "_script_generation_events")
+        if row.get("event_type") == "generated"
+    ]
+    assert generated_events
+    latest = generated_events[-1]
+    assert latest["user_id"] == "user-analytics"
+    assert latest["package_id"] == response.package_id
+    assert latest["selected_ask"] == "support"
+    assert latest["script_generation_source"] in {"template_only", "llm_full", "llm_rewrite"}
+
+
+def test_feedback_and_mapc_completion_events_logged() -> None:
+    repo = InMemoryCivicRepository()
+    _seed_real_reps(repo, "user-feedback")
+    civic_service = CivicService(repository=repo)
+    brief_service = IssueBriefService(repository=repo)
+    script_service = ScriptPackageService(civic_service=civic_service, issue_brief_service=brief_service)
+
+    script_service.record_feedback(
+        ScriptPackageFeedbackRequest(
+            user_id="user-feedback",
+            package_id="pkg-1",
+            decision="accurate",
+            chosen_option="Expand Medicaid",
+            final_script="Please expand Medicaid eligibility.",
+        )
+    )
+    script_service.record_mapc_completion(
+        user_id="user-feedback",
+        launch_event_id="launch-1",
+        completed=True,
+        issue_id="healthcare_medicaid_expansion",
+        session_id="session-1",
+    )
+
+    rows = getattr(repo, "_script_generation_events")
+    assert any(row.get("event_type") == "feedback" and row.get("decision") == "accurate" for row in rows)
+    assert any(
+        row.get("event_type") == "mapc_completion"
+        and row.get("mapc_completed") is True
+        and row.get("metadata", {}).get("launch_event_id") == "launch-1"
+        for row in rows
+    )
 
 
 def test_specific_issue_attempts_llm_when_assistant_available() -> None:

@@ -24,6 +24,7 @@ from .models import (
     LeaderboardPeriodType,
     RepContext,
     RepTarget,
+    ScriptPackageFeedbackRequest,
     ScriptPackageRequest,
 )
 from .issue_brief_service import IssueBriefService
@@ -271,6 +272,20 @@ def parse_script_package_request(payload: dict[str, Any], user_id: str) -> Scrip
             "include_full_address_in_script",
             default=False,
         ),
+        chosen_option=_optional_string(payload, "chosen_option"),
+    )
+
+
+def parse_script_feedback_request(payload: dict[str, Any], user_id: str) -> ScriptPackageFeedbackRequest:
+    decision = _required_string(payload, "decision").strip().lower()
+    if decision not in {"accurate", "revise"}:
+        raise ValueError("decision must be one of: accurate, revise.")
+    return ScriptPackageFeedbackRequest(
+        user_id=user_id,
+        package_id=_required_string(payload, "package_id"),
+        decision=decision,
+        chosen_option=_optional_string(payload, "chosen_option"),
+        final_script=_optional_string(payload, "final_script"),
     )
 
 
@@ -292,7 +307,17 @@ def post_calls_launch(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
 
 
 def post_calls_confirm(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
-    return service.confirm_call_completion(parse_completion_request(payload, user_id)).to_dict()
+    parsed = parse_completion_request(payload, user_id)
+    launch = service.repository.get_call_launch_event(parsed.user_id, parsed.launch_event_id)
+    response = service.confirm_call_completion(parsed)
+    script_package_service.record_mapc_completion(
+        user_id=parsed.user_id,
+        launch_event_id=parsed.launch_event_id,
+        completed=parsed.completed,
+        issue_id=launch.issue_id if launch is not None else None,
+        session_id=launch.session_id if launch is not None else None,
+    )
+    return response.to_dict()
 
 
 def get_history(user_id: str) -> dict[str, Any]:
@@ -382,6 +407,12 @@ def post_script_package(payload: dict[str, Any], user_id: str) -> dict[str, Any]
     _log_marker("=== SCRIPT PACKAGE RESPONSE END ===")
 
     return response.to_dict()
+
+
+def post_script_feedback(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+    parsed = parse_script_feedback_request(payload, user_id)
+    script_package_service.record_feedback(parsed)
+    return {"ok": True}
 
 
 _SHARE_CARD_DEFAULTS: dict[str, dict[str, str]] = {
@@ -769,6 +800,13 @@ if FastAPI is not None:
         _log_marker("=== SCRIPT PACKAGE RAW PAYLOAD END ===")
         return _run_endpoint(
             lambda: post_script_package(payload, resolve_authenticated_or_anonymous_user_id(request)),
+            bad_request_exceptions=bad_request,
+        )
+
+    @app.post("/api/v1/civic/script-feedback")
+    def civic_script_feedback(payload: dict[str, Any], request: Request) -> dict[str, Any]:
+        return _run_endpoint(
+            lambda: post_script_feedback(payload, resolve_authenticated_or_anonymous_user_id(request)),
             bad_request_exceptions=bad_request,
         )
 
