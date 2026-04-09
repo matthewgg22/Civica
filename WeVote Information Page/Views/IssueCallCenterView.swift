@@ -354,14 +354,6 @@ struct IssueCallCenterView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .modifier(IssueCallCenterTabBarVisibilityModifier(hidden: hidesTabBar || isMAPCMode))
-        .toolbar {
-            ToolbarItemGroup(placement: .keyboard) {
-                Spacer()
-                Button(l("app.issue_call.action.done", "Done")) {
-                    focusedField = nil
-                }
-            }
-        }
         .task {
             await viewModel.loadExamplesAndHistoryIfNeeded()
         }
@@ -974,7 +966,7 @@ struct IssueCallCenterView: View {
                 Button {
                     approveBackgroundInChat()
                 } label: {
-                    Text("Looks right")
+                    Text("Accurate")
                         .font(.subheadline.weight(.semibold))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
@@ -1158,14 +1150,23 @@ struct IssueCallCenterView: View {
         guard !prompt.isEmpty else { return }
         guard !viewModel.isSubmitting, !assistantIsThinking else { return }
 
+        let wasRefinementStage = assistantFlowStage == .awaitingBackgroundApproval || assistantFlowStage == .awaitingMapcStart
+        let priorConcern = viewModel.concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let combinedPrompt: String
+        if wasRefinementStage, !priorConcern.isEmpty {
+            combinedPrompt = "\(priorConcern)\n\nFocus refinement: \(prompt)"
+        } else {
+            combinedPrompt = prompt
+        }
+
         if viewModel.selectedAsk == nil {
-            viewModel.selectedAsk = inferredAsk(from: prompt) ?? .support
+            viewModel.selectedAsk = inferredAsk(from: combinedPrompt) ?? .support
         }
         if viewModel.optionalBillRef.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-           let extractedBill = extractedBillReference(from: prompt) {
+           let extractedBill = extractedBillReference(from: combinedPrompt) {
             viewModel.optionalBillRef = extractedBill
         }
-        viewModel.concernText = prompt
+        viewModel.concernText = combinedPrompt
 
         guard viewModel.canSubmit else { return }
 
@@ -1214,7 +1215,7 @@ struct IssueCallCenterView: View {
             laymanBackground,
             kind: .plain
         ))
-        assistantFlowStage = .awaitingPrompt
+        assistantFlowStage = .awaitingBackgroundApproval
         hasPostedCurrentDraftBackground = true
     }
 
@@ -3481,9 +3482,13 @@ private struct AssistantThinkingLogoView: View {
     @State private var animationTask: Task<Void, Never>?
 
     var body: some View {
-        VoteNowLogoIcon(size: 20)
+        VoteNowLogoIcon(
+            size: 22,
+            borderWidth: 0.5,
+            shadowColor: .clear
+        )
             .aspectRatio(1, contentMode: .fit)
-            .frame(width: 24, height: 24, alignment: .center)
+            .frame(width: 26, height: 26, alignment: .center)
             .scaleEffect(scale)
             .opacity(opacity)
             .fixedSize()
