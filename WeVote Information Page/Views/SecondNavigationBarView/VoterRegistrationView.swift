@@ -49,7 +49,7 @@ private struct VoterRegistrationCard: Identifiable {
     enum Action {
         case openURL(URL)
         case goToHowToVoteTab
-        case shareReminder
+        case shareDeadline
     }
 
     enum Kind {
@@ -373,7 +373,7 @@ struct VoterRegistrationView: View {
                     l("app.registration.card.then_vote.bullet_2.capitalized", "See what’s on your ballot in advance"),
                     l("app.registration.card.then_vote.bullet_3.no_period", "Confirm polling location and hours")
                 ],
-                primaryActionTitle: l("app.registration.action.go_how_to_vote", "Go to How to Vote"),
+                primaryActionTitle: l("app.registration.action.see_voting_options", "See Voting Options"),
                 primaryAction: .goToHowToVoteTab,
                 isPrimaryActionCalloutPill: false,
                 secondaryActionTitle: nil,
@@ -493,7 +493,7 @@ struct VoterRegistrationView: View {
                             .allowsHitTesting(shouldShowStickyGuideStrip)
 
                         VStack(alignment: .leading, spacing: 0) {
-                            PageHeader(title: "How to Vote")
+                            PageHeader(title: "Voting Guide")
                             HStack(alignment: .firstTextBaseline, spacing: 8) {
                                 Text(headerElectionSubtitle)
                                     .font(.subheadline.weight(.semibold))
@@ -506,7 +506,7 @@ struct VoterRegistrationView: View {
                                 Button {
                                     openMyInfoPanel()
                                 } label: {
-                                    Text(l("app.reps.action.my_info", "My Info") + "...")
+                                    Text(l("app.reps.action.edit_location", "Edit Location"))
                                         .font(.callout.weight(.semibold))
                                         .italic()
                                         .foregroundColor(VoteNowColors.primaryCTA)
@@ -560,8 +560,8 @@ struct VoterRegistrationView: View {
                 isPresented: $showingDeadlineActions,
                 titleVisibility: .hidden
             ) {
-                Button(l("app.registration.action.share_reminder", "Share Reminder")) {
-                    shareRegistrationReminder()
+                Button(l("app.registration.action.share_deadline", "Share Deadline")) {
+                    shareRegistrationDeadline()
                 }
             }
         }
@@ -675,7 +675,7 @@ struct VoterRegistrationView: View {
                 .fixedSize(horizontal: false, vertical: true)
             }
 
-            // Step 2 "Go to How to Vote" CTA is parked for a future release.
+            // Step 2 "See Voting Options" CTA is parked for a future release.
             // See: WeVote Information Page/_FutureFeatures/Step2GoToHowToVoteCTA.md
             if card.kind != .whyRegister && card.kind != .absenteeCure && card.kind != .deadline && card.kind != .thenVote {
                 if card.kind == .check {
@@ -1147,7 +1147,7 @@ struct VoterRegistrationView: View {
         }
         .buttonStyle(.plain)
         .contentShape(Circle())
-        .accessibilityLabel(l("app.registration.action.share_reminder", "Share Reminder"))
+        .accessibilityLabel(l("app.registration.action.share_deadline", "Share Deadline"))
     }
 
     private var deadlinePanel: some View {
@@ -1223,13 +1223,13 @@ struct VoterRegistrationView: View {
     private var thenVoteTimelinePanel: some View {
         VStack(alignment: .leading, spacing: 10) {
             thenVoteTimelineRow(
-                icon: "🕒",
+                symbolName: "clock.fill",
                 title: l("app.guide.voting.early_vote.label", "Early Vote"),
                 body: earlyVoteTimelineValue
             )
 
             thenVoteTimelineRow(
-                icon: "✉️",
+                symbolName: "envelope.fill",
                 title: l("app.guide.voting.by_mail.label", "Vote by Mail"),
                 body: voteByMailDeadlineValue
             )
@@ -1248,7 +1248,7 @@ struct VoterRegistrationView: View {
             .buttonStyle(.plain)
 
             thenVoteTimelineRow(
-                icon: "📬",
+                symbolName: "calendar.circle.fill",
                 title: l("app.guide.voting.election_day.label", "Election Day"),
                 body: formattedElectionDay(nextUpcomingElectionDay)
             )
@@ -1262,11 +1262,12 @@ struct VoterRegistrationView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
-    private func thenVoteTimelineRow(icon: String, title: String, body: String) -> some View {
+    private func thenVoteTimelineRow(symbolName: String, title: String, body: String) -> some View {
         HStack(alignment: .top, spacing: 10) {
-            Text(icon)
-                .font(.title3)
-                .frame(width: 24, alignment: .center)
+            Image(systemName: symbolName)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundColor(VoteNowColors.primaryCTA)
+                .frame(width: 24, height: 24, alignment: .center)
 
             (
                 Text(title).bold()
@@ -1922,12 +1923,12 @@ struct VoterRegistrationView: View {
             openURL(url)
         case .goToHowToVoteTab:
             openURL(howToVoteDeepLink)
-        case .shareReminder:
-            shareRegistrationReminder()
+        case .shareDeadline:
+            shareRegistrationDeadline()
         }
     }
 
-    private func shareRegistrationReminder() {
+    private func shareRegistrationDeadline() {
         let stateLabel = registrationStateCode ?? l("app.timeline.statewide", "Statewide")
         let deadline = guideContent?.registrationDeadline.map { Self.isoDateFormatter.string(from: $0) }
         let badge = "\(stateLabel) · \(formattedElectionDay(guideContent?.registrationDeadline))"

@@ -240,20 +240,19 @@ struct PageHeader: View {
 
 struct VoteNowLogoIcon: View {
     var size: CGFloat = 50
-    var backgroundColor: Color = Color(red: 0.68, green: 0.84, blue: 0.90) // #ADD7E5-ish icon tone
-    var stripeColor: Color = Color(red: 223.0 / 255.0, green: 88.0 / 255.0, blue: 69.0 / 255.0) // #DF5845
+    var backgroundColor: Color = VoteNowColors.brandSoftBlue
+    var stripeColor: Color = Color(red: 1.0, green: 0.30, blue: 0.24)
     var cornerRadiusScale: CGFloat = 0.24
-    var stripeScaleYOverride: CGFloat? = nil
     var borderColor: Color = VoteNowColors.surfaceWhite.opacity(0.9)
     var borderWidth: CGFloat = 0.6
     var shadowColor: Color = VoteNowColors.primaryText.opacity(0.14)
 
     var body: some View {
-        let stripeScaleY: CGFloat = stripeScaleYOverride ?? (size < 30 ? 0.97 : 0.86)
+        let stripeScaleY: CGFloat = 1.0
         let stripeScaleX: CGFloat = 1.0
-        let motifWidth = size * 0.88
-        let barHeight = max(2.4, size * 0.072)
-        let gap = size * 0.045
+        let motifWidth = size * 0.86
+        let barHeight = max(2.6, size * 0.080)
+        let gap = max(1.6, size * 0.045)
         let topWidth = motifWidth * 0.56
         let iconCornerRadius = size * cornerRadiusScale
 

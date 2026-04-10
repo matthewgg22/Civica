@@ -64,6 +64,9 @@ struct MyInfoPanelView: View {
     @State private var showInvalidZipAlert = false
     @State private var showFeedbackSheet = false
     @State private var isResolvingCurrentAddress = false
+    @State private var isSavingAddress = false
+    @State private var addressSaveError: String?
+    @State private var activeResolutionStartedAt: Date?
     @FocusState private var locationFieldFocused: Bool
     private let zipStateResolver = USZipStateResolver()
 
@@ -96,6 +99,9 @@ struct MyInfoPanelView: View {
                             )
                             .onChange(of: locationInput) { _, newValue in
                                 repsVM.handleLocationInputTyping(newValue)
+                                if !newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                    addressSaveError = nil
+                                }
                             }
                             .onSubmit {
                                 Task {
@@ -129,8 +135,8 @@ struct MyInfoPanelView: View {
                     } label: {
                         Label(
                             isResolvingCurrentAddress
-                            ? l("my_info.action.current_address.loading", "Locating Current Address...")
-                            : l("my_info.action.current_address", "Current Address"),
+                            ? l("my_info.action.use_current_location.loading", "Locating Current Location...")
+                            : l("my_info.action.use_current_location", "Use Current Location"),
                             systemImage: "location.fill"
                         )
                         .font(.subheadline.weight(.semibold))
@@ -146,18 +152,30 @@ struct MyInfoPanelView: View {
                             .stroke(VoteNowColors.primaryCTA.opacity(0.28), lineWidth: 1)
                     )
                     .buttonStyle(.plain)
-                    .disabled(isResolvingCurrentAddress)
+                    .disabled(isResolvingCurrentAddress || isSavingAddress)
 
                     Button {
                         Task {
                             await handleSaveAddressTapped()
                         }
                     } label: {
-                        Text("my_info.action.show_reps", tableName: "MyInfoPanel")
-                            .font(.subheadline.weight(.semibold))
+                        if isSavingAddress {
+                            HStack(spacing: 8) {
+                                ProgressView()
+                                    .controlSize(.small)
+                                Text(l("my_info.action.save_location.loading", "Saving Location..."))
+                                    .font(.subheadline.weight(.semibold))
+                            }
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
+                        } else {
+                            Text(l("my_info.action.save_location", "Save Location"))
+                                .font(.subheadline.weight(.semibold))
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                        }
                     }
                     .background(VoteNowColors.infoSurfaceBlue)
                     .foregroundColor(VoteNowColors.richBlue)
@@ -167,6 +185,13 @@ struct MyInfoPanelView: View {
                             .stroke(VoteNowColors.richBlue.opacity(0.28), lineWidth: 1)
                     )
                     .buttonStyle(.plain)
+                    .disabled(isResolvingCurrentAddress || isSavingAddress)
+
+                    if let addressSaveError {
+                        Text(addressSaveError)
+                            .font(.footnote)
+                            .foregroundColor(VoteNowColors.urgentCTA)
+                    }
                 } header: {
                     Text("my_info.section.zip.header", tableName: "MyInfoPanel")
                         .font(.headline.weight(.bold))
@@ -229,7 +254,7 @@ struct MyInfoPanelView: View {
                     .buttonStyle(.plain)
                 }
             }
-            .navigationTitle(Text(l("my_info.navigation.title", "My Information")))
+            .navigationTitle(Text(l("my_info.navigation.title.location_profile", "Location & Voting Profile")))
             .navigationBarTitleDisplayMode(.large)
             .sheet(isPresented: $showFeedbackSheet) {
                 NavigationStack {
@@ -263,19 +288,37 @@ struct MyInfoPanelView: View {
                 preferredLanguageCode = selectedLanguage.rawValue
             }
             .onChange(of: repsVM.resolvedLocationSelection) { _, _ in
-                guard isResolvingCurrentAddress else { return }
+                guard isResolvingCurrentAddress || isSavingAddress else { return }
+                guard let selection = repsVM.resolvedLocationSelection else { return }
+                guard selectionBelongsToActiveResolution(selection) else { return }
                 if applyCurrentAddressToInput(includeFallback: false) {
                     syncPlanAddressFromResolvedSelection()
-                    isResolvingCurrentAddress = false
+                    addressSaveError = nil
+                    resetActiveResolutionState()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                         dismiss()
                     }
                 }
             }
             .onChange(of: repsVM.isLoading) { _, isLoading in
-                guard isResolvingCurrentAddress else { return }
+                guard isResolvingCurrentAddress || isSavingAddress else { return }
                 if !isLoading {
-                    isResolvingCurrentAddress = false
+                    if let selection = repsVM.resolvedLocationSelection,
+                       selectionBelongsToActiveResolution(selection),
+                       applyCurrentAddressToInput(includeFallback: false) {
+                        syncPlanAddressFromResolvedSelection()
+                        addressSaveError = nil
+                        resetActiveResolutionState()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                            dismiss()
+                        }
+                        return
+                    }
+
+                    if isSavingAddress {
+                        addressSaveError = "We couldn’t verify that address. Try a full street address or ZIP code."
+                    }
+                    resetActiveResolutionState()
                 }
             }
         }
@@ -317,6 +360,7 @@ struct MyInfoPanelView: View {
     private func handleSaveAddressTapped() async {
         let trimmedInput = locationInput.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedInput.isEmpty else {
+            addressSaveError = nil
             showInvalidZipAlert = true
             return
         }
@@ -334,13 +378,12 @@ struct MyInfoPanelView: View {
             planVM.userAddress = updatedAddress
         }
 
+        addressSaveError = nil
+        isSavingAddress = true
+        isResolvingCurrentAddress = false
+        activeResolutionStartedAt = Date()
         locationFieldFocused = false
         repsVM.resolveLocationInput(trimmedInput)
-
-        // Add slight delay to avoid dismissal race condition
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            dismiss()
-        }
     }
 
     private func seedLookupInputIfNeeded() {
@@ -375,8 +418,22 @@ struct MyInfoPanelView: View {
 
     private func useCurrentAddressTapped() {
         locationFieldFocused = false
+        addressSaveError = nil
         isResolvingCurrentAddress = true
+        isSavingAddress = false
+        activeResolutionStartedAt = Date()
         repsVM.centerOnCurrentLocation()
+    }
+
+    private func selectionBelongsToActiveResolution(_ selection: RepsLocationSelection) -> Bool {
+        guard let startedAt = activeResolutionStartedAt else { return true }
+        return selection.timestamp >= startedAt.addingTimeInterval(-0.5)
+    }
+
+    private func resetActiveResolutionState() {
+        isResolvingCurrentAddress = false
+        isSavingAddress = false
+        activeResolutionStartedAt = nil
     }
 
     @discardableResult

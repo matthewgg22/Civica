@@ -318,7 +318,7 @@ struct MyRepsView: View {
             locationFieldFocused = false
             showMyInfoSheet = true
         } label: {
-            Text(l("app.reps.action.my_info", "My Info") + "...")
+            Text(l("app.reps.action.edit_location", "Edit Location"))
                 .font(.callout.weight(.semibold))
                 .italic()
                 .foregroundColor(VoteNowColors.primaryCTA)

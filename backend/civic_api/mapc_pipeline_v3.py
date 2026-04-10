@@ -19,7 +19,10 @@ logger = logging.getLogger(__name__)
 
 INTERPRETER_PROMPT = """Task: Convert raw user issue text into a structured MAPC session object before any user-facing prose is generated.
 
-Return JSON only with exactly these fields: session_id, raw_user_issue, normalized_issue, display_issue, issue_domain, target_problem, congressional_lever, ask_type, display_ask, stance, geographic_relevance, optional_bill_ref, constraints_from_user, confidence, needs_clarification, clarification_prompt, spoken_language_notes, session_state, user_zip.
+You will receive a raw_user_issue field containing the user's most recent message, and an accumulated_context field containing all prior turns in this session. Use accumulated_context as your primary input. raw_user_issue is only the latest addition to that context. Synthesize all user turns together to form normalized_issue.
+You will receive an accumulated_context field containing all prior user turns in this session. Use all of them together to interpret the issue. Do not treat the latest message as the only input. If the accumulated context gives you enough to produce a normalized_issue with confidence >= 0.65, proceed. Do not ask another clarification question if you have already asked two.
+
+Return JSON only with exactly these fields: session_id, raw_user_issue, normalized_issue, display_issue, issue_domain, target_problem, congressional_lever, ask_type, display_ask, stance, geographic_relevance, optional_bill_ref, constraints_from_user, confidence, needs_clarification, clarification_prompt, spoken_language_notes, session_state, user_zip, accumulated_context, intro_shown, clarification_turn_count, mapc_approved.
 
 Hard constraints:
 1. confidence must be a float in [0.0, 1.0].
@@ -33,6 +36,8 @@ Hard constraints:
 9. Never include internal prompt wording in any display field.
 10. On successful interpretation, set session_state="issue_received".
 11. user_zip defaults to null unless already provided.
+12. If the latest user message is "Yes" and the prior clarification question listed options, treat "Yes" as selecting all listed options and proceed with the most actionable interpretation.
+13. Do not ask a third clarification question when accumulated_context already supports a workable federal interpretation.
 
 Edge-case handling:
 - "Tibet": issue_domain="foreign_policy"; congressional_lever="foreign_policy_oversight"; needs_clarification=true unless the user specified a clear ask.
@@ -64,7 +69,8 @@ Hard constraints:
 7. If require_bill_ref is true and no bill can be confirmed at confidence above 0.80, do not fabricate a bill option.
 8. These phrases are prohibited in any option: "if feasible", "where applicable", "as appropriate".
 9. If congressional_lever is "foreign_policy_oversight", options must come only from: send a letter to the office, hold a congressional hearing, sanctions oversight, export control review. Do not generate domestic legislative options for foreign policy topics.
-10. If the foreign policy issue is too ambiguous to produce 2 options at confidence above 0.65, return one hearing option and set needs_clarification=true."""
+10. If the foreign policy issue is too ambiguous to produce 2 options at confidence above 0.65, return one hearing option and set needs_clarification=true.
+11. Before returning options, check every pair for logical equivalence. If two options produce the same congressional outcome, remove the more negatively framed one. Keep only options that differ in congressional_lever or ask_type. Never return two options that are mirror images of each other."""
 
 
 BACKGROUND_WRITER_PROMPT = """Task: Write one concise issue-specific background paragraph for the interpreted civic issue.
@@ -103,7 +109,9 @@ Hard constraints:
 7. No acronyms unless defined first.
 8. No template markers of any kind except [ZIP], which the user fills in before placing the call.
 9. Do not paste user text verbatim. Synthesize it into natural spoken language.
-10. Do not close with "consider". The close must request a specific action or ask the office to state its position."""
+10. Do not close with "consider". The close must request a specific action or ask the office to state its position.
+11. The phrase "oppose this issue" is prohibited because it is not a meaningful congressional ask.
+12. [ZIP] represents the caller's ZIP code and must only appear in a location context such as 'I'm calling from [ZIP]' or 'I'm a constituent in [ZIP].' Never place [ZIP] after 'my name is' or any name-reference phrasing."""
 
 
 STATE_TRANSITIONS: dict[str, set[str]] = {
@@ -137,6 +145,7 @@ STOPWORDS: set[str] = {
 }
 
 BANNED_ASK_PHRASES: tuple[str, ...] = ("if feasible", "where applicable", "as appropriate")
+AFFIRMATIVE_YES_RESPONSES: set[str] = {"yes", "yes.", "yeah", "yep", "y", "sure", "correct"}
 
 
 @dataclass(frozen=True)
@@ -153,6 +162,8 @@ class MAPCPipelineV3Service:
         self._lock = threading.Lock()
         self._state_by_session: dict[str, str] = {}
         self._idempotency_cache: dict[str, dict[str, Any]] = {}
+        self._history_by_session: dict[str, list[dict[str, Any]]] = {}
+        self._clarification_count_by_session: dict[str, int] = {}
         self._api_key = os.environ.get("OPENAI_API_KEY", "").strip()
         self._model = os.environ.get("VOTENOW_OPENAI_MODEL_MAPC_V3", os.environ.get("VOTENOW_OPENAI_MODEL", "gpt-5.4-nano")).strip() or "gpt-5.4-nano"
         self._base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com").rstrip("/")
@@ -175,10 +186,32 @@ class MAPCPipelineV3Service:
 
         with self._lock:
             current = self._state_by_session.get(session_id, "new")
-        if current != "new":
-            raise MAPCPipelineV3Error("invalid_state_transition", f"interpret requires new state, found {current}.")
+            prior_history = deepcopy(self._history_by_session.get(session_id, []))
+            prior_clarification_count = int(self._clarification_count_by_session.get(session_id, 0))
+        if current not in {"new", "issue_received", "revising"}:
+            raise MAPCPipelineV3Error("invalid_state_transition", f"interpret requires new/issue_received/revising state, found {current}.")
 
-        session_obj = self._call_stage_1_llm(normalized_payload)
+        incoming_context = _coerce_context_turns(payload.get("accumulated_context"))
+        working_history = _merge_context_turns(prior_history, incoming_context)
+        working_history = _append_context_turn(
+            working_history,
+            role="user",
+            text=normalized_payload["raw_user_issue"],
+        )
+        yes_select_all = _latest_is_yes_with_prior_choice_question(
+            latest_user_text=normalized_payload["raw_user_issue"],
+            history=working_history,
+        )
+
+        interpreter_payload = dict(normalized_payload)
+        interpreter_payload["accumulated_context"] = working_history
+        interpreter_payload["clarification_turn_count"] = prior_clarification_count
+        interpreter_payload["intro_shown"] = bool(payload.get("intro_shown", False))
+        interpreter_payload["mapc_approved"] = bool(payload.get("mapc_approved", False))
+        if yes_select_all:
+            interpreter_payload["clarification_yes_means_select_all"] = True
+
+        session_obj = self._call_stage_1_llm(interpreter_payload)
         validator_report: dict[str, Any] = {
             "stage": stage,
             "checks": [],
@@ -191,7 +224,38 @@ class MAPCPipelineV3Service:
             session_obj["needs_clarification"] = True
             if not _normalized_text(session_obj.get("clarification_prompt")):
                 session_obj["clarification_prompt"] = "What specific action should Congress take first?"
+        if yes_select_all and needs_clarification:
+            # mapc_pipeline_v3 — remove flag check after rollout confirmed
+            session_obj = _force_best_effort_interpretation(session_obj, working_history)
+            needs_clarification = False
+            confidence = max(0.65, _coerce_float(session_obj.get("confidence"), fallback=0.65))
+
+        clarification_turn_count = prior_clarification_count
+        if needs_clarification:
+            clarification_turn_count += 1
+            if clarification_turn_count >= 3:
+                # mapc_pipeline_v3 — remove flag check after rollout confirmed
+                session_obj = _force_best_effort_interpretation(session_obj, working_history)
+                needs_clarification = False
+                confidence = max(0.65, _coerce_float(session_obj.get("confidence"), fallback=0.65))
+                clarification_turn_count = 3
+        else:
+            clarification_turn_count = 0
+
         session_obj["confidence"] = confidence
+        session_obj["needs_clarification"] = needs_clarification
+        session_obj["clarification_turn_count"] = clarification_turn_count
+        session_obj["intro_shown"] = bool(payload.get("intro_shown", session_obj.get("intro_shown", False)))
+        session_obj["mapc_approved"] = bool(payload.get("mapc_approved", session_obj.get("mapc_approved", False)))
+        if not needs_clarification:
+            session_obj["clarification_prompt"] = None
+
+        if needs_clarification:
+            clarification_prompt = _normalized_text(session_obj.get("clarification_prompt")) or "What specific action should Congress take first?"
+            working_history = _append_context_turn(working_history, role="assistant", text=clarification_prompt)
+            session_obj["clarification_prompt"] = clarification_prompt
+
+        session_obj["accumulated_context"] = working_history
         session_obj["session_state"] = "issue_received"
         validator_report["checks"].append({
             "name": "confidence_gate",
@@ -199,13 +263,26 @@ class MAPCPipelineV3Service:
             "confidence": confidence,
             "needs_clarification": needs_clarification,
         })
+        validator_report["checks"].append({
+            "name": "clarification_turn_limit",
+            "passed": clarification_turn_count < 3 or not needs_clarification,
+            "clarification_turn_count": clarification_turn_count,
+        })
+        validator_report["checks"].append({
+            "name": "accumulated_context_used",
+            "passed": len(working_history) > 0,
+            "context_turns": len(working_history),
+        })
+        with self._lock:
+            self._history_by_session[session_id] = deepcopy(working_history)
+            self._clarification_count_by_session[session_id] = clarification_turn_count
         self._set_state(session_id, "issue_received")
         response = {
             "session": session_obj,
             "validator_report": validator_report,
         }
         self._cache(stage, session_id, normalized_payload, response)
-        self._log_request(stage=stage, session_id=session_id, state_before="new", state_after="issue_received", confidence=confidence, needs_clarification=needs_clarification, validator_report=validator_report)
+        self._log_request(stage=stage, session_id=session_id, state_before=current, state_after="issue_received", confidence=confidence, needs_clarification=needs_clarification, validator_report=validator_report)
         _ = user_id  # reserved for future auditing hooks.
         return response
 
@@ -254,13 +331,21 @@ class MAPCPipelineV3Service:
                 raise MAPCPipelineV3Error("display_ask_length_violation", "display_ask exceeds 10 words.")
             validator_report["checks"].append({"name": "display_ask_word_limit_retry", "passed": True})
 
+        options = _dedupe_logically_equivalent_options(options)
+        options = _ensure_minimum_distinct_options(options=options, session_obj=session_obj)
+        validator_report["checks"].append({
+            "name": "logical_option_dedup",
+            "passed": len(options) >= 1,
+            "remaining_options": len(options),
+        })
+
         for entry in options:
             display = _normalized_text(entry.get("display_ask")).lower()
             if any(phrase in display for phrase in BANNED_ASK_PHRASES):
                 raise MAPCPipelineV3Error("banned_phrase_in_option", "ask option contains prohibited phrase.")
 
         response_session = deepcopy(session_obj)
-        response_session["needs_clarification"] = bool(options_payload.get("needs_clarification", False))
+        response_session["needs_clarification"] = bool(options_payload.get("needs_clarification", False)) or len(options) < 2
         response_session["session_state"] = "ask_selected"
         self._set_state(session_id, "ask_selected")
         response = {
@@ -573,15 +658,37 @@ class MAPCPipelineV3Service:
             if not verbatim_ok:
                 raise MAPCPipelineV3Error("verbatim_paste_detected", "verbatim phrase remained after retry.")
 
-        leak_ok, leaked = _placeholder_leak_ok(scripts["live_script"])
+        leak_ok_live, leaked_live = _placeholder_leak_ok(scripts["live_script"])
+        leak_ok_vm, leaked_vm = _placeholder_leak_ok(scripts["voicemail_script"])
+        leak_ok = leak_ok_live and leak_ok_vm
+        leaked = leaked_live if not leak_ok_live else leaked_vm
         validator_report["checks"].append({"name": "placeholder_leak", "passed": leak_ok, "token": leaked})
         if not leak_ok:
             retried = rerun("Remove all template markers. [ZIP] is the only allowed bracket token.")
             scripts = {k: _normalized_text(retried.get(k)) for k in scripts}
-            leak_ok, leaked = _placeholder_leak_ok(scripts["live_script"])
+            leak_ok_live, leaked_live = _placeholder_leak_ok(scripts["live_script"])
+            leak_ok_vm, leaked_vm = _placeholder_leak_ok(scripts["voicemail_script"])
+            leak_ok = leak_ok_live and leak_ok_vm
+            leaked = leaked_live if not leak_ok_live else leaked_vm
             validator_report["checks"].append({"name": "placeholder_leak_retry", "passed": leak_ok, "token": leaked})
             if not leak_ok:
                 raise MAPCPipelineV3Error("placeholder_leak", f"disallowed token remained: {leaked}")
+
+        zip_ok_live, zip_issue_live = _zip_context_ok(scripts["live_script"])
+        zip_ok_vm, zip_issue_vm = _zip_context_ok(scripts["voicemail_script"])
+        zip_ok = zip_ok_live and zip_ok_vm
+        zip_issue = zip_issue_live if not zip_ok_live else zip_issue_vm
+        validator_report["checks"].append({"name": "zip_location_context", "passed": zip_ok, "issue": zip_issue})
+        if not zip_ok:
+            retried = rerun("Use [ZIP] only in location phrases like 'I'm calling from [ZIP]'. Never write 'my name is [ZIP]'.")
+            scripts = {k: _normalized_text(retried.get(k)) for k in scripts}
+            zip_ok_live, zip_issue_live = _zip_context_ok(scripts["live_script"])
+            zip_ok_vm, zip_issue_vm = _zip_context_ok(scripts["voicemail_script"])
+            zip_ok = zip_ok_live and zip_ok_vm
+            zip_issue = zip_issue_live if not zip_ok_live else zip_issue_vm
+            validator_report["checks"].append({"name": "zip_location_context_retry", "passed": zip_ok, "issue": zip_issue})
+            if not zip_ok:
+                raise MAPCPipelineV3Error("zip_context_invalid", f"invalid [ZIP] usage: {zip_issue}")
 
         deduped_live, duplicate_found = _dedupe_repeated_phrase(scripts["live_script"])
         validator_report["checks"].append({"name": "duplicate_phrase", "passed": not duplicate_found})
@@ -594,7 +701,7 @@ class MAPCPipelineV3Service:
             if duplicate_found_retry:
                 raise MAPCPipelineV3Error("duplicate_phrase", "duplicate phrase remained after retry.")
 
-        malformed_ok = not _is_malformed_ask(scripts["live_script"])
+        malformed_ok = not _is_malformed_ask(scripts["live_script"]) and not _is_malformed_ask(scripts["voicemail_script"])
         validator_report["checks"].append({"name": "malformed_ask", "passed": malformed_ok})
         if not malformed_ok:
             repaired = self._call_stage_1_llm({
@@ -647,6 +754,10 @@ class MAPCPipelineV3Service:
         parsed.setdefault("raw_user_issue", raw_issue)
         parsed.setdefault("session_id", payload.get("session_id") or str(uuid.uuid4()))
         parsed.setdefault("user_zip", payload.get("user_zip"))
+        parsed.setdefault("accumulated_context", payload.get("accumulated_context", []))
+        parsed.setdefault("intro_shown", bool(payload.get("intro_shown", False)))
+        parsed.setdefault("clarification_turn_count", int(payload.get("clarification_turn_count", 0) or 0))
+        parsed.setdefault("mapc_approved", bool(payload.get("mapc_approved", False)))
         return _sanitize_session(parsed)
 
     def _call_stage_2_llm(
@@ -810,15 +921,19 @@ class MAPCPipelineV3Service:
         raw_user_issue = _required_text(payload.get("raw_user_issue"), field="raw_user_issue")
         session_id = _normalized_text(payload.get("session_id")) or str(uuid.uuid4())
         session_state = _normalized_text(payload.get("session_state")) or "new"
-        if session_state != "new":
-            raise MAPCPipelineV3Error("invalid_initial_state", "interpret requires session_state=new.")
+        if session_state not in {"new", "issue_received", "revising"}:
+            raise MAPCPipelineV3Error("invalid_initial_state", "interpret requires session_state in {new, issue_received, revising}.")
         concern_text = _normalized_text(payload.get("concern_text")) or raw_user_issue
         return {
             "session_id": session_id,
             "raw_user_issue": raw_user_issue,
             "concern_text": concern_text,
-            "session_state": "new",
+            "session_state": session_state,
             "user_zip": _normalized_text(payload.get("user_zip")) or None,
+            "accumulated_context": _coerce_context_turns(payload.get("accumulated_context")),
+            "clarification_turn_count": _coerce_non_negative_int(payload.get("clarification_turn_count"), fallback=0),
+            "intro_shown": bool(payload.get("intro_shown", False)),
+            "mapc_approved": bool(payload.get("mapc_approved", False)),
         }
 
     def _set_state(self, session_id: str, next_state: str) -> None:
@@ -913,6 +1028,14 @@ def _coerce_float(value: Any, fallback: float) -> float:
     return number
 
 
+def _coerce_non_negative_int(value: Any, fallback: int) -> int:
+    try:
+        number = int(value)
+    except (TypeError, ValueError):
+        return max(0, fallback)
+    return max(0, number)
+
+
 def _utc_iso_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -947,6 +1070,209 @@ def _specificity_score(text: str, issue_domain: str) -> float:
     domain_tokens = _extract_key_tokens(issue_domain)
     overlap = len({_stem(token) for token in tokens}.intersection({_stem(token) for token in domain_tokens}))
     return overlap / max(1, len(domain_tokens))
+
+
+def _coerce_context_turns(value: Any) -> list[dict[str, Any]]:
+    if not isinstance(value, list):
+        return []
+    turns: list[dict[str, Any]] = []
+    for entry in value:
+        if not isinstance(entry, dict):
+            continue
+        role = _normalized_text(entry.get("role")).lower()
+        text = _normalized_text(entry.get("text"))
+        turn_value = entry.get("turn")
+        try:
+            turn_number = int(turn_value)
+        except (TypeError, ValueError):
+            turn_number = len(turns) + 1
+        if role not in {"user", "assistant"} or not text:
+            continue
+        turns.append({"turn": turn_number, "role": role, "text": text})
+    turns = sorted(turns, key=lambda item: item.get("turn", 0))
+    normalized_turns: list[dict[str, Any]] = []
+    for index, entry in enumerate(turns, start=1):
+        normalized_turns.append({"turn": index, "role": entry["role"], "text": entry["text"]})
+    return normalized_turns
+
+
+def _merge_context_turns(existing: list[dict[str, Any]], incoming: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    if not existing and not incoming:
+        return []
+    if not existing:
+        return _coerce_context_turns(incoming)
+    if not incoming:
+        return _coerce_context_turns(existing)
+    merged = _coerce_context_turns(existing)
+    for entry in _coerce_context_turns(incoming):
+        if merged and merged[-1]["role"] == entry["role"] and merged[-1]["text"].lower() == entry["text"].lower():
+            continue
+        merged.append({"turn": len(merged) + 1, "role": entry["role"], "text": entry["text"]})
+    return _coerce_context_turns(merged)
+
+
+def _append_context_turn(history: list[dict[str, Any]], *, role: str, text: str) -> list[dict[str, Any]]:
+    normalized_history = _coerce_context_turns(history)
+    normalized_text = _normalized_text(text)
+    normalized_role = _normalized_text(role).lower()
+    if normalized_role not in {"user", "assistant"} or not normalized_text:
+        return normalized_history
+    if normalized_history and normalized_history[-1]["role"] == normalized_role and normalized_history[-1]["text"].lower() == normalized_text.lower():
+        return normalized_history
+    normalized_history.append({"turn": len(normalized_history) + 1, "role": normalized_role, "text": normalized_text})
+    return normalized_history
+
+
+def _latest_is_yes_with_prior_choice_question(*, latest_user_text: str, history: list[dict[str, Any]]) -> bool:
+    if _normalized_text(latest_user_text).lower() not in AFFIRMATIVE_YES_RESPONSES:
+        return False
+    normalized_history = _coerce_context_turns(history)
+    assistant_turns = [entry for entry in normalized_history if entry.get("role") == "assistant"]
+    if not assistant_turns:
+        return False
+    question = _normalized_text(assistant_turns[-1].get("text", "")).lower()
+    if "?" not in question:
+        return False
+    return (" or " in question) or ("," in question and "which" in question)
+
+
+def _force_best_effort_interpretation(session_obj: dict[str, Any], history: list[dict[str, Any]]) -> dict[str, Any]:
+    working = _sanitize_session(session_obj)
+    user_texts = [
+        _normalized_text(entry.get("text"))
+        for entry in _coerce_context_turns(history)
+        if _normalized_text(entry.get("role")).lower() == "user" and _normalized_text(entry.get("text"))
+    ]
+    synthesized = _normalized_text(" ".join(user_texts[-4:])) or _normalized_text(working.get("raw_user_issue")) or "Federal policy issue"
+    if not _normalized_text(working.get("normalized_issue")):
+        working["normalized_issue"] = synthesized
+    if not _normalized_text(working.get("display_issue")):
+        working["display_issue"] = _limit_words(working["normalized_issue"], 15)
+    if not _normalized_text(working.get("issue_domain")):
+        working["issue_domain"] = "general_policy"
+    if not _normalized_text(working.get("target_problem")):
+        working["target_problem"] = "User requests federal action on the interpreted issue"
+    if not _normalized_text(working.get("congressional_lever")):
+        working["congressional_lever"] = "oversight"
+    if not _normalized_text(working.get("ask_type")):
+        working["ask_type"] = "hold_hearing"
+    if not _normalized_text(working.get("display_ask")):
+        working["display_ask"] = "Hold a hearing on this issue"
+    working["confidence"] = max(0.65, _coerce_float(working.get("confidence"), fallback=0.65))
+    working["needs_clarification"] = False
+    working["clarification_prompt"] = None
+    return working
+
+
+def _is_negative_frame(text: str) -> bool:
+    lowered = _normalized_text(text).lower()
+    return any(phrase in lowered for phrase in ("oppose", "block", "stop", "against", "cut", "cuts", "reduce", "reduction"))
+
+
+def _is_affirmative_frame(text: str) -> bool:
+    lowered = _normalized_text(text).lower()
+    return any(phrase in lowered for phrase in ("support", "increase", "fund", "expand", "strengthen", "protect"))
+
+
+def _option_outcome_signature(option: dict[str, Any]) -> tuple[str, tuple[str, ...]]:
+    ask_type = _normalized_text(option.get("ask_type")).lower()
+    display = _normalized_text(option.get("display_ask")).lower()
+    framing_stopwords = {
+        "support", "oppose", "block", "stop", "against", "cut", "cuts", "reduce", "reduction",
+        "increase", "fund", "funding", "expand", "strengthen", "protect", "hold", "hearing",
+        "request", "public", "position", "review", "oversight",
+    }
+    nouns = [
+        _stem(token)
+        for token in _extract_key_tokens(display)
+        if token not in framing_stopwords
+    ]
+    return ask_type, tuple(sorted(set(nouns)))
+
+
+def _are_options_logically_equivalent(left: dict[str, Any], right: dict[str, Any]) -> bool:
+    left_signature = _option_outcome_signature(left)
+    right_signature = _option_outcome_signature(right)
+    if left_signature[0] == right_signature[0]:
+        return True
+    left_tokens = set(left_signature[1])
+    right_tokens = set(right_signature[1])
+    if left_tokens and right_tokens and len(left_tokens.intersection(right_tokens)) >= 1:
+        return True
+    return False
+
+
+def _preferred_option(left: dict[str, Any], right: dict[str, Any]) -> dict[str, Any]:
+    left_display = _normalized_text(left.get("display_ask"))
+    right_display = _normalized_text(right.get("display_ask"))
+    left_positive = _is_affirmative_frame(left_display)
+    right_positive = _is_affirmative_frame(right_display)
+    left_negative = _is_negative_frame(left_display)
+    right_negative = _is_negative_frame(right_display)
+    if left_positive and right_negative:
+        return left
+    if right_positive and left_negative:
+        return right
+    left_conf = _coerce_float(left.get("confidence"), fallback=0.0)
+    right_conf = _coerce_float(right.get("confidence"), fallback=0.0)
+    return left if left_conf >= right_conf else right
+
+
+def _dedupe_logically_equivalent_options(options: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    normalized_options = [entry for entry in options if isinstance(entry, dict)]
+    kept: list[dict[str, Any]] = []
+    for candidate in normalized_options:
+        replaced = False
+        for index, existing in enumerate(kept):
+            if _are_options_logically_equivalent(candidate, existing):
+                kept[index] = _preferred_option(existing, candidate)
+                replaced = True
+                break
+        if not replaced:
+            kept.append(candidate)
+
+    distinct_by_ask_type: list[dict[str, Any]] = []
+    seen_ask_types: set[str] = set()
+    for option in kept:
+        ask_type = _normalized_text(option.get("ask_type")).lower()
+        if ask_type in seen_ask_types:
+            continue
+        seen_ask_types.add(ask_type)
+        distinct_by_ask_type.append(option)
+    return distinct_by_ask_type
+
+
+def _ensure_minimum_distinct_options(*, options: list[dict[str, Any]], session_obj: dict[str, Any]) -> list[dict[str, Any]]:
+    deduped = [entry for entry in options if isinstance(entry, dict)]
+    used_ask_types = {_normalized_text(entry.get("ask_type")).lower() for entry in deduped}
+    lever = _normalized_text(session_obj.get("congressional_lever")).lower()
+    pool: list[dict[str, Any]] = []
+    if lever == "foreign_policy_oversight":
+        pool = [
+            {"option_id": option_id, "ask_type": ask_type, "display_ask": display_ask, "confidence": confidence}
+            for option_id, ask_type, display_ask, confidence in FOREIGN_POLICY_OPTION_POOL
+        ]
+    else:
+        pool = [
+            {"option_id": option_id, "ask_type": ask_type, "display_ask": display_ask, "confidence": confidence}
+            for option_id, ask_type, display_ask, confidence in GENERIC_OPTION_POOL
+        ]
+    next_index = len(deduped) + 1
+    for candidate in pool:
+        ask_type = _normalized_text(candidate.get("ask_type")).lower()
+        if ask_type in used_ask_types:
+            continue
+        deduped.append({
+            "option_id": f"A{next_index}",
+            "ask_type": ask_type,
+            "display_ask": _limit_words(_normalized_text(candidate.get("display_ask")), 10),
+            "confidence": _coerce_float(candidate.get("confidence"), fallback=0.67),
+        })
+        used_ask_types.add(ask_type)
+        next_index += 1
+        if len(deduped) >= 2:
+            break
+    return deduped[:4]
 
 
 def _parse_possible_json(raw: str) -> Any:
@@ -988,6 +1314,10 @@ def _sanitize_session(raw: dict[str, Any]) -> dict[str, Any]:
         "spoken_language_notes": _normalized_text(raw.get("spoken_language_notes")) or None,
         "session_state": _normalized_text(raw.get("session_state")) or "new",
         "user_zip": _normalized_text(raw.get("user_zip")) or None,
+        "accumulated_context": _coerce_context_turns(raw.get("accumulated_context")),
+        "intro_shown": bool(raw.get("intro_shown", False)),
+        "clarification_turn_count": _coerce_non_negative_int(raw.get("clarification_turn_count"), fallback=0),
+        "mapc_approved": bool(raw.get("mapc_approved", False)),
     }
     if session["stance"] not in {"support", "oppose"}:
         session["stance"] = "support"
@@ -1016,6 +1346,8 @@ def _compact_validator_log(report: dict[str, Any]) -> dict[str, Any]:
 
 def _stance_aligned(script: str, expected_stance: str) -> tuple[bool, str]:
     lowered = script.lower()
+    if "oppose this issue" in lowered:
+        return False, "oppose_this_issue"
     if " oppose " in f" {lowered} " or "reject" in lowered or "vote no" in lowered:
         detected = "oppose"
     elif " support " in f" {lowered} " or "back " in lowered or "vote yes" in lowered:
@@ -1061,6 +1393,19 @@ def _verbatim_ok(script: str, raw_user_issue: str, constraints_from_user: str) -
 
 
 def _placeholder_leak_ok(script: str) -> tuple[bool, str | None]:
+    blocked_explicit_tokens = {
+        "[Your Name]",
+        "[REPRESENTATIVE]",
+        "[Rep Name]",
+        "[Member]",
+        "[District]",
+        "[State]",
+        "[DATE]",
+        "[BILL]",
+    }
+    for token in blocked_explicit_tokens:
+        if token.lower() in script.lower():
+            return False, token
     for token in re.findall(r"\[[^\]]+\]", script):
         if token != "[ZIP]":
             return False, token
@@ -1095,18 +1440,68 @@ def _is_malformed_ask(script: str) -> bool:
         r"\bto\s+support\s+support\b",
         r"\bto\s+oppose\s+oppose\b",
         r"\bsupport on congressional action on support\b",
+        r"\boppose this issue\b",
     )
     return any(re.search(pattern, lowered) for pattern in patterns)
 
 
+def _zip_context_ok(script: str) -> tuple[bool, str | None]:
+    lowered = script.lower()
+    if re.search(r"my\s+name\s+is\s*\[zip\]", lowered):
+        return False, "zip_in_name_context"
+    if "[zip]" in lowered:
+        location_ok = bool(
+            re.search(
+                r"(calling from|constituent from|constituent in|from|in)\s*\[zip\]",
+                lowered,
+            )
+        )
+        if not location_ok:
+            return False, "zip_not_in_location_context"
+    return True, None
+
+
 def _offline_interpret(payload: dict[str, Any]) -> dict[str, Any]:
-    text = _normalized_text(payload.get("raw_user_issue"))
+    raw_latest = _normalized_text(payload.get("raw_user_issue"))
+    context_turns = _coerce_context_turns(payload.get("accumulated_context"))
+    user_texts = [
+        _normalized_text(entry.get("text"))
+        for entry in context_turns
+        if _normalized_text(entry.get("role")).lower() == "user" and _normalized_text(entry.get("text"))
+    ]
+    context_combined = _normalized_text(" ".join(user_texts))
+    text = context_combined or raw_latest
     lowered = text.lower()
     session = _blank_session(session_id=_normalized_text(payload.get("session_id")) or str(uuid.uuid4()))
-    session["raw_user_issue"] = text
+    session["raw_user_issue"] = raw_latest
     session["user_zip"] = payload.get("user_zip")
     session["session_state"] = "issue_received"
     session["constraints_from_user"] = None
+    session["accumulated_context"] = _append_context_turn(context_turns, role="user", text=raw_latest)
+    session["clarification_turn_count"] = max(0, int(payload.get("clarification_turn_count", 0) or 0))
+    session["intro_shown"] = bool(payload.get("intro_shown", False))
+    session["mapc_approved"] = bool(payload.get("mapc_approved", False))
+
+    if _latest_is_yes_with_prior_choice_question(
+        latest_user_text=raw_latest,
+        history=session["accumulated_context"],
+    ):
+        session.update({
+            "normalized_issue": context_combined or "Interpreted from prior clarification context",
+            "display_issue": _limit_words(context_combined or "Interpreted issue from prior context", 15),
+            "issue_domain": session.get("issue_domain") or "general_policy",
+            "target_problem": "User confirmed the listed clarification options",
+            "congressional_lever": "oversight",
+            "ask_type": "hold_hearing",
+            "display_ask": "Hold a hearing on this issue",
+            "stance": "support",
+            "geographic_relevance": "national",
+            "confidence": 0.65,
+            "needs_clarification": False,
+            "clarification_prompt": None,
+            "spoken_language_notes": "Interpretation synthesized from multiple turns.",
+        })
+        return session
 
     if lowered in {"tibet"} or "hong kong" in lowered or "tibet" in lowered:
         session.update({
@@ -1124,6 +1519,8 @@ def _offline_interpret(payload: dict[str, Any]) -> dict[str, Any]:
             "clarification_prompt": "Which Tibet action should Congress take first: hearings, sanctions oversight, or refugee protections?",
             "spoken_language_notes": "Congress acts through oversight and sanctions tools, not direct foreign administration.",
         })
+        if session["clarification_turn_count"] >= 2:
+            session = _force_best_effort_interpretation(session, session["accumulated_context"])
         return session
 
     if lowered in {"groceries", "cost of living"} or "cost of living" in lowered:
@@ -1142,6 +1539,8 @@ def _offline_interpret(payload: dict[str, Any]) -> dict[str, Any]:
             "clarification_prompt": "Which federal angle should Congress prioritize first: price-gouging oversight, competition hearings, or nutrition benefits?",
             "spoken_language_notes": "Keep terms plain and household-focused.",
         })
+        if session["clarification_turn_count"] >= 2:
+            session = _force_best_effort_interpretation(session, session["accumulated_context"])
         return session
 
     if "marriage equality" in lowered:
@@ -1215,6 +1614,8 @@ def _offline_interpret(payload: dict[str, Any]) -> dict[str, Any]:
             "clarification_prompt": "What exact action should Congress take first?",
             "spoken_language_notes": None,
         })
+        if session["clarification_turn_count"] >= 2:
+            session = _force_best_effort_interpretation(session, session["accumulated_context"])
         return session
 
     session.update({
@@ -1343,6 +1744,10 @@ def _blank_session(*, session_id: str) -> dict[str, Any]:
         "spoken_language_notes": None,
         "session_state": "new",
         "user_zip": None,
+        "accumulated_context": [],
+        "intro_shown": False,
+        "clarification_turn_count": 0,
+        "mapc_approved": False,
     }
 
 

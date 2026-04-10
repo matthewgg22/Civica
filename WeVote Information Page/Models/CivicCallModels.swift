@@ -598,10 +598,10 @@ enum CivicIssueCallTab: String, CaseIterable, Identifiable, Codable {
 
     var title: String {
         switch self {
-        case .assistant: return "Build Script"
-        case .examples: return "Premade"
-        case .civicScore: return "Your Activity"
-        case .history: return "History"
+        case .assistant: return "Write a Call"
+        case .examples: return "Browse Issues"
+        case .civicScore: return "History"
+        case .history: return "How calling works"
         }
     }
 }

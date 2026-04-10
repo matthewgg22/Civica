@@ -22691,7 +22691,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Finish Script!"
+            "value": "Finish Calling"
           }
         },
         "es": {
@@ -22727,13 +22727,13 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Finish Script!"
+            "value": "Finish Calling"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Finish Script!"
+            "value": "Finish Calling"
           }
         }
       }

@@ -114,7 +114,13 @@ private struct CivicScriptChatTurnRequest: Codable {
     }
 }
 
-private struct CivicMAPCV3Session: Codable {
+private struct CivicMAPCV3ContextTurn: Codable, Sendable {
+    let turn: Int
+    let role: String
+    let text: String
+}
+
+private struct CivicMAPCV3Session: Codable, Sendable {
     let sessionID: String
     let rawUserIssue: String
     let normalizedIssue: String
@@ -134,6 +140,10 @@ private struct CivicMAPCV3Session: Codable {
     let spokenLanguageNotes: String?
     let sessionState: String
     let userZip: String?
+    let accumulatedContext: [CivicMAPCV3ContextTurn]
+    let introShown: Bool
+    let clarificationTurnCount: Int
+    let mapcApproved: Bool
 
     enum CodingKeys: String, CodingKey {
         case sessionID = "session_id"
@@ -155,10 +165,14 @@ private struct CivicMAPCV3Session: Codable {
         case spokenLanguageNotes = "spoken_language_notes"
         case sessionState = "session_state"
         case userZip = "user_zip"
+        case accumulatedContext = "accumulated_context"
+        case introShown = "intro_shown"
+        case clarificationTurnCount = "clarification_turn_count"
+        case mapcApproved = "mapc_approved"
     }
 }
 
-private struct CivicMAPCV3AskOption: Codable {
+private struct CivicMAPCV3AskOption: Codable, Sendable {
     let optionID: String
     let askType: String
     let displayAsk: String
@@ -188,6 +202,10 @@ private struct CivicMAPCV3InterpretRequest: Codable {
     let concernText: String
     let sessionState: String
     let userZip: String?
+    let accumulatedContext: [CivicMAPCV3ContextTurn]
+    let clarificationTurnCount: Int
+    let introShown: Bool
+    let mapcApproved: Bool
 
     enum CodingKeys: String, CodingKey {
         case sessionID = "session_id"
@@ -195,6 +213,10 @@ private struct CivicMAPCV3InterpretRequest: Codable {
         case concernText = "concern_text"
         case sessionState = "session_state"
         case userZip = "user_zip"
+        case accumulatedContext = "accumulated_context"
+        case clarificationTurnCount = "clarification_turn_count"
+        case introShown = "intro_shown"
+        case mapcApproved = "mapc_approved"
     }
 }
 
@@ -297,6 +319,7 @@ struct CivicMAPCV3PreparedOption: Identifiable, Sendable {
 
 struct CivicMAPCV3PreparedSelection: Sendable {
     let sessionID: String
+    let session: CivicMAPCV3Session
     let displayIssue: String
     let needsClarification: Bool
     let clarificationPrompt: String?
@@ -611,7 +634,13 @@ protocol CivicIssueCallAPIClientProtocol {
     ) async throws -> CivicScriptPackageResponse
     func prepareMAPCV3Selection(
         userID: String,
+        sessionID: String?,
+        sessionState: String,
         concernText: String,
+        accumulatedContext: [CivicMAPCV3ContextTurn],
+        clarificationTurnCount: Int,
+        introShown: Bool,
+        mapcApproved: Bool,
         userZip: String?
     ) async throws -> CivicMAPCV3PreparedSelection
     func generateMAPCV3ScriptFromSelection(
@@ -832,7 +861,13 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
 
     func prepareMAPCV3Selection(
         userID _: String,
+        sessionID: String?,
+        sessionState: String,
         concernText: String,
+        accumulatedContext: [CivicMAPCV3ContextTurn],
+        clarificationTurnCount: Int,
+        introShown: Bool,
+        mapcApproved: Bool,
         userZip: String?
     ) async throws -> CivicMAPCV3PreparedSelection {
         // mapc_pipeline_v3 — remove flag check after rollout confirmed
@@ -845,13 +880,22 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         }
 
         let normalizedConcern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
-        let sessionID = UUID().uuidString
+        let normalizedSessionState = sessionState.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? "new"
+            : sessionState.trimmingCharacters(in: .whitespacesAndNewlines)
+        let resolvedSessionID = sessionID?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
+            ? sessionID!.trimmingCharacters(in: .whitespacesAndNewlines)
+            : UUID().uuidString
         let interpretPayload = CivicMAPCV3InterpretRequest(
-            sessionID: sessionID,
+            sessionID: resolvedSessionID,
             rawUserIssue: normalizedConcern,
             concernText: normalizedConcern,
-            sessionState: "new",
-            userZip: userZip
+            sessionState: normalizedSessionState,
+            userZip: userZip,
+            accumulatedContext: accumulatedContext,
+            clarificationTurnCount: clarificationTurnCount,
+            introShown: introShown,
+            mapcApproved: mapcApproved
         )
         var interpretRequest = URLRequest(url: endpoint("/api/v2/civic/mapc/interpret"))
         interpretRequest.httpMethod = "POST"
@@ -869,6 +913,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             )
             return CivicMAPCV3PreparedSelection(
                 sessionID: interpretResponse.session.sessionID,
+                session: interpretResponse.session,
                 displayIssue: interpretResponse.session.displayIssue,
                 needsClarification: true,
                 clarificationPrompt: interpretResponse.session.clarificationPrompt
@@ -906,6 +951,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
 
         return CivicMAPCV3PreparedSelection(
             sessionID: askResponse.session.sessionID,
+            session: askResponse.session,
             displayIssue: askResponse.session.displayIssue,
             needsClarification: askResponse.session.needsClarification,
             clarificationPrompt: askResponse.session.clarificationPrompt,
@@ -1051,6 +1097,11 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             voicemailScript: scriptResponse.voicemailScript
         )
 
+        let resolvedCommonAsk: String = {
+            let candidate = scriptResponse.session.askType.trimmingCharacters(in: .whitespacesAndNewlines)
+            return candidate.isEmpty ? "support" : candidate
+        }()
+
         return CivicScriptPackageResponse(
             status: .ok,
             packageID: packageID,
@@ -1058,7 +1109,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 issueID: canonicalIssueID,
                 title: resolvedIssueTitle,
                 summaryPlain: backgroundText,
-                commonAsk: selectedAsk.rawValue,
+                commonAsk: resolvedCommonAsk,
                 relatedBills: relatedBills,
                 billSource: billSource,
                 billDisplayText: billDisplay,
@@ -1119,6 +1170,8 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         }
 
         return selectedTargets.map { target in
+            let personalizedLiveScript = personalizeV3ScriptForTarget(liveScript, target: target)
+            let personalizedVoicemailScript = personalizeV3ScriptForTarget(voicemailScript, target: target)
             CivicScriptPackageOfficeOverlay(
                 repID: stableRepID(for: target.official),
                 repName: target.official.name,
@@ -1126,11 +1179,46 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 chamber: target.slot == .house ? "house" : "senate",
                 committeeMatch: CivicScriptPackageCommitteeMatch(matched: false, matchedCommittees: [], jurisdictionCallout: nil),
                 roleOverlays: [],
-                liveScriptFinal: liveScript,
-                voicemailScriptFinal: voicemailScript,
+                liveScriptFinal: personalizedLiveScript,
+                voicemailScriptFinal: personalizedVoicemailScript,
                 relatedCommittees: []
             )
         }
+    }
+
+    private func personalizeV3ScriptForTarget(_ script: String, target: CivicRepTarget) -> String {
+        let trimmed = script.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return script }
+
+        let fullName = target.official.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let lastName = fullName.split(whereSeparator: \.isWhitespace).last.map(String.init) ?? fullName
+        let title = target.slot == .house ? "Representative" : "Senator"
+        let titledName = "\(title) \(lastName.trimmingCharacters(in: .whitespacesAndNewlines))"
+
+        var personalized = trimmed
+            .replacingOccurrences(of: "[REPRESENTATIVE]", with: titledName)
+            .replacingOccurrences(of: "{REP_NAME}", with: titledName)
+
+        let substitutions: [(String, String)] = [
+            (#"(?i)\bthe representative\b"#, titledName),
+            (#"(?i)\byour representative\b"#, titledName),
+            (#"(?i)\bthis representative\b"#, titledName),
+            (#"(?i)\bthe senator\b"#, titledName),
+            (#"(?i)\byour senator\b"#, titledName),
+            (#"(?i)\bthis senator\b"#, titledName),
+            (#"(?i)\bthe member of congress\b"#, titledName),
+            (#"(?i)\bthe member\b"#, titledName)
+        ]
+
+        for (pattern, replacement) in substitutions {
+            personalized = personalized.replacingOccurrences(
+                of: pattern,
+                with: replacement,
+                options: .regularExpression
+            )
+        }
+
+        return personalized
     }
 
     func logScriptFeedback(
@@ -1634,6 +1722,13 @@ final class IssueCallCenterViewModel: ObservableObject {
     @Published var mapcV3SelectedOptionID: String?
     @Published var mapcV3SelectedDisplayAsk: String = ""
     @Published var mapcV3BackgroundText: String = ""
+    @Published var mapcV3SessionState: String = "new"
+    @Published var mapcV3NeedsClarification: Bool = false
+    @Published var mapcV3ClarificationPrompt: String?
+    @Published var mapcV3IntroShown: Bool = false
+    @Published var mapcV3ClarificationTurnCount: Int = 0
+    @Published var mapcV3MapcApproved: Bool = false
+    @Published var mapcV3AccumulatedContext: [CivicMAPCV3ContextTurn] = []
 
     var outcomeBreakdown: CivicOutcomeBreakdown {
         var contacted = 0
@@ -1816,6 +1911,18 @@ final class IssueCallCenterViewModel: ObservableObject {
 
     var hasMAPCV3PreparedSelection: Bool {
         !mapcV3DisplayIssue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !mapcV3AskOptions.isEmpty
+    }
+
+    var shouldContinueMAPCV3Clarification: Bool {
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        guard mapcPipelineV3Enabled else { return false }
+        guard let pendingID = mapcV3PendingSessionID?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !pendingID.isEmpty else { return false }
+        return mapcV3NeedsClarification
+    }
+
+    var hasScriptChatHistory: Bool {
+        scriptChatTurnIndex > 0 || !pendingScriptChatTurnPayloads.isEmpty
     }
 
     func loadExamplesAndHistory() async {
@@ -2223,6 +2330,36 @@ final class IssueCallCenterViewModel: ObservableObject {
         mapcV3SelectedOptionID = nil
         mapcV3SelectedDisplayAsk = ""
         mapcV3BackgroundText = ""
+        mapcV3SessionState = "new"
+        mapcV3NeedsClarification = false
+        mapcV3ClarificationPrompt = nil
+        mapcV3ClarificationTurnCount = 0
+        mapcV3MapcApproved = false
+        mapcV3AccumulatedContext = []
+    }
+
+    func prepareForMAPCV3ClarificationFollowUp() {
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        clearDisplayedDraftBeforeNewGeneration()
+        pendingGeneratedResolution = nil
+        requiresDraftApproval = false
+        activeMAPCSessionID = nil
+        selectedRepFilter = .all
+        mapcV3DisplayIssue = ""
+        mapcV3AskOptions = []
+        mapcV3SelectedOptionID = nil
+        mapcV3SelectedDisplayAsk = ""
+        mapcV3BackgroundText = ""
+    }
+
+    func markMAPCV3IntroShown() {
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        mapcV3IntroShown = true
+    }
+
+    func markMAPCV3ApprovedByUser() {
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        mapcV3MapcApproved = true
     }
 
     func prepareForFreshGeneration() {
@@ -3586,6 +3723,19 @@ final class IssueCallCenterViewModel: ObservableObject {
 
     private func fallbackExamples() -> [CivicExampleIssueCard] {
         guard !repTargets.isEmpty else { return [] }
+        struct ExplicitRequest: Hashable {
+            let line: String
+            let shortLabel: String
+            let required: Bool
+        }
+
+        struct ScriptSpec: Hashable {
+            let contextLine: String
+            let explicitRequests: [ExplicitRequest]
+            let fallbackAskLine: String?
+            let deadlineLine: String?
+        }
+
         struct Seed {
             let id: String
             let title: String
@@ -3598,6 +3748,52 @@ final class IssueCallCenterViewModel: ObservableObject {
             let templateAsks: [CivicAsk]
             let relatedBills: [String]
             let tags: [String]
+            let scriptSpec: ScriptSpec?
+
+            init(
+                id: String,
+                title: String,
+                category: String,
+                targetChambers: [String],
+                primaryAsk: String,
+                summary: String,
+                liveScript: String,
+                voicemailScript: String,
+                templateAsks: [CivicAsk],
+                relatedBills: [String],
+                tags: [String],
+                scriptSpec: ScriptSpec? = nil
+            ) {
+                self.id = id
+                self.title = title
+                self.category = category
+                self.targetChambers = targetChambers
+                self.primaryAsk = primaryAsk
+                self.summary = summary
+                self.liveScript = liveScript
+                self.voicemailScript = voicemailScript
+                self.templateAsks = templateAsks
+                self.relatedBills = relatedBills
+                self.tags = tags
+                self.scriptSpec = scriptSpec
+            }
+
+            func applying(scriptSpec: ScriptSpec) -> Seed {
+                Seed(
+                    id: id,
+                    title: title,
+                    category: category,
+                    targetChambers: targetChambers,
+                    primaryAsk: primaryAsk,
+                    summary: summary,
+                    liveScript: liveScript,
+                    voicemailScript: voicemailScript,
+                    templateAsks: templateAsks,
+                    relatedBills: relatedBills,
+                    tags: tags,
+                    scriptSpec: scriptSpec
+                )
+            }
         }
 
         let sharedSupporter = "Thank you [OFFICIAL_TITLE] [OFFICIAL_LAST] for supporting this issue. Please keep speaking out publicly, push leadership to act, and urge your colleagues to join you."
@@ -3609,6 +3805,146 @@ final class IssueCallCenterViewModel: ObservableObject {
         let availableChambers: Set<String> = Set(
             repTargets.map { $0.slot == .house ? "house" : "senate" }
         )
+
+        func normalizedOptionalLine(_ raw: String?) -> String? {
+            guard let raw else { return nil }
+            let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+            return trimmed.isEmpty ? nil : trimmed
+        }
+
+        func explicitRequests(for seed: Seed) -> [ExplicitRequest] {
+            let normalizedPrimaryAsk = seed.primaryAsk.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            let normalizedCategory = seed.category.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            let isNomination = normalizedCategory == "nominations" || seed.tags.contains(where: { $0.lowercased() == "nominations" })
+            let billReference = seed.relatedBills
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .first(where: { !$0.isEmpty })
+
+            switch normalizedPrimaryAsk {
+            case "vote_no":
+                if isNomination {
+                    return [
+                        ExplicitRequest(line: "Vote NO on this nomination.", shortLabel: "Vote no", required: true),
+                        ExplicitRequest(line: "Tell Senate leadership you oppose moving this nomination forward.", shortLabel: "Notify leadership", required: true),
+                        ExplicitRequest(line: "Issue a public statement explaining your NO vote.", shortLabel: "Public statement", required: false)
+                    ]
+                }
+                let voteNoTarget = billReference ?? "this measure"
+                return [
+                    ExplicitRequest(line: "Vote NO on \(voteNoTarget).", shortLabel: "Vote no", required: true),
+                    ExplicitRequest(line: "Urge leadership not to advance \(voteNoTarget).", shortLabel: "Block floor action", required: true),
+                    ExplicitRequest(line: "Issue a public statement explaining your opposition.", shortLabel: "Public statement", required: false)
+                ]
+            case "oppose":
+                if let billReference {
+                    return [
+                        ExplicitRequest(line: "Vote NO on \(billReference).", shortLabel: "Vote no", required: true),
+                        ExplicitRequest(line: "Oppose any amendment, rider, or rule that advances this policy.", shortLabel: "Block amendments", required: true),
+                        ExplicitRequest(line: "Issue a public statement explaining your opposition.", shortLabel: "Public statement", required: false)
+                    ]
+                }
+                return [
+                    ExplicitRequest(line: "Publicly oppose this policy proposal.", shortLabel: "Public opposition", required: true),
+                    ExplicitRequest(line: "Vote NO on any bill, amendment, or funding package that advances it.", shortLabel: "Vote no", required: true),
+                    ExplicitRequest(line: "Press committee leadership to hold oversight hearings.", shortLabel: "Request hearings", required: false)
+                ]
+            case "seek_oversight":
+                return [
+                    ExplicitRequest(line: "Request a formal oversight hearing in the relevant committee.", shortLabel: "Oversight hearing", required: true),
+                    ExplicitRequest(line: "Demand documents and written responses from the agency or officials involved.", shortLabel: "Demand records", required: true),
+                    ExplicitRequest(line: "Issue a public update on next accountability steps.", shortLabel: "Public update", required: false)
+                ]
+            case "support":
+                if let billReference {
+                    return [
+                        ExplicitRequest(line: "Cosponsor and vote YES on \(billReference).", shortLabel: "Cosponsor and vote yes", required: true),
+                        ExplicitRequest(line: "Ask leadership to schedule floor action on \(billReference).", shortLabel: "Schedule floor vote", required: true),
+                        ExplicitRequest(line: "Issue a public statement supporting this action.", shortLabel: "Public statement", required: false)
+                    ]
+                }
+                return [
+                    ExplicitRequest(line: "Support and vote YES for legislation that addresses this issue.", shortLabel: "Vote yes", required: true),
+                    ExplicitRequest(line: "Push leadership to bring this legislation to the floor.", shortLabel: "Advance legislation", required: true),
+                    ExplicitRequest(line: "Issue a public statement supporting this action.", shortLabel: "Public statement", required: false)
+                ]
+            default:
+                return [
+                    ExplicitRequest(line: "Take a clear public position on this issue.", shortLabel: "Public position", required: true),
+                    ExplicitRequest(line: "Vote in line with that position on any related bill or amendment.", shortLabel: "Vote position", required: true),
+                    ExplicitRequest(line: "Share your office's next concrete step.", shortLabel: "Next step", required: false)
+                ]
+            }
+        }
+
+        func defaultScriptSpec(for seed: Seed) -> ScriptSpec {
+            let senateOnly = Set(seed.targetChambers) == Set(["senate"])
+            let fallbackLine = senateOnly
+                ? "Please tell me Senator [OFFICIAL_LAST]'s current position on these requests."
+                : "Please tell me [OFFICIAL_TITLE] [OFFICIAL_LAST]'s current position on these requests."
+            let deadlineLine = seed.tags.contains(where: { $0.lowercased() == "urgent" })
+                ? "Please act this week and share your timeline publicly."
+                : nil
+            return ScriptSpec(
+                contextLine: "I'm calling about \(seed.title).",
+                explicitRequests: explicitRequests(for: seed),
+                fallbackAskLine: fallbackLine,
+                deadlineLine: deadlineLine
+            )
+        }
+
+        func renderedScripts(for seed: Seed) -> (live: String, voicemail: String) {
+            guard let scriptSpec = seed.scriptSpec else {
+                return (seed.liveScript, seed.voicemailScript)
+            }
+
+            let contextLine = scriptSpec.contextLine.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !contextLine.isEmpty || !scriptSpec.explicitRequests.isEmpty else {
+                return (seed.liveScript, seed.voicemailScript)
+            }
+
+            let requestLines = scriptSpec.explicitRequests.map { "- \($0.line)" }
+            let requiredRequests = scriptSpec.explicitRequests.filter(\.required)
+            let voicemailRequests = (requiredRequests.isEmpty ? Array(scriptSpec.explicitRequests.prefix(2)) : requiredRequests).map { "- \($0.line)" }
+
+            var liveParts: [String] = [
+                "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP]."
+            ]
+            if !contextLine.isEmpty {
+                liveParts.append(contextLine)
+            }
+            if !requestLines.isEmpty {
+                liveParts.append("Please take these actions:\n\(requestLines.joined(separator: "\n"))")
+            }
+            if let deadlineLine = normalizedOptionalLine(scriptSpec.deadlineLine) {
+                liveParts.append(deadlineLine)
+            }
+            if let fallbackAskLine = normalizedOptionalLine(scriptSpec.fallbackAskLine) {
+                liveParts.append(fallbackAskLine)
+            }
+            liveParts.append("Thank you for your time and consideration.")
+
+            var voicemailParts: [String] = [
+                "Hi, this is [YOUR_NAME] from [CITY], [ZIP]."
+            ]
+            if !contextLine.isEmpty {
+                voicemailParts.append(contextLine)
+            }
+            if !voicemailRequests.isEmpty {
+                voicemailParts.append("My request is:\n\(voicemailRequests.joined(separator: "\n"))")
+            }
+            if let deadlineLine = normalizedOptionalLine(scriptSpec.deadlineLine) {
+                voicemailParts.append(deadlineLine)
+            }
+            if let fallbackAskLine = normalizedOptionalLine(scriptSpec.fallbackAskLine) {
+                voicemailParts.append(fallbackAskLine)
+            }
+            voicemailParts.append("Thank you.")
+
+            return (
+                liveParts.joined(separator: "\n\n"),
+                voicemailParts.joined(separator: "\n\n")
+            )
+        }
 
         let seeds: [Seed] = [
             Seed(
@@ -3910,7 +4246,9 @@ final class IssueCallCenterViewModel: ObservableObject {
                 relatedBills: [],
                 tags: ["urgent", "tsa", "air-travel", "aviation", "staffing", "travel-delays", "airport-security"]
             )
-        ]
+        ].map { seed in
+            seed.applying(scriptSpec: seed.scriptSpec ?? defaultScriptSpec(for: seed))
+        }
 
         return seeds
             .filter { seed in
@@ -3927,6 +4265,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                     ? "This issue is currently targeted to the Senate."
                     : "This issue can be raised with both House and Senate offices."
                 ] + relevantReps.prefix(3).map { "\($0.official.name) serves in \($0.officeType)." }
+                let scripts = renderedScripts(for: seed)
 
                 return CivicExampleIssueCard(
                     id: seed.id,
@@ -3939,8 +4278,8 @@ final class IssueCallCenterViewModel: ObservableObject {
                     relatedBills: seed.relatedBills,
                     repRelevance: repRelevance,
                     templateAsks: seed.templateAsks,
-                    liveScript: seed.liveScript,
-                    voicemailScript: seed.voicemailScript,
+                    liveScript: scripts.live,
+                    voicemailScript: scripts.voicemail,
                     supporterVariant: sharedSupporter,
                     undecidedVariant: sharedUndecided,
                     stafferVariant: sharedStaffer,
