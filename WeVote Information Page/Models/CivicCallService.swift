@@ -114,6 +114,195 @@ private struct CivicScriptChatTurnRequest: Codable {
     }
 }
 
+private struct CivicMAPCV3Session: Codable {
+    let sessionID: String
+    let rawUserIssue: String
+    let normalizedIssue: String
+    let displayIssue: String
+    let issueDomain: String
+    let targetProblem: String
+    let congressionalLever: String
+    let askType: String
+    let displayAsk: String
+    let stance: String
+    let geographicRelevance: String
+    let optionalBillRef: String?
+    let constraintsFromUser: String?
+    let confidence: Double
+    let needsClarification: Bool
+    let clarificationPrompt: String?
+    let spokenLanguageNotes: String?
+    let sessionState: String
+    let userZip: String?
+
+    enum CodingKeys: String, CodingKey {
+        case sessionID = "session_id"
+        case rawUserIssue = "raw_user_issue"
+        case normalizedIssue = "normalized_issue"
+        case displayIssue = "display_issue"
+        case issueDomain = "issue_domain"
+        case targetProblem = "target_problem"
+        case congressionalLever = "congressional_lever"
+        case askType = "ask_type"
+        case displayAsk = "display_ask"
+        case stance
+        case geographicRelevance = "geographic_relevance"
+        case optionalBillRef = "optional_bill_ref"
+        case constraintsFromUser = "constraints_from_user"
+        case confidence
+        case needsClarification = "needs_clarification"
+        case clarificationPrompt = "clarification_prompt"
+        case spokenLanguageNotes = "spoken_language_notes"
+        case sessionState = "session_state"
+        case userZip = "user_zip"
+    }
+}
+
+private struct CivicMAPCV3AskOption: Codable {
+    let optionID: String
+    let askType: String
+    let displayAsk: String
+    let confidence: Double
+
+    enum CodingKeys: String, CodingKey {
+        case optionID = "option_id"
+        case askType = "ask_type"
+        case displayAsk = "display_ask"
+        case confidence
+    }
+}
+
+private struct CivicMAPCV3ValidatorReport: Codable {
+    let stage: String?
+    let checks: [CivicMAPCV3ValidatorCheck]?
+}
+
+private struct CivicMAPCV3ValidatorCheck: Codable {
+    let name: String?
+    let passed: Bool?
+}
+
+private struct CivicMAPCV3InterpretRequest: Codable {
+    let sessionID: String
+    let rawUserIssue: String
+    let concernText: String
+    let sessionState: String
+    let userZip: String?
+
+    enum CodingKeys: String, CodingKey {
+        case sessionID = "session_id"
+        case rawUserIssue = "raw_user_issue"
+        case concernText = "concern_text"
+        case sessionState = "session_state"
+        case userZip = "user_zip"
+    }
+}
+
+private struct CivicMAPCV3InterpretResponse: Codable {
+    let session: CivicMAPCV3Session
+    let validatorReport: CivicMAPCV3ValidatorReport?
+
+    enum CodingKeys: String, CodingKey {
+        case session
+        case validatorReport = "validator_report"
+    }
+}
+
+private struct CivicMAPCV3BackgroundRequest: Codable {
+    let session: CivicMAPCV3Session
+    let concernText: String
+
+    enum CodingKeys: String, CodingKey {
+        case session
+        case concernText = "concern_text"
+    }
+}
+
+private struct CivicMAPCV3BackgroundResponse: Codable {
+    let session: CivicMAPCV3Session
+    let backgroundText: String?
+    let reason: String?
+    let validatorReport: CivicMAPCV3ValidatorReport?
+
+    enum CodingKeys: String, CodingKey {
+        case session
+        case backgroundText = "background_text"
+        case reason
+        case validatorReport = "validator_report"
+    }
+}
+
+private struct CivicMAPCV3AskOptionsRequest: Codable {
+    let session: CivicMAPCV3Session
+    let requireBillRef: Bool
+    let concernText: String
+
+    enum CodingKeys: String, CodingKey {
+        case session
+        case requireBillRef = "require_bill_ref"
+        case concernText = "concern_text"
+    }
+}
+
+private struct CivicMAPCV3AskOptionsResponse: Codable {
+    let session: CivicMAPCV3Session
+    let options: [CivicMAPCV3AskOption]
+    let validatorReport: CivicMAPCV3ValidatorReport?
+
+    enum CodingKeys: String, CodingKey {
+        case session
+        case options
+        case validatorReport = "validator_report"
+    }
+}
+
+private struct CivicMAPCV3ScriptRequest: Codable {
+    let session: CivicMAPCV3Session
+    let options: [CivicMAPCV3AskOption]
+    let selectedOptionID: String
+    let confirmed: Bool
+    let concernText: String
+
+    enum CodingKeys: String, CodingKey {
+        case session
+        case options
+        case selectedOptionID = "selected_option_id"
+        case confirmed
+        case concernText = "concern_text"
+    }
+}
+
+private struct CivicMAPCV3ScriptResponse: Codable {
+    let session: CivicMAPCV3Session
+    let liveScript: String
+    let voicemailScript: String
+    let validatorReport: CivicMAPCV3ValidatorReport?
+
+    enum CodingKeys: String, CodingKey {
+        case session
+        case liveScript = "live_script"
+        case voicemailScript = "voicemail_script"
+        case validatorReport = "validator_report"
+    }
+}
+
+struct CivicMAPCV3PreparedOption: Identifiable, Sendable {
+    let optionID: String
+    let askType: String
+    let displayAsk: String
+    let confidence: Double
+
+    var id: String { optionID }
+}
+
+struct CivicMAPCV3PreparedSelection: Sendable {
+    let sessionID: String
+    let displayIssue: String
+    let needsClarification: Bool
+    let clarificationPrompt: String?
+    let options: [CivicMAPCV3PreparedOption]
+}
+
 struct CivicIssueBriefFact: Codable {
     let fact: String
     let sourceName: String?
@@ -420,6 +609,21 @@ protocol CivicIssueCallAPIClientProtocol {
         userZip: String?,
         userState: String?
     ) async throws -> CivicScriptPackageResponse
+    func prepareMAPCV3Selection(
+        userID: String,
+        concernText: String,
+        userZip: String?
+    ) async throws -> CivicMAPCV3PreparedSelection
+    func generateMAPCV3ScriptFromSelection(
+        userID: String,
+        concernText: String,
+        sessionID: String,
+        selectedOptionID: String,
+        targetReps: [CivicRepSlot],
+        repTargets: [CivicRepTarget],
+        optionalBillRef: String?,
+        userState: String?
+    ) async throws -> CivicScriptPackageResponse
     func logScriptFeedback(
         userID: String,
         packageID: String,
@@ -467,6 +671,12 @@ protocol CivicIssueCallAPIClientProtocol {
 }
 
 final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
+    private struct MAPCV3PendingSelectionState {
+        let concernText: String
+        let session: CivicMAPCV3Session
+        let options: [CivicMAPCV3AskOption]
+    }
+
     private let baseURL: URL
     private let session: URLSession
     private let encoder = JSONEncoder()
@@ -474,6 +684,8 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
     private let logger = Logger(subsystem: "VoteNow", category: "CivicIssueCallAPIClient")
     // Render free instances can cold-start slowly; allow enough time before failing.
     private let requestTimeout: TimeInterval = 65
+    private let mapcPipelineV3FlagKey = "mapc_pipeline_v3_enabled"
+    private var mapcV3PendingSelectionStateBySessionID: [String: MAPCV3PendingSelectionState] = [:]
 
     init(baseURL: URL = CivicIssueCallAPIClient.resolveBaseURL(), session: URLSession = .shared) {
         self.baseURL = baseURL
@@ -512,6 +724,18 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         userZip: String?,
         userState: String?
     ) async throws -> CivicScriptPackageResponse {
+        if mapcPipelineV3Enabled {
+            return try await createScriptPackageV3(
+                concernText: concernText,
+                selectedAsk: selectedAsk,
+                targetReps: targetReps,
+                repTargets: repTargets,
+                optionalBillRef: optionalBillRef,
+                userZip: userZip,
+                userState: userState
+            )
+        }
+
         let repContextPayload = targetReps.compactMap { slot -> CivicScriptPackageRequest.RepContextPayload? in
             guard let target = repTargets.first(where: { $0.slot == slot }) else {
                 return nil
@@ -562,6 +786,349 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 userInfo: [
                     NSLocalizedDescriptionKey: "Received an unexpected script payload from civic API."
                 ]
+            )
+        }
+    }
+
+    private var mapcPipelineV3Enabled: Bool {
+        if let boolValue = UserDefaults.standard.object(forKey: mapcPipelineV3FlagKey) as? Bool {
+            return boolValue
+        }
+        if let stringValue = UserDefaults.standard.string(forKey: mapcPipelineV3FlagKey) {
+            let normalized = stringValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            if ["1", "true", "yes", "on"].contains(normalized) { return true }
+            if ["0", "false", "no", "off"].contains(normalized) { return false }
+        }
+        if let envValue = ProcessInfo.processInfo.environment[mapcPipelineV3FlagKey] {
+            let normalized = envValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            return ["1", "true", "yes", "on"].contains(normalized)
+        }
+        return true
+    }
+
+    private func createScriptPackageV3(
+        concernText: String,
+        selectedAsk: CivicAsk,
+        targetReps: [CivicRepSlot],
+        repTargets: [CivicRepTarget],
+        optionalBillRef: String?,
+        userZip: String?,
+        userState: String?
+    ) async throws -> CivicScriptPackageResponse {
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        _ = concernText
+        _ = selectedAsk
+        _ = targetReps
+        _ = repTargets
+        _ = optionalBillRef
+        _ = userZip
+        _ = userState
+        throw NSError(
+            domain: "CivicIssueCallAPIClient",
+            code: -31_001,
+            userInfo: [NSLocalizedDescriptionKey: "MAPC v3 requires explicit ask-option selection before script generation."]
+        )
+    }
+
+    func prepareMAPCV3Selection(
+        userID _: String,
+        concernText: String,
+        userZip: String?
+    ) async throws -> CivicMAPCV3PreparedSelection {
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        guard mapcPipelineV3Enabled else {
+            throw NSError(
+                domain: "CivicIssueCallAPIClient",
+                code: -31_002,
+                userInfo: [NSLocalizedDescriptionKey: "MAPC v3 is disabled."]
+            )
+        }
+
+        let normalizedConcern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let sessionID = UUID().uuidString
+        let interpretPayload = CivicMAPCV3InterpretRequest(
+            sessionID: sessionID,
+            rawUserIssue: normalizedConcern,
+            concernText: normalizedConcern,
+            sessionState: "new",
+            userZip: userZip
+        )
+        var interpretRequest = URLRequest(url: endpoint("/api/v2/civic/mapc/interpret"))
+        interpretRequest.httpMethod = "POST"
+        interpretRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        await attachAuthorizationIfAvailable(to: &interpretRequest)
+        interpretRequest.httpBody = try encoder.encode(interpretPayload)
+        let interpretData = try await requestData(for: interpretRequest)
+        let interpretResponse = try decoder.decode(CivicMAPCV3InterpretResponse.self, from: interpretData)
+
+        if interpretResponse.session.needsClarification {
+            mapcV3PendingSelectionStateBySessionID[interpretResponse.session.sessionID] = MAPCV3PendingSelectionState(
+                concernText: normalizedConcern,
+                session: interpretResponse.session,
+                options: []
+            )
+            return CivicMAPCV3PreparedSelection(
+                sessionID: interpretResponse.session.sessionID,
+                displayIssue: interpretResponse.session.displayIssue,
+                needsClarification: true,
+                clarificationPrompt: interpretResponse.session.clarificationPrompt
+                    ?? "Please clarify the exact congressional action you want.",
+                options: []
+            )
+        }
+
+        var askRequest = URLRequest(url: endpoint("/api/v2/civic/mapc/ask-options"))
+        askRequest.httpMethod = "POST"
+        askRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        await attachAuthorizationIfAvailable(to: &askRequest)
+        askRequest.httpBody = try encoder.encode(
+            CivicMAPCV3AskOptionsRequest(
+                session: interpretResponse.session,
+                requireBillRef: false,
+                concernText: normalizedConcern
+            )
+        )
+        let askData = try await requestData(for: askRequest)
+        let askResponse = try decoder.decode(CivicMAPCV3AskOptionsResponse.self, from: askData)
+        guard !askResponse.options.isEmpty else {
+            throw NSError(
+                domain: "CivicIssueCallAPIClient",
+                code: -31_003,
+                userInfo: [NSLocalizedDescriptionKey: "MAPC v3 returned no ask options."]
+            )
+        }
+
+        mapcV3PendingSelectionStateBySessionID[askResponse.session.sessionID] = MAPCV3PendingSelectionState(
+            concernText: normalizedConcern,
+            session: askResponse.session,
+            options: askResponse.options
+        )
+
+        return CivicMAPCV3PreparedSelection(
+            sessionID: askResponse.session.sessionID,
+            displayIssue: askResponse.session.displayIssue,
+            needsClarification: askResponse.session.needsClarification,
+            clarificationPrompt: askResponse.session.clarificationPrompt,
+            options: askResponse.options.map {
+                CivicMAPCV3PreparedOption(
+                    optionID: $0.optionID,
+                    askType: $0.askType,
+                    displayAsk: $0.displayAsk,
+                    confidence: $0.confidence
+                )
+            }
+        )
+    }
+
+    func generateMAPCV3ScriptFromSelection(
+        userID _: String,
+        concernText: String,
+        sessionID: String,
+        selectedOptionID: String,
+        targetReps: [CivicRepSlot],
+        repTargets: [CivicRepTarget],
+        optionalBillRef: String?,
+        userState: String?
+    ) async throws -> CivicScriptPackageResponse {
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        guard mapcPipelineV3Enabled else {
+            throw NSError(
+                domain: "CivicIssueCallAPIClient",
+                code: -31_004,
+                userInfo: [NSLocalizedDescriptionKey: "MAPC v3 is disabled."]
+            )
+        }
+
+        let normalizedConcern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !selectedOptionID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            throw NSError(
+                domain: "CivicIssueCallAPIClient",
+                code: -31_005,
+                userInfo: [NSLocalizedDescriptionKey: "selected_option_id is required."]
+            )
+        }
+        let pending = mapcV3PendingSelectionStateBySessionID[sessionID]
+        guard let pending else {
+            throw NSError(
+                domain: "CivicIssueCallAPIClient",
+                code: -31_006,
+                userInfo: [NSLocalizedDescriptionKey: "No pending MAPC v3 selection state was found."]
+            )
+        }
+        if pending.concernText.caseInsensitiveCompare(normalizedConcern) != .orderedSame {
+            throw NSError(
+                domain: "CivicIssueCallAPIClient",
+                code: -31_007,
+                userInfo: [NSLocalizedDescriptionKey: "MAPC v3 session does not match the current issue input."]
+            )
+        }
+
+        var backgroundRequest = URLRequest(url: endpoint("/api/v2/civic/mapc/background"))
+        backgroundRequest.httpMethod = "POST"
+        backgroundRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        await attachAuthorizationIfAvailable(to: &backgroundRequest)
+        backgroundRequest.httpBody = try encoder.encode(
+            CivicMAPCV3BackgroundRequest(
+                session: pending.session,
+                concernText: normalizedConcern
+            )
+        )
+        let backgroundData = try await requestData(for: backgroundRequest)
+        let backgroundResponse = try decoder.decode(CivicMAPCV3BackgroundResponse.self, from: backgroundData)
+        guard let backgroundText = backgroundResponse.backgroundText?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !backgroundText.isEmpty else {
+            return CivicScriptPackageResponse(
+                status: .needsClarification,
+                packageID: UUID().uuidString,
+                canonicalContext: nil,
+                scriptCore: nil,
+                officeOverlays: [],
+                reviewCanRegenerate: true,
+                reviewRegenerateHint: backgroundResponse.session.clarificationPrompt
+                    ?? "Please clarify the exact action you want Congress to take.",
+                truthTrace: nil,
+                policyFlags: ["mapc_pipeline_v3_background_\(backgroundResponse.reason ?? "null")"]
+            )
+        }
+
+        var scriptRequest = URLRequest(url: endpoint("/api/v2/civic/mapc/script"))
+        scriptRequest.httpMethod = "POST"
+        scriptRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        await attachAuthorizationIfAvailable(to: &scriptRequest)
+        scriptRequest.httpBody = try encoder.encode(
+            CivicMAPCV3ScriptRequest(
+                session: backgroundResponse.session,
+                options: pending.options,
+                selectedOptionID: selectedOptionID,
+                confirmed: true,
+                concernText: normalizedConcern
+            )
+        )
+        let scriptData = try await requestData(for: scriptRequest)
+        let scriptResponse = try decoder.decode(CivicMAPCV3ScriptResponse.self, from: scriptData)
+        mapcV3PendingSelectionStateBySessionID[sessionID] = nil
+
+        return buildV3ScriptPackageFromStageOutputs(
+            scriptResponse: scriptResponse,
+            backgroundText: backgroundText,
+            concernText: normalizedConcern,
+            targetReps: targetReps,
+            repTargets: repTargets,
+            optionalBillRef: optionalBillRef,
+            userState: userState
+        )
+    }
+
+    private func buildV3ScriptPackageFromStageOutputs(
+        scriptResponse: CivicMAPCV3ScriptResponse,
+        backgroundText: String,
+        concernText: String,
+        targetReps: [CivicRepSlot],
+        repTargets: [CivicRepTarget],
+        optionalBillRef: String?,
+        userState: String?
+    ) -> CivicScriptPackageResponse {
+        let packageID = UUID().uuidString
+        let resolvedIssueTitle = scriptResponse.session.normalizedIssue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? scriptResponse.session.displayIssue
+            : scriptResponse.session.normalizedIssue
+        let canonicalIssueID = UUID().uuidString
+        let billSource = (optionalBillRef?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false) ? "user" : "none"
+        let billDisplay = optionalBillRef?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
+            ? optionalBillRef!.trimmingCharacters(in: .whitespacesAndNewlines)
+            : "this issue"
+        let relatedBills = optionalBillRef.map { [$0] } ?? []
+
+        let core = CivicScriptPackageScriptCore(
+            liveScriptCore: scriptResponse.liveScript,
+            voicemailScriptCore: scriptResponse.voicemailScript
+        )
+
+        let officeOverlays = buildV3OfficeOverlays(
+            targetReps: targetReps,
+            repTargets: repTargets,
+            liveScript: scriptResponse.liveScript,
+            voicemailScript: scriptResponse.voicemailScript
+        )
+
+        return CivicScriptPackageResponse(
+            status: .ok,
+            packageID: packageID,
+            canonicalContext: CivicScriptPackageCanonicalContext(
+                issueID: canonicalIssueID,
+                title: resolvedIssueTitle,
+                summaryPlain: backgroundText,
+                commonAsk: selectedAsk.rawValue,
+                relatedBills: relatedBills,
+                billSource: billSource,
+                billDisplayText: billDisplay,
+                evidenceQuality: "limited",
+                evidenceWarning: nil,
+                keyFacts: []
+            ),
+            scriptCore: core,
+            officeOverlays: officeOverlays,
+            reviewCanRegenerate: true,
+            reviewRegenerateHint: "Use revise to adjust issue scope, stance, or local angle.",
+            truthTrace: CivicScriptPackageTruthTrace(
+                normalizedInput: concernText,
+                canonicalIssueID: canonicalIssueID,
+                classificationReason: "mapc_pipeline_v3",
+                billSource: billSource,
+                personalizationFieldsUsed: userState.map { [$0] } ?? [],
+                fallbackUsed: "none",
+                refusalReason: nil
+            ),
+            policyFlags: ["mapc_pipeline_v3_enabled"]
+        )
+    }
+
+    private func preferredV3Option(from options: [CivicMAPCV3AskOption], selectedAsk: CivicAsk) -> CivicMAPCV3AskOption? {
+        guard !options.isEmpty else { return nil }
+        let askHint = selectedAsk.rawValue.lowercased()
+        if let matched = options.first(where: {
+            $0.askType.lowercased().contains(askHint)
+                || $0.displayAsk.lowercased().contains(askHint.replacingOccurrences(of: "_", with: " "))
+        }) {
+            return matched
+        }
+        return options.first
+    }
+
+    private func buildV3OfficeOverlays(
+        targetReps: [CivicRepSlot],
+        repTargets: [CivicRepTarget],
+        liveScript: String,
+        voicemailScript: String
+    ) -> [CivicScriptPackageOfficeOverlay] {
+        let selectedTargets = repTargets.filter { targetReps.contains($0.slot) }
+        if selectedTargets.isEmpty {
+            return [
+                CivicScriptPackageOfficeOverlay(
+                    repID: UUID().uuidString,
+                    repName: "Congressional Office",
+                    officeType: "Congressional Office",
+                    chamber: "",
+                    committeeMatch: CivicScriptPackageCommitteeMatch(matched: false, matchedCommittees: [], jurisdictionCallout: nil),
+                    roleOverlays: [],
+                    liveScriptFinal: liveScript,
+                    voicemailScriptFinal: voicemailScript,
+                    relatedCommittees: []
+                )
+            ]
+        }
+
+        return selectedTargets.map { target in
+            CivicScriptPackageOfficeOverlay(
+                repID: stableRepID(for: target.official),
+                repName: target.official.name,
+                officeType: target.officeType,
+                chamber: target.slot == .house ? "house" : "senate",
+                committeeMatch: CivicScriptPackageCommitteeMatch(matched: false, matchedCommittees: [], jurisdictionCallout: nil),
+                roleOverlays: [],
+                liveScriptFinal: liveScript,
+                voicemailScriptFinal: voicemailScript,
+                relatedCommittees: []
             )
         }
     }
@@ -1022,6 +1589,21 @@ final class IssueCallCenterViewModel: ObservableObject {
         let launchedAt: Date
     }
 
+    private struct ScriptChatTurnPayload: Codable, Sendable {
+        let sessionID: String
+        let packageID: String?
+        let role: String
+        let turnIndex: Int
+        let messageText: String
+        let messageType: String?
+    }
+
+    private struct PersistedScriptChatState: Codable, Sendable {
+        let sessionID: String?
+        let turnIndex: Int
+        let pendingPayloads: [ScriptChatTurnPayload]
+    }
+
     @Published var selectedTab: CivicIssueCallTab = .assistant
     @Published var selectedRepFilter: CivicRepFilter = .all
     @Published var concernText: String = ""
@@ -1047,6 +1629,11 @@ final class IssueCallCenterViewModel: ObservableObject {
     @Published var lastCompletionResult: CivicCallCompletionResponse?
     @Published var pendingCallLaunch: PendingCallLaunch?
     @Published var requiresDraftApproval = false
+    @Published var mapcV3DisplayIssue: String = ""
+    @Published var mapcV3AskOptions: [CivicMAPCV3PreparedOption] = []
+    @Published var mapcV3SelectedOptionID: String?
+    @Published var mapcV3SelectedDisplayAsk: String = ""
+    @Published var mapcV3BackgroundText: String = ""
 
     var outcomeBreakdown: CivicOutcomeBreakdown {
         var contacted = 0
@@ -1101,7 +1688,15 @@ final class IssueCallCenterViewModel: ObservableObject {
     private var lastGeneratedPackageID: String?
     private var scriptChatSessionID: UUID?
     private var scriptChatTurnIndex: Int = 0
+    private var pendingScriptChatTurnPayloads: [ScriptChatTurnPayload] = []
+    private var isFlushingScriptChatTurns = false
+    private var hasLoggedScriptChatTelemetryFailure = false
+    private var hasLoggedScriptFeedbackTelemetryFailure = false
+    private let scriptChatStateDefaultsKey = "civic.issue_call.script_chat_state.v1"
     private let zipFallbackToken = "[ZIPCODE]"
+    private let mapcPipelineV3FlagKey = "mapc_pipeline_v3_enabled"
+    private let mapcV3RecoveryMessage = "Something's off and I want to fix it before you call. Can you tell me the core issue in one sentence?"
+    private var mapcV3PendingSessionID: String?
 
     init(
         federalReps: [Official],
@@ -1139,6 +1734,12 @@ final class IssueCallCenterViewModel: ObservableObject {
         // Keep Build Script composer blank on open (no auto-prefill from prior session).
         selectedTab = .assistant
         selectedRepFilter = .all
+        restorePersistedScriptChatState()
+        if !pendingScriptChatTurnPayloads.isEmpty {
+            Task {
+                await self.flushPendingScriptChatTurns()
+            }
+        }
     }
 
     private var resolvedUserZip: String {
@@ -1162,6 +1763,23 @@ final class IssueCallCenterViewModel: ObservableObject {
             }
         }
         return nil
+    }
+
+    var mapcPipelineV3Enabled: Bool {
+        if let boolValue = UserDefaults.standard.object(forKey: mapcPipelineV3FlagKey) as? Bool {
+            return boolValue
+        }
+        if let stringValue = UserDefaults.standard.string(forKey: mapcPipelineV3FlagKey) {
+            let normalized = stringValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            if ["1", "true", "yes", "on"].contains(normalized) { return true }
+            if ["0", "false", "no", "off"].contains(normalized) { return false }
+        }
+        if let envValue = ProcessInfo.processInfo.environment[mapcPipelineV3FlagKey] {
+            let normalized = envValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            if ["1", "true", "yes", "on"].contains(normalized) { return true }
+            if ["0", "false", "no", "off"].contains(normalized) { return false }
+        }
+        return true
     }
 
     var availableFilters: [CivicRepFilter] {
@@ -1194,6 +1812,10 @@ final class IssueCallCenterViewModel: ObservableObject {
 
     var canSubmit: Bool {
         selectedAsk != nil && !concernText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !repTargets.isEmpty
+    }
+
+    var hasMAPCV3PreparedSelection: Bool {
+        !mapcV3DisplayIssue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !mapcV3AskOptions.isEmpty
     }
 
     func loadExamplesAndHistory() async {
@@ -1313,6 +1935,14 @@ final class IssueCallCenterViewModel: ObservableObject {
         let trimmedBill = optionalBillRef.trimmingCharacters(in: .whitespacesAndNewlines)
         let userID = await userIDForRequest()
         prepareForFreshGeneration()
+        if mapcPipelineV3Enabled {
+            // mapc_pipeline_v3 — remove flag check after rollout confirmed
+            await submitAssistantRequestV3(
+                userID: userID,
+                concernText: trimmedConcern
+            )
+            return
+        }
 
         do {
             let package = try await apiClient.createScriptPackage(
@@ -1406,6 +2036,174 @@ final class IssueCallCenterViewModel: ObservableObject {
         }
     }
 
+    private func submitAssistantRequestV3(
+        userID: String,
+        concernText: String
+    ) async {
+        mapcV3PendingSessionID = nil
+        mapcV3DisplayIssue = ""
+        mapcV3AskOptions = []
+        mapcV3SelectedOptionID = nil
+        mapcV3SelectedDisplayAsk = ""
+        mapcV3BackgroundText = ""
+        pendingGeneratedResolution = nil
+        lastGeneratedPackageID = nil
+        requiresDraftApproval = false
+
+        do {
+            let prepared = try await apiClient.prepareMAPCV3Selection(
+                userID: userID,
+                concernText: concernText,
+                userZip: requestUserZip
+            )
+
+            mapcV3PendingSessionID = prepared.sessionID
+            mapcV3DisplayIssue = prepared.displayIssue
+            mapcV3AskOptions = prepared.options
+            mapcV3SelectedOptionID = nil
+            mapcV3SelectedDisplayAsk = ""
+
+            if prepared.needsClarification {
+                errorMessage = prepared.clarificationPrompt ?? "Please clarify your requested congressional action, then try again."
+                return
+            }
+            if prepared.options.isEmpty {
+                errorMessage = "I couldn't generate ask options yet. Tell me the core issue in one sentence."
+                return
+            }
+
+            errorMessage = nil
+            selectedTab = .assistant
+        } catch {
+            if isMAPCV3TransportFailure(error) {
+                errorMessage = mapcV3RecoveryMessage
+            } else {
+                errorMessage = resolveFailureMessage(for: error)
+            }
+            pendingGeneratedResolution = nil
+            requiresDraftApproval = false
+        }
+    }
+
+    func selectMAPCV3Option(optionID: String) {
+        let trimmed = optionID.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        guard let option = mapcV3AskOptions.first(where: { $0.optionID == trimmed }) else { return }
+        mapcV3SelectedOptionID = option.optionID
+        mapcV3SelectedDisplayAsk = option.displayAsk
+    }
+
+    func clearMAPCV3OptionSelection() {
+        mapcV3SelectedOptionID = nil
+        mapcV3SelectedDisplayAsk = ""
+    }
+
+    func generateMAPCV3ScriptAfterPreviewConfirmation() async {
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        guard mapcPipelineV3Enabled else { return }
+        guard let selectedAsk else {
+            errorMessage = "Select an explicit ask before generating call briefs."
+            return
+        }
+        guard let selectedOptionID = mapcV3SelectedOptionID,
+              let sessionID = mapcV3PendingSessionID else {
+            errorMessage = "Pick one ask option before confirming preview."
+            return
+        }
+
+        isSubmitting = true
+        defer { isSubmitting = false }
+
+        let trimmedConcern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedBill = optionalBillRef.trimmingCharacters(in: .whitespacesAndNewlines)
+        let userID = await userIDForRequest()
+
+        do {
+            let package = try await apiClient.generateMAPCV3ScriptFromSelection(
+                userID: userID,
+                concernText: trimmedConcern,
+                sessionID: sessionID,
+                selectedOptionID: selectedOptionID,
+                targetReps: requestRepSlots,
+                repTargets: repTargets,
+                optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill,
+                userState: resolvedUserState
+            )
+
+            switch package.status {
+            case .ok:
+                let response = resolutionFromScriptPackage(
+                    package,
+                    concernText: trimmedConcern,
+                    ask: selectedAsk,
+                    selectedSlots: requestRepSlots,
+                    optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill
+                )
+                let vetted = vettedGeneratedResolution(
+                    response,
+                    concernText: trimmedConcern,
+                    ask: selectedAsk,
+                    selectedSlots: requestRepSlots,
+                    optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill
+                )
+                let finalResponse = vetted.resolution
+                if vetted.usedFallback {
+                    logger.warning("Discarded off-topic or unsafe MAPC package and rebuilt a local draft.")
+                    errorMessage = clarificationPromptForConcern(
+                        trimmedConcern,
+                        optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill,
+                        selectedAsk: selectedAsk
+                    )
+                } else {
+                    errorMessage = nil
+                }
+                applyResolution(finalResponse)
+                pendingGeneratedResolution = finalResponse
+                lastGeneratedPackageID = package.packageID
+                requiresDraftApproval = true
+                mapcV3BackgroundText = package.canonicalContext?.summaryPlain ?? ""
+                mapcV3AskOptions = []
+                saveSnapshot()
+                selectedRepFilter = .all
+                selectedTab = .assistant
+                Task { [userID] in
+                    await self.refreshCallScoreData(for: userID)
+                }
+            case .needsClarification:
+                pendingGeneratedResolution = nil
+                lastGeneratedPackageID = nil
+                requiresDraftApproval = false
+                let hint = package.reviewRegenerateHint.trimmingCharacters(in: .whitespacesAndNewlines)
+                if hint.isEmpty {
+                    errorMessage = "Please clarify your requested congressional action, then try again."
+                } else {
+                    errorMessage = hint
+                }
+            case .refused:
+                pendingGeneratedResolution = nil
+                lastGeneratedPackageID = nil
+                requiresDraftApproval = false
+                errorMessage = package.truthTrace?.refusalReason ?? package.reviewRegenerateHint
+            }
+        } catch {
+            pendingGeneratedResolution = nil
+            lastGeneratedPackageID = nil
+            requiresDraftApproval = false
+            if isMAPCV3TransportFailure(error) {
+                errorMessage = mapcV3RecoveryMessage
+            } else {
+                errorMessage = resolveFailureMessage(for: error)
+            }
+        }
+    }
+
+    private func isMAPCV3TransportFailure(_ error: Error) -> Bool {
+        if error is URLError { return true }
+        let nsError = error as NSError
+        if nsError.domain == NSURLErrorDomain { return true }
+        return nsError.domain == "CivicIssueCallAPIClient" && nsError.code == 502
+    }
+
     private func clearDisplayedDraftBeforeNewGeneration() {
         issueTitle = ""
         issueSummary = ""
@@ -1418,12 +2216,22 @@ final class IssueCallCenterViewModel: ObservableObject {
         lastGeneratedPackageID = nil
     }
 
+    private func resetMAPCV3SelectionState() {
+        mapcV3PendingSessionID = nil
+        mapcV3DisplayIssue = ""
+        mapcV3AskOptions = []
+        mapcV3SelectedOptionID = nil
+        mapcV3SelectedDisplayAsk = ""
+        mapcV3BackgroundText = ""
+    }
+
     func prepareForFreshGeneration() {
         clearDisplayedDraftBeforeNewGeneration()
         pendingGeneratedResolution = nil
         requiresDraftApproval = false
         activeMAPCSessionID = nil
         selectedRepFilter = .all
+        resetMAPCV3SelectionState()
     }
 
     func logScriptChatTurn(role: String, messageText: String, messageType: String?) {
@@ -1437,28 +2245,96 @@ final class IssueCallCenterViewModel: ObservableObject {
         let turnIndex = scriptChatTurnIndex
         let packageID = lastGeneratedPackageID
         let normalizedType = messageType?.trimmingCharacters(in: .whitespacesAndNewlines)
+        pendingScriptChatTurnPayloads.append(
+            ScriptChatTurnPayload(
+                sessionID: sessionID,
+                packageID: packageID,
+                role: normalizedRole,
+                turnIndex: turnIndex,
+                messageText: normalizedText,
+                messageType: (normalizedType?.isEmpty == false) ? normalizedType : nil
+            )
+        )
+        persistScriptChatState()
 
-        Task { [apiClient] in
-            let userID = await self.userIDForRequest()
-            do {
-                try await apiClient.logScriptChatTurn(
-                    userID: userID,
-                    sessionID: sessionID,
-                    packageID: packageID,
-                    role: normalizedRole,
-                    turnIndex: turnIndex,
-                    messageText: normalizedText,
-                    messageType: (normalizedType?.isEmpty == false) ? normalizedType : nil
-                )
-            } catch {
-                self.logger.error("Failed to log script chat turn: \(self.compactLogError(error), privacy: .public)")
-            }
+        Task {
+            await self.flushPendingScriptChatTurns()
         }
     }
 
     func resetScriptChatSession() {
         scriptChatSessionID = nil
         scriptChatTurnIndex = 0
+        persistScriptChatState()
+    }
+
+    private func flushPendingScriptChatTurns() async {
+        guard !isFlushingScriptChatTurns else { return }
+        isFlushingScriptChatTurns = true
+        defer { isFlushingScriptChatTurns = false }
+
+        while !pendingScriptChatTurnPayloads.isEmpty {
+            let payload = pendingScriptChatTurnPayloads[0]
+            let userID = await userIDForRequest()
+            do {
+                try await apiClient.logScriptChatTurn(
+                    userID: userID,
+                    sessionID: payload.sessionID,
+                    packageID: payload.packageID,
+                    role: payload.role,
+                    turnIndex: payload.turnIndex,
+                    messageText: payload.messageText,
+                    messageType: payload.messageType
+                )
+                pendingScriptChatTurnPayloads.removeFirst()
+                persistScriptChatState()
+            } catch {
+                if !self.hasLoggedScriptChatTelemetryFailure {
+                    self.hasLoggedScriptChatTelemetryFailure = true
+                    self.logger.notice(
+                        "Script chat telemetry unavailable; retrying silently. \(self.compactLogError(error), privacy: .public)"
+                    )
+                }
+                Task { [weak self] in
+                    try? await Task.sleep(nanoseconds: 2_000_000_000)
+                    guard let self else { return }
+                    await self.flushPendingScriptChatTurns()
+                }
+                break
+            }
+        }
+    }
+
+    private func restorePersistedScriptChatState() {
+        guard let data = UserDefaults.standard.data(forKey: scriptChatStateDefaultsKey) else { return }
+        guard let state = try? JSONDecoder().decode(PersistedScriptChatState.self, from: data) else {
+            UserDefaults.standard.removeObject(forKey: scriptChatStateDefaultsKey)
+            return
+        }
+
+        if let sessionID = state.sessionID, let parsedSessionID = UUID(uuidString: sessionID) {
+            scriptChatSessionID = parsedSessionID
+        } else {
+            scriptChatSessionID = nil
+        }
+        scriptChatTurnIndex = max(state.turnIndex, 0)
+        pendingScriptChatTurnPayloads = state.pendingPayloads
+    }
+
+    private func persistScriptChatState() {
+        let state = PersistedScriptChatState(
+            sessionID: scriptChatSessionID?.uuidString,
+            turnIndex: scriptChatTurnIndex,
+            pendingPayloads: pendingScriptChatTurnPayloads
+        )
+
+        if scriptChatSessionID == nil && scriptChatTurnIndex == 0 && pendingScriptChatTurnPayloads.isEmpty {
+            UserDefaults.standard.removeObject(forKey: scriptChatStateDefaultsKey)
+            return
+        }
+
+        guard let data = try? JSONEncoder().encode(state) else { return }
+        UserDefaults.standard.set(data, forKey: scriptChatStateDefaultsKey)
     }
 
     func approveGeneratedDraft() {
@@ -1471,6 +2347,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         pendingGeneratedResolution = nil
         requiresDraftApproval = false
         lastGeneratedPackageID = nil
+        resetMAPCV3SelectionState()
         saveSnapshot()
 
         if let packageID, !packageID.isEmpty {
@@ -1485,7 +2362,12 @@ final class IssueCallCenterViewModel: ObservableObject {
                         finalScript: finalScript
                     )
                 } catch {
-                    self.logger.error("Failed to log script feedback (accurate): \(self.compactLogError(error), privacy: .public)")
+                    if !self.hasLoggedScriptFeedbackTelemetryFailure {
+                        self.hasLoggedScriptFeedbackTelemetryFailure = true
+                        self.logger.notice(
+                            "Script feedback telemetry unavailable; continuing. \(self.compactLogError(error), privacy: .public)"
+                        )
+                    }
                 }
             }
         }
@@ -1498,6 +2380,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         pendingGeneratedResolution = nil
         requiresDraftApproval = false
         lastGeneratedPackageID = nil
+        resetMAPCV3SelectionState()
         issueTitle = ""
         issueSummary = ""
         resolvedEntities = .empty
@@ -1518,7 +2401,12 @@ final class IssueCallCenterViewModel: ObservableObject {
                         finalScript: finalScript
                     )
                 } catch {
-                    self.logger.error("Failed to log script feedback (revise): \(self.compactLogError(error), privacy: .public)")
+                    if !self.hasLoggedScriptFeedbackTelemetryFailure {
+                        self.hasLoggedScriptFeedbackTelemetryFailure = true
+                        self.logger.notice(
+                            "Script feedback telemetry unavailable; continuing. \(self.compactLogError(error), privacy: .public)"
+                        )
+                    }
                 }
             }
         }

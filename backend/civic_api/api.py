@@ -29,6 +29,7 @@ from .models import (
     ScriptPackageRequest,
 )
 from .issue_brief_service import IssueBriefService
+from .mapc_pipeline_v3 import MAPCPipelineV3Error, MAPCPipelineV3Service
 from .repository import CivicRepository, InMemoryCivicRepository, SupabaseCivicRepository
 from .script_package_service import ScriptPackageService
 from .service import CivicService
@@ -103,6 +104,7 @@ logger.info(
 service = CivicService(repository=_build_repository())
 issue_brief_service = IssueBriefService(repository=service.repository)
 script_package_service = ScriptPackageService(civic_service=service, issue_brief_service=issue_brief_service)
+mapc_pipeline_v3_service = MAPCPipelineV3Service()
 
 
 def _required_string(payload: dict[str, Any], key: str) -> str:
@@ -442,6 +444,48 @@ def post_script_chat_turn(payload: dict[str, Any], user_id: str) -> dict[str, An
     parsed = parse_script_chat_turn_request(payload, user_id)
     script_package_service.record_chat_turn(parsed)
     return {"ok": True}
+
+
+def _mapc_v3_detail(exc: MAPCPipelineV3Error) -> dict[str, str]:
+    return {
+        "reason_code": exc.reason_code,
+        "message": exc.message,
+    }
+
+
+def post_mapc_v3_interpret(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+    try:
+        return mapc_pipeline_v3_service.interpret(payload, user_id=user_id)
+    except MAPCPipelineV3Error as exc:
+        raise ValueError(json.dumps(_mapc_v3_detail(exc))) from exc
+
+
+def post_mapc_v3_ask_options(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+    try:
+        return mapc_pipeline_v3_service.ask_options(payload, user_id=user_id)
+    except MAPCPipelineV3Error as exc:
+        raise ValueError(json.dumps(_mapc_v3_detail(exc))) from exc
+
+
+def post_mapc_v3_background(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+    try:
+        return mapc_pipeline_v3_service.background(payload, user_id=user_id)
+    except MAPCPipelineV3Error as exc:
+        raise ValueError(json.dumps(_mapc_v3_detail(exc))) from exc
+
+
+def post_mapc_v3_script(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+    try:
+        return mapc_pipeline_v3_service.script(payload, user_id=user_id)
+    except MAPCPipelineV3Error as exc:
+        raise ValueError(json.dumps(_mapc_v3_detail(exc))) from exc
+
+
+def post_mapc_v3_revise(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+    try:
+        return mapc_pipeline_v3_service.revise(payload, user_id=user_id)
+    except MAPCPipelineV3Error as exc:
+        raise ValueError(json.dumps(_mapc_v3_detail(exc))) from exc
 
 
 _SHARE_CARD_DEFAULTS: dict[str, dict[str, str]] = {
@@ -843,6 +887,41 @@ if FastAPI is not None:
     def civic_script_chat_turn(payload: dict[str, Any], request: Request) -> dict[str, Any]:
         return _run_endpoint(
             lambda: post_script_chat_turn(payload, resolve_authenticated_or_anonymous_user_id(request)),
+            bad_request_exceptions=bad_request,
+        )
+
+    @app.post("/api/v2/civic/mapc/interpret")
+    def civic_mapc_v3_interpret(payload: dict[str, Any], request: Request) -> dict[str, Any]:
+        return _run_endpoint(
+            lambda: post_mapc_v3_interpret(payload, resolve_authenticated_or_anonymous_user_id(request)),
+            bad_request_exceptions=bad_request,
+        )
+
+    @app.post("/api/v2/civic/mapc/ask-options")
+    def civic_mapc_v3_ask_options(payload: dict[str, Any], request: Request) -> dict[str, Any]:
+        return _run_endpoint(
+            lambda: post_mapc_v3_ask_options(payload, resolve_authenticated_or_anonymous_user_id(request)),
+            bad_request_exceptions=bad_request,
+        )
+
+    @app.post("/api/v2/civic/mapc/background")
+    def civic_mapc_v3_background(payload: dict[str, Any], request: Request) -> dict[str, Any]:
+        return _run_endpoint(
+            lambda: post_mapc_v3_background(payload, resolve_authenticated_or_anonymous_user_id(request)),
+            bad_request_exceptions=bad_request,
+        )
+
+    @app.post("/api/v2/civic/mapc/script")
+    def civic_mapc_v3_script(payload: dict[str, Any], request: Request) -> dict[str, Any]:
+        return _run_endpoint(
+            lambda: post_mapc_v3_script(payload, resolve_authenticated_or_anonymous_user_id(request)),
+            bad_request_exceptions=bad_request,
+        )
+
+    @app.post("/api/v2/civic/mapc/revise")
+    def civic_mapc_v3_revise(payload: dict[str, Any], request: Request) -> dict[str, Any]:
+        return _run_endpoint(
+            lambda: post_mapc_v3_revise(payload, resolve_authenticated_or_anonymous_user_id(request)),
             bad_request_exceptions=bad_request,
         )
 

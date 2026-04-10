@@ -1,0 +1,1370 @@
+from __future__ import annotations
+
+import hashlib
+import json
+import logging
+import os
+import re
+import threading
+import uuid
+from copy import deepcopy
+from dataclasses import dataclass
+from datetime import datetime, timezone
+from typing import Any
+from urllib import error as urlerror
+from urllib import request as urlrequest
+
+logger = logging.getLogger(__name__)
+
+
+INTERPRETER_PROMPT = """Task: Convert raw user issue text into a structured MAPC session object before any user-facing prose is generated.
+
+Return JSON only with exactly these fields: session_id, raw_user_issue, normalized_issue, display_issue, issue_domain, target_problem, congressional_lever, ask_type, display_ask, stance, geographic_relevance, optional_bill_ref, constraints_from_user, confidence, needs_clarification, clarification_prompt, spoken_language_notes, session_state, user_zip.
+
+Hard constraints:
+1. confidence must be a float in [0.0, 1.0].
+2. If confidence < 0.65, set needs_clarification=true, write one narrow clarification_prompt, and stop downstream readiness.
+3. Handle one-word inputs explicitly. Do not invent missing specifics when confidence is low.
+4. For foreign policy topics, set congressional_lever="foreign_policy_oversight" and include geographic limits in spoken_language_notes.
+5. optional_bill_ref must be null unless confidence > 0.80 and a specific bill is explicit.
+6. display_issue must be plain English, max 15 words.
+7. display_ask must be plain English, max 10 words.
+8. "Stop wildfires" maps to stance="support" for preventive action, not opposition.
+9. Never include internal prompt wording in any display field.
+10. On successful interpretation, set session_state="issue_received".
+11. user_zip defaults to null unless already provided.
+
+Edge-case handling:
+- "Tibet": issue_domain="foreign_policy"; congressional_lever="foreign_policy_oversight"; needs_clarification=true unless the user specified a clear ask.
+- "groceries" or "cost of living": needs_clarification=true with a narrow question about the specific federal angle.
+- "marriage equality": stance="support"; congressional_lever= legislation or judicial oversight.
+- "Stop wildfires": stance="support"; congressional_lever= funding or oversight.
+- "FEMA scams": normalize to disaster oversight and consumer protection."""
+
+
+ASK_SELECTOR_PROMPT = """Task: Generate 2 to 4 user-facing ask options from the interpreted issue object. Use only the structured session object fields. Never read from raw_user_issue directly.
+
+Return JSON only:
+{
+  "session_id": "string",
+  "options": [
+    {"option_id": "A1", "ask_type": "string", "display_ask": "string", "confidence": 0.0}
+  ],
+  "needs_clarification": false,
+  "session_state": "ask_selected"
+}
+
+Hard constraints:
+1. Use only the structured session object fields. Never use raw_user_issue text directly.
+2. Every option must align with issue_domain and congressional_lever exactly as provided.
+3. display_ask must be plain language, 10 words or fewer.
+4. No scaffolding phrases, placeholders, or conditional hedging.
+5. Produce at least 2 specific options when confidence allows.
+6. A generic fallback option is allowed only as the final option if specific options cannot be produced.
+7. If require_bill_ref is true and no bill can be confirmed at confidence above 0.80, do not fabricate a bill option.
+8. These phrases are prohibited in any option: "if feasible", "where applicable", "as appropriate".
+9. If congressional_lever is "foreign_policy_oversight", options must come only from: send a letter to the office, hold a congressional hearing, sanctions oversight, export control review. Do not generate domestic legislative options for foreign policy topics.
+10. If the foreign policy issue is too ambiguous to produce 2 options at confidence above 0.65, return one hearing option and set needs_clarification=true."""
+
+
+BACKGROUND_WRITER_PROMPT = """Task: Write one concise issue-specific background paragraph for the interpreted civic issue.
+
+Return JSON only:
+{"background_text": "string"}
+or if generation is not possible:
+{"background_text": null, "reason": "string"}
+
+Hard constraints:
+1. If confidence is below 0.65, return null.
+2. If issue_domain is null or empty, return null.
+3. Write 3 to 5 sentences in plain language.
+4. The paragraph must be specific to issue_domain and target_problem.
+5. Do not write any paragraph that would apply equally to three or more unrelated issue domains. If that level of specificity cannot be achieved, return null.
+6. This generic pattern is explicitly prohibited and must never appear: a broad paragraph about Congress setting policy, weighing timelines and tradeoffs, and the potential for higher costs to families. This pattern has appeared across unrelated topics and destroys user trust.
+7. No placeholders, no meta language, no instruction-like text."""
+
+
+SCRIPT_WRITER_PROMPT = """Task: Generate a phone-ready congressional call script based on the confirmed session object and selected ask option.
+
+Return JSON only:
+{
+  "live_script": "string",
+  "voicemail_script": "string",
+  "session_state": "script_shown"
+}
+
+Hard constraints:
+1. Target 43 to 97 words total for each script.
+2. Required structure: constituent introduction, then issue framing in 1 to 2 sentences, then one clear ask, then one or two reasons, then a close that requests a specific action or the office's stated position.
+3. Average sentence length must be 18 words or fewer.
+4. The ask sentence must use active voice.
+5. The constituent's identity or location must appear within the first 2 sentences.
+6. The ask must be stated once and stated clearly.
+7. No acronyms unless defined first.
+8. No template markers of any kind except [ZIP], which the user fills in before placing the call.
+9. Do not paste user text verbatim. Synthesize it into natural spoken language.
+10. Do not close with "consider". The close must request a specific action or ask the office to state its position."""
+
+
+STATE_TRANSITIONS: dict[str, set[str]] = {
+    "new": {"issue_received"},
+    "issue_received": {"ask_selected", "background_shown", "revising"},
+    "background_shown": {"ask_selected", "preview_shown", "revising"},
+    "ask_selected": {"background_shown", "preview_shown", "revising"},
+    "preview_shown": {"script_shown", "revising"},
+    "script_shown": {"complete", "revising"},
+    "revising": {"issue_received", "background_shown", "ask_selected", "new", "preview_shown", "script_shown"},
+    "complete": set(),
+}
+
+FOREIGN_POLICY_OPTION_POOL: tuple[tuple[str, str, float], ...] = (
+    ("A1", "hold_hearing", "Hold a congressional hearing", 0.82),
+    ("A2", "sanctions_oversight", "Strengthen sanctions oversight", 0.79),
+    ("A3", "export_control_review", "Review export control enforcement", 0.76),
+    ("A4", "send_letter", "Send a formal office letter", 0.71),
+)
+
+GENERIC_OPTION_POOL: tuple[tuple[str, str, str, float], ...] = (
+    ("A1", "hold_hearing", "Hold a congressional hearing", 0.78),
+    ("A2", "seek_oversight", "Open oversight of agency enforcement", 0.75),
+    ("A3", "increase_funding", "Increase targeted program funding", 0.74),
+    ("A4", "send_letter", "Request a public office position", 0.69),
+)
+
+STOPWORDS: set[str] = {
+    "a", "an", "the", "and", "or", "to", "for", "of", "on", "in", "with", "by", "is", "are", "be", "that",
+    "this", "it", "as", "at", "from", "your", "you", "i", "we", "our", "us", "my", "me", "about",
+}
+
+BANNED_ASK_PHRASES: tuple[str, ...] = ("if feasible", "where applicable", "as appropriate")
+
+
+@dataclass(frozen=True)
+class MAPCPipelineV3Error(Exception):
+    reason_code: str
+    message: str
+
+    def __str__(self) -> str:
+        return f"{self.reason_code}: {self.message}"
+
+
+class MAPCPipelineV3Service:
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._state_by_session: dict[str, str] = {}
+        self._idempotency_cache: dict[str, dict[str, Any]] = {}
+        self._api_key = os.environ.get("OPENAI_API_KEY", "").strip()
+        self._model = os.environ.get("VOTENOW_OPENAI_MODEL_MAPC_V3", os.environ.get("VOTENOW_OPENAI_MODEL", "gpt-5.4-nano")).strip() or "gpt-5.4-nano"
+        self._base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com").rstrip("/")
+        self._timeout_seconds = max(8, int(os.environ.get("VOTENOW_OPENAI_TIMEOUT_SECONDS", "45")))
+
+    @property
+    def enabled(self) -> bool:
+        return _env_flag("mapc_pipeline_v3_enabled", default=True)
+
+    def interpret(self, payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+        self._require_enabled()
+        stage = "interpret"
+        if "concern_text" not in payload:
+            raise MAPCPipelineV3Error("missing_concern_text", "concern_text is required.")
+        normalized_payload = self._normalize_interpret_payload(payload)
+        session_id = normalized_payload["session_id"]
+        cached = self._get_cached(stage, session_id, normalized_payload)
+        if cached is not None:
+            return cached
+
+        with self._lock:
+            current = self._state_by_session.get(session_id, "new")
+        if current != "new":
+            raise MAPCPipelineV3Error("invalid_state_transition", f"interpret requires new state, found {current}.")
+
+        session_obj = self._call_stage_1_llm(normalized_payload)
+        validator_report: dict[str, Any] = {
+            "stage": stage,
+            "checks": [],
+            "timestamp": _utc_iso_now(),
+        }
+        confidence = _coerce_float(session_obj.get("confidence"), fallback=0.0)
+        needs_clarification = bool(session_obj.get("needs_clarification"))
+        if confidence < 0.65:
+            needs_clarification = True
+            session_obj["needs_clarification"] = True
+            if not _normalized_text(session_obj.get("clarification_prompt")):
+                session_obj["clarification_prompt"] = "What specific action should Congress take first?"
+        session_obj["confidence"] = confidence
+        session_obj["session_state"] = "issue_received"
+        validator_report["checks"].append({
+            "name": "confidence_gate",
+            "passed": confidence >= 0.65 and not needs_clarification,
+            "confidence": confidence,
+            "needs_clarification": needs_clarification,
+        })
+        self._set_state(session_id, "issue_received")
+        response = {
+            "session": session_obj,
+            "validator_report": validator_report,
+        }
+        self._cache(stage, session_id, normalized_payload, response)
+        self._log_request(stage=stage, session_id=session_id, state_before="new", state_after="issue_received", confidence=confidence, needs_clarification=needs_clarification, validator_report=validator_report)
+        _ = user_id  # reserved for future auditing hooks.
+        return response
+
+    def ask_options(self, payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+        self._require_enabled()
+        stage = "ask_options"
+        if "concern_text" not in payload:
+            raise MAPCPipelineV3Error("missing_concern_text", "concern_text is required.")
+        session_obj = _coerce_session_object(payload)
+        require_bill_ref = bool(payload.get("require_bill_ref", False))
+        normalized_payload = {
+            "session": session_obj,
+            "require_bill_ref": require_bill_ref,
+            "concern_text": _normalized_text(payload.get("concern_text")),
+        }
+        session_id = _required_session_id(session_obj)
+        cached = self._get_cached(stage, session_id, normalized_payload)
+        if cached is not None:
+            return cached
+
+        with self._lock:
+            current = self._state_by_session.get(session_id, "new")
+        if current not in {"issue_received", "ask_selected", "background_shown", "preview_shown", "revising"}:
+            raise MAPCPipelineV3Error("invalid_state_transition", f"ask-options requires issue_received/ask_selected/background_shown/preview_shown/revising, found {current}.")
+
+        options_payload = self._call_stage_2_llm(session_obj=session_obj, require_bill_ref=require_bill_ref)
+        validator_report: dict[str, Any] = {
+            "stage": stage,
+            "checks": [],
+            "timestamp": _utc_iso_now(),
+        }
+
+        options = options_payload.get("options")
+        if not isinstance(options, list):
+            raise MAPCPipelineV3Error("ask_options_parse_error", "ask options response missing options array.")
+        passed = self._validate_display_ask_lengths(options)
+        validator_report["checks"].append({"name": "display_ask_word_limit", "passed": passed})
+        if not passed:
+            options_payload = self._call_stage_2_llm(
+                session_obj=session_obj,
+                require_bill_ref=require_bill_ref,
+                extra_user_instruction="Shorten every display_ask to 10 words or fewer.",
+            )
+            options = options_payload.get("options")
+            if not isinstance(options, list) or not self._validate_display_ask_lengths(options):
+                raise MAPCPipelineV3Error("display_ask_length_violation", "display_ask exceeds 10 words.")
+            validator_report["checks"].append({"name": "display_ask_word_limit_retry", "passed": True})
+
+        for entry in options:
+            display = _normalized_text(entry.get("display_ask")).lower()
+            if any(phrase in display for phrase in BANNED_ASK_PHRASES):
+                raise MAPCPipelineV3Error("banned_phrase_in_option", "ask option contains prohibited phrase.")
+
+        response_session = deepcopy(session_obj)
+        response_session["needs_clarification"] = bool(options_payload.get("needs_clarification", False))
+        response_session["session_state"] = "ask_selected"
+        self._set_state(session_id, "ask_selected")
+        response = {
+            "session": response_session,
+            "options": options,
+            "validator_report": validator_report,
+        }
+        self._cache(stage, session_id, normalized_payload, response)
+        self._log_request(stage=stage, session_id=session_id, state_before=current, state_after="ask_selected", confidence=_coerce_float(session_obj.get("confidence"), fallback=0.0), needs_clarification=response_session["needs_clarification"], validator_report=validator_report)
+        _ = user_id
+        return response
+
+    def background(self, payload: dict[str, Any], user_id: str, generic_retry_hint: str | None = None) -> dict[str, Any]:
+        self._require_enabled()
+        stage = "background"
+        if "concern_text" not in payload:
+            raise MAPCPipelineV3Error("missing_concern_text", "concern_text is required.")
+        session_obj = _coerce_session_object(payload)
+        session_id = _required_session_id(session_obj)
+        normalized_payload = {
+            "session": session_obj,
+            "concern_text": _normalized_text(payload.get("concern_text")),
+            "generic_retry_hint": _normalized_text(generic_retry_hint),
+        }
+        cached = self._get_cached(stage, session_id, normalized_payload)
+        if cached is not None:
+            return cached
+
+        with self._lock:
+            current = self._state_by_session.get(session_id, "new")
+        if current not in {"issue_received", "ask_selected", "preview_shown", "revising"}:
+            raise MAPCPipelineV3Error("invalid_state_transition", f"background requires issue_received/ask_selected/preview_shown/revising, found {current}.")
+
+        validator_report: dict[str, Any] = {"stage": stage, "checks": [], "timestamp": _utc_iso_now()}
+        confidence = _coerce_float(session_obj.get("confidence"), fallback=0.0)
+        issue_domain = _normalized_text(session_obj.get("issue_domain"))
+        if confidence < 0.65:
+            validator_report["checks"].append({"name": "precheck_low_confidence", "passed": False})
+            response = {
+                "session": deepcopy(session_obj),
+                "background_text": None,
+                "reason": "low_confidence",
+                "validator_report": validator_report,
+            }
+            self._cache(stage, session_id, normalized_payload, response)
+            self._log_request(stage=stage, session_id=session_id, state_before=current, state_after=current, confidence=confidence, needs_clarification=True, validator_report=validator_report)
+            return response
+        if not issue_domain:
+            validator_report["checks"].append({"name": "precheck_missing_domain", "passed": False})
+            response = {
+                "session": deepcopy(session_obj),
+                "background_text": None,
+                "reason": "missing_domain",
+                "validator_report": validator_report,
+            }
+            self._cache(stage, session_id, normalized_payload, response)
+            self._log_request(stage=stage, session_id=session_id, state_before=current, state_after=current, confidence=confidence, needs_clarification=True, validator_report=validator_report)
+            return response
+
+        generated = self._call_stage_3_llm(session_obj=session_obj, extra_user_instruction=generic_retry_hint)
+        background_text = _normalized_text(generated.get("background_text"))
+        reason = _normalized_text(generated.get("reason")) or None
+        if not background_text:
+            response = {
+                "session": deepcopy(session_obj),
+                "background_text": None,
+                "reason": reason or "model_returned_null",
+                "validator_report": validator_report,
+            }
+            self._cache(stage, session_id, normalized_payload, response)
+            self._log_request(stage=stage, session_id=session_id, state_before=current, state_after=current, confidence=confidence, needs_clarification=True, validator_report=validator_report)
+            return response
+
+        topic_ok, topic_report = self._topic_match_report(session_obj=session_obj, background_text=background_text)
+        validator_report["checks"].append(topic_report)
+        if not topic_ok:
+            response = {
+                "session": deepcopy(session_obj),
+                "background_text": None,
+                "reason": "topic_match_failed",
+                "validator_report": validator_report,
+            }
+            self._cache(stage, session_id, normalized_payload, response)
+            self._log_request(stage=stage, session_id=session_id, state_before=current, state_after=current, confidence=confidence, needs_clarification=True, validator_report=validator_report)
+            return response
+
+        generic_ok, generic_report = self._generic_background_report(session_obj=session_obj, background_text=background_text)
+        validator_report["checks"].append(generic_report)
+        if not generic_ok:
+            response = {
+                "session": deepcopy(session_obj),
+                "background_text": None,
+                "reason": "generic_background_detected",
+                "validator_report": validator_report,
+            }
+            self._cache(stage, session_id, normalized_payload, response)
+            self._log_request(stage=stage, session_id=session_id, state_before=current, state_after=current, confidence=confidence, needs_clarification=True, validator_report=validator_report)
+            return response
+
+        response_session = deepcopy(session_obj)
+        response_session["session_state"] = "background_shown"
+        self._set_state(session_id, "background_shown")
+        response = {
+            "session": response_session,
+            "background_text": background_text,
+            "reason": None,
+            "validator_report": validator_report,
+        }
+        self._cache(stage, session_id, normalized_payload, response)
+        self._log_request(stage=stage, session_id=session_id, state_before=current, state_after="background_shown", confidence=confidence, needs_clarification=False, validator_report=validator_report)
+        _ = user_id
+        return response
+
+    def script(self, payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+        self._require_enabled()
+        stage = "script"
+        if "concern_text" not in payload:
+            raise MAPCPipelineV3Error("missing_concern_text", "concern_text is required.")
+        confirmed = bool(payload.get("confirmed", False))
+        if not confirmed:
+            raise MAPCPipelineV3Error("preview_not_confirmed", "Script generation requires confirmed=true.")
+
+        session_obj = _coerce_session_object(payload)
+        session_id = _required_session_id(session_obj)
+        selected_option_id = _normalized_text(payload.get("selected_option_id"))
+        if not selected_option_id:
+            raise MAPCPipelineV3Error("missing_selected_option", "selected_option_id is required.")
+        options = payload.get("options")
+        if not isinstance(options, list):
+            raise MAPCPipelineV3Error("missing_options", "options array is required.")
+
+        normalized_payload = {
+            "session": session_obj,
+            "selected_option_id": selected_option_id,
+            "confirmed": confirmed,
+            "concern_text": _normalized_text(payload.get("concern_text")),
+            "options": options,
+        }
+        cached = self._get_cached(stage, session_id, normalized_payload)
+        if cached is not None:
+            return cached
+
+        with self._lock:
+            current = self._state_by_session.get(session_id, "new")
+        if current not in {"ask_selected", "background_shown", "preview_shown", "revising"}:
+            raise MAPCPipelineV3Error("invalid_state_transition", f"script requires ask_selected/background_shown/preview_shown/revising, found {current}.")
+
+        selected_option = self._selected_option(options=options, selected_option_id=selected_option_id)
+        if selected_option is None:
+            raise MAPCPipelineV3Error("invalid_selected_option", "selected_option_id was not found in options.")
+        working_session = deepcopy(session_obj)
+        working_session["ask_type"] = _normalized_text(selected_option.get("ask_type")) or working_session.get("ask_type")
+        working_session["display_ask"] = _normalized_text(selected_option.get("display_ask")) or working_session.get("display_ask")
+        self._set_state(session_id, "preview_shown")
+
+        validator_report: dict[str, Any] = {"stage": stage, "checks": [], "timestamp": _utc_iso_now()}
+        script_payload = self._call_stage_4_llm(session_obj=working_session, selected_option=selected_option)
+        live_script = _normalized_text(script_payload.get("live_script"))
+        voicemail_script = _normalized_text(script_payload.get("voicemail_script"))
+        if not live_script or not voicemail_script:
+            raise MAPCPipelineV3Error("script_parse_error", "script stage returned empty live/voicemail content.")
+
+        live_script, voicemail_script = self._run_script_validators(
+            session_obj=working_session,
+            selected_option=selected_option,
+            live_script=live_script,
+            voicemail_script=voicemail_script,
+            validator_report=validator_report,
+        )
+
+        response_session = deepcopy(working_session)
+        response_session["session_state"] = "script_shown"
+        self._set_state(session_id, "script_shown")
+        response = {
+            "session": response_session,
+            "live_script": live_script,
+            "voicemail_script": voicemail_script,
+            "validator_report": validator_report,
+        }
+        self._cache(stage, session_id, normalized_payload, response)
+        self._log_request(stage=stage, session_id=session_id, state_before=current, state_after="script_shown", confidence=_coerce_float(working_session.get("confidence"), fallback=0.0), needs_clarification=bool(working_session.get("needs_clarification")), validator_report=validator_report)
+        _ = user_id
+        return response
+
+    def revise(self, payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+        self._require_enabled()
+        action = _normalized_text(payload.get("action")).lower()
+        if not action:
+            raise MAPCPipelineV3Error("missing_revision_action", "action is required.")
+        session_obj = _coerce_session_object(payload)
+        session_id = _required_session_id(session_obj)
+        with self._lock:
+            current = self._state_by_session.get(session_id, "new")
+        self._set_state(session_id, "revising")
+
+        normalized_action = action.replace(" ", "_")
+        if normalized_action == "too_generic":
+            return self.background(payload={"session": session_obj, "concern_text": payload.get("concern_text")}, user_id=user_id, generic_retry_hint="The previous background was too generic. Write a paragraph that is highly specific to this issue_domain and target_problem.")
+        if normalized_action == "wrong_issue":
+            reset = _blank_session(session_id=session_id)
+            self._set_state(session_id, "new")
+            return {"session": reset, "prompt": "Please restate the issue in one sentence."}
+        if normalized_action == "wrong_stance":
+            flipped = deepcopy(session_obj)
+            flipped["stance"] = "oppose" if _normalized_text(flipped.get("stance")).lower() == "support" else "support"
+            self._set_state(session_id, "preview_shown")
+            return self.script(
+                payload={
+                    "session": flipped,
+                    "options": payload.get("options", []),
+                    "selected_option_id": payload.get("selected_option_id"),
+                    "confirmed": True,
+                    "concern_text": payload.get("concern_text"),
+                },
+                user_id=user_id,
+            )
+        if normalized_action == "too_broad":
+            updated = deepcopy(session_obj)
+            updated["needs_clarification"] = True
+            updated["clarification_prompt"] = _normalized_text(updated.get("clarification_prompt")) or "What exact action should Congress take first?"
+            updated["session_state"] = "issue_received"
+            self._set_state(session_id, "issue_received")
+            return {"session": updated, "clarification_prompt": updated["clarification_prompt"]}
+        if normalized_action == "needs_local_angle":
+            localized = deepcopy(session_obj)
+            localized["geographic_relevance"] = "constituent_district"
+            self._set_state(session_id, "preview_shown")
+            return self.script(
+                payload={
+                    "session": localized,
+                    "options": payload.get("options", []),
+                    "selected_option_id": payload.get("selected_option_id"),
+                    "confirmed": True,
+                    "concern_text": payload.get("concern_text"),
+                },
+                user_id=user_id,
+            )
+        if normalized_action == "needs_a_bill":
+            self._set_state(session_id, "background_shown")
+            return self.ask_options(
+                payload={
+                    "session": session_obj,
+                    "require_bill_ref": True,
+                    "concern_text": payload.get("concern_text"),
+                },
+                user_id=user_id,
+            )
+        if normalized_action == "start_over":
+            reset = _blank_session(session_id=session_id)
+            self._set_state(session_id, "new")
+            return {"session": reset}
+        if normalized_action == "something_else":
+            text = _normalized_text(payload.get("free_text"))
+            if not text:
+                raise MAPCPipelineV3Error("missing_free_text", "free_text is required for something_else.")
+            self._set_state(session_id, "new")
+            return self.interpret(
+                payload={
+                    "session_id": session_id,
+                    "raw_user_issue": text,
+                    "concern_text": text,
+                    "session_state": "new",
+                    "user_zip": session_obj.get("user_zip"),
+                },
+                user_id=user_id,
+            )
+
+        raise MAPCPipelineV3Error("unknown_revision_action", f"unsupported action: {action}")
+
+    def _run_script_validators(
+        self,
+        *,
+        session_obj: dict[str, Any],
+        selected_option: dict[str, Any],
+        live_script: str,
+        voicemail_script: str,
+        validator_report: dict[str, Any],
+    ) -> tuple[str, str]:
+        scripts = {"live_script": live_script, "voicemail_script": voicemail_script}
+
+        def rerun(extra_instruction: str) -> dict[str, Any]:
+            return self._call_stage_4_llm(session_obj=session_obj, selected_option=selected_option, extra_user_instruction=extra_instruction)
+
+        expected_stance = _normalized_text(session_obj.get("stance")).lower()
+        stance_ok, detected = _stance_aligned(scripts["live_script"], expected_stance)
+        validator_report["checks"].append({"name": "stance_consistency", "passed": stance_ok, "detected_verb": detected, "expected_stance": expected_stance})
+        if not stance_ok:
+            retried = rerun("Align the ask verb with the session stance exactly.")
+            scripts = {k: _normalized_text(retried.get(k)) for k in scripts}
+            stance_ok, detected = _stance_aligned(scripts["live_script"], expected_stance)
+            validator_report["checks"].append({"name": "stance_consistency_retry", "passed": stance_ok, "detected_verb": detected})
+            if not stance_ok:
+                raise MAPCPipelineV3Error("stance_mismatch", "script ask verb did not align with stance.")
+
+        verbatim_ok, offending_source = _verbatim_ok(
+            scripts["live_script"],
+            _normalized_text(session_obj.get("raw_user_issue")),
+            _normalized_text(session_obj.get("constraints_from_user")),
+        )
+        validator_report["checks"].append({"name": "verbatim_paste", "passed": verbatim_ok, "source": offending_source})
+        if not verbatim_ok:
+            retried = rerun("Do not copy user text verbatim. Synthesize fresh spoken language.")
+            scripts = {k: _normalized_text(retried.get(k)) for k in scripts}
+            verbatim_ok, offending_source = _verbatim_ok(
+                scripts["live_script"],
+                _normalized_text(session_obj.get("raw_user_issue")),
+                _normalized_text(session_obj.get("constraints_from_user")),
+            )
+            validator_report["checks"].append({"name": "verbatim_paste_retry", "passed": verbatim_ok, "source": offending_source})
+            if not verbatim_ok:
+                raise MAPCPipelineV3Error("verbatim_paste_detected", "verbatim phrase remained after retry.")
+
+        leak_ok, leaked = _placeholder_leak_ok(scripts["live_script"])
+        validator_report["checks"].append({"name": "placeholder_leak", "passed": leak_ok, "token": leaked})
+        if not leak_ok:
+            retried = rerun("Remove all template markers. [ZIP] is the only allowed bracket token.")
+            scripts = {k: _normalized_text(retried.get(k)) for k in scripts}
+            leak_ok, leaked = _placeholder_leak_ok(scripts["live_script"])
+            validator_report["checks"].append({"name": "placeholder_leak_retry", "passed": leak_ok, "token": leaked})
+            if not leak_ok:
+                raise MAPCPipelineV3Error("placeholder_leak", f"disallowed token remained: {leaked}")
+
+        deduped_live, duplicate_found = _dedupe_repeated_phrase(scripts["live_script"])
+        validator_report["checks"].append({"name": "duplicate_phrase", "passed": not duplicate_found})
+        scripts["live_script"] = deduped_live
+        if duplicate_found:
+            retried = rerun("Avoid repeating any phrase of six or more words.")
+            scripts = {k: _normalized_text(retried.get(k)) for k in scripts}
+            _, duplicate_found_retry = _dedupe_repeated_phrase(scripts["live_script"])
+            validator_report["checks"].append({"name": "duplicate_phrase_retry", "passed": not duplicate_found_retry})
+            if duplicate_found_retry:
+                raise MAPCPipelineV3Error("duplicate_phrase", "duplicate phrase remained after retry.")
+
+        malformed_ok = not _is_malformed_ask(scripts["live_script"])
+        validator_report["checks"].append({"name": "malformed_ask", "passed": malformed_ok})
+        if not malformed_ok:
+            repaired = self._call_stage_1_llm({
+                "session_id": _required_session_id(session_obj),
+                "raw_user_issue": _normalized_text(session_obj.get("raw_user_issue")),
+                "concern_text": _normalized_text(session_obj.get("raw_user_issue")),
+                "session_state": "new",
+                "user_zip": session_obj.get("user_zip"),
+            })
+            session_obj["normalized_issue"] = repaired.get("normalized_issue", session_obj.get("normalized_issue"))
+            retried = rerun("Rewrite ask sentence to avoid double prepositions or recursive stacking.")
+            scripts = {k: _normalized_text(retried.get(k)) for k in scripts}
+            malformed_ok = not _is_malformed_ask(scripts["live_script"])
+            validator_report["checks"].append({"name": "malformed_ask_retry", "passed": malformed_ok})
+            if not malformed_ok:
+                raise MAPCPipelineV3Error("malformed_ask", "malformed ask remained after retry.")
+
+        live_wc = _word_count(scripts["live_script"])
+        vm_wc = _word_count(scripts["voicemail_script"])
+        in_range = 43 <= live_wc <= 97 and 43 <= vm_wc <= 97
+        validator_report["checks"].append({"name": "word_count", "passed": in_range, "live_words": live_wc, "voicemail_words": vm_wc})
+        if not in_range:
+            retried = rerun("Ensure each script is between 43 and 97 words.")
+            scripts = {k: _normalized_text(retried.get(k)) for k in scripts}
+            live_wc = _word_count(scripts["live_script"])
+            vm_wc = _word_count(scripts["voicemail_script"])
+            in_range = 43 <= live_wc <= 97 and 43 <= vm_wc <= 97
+            validator_report["checks"].append({"name": "word_count_retry", "passed": in_range, "live_words": live_wc, "voicemail_words": vm_wc})
+            if not in_range:
+                raise MAPCPipelineV3Error("word_count_out_of_range", "script word count remained out of range after retry.")
+
+        return scripts["live_script"], scripts["voicemail_script"]
+
+    def _call_stage_1_llm(self, payload: dict[str, Any]) -> dict[str, Any]:
+        raw_issue = _normalized_text(payload.get("raw_user_issue"))
+        if not self._api_key:
+            return _offline_interpret(payload)
+        model_payload = {
+            "model": self._model,
+            "temperature": 0.1,
+            "response_format": {"type": "json_object"},
+            "messages": [
+                {"role": "system", "content": INTERPRETER_PROMPT},
+                {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
+            ],
+        }
+        parsed = self._chat_json(model_payload, parse_reason_code="interpreter_parse_error")
+        if not isinstance(parsed, dict):
+            raise MAPCPipelineV3Error("interpreter_parse_error", "Interpreter response was not a JSON object.")
+        parsed.setdefault("raw_user_issue", raw_issue)
+        parsed.setdefault("session_id", payload.get("session_id") or str(uuid.uuid4()))
+        parsed.setdefault("user_zip", payload.get("user_zip"))
+        return _sanitize_session(parsed)
+
+    def _call_stage_2_llm(
+        self,
+        *,
+        session_obj: dict[str, Any],
+        require_bill_ref: bool,
+        extra_user_instruction: str | None = None,
+    ) -> dict[str, Any]:
+        if not self._api_key:
+            return _offline_ask_options(session_obj=session_obj, require_bill_ref=require_bill_ref)
+        messages = [
+            {"role": "system", "content": ASK_SELECTOR_PROMPT},
+            {"role": "user", "content": json.dumps({"session": session_obj, "require_bill_ref": require_bill_ref}, ensure_ascii=False)},
+        ]
+        if _normalized_text(extra_user_instruction):
+            messages.append({"role": "user", "content": _normalized_text(extra_user_instruction)})
+        model_payload = {
+            "model": self._model,
+            "temperature": 0.1,
+            "response_format": {"type": "json_object"},
+            "messages": messages,
+        }
+        parsed = self._chat_json(model_payload, parse_reason_code="ask_options_parse_error")
+        if not isinstance(parsed, dict):
+            raise MAPCPipelineV3Error("ask_options_parse_error", "Ask selector response was not a JSON object.")
+        return parsed
+
+    def _call_stage_3_llm(self, *, session_obj: dict[str, Any], extra_user_instruction: str | None = None) -> dict[str, Any]:
+        if not self._api_key:
+            return _offline_background(session_obj=session_obj)
+        messages = [
+            {"role": "system", "content": BACKGROUND_WRITER_PROMPT},
+            {"role": "user", "content": json.dumps({"session": session_obj}, ensure_ascii=False)},
+        ]
+        if _normalized_text(extra_user_instruction):
+            messages.append({"role": "user", "content": _normalized_text(extra_user_instruction)})
+        model_payload = {
+            "model": self._model,
+            "temperature": 0.2,
+            "response_format": {"type": "json_object"},
+            "messages": messages,
+        }
+        parsed = self._chat_json(model_payload, parse_reason_code="background_parse_error")
+        if not isinstance(parsed, dict):
+            raise MAPCPipelineV3Error("background_parse_error", "Background writer response was not a JSON object.")
+        return parsed
+
+    def _call_stage_4_llm(
+        self,
+        *,
+        session_obj: dict[str, Any],
+        selected_option: dict[str, Any],
+        extra_user_instruction: str | None = None,
+    ) -> dict[str, Any]:
+        if not self._api_key:
+            return _offline_script(session_obj=session_obj, selected_option=selected_option)
+        messages = [
+            {"role": "system", "content": SCRIPT_WRITER_PROMPT},
+            {"role": "user", "content": json.dumps({"session": session_obj, "selected_option": selected_option}, ensure_ascii=False)},
+        ]
+        if _normalized_text(extra_user_instruction):
+            messages.append({"role": "user", "content": _normalized_text(extra_user_instruction)})
+        model_payload = {
+            "model": self._model,
+            "temperature": 0.2,
+            "response_format": {"type": "json_object"},
+            "messages": messages,
+        }
+        parsed = self._chat_json(model_payload, parse_reason_code="script_parse_error")
+        if not isinstance(parsed, dict):
+            raise MAPCPipelineV3Error("script_parse_error", "Script writer response was not a JSON object.")
+        return parsed
+
+    def _chat_json(self, payload: dict[str, Any], parse_reason_code: str) -> dict[str, Any]:
+        body = json.dumps(payload).encode("utf-8")
+        req = urlrequest.Request(
+            url=f"{self._base_url}/v1/chat/completions",
+            data=body,
+            method="POST",
+            headers={
+                "Authorization": f"Bearer {self._api_key}",
+                "Content-Type": "application/json",
+            },
+        )
+        try:
+            with urlrequest.urlopen(req, timeout=self._timeout_seconds) as response:
+                raw = response.read().decode("utf-8")
+        except urlerror.HTTPError as exc:
+            detail = exc.read().decode("utf-8", errors="ignore")
+            raise MAPCPipelineV3Error("llm_http_error", f"OpenAI HTTP {exc.code}: {detail[:400]}") from exc
+        except Exception as exc:
+            raise MAPCPipelineV3Error("llm_transport_error", f"OpenAI request failed: {type(exc).__name__}") from exc
+
+        decoded = _parse_possible_json(raw)
+        if not isinstance(decoded, dict):
+            raise MAPCPipelineV3Error(parse_reason_code, "LLM response was not valid JSON.")
+
+        message = ((decoded.get("choices") or [{}])[0] or {}).get("message") or {}
+        content = message.get("content")
+        if not isinstance(content, str) or not content.strip():
+            raise MAPCPipelineV3Error(parse_reason_code, "LLM returned empty message content.")
+        parsed = _parse_possible_json(content)
+        if not isinstance(parsed, dict):
+            raise MAPCPipelineV3Error(parse_reason_code, "LLM content was not valid JSON object.")
+        return parsed
+
+    def _topic_match_report(self, *, session_obj: dict[str, Any], background_text: str) -> tuple[bool, dict[str, Any]]:
+        noun_candidates = _extract_key_tokens(" ".join([
+            _normalized_text(session_obj.get("normalized_issue")),
+            _normalized_text(session_obj.get("issue_domain")),
+        ]))
+        background_stems = {_stem(token) for token in _extract_key_tokens(background_text)}
+        matched = [token for token in noun_candidates if _stem(token) in background_stems]
+        report = {
+            "name": "topic_match",
+            "passed": len(matched) >= 2,
+            "nouns_checked": noun_candidates,
+            "matched_count": len(matched),
+            "background_fingerprint": _fingerprint(background_text),
+        }
+        return len(matched) >= 2, report
+
+    def _generic_background_report(self, *, session_obj: dict[str, Any], background_text: str) -> tuple[bool, dict[str, Any]]:
+        lowered = background_text.lower()
+        issue_domain = _normalized_text(session_obj.get("issue_domain")).lower()
+        has_generic_pattern = (
+            "congress" in lowered
+            and ("timeline" in lowered or "timelines" in lowered)
+            and ("tradeoff" in lowered or "tradeoffs" in lowered)
+            and ("costs to families" in lowered or "family costs" in lowered)
+        )
+        missing_domain_anchor = not issue_domain or issue_domain not in lowered
+        passed = not (has_generic_pattern and missing_domain_anchor)
+        report = {
+            "name": "generic_background",
+            "passed": passed,
+            "specificity_score": _specificity_score(background_text, issue_domain),
+            "pattern_detected": has_generic_pattern,
+        }
+        return passed, report
+
+    def _validate_display_ask_lengths(self, options: list[dict[str, Any]]) -> bool:
+        for option in options:
+            display = _normalized_text(option.get("display_ask"))
+            if _word_count(display) > 10:
+                return False
+        return True
+
+    def _selected_option(self, *, options: list[Any], selected_option_id: str) -> dict[str, Any] | None:
+        target = selected_option_id.strip().lower()
+        for candidate in options:
+            if not isinstance(candidate, dict):
+                continue
+            option_id = _normalized_text(candidate.get("option_id")).lower()
+            if option_id == target:
+                return candidate
+        return None
+
+    def _normalize_interpret_payload(self, payload: dict[str, Any]) -> dict[str, Any]:
+        raw_user_issue = _required_text(payload.get("raw_user_issue"), field="raw_user_issue")
+        session_id = _normalized_text(payload.get("session_id")) or str(uuid.uuid4())
+        session_state = _normalized_text(payload.get("session_state")) or "new"
+        if session_state != "new":
+            raise MAPCPipelineV3Error("invalid_initial_state", "interpret requires session_state=new.")
+        concern_text = _normalized_text(payload.get("concern_text")) or raw_user_issue
+        return {
+            "session_id": session_id,
+            "raw_user_issue": raw_user_issue,
+            "concern_text": concern_text,
+            "session_state": "new",
+            "user_zip": _normalized_text(payload.get("user_zip")) or None,
+        }
+
+    def _set_state(self, session_id: str, next_state: str) -> None:
+        with self._lock:
+            current = self._state_by_session.get(session_id, "new")
+            if current == next_state:
+                return
+            allowed = STATE_TRANSITIONS.get(current, set())
+            if next_state not in allowed:
+                raise MAPCPipelineV3Error("invalid_state_transition", f"{current} -> {next_state} is not allowed.")
+            self._state_by_session[session_id] = next_state
+
+    def _get_cached(self, stage: str, session_id: str, payload: dict[str, Any]) -> dict[str, Any] | None:
+        cache_key = self._cache_key(stage, session_id, payload)
+        with self._lock:
+            cached = self._idempotency_cache.get(cache_key)
+        return deepcopy(cached) if cached is not None else None
+
+    def _cache(self, stage: str, session_id: str, payload: dict[str, Any], response: dict[str, Any]) -> None:
+        cache_key = self._cache_key(stage, session_id, payload)
+        with self._lock:
+            self._idempotency_cache[cache_key] = deepcopy(response)
+
+    def _cache_key(self, stage: str, session_id: str, payload: dict[str, Any]) -> str:
+        serialized = json.dumps(payload, ensure_ascii=False, sort_keys=True, default=str)
+        digest = hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+        return f"{stage}:{session_id}:{digest}"
+
+    def _log_request(
+        self,
+        *,
+        stage: str,
+        session_id: str,
+        state_before: str,
+        state_after: str,
+        confidence: float,
+        needs_clarification: bool,
+        validator_report: dict[str, Any],
+    ) -> None:
+        logger.info(
+            "mapc_v3 stage=%s session_id=%s state_before=%s state_after=%s confidence=%.3f needs_clarification=%s validators=%s",
+            stage,
+            session_id,
+            state_before,
+            state_after,
+            confidence,
+            needs_clarification,
+            _compact_validator_log(validator_report),
+        )
+
+    def _require_enabled(self) -> None:
+        if not self.enabled:
+            raise MAPCPipelineV3Error("feature_flag_disabled", "mapc_pipeline_v3_enabled is not enabled.")
+
+
+def _coerce_session_object(payload: dict[str, Any]) -> dict[str, Any]:
+    session_obj = payload.get("session")
+    if not isinstance(session_obj, dict):
+        raise MAPCPipelineV3Error("missing_session_object", "session object is required.")
+    return _sanitize_session(session_obj)
+
+
+def _required_session_id(session_obj: dict[str, Any]) -> str:
+    session_id = _normalized_text(session_obj.get("session_id"))
+    if not session_id:
+        raise MAPCPipelineV3Error("missing_session_id", "session_id is required in session object.")
+    return session_id
+
+
+def _required_text(value: Any, *, field: str) -> str:
+    text = _normalized_text(value)
+    if not text:
+        raise MAPCPipelineV3Error("missing_required_field", f"{field} is required.")
+    return text
+
+
+def _normalized_text(value: Any) -> str:
+    if value is None:
+        return ""
+    return re.sub(r"\s+", " ", str(value).strip())
+
+
+def _coerce_float(value: Any, fallback: float) -> float:
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return fallback
+    if number < 0.0:
+        return 0.0
+    if number > 1.0:
+        return 1.0
+    return number
+
+
+def _utc_iso_now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _word_count(text: str) -> int:
+    return len(re.findall(r"\b[\w'\-]+\b", text))
+
+
+def _fingerprint(text: str) -> str:
+    normalized = _normalized_text(text).lower()
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:16]
+
+
+def _extract_key_tokens(text: str) -> list[str]:
+    tokens = re.findall(r"[a-zA-Z][a-zA-Z\-]{1,}", text.lower())
+    filtered = [token for token in tokens if token not in STOPWORDS and len(token) > 2]
+    return list(dict.fromkeys(filtered))
+
+
+def _stem(token: str) -> str:
+    value = token.lower().strip()
+    for suffix in ("ing", "ed", "es", "s"):
+        if value.endswith(suffix) and len(value) - len(suffix) >= 3:
+            return value[: -len(suffix)]
+    return value
+
+
+def _specificity_score(text: str, issue_domain: str) -> float:
+    tokens = _extract_key_tokens(text)
+    if not tokens:
+        return 0.0
+    domain_tokens = _extract_key_tokens(issue_domain)
+    overlap = len({_stem(token) for token in tokens}.intersection({_stem(token) for token in domain_tokens}))
+    return overlap / max(1, len(domain_tokens))
+
+
+def _parse_possible_json(raw: str) -> Any:
+    text = raw.strip()
+    if not text:
+        return None
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        start = text.find("{")
+        end = text.rfind("}")
+        if start >= 0 and end > start:
+            snippet = text[start : end + 1]
+            try:
+                return json.loads(snippet)
+            except json.JSONDecodeError:
+                return None
+    return None
+
+
+def _sanitize_session(raw: dict[str, Any]) -> dict[str, Any]:
+    session = {
+        "session_id": _normalized_text(raw.get("session_id")) or str(uuid.uuid4()),
+        "raw_user_issue": _normalized_text(raw.get("raw_user_issue")),
+        "normalized_issue": _normalized_text(raw.get("normalized_issue")),
+        "display_issue": _limit_words(_normalized_text(raw.get("display_issue")), 15),
+        "issue_domain": _normalized_text(raw.get("issue_domain")),
+        "target_problem": _normalized_text(raw.get("target_problem")),
+        "congressional_lever": _normalized_text(raw.get("congressional_lever")),
+        "ask_type": _normalized_text(raw.get("ask_type")),
+        "display_ask": _limit_words(_normalized_text(raw.get("display_ask")), 10),
+        "stance": _normalized_text(raw.get("stance")).lower() or "support",
+        "geographic_relevance": _normalized_text(raw.get("geographic_relevance")) or "national",
+        "optional_bill_ref": _normalized_text(raw.get("optional_bill_ref")) or None,
+        "constraints_from_user": _normalized_text(raw.get("constraints_from_user")) or None,
+        "confidence": _coerce_float(raw.get("confidence"), fallback=0.0),
+        "needs_clarification": bool(raw.get("needs_clarification", False)),
+        "clarification_prompt": _normalized_text(raw.get("clarification_prompt")) or None,
+        "spoken_language_notes": _normalized_text(raw.get("spoken_language_notes")) or None,
+        "session_state": _normalized_text(raw.get("session_state")) or "new",
+        "user_zip": _normalized_text(raw.get("user_zip")) or None,
+    }
+    if session["stance"] not in {"support", "oppose"}:
+        session["stance"] = "support"
+    if session["confidence"] <= 0.80:
+        session["optional_bill_ref"] = None
+    if _word_count(session["display_issue"]) > 15:
+        session["display_issue"] = _limit_words(session["display_issue"], 15)
+    if _word_count(session["display_ask"]) > 10:
+        session["display_ask"] = _limit_words(session["display_ask"], 10)
+    return session
+
+
+def _limit_words(text: str, limit: int) -> str:
+    words = text.split()
+    if len(words) <= limit:
+        return text
+    return " ".join(words[:limit])
+
+
+def _compact_validator_log(report: dict[str, Any]) -> dict[str, Any]:
+    checks = report.get("checks")
+    if not isinstance(checks, list):
+        return {"checks": []}
+    return {"checks": [{"name": check.get("name"), "passed": check.get("passed")} for check in checks if isinstance(check, dict)]}
+
+
+def _stance_aligned(script: str, expected_stance: str) -> tuple[bool, str]:
+    lowered = script.lower()
+    if " oppose " in f" {lowered} " or "reject" in lowered or "vote no" in lowered:
+        detected = "oppose"
+    elif " support " in f" {lowered} " or "back " in lowered or "vote yes" in lowered:
+        detected = "support"
+    else:
+        detected = "unknown"
+    if expected_stance not in {"support", "oppose"}:
+        return True, detected
+    if detected == "unknown":
+        return False, detected
+    return detected == expected_stance, detected
+
+
+def _sentence_tokens(text: str) -> list[set[str]]:
+    tokens_by_sentence: list[set[str]] = []
+    for sentence in re.split(r"[.!?]+", text):
+        words = [
+            _stem(token)
+            for token in re.findall(r"[a-zA-Z][a-zA-Z\-]{1,}", sentence.lower())
+            if token not in STOPWORDS
+        ]
+        if words:
+            tokens_by_sentence.append(set(words))
+    return tokens_by_sentence
+
+
+def _verbatim_ok(script: str, raw_user_issue: str, constraints_from_user: str) -> tuple[bool, str | None]:
+    script_sets = _sentence_tokens(script)
+    source_sets = {
+        "raw_user_issue": _sentence_tokens(raw_user_issue),
+        "constraints_from_user": _sentence_tokens(constraints_from_user),
+    }
+    for script_set in script_sets:
+        for source_name, source_group in source_sets.items():
+            for source_set in source_group:
+                if not script_set or not source_set:
+                    continue
+                overlap = len(script_set.intersection(source_set))
+                denom = max(1, len(script_set))
+                if overlap / denom >= 0.90:
+                    return False, source_name
+    return True, None
+
+
+def _placeholder_leak_ok(script: str) -> tuple[bool, str | None]:
+    for token in re.findall(r"\[[^\]]+\]", script):
+        if token != "[ZIP]":
+            return False, token
+    if re.search(r"[\{\}]|<[^>]*>", script):
+        return False, "{}<>"
+    for keyword in ("INSERT", "FILL IN", "TBD", "PLACEHOLDER"):
+        if re.search(rf"\b{re.escape(keyword)}\b", script, flags=re.IGNORECASE):
+            return False, keyword
+    return True, None
+
+
+def _dedupe_repeated_phrase(script: str) -> tuple[str, bool]:
+    words = script.split()
+    if len(words) < 12:
+        return script, False
+    seen: dict[tuple[str, ...], int] = {}
+    for idx in range(len(words) - 5):
+        gram = tuple(word.lower() for word in words[idx : idx + 6])
+        if gram in seen:
+            phrase = " ".join(words[idx : idx + 6])
+            updated = re.sub(re.escape(phrase), "", script, count=1)
+            updated = re.sub(r"\s+", " ", updated).strip()
+            return updated, True
+        seen[gram] = idx
+    return script, False
+
+
+def _is_malformed_ask(script: str) -> bool:
+    lowered = script.lower()
+    patterns = (
+        r"(support|oppose)\s+on\s+.+\s+on\s+(support|oppose)",
+        r"\bto\s+support\s+support\b",
+        r"\bto\s+oppose\s+oppose\b",
+        r"\bsupport on congressional action on support\b",
+    )
+    return any(re.search(pattern, lowered) for pattern in patterns)
+
+
+def _offline_interpret(payload: dict[str, Any]) -> dict[str, Any]:
+    text = _normalized_text(payload.get("raw_user_issue"))
+    lowered = text.lower()
+    session = _blank_session(session_id=_normalized_text(payload.get("session_id")) or str(uuid.uuid4()))
+    session["raw_user_issue"] = text
+    session["user_zip"] = payload.get("user_zip")
+    session["session_state"] = "issue_received"
+    session["constraints_from_user"] = None
+
+    if lowered in {"tibet"} or "hong kong" in lowered or "tibet" in lowered:
+        session.update({
+            "normalized_issue": "Congressional oversight on Tibet human rights protections",
+            "display_issue": "Congressional action on Tibet human rights protections",
+            "issue_domain": "foreign_policy",
+            "target_problem": "Limited accountability tools for human-rights repression",
+            "congressional_lever": "foreign_policy_oversight",
+            "ask_type": "hold_hearing",
+            "display_ask": "Hold a hearing on Tibet",
+            "stance": "support",
+            "geographic_relevance": "national",
+            "confidence": 0.58,
+            "needs_clarification": True,
+            "clarification_prompt": "Which Tibet action should Congress take first: hearings, sanctions oversight, or refugee protections?",
+            "spoken_language_notes": "Congress acts through oversight and sanctions tools, not direct foreign administration.",
+        })
+        return session
+
+    if lowered in {"groceries", "cost of living"} or "cost of living" in lowered:
+        session.update({
+            "normalized_issue": "Federal response to grocery and household cost pressures",
+            "display_issue": "Congressional action on grocery and cost-of-living pressures",
+            "issue_domain": "consumer_prices",
+            "target_problem": "High household prices without a defined federal policy lever",
+            "congressional_lever": "oversight",
+            "ask_type": "hold_hearing",
+            "display_ask": "Hold hearings on food prices",
+            "stance": "support",
+            "geographic_relevance": "national",
+            "confidence": 0.52,
+            "needs_clarification": True,
+            "clarification_prompt": "Which federal angle should Congress prioritize first: price-gouging oversight, competition hearings, or nutrition benefits?",
+            "spoken_language_notes": "Keep terms plain and household-focused.",
+        })
+        return session
+
+    if "marriage equality" in lowered:
+        session.update({
+            "normalized_issue": "Federal protections for marriage equality",
+            "display_issue": "Federal protections for marriage equality",
+            "issue_domain": "civil_rights",
+            "target_problem": "Risk of inconsistent legal protections across jurisdictions",
+            "congressional_lever": "legislation",
+            "ask_type": "support_protections",
+            "display_ask": "Support federal marriage equality protections",
+            "stance": "support",
+            "geographic_relevance": "national",
+            "confidence": 0.91,
+            "needs_clarification": False,
+            "clarification_prompt": None,
+            "spoken_language_notes": "Avoid legal jargon.",
+        })
+        return session
+
+    if "stop wildfire" in lowered or "wildfire" in lowered:
+        session.update({
+            "normalized_issue": "Federal wildfire prevention and resilience action",
+            "display_issue": "Federal wildfire prevention and resilience action",
+            "issue_domain": "wildfire",
+            "target_problem": "Escalating wildfire risk and recovery damage",
+            "congressional_lever": "funding",
+            "ask_type": "increase_funding",
+            "display_ask": "Fund wildfire prevention and fuel reduction",
+            "stance": "support",
+            "geographic_relevance": "state",
+            "confidence": 0.86,
+            "needs_clarification": False,
+            "clarification_prompt": None,
+            "spoken_language_notes": "Use active spoken phrasing and avoid acronyms.",
+        })
+        return session
+
+    if "fema" in lowered and "scam" in lowered:
+        session.update({
+            "normalized_issue": "Disaster-aid fraud prevention and FEMA oversight",
+            "display_issue": "FEMA fraud prevention and disaster-aid protections",
+            "issue_domain": "disaster_response",
+            "target_problem": "Fraud risk undermining disaster aid delivery",
+            "congressional_lever": "oversight",
+            "ask_type": "hold_hearing",
+            "display_ask": "Investigate FEMA fraud controls",
+            "stance": "support",
+            "geographic_relevance": "national",
+            "confidence": 0.84,
+            "needs_clarification": False,
+            "clarification_prompt": None,
+            "spoken_language_notes": "Focus on accountability and consumer protection.",
+        })
+        return session
+
+    short = _word_count(text) <= 1
+    if short:
+        session.update({
+            "normalized_issue": text or "Federal policy issue",
+            "display_issue": text or "Federal policy issue",
+            "issue_domain": "",
+            "target_problem": "",
+            "congressional_lever": "",
+            "ask_type": "",
+            "display_ask": "",
+            "stance": "support",
+            "geographic_relevance": "national",
+            "confidence": 0.40,
+            "needs_clarification": True,
+            "clarification_prompt": "What exact action should Congress take first?",
+            "spoken_language_notes": None,
+        })
+        return session
+
+    session.update({
+        "normalized_issue": text,
+        "display_issue": _limit_words(text, 15),
+        "issue_domain": "general_policy",
+        "target_problem": "User seeks congressional action on the stated issue",
+        "congressional_lever": "oversight",
+        "ask_type": "hold_hearing",
+        "display_ask": "Hold a hearing on this issue",
+        "stance": "support",
+        "geographic_relevance": "national",
+        "confidence": 0.72,
+        "needs_clarification": False,
+        "clarification_prompt": None,
+        "spoken_language_notes": "Use plain spoken language.",
+    })
+    return session
+
+
+def _offline_ask_options(*, session_obj: dict[str, Any], require_bill_ref: bool) -> dict[str, Any]:
+    lever = _normalized_text(session_obj.get("congressional_lever")).lower()
+    confidence = _coerce_float(session_obj.get("confidence"), fallback=0.0)
+    if lever == "foreign_policy_oversight":
+        if confidence < 0.65:
+            return {
+                "session_id": session_obj.get("session_id"),
+                "options": [{
+                    "option_id": "A1",
+                    "ask_type": "hold_hearing",
+                    "display_ask": "Hold a congressional hearing",
+                    "confidence": 0.68,
+                }],
+                "needs_clarification": True,
+                "session_state": "ask_selected",
+            }
+        return {
+            "session_id": session_obj.get("session_id"),
+            "options": [
+                {"option_id": "A1", "ask_type": "hold_hearing", "display_ask": "Hold a congressional hearing", "confidence": 0.82},
+                {"option_id": "A2", "ask_type": "sanctions_oversight", "display_ask": "Strengthen sanctions oversight", "confidence": 0.79},
+            ],
+            "needs_clarification": False,
+            "session_state": "ask_selected",
+        }
+
+    options: list[dict[str, Any]] = []
+    for option_id, ask_type, display_ask, opt_conf in GENERIC_OPTION_POOL:
+        if require_bill_ref and ask_type == "increase_funding" and _coerce_float(session_obj.get("confidence"), fallback=0.0) <= 0.80:
+            continue
+        options.append({
+            "option_id": option_id,
+            "ask_type": ask_type,
+            "display_ask": display_ask,
+            "confidence": opt_conf,
+        })
+    return {
+        "session_id": session_obj.get("session_id"),
+        "options": options[:4] if len(options) >= 2 else options[:1],
+        "needs_clarification": len(options) < 2,
+        "session_state": "ask_selected",
+    }
+
+
+def _offline_background(*, session_obj: dict[str, Any]) -> dict[str, Any]:
+    confidence = _coerce_float(session_obj.get("confidence"), fallback=0.0)
+    if confidence < 0.65:
+        return {"background_text": None, "reason": "low_confidence"}
+    issue_domain = _normalized_text(session_obj.get("issue_domain"))
+    normalized_issue = _normalized_text(session_obj.get("normalized_issue"))
+    target_problem = _normalized_text(session_obj.get("target_problem"))
+    if not issue_domain:
+        return {"background_text": None, "reason": "missing_domain"}
+    if not target_problem:
+        return {"background_text": None, "reason": "missing_target_problem"}
+    background = (
+        f"This issue centers on {normalized_issue.lower() or issue_domain.replace('_', ' ')}. "
+        f"It sits in {issue_domain.replace('_', ' ')} policy and focuses on {target_problem.lower()}. "
+        "Congress can use oversight hearings, reporting mandates, and targeted appropriations to drive execution. "
+        "A specific ask helps offices take a position quickly and route it to the right staff. "
+        "Clear accountability steps make follow-up measurable for constituents."
+    )
+    return {"background_text": background}
+
+
+def _offline_script(*, session_obj: dict[str, Any], selected_option: dict[str, Any]) -> dict[str, Any]:
+    issue = _normalized_text(session_obj.get("display_issue")) or "this issue"
+    ask = _normalized_text(selected_option.get("display_ask")) or _normalized_text(session_obj.get("display_ask")) or "take action"
+    live = (
+        f"Hi, I’m a constituent in ZIP [ZIP]. I’m calling about {issue.lower()}. "
+        f"Please {ask.lower()}. This step would address a concrete public harm and improve accountability. "
+        "Families need timely action, not delay. Will the office support this action this session and share its position?"
+    )
+    voicemail = (
+        f"Hi, I’m a constituent in ZIP [ZIP] calling about {issue.lower()}. "
+        f"Please {ask.lower()}. This action would improve accountability and protect affected families. "
+        "Please share whether the office supports this action and what step comes next."
+    )
+    live = _pad_to_min_words(live, minimum=43)
+    voicemail = _pad_to_min_words(voicemail, minimum=43)
+    return {
+        "live_script": live,
+        "voicemail_script": voicemail,
+        "session_state": "script_shown",
+    }
+
+
+def _blank_session(*, session_id: str) -> dict[str, Any]:
+    return {
+        "session_id": session_id,
+        "raw_user_issue": "",
+        "normalized_issue": "",
+        "display_issue": "",
+        "issue_domain": "",
+        "target_problem": "",
+        "congressional_lever": "",
+        "ask_type": "",
+        "display_ask": "",
+        "stance": "support",
+        "geographic_relevance": "national",
+        "optional_bill_ref": None,
+        "constraints_from_user": None,
+        "confidence": 0.0,
+        "needs_clarification": False,
+        "clarification_prompt": None,
+        "spoken_language_notes": None,
+        "session_state": "new",
+        "user_zip": None,
+    }
+
+
+def _env_flag(name: str, default: bool) -> bool:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    normalized = raw.strip().lower()
+    if normalized in {"1", "true", "yes", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "off"}:
+        return False
+    return default
+
+
+def _pad_to_min_words(text: str, minimum: int) -> str:
+    if _word_count(text) >= minimum:
+        return text
+    suffix = " This action has immediate local impact and should be addressed now."
+    padded = (text + suffix).strip()
+    if _word_count(padded) >= minimum:
+        return padded
+    while _word_count(padded) < minimum:
+        padded += " Please share the office position."
+    return padded

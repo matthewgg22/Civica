@@ -816,30 +816,6 @@ struct VoterRegistrationView: View {
                     .foregroundColor(VoteNowColors.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
 
-                    (
-                        Text(
-                            l(
-                                "app.registration.dropdown.why_register.example.p2.prefix",
-                                "They may not be able to vote in either the "
-                            )
-                        )
-                        + Text(l("app.guide.party.democrat", "Democrat"))
-                            .foregroundColor(VoteNowColors.richBlue)
-                            .fontWeight(.semibold)
-                        + Text(l("app.registration.dropdown.why_register.example.p2.middle", " and "))
-                        + Text(l("app.guide.party.republican", "Republican"))
-                            .foregroundColor(VoteNowColors.richRed)
-                            .fontWeight(.semibold)
-                        + Text(
-                            l(
-                                "app.registration.dropdown.why_register.example.p2.suffix",
-                                " primary unless they change party registration before the state deadline."
-                            )
-                        )
-                    )
-                    .font(.callout)
-                    .foregroundColor(VoteNowColors.primaryText)
-                    .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(.top, 2)
                 .transition(

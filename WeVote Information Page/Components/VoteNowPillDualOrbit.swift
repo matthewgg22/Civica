@@ -16,6 +16,7 @@ private enum VoteNowDualOrbitRuntime {
 /// Two colored segments run the same capsule path with dynamic z-order:
 /// the segment currently "ahead" is rendered last, so it occludes the trailing one.
 struct VoteNowPillDualOrbitModifier: ViewModifier {
+    var enabled: Bool? = nil
     var redColor: Color = Color(hex: "#E14D3A")
     var blueColor: Color = Color(hex: "#2F83D1").opacity(0.80)
     var strokeThickness: CGFloat = 3
@@ -32,7 +33,7 @@ struct VoteNowPillDualOrbitModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content.overlay {
-            if VoteNowDualOrbitRuntime.isEnabled {
+            if enabled ?? VoteNowDualOrbitRuntime.isEnabled {
                 VoteNowPillDualOrbitLayer(
                     redColor: redColor,
                     blueColor: blueColor,
@@ -320,6 +321,7 @@ private struct VoteNowPillDualOrbitLayer: View {
 
 extension View {
     func voteNowPillDualOrbit(
+        enabled: Bool? = nil,
         redColor: Color = Color(hex: "#E14D3A"),
         blueColor: Color = Color(hex: "#2F83D1").opacity(0.80),
         strokeThickness: CGFloat = 3,
@@ -335,6 +337,7 @@ extension View {
     ) -> some View {
         modifier(
             VoteNowPillDualOrbitModifier(
+                enabled: enabled,
                 redColor: redColor,
                 blueColor: blueColor,
                 strokeThickness: strokeThickness,

@@ -836,31 +836,6 @@ struct ElectionTimelineView: View {
                             ballotItemLineView(item)
                         }
 
-                        if shouldShowPrimaryPartyAffiliationHint(for: election) {
-                            Button {
-                                openMyInfoPanel()
-                            } label: {
-                                HStack(alignment: .center, spacing: 6) {
-                                    Text(
-                                        l(
-                                            "app.timeline.ballot.primary.party_affiliation_hint",
-                                            "Enter your registered party affiliation for more specific information."
-                                        )
-                                    )
-                                    .font(.caption2)
-                                    .foregroundColor(VoteNowColors.mutedText)
-                                    .multilineTextAlignment(.leading)
-
-                                    Spacer(minLength: 4)
-
-                                    Image(systemName: "chevron.right")
-                                        .font(.caption2.weight(.semibold))
-                                        .foregroundColor(VoteNowColors.primaryCTA)
-                                }
-                                .contentShape(Rectangle())
-                            }
-                            .buttonStyle(.plain)
-                        }
                     }
                     .padding(.top, 6)
                 } label: {
@@ -917,10 +892,6 @@ struct ElectionTimelineView: View {
             y: isSelected ? 3 : 1
         )
         .animation(.easeInOut(duration: 0.18), value: isSelected)
-    }
-
-    private func shouldShowPrimaryPartyAffiliationHint(for election: Election) -> Bool {
-        ballotStageContext(for: election) == .primary
     }
 
     @ViewBuilder
@@ -3722,10 +3693,11 @@ struct ElectionTimelineView: View {
                     continue
                 }
 
+                let mayoralCycleTBDText = cycleTBDText(for: event.date)
                 var flags = [
                     "STATE_CODE:\(event.stateCode)",
                     "ELECTION_TYPE:MAYOR_\(event.stage)",
-                    "REGISTRATION_DEADLINE_TEXT:\(supplementalMayoralInfoText)",
+                    "REGISTRATION_DEADLINE_TEXT:\(mayoralCycleTBDText)",
                     "MAYOR_TIMELINE_CARD",
                     "MAYOR_CITY:\(event.city)",
                     "MAYOR_STAGE:\(event.stage)",
@@ -3748,7 +3720,7 @@ struct ElectionTimelineView: View {
                         registrationDeadline: event.date,
                         startDate: event.date,
                         electionDay: event.date,
-                        earlyVotingText: supplementalMayoralInfoText,
+                        earlyVotingText: mayoralCycleTBDText,
                         registrationNotes: notes,
                         jurisdictionLevel: "city",
                         jurisdictionName: event.stateName,
@@ -3760,6 +3732,11 @@ struct ElectionTimelineView: View {
                 )
             }
         }
+    }
+
+    private static func cycleTBDText(for date: Date) -> String {
+        let year = Calendar(identifier: .gregorian).component(.year, from: date)
+        return "TBD for \(year) cycle"
     }
 
     private static func mayoralEvents(from record: TopCityMayoralCycleRecord) -> [MayoralElectionEvent] {
@@ -3943,7 +3920,6 @@ struct ElectionTimelineView: View {
     private static let supplementalGubernatorialInfoText = "Check state election office for deadlines"
     private static let supplementalGubernatorialNote =
         "2027 gubernatorial dates are included for planning. Verify registration and early-voting windows with your state election office."
-    private static let supplementalMayoralInfoText = "Check city election office for deadlines"
     private static let supplementalTerritorialInfoText = "Check territory election office for deadlines"
     private static let supplementalTerritorialNote =
         "Territorial election dates are included for planning. Verify registration and early-voting windows with local election officials."

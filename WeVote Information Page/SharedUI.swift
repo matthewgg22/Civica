@@ -243,14 +243,15 @@ struct VoteNowLogoIcon: View {
     var backgroundColor: Color = Color(red: 0.68, green: 0.84, blue: 0.90) // #ADD7E5-ish icon tone
     var stripeColor: Color = Color(red: 223.0 / 255.0, green: 88.0 / 255.0, blue: 69.0 / 255.0) // #DF5845
     var cornerRadiusScale: CGFloat = 0.24
+    var stripeScaleYOverride: CGFloat? = nil
     var borderColor: Color = VoteNowColors.surfaceWhite.opacity(0.9)
     var borderWidth: CGFloat = 0.6
     var shadowColor: Color = VoteNowColors.primaryText.opacity(0.14)
 
     var body: some View {
-        let stripeScaleY: CGFloat = size < 30 ? 0.95 : 0.80
-        let stripeScaleX: CGFloat = 0.80
-        let motifWidth = size * 0.82
+        let stripeScaleY: CGFloat = stripeScaleYOverride ?? (size < 30 ? 0.97 : 0.86)
+        let stripeScaleX: CGFloat = 1.0
+        let motifWidth = size * 0.88
         let barHeight = max(2.4, size * 0.072)
         let gap = size * 0.045
         let topWidth = motifWidth * 0.56
@@ -271,6 +272,7 @@ struct VoteNowLogoIcon: View {
             .frame(width: motifWidth, height: barHeight * 6 + gap * 5)
             .scaleEffect(x: stripeScaleX, y: stripeScaleY, anchor: .center)
         }
+        .aspectRatio(1, contentMode: .fit)
         .frame(width: size, height: size)
         .overlay(
             RoundedRectangle(cornerRadius: iconCornerRadius, style: .continuous)

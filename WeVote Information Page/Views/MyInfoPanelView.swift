@@ -61,7 +61,6 @@ struct MyInfoPanelView: View {
     private var preferredLanguageCode: String = LanguageOption.english.rawValue
 
     @State private var locationInput: String = ""
-    @State private var affiliation: PoliticalParty = .independent
     @State private var showInvalidZipAlert = false
     @State private var showFeedbackSheet = false
     @State private var isResolvingCurrentAddress = false
@@ -175,18 +174,6 @@ struct MyInfoPanelView: View {
                 }
 
                 Section {
-                    PartyAffiliationToggle(selection: $affiliation)
-                        .padding(.vertical, 4)
-                    Text("my_info.party.helper", tableName: "MyInfoPanel")
-                        .font(.footnote)
-                        .foregroundColor(VoteNowColors.mutedText)
-                } header: {
-                    Text("my_info.section.party.header", tableName: "MyInfoPanel")
-                        .font(.headline.weight(.bold))
-                        .textCase(nil)
-                }
-
-                Section {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("my_info.language.title", tableName: "MyInfoPanel")
                             .font(.subheadline.weight(.semibold))
@@ -249,9 +236,6 @@ struct MyInfoPanelView: View {
                     FeedbackView()
                 }
             }
-            .onChange(of: affiliation) { _, newValue in
-                planVM.selectedParty = newValue
-            }
             .alert(isPresented: $showInvalidZipAlert) {
                 Alert(
                     title: Text("my_info.alert.invalid_zip.title", tableName: "MyInfoPanel"),
@@ -276,7 +260,6 @@ struct MyInfoPanelView: View {
             }
             .onAppear {
                 seedLookupInputIfNeeded()
-                affiliation = planVM.selectedParty
                 preferredLanguageCode = selectedLanguage.rawValue
             }
             .onChange(of: repsVM.resolvedLocationSelection) { _, _ in
@@ -337,8 +320,6 @@ struct MyInfoPanelView: View {
             showInvalidZipAlert = true
             return
         }
-
-        planVM.selectedParty = affiliation
 
         if let normalizedZip = USZipInputValidator.normalizedPrimaryZIP(from: trimmedInput) {
             planVM.zip = normalizedZip
@@ -487,75 +468,11 @@ struct MyInfoPanelView: View {
     }
 }
 
-private struct PartyAffiliationToggle: View {
-    @Binding var selection: PoliticalParty
-    @Namespace private var highlightNamespace
-
-    private let parties: [PoliticalParty] = [.democrat, .independent, .republican]
-
-    var body: some View {
-        HStack(spacing: 6) {
-            ForEach(parties, id: \.self) { party in
-                Button {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        selection = party
-                    }
-                } label: {
-                    partyLabel(for: party)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(textColor(for: party))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
-                        .background {
-                            if selection == party {
-                                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .fill(highlightColor(for: party))
-                                    .matchedGeometryEffect(id: "party-highlight", in: highlightNamespace)
-                            }
-                        }
-                }
-                .buttonStyle(.plain)
-            }
-        }
-        .padding(4)
-        .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(VoteNowColors.infoSurfaceBlue)
-        )
-    }
-
-    @ViewBuilder
-    private func partyLabel(for party: PoliticalParty) -> some View {
-        switch party {
-        case .democrat:
-            Text("my_info.party.democrat", tableName: "MyInfoPanel")
-        case .independent:
-            Text("my_info.party.independent", tableName: "MyInfoPanel")
-        case .republican:
-            Text("my_info.party.republican", tableName: "MyInfoPanel")
-        }
-    }
-
-    private func highlightColor(for party: PoliticalParty) -> Color {
-        switch party {
-        case .democrat: return VoteNowColors.richBlue
-        case .independent: return .gray.opacity(0.35)
-        case .republican: return VoteNowColors.richRed
-        }
-    }
-
-    private func textColor(for party: PoliticalParty) -> Color {
-        guard selection == party else { return .primary }
-        return .white
-    }
-}
-
 #if DEBUG
 struct MyInfoPanelView_Previews: PreviewProvider {
     static var previews: some View {
         let planVM = PlanViewModel()
         planVM.zip = "10044"
-        planVM.selectedParty = .democrat
 
         return MyInfoPanelView()
             .environmentObject(planVM)
