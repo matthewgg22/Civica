@@ -2147,7 +2147,17 @@ final class IssueCallCenterViewModel: ObservableObject {
         userID: String,
         concernText: String
     ) async {
-        mapcV3PendingSessionID = nil
+        let isClarificationFollowUp = shouldContinueMAPCV3Clarification
+        if !isClarificationFollowUp {
+            // mapc_pipeline_v3 — remove flag check after rollout confirmed
+            mapcV3PendingSessionID = nil
+            mapcV3SessionState = "new"
+            mapcV3NeedsClarification = false
+            mapcV3ClarificationPrompt = nil
+            mapcV3ClarificationTurnCount = 0
+            mapcV3MapcApproved = false
+            mapcV3AccumulatedContext = []
+        }
         mapcV3DisplayIssue = ""
         mapcV3AskOptions = []
         mapcV3SelectedOptionID = nil
@@ -2160,11 +2170,24 @@ final class IssueCallCenterViewModel: ObservableObject {
         do {
             let prepared = try await apiClient.prepareMAPCV3Selection(
                 userID: userID,
+                sessionID: mapcV3PendingSessionID,
+                sessionState: mapcV3SessionState,
                 concernText: concernText,
+                accumulatedContext: mapcV3AccumulatedContext,
+                clarificationTurnCount: mapcV3ClarificationTurnCount,
+                introShown: mapcV3IntroShown,
+                mapcApproved: mapcV3MapcApproved,
                 userZip: requestUserZip
             )
 
             mapcV3PendingSessionID = prepared.sessionID
+            mapcV3SessionState = prepared.session.sessionState
+            mapcV3NeedsClarification = prepared.session.needsClarification
+            mapcV3ClarificationPrompt = prepared.session.clarificationPrompt
+            mapcV3ClarificationTurnCount = max(0, prepared.session.clarificationTurnCount)
+            mapcV3MapcApproved = prepared.session.mapcApproved
+            mapcV3AccumulatedContext = prepared.session.accumulatedContext
+            mapcV3IntroShown = mapcV3IntroShown || prepared.session.introShown
             mapcV3DisplayIssue = prepared.displayIssue
             mapcV3AskOptions = prepared.options
             mapcV3SelectedOptionID = nil
@@ -2179,11 +2202,20 @@ final class IssueCallCenterViewModel: ObservableObject {
                 return
             }
 
+            mapcV3NeedsClarification = false
+            mapcV3ClarificationPrompt = nil
             errorMessage = nil
             selectedTab = .assistant
         } catch {
             if isMAPCV3TransportFailure(error) {
                 errorMessage = mapcV3RecoveryMessage
+                mapcV3PendingSessionID = nil
+                mapcV3SessionState = "new"
+                mapcV3NeedsClarification = false
+                mapcV3ClarificationPrompt = nil
+                mapcV3ClarificationTurnCount = 0
+                mapcV3MapcApproved = false
+                mapcV3AccumulatedContext = []
             } else {
                 errorMessage = resolveFailureMessage(for: error)
             }
