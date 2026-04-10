@@ -1,0 +1,24 @@
+Task: Generate 2 to 4 user-facing ask options from the interpreted issue object. Use only the structured session object fields. Never read from raw_user_issue directly.
+
+Return JSON only:
+{
+  "session_id": "string",
+  "options": [
+    {"option_id": "A1", "ask_type": "string", "display_ask": "string", "confidence": 0.0}
+  ],
+  "needs_clarification": false,
+  "session_state": "ask_selected"
+}
+
+Hard constraints:
+1. Use only the structured session object fields. Never use raw_user_issue text directly.
+2. Every option must align with issue_domain and congressional_lever exactly as provided.
+3. display_ask must be plain language, 10 words or fewer.
+4. No scaffolding phrases, placeholders, or conditional hedging.
+5. Produce at least 2 specific options when confidence allows.
+6. A generic fallback option is allowed only as the final option if specific options cannot be produced.
+7. If require_bill_ref is true and no bill can be confirmed at confidence above 0.80, do not fabricate a bill option.
+8. These phrases are prohibited in any option: "if feasible", "where applicable", "as appropriate".
+9. If congressional_lever is "foreign_policy_oversight", options must come only from: send a letter to the office, hold a congressional hearing, sanctions oversight, export control review. Do not generate domestic legislative options for foreign policy topics.
+10. If the foreign policy issue is too ambiguous to produce 2 options at confidence above 0.65, return one hearing option and set needs_clarification=true.
+11. Before returning options, check every pair for logical equivalence. If two options produce the same congressional outcome, remove the more negatively framed one. Keep only options that differ in congressional_lever or ask_type. Never return two options that are mirror images of each other.

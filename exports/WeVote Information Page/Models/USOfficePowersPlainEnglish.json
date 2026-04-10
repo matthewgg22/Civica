@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "title": "VoteNow Plain-English powers + current examples",
+    "lastUpdated": "2026-03-23",
+    "sourceFile": "VoteNow_plain_english_powers_examples_final.xlsx"
+  },
+  "rows": [
+    {
+      "office": "U.S. Senate",
+      "officeKey": "us senate",
+      "plainEnglishResponsibility": "Approves presidential picks and helps make federal law.",
+      "easyMetric": "Confirmations / bills passed / hearings",
+      "currentExample": "The Senate confirmed Brooke Rollins as Agriculture Secretary, 72-28 (Feb. 13, 2025).",
+      "sourceURL": "https://www.senate.gov/legislative/LIS/roll_call_votes/vote1191/vote_119_1_00053.htm"
+    },
+    {
+      "office": "U.S. House",
+      "officeKey": "us house",
+      "plainEnglishResponsibility": "Starts money bills and passes federal law.",
+      "easyMetric": "Bills passed / money bills started / hearings",
+      "currentExample": "The House passed H.R. 1, 215-214 (May 22, 2025).",
+      "sourceURL": "https://clerk.house.gov/Votes/2025145"
+    },
+    {
+      "office": "White House / President",
+      "officeKey": "white house president",
+      "plainEnglishResponsibility": "Runs the executive branch and can act fast with executive orders.",
+      "easyMetric": "Executive orders / nominations / vetoes",
+      "currentExample": "Trump signed an order creating the Task Force to Eliminate Fraud (Mar. 16, 2026).",
+      "sourceURL": "https://www.whitehouse.gov/presidential-actions/2026/03/establishing-the-task-force-to-eliminate-fraud/"
+    },
+    {
+      "office": "Governor",
+      "officeKey": "governor",
+      "plainEnglishResponsibility": "Runs state government and sets the state budget agenda.",
+      "easyMetric": "Budget size / bills signed / appointments",
+      "currentExample": "Newsom proposed a $348.9B California budget for FY 2026-27 (Jan. 9, 2026).",
+      "sourceURL": "https://www.gov.ca.gov/2026/01/09/governor-newsom-announces-proposed-budget-that-refills-the-states-rainy-day-fund-protects-previous-accomplishments-and-makes-historic-investments-in-education/"
+    },
+    {
+      "office": "State rep",
+      "officeKey": "state rep",
+      "plainEnglishResponsibility": "Writes and votes on state laws for one local district.",
+      "easyMetric": "Bills filed / committee seats / floor votes",
+      "currentExample": "Texas Rep. Brian Harrison had 75 bills listed in the 89th Legislature report (Mar. 18, 2026).",
+      "sourceURL": "https://capitol.texas.gov/reports/report.aspx?Code=A4085&ID=author&LegSess=89R"
+    },
+    {
+      "office": "State attorney general",
+      "officeKey": "state attorney general",
+      "plainEnglishResponsibility": "Acts as the state's top lawyer and law enforcer.",
+      "easyMetric": "Lawsuits / wins / settlement dollars",
+      "currentExample": "New York AG Letitia James sued the Trump administration over tariffs (Mar. 5, 2026).",
+      "sourceURL": "https://ag.ny.gov/press-release/2026/attorney-general-james-leads-lawsuit-stop-trump-administrations-latest-illegal"
+    },
+    {
+      "office": "Mayor",
+      "officeKey": "mayor",
+      "plainEnglishResponsibility": "Runs city departments and steers the city budget.",
+      "easyMetric": "Budget size / executive orders / appointments",
+      "currentExample": "Mayor Mamdani released NYC's $127B FY 2027 preliminary budget (Feb. 17, 2026).",
+      "sourceURL": "https://www.nyc.gov/mayors-office/news/2026/02/mayor-mamdani-releases-balanced-fiscal-year-2027-preliminary-bud"
+    }
+  ]
+}

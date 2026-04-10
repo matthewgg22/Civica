@@ -68,6 +68,18 @@ struct MyRepsView: View {
         String(planVM.zip.filter(\.isNumber).prefix(5))
     }
 
+    private var isStateOnlyInput: Bool {
+        let trimmed = locationInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return false }
+
+        let upper = trimmed.uppercased()
+        if Self.stateCodeToName.keys.contains(upper) { return true }
+        if Self.stateCodeToName.values.contains(where: { $0.caseInsensitiveCompare(trimmed) == .orderedSame }) {
+            return true
+        }
+        return Self.stateCodeToName.keys.contains(where: { trimmed.uppercased().hasPrefix("\($0) - ") })
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -355,9 +367,14 @@ struct MyRepsView: View {
                 } label: {
                     Image(systemName: "arrow.up.left.and.arrow.down.right")
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.white)
+                        .foregroundColor(VoteNowColors.primaryCTA)
                         .padding(10)
-                        .background(Color.black.opacity(0.26))
+                        .background(VoteNowColors.surfaceWhite.opacity(0.96))
+                        .overlay(
+                            Circle()
+                                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                        )
+                        .shadow(color: VoteNowColors.primaryText.opacity(0.08), radius: 3, x: 0, y: 1)
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
@@ -367,7 +384,12 @@ struct MyRepsView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
 
             Text(
-                repsVM.isGeneralLocationSearchResult
+                isStateOnlyInput
+                ? l(
+                    "app.reps.coverage.precision_missing_banner",
+                    "We found your state, but not your exact congressional district yet. Enter your full street address to load your full representative list."
+                )
+                : repsVM.isGeneralLocationSearchResult
                 ? l(
                     "app.reps.coverage.statewide_only_note",
                     "Showing statewide officials for this general location search. Enter your full street address to load all reps."
@@ -509,9 +531,14 @@ private struct MyRepsFullScreenMapView: View {
                 } label: {
                     Image(systemName: "xmark")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.white)
+                        .foregroundColor(VoteNowColors.primaryCTA)
                         .frame(width: 34, height: 34)
-                        .background(Color.black.opacity(0.35))
+                        .background(VoteNowColors.surfaceWhite.opacity(0.96))
+                        .overlay(
+                            Circle()
+                                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                        )
+                        .shadow(color: VoteNowColors.primaryText.opacity(0.08), radius: 3, x: 0, y: 1)
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
@@ -523,10 +550,15 @@ private struct MyRepsFullScreenMapView: View {
                         onResetMap()
                     }
                     .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(.white)
+                    .foregroundColor(VoteNowColors.primaryCTA)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
-                    .background(Color.black.opacity(0.35))
+                    .background(VoteNowColors.surfaceWhite.opacity(0.96))
+                    .overlay(
+                        Capsule()
+                            .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                    )
+                    .shadow(color: VoteNowColors.primaryText.opacity(0.08), radius: 3, x: 0, y: 1)
                     .clipShape(Capsule())
                     .buttonStyle(.plain)
                 }

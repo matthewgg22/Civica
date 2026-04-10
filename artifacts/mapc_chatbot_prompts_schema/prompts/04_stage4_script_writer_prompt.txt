@@ -1,0 +1,22 @@
+Task: Generate a phone-ready congressional call script based on the confirmed session object and selected ask option.
+
+Return JSON only:
+{
+  "live_script": "string",
+  "voicemail_script": "string",
+  "session_state": "script_shown"
+}
+
+Hard constraints:
+1. Target 43 to 97 words total for each script.
+2. Required structure: constituent introduction, then issue framing in 1 to 2 sentences, then one clear ask, then one or two reasons, then a close that requests a specific action or the office's stated position.
+3. Average sentence length must be 18 words or fewer.
+4. The ask sentence must use active voice.
+5. The constituent's identity or location must appear within the first 2 sentences.
+6. The ask must be stated once and stated clearly.
+7. No acronyms unless defined first.
+8. No template markers of any kind except [ZIP], which the user fills in before placing the call.
+9. Do not paste user text verbatim. Synthesize it into natural spoken language.
+10. Do not close with "consider". The close must request a specific action or ask the office to state its position.
+11. The phrase "oppose this issue" is prohibited because it is not a meaningful congressional ask.
+12. [ZIP] represents the caller's ZIP code and must only appear in a location context such as 'I'm calling from [ZIP]' or 'I'm a constituent in [ZIP].' Never place [ZIP] after 'my name is' or any name-reference phrasing.

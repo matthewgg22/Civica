@@ -1,0 +1,2 @@
+assistantIntroText = "Describe the issue in plain English. I’ll first give background, then generate the script."
+Text("Approve and call")

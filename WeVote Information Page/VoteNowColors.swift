@@ -30,6 +30,7 @@ enum VoteNowColors {
     static let urgentCTA = ctaRed
     static let infoSurfaceBlue = brandSoftBlue.opacity(0.32)
     static let infoSurfaceRed = brandSoftRed.opacity(0.14)
+    static let cardCornerRadius: CGFloat = 12
 }
 
 // Backward-compatible typealias so existing references continue compiling.

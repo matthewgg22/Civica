@@ -1,0 +1,600 @@
+
+{
+  "federal": {
+    "president": {
+      "name": "Donald J. Trump",
+      "divisionId": "ocd-division/country:us",
+      "party": "Republican",
+      "url": "https://www.whitehouse.gov"
+    },
+    "us_senators": {
+      "Class I": {
+        "name": "Kirsten Gillibrand",
+        "divisionId": "ocd-division/country:us/state:ny",
+        "party": "Democratic",
+        "url": "https://www.gillibrand.senate.gov"
+      },
+      "Class III": {
+        "name": "Chuck Schumer",
+        "divisionId": "ocd-division/country:us/state:ny",
+        "party": "Democratic",
+        "url": "https://www.schumer.senate.gov"
+      }
+    },
+    "us_representatives": {
+      "3": {
+        "name": "Tom Suozzi",
+        "divisionId": "ocd-division/country:us/state:ny/cd:3",
+        "party": "Democratic",
+        "url": "https://suozzi.house.gov"
+      },
+      "5": {
+        "name": "Gregory W. Meeks",
+        "divisionId": "ocd-division/country:us/state:ny/cd:5",
+        "party": "Democratic",
+        "url": "https://meeks.house.gov"
+      },
+      "6": {
+        "name": "Grace Meng",
+        "divisionId": "ocd-division/country:us/state:ny/cd:6",
+        "party": "Democratic",
+        "url": "https://meng.house.gov"
+      },
+      "7": {
+        "name": "Nydia M. Velázquez",
+        "divisionId": "ocd-division/country:us/state:ny/cd:7",
+        "party": "Democratic",
+        "url": "https://velazquez.house.gov"
+      },
+      "8": {
+        "name": "Hakeem S. Jeffries",
+        "divisionId": "ocd-division/country:us/state:ny/cd:8",
+        "party": "Democratic",
+        "url": "https://jeffries.house.gov"
+      },
+      "9": {
+        "name": "Yvette D. Clarke",
+        "divisionId": "ocd-division/country:us/state:ny/cd:9",
+        "party": "Democratic",
+        "url": "https://clarke.house.gov"
+      },
+      "10": {
+        "name": "Daniel Goldman",
+        "divisionId": "ocd-division/country:us/state:ny/cd:10",
+        "party": "Democratic",
+        "url": "https://goldman.house.gov"
+      },
+      "11": {
+        "name": "Nicole Malliotakis",
+        "divisionId": "ocd-division/country:us/state:ny/cd:11",
+        "party": "Republican",
+        "url": "https://malliotakis.house.gov"
+      },
+      "12": {
+        "name": "Jerrold Nadler",
+        "divisionId": "ocd-division/country:us/state:ny/cd:12",
+        "party": "Democratic",
+        "url": "https://nadler.house.gov"
+      },
+      "13": {
+        "name": "Adriano Espaillat",
+        "divisionId": "ocd-division/country:us/state:ny/cd:13",
+        "party": "Democratic",
+        "url": "https://espaillat.house.gov"
+      },
+      "14": {
+        "name": "Alexandria Ocasio-Cortez",
+        "divisionId": "ocd-division/country:us/state:ny/cd:14",
+        "party": "Democratic",
+        "url": "https://ocasio-cortez.house.gov"
+      },
+      "15": {
+        "name": "Ritchie Torres",
+        "divisionId": "ocd-division/country:us/state:ny/cd:15",
+        "party": "Democratic",
+        "url": "https://ritchietorres.house.gov"
+      },
+      "16": {
+        "name": "Stephen Latimer",
+        "divisionId": "ocd-division/country:us/state:ny/cd:16",
+        "party": "Democratic",
+        "url": "http://latimer.house.gov"
+      }
+    }
+  }, 
+  "state": {
+    "state_senators": {
+      "10": {
+        "name": "James Sanders Jr.",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:10",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/james-sanders-jr"
+      },
+      "11": {
+        "name": "John C. Liu",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:11",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/john-c-liu"
+      },
+      "12": {
+        "name": "Michael Gianaris",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:12",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/michael-gianaris"
+      },
+      "13": {
+        "name": "Jessica Ramos",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:13",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/jessica-ramos"
+      },
+      "14": {
+        "name": "Leroy Comrie",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:14",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/leroy-comrie"
+      },
+      "15": {
+        "name": "Joseph P. Addabbo Jr.",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:15",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/joseph-p-addabbo-jr"
+      },
+      "16": {
+        "name": "Toby Ann Stavisky",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:16",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/toby-ann-stavisky"
+      },
+      "17": {
+        "name": "Stephen T. Chan",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:17",
+        "party": "Republican",
+        "url": "https://www.nysenate.gov/senators/stephen-t-chan"
+      },
+      "18": {
+        "name": "Julia Salazar",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:18",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/julia-salazar"
+      },
+      "19": {
+        "name": "Roxanne J. Persaud",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:19",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/roxanne-j-persaud"
+      },
+      "20": {
+        "name": "Zellnor Myrie",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:20",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/zellnor-myrie"
+      },
+      "21": {
+        "name": "Kevin S. Parker",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:21",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/kevin-s-parker"
+      },
+      "22": {
+        "name": "Vacant",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:22",
+        "party": null,
+        "url": "https://www.nysenate.gov/district/22"
+      },
+      "23": {
+        "name": "Jessica Scarcella-Spanton",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:23",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/jessica-scarcella-spanton"
+      },
+      "24": {
+        "name": "Andrew Lanza",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:24",
+        "party": "Republican",
+        "url": "https://www.nysenate.gov/senators/andrew-lanza"
+      },
+      "25": {
+        "name": "Jabari Brisport",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:25",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/jabari-brisport"
+      },
+      "26": {
+        "name": "Andrew Gounardes",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:26",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/andrew-gounardes"
+      },
+      "27": {
+        "name": "Brian Kavanagh",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:27",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/brian-kavanagh"
+      },
+      "28": {
+        "name": "Liz Krueger",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:28",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/liz-krueger"
+      },
+      "29": {
+        "name": "José M. Serrano",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:29",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/jose-m-serrano"
+      },
+      "30": {
+        "name": "Cordell Cleare",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:30",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/cordell-cleare"
+      },
+      "31": {
+        "name": "Robert Jackson",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:31",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/robert-jackson"
+      },
+      "32": {
+        "name": "Luis R. Sepúlveda",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:32",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/luis-r-sepulveda"
+      },
+      "33": {
+        "name": "Gustavo Rivera",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:33",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/gustavo-rivera"
+      },
+      "34": {
+        "name": "Nathalia Fernandez",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:34",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/nathalia-fernandez"
+      },
+      "36": {
+        "name": "Jamaal T. Bailey",
+        "divisionId": "ocd-division/country:us/state:ny/sldu:36",
+        "party": "Democratic",
+        "url": "https://www.nysenate.gov/senators/jamaal-t-bailey"
+      }
+    },
+    "state_assembly_members": {
+      "23": {
+        "name": "Stacey Pheffer Amato",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:23",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Stacey-Pheffer-Amato"
+      },
+      "24": {
+        "name": "David Weprin",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:24",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/David-Weprin"
+      },
+      "25": {
+        "name": "Nily Rozic",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:25",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Nily-Rozic"
+      },
+      "26": {
+        "name": "Edward C. Braunstein",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:26",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Edward-C-Braunstein"
+      },
+      "27": {
+        "name": "Sam Berger",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:27",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Sam-Berger"
+      },
+      "28": {
+        "name": "Andrew Hevesi",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:28",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Andrew-Hevesi"
+      },
+      "29": {
+        "name": "Alicia Hyndman",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:29",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Alicia-Hyndman"
+      },
+      "30": {
+        "name": "Steven Raga",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:30",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Steven-Raga"
+      },
+      "31": {
+        "name": "Khaleel Anderson",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:31",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Khaleel-Anderson"
+      },
+      "32": {
+        "name": "Vivian E. Cook",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:32",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Vivian-Cook"
+      },
+      "33": {
+        "name": "Clyde Vanel",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:33",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Clyde-Vanel"
+      },
+      "34": {
+        "name": "Jessica González-Rojas",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:34",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Jessica-Gonzalez-Rojas"
+      },
+      "35": {
+        "name": "Jeffrion L. Aubry",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:35",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Jeffrion-Aubry"
+      },
+      "36": {
+        "name": "Zohran K. Mamdani",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:36",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Zohran-Mamdani"
+      },
+      "37": {
+        "name": "Catherine T. Nolan",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:37",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Catherine-Nolan"
+      },
+      "38": {
+        "name": "Jenifer Rajkumar",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:38",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Jenifer-Rajkumar"
+      },
+      "39": {
+        "name": "Catalina Cruz",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:39",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Catalina-Cruz"
+      },
+      "40": {
+        "name": "Ron Kim",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:40",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Ron-Kim"
+      },
+      "41": {
+        "name": "Edward J. Flood",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:41",
+        "party": "Republican",
+        "url": "https://nyassembly.gov/mem/Edward-Flood"
+      },
+      "42": {
+        "name": "Nantasha M. Williams",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:42",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Nantasha-Williams"
+      },
+      "43": {
+        "name": "Brian Cunningham",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:43",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Brian-Cunningham"
+      },
+      "44": {
+        "name": "Robert C. Carroll",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:44",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Robert-Carroll"
+      },
+      "45": {
+        "name": "Steven H. Cymbrowitz",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:45",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Steven-Cymbrowitz"
+      },
+      "46": {
+        "name": "Mathylde Frontus",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:46",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Mathylde-Frontus"
+      },
+      "47": {
+        "name": "William Colton",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:47",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/William-Colton"
+      },
+      "48": {
+        "name": "Simcha Eichenstein",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:48",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Simcha-Eichenstein"
+      },
+      "49": {
+        "name": "Peter J. Abbate Jr.",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:49",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Peter-Abbate-Jr"
+      },
+      "50": {
+        "name": "Emily Gallagher",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:50",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Emily-Gallagher"
+      },
+      "51": {
+        "name": "Marcela Mitaynes",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:51",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Marcela-Mitaynes"
+      },
+      "52": {
+        "name": "Jo Anne Simon",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:52",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Jo-Anne-Simon"
+      },
+      "53": {
+        "name": "Maritza Davila",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:53",
+        "party": "Democratic",
+        "url": "http://nyassembly.gov/mem/Maritza-Davila"
+      },
+      "54": {
+        "name": "Erik Martin Dilan",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:54",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Erik-Martin-Dilan"
+      },
+      "55": {
+        "name": "Latrice M. Walker",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:55",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Latrice-Walker"
+      },
+      "56": {
+        "name": "Stefani L. Zinerman",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:56",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Stefani-Zinerman"
+      },
+      "57": {
+        "name": "Phara Souffrant Forrest",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:57",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Phara-Souffrant-Forrest"
+      },
+      "58": {
+        "name": "Monique Chandler-Waterman",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:58",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Monique-Chandler-Waterman"
+      },
+      "59": {
+        "name": "Jaime R. Williams",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:59",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Jaime-Williams"
+      },
+      "60": {
+        "name": "Charles Barron",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:60",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Charles-Barron"
+      },
+      "61": {
+        "name": "Charles D. Fall",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:61",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Charles-Fall"
+      },
+      "62": {
+        "name": "Michael Tannousis",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:62",
+        "party": "Republican",
+        "url": "https://nyassembly.gov/mem/Michael-Tannousis"
+      },
+      "63": {
+        "name": "Sam Pirozzolo",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:63",
+        "party": "Republican",
+        "url": "https://nyassembly.gov/mem/Sam-Pirozzolo"
+      },
+      "75": {
+        "name": "Tony Simone",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:75",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Tony-Simone"
+      },
+      "76": {
+        "name": "Rebecca Seawright", 
+        "divisionId": "ocd-division/country:us/state:ny/sldl:76",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Rebecca-Seawright"
+      },
+      "77": {
+        "name": "Latoya Joyner",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:77",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Latoya-Joyner"
+      },
+      "78": {
+        "name": "George Alvarez",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:78",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/George-Alvarez"
+      },
+      "79": {
+        "name": "Chantel Jackson",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:79",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Chantel-Jackson"
+      },
+      "80": {
+        "name": "John Zaccaro Jr.",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:80",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/John-Zaccaro-Jr"
+      },
+      "81": {
+        "name": "Jeffrey Dinowitz",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:81",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Jeffrey-Dinowitz"
+      },
+      "82": {
+        "name": "Michael Benedetto",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:82",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Michael-Benedetto"
+      },
+      "83": {
+        "name": "Carl E. Heastie",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:83",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Carl-E-Heastie"
+      },
+      "84": {
+        "name": "Amanda Septimo",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:84",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Amanda-Septimo"
+      },
+      "85": {
+        "name": "Emerita Torres",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:85",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Emerita-Torres"
+      },
+      "86": {
+        "name": "Yudelka Tapia",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:86",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Yudelka-Tapia"
+      },
+      "87": {
+        "name": "Karines Reyes",
+        "divisionId": "ocd-division/country:us/state:ny/sldl:87",
+        "party": "Democratic",
+        "url": "https://nyassembly.gov/mem/Karines-Reyes"
+      }
+    }
+  },
+  "city": {
+    "mayor": {
+      "name": "Eric L. Adams",
+      "divisionId": "ocd-division/country:us/state:ny/place:new_york",
+      "party": "Democratic",
+      "url": "https://www.nyc.gov/office-of-the-mayor"
+    },
+    "city_council_members": {}
+  }
+}

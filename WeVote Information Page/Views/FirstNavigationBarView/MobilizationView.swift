@@ -183,6 +183,28 @@ struct MobilizationView: View {
         return built
     }
 
+    private var visibleSectionTypes: [SectionType] {
+        SectionType.allCases.filter { section in
+            !section.requiresNYC2025Archive || shouldShowNYC2025ArchiveResources
+        }
+    }
+
+    private var shouldShowNYC2025ArchiveResources: Bool {
+        guard isNYCJurisdiction else { return false }
+        let years = Set(planVM.upcomingElections.map { Calendar.current.component(.year, from: $0.electionDay) })
+        if years.isEmpty { return true }
+        return years.contains(2025)
+    }
+
+    private var isNYCJurisdiction: Bool {
+        guard let stateCode = resolvedStateCode(), stateCode == "NY" else { return false }
+        let city = planVM.userAddress.city.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if city.contains("new york") { return true }
+        let zip = String(planVM.userAddress.zip.filter(\.isNumber).prefix(5))
+        let prefix = String(zip.prefix(3))
+        return ["100", "101", "102", "103", "104", "111", "112", "113", "114", "116"].contains(prefix)
+    }
+
     var body: some View {
         ZStack {
             VoteNowColors.appBackground.ignoresSafeArea()
@@ -258,7 +280,7 @@ struct MobilizationView: View {
                         Divider()
 
                         VStack(spacing: 0) {
-                            ForEach(SectionType.allCases, id: \.self) { section in
+                            ForEach(visibleSectionTypes, id: \.self) { section in
                                 NavigationLink(destination: section.destination(selectedPlace: $selectedPlace)) {
                                     HStack(spacing: 10) {
                                         if section == .supportAmericansVote {
@@ -531,9 +553,9 @@ enum SectionType: CaseIterable {
 
     var title: String {
         switch self {
-        case .raceCandidates:   return "Race Candidates"
-        case .pollingLocations: return "Polling Locations"
-        case .sampleBallot:     return "Sample Ballot"
+        case .raceCandidates:   return "Candidates in this race (NYC 2025 archive)"
+        case .pollingLocations: return "Polling locations (NYC 2025 archive)"
+        case .sampleBallot:     return "Example ballot (NYC 2025 archive)"
         case .mailInBallot:     return "Request Mail-in Ballot"
         case .electionHotlines: return "Election Hotlines"
         case .feedback:         return "Feedback"
@@ -545,21 +567,21 @@ enum SectionType: CaseIterable {
         switch self {
         case .raceCandidates:
             return localizedCatalogString(
-                "app.how_to_vote.section.race_candidates",
+                "app.how_to_vote.section.race_candidates.archive",
                 tableName: "AppShell",
                 locale: locale,
                 fallback: title
             )
         case .pollingLocations:
             return localizedCatalogString(
-                "app.how_to_vote.section.polling_locations",
+                "app.how_to_vote.section.polling_locations.archive",
                 tableName: "AppShell",
                 locale: locale,
                 fallback: title
             )
         case .sampleBallot:
             return localizedCatalogString(
-                "app.how_to_vote.section.sample_ballot",
+                "app.how_to_vote.section.sample_ballot.archive",
                 tableName: "AppShell",
                 locale: locale,
                 fallback: title
@@ -595,15 +617,24 @@ enum SectionType: CaseIterable {
         }
     }
 
+    var requiresNYC2025Archive: Bool {
+        switch self {
+        case .raceCandidates, .pollingLocations, .sampleBallot:
+            return true
+        default:
+            return false
+        }
+    }
+
     @ViewBuilder
     func destination(selectedPlace: Binding<PollingPlace?>) -> some View {
         switch self {
         case .raceCandidates:
-            RaceCandidatesView()
+            RaceCandidatesView(showArchiveDisclaimer: true)
         case .pollingLocations:
-            PollingLocationsView(selectedPlace: selectedPlace)
+            PollingLocationsView(selectedPlace: selectedPlace, showArchiveDisclaimer: true)
         case .sampleBallot:
-            SampleBallotView()
+            SampleBallotView(showArchiveDisclaimer: true)
         case .mailInBallot:
             MailInBallotView()
         case .electionHotlines:

@@ -1,0 +1,15 @@
+Task: Write one concise issue-specific background paragraph for the interpreted civic issue.
+
+Return JSON only:
+{"background_text": "string"}
+or if generation is not possible:
+{"background_text": null, "reason": "string"}
+
+Hard constraints:
+1. If confidence is below 0.65, return null.
+2. If issue_domain is null or empty, return null.
+3. Write 3 to 5 sentences in plain language.
+4. The paragraph must be specific to issue_domain and target_problem.
+5. Do not write any paragraph that would apply equally to three or more unrelated issue domains. If that level of specificity cannot be achieved, return null.
+6. This generic pattern is explicitly prohibited and must never appear: a broad paragraph about Congress setting policy, weighing timelines and tradeoffs, and the potential for higher costs to families. This pattern has appeared across unrelated topics and destroys user trust.
+7. No placeholders, no meta language, no instruction-like text.

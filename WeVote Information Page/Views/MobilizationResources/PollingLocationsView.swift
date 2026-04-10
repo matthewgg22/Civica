@@ -20,6 +20,7 @@ struct PollingLocationsView: View {
     @Environment(\.locale) private var locale
     @Binding var selectedPlace: PollingPlace?
     var isActive: Bool = true
+    var showArchiveDisclaimer: Bool = false
     
     @StateObject private var locationManager = LocationManager()
     @State private var pollingLocations     = pollingPlaces
@@ -49,6 +50,9 @@ struct PollingLocationsView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
+                if showArchiveDisclaimer {
+                    archiveDisclaimerCard
+                }
                 mapButton
                 miniMap
                 placeList
@@ -130,6 +134,38 @@ struct PollingLocationsView: View {
         )
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .shadow(color: .blue.opacity(0.18), radius: 6, x: 0, y: 3)
+        .padding(.horizontal)
+    }
+
+    private var archiveDisclaimerCard: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(
+                l(
+                    "app.polling_locations.archive.title",
+                    "Archived Example: NYC 2025 Polling Locations"
+                )
+            )
+            .font(.subheadline.weight(.bold))
+            .foregroundColor(VoteNowColors.primaryText)
+
+            Text(
+                l(
+                    "app.polling_locations.archive.body",
+                    "This list is a fixed historical example and may not match your current polling place."
+                )
+            )
+            .font(.footnote)
+            .foregroundColor(VoteNowColors.mutedText)
+            .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(VoteNowColors.infoSurfaceBlue)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(VoteNowColors.primaryCTA.opacity(0.16), lineWidth: 1)
+        )
         .padding(.horizontal)
     }
     

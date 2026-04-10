@@ -1,0 +1,562 @@
+{
+  "AK": {
+    "jurisdiction": "Alaska",
+    "type": "State",
+    "ruleCategory": "Non-photo ID",
+    "status": "Yes",
+    "acceptedOptions": "Official voter registration card; birth certificate; hunting or fishing license; current utility bill, bank statement, paycheck, government check, or other government document showing the voter's name and address.",
+    "alternativeIfNoDocument": "Election official may waive the ID requirement if the official knows the voter; otherwise the voter may cast a questioned ballot.",
+    "keyCaveat": "Ordinary in-person voters can satisfy the rule with several non-photo documents.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "AL": {
+    "jurisdiction": "Alabama",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list.",
+    "alternativeIfNoDocument": "Two election officials may identify the voter and sign sworn statements, or the voter can cast a provisional ballot and later show photo ID.",
+    "keyCaveat": "NCSL notes Alabama is sometimes described as effectively strict because provisional voters generally must later show photo ID.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "AR": {
+    "jurisdiction": "Arkansas",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list.",
+    "alternativeIfNoDocument": "Provisional ballot; counted only if acceptable ID is shown by noon on the Monday after the election.",
+    "keyCaveat": "Arkansas requires photo identification for ordinary in-person voting.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "AS": {
+    "jurisdiction": "American Samoa",
+    "type": "Territory",
+    "ruleCategory": "Photo / paired-document territory rule",
+    "status": "Limited",
+    "acceptedOptions": "If the voter lacks a valid American Samoa voter ID card with photo or a valid U.S. passport, the voter may use a combination of two IDs: another government-issued photo ID plus a birth certificate.",
+    "alternativeIfNoDocument": "The reviewed source did not identify a broader standalone non-photo alternative beyond the paired-ID option.",
+    "keyCaveat": "The non-photo document (birth certificate) is accepted only as part of a two-ID combination under the source reviewed.",
+    "sourceURLs": "https://www.usvotefoundation.org/state-voter-information/american-samoa\nhttps://www.aselectionoffice.gov/"
+  },
+  "AZ": {
+    "jurisdiction": "Arizona",
+    "type": "State",
+    "ruleCategory": "Non-photo ID",
+    "status": "Yes",
+    "acceptedOptions": "Utility bill dated within 90 days; bank or credit-union statement dated within 90 days; Arizona vehicle registration; Indian census card; property tax statement; vehicle insurance card; recorder's certificate.",
+    "alternativeIfNoDocument": "Provisional ballot; counted only if ID is provided to the county recorder within the cure period.",
+    "keyCaveat": "These documentary options can be used instead of photo ID for ordinary in-person voting.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "CA": {
+    "jurisdiction": "California",
+    "type": "State",
+    "ruleCategory": "No-documentary verification",
+    "status": "No document",
+    "acceptedOptions": "No ID document is ordinarily required at the polls.",
+    "alternativeIfNoDocument": "Voter states name and address and signs the poll book.",
+    "keyCaveat": "This reflects ordinary in-person voting, not special first-time-by-mail HAVA cases.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-verification-without-id-documents"
+  },
+  "CO": {
+    "jurisdiction": "Colorado",
+    "type": "State",
+    "ruleCategory": "Non-photo ID",
+    "status": "Yes",
+    "acceptedOptions": "Current utility bill, bank statement, government check, paycheck, or other government document showing name and address; Medicare or Medicaid card; certified birth certificate; certified documentation of naturalization.",
+    "alternativeIfNoDocument": "Provisional ballot; election officials verify eligibility before counting.",
+    "keyCaveat": "Most Colorado voters vote by mail, but this list applies to in-person voters at vote centers/polling places.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "CT": {
+    "jurisdiction": "Connecticut",
+    "type": "State",
+    "ruleCategory": "Non-photo ID",
+    "status": "Yes",
+    "acceptedOptions": "Social Security card; any other preprinted form of identification showing the elector's name and either address, signature, or photo.",
+    "alternativeIfNoDocument": "Voter can complete a signed statement with residential address and date of birth under penalty of false statement.",
+    "keyCaveat": "Connecticut accepts several non-photo documents for ordinary in-person voting.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "DC": {
+    "jurisdiction": "District of Columbia",
+    "type": "Federal district",
+    "ruleCategory": "No-documentary verification",
+    "status": "No document",
+    "acceptedOptions": "No ID document is ordinarily required at the polls.",
+    "alternativeIfNoDocument": "Voter signs the poll book.",
+    "keyCaveat": "The District uses signature-based verification for ordinary in-person voting.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-verification-without-id-documents"
+  },
+  "DE": {
+    "jurisdiction": "Delaware",
+    "type": "State",
+    "ruleCategory": "Non-photo ID",
+    "status": "Yes",
+    "acceptedOptions": "Utility bill; paycheck; government document showing the voter's name and address.",
+    "alternativeIfNoDocument": "Voter may sign an affidavit of affirmation.",
+    "keyCaveat": "Non-photo documents are sufficient if they show the required information.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "FL": {
+    "jurisdiction": "Florida",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No standalone non-photo document list for ordinary in-person voting.",
+    "alternativeIfNoDocument": "If the picture ID lacks the voter's signature, an additional ID showing the signature is required; otherwise the voter may cast a provisional ballot and the signature on the envelope is checked.",
+    "keyCaveat": "A non-photo item can supplement a picture ID for signature purposes, but not replace the ordinary picture-ID requirement.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "GA": {
+    "jurisdiction": "Georgia",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list.",
+    "alternativeIfNoDocument": "Provisional ballot; counted only if photo ID is shown within the cure period.",
+    "keyCaveat": "Georgia requires photo ID for ordinary in-person voting.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "GU": {
+    "jurisdiction": "Guam",
+    "type": "Territory",
+    "ruleCategory": "Territory-specific in-person ID rule",
+    "status": "Not identified",
+    "acceptedOptions": "The U.S. Vote Foundation source reviewed did not identify a standalone non-photo document option for ordinary in-person voting. It listed passport, current/valid photo ID, tribal ID, student ID, military ID, ID issued by another state, government photo ID, and Guam driver's license.",
+    "alternativeIfNoDocument": "No broader non-photo document substitute was clearly identified in the source reviewed.",
+    "keyCaveat": "Because the reviewed territory source emphasized photo-style IDs, this row is flagged for caution rather than stated as a definitive 'No'.",
+    "sourceURLs": "https://www.usvotefoundation.org/state-voter-information/guam\nhttps://gec.guam.gov/"
+  },
+  "HI": {
+    "jurisdiction": "Hawaii",
+    "type": "State",
+    "ruleCategory": "No-documentary verification",
+    "status": "No document",
+    "acceptedOptions": "No ID document is ordinarily required at the polls.",
+    "alternativeIfNoDocument": "Voter provides name, address, and date of birth.",
+    "keyCaveat": "This is the ordinary in-person rule after Hawaii repealed its prior request-for-ID provision.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-verification-without-id-documents"
+  },
+  "IA": {
+    "jurisdiction": "Iowa",
+    "type": "State",
+    "ruleCategory": "Non-photo ID",
+    "status": "Yes",
+    "acceptedOptions": "Current signed voter identification card; residential lease; property tax statement; utility bill; bank statement; paycheck; government check; other government document; or a written oath by another registered voter in the precinct.",
+    "alternativeIfNoDocument": "Provisional ballot if the voter cannot use any listed document or attesting-voter option.",
+    "keyCaveat": "Iowa accepts several documentary proofs of identity/residency for ordinary in-person voting.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "ID": {
+    "jurisdiction": "Idaho",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list.",
+    "alternativeIfNoDocument": "Voter may complete an affidavit with name and address in lieu of presenting ID.",
+    "keyCaveat": "Idaho's alternative is affidavit-based, not document-based.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "IL": {
+    "jurisdiction": "Illinois",
+    "type": "State",
+    "ruleCategory": "No-documentary verification",
+    "status": "No document",
+    "acceptedOptions": "No ID document is ordinarily required at the polls.",
+    "alternativeIfNoDocument": "Voter signs an affidavit of eligibility and gives name and, if requested, address.",
+    "keyCaveat": "Ordinary in-person voters do not generally need to present a document.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-verification-without-id-documents"
+  },
+  "IN": {
+    "jurisdiction": "Indiana",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list.",
+    "alternativeIfNoDocument": "Voter casts a provisional ballot; it can count if the voter later shows photo ID or executes an indigency or religious-objection affidavit.",
+    "keyCaveat": "Educational-institution IDs may not be used for voting effective July 1, 2025.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "KS": {
+    "jurisdiction": "Kansas",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list.",
+    "alternativeIfNoDocument": "Provisional ballot; voter must later provide valid photo ID before the canvass.",
+    "keyCaveat": "Kansas requires photo identification for ordinary in-person voting.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "KY": {
+    "jurisdiction": "Kentucky",
+    "type": "State",
+    "ruleCategory": "Photo ID + limited exception",
+    "status": "Limited",
+    "acceptedOptions": "After signing a voter affirmation form and stating the reason for lacking photo ID, a voter may use a Social Security card, county-issued identification card, food-stamp identification card, or another identification card with photo and name.",
+    "alternativeIfNoDocument": "Limited document exception exists only after the voter affirmation step.",
+    "keyCaveat": "The listed exception includes both non-photo and photo documents; it is not a standalone non-photo system.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "LA": {
+    "jurisdiction": "Louisiana",
+    "type": "State",
+    "ruleCategory": "Photo ID + limited exception",
+    "status": "Limited",
+    "acceptedOptions": "If the voter has no picture ID, the voter may sign an affidavit and provide a current registration certificate, date of birth, or other precinct-register information requested by commissioners.",
+    "alternativeIfNoDocument": "Affidavit path is available, but the voter can still be challenged.",
+    "keyCaveat": "Louisiana's documentary alternative is tied to an affidavit and poll-book information.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "MA": {
+    "jurisdiction": "Massachusetts",
+    "type": "State",
+    "ruleCategory": "No-documentary verification",
+    "status": "No document",
+    "acceptedOptions": "No ID document is ordinarily required at the polls.",
+    "alternativeIfNoDocument": "Voter provides name and, if requested, address.",
+    "keyCaveat": "Massachusetts ordinarily verifies identity without a document at the polls.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-verification-without-id-documents"
+  },
+  "MD": {
+    "jurisdiction": "Maryland",
+    "type": "State",
+    "ruleCategory": "No-documentary verification",
+    "status": "No document",
+    "acceptedOptions": "No ID document is ordinarily required at the polls.",
+    "alternativeIfNoDocument": "Voter states month and date of birth and, in some circumstances, address.",
+    "keyCaveat": "Ordinary in-person voters do not generally present a document.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-verification-without-id-documents"
+  },
+  "ME": {
+    "jurisdiction": "Maine",
+    "type": "State",
+    "ruleCategory": "No-documentary verification",
+    "status": "No document",
+    "acceptedOptions": "No ID document is ordinarily required at the polls.",
+    "alternativeIfNoDocument": "Voter states name and address.",
+    "keyCaveat": "Maine uses non-documentary verification for ordinary in-person voting.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-verification-without-id-documents"
+  },
+  "MI": {
+    "jurisdiction": "Michigan",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list.",
+    "alternativeIfNoDocument": "A voter who does not possess or did not bring photo ID may sign an affidavit and vote a regular ballot.",
+    "keyCaveat": "Michigan's ordinary listed IDs are photo IDs; the fallback is affidavit-based.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "MN": {
+    "jurisdiction": "Minnesota",
+    "type": "State",
+    "ruleCategory": "No-documentary verification",
+    "status": "No document",
+    "acceptedOptions": "No ID document is ordinarily required at the polls.",
+    "alternativeIfNoDocument": "Voter signs an affidavit of eligibility and, if requested, provides name, address, and date of birth.",
+    "keyCaveat": "Ordinary in-person voters do not generally need to present a document.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-verification-without-id-documents"
+  },
+  "MO": {
+    "jurisdiction": "Missouri",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list.",
+    "alternativeIfNoDocument": "Provisional ballot; it can count if the voter returns by 7 p.m. on Election Day with ID or if the provisional-ballot-envelope signature matches the registration record.",
+    "keyCaveat": "Missouri's alternative is signature or same-day cure, not a non-photo document list.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "MP": {
+    "jurisdiction": "Northern Mariana Islands",
+    "type": "Territory",
+    "ruleCategory": "Territory-specific in-person ID rule",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list identified in the reviewed source.",
+    "alternativeIfNoDocument": "The reviewed source states that a current and valid photo ID is required for in-person voting.",
+    "keyCaveat": "The U.S. Vote Foundation page reviewed lists only a current and valid photo ID for in-person voting.",
+    "sourceURLs": "https://www.usvotefoundation.org/state-voter-information/northern-mariana-islands\nhttps://www.votecnmi.gov.mp/"
+  },
+  "MS": {
+    "jurisdiction": "Mississippi",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list.",
+    "alternativeIfNoDocument": "Affidavit ballot; generally counted only if the voter later shows government-issued photo ID or returns with a religious-objection affidavit.",
+    "keyCaveat": "Mississippi is a photo-ID state with narrow affidavit-ballot exceptions.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "MT": {
+    "jurisdiction": "Montana",
+    "type": "State",
+    "ruleCategory": "Photo ID + paired documentary option",
+    "status": "Limited",
+    "acceptedOptions": "Two alternative IDs are allowed if one has a photo; documentary options include current utility bill, bank statement, paycheck, notice of confirmation of voter registration, government check, or other government document showing the elector's name and current address.",
+    "alternativeIfNoDocument": "Provisional ballot; eligibility is later checked by signature verification.",
+    "keyCaveat": "Montana does accept documents, but one of the two alternative IDs must include a photo.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "NC": {
+    "jurisdiction": "North Carolina",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document option identified in the NCSL in-effect table.",
+    "alternativeIfNoDocument": "Limited statutory exception paths apply for certain voters; otherwise the voter uses the photo-ID cure/exception process.",
+    "keyCaveat": "North Carolina is currently listed by NCSL as a strict photo-ID state.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "ND": {
+    "jurisdiction": "North Dakota",
+    "type": "State",
+    "ruleCategory": "Non-photo ID",
+    "status": "Yes",
+    "acceptedOptions": "If the primary ID is missing required or current information, it may be supplemented with a current utility bill, current bank statement, government-issued check, paycheck, federal/state/local government document, or authorized university document; certain voters may use a long-term-care certificate.",
+    "alternativeIfNoDocument": "Set-aside ballot/provisional-style process if the voter later shows valid ID within the cure period.",
+    "keyCaveat": "North Dakota requires the voter record to show legal name, current residential street address, and date of birth.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "NE": {
+    "jurisdiction": "Nebraska",
+    "type": "State",
+    "ruleCategory": "Photo ID + listed document",
+    "status": "Yes",
+    "acceptedOptions": "A record from a hospital, assisted-living facility, provider agency for disability services, or intermediate-care facility.",
+    "alternativeIfNoDocument": "Voter fills out a provisional voter-identification-verification envelope.",
+    "keyCaveat": "Nebraska's photo-ID law still lists this facility record as an acceptable form of ID.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "NH": {
+    "jurisdiction": "New Hampshire",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list.",
+    "alternativeIfNoDocument": "A moderator, supervisor of the checklist, or clerk may verify the voter's identity; otherwise the voter is not allowed to vote under the current law.",
+    "keyCaveat": "New Hampshire removed earlier no-photo provisional-ballot processes in 2024.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "NJ": {
+    "jurisdiction": "New Jersey",
+    "type": "State",
+    "ruleCategory": "No-documentary verification",
+    "status": "No document",
+    "acceptedOptions": "No ID document is ordinarily required at the polls.",
+    "alternativeIfNoDocument": "Voter provides a signature that is compared with the signature on file.",
+    "keyCaveat": "Ordinary in-person verification is signature-based.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-verification-without-id-documents"
+  },
+  "NM": {
+    "jurisdiction": "New Mexico",
+    "type": "State",
+    "ruleCategory": "No-documentary verification",
+    "status": "No document",
+    "acceptedOptions": "No ID document is ordinarily required at the polls.",
+    "alternativeIfNoDocument": "Voter provides written or verbal confirmation of name, address, and date of birth, then signs the poll book.",
+    "keyCaveat": "Ordinary in-person voters are verified without showing a document.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-verification-without-id-documents"
+  },
+  "NV": {
+    "jurisdiction": "Nevada",
+    "type": "State",
+    "ruleCategory": "No-documentary verification",
+    "status": "No document",
+    "acceptedOptions": "No ID document is ordinarily required at the polls.",
+    "alternativeIfNoDocument": "Voter signs the poll book; signature is compared to the signature on file.",
+    "keyCaveat": "Nevada generally verifies ordinary in-person voters by signature.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-verification-without-id-documents"
+  },
+  "NY": {
+    "jurisdiction": "New York",
+    "type": "State",
+    "ruleCategory": "No-documentary verification",
+    "status": "No document",
+    "acceptedOptions": "No ID document is ordinarily required at the polls.",
+    "alternativeIfNoDocument": "Voter signs the poll book; officials compare the signature and may compare physical appearance with the record.",
+    "keyCaveat": "Ordinary in-person voting is generally signature-based.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-verification-without-id-documents"
+  },
+  "OH": {
+    "jurisdiction": "Ohio",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list.",
+    "alternativeIfNoDocument": "Provisional ballot; voters with a religious objection to being photographed can complete an affidavit.",
+    "keyCaveat": "Ohio became a photo-ID state under 2023 legislation.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "OK": {
+    "jurisdiction": "Oklahoma",
+    "type": "State",
+    "ruleCategory": "Non-photo ID",
+    "status": "Yes",
+    "acceptedOptions": "County voter registration card may serve as proof of identity without meeting the usual photo-ID criteria.",
+    "alternativeIfNoDocument": "Provisional ballot can count if affidavit data matches the registration database.",
+    "keyCaveat": "NCSL notes some observers still describe Oklahoma as a photo-ID state because most voters use photo ID.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "OR": {
+    "jurisdiction": "Oregon",
+    "type": "State",
+    "ruleCategory": "No-documentary verification",
+    "status": "No document",
+    "acceptedOptions": "No ID document is ordinarily required; Oregon mainly votes by mail.",
+    "alternativeIfNoDocument": "Voter signs the return envelope, including when voting in person at a county election office.",
+    "keyCaveat": "Ordinary verification is signature-based rather than document-based.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-verification-without-id-documents"
+  },
+  "PA": {
+    "jurisdiction": "Pennsylvania",
+    "type": "State",
+    "ruleCategory": "No-documentary verification",
+    "status": "No document",
+    "acceptedOptions": "No ID document is ordinarily required at the polls.",
+    "alternativeIfNoDocument": "Voter signs an affidavit of eligibility and provides address except in certain circumstances.",
+    "keyCaveat": "Ordinary in-person voters generally do not show a document.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-verification-without-id-documents"
+  },
+  "PR": {
+    "jurisdiction": "Puerto Rico",
+    "type": "Territory / Commonwealth",
+    "ruleCategory": "Territory-specific in-person ID rule",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list identified in the reviewed source.",
+    "alternativeIfNoDocument": "The reviewed source lists U.S. passport, U.S. Global Entry card, valid military ID, valid Puerto Rico driver's license, and valid Puerto Rico voter ID card.",
+    "keyCaveat": "Puerto Rico's reviewed source was photo-ID-based for in-person voting.",
+    "sourceURLs": "https://www.usvotefoundation.org/state-voter-information/puerto-rico\nhttps://ww2.ceepur.org/"
+  },
+  "RI": {
+    "jurisdiction": "Rhode Island",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list.",
+    "alternativeIfNoDocument": "Provisional ballot; local board later checks whether the signature matches the registration record.",
+    "keyCaveat": "Rhode Island's accepted IDs must show a photo.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "SC": {
+    "jurisdiction": "South Carolina",
+    "type": "State",
+    "ruleCategory": "Photo ID + limited exception",
+    "status": "Limited",
+    "acceptedOptions": "If the voter has a reasonable impediment to obtaining photo ID, the voter may show a current non-photo voter registration card and sign an affidavit.",
+    "alternativeIfNoDocument": "Without the reasonable-impediment path, the voter can cast a provisional ballot and later show photo ID.",
+    "keyCaveat": "The non-photo registration card works only inside the reasonable-impediment exception.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "SD": {
+    "jurisdiction": "South Dakota",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list.",
+    "alternativeIfNoDocument": "Voter may complete an affidavit in lieu of personal identification.",
+    "keyCaveat": "South Dakota's fallback is affidavit-based rather than document-based.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "TN": {
+    "jurisdiction": "Tennessee",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list.",
+    "alternativeIfNoDocument": "Most voters use a provisional ballot and later show photo ID; indigent voters and voters with a religious objection to being photographed can execute an affidavit of identity.",
+    "keyCaveat": "Tennessee is a strict photo-ID state for ordinary in-person voting.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "TX": {
+    "jurisdiction": "Texas",
+    "type": "State",
+    "ruleCategory": "Photo ID + limited exception",
+    "status": "Limited",
+    "acceptedOptions": "With a Reasonable Impediment Declaration: valid voter registration certificate; certified birth certificate; current utility bill; bank statement; government check; paycheck; or government document with the voter's name and address.",
+    "alternativeIfNoDocument": "Reasonable Impediment Declaration is required with the supporting document; some voters also qualify for disability, religious-objection, or natural-disaster paths.",
+    "keyCaveat": "Texas accepts these documents only through the reasonable-impediment system, not as a standalone universal substitute.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "UT": {
+    "jurisdiction": "Utah",
+    "type": "State",
+    "ruleCategory": "Non-photo ID",
+    "status": "Yes",
+    "acceptedOptions": "Two forms of ID that bear the voter's name and provide evidence that the voter resides in the precinct.",
+    "alternativeIfNoDocument": "Provisional ballot; county clerk may also verify identity and residence through other means.",
+    "keyCaveat": "Utah allows documentary proof of residence instead of a single photo ID.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "VA": {
+    "jurisdiction": "Virginia",
+    "type": "State",
+    "ruleCategory": "Non-photo ID",
+    "status": "Yes",
+    "acceptedOptions": "Voter confirmation document; copy of a current utility bill, bank statement, government check, paycheck, or other government document containing the voter's name and address.",
+    "alternativeIfNoDocument": "Except for certain HAVA first-time voters, a voter without ID can sign a statement verifying identity and vote a regular ballot.",
+    "keyCaveat": "Virginia keeps both documentary and signed-statement paths for ordinary in-person voting.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "VI": {
+    "jurisdiction": "U.S. Virgin Islands",
+    "type": "Territory",
+    "ruleCategory": "Conditional territory rule",
+    "status": "Conditional",
+    "acceptedOptions": "If a voter is voting for the first time or the registration is incomplete, the reviewed source says valid ID may be required; accepted documents include valid U.S. passport, certified/copy of U.S. birth certificate, military discharge certificate, birth certificate, or certified/copy of a naturalization document.",
+    "alternativeIfNoDocument": "For established voters, the reviewed source suggests ID is not generally required unless the first-time/incomplete-registration condition applies.",
+    "keyCaveat": "This is a conditional rule from the reviewed source, not a universal always-on document requirement for every in-person voter.",
+    "sourceURLs": "https://www.usvotefoundation.org/state-voter-information/virgin-islands\nhttps://vivote.gov/"
+  },
+  "VT": {
+    "jurisdiction": "Vermont",
+    "type": "State",
+    "ruleCategory": "No-documentary verification",
+    "status": "No document",
+    "acceptedOptions": "No ID document is ordinarily required at the polls.",
+    "alternativeIfNoDocument": "Voter states name and, if requested, address; NCSL also notes documentation may be provided if requested.",
+    "keyCaveat": "The NCSL no-document summary does not specify the exact documentation types for Vermont's alternative path.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-verification-without-id-documents"
+  },
+  "WA": {
+    "jurisdiction": "Washington",
+    "type": "State",
+    "ruleCategory": "Signature/photo at vote center",
+    "status": "Conditional",
+    "acceptedOptions": "No standalone non-photo document list. At a voting center, a voter may ordinarily sign a ballot declaration instead of presenting ID; if identification is used, it must be photo ID.",
+    "alternativeIfNoDocument": "Provisional ballot can count if the signature on the declaration matches the registration record.",
+    "keyCaveat": "Most Washington voters vote by mail; this row addresses in-person vote-center voting.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "WI": {
+    "jurisdiction": "Wisconsin",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list for voter ID itself.",
+    "alternativeIfNoDocument": "Provisional ballot; voter must later furnish statutory photo ID. Separate proof-of-residence rules can also apply when the photo ID does not prove residence.",
+    "keyCaveat": "Wisconsin voters approved a 2025 constitutional amendment requiring photo ID to vote.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "WV": {
+    "jurisdiction": "West Virginia",
+    "type": "State",
+    "ruleCategory": "Photo ID",
+    "status": "No",
+    "acceptedOptions": "No ordinary non-photo document list in the current law.",
+    "alternativeIfNoDocument": "An adult who has known the voter for at least six months may sign an affidavit, or a poll worker who has known the voter for at least six months may allow voting; otherwise the voter may cast a provisional ballot after an identity affidavit.",
+    "keyCaveat": "NCSL notes West Virginia enacted a 2025 law changing the state from a non-photo to a photo-ID system.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  },
+  "WY": {
+    "jurisdiction": "Wyoming",
+    "type": "State",
+    "ruleCategory": "Non-photo ID",
+    "status": "Yes",
+    "acceptedOptions": "Valid Medicare insurance card or valid Medicaid insurance card (accepted until Dec. 31, 2029).",
+    "alternativeIfNoDocument": "Provisional ballot; voter must furnish statutory ID by the close of business on the day after the election.",
+    "keyCaveat": "Most Wyoming voters still use photo ID, but these non-photo insurance cards are currently valid.",
+    "sourceURLs": "https://www.ncsl.org/elections-and-campaigns/voter-id"
+  }
+}

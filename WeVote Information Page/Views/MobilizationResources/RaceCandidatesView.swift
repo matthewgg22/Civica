@@ -18,6 +18,7 @@ struct StaticCandidate: Identifiable {
 
 struct RaceCandidatesView: View {
     @Environment(\.locale) private var locale
+    var showArchiveDisclaimer: Bool = false
 
     let candidates = [
         StaticCandidate(name: "Adrienne Adams", imageName: "adrienne", experience: "Speaker of the NYC Council (2022–present), Councilmember (2017–present)", announcedDate: "March 5, 2025", websiteURL: "https://adrienneforthepeople.com"),
@@ -34,10 +35,22 @@ struct RaceCandidatesView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 20) {
-                Text(l("app.race_candidates.title", "Race Candidates"))
+                Text(l("app.race_candidates.title.truthful", "Candidates in this race"))
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
+
+                if showArchiveDisclaimer {
+                    Text(
+                        l(
+                            "app.race_candidates.archive.subtitle",
+                            "Archived example: NYC 2025 Mayoral Democratic Primary"
+                        )
+                    )
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(VoteNowColors.mutedText)
+                    .multilineTextAlignment(.center)
+                }
 
                 Text(l("app.race_candidates.subtitle", "🗽 2025 NYC Mayoral Race - Dem Primary"))
                     .font(.title3)

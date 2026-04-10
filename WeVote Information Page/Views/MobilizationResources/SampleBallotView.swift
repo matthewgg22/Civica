@@ -115,6 +115,7 @@ struct SampleBallotView: View {
     @Environment(\.locale) private var locale
     @EnvironmentObject var planVM: PlanViewModel
     @State private var raceRankings: [String: [String: Int]] = [:]
+    var showArchiveDisclaimer: Bool = false
 
     struct CandidateSummary: Identifiable {
         let id: String
@@ -220,9 +221,27 @@ struct SampleBallotView: View {
     var body: some View {
         ScrollView(.vertical) {
             VStack(alignment: .leading, spacing: 20) {
-                Text(l("app.sample_ballot.title", "Sample Ballot"))
+                Text(l("app.sample_ballot.title.truthful", "Example ballot"))
                     .font(.largeTitle).bold()
-                Text(l("app.sample_ballot.subtitle", "Preview candidates by race. Party filter from My Information is applied."))
+
+                if showArchiveDisclaimer {
+                    Text(
+                        l(
+                            "app.sample_ballot.archive.subtitle",
+                            "Archived example: NYC 2025 mayoral-cycle ballot. This is not a live personalized ballot."
+                        )
+                    )
+                    .font(.footnote.weight(.semibold))
+                    .foregroundColor(VoteNowColors.mutedText)
+                    .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Text(
+                    l(
+                        "app.sample_ballot.subtitle",
+                        "Preview candidates by race. Party filter from My Information is applied."
+                    )
+                )
                     .font(.subheadline)
                     .foregroundColor(VoteNowColors.mutedText)
 

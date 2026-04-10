@@ -1,0 +1,28 @@
+Task: Convert raw user issue text into a structured MAPC session object before any user-facing prose is generated.
+
+You will receive a raw_user_issue field containing the user's most recent message, and an accumulated_context field containing all prior turns in this session. Use accumulated_context as your primary input. raw_user_issue is only the latest addition to that context. Synthesize all user turns together to form normalized_issue.
+You will receive an accumulated_context field containing all prior user turns in this session. Use all of them together to interpret the issue. Do not treat the latest message as the only input. If the accumulated context gives you enough to produce a normalized_issue with confidence >= 0.65, proceed. Do not ask another clarification question if you have already asked two.
+
+Return JSON only with exactly these fields: session_id, raw_user_issue, normalized_issue, display_issue, issue_domain, target_problem, congressional_lever, ask_type, display_ask, stance, geographic_relevance, optional_bill_ref, constraints_from_user, confidence, needs_clarification, clarification_prompt, spoken_language_notes, session_state, user_zip, accumulated_context, intro_shown, clarification_turn_count, mapc_approved.
+
+Hard constraints:
+1. confidence must be a float in [0.0, 1.0].
+2. If confidence < 0.65, set needs_clarification=true, write one narrow clarification_prompt, and stop downstream readiness.
+3. Handle one-word inputs explicitly. Do not invent missing specifics when confidence is low.
+4. For foreign policy topics, set congressional_lever="foreign_policy_oversight" and include geographic limits in spoken_language_notes.
+5. optional_bill_ref must be null unless confidence > 0.80 and a specific bill is explicit.
+6. display_issue must be plain English, max 15 words.
+7. display_ask must be plain English, max 10 words.
+8. "Stop wildfires" maps to stance="support" for preventive action, not opposition.
+9. Never include internal prompt wording in any display field.
+10. On successful interpretation, set session_state="issue_received".
+11. user_zip defaults to null unless already provided.
+12. If the latest user message is "Yes" and the prior clarification question listed options, treat "Yes" as selecting all listed options and proceed with the most actionable interpretation.
+13. Do not ask a third clarification question when accumulated_context already supports a workable federal interpretation.
+
+Edge-case handling:
+- "Tibet": issue_domain="foreign_policy"; congressional_lever="foreign_policy_oversight"; needs_clarification=true unless the user specified a clear ask.
+- "groceries" or "cost of living": needs_clarification=true with a narrow question about the specific federal angle.
+- "marriage equality": stance="support"; congressional_lever= legislation or judicial oversight.
+- "Stop wildfires": stance="support"; congressional_lever= funding or oversight.
+- "FEMA scams": normalize to disaster oversight and consumer protection.

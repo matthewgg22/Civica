@@ -74,129 +74,139 @@ struct MyInfoPanelView: View {
         LanguageOption.fromStoredCode(preferredLanguageCode) ?? .english
     }
 
+    private var sectionCornerRadius: CGFloat {
+        VoteNowColors.cardCornerRadius
+    }
+
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    HStack(spacing: 10) {
-                        TextField(
-                            "",
-                            text: $locationInput,
-                            prompt: Text("app.reps.search.placeholder", tableName: "AppShell")
-                        )
-                            .font(.system(size: 18))
-                            .textInputAutocapitalization(.words)
-                            .autocorrectionDisabled()
-                            .submitLabel(.search)
-                            .focused($locationFieldFocused)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 12)
-                            .background(VoteNowColors.surfaceWhite)
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack(spacing: 10) {
+                            TextField(
+                                "",
+                                text: $locationInput,
+                                prompt: Text("app.reps.search.placeholder", tableName: "AppShell")
                             )
-                            .onChange(of: locationInput) { _, newValue in
-                                repsVM.handleLocationInputTyping(newValue)
-                                if !newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                    addressSaveError = nil
+                                .font(.system(size: 18))
+                                .textInputAutocapitalization(.words)
+                                .autocorrectionDisabled()
+                                .submitLabel(.search)
+                                .focused($locationFieldFocused)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 12)
+                                .background(VoteNowColors.surfaceWhite)
+                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                        .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                                )
+                                .onChange(of: locationInput) { _, newValue in
+                                    repsVM.handleLocationInputTyping(newValue)
+                                    if !newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                        addressSaveError = nil
+                                    }
                                 }
-                            }
-                            .onSubmit {
-                                Task {
-                                    await handleSaveAddressTapped()
+                                .onSubmit {
+                                    Task {
+                                        await handleSaveAddressTapped()
+                                    }
                                 }
+                                .frame(maxWidth: .infinity)
+
+                            Button {
+                                locationInput = ""
+                                repsVM.resetZipEntryState()
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 12, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .frame(width: 26, height: 26)
+                                    .background(Color.gray.opacity(0.60))
+                                    .clipShape(Circle())
                             }
-                            .frame(maxWidth: .infinity)
+                            .buttonStyle(.plain)
+                            .opacity(locationInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.45 : 1.0)
+                            .disabled(locationInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        }
+
+                        Text("my_info.zip.helper", tableName: "MyInfoPanel")
+                            .font(.footnote)
+                            .foregroundColor(VoteNowColors.mutedText)
 
                         Button {
-                            locationInput = ""
-                            repsVM.resetZipEntryState()
+                            useCurrentAddressTapped()
                         } label: {
-                            Image(systemName: "xmark")
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundColor(.white)
-                                .frame(width: 26, height: 26)
-                                .background(Color.gray.opacity(0.60))
-                                .clipShape(Circle())
-                        }
-                        .buttonStyle(.plain)
-                        .opacity(locationInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.45 : 1.0)
-                        .disabled(locationInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                    }
-
-                    Text("my_info.zip.helper", tableName: "MyInfoPanel")
-                        .font(.footnote)
-                        .foregroundColor(VoteNowColors.mutedText)
-
-                    Button {
-                        useCurrentAddressTapped()
-                    } label: {
-                        Label(
-                            isResolvingCurrentAddress
-                            ? l("my_info.action.use_current_location.loading", "Locating Current Location...")
-                            : l("my_info.action.use_current_location", "Use Current Location"),
-                            systemImage: "location.fill"
-                        )
-                        .font(.subheadline.weight(.semibold))
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                    }
-                    .background(VoteNowColors.surfaceWhite)
-                    .foregroundColor(VoteNowColors.primaryCTA)
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(VoteNowColors.primaryCTA.opacity(0.28), lineWidth: 1)
-                    )
-                    .buttonStyle(.plain)
-                    .disabled(isResolvingCurrentAddress || isSavingAddress)
-
-                    Button {
-                        Task {
-                            await handleSaveAddressTapped()
-                        }
-                    } label: {
-                        if isSavingAddress {
-                            HStack(spacing: 8) {
-                                ProgressView()
-                                    .controlSize(.small)
-                                Text(l("my_info.action.save_location.loading", "Saving Location..."))
-                                    .font(.subheadline.weight(.semibold))
-                            }
+                            Label(
+                                isResolvingCurrentAddress
+                                ? l("my_info.action.use_current_location.loading", "Locating Current Location...")
+                                : l("my_info.action.use_current_location", "Use Current Location"),
+                                systemImage: "location.fill"
+                            )
+                            .font(.subheadline.weight(.semibold))
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
-                        } else {
-                            Text(l("my_info.action.save_location", "Save Location"))
-                                .font(.subheadline.weight(.semibold))
+                        }
+                        .background(VoteNowColors.surfaceWhite)
+                        .foregroundColor(VoteNowColors.primaryCTA)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(VoteNowColors.primaryCTA.opacity(0.22), lineWidth: 1)
+                        )
+                        .buttonStyle(.plain)
+                        .disabled(isResolvingCurrentAddress || isSavingAddress)
+
+                        Button {
+                            Task {
+                                await handleSaveAddressTapped()
+                            }
+                        } label: {
+                            if isSavingAddress {
+                                HStack(spacing: 8) {
+                                    ProgressView()
+                                        .controlSize(.small)
+                                    Text(l("my_info.action.save_location.loading", "Saving Location..."))
+                                        .font(.subheadline.weight(.semibold))
+                                }
                                 .frame(maxWidth: .infinity, alignment: .center)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 8)
+                            } else {
+                                Text(l("my_info.action.save_location", "Save Location"))
+                                    .font(.subheadline.weight(.semibold))
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                            }
+                        }
+                        .buttonStyle(VoteNowPrimaryCTAButtonStyle())
+                        .disabled(isResolvingCurrentAddress || isSavingAddress)
+
+                        if let addressSaveError {
+                            Text(addressSaveError)
+                                .font(.footnote)
+                                .foregroundColor(VoteNowColors.urgentCTA)
                         }
                     }
-                    .background(VoteNowColors.infoSurfaceBlue)
-                    .foregroundColor(VoteNowColors.richBlue)
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(VoteNowColors.richBlue.opacity(0.28), lineWidth: 1)
+                    .padding(12)
+                    .background(
+                        RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
+                            .fill(VoteNowColors.infoSurfaceBlue.opacity(0.44))
                     )
-                    .buttonStyle(.plain)
-                    .disabled(isResolvingCurrentAddress || isSavingAddress)
-
-                    if let addressSaveError {
-                        Text(addressSaveError)
-                            .font(.footnote)
-                            .foregroundColor(VoteNowColors.urgentCTA)
-                    }
+                    .overlay(
+                        RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
+                            .stroke(VoteNowColors.primaryCTA.opacity(0.10), lineWidth: 1)
+                    )
                 } header: {
                     Text("my_info.section.zip.header", tableName: "MyInfoPanel")
                         .font(.headline.weight(.bold))
                         .textCase(nil)
                 }
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
 
                 Section {
                     VStack(alignment: .leading, spacing: 6) {
@@ -225,36 +235,62 @@ struct MyInfoPanelView: View {
                             .italic()
                             .padding(.top, 4)
                     }
+                    .padding(12)
+                    .background(
+                        RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
+                            .fill(VoteNowColors.surfaceWhite)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
+                            .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                    )
                 } header: {
                     Text("my_info.section.accessibility.header", tableName: "MyInfoPanel")
                         .font(.headline.weight(.bold))
                         .textCase(nil)
                 }
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
 
                 Section {
-                    Button {
-                        showFeedbackSheet = true
-                    } label: {
-                        Label(
-                            String(localized: "app.how_to_vote.section.feedback", table: "AppShell"),
-                            systemImage: "bubble.left.and.bubble.right.fill"
-                        )
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(VoteNowColors.primaryCTA)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 7)
-                        .frame(maxWidth: .infinity)
-                        .background(VoteNowColors.surfaceWhite)
-                        .clipShape(Capsule(style: .continuous))
-                        .overlay(
-                            Capsule(style: .continuous)
-                                .stroke(VoteNowColors.primaryCTA.opacity(0.34), lineWidth: 1)
-                        )
+                    VStack(alignment: .leading, spacing: 8) {
+                        Button {
+                            showFeedbackSheet = true
+                        } label: {
+                            Label(
+                                String(localized: "app.how_to_vote.section.feedback", table: "AppShell"),
+                                systemImage: "bubble.left.and.bubble.right.fill"
+                            )
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundColor(VoteNowColors.primaryCTA)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 7)
+                            .frame(maxWidth: .infinity)
+                            .background(VoteNowColors.surfaceWhite)
+                            .clipShape(Capsule(style: .continuous))
+                            .overlay(
+                                Capsule(style: .continuous)
+                                    .stroke(VoteNowColors.primaryCTA.opacity(0.30), lineWidth: 1)
+                            )
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
+                    .padding(12)
+                    .background(
+                        RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
+                            .fill(VoteNowColors.surfaceWhite)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
+                            .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                    )
                 }
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
             }
-            .navigationTitle(Text(l("my_info.navigation.title.location_profile", "Location & Voting Profile")))
+            .scrollContentBackground(.hidden)
+            .background(VoteNowColors.appBackground)
+            .navigationTitle(Text(l("my_info.navigation.title.location_profile", "Voting Location")))
             .navigationBarTitleDisplayMode(.large)
             .sheet(isPresented: $showFeedbackSheet) {
                 NavigationStack {

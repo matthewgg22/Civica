@@ -1,0 +1,2522 @@
+[
+  {
+    "rank": 1,
+    "city": "New York",
+    "state_name": "New York",
+    "state_code": "NY",
+    "population_2024": 8736047,
+    "name": "Zohran K. Mamdani",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+New+York+NY"
+  },
+  {
+    "rank": 2,
+    "city": "Los Angeles",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 3902440,
+    "name": "Karen Bass",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Los+Angeles+CA"
+  },
+  {
+    "rank": 3,
+    "city": "Chicago",
+    "state_name": "Illinois",
+    "state_code": "IL",
+    "population_2024": 2742119,
+    "name": "Brandon Johnson",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Chicago+IL"
+  },
+  {
+    "rank": 4,
+    "city": "Houston",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 2293288,
+    "name": "John Whitmire",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Houston+TX"
+  },
+  {
+    "rank": 5,
+    "city": "Philadelphia",
+    "state_name": "Pennsylvania",
+    "state_code": "PA",
+    "population_2024": 1596865,
+    "name": "Cherelle Parker",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Philadelphia+PA"
+  },
+  {
+    "rank": 6,
+    "city": "Phoenix",
+    "state_name": "Arizona",
+    "state_code": "AZ",
+    "population_2024": 1591119,
+    "name": "Kate Gallego",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Phoenix+AZ"
+  },
+  {
+    "rank": 7,
+    "city": "San Antonio",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 1434540,
+    "name": "Gina Ortiz Jones",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+San+Antonio+TX"
+  },
+  {
+    "rank": 8,
+    "city": "San Diego",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 1385398,
+    "name": "Todd Gloria",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+San+Diego+CA"
+  },
+  {
+    "rank": 9,
+    "city": "Dallas",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 1300239,
+    "name": "Eric Johnson",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Dallas+TX"
+  },
+  {
+    "rank": 10,
+    "city": "San Jose",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 1013337,
+    "name": "Matt Mahan",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+San+Jose+CA"
+  },
+  {
+    "rank": 11,
+    "city": "Austin",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 944658,
+    "name": "Kirk Watson",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Austin+TX"
+  },
+  {
+    "rank": 12,
+    "city": "Jacksonville",
+    "state_name": "Florida",
+    "state_code": "FL",
+    "population_2024": 937690,
+    "name": "Donna Deegan",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Jacksonville+FL"
+  },
+  {
+    "rank": 13,
+    "city": "Fort Worth",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 908469,
+    "name": "Mattie Parker",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Fort+Worth+TX"
+  },
+  {
+    "rank": 14,
+    "city": "Columbus",
+    "state_name": "Ohio",
+    "state_code": "OH",
+    "population_2024": 898143,
+    "name": "Andrew Ginther",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Columbus+OH"
+  },
+  {
+    "rank": 15,
+    "city": "Indianapolis (balance)",
+    "state_name": "Indiana",
+    "state_code": "IN",
+    "population_2024": 880104,
+    "name": "Joe Hogsett",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Indianapolis+(balance)+IN"
+  },
+  {
+    "rank": 16,
+    "city": "San Francisco",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 865933,
+    "name": "Daniel Lurie",
+    "party": "Democrat",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+San+Francisco+CA"
+  },
+  {
+    "rank": 17,
+    "city": "Charlotte",
+    "state_name": "North Carolina",
+    "state_code": "NC",
+    "population_2024": 864871,
+    "name": "Vi Lyles",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Charlotte+NC"
+  },
+  {
+    "rank": 18,
+    "city": "Seattle",
+    "state_name": "Washington",
+    "state_code": "WA",
+    "population_2024": 726054,
+    "name": "Katie Wilson",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Seattle+WA"
+  },
+  {
+    "rank": 19,
+    "city": "Denver",
+    "state_name": "Colorado",
+    "state_code": "CO",
+    "population_2024": 706799,
+    "name": "Mike Johnston",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Denver+CO"
+  },
+  {
+    "rank": 20,
+    "city": "Washington",
+    "state_name": "District of Columbia",
+    "state_code": "DC",
+    "population_2024": 683154,
+    "name": "Muriel Bowser",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Washington+DC"
+  },
+  {
+    "rank": 21,
+    "city": "Nashville-Davidson (balance)",
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "population_2024": 682646,
+    "name": "Freddie O\u2019Connell",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Nashville-Davidson+(balance)+TN"
+  },
+  {
+    "rank": 22,
+    "city": "El Paso",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 676395,
+    "name": "Renard Johnson",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+El+Paso+TX"
+  },
+  {
+    "rank": 23,
+    "city": "Oklahoma",
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "population_2024": 673183,
+    "name": "David Holt",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Oklahoma+OK"
+  },
+  {
+    "rank": 24,
+    "city": "Boston",
+    "state_name": "Massachusetts",
+    "state_code": "MA",
+    "population_2024": 672814,
+    "name": "Michelle Wu",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Boston+MA"
+  },
+  {
+    "rank": 25,
+    "city": "Portland",
+    "state_name": "Oregon",
+    "state_code": "OR",
+    "population_2024": 647176,
+    "name": "Keith Wilson",
+    "party": "Nonpartisan (Democratic affiliation)",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Portland+OR"
+  },
+  {
+    "rank": 26,
+    "city": "Detroit",
+    "state_name": "Michigan",
+    "state_code": "MI",
+    "population_2024": 645658,
+    "name": "Mike Duggan",
+    "party": "Independent",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Detroit+MI"
+  },
+  {
+    "rank": 27,
+    "city": "Las Vegas",
+    "state_name": "Nevada",
+    "state_code": "NV",
+    "population_2024": 634786,
+    "name": "Shelley Berkley",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Las+Vegas+NV"
+  },
+  {
+    "rank": 28,
+    "city": "Memphis",
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "population_2024": 634139,
+    "name": "Paul Young",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Memphis+TN"
+  },
+  {
+    "rank": 29,
+    "city": "Louisville/Jefferson County (balance)",
+    "state_name": "Kentucky",
+    "state_code": "KY",
+    "population_2024": 630260,
+    "name": "Craig Greenberg",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Louisville/Jefferson+County+(balance)+KY"
+  },
+  {
+    "rank": 30,
+    "city": "Baltimore",
+    "state_name": "Maryland",
+    "state_code": "MD",
+    "population_2024": 592211,
+    "name": "Brandon Scott",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Baltimore+MD"
+  },
+  {
+    "rank": 31,
+    "city": "Milwaukee",
+    "state_name": "Wisconsin",
+    "state_code": "WI",
+    "population_2024": 578198,
+    "name": "Cavalier Johnson",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Milwaukee+WI"
+  },
+  {
+    "rank": 32,
+    "city": "Albuquerque",
+    "state_name": "New Mexico",
+    "state_code": "NM",
+    "population_2024": 562336,
+    "name": "Tim Keller",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Albuquerque+NM"
+  },
+  {
+    "rank": 33,
+    "city": "Fresno",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 538678,
+    "name": "Jerry Dyer",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Fresno+CA"
+  },
+  {
+    "rank": 34,
+    "city": "Tucson",
+    "state_name": "Arizona",
+    "state_code": "AZ",
+    "population_2024": 538167,
+    "name": "Regina Romero",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Tucson+AZ"
+  },
+  {
+    "rank": 35,
+    "city": "Sacramento",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 518605,
+    "name": "Kevin McCarty",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Sacramento+CA"
+  },
+  {
+    "rank": 36,
+    "city": "Kansas",
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "population_2024": 502597,
+    "name": "Quinton Lucas",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Kansas+MO"
+  },
+  {
+    "rank": 37,
+    "city": "Mesa",
+    "state_name": "Arizona",
+    "state_code": "AZ",
+    "population_2024": 497752,
+    "name": "Mark Freeman",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Mesa+AZ"
+  },
+  {
+    "rank": 38,
+    "city": "Atlanta",
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "population_2024": 492204,
+    "name": "Andre Dickens",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Atlanta+GA"
+  },
+  {
+    "rank": 39,
+    "city": "Omaha",
+    "state_name": "Nebraska",
+    "state_code": "NE",
+    "population_2024": 488059,
+    "name": "Jean Stothert",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Omaha+NE"
+  },
+  {
+    "rank": 40,
+    "city": "Colorado Springs",
+    "state_name": "Colorado",
+    "state_code": "CO",
+    "population_2024": 475282,
+    "name": "Yemi Mobolade",
+    "party": "Independent",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Colorado+Springs+CO"
+  },
+  {
+    "rank": 41,
+    "city": "Long Beach",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 466565,
+    "name": "Rex Richardson",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Long+Beach+CA"
+  },
+  {
+    "rank": 42,
+    "city": "Raleigh",
+    "state_name": "North Carolina",
+    "state_code": "NC",
+    "population_2024": 462219,
+    "name": "Janet Cowell",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Raleigh+NC"
+  },
+  {
+    "rank": 43,
+    "city": "Virginia Beach",
+    "state_name": "Virginia",
+    "state_code": "VA",
+    "population_2024": 457658,
+    "name": "Bobby Dyer",
+    "party": "Independent",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Virginia+Beach+VA"
+  },
+  {
+    "rank": 44,
+    "city": "Miami",
+    "state_name": "Florida",
+    "state_code": "FL",
+    "population_2024": 440807,
+    "name": "Eileen Higgins",
+    "party": "Democatic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Miami+FL"
+  },
+  {
+    "rank": 45,
+    "city": "Oakland",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 437548,
+    "name": "Sheng Thao",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Oakland+CA"
+  },
+  {
+    "rank": 46,
+    "city": "Minneapolis",
+    "state_name": "Minnesota",
+    "state_code": "MN",
+    "population_2024": 425091,
+    "name": "Jacob Frey",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Minneapolis+MN"
+  },
+  {
+    "rank": 47,
+    "city": "Tulsa",
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "population_2024": 410652,
+    "name": "G.T. Bynum",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Tulsa+OK"
+  },
+  {
+    "rank": 48,
+    "city": "Bakersfield",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 398756,
+    "name": "Karen Goh",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Bakersfield+CA"
+  },
+  {
+    "rank": 49,
+    "city": "Wichita",
+    "state_name": "Kansas",
+    "state_code": "KS",
+    "population_2024": 394574,
+    "name": "Lily Wu",
+    "party": "Nonpartisan (Republican affiliation)",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Wichita+KS"
+  },
+  {
+    "rank": 50,
+    "city": "Arlington",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 392304,
+    "name": "Jim Ross",
+    "party": "Nonpartisan (Republican affiliation)",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Arlington+TX"
+  },
+  {
+    "rank": 51,
+    "city": "New Orleans",
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "population_2024": 383974,
+    "name": "LaToya Cantrell",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+New+Orleans+LA"
+  },
+  {
+    "rank": 52,
+    "city": "Aurora",
+    "state_name": "Colorado",
+    "state_code": "CO",
+    "population_2024": 383496,
+    "name": "Mike Coffman",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Aurora+CO"
+  },
+  {
+    "rank": 53,
+    "city": "Tampa",
+    "state_name": "Florida",
+    "state_code": "FL",
+    "population_2024": 380476,
+    "name": "Jane Castor",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Tampa+FL"
+  },
+  {
+    "rank": 54,
+    "city": "Cleveland",
+    "state_name": "Ohio",
+    "state_code": "OH",
+    "population_2024": 374861,
+    "name": "Justin Bibb",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Cleveland+OH"
+  },
+  {
+    "rank": 55,
+    "city": "Urban Honolulu",
+    "state_name": "Hawaii",
+    "state_code": "HI",
+    "population_2024": 351554,
+    "name": "Rick Blangiardi",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Urban+Honolulu+HI"
+  },
+  {
+    "rank": 56,
+    "city": "Anaheim",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 348204,
+    "name": "Ashleigh Aitken",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Anaheim+CA"
+  },
+  {
+    "rank": 57,
+    "city": "San Juan",
+    "state_name": "PR",
+    "state_code": "PR",
+    "population_2024": 325343,
+    "name": "Miguel A. Romero Lugo",
+    "party": "Popular Democratic Party",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+San+Juan+PR"
+  },
+  {
+    "rank": 58,
+    "city": "Lexington-Fayette",
+    "state_name": "Kentucky",
+    "state_code": "KY",
+    "population_2024": 321354,
+    "name": "Linda Gorton",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Lexington-Fayette+KY"
+  },
+  {
+    "rank": 59,
+    "city": "Corpus Christi",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 318168,
+    "name": "Paulette Guajardo",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Corpus+Christi+TX"
+  },
+  {
+    "rank": 60,
+    "city": "Stockton",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 317818,
+    "name": "Kevin Lincoln",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Stockton+CA"
+  },
+  {
+    "rank": 61,
+    "city": "Riverside",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 314858,
+    "name": "Patricia Lock Dawson",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Riverside+CA"
+  },
+  {
+    "rank": 62,
+    "city": "Santa Ana",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 313818,
+    "name": "Valerie Amezcua",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Santa+Ana+CA"
+  },
+  {
+    "rank": 63,
+    "city": "Henderson",
+    "state_name": "Nevada",
+    "state_code": "NV",
+    "population_2024": 311250,
+    "name": "Michelle Romero",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Henderson+NV"
+  },
+  {
+    "rank": 64,
+    "city": "St. Paul",
+    "state_name": "Minnesota",
+    "state_code": "MN",
+    "population_2024": 309751,
+    "name": "Melvin Carter",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+St.+Paul+MN"
+  },
+  {
+    "rank": 65,
+    "city": "Cincinnati",
+    "state_name": "Ohio",
+    "state_code": "OH",
+    "population_2024": 308664,
+    "name": "Aftab Pureval",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Cincinnati+OH"
+  },
+  {
+    "rank": 66,
+    "city": "Newark",
+    "state_name": "New Jersey",
+    "state_code": "NJ",
+    "population_2024": 306247,
+    "name": "Ras Baraka",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Newark+NJ"
+  },
+  {
+    "rank": 67,
+    "city": "Pittsburgh",
+    "state_name": "Pennsylvania",
+    "state_code": "PA",
+    "population_2024": 303207,
+    "name": "Ed Gainey",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Pittsburgh+PA"
+  },
+  {
+    "rank": 68,
+    "city": "Orlando",
+    "state_name": "Florida",
+    "state_code": "FL",
+    "population_2024": 302968,
+    "name": "Buddy Dyer",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Orlando+FL"
+  },
+  {
+    "rank": 69,
+    "city": "St. Louis",
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "population_2024": 302787,
+    "name": "Tishaura Jones",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+St.+Louis+MO"
+  },
+  {
+    "rank": 70,
+    "city": "Irvine",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 297868,
+    "name": "Farrah Khan",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Irvine+CA"
+  },
+  {
+    "rank": 71,
+    "city": "Greensboro",
+    "state_name": "North Carolina",
+    "state_code": "NC",
+    "population_2024": 295483,
+    "name": "Nancy Vaughan",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Greensboro+NC"
+  },
+  {
+    "rank": 72,
+    "city": "Anchorage",
+    "state_name": "Alaska",
+    "state_code": "AK",
+    "population_2024": 292545,
+    "name": "Suzanne LaFrance",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Anchorage+AK"
+  },
+  {
+    "rank": 73,
+    "city": "Lincoln",
+    "state_name": "Nebraska",
+    "state_code": "NE",
+    "population_2024": 289136,
+    "name": "Leirion Gaylor Baird",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Lincoln+NE"
+  },
+  {
+    "rank": 74,
+    "city": "Jersey",
+    "state_name": "New Jersey",
+    "state_code": "NJ",
+    "population_2024": 287146,
+    "name": "Steven Fulop",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Jersey+NJ"
+  },
+  {
+    "rank": 75,
+    "city": "Plano",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 282181,
+    "name": "John Muns",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Plano+TX"
+  },
+  {
+    "rank": 76,
+    "city": "Durham",
+    "state_name": "North Carolina",
+    "state_code": "NC",
+    "population_2024": 279106,
+    "name": "Leo Williams",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Durham+NC"
+  },
+  {
+    "rank": 77,
+    "city": "Buffalo",
+    "state_name": "New York",
+    "state_code": "NY",
+    "population_2024": 276011,
+    "name": "Byron Brown",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Buffalo+NY"
+  },
+  {
+    "rank": 78,
+    "city": "Chula Vista",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 274818,
+    "name": "John McCann",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Chula+Vista+CA"
+  },
+  {
+    "rank": 79,
+    "city": "Chandler",
+    "state_name": "Arizona",
+    "state_code": "AZ",
+    "population_2024": 272439,
+    "name": "Kevin Hartke",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Chandler+AZ"
+  },
+  {
+    "rank": 80,
+    "city": "Toledo",
+    "state_name": "Ohio",
+    "state_code": "OH",
+    "population_2024": 271454,
+    "name": "Wade Kapszukiewicz",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Toledo+OH"
+  },
+  {
+    "rank": 81,
+    "city": "Madison",
+    "state_name": "Wisconsin",
+    "state_code": "WI",
+    "population_2024": 265447,
+    "name": "Satya Rhodes-Conway",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Madison+WI"
+  },
+  {
+    "rank": 82,
+    "city": "Fort Wayne",
+    "state_name": "Indiana",
+    "state_code": "IN",
+    "population_2024": 262676,
+    "name": "Sharon Tucker",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Fort+Wayne+IN"
+  },
+  {
+    "rank": 83,
+    "city": "Gilbert",
+    "state_name": "Arizona",
+    "state_code": "AZ",
+    "population_2024": 262249,
+    "name": "Scott Anderson",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Gilbert+AZ"
+  },
+  {
+    "rank": 84,
+    "city": "Reno",
+    "state_name": "Nevada",
+    "state_code": "NV",
+    "population_2024": 259913,
+    "name": "Hillary Schieve",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Reno+NV"
+  },
+  {
+    "rank": 85,
+    "city": "North Las Vegas",
+    "state_name": "Nevada",
+    "state_code": "NV",
+    "population_2024": 259638,
+    "name": "Pamela Goynes-Brown",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+North+Las+Vegas+NV"
+  },
+  {
+    "rank": 86,
+    "city": "St. Petersburg",
+    "state_name": "Florida",
+    "state_code": "FL",
+    "population_2024": 258245,
+    "name": "Ken Welch",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+St.+Petersburg+FL"
+  },
+  {
+    "rank": 87,
+    "city": "Lubbock",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 255537,
+    "name": "Mark McBrayer",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Lubbock+TX"
+  },
+  {
+    "rank": 88,
+    "city": "Laredo",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 254697,
+    "name": "Victor Trevi\u00f1o",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Laredo+TX"
+  },
+  {
+    "rank": 89,
+    "city": "Irving",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 254184,
+    "name": "Rick Stopfer",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Irving+TX"
+  },
+  {
+    "rank": 90,
+    "city": "Winston-Salem",
+    "state_name": "North Carolina",
+    "state_code": "NC",
+    "population_2024": 247917,
+    "name": "Allen Joines",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Winston-Salem+NC"
+  },
+  {
+    "rank": 91,
+    "city": "Chesapeake",
+    "state_name": "Virginia",
+    "state_code": "VA",
+    "population_2024": 247172,
+    "name": "Rick West",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Chesapeake+VA"
+  },
+  {
+    "rank": 92,
+    "city": "Glendale",
+    "state_name": "Arizona",
+    "state_code": "AZ",
+    "population_2024": 245685,
+    "name": "Jerry Weiers",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Glendale+AZ"
+  },
+  {
+    "rank": 93,
+    "city": "Garland",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 245075,
+    "name": "Scott LeMay",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Garland+TX"
+  },
+  {
+    "rank": 94,
+    "city": "Scottsdale",
+    "state_name": "Arizona",
+    "state_code": "AZ",
+    "population_2024": 238685,
+    "name": "David Ortega",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Scottsdale+AZ"
+  },
+  {
+    "rank": 95,
+    "city": "Norfolk",
+    "state_name": "Virginia",
+    "state_code": "VA",
+    "population_2024": 238556,
+    "name": "Kenneth Cooper Alexander",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Norfolk+VA"
+  },
+  {
+    "rank": 96,
+    "city": "Arlington",
+    "state_name": "Virginia",
+    "state_code": "VA",
+    "population_2024": 235764,
+    "name": "Jim Ross",
+    "party": "Independent",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Arlington+VA"
+  },
+  {
+    "rank": 97,
+    "city": "Boise",
+    "state_name": "Idaho",
+    "state_code": "ID",
+    "population_2024": 231537,
+    "name": "Lauren McLean",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Boise+ID"
+  },
+  {
+    "rank": 98,
+    "city": "Fremont",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 231502,
+    "name": "Lily Mei",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Fremont+CA"
+  },
+  {
+    "rank": 99,
+    "city": "Santa Clarita",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 227182,
+    "name": "Cameron Smyth",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Santa+Clarita+CA"
+  },
+  {
+    "rank": 100,
+    "city": "Spokane",
+    "state_name": "Washington",
+    "state_code": "WA",
+    "population_2024": 225709,
+    "name": "Lisa Brown",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Spokane+WA"
+  },
+  {
+    "rank": 101,
+    "city": "Richmond",
+    "state_name": "Virginia",
+    "state_code": "VA",
+    "population_2024": 225676,
+    "name": "Levar Stoney",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Richmond+VA"
+  },
+  {
+    "rank": 102,
+    "city": "Baton Rouge",
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "population_2024": 225539,
+    "name": "Sharon Weston Broome",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Baton+Rouge+LA"
+  },
+  {
+    "rank": 103,
+    "city": "Hialeah",
+    "state_name": "Florida",
+    "state_code": "FL",
+    "population_2024": 224362,
+    "name": "Esteban Bovo Jr.",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Hialeah+FL"
+  },
+  {
+    "rank": 104,
+    "city": "San Bernardino",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 220821,
+    "name": "Helen Tran",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+San+Bernardino+CA"
+  },
+  {
+    "rank": 105,
+    "city": "Enterprise",
+    "state_name": "Nevada",
+    "state_code": "NV",
+    "population_2024": 219566,
+    "name": "Naomi Hattaway",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Enterprise+NV"
+  },
+  {
+    "rank": 106,
+    "city": "Modesto",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 217728,
+    "name": "Sue Zwahlen",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Modesto+CA"
+  },
+  {
+    "rank": 107,
+    "city": "Spring Valley",
+    "state_name": "Nevada",
+    "state_code": "NV",
+    "population_2024": 217441,
+    "name": "Kevin McMahill",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Spring+Valley+NV"
+  },
+  {
+    "rank": 108,
+    "city": "Tacoma",
+    "state_name": "Washington",
+    "state_code": "WA",
+    "population_2024": 217332,
+    "name": "Victoria Woodards",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Tacoma+WA"
+  },
+  {
+    "rank": 109,
+    "city": "Des Moines",
+    "state_name": "Iowa",
+    "state_code": "IA",
+    "population_2024": 213545,
+    "name": "Connie Boesen",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Des+Moines+IA"
+  },
+  {
+    "rank": 110,
+    "city": "Rochester",
+    "state_name": "New York",
+    "state_code": "NY",
+    "population_2024": 211100,
+    "name": "Malik Evans",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Rochester+NY"
+  },
+  {
+    "rank": 111,
+    "city": "Huntsville",
+    "state_name": "Alabama",
+    "state_code": "AL",
+    "population_2024": 210081,
+    "name": "Tommy Battle",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Huntsville+AL"
+  },
+  {
+    "rank": 112,
+    "city": "Yonkers",
+    "state_name": "New York",
+    "state_code": "NY",
+    "population_2024": 209730,
+    "name": "Mike Spano",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Yonkers+NY"
+  },
+  {
+    "rank": 113,
+    "city": "Fayetteville",
+    "state_name": "North Carolina",
+    "state_code": "NC",
+    "population_2024": 208497,
+    "name": "Mitch Colvin",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Fayetteville+NC"
+  },
+  {
+    "rank": 114,
+    "city": "Moreno Valley",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 208371,
+    "name": "Ulises Cabrera",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Moreno+Valley+CA"
+  },
+  {
+    "rank": 115,
+    "city": "Fontana",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 208087,
+    "name": "Acquanetta Warren",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Fontana+CA"
+  },
+  {
+    "rank": 116,
+    "city": "Columbus",
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "population_2024": 204366,
+    "name": "Skip Henderson",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Columbus+GA"
+  },
+  {
+    "rank": 117,
+    "city": "Worcester",
+    "state_name": "Massachusetts",
+    "state_code": "MA",
+    "population_2024": 203867,
+    "name": "Joseph Petty",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Worcester+MA"
+  },
+  {
+    "rank": 118,
+    "city": "Oxnard",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 202981,
+    "name": "Luis McArthur",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Oxnard+CA"
+  },
+  {
+    "rank": 119,
+    "city": "Birmingham",
+    "state_name": "Alabama",
+    "state_code": "AL",
+    "population_2024": 202234,
+    "name": "Randall Woodfin",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Birmingham+AL"
+  },
+  {
+    "rank": 120,
+    "city": "Port St. Lucie",
+    "state_name": "Florida",
+    "state_code": "FL",
+    "population_2024": 202177,
+    "name": "Shannon Martin",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Port+St.+Lucie+FL"
+  },
+  {
+    "rank": 121,
+    "city": "Little Rock",
+    "state_name": "Arkansas",
+    "state_code": "AR",
+    "population_2024": 201893,
+    "name": "Frank Scott Jr.",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Little+Rock+AR"
+  },
+  {
+    "rank": 122,
+    "city": "Augusta-Richmond County (balance)",
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "population_2024": 201264,
+    "name": "Garnett Johnson",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Augusta-Richmond+County+(balance)+GA"
+  },
+  {
+    "rank": 123,
+    "city": "Montgomery",
+    "state_name": "Alabama",
+    "state_code": "AL",
+    "population_2024": 201022,
+    "name": "Steven Reed",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Montgomery+AL"
+  },
+  {
+    "rank": 124,
+    "city": "Amarillo",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 200371,
+    "name": "Cole Stanley",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Amarillo+TX"
+  },
+  {
+    "rank": 125,
+    "city": "Salt Lake",
+    "state_name": "Utah",
+    "state_code": "UT",
+    "population_2024": 199153,
+    "name": "Erin Mendenhall",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Salt+Lake+UT"
+  },
+  {
+    "rank": 126,
+    "city": "Huntington Beach",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 198735,
+    "name": "Pat Burns",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Huntington+Beach+CA"
+  },
+  {
+    "rank": 127,
+    "city": "Grand Rapids",
+    "state_name": "Michigan",
+    "state_code": "MI",
+    "population_2024": 197858,
+    "name": "David LaGrand",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Grand+Rapids+MI"
+  },
+  {
+    "rank": 128,
+    "city": "Glendale",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 196512,
+    "name": "Ara Najarian",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Glendale+CA"
+  },
+  {
+    "rank": 129,
+    "city": "Sunrise Manor",
+    "state_name": "Nevada",
+    "state_code": "NV",
+    "population_2024": 196411,
+    "name": "Kevin McMahill",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Sunrise+Manor+NV"
+  },
+  {
+    "rank": 130,
+    "city": "Grand Prairie",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 195992,
+    "name": "Ron Jensen",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Grand+Prairie+TX"
+  },
+  {
+    "rank": 131,
+    "city": "Overland Park",
+    "state_name": "Kansas",
+    "state_code": "KS",
+    "population_2024": 195249,
+    "name": "Curt Skoog",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Overland+Park+KS"
+  },
+  {
+    "rank": 132,
+    "city": "Tallahassee",
+    "state_name": "Florida",
+    "state_code": "FL",
+    "population_2024": 195057,
+    "name": "John Dailey",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Tallahassee+FL"
+  },
+  {
+    "rank": 133,
+    "city": "Frisco",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 193140,
+    "name": "Jeff Cheney",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Frisco+TX"
+  },
+  {
+    "rank": 134,
+    "city": "Cape Coral",
+    "state_name": "Florida",
+    "state_code": "FL",
+    "population_2024": 193003,
+    "name": "John Gunter",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Cape+Coral+FL"
+  },
+  {
+    "rank": 135,
+    "city": "Akron",
+    "state_name": "Ohio",
+    "state_code": "OH",
+    "population_2024": 191483,
+    "name": "Shammas Malik",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Akron+OH"
+  },
+  {
+    "rank": 136,
+    "city": "Paradise",
+    "state_name": "Nevada",
+    "state_code": "NV",
+    "population_2024": 189852,
+    "name": "Kevin McMahill",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Paradise+NV"
+  },
+  {
+    "rank": 137,
+    "city": "McKinney",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 189394,
+    "name": "George Fuller",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+McKinney+TX"
+  },
+  {
+    "rank": 138,
+    "city": "Shreveport",
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "population_2024": 189374,
+    "name": "Tom Arceneaux",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Shreveport+LA"
+  },
+  {
+    "rank": 139,
+    "city": "Knoxville",
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "population_2024": 189339,
+    "name": "Indya Kincannon",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Knoxville+TN"
+  },
+  {
+    "rank": 140,
+    "city": "Sioux Falls",
+    "state_name": "South Dakota",
+    "state_code": "SD",
+    "population_2024": 189258,
+    "name": "Paul TenHaken",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Sioux+Falls+SD"
+  },
+  {
+    "rank": 141,
+    "city": "Providence",
+    "state_name": "Rhode Island",
+    "state_code": "RI",
+    "population_2024": 188812,
+    "name": "Brett Smiley",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Providence+RI"
+  },
+  {
+    "rank": 142,
+    "city": "Vancouver",
+    "state_name": "Washington",
+    "state_code": "WA",
+    "population_2024": 188331,
+    "name": "Anne McEnerny-Ogle",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Vancouver+WA"
+  },
+  {
+    "rank": 143,
+    "city": "Peoria",
+    "state_name": "Arizona",
+    "state_code": "AZ",
+    "population_2024": 187733,
+    "name": "Jason Beck",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Peoria+AZ"
+  },
+  {
+    "rank": 144,
+    "city": "Mobile",
+    "state_name": "Alabama",
+    "state_code": "AL",
+    "population_2024": 187445,
+    "name": "Sandy Stimpson",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Mobile+AL"
+  },
+  {
+    "rank": 145,
+    "city": "Brownsville",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 185849,
+    "name": "John Cowen Jr.",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Brownsville+TX"
+  },
+  {
+    "rank": 146,
+    "city": "Newport News",
+    "state_name": "Virginia",
+    "state_code": "VA",
+    "population_2024": 185069,
+    "name": "Phillip Jones",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Newport+News+VA"
+  },
+  {
+    "rank": 147,
+    "city": "Aurora",
+    "state_name": "Illinois",
+    "state_code": "IL",
+    "population_2024": 183447,
+    "name": "Richard Irvin",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Aurora+IL"
+  },
+  {
+    "rank": 148,
+    "city": "Fort Lauderdale",
+    "state_name": "Florida",
+    "state_code": "FL",
+    "population_2024": 182247,
+    "name": "Dean Trantalis",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Fort+Lauderdale+FL"
+  },
+  {
+    "rank": 149,
+    "city": "Chattanooga",
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "population_2024": 180353,
+    "name": "Tim Kelly",
+    "party": "Independent",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Chattanooga+TN"
+  },
+  {
+    "rank": 150,
+    "city": "Santa Rosa",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 179213,
+    "name": "Natalie Rogers",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Santa+Rosa+CA"
+  },
+  {
+    "rank": 151,
+    "city": "Tempe",
+    "state_name": "Arizona",
+    "state_code": "AZ",
+    "population_2024": 178862,
+    "name": "Corey Woods",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Tempe+AZ"
+  },
+  {
+    "rank": 152,
+    "city": "Elk Grove",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 175510,
+    "name": "Bobbie Singh-Allen",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Elk+Grove+CA"
+  },
+  {
+    "rank": 153,
+    "city": "Ontario",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 175223,
+    "name": "Paul Leon",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Ontario+CA"
+  },
+  {
+    "rank": 154,
+    "city": "Oceanside",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 174461,
+    "name": "Esther Sanchez",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Oceanside+CA"
+  },
+  {
+    "rank": 155,
+    "city": "Salem",
+    "state_name": "Oregon",
+    "state_code": "OR",
+    "population_2024": 174193,
+    "name": "Chris Hoy",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Salem+OR"
+  },
+  {
+    "rank": 156,
+    "city": "Rancho Cucamonga",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 173946,
+    "name": "L. Dennis Michael",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Rancho+Cucamonga+CA"
+  },
+  {
+    "rank": 157,
+    "city": "Eugene",
+    "state_name": "Oregon",
+    "state_code": "OR",
+    "population_2024": 173278,
+    "name": "Lucy Vinis",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Eugene+OR"
+  },
+  {
+    "rank": 158,
+    "city": "Garden Grove",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 172708,
+    "name": "Steve Jones",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Garden+Grove+CA"
+  },
+  {
+    "rank": 159,
+    "city": "Lancaster",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 171820,
+    "name": "R. Rex Parris",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Lancaster+CA"
+  },
+  {
+    "rank": 160,
+    "city": "Cary",
+    "state_name": "North Carolina",
+    "state_code": "NC",
+    "population_2024": 171603,
+    "name": "Harold Weinbrecht",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Cary+NC"
+  },
+  {
+    "rank": 161,
+    "city": "Pembroke Pines",
+    "state_name": "Florida",
+    "state_code": "FL",
+    "population_2024": 170346,
+    "name": "Frank Ortis",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Pembroke+Pines+FL"
+  },
+  {
+    "rank": 162,
+    "city": "Bayam\u00f3n",
+    "state_name": "PR",
+    "state_code": "PR",
+    "population_2024": 170028,
+    "name": "Ramon Luis Rivera Jr.",
+    "party": "Popular Democratic Party",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Bayam%C3%B3n+PR"
+  },
+  {
+    "rank": 163,
+    "city": "Springfield",
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "population_2024": 168603,
+    "name": "Ken McClure",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Springfield+MO"
+  },
+  {
+    "rank": 164,
+    "city": "Palmdale",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 167987,
+    "name": "Laura Bettencourt",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Palmdale+CA"
+  },
+  {
+    "rank": 165,
+    "city": "Fort Collins",
+    "state_name": "Colorado",
+    "state_code": "CO",
+    "population_2024": 166788,
+    "name": "Jeni Arndt",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Fort+Collins+CO"
+  },
+  {
+    "rank": 166,
+    "city": "Clarksville",
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "population_2024": 163518,
+    "name": "Joe Pitts",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Clarksville+TN"
+  },
+  {
+    "rank": 167,
+    "city": "Salinas",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 163004,
+    "name": "Kimbley Craig",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Salinas+CA"
+  },
+  {
+    "rank": 168,
+    "city": "Hayward",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 162254,
+    "name": "Mark Salinas",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Hayward+CA"
+  },
+  {
+    "rank": 169,
+    "city": "Alexandria",
+    "state_name": "Virginia",
+    "state_code": "VA",
+    "population_2024": 158185,
+    "name": "Justin Wilson",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Alexandria+VA"
+  },
+  {
+    "rank": 170,
+    "city": "Paterson",
+    "state_name": "New Jersey",
+    "state_code": "NJ",
+    "population_2024": 157927,
+    "name": "Andre Sayegh",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Paterson+NJ"
+  },
+  {
+    "rank": 171,
+    "city": "Corona",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 157844,
+    "name": "Wes Speake",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Corona+CA"
+  },
+  {
+    "rank": 172,
+    "city": "Jackson",
+    "state_name": "Mississippi",
+    "state_code": "MS",
+    "population_2024": 156803,
+    "name": "Chokwe Antar Lumumba",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Jackson+MS"
+  },
+  {
+    "rank": 173,
+    "city": "Macon-Bibb",
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "population_2024": 156711,
+    "name": "Lester Miller",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Macon-Bibb+GA"
+  },
+  {
+    "rank": 174,
+    "city": "Springfield",
+    "state_name": "Massachusetts",
+    "state_code": "MA",
+    "population_2024": 155770,
+    "name": "Domenic Sarno",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Springfield+MA"
+  },
+  {
+    "rank": 175,
+    "city": "Kansas",
+    "state_name": "Kansas",
+    "state_code": "KS",
+    "population_2024": 155745,
+    "name": "Tyrone Garner",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Kansas+KS"
+  },
+  {
+    "rank": 176,
+    "city": "Lakewood",
+    "state_name": "Colorado",
+    "state_code": "CO",
+    "population_2024": 155608,
+    "name": "Wendi Strom",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Lakewood+CO"
+  },
+  {
+    "rank": 177,
+    "city": "Sunnyvale",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 155550,
+    "name": "Larry Klein",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Sunnyvale+CA"
+  },
+  {
+    "rank": 178,
+    "city": "Hollywood",
+    "state_name": "Florida",
+    "state_code": "FL",
+    "population_2024": 152597,
+    "name": "Josh Levy",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Hollywood+FL"
+  },
+  {
+    "rank": 179,
+    "city": "Pasadena",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 151964,
+    "name": "Jeff Wagner",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Pasadena+TX"
+  },
+  {
+    "rank": 180,
+    "city": "Pomona",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 151592,
+    "name": "Tim Sandoval",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Pomona+CA"
+  },
+  {
+    "rank": 181,
+    "city": "Escondido",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 151443,
+    "name": "Dane White",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Escondido+CA"
+  },
+  {
+    "rank": 182,
+    "city": "Joliet",
+    "state_name": "Illinois",
+    "state_code": "IL",
+    "population_2024": 150323,
+    "name": "Terry D\u2019Arcy",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Joliet+IL"
+  },
+  {
+    "rank": 183,
+    "city": "Killeen",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 150082,
+    "name": "Debbie Nash-King",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Killeen+TX"
+  },
+  {
+    "rank": 184,
+    "city": "Mesquite",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 149848,
+    "name": "Daniel Alem\u00e1n Jr.",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Mesquite+TX"
+  },
+  {
+    "rank": 185,
+    "city": "Bellevue",
+    "state_name": "Washington",
+    "state_code": "WA",
+    "population_2024": 149365,
+    "name": "Lynne Robinson",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Bellevue+WA"
+  },
+  {
+    "rank": 186,
+    "city": "Naperville",
+    "state_name": "Illinois",
+    "state_code": "IL",
+    "population_2024": 149013,
+    "name": "Scott Wehrli",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Naperville+IL"
+  },
+  {
+    "rank": 187,
+    "city": "Murfreesboro",
+    "state_name": "Tennessee",
+    "state_code": "TN",
+    "population_2024": 148970,
+    "name": "Shane McFarland",
+    "party": "Independent",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Murfreesboro+TN"
+  },
+  {
+    "rank": 188,
+    "city": "Rockford",
+    "state_name": "Illinois",
+    "state_code": "IL",
+    "population_2024": 148942,
+    "name": "Tom McNamara",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Rockford+IL"
+  },
+  {
+    "rank": 189,
+    "city": "Bridgeport",
+    "state_name": "Connecticut",
+    "state_code": "CT",
+    "population_2024": 148529,
+    "name": "Joe Ganim",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Bridgeport+CT"
+  },
+  {
+    "rank": 190,
+    "city": "Savannah",
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "population_2024": 147930,
+    "name": "Van Johnson",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Savannah+GA"
+  },
+  {
+    "rank": 191,
+    "city": "Charleston",
+    "state_name": "South Carolina",
+    "state_code": "SC",
+    "population_2024": 147928,
+    "name": "William Cogswell",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Charleston+SC"
+  },
+  {
+    "rank": 192,
+    "city": "Torrance",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 147156,
+    "name": "George Chen",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Torrance+CA"
+  },
+  {
+    "rank": 193,
+    "city": "Syracuse",
+    "state_name": "New York",
+    "state_code": "NY",
+    "population_2024": 146781,
+    "name": "Ben Walsh",
+    "party": "Independent",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Syracuse+NY"
+  },
+  {
+    "rank": 194,
+    "city": "Roseville",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 145687,
+    "name": "Bruce Houdeshell",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Roseville+CA"
+  },
+  {
+    "rank": 195,
+    "city": "Fullerton",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 142964,
+    "name": "Fred Jung",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Fullerton+CA"
+  },
+  {
+    "rank": 196,
+    "city": "McAllen",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 141941,
+    "name": "Javier Villalobos",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+McAllen+TX"
+  },
+  {
+    "rank": 197,
+    "city": "Surprise",
+    "state_name": "Arizona",
+    "state_code": "AZ",
+    "population_2024": 141875,
+    "name": "Skip Hall",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Surprise+AZ"
+  },
+  {
+    "rank": 198,
+    "city": "Metairie",
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "population_2024": 140590,
+    "name": "Mike Morath",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Metairie+LA"
+  },
+  {
+    "rank": 199,
+    "city": "Thornton",
+    "state_name": "Colorado",
+    "state_code": "CO",
+    "population_2024": 140538,
+    "name": "Jan Kulmann",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Thornton+CO"
+  },
+  {
+    "rank": 200,
+    "city": "Olathe",
+    "state_name": "Kansas",
+    "state_code": "KS",
+    "population_2024": 140339,
+    "name": "John Bacon",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Olathe+KS"
+  },
+  {
+    "rank": 201,
+    "city": "Visalia",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 140109,
+    "name": "Brett Taylor",
+    "party": "Nonpartisan/Unknown",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Visalia+CA"
+  },
+  {
+    "rank": 202,
+    "city": "Carolina",
+    "state_name": "PR",
+    "state_code": "PR",
+    "population_2024": 139735,
+    "name": "Jos\u00e9 Carlos Aponte Dalmau",
+    "party": "PDP",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Carolina+PR"
+  },
+  {
+    "rank": 203,
+    "city": "Denton",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 139704,
+    "name": "Gerard Hudspeth",
+    "party": "Nonpartisan/Unknown",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Denton+TX"
+  },
+  {
+    "rank": 204,
+    "city": "West Valley",
+    "state_name": "Utah",
+    "state_code": "UT",
+    "population_2024": 139361,
+    "name": "Karen Lang",
+    "party": "Nonpartisan/Unknown",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+West+Valley+UT"
+  },
+  {
+    "rank": 205,
+    "city": "Orange",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 139195,
+    "name": "Dan Slater",
+    "party": "Nonpartisan/Unknown",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Orange+CA"
+  },
+  {
+    "rank": 206,
+    "city": "Warren",
+    "state_name": "Michigan",
+    "state_code": "MI",
+    "population_2024": 138996,
+    "name": "Lori Stone",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Warren+MI"
+  },
+  {
+    "rank": 207,
+    "city": "Pasadena",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 138771,
+    "name": "Victor Gordo",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Pasadena+CA"
+  },
+  {
+    "rank": 208,
+    "city": "Gainesville",
+    "state_name": "Florida",
+    "state_code": "FL",
+    "population_2024": 138741,
+    "name": "Harvey Ward",
+    "party": "Nonpartisan/Unknown",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Gainesville+FL"
+  },
+  {
+    "rank": 209,
+    "city": "Dayton",
+    "state_name": "Ohio",
+    "state_code": "OH",
+    "population_2024": 138416,
+    "name": "Jeffrey J. Mims Jr.",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Dayton+OH"
+  },
+  {
+    "rank": 210,
+    "city": "Columbia",
+    "state_name": "South Carolina",
+    "state_code": "SC",
+    "population_2024": 137276,
+    "name": "Daniel Rickenmann",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Columbia+SC"
+  },
+  {
+    "rank": 211,
+    "city": "Waco",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 136800,
+    "name": "Jim Holmes",
+    "party": "Nonpartisan/Unknown",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Waco+TX"
+  },
+  {
+    "rank": 212,
+    "city": "Hampton",
+    "state_name": "Virginia",
+    "state_code": "VA",
+    "population_2024": 136748,
+    "name": "Donnie Tuck",
+    "party": "Nonpartisan/Unknown",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Hampton+VA"
+  },
+  {
+    "rank": 213,
+    "city": "Cedar Rapids",
+    "state_name": "Iowa",
+    "state_code": "IA",
+    "population_2024": 136512,
+    "name": "Tiffany O\u2019Donnell",
+    "party": "Nonpartisan/Unknown",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Cedar+Rapids+IA"
+  },
+  {
+    "rank": 214,
+    "city": "Elizabeth",
+    "state_name": "New Jersey",
+    "state_code": "NJ",
+    "population_2024": 135772,
+    "name": "J. Christian Bollwage",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Elizabeth+NJ"
+  },
+  {
+    "rank": 215,
+    "city": "Kent",
+    "state_name": "Washington",
+    "state_code": "WA",
+    "population_2024": 134890,
+    "name": "Dana Ralph",
+    "party": "Nonpartisan/Unknown",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Kent+WA"
+  },
+  {
+    "rank": 216,
+    "city": "Stamford",
+    "state_name": "Connecticut",
+    "state_code": "CT",
+    "population_2024": 134820,
+    "name": "Caroline Simmons",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Stamford+CT"
+  },
+  {
+    "rank": 217,
+    "city": "Miramar",
+    "state_name": "Florida",
+    "state_code": "FL",
+    "population_2024": 134306,
+    "name": "Wayne Messam",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Miramar+FL"
+  },
+  {
+    "rank": 218,
+    "city": "Sterling Heights",
+    "state_name": "Michigan",
+    "state_code": "MI",
+    "population_2024": 134062,
+    "name": "Michael C. Taylor",
+    "party": "Nonpartisan/Unknown",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Sterling+Heights+MI"
+  },
+  {
+    "rank": 219,
+    "city": "New Haven",
+    "state_name": "Connecticut",
+    "state_code": "CT",
+    "population_2024": 133874,
+    "name": "Justin Elicker",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+New+Haven+CT"
+  },
+  {
+    "rank": 220,
+    "city": "Coral Springs",
+    "state_name": "Florida",
+    "state_code": "FL",
+    "population_2024": 133693,
+    "name": "Scott J. Brook",
+    "party": "Nonpartisan/Unknown",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Coral+Springs+FL"
+  },
+  {
+    "rank": 221,
+    "city": "Victorville",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 132924,
+    "name": "Debra Jones",
+    "party": "Nonpartisan/Unknown",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Victorville+CA"
+  },
+  {
+    "rank": 222,
+    "city": "Carrollton",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 131388,
+    "name": "Steve Franks",
+    "party": "Nonpartisan/Unknown",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Carrollton+TX"
+  },
+  {
+    "rank": 223,
+    "city": "Midland",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 130765,
+    "name": "Lori Blong",
+    "party": "Nonpartisan/Unknown",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Midland+TX"
+  },
+  {
+    "rank": 224,
+    "city": "Santa Clara",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 127922,
+    "name": "Lisa Gillmor",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Santa+Clara+CA"
+  },
+  {
+    "rank": 225,
+    "city": "Thousand Oaks",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 127274,
+    "name": "David Newman",
+    "party": "Nonpartisan/Unknown",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Thousand+Oaks+CA"
+  },
+  {
+    "rank": 226,
+    "city": "Simi Valley",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 126809,
+    "name": "Dee Dee Cavanaugh",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Simi+Valley+CA"
+  },
+  {
+    "rank": 227,
+    "city": "Topeka",
+    "state_name": "Kansas",
+    "state_code": "KS",
+    "population_2024": 126802,
+    "name": "Mike Padilla",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Topeka+KS"
+  },
+  {
+    "rank": 228,
+    "city": "Athens-Clarke County (balance)",
+    "state_name": "Georgia",
+    "state_code": "GA",
+    "population_2024": 126118,
+    "name": "Kelly Girtz",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Athens-Clarke+County+(balance)+GA"
+  },
+  {
+    "rank": 229,
+    "city": "Concord",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 125769,
+    "name": "Laura Nakamura",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Concord+CA"
+  },
+  {
+    "rank": 230,
+    "city": "Norman",
+    "state_name": "Oklahoma",
+    "state_code": "OK",
+    "population_2024": 125745,
+    "name": "Stephen Tyler Holman",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Norman+OK"
+  },
+  {
+    "rank": 231,
+    "city": "Abilene",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 125474,
+    "name": "Weldon W. Hurt",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Abilene+TX"
+  },
+  {
+    "rank": 232,
+    "city": "Vallejo",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 125350,
+    "name": "Andrea Sorce",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Vallejo+CA"
+  },
+  {
+    "rank": 233,
+    "city": "Allentown",
+    "state_name": "Pennsylvania",
+    "state_code": "PA",
+    "population_2024": 125250,
+    "name": "Matt Tuerk",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Allentown+PA"
+  },
+  {
+    "rank": 234,
+    "city": "Fargo",
+    "state_name": "North Dakota",
+    "state_code": "ND",
+    "population_2024": 124979,
+    "name": "Tim Mahoney",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Fargo+ND"
+  },
+  {
+    "rank": 235,
+    "city": "Columbia",
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "population_2024": 124342,
+    "name": "Barbara Buffaloe",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Columbia+MO"
+  },
+  {
+    "rank": 236,
+    "city": "Lehigh Acres",
+    "state_name": "Florida",
+    "state_code": "FL",
+    "population_2024": 123751,
+    "name": "N/A",
+    "party": "N/A",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Lehigh+Acres+FL"
+  },
+  {
+    "rank": 237,
+    "city": "Arvada",
+    "state_name": "Colorado",
+    "state_code": "CO",
+    "population_2024": 122903,
+    "name": "Lauren Simpson",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Arvada+CO"
+  },
+  {
+    "rank": 238,
+    "city": "Ann Arbor",
+    "state_name": "Michigan",
+    "state_code": "MI",
+    "population_2024": 122731,
+    "name": "Christopher Taylor",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Ann+Arbor+MI"
+  },
+  {
+    "rank": 239,
+    "city": "Pearland",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 122609,
+    "name": "Kevin Cole",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Pearland+TX"
+  },
+  {
+    "rank": 240,
+    "city": "Lafayette",
+    "state_name": "Louisiana",
+    "state_code": "LA",
+    "population_2024": 122469,
+    "name": "Josh Guillory",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Lafayette+LA"
+  },
+  {
+    "rank": 241,
+    "city": "Independence",
+    "state_name": "Missouri",
+    "state_code": "MO",
+    "population_2024": 122230,
+    "name": "Rory Rowland",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Independence+MO"
+  },
+  {
+    "rank": 242,
+    "city": "Hartford",
+    "state_name": "Connecticut",
+    "state_code": "CT",
+    "population_2024": 121562,
+    "name": "Arunan Arulampalam",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Hartford+CT"
+  },
+  {
+    "rank": 243,
+    "city": "Rochester",
+    "state_name": "Minnesota",
+    "state_code": "MN",
+    "population_2024": 119732,
+    "name": "Kim Norton",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Rochester+MN"
+  },
+  {
+    "rank": 244,
+    "city": "Berkeley",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 119607,
+    "name": "Jesse Arregu\u00edn",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Berkeley+CA"
+  },
+  {
+    "rank": 245,
+    "city": "East Los Angeles",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 118964,
+    "name": "N/A",
+    "party": "N/A",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+East+Los+Angeles+CA"
+  },
+  {
+    "rank": 246,
+    "city": "Fairfield",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 118932,
+    "name": "Catherine Moy",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Fairfield+CA"
+  },
+  {
+    "rank": 247,
+    "city": "Palm Bay",
+    "state_name": "Florida",
+    "state_code": "FL",
+    "population_2024": 118709,
+    "name": "Rob Medina",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Palm+Bay+FL"
+  },
+  {
+    "rank": 248,
+    "city": "Clovis",
+    "state_name": "California",
+    "state_code": "CA",
+    "population_2024": 118488,
+    "name": "Lynne Ashbeck",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Clovis+CA"
+  },
+  {
+    "rank": 249,
+    "city": "Round Rock",
+    "state_name": "Texas",
+    "state_code": "TX",
+    "population_2024": 117735,
+    "name": "Craig Morgan",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Round+Rock+TX"
+  },
+  {
+    "rank": 250,
+    "city": "Evansville",
+    "state_name": "Indiana",
+    "state_code": "IN",
+    "population_2024": 117184,
+    "name": "Stephanie Terry",
+    "party": "Democratic",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Evansville+IN"
+  },
+  {
+    "rank": 251,
+    "city": "Hagatna",
+    "state_name": "Guam",
+    "state_code": "GU",
+    "population_2024": 1100,
+    "name": "Michael T. C. Gumataotao",
+    "party": "Nonpartisan",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Hagatna+Guam"
+  },
+  {
+    "rank": 252,
+    "city": "Saipan",
+    "state_name": "Northern Mariana Islands",
+    "state_code": "MP",
+    "population_2024": 47565,
+    "name": "Ramon RB Camacho",
+    "party": "Republican",
+    "url": "https://en.wikipedia.org/w/index.php?search=mayor+of+Saipan"
+  }
+]

@@ -1,0 +1,572 @@
+[
+  {
+    "jurisdiction": "Alabama",
+    "methods": {
+      "in_person": "Received 5 days before Election Day.",
+      "by_mail": "Received 7 days before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Alaska",
+    "methods": {
+      "in_person": "Received 10 days before Election Day.",
+      "by_mail": "Received 10 days before Election Day.",
+      "online_email": "Received 10 days before Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "American Samoa",
+    "methods": {
+      "in_person": "See American Samoa Election Office for election-specific deadlines.",
+      "by_mail": "Federal (UOCAVA) ballot request deadline for General Election Nov 3, 2026: Received by Oct 19, 2026.",
+      "online_email": "Federal (UOCAVA) ballot request deadline for General Election Nov 3, 2026: Received by Oct 19, 2026."
+    },
+    "conventions": [
+      "FVAP deadlines shown are for military/overseas absentee voting (UOCAVA). The American Samoa Election Office provides absentee request instructions/forms."
+    ],
+    "source_url": "https://www.fvap.gov/guide/chapter2/american-samoa"
+  },
+  {
+    "jurisdiction": "Arizona",
+    "methods": {
+      "in_person": "Received by 5pm, 11 days before Election Day.",
+      "by_mail": "Received by 5pm, 11 days before Election Day.",
+      "online_email": "Received by 5pm, 11 days before Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Arkansas",
+    "methods": {
+      "in_person": "Received the Friday before Election Day.",
+      "by_mail": "Received 7 days before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "California",
+    "methods": {
+      "in_person": "If you need to change where your ballot is mailed, your application should be received by the 7th day before Election Day.",
+      "by_mail": "If you need to change where your ballot is mailed, your application should be received by the 7th day before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Colorado",
+    "methods": {
+      "in_person": "N/A",
+      "by_mail": "If you need to change where your ballot is mailed, submit an address change at least 8 days before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Connecticut",
+    "methods": {
+      "in_person": "Received 1 day before Election Day",
+      "by_mail": "Received 1 day before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Delaware",
+    "methods": {
+      "in_person": "Received by 12pm on the day before Election Day.",
+      "by_mail": "Received 4 days before Election Day.",
+      "online_email": "Received 4 days before Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "District of Columbia",
+    "methods": {
+      "in_person": "N/A",
+      "by_mail": "Received 15 days before Election Day.",
+      "online_email": "Received 15 days before Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Florida",
+    "methods": {
+      "in_person": "Received by 5pm 12 days before Election Day",
+      "by_mail": "Received by 5pm 12 days before Election Day",
+      "online_email": "Received by 5pm 12 days before Election Day"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Georgia",
+    "methods": {
+      "in_person": "Received 11 days before Election Day.",
+      "by_mail": "Received 11 days before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Guam",
+    "methods": {
+      "in_person": "See FVAP / EAC page for election-specific deadlines (Guam Election Commission site was unavailable during compile).",
+      "by_mail": "Federal (UOCAVA) ballot request deadline for General Election Nov 3, 2026: Received by Oct 31, 2026.",
+      "online_email": "See FVAP / EAC page for election-specific deadlines."
+    },
+    "conventions": [
+      "FVAP deadlines shown are for military/overseas absentee voting (UOCAVA). For other absentee categories, see Guam Election Commission via EAC."
+    ],
+    "source_url": "https://www.fvap.gov/guam"
+  },
+  {
+    "jurisdiction": "Hawaii",
+    "methods": {
+      "in_person": "If you need to change where your ballot is mailed, submit address change at least 7 days before Election Day.",
+      "by_mail": "If you need to change where your ballot is mailed, submit address change at least 7 days before Election Day.",
+      "online_email": "N/A, Hawaii has transitioned to all-mail voting with no application required."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Idaho",
+    "methods": {
+      "in_person": "Received by 5pm on the Friday before Election Day.",
+      "by_mail": "Received by 5pm 11 days before Election Day.",
+      "online_email": "Received by 5pm 11 days before Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Illinois",
+    "methods": {
+      "in_person": "Received 1 day before Election Day.",
+      "by_mail": "Received 5 days before Election Day.",
+      "online_email": "Received 5 days before Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Indiana",
+    "methods": {
+      "in_person": "Received 12 days before Election Day.",
+      "by_mail": "Received 12 days before Election Day.",
+      "online_email": "Received 12 days before Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Iowa",
+    "methods": {
+      "in_person": "Received 1 day before Election Day unless the polls open at noon. If the polls open at noon, you may cast an absentee ballot at the county auditor's office from 8am to 11am on Election Day.",
+      "by_mail": "Received 15 days before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Kansas",
+    "methods": {
+      "in_person": "Received 7 days before Election Day.",
+      "by_mail": "Received 7 days before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Kentucky",
+    "methods": {
+      "in_person": "N/A",
+      "by_mail": "N/A",
+      "online_email": "Received by 11:59 PM 14 days before Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Louisiana",
+    "methods": {
+      "in_person": "Received by 4:30pm, 4 days before Election Day (unless this day falls on a weekend or holiday; then the deadline is the following business day).",
+      "by_mail": "Received by 4:30pm, 4 days before Election Day (unless this day falls on a weekend or holiday; then the deadline is the following business day).",
+      "online_email": "Received by 4:30pm, 4 days before Election Day (unless this day falls on a weekend or holiday; then the deadline is the following business day)."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Maine",
+    "methods": {
+      "in_person": "Received 3 business days before Election Day.",
+      "by_mail": "Received 3 business days before Election Day.",
+      "online_email": "Received 3 business days before Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Maryland",
+    "methods": {
+      "in_person": "Election Day.",
+      "by_mail": "Received 7 days before Election Day.",
+      "online_email": "Received 7 days before Election Day to receive ballot by mail, and received 4 days before Election Day to receive ballot online."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Massachusetts",
+    "methods": {
+      "in_person": "Received by 5pm, 5 business days before Election Day.",
+      "by_mail": "Received by 5pm, 5 business days before Election Day.",
+      "online_email": "Received by 5pm, 5 business days before Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Michigan",
+    "methods": {
+      "in_person": "Received at your city or township clerk’s office by 4 p.m. 1 day before Election Day (if already registered where you live); received by 8 p.m. on Election Day (if a new/updated registrant). If you request your absentee ballot on Election Day, you must vote the ballot in the clerk's office.",
+      "by_mail": "Received by your city of township clerk by 5 p.m. the Friday before the election. There is no guarantee that a voter who submits their application by or close to this deadline will receive a ballot before Election Day. If it is within two weeks of Election Day, voters are strongly encouraged to request an absentee ballot in person.",
+      "online_email": "Received by 5 p.m. the Friday before the election. There is no guarantee that a voter who submits their application by or close to this deadline will receive a ballot before Election Day. If it is within two weeks of Election Day, voters are strongly encouraged to request an absentee ballot in person."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Minnesota",
+    "methods": {
+      "in_person": "Received before Election Day, but we recommend submitting at least 7 days before Election Day to allow time to receive absentee ballot and submit by Election Day.",
+      "by_mail": "Received before Election Day, but we recommend submitting at least 7 days before Election Day to allow time to receive absentee ballot and submit by Election Day.",
+      "online_email": "Received before Election Day, but we recommend submitting at least 7 days before Election Day to allow time to receive absentee ballot and submit by Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Mississippi",
+    "methods": {
+      "in_person": "No specific deadline. In-person absentee voting for those with a qualifying excuse ends 3 days before Election Day.",
+      "by_mail": "No specific deadline. We recommend requesting your ballot at least 7 days before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Missouri",
+    "methods": {
+      "in_person": "Received by 5pm on the day before Election Day.",
+      "by_mail": "Received by 5pm on the second Wednesday prior to Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Montana",
+    "methods": {
+      "in_person": "Received by noon, 1 day before Election Day.",
+      "by_mail": "Received by noon, 1 day before before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Nebraska",
+    "methods": {
+      "in_person": "Received 11 days before Election Day.",
+      "by_mail": "Received 11 days before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Nevada",
+    "methods": {
+      "in_person": "N/A (all registered voters will receive a vote by mail ballot)",
+      "by_mail": "N/A (all registered voters will receive a vote by mail ballot)",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "New Hampshire",
+    "methods": {
+      "in_person": "No specific deadline.",
+      "by_mail": "No specific deadline. We recommend requesting your ballot at least 14 days before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "New Jersey",
+    "methods": {
+      "in_person": "Received by 3pm, the day before Election Day.",
+      "by_mail": "Received 7 days before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "New Mexico",
+    "methods": {
+      "in_person": "Received 14 days prior to Election Day.",
+      "by_mail": "Received 14 days prior to Election Day.",
+      "online_email": "Received 14 days prior to Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "New York",
+    "methods": {
+      "in_person": "Received 1 day before Election Day.",
+      "by_mail": "Received 15 days before Election Day.",
+      "online_email": "Received 15 days before Election Day"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "North Carolina",
+    "methods": {
+      "in_person": "Received by 5pm 7 days before Election Day.",
+      "by_mail": "Received by 5pm, 7 days before Election Day.",
+      "online_email": "Received 7 days before Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "North Dakota",
+    "methods": {
+      "in_person": "No specific deadline.",
+      "by_mail": "No specific deadline. We recommend requesting your ballot at least 7 days before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Northern Mariana Islands",
+    "methods": {
+      "in_person": "Apply no more than 75 days before, and not less than 25 days before, the election.",
+      "by_mail": "Apply no more than 75 days before, and not less than 25 days before, the election.",
+      "online_email": "Apply no more than 75 days before, and not less than 25 days before, the election."
+    },
+    "conventions": [
+      "Window for absentee voting application; check the Commonwealth Election Commission for election-specific calendars."
+    ],
+    "source_url": "https://www.votecnmi.gov.mp/downloads/registration_package-f.pdf"
+  },
+  {
+    "jurisdiction": "Ohio",
+    "methods": {
+      "in_person": "Received by close of business 7 days before Election Day.",
+      "by_mail": "Received by close of business 7 days before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Oklahoma",
+    "methods": {
+      "in_person": "Received by 5pm on the third Monday preceding Election Day.",
+      "by_mail": "Received by 5pm on the third Monday preceding an election.",
+      "online_email": "Received by 5pm on the third Monday preceding an election."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Oregon",
+    "methods": {
+      "in_person": "N/A",
+      "by_mail": "You can update your voter registration information, until 8 p.m. on Election Day and still cast a ballot. However, if your registration is updated close to an election, your ballot might have to be issued at the county elections office.​​​​​​​​​​​​​​​​​​​​​​​​",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Pennsylvania",
+    "methods": {
+      "in_person": "Received 7 days before Election Day by 5PM.",
+      "by_mail": "Received 7 days before Election Day.",
+      "online_email": "Received by 5pm on the first Tuesday before Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Puerto Rico",
+    "methods": {
+      "in_person": "On or before 45 days prior to Election Day (voto ausente)",
+      "by_mail": "On or before 45 days prior to Election Day (voto ausente)",
+      "online_email": "On or before 45 days prior to Election Day (voto ausente); ballot delivery can be by email per voter request"
+    },
+    "conventions": [
+      "Puerto Rico distinguishes voto ausente (absentee) vs voto adelantado (early): voto adelantado must be requested on/before 50 days prior."
+    ],
+    "source_url": "https://ww2.ceepur.org/Home/SolicituddeVoto"
+  },
+  {
+    "jurisdiction": "Rhode Island",
+    "methods": {
+      "in_person": "Received by 4pm, 21 days before Election Day.",
+      "by_mail": "Received by 4pm, 21 days before Election Day.",
+      "online_email": "Received by 4pm, 21 days before Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "South Carolina",
+    "methods": {
+      "in_person": "5pm on the 11th day before Election Day.",
+      "by_mail": "Received by 5:00pm 4 days prior to the election. However, the state strongly recommends that voters' applications are received two weeks before Election Day to provide time for receiving and returning ballots by mail.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "South Dakota",
+    "methods": {
+      "in_person": "1 day before Election Day.",
+      "by_mail": "Received 1 day before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Tennessee",
+    "methods": {
+      "in_person": "N/A",
+      "by_mail": "Received 7 days before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Texas",
+    "methods": {
+      "in_person": "Received 11 days before Election Day.",
+      "by_mail": "Received 11 days before Election Day",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Utah",
+    "methods": {
+      "in_person": "Utah automatically sends ballots to all registered voters, but for individuals who need a ballot mailed to a location other than their registration address, an application must be received 11 days before Election Day.",
+      "by_mail": "Utah automatically sends ballots to all registered voters, but for individuals who need a ballot mailed to a location other than their registration address, an application must be received 11 days before Election Day.",
+      "online_email": "Utah automatically sends ballots to all registered voters, but for individuals who need a ballot mailed to a location other than their registration address, an application must be received 11 days before Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Vermont",
+    "methods": {
+      "in_person": "Received 1 day before Election Day.",
+      "by_mail": "Received 1 day before Election Day.",
+      "online_email": "Received 1 day before Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Virgin Islands",
+    "methods": {
+      "in_person": "See FVAP / Elections System for election-specific deadlines.",
+      "by_mail": "Federal (UOCAVA) request mail ballot deadline (General Election Nov 3, 2026): Received by Oct 20, 2026.",
+      "online_email": "Federal (UOCAVA) request email/faxed ballot deadline (General Election Nov 3, 2026): Received by 5 PM, Nov 3, 2026."
+    },
+    "conventions": [
+      "FVAP deadlines shown are for military/overseas absentee voting (UOCAVA)."
+    ],
+    "source_url": "https://www.fvap.gov/virgin-islands"
+  },
+  {
+    "jurisdiction": "Virginia",
+    "methods": {
+      "in_person": "Received 3 days before Election Day.",
+      "by_mail": "Received by 5 PM 11 days before Election Day.",
+      "online_email": "Received by 5 PM 11 days before Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Washington",
+    "methods": {
+      "in_person": "N/A",
+      "by_mail": "Washington automatically sends a ballot to every registered voter, but also provides a special application for voters who are unable to receive and return a ballot during the regular absentee ballot window. This application can be submitted in person starting 90 days before the election.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "West Virginia",
+    "methods": {
+      "in_person": "Received 6 days before Election Day.",
+      "by_mail": "Received 6 days before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Wisconsin",
+    "methods": {
+      "in_person": "The Sunday before Election Day.",
+      "by_mail": "Received by 5pm 5 days before Election Day.",
+      "online_email": "Received by 5pm, 5 days before Election Day."
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  },
+  {
+    "jurisdiction": "Wyoming",
+    "methods": {
+      "in_person": "Received 1 day before Election Day.",
+      "by_mail": "Received 1 day before Election Day.",
+      "online_email": "N/A"
+    },
+    "conventions": null,
+    "source_url": "https://www.vote.org/absentee-ballot-deadlines/"
+  }
+]
