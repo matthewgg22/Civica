@@ -1,0 +1,419 @@
+{
+  "meta": {
+    "source_rows_50_states": 7349,
+    "db_rows_50_states": 7349,
+    "all_db_rows_total": 7443,
+    "states_checked": 50,
+    "states_passed": 50,
+    "states_failed": 0
+  },
+  "state_stats": {
+    "AK": {
+      "source_count": 60,
+      "db_count": 60,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "AL": {
+      "source_count": 140,
+      "db_count": 140,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "AR": {
+      "source_count": 135,
+      "db_count": 135,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "AZ": {
+      "source_count": 90,
+      "db_count": 90,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "CA": {
+      "source_count": 120,
+      "db_count": 120,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "CO": {
+      "source_count": 100,
+      "db_count": 100,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "CT": {
+      "source_count": 187,
+      "db_count": 187,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "DE": {
+      "source_count": 62,
+      "db_count": 62,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "FL": {
+      "source_count": 156,
+      "db_count": 156,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "GA": {
+      "source_count": 233,
+      "db_count": 233,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "HI": {
+      "source_count": 76,
+      "db_count": 76,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "IA": {
+      "source_count": 150,
+      "db_count": 150,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "ID": {
+      "source_count": 105,
+      "db_count": 105,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "IL": {
+      "source_count": 177,
+      "db_count": 177,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "IN": {
+      "source_count": 150,
+      "db_count": 150,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "KS": {
+      "source_count": 165,
+      "db_count": 165,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "KY": {
+      "source_count": 138,
+      "db_count": 138,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "LA": {
+      "source_count": 141,
+      "db_count": 141,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "MA": {
+      "source_count": 198,
+      "db_count": 198,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "MD": {
+      "source_count": 188,
+      "db_count": 188,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "ME": {
+      "source_count": 187,
+      "db_count": 187,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "MI": {
+      "source_count": 147,
+      "db_count": 147,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "MN": {
+      "source_count": 201,
+      "db_count": 201,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "MO": {
+      "source_count": 192,
+      "db_count": 192,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "MS": {
+      "source_count": 174,
+      "db_count": 174,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "MT": {
+      "source_count": 150,
+      "db_count": 150,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "NC": {
+      "source_count": 170,
+      "db_count": 170,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "ND": {
+      "source_count": 141,
+      "db_count": 141,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "NE": {
+      "source_count": 49,
+      "db_count": 49,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "NH": {
+      "source_count": 414,
+      "db_count": 414,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "NJ": {
+      "source_count": 120,
+      "db_count": 120,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "NM": {
+      "source_count": 112,
+      "db_count": 112,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "NV": {
+      "source_count": 63,
+      "db_count": 63,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "NY": {
+      "source_count": 213,
+      "db_count": 213,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "OH": {
+      "source_count": 132,
+      "db_count": 132,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "OK": {
+      "source_count": 146,
+      "db_count": 146,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "OR": {
+      "source_count": 90,
+      "db_count": 90,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "PA": {
+      "source_count": 248,
+      "db_count": 248,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "RI": {
+      "source_count": 113,
+      "db_count": 113,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "SC": {
+      "source_count": 170,
+      "db_count": 170,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "SD": {
+      "source_count": 105,
+      "db_count": 105,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "TN": {
+      "source_count": 132,
+      "db_count": 132,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "TX": {
+      "source_count": 180,
+      "db_count": 180,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "UT": {
+      "source_count": 104,
+      "db_count": 104,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "VA": {
+      "source_count": 139,
+      "db_count": 139,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "VT": {
+      "source_count": 180,
+      "db_count": 180,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "WA": {
+      "source_count": 147,
+      "db_count": 147,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "WI": {
+      "source_count": 132,
+      "db_count": 132,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "WV": {
+      "source_count": 134,
+      "db_count": 134,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    },
+    "WY": {
+      "source_count": 93,
+      "db_count": 93,
+      "missing_in_db": 0,
+      "extra_in_db": 0,
+      "field_mismatch_count": 0,
+      "status": "PASS"
+    }
+  },
+  "missing_in_db_total": 0,
+  "extra_in_db_total": 0,
+  "field_mismatch_total": 0,
+  "missing_in_db_sample": [],
+  "extra_in_db_sample": [],
+  "field_mismatches_sample": [],
+  "chamber_mismatch": []
+}

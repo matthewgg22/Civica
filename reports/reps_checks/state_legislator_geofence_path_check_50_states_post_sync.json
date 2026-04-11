@@ -1,0 +1,459 @@
+{
+  "summary": {
+    "states_checked": 50,
+    "pass": 50,
+    "fail": 0
+  },
+  "results": [
+    {
+      "state": "AL",
+      "status": "PASS",
+      "upper": "30",
+      "lower": "42",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "AK",
+      "status": "PASS",
+      "upper": "R",
+      "lower": "36",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "AZ",
+      "status": "PASS",
+      "upper": "1",
+      "lower": "1",
+      "upper_count": 1,
+      "lower_count": 2,
+      "legislature_count": 0
+    },
+    {
+      "state": "AR",
+      "status": "PASS",
+      "upper": "13",
+      "lower": "69",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "CA",
+      "status": "PASS",
+      "upper": "4",
+      "lower": "8",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "CO",
+      "status": "PASS",
+      "upper": "4",
+      "lower": "13",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "CT",
+      "status": "PASS",
+      "upper": "6",
+      "lower": "30",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "DE",
+      "status": "PASS",
+      "upper": "16",
+      "lower": "33",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "FL",
+      "status": "PASS",
+      "upper": "11",
+      "lower": "53",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "GA",
+      "status": "PASS",
+      "upper": "26",
+      "lower": "133",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "HI",
+      "status": "PASS",
+      "upper": "4",
+      "lower": "5",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "ID",
+      "status": "PASS",
+      "upper": "8",
+      "lower": "8",
+      "upper_count": 1,
+      "lower_count": 0,
+      "legislature_count": 0
+    },
+    {
+      "state": "IL",
+      "status": "PASS",
+      "upper": "44",
+      "lower": "87",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "IN",
+      "status": "PASS",
+      "upper": "29",
+      "lower": "86",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "IA",
+      "status": "PASS",
+      "upper": "26",
+      "lower": "51",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "KS",
+      "status": "PASS",
+      "upper": "33",
+      "lower": "113",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "KY",
+      "status": "PASS",
+      "upper": "14",
+      "lower": "51",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "LA",
+      "status": "PASS",
+      "upper": "28",
+      "lower": "28",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "ME",
+      "status": "PASS",
+      "upper": "4",
+      "lower": "30",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "MD",
+      "status": "PASS",
+      "upper": "23",
+      "lower": "23",
+      "upper_count": 1,
+      "lower_count": 3,
+      "legislature_count": 0
+    },
+    {
+      "state": "MA",
+      "status": "PASS",
+      "upper": "First Worcester",
+      "lower": "13th Worcester",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "MI",
+      "status": "PASS",
+      "upper": "34",
+      "lower": "92",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "MN",
+      "status": "PASS",
+      "upper": "6",
+      "lower": "6B",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "MS",
+      "status": "PASS",
+      "upper": "21",
+      "lower": "27",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "MO",
+      "status": "PASS",
+      "upper": "6",
+      "lower": "124",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "MT",
+      "status": "PASS",
+      "upper": "19",
+      "lower": "37",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "NE",
+      "status": "PASS",
+      "upper": "43",
+      "lower": null,
+      "upper_count": 0,
+      "lower_count": 0,
+      "legislature_count": 1
+    },
+    {
+      "state": "NV",
+      "status": "PASS",
+      "upper": "14",
+      "lower": "32",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "NH",
+      "status": "PASS",
+      "upper": "2",
+      "lower": "Belknap 01",
+      "upper_count": 1,
+      "lower_count": 0,
+      "legislature_count": 0
+    },
+    {
+      "state": "NJ",
+      "status": "PASS",
+      "upper": "14",
+      "lower": "14",
+      "upper_count": 1,
+      "lower_count": 2,
+      "legislature_count": 0
+    },
+    {
+      "state": "NM",
+      "status": "PASS",
+      "upper": "39",
+      "lower": "22",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "NY",
+      "status": "PASS",
+      "upper": "53",
+      "lower": "122",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "NC",
+      "status": "PASS",
+      "upper": "20",
+      "lower": "54",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "ND",
+      "status": "PASS",
+      "upper": "14",
+      "lower": "14",
+      "upper_count": 1,
+      "lower_count": 2,
+      "legislature_count": 0
+    },
+    {
+      "state": "OH",
+      "status": "PASS",
+      "upper": "19",
+      "lower": "61",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "OK",
+      "status": "PASS",
+      "upper": "48",
+      "lower": "97",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "OR",
+      "status": "PASS",
+      "upper": "30",
+      "lower": "59",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "PA",
+      "status": "PASS",
+      "upper": "25",
+      "lower": "82",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "RI",
+      "status": "PASS",
+      "upper": "21",
+      "lower": "28",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "SC",
+      "status": "PASS",
+      "upper": "21",
+      "lower": "70",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "SD",
+      "status": "PASS",
+      "upper": "24",
+      "lower": "24",
+      "upper_count": 1,
+      "lower_count": 2,
+      "legislature_count": 0
+    },
+    {
+      "state": "TN",
+      "status": "PASS",
+      "upper": "14",
+      "lower": "48",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "TX",
+      "status": "PASS",
+      "upper": "28",
+      "lower": "72",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "UT",
+      "status": "PASS",
+      "upper": "27",
+      "lower": "66",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "VT",
+      "status": "PASS",
+      "upper": "Washington",
+      "lower": "Orange-Washington-Addison",
+      "upper_count": 3,
+      "lower_count": 2,
+      "legislature_count": 0
+    },
+    {
+      "state": "VA",
+      "status": "PASS",
+      "upper": "10",
+      "lower": "56",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "WA",
+      "status": "PASS",
+      "upper": "12",
+      "lower": "12",
+      "upper_count": 1,
+      "lower_count": 2,
+      "legislature_count": 0
+    },
+    {
+      "state": "WV",
+      "status": "PASS",
+      "upper": "11",
+      "lower": "63",
+      "upper_count": 2,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "WI",
+      "status": "PASS",
+      "upper": "29",
+      "lower": "86",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "WY",
+      "status": "PASS",
+      "upper": "20",
+      "lower": "28",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    }
+  ]
+}

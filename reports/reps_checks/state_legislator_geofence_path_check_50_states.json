@@ -1,0 +1,659 @@
+{
+  "summary": {
+    "states_checked": 50,
+    "pass": 50,
+    "fail": 0
+  },
+  "results": [
+    {
+      "state": "AL",
+      "status": "PASS",
+      "point": [
+        32.790136,
+        -86.828065
+      ],
+      "upper": "30",
+      "lower": "42",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "AK",
+      "status": "PASS",
+      "point": [
+        64.49941,
+        -152.69469
+      ],
+      "upper": "R",
+      "lower": "36",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "AZ",
+      "status": "PASS",
+      "point": [
+        34.293211,
+        -111.664639
+      ],
+      "upper": "1",
+      "lower": "1",
+      "upper_count": 1,
+      "lower_count": 2,
+      "legislature_count": 0
+    },
+    {
+      "state": "AR",
+      "status": "PASS",
+      "point": [
+        34.900009,
+        -92.438149
+      ],
+      "upper": "13",
+      "lower": "69",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "CA",
+      "status": "PASS",
+      "point": [
+        37.253914,
+        -119.611024
+      ],
+      "upper": "4",
+      "lower": "8",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "CO",
+      "status": "PASS",
+      "point": [
+        38.998546,
+        -105.547815
+      ],
+      "upper": "4",
+      "lower": "13",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "CT",
+      "status": "PASS",
+      "point": [
+        41.620157,
+        -72.726401
+      ],
+      "upper": "6",
+      "lower": "30",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "DE",
+      "status": "PASS",
+      "point": [
+        38.99133,
+        -75.500202
+      ],
+      "upper": "16",
+      "lower": "33",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "FL",
+      "status": "PASS",
+      "point": [
+        28.646897,
+        -82.503189
+      ],
+      "upper": "11",
+      "lower": "53",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "GA",
+      "status": "PASS",
+      "point": [
+        32.649106,
+        -83.44601
+      ],
+      "upper": "26",
+      "lower": "133",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "HI",
+      "status": "PASS",
+      "point": [
+        19.598713,
+        -155.518743
+      ],
+      "upper": "4",
+      "lower": "5",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "ID",
+      "status": "PASS",
+      "point": [
+        44.389092,
+        -114.659357
+      ],
+      "upper": "8",
+      "lower": "8",
+      "upper_count": 1,
+      "lower_count": 0,
+      "legislature_count": 0
+    },
+    {
+      "state": "IL",
+      "status": "PASS",
+      "point": [
+        40.064995,
+        -89.19843
+      ],
+      "upper": "44",
+      "lower": "87",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "IN",
+      "status": "PASS",
+      "point": [
+        39.908131,
+        -86.275622
+      ],
+      "upper": "29",
+      "lower": "86",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "IA",
+      "status": "PASS",
+      "point": [
+        42.074627,
+        -93.500065
+      ],
+      "upper": "26",
+      "lower": "51",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "KS",
+      "status": "PASS",
+      "point": [
+        38.484699,
+        -98.380216
+      ],
+      "upper": "33",
+      "lower": "113",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "KY",
+      "status": "PASS",
+      "point": [
+        37.527302,
+        -85.287806
+      ],
+      "upper": "14",
+      "lower": "51",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "LA",
+      "status": "PASS",
+      "point": [
+        31.054694,
+        -91.978598
+      ],
+      "upper": "28",
+      "lower": "28",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "ME",
+      "status": "PASS",
+      "point": [
+        45.3648,
+        -69.224747
+      ],
+      "upper": "4",
+      "lower": "30",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "MD",
+      "status": "PASS",
+      "point": [
+        39.035385,
+        -76.769614
+      ],
+      "upper": "23",
+      "lower": "23",
+      "upper_count": 1,
+      "lower_count": 3,
+      "legislature_count": 0
+    },
+    {
+      "state": "MA",
+      "status": "PASS",
+      "point": [
+        42.270424,
+        -71.822416
+      ],
+      "upper": "First Worcester",
+      "lower": "13th Worcester",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "MI",
+      "status": "PASS",
+      "point": [
+        43.482635,
+        -84.622798
+      ],
+      "upper": "34",
+      "lower": "92",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "MN",
+      "status": "PASS",
+      "point": [
+        46.316619,
+        -94.308753
+      ],
+      "upper": "6",
+      "lower": "6B",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "MS",
+      "status": "PASS",
+      "point": [
+        32.750627,
+        -89.664875
+      ],
+      "upper": "21",
+      "lower": "27",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "MO",
+      "status": "PASS",
+      "point": [
+        38.367658,
+        -92.477425
+      ],
+      "upper": "6",
+      "lower": "124",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "MT",
+      "status": "PASS",
+      "point": [
+        47.033485,
+        -109.64512
+      ],
+      "upper": "19",
+      "lower": "37",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "NE",
+      "status": "PASS",
+      "point": [
+        41.52715,
+        -99.810848
+      ],
+      "upper": "43",
+      "lower": null,
+      "upper_count": 0,
+      "lower_count": 0,
+      "legislature_count": 1
+    },
+    {
+      "state": "NV",
+      "status": "PASS",
+      "point": [
+        39.356435,
+        -116.655385
+      ],
+      "upper": "14",
+      "lower": "32",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "NH",
+      "status": "PASS",
+      "point": [
+        43.685745,
+        -71.577661
+      ],
+      "upper": "2",
+      "lower": "Belknap 01",
+      "upper_count": 1,
+      "lower_count": 0,
+      "legislature_count": 0
+    },
+    {
+      "state": "NJ",
+      "status": "PASS",
+      "point": [
+        40.184599,
+        -74.661033
+      ],
+      "upper": "14",
+      "lower": "14",
+      "upper_count": 1,
+      "lower_count": 2,
+      "legislature_count": 0
+    },
+    {
+      "state": "NM",
+      "status": "PASS",
+      "point": [
+        34.421363,
+        -106.108376
+      ],
+      "upper": "39",
+      "lower": "22",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "NY",
+      "status": "PASS",
+      "point": [
+        42.943635,
+        -75.505313
+      ],
+      "upper": "53",
+      "lower": "122",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "NC",
+      "status": "PASS",
+      "point": [
+        35.540028,
+        -79.365443
+      ],
+      "upper": "20",
+      "lower": "54",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "ND",
+      "status": "PASS",
+      "point": [
+        47.446303,
+        -100.469311
+      ],
+      "upper": "14",
+      "lower": "14",
+      "upper_count": 1,
+      "lower_count": 2,
+      "legislature_count": 0
+    },
+    {
+      "state": "OH",
+      "status": "PASS",
+      "point": [
+        40.292861,
+        -82.790137
+      ],
+      "upper": "19",
+      "lower": "61",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "OK",
+      "status": "PASS",
+      "point": [
+        35.583548,
+        -97.508439
+      ],
+      "upper": "48",
+      "lower": "97",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "OR",
+      "status": "PASS",
+      "point": [
+        43.936662,
+        -120.555169
+      ],
+      "upper": "30",
+      "lower": "59",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "PA",
+      "status": "PASS",
+      "point": [
+        40.873889,
+        -77.799604
+      ],
+      "upper": "25",
+      "lower": "82",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "RI",
+      "status": "PASS",
+      "point": [
+        41.694967,
+        -71.588465
+      ],
+      "upper": "21",
+      "lower": "28",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "SC",
+      "status": "PASS",
+      "point": [
+        33.908216,
+        -80.896432
+      ],
+      "upper": "21",
+      "lower": "70",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "SD",
+      "status": "PASS",
+      "point": [
+        44.436131,
+        -100.230448
+      ],
+      "upper": "24",
+      "lower": "24",
+      "upper_count": 1,
+      "lower_count": 2,
+      "legislature_count": 0
+    },
+    {
+      "state": "TN",
+      "status": "PASS",
+      "point": [
+        35.843116,
+        -86.341998
+      ],
+      "upper": "14",
+      "lower": "48",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "TX",
+      "status": "PASS",
+      "point": [
+        31.482962,
+        -99.349762
+      ],
+      "upper": "28",
+      "lower": "72",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "UT",
+      "status": "PASS",
+      "point": [
+        39.323789,
+        -111.678205
+      ],
+      "upper": "27",
+      "lower": "66",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "VT",
+      "status": "PASS",
+      "point": [
+        44.075199,
+        -72.662719
+      ],
+      "upper": "Washington",
+      "lower": "Orange-Washington-Addison",
+      "upper_count": 3,
+      "lower_count": 2,
+      "legislature_count": 0
+    },
+    {
+      "state": "VA",
+      "status": "PASS",
+      "point": [
+        37.513042,
+        -78.881497
+      ],
+      "upper": "10",
+      "lower": "56",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "WA",
+      "status": "PASS",
+      "point": [
+        47.37475,
+        -120.432755
+      ],
+      "upper": "12",
+      "lower": "12",
+      "upper_count": 1,
+      "lower_count": 2,
+      "legislature_count": 0
+    },
+    {
+      "state": "WV",
+      "status": "PASS",
+      "point": [
+        38.642527,
+        -80.613837
+      ],
+      "upper": "11",
+      "lower": "63",
+      "upper_count": 2,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "WI",
+      "status": "PASS",
+      "point": [
+        44.634071,
+        -90.012162
+      ],
+      "upper": "29",
+      "lower": "86",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    },
+    {
+      "state": "WY",
+      "status": "PASS",
+      "point": [
+        42.999649,
+        -107.551477
+      ],
+      "upper": "20",
+      "lower": "28",
+      "upper_count": 1,
+      "lower_count": 1,
+      "legislature_count": 0
+    }
+  ]
+}

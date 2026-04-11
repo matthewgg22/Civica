@@ -128,18 +128,18 @@ STATE_TRANSITIONS: dict[str, set[str]] = {
     "complete": set(),
 }
 
-FOREIGN_POLICY_OPTION_POOL: tuple[tuple[str, str, float], ...] = (
-    ("A1", "hold_hearing", "Hold a congressional hearing", 0.82),
-    ("A2", "sanctions_oversight", "Strengthen sanctions oversight", 0.79),
-    ("A3", "export_control_review", "Review export control enforcement", 0.76),
-    ("A4", "send_letter", "Send a formal office letter", 0.71),
+FOREIGN_POLICY_OPTION_POOL: tuple[tuple[str, str, str, float], ...] = (
+    ("A1", "sanctions_oversight", "Strengthen sanctions enforcement", 0.82),
+    ("A2", "export_control_review", "Tighten export-control enforcement", 0.79),
+    ("A3", "war_powers_authorization_funding_restriction", "Restrict unauthorized military funding", 0.76),
+    ("A4", "humanitarian_refugee_protection", "Protect refugee processing safeguards", 0.71),
 )
 
 GENERIC_OPTION_POOL: tuple[tuple[str, str, str, float], ...] = (
-    ("A1", "hold_hearing", "Hold a congressional hearing", 0.78),
-    ("A2", "seek_oversight", "Open oversight of agency enforcement", 0.75),
+    ("A1", "require_reporting", "Require public reporting deadlines", 0.78),
+    ("A2", "seek_oversight", "Open watchdog investigation and reporting", 0.75),
     ("A3", "increase_funding", "Increase targeted program funding", 0.74),
-    ("A4", "send_letter", "Request a public office position", 0.69),
+    ("A4", "ask_public_statement", "State a clear public office position", 0.69),
 )
 
 STOPWORDS: set[str] = {
@@ -352,6 +352,8 @@ class MAPCPipelineV3Service:
             validator_report["checks"].append({"name": "display_ask_word_limit_retry", "passed": True})
 
         options = _dedupe_logically_equivalent_options(options)
+        options = _ensure_minimum_distinct_options(options=options, session_obj=session_obj)
+        options = _drop_hearing_when_alternatives_exist(options)
         options = _ensure_minimum_distinct_options(options=options, session_obj=session_obj)
         validator_report["checks"].append({
             "name": "logical_option_dedup",
@@ -703,6 +705,16 @@ class MAPCPipelineV3Service:
             leak_ok = leak_ok_live and leak_ok_vm
             leaked = leaked_live if not leak_ok_live else leaked_vm
             validator_report["checks"].append({"name": "placeholder_leak_retry", "passed": leak_ok, "token": leaked})
+            if not leak_ok:
+                # mapc_pipeline_v3 — remove flag check after rollout confirmed
+                # Deterministic final cleanup for known leaked template tokens.
+                scripts["live_script"] = _sanitize_disallowed_placeholders(scripts["live_script"])
+                scripts["voicemail_script"] = _sanitize_disallowed_placeholders(scripts["voicemail_script"])
+                leak_ok_live, leaked_live = _placeholder_leak_ok(scripts["live_script"])
+                leak_ok_vm, leaked_vm = _placeholder_leak_ok(scripts["voicemail_script"])
+                leak_ok = leak_ok_live and leak_ok_vm
+                leaked = leaked_live if not leak_ok_live else leaked_vm
+                validator_report["checks"].append({"name": "placeholder_leak_sanitized", "passed": leak_ok, "token": leaked})
             if not leak_ok:
                 raise MAPCPipelineV3Error("placeholder_leak", f"disallowed token remained: {leaked}")
 
@@ -1220,9 +1232,9 @@ def _force_best_effort_interpretation(session_obj: dict[str, Any], history: list
     if not _normalized_text(working.get("congressional_lever")):
         working["congressional_lever"] = "oversight"
     if not _normalized_text(working.get("ask_type")):
-        working["ask_type"] = "hold_hearing"
+        working["ask_type"] = "require_reporting"
     if not _normalized_text(working.get("display_ask")):
-        working["display_ask"] = "Hold a hearing on this issue"
+        working["display_ask"] = "Require public reporting deadlines"
     working["confidence"] = max(0.50, _coerce_float(working.get("confidence"), fallback=0.50))
     working["needs_clarification"] = False
     working["clarification_prompt"] = None
@@ -1305,6 +1317,20 @@ def _dedupe_logically_equivalent_options(options: list[dict[str, Any]]) -> list[
         seen_ask_types.add(ask_type)
         distinct_by_ask_type.append(option)
     return distinct_by_ask_type
+
+
+def _is_hearing_option(option: dict[str, Any]) -> bool:
+    ask_type = _normalized_text(option.get("ask_type")).lower()
+    display = _normalized_text(option.get("display_ask")).lower()
+    return ("hearing" in ask_type) or ("hearing" in display)
+
+
+def _drop_hearing_when_alternatives_exist(options: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    cleaned = [entry for entry in options if isinstance(entry, dict)]
+    non_hearing = [entry for entry in cleaned if not _is_hearing_option(entry)]
+    if non_hearing:
+        return non_hearing
+    return cleaned
 
 
 def _ensure_minimum_distinct_options(*, options: list[dict[str, Any]], session_obj: dict[str, Any]) -> list[dict[str, Any]]:
@@ -1482,6 +1508,22 @@ def _placeholder_leak_ok(script: str) -> tuple[bool, str | None]:
         if re.search(rf"\b{re.escape(keyword)}\b", script, flags=re.IGNORECASE):
             return False, keyword
     return True, None
+
+
+def _sanitize_disallowed_placeholders(script: str) -> str:
+    cleaned = script
+    cleaned = re.sub(r"\[(your[_ ]?name|name)\]", "a constituent", cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"\[(representative|rep name|member)\]", "the office", cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"\[(district|state|date|bill)\]", "", cleaned, flags=re.IGNORECASE)
+
+    def _strip_unknown_token(match: re.Match[str]) -> str:
+        token = match.group(0)
+        return token if token == "[ZIP]" else ""
+
+    cleaned = re.sub(r"\[[^\]]+\]", _strip_unknown_token, cleaned)
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    cleaned = re.sub(r"\s+([,.;:!?])", r"\1", cleaned)
+    return cleaned
 
 
 def _dedupe_repeated_phrase(script: str) -> tuple[str, bool]:
@@ -1687,8 +1729,8 @@ def _offline_interpret(payload: dict[str, Any]) -> dict[str, Any]:
             "issue_domain": session.get("issue_domain") or "general_policy",
             "target_problem": "User confirmed the listed clarification options",
             "congressional_lever": "oversight",
-            "ask_type": "hold_hearing",
-            "display_ask": "Hold a hearing on this issue",
+            "ask_type": "require_reporting",
+            "display_ask": "Require public reporting deadlines",
             "stance": "support",
             "geographic_relevance": "national",
             "confidence": 0.50,
@@ -1705,8 +1747,8 @@ def _offline_interpret(payload: dict[str, Any]) -> dict[str, Any]:
             "issue_domain": "foreign_policy",
             "target_problem": "Limited accountability tools for human-rights repression",
             "congressional_lever": "foreign_policy_oversight",
-            "ask_type": "hold_hearing",
-            "display_ask": "Hold a hearing on Tibet",
+            "ask_type": "sanctions_oversight",
+            "display_ask": "Strengthen sanctions enforcement",
             "stance": "support",
             "geographic_relevance": "national",
             "confidence": 0.58,
@@ -1725,8 +1767,8 @@ def _offline_interpret(payload: dict[str, Any]) -> dict[str, Any]:
             "issue_domain": "consumer_prices",
             "target_problem": "High household prices without a defined federal policy lever",
             "congressional_lever": "oversight",
-            "ask_type": "hold_hearing",
-            "display_ask": "Hold hearings on food prices",
+            "ask_type": "anti_fraud_consumer_protection_enforcement",
+            "display_ask": "Investigate food-price manipulation",
             "stance": "support",
             "geographic_relevance": "national",
             "confidence": 0.52,
@@ -1819,8 +1861,8 @@ def _offline_interpret(payload: dict[str, Any]) -> dict[str, Any]:
         "issue_domain": "general_policy",
         "target_problem": "User seeks congressional action on the stated issue",
         "congressional_lever": "oversight",
-        "ask_type": "hold_hearing",
-        "display_ask": "Hold a hearing on this issue",
+        "ask_type": "require_reporting",
+        "display_ask": "Require public reporting deadlines",
         "stance": "support",
         "geographic_relevance": "national",
         "confidence": 0.72,
@@ -1840,8 +1882,8 @@ def _offline_ask_options(*, session_obj: dict[str, Any], require_bill_ref: bool)
                 "session_id": session_obj.get("session_id"),
                 "options": [{
                     "option_id": "A1",
-                    "ask_type": "hold_hearing",
-                    "display_ask": "Hold a congressional hearing",
+                    "ask_type": "sanctions_oversight",
+                    "display_ask": "Strengthen sanctions enforcement",
                     "confidence": 0.68,
                 }],
                 "needs_clarification": True,
@@ -1850,8 +1892,8 @@ def _offline_ask_options(*, session_obj: dict[str, Any], require_bill_ref: bool)
         return {
             "session_id": session_obj.get("session_id"),
             "options": [
-                {"option_id": "A1", "ask_type": "hold_hearing", "display_ask": "Hold a congressional hearing", "confidence": 0.82},
-                {"option_id": "A2", "ask_type": "sanctions_oversight", "display_ask": "Strengthen sanctions oversight", "confidence": 0.79},
+                {"option_id": "A1", "ask_type": "sanctions_oversight", "display_ask": "Strengthen sanctions enforcement", "confidence": 0.82},
+                {"option_id": "A2", "ask_type": "export_control_review", "display_ask": "Tighten export-control enforcement", "confidence": 0.79},
             ],
             "needs_clarification": False,
             "session_state": "ask_selected",
@@ -1889,7 +1931,7 @@ def _offline_background(*, session_obj: dict[str, Any]) -> dict[str, Any]:
     background = (
         f"This issue centers on {normalized_issue.lower() or issue_domain.replace('_', ' ')}. "
         f"It sits in {issue_domain.replace('_', ' ')} policy and focuses on {target_problem.lower()}. "
-        "Congress can use oversight hearings, reporting mandates, and targeted appropriations to drive execution. "
+        "The office can push reporting mandates, enforcement checks, and targeted appropriations to drive execution. "
         "A specific ask helps offices take a position quickly and route it to the right staff. "
         "Clear accountability steps make follow-up measurable for constituents."
     )

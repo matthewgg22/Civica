@@ -1,0 +1,509 @@
+{
+  "sample_size": 100,
+  "states_covered": 50,
+  "bad_rows": 10,
+  "state_summary": {
+    "AK": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "AL": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "AR": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "AZ": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "CA": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "CO": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "CT": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "DE": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "FL": {
+      "samples": 2,
+      "website_ok": 1,
+      "website_bad": 1,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "GA": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "HI": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "IA": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "ID": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "IL": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "IN": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "KS": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "KY": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "LA": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "MA": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "MD": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "ME": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "MI": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "MN": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "MO": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "MS": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "MT": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "NC": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "ND": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 0,
+      "phone_bad": 2
+    },
+    "NE": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "NH": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "NJ": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "NM": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "NV": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "NY": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "OH": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "OK": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "OR": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "PA": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "RI": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "SC": {
+      "samples": 2,
+      "website_ok": 0,
+      "website_bad": 2,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "SD": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 0,
+      "phone_bad": 2
+    },
+    "TN": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "TX": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "UT": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "VA": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "VT": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "WA": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "WI": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 1,
+      "phone_bad": 1
+    },
+    "WV": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 2,
+      "phone_bad": 0
+    },
+    "WY": {
+      "samples": 2,
+      "website_ok": 2,
+      "website_bad": 0,
+      "phone_ok": 0,
+      "phone_bad": 2
+    }
+  },
+  "bad_rows_sample": [
+    {
+      "state": "ND",
+      "legislator_key": "ocd-person/7c99cb12-9158-4ddc-8bff-8ecca64cc8fa:nd:lower:9",
+      "name": "Collette Brown",
+      "chamber": "lower",
+      "district": "9",
+      "website": "https://ndlegis.gov/biography/collette-brown",
+      "phone": null,
+      "title": "Representative",
+      "http_status": 200,
+      "final_url": "https://ndlegis.gov/biography/collette-brown",
+      "phone_digits": 0,
+      "phone_format_ok": false,
+      "website_ok": true
+    },
+    {
+      "state": "ND",
+      "legislator_key": "ocd-person/00959142-f06a-4e5d-aab2-21abfd9aa261:nd:lower:8",
+      "name": "Mike Berg",
+      "chamber": "lower",
+      "district": "8",
+      "website": "https://ndlegis.gov/biography/mike-berg",
+      "phone": null,
+      "title": "Representative",
+      "http_status": 200,
+      "final_url": "https://ndlegis.gov/biography/mike-berg",
+      "phone_digits": 0,
+      "phone_format_ok": false,
+      "website_ok": true
+    },
+    {
+      "state": "SC",
+      "legislator_key": "ocd-person/00d450b3-f427-4e64-b0bd-45609b0a433b:sc:lower:63",
+      "name": "Jay Jordan",
+      "chamber": "lower",
+      "district": "63",
+      "website": "https://scstatehouse.gov/member.php?code=0957954431",
+      "phone": "803-734-3114",
+      "title": "Representative",
+      "http_status": null,
+      "final_url": "https://scstatehouse.gov/member.php?code=0957954431",
+      "phone_digits": 10,
+      "phone_format_ok": true,
+      "website_ok": false
+    },
+    {
+      "state": "SC",
+      "legislator_key": "ocd-person/74b41634-f393-47b4-807b-124c14277ecb:sc:upper:39",
+      "name": "Tom Fernandez",
+      "chamber": "upper",
+      "district": "39",
+      "website": "https://www.scstatehouse.gov/member.php?code=0574999931",
+      "phone": "803-212-6024",
+      "title": "Senator",
+      "http_status": null,
+      "final_url": "https://www.scstatehouse.gov/member.php?code=0574999931",
+      "phone_digits": 10,
+      "phone_format_ok": true,
+      "website_ok": false
+    },
+    {
+      "state": "SD",
+      "legislator_key": "ocd-person/00ed522e-529c-4ec7-bec2-90e124a2b3df:sd:lower:32",
+      "name": "Nicole Uhre-Balk",
+      "chamber": "lower",
+      "district": "32",
+      "website": "https://sdlegislature.gov/Legislators/Profile/4693/Detail",
+      "phone": null,
+      "title": "Representative",
+      "http_status": 200,
+      "final_url": "https://sdlegislature.gov/Legislators/Profile/4693/Detail",
+      "phone_digits": 0,
+      "phone_format_ok": false,
+      "website_ok": true
+    },
+    {
+      "state": "SD",
+      "legislator_key": "ocd-person/7eefd193-a618-4a9b-b416-cd495239ead6:sd:lower:22",
+      "name": "Lana Greenfield",
+      "chamber": "lower",
+      "district": "22",
+      "website": "https://sdlegislature.gov/Legislators/Legislators/MemberDetail.aspx?Member=1509&Session=2018s",
+      "phone": null,
+      "title": "Representative",
+      "http_status": 200,
+      "final_url": "https://sdlegislature.gov/Legislators/Profile/1509/Detail",
+      "phone_digits": 0,
+      "phone_format_ok": false,
+      "website_ok": true
+    },
+    {
+      "state": "WI",
+      "legislator_key": "ocd-person/77257644-eb9a-447d-bcd8-f3e3de7e49e4:wi:lower:72",
+      "name": "Scott Krug",
+      "chamber": "lower",
+      "district": "72",
+      "website": "https://docs.legis.wisconsin.gov/2017/legislators/assembly/1579",
+      "phone": null,
+      "title": "Representative",
+      "http_status": 200,
+      "final_url": "https://docs.legis.wisconsin.gov/2017/legislators/assembly/1579",
+      "phone_digits": 0,
+      "phone_format_ok": false,
+      "website_ok": true
+    },
+    {
+      "state": "WY",
+      "legislator_key": "ocd-person/84464d31-bdbb-4687-9757-27794e64d319:wy:upper:10",
+      "name": "Gary Crum",
+      "chamber": "upper",
+      "district": "10",
+      "website": "https://wyoleg.gov/Legislators/2025/S/2144",
+      "phone": null,
+      "title": "Senator",
+      "http_status": 200,
+      "final_url": "https://wyoleg.gov/Legislators/2025/S/2144",
+      "phone_digits": 0,
+      "phone_format_ok": false,
+      "website_ok": true
+    },
+    {
+      "state": "WY",
+      "legislator_key": "ocd-person/016465da-4d49-4ffc-8bb0-cf9528bc6d0e:wy:upper:21",
+      "name": "Bo Biteman",
+      "chamber": "upper",
+      "district": "21",
+      "website": "https://www.wyoleg.gov/Legislators/2018/H/2044",
+      "phone": null,
+      "title": "Senator",
+      "http_status": 200,
+      "final_url": "https://www.wyoleg.gov/Legislators/2018/H/2044",
+      "phone_digits": 0,
+      "phone_format_ok": false,
+      "website_ok": true
+    },
+    {
+      "state": "FL",
+      "legislator_key": "ocd-person/03362949-948c-415d-a5b6-f99e8fbc6495:fl:upper:5",
+      "name": "Tracie Davis",
+      "chamber": "upper",
+      "district": "5",
+      "website": "https://flsenate.gov/Senators/2022-2024/S5",
+      "phone": "850-487-5005",
+      "title": "Senator",
+      "http_status": null,
+      "final_url": "https://flsenate.gov/Senators/2022-2024/S5",
+      "phone_digits": 10,
+      "phone_format_ok": true,
+      "website_ok": false
+    }
+  ]
+}

@@ -776,7 +776,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             return CivicScriptPackageRequest.RepContextPayload(
                 repID: stableRepID(for: target.official),
                 repName: target.official.name,
-                officeType: officeType.isEmpty ? (slot == .house ? "U.S. Representative" : "U.S. Senator") : officeType,
+                officeType: officeType.isEmpty ? (slot == .house ? "Representative" : "U.S. Senator") : officeType,
                 chamber: chamber,
                 district: (district?.isEmpty == true) ? nil : district,
                 state: stateCodeFromDivisionID(target.official.divisionId),
@@ -1957,7 +1957,9 @@ final class IssueCallCenterViewModel: ObservableObject {
                 slug,
                 title,
                 category,
+                issue_area,
                 summary,
+                background_summary,
                 action_sentence,
                 live_script,
                 voicemail_script,
@@ -2042,13 +2044,22 @@ final class IssueCallCenterViewModel: ObservableObject {
             let title = normalizedNonEmpty(script.title)
                 ?? key.replacingOccurrences(of: "-", with: " ").capitalized
             let actionSentence = normalizedSentence(script.actionSentence)
-            let summary = normalizedNonEmpty(script.summary)
+            let summary = normalizedNonEmpty(script.backgroundSummary)
+                ?? normalizedNonEmpty(script.summary)
                 ?? actionSentence
                 ?? "Call your representatives about this issue."
-            let liveScript = normalizedNonEmpty(script.liveScript)
+            let rawLiveScript = normalizedNonEmpty(script.liveScript)
                 ?? generatedFallbackScript(title: title, actionSentence: actionSentence, isVoicemail: false)
-            let voicemailScript = normalizedNonEmpty(script.voicemailScript)
+            let rawVoicemailScript = normalizedNonEmpty(script.voicemailScript)
                 ?? generatedFallbackScript(title: title, actionSentence: actionSentence, isVoicemail: true)
+            let liveScript = normalizedPremadeScriptWithCanonicalIntro(
+                rawLiveScript,
+                isVoicemail: false
+            )
+            let voicemailScript = normalizedPremadeScriptWithCanonicalIntro(
+                rawVoicemailScript,
+                isVoicemail: true
+            )
             var targetChambers = (script.targetChambers ?? [])
                 .compactMap { normalizedNonEmpty($0)?.lowercased() }
             if targetChambers.isEmpty {
@@ -2072,7 +2083,9 @@ final class IssueCallCenterViewModel: ObservableObject {
                 id: key,
                 slug: key,
                 title: title,
-                category: normalizedNonEmpty(script.category) ?? "Issue",
+                category: normalizedNonEmpty(script.issueArea)
+                    ?? normalizedNonEmpty(script.category)
+                    ?? "Issue",
                 targetChambers: targetChambers,
                 primaryAsk: normalizedNonEmpty(script.primaryAsk) ?? askFromPrimary?.rawValue,
                 summary: summary,
@@ -2175,6 +2188,39 @@ final class IssueCallCenterViewModel: ObservableObject {
 
         Thank you for your time and consideration.
         """
+    }
+
+    private func normalizedPremadeScriptWithCanonicalIntro(_ script: String, isVoicemail: Bool) -> String {
+        let intro = isVoicemail
+            ? "Hi, this is [YOUR_NAME], a constituent from [CITY], [ZIP]."
+            : "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP]."
+
+        let body = strippedLeadingPremadeIntroSentences(from: script)
+        guard !body.isEmpty else { return intro }
+        return "\(intro)\n\n\(body)"
+    }
+
+    private func strippedLeadingPremadeIntroSentences(from script: String) -> String {
+        let introPattern = #"""
+        ^\s*(?:hi|hello)[^.!?]{0,220}\b(?:my\s+name\s+is|this\s+is)\b[^.!?]*(?:\[(?:your_name|your name)\]|\bconstituent\b|\[(?:city|zip|your city/state)\])[^.!?]*[.!?]\s*
+        """#
+        var remaining = script
+            .replacingOccurrences(of: "\r\n", with: "\n")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        for _ in 0..<4 {
+            let updated = remaining.replacingOccurrences(
+                of: introPattern,
+                with: "",
+                options: [.regularExpression, .caseInsensitive]
+            )
+            if updated == remaining {
+                break
+            }
+            remaining = updated.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        return remaining
     }
 
     private func normalizedSentence(_ value: String?) -> String? {
@@ -2517,27 +2563,33 @@ final class IssueCallCenterViewModel: ObservableObject {
             return mapcV3RecoveryMessage
         }
         let nsError = error as NSError
+        let lowered = nsError.localizedDescription.lowercased()
         if nsError.domain == "CivicIssueCallAPIClient" && nsError.code == 404 {
             return "MAPC v3 API route is unavailable. Confirm /api/v2/civic/mapc endpoints are deployed."
-        }
-        if nsError.domain == "CivicIssueCallAPIClient" && nsError.code == 400 {
-            return "MAPC v3 rejected this request format. Please try a single-sentence issue."
         }
         if nsError.domain == "CivicIssueCallAPIClient" && nsError.code == 401 {
             return "Session expired. Please reopen VoteNow and try again."
         }
-        let lowered = nsError.localizedDescription.lowercased()
         if lowered.contains("feature_flag_disabled") {
             return "MAPC v3 is disabled on the backend."
         }
+        if lowered.contains("placeholder_leak") || lowered.contains("disallowed token remained") {
+            return "I kept your issue, but the script had an unfilled placeholder. Tap Fix this and I’ll regenerate it."
+        }
+        if lowered.contains("missing_selected_option") || lowered.contains("invalid_selected_option") {
+            return "I kept your issue, but the selected ask did not sync. Tap an ask option again."
+        }
         if lowered.contains("invalid_initial_state") || lowered.contains("invalid_state_transition") {
-            return mapcV3RecoveryMessage
+            return "I kept your issue, but the session got out of sync. Tap an ask option again."
         }
         if lowered.contains("preview_not_confirmed") {
             return "Please confirm the preview before generating the script."
         }
         if lowered.contains("universal_script_lint_failed") {
             return mapcV3LintRecoveryMessage
+        }
+        if nsError.domain == "CivicIssueCallAPIClient" && nsError.code == 400 {
+            return "I kept your issue, but this request did not sync. Tap your ask option again."
         }
         if nsError.domain == "CivicIssueCallAPIClient"
             && [-31_006, -31_007].contains(nsError.code) {
@@ -2788,6 +2840,11 @@ final class IssueCallCenterViewModel: ObservableObject {
     }
 
     func approveGeneratedDraft() {
+        if mapcPipelineV3Enabled && mapcV3SessionState != "script_shown" {
+            // mapc_pipeline_v3 — remove flag check after rollout confirmed
+            errorMessage = "Review the script preview first, then tap Looks right before approving."
+            return
+        }
         let packageID = lastGeneratedPackageID
         let chosenOption = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
         let finalScript = pendingGeneratedResolution?.callBriefs.first?.liveScript

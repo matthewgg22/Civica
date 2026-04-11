@@ -1,0 +1,452 @@
+[
+  {
+    "state": "AK",
+    "total": 60,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "AL",
+    "total": 140,
+    "missing_phone": 1,
+    "missing_website": 9,
+    "missing_both": 0,
+    "pct_missing_phone": 0.7,
+    "pct_missing_website": 6.4
+  },
+  {
+    "state": "AR",
+    "total": 135,
+    "missing_phone": 2,
+    "missing_website": 2,
+    "missing_both": 2,
+    "pct_missing_phone": 1.5,
+    "pct_missing_website": 1.5
+  },
+  {
+    "state": "AZ",
+    "total": 90,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "CA",
+    "total": 120,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "CO",
+    "total": 100,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "CT",
+    "total": 187,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "DE",
+    "total": 62,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "FL",
+    "total": 156,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "GA",
+    "total": 233,
+    "missing_phone": 1,
+    "missing_website": 1,
+    "missing_both": 1,
+    "pct_missing_phone": 0.4,
+    "pct_missing_website": 0.4
+  },
+  {
+    "state": "HI",
+    "total": 76,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "IA",
+    "total": 150,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "ID",
+    "total": 105,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "IL",
+    "total": 177,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "IN",
+    "total": 150,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "KS",
+    "total": 165,
+    "missing_phone": 18,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 10.9,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "KY",
+    "total": 138,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "LA",
+    "total": 141,
+    "missing_phone": 0,
+    "missing_website": 3,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 2.1
+  },
+  {
+    "state": "MA",
+    "total": 198,
+    "missing_phone": 2,
+    "missing_website": 1,
+    "missing_both": 1,
+    "pct_missing_phone": 1.0,
+    "pct_missing_website": 0.5
+  },
+  {
+    "state": "MD",
+    "total": 188,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "ME",
+    "total": 187,
+    "missing_phone": 1,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.5,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "MI",
+    "total": 147,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "MN",
+    "total": 201,
+    "missing_phone": 2,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 1.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "MO",
+    "total": 192,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "MS",
+    "total": 174,
+    "missing_phone": 10,
+    "missing_website": 1,
+    "missing_both": 1,
+    "pct_missing_phone": 5.7,
+    "pct_missing_website": 0.6
+  },
+  {
+    "state": "MT",
+    "total": 150,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "NC",
+    "total": 170,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "ND",
+    "total": 141,
+    "missing_phone": 74,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 52.5,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "NE",
+    "total": 49,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "NH",
+    "total": 414,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "NJ",
+    "total": 120,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "NM",
+    "total": 112,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "NV",
+    "total": 63,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "NY",
+    "total": 213,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "OH",
+    "total": 132,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "OK",
+    "total": 146,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "OR",
+    "total": 90,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "PA",
+    "total": 248,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "RI",
+    "total": 113,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "SC",
+    "total": 170,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "SD",
+    "total": 105,
+    "missing_phone": 21,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 20.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "TN",
+    "total": 132,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "TX",
+    "total": 180,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "UT",
+    "total": 104,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "VA",
+    "total": 139,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "VT",
+    "total": 180,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "WA",
+    "total": 147,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "WI",
+    "total": 132,
+    "missing_phone": 65,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 49.2,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "WV",
+    "total": 134,
+    "missing_phone": 0,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 0.0,
+    "pct_missing_website": 0.0
+  },
+  {
+    "state": "WY",
+    "total": 93,
+    "missing_phone": 79,
+    "missing_website": 0,
+    "missing_both": 0,
+    "pct_missing_phone": 84.9,
+    "pct_missing_website": 0.0
+  }
+]

@@ -313,7 +313,9 @@ struct RemotePremadeScript: Identifiable, Codable {
     let slug: String
     let title: String?
     let category: String?
+    let issueArea: String?
     let summary: String?
+    let backgroundSummary: String?
     let actionSentence: String?
     let liveScript: String?
     let voicemailScript: String?
@@ -331,6 +333,8 @@ struct RemotePremadeScript: Identifiable, Codable {
 
     enum CodingKeys: String, CodingKey {
         case slug, title, category, summary, status, tags
+        case issueArea = "issue_area"
+        case backgroundSummary = "background_summary"
         case actionSentence = "action_sentence"
         case liveScript = "live_script"
         case voicemailScript = "voicemail_script"
@@ -601,7 +605,8 @@ struct CivicRepTarget: Identifiable {
 
     var officeType: String {
         let title = (official.officeTitle ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        return title.isEmpty ? inferredOfficeType : title
+        let resolved = title.isEmpty ? inferredOfficeType : title
+        return normalizedOfficeType(resolved)
     }
 
     private var inferredOfficeType: String {
@@ -609,11 +614,19 @@ struct CivicRepTarget: Identifiable {
         let normalizedTitle = (official.officeTitle ?? "").lowercased()
         if normalizedTitle.contains("senator") { return "U.S. Senator" }
         if normalizedTitle.contains("representative") || normalizedTitle.contains("congress") {
-            return "U.S. Representative"
+            return "Representative"
         }
-        if slot == .house { return "U.S. Representative" }
+        if slot == .house { return "Representative" }
         if slot == .senate1 || slot == .senate2 { return "U.S. Senator" }
         return name
+    }
+
+    private func normalizedOfficeType(_ value: String) -> String {
+        let normalized = value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if normalized.contains("representative") || normalized.contains("congressman") || normalized.contains("congresswoman") {
+            return "Representative"
+        }
+        return value
     }
 }
 

@@ -32,6 +32,7 @@ struct IssueCallCenterView: View {
     @State private var exampleSearchQuery: String = ""
     @State private var showAllPremadeExamples = false
     @State private var showAllExampleCategoryChips = false
+    @State private var expandedPremadeLiveScriptIDs: Set<String> = []
     @State private var assistantComposerText: String = ""
     @State private var assistantMessages: [AssistantChatMessage] = []
     @State private var assistantIsThinking = false
@@ -348,14 +349,11 @@ struct IssueCallCenterView: View {
     }
 
     private var visiblePremadeExamples: [CivicExampleIssueCard] {
-        if showAllPremadeExamples {
-            return filteredExamples
-        }
-        return Array(filteredExamples.prefix(Self.premadeCollapsedCardLimit))
+        filteredExamples
     }
 
     private var hasHiddenPremadeExamples: Bool {
-        filteredExamples.count > Self.premadeCollapsedCardLimit
+        false
     }
 
     private var collapsedExampleCategoryOptions: [String] {
@@ -378,26 +376,21 @@ struct IssueCallCenterView: View {
     }
 
     private var visibleExampleCategoryOptions: [String] {
-        if showAllExampleCategoryChips {
-            if hasHiddenExampleCategoryOptions {
-                return exampleCategoryOptions + [Self.moreExamplesFilterToken]
-            }
-            return exampleCategoryOptions
-        }
+        exampleCategoryOptions
+    }
 
-        guard hasHiddenExampleCategoryOptions else {
-            return collapsedExampleCategoryOptions
-        }
-
-        var withMore = fittedCategoryOptionsForCollapsedRows(
-            from: collapsedExampleCategoryOptions + [Self.moreExamplesFilterToken],
-            maxRows: Self.premadeCollapsedCategoryRowLimit
+    private var exampleCategoryGridRows: [GridItem] {
+        Array(
+            repeating: GridItem(.fixed(32), spacing: 8, alignment: .top),
+            count: Self.premadeCollapsedCategoryRowLimit
         )
-        if !containsCategory(withMore, Self.moreExamplesFilterToken), !withMore.isEmpty {
-            withMore.removeLast()
-            withMore.append(Self.moreExamplesFilterToken)
-        }
-        return withMore
+    }
+
+    private var exampleCategoryRailHeight: CGFloat {
+        let rowCount = Self.premadeCollapsedCategoryRowLimit
+        let chipHeight: CGFloat = 32
+        let rowSpacing: CGFloat = 8
+        return CGFloat(rowCount) * chipHeight + CGFloat(max(0, rowCount - 1)) * rowSpacing + 4
     }
 
     private func fittedCategoryOptionsForCollapsedRows(from options: [String], maxRows: Int) -> [String] {
@@ -1931,7 +1924,6 @@ struct IssueCallCenterView: View {
         guard viewModel.requiresDraftApproval else { return }
         // mapc_pipeline_v3 — remove flag check after rollout confirmed
         viewModel.markMAPCV3ApprovedByUser()
-        viewModel.mapcV3SessionState = "complete"
         viewModel.approveGeneratedDraft()
         appendAssistantBotMessage(
             "Your call guide is ready. Approve and call, or fix the wording first.",
@@ -2711,6 +2703,12 @@ struct IssueCallCenterView: View {
                 .buttonStyle(.plain)
 
                 Button {
+                    if viewModel.mapcPipelineV3Enabled {
+                        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+                        // Treat this tap as explicit script acceptance before final approval.
+                        viewModel.mapcV3SessionState = "script_shown"
+                        viewModel.markMAPCV3ApprovedByUser()
+                    }
                     viewModel.approveGeneratedDraft()
                 } label: {
                     Text("Looks good")
@@ -2862,6 +2860,7 @@ struct IssueCallCenterView: View {
         let isLastBrief = viewModel.isLastBrief(brief)
         let briefIndex = viewModel.callBriefs.firstIndex(where: { $0.id == brief.id }) ?? 0
         let isFirstBrief = briefIndex == 0
+        let isLiveScriptExpanded = expandedLiveBriefIDs.contains(brief.id)
         let isVoicemailExpanded = expandedVoicemailBriefIDs.contains(brief.id)
         let selectedOutcome = viewModel.loggedOutcomeByBriefID[brief.id]
         let liveScriptText = brief.liveScript
@@ -2973,47 +2972,13 @@ struct IssueCallCenterView: View {
             }
 
             if condensedForMAPC {
-                VStack(alignment: .leading, spacing: 4) {
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            if expandedLiveBriefIDs.contains(brief.id) {
-                                expandedLiveBriefIDs.remove(brief.id)
-                            } else {
-                                expandedLiveBriefIDs.insert(brief.id)
-                                expandedVoicemailBriefIDs.remove(brief.id)
-                            }
-                        }
-                    } label: {
-                        HStack(spacing: 8) {
-                            Text("Live-call Script")
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundColor(VoteNowColors.primaryText)
-                            Spacer(minLength: 0)
-                            Image(systemName: expandedLiveBriefIDs.contains(brief.id) ? "chevron.up" : "chevron.down")
-                                .font(.caption.weight(.bold))
-                                .foregroundColor(VoteNowColors.primaryCTA)
-                        }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 8)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Self.mapcScriptCardBackground)
-                        .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 9, style: .continuous)
-                                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
-                        )
-                    }
-                    .buttonStyle(.plain)
-
-                    if expandedLiveBriefIDs.contains(brief.id) {
-                        scriptBlock(
-                            title: "Live-call Script",
-                            text: liveScriptText,
-                            showScriptInputsToggle: false,
-                            showTitle: false,
-                            usesMapcCardChrome: true
-                        )
-                    }
+                if isLiveScriptExpanded {
+                    scriptBlock(
+                        title: "Live-call Script",
+                        text: liveScriptText,
+                        showScriptInputsToggle: false,
+                        usesMapcCardChrome: true
+                    )
                 }
             } else {
                 scriptBlock(
@@ -3194,69 +3159,65 @@ struct IssueCallCenterView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 if !exampleCategoryOptions.isEmpty {
-                    ChipFlowLayout(itemSpacing: 8, rowSpacing: 8) {
-                        ForEach(visibleExampleCategoryOptions, id: \.self) { category in
-                            let isMoreToggle = category.caseInsensitiveCompare(Self.moreExamplesFilterToken) == .orderedSame
-                            let isSelected = !isMoreToggle && category.caseInsensitiveCompare(selectedExampleCategory) == .orderedSame
-                            let categoryColor = exampleCategoryColor(for: category)
-                            Button {
-                                if isMoreToggle {
-                                    withAnimation(.easeInOut(duration: 0.22)) {
-                                        showAllExampleCategoryChips.toggle()
-                                    }
-                                } else {
-                                    selectedExampleCategory = category
-                                }
-                            } label: {
-                                HStack(spacing: 5) {
-                                    if category.caseInsensitiveCompare(Self.searchExamplesFilterLabel) == .orderedSame {
-                                        Image(systemName: "magnifyingglass")
-                                            .font(.caption2.weight(.bold))
-                                            .foregroundColor(.white)
-                                    }
-                                    if isMoreToggle {
-                                        Image(systemName: showAllExampleCategoryChips ? "chevron.up" : "chevron.down")
-                                            .font(.caption2.weight(.bold))
-                                            .foregroundColor(.white)
-                                    }
-                                    Text(exampleCategoryDisplayName(for: category))
-                                        .font(.caption.weight(.semibold))
-                                        .foregroundColor(.white)
-                                        .lineLimit(1)
-                                        .multilineTextAlignment(.center)
-                                        .minimumScaleFactor(0.78)
-                                }
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                    .background(
-                                        ZStack {
-                                            exampleCategoryBackgroundColor(for: category, isSelected: isSelected)
-                                            if isSelected {
-                                                Capsule()
-                                                    .fill(Color.white.opacity(0.16))
-                                                    .padding(1)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        LazyHGrid(rows: exampleCategoryGridRows, alignment: .top, spacing: 8) {
+                            ForEach(visibleExampleCategoryOptions, id: \.self) { category in
+                                        let isSelected = category.caseInsensitiveCompare(selectedExampleCategory) == .orderedSame
+                                        let categoryColor = exampleCategoryColor(for: category)
+                                        let textColor = exampleCategoryTextColor(for: category)
+                                        Button {
+                                            selectedExampleCategory = category
+                                        } label: {
+                                            HStack(spacing: 5) {
+                                                if category.caseInsensitiveCompare(Self.searchExamplesFilterLabel) == .orderedSame {
+                                                    Image(systemName: "magnifyingglass")
+                                                        .font(.caption2.weight(.bold))
+                                                        .foregroundColor(textColor)
+                                                }
+                                                Text(exampleCategoryDisplayName(for: category))
+                                                    .font(.caption.weight(.semibold))
+                                                    .foregroundColor(textColor)
+                                                    .lineLimit(1)
+                                                    .multilineTextAlignment(.center)
+                                                    .minimumScaleFactor(0.78)
                                             }
+                                                .padding(.horizontal, 12)
+                                                .padding(.vertical, 8)
+                                                .background(
+                                                    ZStack {
+                                                        exampleCategoryBackgroundColor(for: category, isSelected: isSelected)
+                                                        if isSelected {
+                                                            Capsule()
+                                                                .fill(Color.white.opacity(0.16))
+                                                                .padding(1)
+                                                        }
+                                                    }
+                                                )
+                                                .clipShape(Capsule())
+                                                .overlay(
+                                                    Capsule()
+                                                        .stroke(
+                                                            exampleCategoryBorderColor(
+                                                                for: category,
+                                                                isSelected: isSelected,
+                                                                baseColor: categoryColor
+                                                            ),
+                                                            lineWidth: isSelected ? 1.8 : 1
+                                                        )
+                                                )
+                                                .shadow(
+                                                    color: isSelected ? categoryColor.opacity(0.36) : .clear,
+                                                    radius: isSelected ? 4 : 0,
+                                                    x: 0,
+                                                    y: 1
+                                                )
                                         }
-                                    )
-                                    .clipShape(Capsule())
-                                    .overlay(
-                                        Capsule()
-                                            .stroke(
-                                                isSelected ? Color.white.opacity(0.98) : categoryColor.opacity(0.85),
-                                                lineWidth: isSelected ? 1.8 : 1
-                                            )
-                                    )
-                                    .shadow(
-                                        color: isSelected ? categoryColor.opacity(0.36) : .clear,
-                                        radius: isSelected ? 4 : 0,
-                                        x: 0,
-                                        y: 1
-                                    )
+                                        .buttonStyle(.plain)
                             }
-                            .buttonStyle(.plain)
                         }
+                        .padding(.vertical, 2)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity, minHeight: exampleCategoryRailHeight, maxHeight: exampleCategoryRailHeight, alignment: .topLeading)
                     .padding(.top, 4)
                 }
 
@@ -3380,17 +3341,6 @@ struct IssueCallCenterView: View {
                             .foregroundColor(VoteNowColors.primaryText)
                             .fixedSize(horizontal: false, vertical: true)
 
-                        if let vehicleLabel = premadeOptionalDisplayText(example.vehicleLabel) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Legislative vehicle")
-                                    .font(.caption.weight(.semibold))
-                                    .foregroundColor(VoteNowColors.mutedText)
-                                emphasizedPromptText(vehicleLabel, baseFont: .subheadline)
-                                    .foregroundColor(VoteNowColors.primaryText)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                        }
-
                         if let actionSentence = premadeOptionalDisplayText(example.actionSentence) {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Action request")
@@ -3402,15 +3352,38 @@ struct IssueCallCenterView: View {
                             }
                         }
 
-                        exampleScriptBlock(
-                            title: "Live-call Script",
-                            text: condensedPremadeScriptPlaceholderText(example.liveScript)
-                        )
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                if expandedPremadeLiveScriptIDs.contains(example.id) {
+                                    expandedPremadeLiveScriptIDs.remove(example.id)
+                                } else {
+                                    expandedPremadeLiveScriptIDs.insert(example.id)
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 8) {
+                                Text("Live-call Script")
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundColor(VoteNowColors.primaryText)
+                                Spacer(minLength: 0)
+                                Image(systemName: expandedPremadeLiveScriptIDs.contains(example.id) ? "chevron.up" : "chevron.down")
+                                    .font(.caption.weight(.bold))
+                                    .foregroundColor(VoteNowColors.primaryCTA)
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 8)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(VoteNowColors.infoSurfaceBlue)
+                            .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
 
-                        exampleScriptBlock(
-                            title: "Voicemail Script",
-                            text: condensedPremadeScriptPlaceholderText(example.voicemailScript)
-                        )
+                        if expandedPremadeLiveScriptIDs.contains(example.id) {
+                            exampleScriptBlock(
+                                title: "Live-call Script",
+                                text: condensedPremadeScriptPlaceholderText(example.liveScript)
+                            )
+                        }
 
                         Button {
                             focusedField = nil
@@ -3473,6 +3446,13 @@ struct IssueCallCenterView: View {
             .padding(.top, 6)
             .padding(.bottom, 20)
         }
+        .refreshable {
+            await refreshPremadeExamples()
+        }
+    }
+
+    private func refreshPremadeExamples() async {
+        await viewModel.loadExamplesAndHistoryIfNeeded(force: true)
     }
 
     private func transitionToAssistantFromPremade(prefillConcern: String?) {
@@ -4673,8 +4653,25 @@ struct IssueCallCenterView: View {
     }
 
     private func exampleCategoryBackgroundColor(for category: String, isSelected: Bool) -> Color {
+        if category.caseInsensitiveCompare(Self.searchExamplesFilterLabel) == .orderedSame {
+            return .white
+        }
         let base = exampleCategoryColor(for: category)
         return isSelected ? base : base.opacity(0.78)
+    }
+
+    private func exampleCategoryTextColor(for category: String) -> Color {
+        if category.caseInsensitiveCompare(Self.searchExamplesFilterLabel) == .orderedSame {
+            return .black
+        }
+        return .white
+    }
+
+    private func exampleCategoryBorderColor(for category: String, isSelected: Bool, baseColor: Color) -> Color {
+        if category.caseInsensitiveCompare(Self.searchExamplesFilterLabel) == .orderedSame {
+            return isSelected ? Color.black.opacity(0.95) : Color.black.opacity(0.55)
+        }
+        return isSelected ? Color.white.opacity(0.98) : baseColor.opacity(0.85)
     }
 
     private func exampleCategoryDisplayName(for category: String) -> String {

@@ -2,7 +2,7 @@
   "meta": {
     "source_url": "https://github.com/openstates/people/archive/refs/heads/main.tar.gz",
     "source_tar": "data/source/openstates/people-main.tar.gz",
-    "as_of": "2026-04-05",
+    "as_of": "2026-04-11",
     "record_count": 7443,
     "states_included": [
       "ak",
