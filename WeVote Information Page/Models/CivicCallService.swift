@@ -917,7 +917,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 displayIssue: interpretResponse.session.displayIssue,
                 needsClarification: true,
                 clarificationPrompt: interpretResponse.session.clarificationPrompt
-                    ?? "I need one detail to make this usable: what should the office do first?",
+                    ?? "I need one detail to make this usable: what issue do you care about most?",
                 options: []
             )
         }
@@ -1036,7 +1036,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 officeOverlays: [],
                 reviewCanRegenerate: true,
                 reviewRegenerateHint: backgroundResponse.session.clarificationPrompt
-                    ?? "I need one detail to make this usable: what should the office do first?",
+                    ?? "I need one detail to make this usable: what issue do you care about most?",
                 truthTrace: nil,
                 policyFlags: ["mapc_pipeline_v3_background_\(backgroundResponse.reason ?? "null")"]
             )
@@ -2043,7 +2043,10 @@ final class IssueCallCenterViewModel: ObservableObject {
         async let historyTask: [CivicHistoryGroup] = apiClient.fetchHistory(userID: userID)
 
         let remotePremadeScripts = await remotePremadeScriptsTask
-        let mappedRemoteExamples = mapRemoteScriptsToExampleCards(remotePremadeScripts)
+        let mappedRemoteExamples = mapRemoteScriptsToExampleCards(
+            remotePremadeScripts,
+            localSeeds: localFallback
+        )
         if !mappedRemoteExamples.isEmpty {
             examples = mappedRemoteExamples
         } else if examples.isEmpty {
@@ -2066,8 +2069,24 @@ final class IssueCallCenterViewModel: ObservableObject {
         await loadExamplesAndHistory()
     }
 
-    private func mapRemoteScriptsToExampleCards(_ scripts: [RemotePremadeScript]) -> [CivicExampleIssueCard] {
+    private func mapRemoteScriptsToExampleCards(
+        _ scripts: [RemotePremadeScript],
+        localSeeds: [CivicExampleIssueCard]
+    ) -> [CivicExampleIssueCard] {
         let availableChambers = availablePremadeTargetChambers()
+        // Display layer is local-first (issue framing), action layer is remote-first (ask + scripts).
+        let localSeedByKey = localPremadeSeedIndex(localSeeds)
+        var remoteByKey: [String: RemotePremadeScript] = [:]
+        for script in scripts {
+            guard let key = normalizedPremadeKey(script.slug) else { continue }
+            if remoteByKey[key] == nil {
+                remoteByKey[key] = script
+            }
+        }
+        let displayScripts = mergedDisplayPremadeScripts(
+            remote: scripts,
+            localSeedByKey: localSeedByKey
+        )
         let placeholders = [
             "[YOUR_NAME]",
             "[CITY]",
@@ -2077,41 +2096,61 @@ final class IssueCallCenterViewModel: ObservableObject {
             "[BILL_OR_RESOLUTION]"
         ]
 
-        let cards = scripts.compactMap { script -> CivicExampleIssueCard? in
-            let trimmedSlug = script.slug.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !trimmedSlug.isEmpty else { return nil }
+        let cards = displayScripts.compactMap { display -> CivicExampleIssueCard? in
+            guard let key = normalizedPremadeKey(display.id) else { return nil }
+            let localSeed = localSeedByKey[key]
+            let remote = remoteByKey[key]
 
-            let normalizedActionSentence = normalizedSentence(
-                script.actionSentence?.trimmingCharacters(in: .whitespacesAndNewlines)
-            )
-            let title = normalizedNonEmpty(script.title)
-                ?? normalizedNonEmpty(script.actionTargetDisplay)
-                ?? trimmedSlug.replacingOccurrences(of: "-", with: " ").capitalized
-            let summary = normalizedNonEmpty(script.whyNow)
-                ?? normalizedActionSentence
+            let title = normalizedNonEmpty(display.title)
+                ?? normalizedNonEmpty(remote?.title)
+                ?? key.replacingOccurrences(of: "-", with: " ").capitalized
+            let actionSentence = normalizedSentence(display.actionSentence)
+            let summary = normalizedNonEmpty(display.background)
+                ?? normalizedNonEmpty(remote?.whyNow)
+                ?? actionSentence
                 ?? "Call your representatives about this issue."
-            let liveScript = normalizedNonEmpty(script.liveScript)
-                ?? generatedFallbackScript(title: title, actionSentence: normalizedActionSentence, isVoicemail: false)
-            let voicemailScript = normalizedNonEmpty(script.voicemailScript)
-                ?? generatedFallbackScript(title: title, actionSentence: normalizedActionSentence, isVoicemail: true)
+            let liveScript = normalizedNonEmpty(display.liveScript)
+                ?? localSeed?.liveScript
+                ?? generatedFallbackScript(title: title, actionSentence: actionSentence, isVoicemail: false)
+            let voicemailScript = normalizedNonEmpty(display.voicemailScript)
+                ?? localSeed?.voicemailScript
+                ?? generatedFallbackScript(title: title, actionSentence: actionSentence, isVoicemail: true)
 
-            let inferredAsk = civicAsk(from: script.actionType)
-            let targetChambers = inferredTargetChambers(from: script.actionTargetDisplay, fallback: availableChambers)
-            let repRelevance = repRelevanceLines(for: targetChambers)
-            let actionTargetID = normalizedNonEmpty(script.actionTargetId)
-            let relatedBills = actionTargetID.map { [$0] } ?? []
+            let inferredAsk = localSeed?.preferredAsk ?? civicAsk(from: remote?.actionType)
+            let targetChambers = localSeed?.targetChambers
+                ?? inferredTargetChambers(from: remote?.actionTargetDisplay, fallback: availableChambers)
+            let repRelevance = (localSeed?.repRelevance.isEmpty == false)
+                ? (localSeed?.repRelevance ?? [])
+                : repRelevanceLines(for: targetChambers)
+
+            var relatedBills = localSeed?.relatedBills ?? []
+            if let vehicleLabel = normalizedNonEmpty(display.vehicleLabel),
+               !containsCaseInsensitive(relatedBills, value: vehicleLabel) {
+                relatedBills.insert(vehicleLabel, at: 0)
+            } else if let actionTargetID = normalizedNonEmpty(remote?.actionTargetId),
+                      !containsCaseInsensitive(relatedBills, value: actionTargetID) {
+                relatedBills.append(actionTargetID)
+            }
+
+            let tags = (localSeed?.tags.isEmpty == false)
+                ? (localSeed?.tags ?? [])
+                : remoteTags(contentType: remote?.contentType, actionType: remote?.actionType)
 
             return CivicExampleIssueCard(
-                id: trimmedSlug,
-                slug: trimmedSlug,
+                id: key,
+                slug: key,
                 title: title,
-                category: normalizedDisplayCategory(script.contentType),
+                category: normalizedNonEmpty(display.issueArea) ?? "Issue",
                 targetChambers: targetChambers,
-                primaryAsk: inferredAsk?.rawValue ?? normalizedNonEmpty(script.actionType),
+                primaryAsk: localSeed?.primaryAsk ?? inferredAsk?.rawValue ?? normalizedNonEmpty(remote?.actionType),
                 summary: summary,
+                vehicleLabel: normalizedNonEmpty(display.vehicleLabel),
+                actionSentence: actionSentence,
                 relatedBills: relatedBills,
                 repRelevance: repRelevance,
-                templateAsks: inferredAsk.map { [$0] } ?? [.support],
+                templateAsks: (localSeed?.templateAsks.isEmpty == false)
+                    ? (localSeed?.templateAsks ?? [])
+                    : (inferredAsk.map { [$0] } ?? [.support]),
                 liveScript: liveScript,
                 voicemailScript: voicemailScript,
                 supporterVariant: nil,
@@ -2119,14 +2158,62 @@ final class IssueCallCenterViewModel: ObservableObject {
                 stafferVariant: nil,
                 voicemailFooter: nil,
                 placeholders: placeholders,
-                tags: remoteTags(contentType: script.contentType, actionType: script.actionType),
-                updatedAt: parseRemotePremadeTimestamp(script.updatedAt)
+                tags: tags,
+                updatedAt: parseRemotePremadeTimestamp(display.updatedAt) ?? localSeed?.updatedAt
             )
         }
 
         return cards.filter { card in
             !Set(card.targetChambers).intersection(Set(availableChambers)).isEmpty
         }
+    }
+
+    private func mergedDisplayPremadeScripts(
+        remote: [RemotePremadeScript],
+        localSeedByKey: [String: CivicExampleIssueCard]
+    ) -> [DisplayPremadeScript] {
+        // Preserve Supabase ordering while replacing visual framing with bundled seed metadata.
+        remote.compactMap { script in
+            guard let key = normalizedPremadeKey(script.slug) else { return nil }
+            let localSeed = localSeedByKey[key]
+            let fallbackTitle = normalizedNonEmpty(script.title)
+                ?? normalizedNonEmpty(script.actionTargetDisplay)
+                ?? key.replacingOccurrences(of: "-", with: " ").capitalized
+
+            return DisplayPremadeScript(
+                id: key,
+                title: localSeed?.title ?? fallbackTitle,
+                issueArea: normalizedNonEmpty(localSeed?.category) ?? "Issue",
+                background: normalizedNonEmpty(localSeed?.summary)
+                    ?? normalizedNonEmpty(script.whyNow)
+                    ?? "",
+                vehicleLabel: vehicleLabelForSlug(key) ?? bestLocalVehicleLabel(from: localSeed),
+                actionSentence: normalizedSentence(script.actionSentence),
+                liveScript: normalizedNonEmpty(script.liveScript) ?? localSeed?.liveScript,
+                voicemailScript: normalizedNonEmpty(script.voicemailScript) ?? localSeed?.voicemailScript,
+                updatedAt: normalizedNonEmpty(script.updatedAt)
+            )
+        }
+    }
+
+    private func localPremadeSeedIndex(_ localSeeds: [CivicExampleIssueCard]) -> [String: CivicExampleIssueCard] {
+        var index: [String: CivicExampleIssueCard] = [:]
+        for seed in localSeeds {
+            let keys: [String?] = [seed.slug, seed.id]
+            for rawKey in keys {
+                guard let normalizedKey = normalizedPremadeKey(rawKey) else { continue }
+                if index[normalizedKey] == nil {
+                    index[normalizedKey] = seed
+                }
+            }
+        }
+        return index
+    }
+
+    private func normalizedPremadeKey(_ value: String?) -> String? {
+        guard let trimmed = value?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !trimmed.isEmpty else { return nil }
+        return trimmed.lowercased()
     }
 
     private func availablePremadeTargetChambers() -> [String] {
@@ -2192,14 +2279,6 @@ final class IssueCallCenterViewModel: ObservableObject {
         }
     }
 
-    private func normalizedDisplayCategory(_ contentType: String?) -> String? {
-        guard let contentType = normalizedNonEmpty(contentType) else { return nil }
-        return contentType
-            .replacingOccurrences(of: "_", with: " ")
-            .replacingOccurrences(of: "-", with: " ")
-            .capitalized
-    }
-
     private func remoteTags(contentType: String?, actionType: String?) -> [String] {
         var tags: [String] = []
         if let contentType = normalizedNonEmpty(contentType)?.lowercased() {
@@ -2242,6 +2321,45 @@ final class IssueCallCenterViewModel: ObservableObject {
             return value
         }
         return "\(value)."
+    }
+
+    private func bestLocalVehicleLabel(from localSeed: CivicExampleIssueCard?) -> String? {
+        guard let localSeed else { return nil }
+        for relatedBill in localSeed.relatedBills {
+            if let normalized = normalizedBillReference(relatedBill) {
+                return normalized
+            }
+        }
+        return nil
+    }
+
+    private func vehicleLabelForSlug(_ slug: String) -> String? {
+        switch slug {
+        case "oppose-the-save-america-act":
+            return "Safeguard American Voter Eligibility Act (SAVE Act), H.R. 22"
+        case "crypto-consumer-protection":
+            return "Digital Asset Market Clarity Act of 2025 (CLARITY Act), H.R. 3633"
+        case "expand-housing-supply-and-prevent-homelessness":
+            return "Housing for the 21st Century Act, H.R. 6644"
+        case "block-trumps-push-to-take-control-of-greenland":
+            return "Greenland Sovereignty Protection Act, H.R. 7013"
+        case "strengthen-tsa-staffing-and-reduce-checkpoint-bottlenecks":
+            return "Rights for the TSA Workforce Act, H.R. 2086"
+        case "ukraine-security-and-humanitarian-support":
+            return "Ukraine Support Act, H.R. 2913"
+        case "gun-safety-and-background-checks":
+            return "Bipartisan Background Checks Act of 2025, H.R. 18"
+        case "protect-state-level-ai-regulation":
+            return "A bill to prohibit the use of Federal funds to implement the Executive order entitled \"Ensuring a National Policy Framework for Artificial Intelligence,\" S. 3557"
+        case "oppose-casey-means-for-surgeon-general":
+            return "Casey Means nomination for Surgeon General, PN730-47"
+        case "oppose-steve-pearce-as-blm-director":
+            return "Stevan Pearce nomination for Bureau of Land Management Director, PN730-52"
+        case "stop-unauthorized-military-strikes-on-iran":
+            return "Iran War Powers Resolution, S.J.Res. 104"
+        default:
+            return nil
+        }
     }
 
     private func normalizedNonEmpty(_ value: String?) -> String? {
@@ -2430,7 +2548,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                     fallbackReason: nil,
                     sessionResetReason: nil
                 )
-                errorMessage = prepared.clarificationPrompt ?? "I need one detail to make this usable: what should the office do first?"
+                errorMessage = prepared.clarificationPrompt ?? "I need one detail to make this usable: what issue do you care about most?"
                 return
             }
             if prepared.options.isEmpty {
@@ -2582,8 +2700,8 @@ final class IssueCallCenterViewModel: ObservableObject {
                 mapcV3NeedsClarification = true
                 let hint = package.reviewRegenerateHint.trimmingCharacters(in: .whitespacesAndNewlines)
                 if hint.isEmpty {
-                    errorMessage = "I need one detail to make this usable: what should the office do first?"
-                    mapcV3ClarificationPrompt = "I need one detail to make this usable: what should the office do first?"
+                    errorMessage = "I need one detail to make this usable: what issue do you care about most?"
+                    mapcV3ClarificationPrompt = "I need one detail to make this usable: what issue do you care about most?"
                 } else {
                     errorMessage = hint
                     mapcV3ClarificationPrompt = hint
@@ -2625,6 +2743,11 @@ final class IssueCallCenterViewModel: ObservableObject {
         if error is URLError { return true }
         let nsError = error as NSError
         if nsError.domain == NSURLErrorDomain { return true }
+        if nsError.domain == NSCocoaErrorDomain && (nsError.code == 4865 || nsError.code == 3840) {
+            // mapc_pipeline_v3 — remove flag check after rollout confirmed
+            // Upstream returned empty/invalid JSON payload; treat as recoverable transport-style failure.
+            return true
+        }
         return nsError.domain == "CivicIssueCallAPIClient" && nsError.code == 502
     }
 
@@ -2646,13 +2769,20 @@ final class IssueCallCenterViewModel: ObservableObject {
         if lowered.contains("feature_flag_disabled") {
             return "MAPC v3 is disabled on the backend."
         }
+        if lowered.contains("invalid_initial_state") || lowered.contains("invalid_state_transition") {
+            return mapcV3RecoveryMessage
+        }
         if lowered.contains("preview_not_confirmed") {
             return "Please confirm the preview before generating the script."
         }
         if lowered.contains("universal_script_lint_failed") {
             return mapcV3LintRecoveryMessage
         }
-        return "MAPC v3 hit an unexpected error. Please try again."
+        if nsError.domain == "CivicIssueCallAPIClient"
+            && [-31_006, -31_007].contains(nsError.code) {
+            return mapcV3RecoveryMessage
+        }
+        return mapcV3RecoveryMessage
     }
 
     private func recordMAPCGenerationTelemetry(
@@ -2732,6 +2862,9 @@ final class IssueCallCenterViewModel: ObservableObject {
     func prepareForMAPCV3RevisionFollowUp() {
         // mapc_pipeline_v3 — remove flag check after rollout confirmed
         mapcV3PreserveSessionForNextSubmit = true
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        // Backend Stage 1 accepts new/issue_received/revising. Revision turns must not reuse script_shown.
+        mapcV3SessionState = "revising"
         clearDisplayedDraftBeforeNewGeneration()
         pendingGeneratedResolution = nil
         requiresDraftApproval = false

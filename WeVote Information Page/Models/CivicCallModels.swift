@@ -183,6 +183,8 @@ struct CivicExampleIssueCard: Identifiable, Codable, Sendable {
     let targetChambers: [String]
     let primaryAsk: String?
     let summary: String
+    let vehicleLabel: String?
+    let actionSentence: String?
     let relatedBills: [String]
     let repRelevance: [String]
     let templateAsks: [CivicAsk]
@@ -204,6 +206,8 @@ struct CivicExampleIssueCard: Identifiable, Codable, Sendable {
         case targetChambers = "target_chambers"
         case primaryAsk = "primary_ask"
         case summary
+        case vehicleLabel = "vehicle_label"
+        case actionSentence = "action_sentence"
         case relatedBills = "related_bills"
         case repRelevance = "rep_relevance"
         case templateAsks = "template_asks"
@@ -230,6 +234,8 @@ struct CivicExampleIssueCard: Identifiable, Codable, Sendable {
         targetChambers: [String] = [],
         primaryAsk: String? = nil,
         summary: String,
+        vehicleLabel: String? = nil,
+        actionSentence: String? = nil,
         relatedBills: [String],
         repRelevance: [String],
         templateAsks: [CivicAsk],
@@ -250,6 +256,8 @@ struct CivicExampleIssueCard: Identifiable, Codable, Sendable {
         self.targetChambers = targetChambers
         self.primaryAsk = primaryAsk
         self.summary = summary
+        self.vehicleLabel = vehicleLabel
+        self.actionSentence = actionSentence
         self.relatedBills = relatedBills
         self.repRelevance = repRelevance
         self.templateAsks = templateAsks
@@ -273,6 +281,8 @@ struct CivicExampleIssueCard: Identifiable, Codable, Sendable {
         targetChambers = try container.decodeIfPresent([String].self, forKey: .targetChambers) ?? []
         primaryAsk = try container.decodeIfPresent(String.self, forKey: .primaryAsk)
         summary = try container.decode(String.self, forKey: .summary)
+        vehicleLabel = try container.decodeIfPresent(String.self, forKey: .vehicleLabel)
+        actionSentence = try container.decodeIfPresent(String.self, forKey: .actionSentence)
         relatedBills = try container.decodeIfPresent([String].self, forKey: .relatedBills) ?? []
         repRelevance = try container.decodeIfPresent([String].self, forKey: .repRelevance) ?? []
         templateAsks = try container.decodeIfPresent([CivicAsk].self, forKey: .templateAsks) ?? []
@@ -328,6 +338,18 @@ struct RemotePremadeScript: Identifiable, Codable {
         case displayOrder = "display_order"
         case updatedAt = "updated_at"
     }
+}
+
+struct DisplayPremadeScript: Identifiable {
+    let id: String
+    let title: String
+    let issueArea: String
+    let background: String
+    let vehicleLabel: String?
+    let actionSentence: String?
+    let liveScript: String?
+    let voicemailScript: String?
+    let updatedAt: String?
 }
 
 struct CivicCallLogRecord: Identifiable, Codable, Sendable {

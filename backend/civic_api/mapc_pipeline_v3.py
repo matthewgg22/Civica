@@ -232,7 +232,7 @@ class MAPCPipelineV3Service:
             needs_clarification = True
             session_obj["needs_clarification"] = True
             if not _normalized_text(session_obj.get("clarification_prompt")):
-                session_obj["clarification_prompt"] = "What specific action should Congress take first?"
+                session_obj["clarification_prompt"] = "What issue do you care about most?"
         if yes_select_all and needs_clarification:
             # mapc_pipeline_v3 — remove flag check after rollout confirmed
             session_obj = _force_best_effort_interpretation(session_obj, working_history)
@@ -260,7 +260,7 @@ class MAPCPipelineV3Service:
             session_obj["clarification_prompt"] = None
 
         if needs_clarification:
-            clarification_prompt = _normalized_text(session_obj.get("clarification_prompt")) or "What specific action should Congress take first?"
+            clarification_prompt = _normalized_text(session_obj.get("clarification_prompt")) or "What issue do you care about most?"
             working_history = _append_context_turn(working_history, role="assistant", text=clarification_prompt)
             session_obj["clarification_prompt"] = clarification_prompt
 
@@ -578,7 +578,7 @@ class MAPCPipelineV3Service:
         if normalized_action == "too_broad":
             updated = deepcopy(session_obj)
             updated["needs_clarification"] = True
-            updated["clarification_prompt"] = _normalized_text(updated.get("clarification_prompt")) or "What exact action should Congress take first?"
+            updated["clarification_prompt"] = _normalized_text(updated.get("clarification_prompt")) or "What issue do you care about most?"
             updated["session_state"] = "issue_received"
             self._set_state(session_id, "issue_received")
             return {"session": updated, "clarification_prompt": updated["clarification_prompt"]}
@@ -1700,7 +1700,7 @@ def _offline_interpret(payload: dict[str, Any]) -> dict[str, Any]:
             "geographic_relevance": "national",
             "confidence": 0.58,
             "needs_clarification": True,
-            "clarification_prompt": "Which Tibet action should Congress take first: hearings, sanctions oversight, or refugee protections?",
+            "clarification_prompt": "On Tibet, what issue do you care about most?",
             "spoken_language_notes": "Congress acts through oversight and sanctions tools, not direct foreign administration.",
         })
         if session["clarification_turn_count"] >= 2:
@@ -1720,7 +1720,7 @@ def _offline_interpret(payload: dict[str, Any]) -> dict[str, Any]:
             "geographic_relevance": "national",
             "confidence": 0.52,
             "needs_clarification": True,
-            "clarification_prompt": "Which federal angle should Congress prioritize first: price-gouging oversight, competition hearings, or nutrition benefits?",
+            "clarification_prompt": "For groceries and cost of living, what issue do you care about most?",
             "spoken_language_notes": "Keep terms plain and household-focused.",
         })
         if session["clarification_turn_count"] >= 2:
@@ -1795,7 +1795,7 @@ def _offline_interpret(payload: dict[str, Any]) -> dict[str, Any]:
             "geographic_relevance": "national",
             "confidence": 0.40,
             "needs_clarification": True,
-            "clarification_prompt": "What exact action should Congress take first?",
+            "clarification_prompt": "What issue do you care about most?",
             "spoken_language_notes": None,
         })
         if session["clarification_turn_count"] >= 2:

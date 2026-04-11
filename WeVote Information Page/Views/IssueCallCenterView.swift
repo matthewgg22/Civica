@@ -47,6 +47,7 @@ struct IssueCallCenterView: View {
     @State private var currentBackgroundDiscussionOptions: [String] = []
     @State private var hasPickedDiscussionOptionInCurrentCycle = false
     @State private var suppressTranslationForNextBackground = false
+    @State private var awaitingCustomAgenticStrategyInput = false
     @State private var isKeyboardVisible = false
     @State private var nonMapcTabSlidesForward = true
     @State private var previousNonMapcTab: CivicIssueCallTab = .assistant
@@ -85,16 +86,47 @@ struct IssueCallCenterView: View {
         let newIssueScore: Double
     }
 
-    private enum MAPCRevisionChip: String, CaseIterable, Identifiable {
-        case wrongIssue = "Wrong issue"
-        case wrongAsk = "Wrong ask"
-        case tooBroad = "Too broad"
-        case needsLocalAngle = "Needs local angle"
-        case needsBill = "Needs a bill"
-        case needsSpecificAction = "Needs a specific action"
-        case startOver = "Start over"
+    private enum MAPCAgenticStrategyChip: String, CaseIterable, Identifiable {
+        case strongestFirstStep = "Strongest First Step"
+        case legislativePush = "Legislative Push"
+        case fundingLeverage = "Funding Leverage"
+        case oversightWithDeadlines = "Oversight With Deadlines"
+        case positionOnRecord = "Position on Record"
+        case billLinkedOnlyIfReal = "Bill-Linked (Only if Real)"
+        case districtFirstImpact = "District-First Impact"
+        case bipartisanFeasiblePath = "Bipartisan Feasible Path"
+        case escalationPath = "Escalation Path"
+        case noGenericOptions = "No Generic Options"
+        case other = "Other (Type Your Own)"
 
         var id: String { rawValue }
+
+        var strategyInstruction: String {
+            switch self {
+            case .strongestFirstStep:
+                return "Prioritize the highest-impact concrete action, not safest wording."
+            case .legislativePush:
+                return "Prefer vote, cosponsor, and statutory actions over hearing or letter defaults."
+            case .fundingLeverage:
+                return "Prioritize appropriations, funding increases or cuts, and funding restrictions."
+            case .oversightWithDeadlines:
+                return "Require reporting deadlines, public updates, and enforcement checkpoints."
+            case .positionOnRecord:
+                return "Ask for a clear public position from the member or office."
+            case .billLinkedOnlyIfReal:
+                return "Include an explicit bill only when confidence is high and the bill is verifiable."
+            case .districtFirstImpact:
+                return "Frame asks around district harms and measurable local outcomes."
+            case .bipartisanFeasiblePath:
+                return "Pick the most passable near-term action while staying specific."
+            case .escalationPath:
+                return "Provide a sequenced plan: first action now, backup if no response."
+            case .noGenericOptions:
+                return "Block generic asks like support this issue and require distinct action families."
+            case .other:
+                return ""
+            }
+        }
     }
 
     private struct AssistantRefinementSnapshot: Codable {
@@ -454,7 +486,7 @@ struct IssueCallCenterView: View {
                             scriptFocusModeContent
                         }
                     } else {
-                        VStack(spacing: 12) {
+                        VStack(spacing: 6) {
                             headerSection
                             topTabSelector
                                 .offset(y: shouldHideTopTabSelector ? -16 : 0)
@@ -720,8 +752,8 @@ struct IssueCallCenterView: View {
             }
         }
         .padding(.horizontal, 16)
-        .padding(.top, 4)
-        .padding(.bottom, 8)
+        .padding(.top, 2)
+        .padding(.bottom, 2)
         .background(VoteNowColors.brandSoftBlue)
     }
 
@@ -824,7 +856,7 @@ struct IssueCallCenterView: View {
         )
         .shadow(color: VoteNowColors.primaryText.opacity(0.06), radius: 6, x: 0, y: 2)
         .padding(.horizontal, 16)
-        .padding(.top, -4)
+        .padding(.top, 0)
         .padding(.bottom, 4)
         .background(VoteNowColors.brandSoftBlue)
         .accessibilityIdentifier("issue_call.tabs")
@@ -1347,14 +1379,14 @@ struct IssueCallCenterView: View {
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(VoteNowColors.primaryText)
 
-            Text("Need changes first?")
+            Text("Pick how agentic the ask options should be:")
                 .font(.caption.weight(.semibold))
                 .foregroundColor(VoteNowColors.mutedText)
 
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 145), spacing: 8)], spacing: 8) {
-                ForEach(MAPCRevisionChip.allCases) { chip in
+                ForEach(MAPCAgenticStrategyChip.allCases) { chip in
                     Button {
-                        applyMAPCV3RevisionChip(chip)
+                        applyMAPCAgenticStrategyChip(chip)
                     } label: {
                         Text(chip.rawValue)
                             .font(.caption.weight(.semibold))
@@ -1520,7 +1552,17 @@ struct IssueCallCenterView: View {
         suppressTranslationForNextBackground = fromDiscussionOption
 
         let priorConcern = viewModel.concernText.trimmingCharacters(in: .whitespacesAndNewlines)
-        let intent = classifyMAPCTurnIntent(prompt)
+        let pipelinePrompt: String
+        var intent = classifyMAPCTurnIntent(prompt)
+        if awaitingCustomAgenticStrategyInput && viewModel.mapcPipelineV3Enabled {
+            // mapc_pipeline_v3 — remove flag check after rollout confirmed
+            // "Other" strategy text should be handled as a constraints revision, not a new issue.
+            pipelinePrompt = "strategy preference: \(prompt)"
+            intent = MAPCTurnIntentClassification(intent: .reviseToneOrConstraints, newIssueScore: 0.1)
+            awaitingCustomAgenticStrategyInput = false
+        } else {
+            pipelinePrompt = prompt
+        }
         let hasActiveMAPCV3Session = viewModel.mapcPipelineV3Enabled
             && (isActiveMAPCRefinementStage
                 || viewModel.shouldContinueMAPCV3Clarification
@@ -1543,14 +1585,14 @@ struct IssueCallCenterView: View {
         if shouldTreatAsMAPCRevision {
             // mapc_pipeline_v3 — remove flag check after rollout confirmed
             combinedPrompt = rewrittenMAPCV3RevisionPrompt(
-                from: prompt,
+                from: pipelinePrompt,
                 priorConcern: priorConcern,
                 intent: intent
             )
         } else if wasLegacyRefinementStage, !priorConcern.isEmpty {
-            combinedPrompt = mergedConcernText(base: priorConcern, refinement: prompt)
+            combinedPrompt = mergedConcernText(base: priorConcern, refinement: pipelinePrompt)
         } else {
-            combinedPrompt = prompt
+            combinedPrompt = pipelinePrompt
             hasPickedDiscussionOptionInCurrentCycle = false
         }
 
@@ -1660,7 +1702,8 @@ struct IssueCallCenterView: View {
             "local angle",
             "district",
             "state-specific",
-            "tone"
+            "tone",
+            "strategy preference"
         ]) {
             return MAPCTurnIntentClassification(intent: .reviseToneOrConstraints, newIssueScore: 0.2)
         }
@@ -1741,7 +1784,7 @@ struct IssueCallCenterView: View {
             viewModel.errorMessage = nil
         } else {
             appendAssistantBotMessage(
-                "I need one detail to make this usable: what should the office do first?",
+                "I need one detail to make this usable: what issue do you care about most?",
                 kind: .plain,
                 messageType: "fallback_prompt"
             )
@@ -1778,7 +1821,7 @@ struct IssueCallCenterView: View {
             viewModel.errorMessage = nil
         } else {
             appendAssistantBotMessage(
-                "I need one detail to make this usable: what should the office do first?",
+                "I need one detail to make this usable: what issue do you care about most?",
                 kind: .plain,
                 messageType: "fallback_prompt"
             )
@@ -1885,40 +1928,30 @@ struct IssueCallCenterView: View {
         suppressTranslationForNextBackground = false
     }
 
-    private func applyMAPCV3RevisionChip(_ chip: MAPCRevisionChip) {
+    private func applyMAPCAgenticStrategyChip(_ chip: MAPCAgenticStrategyChip) {
         guard !assistantIsThinking, !viewModel.isSubmitting else { return }
-        appendAssistantUserMessage("Selected: \(chip.rawValue)", messageType: "revision_chip")
+        appendAssistantUserMessage("Selected strategy: \(chip.rawValue)", messageType: "strategy_chip")
 
-        if chip == .startOver {
-            startOverMAPCV3SessionInChat()
+        if chip == .other {
+            awaitingCustomAgenticStrategyInput = true
+            appendAssistantBotMessage(
+                "Type your strategy in one sentence and I’ll apply it to the next ask options.",
+                kind: .plain,
+                messageType: "strategy_other_prompt"
+            )
+            focusedField = .concern
             return
         }
 
-        let revisionPrompt: String
-        switch chip {
-        case .wrongIssue:
-            revisionPrompt = "wrong issue"
-        case .wrongAsk:
-            revisionPrompt = "wrong ask"
-        case .tooBroad:
-            revisionPrompt = "too broad"
-        case .needsLocalAngle:
-            revisionPrompt = "needs a local angle"
-        case .needsBill:
-            revisionPrompt = "there's no explicit bill"
-        case .needsSpecificAction:
-            revisionPrompt = "needs a specific action"
-        case .startOver:
-            revisionPrompt = "start over"
-        }
-
-        assistantComposerText = revisionPrompt
+        awaitingCustomAgenticStrategyInput = false
+        assistantComposerText = "strategy preference: \(chip.strategyInstruction)"
         submitScriptDraft(fromDiscussionOption: true)
     }
 
     private func startOverMAPCV3SessionInChat() {
         // mapc_pipeline_v3 — remove flag check after rollout confirmed
         viewModel.startOverMAPCV3Session()
+        awaitingCustomAgenticStrategyInput = false
         previewLintBlocked = false
         hasRetriedPreviewLintRegeneration = false
         assistantFlowStage = .awaitingPrompt
@@ -1982,6 +2015,7 @@ struct IssueCallCenterView: View {
     private func selectMAPCV3OptionInChat(_ option: CivicMAPCV3PreparedOption) {
         guard !assistantIsThinking, !viewModel.isSubmitting else { return }
         hasPickedDiscussionOptionInCurrentCycle = true
+        awaitingCustomAgenticStrategyInput = false
         previewLintBlocked = false
         hasRetriedPreviewLintRegeneration = false
         viewModel.selectMAPCV3Option(optionID: option.optionID)
@@ -2435,7 +2469,7 @@ struct IssueCallCenterView: View {
         if normalizedBillInput() == nil && viewModel.resolvedEntities.bills.isEmpty {
             questions.append("Is there a specific bill, program, or agency you want referenced?")
         }
-        questions.append("What exact action should Congress take first?")
+        questions.append("What issue do you care about most?")
         questions.append("Should the script prioritize funding, oversight, or voting action?")
         questions.append("Do you want a stronger economic, safety, rights, or local-impact framing?")
         questions = Array(questions.prefix(4))
@@ -2795,7 +2829,7 @@ struct IssueCallCenterView: View {
             return brief.officeType
         }()
         let primaryCallURL = callURL(primary: brief.primaryPhoneNumber, fallback: official?.officialPhone)
-        let shouldShowCallPillOrbit = condensedForMAPC && !isMAPCCardTransitioning && primaryCallURL != nil
+        let shouldShowCallPillOrbit = condensedForMAPC
         let isLastBrief = viewModel.isLastBrief(brief)
         let briefIndex = viewModel.callBriefs.firstIndex(where: { $0.id == brief.id }) ?? 0
         let isFirstBrief = briefIndex == 0
@@ -3317,9 +3351,36 @@ struct IssueCallCenterView: View {
                             .foregroundColor(VoteNowColors.primaryText)
                             .fixedSize(horizontal: false, vertical: true)
 
+                        if let vehicleLabel = premadeOptionalDisplayText(example.vehicleLabel) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Legislative vehicle")
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundColor(VoteNowColors.mutedText)
+                                emphasizedPromptText(vehicleLabel, baseFont: .subheadline)
+                                    .foregroundColor(VoteNowColors.primaryText)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+
+                        if let actionSentence = premadeOptionalDisplayText(example.actionSentence) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Action request")
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundColor(VoteNowColors.mutedText)
+                                emphasizedPromptText(actionSentence, baseFont: .subheadline)
+                                    .foregroundColor(VoteNowColors.primaryText)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+
                         exampleScriptBlock(
                             title: "Live-call Script",
                             text: condensedPremadeScriptPlaceholderText(example.liveScript)
+                        )
+
+                        exampleScriptBlock(
+                            title: "Voicemail Script",
+                            text: condensedPremadeScriptPlaceholderText(example.voicemailScript)
                         )
 
                         Button {
@@ -4610,6 +4671,8 @@ struct IssueCallCenterView: View {
         let haystacks: [String] = [
             example.title,
             example.summary,
+            example.vehicleLabel ?? "",
+            example.actionSentence ?? "",
             example.category ?? "",
             example.slug ?? "",
             example.liveScript,
@@ -4700,6 +4763,12 @@ struct IssueCallCenterView: View {
         )
 
         return preview.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func premadeOptionalDisplayText(_ text: String?) -> String? {
+        guard let text = text?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !text.isEmpty else { return nil }
+        return text
     }
 
     private var scriptInputsToggleButton: some View {
