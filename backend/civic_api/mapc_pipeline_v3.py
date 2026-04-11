@@ -910,6 +910,22 @@ class MAPCPipelineV3Service:
                 "passed": universal_ok,
                 "reason": universal_reason,
             })
+            if not universal_ok and universal_reason and "missing_concrete_action_verb" in universal_reason:
+                # mapc_pipeline_v3 — remove flag check after rollout confirmed
+                # Deterministic final repair path for missing action verbs.
+                action_sentence = _deterministic_action_sentence(selected_option, session_obj)
+                scripts["live_script"] = _inject_missing_action_sentence(scripts["live_script"], action_sentence)
+                scripts["voicemail_script"] = _inject_missing_action_sentence(scripts["voicemail_script"], action_sentence)
+                universal_ok, universal_reason = _universal_mapc_script_lint_ok(
+                    live_script=scripts["live_script"],
+                    voicemail_script=scripts["voicemail_script"],
+                    raw_user_issue=_normalized_text(session_obj.get("raw_user_issue")),
+                )
+                validator_report["checks"].append({
+                    "name": "universal_script_lint_deterministic_action_repair",
+                    "passed": universal_ok,
+                    "reason": universal_reason,
+                })
             if not universal_ok:
                 self._increment_lint_reason_counter(universal_reason)
                 raise MAPCPipelineV3Error("universal_script_lint_failed", f"script lint failed: {universal_reason}")
@@ -1773,11 +1789,68 @@ def _ask_sentence_has_action(script: str) -> bool:
     sentences = _sentence_list(script)
     if not sentences:
         return False
+    # Prefer explicit ask-like sentences when present.
     for sentence in sentences:
         lowered = sentence.lower()
-        if "please" in lowered or "asking" in lowered or "i'm asking" in lowered:
+        if (
+            "please" in lowered
+            or "asking" in lowered
+            or "i'm asking" in lowered
+            or "i am asking" in lowered
+            or "i ask" in lowered
+            or "i want" in lowered
+            or "i'm calling to ask" in lowered
+        ):
             return _contains_concrete_action_verb(sentence)
-    return _contains_concrete_action_verb(sentences[0])
+    # Fallback: if any sentence has an accepted concrete action, treat it as sufficient.
+    return any(_contains_concrete_action_verb(sentence) for sentence in sentences)
+
+
+def _deterministic_action_sentence(selected_option: dict[str, Any], session_obj: dict[str, Any]) -> str:
+    ask_type = _normalized_text(selected_option.get("ask_type")).lower()
+    display_ask = _normalized_text(selected_option.get("display_ask"))
+    if display_ask:
+        candidate = display_ask.rstrip(".")
+        if _contains_concrete_action_verb(candidate):
+            return f"Please {candidate}."
+    mapping: tuple[tuple[str, str], ...] = (
+        ("legislation", "Please vote yes on this legislative action and state the office position."),
+        ("appropriations", "Please fund this priority in the next appropriations package."),
+        ("funding", "Please fund this priority in the next appropriations package."),
+        ("oversight", "Please require public reporting deadlines and oversight updates."),
+        ("reporting", "Please require public reporting deadlines and oversight updates."),
+        ("nomination", "Please issue a public statement and share the office vote position."),
+        ("vote", "Please vote yes on this action and share the office position."),
+        ("public_statement", "Please issue a clear public statement on this action."),
+        ("sanctions", "Please investigate sanctions enforcement and require public reporting."),
+        ("export", "Please investigate export-control enforcement and require public reporting."),
+        ("war_powers", "Please restrict unauthorized military funding and require authorization."),
+        ("humanitarian", "Please support humanitarian and refugee protections."),
+        ("refugee", "Please support humanitarian and refugee protections."),
+        ("anti_fraud", "Please investigate fraud and require public reporting."),
+        ("consumer_protection", "Please investigate fraud and require public reporting."),
+    )
+    for key, sentence in mapping:
+        if key in ask_type:
+            return sentence
+    stance = _normalized_text(session_obj.get("stance")).lower()
+    if stance == "oppose":
+        return "Please oppose this specific policy action and state the office position."
+    return "Please support this specific policy action and state the office position."
+
+
+def _inject_missing_action_sentence(script: str, action_sentence: str) -> str:
+    if not _normalized_text(script):
+        return action_sentence
+    sentence_list = _sentence_list(script)
+    if not sentence_list:
+        return _normalized_text(f"{script} {action_sentence}")
+    if _contains_concrete_action_verb(script):
+        return script
+    if len(sentence_list) >= 2:
+        rebuilt = sentence_list[:-1] + [action_sentence, sentence_list[-1]]
+        return " ".join(rebuilt).strip()
+    return _normalized_text(f"{script.rstrip()} {action_sentence}")
 
 
 def _close_requests_position_or_next_step(script: str) -> bool:
