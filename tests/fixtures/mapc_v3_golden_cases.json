@@ -1,0 +1,42 @@
+[
+  {
+    "name": "marriage_equality_full_flow",
+    "raw_issue": "marriage equality",
+    "followups": [],
+    "expected": {
+      "min_options": 2,
+      "requires_background": true
+    }
+  },
+  {
+    "name": "wildfires_one_word_then_followup",
+    "raw_issue": "wildfires",
+    "followups": [
+      "fund prevention and forest management"
+    ],
+    "expected": {
+      "min_options": 2,
+      "requires_background": true
+    }
+  },
+  {
+    "name": "hong_kong_foreign_policy_with_followup",
+    "raw_issue": "hong kong",
+    "followups": [
+      "sanctions oversight and export controls"
+    ],
+    "expected": {
+      "min_options": 2,
+      "requires_background": true
+    }
+  },
+  {
+    "name": "fema_scams_full_flow",
+    "raw_issue": "fema scams",
+    "followups": [],
+    "expected": {
+      "min_options": 2,
+      "requires_background": true
+    }
+  }
+]

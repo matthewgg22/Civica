@@ -1017,6 +1017,13 @@ struct IssueCallCenterView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
+                    #if DEBUG
+                    if viewModel.mapcPipelineV3Enabled {
+                        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+                        mapcV3DebugBadge
+                    }
+                    #endif
+
                     if viewModel.lastCompletionResult != nil {
                         completionFeedbackCard
                     }
@@ -1094,6 +1101,31 @@ struct IssueCallCenterView: View {
             }
         }
     }
+
+    #if DEBUG
+    private var mapcV3DebugBadge: some View {
+        let reasonCode = viewModel.mapcV3LastFailureReasonCode ?? "none"
+        let fallback = viewModel.fallbackReason ?? "none"
+        let reset = viewModel.sessionResetReason ?? "none"
+        return VStack(alignment: .leading, spacing: 4) {
+            Text("MAPC v3 \(viewModel.generationPath) | reason: \(reasonCode)")
+                .font(.caption2.weight(.semibold))
+                .foregroundColor(VoteNowColors.primaryText)
+            Text("fallback: \(fallback) | reset: \(reset)")
+                .font(.caption2)
+                .foregroundColor(VoteNowColors.mutedText)
+                .lineLimit(2)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(VoteNowColors.surfaceWhite)
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+        )
+    }
+    #endif
 
     @ViewBuilder
     private func assistantMessageRow(_ message: AssistantChatMessage) -> some View {
@@ -4276,18 +4308,41 @@ struct IssueCallCenterView: View {
         }
     }
 
-    private func appendAssistantUserMessage(_ text: String, messageType: String) {
+    private func appendAssistantUserMessage(
+        _ text: String,
+        messageType: String,
+        metadata: [String: String]? = nil
+    ) {
         assistantMessages.append(.user(text))
-        viewModel.logScriptChatTurn(role: "user", messageText: text, messageType: messageType)
+        viewModel.logScriptChatTurn(
+            role: "user",
+            messageText: text,
+            messageType: messageType,
+            metadata: metadata
+        )
     }
 
     private func appendAssistantBotMessage(
         _ text: String,
         kind: AssistantChatMessage.MessageKind = .plain,
-        messageType: String
+        messageType: String,
+        metadata: [String: String]? = nil
     ) {
         assistantMessages.append(.assistant(text, kind: kind))
-        viewModel.logScriptChatTurn(role: "assistant", messageText: text, messageType: messageType)
+        var resolvedMetadata = metadata ?? [:]
+        let loweredType = messageType.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if resolvedMetadata["reason_code"] == nil,
+           ["error", "lint_blocked", "offline_notice", "preview_required"].contains(loweredType),
+           let reasonCode = viewModel.mapcV3LastFailureReasonCode,
+           !reasonCode.isEmpty {
+            resolvedMetadata["reason_code"] = reasonCode
+        }
+        viewModel.logScriptChatTurn(
+            role: "assistant",
+            messageText: text,
+            messageType: messageType,
+            metadata: resolvedMetadata.isEmpty ? nil : resolvedMetadata
+        )
     }
 
     @ViewBuilder

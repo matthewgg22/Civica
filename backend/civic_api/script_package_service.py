@@ -779,7 +779,7 @@ class ScriptPackageService:
             "turn_index": max(1, int(request.turn_index)),
             "message_text": _trim_for_event(request.message_text, 6000),
             "message_type": _trim_for_event(request.message_type, 120) or None,
-            "metadata": {},
+            "metadata": request.metadata or {},
         }
         try:
             self.civic_service.repository.insert_script_chat_turn(row)

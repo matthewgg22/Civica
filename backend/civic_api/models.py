@@ -703,3 +703,4 @@ class ScriptChatTurnRequest:
     turn_index: int
     package_id: str | None = None
     message_type: str | None = None
+    metadata: dict[str, str] | None = None

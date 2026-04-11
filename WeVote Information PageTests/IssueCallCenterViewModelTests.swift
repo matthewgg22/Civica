@@ -84,6 +84,109 @@ struct IssueCallCenterViewModelTests {
             )
         }
 
+        func prepareMAPCV3Selection(
+            userID: String,
+            sessionID: String?,
+            sessionState: String,
+            concernText: String,
+            accumulatedContext: [CivicMAPCV3ContextTurn],
+            clarificationTurnCount: Int,
+            introShown: Bool,
+            mapcApproved: Bool,
+            userZip: String?
+        ) async throws -> CivicMAPCV3PreparedSelection {
+            let resolvedSessionID = sessionID ?? UUID().uuidString
+            let normalizedConcern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+            let displayIssue = normalizedConcern.isEmpty ? "Federal policy issue" : normalizedConcern
+            let session = CivicMAPCV3Session(
+                sessionID: resolvedSessionID,
+                rawUserIssue: normalizedConcern,
+                normalizedIssue: displayIssue,
+                displayIssue: displayIssue,
+                issueDomain: "general_policy",
+                targetProblem: "Constituent requests office action",
+                congressionalLever: "oversight",
+                askType: "oversight_reporting_requirement",
+                displayAsk: "Require public reporting deadlines",
+                stance: "support",
+                geographicRelevance: "national",
+                optionalBillRef: nil,
+                constraintsFromUser: nil,
+                confidence: 0.82,
+                needsClarification: false,
+                clarificationPrompt: nil,
+                spokenLanguageNotes: nil,
+                sessionState: "ask_selected",
+                userZip: userZip,
+                accumulatedContext: accumulatedContext,
+                introShown: introShown,
+                clarificationTurnCount: clarificationTurnCount,
+                mapcApproved: mapcApproved
+            )
+            return CivicMAPCV3PreparedSelection(
+                sessionID: resolvedSessionID,
+                session: session,
+                displayIssue: session.displayIssue,
+                needsClarification: false,
+                clarificationPrompt: nil,
+                options: [
+                    CivicMAPCV3PreparedOption(
+                        optionID: "A1",
+                        askType: "oversight_reporting_requirement",
+                        displayAsk: "Require public reporting deadlines",
+                        confidence: 0.82
+                    ),
+                    CivicMAPCV3PreparedOption(
+                        optionID: "A2",
+                        askType: "appropriations_funding",
+                        displayAsk: "Fund targeted enforcement capacity",
+                        confidence: 0.78
+                    )
+                ]
+            )
+        }
+
+        func generateMAPCV3ScriptFromSelection(
+            userID: String,
+            concernText: String,
+            sessionID: String,
+            selectedOptionID: String,
+            targetReps: [CivicRepSlot],
+            repTargets: [CivicRepTarget],
+            optionalBillRef: String?,
+            userState: String?
+        ) async throws -> CivicScriptPackageResponse {
+            try await createScriptPackage(
+                userID: userID,
+                concernText: concernText,
+                selectedAsk: .support,
+                targetReps: targetReps,
+                repTargets: repTargets,
+                optionalBillRef: optionalBillRef,
+                userZip: nil,
+                userState: userState
+            )
+        }
+
+        func logScriptFeedback(
+            userID: String,
+            packageID: String,
+            decision: String,
+            chosenOption: String?,
+            finalScript: String?
+        ) async throws {}
+
+        func logScriptChatTurn(
+            userID: String,
+            sessionID: String,
+            packageID: String?,
+            role: String,
+            turnIndex: Int,
+            messageText: String,
+            messageType: String?,
+            metadata: [String: String]?
+        ) async throws {}
+
         func logCall(
             userID: String,
             repID: String,
@@ -335,6 +438,37 @@ struct IssueCallCenterViewModelTests {
 
         #expect(vm.lastCompletionResult?.scoringEligible == false)
         #expect(vm.lastCompletionResult?.scoringIneligibilityReason?.contains("past 7 days") == true)
+    }
+
+    @Test
+    func mapcV3FailureMappingUsesEmbeddedReasonCodeWhenPresent() async {
+        let vm = IssueCallCenterViewModel(
+            federalReps: sampleFederalReps(),
+            userZip: "10001",
+            apiClient: MockAPIClient(resolveResponse: sampleResolution()),
+            cacheStore: CivicCallBriefCacheStore(defaults: UserDefaults(suiteName: "IssueCallCenterViewModelTests.mapcReasonCode")!)
+        )
+        let description = #"CivicIssueCallAPIClient#400 status 400: {"detail":"{\"reason_code\": \"placeholder_leak\", \"message\": \"disallowed token remained: [Your Name]\"}"}"#
+        let result = vm.mapcV3FailureMappingPreview(description: description, domain: "CivicIssueCallAPIClient", code: 400)
+        #expect(result.reasonCode == "placeholder_leak")
+        #expect(result.message.contains("placeholder"))
+    }
+
+    @Test
+    func mapcV3FailureMappingPendingStateMissingUsesRecoveryCopy() async {
+        let vm = IssueCallCenterViewModel(
+            federalReps: sampleFederalReps(),
+            userZip: "10001",
+            apiClient: MockAPIClient(resolveResponse: sampleResolution()),
+            cacheStore: CivicCallBriefCacheStore(defaults: UserDefaults(suiteName: "IssueCallCenterViewModelTests.mapcPendingRecovery")!)
+        )
+        let result = vm.mapcV3FailureMappingPreview(
+            description: "No pending MAPC v3 selection state was found.",
+            domain: "CivicIssueCallAPIClient",
+            code: -31_006
+        )
+        #expect(result.reasonCode == "pending_state_missing")
+        #expect(result.message == "I hit a snag, but I still have your issue. Pick a fix or restate the action you want.")
     }
 
     private func sampleFederalReps() -> [Official] {

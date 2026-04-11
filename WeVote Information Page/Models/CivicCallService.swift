@@ -103,6 +103,7 @@ private struct CivicScriptChatTurnRequest: Codable {
     let turnIndex: Int
     let messageText: String
     let messageType: String?
+    let metadata: [String: String]?
 
     enum CodingKeys: String, CodingKey {
         case sessionID = "session_id"
@@ -111,6 +112,7 @@ private struct CivicScriptChatTurnRequest: Codable {
         case turnIndex = "turn_index"
         case messageText = "message_text"
         case messageType = "message_type"
+        case metadata
     }
 }
 
@@ -306,6 +308,36 @@ private struct CivicMAPCV3ScriptResponse: Codable {
         case voicemailScript = "voicemail_script"
         case validatorReport = "validator_report"
     }
+}
+
+private struct CivicMAPCV3PendingRequest: Codable {
+    let sessionID: String
+    let concernText: String
+
+    enum CodingKeys: String, CodingKey {
+        case sessionID = "session_id"
+        case concernText = "concern_text"
+    }
+}
+
+private struct CivicMAPCV3PendingResponse: Codable {
+    let found: Bool
+    let session: CivicMAPCV3Session?
+    let options: [CivicMAPCV3AskOption]
+    let concernText: String?
+
+    enum CodingKeys: String, CodingKey {
+        case found
+        case session
+        case options
+        case concernText = "concern_text"
+    }
+}
+
+private struct CivicMAPCV3RecoveredSelection: Sendable {
+    let concernText: String
+    let session: CivicMAPCV3Session
+    let options: [CivicMAPCV3AskOption]
 }
 
 struct CivicMAPCV3PreparedOption: Identifiable, Sendable {
@@ -667,7 +699,8 @@ protocol CivicIssueCallAPIClientProtocol {
         role: String,
         turnIndex: Int,
         messageText: String,
-        messageType: String?
+        messageType: String?,
+        metadata: [String: String]?
     ) async throws
     func logCall(
         userID: String,
@@ -993,7 +1026,23 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 userInfo: [NSLocalizedDescriptionKey: "selected_option_id is required."]
             )
         }
-        let pending = mapcV3PendingSelectionStateBySessionID[sessionID]
+        var pending = mapcV3PendingSelectionStateBySessionID[sessionID]
+        if pending == nil {
+            // mapc_pipeline_v3 — remove flag check after rollout confirmed
+            // Recover pending ask selection server-side when local in-memory state is missing.
+            if let recovered = try await recoverMAPCV3PendingSelection(
+                userID: "",
+                sessionID: sessionID,
+                concernText: normalizedConcern
+            ) {
+                pending = MAPCV3PendingSelectionState(
+                    concernText: recovered.concernText,
+                    session: recovered.session,
+                    options: recovered.options
+                )
+                mapcV3PendingSelectionStateBySessionID[sessionID] = pending
+            }
+        }
         guard let pending else {
             throw NSError(
                 domain: "CivicIssueCallAPIClient",
@@ -1070,6 +1119,36 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             repTargets: repTargets,
             optionalBillRef: optionalBillRef,
             userState: userState
+        )
+    }
+
+    private func recoverMAPCV3PendingSelection(
+        userID _: String,
+        sessionID: String,
+        concernText: String
+    ) async throws -> CivicMAPCV3RecoveredSelection? {
+        guard mapcPipelineV3Enabled else { return nil }
+        let trimmedSessionID = sessionID.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedSessionID.isEmpty else { return nil }
+        let trimmedConcern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+        var request = URLRequest(url: endpoint("/api/v2/civic/mapc/pending"))
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        await attachAuthorizationIfAvailable(to: &request)
+        request.httpBody = try encoder.encode(
+            CivicMAPCV3PendingRequest(
+                sessionID: trimmedSessionID,
+                concernText: trimmedConcern
+            )
+        )
+        let data = try await requestData(for: request)
+        let response = try decoder.decode(CivicMAPCV3PendingResponse.self, from: data)
+        guard response.found, let session = response.session, !response.options.isEmpty else { return nil }
+        let recoveredConcern = response.concernText?.trimmingCharacters(in: .whitespacesAndNewlines)
+        return CivicMAPCV3RecoveredSelection(
+            concernText: (recoveredConcern?.isEmpty == false) ? recoveredConcern! : trimmedConcern,
+            session: session,
+            options: response.options
         )
     }
 
@@ -1257,7 +1336,8 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         role: String,
         turnIndex: Int,
         messageText: String,
-        messageType: String?
+        messageType: String?,
+        metadata: [String: String]? = nil
     ) async throws {
         let payload = CivicScriptChatTurnRequest(
             sessionID: sessionID,
@@ -1265,7 +1345,8 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             role: role,
             turnIndex: turnIndex,
             messageText: messageText,
-            messageType: messageType
+            messageType: messageType,
+            metadata: metadata
         )
         var request = URLRequest(url: endpoint("/api/v1/civic/script-chat-turn"))
         request.httpMethod = "POST"
@@ -1465,7 +1546,8 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
     private func requestData(
         for request: URLRequest,
         timeout: TimeInterval? = nil,
-        allowTimeoutRetry: Bool = true
+        allowTimeoutRetry: Bool = true,
+        allowTransient400Retry: Bool = true
     ) async throws -> Data {
         var firstAttempt = request
         if let timeout {
@@ -1492,8 +1574,41 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                     )
                 }
             }
+            if allowTransient400Retry, shouldRetryTransientMAPCV3BadRequest(error: error, request: firstAttempt) {
+                // mapc_pipeline_v3 — remove flag check after rollout confirmed
+                // One-shot retry for transient parse-wrapped 400s returned by staged MAPC v3 endpoints.
+                try? await Task.sleep(nanoseconds: 300_000_000)
+                return try await requestData(
+                    for: firstAttempt,
+                    timeout: firstAttempt.timeoutInterval,
+                    allowTimeoutRetry: false,
+                    allowTransient400Retry: false
+                )
+            }
             throw error
         }
+    }
+
+    private func shouldRetryTransientMAPCV3BadRequest(error: Error, request: URLRequest) -> Bool {
+        guard let path = request.url?.path.lowercased(),
+              path.contains("/api/v2/civic/mapc/") else {
+            return false
+        }
+        let nsError = error as NSError
+        guard nsError.domain == "CivicIssueCallAPIClient", nsError.code == 400 else {
+            return false
+        }
+        let lowered = nsError.localizedDescription.lowercased()
+        let transientParseSignals = [
+            "interpreter_parse_error",
+            "ask_options_parse_error",
+            "background_parse_error",
+            "script_parse_error",
+            "the data couldn’t be read because it is missing",
+            "missing.",
+            "model_returned_null",
+        ]
+        return transientParseSignals.contains { lowered.contains($0) }
     }
 
     private func performRequest(_ request: URLRequest) async throws -> Data {
@@ -1692,6 +1807,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         let turnIndex: Int
         let messageText: String
         let messageType: String?
+        let metadata: [String: String]?
     }
 
     private struct PersistedScriptChatState: Codable, Sendable {
@@ -1740,6 +1856,7 @@ final class IssueCallCenterViewModel: ObservableObject {
     @Published var generationPath: String = "v3"
     @Published var fallbackReason: String?
     @Published var sessionResetReason: String?
+    @Published var mapcV3LastFailureReasonCode: String?
 
     var outcomeBreakdown: CivicOutcomeBreakdown {
         var contacted = 0
@@ -2376,6 +2493,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 fallbackReason: nil,
                 sessionResetReason: nil
             )
+            mapcV3LastFailureReasonCode = nil
             errorMessage = nil
             selectedTab = .assistant
         } catch {
@@ -2476,6 +2594,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                     return
                 }
                 let finalResponse = validation.sanitized
+                mapcV3LastFailureReasonCode = nil
                 errorMessage = nil
                 applyResolution(finalResponse)
                 pendingGeneratedResolution = finalResponse
@@ -2560,46 +2679,89 @@ final class IssueCallCenterViewModel: ObservableObject {
 
     private func resolveMAPCV3FailureMessage(for error: Error) -> String {
         if isMAPCV3TransportFailure(error) {
+            mapcV3LastFailureReasonCode = "transport_failure"
             return mapcV3RecoveryMessage
         }
         let nsError = error as NSError
         let lowered = nsError.localizedDescription.lowercased()
+        mapcV3LastFailureReasonCode = extractedMAPCV3ReasonCode(from: nsError.localizedDescription)
         if nsError.domain == "CivicIssueCallAPIClient" && nsError.code == 404 {
+            mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "route_not_found"
             return "MAPC v3 API route is unavailable. Confirm /api/v2/civic/mapc endpoints are deployed."
         }
         if nsError.domain == "CivicIssueCallAPIClient" && nsError.code == 401 {
+            mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "unauthorized"
             return "Session expired. Please reopen VoteNow and try again."
         }
         if lowered.contains("feature_flag_disabled") {
+            mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "feature_flag_disabled"
             return "MAPC v3 is disabled on the backend."
         }
         if lowered.contains("placeholder_leak") || lowered.contains("disallowed token remained") {
+            mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "placeholder_leak"
             return "I kept your issue, but the script had an unfilled placeholder. Tap Fix this and I’ll regenerate it."
         }
         if lowered.contains("missing_selected_option") || lowered.contains("invalid_selected_option") {
+            mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "invalid_selected_option"
             return "I kept your issue, but the selected ask did not sync. Tap an ask option again."
         }
         if lowered.contains("invalid_initial_state") || lowered.contains("invalid_state_transition") {
+            mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "invalid_state_transition"
             return "I kept your issue, but the session got out of sync. Tap an ask option again."
         }
         if lowered.contains("preview_not_confirmed") {
+            mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "preview_not_confirmed"
             return "Please confirm the preview before generating the script."
         }
         if lowered.contains("universal_script_lint_failed")
             && (lowered.contains("placeholder:") || lowered.contains("[name]") || lowered.contains("[your name]")) {
+            mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "universal_script_lint_failed"
             return "I kept your issue, but the script still had a placeholder. Tap Fix this and I’ll regenerate it."
         }
         if lowered.contains("universal_script_lint_failed") {
+            mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "universal_script_lint_failed"
             return mapcV3LintRecoveryMessage
         }
         if nsError.domain == "CivicIssueCallAPIClient" && nsError.code == 400 {
+            mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "bad_request"
             return "I kept your issue, but this request did not sync. Tap your ask option again."
         }
         if nsError.domain == "CivicIssueCallAPIClient"
             && [-31_006, -31_007].contains(nsError.code) {
+            mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "pending_state_missing"
             return mapcV3RecoveryMessage
         }
+        mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "unknown_error"
         return mapcV3RecoveryMessage
+    }
+
+    private func extractedMAPCV3ReasonCode(from description: String) -> String? {
+        let source = description.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !source.isEmpty else { return nil }
+        if let range = source.range(of: #""reason_code"\s*:\s*"([^"]+)""#, options: .regularExpression) {
+            let matched = String(source[range])
+            if let capture = matched.split(separator: "\"").dropFirst(3).first {
+                let reason = String(capture).trimmingCharacters(in: .whitespacesAndNewlines)
+                return reason.isEmpty ? nil : reason
+            }
+        }
+        return nil
+    }
+
+    // mapc_pipeline_v3 — remove flag check after rollout confirmed
+    // Test helper for strict reason_code-to-copy contract assertions.
+    func mapcV3FailureMappingPreview(
+        description: String,
+        domain: String = "CivicIssueCallAPIClient",
+        code: Int = 400
+    ) -> (message: String, reasonCode: String?) {
+        let error = NSError(
+            domain: domain,
+            code: code,
+            userInfo: [NSLocalizedDescriptionKey: description]
+        )
+        let message = resolveMAPCV3FailureMessage(for: error)
+        return (message, mapcV3LastFailureReasonCode)
     }
 
     private func recordMAPCGenerationTelemetry(
@@ -2654,6 +2816,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         mapcV3ClarificationTurnCount = 0
         mapcV3MapcApproved = false
         mapcV3AccumulatedContext = []
+        mapcV3LastFailureReasonCode = nil
     }
 
     func prepareForMAPCV3ClarificationFollowUp() {
@@ -2740,7 +2903,12 @@ final class IssueCallCenterViewModel: ObservableObject {
         )
     }
 
-    func logScriptChatTurn(role: String, messageText: String, messageType: String?) {
+    func logScriptChatTurn(
+        role: String,
+        messageText: String,
+        messageType: String?,
+        metadata: [String: String]? = nil
+    ) {
         let normalizedRole = role.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard normalizedRole == "user" || normalizedRole == "assistant" else { return }
         let normalizedText = messageText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -2758,7 +2926,8 @@ final class IssueCallCenterViewModel: ObservableObject {
                 role: normalizedRole,
                 turnIndex: turnIndex,
                 messageText: normalizedText,
-                messageType: (normalizedType?.isEmpty == false) ? normalizedType : nil
+                messageType: (normalizedType?.isEmpty == false) ? normalizedType : nil,
+                metadata: metadata
             )
         )
         persistScriptChatState()
@@ -2790,7 +2959,8 @@ final class IssueCallCenterViewModel: ObservableObject {
                     role: payload.role,
                     turnIndex: payload.turnIndex,
                     messageText: payload.messageText,
-                    messageType: payload.messageType
+                    messageType: payload.messageType,
+                    metadata: payload.metadata
                 )
                 pendingScriptChatTurnPayloads.removeFirst()
                 persistScriptChatState()

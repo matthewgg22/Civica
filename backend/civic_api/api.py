@@ -310,6 +310,19 @@ def parse_script_chat_turn_request(payload: dict[str, Any], user_id: str) -> Scr
         raise ValueError("turn_index must be an integer.") from None
     if turn_index < 1:
         raise ValueError("turn_index must be >= 1.")
+    metadata_raw = payload.get("metadata")
+    metadata: dict[str, str] | None = None
+    if isinstance(metadata_raw, dict):
+        cleaned: dict[str, str] = {}
+        for key, value in metadata_raw.items():
+            key_text = str(key).strip() if key is not None else ""
+            value_text = str(value).strip() if value is not None else ""
+            if not key_text or not value_text:
+                continue
+            cleaned[key_text[:120]] = value_text[:500]
+            if len(cleaned) >= 16:
+                break
+        metadata = cleaned or None
     return ScriptChatTurnRequest(
         user_id=user_id,
         session_id=_required_string(payload, "session_id"),
@@ -318,6 +331,7 @@ def parse_script_chat_turn_request(payload: dict[str, Any], user_id: str) -> Scr
         turn_index=turn_index,
         package_id=_optional_string(payload, "package_id"),
         message_type=_optional_string(payload, "message_type"),
+        metadata=metadata,
     )
 
 
@@ -509,6 +523,17 @@ def post_mapc_v3_revise(payload: dict[str, Any], user_id: str) -> dict[str, Any]
         return mapc_pipeline_v3_service.revise(payload, user_id=user_id)
     except MAPCPipelineV3Error as exc:
         raise ValueError(json.dumps(_mapc_v3_detail(exc))) from exc
+
+
+def post_mapc_v3_pending(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+    try:
+        return mapc_pipeline_v3_service.pending_selection(payload, user_id=user_id)
+    except MAPCPipelineV3Error as exc:
+        raise ValueError(json.dumps(_mapc_v3_detail(exc))) from exc
+
+
+def get_mapc_v3_health(_: str) -> dict[str, Any]:
+    return mapc_pipeline_v3_service.health_snapshot()
 
 
 _SHARE_CARD_DEFAULTS: dict[str, dict[str, str]] = {
@@ -945,6 +970,20 @@ if FastAPI is not None:
     def civic_mapc_v3_revise(payload: dict[str, Any], request: Request) -> dict[str, Any]:
         return _run_endpoint(
             lambda: post_mapc_v3_revise(payload, resolve_authenticated_or_anonymous_user_id(request)),
+            bad_request_exceptions=bad_request,
+        )
+
+    @app.post("/api/v2/civic/mapc/pending")
+    def civic_mapc_v3_pending(payload: dict[str, Any], request: Request) -> dict[str, Any]:
+        return _run_endpoint(
+            lambda: post_mapc_v3_pending(payload, resolve_authenticated_or_anonymous_user_id(request)),
+            bad_request_exceptions=bad_request,
+        )
+
+    @app.get("/api/v2/civic/mapc/health")
+    def civic_mapc_v3_health(request: Request) -> dict[str, Any]:
+        return _run_endpoint(
+            lambda: get_mapc_v3_health(resolve_authenticated_or_anonymous_user_id(request)),
             bad_request_exceptions=bad_request,
         )
 

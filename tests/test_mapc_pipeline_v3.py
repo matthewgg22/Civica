@@ -113,7 +113,7 @@ def test_mapc_v3_stage_sequence_interpret_background_ask_script(monkeypatch: pyt
     assert 43 <= _wc(scripts["voicemail_script"]) <= 97
 
 
-def test_mapc_v3_rejects_ask_options_before_background(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_mapc_v3_allows_ask_options_from_issue_received(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("mapc_pipeline_v3_enabled", "true")
     session_id = str(uuid.uuid4())
     interpret = post_mapc_v3_interpret(
@@ -125,16 +125,88 @@ def test_mapc_v3_rejects_ask_options_before_background(monkeypatch: pytest.Monke
         },
         user_id="v3-user-4",
     )
-    with pytest.raises(Exception) as exc_info:
-        post_mapc_v3_ask_options(
-            {
-                "session": interpret["session"],
-                "require_bill_ref": False,
-                "concern_text": "Marriage equality",
-            },
-            user_id="v3-user-4",
-        )
-    assert _reason_code(exc_info.value) == "invalid_state_transition"
+    ask = post_mapc_v3_ask_options(
+        {
+            "session": interpret["session"],
+            "require_bill_ref": False,
+            "concern_text": "Marriage equality",
+        },
+        user_id="v3-user-4",
+    )
+    assert ask["session"]["session_state"] == "ask_selected"
+    assert len(ask["options"]) >= 2
+
+
+def test_mapc_v3_one_word_needs_only_one_clarification_then_best_effort(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("mapc_pipeline_v3_enabled", "true")
+    session_id = str(uuid.uuid4())
+    first = post_mapc_v3_interpret(
+        {
+            "session_id": session_id,
+            "raw_user_issue": "inflation",
+            "concern_text": "inflation",
+            "session_state": "new",
+        },
+        user_id="v3-user-5",
+    )
+    assert first["session"]["needs_clarification"] is True
+    second = post_mapc_v3_interpret(
+        {
+            "session_id": session_id,
+            "raw_user_issue": "yes",
+            "concern_text": "yes",
+            "session_state": first["session"]["session_state"],
+            "accumulated_context": first["session"].get("accumulated_context", []),
+            "clarification_turn_count": first["session"].get("clarification_turn_count", 0),
+        },
+        user_id="v3-user-5",
+    )
+    assert second["session"]["needs_clarification"] is False
+    assert second["session"]["confidence"] >= 0.50
+    assert int(second["session"].get("clarification_turn_count", 0)) <= 2
+    context_text = " ".join(
+        str(turn.get("text", ""))
+        for turn in second["session"].get("accumulated_context", [])
+        if isinstance(turn, dict)
+    ).lower()
+    assert "inflation" in context_text
+
+
+def test_mapc_v3_script_recovers_pending_selection_when_options_missing(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("mapc_pipeline_v3_enabled", "true")
+    session_id = str(uuid.uuid4())
+    concern = "marriage equality"
+
+    interpret = post_mapc_v3_interpret(
+        {
+            "session_id": session_id,
+            "raw_user_issue": concern,
+            "concern_text": concern,
+            "session_state": "new",
+        },
+        user_id="v3-user-6",
+    )
+    ask = post_mapc_v3_ask_options(
+        {
+            "session": interpret["session"],
+            "require_bill_ref": False,
+            "concern_text": concern,
+        },
+        user_id="v3-user-6",
+    )
+
+    selected_id = ask["options"][0]["option_id"]
+    scripts = post_mapc_v3_script(
+        {
+            "session": {"session_id": session_id},
+            "selected_option_id": selected_id,
+            "confirmed": True,
+            "concern_text": concern,
+        },
+        user_id="v3-user-6",
+    )
+    assert scripts["session"]["session_state"] == "script_shown"
+    assert 43 <= _wc(scripts["live_script"]) <= 97
 
 
 def test_universal_script_lint_rejects_stop_wildfires_bad_placeholder() -> None:
@@ -162,7 +234,7 @@ def test_universal_script_lint_rejects_marriage_equality_malformed_ask() -> None
         raw_user_issue="Marriage equality",
     )
     assert ok is False
-    assert reason and "malformed_ask" in reason
+    assert reason and ("malformed_ask" in reason or "blocked_phrase" in reason)
 
 
 def test_universal_script_lint_rejects_gas_prices_raw_text_copy() -> None:

@@ -167,6 +167,8 @@ class MAPCPipelineV3Service:
         self._idempotency_cache: dict[str, dict[str, Any]] = {}
         self._history_by_session: dict[str, list[dict[str, Any]]] = {}
         self._clarification_count_by_session: dict[str, int] = {}
+        self._pending_selection_by_session: dict[str, dict[str, Any]] = {}
+        self._script_lint_reason_counts: dict[str, int] = {}
         self._api_key = os.environ.get("OPENAI_API_KEY", "").strip()
         self._model = os.environ.get("VOTENOW_OPENAI_MODEL_MAPC_V3", os.environ.get("VOTENOW_OPENAI_MODEL", "gpt-5.4-nano")).strip() or "gpt-5.4-nano"
         self._base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com").rstrip("/")
@@ -183,6 +185,10 @@ class MAPCPipelineV3Service:
             raise MAPCPipelineV3Error("missing_concern_text", "concern_text is required.")
         normalized_payload = self._normalize_interpret_payload(payload)
         session_id = normalized_payload["session_id"]
+        if normalized_payload.get("session_state") == "new":
+            # mapc_pipeline_v3 — remove flag check after rollout confirmed
+            # Starting a fresh issue should drop stale pending ask selections.
+            self._clear_pending_selection(session_id)
         cached = self._get_cached(stage, session_id, normalized_payload)
         if cached is not None:
             return cached
@@ -370,6 +376,12 @@ class MAPCPipelineV3Service:
         response_session["needs_clarification"] = bool(options_payload.get("needs_clarification", False)) or len(options) < 2
         response_session["session_state"] = "ask_selected"
         self._set_state(session_id, "ask_selected")
+        self._store_pending_selection(
+            session_id=session_id,
+            concern_text=normalized_payload["concern_text"],
+            session_obj=response_session,
+            options=options,
+        )
         response = {
             "session": response_session,
             "options": options,
@@ -470,6 +482,7 @@ class MAPCPipelineV3Service:
         response_session = deepcopy(session_obj)
         response_session["session_state"] = "background_shown"
         self._set_state(session_id, "background_shown")
+        self._update_pending_session(session_id=session_id, session_obj=response_session)
         response = {
             "session": response_session,
             "background_text": background_text,
@@ -497,13 +510,26 @@ class MAPCPipelineV3Service:
             raise MAPCPipelineV3Error("missing_selected_option", "selected_option_id is required.")
         options = payload.get("options")
         if not isinstance(options, list):
+            options = []
+        concern_text = _normalized_text(payload.get("concern_text"))
+        pending_selection = self._get_pending_selection(
+            session_id=session_id,
+            concern_text=concern_text,
+        )
+        if not options and pending_selection is not None:
+            options = deepcopy(pending_selection.get("options", []))
+        if not isinstance(options, list) or not options:
             raise MAPCPipelineV3Error("missing_options", "options array is required.")
+        if pending_selection is not None and _session_looks_sparse(session_obj):
+            pending_session = pending_selection.get("session")
+            if isinstance(pending_session, dict):
+                session_obj = _sanitize_session(pending_session)
 
         normalized_payload = {
             "session": session_obj,
             "selected_option_id": selected_option_id,
             "confirmed": confirmed,
-            "concern_text": _normalized_text(payload.get("concern_text")),
+            "concern_text": concern_text,
             "options": options,
         }
         cached = self._get_cached(stage, session_id, normalized_payload)
@@ -512,10 +538,26 @@ class MAPCPipelineV3Service:
 
         with self._lock:
             current = self._state_by_session.get(session_id, "new")
-        if current not in {"ask_selected", "background_shown", "preview_shown", "revising"}:
+        allowed_script_states = {"ask_selected", "background_shown", "preview_shown", "revising"}
+        if current not in allowed_script_states and pending_selection is not None:
+            recovered_state = _normalized_text(
+                (pending_selection.get("session") or {}).get("session_state")
+                if isinstance(pending_selection.get("session"), dict)
+                else None
+            )
+            if recovered_state in allowed_script_states:
+                current = recovered_state
+        if current not in allowed_script_states:
             raise MAPCPipelineV3Error("invalid_state_transition", f"script requires ask_selected/background_shown/preview_shown/revising, found {current}.")
 
         selected_option = self._selected_option(options=options, selected_option_id=selected_option_id)
+        if selected_option is None and pending_selection is not None:
+            pending_options = pending_selection.get("options")
+            if isinstance(pending_options, list):
+                pending_selected = self._selected_option(options=pending_options, selected_option_id=selected_option_id)
+                if pending_selected is not None:
+                    selected_option = pending_selected
+                    options = deepcopy(pending_options)
         if selected_option is None:
             raise MAPCPipelineV3Error("invalid_selected_option", "selected_option_id was not found in options.")
         working_session = deepcopy(session_obj)
@@ -541,6 +583,7 @@ class MAPCPipelineV3Service:
         response_session = deepcopy(working_session)
         response_session["session_state"] = "script_shown"
         self._set_state(session_id, "script_shown")
+        self._update_pending_session(session_id=session_id, session_obj=response_session)
         response = {
             "session": response_session,
             "live_script": live_script,
@@ -551,6 +594,26 @@ class MAPCPipelineV3Service:
         self._log_request(stage=stage, session_id=session_id, state_before=current, state_after="script_shown", confidence=_coerce_float(working_session.get("confidence"), fallback=0.0), needs_clarification=bool(working_session.get("needs_clarification")), validator_report=validator_report)
         _ = user_id
         return response
+
+    def pending_selection(self, payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+        self._require_enabled()
+        _ = user_id
+        session_id = _required_text(payload.get("session_id"), field="session_id")
+        concern_text = _normalized_text(payload.get("concern_text"))
+        pending = self._get_pending_selection(session_id=session_id, concern_text=concern_text)
+        if pending is None:
+            return {
+                "found": False,
+                "session": None,
+                "options": [],
+                "concern_text": concern_text or None,
+            }
+        return {
+            "found": True,
+            "session": deepcopy(pending.get("session")) if isinstance(pending.get("session"), dict) else None,
+            "options": deepcopy(pending.get("options")) if isinstance(pending.get("options"), list) else [],
+            "concern_text": _normalized_text(pending.get("concern_text")) or None,
+        }
 
     def revise(self, payload: dict[str, Any], user_id: str) -> dict[str, Any]:
         self._require_enabled()
@@ -571,6 +634,7 @@ class MAPCPipelineV3Service:
             with self._lock:
                 self._history_by_session[session_id] = []
                 self._clarification_count_by_session[session_id] = 0
+            self._clear_pending_selection(session_id)
             reset = _blank_session(session_id=session_id)
             self._set_state(session_id, "new")
             return {"session": reset, "prompt": "Please restate the issue in one sentence."}
@@ -624,6 +688,7 @@ class MAPCPipelineV3Service:
             with self._lock:
                 self._history_by_session[session_id] = []
                 self._clarification_count_by_session[session_id] = 0
+            self._clear_pending_selection(session_id)
             reset = _blank_session(session_id=session_id)
             self._set_state(session_id, "new")
             return {"session": reset}
@@ -792,6 +857,7 @@ class MAPCPipelineV3Service:
             "token": leaked_post,
         })
         if not leak_ok_post:
+            self._increment_lint_reason_counter(f"placeholder:{leaked_post}")
             raise MAPCPipelineV3Error("placeholder_leak", f"disallowed token remained after reruns: {leaked_post}")
 
         universal_ok, universal_reason = _universal_mapc_script_lint_ok(
@@ -805,6 +871,7 @@ class MAPCPipelineV3Service:
             "reason": universal_reason,
         })
         if not universal_ok:
+            self._increment_lint_reason_counter(universal_reason)
             retried = rerun(
                 "Apply strict MAPC script lint. Remove placeholders except [ZIP]. Keep [ZIP] only in a location phrase. "
                 "Do not write 'support this issue' or 'oppose this issue'. Avoid malformed asks. "
@@ -814,6 +881,25 @@ class MAPCPipelineV3Service:
                 "Do not copy raw user wording verbatim."
             )
             scripts = {k: _normalized_text(retried.get(k)) for k in scripts}
+            # mapc_pipeline_v3 — remove flag check after rollout confirmed
+            # Retry output can still reintroduce placeholder tokens like [Name].
+            # Sanitize again before final universal lint pass.
+            scripts["live_script"] = _sanitize_disallowed_placeholders(scripts["live_script"])
+            scripts["voicemail_script"] = _sanitize_disallowed_placeholders(scripts["voicemail_script"])
+
+            leak_ok_live_retry, leaked_live_retry = _placeholder_leak_ok(scripts["live_script"])
+            leak_ok_vm_retry, leaked_vm_retry = _placeholder_leak_ok(scripts["voicemail_script"])
+            leak_ok_retry = leak_ok_live_retry and leak_ok_vm_retry
+            leaked_retry = leaked_live_retry if not leak_ok_live_retry else leaked_vm_retry
+            validator_report["checks"].append({
+                "name": "placeholder_post_universal_retry",
+                "passed": leak_ok_retry,
+                "token": leaked_retry,
+            })
+            if not leak_ok_retry:
+                self._increment_lint_reason_counter(f"placeholder:{leaked_retry}")
+                raise MAPCPipelineV3Error("placeholder_leak", f"disallowed token remained after universal retry: {leaked_retry}")
+
             universal_ok, universal_reason = _universal_mapc_script_lint_ok(
                 live_script=scripts["live_script"],
                 voicemail_script=scripts["voicemail_script"],
@@ -825,6 +911,7 @@ class MAPCPipelineV3Service:
                 "reason": universal_reason,
             })
             if not universal_ok:
+                self._increment_lint_reason_counter(universal_reason)
                 raise MAPCPipelineV3Error("universal_script_lint_failed", f"script lint failed: {universal_reason}")
 
         return scripts["live_script"], scripts["voicemail_script"]
@@ -1051,6 +1138,63 @@ class MAPCPipelineV3Service:
         with self._lock:
             self._idempotency_cache[cache_key] = deepcopy(response)
 
+    def _store_pending_selection(
+        self,
+        *,
+        session_id: str,
+        concern_text: str,
+        session_obj: dict[str, Any],
+        options: list[dict[str, Any]],
+    ) -> None:
+        with self._lock:
+            self._pending_selection_by_session[session_id] = {
+                "concern_text": _normalized_text(concern_text),
+                "session": _sanitize_session(deepcopy(session_obj)),
+                "options": [deepcopy(option) for option in options if isinstance(option, dict)],
+                "updated_at": _utc_iso_now(),
+            }
+
+    def _update_pending_session(self, *, session_id: str, session_obj: dict[str, Any]) -> None:
+        with self._lock:
+            existing = self._pending_selection_by_session.get(session_id)
+            if existing is None:
+                return
+            existing["session"] = _sanitize_session(deepcopy(session_obj))
+            existing["updated_at"] = _utc_iso_now()
+            self._pending_selection_by_session[session_id] = existing
+
+    def _get_pending_selection(self, *, session_id: str, concern_text: str | None) -> dict[str, Any] | None:
+        normalized_concern = _normalized_text(concern_text)
+        with self._lock:
+            pending = deepcopy(self._pending_selection_by_session.get(session_id))
+        if pending is None:
+            return None
+        pending_concern = _normalized_text(pending.get("concern_text"))
+        if normalized_concern and pending_concern and normalized_concern.lower() != pending_concern.lower():
+            return None
+        return pending
+
+    def _clear_pending_selection(self, session_id: str) -> None:
+        with self._lock:
+            self._pending_selection_by_session.pop(session_id, None)
+
+    def _increment_lint_reason_counter(self, reason: str | None) -> None:
+        normalized_reason = _normalized_text(reason) or "unknown_lint_reason"
+        with self._lock:
+            next_count = self._script_lint_reason_counts.get(normalized_reason, 0) + 1
+            self._script_lint_reason_counts[normalized_reason] = next_count
+        logger.info("mapc_v3 lint_reason=%s count=%s", normalized_reason, next_count)
+
+    def health_snapshot(self) -> dict[str, Any]:
+        with self._lock:
+            return {
+                "enabled": self.enabled,
+                "state_sessions": len(self._state_by_session),
+                "pending_sessions": len(self._pending_selection_by_session),
+                "idempotency_entries": len(self._idempotency_cache),
+                "lint_reason_counts": dict(self._script_lint_reason_counts),
+            }
+
     def _cache_key(self, stage: str, session_id: str, payload: dict[str, Any]) -> str:
         serialized = json.dumps(payload, ensure_ascii=False, sort_keys=True, default=str)
         digest = hashlib.sha256(serialized.encode("utf-8")).hexdigest()
@@ -1095,6 +1239,13 @@ def _required_session_id(session_obj: dict[str, Any]) -> str:
     if not session_id:
         raise MAPCPipelineV3Error("missing_session_id", "session_id is required in session object.")
     return session_id
+
+
+def _session_looks_sparse(session_obj: dict[str, Any]) -> bool:
+    display_issue = _normalized_text(session_obj.get("display_issue"))
+    issue_domain = _normalized_text(session_obj.get("issue_domain"))
+    normalized_issue = _normalized_text(session_obj.get("normalized_issue"))
+    return not display_issue or not issue_domain or not normalized_issue
 
 
 def _required_text(value: Any, *, field: str) -> str:
