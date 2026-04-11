@@ -379,10 +379,10 @@ struct IssueCallCenterView: View {
         exampleCategoryOptions
     }
 
-    private var exampleCategoryGridRows: [GridItem] {
-        Array(
-            repeating: GridItem(.fixed(32), spacing: 8, alignment: .top),
-            count: Self.premadeCollapsedCategoryRowLimit
+    private var exampleCategoryRows: [[String]] {
+        packedCategoryRows(
+            from: visibleExampleCategoryOptions,
+            rowCount: Self.premadeCollapsedCategoryRowLimit
         )
     }
 
@@ -418,6 +418,31 @@ struct IssueCallCenterView: View {
         }
 
         return visible
+    }
+
+    private func packedCategoryRows(from options: [String], rowCount: Int) -> [[String]] {
+        guard rowCount > 0 else { return [] }
+        if rowCount == 1 { return [options] }
+
+        var rows = Array(repeating: [String](), count: rowCount)
+        var rowWidths = Array(repeating: CGFloat(0), count: rowCount)
+        let chipSpacing: CGFloat = 8
+
+        for category in options {
+            let chipWidth = estimatedCategoryChipWidth(for: category)
+            let targetRowIndex = rowWidths.enumerated()
+                .min(by: { $0.element < $1.element })?
+                .offset ?? 0
+
+            rows[targetRowIndex].append(category)
+            if rows[targetRowIndex].count == 1 {
+                rowWidths[targetRowIndex] = chipWidth
+            } else {
+                rowWidths[targetRowIndex] += chipSpacing + chipWidth
+            }
+        }
+
+        return rows
     }
 
     private func estimatedCategoryChipWidth(for category: String) -> CGFloat {
@@ -3160,8 +3185,10 @@ struct IssueCallCenterView: View {
             VStack(alignment: .leading, spacing: 12) {
                 if !exampleCategoryOptions.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
-                        LazyHGrid(rows: exampleCategoryGridRows, alignment: .top, spacing: 8) {
-                            ForEach(visibleExampleCategoryOptions, id: \.self) { category in
+                        VStack(alignment: .leading, spacing: 8) {
+                            ForEach(Array(exampleCategoryRows.enumerated()), id: \.offset) { _, row in
+                                HStack(spacing: 8) {
+                                    ForEach(row, id: \.self) { category in
                                         let isSelected = category.caseInsensitiveCompare(selectedExampleCategory) == .orderedSame
                                         let categoryColor = exampleCategoryColor(for: category)
                                         let textColor = exampleCategoryTextColor(for: category)
@@ -3181,8 +3208,8 @@ struct IssueCallCenterView: View {
                                                     .multilineTextAlignment(.center)
                                                     .minimumScaleFactor(0.78)
                                             }
-                                                .padding(.horizontal, 12)
-                                                .padding(.vertical, 8)
+                                                .padding(.horizontal, 10)
+                                                .padding(.vertical, 7)
                                                 .background(
                                                     ZStack {
                                                         exampleCategoryBackgroundColor(for: category, isSelected: isSelected)
@@ -3213,6 +3240,9 @@ struct IssueCallCenterView: View {
                                                 )
                                         }
                                         .buttonStyle(.plain)
+                                    }
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
                             }
                         }
                         .padding(.vertical, 2)
