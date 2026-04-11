@@ -1155,17 +1155,23 @@ struct IssueCallCenterView: View {
                         text: message.text,
                         animate: !reduceMotion && !animatedAssistantMessageIDs.contains(message.id),
                         onFinished: {
-                            animatedAssistantMessageIDs.insert(message.id)
-                            if pendingBackgroundMessageID == message.id {
-                                pendingBackgroundMessageID = nil
-                                withAnimation(.easeOut(duration: 0.18)) {
-                                    isBackgroundMessageReadyForActions = true
+                            // mapc_pipeline_v3 — remove flag check after rollout confirmed
+                            // Defer state mutations to the next run loop to avoid
+                            // "Publishing changes from within view updates" warnings.
+                            DispatchQueue.main.async {
+                                guard !animatedAssistantMessageIDs.contains(message.id) else { return }
+                                animatedAssistantMessageIDs.insert(message.id)
+                                if pendingBackgroundMessageID == message.id {
+                                    pendingBackgroundMessageID = nil
+                                    withAnimation(.easeOut(duration: 0.18)) {
+                                        isBackgroundMessageReadyForActions = true
+                                    }
                                 }
-                            }
-                            if pendingScriptPreviewMessageID == message.id {
-                                pendingScriptPreviewMessageID = nil
-                                withAnimation(.easeOut(duration: 0.18)) {
-                                    isScriptPreviewReadyForMAPCActions = true
+                                if pendingScriptPreviewMessageID == message.id {
+                                    pendingScriptPreviewMessageID = nil
+                                    withAnimation(.easeOut(duration: 0.18)) {
+                                        isScriptPreviewReadyForMAPCActions = true
+                                    }
                                 }
                             }
                         }
