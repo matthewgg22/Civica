@@ -2585,6 +2585,10 @@ final class IssueCallCenterViewModel: ObservableObject {
         if lowered.contains("preview_not_confirmed") {
             return "Please confirm the preview before generating the script."
         }
+        if lowered.contains("universal_script_lint_failed")
+            && (lowered.contains("placeholder:") || lowered.contains("[name]") || lowered.contains("[your name]")) {
+            return "I kept your issue, but the script still had a placeholder. Tap Fix this and I’ll regenerate it."
+        }
         if lowered.contains("universal_script_lint_failed") {
             return mapcV3LintRecoveryMessage
         }

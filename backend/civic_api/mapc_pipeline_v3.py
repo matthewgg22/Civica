@@ -777,6 +777,23 @@ class MAPCPipelineV3Service:
             if not in_range:
                 raise MAPCPipelineV3Error("word_count_out_of_range", "script word count remained out of range after retry.")
 
+        # mapc_pipeline_v3 — remove flag check after rollout confirmed
+        # Later reruns (for example word-count corrections) can reintroduce placeholders.
+        # Sanitize once more before final universal lint.
+        scripts["live_script"] = _sanitize_disallowed_placeholders(scripts["live_script"])
+        scripts["voicemail_script"] = _sanitize_disallowed_placeholders(scripts["voicemail_script"])
+        leak_ok_live, leaked_live = _placeholder_leak_ok(scripts["live_script"])
+        leak_ok_vm, leaked_vm = _placeholder_leak_ok(scripts["voicemail_script"])
+        leak_ok_post = leak_ok_live and leak_ok_vm
+        leaked_post = leaked_live if not leak_ok_live else leaked_vm
+        validator_report["checks"].append({
+            "name": "placeholder_post_reruns",
+            "passed": leak_ok_post,
+            "token": leaked_post,
+        })
+        if not leak_ok_post:
+            raise MAPCPipelineV3Error("placeholder_leak", f"disallowed token remained after reruns: {leaked_post}")
+
         universal_ok, universal_reason = _universal_mapc_script_lint_ok(
             live_script=scripts["live_script"],
             voicemail_script=scripts["voicemail_script"],
@@ -1589,7 +1606,11 @@ def _contains_concrete_action_verb(text: str) -> bool:
         r"\bvote\s+no\b",
         r"\bfund(?:ing)?\b",
         r"\binvestigat(?:e|es|ing|ion)\b",
-        r"\brequire\s+report(?:ing|s)?\b",
+        # Accept "require reporting", "require public reporting deadlines", and similar variants.
+        r"\brequire\b(?:\W+\w+){0,4}\W+report(?:ing|s)?\b",
+        r"\bstrengthen\s+(sanctions|enforcement|oversight|protections?)\b",
+        r"\btighten\s+export[- ]control\s+enforcement\b",
+        r"\bprotect\s+(refugee|humanitarian|rights?|protections?)\b",
         r"\bback\s+protections?\b",
         r"\brestrict\s+funding\b",
         r"\bissue\s+a\s+public\s+statement\b",
@@ -1612,16 +1633,21 @@ def _close_requests_position_or_next_step(script: str) -> bool:
     sentences = _sentence_list(script)
     if not sentences:
         return False
-    close_line = sentences[-1].lower()
-    if ("office" in close_line or "member" in close_line) and "position" in close_line:
-        return True
-    if "next step" in close_line:
-        return True
-    if re.search(
-        r"(whether|will)\s+the\s+office\s+(support|oppose|back|vote|fund|investigate|require|restrict|issue)",
-        close_line,
-    ):
-        return True
+    # Accept the closing request if it appears in the final sentence
+    # or the second-to-last sentence (padding may append one last sentence).
+    candidate_closes = [line.lower() for line in sentences[-2:]]
+    for close_line in candidate_closes:
+        if ("office" in close_line or "member" in close_line) and "position" in close_line:
+            return True
+        if "next step" in close_line:
+            return True
+        if "step comes next" in close_line or "what comes next" in close_line:
+            return True
+        if re.search(
+            r"(whether|will)\s+the\s+office\s+(support|oppose|back|vote|fund|investigate|require|restrict|issue)",
+            close_line,
+        ):
+            return True
     return False
 
 
@@ -1639,6 +1665,10 @@ def _direct_verbatim_copy_detected(script: str, raw_user_issue: str) -> bool:
         return False
 
     raw_words = raw_norm.split()
+    # Short clarification replies (for example 2-4 words) are often intentionally
+    # reused as topic anchors and should not auto-fail verbatim checks.
+    if len(raw_words) < 5:
+        return False
     if len(raw_words) >= 2 and len(raw_norm) >= 8 and raw_norm in script_norm:
         if script_norm.startswith(raw_norm) or f" about {raw_norm}" in script_norm or f" calling about {raw_norm}" in script_norm:
             return True
