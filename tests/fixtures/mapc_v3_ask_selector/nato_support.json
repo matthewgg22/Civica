@@ -1,0 +1,22 @@
+{
+  "name": "nato_support",
+  "session": {
+    "session_id": "fixture-nato-support",
+    "issue_domain": "foreign_policy",
+    "target_problem": "maintaining credible U.S. commitments to NATO allies",
+    "congressional_lever": "foreign_policy_oversight",
+    "constraints_from_user": "bipartisan feasibility",
+    "confidence": 0.78
+  },
+  "require_bill_ref": false,
+  "expected": {
+    "option_count": 3,
+    "distinct_action_families": 3,
+    "must_include_families": [
+      "appropriations_funding",
+      "nomination_vote_position",
+      "public_statement"
+    ],
+    "must_avoid_hearing_letter_default_pair": true
+  }
+}

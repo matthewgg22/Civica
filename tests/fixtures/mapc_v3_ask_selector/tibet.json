@@ -1,0 +1,21 @@
+{
+  "name": "tibet",
+  "session": {
+    "session_id": "fixture-tibet",
+    "issue_domain": "foreign_policy",
+    "target_problem": "human rights abuses and repression in Tibet",
+    "congressional_lever": "foreign_policy_oversight",
+    "constraints_from_user": "legal durability",
+    "confidence": 0.72
+  },
+  "require_bill_ref": false,
+  "expected": {
+    "option_count": 2,
+    "distinct_action_families": 2,
+    "must_include_families": [
+      "sanctions_export_control_review",
+      "humanitarian_refugee_protection"
+    ],
+    "must_avoid_hearing_letter_default_pair": true
+  }
+}

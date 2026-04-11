@@ -42,6 +42,8 @@ struct IssueCallCenterView: View {
     @State private var isBackgroundMessageReadyForActions = false
     @State private var pendingScriptPreviewMessageID: UUID?
     @State private var isScriptPreviewReadyForMAPCActions = false
+    @State private var previewLintBlocked = false
+    @State private var hasRetriedPreviewLintRegeneration = false
     @State private var currentBackgroundDiscussionOptions: [String] = []
     @State private var hasPickedDiscussionOptionInCurrentCycle = false
     @State private var suppressTranslationForNextBackground = false
@@ -54,7 +56,7 @@ struct IssueCallCenterView: View {
     private let initialTab: CivicIssueCallTab
     private let showsReturnHomeButton: Bool
     private let hidesTabBar: Bool
-    private static let assistantIntroText = "Describe the issue in plain English. I’ll first give background, then generate the script."
+    private static let assistantIntroText = "Tell me the issue you want your elected representatives to act on. I’ll help turn it into a specific call guide."
 
     private enum FocusedField: Hashable {
         case concern
@@ -66,6 +68,33 @@ struct IssueCallCenterView: View {
         case awaitingBackgroundApproval
         case awaitingPreviewConfirmation
         case awaitingMapcStart
+    }
+
+    private enum MAPCTurnIntent: String {
+        case newIssue = "new_issue"
+        case clarificationAnswer = "clarification_answer"
+        case reviseIssue = "revise_issue"
+        case reviseAsk = "revise_ask"
+        case reviseToneOrConstraints = "revise_tone_or_constraints"
+        case metaFrustration = "meta_frustration"
+        case startOver = "start_over"
+    }
+
+    private struct MAPCTurnIntentClassification {
+        let intent: MAPCTurnIntent
+        let newIssueScore: Double
+    }
+
+    private enum MAPCRevisionChip: String, CaseIterable, Identifiable {
+        case wrongIssue = "Wrong issue"
+        case wrongAsk = "Wrong ask"
+        case tooBroad = "Too broad"
+        case needsLocalAngle = "Needs local angle"
+        case needsBill = "Needs a bill"
+        case needsSpecificAction = "Needs a specific action"
+        case startOver = "Start over"
+
+        var id: String { rawValue }
     }
 
     private struct AssistantRefinementSnapshot: Codable {
@@ -691,7 +720,7 @@ struct IssueCallCenterView: View {
             }
         }
         .padding(.horizontal, 16)
-        .padding(.top, 8)
+        .padding(.top, 4)
         .padding(.bottom, 8)
         .background(VoteNowColors.brandSoftBlue)
     }
@@ -967,7 +996,9 @@ struct IssueCallCenterView: View {
                     if assistantFlowStage == .awaitingBackgroundApproval && isBackgroundMessageReadyForActions {
                         assistantBackgroundActions
                             .id("assistant-background-actions")
-                    } else if assistantFlowStage == .awaitingPreviewConfirmation && isBackgroundMessageReadyForActions {
+                    } else if assistantFlowStage == .awaitingPreviewConfirmation
+                        && isScriptPreviewReadyForMAPCActions
+                        && pendingBackgroundMessageID == nil {
                         assistantPreviewActions
                             .id("assistant-preview-actions")
                     } else if assistantFlowStage == .awaitingMapcStart
@@ -1130,7 +1161,7 @@ struct IssueCallCenterView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundColor(VoteNowColors.primaryText)
 
-                Text("Does this look right before we pick an ask?")
+                Text("Pick the first action you want the office to take.")
                     .font(.caption.weight(.semibold))
                     .foregroundColor(VoteNowColors.mutedText)
 
@@ -1234,15 +1265,15 @@ struct IssueCallCenterView: View {
 
     private var assistantPreviewActions: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Issue: \(viewModel.mapcV3DisplayIssue)")
-                .font(.subheadline.weight(.semibold))
-                .foregroundColor(VoteNowColors.primaryText)
+            if previewLintBlocked {
+                Text("I hit a snag, but I still have your issue.")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(VoteNowColors.primaryText)
 
-            Text("Ask: \(viewModel.mapcV3SelectedDisplayAsk)")
-                .font(.subheadline)
-                .foregroundColor(VoteNowColors.primaryText)
+                Text("Pick a fix or restate the action you want.")
+                    .font(.caption.weight(.semibold))
+                    .foregroundColor(VoteNowColors.mutedText)
 
-            HStack(spacing: 8) {
                 Button {
                     fixMAPCV3PreviewInChat()
                 } label: {
@@ -1259,19 +1290,46 @@ struct IssueCallCenterView: View {
                         )
                 }
                 .buttonStyle(.plain)
+            } else {
+                Text("Review the draft preview below.")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(VoteNowColors.primaryText)
 
-                Button {
-                    confirmMAPCV3PreviewInChat()
-                } label: {
-                    Text("Looks right")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                        .background(VoteNowColors.primaryCTA)
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                Text("Looks right moves to final approval. Fix this keeps this ask and lets you adjust details.")
+                    .font(.caption.weight(.semibold))
+                    .foregroundColor(VoteNowColors.mutedText)
+
+                HStack(spacing: 8) {
+                    Button {
+                        fixMAPCV3PreviewInChat()
+                    } label: {
+                        Text("Fix this")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundColor(VoteNowColors.primaryText)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(VoteNowColors.surfaceWhite)
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        confirmMAPCV3PreviewInChat()
+                    } label: {
+                        Text("Looks right")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(VoteNowColors.primaryCTA)
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
         }
         .padding(12)
@@ -1285,28 +1343,38 @@ struct IssueCallCenterView: View {
 
     private var assistantStartMAPCActions: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("If this looks right, start calling your representatives.")
+            Text("Your call guide is ready. Approve and call, or fix the wording first.")
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(VoteNowColors.primaryText)
 
-            HStack(spacing: 8) {
-                Button {
-                    reviseGeneratedDraftInChat()
-                } label: {
-                    Text("Revise")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(VoteNowColors.primaryText)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                        .background(VoteNowColors.surfaceWhite)
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
-                        )
-                }
-                .buttonStyle(.plain)
+            Text("Need changes first?")
+                .font(.caption.weight(.semibold))
+                .foregroundColor(VoteNowColors.mutedText)
 
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 145), spacing: 8)], spacing: 8) {
+                ForEach(MAPCRevisionChip.allCases) { chip in
+                    Button {
+                        applyMAPCV3RevisionChip(chip)
+                    } label: {
+                        Text(chip.rawValue)
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(VoteNowColors.primaryText)
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 9)
+                            .background(VoteNowColors.surfaceWhite)
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            HStack(spacing: 8) {
                 Button {
                     startMAPCFromChat()
                 } label: {
@@ -1340,7 +1408,7 @@ struct IssueCallCenterView: View {
                 text: $viewModel.concernText,
                 prompt: Text(l(
                     "app.issue_call.concern.subheader",
-                    "Write what issue you want to inform Congress and we will generate a script!"
+                    "Tell us what issue you want your elected representatives to act on and we’ll generate a script."
                 )),
                 axis: .vertical
             )
@@ -1451,16 +1519,35 @@ struct IssueCallCenterView: View {
         guard !viewModel.isSubmitting, !assistantIsThinking else { return }
         suppressTranslationForNextBackground = fromDiscussionOption
 
-        let wasRefinementStage: Bool
-        if viewModel.mapcPipelineV3Enabled {
-            // mapc_pipeline_v3 — remove flag check after rollout confirmed
-            wasRefinementStage = false
-        } else {
-            wasRefinementStage = assistantFlowStage == .awaitingBackgroundApproval || assistantFlowStage == .awaitingMapcStart
-        }
         let priorConcern = viewModel.concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let intent = classifyMAPCTurnIntent(prompt)
+        let hasActiveMAPCV3Session = viewModel.mapcPipelineV3Enabled
+            && (isActiveMAPCRefinementStage
+                || viewModel.shouldContinueMAPCV3Clarification
+                || viewModel.mapcV3SessionState != "new")
+
+        if hasActiveMAPCV3Session && intent.intent == .startOver {
+            appendAssistantUserMessage(prompt, messageType: "mapc_turn_\(intent.intent.rawValue)")
+            assistantComposerText = ""
+            startOverMAPCV3SessionInChat()
+            return
+        }
+
+        let shouldTreatAsMAPCRevision = viewModel.mapcPipelineV3Enabled
+            && isActiveMAPCRefinementStage
+            && intent.newIssueScore < 0.85
+        let wasLegacyRefinementStage = !viewModel.mapcPipelineV3Enabled
+            && (assistantFlowStage == .awaitingBackgroundApproval || assistantFlowStage == .awaitingMapcStart)
+
         let combinedPrompt: String
-        if wasRefinementStage, !priorConcern.isEmpty {
+        if shouldTreatAsMAPCRevision {
+            // mapc_pipeline_v3 — remove flag check after rollout confirmed
+            combinedPrompt = rewrittenMAPCV3RevisionPrompt(
+                from: prompt,
+                priorConcern: priorConcern,
+                intent: intent
+            )
+        } else if wasLegacyRefinementStage, !priorConcern.isEmpty {
             combinedPrompt = mergedConcernText(base: priorConcern, refinement: prompt)
         } else {
             combinedPrompt = prompt
@@ -1478,7 +1565,10 @@ struct IssueCallCenterView: View {
 
         guard viewModel.canSubmit else { return }
 
-        appendAssistantUserMessage(prompt, messageType: "user_prompt")
+        let messageType = viewModel.mapcPipelineV3Enabled
+            ? "mapc_turn_\(intent.intent.rawValue)"
+            : "user_prompt"
+        appendAssistantUserMessage(prompt, messageType: messageType)
         assistantComposerText = ""
         hasPostedCurrentDraftBackground = false
         pendingBackgroundMessageID = nil
@@ -1491,9 +1581,15 @@ struct IssueCallCenterView: View {
         focusedField = nil
         isTalkingPointsExpanded = false
         didCompleteMAPC = false
-        if viewModel.mapcPipelineV3Enabled && viewModel.shouldContinueMAPCV3Clarification {
+        if viewModel.mapcPipelineV3Enabled {
             // mapc_pipeline_v3 — remove flag check after rollout confirmed
-            viewModel.prepareForMAPCV3ClarificationFollowUp()
+            if viewModel.shouldContinueMAPCV3Clarification {
+                viewModel.prepareForMAPCV3ClarificationFollowUp()
+            } else if shouldTreatAsMAPCRevision {
+                viewModel.prepareForMAPCV3RevisionFollowUp()
+            } else {
+                viewModel.prepareForFreshGeneration()
+            }
         } else {
             viewModel.prepareForFreshGeneration()
         }
@@ -1505,6 +1601,125 @@ struct IssueCallCenterView: View {
                 processAssistantGenerationResult()
             }
         }
+    }
+
+    private var isActiveMAPCRefinementStage: Bool {
+        assistantFlowStage == .awaitingBackgroundApproval
+            || assistantFlowStage == .awaitingPreviewConfirmation
+            || assistantFlowStage == .awaitingMapcStart
+    }
+
+    private func classifyMAPCTurnIntent(_ prompt: String) -> MAPCTurnIntentClassification {
+        let trimmed = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
+        let lower = trimmed.lowercased()
+
+        if containsAnyIntentPhrase(lower, [
+            "start over",
+            "restart",
+            "reset this",
+            "new conversation"
+        ]) {
+            return MAPCTurnIntentClassification(intent: .startOver, newIssueScore: 1.0)
+        }
+
+        if containsAnyIntentPhrase(lower, [
+            "new issue",
+            "different issue",
+            "switch topics",
+            "instead talk about",
+            "actually i want to talk about"
+        ]) {
+            return MAPCTurnIntentClassification(intent: .newIssue, newIssueScore: 0.92)
+        }
+
+        if containsAnyIntentPhrase(lower, [
+            "wrong ask",
+            "change the ask",
+            "there's no explicit bill",
+            "there’s no explicit bill",
+            "there is no explicit bill",
+            "needs a bill",
+            "needs a specific action"
+        ]) {
+            return MAPCTurnIntentClassification(intent: .reviseAsk, newIssueScore: 0.2)
+        }
+
+        if containsAnyIntentPhrase(lower, [
+            "wrong issue",
+            "not about",
+            "too broad",
+            "narrow this",
+            "not this issue"
+        ]) {
+            return MAPCTurnIntentClassification(intent: .reviseIssue, newIssueScore: 0.2)
+        }
+
+        if containsAnyIntentPhrase(lower, [
+            "needs a local angle",
+            "make it local",
+            "local angle",
+            "district",
+            "state-specific",
+            "tone"
+        ]) {
+            return MAPCTurnIntentClassification(intent: .reviseToneOrConstraints, newIssueScore: 0.2)
+        }
+
+        if containsAnyIntentPhrase(lower, [
+            "bad response",
+            "this is bad",
+            "this is wrong",
+            "you are not listening",
+            "frustrating"
+        ]) {
+            return MAPCTurnIntentClassification(intent: .metaFrustration, newIssueScore: 0.15)
+        }
+
+        if viewModel.shouldContinueMAPCV3Clarification {
+            return MAPCTurnIntentClassification(intent: .clarificationAnswer, newIssueScore: 0.2)
+        }
+
+        if isActiveMAPCRefinementStage && viewModel.mapcPipelineV3Enabled {
+            return MAPCTurnIntentClassification(intent: .reviseIssue, newIssueScore: 0.25)
+        }
+
+        return MAPCTurnIntentClassification(intent: .newIssue, newIssueScore: 0.7)
+    }
+
+    private func rewrittenMAPCV3RevisionPrompt(
+        from prompt: String,
+        priorConcern: String,
+        intent: MAPCTurnIntentClassification
+    ) -> String {
+        let trimmed = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
+        let lower = trimmed.lowercased()
+        let contextSnippet = String(priorConcern.prefix(180)).trimmingCharacters(in: .whitespacesAndNewlines)
+        let contextPrefix = contextSnippet.isEmpty ? "" : " Current issue context: \(contextSnippet)."
+
+        switch intent.intent {
+        case .clarificationAnswer:
+            return trimmed
+        case .reviseIssue:
+            return "Keep the current issue context.\(contextPrefix) Revise issue framing based on this feedback: \(trimmed)"
+        case .reviseAsk:
+            if containsAnyIntentPhrase(lower, ["there's no explicit bill", "there’s no explicit bill", "there is no explicit bill", "needs a bill"]) {
+                return "Keep the same issue.\(contextPrefix) Revision request: there is no explicit bill reference. Add a bill only if explicit and feasible; otherwise choose one specific congressional action."
+            }
+            if containsAnyIntentPhrase(lower, ["needs a specific action"]) {
+                return "Keep the same issue.\(contextPrefix) Revision request: replace generic language with one explicit congressional action."
+            }
+            return "Keep the same issue.\(contextPrefix) Revise the ask selection based on: \(trimmed)"
+        case .reviseToneOrConstraints:
+            return "Keep the same issue and ask.\(contextPrefix) Apply this constraint update: \(trimmed)"
+        case .metaFrustration:
+            return "Keep the same issue.\(contextPrefix) Improve specificity and correctness. User feedback: \(trimmed)"
+        case .newIssue, .startOver:
+            return trimmed
+        }
+    }
+
+    private func containsAnyIntentPhrase(_ text: String, _ phrases: [String]) -> Bool {
+        phrases.contains { text.contains($0) }
     }
 
     private func processAssistantGenerationResult() {
@@ -1526,7 +1741,7 @@ struct IssueCallCenterView: View {
             viewModel.errorMessage = nil
         } else {
             appendAssistantBotMessage(
-                "I couldn’t produce a draft yet. Send one more line with the exact action you want Congress to take.",
+                "I need one detail to make this usable: what should the office do first?",
                 kind: .plain,
                 messageType: "fallback_prompt"
             )
@@ -1563,7 +1778,7 @@ struct IssueCallCenterView: View {
             viewModel.errorMessage = nil
         } else {
             appendAssistantBotMessage(
-                "I couldn’t produce a draft yet. Send one more line with the exact action you want Congress to take.",
+                "I need one detail to make this usable: what should the office do first?",
                 kind: .plain,
                 messageType: "fallback_prompt"
             )
@@ -1656,7 +1871,7 @@ struct IssueCallCenterView: View {
         viewModel.mapcV3SessionState = "complete"
         viewModel.approveGeneratedDraft()
         appendAssistantBotMessage(
-            "Looks good. Your call guide is ready.",
+            "Your call guide is ready. Approve and call, or fix the wording first.",
             kind: .plain,
             messageType: "mapc_launch"
         )
@@ -1668,6 +1883,57 @@ struct IssueCallCenterView: View {
         isScriptPreviewReadyForMAPCActions = false
         currentBackgroundDiscussionOptions = []
         suppressTranslationForNextBackground = false
+    }
+
+    private func applyMAPCV3RevisionChip(_ chip: MAPCRevisionChip) {
+        guard !assistantIsThinking, !viewModel.isSubmitting else { return }
+        appendAssistantUserMessage("Selected: \(chip.rawValue)", messageType: "revision_chip")
+
+        if chip == .startOver {
+            startOverMAPCV3SessionInChat()
+            return
+        }
+
+        let revisionPrompt: String
+        switch chip {
+        case .wrongIssue:
+            revisionPrompt = "wrong issue"
+        case .wrongAsk:
+            revisionPrompt = "wrong ask"
+        case .tooBroad:
+            revisionPrompt = "too broad"
+        case .needsLocalAngle:
+            revisionPrompt = "needs a local angle"
+        case .needsBill:
+            revisionPrompt = "there's no explicit bill"
+        case .needsSpecificAction:
+            revisionPrompt = "needs a specific action"
+        case .startOver:
+            revisionPrompt = "start over"
+        }
+
+        assistantComposerText = revisionPrompt
+        submitScriptDraft(fromDiscussionOption: true)
+    }
+
+    private func startOverMAPCV3SessionInChat() {
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        viewModel.startOverMAPCV3Session()
+        previewLintBlocked = false
+        hasRetriedPreviewLintRegeneration = false
+        assistantFlowStage = .awaitingPrompt
+        hasPostedCurrentDraftBackground = false
+        pendingBackgroundMessageID = nil
+        isBackgroundMessageReadyForActions = false
+        pendingScriptPreviewMessageID = nil
+        isScriptPreviewReadyForMAPCActions = false
+        currentBackgroundDiscussionOptions = []
+        suppressTranslationForNextBackground = false
+        appendAssistantBotMessage(
+            "Starting over. Tell me the issue you want your elected representatives to act on.",
+            kind: .plain,
+            messageType: "start_over"
+        )
     }
 
     private func reviseGeneratedDraftInChat() {
@@ -1716,29 +1982,20 @@ struct IssueCallCenterView: View {
     private func selectMAPCV3OptionInChat(_ option: CivicMAPCV3PreparedOption) {
         guard !assistantIsThinking, !viewModel.isSubmitting else { return }
         hasPickedDiscussionOptionInCurrentCycle = true
+        previewLintBlocked = false
+        hasRetriedPreviewLintRegeneration = false
         viewModel.selectMAPCV3Option(optionID: option.optionID)
-        assistantFlowStage = .awaitingPreviewConfirmation
-        pendingBackgroundMessageID = nil
-        withAnimation(.easeOut(duration: 0.18)) {
-            isBackgroundMessageReadyForActions = true
-        }
-    }
-
-    private func fixMAPCV3PreviewInChat() {
-        viewModel.clearMAPCV3OptionSelection()
-        hasPickedDiscussionOptionInCurrentCycle = false
-        assistantFlowStage = .awaitingBackgroundApproval
-        withAnimation(.easeOut(duration: 0.18)) {
-            isBackgroundMessageReadyForActions = true
-        }
-    }
-
-    private func confirmMAPCV3PreviewInChat() {
-        guard !assistantIsThinking, !viewModel.isSubmitting else { return }
-        appendAssistantUserMessage("Selected: Looks right", messageType: "preview_confirm")
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        // New flow order: selecting an ask immediately generates background + script preview.
+        appendAssistantUserMessage("Selected ask: \(option.displayAsk)", messageType: "ask_selected")
         assistantIsThinking = true
+        pendingBackgroundMessageID = nil
         pendingScriptPreviewMessageID = nil
-        isScriptPreviewReadyForMAPCActions = false
+        withAnimation(.easeOut(duration: 0.18)) {
+            isBackgroundMessageReadyForActions = false
+            isScriptPreviewReadyForMAPCActions = false
+        }
+        assistantFlowStage = .awaitingPrompt
         Task {
             await viewModel.generateMAPCV3ScriptAfterPreviewConfirmation()
             await MainActor.run {
@@ -1748,8 +2005,96 @@ struct IssueCallCenterView: View {
         }
     }
 
+    private func fixMAPCV3PreviewInChat() {
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        // Preserve selected ask so the user can refine without reselecting.
+        appendAssistantUserMessage("Selected: Fix this", messageType: "preview_fix")
+        previewLintBlocked = false
+        hasRetriedPreviewLintRegeneration = false
+        hasPickedDiscussionOptionInCurrentCycle = false
+        assistantFlowStage = .awaitingPreviewConfirmation
+        withAnimation(.easeOut(duration: 0.18)) {
+            isBackgroundMessageReadyForActions = false
+            isScriptPreviewReadyForMAPCActions = false
+        }
+        appendAssistantBotMessage(
+            "Got it — I’m keeping the issue and changing the ask.",
+            kind: .plain,
+            messageType: "revise_prompt"
+        )
+        focusedField = .concern
+    }
+
+    private func confirmMAPCV3PreviewInChat() {
+        guard !assistantIsThinking, !viewModel.isSubmitting else { return }
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        // Preview confirmation now happens after preview is visible; no regeneration here.
+        appendAssistantUserMessage("Selected: Looks right", messageType: "preview_confirm")
+        viewModel.mapcV3SessionState = "script_shown"
+        assistantFlowStage = .awaitingMapcStart
+    }
+
     private func processMAPCV3ConfirmedResult() {
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        let normalizedGenerationPath = viewModel.generationPath
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+        let previewAllowedPaths: Set<String> = ["v3", "premade"]
+        if viewModel.requiresDraftApproval && !previewAllowedPaths.contains(normalizedGenerationPath) {
+            let reason = normalizedGenerationPath.isEmpty
+                ? "final_preview_guard_unknown_path"
+                : "final_preview_guard_\(normalizedGenerationPath)"
+            viewModel.blockLegacyPreviewAtHandoff(reason: reason)
+            appendAssistantBotMessage(
+                viewModel.mapcTransportNotice,
+                kind: .plain,
+                messageType: "offline_notice"
+            )
+            assistantFlowStage = .awaitingPrompt
+            pendingBackgroundMessageID = nil
+            pendingScriptPreviewMessageID = nil
+            isBackgroundMessageReadyForActions = false
+            isScriptPreviewReadyForMAPCActions = false
+            currentBackgroundDiscussionOptions = []
+            viewModel.errorMessage = nil
+            return
+        }
+
         if viewModel.requiresDraftApproval, let brief = viewModel.activeBrief {
+            if let lintReason = mapcPreviewLintFailureReason(for: brief) {
+                if normalizedGenerationPath == "v3", !hasRetriedPreviewLintRegeneration {
+                    // mapc_pipeline_v3 — remove flag check after rollout confirmed
+                    hasRetriedPreviewLintRegeneration = true
+                    assistantIsThinking = true
+                    Task {
+                        await viewModel.generateMAPCV3ScriptAfterPreviewConfirmation()
+                        await MainActor.run {
+                            assistantIsThinking = false
+                            processMAPCV3ConfirmedResult()
+                        }
+                    }
+                    return
+                }
+
+                previewLintBlocked = true
+                appendAssistantBotMessage(
+                    "I hit a snag, but I still have your issue. Pick a fix or restate the action you want.",
+                    kind: .plain,
+                    messageType: "lint_blocked"
+                )
+                assistantFlowStage = .awaitingPreviewConfirmation
+                pendingBackgroundMessageID = nil
+                pendingScriptPreviewMessageID = nil
+                withAnimation(.easeOut(duration: 0.18)) {
+                    isBackgroundMessageReadyForActions = false
+                    isScriptPreviewReadyForMAPCActions = true
+                }
+                viewModel.errorMessage = nil
+                return
+            }
+
+            previewLintBlocked = false
+            hasRetriedPreviewLintRegeneration = false
             let trimmedBackground = viewModel.mapcV3BackgroundText.trimmingCharacters(in: .whitespacesAndNewlines)
             if !trimmedBackground.isEmpty {
                 let backgroundMessage = AssistantChatMessage.assistant(trimmedBackground, kind: .plain)
@@ -1771,7 +2116,9 @@ struct IssueCallCenterView: View {
                 messageType: "script_preview"
             )
             pendingScriptPreviewMessageID = scriptPreviewMessage.id
-            assistantFlowStage = .awaitingMapcStart
+            // mapc_pipeline_v3 — remove flag check after rollout confirmed
+            // New flow order: show preview actions first, then MAPC approval actions.
+            assistantFlowStage = .awaitingPreviewConfirmation
             isBackgroundMessageReadyForActions = false
             currentBackgroundDiscussionOptions = []
             viewModel.errorMessage = nil
@@ -1780,9 +2127,23 @@ struct IssueCallCenterView: View {
 
         if let error = viewModel.errorMessage?.trimmingCharacters(in: .whitespacesAndNewlines),
            !error.isEmpty {
+            if error.lowercased().contains("script issue and held this draft") {
+                previewLintBlocked = true
+                appendAssistantBotMessage(error, kind: .plain, messageType: "lint_blocked")
+                assistantFlowStage = .awaitingPreviewConfirmation
+                pendingBackgroundMessageID = nil
+                pendingScriptPreviewMessageID = nil
+                withAnimation(.easeOut(duration: 0.18)) {
+                    isBackgroundMessageReadyForActions = false
+                    isScriptPreviewReadyForMAPCActions = true
+                }
+                viewModel.errorMessage = nil
+                return
+            }
             appendAssistantBotMessage(error, kind: .plain, messageType: "error")
             viewModel.errorMessage = nil
         }
+        previewLintBlocked = false
         assistantFlowStage = .awaitingPrompt
         pendingBackgroundMessageID = nil
         isBackgroundMessageReadyForActions = false
@@ -1805,6 +2166,163 @@ struct IssueCallCenterView: View {
             return "Build the script around \(compact). If feasible, tie the ask directly to \(bill)."
         }
         return "Build the script around \(compact) and choose the highest-impact congressional action."
+    }
+
+    private func mapcPreviewLintFailureReason(for brief: CivicCallBrief) -> String? {
+        let rawIssue = viewModel.concernText
+        let scripts = [
+            ("live", brief.liveScript),
+            ("voicemail", brief.voicemailScript),
+        ]
+
+        for (label, script) in scripts {
+            if let reason = singleScriptLintFailureReason(script: script, rawIssue: rawIssue) {
+                return "\(label): \(reason)"
+            }
+        }
+        return nil
+    }
+
+    private func singleScriptLintFailureReason(script: String, rawIssue: String) -> String? {
+        let lowered = normalizeLintText(script)
+        guard !lowered.isEmpty else { return "empty script" }
+
+        let blockedPhrases = [
+            "[representative]",
+            "[your_name]",
+            "[your name]",
+            "[name]",
+            "my name is [zip]",
+            "support this issue",
+            "oppose this issue",
+            "represents your house district",
+            "support on congressional action on support",
+            "oppose stop",
+            "calling about i want a mapc on"
+        ]
+        if let matched = blockedPhrases.first(where: { lowered.contains($0) }) {
+            return "blocked phrase '\(matched)'"
+        }
+
+        if hasDisallowedPlaceholder(in: script) {
+            return "placeholder other than [ZIP]"
+        }
+
+        if lowered.contains("[zip]"), !zipAppearsInLocationPhrase(script) {
+            return "[ZIP] not in location phrase"
+        }
+
+        if !askSentenceHasConcreteAction(script) {
+            return "missing concrete ask verb"
+        }
+
+        if !closeRequestsPositionOrNextStep(script) {
+            return "missing closing request"
+        }
+
+        if directRawIssueCopyDetected(script: script, rawIssue: rawIssue) {
+            return "direct raw issue copy"
+        }
+
+        return nil
+    }
+
+    private func hasDisallowedPlaceholder(in script: String) -> Bool {
+        let nsrange = NSRange(script.startIndex..<script.endIndex, in: script)
+        guard let regex = try? NSRegularExpression(pattern: #"\[[^\]]+\]"#, options: []) else {
+            return false
+        }
+        let matches = regex.matches(in: script, options: [], range: nsrange)
+        for match in matches {
+            guard let range = Range(match.range, in: script) else { continue }
+            let token = script[range].lowercased()
+            if token != "[zip]" {
+                return true
+            }
+        }
+        return false
+    }
+
+    private func zipAppearsInLocationPhrase(_ script: String) -> Bool {
+        let lowered = normalizeLintText(script)
+        if lowered.contains("my name is [zip]") {
+            return false
+        }
+        let pattern = #"(calling from|constituent from|constituent in|from|in)\s*(zip\s*)?\[zip\]"#
+        return lowered.range(of: pattern, options: .regularExpression) != nil
+    }
+
+    private func askSentenceHasConcreteAction(_ script: String) -> Bool {
+        let sentences = splitSentences(script)
+        guard !sentences.isEmpty else { return false }
+
+        let actionPatterns = [
+            #"\bsupport\b"#,
+            #"\boppose\b"#,
+            #"\bvote\s+yes\b"#,
+            #"\bvote\s+no\b"#,
+            #"\bfund(?:ing)?\b"#,
+            #"\binvestigat(?:e|es|ing|ion)\b"#,
+            #"\brequire\s+report(?:ing|s)?\b"#,
+            #"\bback\s+protections?\b"#,
+            #"\brestrict\s+funding\b"#,
+            #"\bissue\s+a\s+public\s+statement\b"#
+        ]
+
+        let candidateSentence = sentences.first(where: {
+            let lowered = normalizeLintText($0)
+            return lowered.contains("please") || lowered.contains("i'm asking") || lowered.contains("i am asking")
+        }) ?? sentences[0]
+
+        let loweredCandidate = normalizeLintText(candidateSentence)
+        return actionPatterns.contains(where: { loweredCandidate.range(of: $0, options: .regularExpression) != nil })
+    }
+
+    private func closeRequestsPositionOrNextStep(_ script: String) -> Bool {
+        let sentences = splitSentences(script)
+        guard let last = sentences.last else { return false }
+        let lowered = normalizeLintText(last)
+
+        if lowered.contains("position") && (lowered.contains("office") || lowered.contains("member")) {
+            return true
+        }
+        if lowered.contains("next step") {
+            return true
+        }
+        let supportPattern = #"(whether|will)\s+the\s+office\s+(support|oppose|back|vote|fund|investigate|require|restrict|issue)"#
+        return lowered.range(of: supportPattern, options: .regularExpression) != nil
+    }
+
+    private func directRawIssueCopyDetected(script: String, rawIssue: String) -> Bool {
+        let normalizedRaw = normalizeLintText(rawIssue)
+        let normalizedScript = normalizeLintText(script)
+        guard !normalizedRaw.isEmpty, !normalizedScript.isEmpty else { return false }
+
+        let words = normalizedRaw.split(separator: " ")
+        if normalizedRaw.count >= 8, words.count >= 2, normalizedScript.contains(normalizedRaw) {
+            if normalizedScript.hasPrefix(normalizedRaw)
+                || normalizedScript.contains("about \(normalizedRaw)")
+                || normalizedScript.contains("calling about \(normalizedRaw)")
+                || words.count >= 5 {
+                return true
+            }
+        }
+        return false
+    }
+
+    private func splitSentences(_ text: String) -> [String] {
+        text
+            .components(separatedBy: CharacterSet(charactersIn: ".!?"))
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+    }
+
+    private func normalizeLintText(_ text: String) -> String {
+        text
+            .lowercased()
+            .replacingOccurrences(of: #"[^a-z0-9\[\]\s']"#, with: " ", options: .regularExpression)
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private func mergedConcernText(base: String, refinement: String) -> String {
@@ -2345,6 +2863,7 @@ struct IssueCallCenterView: View {
                             .background(primaryCallURL == nil ? VoteNowColors.mutedText.opacity(0.45) : VoteNowColors.primaryCTA)
                             .clipShape(Capsule(style: .continuous))
                             .voteNowPillDualOrbit(
+                                enabled: true,
                                 redColor: VoteNowColors.ctaRed.opacity(0.94),
                                 blueColor: VoteNowColors.ctaBlue.opacity(0.88),
                                 strokeThickness: 2.8,

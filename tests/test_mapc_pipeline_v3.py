@@ -12,6 +12,7 @@ from backend.civic_api.api import (
     post_mapc_v3_interpret,
     post_mapc_v3_script,
 )
+from backend.civic_api.mapc_pipeline_v3 import _universal_mapc_script_lint_ok
 
 
 def _reason_code(exc: Exception) -> str:
@@ -134,3 +135,52 @@ def test_mapc_v3_rejects_ask_options_before_background(monkeypatch: pytest.Monke
             user_id="v3-user-4",
         )
     assert _reason_code(exc_info.value) == "invalid_state_transition"
+
+
+def test_universal_script_lint_rejects_stop_wildfires_bad_placeholder() -> None:
+    live = "Hi, my name is [ZIP]. Please support this issue. Thanks."
+    vm = "Hi, my name is [ZIP]. Please support this issue. Thanks."
+    ok, reason = _universal_mapc_script_lint_ok(
+        live_script=live,
+        voicemail_script=vm,
+        raw_user_issue="Stop wildfires",
+    )
+    assert ok is False
+    assert reason and "blocked_phrase" in reason
+
+
+def test_universal_script_lint_rejects_marriage_equality_malformed_ask() -> None:
+    live = (
+        "Hi, I'm a constituent from [ZIP]. "
+        "Please support on congressional action on support marriage equality. "
+        "Will the office share its position?"
+    )
+    vm = live
+    ok, reason = _universal_mapc_script_lint_ok(
+        live_script=live,
+        voicemail_script=vm,
+        raw_user_issue="Marriage equality",
+    )
+    assert ok is False
+    assert reason and "malformed_ask" in reason
+
+
+def test_universal_script_lint_rejects_gas_prices_raw_text_copy() -> None:
+    raw_issue = "gas prices are too high and hurting families"
+    live = (
+        "Hi, I'm a constituent from [ZIP]. "
+        "I'm calling about gas prices are too high and hurting families. "
+        "Please investigate price gouging. Will the office share its position?"
+    )
+    vm = (
+        "Hi, I'm a constituent from [ZIP]. "
+        "I'm calling about gas prices are too high and hurting families. "
+        "Please require reporting from major fuel suppliers. What is the member's next step?"
+    )
+    ok, reason = _universal_mapc_script_lint_ok(
+        live_script=live,
+        voicemail_script=vm,
+        raw_user_issue=raw_issue,
+    )
+    assert ok is False
+    assert reason and "direct_verbatim_copy" in reason

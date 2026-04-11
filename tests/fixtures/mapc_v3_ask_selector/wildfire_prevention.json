@@ -1,0 +1,22 @@
+{
+  "name": "wildfire_prevention",
+  "session": {
+    "session_id": "fixture-wildfire",
+    "issue_domain": "climate_resilience",
+    "target_problem": "rising wildfire risk and inadequate prevention capacity",
+    "congressional_lever": "funding",
+    "constraints_from_user": "narrow first step",
+    "confidence": 0.91
+  },
+  "require_bill_ref": false,
+  "expected": {
+    "option_count": 3,
+    "distinct_action_families": 3,
+    "must_include_families": [
+      "appropriations_funding",
+      "oversight_reporting_requirement",
+      "legislation"
+    ],
+    "must_avoid_bad_examples": true
+  }
+}

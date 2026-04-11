@@ -1,0 +1,21 @@
+{
+  "name": "groceries",
+  "session": {
+    "session_id": "fixture-groceries",
+    "issue_domain": "competition_and_prices",
+    "target_problem": "high grocery prices and market concentration",
+    "congressional_lever": "oversight",
+    "constraints_from_user": "bipartisan feasibility and local angle",
+    "confidence": 0.74
+  },
+  "require_bill_ref": false,
+  "expected": {
+    "option_count": 2,
+    "distinct_action_families": 2,
+    "must_include_families": [
+      "oversight_reporting_requirement",
+      "anti_fraud_consumer_protection_enforcement"
+    ],
+    "must_reflect_constraints": true
+  }
+}

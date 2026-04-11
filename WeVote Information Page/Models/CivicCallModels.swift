@@ -299,6 +299,37 @@ struct CivicExampleIssueCard: Identifiable, Codable, Sendable {
     }
 }
 
+struct RemotePremadeScript: Identifiable, Codable {
+    let slug: String
+    let title: String?
+    let contentType: String?
+    let actionType: String?
+    let actionTargetId: String?
+    let actionTargetDisplay: String?
+    let actionSentence: String?
+    let whyNow: String?
+    let liveScript: String?
+    let voicemailScript: String?
+    let displayOrder: Int?
+    let updatedAt: String?
+
+    var id: String { slug }
+
+    enum CodingKeys: String, CodingKey {
+        case slug, title
+        case contentType = "content_type"
+        case actionType = "action_type"
+        case actionTargetId = "action_target_id"
+        case actionTargetDisplay = "action_target_display"
+        case actionSentence = "action_sentence"
+        case whyNow = "why_now"
+        case liveScript = "live_script"
+        case voicemailScript = "voicemail_script"
+        case displayOrder = "display_order"
+        case updatedAt = "updated_at"
+    }
+}
+
 struct CivicCallLogRecord: Identifiable, Codable, Sendable {
     let id: String
     let createdAt: Date

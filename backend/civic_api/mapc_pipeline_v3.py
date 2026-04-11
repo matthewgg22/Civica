@@ -47,7 +47,7 @@ Edge-case handling:
 - "FEMA scams": normalize to disaster oversight and consumer protection."""
 
 
-ASK_SELECTOR_PROMPT = """Task: Generate 2 to 4 user-facing ask options from the interpreted issue object. Use only the structured session object fields. Never read from raw_user_issue directly.
+ASK_SELECTOR_PROMPT = """Task: Generate specific, first-step ask options from the interpreted MAPC session object.
 
 Return JSON only:
 {
@@ -60,20 +60,24 @@ Return JSON only:
 }
 
 Hard constraints:
-1. Use only the structured session object fields. Never use raw_user_issue text directly.
-2. Every option must align with issue_domain and congressional_lever exactly as provided.
-3. display_ask must be plain language, 10 words or fewer.
-4. No scaffolding phrases, placeholders, or conditional hedging.
-5. Produce at least 2 specific options when confidence allows.
-6. A generic fallback option is allowed only as the final option if specific options cannot be produced.
-7. If require_bill_ref is true and no bill can be confirmed at confidence above 0.80, do not fabricate a bill option.
-8. These phrases are prohibited in any option: "if feasible", "where applicable", "as appropriate".
-9. If congressional_lever is "foreign_policy_oversight", options must come only from: send a letter to the office, hold a congressional hearing, sanctions oversight, export control review. Do not generate domestic legislative options for foreign policy topics.
-10. If the foreign policy issue is too ambiguous to produce 2 options at confidence above 0.65, return one hearing option and set needs_clarification=true.
-11. Before returning options, check every pair for logical equivalence. If two options produce the same congressional outcome, remove the more negatively framed one. Keep only options that differ in congressional_lever or ask_type. Never return two options that are mirror images of each other."""
+1. Use only the structured session object plus constraints_from_user. Never read raw_user_issue directly.
+2. If confidence >= 0.75, return exactly 3 options. If confidence < 0.75, return exactly 2 options.
+3. Each option must be a distinct action family, not wording variants of the same outcome.
+4. Allowed action families only: legislation, appropriations_funding, oversight_reporting_requirement, nomination_vote_position, public_statement, sanctions_export_control_review, war_powers_authorization_funding_restriction, humanitarian_refugee_protection, anti_fraud_consumer_protection_enforcement.
+5. Set ask_type to one of the allowed action families. Do not invent new families.
+6. Each display_ask must name the first office action and be 4 to 10 words.
+7. Bad options that are prohibited: "Support this issue", "Stronger laws", "Hold a hearing on this issue".
+8. Good options include concrete first steps such as: "Fund prescribed-burn capacity", "Require FEMA fraud reporting", "Oppose unauthorized Iran escalation", "Protect marriage equality protections".
+9. Avoid "hold a hearing" unless oversight is clearly the strongest and most concrete first step.
+10. If constraints_from_user is present, reflect it in at least one option. Supported constraints include local angle, bipartisan feasibility, legal durability, narrow first step, explicit bill, and public updates/deadlines/accountability metrics.
+11. Never mention "Congress" in display_ask text.
+12. Remove logically equivalent options before returning. Never return mirror-image options (for example, opposing cuts vs increasing the same funding).
+13. If require_bill_ref is true and no bill can be confirmed above 0.80 confidence, do not fabricate a bill option.
+14. Do not use scaffolding phrases, placeholders, or conditional hedging such as "if feasible", "where applicable", or "as appropriate".
+15. For foreign-policy issues, do not default to hearing + letter. Prefer a stronger first-step tool when inferable, such as sanctions/export-control review, war-powers or authorization limits, or refugee protection."""
 
 
-BACKGROUND_WRITER_PROMPT = """Task: Write one concise issue-specific background paragraph for the interpreted civic issue.
+BACKGROUND_WRITER_PROMPT = """Task: Write an issue-specific background paragraph or return null when specificity is insufficient.
 
 Return JSON only:
 {"background_text": "string"}
@@ -81,13 +85,18 @@ or if generation is not possible:
 {"background_text": null, "reason": "string"}
 
 Hard constraints:
-1. If confidence is below 0.65, return null.
+1. If confidence is below 0.65, return {"background_text": null, "reason": "insufficient_specificity"}.
 2. If issue_domain is null or empty, return null.
-3. Write 3 to 5 sentences in plain language.
-4. The paragraph must be specific to issue_domain and target_problem.
-5. Do not write any paragraph that would apply equally to three or more unrelated issue domains. If that level of specificity cannot be achieved, return null.
-6. This generic pattern is explicitly prohibited and must never appear: a broad paragraph about Congress setting policy, weighing timelines and tradeoffs, and the potential for higher costs to families. This pattern has appeared across unrelated topics and destroys user trust.
-7. No placeholders, no meta language, no instruction-like text."""
+3. Write 2 to 4 sentences totaling 45 to 85 words.
+4. Use plain spoken language.
+5. Do not include a meta preface like "It sounds like you're asking about".
+6. The paragraph must include at least two issue-specific nouns, institutions, mechanisms, or harms that would not fit three unrelated issue areas.
+7. Sentence 1 must state what the issue is.
+8. Sentence 2 must explain why the federal lever matters.
+9. Optional sentence 3 can explain why the selected ask or first-step action matters.
+10. If specificity cannot be achieved, return {"background_text": null, "reason": "insufficient_specificity"}.
+11. Absolute prohibitions: "This issue affects how Congress sets policy...", "higher costs to families", "timelines, funding, and tradeoffs", and any paragraph that could fit Tibet, childcare, groceries, and marriage equality equally well.
+12. No placeholders, no prompt-like wording, and no generic civics boilerplate."""
 
 
 SCRIPT_WRITER_PROMPT = """Task: Generate a phone-ready congressional call script based on the confirmed session object and selected ask option.
@@ -744,6 +753,39 @@ class MAPCPipelineV3Service:
             validator_report["checks"].append({"name": "word_count_retry", "passed": in_range, "live_words": live_wc, "voicemail_words": vm_wc})
             if not in_range:
                 raise MAPCPipelineV3Error("word_count_out_of_range", "script word count remained out of range after retry.")
+
+        universal_ok, universal_reason = _universal_mapc_script_lint_ok(
+            live_script=scripts["live_script"],
+            voicemail_script=scripts["voicemail_script"],
+            raw_user_issue=_normalized_text(session_obj.get("raw_user_issue")),
+        )
+        validator_report["checks"].append({
+            "name": "universal_script_lint",
+            "passed": universal_ok,
+            "reason": universal_reason,
+        })
+        if not universal_ok:
+            retried = rerun(
+                "Apply strict MAPC script lint. Remove placeholders except [ZIP]. Keep [ZIP] only in a location phrase. "
+                "Do not write 'support this issue' or 'oppose this issue'. Avoid malformed asks. "
+                "Use one concrete ask action verb (support, oppose, vote yes, vote no, fund, investigate, require reporting, "
+                "back protections, restrict funding, or issue a public statement). "
+                "Close by asking the office's position, the member's next step, or whether the office will support the action. "
+                "Do not copy raw user wording verbatim."
+            )
+            scripts = {k: _normalized_text(retried.get(k)) for k in scripts}
+            universal_ok, universal_reason = _universal_mapc_script_lint_ok(
+                live_script=scripts["live_script"],
+                voicemail_script=scripts["voicemail_script"],
+                raw_user_issue=_normalized_text(session_obj.get("raw_user_issue")),
+            )
+            validator_report["checks"].append({
+                "name": "universal_script_lint_retry",
+                "passed": universal_ok,
+                "reason": universal_reason,
+            })
+            if not universal_ok:
+                raise MAPCPipelineV3Error("universal_script_lint_failed", f"script lint failed: {universal_reason}")
 
         return scripts["live_script"], scripts["voicemail_script"]
 
@@ -1406,7 +1448,9 @@ def _verbatim_ok(script: str, raw_user_issue: str, constraints_from_user: str) -
 
 def _placeholder_leak_ok(script: str) -> tuple[bool, str | None]:
     blocked_explicit_tokens = {
+        "[YOUR_NAME]",
         "[Your Name]",
+        "[Name]",
         "[REPRESENTATIVE]",
         "[Rep Name]",
         "[Member]",
@@ -1452,6 +1496,9 @@ def _is_malformed_ask(script: str) -> bool:
         r"\bto\s+support\s+support\b",
         r"\bto\s+oppose\s+oppose\b",
         r"\bsupport on congressional action on support\b",
+        r"\boppose\s+stop\b",
+        r"\bcalling about i want a mapc on\b",
+        r"\bsupport this issue\b",
         r"\boppose this issue\b",
     )
     return any(re.search(pattern, lowered) for pattern in patterns)
@@ -1470,6 +1517,131 @@ def _zip_context_ok(script: str) -> tuple[bool, str | None]:
         )
         if not location_ok:
             return False, "zip_not_in_location_context"
+    return True, None
+
+
+def _sentence_list(text: str) -> list[str]:
+    collapsed = re.sub(r"\s+", " ", _normalized_text(text)).strip()
+    if not collapsed:
+        return []
+    return [segment.strip() for segment in re.split(r"(?<=[.!?])\s+", collapsed) if segment.strip()]
+
+
+def _contains_concrete_action_verb(text: str) -> bool:
+    lowered = _normalized_text(text).lower()
+    patterns = (
+        r"\bsupport\b",
+        r"\boppose\b",
+        r"\bvote\s+yes\b",
+        r"\bvote\s+no\b",
+        r"\bfund(?:ing)?\b",
+        r"\binvestigat(?:e|es|ing|ion)\b",
+        r"\brequire\s+report(?:ing|s)?\b",
+        r"\bback\s+protections?\b",
+        r"\brestrict\s+funding\b",
+        r"\bissue\s+a\s+public\s+statement\b",
+    )
+    return any(re.search(pattern, lowered) for pattern in patterns)
+
+
+def _ask_sentence_has_action(script: str) -> bool:
+    sentences = _sentence_list(script)
+    if not sentences:
+        return False
+    for sentence in sentences:
+        lowered = sentence.lower()
+        if "please" in lowered or "asking" in lowered or "i'm asking" in lowered:
+            return _contains_concrete_action_verb(sentence)
+    return _contains_concrete_action_verb(sentences[0])
+
+
+def _close_requests_position_or_next_step(script: str) -> bool:
+    sentences = _sentence_list(script)
+    if not sentences:
+        return False
+    close_line = sentences[-1].lower()
+    if ("office" in close_line or "member" in close_line) and "position" in close_line:
+        return True
+    if "next step" in close_line:
+        return True
+    if re.search(
+        r"(whether|will)\s+the\s+office\s+(support|oppose|back|vote|fund|investigate|require|restrict|issue)",
+        close_line,
+    ):
+        return True
+    return False
+
+
+def _normalize_for_verbatim(text: str) -> str:
+    lowered = _normalized_text(text).lower()
+    lowered = re.sub(r"[^a-z0-9\s]", " ", lowered)
+    lowered = re.sub(r"\s+", " ", lowered).strip()
+    return lowered
+
+
+def _direct_verbatim_copy_detected(script: str, raw_user_issue: str) -> bool:
+    raw_norm = _normalize_for_verbatim(raw_user_issue)
+    script_norm = _normalize_for_verbatim(script)
+    if not raw_norm or not script_norm:
+        return False
+
+    raw_words = raw_norm.split()
+    if len(raw_words) >= 2 and len(raw_norm) >= 8 and raw_norm in script_norm:
+        if script_norm.startswith(raw_norm) or f" about {raw_norm}" in script_norm or f" calling about {raw_norm}" in script_norm:
+            return True
+        if len(raw_words) >= 5:
+            return True
+    return False
+
+
+def _single_script_universal_lint(script: str, raw_user_issue: str) -> tuple[bool, str | None]:
+    lowered = _normalized_text(script).lower()
+    if not lowered:
+        return False, "empty_script"
+
+    blocked_phrases = (
+        "my name is [zip]",
+        "support this issue",
+        "oppose this issue",
+        "represents your house district",
+        "support on congressional action on support",
+        "oppose stop",
+        "calling about i want a mapc on",
+    )
+    for phrase in blocked_phrases:
+        if phrase in lowered:
+            return False, f"blocked_phrase:{phrase}"
+
+    leak_ok, leaked = _placeholder_leak_ok(script)
+    if not leak_ok:
+        return False, f"placeholder:{leaked}"
+
+    zip_ok, zip_issue = _zip_context_ok(script)
+    if not zip_ok:
+        return False, f"zip_context:{zip_issue}"
+
+    if not _ask_sentence_has_action(script):
+        return False, "missing_concrete_action_verb"
+
+    if not _close_requests_position_or_next_step(script):
+        return False, "missing_close_request"
+
+    if _is_malformed_ask(script):
+        return False, "malformed_ask"
+
+    if _direct_verbatim_copy_detected(script, raw_user_issue):
+        return False, "direct_verbatim_copy"
+
+    return True, None
+
+
+def _universal_mapc_script_lint_ok(*, live_script: str, voicemail_script: str, raw_user_issue: str) -> tuple[bool, str | None]:
+    live_ok, live_reason = _single_script_universal_lint(live_script, raw_user_issue)
+    if not live_ok:
+        return False, f"live:{live_reason}"
+    vm_ok, vm_reason = _single_script_universal_lint(voicemail_script, raw_user_issue)
+    if not vm_ok:
+        return False, f"voicemail:{vm_reason}"
     return True, None
 
 
@@ -1717,12 +1889,12 @@ def _offline_script(*, session_obj: dict[str, Any], selected_option: dict[str, A
     issue = _normalized_text(session_obj.get("display_issue")) or "this issue"
     ask = _normalized_text(selected_option.get("display_ask")) or _normalized_text(session_obj.get("display_ask")) or "take action"
     live = (
-        f"Hi, I’m a constituent in ZIP [ZIP]. I’m calling about {issue.lower()}. "
+        f"Hi, I’m a constituent from [ZIP]. I’m calling about {issue.lower()}. "
         f"Please {ask.lower()}. This step would address a concrete public harm and improve accountability. "
         "Families need timely action, not delay. Will the office support this action this session and share its position?"
     )
     voicemail = (
-        f"Hi, I’m a constituent in ZIP [ZIP] calling about {issue.lower()}. "
+        f"Hi, I’m a constituent from [ZIP] calling about {issue.lower()}. "
         f"Please {ask.lower()}. This action would improve accountability and protect affected families. "
         "Please share whether the office supports this action and what step comes next."
     )

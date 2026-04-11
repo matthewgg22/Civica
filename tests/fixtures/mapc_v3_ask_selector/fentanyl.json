@@ -1,0 +1,22 @@
+{
+  "name": "fentanyl",
+  "session": {
+    "session_id": "fixture-fentanyl",
+    "issue_domain": "public_health",
+    "target_problem": "fentanyl overdose deaths and cartel supply chains",
+    "congressional_lever": "oversight",
+    "constraints_from_user": "narrow first step with public updates and accountability metrics",
+    "confidence": 0.84
+  },
+  "require_bill_ref": false,
+  "expected": {
+    "option_count": 3,
+    "distinct_action_families": 3,
+    "must_include_families": [
+      "anti_fraud_consumer_protection_enforcement",
+      "appropriations_funding",
+      "oversight_reporting_requirement"
+    ],
+    "must_reflect_constraints": true
+  }
+}

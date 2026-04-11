@@ -1,0 +1,22 @@
+{
+  "name": "crypto_scams",
+  "session": {
+    "session_id": "fixture-crypto-scams",
+    "issue_domain": "consumer_protection",
+    "target_problem": "retail investor losses from crypto fraud and weak enforcement",
+    "congressional_lever": "oversight",
+    "constraints_from_user": "explicit accountability metrics",
+    "confidence": 0.81
+  },
+  "require_bill_ref": false,
+  "expected": {
+    "option_count": 3,
+    "distinct_action_families": 3,
+    "must_include_families": [
+      "anti_fraud_consumer_protection_enforcement",
+      "oversight_reporting_requirement",
+      "legislation"
+    ],
+    "must_reflect_constraints": true
+  }
+}

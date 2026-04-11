@@ -1,0 +1,22 @@
+{
+  "name": "hong_kong",
+  "session": {
+    "session_id": "fixture-hong-kong",
+    "issue_domain": "foreign_policy",
+    "target_problem": "rights erosion and accountability gaps in Hong Kong",
+    "congressional_lever": "foreign_policy_oversight",
+    "constraints_from_user": "public updates and deadlines",
+    "confidence": 0.83
+  },
+  "require_bill_ref": false,
+  "expected": {
+    "option_count": 3,
+    "distinct_action_families": 3,
+    "must_include_families": [
+      "sanctions_export_control_review",
+      "oversight_reporting_requirement",
+      "public_statement"
+    ],
+    "must_reflect_constraints": true
+  }
+}

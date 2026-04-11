@@ -917,7 +917,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 displayIssue: interpretResponse.session.displayIssue,
                 needsClarification: true,
                 clarificationPrompt: interpretResponse.session.clarificationPrompt
-                    ?? "Please clarify the exact congressional action you want.",
+                    ?? "I need one detail to make this usable: what should the office do first?",
                 options: []
             )
         }
@@ -1021,8 +1021,13 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         )
         let backgroundData = try await requestData(for: backgroundRequest)
         let backgroundResponse = try decoder.decode(CivicMAPCV3BackgroundResponse.self, from: backgroundData)
-        guard let backgroundText = backgroundResponse.backgroundText?.trimmingCharacters(in: .whitespacesAndNewlines),
-              !backgroundText.isEmpty else {
+        let resolvedBackgroundText = backgroundResponse.backgroundText?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let missingBackground = resolvedBackgroundText.isEmpty
+        let canProceedWithoutBackground = backgroundResponse.session.confidence >= 0.65
+            && !backgroundResponse.session.needsClarification
+
+        if missingBackground && !canProceedWithoutBackground {
             return CivicScriptPackageResponse(
                 status: .needsClarification,
                 packageID: UUID().uuidString,
@@ -1031,11 +1036,14 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 officeOverlays: [],
                 reviewCanRegenerate: true,
                 reviewRegenerateHint: backgroundResponse.session.clarificationPrompt
-                    ?? "Please clarify the exact action you want Congress to take.",
+                    ?? "I need one detail to make this usable: what should the office do first?",
                 truthTrace: nil,
                 policyFlags: ["mapc_pipeline_v3_background_\(backgroundResponse.reason ?? "null")"]
             )
         }
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        // UI safeguard: if Stage 3 returns null, proceed without injecting a generic background paragraph.
+        let backgroundText = resolvedBackgroundText
 
         var scriptRequest = URLRequest(url: endpoint("/api/v2/civic/mapc/script"))
         scriptRequest.httpMethod = "POST"
@@ -1729,6 +1737,9 @@ final class IssueCallCenterViewModel: ObservableObject {
     @Published var mapcV3ClarificationTurnCount: Int = 0
     @Published var mapcV3MapcApproved: Bool = false
     @Published var mapcV3AccumulatedContext: [CivicMAPCV3ContextTurn] = []
+    @Published var generationPath: String = "v3"
+    @Published var fallbackReason: String?
+    @Published var sessionResetReason: String?
 
     var outcomeBreakdown: CivicOutcomeBreakdown {
         var contacted = 0
@@ -1788,10 +1799,17 @@ final class IssueCallCenterViewModel: ObservableObject {
     private var hasLoggedScriptChatTelemetryFailure = false
     private var hasLoggedScriptFeedbackTelemetryFailure = false
     private let scriptChatStateDefaultsKey = "civic.issue_call.script_chat_state.v1"
+    private let premadeScriptsCacheDefaultsKey = "civic.issue_call.premade_scripts.cache.v1"
     private let zipFallbackToken = "[ZIPCODE]"
     private let mapcPipelineV3FlagKey = "mapc_pipeline_v3_enabled"
-    private let mapcV3RecoveryMessage = "Something's off and I want to fix it before you call. Can you tell me the core issue in one sentence?"
+    private let mapcV3RecoveryMessage = "I hit a snag, but I still have your issue. Pick a fix or restate the action you want."
+    private let mapcV3LintRecoveryMessage = "I hit a snag, but I still have your issue. Pick a fix or restate the action you want."
+    private let mapcGenerationPathV3 = "v3"
+    private let mapcGenerationPathPremade = "premade"
+    private let mapcGenerationPathOfflineNotice = "offline_notice"
+    private let mapcGenerationPathBlockedLegacy = "blocked_legacy"
     private var mapcV3PendingSessionID: String?
+    private var mapcV3PreserveSessionForNextSubmit = false
 
     init(
         federalReps: [Official],
@@ -1925,6 +1943,95 @@ final class IssueCallCenterViewModel: ObservableObject {
         scriptChatTurnIndex > 0 || !pendingScriptChatTurnPayloads.isEmpty
     }
 
+    var mapcTransportNotice: String {
+        mapcV3RecoveryMessage
+    }
+
+    // Supabase is the primary source for premade scripts. This fetch keeps ordering
+    // aligned with the table so the UI does not need to sort locally.
+    func fetchPublishedPremadeScripts() async throws -> [RemotePremadeScript] {
+        try? await supabaseManager.signInAnonymouslyIfNeeded()
+
+        #if canImport(Supabase)
+        let response = try await SupabaseClientProvider.shared.client
+            .from("civic_example_templates")
+            .select("""
+                slug,
+                title,
+                content_type,
+                action_type,
+                action_target_id,
+                action_target_display,
+                action_sentence,
+                why_now,
+                live_script,
+                voicemail_script,
+                display_order,
+                updated_at
+            """)
+            .eq("status", value: "published")
+            .order("display_order", ascending: true)
+            .order("updated_at", ascending: false)
+            .execute()
+
+        return try JSONDecoder().decode([RemotePremadeScript].self, from: response.data)
+        #else
+        struct SupabaseUnavailableError: LocalizedError {
+            var errorDescription: String? { "Supabase SDK is unavailable." }
+        }
+        throw SupabaseUnavailableError()
+        #endif
+    }
+
+    // Always return something usable: remote first, then cached, then bundled seeds.
+    func loadPremadeScripts() async -> [RemotePremadeScript] {
+        do {
+            let remote = try await fetchPublishedPremadeScripts()
+            if !remote.isEmpty {
+                cacheScripts(remote)
+                return remote
+            }
+            logger.warning("Published premade scripts query returned 0 rows; using cached/local fallback.")
+            return loadCachedOrLocalFallback()
+        } catch {
+            logger.error("Failed loading published premade scripts: \(String(describing: error), privacy: .public)")
+            return loadCachedOrLocalFallback()
+        }
+    }
+
+    private func cacheScripts(_ scripts: [RemotePremadeScript]) {
+        guard let encoded = try? JSONEncoder().encode(scripts) else {
+            logger.error("Failed to encode premade scripts for local cache.")
+            return
+        }
+        UserDefaults.standard.set(encoded, forKey: premadeScriptsCacheDefaultsKey)
+    }
+
+    private func loadCachedOrLocalFallback() -> [RemotePremadeScript] {
+        if let cachedData = UserDefaults.standard.data(forKey: premadeScriptsCacheDefaultsKey),
+           let cached = try? JSONDecoder().decode([RemotePremadeScript].self, from: cachedData),
+           !cached.isEmpty {
+            return cached
+        }
+
+        return fallbackExamples().map { card in
+            RemotePremadeScript(
+                slug: card.slug ?? card.id,
+                title: card.title,
+                contentType: card.category,
+                actionType: card.primaryAsk,
+                actionTargetId: card.relatedBills.first,
+                actionTargetDisplay: nil,
+                actionSentence: nil,
+                whyNow: card.summary,
+                liveScript: card.liveScript,
+                voicemailScript: card.voicemailScript,
+                displayOrder: nil,
+                updatedAt: card.updatedAt.map(Self.iso8601WithFractional.string(from:))
+            )
+        }
+    }
+
     func loadExamplesAndHistory() async {
         let userID = await userIDForRequest()
         let localFallback = fallbackExamples()
@@ -1932,19 +2039,15 @@ final class IssueCallCenterViewModel: ObservableObject {
             examples = localFallback
         }
 
-        async let remoteExamplesTask: [CivicExampleIssueCard] = apiClient.fetchExamples(userID: userID, reps: repTargets)
+        async let remotePremadeScriptsTask: [RemotePremadeScript] = loadPremadeScripts()
         async let historyTask: [CivicHistoryGroup] = apiClient.fetchHistory(userID: userID)
 
-        do {
-            let remoteExamples = try await remoteExamplesTask
-            let mergedExamples = mergePremadeExamples(remote: remoteExamples, local: localFallback)
-            if !mergedExamples.isEmpty || examples.isEmpty {
-                examples = mergedExamples
-            }
-        } catch {
-            if examples.isEmpty {
-                examples = localFallback
-            }
+        let remotePremadeScripts = await remotePremadeScriptsTask
+        let mappedRemoteExamples = mapRemoteScriptsToExampleCards(remotePremadeScripts)
+        if !mappedRemoteExamples.isEmpty {
+            examples = mappedRemoteExamples
+        } else if examples.isEmpty {
+            examples = localFallback
         }
 
         do {
@@ -1962,6 +2065,207 @@ final class IssueCallCenterViewModel: ObservableObject {
         hasLoadedExamplesAndHistoryThisSession = true
         await loadExamplesAndHistory()
     }
+
+    private func mapRemoteScriptsToExampleCards(_ scripts: [RemotePremadeScript]) -> [CivicExampleIssueCard] {
+        let availableChambers = availablePremadeTargetChambers()
+        let placeholders = [
+            "[YOUR_NAME]",
+            "[CITY]",
+            "[ZIP]",
+            "[OFFICIAL_TITLE]",
+            "[OFFICIAL_LAST]",
+            "[BILL_OR_RESOLUTION]"
+        ]
+
+        let cards = scripts.compactMap { script -> CivicExampleIssueCard? in
+            let trimmedSlug = script.slug.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmedSlug.isEmpty else { return nil }
+
+            let normalizedActionSentence = normalizedSentence(
+                script.actionSentence?.trimmingCharacters(in: .whitespacesAndNewlines)
+            )
+            let title = normalizedNonEmpty(script.title)
+                ?? normalizedNonEmpty(script.actionTargetDisplay)
+                ?? trimmedSlug.replacingOccurrences(of: "-", with: " ").capitalized
+            let summary = normalizedNonEmpty(script.whyNow)
+                ?? normalizedActionSentence
+                ?? "Call your representatives about this issue."
+            let liveScript = normalizedNonEmpty(script.liveScript)
+                ?? generatedFallbackScript(title: title, actionSentence: normalizedActionSentence, isVoicemail: false)
+            let voicemailScript = normalizedNonEmpty(script.voicemailScript)
+                ?? generatedFallbackScript(title: title, actionSentence: normalizedActionSentence, isVoicemail: true)
+
+            let inferredAsk = civicAsk(from: script.actionType)
+            let targetChambers = inferredTargetChambers(from: script.actionTargetDisplay, fallback: availableChambers)
+            let repRelevance = repRelevanceLines(for: targetChambers)
+            let actionTargetID = normalizedNonEmpty(script.actionTargetId)
+            let relatedBills = actionTargetID.map { [$0] } ?? []
+
+            return CivicExampleIssueCard(
+                id: trimmedSlug,
+                slug: trimmedSlug,
+                title: title,
+                category: normalizedDisplayCategory(script.contentType),
+                targetChambers: targetChambers,
+                primaryAsk: inferredAsk?.rawValue ?? normalizedNonEmpty(script.actionType),
+                summary: summary,
+                relatedBills: relatedBills,
+                repRelevance: repRelevance,
+                templateAsks: inferredAsk.map { [$0] } ?? [.support],
+                liveScript: liveScript,
+                voicemailScript: voicemailScript,
+                supporterVariant: nil,
+                undecidedVariant: nil,
+                stafferVariant: nil,
+                voicemailFooter: nil,
+                placeholders: placeholders,
+                tags: remoteTags(contentType: script.contentType, actionType: script.actionType),
+                updatedAt: parseRemotePremadeTimestamp(script.updatedAt)
+            )
+        }
+
+        return cards.filter { card in
+            !Set(card.targetChambers).intersection(Set(availableChambers)).isEmpty
+        }
+    }
+
+    private func availablePremadeTargetChambers() -> [String] {
+        var chambers: [String] = []
+        if repTargets.contains(where: { $0.slot == .house }) {
+            chambers.append("house")
+        }
+        if repTargets.contains(where: { $0.slot == .senate1 || $0.slot == .senate2 }) {
+            chambers.append("senate")
+        }
+        return chambers.isEmpty ? ["house", "senate"] : chambers
+    }
+
+    private func inferredTargetChambers(from actionTargetDisplay: String?, fallback: [String]) -> [String] {
+        guard let normalizedDisplay = normalizedNonEmpty(actionTargetDisplay)?.lowercased() else {
+            return fallback
+        }
+        if normalizedDisplay.contains("senate") || normalizedDisplay.contains("senator") {
+            return ["senate"]
+        }
+        if normalizedDisplay.contains("house") || normalizedDisplay.contains("representative") {
+            return ["house"]
+        }
+        return fallback
+    }
+
+    private func repRelevanceLines(for targetChambers: [String]) -> [String] {
+        var lines: [String] = []
+        let chamberSet = Set(targetChambers)
+        if chamberSet == Set(["senate"]) {
+            lines.append("This issue is currently targeted to the Senate.")
+        } else if chamberSet == Set(["house"]) {
+            lines.append("This issue is currently targeted to the House.")
+        } else {
+            lines.append("This issue can be raised with both House and Senate offices.")
+        }
+
+        lines += repTargets
+            .filter { target in
+                if targetChambers.contains("house"), target.slot == .house { return true }
+                if targetChambers.contains("senate"), target.slot == .senate1 || target.slot == .senate2 { return true }
+                return false
+            }
+            .prefix(3)
+            .map { "\($0.official.name) serves in \($0.officeType)." }
+
+        return lines
+    }
+
+    private func civicAsk(from actionType: String?) -> CivicAsk? {
+        guard let normalized = normalizedNonEmpty(actionType)?.lowercased() else { return nil }
+        switch normalized {
+        case "support": return .support
+        case "oppose": return .oppose
+        case "cosponsor": return .cosponsor
+        case "vote_yes", "vote-yes", "vote yes": return .voteYes
+        case "vote_no", "vote-no", "vote no": return .voteNo
+        case "seek_oversight", "seek-oversight", "seek oversight": return .seekOversight
+        case "ask_public_statement", "ask-public-statement", "ask public statement": return .askPublicStatement
+        case "ask_amendment", "ask-amendment", "ask amendment": return .askAmendment
+        default:
+            return CivicAsk(rawValue: normalized)
+        }
+    }
+
+    private func normalizedDisplayCategory(_ contentType: String?) -> String? {
+        guard let contentType = normalizedNonEmpty(contentType) else { return nil }
+        return contentType
+            .replacingOccurrences(of: "_", with: " ")
+            .replacingOccurrences(of: "-", with: " ")
+            .capitalized
+    }
+
+    private func remoteTags(contentType: String?, actionType: String?) -> [String] {
+        var tags: [String] = []
+        if let contentType = normalizedNonEmpty(contentType)?.lowercased() {
+            tags.append(contentType)
+        }
+        if let actionType = normalizedNonEmpty(actionType)?.lowercased() {
+            tags.append(actionType)
+        }
+        return tags
+    }
+
+    private func generatedFallbackScript(title: String, actionSentence: String?, isVoicemail: Bool) -> String {
+        let actionLine = actionSentence ?? "take clear public action on this issue."
+        if isVoicemail {
+            return """
+            Hi, this is [YOUR_NAME] from [CITY], [ZIP].
+
+            I'm calling about \(title).
+
+            Please ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to \(actionLine)
+
+            Thank you.
+            """
+        }
+
+        return """
+        Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].
+
+        I'm calling about \(title).
+
+        Please ask [OFFICIAL_TITLE] [OFFICIAL_LAST] to \(actionLine)
+
+        Thank you for your time and consideration.
+        """
+    }
+
+    private func normalizedSentence(_ value: String?) -> String? {
+        guard let value = normalizedNonEmpty(value) else { return nil }
+        if value.hasSuffix(".") || value.hasSuffix("!") || value.hasSuffix("?") {
+            return value
+        }
+        return "\(value)."
+    }
+
+    private func normalizedNonEmpty(_ value: String?) -> String? {
+        guard let trimmed = value?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !trimmed.isEmpty else { return nil }
+        return trimmed
+    }
+
+    private func parseRemotePremadeTimestamp(_ value: String?) -> Date? {
+        guard let value = normalizedNonEmpty(value) else { return nil }
+        return Self.iso8601WithFractional.date(from: value) ?? Self.iso8601Basic.date(from: value)
+    }
+
+    private static let iso8601WithFractional: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+
+    private static let iso8601Basic: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter
+    }()
 
     private func mergePremadeExamples(
         remote: [CivicExampleIssueCard],
@@ -2026,7 +2330,7 @@ final class IssueCallCenterViewModel: ObservableObject {
 
     func submitAssistantRequest() async {
         errorMessage = nil
-        guard let ask = selectedAsk else {
+        guard selectedAsk != nil else {
             errorMessage = "Select an explicit ask before generating call briefs."
             return
         }
@@ -2039,7 +2343,6 @@ final class IssueCallCenterViewModel: ObservableObject {
         defer { isSubmitting = false }
 
         let trimmedConcern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedBill = optionalBillRef.trimmingCharacters(in: .whitespacesAndNewlines)
         let userID = await userIDForRequest()
         if mapcPipelineV3Enabled && shouldContinueMAPCV3Clarification {
             // mapc_pipeline_v3 — remove flag check after rollout confirmed
@@ -2047,105 +2350,26 @@ final class IssueCallCenterViewModel: ObservableObject {
         } else {
             prepareForFreshGeneration()
         }
-        if mapcPipelineV3Enabled {
+        guard mapcPipelineV3Enabled else {
             // mapc_pipeline_v3 — remove flag check after rollout confirmed
-            await submitAssistantRequestV3(
-                userID: userID,
-                concernText: trimmedConcern
+            pendingGeneratedResolution = nil
+            lastGeneratedPackageID = nil
+            requiresDraftApproval = false
+            recordMAPCGenerationTelemetry(
+                path: mapcGenerationPathBlockedLegacy,
+                fallbackReason: "v3_disabled",
+                sessionResetReason: nil
             )
+            errorMessage = mapcV3RecoveryMessage
+            logger.notice("Blocked legacy free-text generation because MAPC v3 is disabled.")
             return
         }
 
-        do {
-            let package = try await apiClient.createScriptPackage(
-                userID: userID,
-                concernText: trimmedConcern,
-                selectedAsk: ask,
-                targetReps: requestRepSlots,
-                repTargets: repTargets,
-                optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill,
-                userZip: requestUserZip,
-                userState: resolvedUserState
-            )
-
-            switch package.status {
-            case .ok:
-                let response = resolutionFromScriptPackage(
-                    package,
-                    concernText: trimmedConcern,
-                    ask: ask,
-                    selectedSlots: requestRepSlots,
-                    optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill
-                )
-                let vetted = vettedGeneratedResolution(
-                    response,
-                    concernText: trimmedConcern,
-                    ask: ask,
-                    selectedSlots: requestRepSlots,
-                    optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill
-                )
-                let finalResponse = vetted.resolution
-                if vetted.usedFallback {
-                    logger.warning("Discarded off-topic or unsafe MAPC package and rebuilt a local draft.")
-                    errorMessage = clarificationPromptForConcern(
-                        trimmedConcern,
-                        optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill,
-                        selectedAsk: ask
-                    )
-                }
-                applyResolution(finalResponse)
-                pendingGeneratedResolution = finalResponse
-                lastGeneratedPackageID = package.packageID
-                requiresDraftApproval = true
-                saveSnapshot()
-                selectedRepFilter = .all
-                selectedTab = .assistant
-                isSubmitting = false
-                Task { [userID] in
-                    await self.refreshCallScoreData(for: userID)
-                }
-            case .needsClarification:
-                pendingGeneratedResolution = nil
-                lastGeneratedPackageID = nil
-                requiresDraftApproval = false
-                let hint = package.reviewRegenerateHint.trimmingCharacters(in: .whitespacesAndNewlines)
-                if hint.isEmpty {
-                    errorMessage = "Please clarify your requested congressional action, then try again."
-                } else {
-                    errorMessage = "\(hint)\n\nUpdate your concern with that action, then tap Generate again."
-                }
-            case .refused:
-                pendingGeneratedResolution = nil
-                lastGeneratedPackageID = nil
-                requiresDraftApproval = false
-                errorMessage = package.truthTrace?.refusalReason ?? package.reviewRegenerateHint
-            }
-        } catch {
-            if isSafetyBlockedError(error) {
-                pendingGeneratedResolution = nil
-                requiresDraftApproval = false
-                errorMessage = "We can't generate scripts for harmful, hateful, or violent requests."
-                return
-            }
-
-            let fallback = fallbackResolution(
-                concernText: trimmedConcern,
-                ask: ask,
-                selectedSlots: requestRepSlots,
-                optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill
-            )
-            applyResolution(fallback)
-            pendingGeneratedResolution = fallback
-            lastGeneratedPackageID = nil
-            requiresDraftApproval = true
-            saveSnapshot()
-            selectedRepFilter = .all
-            errorMessage = resolveFailureMessage(for: error)
-            isSubmitting = false
-            Task { [userID] in
-                await self.refreshCallScoreData(for: userID)
-            }
-        }
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        await submitAssistantRequestV3(
+            userID: userID,
+            concernText: trimmedConcern
+        )
     }
 
     private func submitAssistantRequestV3(
@@ -2153,7 +2377,9 @@ final class IssueCallCenterViewModel: ObservableObject {
         concernText: String
     ) async {
         let isClarificationFollowUp = shouldContinueMAPCV3Clarification
-        if !isClarificationFollowUp {
+        let preserveSessionForTurn = mapcV3PreserveSessionForNextSubmit
+        mapcV3PreserveSessionForNextSubmit = false
+        if !isClarificationFollowUp && !preserveSessionForTurn {
             // mapc_pipeline_v3 — remove flag check after rollout confirmed
             mapcV3PendingSessionID = nil
             mapcV3SessionState = "new"
@@ -2199,31 +2425,44 @@ final class IssueCallCenterViewModel: ObservableObject {
             mapcV3SelectedDisplayAsk = ""
 
             if prepared.needsClarification {
-                errorMessage = prepared.clarificationPrompt ?? "Please clarify your requested congressional action, then try again."
+                recordMAPCGenerationTelemetry(
+                    path: mapcGenerationPathV3,
+                    fallbackReason: nil,
+                    sessionResetReason: nil
+                )
+                errorMessage = prepared.clarificationPrompt ?? "I need one detail to make this usable: what should the office do first?"
                 return
             }
             if prepared.options.isEmpty {
-                errorMessage = "I couldn't generate ask options yet. Tell me the core issue in one sentence."
+                recordMAPCGenerationTelemetry(
+                    path: mapcGenerationPathOfflineNotice,
+                    fallbackReason: "stage2_no_options",
+                    sessionResetReason: nil
+                )
+                errorMessage = "I hit a snag, but I still have your issue. Pick a fix or restate the action you want."
                 return
             }
 
             mapcV3NeedsClarification = false
             mapcV3ClarificationPrompt = nil
+            recordMAPCGenerationTelemetry(
+                path: mapcGenerationPathV3,
+                fallbackReason: nil,
+                sessionResetReason: nil
+            )
             errorMessage = nil
             selectedTab = .assistant
         } catch {
             // mapc_pipeline_v3 — remove flag check after rollout confirmed
             let failureMessage = resolveMAPCV3FailureMessage(for: error)
             errorMessage = failureMessage
-            mapcV3PendingSessionID = nil
-            mapcV3SessionState = "new"
-            mapcV3NeedsClarification = false
-            mapcV3ClarificationPrompt = nil
-            mapcV3ClarificationTurnCount = 0
-            mapcV3MapcApproved = false
-            mapcV3AccumulatedContext = []
             pendingGeneratedResolution = nil
             requiresDraftApproval = false
+            recordMAPCGenerationTelemetry(
+                path: mapcGenerationPathOfflineNotice,
+                fallbackReason: compactLogError(error),
+                sessionResetReason: nil
+            )
             logger.error("MAPC v3 Stage 1/2 failed: \(self.compactLogError(error), privacy: .public)")
         }
     }
@@ -2244,6 +2483,7 @@ final class IssueCallCenterViewModel: ObservableObject {
 
     func generateMAPCV3ScriptAfterPreviewConfirmation() async {
         // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        // New flow order: this can be invoked immediately after ask selection to build preview content.
         guard mapcPipelineV3Enabled else { return }
         guard let selectedAsk else {
             errorMessage = "Select an explicit ask before generating call briefs."
@@ -2261,7 +2501,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         let trimmedConcern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedBill = optionalBillRef.trimmingCharacters(in: .whitespacesAndNewlines)
         let userID = await userIDForRequest()
-        mapcV3SessionState = "preview_shown"
+        mapcV3SessionState = "ask_selected"
         mapcV3MapcApproved = false
 
         do {
@@ -2285,34 +2525,49 @@ final class IssueCallCenterViewModel: ObservableObject {
                     selectedSlots: requestRepSlots,
                     optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill
                 )
-                let vetted = vettedGeneratedResolution(
+                let validation = generatedResolutionValidation(
                     response,
                     concernText: trimmedConcern,
                     ask: selectedAsk,
-                    selectedSlots: requestRepSlots,
                     optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill
                 )
-                let finalResponse = vetted.resolution
-                if vetted.usedFallback {
-                    logger.warning("Discarded off-topic or unsafe MAPC package and rebuilt a local draft.")
-                    errorMessage = clarificationPromptForConcern(
-                        trimmedConcern,
-                        optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill,
-                        selectedAsk: selectedAsk
+                if validation.shouldFallback {
+                    // mapc_pipeline_v3 — remove flag check after rollout confirmed
+                    pendingGeneratedResolution = nil
+                    lastGeneratedPackageID = nil
+                    requiresDraftApproval = false
+                    mapcV3SessionState = "preview_shown"
+                    mapcV3NeedsClarification = false
+                    mapcV3ClarificationPrompt = nil
+                    mapcV3MapcApproved = false
+                    mapcV3BackgroundText = package.canonicalContext?.summaryPlain ?? ""
+                    errorMessage = mapcV3RecoveryMessage
+                    recordMAPCGenerationTelemetry(
+                        path: mapcGenerationPathBlockedLegacy,
+                        fallbackReason: "v3_validation_blocked_legacy_fallback",
+                        sessionResetReason: nil
                     )
-                } else {
-                    errorMessage = nil
+                    logger.warning("Blocked legacy fallback script from MAPC v3 preview handoff.")
+                    return
                 }
+                let finalResponse = validation.sanitized
+                errorMessage = nil
                 applyResolution(finalResponse)
                 pendingGeneratedResolution = finalResponse
                 lastGeneratedPackageID = package.packageID
                 requiresDraftApproval = true
-                mapcV3SessionState = "script_shown"
+                // Preview is now shown before final "Looks right" confirmation.
+                mapcV3SessionState = "preview_shown"
                 mapcV3NeedsClarification = false
                 mapcV3ClarificationPrompt = nil
                 mapcV3MapcApproved = false
                 mapcV3BackgroundText = package.canonicalContext?.summaryPlain ?? ""
                 mapcV3AskOptions = []
+                recordMAPCGenerationTelemetry(
+                    path: mapcGenerationPathV3,
+                    fallbackReason: nil,
+                    sessionResetReason: nil
+                )
                 saveSnapshot()
                 selectedRepFilter = .all
                 selectedTab = .assistant
@@ -2327,18 +2582,28 @@ final class IssueCallCenterViewModel: ObservableObject {
                 mapcV3NeedsClarification = true
                 let hint = package.reviewRegenerateHint.trimmingCharacters(in: .whitespacesAndNewlines)
                 if hint.isEmpty {
-                    errorMessage = "Please clarify your requested congressional action, then try again."
-                    mapcV3ClarificationPrompt = "Please clarify your requested congressional action, then try again."
+                    errorMessage = "I need one detail to make this usable: what should the office do first?"
+                    mapcV3ClarificationPrompt = "I need one detail to make this usable: what should the office do first?"
                 } else {
                     errorMessage = hint
                     mapcV3ClarificationPrompt = hint
                 }
+                recordMAPCGenerationTelemetry(
+                    path: mapcGenerationPathV3,
+                    fallbackReason: "stage3_needs_clarification",
+                    sessionResetReason: nil
+                )
             case .refused:
                 pendingGeneratedResolution = nil
                 lastGeneratedPackageID = nil
                 requiresDraftApproval = false
                 mapcV3SessionState = "issue_received"
                 errorMessage = package.truthTrace?.refusalReason ?? package.reviewRegenerateHint
+                recordMAPCGenerationTelemetry(
+                    path: mapcGenerationPathV3,
+                    fallbackReason: "stage4_refused",
+                    sessionResetReason: nil
+                )
             }
         } catch {
             pendingGeneratedResolution = nil
@@ -2347,13 +2612,11 @@ final class IssueCallCenterViewModel: ObservableObject {
             // mapc_pipeline_v3 — remove flag check after rollout confirmed
             let failureMessage = resolveMAPCV3FailureMessage(for: error)
             errorMessage = failureMessage
-            mapcV3PendingSessionID = nil
-            mapcV3SessionState = "new"
-            mapcV3NeedsClarification = false
-            mapcV3ClarificationPrompt = nil
-            mapcV3ClarificationTurnCount = 0
-            mapcV3MapcApproved = false
-            mapcV3AccumulatedContext = []
+            recordMAPCGenerationTelemetry(
+                path: mapcGenerationPathOfflineNotice,
+                fallbackReason: compactLogError(error),
+                sessionResetReason: nil
+            )
             logger.error("MAPC v3 Stage 3/4 failed: \(self.compactLogError(error), privacy: .public)")
         }
     }
@@ -2386,7 +2649,37 @@ final class IssueCallCenterViewModel: ObservableObject {
         if lowered.contains("preview_not_confirmed") {
             return "Please confirm the preview before generating the script."
         }
+        if lowered.contains("universal_script_lint_failed") {
+            return mapcV3LintRecoveryMessage
+        }
         return "MAPC v3 hit an unexpected error. Please try again."
+    }
+
+    private func recordMAPCGenerationTelemetry(
+        path: String? = nil,
+        fallbackReason fallbackReasonValue: String? = nil,
+        sessionResetReason sessionResetReasonValue: String? = nil
+    ) {
+        if let path {
+            generationPath = path
+        }
+        fallbackReason = fallbackReasonValue
+        sessionResetReason = sessionResetReasonValue
+        logger.notice(
+            "MAPC generation telemetry path=\(self.generationPath, privacy: .public) fallback_reason=\((self.fallbackReason ?? "none"), privacy: .public) session_reset_reason=\((self.sessionResetReason ?? "none"), privacy: .public)"
+        )
+    }
+
+    func blockLegacyPreviewAtHandoff(reason: String) {
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        clearDisplayedDraftBeforeNewGeneration()
+        pendingGeneratedResolution = nil
+        requiresDraftApproval = false
+        recordMAPCGenerationTelemetry(
+            path: mapcGenerationPathBlockedLegacy,
+            fallbackReason: reason,
+            sessionResetReason: nil
+        )
     }
 
     private func clearDisplayedDraftBeforeNewGeneration() {
@@ -2418,6 +2711,7 @@ final class IssueCallCenterViewModel: ObservableObject {
 
     func prepareForMAPCV3ClarificationFollowUp() {
         // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        mapcV3PreserveSessionForNextSubmit = true
         clearDisplayedDraftBeforeNewGeneration()
         pendingGeneratedResolution = nil
         requiresDraftApproval = false
@@ -2428,6 +2722,31 @@ final class IssueCallCenterViewModel: ObservableObject {
         mapcV3SelectedOptionID = nil
         mapcV3SelectedDisplayAsk = ""
         mapcV3BackgroundText = ""
+        recordMAPCGenerationTelemetry(
+            path: mapcGenerationPathV3,
+            fallbackReason: nil,
+            sessionResetReason: "clarification_follow_up"
+        )
+    }
+
+    func prepareForMAPCV3RevisionFollowUp() {
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        mapcV3PreserveSessionForNextSubmit = true
+        clearDisplayedDraftBeforeNewGeneration()
+        pendingGeneratedResolution = nil
+        requiresDraftApproval = false
+        activeMAPCSessionID = nil
+        selectedRepFilter = .all
+        mapcV3DisplayIssue = ""
+        mapcV3AskOptions = []
+        mapcV3SelectedOptionID = nil
+        mapcV3SelectedDisplayAsk = ""
+        mapcV3BackgroundText = ""
+        recordMAPCGenerationTelemetry(
+            path: mapcGenerationPathV3,
+            fallbackReason: nil,
+            sessionResetReason: "revision_follow_up"
+        )
     }
 
     func markMAPCV3IntroShown() {
@@ -2441,12 +2760,34 @@ final class IssueCallCenterViewModel: ObservableObject {
     }
 
     func prepareForFreshGeneration() {
+        mapcV3PreserveSessionForNextSubmit = false
         clearDisplayedDraftBeforeNewGeneration()
         pendingGeneratedResolution = nil
         requiresDraftApproval = false
         activeMAPCSessionID = nil
         selectedRepFilter = .all
         resetMAPCV3SelectionState()
+        recordMAPCGenerationTelemetry(
+            path: mapcGenerationPathV3,
+            fallbackReason: nil,
+            sessionResetReason: "fresh_generation"
+        )
+    }
+
+    func startOverMAPCV3Session() {
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        mapcV3PreserveSessionForNextSubmit = false
+        clearDisplayedDraftBeforeNewGeneration()
+        pendingGeneratedResolution = nil
+        requiresDraftApproval = false
+        activeMAPCSessionID = nil
+        selectedRepFilter = .all
+        resetMAPCV3SelectionState()
+        recordMAPCGenerationTelemetry(
+            path: mapcGenerationPathV3,
+            fallbackReason: nil,
+            sessionResetReason: "start_over"
+        )
     }
 
     func logScriptChatTurn(role: String, messageText: String, messageType: String?) {
@@ -2602,6 +2943,11 @@ final class IssueCallCenterViewModel: ObservableObject {
         callBriefs = []
         activeBriefID = nil
         selectedTab = .assistant
+        recordMAPCGenerationTelemetry(
+            path: mapcGenerationPathV3,
+            fallbackReason: nil,
+            sessionResetReason: "user_revise"
+        )
         saveSnapshot()
 
         if let packageID, !packageID.isEmpty {
@@ -2639,6 +2985,11 @@ final class IssueCallCenterViewModel: ObservableObject {
         selectedAsk = nil
         optionalBillRef = ""
         applySeedResolution(for: example)
+        recordMAPCGenerationTelemetry(
+            path: mapcGenerationPathPremade,
+            fallbackReason: nil,
+            sessionResetReason: nil
+        )
 
         queueMAPCCallEvent(
             type: .mapcStarted,
@@ -5018,15 +5369,14 @@ final class IssueCallCenterViewModel: ObservableObject {
         selectedSlots: [CivicRepSlot],
         optionalBillRef: String?
     ) -> (resolution: CivicIssueResolutionResponse, usedFallback: Bool) {
-        let sanitized = sanitizedGeneratedResolution(response)
-        let shouldFallback = containsDisallowedScriptMeta(in: sanitized)
-            || isLikelyOffTopic(response: sanitized, concernText: concernText, optionalBillRef: optionalBillRef)
-            || !hasReadableCallScripts(
-                in: sanitized,
-                ask: ask,
-                concernText: concernText,
-                optionalBillRef: optionalBillRef
-            )
+        let validation = generatedResolutionValidation(
+            response,
+            concernText: concernText,
+            ask: ask,
+            optionalBillRef: optionalBillRef
+        )
+        let sanitized = validation.sanitized
+        let shouldFallback = validation.shouldFallback
         if shouldFallback {
             let fallback = fallbackResolution(
                 concernText: concernText,
@@ -5037,6 +5387,24 @@ final class IssueCallCenterViewModel: ObservableObject {
             return (fallback, true)
         }
         return (sanitized, false)
+    }
+
+    private func generatedResolutionValidation(
+        _ response: CivicIssueResolutionResponse,
+        concernText: String,
+        ask: CivicAsk,
+        optionalBillRef: String?
+    ) -> (sanitized: CivicIssueResolutionResponse, shouldFallback: Bool) {
+        let sanitized = sanitizedGeneratedResolution(response)
+        let shouldFallback = containsDisallowedScriptMeta(in: sanitized)
+            || isLikelyOffTopic(response: sanitized, concernText: concernText, optionalBillRef: optionalBillRef)
+            || !hasReadableCallScripts(
+                in: sanitized,
+                ask: ask,
+                concernText: concernText,
+                optionalBillRef: optionalBillRef
+            )
+        return (sanitized, shouldFallback)
     }
 
     private func sanitizedGeneratedResolution(_ response: CivicIssueResolutionResponse) -> CivicIssueResolutionResponse {

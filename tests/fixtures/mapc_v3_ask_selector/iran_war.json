@@ -1,0 +1,22 @@
+{
+  "name": "iran_war",
+  "session": {
+    "session_id": "fixture-iran-war",
+    "issue_domain": "foreign_policy",
+    "target_problem": "risk of unauthorized escalation with Iran",
+    "congressional_lever": "foreign_policy_oversight",
+    "constraints_from_user": "legal durability and narrow first step",
+    "confidence": 0.88
+  },
+  "require_bill_ref": false,
+  "expected": {
+    "option_count": 3,
+    "distinct_action_families": 3,
+    "must_include_families": [
+      "war_powers_authorization_funding_restriction",
+      "sanctions_export_control_review",
+      "public_statement"
+    ],
+    "must_avoid_hearing_letter_default_pair": true
+  }
+}
