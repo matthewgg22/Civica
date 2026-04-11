@@ -312,44 +312,36 @@ struct CivicExampleIssueCard: Identifiable, Codable, Sendable {
 struct RemotePremadeScript: Identifiable, Codable {
     let slug: String
     let title: String?
-    let contentType: String?
-    let actionType: String?
-    let actionTargetId: String?
-    let actionTargetDisplay: String?
+    let category: String?
+    let summary: String?
     let actionSentence: String?
-    let whyNow: String?
     let liveScript: String?
     let voicemailScript: String?
+    let vehicleLabel: String?
+    let status: String?
     let displayOrder: Int?
+    let targetChambers: [String]?
+    let primaryAsk: String?
+    let templateAsks: [String]?
+    let relatedBills: [String]?
+    let tags: [String]?
     let updatedAt: String?
 
     var id: String { slug }
 
     enum CodingKeys: String, CodingKey {
-        case slug, title
-        case contentType = "content_type"
-        case actionType = "action_type"
-        case actionTargetId = "action_target_id"
-        case actionTargetDisplay = "action_target_display"
+        case slug, title, category, summary, status, tags
         case actionSentence = "action_sentence"
-        case whyNow = "why_now"
         case liveScript = "live_script"
         case voicemailScript = "voicemail_script"
+        case vehicleLabel = "vehicle_label"
         case displayOrder = "display_order"
+        case targetChambers = "target_chambers"
+        case primaryAsk = "primary_ask"
+        case templateAsks = "template_asks"
+        case relatedBills = "related_bills"
         case updatedAt = "updated_at"
     }
-}
-
-struct DisplayPremadeScript: Identifiable {
-    let id: String
-    let title: String
-    let issueArea: String
-    let background: String
-    let vehicleLabel: String?
-    let actionSentence: String?
-    let liveScript: String?
-    let voicemailScript: String?
-    let updatedAt: String?
 }
 
 struct CivicCallLogRecord: Identifiable, Codable, Sendable {

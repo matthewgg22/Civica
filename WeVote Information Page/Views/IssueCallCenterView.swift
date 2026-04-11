@@ -44,6 +44,7 @@ struct IssueCallCenterView: View {
     @State private var isScriptPreviewReadyForMAPCActions = false
     @State private var previewLintBlocked = false
     @State private var hasRetriedPreviewLintRegeneration = false
+    @State private var hasAcceptedCurrentMAPCV3Preview = false
     @State private var currentBackgroundDiscussionOptions: [String] = []
     @State private var hasPickedDiscussionOptionInCurrentCycle = false
     @State private var suppressTranslationForNextBackground = false
@@ -1523,7 +1524,7 @@ struct IssueCallCenterView: View {
                         ProgressView()
                             .tint(.white)
                     }
-                    Text(l("app.issue_call.action.generate", "Generate script draft"))
+                    Text(l("app.issue_call.action.generate", "Create Call Script"))
                         .font(.headline)
                 }
                 .foregroundColor(.white)
@@ -1576,7 +1577,8 @@ struct IssueCallCenterView: View {
         }
 
         let shouldTreatAsMAPCRevision = viewModel.mapcPipelineV3Enabled
-            && isActiveMAPCRefinementStage
+            && hasActiveMAPCV3Session
+            && intent.intent != .startOver
             && intent.newIssueScore < 0.85
         let wasLegacyRefinementStage = !viewModel.mapcPipelineV3Enabled
             && (assistantFlowStage == .awaitingBackgroundApproval || assistantFlowStage == .awaitingMapcStart)
@@ -1797,19 +1799,27 @@ struct IssueCallCenterView: View {
 
     private func processAssistantGenerationResultV3() {
         if viewModel.hasMAPCV3PreparedSelection {
+            // mapc_pipeline_v3 — remove flag check after rollout confirmed
+            // Do not auto-advance. Always show interpreted issue + ask chips and wait for user selection.
+            guard !viewModel.mapcV3AskOptions.isEmpty else {
+                appendAssistantBotMessage(
+                    "I hit a snag, but I still have your issue. Pick a fix or restate the action you want.",
+                    kind: .plain,
+                    messageType: "offline_notice"
+                )
+                assistantFlowStage = .awaitingPrompt
+                viewModel.errorMessage = nil
+                return
+            }
+
             hasPostedCurrentDraftBackground = true
-            let confirmationText = "I read this as: \(viewModel.mapcV3DisplayIssue)"
-            let confirmationMessage = AssistantChatMessage.assistant(confirmationText, kind: .plain)
-            assistantMessages.append(confirmationMessage)
-            viewModel.logScriptChatTurn(
-                role: "assistant",
-                messageText: confirmationText,
-                messageType: "issue_confirmation"
-            )
-            pendingBackgroundMessageID = confirmationMessage.id
+            hasAcceptedCurrentMAPCV3Preview = false
+            pendingBackgroundMessageID = nil
             pendingScriptPreviewMessageID = nil
-            isScriptPreviewReadyForMAPCActions = false
-            isBackgroundMessageReadyForActions = false
+            withAnimation(.easeOut(duration: 0.18)) {
+                isScriptPreviewReadyForMAPCActions = false
+                isBackgroundMessageReadyForActions = true
+            }
             assistantFlowStage = .awaitingBackgroundApproval
             viewModel.errorMessage = nil
             return
@@ -1908,6 +1918,16 @@ struct IssueCallCenterView: View {
 
     private func startMAPCFromChat() {
         guard assistantFlowStage == .awaitingMapcStart else { return }
+        if viewModel.mapcPipelineV3Enabled && !hasAcceptedCurrentMAPCV3Preview {
+            // mapc_pipeline_v3 — remove flag check after rollout confirmed
+            appendAssistantBotMessage(
+                "Review the script preview and tap Looks right before approving the call.",
+                kind: .plain,
+                messageType: "preview_required"
+            )
+            assistantFlowStage = .awaitingPreviewConfirmation
+            return
+        }
         guard viewModel.requiresDraftApproval else { return }
         // mapc_pipeline_v3 — remove flag check after rollout confirmed
         viewModel.markMAPCV3ApprovedByUser()
@@ -1920,6 +1940,7 @@ struct IssueCallCenterView: View {
         )
         assistantFlowStage = .awaitingPrompt
         hasPostedCurrentDraftBackground = false
+        hasAcceptedCurrentMAPCV3Preview = false
         pendingBackgroundMessageID = nil
         isBackgroundMessageReadyForActions = false
         pendingScriptPreviewMessageID = nil
@@ -1954,6 +1975,7 @@ struct IssueCallCenterView: View {
         awaitingCustomAgenticStrategyInput = false
         previewLintBlocked = false
         hasRetriedPreviewLintRegeneration = false
+        hasAcceptedCurrentMAPCV3Preview = false
         assistantFlowStage = .awaitingPrompt
         hasPostedCurrentDraftBackground = false
         pendingBackgroundMessageID = nil
@@ -2018,6 +2040,7 @@ struct IssueCallCenterView: View {
         awaitingCustomAgenticStrategyInput = false
         previewLintBlocked = false
         hasRetriedPreviewLintRegeneration = false
+        hasAcceptedCurrentMAPCV3Preview = false
         viewModel.selectMAPCV3Option(optionID: option.optionID)
         // mapc_pipeline_v3 — remove flag check after rollout confirmed
         // New flow order: selecting an ask immediately generates background + script preview.
@@ -2045,6 +2068,7 @@ struct IssueCallCenterView: View {
         appendAssistantUserMessage("Selected: Fix this", messageType: "preview_fix")
         previewLintBlocked = false
         hasRetriedPreviewLintRegeneration = false
+        hasAcceptedCurrentMAPCV3Preview = false
         hasPickedDiscussionOptionInCurrentCycle = false
         assistantFlowStage = .awaitingPreviewConfirmation
         withAnimation(.easeOut(duration: 0.18)) {
@@ -2064,6 +2088,7 @@ struct IssueCallCenterView: View {
         // mapc_pipeline_v3 — remove flag check after rollout confirmed
         // Preview confirmation now happens after preview is visible; no regeneration here.
         appendAssistantUserMessage("Selected: Looks right", messageType: "preview_confirm")
+        hasAcceptedCurrentMAPCV3Preview = true
         viewModel.mapcV3SessionState = "script_shown"
         assistantFlowStage = .awaitingMapcStart
     }
@@ -2111,6 +2136,7 @@ struct IssueCallCenterView: View {
                 }
 
                 previewLintBlocked = true
+                hasAcceptedCurrentMAPCV3Preview = false
                 appendAssistantBotMessage(
                     "I hit a snag, but I still have your issue. Pick a fix or restate the action you want.",
                     kind: .plain,
@@ -2129,6 +2155,7 @@ struct IssueCallCenterView: View {
 
             previewLintBlocked = false
             hasRetriedPreviewLintRegeneration = false
+            hasAcceptedCurrentMAPCV3Preview = false
             let trimmedBackground = viewModel.mapcV3BackgroundText.trimmingCharacters(in: .whitespacesAndNewlines)
             if !trimmedBackground.isEmpty {
                 let backgroundMessage = AssistantChatMessage.assistant(trimmedBackground, kind: .plain)
@@ -2151,7 +2178,7 @@ struct IssueCallCenterView: View {
             )
             pendingScriptPreviewMessageID = scriptPreviewMessage.id
             // mapc_pipeline_v3 — remove flag check after rollout confirmed
-            // New flow order: show preview actions first, then MAPC approval actions.
+            // Keep preview confirmation post-preview. MAPC start appears only after "Looks right".
             assistantFlowStage = .awaitingPreviewConfirmation
             isBackgroundMessageReadyForActions = false
             currentBackgroundDiscussionOptions = []
@@ -2163,6 +2190,7 @@ struct IssueCallCenterView: View {
            !error.isEmpty {
             if error.lowercased().contains("script issue and held this draft") {
                 previewLintBlocked = true
+                hasAcceptedCurrentMAPCV3Preview = false
                 appendAssistantBotMessage(error, kind: .plain, messageType: "lint_blocked")
                 assistantFlowStage = .awaitingPreviewConfirmation
                 pendingBackgroundMessageID = nil
@@ -2178,6 +2206,7 @@ struct IssueCallCenterView: View {
             viewModel.errorMessage = nil
         }
         previewLintBlocked = false
+        hasAcceptedCurrentMAPCV3Preview = false
         assistantFlowStage = .awaitingPrompt
         pendingBackgroundMessageID = nil
         isBackgroundMessageReadyForActions = false

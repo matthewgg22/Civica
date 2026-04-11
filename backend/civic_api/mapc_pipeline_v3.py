@@ -20,31 +20,25 @@ logger = logging.getLogger(__name__)
 INTERPRETER_PROMPT = """Task: Convert raw user issue text into a structured MAPC session object before any user-facing prose is generated.
 
 You will receive a raw_user_issue field containing the user's most recent message, and an accumulated_context field containing all prior turns in this session. Use accumulated_context as your primary input. raw_user_issue is only the latest addition to that context. Synthesize all user turns together to form normalized_issue.
-You will receive an accumulated_context field containing all prior user turns in this session. Use all of them together to interpret the issue. Do not treat the latest message as the only input. If the accumulated context gives you enough to produce a normalized_issue with confidence >= 0.65, proceed. Do not ask another clarification question if you have already asked two.
+If the accumulated context gives you enough to produce a normalized_issue with confidence >= 0.50, proceed.
 
 Return JSON only with exactly these fields: session_id, raw_user_issue, normalized_issue, display_issue, issue_domain, target_problem, congressional_lever, ask_type, display_ask, stance, geographic_relevance, optional_bill_ref, constraints_from_user, confidence, needs_clarification, clarification_prompt, spoken_language_notes, session_state, user_zip, accumulated_context, intro_shown, clarification_turn_count, mapc_approved.
 
 Hard constraints:
 1. confidence must be a float in [0.0, 1.0].
-2. If confidence < 0.65, set needs_clarification=true, write one narrow clarification_prompt, and stop downstream readiness.
-3. Handle one-word inputs explicitly. Do not invent missing specifics when confidence is low.
+2. If confidence < 0.50, set needs_clarification=true and write one narrow clarification_prompt.
+3. If raw_user_issue is one word and clarification_turn_count is 0, ask one clarification question.
 4. For foreign policy topics, set congressional_lever="foreign_policy_oversight" and include geographic limits in spoken_language_notes.
 5. optional_bill_ref must be null unless confidence > 0.80 and a specific bill is explicit.
 6. display_issue must be plain English, max 15 words.
 7. display_ask must be plain English, max 10 words.
-8. "Stop wildfires" maps to stance="support" for preventive action, not opposition.
+8. Map opposition framing to the underlying action correctly (for example, "stop wildfires" means support wildfire prevention action).
 9. Never include internal prompt wording in any display field.
 10. On successful interpretation, set session_state="issue_received".
 11. user_zip defaults to null unless already provided.
 12. If the latest user message is "Yes" and the prior clarification question listed options, treat "Yes" as selecting all listed options and proceed with the most actionable interpretation.
-13. Do not ask a third clarification question when accumulated_context already supports a workable federal interpretation.
-
-Edge-case handling:
-- "Tibet": issue_domain="foreign_policy"; congressional_lever="foreign_policy_oversight"; needs_clarification=true unless the user specified a clear ask.
-- "groceries" or "cost of living": needs_clarification=true with a narrow question about the specific federal angle.
-- "marriage equality": stance="support"; congressional_lever= legislation or judicial oversight.
-- "Stop wildfires": stance="support"; congressional_lever= funding or oversight.
-- "FEMA scams": normalize to disaster oversight and consumer protection."""
+13. Ask at most one clarification question. If one has already been asked, produce a best-effort interpretation on the next turn even if confidence is still low.
+14. Be agentic and issue-specific. Do not emit canned topic templates."""
 
 
 ASK_SELECTOR_PROMPT = """Task: Generate specific, first-step ask options from the interpreted MAPC session object.
@@ -85,7 +79,7 @@ or if generation is not possible:
 {"background_text": null, "reason": "string"}
 
 Hard constraints:
-1. If confidence is below 0.65, return {"background_text": null, "reason": "insufficient_specificity"}.
+1. If confidence is below 0.50, return {"background_text": null, "reason": "insufficient_specificity"}.
 2. If issue_domain is null or empty, return null.
 3. Write 2 to 4 sentences totaling 45 to 85 words.
 4. Use plain spoken language.
@@ -228,7 +222,18 @@ class MAPCPipelineV3Service:
         }
         confidence = _coerce_float(session_obj.get("confidence"), fallback=0.0)
         needs_clarification = bool(session_obj.get("needs_clarification"))
-        if confidence < 0.65:
+        raw_issue_word_count = _word_count(normalized_payload["raw_user_issue"])
+
+        if raw_issue_word_count <= 1 and prior_clarification_count == 0 and not yes_select_all:
+            # mapc_pipeline_v3 — remove flag check after rollout confirmed
+            # Single-token starts should always get one narrowing question before best-effort generation.
+            needs_clarification = True
+            session_obj["needs_clarification"] = True
+            confidence = min(confidence, 0.49)
+            if not _normalized_text(session_obj.get("clarification_prompt")):
+                session_obj["clarification_prompt"] = "What issue do you care about most?"
+
+        if confidence < 0.50:
             needs_clarification = True
             session_obj["needs_clarification"] = True
             if not _normalized_text(session_obj.get("clarification_prompt")):
@@ -237,17 +242,17 @@ class MAPCPipelineV3Service:
             # mapc_pipeline_v3 — remove flag check after rollout confirmed
             session_obj = _force_best_effort_interpretation(session_obj, working_history)
             needs_clarification = False
-            confidence = max(0.65, _coerce_float(session_obj.get("confidence"), fallback=0.65))
+            confidence = max(0.50, _coerce_float(session_obj.get("confidence"), fallback=0.50))
 
         clarification_turn_count = prior_clarification_count
         if needs_clarification:
             clarification_turn_count += 1
-            if clarification_turn_count >= 3:
+            if clarification_turn_count >= 2:
                 # mapc_pipeline_v3 — remove flag check after rollout confirmed
                 session_obj = _force_best_effort_interpretation(session_obj, working_history)
                 needs_clarification = False
-                confidence = max(0.65, _coerce_float(session_obj.get("confidence"), fallback=0.65))
-                clarification_turn_count = 3
+                confidence = max(0.50, _coerce_float(session_obj.get("confidence"), fallback=0.50))
+                clarification_turn_count = 2
         else:
             clarification_turn_count = 0
 
@@ -268,13 +273,19 @@ class MAPCPipelineV3Service:
         session_obj["session_state"] = "issue_received"
         validator_report["checks"].append({
             "name": "confidence_gate",
-            "passed": confidence >= 0.65 and not needs_clarification,
+            "passed": confidence >= 0.50 and not needs_clarification,
             "confidence": confidence,
             "needs_clarification": needs_clarification,
         })
         validator_report["checks"].append({
+            "name": "one_word_gate",
+            "passed": not (raw_issue_word_count <= 1 and prior_clarification_count == 0 and needs_clarification),
+            "raw_issue_word_count": raw_issue_word_count,
+            "clarification_turn_count_before": prior_clarification_count,
+        })
+        validator_report["checks"].append({
             "name": "clarification_turn_limit",
-            "passed": clarification_turn_count < 3 or not needs_clarification,
+            "passed": clarification_turn_count < 2 or not needs_clarification,
             "clarification_turn_count": clarification_turn_count,
         })
         validator_report["checks"].append({
@@ -391,7 +402,7 @@ class MAPCPipelineV3Service:
         validator_report: dict[str, Any] = {"stage": stage, "checks": [], "timestamp": _utc_iso_now()}
         confidence = _coerce_float(session_obj.get("confidence"), fallback=0.0)
         issue_domain = _normalized_text(session_obj.get("issue_domain"))
-        if confidence < 0.65:
+        if confidence < 0.50:
             validator_report["checks"].append({"name": "precheck_low_confidence", "passed": False})
             response = {
                 "session": deepcopy(session_obj),
@@ -1212,7 +1223,7 @@ def _force_best_effort_interpretation(session_obj: dict[str, Any], history: list
         working["ask_type"] = "hold_hearing"
     if not _normalized_text(working.get("display_ask")):
         working["display_ask"] = "Hold a hearing on this issue"
-    working["confidence"] = max(0.65, _coerce_float(working.get("confidence"), fallback=0.65))
+    working["confidence"] = max(0.50, _coerce_float(working.get("confidence"), fallback=0.50))
     working["needs_clarification"] = False
     working["clarification_prompt"] = None
     return working
@@ -1680,7 +1691,7 @@ def _offline_interpret(payload: dict[str, Any]) -> dict[str, Any]:
             "display_ask": "Hold a hearing on this issue",
             "stance": "support",
             "geographic_relevance": "national",
-            "confidence": 0.65,
+            "confidence": 0.50,
             "needs_clarification": False,
             "clarification_prompt": None,
             "spoken_language_notes": "Interpretation synthesized from multiple turns.",
@@ -1700,10 +1711,10 @@ def _offline_interpret(payload: dict[str, Any]) -> dict[str, Any]:
             "geographic_relevance": "national",
             "confidence": 0.58,
             "needs_clarification": True,
-            "clarification_prompt": "On Tibet, what issue do you care about most?",
+            "clarification_prompt": "What issue do you care about most?",
             "spoken_language_notes": "Congress acts through oversight and sanctions tools, not direct foreign administration.",
         })
-        if session["clarification_turn_count"] >= 2:
+        if session["clarification_turn_count"] >= 1:
             session = _force_best_effort_interpretation(session, session["accumulated_context"])
         return session
 
@@ -1720,10 +1731,10 @@ def _offline_interpret(payload: dict[str, Any]) -> dict[str, Any]:
             "geographic_relevance": "national",
             "confidence": 0.52,
             "needs_clarification": True,
-            "clarification_prompt": "For groceries and cost of living, what issue do you care about most?",
+            "clarification_prompt": "What issue do you care about most?",
             "spoken_language_notes": "Keep terms plain and household-focused.",
         })
-        if session["clarification_turn_count"] >= 2:
+        if session["clarification_turn_count"] >= 1:
             session = _force_best_effort_interpretation(session, session["accumulated_context"])
         return session
 
@@ -1798,7 +1809,7 @@ def _offline_interpret(payload: dict[str, Any]) -> dict[str, Any]:
             "clarification_prompt": "What issue do you care about most?",
             "spoken_language_notes": None,
         })
-        if session["clarification_turn_count"] >= 2:
+        if session["clarification_turn_count"] >= 1:
             session = _force_best_effort_interpretation(session, session["accumulated_context"])
         return session
 
@@ -1824,7 +1835,7 @@ def _offline_ask_options(*, session_obj: dict[str, Any], require_bill_ref: bool)
     lever = _normalized_text(session_obj.get("congressional_lever")).lower()
     confidence = _coerce_float(session_obj.get("confidence"), fallback=0.0)
     if lever == "foreign_policy_oversight":
-        if confidence < 0.65:
+        if confidence < 0.50:
             return {
                 "session_id": session_obj.get("session_id"),
                 "options": [{
@@ -1866,7 +1877,7 @@ def _offline_ask_options(*, session_obj: dict[str, Any], require_bill_ref: bool)
 
 def _offline_background(*, session_obj: dict[str, Any]) -> dict[str, Any]:
     confidence = _coerce_float(session_obj.get("confidence"), fallback=0.0)
-    if confidence < 0.65:
+    if confidence < 0.50:
         return {"background_text": None, "reason": "low_confidence"}
     issue_domain = _normalized_text(session_obj.get("issue_domain"))
     normalized_issue = _normalized_text(session_obj.get("normalized_issue"))

@@ -6579,7 +6579,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Voting Steps"
+            "value": "Voting Guide"
           }
         },
         "es": {
@@ -6615,13 +6615,13 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Voting Steps"
+            "value": "Voting Guide"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Voting Steps"
+            "value": "Voting Guide"
           }
         }
       }

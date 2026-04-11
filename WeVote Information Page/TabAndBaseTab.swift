@@ -59,10 +59,10 @@ struct TabAndBaseTab: View {
                 .tabItem { Label("Election Timeline", systemImage: "calendar") }
                 .tag(Tab.electionTimeline)
 
-            // Voting Steps
+            // Voting Guide
             VoterRegistrationView()
                 .environmentObject(planVM)
-                .tabItem { Label("Voting Steps", systemImage: "person.badge.plus") }
+                .tabItem { Label("Voting Guide", systemImage: "person.badge.plus") }
                 .tag(Tab.registration)
 
         }

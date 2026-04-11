@@ -37,7 +37,14 @@ from .service import CivicService
 logger = logging.getLogger(__name__)
 
 
+def _marker_logging_enabled() -> bool:
+    value = os.environ.get("VOTENOW_DEBUG_MARKER_LOGS", "")
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
 def _log_marker(marker: str, payload: Any | None = None) -> None:
+    if not _marker_logging_enabled():
+        return
     if payload is None:
         logger.info(marker)
         return
