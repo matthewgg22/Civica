@@ -45,6 +45,24 @@ private struct BottomRoundedRectangle: Shape {
     }
 }
 
+private struct GuideStripTapFeedbackStyle: ButtonStyle {
+    let accent: Color
+    let isActive: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .contentShape(Capsule(style: .continuous))
+            .shadow(
+                color: (configuration.isPressed ? accent.opacity(0.35) : accent.opacity(isActive ? 0.18 : 0.0)),
+                radius: configuration.isPressed ? 8 : (isActive ? 5 : 0),
+                x: 0,
+                y: configuration.isPressed ? 3 : (isActive ? 2 : 0)
+            )
+            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .animation(.easeOut(duration: 0.16), value: configuration.isPressed)
+    }
+}
+
 private struct VoterRegistrationCard: Identifiable {
     enum Action {
         case openURL(URL)
@@ -494,7 +512,7 @@ struct VoterRegistrationView: View {
                         VStack(alignment: .leading, spacing: 0) {
                             PageHeader(title: "Voting Guide")
                             HStack(alignment: .firstTextBaseline, spacing: 8) {
-                                Text(headerElectionSubtitle)
+                                Text(headerLocationSubtitle)
                                     .font(.subheadline.weight(.semibold))
                                     .foregroundColor(VoteNowColors.mutedText)
                                     .lineLimit(1)
@@ -1584,6 +1602,7 @@ struct VoterRegistrationView: View {
         proxy: ScrollViewProxy
     ) -> some View {
         let isActive = phase == activeGuidePhase
+        let accent = guidePhaseHighlightColor(for: phase)
         return Button {
             currentlyViewedPhase = phase
             let target = preferredScrollTarget(for: phase)
@@ -1600,10 +1619,10 @@ struct VoterRegistrationView: View {
                 .padding(.vertical, 3)
                 .background(
                     Capsule(style: .continuous)
-                        .fill(isActive ? guidePhaseHighlightColor(for: phase) : .clear)
+                        .fill(isActive ? accent : .clear)
                 )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(GuideStripTapFeedbackStyle(accent: accent, isActive: isActive))
     }
 
     private func preferredScrollTarget(for phase: VoterRegistrationCard.Phase) -> AnyHashable {
@@ -1620,7 +1639,7 @@ struct VoterRegistrationView: View {
         case .duringElection:
             return VoteNowColors.warningAmber
         case .postElection:
-            return VoteNowColors.urgentCTA
+            return VoteNowColors.successGreen
         }
     }
 
@@ -1655,13 +1674,21 @@ struct VoterRegistrationView: View {
         return l("app.registration.readiness.state.fallback", "Your state")
     }
 
-    private var headerElectionSubtitle: String {
-        let cycleLabel = electionCycleLabel
-        if let electionDate = nextUpcomingElectionDay {
-            let year = Calendar.current.component(.year, from: electionDate)
-            return "\(year) \(cycleLabel)"
+    private var headerLocationSubtitle: String {
+        let state = (registrationStateCode ?? planVM.userAddress.state)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let zip = normalizedShareZip?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+        if !state.isEmpty && !zip.isEmpty {
+            return "\(state), \(zip)"
         }
-        return cycleLabel
+        if !state.isEmpty {
+            return state
+        }
+        if !zip.isEmpty {
+            return zip
+        }
+        return l("app.registration.location.set_address", "Set your address in My Reps")
     }
 
     private var readinessTitleText: String {

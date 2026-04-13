@@ -1,0 +1,1818 @@
+[
+  {
+    "id": "voter-primary-basics",
+    "state_code": "ALL",
+    "election_type": "all",
+    "phase": "primary",
+    "title": "What Is a Primary?",
+    "body": "A primary decides which candidate(s) move forward to the general election. In some states, party registration affects which primary ballot you can use."
+  },
+  {
+    "id": "voter-general-basics",
+    "state_code": "ALL",
+    "election_type": "all",
+    "phase": "general",
+    "title": "What Is a General Election?",
+    "body": "The general election chooses who takes office. Depending on state rules, the winner may be decided by plurality or may require a majority threshold."
+  },
+  {
+    "id": "voter-runoff-basics",
+    "state_code": "ALL",
+    "election_type": "all",
+    "phase": "runoff",
+    "title": "What Is a Runoff?",
+    "body": "A runoff is a second election round used when no candidate reaches the required threshold in the first round."
+  },
+  {
+    "id": "state-what-to-bring-al",
+    "state_code": "AL",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring photo ID if available. This jurisdiction is listed in a non-strict photo-ID category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-al",
+    "state_code": "AL",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is not listed as open to all voters statewide; eligible absentee pathways may still exist. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-al",
+    "state_code": "AL",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Primary runoff/second-round rules may apply if thresholds are not met."
+  },
+  {
+    "id": "state-election-structure-al",
+    "state_code": "AL",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-ak",
+    "state_code": "AK",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring acceptable ID if available. This jurisdiction is listed in a non-strict non-photo category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-ak",
+    "state_code": "AK",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-ak",
+    "state_code": "AK",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-ak",
+    "state_code": "AK",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format: top-four primary with ranked-choice counting in covered general contests."
+  },
+  {
+    "id": "state-what-to-bring-az",
+    "state_code": "AZ",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring acceptable ID. This jurisdiction is listed in a strict non-photo ID category, so missing ID can cause extra cure steps. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-az",
+    "state_code": "AZ",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-az",
+    "state_code": "AZ",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-az",
+    "state_code": "AZ",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-ar",
+    "state_code": "AR",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring an acceptable photo ID. This jurisdiction is listed in a strict photo-ID category, so missing ID can cause extra cure steps. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-ar",
+    "state_code": "AR",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-ar",
+    "state_code": "AR",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Primary runoff/second-round rules may apply if thresholds are not met."
+  },
+  {
+    "id": "state-election-structure-ar",
+    "state_code": "AR",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-ca",
+    "state_code": "CA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "In-person ID document is generally not listed as required in standard cases; identity is commonly verified through election records and check-in procedures. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-ca",
+    "state_code": "CA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. This jurisdiction is listed as a broad vote-by-mail model where ballots are mailed to active registered voters in covered elections."
+  },
+  {
+    "id": "state-runoff-rules-ca",
+    "state_code": "CA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-ca",
+    "state_code": "CA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-co",
+    "state_code": "CO",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring acceptable ID if available. This jurisdiction is listed in a non-strict non-photo category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-co",
+    "state_code": "CO",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. This jurisdiction is listed as a broad vote-by-mail model where ballots are mailed to active registered voters in covered elections."
+  },
+  {
+    "id": "state-runoff-rules-co",
+    "state_code": "CO",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-co",
+    "state_code": "CO",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-ct",
+    "state_code": "CT",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring acceptable ID if available. This jurisdiction is listed in a non-strict non-photo category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-ct",
+    "state_code": "CT",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-ct",
+    "state_code": "CT",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-ct",
+    "state_code": "CT",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-de",
+    "state_code": "DE",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring acceptable ID if available. This jurisdiction is listed in a non-strict non-photo category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-de",
+    "state_code": "DE",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-de",
+    "state_code": "DE",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-de",
+    "state_code": "DE",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-fl",
+    "state_code": "FL",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring photo ID if available. This jurisdiction is listed in a non-strict photo-ID category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-fl",
+    "state_code": "FL",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-fl",
+    "state_code": "FL",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-fl",
+    "state_code": "FL",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-ga",
+    "state_code": "GA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring an acceptable photo ID. This jurisdiction is listed in a strict photo-ID category, so missing ID can cause extra cure steps. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-ga",
+    "state_code": "GA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-ga",
+    "state_code": "GA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Primary runoff/second-round rules may apply if thresholds are not met. General-election runoff triggers are listed when no candidate reaches the required threshold."
+  },
+  {
+    "id": "state-election-structure-ga",
+    "state_code": "GA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-hi",
+    "state_code": "HI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "In-person ID document is generally not listed as required in standard cases; identity is commonly verified through election records and check-in procedures. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-hi",
+    "state_code": "HI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. This jurisdiction is listed as a broad vote-by-mail model where ballots are mailed to active registered voters in covered elections."
+  },
+  {
+    "id": "state-runoff-rules-hi",
+    "state_code": "HI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-hi",
+    "state_code": "HI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-id",
+    "state_code": "ID",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring photo ID if available. This jurisdiction is listed in a non-strict photo-ID category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-id",
+    "state_code": "ID",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-id",
+    "state_code": "ID",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-id",
+    "state_code": "ID",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-il",
+    "state_code": "IL",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "In-person ID document is generally not listed as required in standard cases; identity is commonly verified through election records and check-in procedures. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-il",
+    "state_code": "IL",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-il",
+    "state_code": "IL",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-il",
+    "state_code": "IL",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-in",
+    "state_code": "IN",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring an acceptable photo ID. This jurisdiction is listed in a strict photo-ID category, so missing ID can cause extra cure steps. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-in",
+    "state_code": "IN",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-in",
+    "state_code": "IN",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-in",
+    "state_code": "IN",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-ia",
+    "state_code": "IA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring acceptable ID if available. This jurisdiction is listed in a non-strict non-photo category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-ia",
+    "state_code": "IA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-ia",
+    "state_code": "IA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-ia",
+    "state_code": "IA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-ks",
+    "state_code": "KS",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring an acceptable photo ID. This jurisdiction is listed in a strict photo-ID category, so missing ID can cause extra cure steps. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-ks",
+    "state_code": "KS",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-ks",
+    "state_code": "KS",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-ks",
+    "state_code": "KS",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-ky",
+    "state_code": "KY",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring photo ID if available. This jurisdiction is listed in a non-strict photo-ID category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-ky",
+    "state_code": "KY",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-ky",
+    "state_code": "KY",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-ky",
+    "state_code": "KY",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-la",
+    "state_code": "LA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring photo ID if available. This jurisdiction is listed in a non-strict photo-ID category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-la",
+    "state_code": "LA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-la",
+    "state_code": "LA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "General-election runoff triggers are listed when no candidate reaches the required threshold."
+  },
+  {
+    "id": "state-election-structure-la",
+    "state_code": "LA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-me",
+    "state_code": "ME",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "In-person ID document is generally not listed as required in standard cases; identity is commonly verified through election records and check-in procedures. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-me",
+    "state_code": "ME",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-me",
+    "state_code": "ME",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-me",
+    "state_code": "ME",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format: ranked-choice voting in covered contests."
+  },
+  {
+    "id": "state-what-to-bring-md",
+    "state_code": "MD",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "In-person ID document is generally not listed as required in standard cases; identity is commonly verified through election records and check-in procedures. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-md",
+    "state_code": "MD",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-md",
+    "state_code": "MD",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-md",
+    "state_code": "MD",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-ma",
+    "state_code": "MA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "In-person ID document is generally not listed as required in standard cases; identity is commonly verified through election records and check-in procedures. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-ma",
+    "state_code": "MA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-ma",
+    "state_code": "MA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-ma",
+    "state_code": "MA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-mi",
+    "state_code": "MI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring photo ID if available. This jurisdiction is listed in a non-strict photo-ID category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-mi",
+    "state_code": "MI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-mi",
+    "state_code": "MI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-mi",
+    "state_code": "MI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-mn",
+    "state_code": "MN",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "In-person ID document is generally not listed as required in standard cases; identity is commonly verified through election records and check-in procedures. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-mn",
+    "state_code": "MN",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-mn",
+    "state_code": "MN",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-mn",
+    "state_code": "MN",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-ms",
+    "state_code": "MS",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring an acceptable photo ID. This jurisdiction is listed in a strict photo-ID category, so missing ID can cause extra cure steps. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-ms",
+    "state_code": "MS",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is not listed as open to all voters statewide; eligible absentee pathways may still exist. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-ms",
+    "state_code": "MS",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Primary runoff/second-round rules may apply if thresholds are not met. General-election runoff triggers are listed when no candidate reaches the required threshold."
+  },
+  {
+    "id": "state-election-structure-ms",
+    "state_code": "MS",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-mo",
+    "state_code": "MO",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring photo ID if available. This jurisdiction is listed in a non-strict photo-ID category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-mo",
+    "state_code": "MO",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-mo",
+    "state_code": "MO",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-mo",
+    "state_code": "MO",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-mt",
+    "state_code": "MT",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring photo ID if available. This jurisdiction is listed in a non-strict photo-ID category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-mt",
+    "state_code": "MT",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-mt",
+    "state_code": "MT",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-mt",
+    "state_code": "MT",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-ne",
+    "state_code": "NE",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring photo ID if available. This jurisdiction is listed in a non-strict photo-ID category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-ne",
+    "state_code": "NE",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-ne",
+    "state_code": "NE",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-ne",
+    "state_code": "NE",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-nv",
+    "state_code": "NV",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "In-person ID document is generally not listed as required in standard cases; identity is commonly verified through election records and check-in procedures. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-nv",
+    "state_code": "NV",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. This jurisdiction is listed as a broad vote-by-mail model where ballots are mailed to active registered voters in covered elections."
+  },
+  {
+    "id": "state-runoff-rules-nv",
+    "state_code": "NV",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-nv",
+    "state_code": "NV",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-nh",
+    "state_code": "NH",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring an acceptable photo ID. This jurisdiction is listed in a strict photo-ID category, so missing ID can cause extra cure steps. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-nh",
+    "state_code": "NH",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is not listed as open to all voters statewide; eligible absentee pathways may still exist. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-nh",
+    "state_code": "NH",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-nh",
+    "state_code": "NH",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-nj",
+    "state_code": "NJ",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "In-person ID document is generally not listed as required in standard cases; identity is commonly verified through election records and check-in procedures. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-nj",
+    "state_code": "NJ",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-nj",
+    "state_code": "NJ",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-nj",
+    "state_code": "NJ",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-nm",
+    "state_code": "NM",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "In-person ID document is generally not listed as required in standard cases; identity is commonly verified through election records and check-in procedures. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-nm",
+    "state_code": "NM",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-nm",
+    "state_code": "NM",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-nm",
+    "state_code": "NM",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-ny",
+    "state_code": "NY",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "In-person ID document is generally not listed as required in standard cases; identity is commonly verified through election records and check-in procedures. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-ny",
+    "state_code": "NY",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-ny",
+    "state_code": "NY",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-ny",
+    "state_code": "NY",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-nc",
+    "state_code": "NC",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring an acceptable photo ID. This jurisdiction is listed in a strict photo-ID category, so missing ID can cause extra cure steps. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-nc",
+    "state_code": "NC",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-nc",
+    "state_code": "NC",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Primary runoff/second-round rules may apply if thresholds are not met."
+  },
+  {
+    "id": "state-election-structure-nc",
+    "state_code": "NC",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-nd",
+    "state_code": "ND",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring acceptable ID. This jurisdiction is listed in a strict non-photo ID category, so missing ID can cause extra cure steps. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-nd",
+    "state_code": "ND",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-nd",
+    "state_code": "ND",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-nd",
+    "state_code": "ND",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-oh",
+    "state_code": "OH",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring an acceptable photo ID. This jurisdiction is listed in a strict photo-ID category, so missing ID can cause extra cure steps. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-oh",
+    "state_code": "OH",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-oh",
+    "state_code": "OH",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-oh",
+    "state_code": "OH",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-ok",
+    "state_code": "OK",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring acceptable ID if available. This jurisdiction is listed in a non-strict non-photo category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-ok",
+    "state_code": "OK",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-ok",
+    "state_code": "OK",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Primary runoff/second-round rules may apply if thresholds are not met."
+  },
+  {
+    "id": "state-election-structure-ok",
+    "state_code": "OK",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-or",
+    "state_code": "OR",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "In-person ID document is generally not listed as required in standard cases; identity is commonly verified through election records and check-in procedures. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-or",
+    "state_code": "OR",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. This jurisdiction is listed as a broad vote-by-mail model where ballots are mailed to active registered voters in covered elections."
+  },
+  {
+    "id": "state-runoff-rules-or",
+    "state_code": "OR",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-or",
+    "state_code": "OR",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-pa",
+    "state_code": "PA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "In-person ID document is generally not listed as required in standard cases; identity is commonly verified through election records and check-in procedures. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-pa",
+    "state_code": "PA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-pa",
+    "state_code": "PA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-pa",
+    "state_code": "PA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-ri",
+    "state_code": "RI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring photo ID if available. This jurisdiction is listed in a non-strict photo-ID category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-ri",
+    "state_code": "RI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-ri",
+    "state_code": "RI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-ri",
+    "state_code": "RI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-sc",
+    "state_code": "SC",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring photo ID if available. This jurisdiction is listed in a non-strict photo-ID category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-sc",
+    "state_code": "SC",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-sc",
+    "state_code": "SC",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Primary runoff/second-round rules may apply if thresholds are not met."
+  },
+  {
+    "id": "state-election-structure-sc",
+    "state_code": "SC",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-sd",
+    "state_code": "SD",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring photo ID if available. This jurisdiction is listed in a non-strict photo-ID category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-sd",
+    "state_code": "SD",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-sd",
+    "state_code": "SD",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Primary runoff/second-round rules may apply if thresholds are not met."
+  },
+  {
+    "id": "state-election-structure-sd",
+    "state_code": "SD",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-tn",
+    "state_code": "TN",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring an acceptable photo ID. This jurisdiction is listed in a strict photo-ID category, so missing ID can cause extra cure steps. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-tn",
+    "state_code": "TN",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-tn",
+    "state_code": "TN",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-tn",
+    "state_code": "TN",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-tx",
+    "state_code": "TX",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring photo ID if available. This jurisdiction is listed in a non-strict photo-ID category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-tx",
+    "state_code": "TX",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-tx",
+    "state_code": "TX",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Primary runoff/second-round rules may apply if thresholds are not met."
+  },
+  {
+    "id": "state-election-structure-tx",
+    "state_code": "TX",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-ut",
+    "state_code": "UT",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring acceptable ID if available. This jurisdiction is listed in a non-strict non-photo category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-ut",
+    "state_code": "UT",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. This jurisdiction is listed as a broad vote-by-mail model where ballots are mailed to active registered voters in covered elections."
+  },
+  {
+    "id": "state-runoff-rules-ut",
+    "state_code": "UT",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-ut",
+    "state_code": "UT",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-vt",
+    "state_code": "VT",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "In-person ID document is generally not listed as required in standard cases; identity is commonly verified through election records and check-in procedures. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-vt",
+    "state_code": "VT",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. This jurisdiction is listed as a broad vote-by-mail model where ballots are mailed to active registered voters in covered elections."
+  },
+  {
+    "id": "state-runoff-rules-vt",
+    "state_code": "VT",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-vt",
+    "state_code": "VT",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-va",
+    "state_code": "VA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring acceptable ID if available. This jurisdiction is listed in a non-strict non-photo category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-va",
+    "state_code": "VA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-va",
+    "state_code": "VA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-va",
+    "state_code": "VA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-wa",
+    "state_code": "WA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring acceptable ID if available. This jurisdiction is listed in a non-strict non-photo category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-wa",
+    "state_code": "WA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. This jurisdiction is listed as a broad vote-by-mail model where ballots are mailed to active registered voters in covered elections."
+  },
+  {
+    "id": "state-runoff-rules-wa",
+    "state_code": "WA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-wa",
+    "state_code": "WA",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format: top-two primary where the top two candidates advance."
+  },
+  {
+    "id": "state-what-to-bring-wv",
+    "state_code": "WV",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring photo ID if available. This jurisdiction is listed in a non-strict photo-ID category with fallback verification paths. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-wv",
+    "state_code": "WV",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-wv",
+    "state_code": "WV",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-wv",
+    "state_code": "WV",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-wi",
+    "state_code": "WI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring an acceptable photo ID. This jurisdiction is listed in a strict photo-ID category, so missing ID can cause extra cure steps. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-wi",
+    "state_code": "WI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-wi",
+    "state_code": "WI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-wi",
+    "state_code": "WI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-wy",
+    "state_code": "WY",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "Bring acceptable ID. This jurisdiction is listed in a strict non-photo ID category, so missing ID can cause extra cure steps. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-wy",
+    "state_code": "WY",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-wy",
+    "state_code": "WY",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-wy",
+    "state_code": "WY",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-dc",
+    "state_code": "DC",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "In-person ID document is generally not listed as required in standard cases; identity is commonly verified through election records and check-in procedures. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-dc",
+    "state_code": "DC",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. This jurisdiction is listed as a broad vote-by-mail model where ballots are mailed to active registered voters in covered elections."
+  },
+  {
+    "id": "state-runoff-rules-dc",
+    "state_code": "DC",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-dc",
+    "state_code": "DC",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format: ranked-choice voting is used in specified contests."
+  },
+  {
+    "id": "state-what-to-bring-as",
+    "state_code": "AS",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "ID requirements vary by contest and voting method. Check your official election office instructions before voting. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-as",
+    "state_code": "AS",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early-voting access is jurisdiction-specific; confirm your local schedule. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-as",
+    "state_code": "AS",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-as",
+    "state_code": "AS",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-gu",
+    "state_code": "GU",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "ID requirements vary by contest and voting method. Check your official election office instructions before voting. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-gu",
+    "state_code": "GU",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-gu",
+    "state_code": "GU",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-gu",
+    "state_code": "GU",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-mp",
+    "state_code": "MP",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "ID requirements vary by contest and voting method. Check your official election office instructions before voting. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-mp",
+    "state_code": "MP",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early-voting access is jurisdiction-specific; confirm your local schedule. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-mp",
+    "state_code": "MP",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-mp",
+    "state_code": "MP",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-pr",
+    "state_code": "PR",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "ID requirements vary by contest and voting method. Check your official election office instructions before voting. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-pr",
+    "state_code": "PR",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-pr",
+    "state_code": "PR",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-pr",
+    "state_code": "PR",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  },
+  {
+    "id": "state-what-to-bring-vi",
+    "state_code": "VI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "What To Bring",
+    "body": "ID requirements vary by contest and voting method. Check your official election office instructions before voting. If check-in issues occur, ask for a provisional ballot and follow cure instructions if needed."
+  },
+  {
+    "id": "state-voting-options-vi",
+    "state_code": "VI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Voting Options",
+    "body": "Early in-person voting is listed as available to all voters. Mail voting is available by state-defined rules; request and return deadlines vary."
+  },
+  {
+    "id": "state-runoff-rules-vi",
+    "state_code": "VI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Runoff Rule in Your State",
+    "body": "Runoff rules are office-specific; check your state election office if no candidate clears the required threshold."
+  },
+  {
+    "id": "state-election-structure-vi",
+    "state_code": "VI",
+    "election_type": "all",
+    "phase": "all",
+    "title": "Election Structure in Your State",
+    "body": "Election format follows state law for each office (for example plurality, majority-plus-runoff, or other defined structures)."
+  }
+]

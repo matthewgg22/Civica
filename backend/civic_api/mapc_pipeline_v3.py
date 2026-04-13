@@ -68,7 +68,8 @@ Hard constraints:
 12. Remove logically equivalent options before returning. Never return mirror-image options (for example, opposing cuts vs increasing the same funding).
 13. If require_bill_ref is true and no bill can be confirmed above 0.80 confidence, do not fabricate a bill option.
 14. Do not use scaffolding phrases, placeholders, or conditional hedging such as "if feasible", "where applicable", or "as appropriate".
-15. For foreign-policy issues, do not default to hearing + letter. Prefer a stronger first-step tool when inferable, such as sanctions/export-control review, war-powers or authorization limits, or refugee protection."""
+15. For foreign-policy issues, do not default to hearing + letter. Prefer a stronger first-step tool when inferable, such as sanctions/export-control review, war-powers or authorization limits, or refugee protection.
+16. Do not generate an "Other" option in model output. The backend appends a fixed "Other: type issue concern" option for free-text follow-up."""
 
 
 BACKGROUND_WRITER_PROMPT = """Task: Write an issue-specific background paragraph or return null when specificity is insufficient.
@@ -149,6 +150,10 @@ STOPWORDS: set[str] = {
 
 BANNED_ASK_PHRASES: tuple[str, ...] = ("if feasible", "where applicable", "as appropriate")
 AFFIRMATIVE_YES_RESPONSES: set[str] = {"yes", "yes.", "yeah", "yep", "y", "sure", "correct"}
+OTHER_ASK_OPTION_ID = "OTHER"
+OTHER_ASK_OPTION_ASK_TYPE = "other_user_defined"
+OTHER_ASK_OPTION_DISPLAY = "Other: type issue concern"
+OTHER_ASK_OPTION_CONFIDENCE = 1.0
 
 
 @dataclass(frozen=True)
@@ -361,10 +366,16 @@ class MAPCPipelineV3Service:
         options = _ensure_minimum_distinct_options(options=options, session_obj=session_obj)
         options = _drop_hearing_when_alternatives_exist(options)
         options = _ensure_minimum_distinct_options(options=options, session_obj=session_obj)
+        actionable_option_count = len(options)
+        options = _append_other_ask_option(options)
         validator_report["checks"].append({
             "name": "logical_option_dedup",
             "passed": len(options) >= 1,
             "remaining_options": len(options),
+        })
+        validator_report["checks"].append({
+            "name": "other_option_appended",
+            "passed": any(_is_other_ask_option(option) for option in options),
         })
 
         for entry in options:
@@ -373,7 +384,7 @@ class MAPCPipelineV3Service:
                 raise MAPCPipelineV3Error("banned_phrase_in_option", "ask option contains prohibited phrase.")
 
         response_session = deepcopy(session_obj)
-        response_session["needs_clarification"] = bool(options_payload.get("needs_clarification", False)) or len(options) < 2
+        response_session["needs_clarification"] = bool(options_payload.get("needs_clarification", False)) or actionable_option_count < 2
         response_session["session_state"] = "ask_selected"
         self._set_state(session_id, "ask_selected")
         self._store_pending_selection(
@@ -560,6 +571,11 @@ class MAPCPipelineV3Service:
                     options = deepcopy(pending_options)
         if selected_option is None:
             raise MAPCPipelineV3Error("invalid_selected_option", "selected_option_id was not found in options.")
+        if _is_other_ask_option(selected_option):
+            raise MAPCPipelineV3Error(
+                "selected_other_option_requires_follow_up",
+                "Select Other and provide your issue concern in chat before generating a script.",
+            )
         working_session = deepcopy(session_obj)
         working_session["ask_type"] = _normalized_text(selected_option.get("ask_type")) or working_session.get("ask_type")
         working_session["display_ask"] = _normalized_text(selected_option.get("display_ask")) or working_session.get("display_ask")
@@ -1540,6 +1556,23 @@ def _drop_hearing_when_alternatives_exist(options: list[dict[str, Any]]) -> list
     non_hearing = [entry for entry in cleaned if not _is_hearing_option(entry)]
     if non_hearing:
         return non_hearing
+    return cleaned
+
+
+def _is_other_ask_option(option: dict[str, Any]) -> bool:
+    option_id = _normalized_text(option.get("option_id")).lower()
+    ask_type = _normalized_text(option.get("ask_type")).lower()
+    return option_id == OTHER_ASK_OPTION_ID.lower() or ask_type == OTHER_ASK_OPTION_ASK_TYPE
+
+
+def _append_other_ask_option(options: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    cleaned = [entry for entry in options if isinstance(entry, dict) and not _is_other_ask_option(entry)]
+    cleaned.append({
+        "option_id": OTHER_ASK_OPTION_ID,
+        "ask_type": OTHER_ASK_OPTION_ASK_TYPE,
+        "display_ask": OTHER_ASK_OPTION_DISPLAY,
+        "confidence": OTHER_ASK_OPTION_CONFIDENCE,
+    })
     return cleaned
 
 

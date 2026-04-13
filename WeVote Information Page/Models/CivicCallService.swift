@@ -2705,6 +2705,11 @@ final class IssueCallCenterViewModel: ObservableObject {
             mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "invalid_selected_option"
             return "I kept your issue, but the selected ask did not sync. Tap an ask option again."
         }
+        if lowered.contains("selected_other_option_requires_follow_up") {
+            // mapc_pipeline_v3 — remove flag check after rollout confirmed
+            mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "selected_other_option_requires_follow_up"
+            return "Tell me your issue concern in one sentence and I’ll regenerate your ask options."
+        }
         if lowered.contains("invalid_initial_state") || lowered.contains("invalid_state_transition") {
             mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "invalid_state_transition"
             return "I kept your issue, but the session got out of sync. Tap an ask option again."
@@ -3019,6 +3024,7 @@ final class IssueCallCenterViewModel: ObservableObject {
             errorMessage = "Review the script preview first, then tap Looks right before approving."
             return
         }
+        let preserveApprovedLaunchState = mapcPipelineV3Enabled && mapcV3MapcApproved
         let packageID = lastGeneratedPackageID
         let chosenOption = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
         let finalScript = pendingGeneratedResolution?.callBriefs.first?.liveScript
@@ -3029,6 +3035,10 @@ final class IssueCallCenterViewModel: ObservableObject {
         requiresDraftApproval = false
         lastGeneratedPackageID = nil
         resetMAPCV3SelectionState()
+        if preserveApprovedLaunchState {
+            // mapc_pipeline_v3 — remove flag check after rollout confirmed
+            mapcV3MapcApproved = true
+        }
         saveSnapshot()
 
         if let packageID, !packageID.isEmpty {
@@ -3103,6 +3113,9 @@ final class IssueCallCenterViewModel: ObservableObject {
         // the user's Build Script personalization draft fields.
         // Also clear any stale composer inputs so Build Script remains blank
         // when the user returns from MAPC.
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        // Premade tap is an explicit user approval to enter MAPC immediately.
+        mapcV3MapcApproved = true
         activeMAPCSessionID = UUID()
         pendingGeneratedResolution = nil
         requiresDraftApproval = false
@@ -4872,7 +4885,17 @@ final class IssueCallCenterViewModel: ObservableObject {
     private func askSignalPhrases(for ask: CivicAsk) -> [String] {
         switch ask {
         case .support:
-            return ["support", "back", "in favor"]
+            return [
+                "support",
+                "back",
+                "in favor",
+                "fund",
+                "funding",
+                "appropriate",
+                "appropriation",
+                "increase funding",
+                "invest in"
+            ]
         case .oppose:
             return ["oppose", "reject", "against"]
         case .cosponsor:
@@ -4970,7 +4993,14 @@ final class IssueCallCenterViewModel: ObservableObject {
             "over", "between", "against", "around", "request", "asking", "asked",
             "needs", "need", "action"
         ]
-        return Set(words.filter { !stopWords.contains($0) })
+        var tokens = Set<String>()
+        for word in words where !stopWords.contains(word) {
+            tokens.insert(word)
+            if let singular = singularizedTopicToken(word), singular.count >= 5 {
+                tokens.insert(singular)
+            }
+        }
+        return tokens
     }
 
     private func hasKnownAcronymExpansionMatch(concernText: String, responseLower: String) -> Bool {
@@ -5003,8 +5033,28 @@ final class IssueCallCenterViewModel: ObservableObject {
             "congress", "member", "office", "people", "their", "them", "into",
             "over", "under", "have", "been", "were", "will", "your", "public"
         ]
-        let filtered = words.filter { !stopWords.contains($0) }
-        return Set(filtered)
+        var tokens = Set<String>()
+        for word in words where !stopWords.contains(word) {
+            tokens.insert(word)
+            if let singular = singularizedTopicToken(word), singular.count >= 4 {
+                tokens.insert(singular)
+            }
+        }
+        return tokens
+    }
+
+    private func singularizedTopicToken(_ token: String) -> String? {
+        guard token.count >= 5 else { return nil }
+        if token.hasSuffix("ies"), token.count > 5 {
+            return String(token.dropLast(3)) + "y"
+        }
+        if token.hasSuffix("es"), token.count > 5 {
+            return String(token.dropLast(2))
+        }
+        if token.hasSuffix("s"), token.count > 4 {
+            return String(token.dropLast())
+        }
+        return nil
     }
 
     private func domainAnchors(in raw: String) -> Set<String> {

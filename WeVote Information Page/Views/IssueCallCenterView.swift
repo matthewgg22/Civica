@@ -50,6 +50,7 @@ struct IssueCallCenterView: View {
     @State private var hasPickedDiscussionOptionInCurrentCycle = false
     @State private var suppressTranslationForNextBackground = false
     @State private var awaitingCustomAgenticStrategyInput = false
+    @State private var awaitingCustomAskInput = false
     @State private var isKeyboardVisible = false
     @State private var nonMapcTabSlidesForward = true
     @State private var previousNonMapcTab: CivicIssueCallTab = .assistant
@@ -280,11 +281,18 @@ struct IssueCallCenterView: View {
         viewModel.activeBriefIndex ?? 0
     }
 
+    private var hasExplicitMAPCLaunchApproval: Bool {
+        guard viewModel.mapcPipelineV3Enabled else { return true }
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        return viewModel.mapcV3MapcApproved
+    }
+
     private var isMAPCMode: Bool {
         !didCompleteMAPC
             && !viewModel.requiresDraftApproval
             && !viewModel.callBriefs.isEmpty
             && viewModel.activeBrief != nil
+            && hasExplicitMAPCLaunchApproval
     }
 
     private var visibleTabs: [CivicIssueCallTab] {
@@ -505,13 +513,12 @@ struct IssueCallCenterView: View {
                             scriptFocusModeContent
                         }
                     } else {
-                        VStack(spacing: 6) {
+                        VStack(spacing: 8) {
                             headerSection
                             topTabSelector
                                 .offset(y: shouldHideTopTabSelector ? -16 : 0)
                                 .opacity(shouldHideTopTabSelector ? 0 : 1)
                                 .frame(height: shouldHideTopTabSelector ? 0 : nil, alignment: .top)
-                                .clipped()
                                 .allowsHitTesting(!shouldHideTopTabSelector)
                                 .accessibilityHidden(shouldHideTopTabSelector)
                                 .animation(
@@ -875,7 +882,7 @@ struct IssueCallCenterView: View {
         )
         .shadow(color: VoteNowColors.primaryText.opacity(0.06), radius: 6, x: 0, y: 2)
         .padding(.horizontal, 16)
-        .padding(.top, 0)
+        .padding(.top, 2)
         .padding(.bottom, 4)
         .background(VoteNowColors.brandSoftBlue)
         .accessibilityIdentifier("issue_call.tabs")
@@ -1275,6 +1282,27 @@ struct IssueCallCenterView: View {
                         }
                         .buttonStyle(.plain)
                     }
+                    if !viewModel.mapcV3AskOptions.contains(where: isMAPCV3OtherOption) {
+                        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+                        Button {
+                            promptForCustomMAPCV3ConcernInput()
+                        } label: {
+                            Text("Other: type issue concern")
+                                .font(.caption.weight(.semibold))
+                                .foregroundColor(VoteNowColors.primaryText)
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 9)
+                                .background(VoteNowColors.surfaceWhite)
+                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                        .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                                )
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
             } else {
                 Text("Does this match what you meant?")
@@ -1611,7 +1639,14 @@ struct IssueCallCenterView: View {
         let priorConcern = viewModel.concernText.trimmingCharacters(in: .whitespacesAndNewlines)
         let pipelinePrompt: String
         var intent = classifyMAPCTurnIntent(prompt)
-        if awaitingCustomAgenticStrategyInput && viewModel.mapcPipelineV3Enabled {
+        if awaitingCustomAskInput && viewModel.mapcPipelineV3Enabled {
+            // mapc_pipeline_v3 — remove flag check after rollout confirmed
+            // "Other" ask follow-up should revise the current issue/ask context via free text.
+            pipelinePrompt = "custom issue concern: \(prompt)"
+            intent = MAPCTurnIntentClassification(intent: .reviseIssue, newIssueScore: 0.2)
+            awaitingCustomAskInput = false
+            awaitingCustomAgenticStrategyInput = false
+        } else if awaitingCustomAgenticStrategyInput && viewModel.mapcPipelineV3Enabled {
             // mapc_pipeline_v3 — remove flag check after rollout confirmed
             // "Other" strategy text should be handled as a constraints revision, not a new issue.
             pipelinePrompt = "strategy preference: \(prompt)"
@@ -1870,6 +1905,7 @@ struct IssueCallCenterView: View {
 
             hasPostedCurrentDraftBackground = true
             hasAcceptedCurrentMAPCV3Preview = false
+            awaitingCustomAskInput = false
             pendingBackgroundMessageID = nil
             pendingScriptPreviewMessageID = nil
             withAnimation(.easeOut(duration: 0.18)) {
@@ -2089,9 +2125,46 @@ struct IssueCallCenterView: View {
         submitScriptDraft(fromDiscussionOption: true)
     }
 
+    private func isMAPCV3OtherOption(_ option: CivicMAPCV3PreparedOption) -> Bool {
+        let normalizedID = option.optionID.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let normalizedAskType = option.askType.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return normalizedID == "other" || normalizedAskType == "other_user_defined"
+    }
+
+    private func promptForCustomMAPCV3ConcernInput() {
+        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+        appendAssistantUserMessage("Selected ask: Other", messageType: "ask_selected_other")
+        hasPickedDiscussionOptionInCurrentCycle = false
+        previewLintBlocked = false
+        hasRetriedPreviewLintRegeneration = false
+        hasAcceptedCurrentMAPCV3Preview = false
+        awaitingCustomAskInput = true
+        awaitingCustomAgenticStrategyInput = false
+        viewModel.clearMAPCV3OptionSelection()
+        pendingBackgroundMessageID = nil
+        pendingScriptPreviewMessageID = nil
+        withAnimation(.easeOut(duration: 0.18)) {
+            isBackgroundMessageReadyForActions = false
+            isScriptPreviewReadyForMAPCActions = false
+        }
+        assistantFlowStage = .awaitingPrompt
+        appendAssistantBotMessage(
+            "Tell me your issue concern in one sentence, and I’ll regenerate your ask options.",
+            kind: .plain,
+            messageType: "ask_selected_other_prompt"
+        )
+        focusedField = .concern
+    }
+
     private func selectMAPCV3OptionInChat(_ option: CivicMAPCV3PreparedOption) {
         guard !assistantIsThinking, !viewModel.isSubmitting else { return }
+        if isMAPCV3OtherOption(option) {
+            // mapc_pipeline_v3 — remove flag check after rollout confirmed
+            promptForCustomMAPCV3ConcernInput()
+            return
+        }
         hasPickedDiscussionOptionInCurrentCycle = true
+        awaitingCustomAskInput = false
         awaitingCustomAgenticStrategyInput = false
         previewLintBlocked = false
         hasRetriedPreviewLintRegeneration = false

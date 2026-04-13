@@ -26,3 +26,4 @@ Hard constraints:
 13. If require_bill_ref is true and no bill can be confirmed above 0.80 confidence, do not fabricate a bill option.
 14. Do not use scaffolding phrases, placeholders, or conditional hedging such as "if feasible", "where applicable", or "as appropriate".
 15. For foreign-policy issues, do not default to hearing + letter. Prefer a stronger first-step tool when inferable, such as sanctions/export-control review, war-powers or authorization limits, or refugee protection.
+16. Do not generate an "Other" option in model output. The backend appends a fixed "Other: type issue concern" option for free-text follow-up.
