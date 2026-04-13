@@ -376,16 +376,20 @@ struct RemotePremadeAsk: Decodable {
         }
 
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        ask =
-            (try container.decodeIfPresent(String.self, forKey: .ask))
-            ?? (try container.decodeIfPresent(String.self, forKey: .askType))
-            ?? (try container.decodeIfPresent(String.self, forKey: .actionType))
-            ?? (try container.decodeIfPresent(String.self, forKey: .primaryAsk))
-            ?? (try container.decodeIfPresent(String.self, forKey: .value))
-            ?? ""
-        label =
-            (try container.decodeIfPresent(String.self, forKey: .label))
-            ?? (try container.decodeIfPresent(String.self, forKey: .actionTargetDisplay))
+        var decodedAsk: String? = nil
+        for key in [CodingKeys.ask, .askType, .actionType, .primaryAsk, .value] {
+            if let value = try container.decodeIfPresent(String.self, forKey: key) {
+                decodedAsk = value
+                break
+            }
+        }
+        ask = decodedAsk ?? ""
+
+        var decodedLabel = try container.decodeIfPresent(String.self, forKey: .label)
+        if decodedLabel == nil {
+            decodedLabel = try container.decodeIfPresent(String.self, forKey: .actionTargetDisplay)
+        }
+        label = decodedLabel
     }
 }
 
