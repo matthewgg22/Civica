@@ -174,6 +174,36 @@ struct CivicMAPCV3Session: Codable, Sendable {
     }
 }
 
+private extension CivicMAPCV3Session {
+    func withSessionState(_ sessionState: String, mapcApproved: Bool? = nil) -> CivicMAPCV3Session {
+        CivicMAPCV3Session(
+            sessionID: sessionID,
+            rawUserIssue: rawUserIssue,
+            normalizedIssue: normalizedIssue,
+            displayIssue: displayIssue,
+            issueDomain: issueDomain,
+            targetProblem: targetProblem,
+            congressionalLever: congressionalLever,
+            askType: askType,
+            displayAsk: displayAsk,
+            stance: stance,
+            geographicRelevance: geographicRelevance,
+            optionalBillRef: optionalBillRef,
+            constraintsFromUser: constraintsFromUser,
+            confidence: confidence,
+            needsClarification: needsClarification,
+            clarificationPrompt: clarificationPrompt,
+            spokenLanguageNotes: spokenLanguageNotes,
+            sessionState: sessionState,
+            userZip: userZip,
+            accumulatedContext: accumulatedContext,
+            introShown: introShown,
+            clarificationTurnCount: clarificationTurnCount,
+            mapcApproved: mapcApproved ?? self.mapcApproved
+        )
+    }
+}
+
 private struct CivicMAPCV3AskOption: Codable, Sendable {
     let optionID: String
     let askType: String
@@ -1058,13 +1088,15 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             )
         }
 
+        let backgroundSession = normalizedMAPCV3SessionForBackground(pending.session)
+
         var backgroundRequest = URLRequest(url: endpoint("/api/v2/civic/mapc/background"))
         backgroundRequest.httpMethod = "POST"
         backgroundRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         await attachAuthorizationIfAvailable(to: &backgroundRequest)
         backgroundRequest.httpBody = try encoder.encode(
             CivicMAPCV3BackgroundRequest(
-                session: pending.session,
+                session: backgroundSession,
                 concernText: normalizedConcern
             )
         )
@@ -1109,7 +1141,11 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         )
         let scriptData = try await requestData(for: scriptRequest)
         let scriptResponse = try decoder.decode(CivicMAPCV3ScriptResponse.self, from: scriptData)
-        mapcV3PendingSelectionStateBySessionID[sessionID] = nil
+        mapcV3PendingSelectionStateBySessionID[sessionID] = MAPCV3PendingSelectionState(
+            concernText: normalizedConcern,
+            session: scriptResponse.session,
+            options: pending.options
+        )
 
         return buildV3ScriptPackageFromStageOutputs(
             scriptResponse: scriptResponse,
@@ -1150,6 +1186,18 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             session: session,
             options: response.options
         )
+    }
+
+    private func normalizedMAPCV3SessionForBackground(_ session: CivicMAPCV3Session) -> CivicMAPCV3Session {
+        let normalizedState = session.sessionState.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let allowedStates: Set<String> = ["issue_received", "ask_selected", "preview_shown", "revising"]
+        if allowedStates.contains(normalizedState) {
+            return session
+        }
+        if normalizedState == "script_shown" {
+            return session.withSessionState("preview_shown", mapcApproved: false)
+        }
+        return session.withSessionState("ask_selected", mapcApproved: false)
     }
 
     private func buildV3ScriptPackageFromStageOutputs(
@@ -1628,6 +1676,13 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             return "API request failed with status \(statusCode)"
         }
 
+        if let jsonMessage = compactJSONHTTPErrorMessage(
+            statusCode: statusCode,
+            responseData: responseData
+        ) {
+            return jsonMessage
+        }
+
         let maxPreviewBytes = 2048
         let rawPreview = String(decoding: responseData.prefix(maxPreviewBytes), as: UTF8.self)
         var normalized = rawPreview.replacingOccurrences(
@@ -1651,6 +1706,66 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             return "status \(statusCode): \(snippet)..."
         }
         return "status \(statusCode): \(snippet)"
+    }
+
+    private func compactJSONHTTPErrorMessage(statusCode: Int, responseData: Data) -> String? {
+        guard let object = try? JSONSerialization.jsonObject(with: responseData, options: []) else {
+            return nil
+        }
+        guard let payload = object as? [String: Any] else {
+            return nil
+        }
+
+        func normalized(_ raw: String?) -> String? {
+            guard let raw else { return nil }
+            let cleaned = raw
+                .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            return cleaned.isEmpty ? nil : cleaned
+        }
+
+        var reasonCode: String?
+        var detailText: String?
+
+        if let directReason = normalized(payload["reason_code"] as? String) {
+            reasonCode = directReason
+        }
+
+        if let detail = payload["detail"] as? [String: Any] {
+            if reasonCode == nil, let detailReason = normalized(detail["reason_code"] as? String) {
+                reasonCode = detailReason
+            }
+            if let detailMessage = normalized(detail["message"] as? String) {
+                detailText = detailMessage
+            } else if let detailString = normalized(detail["detail"] as? String) {
+                detailText = detailString
+            } else if reasonCode == nil, detail.keys.contains("reason_code") {
+                reasonCode = "reason_code_missing"
+            }
+        } else if let detailString = normalized(payload["detail"] as? String) {
+            detailText = detailString
+            if reasonCode == nil && detailString.lowercased().contains("reason_code") {
+                reasonCode = "reason_code_missing"
+            }
+        }
+
+        if detailText == nil, let message = normalized(payload["message"] as? String) {
+            detailText = message
+        }
+        if detailText == nil, let error = normalized(payload["error"] as? String) {
+            detailText = error
+        }
+
+        if let reasonCode, let detailText {
+            return "status \(statusCode): reason_code=\(reasonCode) detail=\(detailText)"
+        }
+        if let reasonCode {
+            return "status \(statusCode): reason_code=\(reasonCode)"
+        }
+        if let detailText {
+            return "status \(statusCode): \(detailText)"
+        }
+        return nil
     }
 
     private func endpoint(_ path: String) -> URL {
@@ -2684,7 +2799,9 @@ final class IssueCallCenterViewModel: ObservableObject {
         }
         let nsError = error as NSError
         let lowered = nsError.localizedDescription.lowercased()
-        mapcV3LastFailureReasonCode = extractedMAPCV3ReasonCode(from: nsError.localizedDescription)
+        mapcV3LastFailureReasonCode =
+            extractedMAPCV3ReasonCode(from: nsError.localizedDescription)
+            ?? inferredMAPCV3ReasonCode(from: lowered)
         if nsError.domain == "CivicIssueCallAPIClient" && nsError.code == 404 {
             mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "route_not_found"
             return "MAPC v3 API route is unavailable. Confirm /api/v2/civic/mapc endpoints are deployed."
@@ -2718,6 +2835,11 @@ final class IssueCallCenterViewModel: ObservableObject {
             mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "preview_not_confirmed"
             return "Please confirm the preview before generating the script."
         }
+        if nsError.domain == "CivicIssueCallAPIClient"
+            && nsError.code == 400
+            && mapcV3LastFailureReasonCode == "reason_code_missing" {
+            return "I kept your issue, but the server response was incomplete. Tap an ask option again."
+        }
         if lowered.contains("universal_script_lint_failed")
             && (lowered.contains("placeholder:") || lowered.contains("[name]") || lowered.contains("[your name]")) {
             mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "universal_script_lint_failed"
@@ -2749,6 +2871,28 @@ final class IssueCallCenterViewModel: ObservableObject {
                 let reason = String(capture).trimmingCharacters(in: .whitespacesAndNewlines)
                 return reason.isEmpty ? nil : reason
             }
+        }
+        return nil
+    }
+
+    private func inferredMAPCV3ReasonCode(from loweredDescription: String) -> String? {
+        let knownCodes = [
+            "feature_flag_disabled",
+            "placeholder_leak",
+            "missing_selected_option",
+            "invalid_selected_option",
+            "selected_other_option_requires_follow_up",
+            "invalid_initial_state",
+            "invalid_state_transition",
+            "preview_not_confirmed",
+            "universal_script_lint_failed",
+            "pending_state_missing",
+        ]
+        if let match = knownCodes.first(where: { loweredDescription.contains($0) }) {
+            return match
+        }
+        if loweredDescription.contains("reason_code") {
+            return "reason_code_missing"
         }
         return nil
     }
