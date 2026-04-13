@@ -977,8 +977,14 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         interpretRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         await attachAuthorizationIfAvailable(to: &interpretRequest)
         interpretRequest.httpBody = try encoder.encode(interpretPayload)
-        let interpretData = try await requestData(for: interpretRequest)
-        let interpretResponse = try decoder.decode(CivicMAPCV3InterpretResponse.self, from: interpretData)
+        logMAPCV3Request(interpretRequest)
+        let (interpretData, interpretHTTP) = try await requestDataWithResponse(for: interpretRequest)
+        print("🌐 [MAPC] HTTP status: \(interpretHTTP.statusCode) path=\(interpretRequest.url?.path ?? "<unknown-path>")")
+        let interpretResponse: CivicMAPCV3InterpretResponse = try decodeMAPCV3Response(
+            CivicMAPCV3InterpretResponse.self,
+            from: interpretData,
+            endpointPath: interpretRequest.url?.path ?? "/api/v2/civic/mapc/interpret"
+        )
 
         if interpretResponse.session.needsClarification {
             mapcV3PendingSelectionStateBySessionID[interpretResponse.session.sessionID] = MAPCV3PendingSelectionState(
@@ -1008,8 +1014,14 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 concernText: normalizedConcern
             )
         )
-        let askData = try await requestData(for: askRequest)
-        let askResponse = try decoder.decode(CivicMAPCV3AskOptionsResponse.self, from: askData)
+        logMAPCV3Request(askRequest)
+        let (askData, askHTTP) = try await requestDataWithResponse(for: askRequest)
+        print("🌐 [MAPC] HTTP status: \(askHTTP.statusCode) path=\(askRequest.url?.path ?? "<unknown-path>")")
+        let askResponse: CivicMAPCV3AskOptionsResponse = try decodeMAPCV3Response(
+            CivicMAPCV3AskOptionsResponse.self,
+            from: askData,
+            endpointPath: askRequest.url?.path ?? "/api/v2/civic/mapc/ask-options"
+        )
         guard !askResponse.options.isEmpty else {
             throw NSError(
                 domain: "CivicIssueCallAPIClient",
@@ -1345,8 +1357,15 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             interpretRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
             await attachAuthorizationIfAvailable(to: &interpretRequest)
             interpretRequest.httpBody = try encoder.encode(interpretPayload)
-            let interpretData = try await requestData(for: interpretRequest)
-            return try decoder.decode(CivicMAPCV3InterpretResponse.self, from: interpretData)
+            logMAPCV3Request(interpretRequest)
+            let (interpretData, interpretHTTP) = try await requestDataWithResponse(for: interpretRequest)
+            print("🌐 [MAPC] HTTP status: \(interpretHTTP.statusCode) path=\(interpretRequest.url?.path ?? "<unknown-path>")")
+            let interpretResponse: CivicMAPCV3InterpretResponse = try decodeMAPCV3Response(
+                CivicMAPCV3InterpretResponse.self,
+                from: interpretData,
+                endpointPath: interpretRequest.url?.path ?? "/api/v2/civic/mapc/interpret"
+            )
+            return interpretResponse
         }
 
         let interpretResponse: CivicMAPCV3InterpretResponse
@@ -1389,8 +1408,14 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 concernText: normalizedConcern
             )
         )
-        let askData = try await requestData(for: askRequest)
-        let askResponse = try decoder.decode(CivicMAPCV3AskOptionsResponse.self, from: askData)
+        logMAPCV3Request(askRequest)
+        let (askData, askHTTP) = try await requestDataWithResponse(for: askRequest)
+        print("🌐 [MAPC] HTTP status: \(askHTTP.statusCode) path=\(askRequest.url?.path ?? "<unknown-path>")")
+        let askResponse: CivicMAPCV3AskOptionsResponse = try decodeMAPCV3Response(
+            CivicMAPCV3AskOptionsResponse.self,
+            from: askData,
+            endpointPath: askRequest.url?.path ?? "/api/v2/civic/mapc/ask-options"
+        )
         guard !askResponse.options.isEmpty else {
             logger.error(
                 "MAPC v3 reprepare returned empty ask options session_id=\(askResponse.session.sessionID, privacy: .public)"
@@ -1903,6 +1928,21 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         allowTimeoutRetry: Bool = true,
         allowTransient400Retry: Bool = true
     ) async throws -> Data {
+        let (data, _) = try await requestDataWithResponse(
+            for: request,
+            timeout: timeout,
+            allowTimeoutRetry: allowTimeoutRetry,
+            allowTransient400Retry: allowTransient400Retry
+        )
+        return data
+    }
+
+    private func requestDataWithResponse(
+        for request: URLRequest,
+        timeout: TimeInterval? = nil,
+        allowTimeoutRetry: Bool = true,
+        allowTransient400Retry: Bool = true
+    ) async throws -> (Data, HTTPURLResponse) {
         var firstAttempt = request
         if let timeout {
             firstAttempt.timeoutInterval = timeout
@@ -1911,7 +1951,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         }
 
         do {
-            return try await performRequest(firstAttempt)
+            return try await performRequestWithResponse(firstAttempt)
         } catch {
             // Retry once on timeout in case the backend is waking from cold start.
             if allowTimeoutRetry, let urlError = error as? URLError, urlError.code == .timedOut {
@@ -1919,7 +1959,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 let baselineTimeout = timeout ?? requestTimeout
                 retryAttempt.timeoutInterval = max(baselineTimeout, 75)
                 do {
-                    return try await performRequest(retryAttempt)
+                    return try await performRequestWithResponse(retryAttempt)
                 } catch {
                     throw NSError(
                         domain: "CivicIssueCallAPIClient",
@@ -1932,7 +1972,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 // mapc_pipeline_v3 — remove flag check after rollout confirmed
                 // One-shot retry for transient parse-wrapped 400s returned by staged MAPC v3 endpoints.
                 try? await Task.sleep(nanoseconds: 300_000_000)
-                return try await requestData(
+                return try await requestDataWithResponse(
                     for: firstAttempt,
                     timeout: firstAttempt.timeoutInterval,
                     allowTimeoutRetry: false,
@@ -1966,6 +2006,11 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
     }
 
     private func performRequest(_ request: URLRequest) async throws -> Data {
+        let (data, _) = try await performRequestWithResponse(request)
+        return data
+    }
+
+    private func performRequestWithResponse(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse else { throw URLError(.badServerResponse) }
         guard (200...299).contains(http.statusCode) else {
@@ -1974,7 +2019,44 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 NSLocalizedDescriptionKey: compactMessage
             ])
         }
-        return data
+        return (data, http)
+    }
+
+    private func logMAPCV3Request(_ request: URLRequest) {
+        let path = request.url?.path ?? "<unknown-path>"
+        print("🌐 [MAPC] endpoint path: \(path)")
+        let body = request.httpBody ?? Data()
+        let bodyString = String(data: body, encoding: .utf8) ?? "<non-utf8-request-body>"
+        print("🌐 [MAPC] request body JSON: \(bodyString)")
+    }
+
+    private func decodeMAPCV3Response<ResponseType: Decodable>(
+        _ responseType: ResponseType.Type,
+        from data: Data,
+        endpointPath: String
+    ) throws -> ResponseType {
+        let rawResponse = String(data: data, encoding: .utf8) ?? "<non-utf8-response>"
+        print("🌐 [MAPC] raw response BEFORE decode (\(endpointPath)): \(rawResponse)")
+        do {
+            let decoded = try decoder.decode(ResponseType.self, from: data)
+            print("✅ Decode success")
+            return decoded
+        } catch DecodingError.keyNotFound(let key, let context) {
+            print("❌ keyNotFound:", key, context.debugDescription, context.codingPath)
+        } catch DecodingError.valueNotFound(let value, let context) {
+            print("❌ valueNotFound:", value, context.debugDescription, context.codingPath)
+        } catch DecodingError.typeMismatch(let type, let context) {
+            print("❌ typeMismatch:", type, context.debugDescription, context.codingPath)
+        } catch DecodingError.dataCorrupted(let context) {
+            print("❌ dataCorrupted:", context.debugDescription)
+        } catch {
+            print("❌ Unknown decode error:", error)
+        }
+        throw NSError(
+            domain: "CivicIssueCallAPIClient",
+            code: -31_020,
+            userInfo: [NSLocalizedDescriptionKey: "Failed to decode MAPC response at \(endpointPath)."]
+        )
     }
 
     private func compactHTTPErrorMessage(statusCode: Int, responseData: Data) -> String {
@@ -2647,7 +2729,9 @@ final class IssueCallCenterViewModel: ObservableObject {
             let resolvedTemplateAsks = templateAsks.isEmpty
                 ? (askFromPrimary.map { [$0] } ?? [.support])
                 : templateAsks
-            let relatedBills = (script.relatedBills ?? []).compactMap { normalizedNonEmpty($0) }
+            let relatedBills = (script.relatedBills ?? []).compactMap { bill in
+                normalizedNonEmpty(bill.displayText)
+            }
             let vehicleLabel = normalizedNonEmpty(script.vehicleLabel)
                 ?? relatedBills.first.flatMap { normalizedBillReference($0) }
             let tags = (script.tags ?? []).compactMap { normalizedNonEmpty($0) }

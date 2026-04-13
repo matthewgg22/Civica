@@ -325,7 +325,7 @@ struct RemotePremadeScript: Identifiable, Decodable {
     let targetChambers: [String]?
     let primaryAsk: String?
     let templateAsks: [RemotePremadeAsk]?
-    let relatedBills: [String]?
+    let relatedBills: [RemotePremadeRelatedBill]?
     let tags: [String]?
     let updatedAt: String?
 
@@ -390,6 +390,43 @@ struct RemotePremadeAsk: Decodable {
             decodedLabel = try container.decodeIfPresent(String.self, forKey: .actionTargetDisplay)
         }
         label = decodedLabel
+    }
+}
+
+struct RemotePremadeRelatedBill: Decodable {
+    let displayText: String
+
+    enum CodingKeys: String, CodingKey {
+        case title
+        case vehicleID = "vehicle_id"
+        case vehicleLabel = "vehicle_label"
+        case billNumber = "bill_number"
+        case actionTargetDisplay = "action_target_display"
+    }
+
+    init(displayText: String) {
+        self.displayText = displayText
+    }
+
+    init(from decoder: Decoder) throws {
+        if let singleValue = try? decoder.singleValueContainer(),
+           let billString = try? singleValue.decode(String.self) {
+            displayText = billString
+            return
+        }
+
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let candidate = [
+            try container.decodeIfPresent(String.self, forKey: .vehicleLabel),
+            try container.decodeIfPresent(String.self, forKey: .title),
+            try container.decodeIfPresent(String.self, forKey: .vehicleID),
+            try container.decodeIfPresent(String.self, forKey: .billNumber),
+            try container.decodeIfPresent(String.self, forKey: .actionTargetDisplay)
+        ]
+        .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
+        .first(where: { !$0.isEmpty })
+
+        displayText = candidate ?? ""
     }
 }
 
