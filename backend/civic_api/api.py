@@ -467,6 +467,17 @@ def post_script_chat_turn(payload: dict[str, Any], user_id: str) -> dict[str, An
     return {"ok": True}
 
 
+def _record_script_chat_turn_async(payload: dict[str, Any], user_id: str) -> None:
+    try:
+        post_script_chat_turn(payload, user_id)
+    except Exception as exc:
+        logger.warning(
+            "Failed to record script chat turn asynchronously; continuing. error=%s",
+            exc,
+            exc_info=exc,
+        )
+
+
 def _mapc_v3_detail(exc: MAPCPipelineV3Error) -> dict[str, str]:
     return {
         "reason_code": exc.reason_code,
@@ -766,10 +777,11 @@ def _build_share_svg(card_type: str, title: str, subtitle: str, badge: str, cta:
 
 
 try:
-    from fastapi import FastAPI, HTTPException, Request
+    from fastapi import BackgroundTasks, FastAPI, HTTPException, Request
     from fastapi.responses import HTMLResponse, Response
 except Exception:  # pragma: no cover
     FastAPI = None
+    BackgroundTasks = Any
     HTTPException = Exception
     Request = Any
     HTMLResponse = None
@@ -858,43 +870,48 @@ def _run_endpoint(
 
 
 def get_openstates_people_geo(lat: float, lng: float, include: str | None = "links") -> dict[str, Any]:
-    if not math.isfinite(lat) or not math.isfinite(lng):
-        raise ValueError("Invalid coordinates.")
-    if lat < -90 or lat > 90 or lng < -180 or lng > 180:
-        raise ValueError("Coordinates out of range.")
-
-    api_key = os.environ.get("OPENSTATES_API_KEY", "").strip()
-    if not api_key or api_key == "YOUR_OPENSTATES_API_KEY":
-        raise HTTPException(status_code=500, detail="OpenStates API key is not configured.")
-
-    params = {
-        "lat": f"{lat:.6f}",
-        "lng": f"{lng:.6f}",
-        "include": "links" if (include or "").strip().lower() == "links" else "links",
-    }
-
-    openstates_request = urllib.request.Request(
-        f"https://v3.openstates.org/people.geo?{urlencode(params)}",
-        method="GET",
-        headers={
-            "Accept": "application/json",
-            "X-API-KEY": api_key,
-        },
-    )
-
     try:
-        with urllib.request.urlopen(openstates_request, timeout=10) as response:
-            payload = json.loads(response.read().decode("utf-8"))
-    except urllib.error.HTTPError as exc:
-        if exc.code == 400:
-            raise HTTPException(status_code=400, detail="Invalid OpenStates request.") from exc
-        raise HTTPException(status_code=502, detail="OpenStates request failed.") from exc
-    except (urllib.error.URLError, json.JSONDecodeError) as exc:
-        raise HTTPException(status_code=502, detail="OpenStates request unavailable.") from exc
+        if not math.isfinite(lat) or not math.isfinite(lng):
+            raise ValueError("Invalid coordinates.")
+        if lat < -90 or lat > 90 or lng < -180 or lng > 180:
+            raise ValueError("Coordinates out of range.")
 
-    if not isinstance(payload, dict):
+        api_key = os.environ.get("OPENSTATES_API_KEY", "").strip()
+        if not api_key or api_key == "YOUR_OPENSTATES_API_KEY":
+            logger.warning("OpenStates API key is not configured; returning empty result.")
+            return {"results": []}
+
+        params = {
+            "lat": f"{lat:.6f}",
+            "lng": f"{lng:.6f}",
+            "include": "links" if (include or "").strip().lower() == "links" else "links",
+        }
+
+        openstates_request = urllib.request.Request(
+            f"https://v3.openstates.org/people.geo?{urlencode(params)}",
+            method="GET",
+            headers={
+                "Accept": "application/json",
+                "X-API-KEY": api_key,
+            },
+        )
+
+        with urllib.request.urlopen(openstates_request, timeout=25) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+
+        if not isinstance(payload, dict):
+            return {"results": []}
+        return payload
+    except Exception as exc:
+        logger.warning(
+            "OpenStates lookup failed; returning empty result. lat=%s lng=%s include=%s error=%s",
+            lat,
+            lng,
+            include,
+            exc,
+            exc_info=exc,
+        )
         return {"results": []}
-    return payload
 
 
 if FastAPI is not None:
@@ -956,11 +973,21 @@ if FastAPI is not None:
         )
 
     @app.post("/api/v1/civic/script-chat-turn")
-    def civic_script_chat_turn(payload: dict[str, Any], request: Request) -> dict[str, Any]:
-        return _run_endpoint(
-            lambda: post_script_chat_turn(payload, resolve_authenticated_or_anonymous_user_id(request)),
-            bad_request_exceptions=bad_request,
-        )
+    def civic_script_chat_turn(
+        payload: dict[str, Any],
+        request: Request,
+        background_tasks: BackgroundTasks,
+    ) -> dict[str, Any]:
+        try:
+            user_id = resolve_authenticated_or_anonymous_user_id(request)
+            background_tasks.add_task(_record_script_chat_turn_async, payload, user_id)
+        except Exception as exc:
+            logger.warning(
+                "Failed to enqueue script chat turn; returning ok immediately. error=%s",
+                exc,
+                exc_info=exc,
+            )
+        return {"ok": True}
 
     @app.post("/api/v2/civic/mapc/interpret")
     def civic_mapc_v3_interpret(payload: dict[str, Any], request: Request) -> dict[str, Any]:

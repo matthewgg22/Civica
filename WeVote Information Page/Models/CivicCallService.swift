@@ -2475,7 +2475,28 @@ final class IssueCallCenterViewModel: ObservableObject {
     }
 
     var canSubmit: Bool {
-        selectedAsk != nil && !concernText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !repTargets.isEmpty
+        selectedAsk != nil && !concernText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    private var federalFallbackRepSlots: [CivicRepSlot] {
+        CivicRepSlot.allCases
+    }
+
+    private func resolvedRepSubmissionContext() async -> (slots: [CivicRepSlot], targets: [CivicRepTarget]) {
+        let immediateSlots = requestRepSlots
+        if !immediateSlots.isEmpty {
+            return (immediateSlots, repTargets)
+        }
+
+        try? await Task.sleep(nanoseconds: 3_000_000_000)
+
+        let delayedSlots = requestRepSlots
+        if !delayedSlots.isEmpty {
+            return (delayedSlots, repTargets)
+        }
+
+        logger.notice("MAPC submission continuing with federal-only fallback slots after 3-second rep target wait.")
+        return (federalFallbackRepSlots, repTargets)
     }
 
     var hasMAPCV3PreparedSelection: Bool {
@@ -2817,15 +2838,20 @@ final class IssueCallCenterViewModel: ObservableObject {
             errorMessage = "Select an explicit ask before generating call briefs."
             return
         }
-        guard canSubmit else {
-            errorMessage = "Enter your concern and keep at least one representative selected."
+        let trimmedConcern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedConcern.isEmpty else {
+            errorMessage = "Enter your concern before generating call briefs."
             return
         }
+        guard canSubmit else {
+            errorMessage = "Enter your concern before generating call briefs."
+            return
+        }
+        _ = await resolvedRepSubmissionContext()
 
         isSubmitting = true
         defer { isSubmitting = false }
 
-        let trimmedConcern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
         let userID = await userIDForRequest()
         if mapcPipelineV3Enabled && shouldContinueMAPCV3Clarification {
             // mapc_pipeline_v3 — remove flag check after rollout confirmed
@@ -2990,6 +3016,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         let trimmedConcern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedBill = optionalBillRef.trimmingCharacters(in: .whitespacesAndNewlines)
         let userID = await userIDForRequest()
+        let resolvedRepContext = await resolvedRepSubmissionContext()
         mapcV3SessionState = "ask_selected"
         mapcV3MapcApproved = false
 
@@ -2999,8 +3026,8 @@ final class IssueCallCenterViewModel: ObservableObject {
                 concernText: trimmedConcern,
                 sessionID: sessionID,
                 selectedOptionID: selectedOptionID,
-                targetReps: requestRepSlots,
-                repTargets: repTargets,
+                targetReps: resolvedRepContext.slots,
+                repTargets: resolvedRepContext.targets,
                 optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill,
                 userState: resolvedUserState
             )
@@ -3011,7 +3038,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                     package,
                     concernText: trimmedConcern,
                     ask: resolvedAsk,
-                    selectedSlots: requestRepSlots,
+                    selectedSlots: resolvedRepContext.slots,
                     optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill
                 )
                 let validation = generatedResolutionValidation(

@@ -200,7 +200,9 @@ struct IssueCallCenterView: View {
     }
 
     private var nonMapcTabTransition: AnyTransition {
-        let travelDistance = UIScreen.main.bounds.width * 0.32
+        let baseWidth = UIScreen.main.bounds.width
+        let safeWidth = (baseWidth.isFinite && baseWidth > 0) ? baseWidth : 0
+        let travelDistance = safeWidth * 0.32
         let insertionX = nonMapcTabSlidesForward ? travelDistance : -travelDistance
         let removalX = nonMapcTabSlidesForward ? -travelDistance : travelDistance
         return .asymmetric(
@@ -822,11 +824,12 @@ struct IssueCallCenterView: View {
     }
 
     private var repProgressRow: some View {
-        HStack(spacing: 8) {
+        let safeProgressLabelCount = max(progressLabels.count, 1)
+        return HStack(spacing: 8) {
             ForEach(Array(progressLabels.enumerated()), id: \.offset) { index, label in
                 let isComplete = index < activeProgressIndex
                 let isCurrent = index == activeProgressIndex
-                let isLastStep = index == max(0, progressLabels.count - 1)
+                let isLastStep = index == max(0, safeProgressLabelCount - 1)
 
                 Text(label)
                     .font(.subheadline.weight(.semibold))
@@ -846,7 +849,7 @@ struct IssueCallCenterView: View {
                             .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
                     )
 
-                if index < progressLabels.count - 1 {
+                if index < safeProgressLabelCount - 1 {
                     Image(systemName: "chevron.right")
                         .font(.footnote.weight(.bold))
                         .foregroundColor(VoteNowColors.mutedText)
@@ -4002,10 +4005,14 @@ struct IssueCallCenterView: View {
     private func trackerIssueProgressBar(completedCalls: Int) -> some View {
         let safeGoal = max(1, trackerProgressGoalCalls)
         let safeCompleted = max(0, completedCalls)
-        let progress = min(Double(safeCompleted) / Double(safeGoal), 1)
+        let rawProgress = Double(safeCompleted) / Double(safeGoal)
+        let safeProgress = rawProgress.isFinite ? rawProgress : 0
+        let progress = min(max(safeProgress, 0), 1)
 
         return GeometryReader { geometry in
-            let filledWidth = geometry.size.width * progress
+            let width = geometry.size.width
+            let safeWidth = (width.isFinite && width > 0) ? width : 0
+            let filledWidth = safeWidth * progress
 
             ZStack(alignment: .leading) {
                 Capsule()
@@ -4792,7 +4799,8 @@ struct IssueCallCenterView: View {
             } else {
                 let steps = max(6, gain * 4)
                 for step in 1...steps {
-                    let progress = Double(step) / Double(steps)
+                    let rawProgress = Double(step) / Double(steps)
+                    let progress = rawProgress.isFinite ? rawProgress : 0
                     let increment = Int(round(Double(gain) * progress))
                     animatedTotalVoteNowCalls = min(targetTotal, currentTotal + increment)
                     animatedUserCallCount = min(targetUser, currentUser + increment)
