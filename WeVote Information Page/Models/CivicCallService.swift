@@ -1088,20 +1088,67 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             )
         }
 
-        let backgroundSession = normalizedMAPCV3SessionForBackground(pending.session)
+        var activePending = pending
+        var selectedOptionIDToUse = selectedOptionID
 
-        var backgroundRequest = URLRequest(url: endpoint("/api/v2/civic/mapc/background"))
-        backgroundRequest.httpMethod = "POST"
-        backgroundRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        await attachAuthorizationIfAvailable(to: &backgroundRequest)
-        backgroundRequest.httpBody = try encoder.encode(
-            CivicMAPCV3BackgroundRequest(
-                session: backgroundSession,
-                concernText: normalizedConcern
+        func performBackgroundRequest(using state: MAPCV3PendingSelectionState) async throws -> CivicMAPCV3BackgroundResponse {
+            let backgroundSession = normalizedMAPCV3SessionForBackground(state.session)
+            var backgroundRequest = URLRequest(url: endpoint("/api/v2/civic/mapc/background"))
+            backgroundRequest.httpMethod = "POST"
+            backgroundRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            await attachAuthorizationIfAvailable(to: &backgroundRequest)
+            backgroundRequest.httpBody = try encoder.encode(
+                CivicMAPCV3BackgroundRequest(
+                    session: backgroundSession,
+                    concernText: normalizedConcern
+                )
             )
-        )
-        let backgroundData = try await requestData(for: backgroundRequest)
-        let backgroundResponse = try decoder.decode(CivicMAPCV3BackgroundResponse.self, from: backgroundData)
+            let backgroundData = try await requestData(for: backgroundRequest)
+            return try decoder.decode(CivicMAPCV3BackgroundResponse.self, from: backgroundData)
+        }
+
+        let backgroundResponse: CivicMAPCV3BackgroundResponse
+        do {
+            logger.notice(
+                "MAPC v3 background request session_id=\(sessionID, privacy: .public) local_session_state=\(activePending.session.sessionState, privacy: .public) selected_option_id=\(selectedOptionIDToUse, privacy: .public)"
+            )
+            backgroundResponse = try await performBackgroundRequest(using: activePending)
+        } catch {
+            let originalError = error
+            if shouldRecoverMAPCV3SelectionAfterInvalidState(originalError) {
+                do {
+                    if let repaired = try await reprepareMAPCV3SelectionForInvalidStateTransition(
+                        sessionID: sessionID,
+                        concernText: normalizedConcern,
+                        previous: activePending,
+                        selectedOptionID: selectedOptionIDToUse
+                    ) {
+                        logger.notice(
+                            "MAPC v3 invalid_state_transition recovery triggered session_id=\(sessionID, privacy: .public) old_state=\(activePending.session.sessionState, privacy: .public) old_selected_option_id=\(selectedOptionIDToUse, privacy: .public)"
+                        )
+                        activePending = repaired.pending
+                        selectedOptionIDToUse = repaired.selectedOptionID
+                        mapcV3PendingSelectionStateBySessionID[sessionID] = activePending
+                        logger.notice(
+                            "MAPC v3 invalid_state_transition recovery prepared session_id=\(sessionID, privacy: .public) new_state=\(activePending.session.sessionState, privacy: .public) new_selected_option_id=\(selectedOptionIDToUse, privacy: .public)"
+                        )
+                        backgroundResponse = try await performBackgroundRequest(using: activePending)
+                    } else {
+                        logger.error(
+                            "MAPC v3 invalid_state_transition recovery unavailable session_id=\(sessionID, privacy: .public) error=\((originalError as NSError).localizedDescription, privacy: .public)"
+                        )
+                        throw originalError
+                    }
+                } catch {
+                    logger.error(
+                        "MAPC v3 invalid_state_transition recovery failed session_id=\(sessionID, privacy: .public) original_error=\((originalError as NSError).localizedDescription, privacy: .public) recovery_error=\((error as NSError).localizedDescription, privacy: .public)"
+                    )
+                    throw error
+                }
+            } else {
+                throw originalError
+            }
+        }
         let resolvedBackgroundText = backgroundResponse.backgroundText?
             .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         let missingBackground = resolvedBackgroundText.isEmpty
@@ -1133,8 +1180,8 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         scriptRequest.httpBody = try encoder.encode(
             CivicMAPCV3ScriptRequest(
                 session: backgroundResponse.session,
-                options: pending.options,
-                selectedOptionID: selectedOptionID,
+                options: activePending.options,
+                selectedOptionID: selectedOptionIDToUse,
                 confirmed: true,
                 concernText: normalizedConcern
             )
@@ -1144,7 +1191,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         mapcV3PendingSelectionStateBySessionID[sessionID] = MAPCV3PendingSelectionState(
             concernText: normalizedConcern,
             session: scriptResponse.session,
-            options: pending.options
+            options: activePending.options
         )
 
         return buildV3ScriptPackageFromStageOutputs(
@@ -1198,6 +1245,88 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             return session.withSessionState("preview_shown", mapcApproved: false)
         }
         return session.withSessionState("ask_selected", mapcApproved: false)
+    }
+
+    private func shouldRecoverMAPCV3SelectionAfterInvalidState(_ error: Error) -> Bool {
+        let lowered = (error as NSError).localizedDescription.lowercased()
+        return lowered.contains("invalid_state_transition")
+    }
+
+    private func reprepareMAPCV3SelectionForInvalidStateTransition(
+        sessionID: String,
+        concernText: String,
+        previous: MAPCV3PendingSelectionState,
+        selectedOptionID: String
+    ) async throws -> (pending: MAPCV3PendingSelectionState, selectedOptionID: String)? {
+        let selectedOption = previous.options.first { $0.optionID == selectedOptionID }
+        let normalizedConcern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let interpretPayload = CivicMAPCV3InterpretRequest(
+            sessionID: sessionID,
+            rawUserIssue: normalizedConcern,
+            concernText: normalizedConcern,
+            sessionState: "revising",
+            userZip: previous.session.userZip,
+            accumulatedContext: previous.session.accumulatedContext,
+            clarificationTurnCount: previous.session.clarificationTurnCount,
+            introShown: previous.session.introShown,
+            mapcApproved: false
+        )
+        var interpretRequest = URLRequest(url: endpoint("/api/v2/civic/mapc/interpret"))
+        interpretRequest.httpMethod = "POST"
+        interpretRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        await attachAuthorizationIfAvailable(to: &interpretRequest)
+        interpretRequest.httpBody = try encoder.encode(interpretPayload)
+        let interpretData = try await requestData(for: interpretRequest)
+        let interpretResponse = try decoder.decode(CivicMAPCV3InterpretResponse.self, from: interpretData)
+        guard !interpretResponse.session.needsClarification else { return nil }
+
+        var askRequest = URLRequest(url: endpoint("/api/v2/civic/mapc/ask-options"))
+        askRequest.httpMethod = "POST"
+        askRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        await attachAuthorizationIfAvailable(to: &askRequest)
+        askRequest.httpBody = try encoder.encode(
+            CivicMAPCV3AskOptionsRequest(
+                session: interpretResponse.session,
+                requireBillRef: false,
+                concernText: normalizedConcern
+            )
+        )
+        let askData = try await requestData(for: askRequest)
+        let askResponse = try decoder.decode(CivicMAPCV3AskOptionsResponse.self, from: askData)
+        guard !askResponse.options.isEmpty else { return nil }
+
+        let selectedID: String
+        if askResponse.options.contains(where: { $0.optionID == selectedOptionID }) {
+            selectedID = selectedOptionID
+        } else if let selectedOption,
+                  let typeMatch = askResponse.options.first(where: {
+                      $0.askType.caseInsensitiveCompare(selectedOption.askType) == .orderedSame
+                  }) {
+            selectedID = typeMatch.optionID
+        } else if let selectedOption,
+                  let displayMatch = askResponse.options.first(where: {
+                      normalizedAskOptionText($0.displayAsk) == normalizedAskOptionText(selectedOption.displayAsk)
+                  }) {
+            selectedID = displayMatch.optionID
+        } else {
+            selectedID = askResponse.options[0].optionID
+        }
+
+        let repairedPending = MAPCV3PendingSelectionState(
+            concernText: normalizedConcern,
+            session: askResponse.session,
+            options: askResponse.options
+        )
+        return (repairedPending, selectedID)
+    }
+
+    private func normalizedAskOptionText(_ value: String) -> String {
+        value
+            .lowercased()
+            .replacingOccurrences(of: "[^a-z0-9 ]", with: " ", options: .regularExpression)
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private func buildV3ScriptPackageFromStageOutputs(
@@ -1743,7 +1872,21 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 reasonCode = "reason_code_missing"
             }
         } else if let detailString = normalized(payload["detail"] as? String) {
-            detailText = detailString
+            if let detailData = detailString.data(using: .utf8),
+               let nestedObject = try? JSONSerialization.jsonObject(with: detailData, options: []),
+               let nested = nestedObject as? [String: Any] {
+                if reasonCode == nil, let nestedReason = normalized(nested["reason_code"] as? String) {
+                    reasonCode = nestedReason
+                }
+                if let nestedMessage = normalized(nested["message"] as? String) {
+                    detailText = nestedMessage
+                } else if let nestedDetail = normalized(nested["detail"] as? String) {
+                    detailText = nestedDetail
+                }
+            }
+            if detailText == nil {
+                detailText = detailString
+            }
             if reasonCode == nil && detailString.lowercased().contains("reason_code") {
                 reasonCode = "reason_code_missing"
             }
@@ -2971,6 +3114,10 @@ final class IssueCallCenterViewModel: ObservableObject {
     func prepareForMAPCV3ClarificationFollowUp() {
         // mapc_pipeline_v3 — remove flag check after rollout confirmed
         mapcV3PreserveSessionForNextSubmit = true
+        // Backend Stage 1 does not accept script_shown for follow-up turns.
+        // Force a valid transition state so subsequent ask/background stages stay in sync.
+        mapcV3SessionState = "revising"
+        mapcV3MapcApproved = false
         clearDisplayedDraftBeforeNewGeneration()
         pendingGeneratedResolution = nil
         requiresDraftApproval = false
