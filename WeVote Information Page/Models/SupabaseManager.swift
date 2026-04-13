@@ -1152,8 +1152,12 @@ final class SupabaseManager {
 
     private func isMissingUserElectionStatusTableError(_ error: Error) -> Bool {
         let message = String(describing: error)
-        return message.contains("PGRST205")
-            || message.contains("Could not find the table 'public.user_election_status'")
+        let lowered = message.lowercased()
+        let explicitMissing =
+            lowered.contains("could not find the table 'public.user_election_status'")
+            || lowered.contains("relation \"user_election_status\" does not exist")
+        let pgrst205ForThisTable = lowered.contains("pgrst205") && lowered.contains("user_election_status")
+        return explicitMissing || pgrst205ForThisTable
     }
 
     private func logMissingUserElectionStatusTableOnce(context: String) {
