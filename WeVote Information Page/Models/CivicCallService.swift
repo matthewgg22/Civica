@@ -1121,6 +1121,19 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
 
         let backgroundResponse: CivicMAPCV3BackgroundResponse
         do {
+            let normalizedState = activePending.session.sessionState
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .lowercased()
+            if normalizedState == "script_shown" || normalizedState == "preview_shown" {
+                logger.notice(
+                    "MAPC v3 background request skipped terminal_state=\(normalizedState, privacy: .public) session_id=\(sessionID, privacy: .public)"
+                )
+                throw NSError(
+                    domain: "CivicIssueCallAPIClient",
+                    code: -31_009,
+                    userInfo: [NSLocalizedDescriptionKey: "MAPC v3 terminal state; skipping stale background request."]
+                )
+            }
             logger.notice(
                 "MAPC v3 background request session_id=\(sessionID, privacy: .public) local_session_state=\(activePending.session.sessionState, privacy: .public) selected_option_id=\(selectedOptionIDToUse, privacy: .public)"
             )
@@ -2704,6 +2717,11 @@ final class IssueCallCenterViewModel: ObservableObject {
         }
     }
 
+    private func isMAPCV3TerminalDisplayState(_ state: String) -> Bool {
+        let normalized = state.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return normalized == "script_shown" || normalized == "preview_shown"
+    }
+
     private func generatedFallbackScript(title: String, actionSentence: String?, isVoicemail: Bool) -> String {
         let actionLine = actionSentence ?? "take clear public action on this issue."
         if isVoicemail {
@@ -2951,6 +2969,12 @@ final class IssueCallCenterViewModel: ObservableObject {
         // mapc_pipeline_v3 — remove flag check after rollout confirmed
         // New flow order: this can be invoked immediately after ask selection to build preview content.
         guard mapcPipelineV3Enabled else { return }
+        if isMAPCV3TerminalDisplayState(mapcV3SessionState) {
+            logger.notice(
+                "MAPC v3 Stage 3/4 skipped at call site due terminal session_state=\(self.mapcV3SessionState, privacy: .public)"
+            )
+            return
+        }
         guard let selectedOptionID = mapcV3SelectedOptionID,
               let sessionID = mapcV3PendingSessionID else {
             errorMessage = "Pick one ask option before confirming preview."
@@ -3072,6 +3096,13 @@ final class IssueCallCenterViewModel: ObservableObject {
                 )
             }
         } catch {
+            let nsError = error as NSError
+            if nsError.domain == "CivicIssueCallAPIClient", nsError.code == -31_009 {
+                logger.notice(
+                    "MAPC v3 Stage 3/4 ignored stale terminal background call session_state=\(self.mapcV3SessionState, privacy: .public)"
+                )
+                return
+            }
             pendingGeneratedResolution = nil
             lastGeneratedPackageID = nil
             requiresDraftApproval = false

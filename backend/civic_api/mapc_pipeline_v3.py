@@ -177,7 +177,11 @@ class MAPCPipelineV3Service:
         self._api_key = os.environ.get("OPENAI_API_KEY", "").strip()
         self._model = os.environ.get("VOTENOW_OPENAI_MODEL_MAPC_V3", os.environ.get("VOTENOW_OPENAI_MODEL", "gpt-5.4-nano")).strip() or "gpt-5.4-nano"
         self._base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com").rstrip("/")
-        self._timeout_seconds = max(8, int(os.environ.get("VOTENOW_OPENAI_TIMEOUT_SECONDS", "45")))
+        configured_accumulator_timeout = float(os.environ.get("MAPC_ACCUMULATOR_TIMEOUT_SECONDS", "25.0"))
+        # Keep MAPC generation latency tolerance configurable for slower model responses.
+        self._accumulator_timeout_seconds = max(25.0, configured_accumulator_timeout)
+        configured_request_timeout = float(os.environ.get("VOTENOW_OPENAI_TIMEOUT_SECONDS", "45"))
+        self._timeout_seconds = max(8.0, configured_request_timeout, self._accumulator_timeout_seconds)
 
     @property
     def enabled(self) -> bool:

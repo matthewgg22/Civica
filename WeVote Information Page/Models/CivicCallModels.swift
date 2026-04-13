@@ -309,7 +309,7 @@ struct CivicExampleIssueCard: Identifiable, Codable, Sendable {
     }
 }
 
-struct RemotePremadeScript: Identifiable, Codable {
+struct RemotePremadeScript: Identifiable, Decodable {
     let slug: String
     let title: String?
     let category: String?
@@ -348,13 +348,18 @@ struct RemotePremadeScript: Identifiable, Codable {
     }
 }
 
-struct RemotePremadeAsk: Codable {
+struct RemotePremadeAsk: Decodable {
     let ask: String
     let label: String?
 
     enum CodingKeys: String, CodingKey {
         case ask
+        case askType = "ask_type"
+        case actionType = "action_type"
+        case primaryAsk = "primary_ask"
+        case value
         case label
+        case actionTargetDisplay = "action_target_display"
     }
 
     init(ask: String, label: String? = nil) {
@@ -371,8 +376,16 @@ struct RemotePremadeAsk: Codable {
         }
 
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        ask = try container.decode(String.self, forKey: .ask)
-        label = try container.decodeIfPresent(String.self, forKey: .label)
+        ask =
+            (try container.decodeIfPresent(String.self, forKey: .ask))
+            ?? (try container.decodeIfPresent(String.self, forKey: .askType))
+            ?? (try container.decodeIfPresent(String.self, forKey: .actionType))
+            ?? (try container.decodeIfPresent(String.self, forKey: .primaryAsk))
+            ?? (try container.decodeIfPresent(String.self, forKey: .value))
+            ?? ""
+        label =
+            (try container.decodeIfPresent(String.self, forKey: .label))
+            ?? (try container.decodeIfPresent(String.self, forKey: .actionTargetDisplay))
     }
 }
 

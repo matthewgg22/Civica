@@ -474,6 +474,16 @@ def _mapc_v3_detail(exc: MAPCPipelineV3Error) -> dict[str, str]:
     }
 
 
+def _mapc_v3_payload_session_state(payload: dict[str, Any]) -> str:
+    session = payload.get("session")
+    if not isinstance(session, dict):
+        return ""
+    raw_state = session.get("session_state")
+    if not isinstance(raw_state, str):
+        return ""
+    return raw_state.strip().lower()
+
+
 def post_mapc_v3_interpret(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
     try:
         response = mapc_pipeline_v3_service.interpret(payload, user_id=user_id)
@@ -505,6 +515,20 @@ def post_mapc_v3_ask_options(payload: dict[str, Any], user_id: str) -> dict[str,
 
 
 def post_mapc_v3_background(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+    payload_state = _mapc_v3_payload_session_state(payload)
+    if payload_state in {"script_shown", "preview_shown"}:
+        logger.info("[mapc_v3] background terminal no-op payload_state=%s", payload_state)
+        session = payload.get("session")
+        safe_session = session if isinstance(session, dict) else {}
+        return {
+            "session": safe_session,
+            "background_text": None,
+            "reason": "terminal_state_noop",
+            "validator_report": {
+                "stage": "background",
+                "checks": [{"name": "terminal_state_noop", "passed": True}],
+            },
+        }
     try:
         return mapc_pipeline_v3_service.background(payload, user_id=user_id)
     except MAPCPipelineV3Error as exc:
