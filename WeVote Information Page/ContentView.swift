@@ -475,7 +475,7 @@ struct ContentView: View {
             DispatchQueue.main.async {
                 mapvPlanStore.bootstrapFromLegacyPlanViewModel(planVM)
                 mapvPlanStore.refreshLiveActivity()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 7.0) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
                     withAnimation(.easeOut(duration: 0.3)) {
                         showLaunchOverlay = false
                     }

@@ -324,7 +324,7 @@ struct RemotePremadeScript: Identifiable, Codable {
     let displayOrder: Int?
     let targetChambers: [String]?
     let primaryAsk: String?
-    let templateAsks: [String]?
+    let templateAsks: [RemotePremadeAsk]?
     let relatedBills: [String]?
     let tags: [String]?
     let updatedAt: String?
@@ -345,6 +345,34 @@ struct RemotePremadeScript: Identifiable, Codable {
         case templateAsks = "template_asks"
         case relatedBills = "related_bills"
         case updatedAt = "updated_at"
+    }
+}
+
+struct RemotePremadeAsk: Codable {
+    let ask: String
+    let label: String?
+
+    enum CodingKeys: String, CodingKey {
+        case ask
+        case label
+    }
+
+    init(ask: String, label: String? = nil) {
+        self.ask = ask
+        self.label = label
+    }
+
+    init(from decoder: Decoder) throws {
+        if let singleValue = try? decoder.singleValueContainer(),
+           let askString = try? singleValue.decode(String.self) {
+            ask = askString
+            label = nil
+            return
+        }
+
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        ask = try container.decode(String.self, forKey: .ask)
+        label = try container.decodeIfPresent(String.self, forKey: .label)
     }
 }
 
