@@ -56,6 +56,18 @@ struct MyRepsView: View {
         ].filter { !$0.officials.isEmpty }
     }
 
+    private var matchedFederalCount: Int {
+        repsVM.executiveReps.count + repsVM.federalReps.count
+    }
+
+    private var matchedStateCount: Int {
+        repsVM.stateReps.count
+    }
+
+    private var matchedLocalCount: Int {
+        repsVM.cityReps.count
+    }
+
     private var chatContexts: [RepCardContext] {
         sections.flatMap { section in
             section.officials.map { official in
@@ -66,6 +78,24 @@ struct MyRepsView: View {
 
     private var normalizedZip: String {
         String(planVM.zip.filter(\.isNumber).prefix(5))
+    }
+
+    private enum RepsLaunchState {
+        case loading
+        case empty
+        case error
+    }
+
+    private var hasLookupError: Bool {
+        let trimmed = repsVM.errorMessage?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return !trimmed.isEmpty
+    }
+
+    private var repsLaunchState: RepsLaunchState? {
+        if repsVM.isLoading { return .loading }
+        if hasLookupError { return .error }
+        if sections.isEmpty { return .empty }
+        return nil
     }
 
     private var isStateOnlyInput: Bool {
@@ -104,63 +134,48 @@ struct MyRepsView: View {
                         VStack(alignment: .leading, spacing: 16) {
                             searchCard
 
-                            locationCoverageCard()
+                            Text("Enter ZIP, city/state, or full address")
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundColor(VoteNowColors.mutedText)
+                                .frame(maxWidth: .infinity, alignment: .leading)
 
-                            if let error = repsVM.errorMessage, !error.isEmpty {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text(error)
-                                        .font(.subheadline)
-                                        .foregroundColor(VoteNowColors.urgentCTA)
+                            Button("Find My Reps") {
+                                submitLookup()
+                            }
+                            .buttonStyle(VoteNowPrimaryCTAButtonStyle())
+                            .disabled(repsVM.isLoading)
 
-                                    Button(l("app.reps.action.retry", "Retry")) {
-                                        submitLookup()
-                                    }
-                                    .buttonStyle(VoteNowPrimaryCTAButtonStyle())
-                                }
+                            if let launchState = repsLaunchState {
+                                launchStateCard(for: launchState)
                             }
 
                             if !sections.isEmpty {
+                                HStack(spacing: 6) {
+                                    Text("Matched:")
+                                        .font(.system(size: 13, weight: .semibold))
+                                        .foregroundColor(VoteNowColors.primaryText)
+                                    Text("\(matchedFederalCount) federal · \(matchedStateCount) state · \(matchedLocalCount) local")
+                                        .font(.system(size: 13, weight: .medium))
+                                        .foregroundColor(VoteNowColors.mutedText)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+
                                 ForEach(sections) { section in
                                     RepresentativeSection(
                                         title: section.title,
                                         officials: section.officials
                                     )
                                 }
-                            } else if !repsVM.isLoading && (repsVM.errorMessage?.isEmpty ?? true) {
-                                Text(l("app.reps.empty_prompt", "Enter your ZIP, city/state, or full U.S. address to load your representatives."))
-                                    .font(.subheadline)
-                                    .foregroundColor(VoteNowColors.mutedText)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.top, 8)
+
+                                locationCoverageCard()
+                            } else {
+                                locationCoverageCard()
                             }
                         }
                         .padding(.horizontal, 16)
                         .padding(.bottom, 16)
                     }
                     .scrollDismissesKeyboard(.interactively)
-                    .overlay {
-                        if repsVM.isLoading {
-                            VStack(spacing: 10) {
-                                ProgressView()
-                                    .progressViewStyle(.circular)
-                                Text(l("app.reps.loading", "Looking up your reps..."))
-                                    .font(.subheadline.weight(.semibold))
-                                    .foregroundColor(VoteNowColors.primaryText)
-                            }
-                            .padding(.horizontal, 18)
-                            .padding(.vertical, 14)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .fill(VoteNowColors.surfaceWhite.opacity(0.96))
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .stroke(VoteNowColors.borderWarm, lineWidth: 1)
-                            )
-                            .shadow(color: VoteNowColors.primaryText.opacity(0.08), radius: 4, x: 0, y: 2)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                        }
-                    }
                 }
             }
             .safeAreaInset(edge: .bottom) {
@@ -441,6 +456,53 @@ struct MyRepsView: View {
 
         if !normalizedZip.isEmpty {
             setLocationInputSilently(normalizedZip)
+        }
+    }
+
+    @ViewBuilder
+    private func launchStateCard(for state: RepsLaunchState) -> some View {
+        switch state {
+        case .loading:
+            LaunchFlowStateCard(
+                state: .loading,
+                title: l("app.reps.loading_title", "Finding your representatives"),
+                message: l("app.reps.loading", "Looking up your reps..."),
+                primaryActionTitle: l("app.reps.action.use_location", "Use my location"),
+                primaryAction: {
+                    locationFieldFocused = false
+                    repsVM.centerOnCurrentLocation()
+                }
+            )
+        case .empty:
+            LaunchFlowStateCard(
+                state: .empty,
+                title: l("app.reps.empty_title", "No representatives loaded yet"),
+                message: l("app.reps.empty_prompt", "Enter your ZIP, city/state, or full U.S. address to load your representatives."),
+                primaryActionTitle: l("app.reps.action.find_my_reps", "Find My Reps"),
+                primaryAction: {
+                    submitLookup()
+                },
+                secondaryActionTitle: l("app.reps.action.use_location", "Use my location"),
+                secondaryAction: {
+                    locationFieldFocused = false
+                    repsVM.centerOnCurrentLocation()
+                }
+            )
+        case .error:
+            LaunchFlowStateCard(
+                state: .error,
+                title: l("app.reps.error_title", "We couldn’t load your representatives"),
+                message: l("app.reps.error_retry_hint", "Try again or use your current location."),
+                primaryActionTitle: l("app.reps.action.retry", "Retry"),
+                primaryAction: {
+                    submitLookup()
+                },
+                secondaryActionTitle: l("app.reps.action.use_location", "Use my location"),
+                secondaryAction: {
+                    locationFieldFocused = false
+                    repsVM.centerOnCurrentLocation()
+                }
+            )
         }
     }
 

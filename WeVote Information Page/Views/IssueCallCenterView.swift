@@ -528,9 +528,15 @@ struct IssueCallCenterView: View {
                                     value: shouldHideTopTabSelector
                                 )
                             ZStack {
-                                nonMapcTabContent(for: viewModel.selectedTab)
-                                    .id(viewModel.selectedTab)
-                                    .transition(nonMapcTabTransition)
+                                if let launchState = launchStateForCurrentTab {
+                                    launchStateView(for: launchState)
+                                        .id("launch-state-\(viewModel.selectedTab.rawValue)")
+                                        .transition(nonMapcTabTransition)
+                                } else {
+                                    nonMapcTabContent(for: viewModel.selectedTab)
+                                        .id(viewModel.selectedTab)
+                                        .transition(nonMapcTabTransition)
+                                }
                             }
                                 .animation(.easeInOut(duration: 0.26), value: viewModel.selectedTab)
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -970,11 +976,147 @@ struct IssueCallCenterView: View {
         case .assistant:
             return "Write a Call"
         case .examples:
-            return "Browse Issues"
+            return "Browse Scripts"
         case .history:
             return "How calling works"
         case .civicScore:
             return "History"
+        }
+    }
+
+    private enum IssueCallLaunchState {
+        case loading
+        case empty
+        case error
+    }
+
+    private var launchStateForCurrentTab: IssueCallLaunchState? {
+        guard !isMAPCMode else { return nil }
+
+        if viewModel.isInitialContentLoading {
+            return .loading
+        }
+
+        switch viewModel.selectedTab {
+        case .examples:
+            if viewModel.initialContentErrorMessage != nil {
+                return .error
+            }
+            if viewModel.hasLoadedInitialContent && viewModel.isInitialContentEmpty {
+                return .empty
+            }
+        case .civicScore:
+            if viewModel.initialContentErrorMessage != nil,
+               viewModel.historyGroups.isEmpty {
+                return .error
+            }
+            if viewModel.hasLoadedInitialContent && viewModel.historyGroups.isEmpty {
+                return .empty
+            }
+        case .assistant, .history:
+            break
+        }
+
+        return nil
+    }
+
+    @ViewBuilder
+    private func launchStateView(for state: IssueCallLaunchState) -> some View {
+        VStack(spacing: 0) {
+            LaunchFlowStateCard(
+                state: launchStateVisualState(for: state),
+                title: launchStateTitle(for: state),
+                message: launchStateMessage(for: state),
+                primaryActionTitle: launchStatePrimaryActionTitle(for: state),
+                primaryAction: { launchStatePrimaryAction(for: state) },
+                secondaryActionTitle: launchStateSecondaryActionTitle(for: state),
+                secondaryAction: launchStateSecondaryAction(for: state)
+            )
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(VoteNowColors.brandSoftBlue)
+    }
+
+    private func launchStateVisualState(for state: IssueCallLaunchState) -> LaunchFlowVisualState {
+        switch state {
+        case .loading:
+            return .loading
+        case .empty:
+            return .empty
+        case .error:
+            return .error
+        }
+    }
+
+    private func launchStateTitle(for state: IssueCallLaunchState) -> String {
+        switch state {
+        case .loading:
+            return l("app.issue_call.launch_state.loading.title", "Loading your call tools")
+        case .empty:
+            return l("app.issue_call.launch_state.empty.title", "Nothing to show yet")
+        case .error:
+            return l("app.issue_call.launch_state.error.title", "We couldn’t load this section")
+        }
+    }
+
+    private func launchStateMessage(for state: IssueCallLaunchState) -> String {
+        switch state {
+        case .loading:
+            return l("app.issue_call.launch_state.loading.body", "Getting scripts, history, and score details...")
+        case .empty:
+            return l("app.issue_call.launch_state.empty.body", "Start by writing a call script, or refresh to try loading again.")
+        case .error:
+            return l("app.issue_call.launch_state.error.body", "Try again now, or continue by writing a call script manually.")
+        }
+    }
+
+    private func launchStatePrimaryActionTitle(for state: IssueCallLaunchState) -> String? {
+        switch state {
+        case .loading:
+            return l("app.issue_call.launch_state.loading.action.primary", "Write a Call")
+        case .empty, .error:
+            return l("app.issue_call.launch_state.action.retry", "Retry")
+        }
+    }
+
+    private func launchStateSecondaryActionTitle(for state: IssueCallLaunchState) -> String? {
+        switch state {
+        case .loading:
+            return l("app.issue_call.launch_state.loading.action.secondary", "Refresh")
+        case .empty, .error:
+            return l("app.issue_call.launch_state.action.fallback", "Write a Call")
+        }
+    }
+
+    private func launchStatePrimaryAction(for state: IssueCallLaunchState) {
+        switch state {
+        case .loading:
+            withAnimation(.easeInOut(duration: 0.2)) {
+                viewModel.selectedTab = .assistant
+            }
+        case .empty, .error:
+            Task {
+                await refreshPremadeExamples()
+            }
+        }
+    }
+
+    private func launchStateSecondaryAction(for state: IssueCallLaunchState) -> (() -> Void)? {
+        switch state {
+        case .loading:
+            return {
+                Task {
+                    await refreshPremadeExamples()
+                }
+            }
+        case .empty, .error:
+            return {
+                transitionToAssistantFromPremade(prefillConcern: nil)
+            }
         }
     }
 
@@ -1260,9 +1402,32 @@ struct IssueCallCenterView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundColor(VoteNowColors.primaryText)
 
-                Text("Building background + script preview...")
+                Text("Pick the first action you want the office to take.")
                     .font(.caption.weight(.semibold))
                     .foregroundColor(VoteNowColors.mutedText)
+
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 165), spacing: 8)], spacing: 8) {
+                    ForEach(Array(viewModel.mapcV3AskOptions.prefix(4))) { option in
+                        Button {
+                            selectMAPCV3OptionInChat(option)
+                        } label: {
+                            Text(sanitizedMAPCV3OptionLabel(option.displayAsk))
+                                .font(.caption.weight(.semibold))
+                                .foregroundColor(VoteNowColors.primaryText)
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 9)
+                                .background(VoteNowColors.surfaceWhite)
+                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                        .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                                )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
             } else {
                 Text("Does this match what you meant?")
                     .font(.subheadline.weight(.semibold))
@@ -1861,49 +2026,21 @@ struct IssueCallCenterView: View {
                 return
             }
 
-            let preferredOption = mapcV3PreferredAutoOption()
-            guard let preferredOption else {
-                appendAssistantBotMessage(
-                    "I hit a snag, but I still have your issue. Pick a fix or restate the action you want.",
-                    kind: .plain,
-                    messageType: "offline_notice"
-                )
-                assistantFlowStage = .awaitingPrompt
-                viewModel.errorMessage = nil
-                return
-            }
-
-            hasPickedDiscussionOptionInCurrentCycle = true
+            hasPickedDiscussionOptionInCurrentCycle = false
             awaitingCustomAskInput = false
             awaitingCustomAgenticStrategyInput = false
             previewLintBlocked = false
             hasRetriedPreviewLintRegeneration = false
             hasAcceptedCurrentMAPCV3Preview = false
-            viewModel.selectMAPCV3Option(optionID: preferredOption.optionID)
-            appendAssistantBotMessage(
-                "Using the best ask option automatically and generating your background + script preview.",
-                kind: .plain,
-                messageType: "ask_auto_selected"
-            )
-            assistantIsThinking = true
             hasPostedCurrentDraftBackground = true
-            hasAcceptedCurrentMAPCV3Preview = false
-            awaitingCustomAskInput = false
             pendingBackgroundMessageID = nil
             pendingScriptPreviewMessageID = nil
             withAnimation(.easeOut(duration: 0.18)) {
-                isBackgroundMessageReadyForActions = false
+                isBackgroundMessageReadyForActions = true
                 isScriptPreviewReadyForMAPCActions = false
             }
-            assistantFlowStage = .awaitingPrompt
+            assistantFlowStage = .awaitingBackgroundApproval
             viewModel.errorMessage = nil
-            Task {
-                await viewModel.generateMAPCV3ScriptAfterPreviewConfirmation()
-                await MainActor.run {
-                    assistantIsThinking = false
-                    processMAPCV3ConfirmedResult()
-                }
-            }
             return
         }
 
@@ -1924,19 +2061,17 @@ struct IssueCallCenterView: View {
         assistantFlowStage = .awaitingPrompt
     }
 
-    private func mapcV3PreferredAutoOption() -> CivicMAPCV3PreparedOption? {
-        let options = viewModel.mapcV3AskOptions
-        guard !options.isEmpty else { return nil }
-        if let selectedAsk = viewModel.selectedAsk,
-           let exactAskMatch = options.first(where: { option in
-               option.askType.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == selectedAsk.rawValue
-           }) {
-            return exactAskMatch
+    private func sanitizedMAPCV3OptionLabel(_ text: String) -> String {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return "Take action on this issue" }
+        let lowered = trimmed.lowercased()
+        if lowered.contains("testif")
+            || lowered.contains("testimony")
+            || lowered.contains("hearing")
+            || lowered.contains("committee") {
+            return "Take public action on this issue"
         }
-        if let firstNonOther = options.first(where: { !isMAPCV3OtherOption($0) }) {
-            return firstNonOther
-        }
-        return options.first
+        return trimmed
     }
 
     private func postStructuredBackgroundIfNeeded() {
@@ -2163,6 +2298,12 @@ struct IssueCallCenterView: View {
 
     private func selectMAPCV3OptionInChat(_ option: CivicMAPCV3PreparedOption) {
         guard !assistantIsThinking, !viewModel.isSubmitting else { return }
+        print(
+            "🧭 [Founder Trace] User tapped follow-up option. " +
+            "option_id=\(option.optionID) " +
+            "ask_type=\(option.askType) " +
+            "display_ask=\(option.displayAsk)"
+        )
         if isMAPCV3OtherOption(option) {
             // mapc_pipeline_v3 — remove flag check after rollout confirmed
             promptForCustomMAPCV3ConcernInput()
@@ -2177,7 +2318,10 @@ struct IssueCallCenterView: View {
         viewModel.selectMAPCV3Option(optionID: option.optionID)
         // mapc_pipeline_v3 — remove flag check after rollout confirmed
         // New flow order: selecting an ask immediately generates background + script preview.
-        appendAssistantUserMessage("Selected ask: \(option.displayAsk)", messageType: "ask_selected")
+        appendAssistantUserMessage(
+            "Selected ask: \(sanitizedMAPCV3OptionLabel(option.displayAsk))",
+            messageType: "ask_selected"
+        )
         assistantIsThinking = true
         pendingBackgroundMessageID = nil
         pendingScriptPreviewMessageID = nil
@@ -2253,21 +2397,8 @@ struct IssueCallCenterView: View {
         }
 
         if viewModel.requiresDraftApproval, let brief = viewModel.activeBrief {
-            if let lintReason = mapcPreviewLintFailureReason(for: brief) {
-                if normalizedGenerationPath == "v3", !hasRetriedPreviewLintRegeneration {
-                    // mapc_pipeline_v3 — remove flag check after rollout confirmed
-                    hasRetriedPreviewLintRegeneration = true
-                    assistantIsThinking = true
-                    Task {
-                        await viewModel.generateMAPCV3ScriptAfterPreviewConfirmation()
-                        await MainActor.run {
-                            assistantIsThinking = false
-                            processMAPCV3ConfirmedResult()
-                        }
-                    }
-                    return
-                }
-
+            if let lintReason = mapcPreviewLintFailureReason(for: brief),
+               isBlockingMAPCV3PreviewLintReason(lintReason) {
                 previewLintBlocked = true
                 hasAcceptedCurrentMAPCV3Preview = false
                 appendAssistantBotMessage(
@@ -2377,6 +2508,13 @@ struct IssueCallCenterView: View {
             }
         }
         return nil
+    }
+
+    private func isBlockingMAPCV3PreviewLintReason(_ reason: String) -> Bool {
+        let lowered = reason.lowercased()
+        // Only block progression for hard-stop formatting failures.
+        return lowered.contains("placeholder")
+            || lowered.contains("empty script")
     }
 
     private func singleScriptLintFailureReason(script: String, rawIssue: String) -> String? {

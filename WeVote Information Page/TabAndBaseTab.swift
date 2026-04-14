@@ -27,7 +27,7 @@ struct TabAndBaseTab: View {
                 .tabItem { Label("My Reps", systemImage: "person.3.fill") }
                 .tag(Tab.myReps)
 
-            // Call Your Rep
+            // Call Your Reps
             NavigationStack {
                 IssueCallCenterView(
                     federalReps: repsVM.federalReps,
@@ -49,7 +49,7 @@ struct TabAndBaseTab: View {
                 .tabItem {
                     Image(uiImage: VoteNowLogoIcon.tabBarBarsUIImage)
                         .renderingMode(.original)
-                    Text("Call Your Rep")
+                    Text("Call Your Reps")
                 }
                 .tag(Tab.callYourReps)
 

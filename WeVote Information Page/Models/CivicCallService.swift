@@ -715,6 +715,7 @@ protocol CivicIssueCallAPIClientProtocol {
         optionalBillRef: String?,
         userState: String?
     ) async throws -> CivicScriptPackageResponse
+    func mapcV3ResolvedSessionID(from sessionID: String) -> String?
     func logScriptFeedback(
         userID: String,
         packageID: String,
@@ -1115,6 +1116,15 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         var activePending = pending
         var selectedOptionIDToUse = selectedOptionID
 
+        func fallbackBackgroundResponse(for session: CivicMAPCV3Session, reason: String) -> CivicMAPCV3BackgroundResponse {
+            CivicMAPCV3BackgroundResponse(
+                session: normalizedMAPCV3SessionForBackground(session),
+                backgroundText: nil,
+                reason: reason,
+                validatorReport: nil
+            )
+        }
+
         func performBackgroundRequest(using state: MAPCV3PendingSelectionState) async throws -> CivicMAPCV3BackgroundResponse {
             let backgroundSession = normalizedMAPCV3SessionForBackground(state.session)
             var backgroundRequest = URLRequest(url: endpoint("/api/v2/civic/mapc/background"))
@@ -1127,11 +1137,16 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                     concernText: normalizedConcern
                 )
             )
-            let backgroundData = try await requestData(for: backgroundRequest)
-            return try decoder.decode(CivicMAPCV3BackgroundResponse.self, from: backgroundData)
+            logMAPCV3Request(backgroundRequest)
+            let backgroundData = try await requestDataForMAPCV3Stage(for: backgroundRequest)
+            return try decodeMAPCV3Response(
+                CivicMAPCV3BackgroundResponse.self,
+                from: backgroundData,
+                endpointPath: backgroundRequest.url?.path ?? "/api/v2/civic/mapc/background"
+            )
         }
 
-        let backgroundResponse: CivicMAPCV3BackgroundResponse
+        var backgroundResponse: CivicMAPCV3BackgroundResponse
         do {
             let normalizedState = activePending.session.sessionState
                 .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -1208,8 +1223,26 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                     logger.error(
                         "MAPC v3 invalid_state_transition recovery failed session_id=\(sessionID, privacy: .public) original_error=\((originalError as NSError).localizedDescription, privacy: .public) recovery_error=\((error as NSError).localizedDescription, privacy: .public)"
                     )
-                    throw error
+                    if shouldGracefullySkipMAPCV3Background(error) {
+                        logger.warning(
+                            "MAPC v3 Stage 3 background transport failed after recovery; continuing without background session_id=\(sessionID, privacy: .public) error=\((error as NSError).localizedDescription, privacy: .public)"
+                        )
+                        backgroundResponse = fallbackBackgroundResponse(
+                            for: activePending.session,
+                            reason: "background_transport_skip_after_recovery"
+                        )
+                    } else {
+                        throw error
+                    }
                 }
+            } else if shouldGracefullySkipMAPCV3Background(originalError) {
+                logger.warning(
+                    "MAPC v3 Stage 3 background transport failed; continuing without background session_id=\(sessionID, privacy: .public) error=\((originalError as NSError).localizedDescription, privacy: .public)"
+                )
+                backgroundResponse = fallbackBackgroundResponse(
+                    for: activePending.session,
+                    reason: "background_transport_skip"
+                )
             } else {
                 throw originalError
             }
@@ -1251,8 +1284,13 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 concernText: normalizedConcern
             )
         )
-        let scriptData = try await requestData(for: scriptRequest)
-        let scriptResponse = try decoder.decode(CivicMAPCV3ScriptResponse.self, from: scriptData)
+        logMAPCV3Request(scriptRequest)
+        let scriptData = try await requestDataForMAPCV3Stage(for: scriptRequest)
+        let scriptResponse = try decodeMAPCV3Response(
+            CivicMAPCV3ScriptResponse.self,
+            from: scriptData,
+            endpointPath: scriptRequest.url?.path ?? "/api/v2/civic/mapc/script"
+        )
         mapcV3PendingSelectionStateBySessionID[sessionID] = MAPCV3PendingSelectionState(
             concernText: normalizedConcern,
             session: scriptResponse.session,
@@ -1303,6 +1341,12 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             session: session,
             options: response.options
         )
+    }
+
+    func mapcV3ResolvedSessionID(from sessionID: String) -> String? {
+        let trimmedSessionID = sessionID.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedSessionID.isEmpty else { return nil }
+        return mapcV3PendingSelectionStateBySessionID[trimmedSessionID]?.session.sessionID
     }
 
     private func normalizedMAPCV3SessionForBackground(_ session: CivicMAPCV3Session) -> CivicMAPCV3Session {
@@ -1983,6 +2027,71 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         }
     }
 
+    private func requestDataForMAPCV3Stage(for request: URLRequest) async throws -> Data {
+        var lastError: Error?
+        for attempt in 1...3 {
+            do {
+                return try await requestData(
+                    for: request,
+                    timeout: max(request.timeoutInterval, requestTimeout),
+                    allowTimeoutRetry: true,
+                    allowTransient400Retry: true
+                )
+            } catch {
+                lastError = error
+                guard attempt < 3, shouldRetryMAPCV3StageRequest(error) else {
+                    throw error
+                }
+                let backoffNanos: UInt64 = attempt == 1 ? 350_000_000 : 800_000_000
+                try? await Task.sleep(nanoseconds: backoffNanos)
+            }
+        }
+        throw lastError ?? URLError(.timedOut)
+    }
+
+    private func shouldRetryMAPCV3StageRequest(_ error: Error) -> Bool {
+        let nsError = error as NSError
+        if nsError.domain == "CivicIssueCallAPIClient", [502, 503, 504].contains(nsError.code) {
+            return true
+        }
+        guard let urlError = error as? URLError else {
+            return false
+        }
+        switch urlError.code {
+        case .timedOut, .networkConnectionLost, .cannotConnectToHost, .cannotFindHost, .dnsLookupFailed:
+            return true
+        default:
+            return false
+        }
+    }
+
+    private func shouldGracefullySkipMAPCV3Background(_ error: Error) -> Bool {
+        if let urlError = error as? URLError {
+            switch urlError.code {
+            case .timedOut, .networkConnectionLost, .cannotConnectToHost, .cannotFindHost, .dnsLookupFailed:
+                return true
+            default:
+                break
+            }
+        }
+
+        let nsError = error as NSError
+        if nsError.domain == "CivicIssueCallAPIClient" {
+            if [502, 503, 504].contains(nsError.code) {
+                return true
+            }
+            if nsError.code == URLError.timedOut.rawValue {
+                return true
+            }
+            let lowered = nsError.localizedDescription.lowercased()
+            if lowered.contains("upstream html error page") || lowered.contains("timed out") {
+                return true
+            }
+        }
+
+        return false
+    }
+
     private func shouldRetryTransientMAPCV3BadRequest(error: Error, request: URLRequest) -> Bool {
         guard let path = request.url?.path.lowercased(),
               path.contains("/api/v2/civic/mapc/") else {
@@ -2013,7 +2122,14 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
     private func performRequestWithResponse(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse else { throw URLError(.badServerResponse) }
+        let path = request.url?.path ?? "<unknown-path>"
+        if path.contains("/api/v2/civic/mapc/") {
+            founderTrace("HTTP \(http.statusCode) from \(path)")
+        }
         guard (200...299).contains(http.statusCode) else {
+            let rawResponse = String(data: data, encoding: .utf8) ?? "<non-utf8-response>"
+            founderTrace("Backend returned non-2xx. path=\(path) status=\(http.statusCode)")
+            founderTrace("Raw backend error response: \(rawResponse)")
             let compactMessage = compactHTTPErrorMessage(statusCode: http.statusCode, responseData: data)
             throw NSError(domain: "CivicIssueCallAPIClient", code: http.statusCode, userInfo: [
                 NSLocalizedDescriptionKey: compactMessage
@@ -2024,38 +2140,49 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
 
     private func logMAPCV3Request(_ request: URLRequest) {
         let path = request.url?.path ?? "<unknown-path>"
-        print("🌐 [MAPC] endpoint path: \(path)")
+        print("🧭 [Founder Trace] endpoint path: \(path)")
         let body = request.httpBody ?? Data()
         let bodyString = String(data: body, encoding: .utf8) ?? "<non-utf8-request-body>"
-        print("🌐 [MAPC] request body JSON: \(bodyString)")
+        print("🧭 [Founder Trace] outbound JSON payload: \(bodyString)")
+    }
+
+    private func founderTrace(_ message: String) {
+        print("🧭 [Founder Trace] \(message)")
     }
 
     private func decodeMAPCV3Response<ResponseType: Decodable>(
         _ responseType: ResponseType.Type,
         from data: Data,
-        endpointPath: String
+        endpointPath: String,
+        file: String = #fileID,
+        function: String = #function,
+        line: Int = #line
     ) throws -> ResponseType {
         let rawResponse = String(data: data, encoding: .utf8) ?? "<non-utf8-response>"
-        print("🌐 [MAPC] raw response BEFORE decode (\(endpointPath)): \(rawResponse)")
+        print("🧭 [Founder Trace] raw backend response BEFORE decode (\(endpointPath)): \(rawResponse)")
         do {
             let decoded = try decoder.decode(ResponseType.self, from: data)
-            print("✅ Decode success")
+            print("✅ [Founder Trace] decode success at \(endpointPath)")
             return decoded
         } catch DecodingError.keyNotFound(let key, let context) {
-            print("❌ keyNotFound:", key, context.debugDescription, context.codingPath)
+            print("❌ [Founder Trace] keyNotFound:", key, context.debugDescription, context.codingPath)
         } catch DecodingError.valueNotFound(let value, let context) {
-            print("❌ valueNotFound:", value, context.debugDescription, context.codingPath)
+            print("❌ [Founder Trace] valueNotFound:", value, context.debugDescription, context.codingPath)
         } catch DecodingError.typeMismatch(let type, let context) {
-            print("❌ typeMismatch:", type, context.debugDescription, context.codingPath)
+            print("❌ [Founder Trace] typeMismatch:", type, context.debugDescription, context.codingPath)
         } catch DecodingError.dataCorrupted(let context) {
-            print("❌ dataCorrupted:", context.debugDescription)
+            print("❌ [Founder Trace] dataCorrupted:", context.debugDescription)
         } catch {
-            print("❌ Unknown decode error:", error)
+            print("❌ [Founder Trace] Unknown decode error:", error)
         }
+        print(
+            "🚨 [Founder Trace] response parse failed. " +
+            "location=\(file):\(line) function=\(function) endpoint=\(endpointPath)"
+        )
         throw NSError(
             domain: "CivicIssueCallAPIClient",
             code: -31_020,
-            userInfo: [NSLocalizedDescriptionKey: "Failed to decode MAPC response at \(endpointPath)."]
+            userInfo: [NSLocalizedDescriptionKey: "Failed to decode MAPC response at \(endpointPath) [\(file):\(line)]."]
         )
     }
 
@@ -2340,6 +2467,10 @@ final class IssueCallCenterViewModel: ObservableObject {
     @Published var optionalBillRef: String = ""
     @Published var isSubmitting = false
     @Published var errorMessage: String?
+    @Published var isInitialContentLoading = false
+    @Published var hasLoadedInitialContent = false
+    @Published var isInitialContentEmpty = false
+    @Published var initialContentErrorMessage: String?
 
     @Published var issueTitle: String = ""
     @Published var issueSummary: String = ""
@@ -2644,33 +2775,49 @@ final class IssueCallCenterViewModel: ObservableObject {
 
     // Loading remains non-fatal: network failures resolve to an empty data set, and UI
     // can use its existing loading/error/empty states.
-    func loadPremadeScripts() async -> [RemotePremadeScript] {
+    func loadPremadeScripts() async -> (scripts: [RemotePremadeScript], failed: Bool) {
         do {
-            return try await fetchPublishedPremadeScripts()
+            return (try await fetchPublishedPremadeScripts(), false)
         } catch {
             logger.error("Failed loading published premade scripts: \(String(describing: error), privacy: .public)")
-            return []
+            return ([], true)
         }
     }
 
     func loadExamplesAndHistory() async {
+        isInitialContentLoading = true
+        initialContentErrorMessage = nil
+        isInitialContentEmpty = false
+        defer {
+            isInitialContentLoading = false
+            hasLoadedInitialContent = true
+        }
+
         let userID = await userIDForRequest()
-
-        async let remotePremadeScriptsTask: [RemotePremadeScript] = loadPremadeScripts()
-        async let historyTask: [CivicHistoryGroup] = apiClient.fetchHistory(userID: userID)
-
-        let remotePremadeScripts = await remotePremadeScriptsTask
-        let mappedRemoteExamples = mapRemoteScriptsToExampleCards(remotePremadeScripts)
+        let remotePremadeScriptsResult = await loadPremadeScripts()
+        let mappedRemoteExamples = mapRemoteScriptsToExampleCards(remotePremadeScriptsResult.scripts)
         examples = mappedRemoteExamples
 
+        var didFailHistoryLoad = false
+
         do {
-            historyGroups = try await historyTask
+            historyGroups = try await apiClient.fetchHistory(userID: userID)
             saveSnapshot()
         } catch {
+            didFailHistoryLoad = true
             // Keep local snapshot history as offline fallback.
         }
 
         await refreshCallScoreData(for: userID)
+
+        let hasContent = !examples.isEmpty || !historyGroups.isEmpty || !callBriefs.isEmpty
+        if !hasContent {
+            if remotePremadeScriptsResult.failed || didFailHistoryLoad {
+                initialContentErrorMessage = "We couldn’t load your call data right now. Please try again."
+            } else {
+                isInitialContentEmpty = true
+            }
+        }
     }
 
     func loadExamplesAndHistoryIfNeeded(force: Bool = false) async {
@@ -3079,12 +3226,23 @@ final class IssueCallCenterViewModel: ObservableObject {
         // mapc_pipeline_v3 — remove flag check after rollout confirmed
         // New flow order: this can be invoked immediately after ask selection to build preview content.
         guard mapcPipelineV3Enabled else { return }
+        let normalizedState = mapcV3SessionState
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+        if requiresDraftApproval,
+           pendingGeneratedResolution != nil,
+           normalizedState == "preview_shown" || normalizedState == "script_shown" {
+            mapcV3SessionState = "preview_shown"
+            errorMessage = nil
+            return
+        }
         guard let selectedOptionID = mapcV3SelectedOptionID,
               let sessionID = mapcV3PendingSessionID else {
             errorMessage = "Pick one ask option before confirming preview."
             return
         }
         let selectedOption = mapcV3AskOptions.first(where: { $0.optionID == selectedOptionID })
+        let selectedOptionLabel = selectedOption?.displayAsk ?? "<missing-option-label>"
         let resolvedAsk = civicAsk(from: selectedOption?.askType) ?? selectedAsk ?? .support
         selectedAsk = resolvedAsk
 
@@ -3095,7 +3253,20 @@ final class IssueCallCenterViewModel: ObservableObject {
         let trimmedBill = optionalBillRef.trimmingCharacters(in: .whitespacesAndNewlines)
         let userID = await userIDForRequest()
         let resolvedRepContext = await resolvedRepSubmissionContext()
-        mapcV3SessionState = "ask_selected"
+        let concernPreview = trimmedConcern.isEmpty ? "<empty>" : String(trimmedConcern.prefix(140))
+        print(
+            "🧭 [Founder Trace] " +
+            "Stage 3/4 preflight. " +
+            "session_id=\(sessionID) " +
+            "session_state=\(mapcV3SessionState) " +
+            "selected_option_id=\(selectedOptionID) " +
+            "selected_option_label=\(selectedOptionLabel) " +
+            "concern_preview=\(concernPreview) " +
+            "rep_slot_count=\(resolvedRepContext.slots.count)"
+        )
+        if normalizedState != "ask_selected" {
+            mapcV3SessionState = "ask_selected"
+        }
         mapcV3MapcApproved = false
 
         do {
@@ -3149,6 +3320,9 @@ final class IssueCallCenterViewModel: ObservableObject {
                 errorMessage = nil
                 applyResolution(finalResponse)
                 pendingGeneratedResolution = finalResponse
+                if let resolvedSessionID = apiClient.mapcV3ResolvedSessionID(from: sessionID) {
+                    mapcV3PendingSessionID = resolvedSessionID
+                }
                 lastGeneratedPackageID = package.packageID
                 requiresDraftApproval = true
                 // Preview is now shown before final "Looks right" confirmation.
@@ -3201,11 +3375,19 @@ final class IssueCallCenterViewModel: ObservableObject {
                 )
             }
         } catch {
+            let failureNSError = error as NSError
+            print(
+                "🚨 [Founder Trace] failure at Stage 3/4 request/parse. " +
+                "location=\(#fileID):\(#line) function=\(#function) " +
+                "domain=\(failureNSError.domain) code=\(failureNSError.code) " +
+                "message=\(failureNSError.localizedDescription)"
+            )
             let nsError = error as NSError
             if nsError.domain == "CivicIssueCallAPIClient", nsError.code == -31_009 {
                 logger.notice(
                     "MAPC v3 Stage 3/4 ignored stale terminal background call session_state=\(self.mapcV3SessionState, privacy: .public)"
                 )
+                errorMessage = nil
                 return
             }
             pendingGeneratedResolution = nil

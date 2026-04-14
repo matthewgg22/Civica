@@ -376,20 +376,36 @@ struct RemotePremadeAsk: Decodable {
         }
 
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        func decodeAskCandidate(for key: CodingKeys) -> String? {
+            if let value = try? container.decode(String.self, forKey: key) {
+                let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+                return trimmed.isEmpty ? nil : trimmed
+            }
+            if let value = try? container.decode(Int.self, forKey: key) {
+                return String(value)
+            }
+            if let value = try? container.decode(Double.self, forKey: key) {
+                return String(value)
+            }
+            if let value = try? container.decode(Bool.self, forKey: key) {
+                return value ? "true" : "false"
+            }
+            return nil
+        }
         var decodedAsk: String? = nil
         for key in [CodingKeys.ask, .askType, .actionType, .primaryAsk, .value] {
-            if let value = try container.decodeIfPresent(String.self, forKey: key) {
-                decodedAsk = value
+            if let candidate = decodeAskCandidate(for: key) {
+                decodedAsk = candidate
                 break
             }
         }
         ask = decodedAsk ?? ""
 
-        var decodedLabel = try container.decodeIfPresent(String.self, forKey: .label)
+        var decodedLabel = try? container.decodeIfPresent(String.self, forKey: .label)
         if decodedLabel == nil {
-            decodedLabel = try container.decodeIfPresent(String.self, forKey: .actionTargetDisplay)
+            decodedLabel = try? container.decodeIfPresent(String.self, forKey: .actionTargetDisplay)
         }
-        label = decodedLabel
+        label = decodedLabel?.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 
@@ -417,16 +433,35 @@ struct RemotePremadeRelatedBill: Decodable {
 
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let candidate = [
-            try container.decodeIfPresent(String.self, forKey: .vehicleLabel),
-            try container.decodeIfPresent(String.self, forKey: .title),
-            try container.decodeIfPresent(String.self, forKey: .vehicleID),
-            try container.decodeIfPresent(String.self, forKey: .billNumber),
-            try container.decodeIfPresent(String.self, forKey: .actionTargetDisplay)
+            Self.decodeLossyString(for: .vehicleLabel, in: container),
+            Self.decodeLossyString(for: .title, in: container),
+            Self.decodeLossyString(for: .vehicleID, in: container),
+            Self.decodeLossyString(for: .billNumber, in: container),
+            Self.decodeLossyString(for: .actionTargetDisplay, in: container)
         ]
         .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
         .first(where: { !$0.isEmpty })
 
         displayText = candidate ?? ""
+    }
+
+    private static func decodeLossyString(
+        for key: CodingKeys,
+        in container: KeyedDecodingContainer<CodingKeys>
+    ) -> String? {
+        if let value = try? container.decodeIfPresent(String.self, forKey: key) {
+            return value
+        }
+        if let value = try? container.decodeIfPresent(Int.self, forKey: key) {
+            return String(value)
+        }
+        if let value = try? container.decodeIfPresent(Double.self, forKey: key) {
+            return String(value)
+        }
+        if let value = try? container.decodeIfPresent(Bool.self, forKey: key) {
+            return value ? "true" : "false"
+        }
+        return nil
     }
 }
 
@@ -739,7 +774,7 @@ enum CivicIssueCallTab: String, CaseIterable, Identifiable, Codable {
     var title: String {
         switch self {
         case .assistant: return "Write a Call"
-        case .examples: return "Browse Issues"
+        case .examples: return "Browse Scripts"
         case .civicScore: return "History"
         case .history: return "How calling works"
         }

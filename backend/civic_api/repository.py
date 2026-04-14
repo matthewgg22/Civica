@@ -790,7 +790,18 @@ class SupabaseCivicRepository(CivicRepository):
 
     def insert_script_chat_turn(self, turn_row: dict[str, Any]) -> None:
         try:
+            logger.info(
+                "🧭 [Founder Trace][Supabase] insert mapc_script_chat_turns session_id=%s turn_index=%s message_type=%s",
+                turn_row.get("session_id"),
+                turn_row.get("turn_index"),
+                turn_row.get("message_type"),
+            )
             self._request_json("POST", "/rest/v1/mapc_script_chat_turns", body=[turn_row])
+            logger.info(
+                "🧭 [Founder Trace][Supabase] insert mapc_script_chat_turns success session_id=%s turn_index=%s",
+                turn_row.get("session_id"),
+                turn_row.get("turn_index"),
+            )
         except urllib.error.HTTPError as exc:
             if exc.code in {400, 404}:
                 logger.warning("Skipping mapc_script_chat_turns insert during rollout (status=%s).", exc.code)

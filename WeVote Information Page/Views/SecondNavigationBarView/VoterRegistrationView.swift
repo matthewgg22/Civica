@@ -473,6 +473,77 @@ struct VoterRegistrationView: View {
         }
     }
 
+    private enum RegistrationLaunchState {
+        case loading
+        case empty
+        case error
+    }
+
+    private var registrationLaunchState: RegistrationLaunchState? {
+        if repsVM.isLoading, guideContext == nil {
+            return .loading
+        }
+
+        let hasLocationContext = registrationStateCode != nil || normalizedShareZip != nil
+        if !hasLocationContext && groupedSections.isEmpty {
+            return .empty
+        }
+
+        if hasLocationContext && groupedSections.isEmpty {
+            return .error
+        }
+
+        return nil
+    }
+
+    @ViewBuilder
+    private func registrationLaunchStateCard(for state: RegistrationLaunchState) -> some View {
+        switch state {
+        case .loading:
+            LaunchFlowStateCard(
+                state: .loading,
+                title: l("app.registration.launch_state.loading.title", "Loading your voting guide"),
+                message: l("app.registration.launch_state.loading.body", "Gathering election details for your location..."),
+                primaryActionTitle: l("app.registration.launch_state.loading.action.primary", "Use Current Location"),
+                primaryAction: {
+                    repsVM.centerOnCurrentLocation()
+                },
+                secondaryActionTitle: l("app.reps.action.edit_location", "Edit Location"),
+                secondaryAction: {
+                    openMyInfoPanel()
+                }
+            )
+        case .empty:
+            LaunchFlowStateCard(
+                state: .empty,
+                title: l("app.registration.launch_state.empty.title", "Set your location to continue"),
+                message: l("app.registration.launch_state.empty.body", "Add your address so we can show the right voting guide for your area."),
+                primaryActionTitle: l("app.registration.launch_state.empty.action.primary", "Set My Address"),
+                primaryAction: {
+                    openMyInfoPanel()
+                },
+                secondaryActionTitle: l("app.registration.launch_state.empty.action.secondary", "Use Current Location"),
+                secondaryAction: {
+                    repsVM.centerOnCurrentLocation()
+                }
+            )
+        case .error:
+            LaunchFlowStateCard(
+                state: .error,
+                title: l("app.registration.launch_state.error.title", "We couldn’t load this voting guide"),
+                message: l("app.registration.launch_state.error.body", "Try again now, or use Vote.gov as a backup."),
+                primaryActionTitle: l("app.registration.launch_state.error.action.primary", "Retry"),
+                primaryAction: {
+                    retryRegistrationGuideLoad()
+                },
+                secondaryActionTitle: l("app.registration.launch_state.error.action.secondary", "Go to Vote.gov"),
+                secondaryAction: {
+                    openURL(voteGovURL)
+                }
+            )
+        }
+    }
+
     var body: some View {
         NavigationStack {
             GeometryReader { _ in
@@ -481,33 +552,46 @@ struct VoterRegistrationView: View {
                         overscrollBackground
 
                         ScrollView(.vertical) {
-                            LazyVStack(spacing: 0) {
+                            if let launchState = registrationLaunchState {
                                 VStack(spacing: 0) {
-                                    registrationReadinessPanel(proxy: proxy)
+                                    registrationLaunchStateCard(for: launchState)
                                         .padding(.horizontal, 16)
-                                        .padding(.top, 8)
-                                        .padding(.bottom, 10)
+                                        .padding(.top, 10)
+                                        .padding(.bottom, 14)
+                                    Spacer(minLength: 0)
                                 }
                                 .frame(maxWidth: .infinity)
-                                .background(VoteNowColors.appBackground)
+                            } else {
+                                LazyVStack(spacing: 0) {
+                                    VStack(spacing: 0) {
+                                        registrationReadinessPanel(proxy: proxy)
+                                            .padding(.horizontal, 16)
+                                            .padding(.top, 8)
+                                            .padding(.bottom, 10)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .background(VoteNowColors.appBackground)
 
-                                ForEach(groupedSections) { section in
-                                    sectionTimeline(section)
-                                        .id(section.phase)
+                                    ForEach(groupedSections) { section in
+                                        sectionTimeline(section)
+                                            .id(section.phase)
+                                    }
                                 }
+                                .padding(.top, stickyHeaderOffset)
+                                .padding(.bottom, 24)
                             }
-                            .padding(.top, stickyHeaderOffset)
-                            .padding(.bottom, 24)
                         }
                         .scrollIndicators(.hidden)
                         .coordinateSpace(name: "VoterRegistrationScroll")
 
-                        stickyGuideStripDock(proxy: proxy)
-                            .padding(.top, stickyHeaderOffset)
-                            .frame(maxWidth: .infinity, alignment: .top)
-                            .zIndex(4)
-                            .opacity(shouldShowStickyGuideStrip ? 1 : 0)
-                            .allowsHitTesting(shouldShowStickyGuideStrip)
+                        if registrationLaunchState == nil {
+                            stickyGuideStripDock(proxy: proxy)
+                                .padding(.top, stickyHeaderOffset)
+                                .frame(maxWidth: .infinity, alignment: .top)
+                                .zIndex(4)
+                                .opacity(shouldShowStickyGuideStrip ? 1 : 0)
+                                .allowsHitTesting(shouldShowStickyGuideStrip)
+                        }
 
                         VStack(alignment: .leading, spacing: 0) {
                             PageHeader(title: "Voting Guide")
@@ -1744,6 +1828,14 @@ struct VoterRegistrationView: View {
 
     private func openMyInfoPanel() {
         NotificationCenter.default.post(name: .openMyInfoPanel, object: nil)
+    }
+
+    private func retryRegistrationGuideLoad() {
+        if let zip = normalizedShareZip, zip.count == 5 {
+            repsVM.fetchReps(for: zip)
+            return
+        }
+        repsVM.centerOnCurrentLocation()
     }
 
     @ViewBuilder

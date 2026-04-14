@@ -414,12 +414,12 @@ struct ContentView: View {
                 }
                 .tag(Tab.myReps)
 
-            // 2. Call Reps
+            // 2. Call Your Reps
             CallYourRepsTabView()
                 .tabItem {
                     Image(uiImage: VoteNowLogoIcon.tabBarBarsUIImage)
                         .renderingMode(.original)
-                    Text("Call Reps")
+                    Text("Call Your Reps")
                 }
                 .tag(Tab.callYourReps)
 

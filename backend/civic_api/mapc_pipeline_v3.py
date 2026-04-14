@@ -17,6 +17,16 @@ from urllib import request as urlrequest
 logger = logging.getLogger(__name__)
 
 
+def _founder_preview(value: Any, limit: int = 8000) -> str:
+    if isinstance(value, str):
+        rendered = value
+    else:
+        rendered = json.dumps(value, ensure_ascii=False, default=str)
+    if len(rendered) > limit:
+        return f"{rendered[:limit]}...<truncated>"
+    return rendered
+
+
 INTERPRETER_PROMPT = """Task: Convert raw user issue text into a structured MAPC session object before any user-facing prose is generated.
 
 You will receive a raw_user_issue field containing the user's most recent message, and an accumulated_context field containing all prior turns in this session. Use accumulated_context as your primary input. raw_user_issue is only the latest addition to that context. Synthesize all user turns together to form normalized_issue.
@@ -124,7 +134,8 @@ STATE_TRANSITIONS: dict[str, set[str]] = {
     "background_shown": {"ask_selected", "preview_shown", "revising"},
     "ask_selected": {"background_shown", "preview_shown", "revising"},
     "preview_shown": {"script_shown", "revising"},
-    "script_shown": {"complete", "revising"},
+    # Allow users to refine/reselect ask options from a shown script without hard reset.
+    "script_shown": {"complete", "revising", "issue_received", "ask_selected", "background_shown", "preview_shown"},
     "revising": {"issue_received", "background_shown", "ask_selected", "new", "preview_shown", "script_shown"},
     "complete": set(),
 }
@@ -206,8 +217,8 @@ class MAPCPipelineV3Service:
             current = self._state_by_session.get(session_id, "new")
             prior_history = deepcopy(self._history_by_session.get(session_id, []))
             prior_clarification_count = int(self._clarification_count_by_session.get(session_id, 0))
-        if current not in {"new", "issue_received", "revising"}:
-            raise MAPCPipelineV3Error("invalid_state_transition", f"interpret requires new/issue_received/revising state, found {current}.")
+        if current not in {"new", "issue_received", "revising", "preview_shown", "script_shown"}:
+            raise MAPCPipelineV3Error("invalid_state_transition", f"interpret requires new/issue_received/revising/preview_shown/script_shown state, found {current}.")
 
         incoming_context = _coerce_context_turns(payload.get("accumulated_context"))
         working_history = _merge_context_turns(prior_history, incoming_context)
@@ -340,8 +351,8 @@ class MAPCPipelineV3Service:
 
         with self._lock:
             current = self._state_by_session.get(session_id, "new")
-        if current not in {"issue_received", "ask_selected", "background_shown", "preview_shown", "revising"}:
-            raise MAPCPipelineV3Error("invalid_state_transition", f"ask-options requires issue_received/ask_selected/background_shown/preview_shown/revising, found {current}.")
+        if current not in {"issue_received", "ask_selected", "background_shown", "preview_shown", "script_shown", "revising"}:
+            raise MAPCPipelineV3Error("invalid_state_transition", f"ask-options requires issue_received/ask_selected/background_shown/preview_shown/script_shown/revising, found {current}.")
 
         options_payload = self._call_stage_2_llm(session_obj=session_obj, require_bill_ref=require_bill_ref)
         validator_report: dict[str, Any] = {
@@ -425,8 +436,8 @@ class MAPCPipelineV3Service:
 
         with self._lock:
             current = self._state_by_session.get(session_id, "new")
-        if current not in {"issue_received", "ask_selected", "preview_shown", "revising"}:
-            raise MAPCPipelineV3Error("invalid_state_transition", f"background requires issue_received/ask_selected/preview_shown/revising, found {current}.")
+        if current not in {"issue_received", "ask_selected", "preview_shown", "script_shown", "revising"}:
+            raise MAPCPipelineV3Error("invalid_state_transition", f"background requires issue_received/ask_selected/preview_shown/script_shown/revising, found {current}.")
 
         validator_report: dict[str, Any] = {"stage": stage, "checks": [], "timestamp": _utc_iso_now()}
         confidence = _coerce_float(session_obj.get("confidence"), fallback=0.0)
@@ -553,7 +564,7 @@ class MAPCPipelineV3Service:
 
         with self._lock:
             current = self._state_by_session.get(session_id, "new")
-        allowed_script_states = {"ask_selected", "background_shown", "preview_shown", "revising"}
+        allowed_script_states = {"ask_selected", "background_shown", "preview_shown", "script_shown", "revising"}
         if current not in allowed_script_states and pending_selection is not None:
             recovered_state = _normalized_text(
                 (pending_selection.get("session") or {}).get("session_state")
@@ -1044,6 +1055,7 @@ class MAPCPipelineV3Service:
             "response_format": {"type": "json_object"},
             "messages": messages,
         }
+        logger.info("🧭 [Founder Trace][OpenAI] stage=background request_input=%s", _founder_preview(model_payload))
         parsed = self._chat_json(model_payload, parse_reason_code="background_parse_error")
         if not isinstance(parsed, dict):
             raise MAPCPipelineV3Error("background_parse_error", "Background writer response was not a JSON object.")
@@ -1070,6 +1082,7 @@ class MAPCPipelineV3Service:
             "response_format": {"type": "json_object"},
             "messages": messages,
         }
+        logger.info("🧭 [Founder Trace][OpenAI] stage=script request_input=%s", _founder_preview(model_payload))
         parsed = self._chat_json(model_payload, parse_reason_code="script_parse_error")
         if not isinstance(parsed, dict):
             raise MAPCPipelineV3Error("script_parse_error", "Script writer response was not a JSON object.")
@@ -1089,10 +1102,26 @@ class MAPCPipelineV3Service:
         try:
             with urlrequest.urlopen(req, timeout=self._timeout_seconds) as response:
                 raw = response.read().decode("utf-8")
+                logger.info(
+                    "🧭 [Founder Trace][OpenAI] raw_response parse_reason_code=%s body=%s",
+                    parse_reason_code,
+                    _founder_preview(raw),
+                )
         except urlerror.HTTPError as exc:
             detail = exc.read().decode("utf-8", errors="ignore")
+            logger.error(
+                "🧭 [Founder Trace][OpenAI] http_error parse_reason_code=%s status=%s body=%s",
+                parse_reason_code,
+                exc.code,
+                _founder_preview(detail),
+            )
             raise MAPCPipelineV3Error("llm_http_error", f"OpenAI HTTP {exc.code}: {detail[:400]}") from exc
         except Exception as exc:
+            logger.error(
+                "🧭 [Founder Trace][OpenAI] transport_error parse_reason_code=%s error_type=%s",
+                parse_reason_code,
+                type(exc).__name__,
+            )
             raise MAPCPipelineV3Error("llm_transport_error", f"OpenAI request failed: {type(exc).__name__}") from exc
 
         decoded = _parse_possible_json(raw)

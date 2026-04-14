@@ -462,7 +462,15 @@ def post_script_feedback(payload: dict[str, Any], user_id: str) -> dict[str, Any
 
 
 def post_script_chat_turn(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+    logger.info("🧭 [Founder Trace][Backend] /script-chat-turn received raw body=%s", json.dumps(payload, ensure_ascii=False, default=str))
     parsed = parse_script_chat_turn_request(payload, user_id)
+    logger.info(
+        "🧭 [Founder Trace][Backend] /script-chat-turn parsed session_id=%s role=%s turn_index=%s message_type=%s",
+        parsed.session_id,
+        parsed.role,
+        parsed.turn_index,
+        parsed.message_type,
+    )
     script_package_service.record_chat_turn(parsed)
     return {"ok": True}
 
@@ -493,6 +501,25 @@ def _mapc_v3_payload_session_state(payload: dict[str, Any]) -> str:
     if not isinstance(raw_state, str):
         return ""
     return raw_state.strip().lower()
+
+
+def _mapc_v3_payload_session_id(payload: dict[str, Any]) -> str:
+    session = payload.get("session")
+    if isinstance(session, dict):
+        raw = session.get("session_id")
+        if isinstance(raw, str):
+            return raw.strip()
+    raw_root = payload.get("session_id")
+    if isinstance(raw_root, str):
+        return raw_root.strip()
+    return ""
+
+
+def _mapc_v3_payload_preview(payload: dict[str, Any], limit: int = 2400) -> str:
+    serialized = json.dumps(payload, ensure_ascii=False, default=str)
+    if len(serialized) > limit:
+        return f"{serialized[:limit]}...<truncated>"
+    return serialized
 
 
 def post_mapc_v3_interpret(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
@@ -527,6 +554,17 @@ def post_mapc_v3_ask_options(payload: dict[str, Any], user_id: str) -> dict[str,
 
 def post_mapc_v3_background(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
     payload_state = _mapc_v3_payload_session_state(payload)
+    payload_session_id = _mapc_v3_payload_session_id(payload)
+    logger.info(
+        "🧭 [Founder Trace][Backend] /mapc/background received user_id=%s session_id=%s session_state=%s",
+        user_id,
+        payload_session_id or "<missing>",
+        payload_state or "<missing>",
+    )
+    logger.info("🧭 [Founder Trace][Backend] /mapc/background body=%s", _mapc_v3_payload_preview(payload))
+    logger.info(
+        "🧭 [Founder Trace][Backend] Supabase thread/session read-write in this route: none (MAPC uses in-memory session cache)."
+    )
     if payload_state in {"script_shown", "preview_shown"}:
         logger.info("[mapc_v3] background terminal no-op payload_state=%s", payload_state)
         session = payload.get("session")
@@ -541,14 +579,32 @@ def post_mapc_v3_background(payload: dict[str, Any], user_id: str) -> dict[str, 
             },
         }
     try:
-        return mapc_pipeline_v3_service.background(payload, user_id=user_id)
+        response = mapc_pipeline_v3_service.background(payload, user_id=user_id)
+        logger.info("🧭 [Founder Trace][Backend] /mapc/background response=%s", _mapc_v3_payload_preview(response))
+        return response
     except MAPCPipelineV3Error as exc:
         raise ValueError(json.dumps(_mapc_v3_detail(exc))) from exc
 
 
 def post_mapc_v3_script(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
+    payload_state = _mapc_v3_payload_session_state(payload)
+    payload_session_id = _mapc_v3_payload_session_id(payload)
+    selected_option_id = str(payload.get("selected_option_id", "")).strip()
+    logger.info(
+        "🧭 [Founder Trace][Backend] /mapc/script received user_id=%s session_id=%s session_state=%s selected_option_id=%s",
+        user_id,
+        payload_session_id or "<missing>",
+        payload_state or "<missing>",
+        selected_option_id or "<missing>",
+    )
+    logger.info("🧭 [Founder Trace][Backend] /mapc/script body=%s", _mapc_v3_payload_preview(payload))
+    logger.info(
+        "🧭 [Founder Trace][Backend] Supabase thread/session read-write in this route: none (MAPC uses in-memory session cache)."
+    )
     try:
-        return mapc_pipeline_v3_service.script(payload, user_id=user_id)
+        response = mapc_pipeline_v3_service.script(payload, user_id=user_id)
+        logger.info("🧭 [Founder Trace][Backend] /mapc/script response=%s", _mapc_v3_payload_preview(response))
+        return response
     except MAPCPipelineV3Error as exc:
         raise ValueError(json.dumps(_mapc_v3_detail(exc))) from exc
 

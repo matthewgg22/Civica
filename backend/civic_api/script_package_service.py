@@ -771,6 +771,14 @@ class ScriptPackageService:
             logger.warning("script generation event insert failed: %s", type(exc).__name__)
 
     def record_chat_turn(self, request: ScriptChatTurnRequest) -> None:
+        logger.info(
+            "🧭 [Founder Trace][Supabase] chat turn write requested session_id=%s package_id=%s role=%s turn_index=%s message_type=%s",
+            request.session_id,
+            request.package_id,
+            request.role,
+            request.turn_index,
+            request.message_type,
+        )
         row = {
             "user_id": request.user_id,
             "session_id": _trim_for_event(request.session_id, 180),
@@ -783,6 +791,11 @@ class ScriptPackageService:
         }
         try:
             self.civic_service.repository.insert_script_chat_turn(row)
+            logger.info(
+                "🧭 [Founder Trace][Supabase] chat turn write succeeded session_id=%s turn_index=%s",
+                row["session_id"],
+                row["turn_index"],
+            )
         except Exception as exc:
             logger.warning("script chat turn insert failed: %s", type(exc).__name__)
 
