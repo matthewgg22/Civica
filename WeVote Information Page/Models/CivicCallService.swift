@@ -3079,12 +3079,6 @@ final class IssueCallCenterViewModel: ObservableObject {
         // mapc_pipeline_v3 — remove flag check after rollout confirmed
         // New flow order: this can be invoked immediately after ask selection to build preview content.
         guard mapcPipelineV3Enabled else { return }
-        if isMAPCV3TerminalDisplayState(mapcV3SessionState) {
-            logger.notice(
-                "MAPC v3 Stage 3/4 skipped at call site due terminal session_state=\(self.mapcV3SessionState, privacy: .public)"
-            )
-            return
-        }
         guard let selectedOptionID = mapcV3SelectedOptionID,
               let sessionID = mapcV3PendingSessionID else {
             errorMessage = "Pick one ask option before confirming preview."
