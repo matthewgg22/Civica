@@ -231,54 +231,41 @@ struct RepRow: View {
     }
 
     private var contactActions: [RepContactAction] {
-        [
-            phoneAction,
-            websiteAction,
-            emailAction
-        ].compactMap { $0 }
-    }
-
-    private var phoneAction: RepContactAction? {
-        guard let phoneURL else { return nil }
-        return RepContactAction(
-            id: "phone",
-            title: l("app.reps.action.phone", "Phone"),
-            systemImage: "phone.fill",
-            destination: phoneURL,
-            phoneLabel: rep.officialPhone
-        )
-    }
-
-    private var websiteAction: RepContactAction? {
-        guard let websiteURL else { return nil }
-        return RepContactAction(
-            id: "website",
-            title: l("app.reps.action.website", "Website"),
-            systemImage: "link",
-            destination: websiteURL,
-            phoneLabel: nil
-        )
-    }
-
-    private var emailAction: RepContactAction? {
-        guard let contactURL else { return nil }
-        return RepContactAction(
-            id: "email",
-            title: l("app.reps.action.email", "Email"),
-            systemImage: "envelope.badge.fill",
-            destination: contactURL,
-            phoneLabel: nil
-        )
-    }
-
-    private var primaryAction: RepContactAction? {
-        // Priority: phone -> website -> email/contact form
-        phoneAction ?? websiteAction ?? emailAction
-    }
-
-    private var secondaryActions: [RepContactAction] {
-        guard let primaryAction else { return [] }
-        return contactActions.filter { $0.id != primaryAction.id }
+        var actions: [RepContactAction] = []
+        if let contactURL {
+            actions.append(
+                RepContactAction(
+                    id: "email",
+                    title: l("app.reps.action.email", "Email"),
+                    systemImage: "envelope.badge.fill",
+                    destination: contactURL,
+                    phoneLabel: nil
+                )
+            )
+        }
+        if let phoneURL {
+            actions.append(
+                RepContactAction(
+                    id: "phone",
+                    title: l("app.reps.action.phone", "Phone"),
+                    systemImage: "phone.fill",
+                    destination: phoneURL,
+                    phoneLabel: rep.officialPhone
+                )
+            )
+        }
+        if let websiteURL {
+            actions.append(
+                RepContactAction(
+                    id: "website",
+                    title: l("app.reps.action.website", "Website"),
+                    systemImage: "link",
+                    destination: websiteURL,
+                    phoneLabel: nil
+                )
+            )
+        }
+        return actions
     }
 
     var body: some View {
@@ -315,49 +302,23 @@ struct RepRow: View {
 
                 Spacer(minLength: 10)
 
-                if let primaryAction {
-                    VStack(alignment: .trailing, spacing: 6) {
-                        Button {
-                            handleActionTap(primaryAction)
-                        } label: {
-                            HStack(spacing: 5) {
-                                Image(systemName: primaryAction.systemImage)
-                                Text(primaryAction.title)
-                            }
-                            .font(.system(size: 11, weight: .semibold))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 10)
-                            .frame(height: 30)
-                            .background(VoteNowColors.primaryCTA)
-                            .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                if !contactActions.isEmpty {
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.18)) {
+                            isContactExpanded.toggle()
                         }
-                        .buttonStyle(.plain)
-
-                        if !secondaryActions.isEmpty {
-                            Button {
-                                withAnimation(.easeInOut(duration: 0.18)) {
-                                    isContactExpanded.toggle()
-                                }
-                            } label: {
-                                HStack(spacing: 4) {
-                                    Text(l("app.reps.action.more", "More"))
-                                        .font(.system(size: 11, weight: .semibold))
-                                    Image(systemName: isContactExpanded ? "chevron.up" : "chevron.down")
-                                        .font(.system(size: 11, weight: .semibold))
-                                }
-                                .foregroundColor(VoteNowColors.mutedText)
-                            }
-                            .buttonStyle(.plain)
-                        }
+                    } label: {
+                        Image(systemName: isContactExpanded ? "chevron.up" : "chevron.down")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(VoteNowColors.mutedText)
                     }
+                    .buttonStyle(.plain)
                 }
             }
 
-            if isContactExpanded, !secondaryActions.isEmpty {
+            if isContactExpanded, !contactActions.isEmpty {
                 HStack(spacing: 8) {
-                    ForEach(secondaryActions) { action in
+                    ForEach(contactActions) { action in
                         Button {
                             handleActionTap(action)
                         } label: {
