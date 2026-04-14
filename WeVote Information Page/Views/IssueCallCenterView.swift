@@ -1260,53 +1260,9 @@ struct IssueCallCenterView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundColor(VoteNowColors.primaryText)
 
-                Text("Pick the first action you want the office to take.")
+                Text("Building background + script preview...")
                     .font(.caption.weight(.semibold))
                     .foregroundColor(VoteNowColors.mutedText)
-
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 165), spacing: 8)], spacing: 8) {
-                    ForEach(viewModel.mapcV3AskOptions) { option in
-                        Button {
-                            selectMAPCV3OptionInChat(option)
-                        } label: {
-                            Text(option.displayAsk)
-                                .font(.caption.weight(.semibold))
-                                .foregroundColor(VoteNowColors.primaryText)
-                                .multilineTextAlignment(.leading)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 9)
-                                .background(VoteNowColors.surfaceWhite)
-                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                        .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
-                                )
-                        }
-                        .buttonStyle(.plain)
-                    }
-                    if !viewModel.mapcV3AskOptions.contains(where: isMAPCV3OtherOption) {
-                        // mapc_pipeline_v3 — remove flag check after rollout confirmed
-                        Button {
-                            promptForCustomMAPCV3ConcernInput()
-                        } label: {
-                            Text("Other: type issue concern")
-                                .font(.caption.weight(.semibold))
-                                .foregroundColor(VoteNowColors.primaryText)
-                                .multilineTextAlignment(.leading)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 9)
-                                .background(VoteNowColors.surfaceWhite)
-                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                        .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
-                                )
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
             } else {
                 Text("Does this match what you meant?")
                     .font(.subheadline.weight(.semibold))
@@ -1894,7 +1850,6 @@ struct IssueCallCenterView: View {
     private func processAssistantGenerationResultV3() {
         if viewModel.hasMAPCV3PreparedSelection {
             // mapc_pipeline_v3 — remove flag check after rollout confirmed
-            // Do not auto-advance. Always show interpreted issue + ask chips and wait for user selection.
             guard !viewModel.mapcV3AskOptions.isEmpty else {
                 appendAssistantBotMessage(
                     "I hit a snag, but I still have your issue. Pick a fix or restate the action you want.",
@@ -1906,17 +1861,49 @@ struct IssueCallCenterView: View {
                 return
             }
 
+            let preferredOption = mapcV3PreferredAutoOption()
+            guard let preferredOption else {
+                appendAssistantBotMessage(
+                    "I hit a snag, but I still have your issue. Pick a fix or restate the action you want.",
+                    kind: .plain,
+                    messageType: "offline_notice"
+                )
+                assistantFlowStage = .awaitingPrompt
+                viewModel.errorMessage = nil
+                return
+            }
+
+            hasPickedDiscussionOptionInCurrentCycle = true
+            awaitingCustomAskInput = false
+            awaitingCustomAgenticStrategyInput = false
+            previewLintBlocked = false
+            hasRetriedPreviewLintRegeneration = false
+            hasAcceptedCurrentMAPCV3Preview = false
+            viewModel.selectMAPCV3Option(optionID: preferredOption.optionID)
+            appendAssistantBotMessage(
+                "Using the best ask option automatically and generating your background + script preview.",
+                kind: .plain,
+                messageType: "ask_auto_selected"
+            )
+            assistantIsThinking = true
             hasPostedCurrentDraftBackground = true
             hasAcceptedCurrentMAPCV3Preview = false
             awaitingCustomAskInput = false
             pendingBackgroundMessageID = nil
             pendingScriptPreviewMessageID = nil
             withAnimation(.easeOut(duration: 0.18)) {
+                isBackgroundMessageReadyForActions = false
                 isScriptPreviewReadyForMAPCActions = false
-                isBackgroundMessageReadyForActions = true
             }
-            assistantFlowStage = .awaitingBackgroundApproval
+            assistantFlowStage = .awaitingPrompt
             viewModel.errorMessage = nil
+            Task {
+                await viewModel.generateMAPCV3ScriptAfterPreviewConfirmation()
+                await MainActor.run {
+                    assistantIsThinking = false
+                    processMAPCV3ConfirmedResult()
+                }
+            }
             return
         }
 
@@ -1935,6 +1922,21 @@ struct IssueCallCenterView: View {
         isBackgroundMessageReadyForActions = false
         currentBackgroundDiscussionOptions = []
         assistantFlowStage = .awaitingPrompt
+    }
+
+    private func mapcV3PreferredAutoOption() -> CivicMAPCV3PreparedOption? {
+        let options = viewModel.mapcV3AskOptions
+        guard !options.isEmpty else { return nil }
+        if let selectedAsk = viewModel.selectedAsk,
+           let exactAskMatch = options.first(where: { option in
+               option.askType.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == selectedAsk.rawValue
+           }) {
+            return exactAskMatch
+        }
+        if let firstNonOther = options.first(where: { !isMAPCV3OtherOption($0) }) {
+            return firstNonOther
+        }
+        return options.first
     }
 
     private func postStructuredBackgroundIfNeeded() {
