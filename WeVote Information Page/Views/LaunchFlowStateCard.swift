@@ -79,8 +79,12 @@ struct LaunchFlowStateCard: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             if let primaryActionTitle, let primaryAction {
-                Button(primaryActionTitle, action: primaryAction)
-                    .buttonStyle(VoteNowPrimaryCTAButtonStyle())
+                Button(action: primaryAction) {
+                    Text(primaryActionTitle)
+                        .font(.subheadline.weight(.semibold))
+                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .center)
+                }
+                .buttonStyle(VoteNowPrimaryCTAButtonStyle())
             }
 
             if let secondaryActionTitle, let secondaryAction {

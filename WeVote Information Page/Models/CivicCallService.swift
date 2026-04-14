@@ -3253,6 +3253,13 @@ final class IssueCallCenterViewModel: ObservableObject {
         let trimmedBill = optionalBillRef.trimmingCharacters(in: .whitespacesAndNewlines)
         let userID = await userIDForRequest()
         let resolvedRepContext = await resolvedRepSubmissionContext()
+        let validationConcernText = mapcV3ValidationConcernText(
+            concernText: trimmedConcern,
+            selectedOptionLabel: selectedOptionLabel
+        )
+        let useRelaxedTopicValidation = shouldUseRelaxedMAPCV3TopicValidation(
+            concernText: trimmedConcern
+        )
         let concernPreview = trimmedConcern.isEmpty ? "<empty>" : String(trimmedConcern.prefix(140))
         print(
             "🧭 [Founder Trace] " +
@@ -3262,6 +3269,8 @@ final class IssueCallCenterViewModel: ObservableObject {
             "selected_option_id=\(selectedOptionID) " +
             "selected_option_label=\(selectedOptionLabel) " +
             "concern_preview=\(concernPreview) " +
+            "validation_concern_preview=\(String(validationConcernText.prefix(140))) " +
+            "relaxed_topic_validation=\(useRelaxedTopicValidation) " +
             "rep_slot_count=\(resolvedRepContext.slots.count)"
         )
         if normalizedState != "ask_selected" {
@@ -3272,7 +3281,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         do {
             let package = try await apiClient.generateMAPCV3ScriptFromSelection(
                 userID: userID,
-                concernText: trimmedConcern,
+                concernText: validationConcernText,
                 sessionID: sessionID,
                 selectedOptionID: selectedOptionID,
                 targetReps: resolvedRepContext.slots,
@@ -3292,28 +3301,44 @@ final class IssueCallCenterViewModel: ObservableObject {
                 )
                 let validation = generatedResolutionValidation(
                     response,
-                    concernText: trimmedConcern,
+                    concernText: validationConcernText,
                     ask: resolvedAsk,
-                    optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill
+                    optionalBillRef: trimmedBill.isEmpty ? nil : trimmedBill,
+                    relaxedTopicValidation: useRelaxedTopicValidation
                 )
                 if validation.shouldFallback {
-                    // mapc_pipeline_v3 — remove flag check after rollout confirmed
-                    pendingGeneratedResolution = nil
-                    lastGeneratedPackageID = nil
-                    requiresDraftApproval = false
-                    mapcV3SessionState = "preview_shown"
-                    mapcV3NeedsClarification = false
-                    mapcV3ClarificationPrompt = nil
-                    mapcV3MapcApproved = false
-                    mapcV3BackgroundText = package.canonicalContext?.summaryPlain ?? ""
-                    errorMessage = mapcV3RecoveryMessage
+                    if validation.containsDisallowedMeta {
+                        // mapc_pipeline_v3 — remove flag check after rollout confirmed
+                        // Hard block only when scripts contain disallowed meta/injection markers.
+                        pendingGeneratedResolution = nil
+                        lastGeneratedPackageID = nil
+                        requiresDraftApproval = false
+                        mapcV3SessionState = "preview_shown"
+                        mapcV3NeedsClarification = false
+                        mapcV3ClarificationPrompt = nil
+                        mapcV3MapcApproved = false
+                        mapcV3BackgroundText = package.canonicalContext?.summaryPlain ?? ""
+                        errorMessage = mapcV3RecoveryMessage
+                        recordMAPCGenerationTelemetry(
+                            path: mapcGenerationPathBlockedLegacy,
+                            fallbackReason: "v3_validation_hard_block_disallowed_meta",
+                            sessionResetReason: nil
+                        )
+                        logger.warning("Blocked MAPC v3 preview handoff due to disallowed script meta markers.")
+                        return
+                    }
+                    // Soft-continue: do not surface "snag" for over-strict local readability/topic heuristics.
+                    logger.warning(
+                        "MAPC v3 validation soft-continue " +
+                        "off_topic=\(validation.offTopic, privacy: .public) " +
+                        "unreadable_scripts=\(validation.unreadableScripts, privacy: .public) " +
+                        "relaxed_topic_validation=\(useRelaxedTopicValidation, privacy: .public)"
+                    )
                     recordMAPCGenerationTelemetry(
-                        path: mapcGenerationPathBlockedLegacy,
-                        fallbackReason: "v3_validation_blocked_legacy_fallback",
+                        path: mapcGenerationPathV3,
+                        fallbackReason: "v3_validation_soft_continue",
                         sessionResetReason: nil
                     )
-                    logger.warning("Blocked legacy fallback script from MAPC v3 preview handoff.")
-                    return
                 }
                 let finalResponse = validation.sanitized
                 mapcV3LastFailureReasonCode = nil
@@ -5285,22 +5310,67 @@ final class IssueCallCenterViewModel: ObservableObject {
         return (sanitized, false)
     }
 
+    private struct GeneratedResolutionValidationResult {
+        let sanitized: CivicIssueResolutionResponse
+        let shouldFallback: Bool
+        let containsDisallowedMeta: Bool
+        let offTopic: Bool
+        let unreadableScripts: Bool
+    }
+
+    private func mapcV3ValidationConcernText(
+        concernText: String,
+        selectedOptionLabel: String
+    ) -> String {
+        let trimmedConcern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard shouldUseRelaxedMAPCV3TopicValidation(concernText: trimmedConcern) else {
+            return trimmedConcern
+        }
+
+        let normalizedIssue = mapcV3DisplayIssue.trimmingCharacters(in: .whitespacesAndNewlines)
+        let normalizedOption = selectedOptionLabel.trimmingCharacters(in: .whitespacesAndNewlines)
+        let parts = [normalizedIssue, normalizedOption, trimmedConcern].filter { !$0.isEmpty }
+        if parts.isEmpty {
+            return trimmedConcern
+        }
+        return parts.joined(separator: ". ")
+    }
+
+    private func shouldUseRelaxedMAPCV3TopicValidation(concernText: String) -> Bool {
+        let trimmed = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty { return false }
+        let semanticTokens = semanticTopicTokens(in: trimmed)
+        if semanticTokens.count < 2 {
+            return true
+        }
+        return wordCount(in: trimmed) <= 3
+    }
+
     private func generatedResolutionValidation(
         _ response: CivicIssueResolutionResponse,
         concernText: String,
         ask: CivicAsk,
-        optionalBillRef: String?
-    ) -> (sanitized: CivicIssueResolutionResponse, shouldFallback: Bool) {
+        optionalBillRef: String?,
+        relaxedTopicValidation: Bool = false
+    ) -> GeneratedResolutionValidationResult {
         let sanitized = sanitizedGeneratedResolution(response)
-        let shouldFallback = containsDisallowedScriptMeta(in: sanitized)
-            || isLikelyOffTopic(response: sanitized, concernText: concernText, optionalBillRef: optionalBillRef)
-            || !hasReadableCallScripts(
+        let hasDisallowedMeta = containsDisallowedScriptMeta(in: sanitized)
+        let offTopic = !relaxedTopicValidation
+            && isLikelyOffTopic(response: sanitized, concernText: concernText, optionalBillRef: optionalBillRef)
+        let unreadableScripts = !hasReadableCallScripts(
                 in: sanitized,
                 ask: ask,
                 concernText: concernText,
-                optionalBillRef: optionalBillRef
+                optionalBillRef: optionalBillRef,
+                requireConcernTopicOverlap: !relaxedTopicValidation
             )
-        return (sanitized, shouldFallback)
+        return GeneratedResolutionValidationResult(
+            sanitized: sanitized,
+            shouldFallback: hasDisallowedMeta || offTopic || unreadableScripts,
+            containsDisallowedMeta: hasDisallowedMeta,
+            offTopic: offTopic,
+            unreadableScripts: unreadableScripts
+        )
     }
 
     private func sanitizedGeneratedResolution(_ response: CivicIssueResolutionResponse) -> CivicIssueResolutionResponse {
@@ -5592,7 +5662,8 @@ final class IssueCallCenterViewModel: ObservableObject {
         in response: CivicIssueResolutionResponse,
         ask: CivicAsk,
         concernText: String,
-        optionalBillRef: String?
+        optionalBillRef: String?,
+        requireConcernTopicOverlap: Bool = true
     ) -> Bool {
         guard !response.callBriefs.isEmpty else { return false }
 
@@ -5629,21 +5700,21 @@ final class IssueCallCenterViewModel: ObservableObject {
                 return false
             }
 
-            if !concernDomainAnchors.isEmpty {
+            if requireConcernTopicOverlap, !concernDomainAnchors.isEmpty {
                 let hasDomainAnchor = concernDomainAnchors.contains { combined.contains($0) }
                 if !hasDomainAnchor {
                     return false
                 }
             }
 
-            if !concernTokens.isEmpty {
+            if requireConcernTopicOverlap, !concernTokens.isEmpty {
                 let scriptTokens = semanticTopicTokens(in: combined)
                 if concernTokens.intersection(scriptTokens).isEmpty {
                     return false
                 }
             }
 
-            if !concernAcronyms.isEmpty {
+            if requireConcernTopicOverlap, !concernAcronyms.isEmpty {
                 let scriptUpper = combined.uppercased()
                 let anyAcronymMatched = concernAcronyms.contains(where: { scriptUpper.contains($0) })
                 if !anyAcronymMatched {

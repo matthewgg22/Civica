@@ -134,16 +134,7 @@ struct MyRepsView: View {
                         VStack(alignment: .leading, spacing: 16) {
                             searchCard
 
-                            Text("Enter ZIP, city/state, or full address")
-                                .font(.system(size: 13, weight: .medium))
-                                .foregroundColor(VoteNowColors.mutedText)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-
-                            Button("Find My Reps") {
-                                submitLookup()
-                            }
-                            .buttonStyle(VoteNowPrimaryCTAButtonStyle())
-                            .disabled(repsVM.isLoading)
+                            locationCoverageCard()
 
                             if let launchState = repsLaunchState {
                                 launchStateCard(for: launchState)
@@ -166,10 +157,6 @@ struct MyRepsView: View {
                                         officials: section.officials
                                     )
                                 }
-
-                                locationCoverageCard()
-                            } else {
-                                locationCoverageCard()
                             }
                         }
                         .padding(.horizontal, 16)
@@ -292,7 +279,7 @@ struct MyRepsView: View {
                         repsVM.handleLocationInputTyping(newValue)
                     }
                     .onSubmit {
-                        submitLookup()
+                        submitLookupOrFallback()
                     }
                     .toolbar {
                         ToolbarItemGroup(placement: .keyboard) {
@@ -480,7 +467,7 @@ struct MyRepsView: View {
                 message: l("app.reps.empty_prompt", "Enter your ZIP, city/state, or full U.S. address to load your representatives."),
                 primaryActionTitle: l("app.reps.action.find_my_reps", "Find My Reps"),
                 primaryAction: {
-                    submitLookup()
+                    submitLookupOrFallback()
                 },
                 secondaryActionTitle: l("app.reps.action.use_location", "Use my location"),
                 secondaryAction: {
@@ -495,7 +482,7 @@ struct MyRepsView: View {
                 message: l("app.reps.error_retry_hint", "Try again or use your current location."),
                 primaryActionTitle: l("app.reps.action.retry", "Retry"),
                 primaryAction: {
-                    submitLookup()
+                    submitLookupOrFallback()
                 },
                 secondaryActionTitle: l("app.reps.action.use_location", "Use my location"),
                 secondaryAction: {
@@ -517,6 +504,16 @@ struct MyRepsView: View {
 
         locationFieldFocused = false
         repsVM.resolveLocationInput(trimmed)
+    }
+
+    private func submitLookupOrFallback() {
+        let trimmed = locationInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty {
+            locationFieldFocused = false
+            repsVM.centerOnCurrentLocation()
+            return
+        }
+        submitLookup()
     }
 
     private func displayAddressInput(for selection: RepsLocationSelection) -> String {
