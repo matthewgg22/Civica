@@ -1023,7 +1023,11 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             from: askData,
             endpointPath: askRequest.url?.path ?? "/api/v2/civic/mapc/ask-options"
         )
-        guard !askResponse.options.isEmpty else {
+        let dedupedAskOptions = deduplicatedMAPCV3AskOptions(
+            askResponse.options,
+            source: "ask-options"
+        )
+        guard !dedupedAskOptions.isEmpty else {
             throw NSError(
                 domain: "CivicIssueCallAPIClient",
                 code: -31_003,
@@ -1034,7 +1038,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         mapcV3PendingSelectionStateBySessionID[askResponse.session.sessionID] = MAPCV3PendingSelectionState(
             concernText: normalizedConcern,
             session: askResponse.session,
-            options: askResponse.options
+            options: dedupedAskOptions
         )
 
         return CivicMAPCV3PreparedSelection(
@@ -1043,7 +1047,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             displayIssue: askResponse.session.displayIssue,
             needsClarification: askResponse.session.needsClarification,
             clarificationPrompt: askResponse.session.clarificationPrompt,
-            options: askResponse.options.map {
+            options: dedupedAskOptions.map {
                 CivicMAPCV3PreparedOption(
                     optionID: $0.optionID,
                     askType: $0.askType,
@@ -1335,12 +1339,45 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         let data = try await requestData(for: request)
         let response = try decoder.decode(CivicMAPCV3PendingResponse.self, from: data)
         guard response.found, let session = response.session, !response.options.isEmpty else { return nil }
+        let dedupedOptions = deduplicatedMAPCV3AskOptions(
+            response.options,
+            source: "pending-selection"
+        )
+        guard !dedupedOptions.isEmpty else { return nil }
         let recoveredConcern = response.concernText?.trimmingCharacters(in: .whitespacesAndNewlines)
         return CivicMAPCV3RecoveredSelection(
             concernText: (recoveredConcern?.isEmpty == false) ? recoveredConcern! : trimmedConcern,
             session: session,
-            options: response.options
+            options: dedupedOptions
         )
+    }
+
+    private func deduplicatedMAPCV3AskOptions(
+        _ options: [CivicMAPCV3AskOption],
+        source: String
+    ) -> [CivicMAPCV3AskOption] {
+        var seen: Set<String> = []
+        var deduped: [CivicMAPCV3AskOption] = []
+
+        for option in options {
+            let normalizedID = option.optionID
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .lowercased()
+            guard !normalizedID.isEmpty else {
+                logger.warning("MAPC v3 dropped ask option with empty option_id source=\(source, privacy: .public)")
+                continue
+            }
+            if seen.contains(normalizedID) {
+                logger.warning(
+                    "MAPC v3 dropped duplicate ask option_id=\(option.optionID, privacy: .public) source=\(source, privacy: .public)"
+                )
+                continue
+            }
+            seen.insert(normalizedID)
+            deduped.append(option)
+        }
+
+        return deduped
     }
 
     func mapcV3ResolvedSessionID(from sessionID: String) -> String? {
@@ -3281,7 +3318,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         do {
             let package = try await apiClient.generateMAPCV3ScriptFromSelection(
                 userID: userID,
-                concernText: validationConcernText,
+                concernText: trimmedConcern,
                 sessionID: sessionID,
                 selectedOptionID: selectedOptionID,
                 targetReps: resolvedRepContext.slots,
