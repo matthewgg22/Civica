@@ -3365,12 +3365,15 @@ final class IssueCallCenterViewModel: ObservableObject {
                         return
                     }
                     // Soft-continue: do not surface "snag" for over-strict local readability/topic heuristics.
-                    logger.warning(
+                    let offTopicFlag = validation.offTopic ? "true" : "false"
+                    let unreadableFlag = validation.unreadableScripts ? "true" : "false"
+                    let relaxedFlag = useRelaxedTopicValidation ? "true" : "false"
+                    let softContinueMessage =
                         "MAPC v3 validation soft-continue " +
-                        "off_topic=\(validation.offTopic, privacy: .public) " +
-                        "unreadable_scripts=\(validation.unreadableScripts, privacy: .public) " +
-                        "relaxed_topic_validation=\(useRelaxedTopicValidation, privacy: .public)"
-                    )
+                        "off_topic=\(offTopicFlag) " +
+                        "unreadable_scripts=\(unreadableFlag) " +
+                        "relaxed_topic_validation=\(relaxedFlag)"
+                    logger.warning("\(softContinueMessage, privacy: .public)")
                     recordMAPCGenerationTelemetry(
                         path: mapcGenerationPathV3,
                         fallbackReason: "v3_validation_soft_continue",
