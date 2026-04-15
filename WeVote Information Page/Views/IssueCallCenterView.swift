@@ -42,6 +42,7 @@ struct IssueCallCenterView: View {
     @State private var pendingBackgroundMessageID: UUID?
     @State private var isBackgroundMessageReadyForActions = false
     @State private var pendingScriptPreviewMessageID: UUID?
+    @State private var queuedScriptPreviewMessage: AssistantChatMessage?
     @State private var isScriptPreviewReadyForMAPCActions = false
     @State private var previewLintBlocked = false
     @State private var hasRetriedPreviewLintRegeneration = false
@@ -1318,6 +1319,17 @@ struct IssueCallCenterView: View {
                                     withAnimation(.easeOut(duration: 0.18)) {
                                         isBackgroundMessageReadyForActions = true
                                     }
+                                    if let queuedScriptMessage = queuedScriptPreviewMessage {
+                                        queuedScriptPreviewMessage = nil
+                                        assistantMessages.append(queuedScriptMessage)
+                                        viewModel.logScriptChatTurn(
+                                            role: "assistant",
+                                            messageText: queuedScriptMessage.text,
+                                            messageType: "script_preview"
+                                        )
+                                        pendingScriptPreviewMessageID = queuedScriptMessage.id
+                                        isScriptPreviewReadyForMAPCActions = false
+                                    }
                                 }
                                 if pendingScriptPreviewMessageID == message.id {
                                     pendingScriptPreviewMessageID = nil
@@ -1588,10 +1600,6 @@ struct IssueCallCenterView: View {
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(VoteNowColors.primaryText)
 
-            Text("Pick how agentic the ask options should be:")
-                .font(.caption.weight(.semibold))
-                .foregroundColor(VoteNowColors.mutedText)
-
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 145), spacing: 8)], spacing: 8) {
                 ForEach(MAPCAgenticStrategyChip.allCases) { chip in
                     Button {
@@ -1833,6 +1841,7 @@ struct IssueCallCenterView: View {
         pendingBackgroundMessageID = nil
         isBackgroundMessageReadyForActions = false
         pendingScriptPreviewMessageID = nil
+        queuedScriptPreviewMessage = nil
         isScriptPreviewReadyForMAPCActions = false
         currentBackgroundDiscussionOptions = []
         assistantFlowStage = .awaitingPrompt
@@ -2035,6 +2044,7 @@ struct IssueCallCenterView: View {
             hasPostedCurrentDraftBackground = true
             pendingBackgroundMessageID = nil
             pendingScriptPreviewMessageID = nil
+            queuedScriptPreviewMessage = nil
             withAnimation(.easeOut(duration: 0.18)) {
                 isBackgroundMessageReadyForActions = true
                 isScriptPreviewReadyForMAPCActions = false
@@ -2142,6 +2152,7 @@ struct IssueCallCenterView: View {
             messageType: "script_preview"
         )
         pendingScriptPreviewMessageID = scriptPreviewMessage.id
+        queuedScriptPreviewMessage = nil
         pendingBackgroundMessageID = nil
         isBackgroundMessageReadyForActions = false
         currentBackgroundDiscussionOptions = []
@@ -2175,6 +2186,7 @@ struct IssueCallCenterView: View {
         pendingBackgroundMessageID = nil
         isBackgroundMessageReadyForActions = false
         pendingScriptPreviewMessageID = nil
+        queuedScriptPreviewMessage = nil
         isScriptPreviewReadyForMAPCActions = false
         currentBackgroundDiscussionOptions = []
         suppressTranslationForNextBackground = false
@@ -2212,6 +2224,7 @@ struct IssueCallCenterView: View {
         pendingBackgroundMessageID = nil
         isBackgroundMessageReadyForActions = false
         pendingScriptPreviewMessageID = nil
+        queuedScriptPreviewMessage = nil
         isScriptPreviewReadyForMAPCActions = false
         currentBackgroundDiscussionOptions = []
         suppressTranslationForNextBackground = false
@@ -2230,6 +2243,7 @@ struct IssueCallCenterView: View {
         pendingBackgroundMessageID = nil
         isBackgroundMessageReadyForActions = false
         pendingScriptPreviewMessageID = nil
+        queuedScriptPreviewMessage = nil
         isScriptPreviewReadyForMAPCActions = false
         currentBackgroundDiscussionOptions = []
         suppressTranslationForNextBackground = false
@@ -2283,6 +2297,7 @@ struct IssueCallCenterView: View {
         viewModel.clearMAPCV3OptionSelection()
         pendingBackgroundMessageID = nil
         pendingScriptPreviewMessageID = nil
+        queuedScriptPreviewMessage = nil
         withAnimation(.easeOut(duration: 0.18)) {
             isBackgroundMessageReadyForActions = false
             isScriptPreviewReadyForMAPCActions = false
@@ -2325,6 +2340,7 @@ struct IssueCallCenterView: View {
         assistantIsThinking = true
         pendingBackgroundMessageID = nil
         pendingScriptPreviewMessageID = nil
+        queuedScriptPreviewMessage = nil
         withAnimation(.easeOut(duration: 0.18)) {
             isBackgroundMessageReadyForActions = false
             isScriptPreviewReadyForMAPCActions = false
@@ -2389,6 +2405,7 @@ struct IssueCallCenterView: View {
             assistantFlowStage = .awaitingPrompt
             pendingBackgroundMessageID = nil
             pendingScriptPreviewMessageID = nil
+            queuedScriptPreviewMessage = nil
             isBackgroundMessageReadyForActions = false
             isScriptPreviewReadyForMAPCActions = false
             currentBackgroundDiscussionOptions = []
@@ -2409,6 +2426,7 @@ struct IssueCallCenterView: View {
                 assistantFlowStage = .awaitingPreviewConfirmation
                 pendingBackgroundMessageID = nil
                 pendingScriptPreviewMessageID = nil
+                queuedScriptPreviewMessage = nil
                 withAnimation(.easeOut(duration: 0.18)) {
                     isBackgroundMessageReadyForActions = false
                     isScriptPreviewReadyForMAPCActions = true
@@ -2434,13 +2452,19 @@ struct IssueCallCenterView: View {
                 pendingBackgroundMessageID = nil
             }
             let scriptPreviewMessage = AssistantChatMessage.assistant(formattedScriptPreview(for: brief), kind: .script)
-            assistantMessages.append(scriptPreviewMessage)
-            viewModel.logScriptChatTurn(
-                role: "assistant",
-                messageText: scriptPreviewMessage.text,
-                messageType: "script_preview"
-            )
-            pendingScriptPreviewMessageID = scriptPreviewMessage.id
+            if pendingBackgroundMessageID == nil {
+                assistantMessages.append(scriptPreviewMessage)
+                viewModel.logScriptChatTurn(
+                    role: "assistant",
+                    messageText: scriptPreviewMessage.text,
+                    messageType: "script_preview"
+                )
+                pendingScriptPreviewMessageID = scriptPreviewMessage.id
+                queuedScriptPreviewMessage = nil
+            } else {
+                queuedScriptPreviewMessage = scriptPreviewMessage
+                pendingScriptPreviewMessageID = nil
+            }
             // mapc_pipeline_v3 — remove flag check after rollout confirmed
             // Keep preview confirmation post-preview. MAPC start appears only after "Looks right".
             assistantFlowStage = .awaitingPreviewConfirmation
@@ -2459,6 +2483,7 @@ struct IssueCallCenterView: View {
                 assistantFlowStage = .awaitingPreviewConfirmation
                 pendingBackgroundMessageID = nil
                 pendingScriptPreviewMessageID = nil
+                queuedScriptPreviewMessage = nil
                 withAnimation(.easeOut(duration: 0.18)) {
                     isBackgroundMessageReadyForActions = false
                     isScriptPreviewReadyForMAPCActions = true
@@ -2474,6 +2499,7 @@ struct IssueCallCenterView: View {
         assistantFlowStage = .awaitingPrompt
         pendingBackgroundMessageID = nil
         isBackgroundMessageReadyForActions = false
+        queuedScriptPreviewMessage = nil
         currentBackgroundDiscussionOptions = []
     }
 
@@ -4521,6 +4547,7 @@ struct IssueCallCenterView: View {
         pendingBackgroundMessageID = nil
         isBackgroundMessageReadyForActions = false
         pendingScriptPreviewMessageID = nil
+        queuedScriptPreviewMessage = nil
         isScriptPreviewReadyForMAPCActions = false
         currentBackgroundDiscussionOptions = []
         hasPickedDiscussionOptionInCurrentCycle = false

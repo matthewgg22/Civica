@@ -163,7 +163,6 @@ struct RepRow: View {
     @Environment(\.openURL) private var openURL
     @Environment(\.locale) private var locale
 
-    @State private var isContactExpanded = false
     @State private var showPhoneFallbackAlert = false
     @State private var phoneFallbackMessage = ""
 
@@ -232,17 +231,6 @@ struct RepRow: View {
 
     private var contactActions: [RepContactAction] {
         var actions: [RepContactAction] = []
-        if let contactURL {
-            actions.append(
-                RepContactAction(
-                    id: "email",
-                    title: l("app.reps.action.email", "Email"),
-                    systemImage: "envelope.badge.fill",
-                    destination: contactURL,
-                    phoneLabel: nil
-                )
-            )
-        }
         if let phoneURL {
             actions.append(
                 RepContactAction(
@@ -261,6 +249,17 @@ struct RepRow: View {
                     title: l("app.reps.action.website", "Website"),
                     systemImage: "link",
                     destination: websiteURL,
+                    phoneLabel: nil
+                )
+            )
+        }
+        if let contactURL {
+            actions.append(
+                RepContactAction(
+                    id: "email",
+                    title: l("app.reps.action.email", "Email"),
+                    systemImage: "envelope.badge.fill",
+                    destination: contactURL,
                     phoneLabel: nil
                 )
             )
@@ -301,22 +300,9 @@ struct RepRow: View {
                 }
 
                 Spacer(minLength: 10)
-
-                if !contactActions.isEmpty {
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.18)) {
-                            isContactExpanded.toggle()
-                        }
-                    } label: {
-                        Image(systemName: isContactExpanded ? "chevron.up" : "chevron.down")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(VoteNowColors.mutedText)
-                    }
-                    .buttonStyle(.plain)
-                }
             }
 
-            if isContactExpanded, !contactActions.isEmpty {
+            if !contactActions.isEmpty {
                 HStack(spacing: 8) {
                     ForEach(contactActions) { action in
                         Button {
@@ -338,7 +324,6 @@ struct RepRow: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .transition(.move(edge: .top).combined(with: .opacity))
             }
         }
         .padding(.vertical, 8)

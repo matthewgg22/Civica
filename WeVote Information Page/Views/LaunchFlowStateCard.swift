@@ -79,17 +79,13 @@ struct LaunchFlowStateCard: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             if let primaryActionTitle, let primaryAction {
-                Button(action: primaryAction) {
-                    Text(primaryActionTitle)
-                        .font(.subheadline.weight(.semibold))
-                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .center)
-                }
-                .buttonStyle(VoteNowPrimaryCTAButtonStyle())
+                Button(primaryActionTitle, action: primaryAction)
+                    .buttonStyle(LaunchFlowPrimaryCTAButtonStyle())
             }
 
             if let secondaryActionTitle, let secondaryAction {
                 Button(secondaryActionTitle, action: secondaryAction)
-                    .buttonStyle(VoteNowSecondaryCTAButtonStyle())
+                    .buttonStyle(LaunchFlowSecondaryCTAButtonStyle())
             }
         }
         .padding(12)
@@ -103,18 +99,36 @@ struct LaunchFlowStateCard: View {
     }
 }
 
-private struct VoteNowSecondaryCTAButtonStyle: ButtonStyle {
+private struct LaunchFlowPrimaryCTAButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.subheadline.weight(.semibold))
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(VoteNowColors.ctaBlue)
+                    .opacity(isEnabled ? (configuration.isPressed ? 0.84 : 1.0) : 0.5)
+            )
+            .scaleEffect(configuration.isPressed ? 0.99 : 1)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+    }
+}
+
+private struct LaunchFlowSecondaryCTAButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.subheadline.weight(.semibold))
             .foregroundColor(VoteNowColors.primaryCTA)
-            .frame(maxWidth: .infinity, minHeight: 44, alignment: .center)
+            .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .fill(VoteNowColors.infoSurfaceBlue.opacity(configuration.isPressed ? 0.55 : 0.8))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .stroke(VoteNowColors.primaryCTA.opacity(0.55), lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.99 : 1)
