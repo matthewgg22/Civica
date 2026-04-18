@@ -14,7 +14,7 @@ struct SupabaseConfig: Sendable {
     private static let fallbackAnonKey = "YOUR_SUPABASE_ANON_KEY"
     private static let fallbackGovHelpFunctionSlug = "govhelp"
 
-    private static let logger = Logger(subsystem: "VoteNow", category: "SupabaseConfig")
+    private static let logger = Logger(subsystem: "Civica", category: "SupabaseConfig")
 
     static let current = load()
 

@@ -9,7 +9,7 @@ final class SupabaseClientProvider {
     static let shared = SupabaseClientProvider()
 
     let client: AppSupabaseClient
-    private static let logger = Logger(subsystem: "VoteNow", category: "SupabaseClientProvider")
+    private static let logger = Logger(subsystem: "Civica", category: "SupabaseClientProvider")
 
     private init(config: SupabaseConfig = .current) {
         let options = SupabaseClientOptions(

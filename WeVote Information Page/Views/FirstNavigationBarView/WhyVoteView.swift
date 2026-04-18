@@ -174,7 +174,7 @@ struct WhyVoteView: View {
                 VStack(alignment: .leading, spacing: 18) {
                     TurnoutExplorer(
                         onSeeHowToVote: {
-                            NotificationCenter.default.post(name: .openHiddenHowToVoteFeatures, object: nil)
+                            NotificationCenter.default.post(name: .openVotingStepsTab, object: nil)
                         },
                         onTurnoutCueColorChange: { cueColor in
                             let softenedCue = softenedHeaderBackgroundColor(from: cueColor)
@@ -269,10 +269,7 @@ struct WhyVoteView: View {
                     label: "\(turnoutPair.presidentialYear) Presidential",
                     turnoutPercent: turnoutPair.presidentialTurnout,
                     summary: formatTurnoutAsOutOfTen(turnoutPair.presidentialTurnout),
-                    filledColor: VoteNowColors.successGreen,
-                    onPeopleLongPress: {
-                        NotificationCenter.default.post(name: .openHiddenHowToVoteFeatures, object: nil)
-                    }
+                    filledColor: VoteNowColors.successGreen
                 )
 
                 OutOfTenTurnoutRowView(
@@ -478,7 +475,6 @@ private struct OutOfTenTurnoutRowView: View {
     let turnoutPercent: Double
     let summary: String
     let filledColor: Color
-    var onPeopleLongPress: (() -> Void)? = nil
 
     private var filledCount: Int {
         max(0, min(10, Int(floor(turnoutPercent / 10))))
@@ -512,12 +508,6 @@ private struct OutOfTenTurnoutRowView: View {
                         .accessibilityHidden(true)
                 }
             }
-            .simultaneousGesture(
-                LongPressGesture(minimumDuration: 1.0)
-                    .onEnded { _ in
-                        onPeopleLongPress?()
-                    }
-            )
 
             HStack(alignment: .firstTextBaseline) {
                 Text(summary)

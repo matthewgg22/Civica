@@ -11,7 +11,7 @@ private let allUSStateCodes: Set<String> = [
 
 private let allUSStateAndTerritoryCodes: Set<String> =
     allUSStateCodes.union(["AS", "DC", "GU", "MP", "PR", "VI"])
-private let repsProviderLogger = Logger(subsystem: "VoteNow", category: "RepsProviders")
+private let repsProviderLogger = Logger(subsystem: "Civica", category: "RepsProviders")
 
 private func normalizedOfficialWebsiteURL(_ value: String?) -> String? {
     guard var raw = value?.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -443,6 +443,7 @@ final class NewYorkRepsProvider: RepsProvider {
 
     private let bundle: Bundle
     private var zipMap: ZipToDistrict = [:]
+    private var cityCouncilDistrictByZIP: [String: String] = [:]
     private var allReps: RepresentativesJSON?
     private var isLoaded = false
 
@@ -454,6 +455,7 @@ final class NewYorkRepsProvider: RepsProvider {
         guard !isLoaded else { return }
 
         var map: ZipToDistrict = [:]
+        var cityCouncilByZIP: [String: String] = [:]
         for (zip, raw) in zipToDistrictMap {
             guard let congressional = raw["congressional"],
                   let stateSenate = raw["state_senate"],
@@ -465,12 +467,20 @@ final class NewYorkRepsProvider: RepsProvider {
                 state_senate: stateSenate,
                 state_assembly: stateAssembly
             )
+
+            if let cityCouncilRaw = raw["city_council"]
+                ?? raw["city_council_district"]
+                ?? raw["nyc_city_council_district"],
+               let normalizedCityCouncilDistrict = normalizedDistrictIdentifier(from: cityCouncilRaw) {
+                cityCouncilByZIP[zip] = normalizedCityCouncilDistrict
+            }
         }
 
         guard !map.isEmpty else {
             throw RepsProviderError.dataLoad(message: "ZIP mapping data is missing.")
         }
         zipMap = map
+        cityCouncilDistrictByZIP = cityCouncilByZIP
 
         guard let repsURL = bundle.url(forResource: "NYCRepresentativesRoster", withExtension: "json"),
               let repsData = try? Data(contentsOf: repsURL) else {
@@ -503,9 +513,57 @@ final class NewYorkRepsProvider: RepsProvider {
         })
 
         // City mayor is provided by USMayorsProvider to keep city mayor data current.
-        let city = Array(reps.city.city_council_members.values)
+        let city: [Official]
+        if let cityCouncilDistrict = cityCouncilDistrictByZIP[zip] {
+            city = filteredNYCCityCouncilMembers(
+                members: reps.city.city_council_members,
+                district: cityCouncilDistrict
+            )
+        } else {
+            city = []
+        }
 
         return RepsLookupResult(executive: [], federal: federal, state: state, city: city)
+    }
+
+    private func filteredNYCCityCouncilMembers(
+        members: [String: Official],
+        district: String
+    ) -> [Official] {
+        let normalizedDistrict = normalizedDistrictIdentifier(from: district)
+        guard let normalizedDistrict else { return [] }
+
+        let keyedMatches = members.compactMap { key, official -> Official? in
+            guard normalizedDistrictIdentifier(from: key) == normalizedDistrict else { return nil }
+            return official
+        }
+        if !keyedMatches.isEmpty {
+            return keyedMatches
+        }
+
+        let valueMatches = members.values.filter { official in
+            let divisionIDMatches = normalizedDistrictIdentifier(from: official.divisionId) == normalizedDistrict
+            let officeTitleMatches = normalizedDistrictIdentifier(from: official.officeTitle) == normalizedDistrict
+            return divisionIDMatches || officeTitleMatches
+        }
+        if !valueMatches.isEmpty {
+            return valueMatches
+        }
+
+        return []
+    }
+
+    private func normalizedDistrictIdentifier(from raw: String?) -> String? {
+        guard let raw = raw?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !raw.isEmpty else {
+            return nil
+        }
+
+        let digits = raw.filter(\.isNumber)
+        guard !digits.isEmpty, let districtNumber = Int(digits) else {
+            return nil
+        }
+        return String(districtNumber)
     }
 }
 
@@ -519,9 +577,9 @@ final class USExecutiveProvider: RepsProvider {
             divisionId: "ocd-division/country:us",
             party: "Republican",
             photoURL: nil,
-            url: "https://www.whitehouse.gov/administration/president-trump/",
+            url: "https://www.whitehouse.gov/",
             officialPhone: "(202) 456-1414",
-            websiteURL: "https://www.whitehouse.gov/administration/president-trump/",
+            websiteURL: "https://www.whitehouse.gov/",
             contactFormURL: "https://www.whitehouse.gov/contact/"
         ),
         Official(
@@ -529,9 +587,9 @@ final class USExecutiveProvider: RepsProvider {
             divisionId: "ocd-division/country:us",
             party: "Republican",
             photoURL: nil,
-            url: "https://www.whitehouse.gov/administration/vice-president-vance/",
+            url: "https://www.whitehouse.gov/",
             officialPhone: "(202) 456-7549",
-            websiteURL: "https://www.whitehouse.gov/administration/vice-president-vance/",
+            websiteURL: "https://www.whitehouse.gov/",
             contactFormURL: "https://www.whitehouse.gov/contact/"
         )
     ]
@@ -883,9 +941,7 @@ final class StateCongressionalBoundaryResolver {
             }
         }
 
-        // Fallback for coastal/offshore ZIP centroids that may land in water polygons:
-        // choose the nearest district boundary instead of returning an entire state's delegation.
-        return nearestDistrict(pointLon: pointLon, pointLat: pointLat)
+        return nil
     }
 
     private func loadIfNeeded() -> Bool {
@@ -1154,7 +1210,7 @@ final class USHouseMembersProvider: RepsProvider {
 
     func lookup(zip: String, coordinate: RepsGeoCoordinate?, locality: String?) -> RepsLookupResult? {
         guard let stateCode = stateResolver.stateCode(for: zip),
-              var members = membersByState[stateCode],
+              let members = membersByState[stateCode],
               !members.isEmpty else {
             return nil
         }
@@ -1199,13 +1255,9 @@ final class USHouseMembersProvider: RepsProvider {
             )
         }
 
-        // Without nationwide ZIP->district mapping yet, return the full state delegation.
-        members.sort { lhs, rhs in
-            sortKey(for: lhs.district_key) < sortKey(for: rhs.district_key)
-        }
-
-        let officials = members.map(official(from:))
-        return RepsLookupResult(executive: [], federal: officials, state: [], city: [])
+        // District could not be resolved for a multi-member state.
+        // Return unresolved instead of returning an incorrect full delegation.
+        return nil
     }
 
     private func official(from member: HouseRecord) -> Official {
@@ -1345,7 +1397,7 @@ final class USMayorsProvider: RepsProvider {
     }
 
     let id = "us-mayors-top50"
-    let supportedStateCodes: Set<String> = allUSStateAndTerritoryCodes
+    let supportedStateCodes: Set<String>
     private let preferredMayorWebsiteByName: [String: String] = [
         "joe hogsett": "https://www.indy.gov/agency/office-of-the-mayor",
         "craig greenberg": "https://louisvilleky.gov/government/mayor-craig-greenberg",
@@ -1364,6 +1416,7 @@ final class USMayorsProvider: RepsProvider {
 
     init(bundle: Bundle = .main) {
         self.bundle = bundle
+        self.supportedStateCodes = Self.deriveSupportedStateCodes(bundle: bundle)
     }
 
     func load() throws {
@@ -1496,28 +1549,41 @@ final class USMayorsProvider: RepsProvider {
             return true
         }
 
-        let mayorTokenCount = canonicalMayor.split(separator: " ").count
-        let localityTokenCount = canonicalLocality.split(separator: " ").count
-        let shorter = canonicalMayor.count <= canonicalLocality.count ? canonicalMayor : canonicalLocality
-        let shorterTokens = shorter.split(separator: " ")
-        let allowSingleTokenContainment = shorterTokens.count == 1 && (shorterTokens.first?.count ?? 0) >= 5
-
-        if min(mayorTokenCount, localityTokenCount) >= 2 || allowSingleTokenContainment {
-            if canonicalMayor.contains(" \(canonicalLocality) ") ||
-                canonicalMayor.hasPrefix("\(canonicalLocality) ") ||
-                canonicalMayor.hasSuffix(" \(canonicalLocality)") {
-                return true
-            }
-
-            if canonicalLocality.contains(" \(canonicalMayor) ") ||
-                canonicalLocality.hasPrefix("\(canonicalMayor) ") ||
-                canonicalLocality.hasSuffix(" \(canonicalMayor)") {
-                return true
-            }
+        if explicitCityAliases[canonicalMayor]?.contains(canonicalLocality) == true {
+            return true
+        }
+        if explicitCityAliases[canonicalLocality]?.contains(canonicalMayor) == true {
+            return true
         }
 
         return false
     }
+
+    private static func deriveSupportedStateCodes(bundle: Bundle) -> Set<String> {
+        guard let url = bundle.url(forResource: "USMayorsTop50", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let entries = try? JSONDecoder().decode([MayorRecord].self, from: data) else {
+            return []
+        }
+
+        return Set(
+            entries
+                .map { $0.state_code.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() }
+                .filter { allUSStateAndTerritoryCodes.contains($0) }
+        )
+    }
+
+    private let explicitCityAliases: [String: Set<String>] = [
+        "nashville": ["nashville davidson"],
+        "nashville davidson": ["nashville"],
+        "louisville": ["louisville jefferson county"],
+        "louisville jefferson county": ["louisville"],
+        "indianapolis": ["indianapolis marion county"],
+        "indianapolis marion county": ["indianapolis"],
+        "new york": ["new york city", "nyc"],
+        "new york city": ["new york", "nyc"],
+        "nyc": ["new york", "new york city"]
+    ]
 
     private func normalizedCityName(_ value: String) -> String {
         let folded = value.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
@@ -1572,6 +1638,11 @@ final class USMayorsProvider: RepsProvider {
 final class RepsProviderRegistry {
     private let providers: [RepsProvider]
     private let stateResolver = USZipStateResolver()
+    private let criticalProviderIDs: Set<String> = [
+        "us-governors",
+        "us-senators",
+        "us-house-members"
+    ]
 
     init(providers: [RepsProvider]) {
         self.providers = providers
@@ -1632,9 +1703,15 @@ final class RepsProviderRegistry {
             do {
                 try provider.load()
             } catch let providerError as RepsProviderError {
+                if criticalProviderIDs.contains(provider.id) {
+                    throw providerError
+                }
                 lastLoadError = providerError
                 continue
             } catch {
+                if criticalProviderIDs.contains(provider.id) {
+                    throw RepsProviderError.dataLoad(message: "Critical representative data is temporarily unavailable.")
+                }
                 continue
             }
 

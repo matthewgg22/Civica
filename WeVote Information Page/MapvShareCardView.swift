@@ -39,7 +39,7 @@ struct MapvShareCardView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("VoteNow")
+            Text("Civica")
                 .font(.system(size: 20, weight: .semibold))
                 .opacity(0.8)
 

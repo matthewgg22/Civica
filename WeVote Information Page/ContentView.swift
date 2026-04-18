@@ -12,6 +12,7 @@ import SwiftUI
 import UIKit   // only needed if you reference UITabBar dimensions elsewhere
 import CoreLocation
 import StoreKit
+import OSLog
 
 // MARK: – Safe-Indexing Helper
 extension Collection {
@@ -22,11 +23,93 @@ extension Collection {
 
 // MARK: – Date Helper
 extension Date {
-    static func from(_ string: String, format: String = "yyyy-MM-dd") -> Date {
+    static func from(_ string: String, format: String = "yyyy-MM-dd") -> Date? {
         let fmt = DateFormatter()
         fmt.dateFormat = format
         fmt.timeZone   = .current
-        return fmt.date(from: string) ?? Date()
+        return fmt.date(from: string)
+    }
+}
+
+struct MidtermElectionBundleRecord: Decodable {
+    let state_name: String
+    let state_code: String
+    let primary_date: String?
+    let primary_runoff_date: String?
+    let general_election_date: String?
+    let registration_deadline_primary: String?
+    let registration_deadline_general: String?
+    let registration_notes: String?
+    let early_voting_primary: String?
+    let early_voting_primary_runoff: String?
+    let early_voting_general: String?
+    let primary_source: String?
+}
+
+final class MidtermElectionBundleStore {
+    static let shared = MidtermElectionBundleStore()
+
+    private let queue = DispatchQueue(label: "com.civica.midtermElectionBundleStore", qos: .userInitiated)
+    private var cachedRecords: [MidtermElectionBundleRecord]?
+    private var isLoading = false
+    private var pendingCompletions: [([MidtermElectionBundleRecord]) -> Void] = []
+
+    private static let logger = Logger(subsystem: "Civica", category: "MidtermElectionBundleStore")
+
+    private init() {}
+
+    func loadRecordsIfNeeded(completion: @escaping ([MidtermElectionBundleRecord]) -> Void) {
+        queue.async {
+            if let cachedRecords = self.cachedRecords {
+                DispatchQueue.main.async {
+                    completion(cachedRecords)
+                }
+                return
+            }
+
+            self.pendingCompletions.append(completion)
+            guard !self.isLoading else { return }
+            self.isLoading = true
+
+            let loadedRecords = Self.loadRecordsFromBundle()
+            self.cachedRecords = loadedRecords
+            self.isLoading = false
+            let completions = self.pendingCompletions
+            self.pendingCompletions.removeAll()
+
+            DispatchQueue.main.async {
+                completions.forEach { completion in
+                    completion(loadedRecords)
+                }
+            }
+        }
+    }
+
+    func records() async -> [MidtermElectionBundleRecord] {
+        await withCheckedContinuation { continuation in
+            loadRecordsIfNeeded { records in
+                continuation.resume(returning: records)
+            }
+        }
+    }
+
+    private static func loadRecordsFromBundle() -> [MidtermElectionBundleRecord] {
+        guard let url = Bundle.main.url(forResource: "USMidterm2026ElectionDates", withExtension: "json") else {
+            logger.error("USMidterm2026ElectionDates.json missing from bundle.")
+            #if DEBUG
+            assertionFailure("USMidterm2026ElectionDates.json missing from bundle.")
+            #endif
+            return []
+        }
+        guard let data = try? Data(contentsOf: url) else {
+            logger.error("Unable to read USMidterm2026ElectionDates.json from bundle.")
+            return []
+        }
+        guard let records = try? JSONDecoder().decode([MidtermElectionBundleRecord].self, from: data) else {
+            logger.error("Unable to decode USMidterm2026ElectionDates.json.")
+            return []
+        }
+        return records
     }
 }
 
@@ -49,13 +132,21 @@ enum Tab: CaseIterable {
 
 // MARK: – Root Content View
 struct ContentView: View {
+    private enum ElectionDeepLinkResolution {
+        case found(Election)
+        case notFound
+    }
+
     @Environment(\.requestReview) private var requestReview
     @EnvironmentObject private var planVM: PlanViewModel
     @EnvironmentObject private var repsVM: MyRepsViewModel
+    @EnvironmentObject private var authStore: AuthStore
     @StateObject private var mapvPlanStore = MAPVPlanStore.shared
     @StateObject private var reviewPromptManager = ReviewPromptManager.shared
     @Environment(\.scenePhase) private var scenePhase
     private let zipStateResolver = USZipStateResolver()
+    private let launchOverlayMinimumDuration: TimeInterval = 1.0
+    private let launchOverlayMaximumDurationNoTap: TimeInterval = 6.0
 
     private static let stateCodeToName: [String: String] = [
         "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "CA": "California",
@@ -80,6 +171,11 @@ struct ContentView: View {
     @State private var showLaunchOverlay  = true
     @State private var showWhyVoteOverlay = false
     @State private var whyVoteTapOriginInSpreadSpace: CGPoint?
+    @State private var launchOverlayStartedAt = Date()
+    @State private var launchOverlayTimeoutTask: Task<Void, Never>?
+    @State private var isMidtermBundleReady = false
+    @State private var launchReadinessTimedOut = false
+    @State private var deepLinkAlertMessage: String?
 
     private var loadingZip: String? {
         let primary = String(planVM.zip.filter(\.isNumber).prefix(5))
@@ -105,19 +201,54 @@ struct ContentView: View {
         return nil
     }
 
+    private var launchOverlayStatusMessage: String? {
+        guard launchReadinessTimedOut, !isLaunchReadyForDismissal else { return nil }
+        return "Still loading your secure session and election data..."
+    }
+
     private func handleElectionDeepLink(_ url: URL) {
         selectedTab = .electionTimeline
-        guard let election = resolveElectionFromDeepLink(url) else { return }
-        selectedElection = election
+        Task { @MainActor in
+            switch await resolveElectionFromDeepLink(url) {
+            case .found(let election):
+                selectedElection = election
+            case .notFound:
+                selectedElection = nil
+                deepLinkAlertMessage = "Couldn’t find this shared election. Please refresh your timeline and try again."
+            }
+        }
     }
 
-    private func openCallYourRepsTab() {
-        selectedTab = .callYourReps
+    private var isLaunchReadyForDismissal: Bool {
+        !authStore.isLoading && isMidtermBundleReady
     }
 
-    private func resolveElectionFromDeepLink(_ url: URL) -> Election? {
+    private func dismissLaunchOverlayIfNeeded(force: Bool = false) {
+        guard showLaunchOverlay else { return }
+        let elapsed = Date().timeIntervalSince(launchOverlayStartedAt)
+        let minimumElapsed = elapsed >= launchOverlayMinimumDuration
+        guard force || (minimumElapsed && isLaunchReadyForDismissal) else { return }
+
+        launchOverlayTimeoutTask?.cancel()
+        launchOverlayTimeoutTask = nil
+        withAnimation(.easeOut(duration: 0.3)) {
+            showLaunchOverlay = false
+        }
+    }
+
+    private func scheduleLaunchOverlayFallbackTimeout() {
+        launchOverlayTimeoutTask?.cancel()
+        launchOverlayTimeoutTask = Task { @MainActor in
+            let nanoseconds = UInt64(launchOverlayMaximumDurationNoTap * 1_000_000_000)
+            try? await Task.sleep(nanoseconds: nanoseconds)
+            launchReadinessTimedOut = true
+            dismissLaunchOverlayIfNeeded()
+        }
+    }
+
+    private func resolveElectionFromDeepLink(_ url: URL) async -> ElectionDeepLinkResolution {
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-            return nil
+            return .notFound
         }
 
         var query: [String: String] = [:]
@@ -131,16 +262,18 @@ struct ContentView: View {
         let targetStateCode = query["state"]?.uppercased()
         let targetType = query["type"]?.uppercased()
         let targetDay = Self.deepLinkDateFormatter.date(from: query["day"] ?? "")
+        let hasSearchFilters = (targetElectionID?.isEmpty == false) || (targetStateCode?.isEmpty == false) || (targetType?.isEmpty == false) || targetDay != nil
 
         var candidates: [Election] = planVM.upcomingElections
         if let targetStateCode, !targetStateCode.isEmpty {
-            let bundled = loadTimelineElectionsFromBundle(for: targetStateCode)
+            let records = await MidtermElectionBundleStore.shared.records()
+            let bundled = buildTimelineElections(for: targetStateCode, records: records)
             candidates = mergedElections(candidates, bundled)
         }
 
         if let targetElectionID, !targetElectionID.isEmpty,
            let exact = candidates.first(where: { $0.id == targetElectionID }) {
-            return exact
+            return .found(exact)
         }
 
         var filtered = candidates
@@ -155,7 +288,7 @@ struct ContentView: View {
                 electionTypeToken(for: election) == targetType &&
                     Calendar.current.isDate(election.electionDay, inSameDayAs: targetDay)
             }) {
-                return exactMatch
+                return .found(exactMatch)
             }
         }
 
@@ -163,21 +296,18 @@ struct ContentView: View {
             if let dayMatch = filtered.first(where: { election in
                 Calendar.current.isDate(election.electionDay, inSameDayAs: targetDay)
             }) {
-                return dayMatch
+                return .found(dayMatch)
             }
         }
 
         if let targetType, !targetType.isEmpty {
             if let typeMatch = filtered.first(where: { electionTypeToken(for: $0) == targetType }) {
-                return typeMatch
+                return .found(typeMatch)
             }
         }
 
-        return filtered.sorted { lhs, rhs in
-            if lhs.electionDay != rhs.electionDay { return lhs.electionDay < rhs.electionDay }
-            return lhs.name < rhs.name
-        }
-        .first
+        guard hasSearchFilters else { return .notFound }
+        return .notFound
     }
 
     private func mergedElections(_ lhs: [Election], _ rhs: [Election]) -> [Election] {
@@ -209,11 +339,8 @@ struct ContentView: View {
         return "ELECTION"
     }
 
-    private func loadTimelineElectionsFromBundle(for stateCode: String) -> [Election] {
-        guard let url = Bundle.main.url(forResource: "USMidterm2026ElectionDates", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let records = try? JSONDecoder().decode([TimelineDeepLinkStateRecord].self, from: data),
-              let record = records.first(where: { $0.state_code.uppercased() == stateCode.uppercased() }) else {
+    private func buildTimelineElections(for stateCode: String, records: [MidtermElectionBundleRecord]) -> [Election] {
+        guard let record = records.first(where: { $0.state_code.uppercased() == stateCode.uppercased() }) else {
             return []
         }
 
@@ -358,12 +485,11 @@ struct ContentView: View {
         let path = url.path.lowercased()
 
         if host == "mapv" || path.contains("mapv") {
-            openCallYourRepsTab()
+            // MAPV deep links are parked for this launch; route to Voting Steps instead.
+            selectedTab = .registration
         } else if host == "directions" || path.contains("directions") {
-            openCallYourRepsTab()
-            if let mapsURL = mapvPlanStore.plan?.mapsURL {
-                UIApplication.shared.open(mapsURL)
-            }
+            // Parking directions MAPV entry alongside other MAPV routes for now.
+            selectedTab = .registration
         } else if host == "election" || path.contains("election") {
             handleElectionDeepLink(url)
         } else if host == "registration" || path.contains("registration") {
@@ -393,7 +519,8 @@ struct ContentView: View {
         case "registration":
             selectedTab = .registration
         case "mapv":
-            openCallYourRepsTab()
+            // MAPV share links are parked for this launch.
+            selectedTab = .registration
         case "civic":
             selectedTab = .myReps
         default:
@@ -464,7 +591,11 @@ struct ContentView: View {
             if showLaunchOverlay {
                 LoadingView(
                     selectedStateName: loadingStateName,
-                    selectedZip: loadingZip
+                    selectedZip: loadingZip,
+                    statusMessage: launchOverlayStatusMessage,
+                    onTapDismiss: {
+                        dismissLaunchOverlayIfNeeded()
+                    }
                 )
                     .transition(.opacity)
                     .zIndex(1000)
@@ -475,12 +606,25 @@ struct ContentView: View {
             DispatchQueue.main.async {
                 mapvPlanStore.bootstrapFromLegacyPlanViewModel(planVM)
                 mapvPlanStore.refreshLiveActivity()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-                    withAnimation(.easeOut(duration: 0.3)) {
-                        showLaunchOverlay = false
-                    }
+
+                launchOverlayStartedAt = Date()
+                launchReadinessTimedOut = false
+                scheduleLaunchOverlayFallbackTimeout()
+                MidtermElectionBundleStore.shared.loadRecordsIfNeeded { _ in
+                    isMidtermBundleReady = true
+                    dismissLaunchOverlayIfNeeded()
                 }
             }
+        }
+        .onDisappear {
+            launchOverlayTimeoutTask?.cancel()
+            launchOverlayTimeoutTask = nil
+        }
+        .onChange(of: authStore.isLoading) { _, _ in
+            dismissLaunchOverlayIfNeeded()
+        }
+        .onChange(of: isMidtermBundleReady) { _, _ in
+            dismissLaunchOverlayIfNeeded()
         }
         .onChange(of: scenePhase) { _, phase in
             guard phase == .active else { return }
@@ -509,17 +653,12 @@ struct ContentView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .openHowToVoteMailInBallot)) { _ in
             DispatchQueue.main.async {
-                openCallYourRepsTab()
+                selectedTab = .registration
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .openVotingStepsTab)) { _ in
             DispatchQueue.main.async {
                 selectedTab = .registration
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .openHiddenHowToVoteFeatures)) { _ in
-            DispatchQueue.main.async {
-                openCallYourRepsTab()
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .openMyInfoPanel)) { _ in
@@ -555,8 +694,8 @@ struct ContentView: View {
             isPresented: Binding(
                 get: { reviewPromptManager.isPrePromptPresented },
                 set: { isPresented in
-                    if !isPresented {
-                        reviewPromptManager.dismissPrePrompt()
+                    if !isPresented, reviewPromptManager.isPrePromptPresented {
+                        reviewPromptManager.handleNotNowTapped()
                     }
                 }
             )
@@ -570,7 +709,21 @@ struct ContentView: View {
                     reviewPromptManager.handleNotNowTapped()
                 }
             )
-            .interactiveDismissDisabled()
+        }
+        .alert(
+            "Election Link Unavailable",
+            isPresented: Binding(
+                get: { deepLinkAlertMessage != nil },
+                set: { presented in
+                    if !presented { deepLinkAlertMessage = nil }
+                }
+            )
+        ) {
+            Button("OK", role: .cancel) {
+                deepLinkAlertMessage = nil
+            }
+        } message: {
+            Text(deepLinkAlertMessage ?? "")
         }
 
     }
@@ -578,7 +731,9 @@ struct ContentView: View {
 private struct CallYourRepsTabView: View {
     @EnvironmentObject private var planVM: PlanViewModel
     @EnvironmentObject private var repsVM: MyRepsViewModel
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var locationProbe = CallTabLocationProbe()
+    private let zipStateResolver = USZipStateResolver()
 
     private var normalizedZip: String {
         // Prioritize ZIP derived from the explicit address fields.
@@ -594,35 +749,72 @@ private struct CallYourRepsTabView: View {
     }
 
     private var issueCallAddressLine: String {
-        let city = planVM.userAddress.city.trimmingCharacters(in: .whitespacesAndNewlines)
-        let state = planVM.userAddress.state.trimmingCharacters(in: .whitespacesAndNewlines)
+        let city = issueCallLocationCity
+        let state = issueCallLocationStateCode
         let zip = normalizedZip
 
-        if !city.isEmpty && !state.isEmpty && !zip.isEmpty {
-            return "\(city), \(state) \(zip)"
+        if !city.isEmpty, let state, !zip.isEmpty {
+            return "\(city), \(state) (\(zip))"
         }
-        if !state.isEmpty && !zip.isEmpty {
-            return "\(state), \(zip)"
+        if !city.isEmpty, let state {
+            return "\(city), \(state)"
+        }
+        if let state, !zip.isEmpty {
+            return "\(state) (\(zip))"
         }
         if !zip.isEmpty {
             return zip
+        }
+        if let state {
+            return state
         }
 
         return planVM.homeAddress.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    private var issueCallLocationCity: String {
+        let resolvedCity = repsVM.resolvedLocationSelection?.city?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !resolvedCity.isEmpty { return resolvedCity }
+        return planVM.userAddress.city.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var issueCallLocationStateCode: String? {
+        if let resolved = normalizedUSStateCode(from: repsVM.resolvedStateCode) {
+            return resolved
+        }
+        if let detected = normalizedUSStateCode(from: repsVM.detectedStateCode) {
+            return detected
+        }
+        if let entered = normalizedUSStateCode(from: planVM.userAddress.state) {
+            return entered
+        }
+        if !normalizedZip.isEmpty {
+            return zipStateResolver.stateCode(for: normalizedZip)
+        }
+        return nil
+    }
+
     private var residencyNotice: String {
-        guard
-            let device = locationProbe.coordinate,
-            let selection = repsVM.resolvedLocationSelection
-        else {
+        guard let deviceCoordinate = locationProbe.coordinate else {
             return ""
         }
 
-        let selected = CLLocation(latitude: selection.latitude, longitude: selection.longitude)
-        let current = CLLocation(latitude: device.latitude, longitude: device.longitude)
+        let selectedCoordinate: CLLocationCoordinate2D?
+        if let selection = repsVM.resolvedLocationSelection {
+            selectedCoordinate = CLLocationCoordinate2D(latitude: selection.latitude, longitude: selection.longitude)
+        } else {
+            selectedCoordinate = repsVM.resolvedCoordinate
+        }
+
+        guard let selectedCoordinate else {
+            return ""
+        }
+
+        let selected = CLLocation(latitude: selectedCoordinate.latitude, longitude: selectedCoordinate.longitude)
+        let current = CLLocation(latitude: deviceCoordinate.latitude, longitude: deviceCoordinate.longitude)
         let miles = current.distance(from: selected) / 1609.344
-        guard miles >= 50 else { return "" }
+        guard miles.isFinite, miles >= 50 else { return "" }
 
         let roundedMiles = Int(miles.rounded())
         return "You appear to be ~\(roundedMiles) miles from your selected address. Representation is based on your residence."
@@ -668,6 +860,10 @@ private struct CallYourRepsTabView: View {
                 repsVM.fetchReps(for: normalizedZip)
             }
         }
+        .onChange(of: scenePhase) { _, newPhase in
+            guard newPhase == .active else { return }
+            locationProbe.requestLocationIfNeeded(force: true)
+        }
     }
 }
 
@@ -683,14 +879,19 @@ private final class CallTabLocationProbe: NSObject, ObservableObject, CLLocation
         manager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
     }
 
-    func requestLocationIfNeeded() {
-        guard !didRequest else { return }
-        didRequest = true
+    func requestLocationIfNeeded(force: Bool = false) {
+        if coordinate == nil, let lastKnown = manager.location?.coordinate {
+            coordinate = lastKnown
+        }
 
         switch manager.authorizationStatus {
         case .authorizedWhenInUse, .authorizedAlways:
+            guard force || !didRequest || coordinate == nil else { return }
+            didRequest = true
             manager.requestLocation()
         case .notDetermined:
+            guard !didRequest else { return }
+            didRequest = true
             manager.requestWhenInUseAuthorization()
         case .denied, .restricted:
             break
@@ -719,21 +920,7 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
             .environmentObject(PlanViewModel())
-            .environmentObject(MyRepsViewModel())  // ← also inject here
+            .environmentObject(MyRepsViewModel())
+            .environmentObject(AuthStore(startListening: false))
     }
-}
-
-private struct TimelineDeepLinkStateRecord: Decodable {
-    let state_name: String
-    let state_code: String
-    let primary_date: String?
-    let primary_runoff_date: String?
-    let general_election_date: String?
-    let registration_deadline_primary: String?
-    let registration_deadline_general: String?
-    let registration_notes: String?
-    let early_voting_primary: String?
-    let early_voting_primary_runoff: String?
-    let early_voting_general: String?
-    let primary_source: String?
 }

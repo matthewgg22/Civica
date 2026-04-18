@@ -14,7 +14,7 @@ enum StripePaymentSheetConfig {
 extension PaymentSheet.Configuration {
     static func voteNowDonationConfiguration() -> PaymentSheet.Configuration {
         var configuration = PaymentSheet.Configuration()
-        configuration.merchantDisplayName = "VoteNow"
+        configuration.merchantDisplayName = "Civica"
         configuration.applePay = .init(
             merchantId: StripePaymentSheetConfig.merchantId,
             merchantCountryCode: StripePaymentSheetConfig.merchantCountryCode

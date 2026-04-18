@@ -47,7 +47,7 @@ final class MAPVPlanStore: ObservableObject {
     private let defaults: UserDefaults
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
-    private let logger = Logger(subsystem: "VoteNow", category: "MAPVPlanStore")
+    private let logger = Logger(subsystem: "Civica", category: "MAPVPlanStore")
     private let zipStateResolver = USZipStateResolver()
     private var lastSupabaseSyncFingerprint: String?
     private var didAttemptSupabaseBootstrap = false
@@ -146,7 +146,7 @@ final class MAPVPlanStore: ObservableObject {
             Task {
                 do {
                     _ = try await SupabaseManager.shared.sendTestPush(
-                        title: "VoteNow",
+                        title: "Civica",
                         body: "Your voting plan is set."
                     )
                 } catch {

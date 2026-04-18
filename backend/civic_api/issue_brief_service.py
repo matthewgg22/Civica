@@ -1231,7 +1231,7 @@ def _seed_evidence_rows() -> list[dict[str, Any]]:
             {
                 "evidence_id": str(uuid.uuid4()),
                 "canonical_issue": variant.slug,
-                "source_name": "VoteNow curated issue packet",
+                "source_name": "Civica curated issue packet",
                 "source_url": None,
                 "published_at": now_iso,
                 "retrieved_at": now_iso,

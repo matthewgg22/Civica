@@ -554,7 +554,7 @@ extension CivicScriptPackageScriptCore {
         liveScriptCore = try container.decodeIfPresent(String.self, forKey: .liveScriptCore)
             ?? "Hi, my name is [Your Name], and I am a constituent calling about this issue."
         voicemailScriptCore = try container.decodeIfPresent(String.self, forKey: .voicemailScriptCore)
-            ?? "Hi, constituent calling about this issue. Please share the member's current position and next step."
+            ?? "Hi, constituent calling about this issue. Thank you for your time."
     }
 }
 
@@ -774,10 +774,12 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
     private let session: URLSession
     private let encoder = JSONEncoder()
     private let decoder: JSONDecoder
-    private let logger = Logger(subsystem: "VoteNow", category: "CivicIssueCallAPIClient")
+    private let logger = Logger(subsystem: "Civica", category: "CivicIssueCallAPIClient")
     // Render free instances can cold-start slowly; allow enough time before failing.
     private let requestTimeout: TimeInterval = 65
-    private let mapcPipelineV3FlagKey = "mapc_pipeline_v3_enabled"
+    private let anonymousIDHeader = "X-Anonymous-ID"
+    private let anonymousIDDefaultsKey = "civic.issue_call.anonymous_id.v1"
+    private static let invalidBaseURLSentinelPath = "/__invalid_civic_api_base_url__"
     private let mapcV3RecoveryMessage = "I hit a snag, but I still have your issue. Pick a fix or restate the action you want."
     private var mapcV3PendingSelectionStateBySessionID: [String: MAPCV3PendingSelectionState] = [:]
 
@@ -878,13 +880,27 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         await attachAuthorizationIfAvailable(to: &request)
         request.httpBody = try encoder.encode(requestBody)
 
-        let data = try await requestData(for: request)
+        let (data, response) = try await requestDataWithResponse(for: request)
         do {
             return try decoder.decode(CivicScriptPackageResponse.self, from: data)
         } catch {
-            let rawPayload = String(data: data, encoding: .utf8) ?? "<non-utf8-payload>"
-            let snippet = String(rawPayload.prefix(900))
-            logger.error("Failed to decode script-package payload. Error: \(String(describing: error), privacy: .public) Payload: \(snippet, privacy: .public)")
+            let endpointPath = request.url?.path ?? "/api/v1/civic/script-package"
+            let errorKind: String
+            switch error {
+            case DecodingError.keyNotFound(let key, _):
+                errorKind = "key_not_found:\(key.stringValue)"
+            case DecodingError.valueNotFound(let type, _):
+                errorKind = "value_not_found:\(String(describing: type))"
+            case DecodingError.typeMismatch(let type, _):
+                errorKind = "type_mismatch:\(String(describing: type))"
+            case DecodingError.dataCorrupted:
+                errorKind = "data_corrupted"
+            default:
+                errorKind = String(describing: type(of: error))
+            }
+            logger.error(
+                "Failed to decode script-package response. endpoint=\(endpointPath, privacy: .public) status=\(response.statusCode, privacy: .public) bytes=\(data.count, privacy: .public) error_kind=\(errorKind, privacy: .public)"
+            )
             throw NSError(
                 domain: "CivicIssueCallAPIClient",
                 code: -2,
@@ -896,19 +912,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
     }
 
     private var mapcPipelineV3Enabled: Bool {
-        if let boolValue = UserDefaults.standard.object(forKey: mapcPipelineV3FlagKey) as? Bool {
-            return boolValue
-        }
-        if let stringValue = UserDefaults.standard.string(forKey: mapcPipelineV3FlagKey) {
-            let normalized = stringValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-            if ["1", "true", "yes", "on"].contains(normalized) { return true }
-            if ["0", "false", "no", "off"].contains(normalized) { return false }
-        }
-        if let envValue = ProcessInfo.processInfo.environment[mapcPipelineV3FlagKey] {
-            let normalized = envValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-            return ["1", "true", "yes", "on"].contains(normalized)
-        }
-        return true
+        VoteNowLaunchFeatures.resolvedMAPCV3Enabled()
     }
 
     private func createScriptPackageV3(
@@ -980,7 +984,9 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         interpretRequest.httpBody = try encoder.encode(interpretPayload)
         logMAPCV3Request(interpretRequest)
         let (interpretData, interpretHTTP) = try await requestDataWithResponse(for: interpretRequest)
-        print("🌐 [MAPC] HTTP status: \(interpretHTTP.statusCode) path=\(interpretRequest.url?.path ?? "<unknown-path>")")
+        logger.debug(
+            "MAPC HTTP status=\(interpretHTTP.statusCode, privacy: .public) path=\(interpretRequest.url?.path ?? "<unknown-path>", privacy: .public)"
+        )
         let interpretResponse: CivicMAPCV3InterpretResponse = try decodeMAPCV3Response(
             CivicMAPCV3InterpretResponse.self,
             from: interpretData,
@@ -1017,7 +1023,9 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         )
         logMAPCV3Request(askRequest)
         let (askData, askHTTP) = try await requestDataWithResponse(for: askRequest)
-        print("🌐 [MAPC] HTTP status: \(askHTTP.statusCode) path=\(askRequest.url?.path ?? "<unknown-path>")")
+        logger.debug(
+            "MAPC HTTP status=\(askHTTP.statusCode, privacy: .public) path=\(askRequest.url?.path ?? "<unknown-path>", privacy: .public)"
+        )
         let askResponse: CivicMAPCV3AskOptionsResponse = try decodeMAPCV3Response(
             CivicMAPCV3AskOptionsResponse.self,
             from: askData,
@@ -1440,7 +1448,9 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             interpretRequest.httpBody = try encoder.encode(interpretPayload)
             logMAPCV3Request(interpretRequest)
             let (interpretData, interpretHTTP) = try await requestDataWithResponse(for: interpretRequest)
-            print("🌐 [MAPC] HTTP status: \(interpretHTTP.statusCode) path=\(interpretRequest.url?.path ?? "<unknown-path>")")
+            logger.debug(
+                "MAPC HTTP status=\(interpretHTTP.statusCode, privacy: .public) path=\(interpretRequest.url?.path ?? "<unknown-path>", privacy: .public)"
+            )
             let interpretResponse: CivicMAPCV3InterpretResponse = try decodeMAPCV3Response(
                 CivicMAPCV3InterpretResponse.self,
                 from: interpretData,
@@ -1491,7 +1501,9 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         )
         logMAPCV3Request(askRequest)
         let (askData, askHTTP) = try await requestDataWithResponse(for: askRequest)
-        print("🌐 [MAPC] HTTP status: \(askHTTP.statusCode) path=\(askRequest.url?.path ?? "<unknown-path>")")
+        logger.debug(
+            "MAPC HTTP status=\(askHTTP.statusCode, privacy: .public) path=\(askRequest.url?.path ?? "<unknown-path>", privacy: .public)"
+        )
         let askResponse: CivicMAPCV3AskOptionsResponse = try decodeMAPCV3Response(
             CivicMAPCV3AskOptionsResponse.self,
             from: askData,
@@ -1677,7 +1689,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 fallbackUsed: "none",
                 refusalReason: nil
             ),
-            policyFlags: ["mapc_pipeline_v3_enabled"]
+            policyFlags: [VoteNowLaunchFeatures.mapcPipelineV3FlagKey]
         )
     }
 
@@ -1973,14 +1985,32 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
     }
 
     private func attachAuthorization(to request: inout URLRequest) async throws {
+        attachAnonymousIDHeader(to: &request)
         let token = try await currentAccessToken()
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
     }
 
     private func attachAuthorizationIfAvailable(to request: inout URLRequest) async {
+        attachAnonymousIDHeader(to: &request)
         if let token = try? await currentAccessToken() {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
+    }
+
+    private func attachAnonymousIDHeader(to request: inout URLRequest) {
+        request.setValue(stableAnonymousRequestID(), forHTTPHeaderField: anonymousIDHeader)
+    }
+
+    private func stableAnonymousRequestID() -> String {
+        let defaults = UserDefaults.standard
+        let existing = defaults.string(forKey: anonymousIDDefaultsKey)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !existing.isEmpty {
+            return existing
+        }
+        let generated = UUID().uuidString.lowercased()
+        defaults.set(generated, forKey: anonymousIDDefaultsKey)
+        return generated
     }
 
     private func currentAccessToken() async throws -> String {
@@ -2157,6 +2187,15 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
     }
 
     private func performRequestWithResponse(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
+        if let url = request.url, url.isFileURL, url.path.contains(Self.invalidBaseURLSentinelPath) {
+            throw NSError(
+                domain: "CivicIssueCallAPIClient",
+                code: -10_001,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "Civic API base URL is not configured. Set CIVIC_API_BASE_URL or SUPABASE_URL in app configuration."
+                ]
+            )
+        }
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse else { throw URLError(.badServerResponse) }
         let path = request.url?.path ?? "<unknown-path>"
@@ -2164,9 +2203,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             founderTrace("HTTP \(http.statusCode) from \(path)")
         }
         guard (200...299).contains(http.statusCode) else {
-            let rawResponse = String(data: data, encoding: .utf8) ?? "<non-utf8-response>"
             founderTrace("Backend returned non-2xx. path=\(path) status=\(http.statusCode)")
-            founderTrace("Raw backend error response: \(rawResponse)")
             let compactMessage = compactHTTPErrorMessage(statusCode: http.statusCode, responseData: data)
             throw NSError(domain: "CivicIssueCallAPIClient", code: http.statusCode, userInfo: [
                 NSLocalizedDescriptionKey: compactMessage
@@ -2177,14 +2214,14 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
 
     private func logMAPCV3Request(_ request: URLRequest) {
         let path = request.url?.path ?? "<unknown-path>"
-        print("🧭 [Founder Trace] endpoint path: \(path)")
-        let body = request.httpBody ?? Data()
-        let bodyString = String(data: body, encoding: .utf8) ?? "<non-utf8-request-body>"
-        print("🧭 [Founder Trace] outbound JSON payload: \(bodyString)")
+        let bodyBytes = request.httpBody?.count ?? 0
+        logger.debug(
+            "MAPC request endpoint=\(path, privacy: .public) body_bytes=\(bodyBytes, privacy: .public)"
+        )
     }
 
     private func founderTrace(_ message: String) {
-        print("🧭 [Founder Trace] \(message)")
+        logger.debug("🧭 [Founder Trace] \(message, privacy: .public)")
     }
 
     private func decodeMAPCV3Response<ResponseType: Decodable>(
@@ -2195,26 +2232,31 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         function: String = #function,
         line: Int = #line
     ) throws -> ResponseType {
-        let rawResponse = String(data: data, encoding: .utf8) ?? "<non-utf8-response>"
-        print("🧭 [Founder Trace] raw backend response BEFORE decode (\(endpointPath)): \(rawResponse)")
         do {
-            let decoded = try decoder.decode(ResponseType.self, from: data)
-            print("✅ [Founder Trace] decode success at \(endpointPath)")
-            return decoded
-        } catch DecodingError.keyNotFound(let key, let context) {
-            print("❌ [Founder Trace] keyNotFound:", key, context.debugDescription, context.codingPath)
-        } catch DecodingError.valueNotFound(let value, let context) {
-            print("❌ [Founder Trace] valueNotFound:", value, context.debugDescription, context.codingPath)
-        } catch DecodingError.typeMismatch(let type, let context) {
-            print("❌ [Founder Trace] typeMismatch:", type, context.debugDescription, context.codingPath)
-        } catch DecodingError.dataCorrupted(let context) {
-            print("❌ [Founder Trace] dataCorrupted:", context.debugDescription)
+            return try decoder.decode(ResponseType.self, from: data)
+        } catch DecodingError.keyNotFound(let key, _) {
+            logger.error(
+                "MAPC decode failure endpoint=\(endpointPath, privacy: .public) error_kind=key_not_found:\(key.stringValue, privacy: .public) bytes=\(data.count, privacy: .public)"
+            )
+        } catch DecodingError.valueNotFound(let value, _) {
+            logger.error(
+                "MAPC decode failure endpoint=\(endpointPath, privacy: .public) error_kind=value_not_found:\(String(describing: value), privacy: .public) bytes=\(data.count, privacy: .public)"
+            )
+        } catch DecodingError.typeMismatch(let type, _) {
+            logger.error(
+                "MAPC decode failure endpoint=\(endpointPath, privacy: .public) error_kind=type_mismatch:\(String(describing: type), privacy: .public) bytes=\(data.count, privacy: .public)"
+            )
+        } catch DecodingError.dataCorrupted(_) {
+            logger.error(
+                "MAPC decode failure endpoint=\(endpointPath, privacy: .public) error_kind=data_corrupted bytes=\(data.count, privacy: .public)"
+            )
         } catch {
-            print("❌ [Founder Trace] Unknown decode error:", error)
+            logger.error(
+                "MAPC decode failure endpoint=\(endpointPath, privacy: .public) error_kind=\(String(describing: type(of: error)), privacy: .public) bytes=\(data.count, privacy: .public)"
+            )
         }
-        print(
-            "🚨 [Founder Trace] response parse failed. " +
-            "location=\(file):\(line) function=\(function) endpoint=\(endpointPath)"
+        logger.error(
+            "MAPC response parse failed endpoint=\(endpointPath, privacy: .public) location=\(file, privacy: .public):\(line, privacy: .public) function=\(function, privacy: .public)"
         )
         throw NSError(
             domain: "CivicIssueCallAPIClient",
@@ -2235,29 +2277,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
             return jsonMessage
         }
 
-        let maxPreviewBytes = 2048
-        let rawPreview = String(decoding: responseData.prefix(maxPreviewBytes), as: UTF8.self)
-        var normalized = rawPreview.replacingOccurrences(
-            of: "\\s+",
-            with: " ",
-            options: .regularExpression
-        )
-        normalized = normalized.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !normalized.isEmpty else {
-            return "API request failed with status \(statusCode)"
-        }
-
-        let lowerPreview = normalized.lowercased()
-        if lowerPreview.contains("<!doctype html") || lowerPreview.contains("<html") {
-            return "status \(statusCode): upstream HTML error page"
-        }
-
-        let maxPreviewChars = 240
-        let snippet = String(normalized.prefix(maxPreviewChars))
-        if normalized.count > maxPreviewChars || responseData.count > maxPreviewBytes {
-            return "status \(statusCode): \(snippet)..."
-        }
-        return "status \(statusCode): \(snippet)"
+        return "API request failed with status \(statusCode)"
     }
 
     private func compactJSONHTTPErrorMessage(statusCode: Int, responseData: Data) -> String? {
@@ -2341,19 +2361,46 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
     private static func resolveBaseURL(bundle: Bundle = .main) -> URL {
         if let configured = (bundle.object(forInfoDictionaryKey: "CIVIC_API_BASE_URL") as? String)?
             .trimmingCharacters(in: .whitespacesAndNewlines),
-           !configured.isEmpty,
-           let url = URL(string: configured) {
-            return url
+           !configured.isEmpty {
+            if let url = validatedHTTPURL(configured) {
+                return url
+            }
+            return invalidConfiguredBaseURL(
+                "Invalid CIVIC_API_BASE_URL. Expected absolute http(s) URL, got: \(configured)"
+            )
         }
 
         if let supabaseURL = (bundle.object(forInfoDictionaryKey: "SUPABASE_URL") as? String)?
             .trimmingCharacters(in: .whitespacesAndNewlines),
-           !supabaseURL.isEmpty,
-           let url = URL(string: supabaseURL) {
-            return url
+           !supabaseURL.isEmpty {
+            if let url = validatedHTTPURL(supabaseURL) {
+                return url
+            }
+            return invalidConfiguredBaseURL(
+                "Invalid SUPABASE_URL. Expected absolute http(s) URL, got: \(supabaseURL)"
+            )
         }
 
-        return URL(string: "https://YOUR-PROJECT-REF.supabase.co") ?? URL(fileURLWithPath: "/")
+        return invalidConfiguredBaseURL("Missing CIVIC_API_BASE_URL and SUPABASE_URL.")
+    }
+
+    private static func validatedHTTPURL(_ raw: String) -> URL? {
+        guard let url = URL(string: raw),
+              let scheme = url.scheme?.lowercased(),
+              ["http", "https"].contains(scheme),
+              let host = url.host,
+              !host.isEmpty else {
+            return nil
+        }
+        return url
+    }
+
+    private static func invalidConfiguredBaseURL(_ reason: String) -> URL {
+        #if DEBUG
+        preconditionFailure("CivicIssueCallAPIClient configuration error: \(reason)")
+        #else
+        return URL(fileURLWithPath: invalidBaseURLSentinelPath)
+        #endif
     }
 }
 
@@ -2584,7 +2631,7 @@ final class IssueCallCenterViewModel: ObservableObject {
     private let apiClient: CivicIssueCallAPIClientProtocol
     private let cacheStore: CivicCallBriefCacheStore
     private let supabaseManager: SupabaseManager
-    private let logger = Logger(subsystem: "VoteNow", category: "IssueCallCenter")
+    private let logger = Logger(subsystem: "Civica", category: "IssueCallCenter")
     private var deferredSnapshotTask: Task<Void, Never>?
     private var hasLoadedExamplesAndHistoryThisSession = false
     private var callScoreRefreshTask: Task<Void, Never>?
@@ -2602,9 +2649,9 @@ final class IssueCallCenterViewModel: ObservableObject {
     private var hasLoggedScriptFeedbackTelemetryFailure = false
     private let scriptChatStateDefaultsKey = "civic.issue_call.script_chat_state.v1"
     private let zipFallbackToken = "[ZIPCODE]"
-    private let mapcPipelineV3FlagKey = "mapc_pipeline_v3_enabled"
     private let mapcV3RecoveryMessage = "I hit a snag, but I still have your issue. Pick a fix or restate the action you want."
     private let mapcV3LintRecoveryMessage = "I hit a snag, but I still have your issue. Pick a fix or restate the action you want."
+    private let mapcRepResolutionRequiredMessage = "We couldn’t find your representatives yet. Set or confirm your location, then try again."
     private let mapcGenerationPathV3 = "v3"
     private let mapcGenerationPathPremade = "premade"
     private let mapcGenerationPathOfflineNotice = "offline_notice"
@@ -2680,20 +2727,7 @@ final class IssueCallCenterViewModel: ObservableObject {
     }
 
     var mapcPipelineV3Enabled: Bool {
-        if let boolValue = UserDefaults.standard.object(forKey: mapcPipelineV3FlagKey) as? Bool {
-            return boolValue
-        }
-        if let stringValue = UserDefaults.standard.string(forKey: mapcPipelineV3FlagKey) {
-            let normalized = stringValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-            if ["1", "true", "yes", "on"].contains(normalized) { return true }
-            if ["0", "false", "no", "off"].contains(normalized) { return false }
-        }
-        if let envValue = ProcessInfo.processInfo.environment[mapcPipelineV3FlagKey] {
-            let normalized = envValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-            if ["1", "true", "yes", "on"].contains(normalized) { return true }
-            if ["0", "false", "no", "off"].contains(normalized) { return false }
-        }
-        return true
+        VoteNowLaunchFeatures.resolvedMAPCV3Enabled()
     }
 
     var availableFilters: [CivicRepFilter] {
@@ -2728,11 +2762,11 @@ final class IssueCallCenterViewModel: ObservableObject {
         selectedAsk != nil && !concernText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    private var federalFallbackRepSlots: [CivicRepSlot] {
-        CivicRepSlot.allCases
+    private enum RepSubmissionContextError: Error {
+        case unresolvedTargets
     }
 
-    private func resolvedRepSubmissionContext() async -> (slots: [CivicRepSlot], targets: [CivicRepTarget]) {
+    private func resolvedRepSubmissionContext() async throws -> (slots: [CivicRepSlot], targets: [CivicRepTarget]) {
         let immediateSlots = requestRepSlots
         if !immediateSlots.isEmpty {
             return (immediateSlots, repTargets)
@@ -2745,8 +2779,8 @@ final class IssueCallCenterViewModel: ObservableObject {
             return (delayedSlots, repTargets)
         }
 
-        logger.notice("MAPC submission continuing with federal-only fallback slots after 3-second rep target wait.")
-        return (federalFallbackRepSlots, repTargets)
+        logger.notice("MAPC submission blocked after 3-second rep target wait because no representative targets are resolved.")
+        throw RepSubmissionContextError.unresolvedTargets
     }
 
     var hasMAPCV3PreparedSelection: Bool {
@@ -3115,7 +3149,13 @@ final class IssueCallCenterViewModel: ObservableObject {
             errorMessage = "Enter your concern before generating call briefs."
             return
         }
-        _ = await resolvedRepSubmissionContext()
+        do {
+            _ = try await resolvedRepSubmissionContext()
+        } catch {
+            errorMessage = mapcRepResolutionRequiredMessage
+            logger.notice("Blocked MAPC submission because representative targets are unresolved.")
+            return
+        }
 
         isSubmitting = true
         defer { isSubmitting = false }
@@ -3289,7 +3329,19 @@ final class IssueCallCenterViewModel: ObservableObject {
         let trimmedConcern = concernText.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedBill = optionalBillRef.trimmingCharacters(in: .whitespacesAndNewlines)
         let userID = await userIDForRequest()
-        let resolvedRepContext = await resolvedRepSubmissionContext()
+        let resolvedRepContext: (slots: [CivicRepSlot], targets: [CivicRepTarget])
+        do {
+            resolvedRepContext = try await resolvedRepSubmissionContext()
+        } catch {
+            errorMessage = mapcRepResolutionRequiredMessage
+            recordMAPCGenerationTelemetry(
+                path: mapcGenerationPathV3,
+                fallbackReason: "stage3_rep_targets_unresolved",
+                sessionResetReason: nil
+            )
+            logger.notice("Blocked MAPC stage 3/4 generation because representative targets are unresolved.")
+            return
+        }
         let validationConcernText = mapcV3ValidationConcernText(
             concernText: trimmedConcern,
             selectedOptionLabel: selectedOptionLabel
@@ -3297,18 +3349,8 @@ final class IssueCallCenterViewModel: ObservableObject {
         let useRelaxedTopicValidation = shouldUseRelaxedMAPCV3TopicValidation(
             concernText: trimmedConcern
         )
-        let concernPreview = trimmedConcern.isEmpty ? "<empty>" : String(trimmedConcern.prefix(140))
-        print(
-            "🧭 [Founder Trace] " +
-            "Stage 3/4 preflight. " +
-            "session_id=\(sessionID) " +
-            "session_state=\(mapcV3SessionState) " +
-            "selected_option_id=\(selectedOptionID) " +
-            "selected_option_label=\(selectedOptionLabel) " +
-            "concern_preview=\(concernPreview) " +
-            "validation_concern_preview=\(String(validationConcernText.prefix(140))) " +
-            "relaxed_topic_validation=\(useRelaxedTopicValidation) " +
-            "rep_slot_count=\(resolvedRepContext.slots.count)"
+        logger.debug(
+            "MAPC stage3/4 preflight session_state=\(self.mapcV3SessionState, privacy: .public) session_id_present=\(!sessionID.isEmpty, privacy: .public) selected_option_id_present=\(!selectedOptionID.isEmpty, privacy: .public) selected_option_label_len=\(selectedOptionLabel.count, privacy: .public) concern_len=\(trimmedConcern.count, privacy: .public) validation_concern_len=\(validationConcernText.count, privacy: .public) relaxed_topic_validation=\(useRelaxedTopicValidation, privacy: .public) rep_slot_count=\(resolvedRepContext.slots.count, privacy: .public)"
         )
         if normalizedState != "ask_selected" {
             mapcV3SessionState = "ask_selected"
@@ -3441,11 +3483,8 @@ final class IssueCallCenterViewModel: ObservableObject {
             }
         } catch {
             let failureNSError = error as NSError
-            print(
-                "🚨 [Founder Trace] failure at Stage 3/4 request/parse. " +
-                "location=\(#fileID):\(#line) function=\(#function) " +
-                "domain=\(failureNSError.domain) code=\(failureNSError.code) " +
-                "message=\(failureNSError.localizedDescription)"
+            logger.error(
+                "MAPC stage3/4 request/parse failure location=\(#fileID, privacy: .public):\(#line, privacy: .public) function=\(#function, privacy: .public) domain=\(failureNSError.domain, privacy: .public) code=\(failureNSError.code, privacy: .public)"
             )
             let nsError = error as NSError
             if nsError.domain == "CivicIssueCallAPIClient", nsError.code == -31_009 {
@@ -3498,7 +3537,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         }
         if nsError.domain == "CivicIssueCallAPIClient" && nsError.code == 401 {
             mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "unauthorized"
-            return "Session expired. Please reopen VoteNow and try again."
+            return "Session expired. Please reopen Civica and try again."
         }
         if lowered.contains("feature_flag_disabled") {
             mapcV3LastFailureReasonCode = mapcV3LastFailureReasonCode ?? "feature_flag_disabled"
@@ -4092,7 +4131,8 @@ final class IssueCallCenterViewModel: ObservableObject {
             )
 
             if completed {
-                lastCompletionResult = response
+                // Suppress technical "launch_event_missing" feedback card copy in MAPC flow.
+                lastCompletionResult = shouldSuppressCompletionFeedback(for: response) ? nil : response
                 pendingCallLaunch = nil
                 await refreshCallScoreData(for: userID, force: true)
             } else {
@@ -4112,6 +4152,13 @@ final class IssueCallCenterViewModel: ObservableObject {
                 ]
             )
         }
+    }
+
+    private func shouldSuppressCompletionFeedback(for response: CivicCallCompletionResponse) -> Bool {
+        let reason = response.scoringIneligibilityReason?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased() ?? ""
+        return reason.contains("launch_event_missing")
     }
 
     func clearCompletionResult() {
@@ -5205,7 +5252,7 @@ final class IssueCallCenterViewModel: ObservableObject {
                 talkingPoints: [
                     "Issue: \(issueTitle)",
                     "Explicit ask: \(canonicalContext?.commonAsk ?? ask.title)",
-                    "Request the office to share the member's current position and next step."
+                    "End with a courteous thank-you."
                 ],
                 issueID: issueID,
                 repSlot: target.slot
@@ -5237,15 +5284,24 @@ final class IssueCallCenterViewModel: ObservableObject {
         }
 
         let normalizedOfficeType = brief.officeType.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        if normalizedOfficeType.contains("senator"),
-           let senator = repTargets.first(where: { $0.slot == .senate1 || $0.slot == .senate2 }) {
-            return senator.official
+        if normalizedOfficeType.contains("senator") {
+            let senateTargets = repTargets.filter { $0.slot == .senate1 || $0.slot == .senate2 }
+            guard senateTargets.count == 1 else {
+                logger.notice("Placeholder official recovery aborted due to ambiguous senate target mapping.")
+                return nil
+            }
+            return senateTargets.first?.official
         }
-        if (normalizedOfficeType.contains("representative") || normalizedOfficeType.contains("congress")),
-           let house = repTargets.first(where: { $0.slot == .house }) {
-            return house.official
+        if normalizedOfficeType.contains("representative") || normalizedOfficeType.contains("congress") {
+            let houseTargets = repTargets.filter { $0.slot == .house }
+            guard houseTargets.count == 1 else {
+                logger.notice("Placeholder official recovery aborted due to ambiguous house target mapping.")
+                return nil
+            }
+            return houseTargets.first?.official
         }
-        return repTargets.first?.official
+        logger.notice("Placeholder official recovery aborted because office text did not map to an unambiguous slot.")
+        return nil
     }
 
     private func resolvedPrimaryPhone(for target: CivicRepTarget) -> String {
@@ -5569,12 +5625,29 @@ final class IssueCallCenterViewModel: ObservableObject {
             "labor", "workers", "health", "ai", "trans", "tps", "farm", "pell", "student"
         ]
         let policyActionSignals = [
-            "bill", "act", "resolution", "funding", "appropriations", "regulation",
-            "oversight", "confirm", "nomination", "vote", "support", "oppose", "amendment"
+            // baseline legislative action terms
+            "bill", "act", "resolution", "vote", "support", "oppose", "funding",
+            "amendment", "oversight", "confirm", "nomination",
+            // committee procedure
+            "markup", "mark up", "committee vote", "subcommittee vote", "report out",
+            "vote out of committee", "refer to committee", "referred to committee", "send to committee",
+            "discharge", "discharge petition",
+            // floor procedure
+            "floor vote", "vote on the floor", "bring to the floor", "take to the floor", "calendar", "put on the calendar",
+            "unanimous consent", "uc", "filibuster", "cloture", "suspend the rules", "suspension",
+            "special rule", "closed rule", "open rule", "structured rule", "point of order",
+            "quorum call", "conference committee", "conference report",
+            // funding / legislative vehicles
+            "appropriations", "authorization", "continuing resolution", "cr",
+            "rider", "omnibus", "minibus",
+            // sponsorship / companion phrasing
+            "sponsor", "co sponsor", "cosponsor", "companion bill", "companion legislation"
         ]
 
         let hasKnownIssueSignal = !wordSet.intersection(knownIssueSignals).isEmpty
-        let hasPolicyActionSignal = policyActionSignals.contains(where: { normalizedConcern.contains($0) })
+        let hasPolicyActionSignal = policyActionSignals.contains(where: {
+            containsLegislativeSignal(in: normalizedConcern, signal: $0)
+        })
 
         if hasKnownIssueSignal || hasPolicyActionSignal || words.count >= 3 {
             return nil
@@ -5619,12 +5692,30 @@ final class IssueCallCenterViewModel: ObservableObject {
     }
 
     private func hasCongressionalActionSignal(in loweredConcern: String) -> Bool {
+        let normalizedConcern = normalizedLegislativeSignalText(loweredConcern)
         let actionSignals = [
-            "support", "oppose", "cosponsor", "vote yes", "vote no", "fund", "increase funding",
-            "cut funding", "block", "pass", "reject", "repeal", "amend", "oversight",
-            "hold a hearing", "confirm", "delay", "protect", "expand", "extend", "enforce"
+            // bill movement
+            "take up", "bring up", "move the bill", "move forward", "move ahead", "advance the bill",
+            "revive the bill", "resurrect the bill", "refile", "report out", "vote out of committee",
+            "discharge", "bring to the floor", "take to the floor", "floor vote", "calendar",
+            "put on the calendar", "fast track", "whip votes",
+            // baseline legislative action terms
+            "support", "oppose", "yes on", "no on", "fund", "increase funding", "cut funding",
+            "repeal", "oversight", "hold a hearing", "investigate", "table", "withdraw",
+            "authorize", "reauthorize", "codify", "rescind", "halt", "ban", "confirm",
+            // amendment actions
+            "amend", "amend the bill", "offer an amendment", "substitute amendment",
+            "manager s amendment", "strip out", "remove from the bill",
+            "attach to the bill", "add as a rider", "fold into", "merge into", "package into",
+            // sponsorship / companion phrasing
+            "sponsor", "co sponsor", "cosponsor", "introduce", "reintroduce",
+            "sign on", "sign onto",
+            // floor / vote action
+            "pass", "enact", "approve", "adopt", "reject", "block", "kill", "sink",
+            "lay on the table", "postpone", "delay", "vote yes", "vote no", "yes on", "no on",
+            "suspend the rules", "suspension"
         ]
-        return actionSignals.contains(where: { loweredConcern.contains($0) })
+        return actionSignals.contains(where: { containsLegislativeSignal(in: normalizedConcern, signal: $0) })
     }
 
     private func hasBillProgramAgencySignal(in concernText: String, optionalBillRef: String?) -> Bool {
@@ -5632,13 +5723,18 @@ final class IssueCallCenterViewModel: ObservableObject {
             return true
         }
 
-        let lowered = concernText.lowercased()
+        let normalizedConcern = normalizedLegislativeSignalText(concernText)
         let namedEntitySignals = [
-            "bill", "act", "resolution", "program", "grant", "pilot", "appropriations", "appropriation",
-            "agency", "department", "administration", "office", "va", "veterans affairs", "usda",
-            "hud", "epa", "fema", "cms", "hhs", "irs", "snap", "medicaid", "medicare", "pell",
+            // funding / legislative vehicles
+            "bill", "act", "legislation", "measure", "proposal", "package", "amendment",
+            "substitute amendment", "rider", "appropriations bill", "spending bill",
+            "authorization bill", "omnibus", "minibus", "continuing resolution", "cr",
+            // committee / chamber products
+            "resolution", "joint resolution", "concurrent resolution", "conference report",
+            // sponsorship / companion phrasing
+            "companion bill", "companion legislation", "house version", "senate version"
         ]
-        if namedEntitySignals.contains(where: { lowered.contains($0) }) {
+        if namedEntitySignals.contains(where: { containsLegislativeSignal(in: normalizedConcern, signal: $0) }) {
             return true
         }
 
@@ -5647,8 +5743,29 @@ final class IssueCallCenterViewModel: ObservableObject {
             #"(?i)\btitle\s+[ivx0-9]+\b"#,
         ]
         return patterns.contains { pattern in
-            lowered.range(of: pattern, options: .regularExpression) != nil
+            concernText.range(of: pattern, options: .regularExpression) != nil
         }
+    }
+
+    private func normalizedLegislativeSignalText(_ text: String) -> String {
+        text
+            .lowercased()
+            .replacingOccurrences(of: "-", with: " ")
+            .replacingOccurrences(of: "’", with: "'")
+            .replacingOccurrences(of: #"[^a-z0-9'\s]"#, with: " ", options: .regularExpression)
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func containsLegislativeSignal(in normalizedConcern: String, signal: String) -> Bool {
+        let normalizedSignal = normalizedLegislativeSignalText(signal)
+        guard !normalizedSignal.isEmpty else { return false }
+        if normalizedSignal.count <= 2 {
+            let escaped = NSRegularExpression.escapedPattern(for: normalizedSignal)
+            let pattern = "\\b\(escaped)\\b"
+            return normalizedConcern.range(of: pattern, options: .regularExpression) != nil
+        }
+        return normalizedConcern.contains(normalizedSignal)
     }
 
     private func hasKnownIssueTopicSignal(in loweredConcern: String) -> Bool {
@@ -6434,9 +6551,9 @@ final class IssueCallCenterViewModel: ObservableObject {
         let billFragment = billRef.map { " \($0)" } ?? " this issue"
         let factLine = reasons.first ?? "This issue is currently active in Congress."
 
-        let liveBase = "Hi, my name is [Your Name], and I am a constituent in ZIP \(zip). I am calling about \(issueTitle). I'm urging \(repName) to \(ask.scriptPhrase)\(billFragment). \(factLine). Can you share the member's current position and next step on this issue? Thank you for your time."
+        let liveBase = "Hi, my name is [Your Name], and I am a constituent in ZIP \(zip). I am calling about \(issueTitle). I'm urging \(repName) to \(ask.scriptPhrase)\(billFragment). \(factLine). Thank you for your time."
 
-        let voicemailBase = "Hi, constituent in ZIP \(zip) calling about \(issueTitle). I'm urging \(repName) to \(ask.scriptPhrase)\(billFragment). Please share the member's current position and next step. Thank you."
+        let voicemailBase = "Hi, constituent in ZIP \(zip) calling about \(issueTitle). I'm urging \(repName) to \(ask.scriptPhrase)\(billFragment). Thank you."
 
         let liveScript = trimToWordLimit(liveBase, maxWords: 90)
         let voicemailScript = trimToWordLimit(voicemailBase, maxWords: 50)
@@ -6444,7 +6561,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         let points: [String] = [
             "Constituent location: ZIP \(zip)",
             "Explicit ask: \(ask.title)\(billRef.map { " \($0)" } ?? " this issue")",
-            "Request the office to share the member's current position"
+            "Close with a clear thank-you."
         ]
 
         return (liveScript, voicemailScript, points)
@@ -6747,7 +6864,7 @@ final class IssueCallCenterViewModel: ObservableObject {
             || lower.contains("invalid or expired token")
             || lower.contains("status 401")
             || lower.contains("status 403") {
-            return "Session expired. Please reopen VoteNow and try generating again."
+            return "Session expired. Please reopen Civica and try generating again."
         }
 
         return "Using offline call briefs while the civic API is unavailable."
@@ -6755,14 +6872,7 @@ final class IssueCallCenterViewModel: ObservableObject {
 
     private func compactLogError(_ error: Error) -> String {
         let nsError = error as NSError
-        let compact = nsError.localizedDescription
-            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        let snippet = String(compact.prefix(240))
-        if compact.count > 240 {
-            return "\(nsError.domain)#\(nsError.code) \(snippet)..."
-        }
-        return "\(nsError.domain)#\(nsError.code) \(snippet)"
+        return "\(nsError.domain)#\(nsError.code)"
     }
 
     private func userIDForRequest() async -> String {

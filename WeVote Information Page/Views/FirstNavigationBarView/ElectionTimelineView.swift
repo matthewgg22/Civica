@@ -77,6 +77,191 @@ private struct TimelineViewportPreferenceKey: PreferenceKey {
     }
 }
 
+enum ElectionTimelineDataDiagnostics {
+    static var onLoadFailure: ((_ resource: String, _ reason: String) -> Void)?
+    private static let logger = Logger(subsystem: "Civica", category: "ElectionTimelineData")
+
+    static func reportLoadFailure(resource: String, reason: String) {
+        logger.error("Bundle fallback triggered for \(resource, privacy: .public): \(reason, privacy: .public)")
+        #if DEBUG
+        assertionFailure("ElectionTimeline data load fallback for \(resource): \(reason)")
+        #endif
+        onLoadFailure?(resource, reason)
+    }
+}
+
+private final class ElectionTimelineBundleLoader {
+    static let shared = ElectionTimelineBundleLoader()
+
+    private let queue = DispatchQueue(
+        label: "com.civica.electionTimeline.bundleLoader",
+        qos: .userInitiated
+    )
+    private var cachedEligibilityDataset: ElectionEligibilityDataset?
+    private var didLoadEligibilityDataset = false
+    private var cachedMidtermElections: [Election]?
+    private var cachedTopCityMayoralRecords: [TopCityMayoralCycleRecord]?
+    private var eligibilityLoadFailureReason: String?
+    private var topCityLoadFailureReason: String?
+    private var midtermLoadFailureReason: String?
+
+    private init() {}
+
+    func loadInitialData(
+        completion: @escaping (
+            _ eligibilityDataset: ElectionEligibilityDataset?,
+            _ elections: [Election],
+            _ loadFailureMessage: String?
+        ) -> Void
+    ) {
+        queue.async {
+            self.resetLoadFailuresOnQueue()
+            let dataset = self.loadEligibilityDatasetOnQueue()
+            let topCityMayoralRecords = self.loadTopCityMayoralCycleRecordsOnQueue()
+            let elections = self.loadMidtermElectionsOnQueue(topCityMayoralRecords: topCityMayoralRecords)
+            let loadFailureMessage = self.currentFailureMessageOnQueue()
+            DispatchQueue.main.async {
+                completion(dataset, elections, loadFailureMessage)
+            }
+        }
+    }
+
+    private func resetLoadFailuresOnQueue() {
+        eligibilityLoadFailureReason = nil
+        topCityLoadFailureReason = nil
+        midtermLoadFailureReason = nil
+    }
+
+    private func currentFailureMessageOnQueue() -> String? {
+        if midtermLoadFailureReason != nil {
+            return "We couldn’t load election dates right now. Please retry."
+        }
+        if topCityLoadFailureReason != nil {
+            return "We couldn’t load mayor election data right now. Please retry."
+        }
+        if eligibilityLoadFailureReason != nil {
+            return "We couldn’t load voter eligibility details right now. Please retry."
+        }
+        return nil
+    }
+
+    private func loadEligibilityDatasetOnQueue() -> ElectionEligibilityDataset? {
+        if didLoadEligibilityDataset {
+            return cachedEligibilityDataset
+        }
+        didLoadEligibilityDataset = true
+
+        guard let url = Bundle.main.url(forResource: "ElectionEligibilityDataset", withExtension: "json") else {
+            ElectionTimelineDataDiagnostics.reportLoadFailure(
+                resource: "ElectionEligibilityDataset.json",
+                reason: "missing bundle resource"
+            )
+            eligibilityLoadFailureReason = "missing bundle resource"
+            cachedEligibilityDataset = nil
+            return nil
+        }
+        guard let data = try? Data(contentsOf: url) else {
+            ElectionTimelineDataDiagnostics.reportLoadFailure(
+                resource: "ElectionEligibilityDataset.json",
+                reason: "unable to read bundle data"
+            )
+            eligibilityLoadFailureReason = "unable to read bundle data"
+            cachedEligibilityDataset = nil
+            return nil
+        }
+        guard let decoded = try? JSONDecoder().decode(ElectionEligibilityDataset.self, from: data) else {
+            ElectionTimelineDataDiagnostics.reportLoadFailure(
+                resource: "ElectionEligibilityDataset.json",
+                reason: "decode failure"
+            )
+            eligibilityLoadFailureReason = "decode failure"
+            cachedEligibilityDataset = nil
+            return nil
+        }
+
+        cachedEligibilityDataset = decoded
+        return decoded
+    }
+
+    private func loadTopCityMayoralCycleRecordsOnQueue() -> [TopCityMayoralCycleRecord] {
+        if let cachedTopCityMayoralRecords {
+            return cachedTopCityMayoralRecords
+        }
+
+        guard let url = Bundle.main.url(forResource: "USTop150MayoralElectionCycles", withExtension: "json") else {
+            ElectionTimelineDataDiagnostics.reportLoadFailure(
+                resource: "USTop150MayoralElectionCycles.json",
+                reason: "missing bundle resource"
+            )
+            topCityLoadFailureReason = "missing bundle resource"
+            cachedTopCityMayoralRecords = []
+            return []
+        }
+        guard let data = try? Data(contentsOf: url) else {
+            ElectionTimelineDataDiagnostics.reportLoadFailure(
+                resource: "USTop150MayoralElectionCycles.json",
+                reason: "unable to read bundle data"
+            )
+            topCityLoadFailureReason = "unable to read bundle data"
+            cachedTopCityMayoralRecords = []
+            return []
+        }
+        guard let records = try? JSONDecoder().decode([TopCityMayoralCycleRecord].self, from: data) else {
+            ElectionTimelineDataDiagnostics.reportLoadFailure(
+                resource: "USTop150MayoralElectionCycles.json",
+                reason: "decode failure"
+            )
+            topCityLoadFailureReason = "decode failure"
+            cachedTopCityMayoralRecords = []
+            return []
+        }
+
+        cachedTopCityMayoralRecords = records
+        return records
+    }
+
+    private func loadMidtermElectionsOnQueue(topCityMayoralRecords: [TopCityMayoralCycleRecord]) -> [Election] {
+        if let cachedMidtermElections {
+            return cachedMidtermElections
+        }
+
+        guard let url = Bundle.main.url(forResource: "USMidterm2026ElectionDates", withExtension: "json") else {
+            ElectionTimelineDataDiagnostics.reportLoadFailure(
+                resource: "USMidterm2026ElectionDates.json",
+                reason: "missing bundle resource"
+            )
+            midtermLoadFailureReason = "missing bundle resource"
+            cachedMidtermElections = []
+            return []
+        }
+        guard let data = try? Data(contentsOf: url) else {
+            ElectionTimelineDataDiagnostics.reportLoadFailure(
+                resource: "USMidterm2026ElectionDates.json",
+                reason: "unable to read bundle data"
+            )
+            midtermLoadFailureReason = "unable to read bundle data"
+            cachedMidtermElections = []
+            return []
+        }
+        guard let records = try? JSONDecoder().decode([MidtermStateElectionRecord].self, from: data) else {
+            ElectionTimelineDataDiagnostics.reportLoadFailure(
+                resource: "USMidterm2026ElectionDates.json",
+                reason: "decode failure"
+            )
+            midtermLoadFailureReason = "decode failure"
+            cachedMidtermElections = []
+            return []
+        }
+
+        let elections = ElectionTimelineView.buildMidtermElections(
+            from: records,
+            topCityMayoralRecords: topCityMayoralRecords
+        )
+        cachedMidtermElections = elections
+        return elections
+    }
+}
+
 struct ElectionTimelineView: View {
     @EnvironmentObject private var planVM: PlanViewModel
     @EnvironmentObject private var repsVM: MyRepsViewModel
@@ -96,17 +281,14 @@ struct ElectionTimelineView: View {
     @State private var manualFocusExpiresAt: Date = .distantPast
     @State private var timelineCardFrames: [String: CGRect] = [:]
     @State private var timelineViewportFrame: CGRect = .zero
+    @State private var eligibilityDataset: ElectionEligibilityDataset?
+    @State private var didLoadBundleData = false
+    @State private var timelineLoadState: TimelineLoadState = .loading
 
     private let stateResolver = USZipStateResolver()
-    private let logger = Logger(subsystem: "VoteNow", category: "ElectionTimeline")
-    private static let eligibilityDataset: ElectionEligibilityDataset? = {
-        guard let url = Bundle.main.url(forResource: "ElectionEligibilityDataset", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let decoded = try? JSONDecoder().decode(ElectionEligibilityDataset.self, from: data) else {
-            return nil
-        }
-        return decoded
-    }()
+    private let logger = Logger(subsystem: "Civica", category: "ElectionTimeline")
+    private let dataLoadFailureMessage = "We couldn’t load election data."
+    private let unresolvedLocationMessage = "Enter a valid address to see your elections."
     private static let independentPrimaryTerritoryNotesByCode: [String: String] = [
         "AS": "Primary type: Nonpartisan / No standard party-primary system verified. Independent voter rule: This is not a normal state-style Dem/GOP primary system in the official materials reviewed. Can choose Democrat or Republican primary ballot: N/A. Note: American Samoa's Election Office describes itself as nonpartisan; a standard territorywide partisan primary access rule for independents was not verified.",
         "GU": "Primary type: Party-column primary. Independent voter rule: Independent voter chooses one party column or the non-affiliated column; not multiple parties. Can choose Democrat or Republican primary ballot: Usually one choice only. Note: Guam law provides separate party columns and a non-affiliated column if needed.",
@@ -130,6 +312,12 @@ struct ElectionTimelineView: View {
         return String(format: format, locale: locale, arguments: args)
     }
 
+    private enum TimelineLoadState {
+        case loading
+        case success
+        case failure
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 0) {
@@ -146,7 +334,7 @@ struct ElectionTimelineView: View {
                     Button {
                         openMyInfoPanel()
                     } label: {
-                        Text(l("app.reps.action.edit_location", "Edit Location"))
+                        Text(l("app.reps.action.edit_location", "Change Location"))
                             .font(.callout.weight(.semibold))
                             .italic()
                             .foregroundColor(VoteNowColors.primaryCTA)
@@ -189,16 +377,46 @@ struct ElectionTimelineView: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 14) {
-                        if let errorMessage {
-                            Text(errorMessage)
-                                .font(.subheadline)
-                                .foregroundColor(VoteNowColors.urgentCTA)
-                        }
+                        if timelineLoadState == .loading {
+                            LaunchFlowStateCard(
+                                state: .loading,
+                                title: l("app.timeline.loading_title", "Loading election timeline"),
+                                message: l("app.timeline.loading_body", "Gathering election details for your location..."),
+                                primaryActionTitle: l("app.reps.action.use_location", "Use my location"),
+                                primaryAction: {
+                                    repsVM.centerOnCurrentLocation()
+                                },
+                                secondaryActionTitle: l("app.reps.action.edit_location", "Change Location"),
+                                secondaryAction: {
+                                    openMyInfoPanel()
+                                }
+                            )
+                        } else if timelineLoadState == .failure {
+                            LaunchFlowStateCard(
+                                state: .error,
+                                title: l("app.timeline.error.title", "We couldn’t load the election timeline"),
+                                message: errorMessage ?? dataLoadFailureMessage,
+                                primaryActionTitle: l("app.timeline.error.retry", "Retry"),
+                                primaryAction: {
+                                    retryTimelineLoad()
+                                },
+                                secondaryActionTitle: l("app.reps.action.edit_location", "Change Location"),
+                                secondaryAction: {
+                                    openMyInfoPanel()
+                                }
+                            )
+                        } else {
+                            if let errorMessage {
+                                Text(errorMessage)
+                                    .font(.subheadline)
+                                    .foregroundColor(VoteNowColors.urgentCTA)
+                            }
 
-                        if visibleElections.isEmpty, errorMessage == nil {
-                            Text(l("app.timeline.empty.none_for_state", "No upcoming elections found for that state yet."))
-                                .font(.subheadline)
-                                .foregroundColor(VoteNowColors.mutedText)
+                            if visibleElections.isEmpty, errorMessage == nil {
+                                Text(l("app.timeline.empty.none_for_state", "No upcoming elections found for that state yet."))
+                                    .font(.subheadline)
+                                    .foregroundColor(VoteNowColors.mutedText)
+                            }
                         }
 
                         VStack(alignment: .leading, spacing: 0) {
@@ -310,11 +528,13 @@ struct ElectionTimelineView: View {
             ),
             titleVisibility: .hidden
         ) {
-            Button(l("app.timeline.action.dialog.share", "Share with friend")) {
-                if let election = pendingFlagElection {
-                    shareElectionCard(for: election)
+            if VoteNowLaunchFeatures.shareActionsEnabled {
+                Button(l("app.timeline.action.dialog.share", "Share with friend")) {
+                    if let election = pendingFlagElection {
+                        shareElectionCard(for: election)
+                    }
+                    pendingFlagElection = nil
                 }
-                pendingFlagElection = nil
             }
             Button(l("app.timeline.action.dialog.report", "Report problem")) {
                 if let election = pendingFlagElection {
@@ -348,23 +568,61 @@ struct ElectionTimelineView: View {
     }
 
     private var timelineAddressSubtitle: String {
-        let parts = [
-            planVM.userAddress.street.trimmingCharacters(in: .whitespacesAndNewlines),
-            planVM.userAddress.city.trimmingCharacters(in: .whitespacesAndNewlines),
-            planVM.userAddress.state.trimmingCharacters(in: .whitespacesAndNewlines),
-            planVM.userAddress.zip.trimmingCharacters(in: .whitespacesAndNewlines)
-        ].filter { !$0.isEmpty }
+        let city = timelineLocationCity
+        let state = timelineLocationStateCode
+        let zip = timelineLocationZip
 
-        if !parts.isEmpty {
-            return parts.joined(separator: ", ")
+        if !city.isEmpty, let state, let zip {
+            return "\(city), \(state) (\(zip))"
         }
-
-        let zip = String(planVM.zip.filter(\.isNumber).prefix(5))
-        if zip.count == 5 {
+        if !city.isEmpty, let state {
+            return "\(city), \(state)"
+        }
+        if let state, let zip {
+            return "\(state) (\(zip))"
+        }
+        if let zip {
             return zip
+        }
+        if let state {
+            return state
         }
 
         return l("app.timeline.location.set_address", "Set your address in My Reps")
+    }
+
+    private var timelineLocationCity: String {
+        let resolvedCity = repsVM.resolvedLocationSelection?.city?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !resolvedCity.isEmpty { return resolvedCity }
+        return planVM.userAddress.city.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var timelineLocationStateCode: String? {
+        if let resolved = normalizedUSStateCode(from: repsVM.resolvedStateCode) {
+            return resolved
+        }
+        if let detected = normalizedUSStateCode(from: repsVM.detectedStateCode) {
+            return detected
+        }
+        if let entered = normalizedUSStateCode(from: planVM.userAddress.state) {
+            return entered
+        }
+        if let zip = timelineLocationZip {
+            return stateResolver.stateCode(for: zip)
+        }
+        return nil
+    }
+
+    private var timelineLocationZip: String? {
+        let addressZip = String(planVM.userAddress.zip.filter(\.isNumber).prefix(5))
+        if addressZip.count == 5 { return addressZip }
+
+        let resolvedZip = String((repsVM.resolvedLocationSelection?.postalCode ?? "").filter(\.isNumber).prefix(5))
+        if resolvedZip.count == 5 { return resolvedZip }
+
+        let fallback = String(planVM.zip.filter(\.isNumber).prefix(5))
+        return fallback.count == 5 ? fallback : nil
     }
 
     @ViewBuilder
@@ -518,12 +776,12 @@ struct ElectionTimelineView: View {
                         } label: {
                             ZStack {
                                 Circle()
-                                    .fill(isFocused ? VoteNowColors.warningAmber : VoteNowColors.primaryCTA)
+                                    .fill(isFocused ? VoteNowColors.timelineFocusGold : VoteNowColors.primaryCTA)
                                 Circle()
                                     .stroke(Color.white, lineWidth: 2)
                                 if isFocused {
                                     Circle()
-                                        .stroke(VoteNowColors.warningAmber.opacity(0.35), lineWidth: 3)
+                                        .stroke(VoteNowColors.timelineFocusGold.opacity(0.62), lineWidth: 3)
                                         .scaleEffect(1.55)
                                 }
                             }
@@ -539,7 +797,8 @@ struct ElectionTimelineView: View {
 
                         Text(Self.timelineMonthDayFormatter.string(from: point.election.electionDay))
                             .font(.footnote.weight(.semibold))
-                            .foregroundColor(VoteNowColors.warningAmber)
+                            .foregroundColor(VoteNowColors.timelineFocusGold)
+                            .shadow(color: VoteNowColors.warningAmber.opacity(0.28), radius: 0.8, x: 0, y: 0.4)
                             .lineLimit(1)
                             .minimumScaleFactor(0.85)
                             .allowsTightening(true)
@@ -614,7 +873,8 @@ struct ElectionTimelineView: View {
     ) -> some View {
         Text(text)
             .font(.footnote.weight(.semibold))
-            .foregroundColor(VoteNowColors.warningAmber)
+            .foregroundColor(VoteNowColors.timelineFocusGold)
+            .shadow(color: VoteNowColors.warningAmber.opacity(0.28), radius: 0.8, x: 0, y: 0.4)
             .lineLimit(1)
             .truncationMode(.tail)
             .multilineTextAlignment(.center)
@@ -647,7 +907,7 @@ struct ElectionTimelineView: View {
             electionCard(election, index: index)
         }
         .contentShape(Rectangle())
-        .simultaneousGesture(TapGesture().onEnded { onCardTap() })
+        .onTapGesture(perform: onCardTap)
         .padding(.top, showYearLabel ? (index == 0 ? 24 : 10) : 0)
         .overlay(alignment: .topLeading) {
             if showYearLabel {
@@ -1511,11 +1771,11 @@ struct ElectionTimelineView: View {
     private func mayoralBallotTitle(forStage stage: String) -> String {
         switch stage.uppercased() {
         case "PRIMARY":
-            return "Mayor Primary"
+            return l("app.timeline.mayoral.stage.primary", "Mayor Primary")
         case "RUNOFF":
-            return "Mayor Runoff"
+            return l("app.timeline.mayoral.stage.runoff", "Mayor Runoff")
         default:
-            return "Mayor General"
+            return l("app.timeline.mayoral.stage.general", "Mayor General")
         }
     }
 
@@ -1644,7 +1904,7 @@ struct ElectionTimelineView: View {
     }
 
     private func datasetBackedBallotDisclosureContent(for election: Election) -> BallotDisclosureContent? {
-        guard let dataset = Self.eligibilityDataset,
+        guard let dataset = eligibilityDataset,
               let state = stateCode(for: election)?.uppercased(),
               let stage = ballotStageContext(for: election),
               let cycleYear = supportedCycleYear(for: election) else {
@@ -1830,7 +2090,7 @@ struct ElectionTimelineView: View {
         ]
 
         if let stage = ballotStageContext(for: election),
-           let dataset = Self.eligibilityDataset,
+           let dataset = eligibilityDataset,
            let supplementalNote = ballotIntroText(
                for: election,
                stage: stage,
@@ -2277,7 +2537,78 @@ struct ElectionTimelineView: View {
         stage _: BallotStageContext,
         isIndependentView _: Bool
     ) -> String {
-        return normalizedPartyWording(in: row.eligibility_summary)
+        if let localized = localizedKnownEligibilitySummary(row.eligibility_summary) {
+            return localized
+        }
+        return normalizedPartyWording(in: normalizeGeneralElectionAbbreviation(in: row.eligibility_summary))
+    }
+
+    private func localizedKnownEligibilitySummary(_ raw: String) -> String? {
+        let normalized = raw
+            .replacingOccurrences(of: "’", with: "'")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !normalized.isEmpty else { return nil }
+
+        if normalized.range(
+            of: "(?i)^any eligible registered voter in the state may vote in the (?:gen\\.?|general) election\\.?$",
+            options: .regularExpression
+        ) != nil {
+            return l(
+                "app.timeline.ballot.general.eligible_voter_state",
+                "Any eligible registered voter in the state may vote in the general election."
+            )
+        }
+
+        if normalized.range(
+            of: "(?i)^any eligible registered voter in the state may vote in the u\\.s\\. senate general election when a senate seat is on that state's ballot\\.?$",
+            options: .regularExpression
+        ) != nil {
+            return l(
+                "app.timeline.ballot.general.eligible_voter_state_senate",
+                "Any eligible registered voter in the state may vote in the U.S. Senate general election when a Senate seat is on that state's ballot."
+            )
+        }
+
+        if normalized.range(
+            of: "(?i)^any eligible registered voter in the voter's u\\.s\\. house district may vote when that district's seat is on the ballot\\.?$",
+            options: .regularExpression
+        ) != nil {
+            return l(
+                "app.timeline.ballot.general.eligible_voter_house_district",
+                "Any eligible registered voter in the voter's U.S. House district may vote when that district's seat is on the ballot."
+            )
+        }
+
+        if normalized.range(
+            of: "(?i)^this is an at-large u\\.s\\. house state; any eligible registered voter in the state may vote when the seat is on the ballot\\.?$",
+            options: .regularExpression
+        ) != nil {
+            return l(
+                "app.timeline.ballot.general.eligible_voter_house_at_large",
+                "This is an at-large U.S. House state; any eligible registered voter in the state may vote when the seat is on the ballot."
+            )
+        }
+
+        if normalized.range(
+            of: "(?i)^only eligible registered voters who reside in the municipality may vote in a mayoral election\\.?$",
+            options: .regularExpression
+        ) != nil {
+            return l(
+                "app.timeline.ballot.general.eligible_voter_municipal_mayor",
+                "Only eligible registered voters who reside in the municipality may vote in a mayoral election."
+            )
+        }
+
+        return nil
+    }
+
+    private func normalizeGeneralElectionAbbreviation(in text: String) -> String {
+        text.replacingOccurrences(
+            of: "(?i)\\bgen\\.\\s+election\\b",
+            with: l("app.timeline.ballot.general_election.term", "general election"),
+            options: .regularExpression
+        )
     }
 
     private func ballotParty(from rawParty: String) -> BallotParty? {
@@ -2758,7 +3089,9 @@ struct ElectionTimelineView: View {
 
     private func cardSecondaryText(for election: Election) -> String? {
         let level = humanReadableJurisdictionLevel(election.jurisdictionLevel)
-        let subtitle = election.subtitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        let subtitle = localizedMayoralTimelineSubtitleIfNeeded(
+            election.subtitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        )
 
         var parts: [String] = []
         if !subtitle.isEmpty, subtitle.caseInsensitiveCompare(cardTitle(for: election)) != .orderedSame {
@@ -3053,14 +3386,52 @@ struct ElectionTimelineView: View {
     }
 
     private func loadElectionsIfNeeded() {
-        guard allElections.isEmpty else { return }
-        allElections = Self.loadMidtermElectionsFromBundle()
+        guard !didLoadBundleData else { return }
+        didLoadBundleData = true
+        timelineLoadState = .loading
+        errorMessage = nil
+
+        ElectionTimelineBundleLoader.shared.loadInitialData { loadedEligibilityDataset, loadedElections, loadFailureMessage in
+            eligibilityDataset = loadedEligibilityDataset
+            allElections = loadedElections
+            if let loadFailureMessage {
+                timelineLoadState = .failure
+                visibleElections = []
+                focusedTimelineElectionID = nil
+                timelineCardFrames.removeAll()
+                errorMessage = loadFailureMessage
+                return
+            }
+            guard !loadedElections.isEmpty else {
+                timelineLoadState = .failure
+                visibleElections = []
+                focusedTimelineElectionID = nil
+                timelineCardFrames.removeAll()
+                errorMessage = dataLoadFailureMessage
+                return
+            }
+            timelineLoadState = .success
+            applyFilter()
+        }
+    }
+
+    private func retryTimelineLoad() {
+        allElections = []
+        visibleElections = []
+        focusedTimelineElectionID = nil
+        timelineCardFrames.removeAll()
+        errorMessage = nil
+        didLoadBundleData = false
+        loadElectionsIfNeeded()
     }
 
     private func applyFilter() {
+        guard timelineLoadState == .success else { return }
+
         guard !allElections.isEmpty else {
+            timelineLoadState = .failure
+            errorMessage = dataLoadFailureMessage
             visibleElections = []
-            planVM.upcomingElections = []
             focusedTimelineElectionID = nil
             timelineCardFrames.removeAll()
             return
@@ -3072,10 +3443,9 @@ struct ElectionTimelineView: View {
 
         guard !targetStateCodes.isEmpty else {
             visibleElections = []
-            planVM.upcomingElections = []
             focusedTimelineElectionID = nil
             timelineCardFrames.removeAll()
-            errorMessage = l("app.timeline.error.set_valid_address", "Set a valid U.S. address or ZIP in My Reps to load your timeline.")
+            errorMessage = unresolvedLocationMessage
             return
         }
 
@@ -3225,13 +3595,10 @@ struct ElectionTimelineView: View {
             .replacingOccurrences(of: "STATE_CODE:", with: "")
     }
 
-    private static func loadMidtermElectionsFromBundle() -> [Election] {
-        guard let url = Bundle.main.url(forResource: "USMidterm2026ElectionDates", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let records = try? JSONDecoder().decode([MidtermStateElectionRecord].self, from: data) else {
-            return []
-        }
-
+    fileprivate static func buildMidtermElections(
+        from records: [MidtermStateElectionRecord],
+        topCityMayoralRecords: [TopCityMayoralCycleRecord]
+    ) -> [Election] {
         var elections: [Election] = []
 
         for record in records {
@@ -3337,7 +3704,7 @@ struct ElectionTimelineView: View {
         appendSupplementalGubernatorialElections(to: &elections)
         appendSupplementalTerritorialElections(to: &elections)
         appendCurrentAppCompatibleSpecialElections(to: &elections)
-        appendTopCityMayoralElections(to: &elections)
+        appendTopCityMayoralElections(to: &elections, records: topCityMayoralRecords)
 
         return elections
     }
@@ -3654,8 +4021,10 @@ struct ElectionTimelineView: View {
         let sourceURL: String?
     }
 
-    private static func appendTopCityMayoralElections(to elections: inout [Election]) {
-        let records = loadTopCityMayoralCycleRecords()
+    private static func appendTopCityMayoralElections(
+        to elections: inout [Election],
+        records: [TopCityMayoralCycleRecord]
+    ) {
         guard !records.isEmpty else { return }
 
         var alignableIndexesByStateAndDay: [String: [String: [Int]]] = [:]
@@ -3783,15 +4152,6 @@ struct ElectionTimelineView: View {
         return !excludedStatuses.contains(normalized)
     }
 
-    private static func loadTopCityMayoralCycleRecords() -> [TopCityMayoralCycleRecord] {
-        guard let url = Bundle.main.url(forResource: "USTop150MayoralElectionCycles", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let records = try? JSONDecoder().decode([TopCityMayoralCycleRecord].self, from: data) else {
-            return []
-        }
-        return records
-    }
-
     private static func electionByReplacingFlags(_ election: Election, flags: [String]) -> Election {
         Election(
             name: election.name,
@@ -3872,6 +4232,19 @@ struct ElectionTimelineView: View {
         let rhsDay = calendar.startOfDay(for: rhs)
         let delta = abs(calendar.dateComponents([.day], from: lhsDay, to: rhsDay).day ?? Int.max)
         return delta <= days
+    }
+
+    private func localizedMayoralTimelineSubtitleIfNeeded(_ subtitle: String) -> String {
+        switch subtitle.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() {
+        case "MAYORAL PRIMARY ELECTION":
+            return l("app.timeline.mayoral.subtitle.primary", "Mayoral Primary Election")
+        case "MAYORAL RUNOFF ELECTION":
+            return l("app.timeline.mayoral.subtitle.runoff", "Mayoral Runoff Election")
+        case "MAYORAL GENERAL ELECTION":
+            return l("app.timeline.mayoral.subtitle.general", "Mayoral General Election")
+        default:
+            return subtitle
+        }
     }
 
     private static func mayoralTimelineSubtitle(for stage: String) -> String {

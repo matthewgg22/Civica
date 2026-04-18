@@ -2,7 +2,7 @@ import UserNotifications
 import UIKit
 import OSLog
 
-private let pushLogger = Logger(subsystem: "VoteNow", category: "PushManager")
+private let pushLogger = Logger(subsystem: "Civica", category: "PushManager")
 
 @MainActor
 func requestPushPermissionAndRegister() async {

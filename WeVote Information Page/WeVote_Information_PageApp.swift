@@ -45,8 +45,8 @@ enum PreferredLanguageCode {
 
 @main
 struct WeVote_Information_PageApp: App {
-    private let logger = Logger(subsystem: "VoteNow", category: "App")
-    private static let bootstrapLogger = Logger(subsystem: "VoteNow", category: "AppBootstrap")
+    private let logger = Logger(subsystem: "Civica", category: "App")
+    private static let bootstrapLogger = Logger(subsystem: "Civica", category: "AppBootstrap")
 
     private enum AppLanguage: String {
         case english = "en"
@@ -110,9 +110,9 @@ struct WeVote_Information_PageApp: App {
                 .environmentObject(planVM)
                 .environmentObject(repsVM)
                 .task {
-                    // Review prompt integration point: call on each fresh app launch/session start.
+                    // Session bookkeeping only; review prompts are gated on meaningful success events.
                     await MainActor.run {
-                        ReviewPromptManager.shared.onAppLaunch()
+                        ReviewPromptManager.shared.onSessionStart()
                     }
                     do {
                         try await SupabaseManager.shared.signInAnonymouslyIfNeeded()

@@ -7009,43 +7009,43 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Temas preliminares para votar"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "初步投票事项"
+            "value": "Qué hay en tu boleta"
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Paunang mga bagay na pagbobotohan"
+            "value": "Ano ang nasa iyong balota"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Các vấn đề sơ bộ để bỏ phiếu"
+            "value": "Lá phiếu của bạn có gì"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的选票上有什么"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "初步投票事项"
+            "value": "你的選票上有什麼"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "What's on your ballot"
+            "value": "Ce qui figure sur votre bulletin"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "What's on your ballot"
+            "value": "Was auf Ihrem Stimmzettel steht"
           }
         }
       }
@@ -16013,49 +16013,49 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow is an endeavor built to support all Americans vote by reducing logistical friction. As a college student endeavor, we want to learn from you and your experience voting. Your feedback is invaluable to improve the app and the voter experience."
+            "value": "Civica is an endeavor built to support all Americans vote by reducing logistical friction. As a college student endeavor, we want to learn from you and your experience voting. Your feedback is invaluable to improve the app and the voter experience."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow es un proyecto universitario creado para apoyar a todas las personas en EE. UU. reduciendo la fricción logística al votar. Nos encantaría recibir tus comentarios para mejorar la app y la experiencia general de votación."
+            "value": "Civica es un proyecto universitario creado para apoyar a todas las personas en EE. UU. reduciendo la fricción logística al votar. Nos encantaría recibir tus comentarios para mejorar la app y la experiencia general de votación."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow 是由大学生发起的项目，旨在通过减少投票流程中的后勤摩擦，远程支持所有美国人。我们非常希望收到你的反馈，以改进应用和整体投票体验。"
+            "value": "Civica 是由大学生发起的项目，旨在通过减少投票流程中的后勤摩擦，远程支持所有美国人。我们非常希望收到你的反馈，以改进应用和整体投票体验。"
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ang VoteNow ay proyektong pinangungunahan ng mga estudyante sa kolehiyo upang suportahan ang lahat ng Amerikano sa pamamagitan ng pagbawas ng abalang proseso sa pagboto. Gusto naming marinig ang iyong feedback para mapabuti ang app at kabuuang karanasan ng botante."
+            "value": "Ang Civica ay proyektong pinangungunahan ng mga estudyante sa kolehiyo upang suportahan ang lahat ng Amerikano sa pamamagitan ng pagbawas ng abalang proseso sa pagboto. Gusto naming marinig ang iyong feedback para mapabuti ang app at kabuuang karanasan ng botante."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow là một dự án do sinh viên đại học xây dựng nhằm hỗ trợ mọi người Mỹ từ xa bằng cách giảm bớt rào cản hậu cần trong việc bỏ phiếu. Chúng tôi rất mong nhận được phản hồi của bạn để cải thiện ứng dụng và trải nghiệm cử tri tổng thể."
+            "value": "Civica là một dự án do sinh viên đại học xây dựng nhằm hỗ trợ mọi người Mỹ từ xa bằng cách giảm bớt rào cản hậu cần trong việc bỏ phiếu. Chúng tôi rất mong nhận được phản hồi của bạn để cải thiện ứng dụng và trải nghiệm cử tri tổng thể."
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow 是由大学生发起的项目，旨在通过减少投票流程中的后勤摩擦，远程支持所有美国人。我们非常希望收到你的反馈，以改进应用和整体投票体验。"
+            "value": "Civica 是由大学生发起的项目，旨在通过减少投票流程中的后勤摩擦，远程支持所有美国人。我们非常希望收到你的反馈，以改进应用和整体投票体验。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow is an endeavor built to support all Americans vote by reducing logistical friction. As a college student endeavor, we want to learn from you and your experience voting. Your feedback is invaluable to improve the app and the voter experience."
+            "value": "Civica is an endeavor built to support all Americans vote by reducing logistical friction. As a college student endeavor, we want to learn from you and your experience voting. Your feedback is invaluable to improve the app and the voter experience."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow is an endeavor built to support all Americans vote by reducing logistical friction. As a college student endeavor, we want to learn from you and your experience voting. Your feedback is invaluable to improve the app and the voter experience."
+            "value": "Civica is an endeavor built to support all Americans vote by reducing logistical friction. As a college student endeavor, we want to learn from you and your experience voting. Your feedback is invaluable to improve the app and the voter experience."
           }
         }
       }
@@ -19458,49 +19458,49 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Support VoteNow"
+            "value": "Support Civica"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Apoya a VoteNow"
+            "value": "Apoya a Civica"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "支持 VoteNow"
+            "value": "支持 Civica"
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Suportahan ang VoteNow"
+            "value": "Suportahan ang Civica"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ủng hộ VoteNow"
+            "value": "Ủng hộ Civica"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "支持 VoteNow"
+            "value": "支持 Civica"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Support VoteNow"
+            "value": "Support Civica"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Support VoteNow"
+            "value": "Support Civica"
           }
         }
       }
@@ -19564,49 +19564,49 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow's mission is to empower every American to vote by being the least friction companion to support participation. We believe that reducing logistical friction-deadlines, locations, ID rules, and confusing steps-is essential to authentic voting help."
+            "value": "Civica's mission is to empower every American to vote by being the least friction companion to support participation. We believe that reducing logistical friction-deadlines, locations, ID rules, and confusing steps-is essential to authentic voting help."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La misión de VoteNow es empoderar a cada persona en EE. UU. para votar, ofreciendo una experiencia con la menor fricción posible para apoyar la participación. Creemos que reducir la fricción logística (fechas límite, lugares, requisitos de identificación y pasos confusos) es esencial para una ayuda real al votar."
+            "value": "La misión de Civica es empoderar a cada persona en EE. UU. para votar, ofreciendo una experiencia con la menor fricción posible para apoyar la participación. Creemos que reducir la fricción logística (fechas límite, lugares, requisitos de identificación y pasos confusos) es esencial para una ayuda real al votar."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow 的使命是通过尽可能降低摩擦来帮助每位美国人参与投票。我们相信，减少后勤摩擦（截止日期、地点、身份证规则和复杂步骤）是提供真实投票帮助的关键。"
+            "value": "Civica 的使命是通过尽可能降低摩擦来帮助每位美国人参与投票。我们相信，减少后勤摩擦（截止日期、地点、身份证规则和复杂步骤）是提供真实投票帮助的关键。"
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Layunin ng VoteNow na tulungan ang bawat Amerikano na bumoto sa pamamagitan ng pagbawas ng hadlang sa partisipasyon. Naniniwala kami na mahalaga sa tunay na tulong sa pagboto ang pagbawas ng hadlang sa deadlines, lokasyon, ID rules, at nakalilitong hakbang."
+            "value": "Layunin ng Civica na tulungan ang bawat Amerikano na bumoto sa pamamagitan ng pagbawas ng hadlang sa partisipasyon. Naniniwala kami na mahalaga sa tunay na tulong sa pagboto ang pagbawas ng hadlang sa deadlines, lokasyon, ID rules, at nakalilitong hakbang."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sứ mệnh của VoteNow là giúp mọi người Mỹ đi bầu bằng cách giảm tối đa ma sát trong quá trình tham gia. Chúng tôi tin rằng giảm ma sát hậu cần — hạn chót, địa điểm, quy định ID và các bước rối rắm — là yếu tố cốt lõi để hỗ trợ bỏ phiếu thực chất."
+            "value": "Sứ mệnh của Civica là giúp mọi người Mỹ đi bầu bằng cách giảm tối đa ma sát trong quá trình tham gia. Chúng tôi tin rằng giảm ma sát hậu cần — hạn chót, địa điểm, quy định ID và các bước rối rắm — là yếu tố cốt lõi để hỗ trợ bỏ phiếu thực chất."
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow 的使命是通过尽可能降低摩擦来帮助每位美国人参与投票。我们相信，减少后勤摩擦（截止日期、地点、身份证规则和复杂步骤）是提供真实投票帮助的关键。"
+            "value": "Civica 的使命是通过尽可能降低摩擦来帮助每位美国人参与投票。我们相信，减少后勤摩擦（截止日期、地点、身份证规则和复杂步骤）是提供真实投票帮助的关键。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow's mission is to empower every American to vote by being the least friction companion to support participation. We believe that reducing logistical friction-deadlines, locations, ID rules, and confusing steps-is essential to authentic voting help."
+            "value": "Civica's mission is to empower every American to vote by being the least friction companion to support participation. We believe that reducing logistical friction-deadlines, locations, ID rules, and confusing steps-is essential to authentic voting help."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow's mission is to empower every American to vote by being the least friction companion to support participation. We believe that reducing logistical friction-deadlines, locations, ID rules, and confusing steps-is essential to authentic voting help."
+            "value": "Civica's mission is to empower every American to vote by being the least friction companion to support participation. We believe that reducing logistical friction-deadlines, locations, ID rules, and confusing steps-is essential to authentic voting help."
           }
         }
       }
@@ -20730,49 +20730,49 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow is built around servicing YOU, the voter."
+            "value": "Civica is built around servicing YOU, the voter."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow está construido para servirte a TI, votante."
+            "value": "Civica está construido para servirte a TI, votante."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow 的设计核心是服务你这位选民。"
+            "value": "Civica 的设计核心是服务你这位选民。"
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ang VoteNow ay ginawa para maglingkod sa IYO, ang botante."
+            "value": "Ang Civica ay ginawa para maglingkod sa IYO, ang botante."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow được xây dựng để phục vụ BẠN, người cử tri."
+            "value": "Civica được xây dựng để phục vụ BẠN, người cử tri."
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow 的设计核心是服务你这位选民。"
+            "value": "Civica 的设计核心是服务你这位选民。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow is built around servicing YOU, the voter."
+            "value": "Civica is built around servicing YOU, the voter."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow is built around servicing YOU, the voter."
+            "value": "Civica is built around servicing YOU, the voter."
           }
         }
       }
@@ -23857,49 +23857,49 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow gives you a script, contact details, and call steps so you can act in minutes."
+            "value": "Civica gives you a script, contact details, and call steps so you can act in minutes."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow te da un guion, datos de contacto y pasos de llamada para que puedas actuar en minutos."
+            "value": "Civica te da un guion, datos de contacto y pasos de llamada para que puedas actuar en minutos."
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Binibigyan ka ng VoteNow ng script, contact details, at mga hakbang sa tawag para makakilos ka sa loob ng ilang minuto."
+            "value": "Binibigyan ka ng Civica ng script, contact details, at mga hakbang sa tawag para makakilos ka sa loob ng ilang minuto."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow cung cấp cho bạn kịch bản, thông tin liên hệ và các bước gọi để bạn có thể hành động trong vài phút."
+            "value": "Civica cung cấp cho bạn kịch bản, thông tin liên hệ và các bước gọi để bạn có thể hành động trong vài phút."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow会提供脚本、联系方式和通话步骤，让你在几分钟内采取行动。"
+            "value": "Civica会提供脚本、联系方式和通话步骤，让你在几分钟内采取行动。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow会提供脚本、联系方式和通话步骤，让你在几分钟内采取行动。"
+            "value": "Civica会提供脚本、联系方式和通话步骤，让你在几分钟内采取行动。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow gives you a script, contact details, and call steps so you can act in minutes."
+            "value": "Civica gives you a script, contact details, and call steps so you can act in minutes."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoteNow gives you a script, contact details, and call steps so you can act in minutes."
+            "value": "Civica gives you a script, contact details, and call steps so you can act in minutes."
           }
         }
       }
@@ -24758,49 +24758,49 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Request a provisional ballot if issues arise at the polling site"
+            "value": "Request a provisional ballot if issues arise at the polling site."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Solicita una provisional ballot si surgen problemas en el lugar de votación"
+            "value": "Solicita una boleta provisional si surgen problemas en el lugar de votación."
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Humiling ng provisional ballot kung may lumitaw na isyu sa polling site"
+            "value": "Humiling ng pansamantalang balota kung may isyu sa presinto."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Yêu cầu provisional ballot nếu phát sinh vấn đề tại điểm bỏ phiếu"
+            "value": "Yêu cầu lá phiếu tạm thời nếu phát sinh vấn đề tại điểm bỏ phiếu."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "如果在投票点出现问题，请申请provisional ballot"
+            "value": "如果在投票点出现问题，请申请临时选票。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "如果在投票点出现问题，请申请provisional ballot"
+            "value": "如果在投票點出現問題，請申請臨時選票。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Request a provisional ballot if issues arise at the polling site"
+            "value": "Demandez un bulletin provisoire si des problèmes surviennent au bureau de vote."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Request a provisional ballot if issues arise at the polling site"
+            "value": "Beantragen Sie einen vorläufigen Stimmzettel, wenn am Wahllokal Probleme auftreten."
           }
         }
       }
@@ -24811,49 +24811,49 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A provisional ballot is a ballot that’s set aside at the polls and reviewed later to determine if it can be counted."
+            "value": "A provisional ballot is set aside at the polls and reviewed later to determine whether it can be counted."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Una provisional ballot es una boleta que se aparta en las urnas y se revisa después para decidir si puede contarse."
+            "value": "Una boleta provisional se aparta en las urnas y luego se revisa para determinar si puede contarse."
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ang provisional ballot ay balotang itinatabi sa presinto at sinusuri sa huli para malaman kung mabibilang ito."
+            "value": "Ang pansamantalang balota ay itinatabi sa presinto at sinusuri sa huli para malaman kung mabibilang ito."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Provisional ballot là lá phiếu được tách riêng tại điểm bỏ phiếu và xem xét sau để xác định có được tính hay không."
+            "value": "Lá phiếu tạm thời sẽ được tách riêng tại điểm bỏ phiếu và xem xét sau để xác định có được tính hay không."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "provisional ballot是在投票站被单独保留并事后审核是否可计票的选票。"
+            "value": "临时选票会在投票点被单独保留，并在之后审核以确定是否可以计票。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "provisional ballot是在投票站被单独保留并事后审核是否可计票的选票。"
+            "value": "臨時選票會在投票點被單獨保留，並在之後審核以確定是否可以計票。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "A provisional ballot is a ballot that’s set aside at the polls and reviewed later to determine if it can be counted."
+            "value": "Un bulletin provisoire est mis de côté au bureau de vote et examiné ensuite pour déterminer s’il peut être compté."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "A provisional ballot is a ballot that’s set aside at the polls and reviewed later to determine if it can be counted."
+            "value": "Ein vorläufiger Stimmzettel wird im Wahllokal zurückgestellt und später geprüft, um festzustellen, ob er gezählt werden kann."
           }
         }
       }
@@ -24870,43 +24870,43 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pueden surgir complicaciones; por eso cada estado debe ofrecer una provisional ballot si se solicita. Puede ayudar a resolver:"
+            "value": "Si surgen complicaciones, los estados deben ofrecer una boleta provisional a petición para resolver:"
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "May mga komplikasyong maaaring mangyari, kaya bawat estado ay kailangang mag-alok ng provisional ballot kapag hiniling; makakatulong ito sa pagresolba ng:"
+            "value": "Kapag may komplikasyon, dapat magbigay ang estado ng pansamantalang balota kapag hiniling upang tugunan ang mga sumusunod:"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Có thể phát sinh vấn đề, vì vậy mọi bang đều phải cung cấp provisional ballot khi được yêu cầu; nó có thể giúp giải quyết:"
+            "value": "Nếu phát sinh vấn đề, các bang phải cung cấp lá phiếu tạm thời khi được yêu cầu để xử lý:"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "可能会出现复杂情况，因此各州在被要求时都必须提供provisional ballot；这可以帮助解决："
+            "value": "如果出现问题，各州在被要求时必须提供临时选票，以处理以下情况："
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "可能会出现复杂情况，因此各州在被要求时都必须提供provisional ballot；这可以帮助解决："
+            "value": "如果出現問題，各州在被要求時必須提供臨時選票，以處理以下情況："
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "If complications arise, states must offer a provisional ballot upon request to address:"
+            "value": "En cas de complication, les États doivent proposer un bulletin provisoire sur demande pour traiter les situations suivantes :"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "If complications arise, states must offer a provisional ballot upon request to address:"
+            "value": "Wenn Komplikationen auftreten, müssen Bundesstaaten auf Antrag einen vorläufigen Stimmzettel anbieten, um Folgendes zu klären:"
           }
         }
       }
@@ -24917,49 +24917,49 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A voter claims they are registered but their name does not appear on the voter roll."
+            "value": "A voter says they are registered, but their name does not appear on the voter roll."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Un votante afirma estar registrado pero su nombre no aparece en el padrón."
+            "value": "Una persona votante afirma estar registrada, pero su nombre no aparece en el padrón electoral."
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Inaangkin ng botante na rehistrado siya pero wala ang pangalan niya sa voter roll."
+            "value": "Sinasabi ng botante na rehistrado siya, pero wala ang pangalan niya sa listahan ng botante."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cử tri cho biết đã đăng ký nhưng tên không xuất hiện trong danh sách cử tri."
+            "value": "Cử tri cho biết mình đã đăng ký, nhưng tên không xuất hiện trong danh sách cử tri."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "选民称自己已登记，但姓名未出现在选民名册中。"
+            "value": "选民表示自己已登记，但其姓名未出现在选民名册中。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "选民称自己已登记，但姓名未出现在选民名册中。"
+            "value": "選民表示自己已登記，但其姓名未出現在選民名冊中。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "A voter claims they are registered but their name does not appear on the voter roll."
+            "value": "Un électeur affirme être inscrit, mais son nom n’apparaît pas sur la liste électorale."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "A voter claims they are registered but their name does not appear on the voter roll."
+            "value": "Eine wahlberechtigte Person gibt an, registriert zu sein, ihr Name steht jedoch nicht im Wählerverzeichnis."
           }
         }
       }
@@ -24970,25 +24970,25 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A voter cannot provide the state's identification requirements immediately."
+            "value": "A voter cannot immediately provide the state's required identification."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Un votante no puede presentar de inmediato los requisitos de identificación del estado."
+            "value": "Una persona votante no puede presentar de inmediato la identificación requerida por el estado."
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hindi agad maibigay ng botante ang mga kinakailangang ID ng estado."
+            "value": "Hindi agad maibigay ng botante ang kinakailangang pagkakakilanlan ng estado."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cử tri không thể cung cấp ngay yêu cầu giấy tờ nhận dạng của bang."
+            "value": "Cử tri không thể cung cấp ngay giấy tờ nhận dạng theo yêu cầu của bang."
           }
         },
         "zh-Hans": {
@@ -25000,19 +25000,19 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "选民无法立即提供州要求的身份证明。"
+            "value": "選民無法立即提供州要求的身分證明。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "A voter cannot provide the state's identification requirements immediately."
+            "value": "Un électeur ne peut pas fournir immédiatement la pièce d’identité exigée par l’État."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "A voter cannot provide the state's identification requirements immediately."
+            "value": "Eine wahlberechtigte Person kann den vom Bundesstaat geforderten Identitätsnachweis nicht sofort vorlegen."
           }
         }
       }
@@ -25453,43 +25453,43 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Proceso de corrección de boleta ausente"
+            "value": "Proceso para corregir la boleta por correo"
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Proseso ng Pag-ayos ng Absentee Ballot"
+            "value": "Proseso ng Pag-ayos ng Balotang Pang-koreo"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Quy trình sửa lỗi absentee ballot"
+            "value": "Quy trình sửa lỗi lá phiếu vắng mặt"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Absentee ballot 补救流程"
+            "value": "缺席选票补救流程"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "Absentee ballot 补救流程"
+            "value": "缺席選票補救流程"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Absentee Ballot Cure Process"
+            "value": "Procédure de correction du vote par correspondance"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Absentee Ballot Cure Process"
+            "value": "Verfahren zur Korrektur von Briefwahlstimmen"
           }
         }
       }
@@ -25506,43 +25506,43 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Si tu boleta de voto ausente tiene un problema, tu estado puede permitir un proceso de corrección para arreglarla y contarla antes del plazo."
+            "value": "Si tu boleta por correo tiene un problema, tu estado puede permitir un proceso de corrección para arreglarla y contarla antes del plazo."
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kung may isyu ang iyong absentee ballot, maaaring payagan ng iyong estado ang proseso ng pag-ayos para maitama at mabilang ito bago ang deadline."
+            "value": "Kung may isyu ang iyong balotang pang-koreo, maaaring payagan ng iyong estado ang proseso ng pag-ayos para maitama at mabilang ito bago ang deadline."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nếu absentee ballot của bạn có vấn đề, bang của bạn có thể cho phép quy trình sửa lỗi để được tính trước hạn chót."
+            "value": "Nếu lá phiếu vắng mặt của bạn có vấn đề, bang của bạn có thể cho phép quy trình sửa lỗi để được tính trước hạn chót."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "如果你的absentee ballot有问题，你所在州可能允许在截止日前进行补救并计票。"
+            "value": "如果你的缺席选票有问题，你所在州可能允许在截止日前进行补救并计票。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "如果你的absentee ballot有问题，你所在州可能允许在截止日前进行补救并计票。"
+            "value": "如果你的缺席選票有問題，你所在州可能允許在截止日前進行補救並計票。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "If your absentee ballot has an issue, your state may allow a cure process to fix and count it before the deadline."
+            "value": "Si votre vote par correspondance présente un problème, votre État peut autoriser une procédure de correction pour qu’il soit validé avant la date limite."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "If your absentee ballot has an issue, your state may allow a cure process to fix and count it before the deadline."
+            "value": "Wenn Ihre Briefwahlstimme ein Problem hat, kann Ihr Bundesstaat ein Korrekturverfahren erlauben, damit sie vor Ablauf der Frist gezählt werden kann."
           }
         }
       }
@@ -25583,19 +25583,19 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "缺少签名"
+            "value": "缺少簽名"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Missing signature"
+            "value": "Signature manquante"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Missing signature"
+            "value": "Fehlende Unterschrift"
           }
         }
       }
@@ -25636,19 +25636,19 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "签名不匹配"
+            "value": "簽名不匹配"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Signature mismatch"
+            "value": "Signature non concordante"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Signature mismatch"
+            "value": "Unterschrift stimmt nicht überein"
           }
         }
       }
@@ -25677,7 +25677,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Thiếu số ID"
+            "value": "Thiếu số giấy tờ tùy thân"
           }
         },
         "zh-Hans": {
@@ -25689,19 +25689,19 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "缺少身份证号码"
+            "value": "缺少身分證號碼"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Missing ID number"
+            "value": "Numéro de pièce d’identité manquant"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Missing ID number"
+            "value": "Fehlende Ausweisnummer"
           }
         }
       }
@@ -25983,43 +25983,43 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Los votantes reciben notificación y pueden corregir la boleta dentro de un plazo."
+            "value": "Los votantes reciben una notificación y pueden corregir la boleta dentro del plazo establecido."
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Makakatanggap ang mga botante ng abiso at maaaring ayusin ang balota bago ang deadline."
+            "value": "Makakatanggap ang mga botante ng abiso at maaaring ayusin ang balota sa loob ng itinakdang deadline."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cử tri sẽ nhận thông báo và có thể sửa lá phiếu trong thời hạn."
+            "value": "Cử tri sẽ nhận được thông báo và có thể sửa lá phiếu trong thời hạn quy định."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "选民会收到通知，并可在截止日前完成补救。"
+            "value": "选民会收到通知，并可在规定期限内完成补救。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "选民会收到通知，并可在截止日前完成补救。"
+            "value": "選民會收到通知，並可在規定期限內完成補救。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Voters receive notification and can cure the ballot within a deadline."
+            "value": "Les électeurs reçoivent une notification et peuvent corriger leur bulletin avant la date limite."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Voters receive notification and can cure the ballot within a deadline."
+            "value": "Wählerinnen und Wähler erhalten eine Benachrichtigung und können den Stimmzettel innerhalb einer Frist korrigieren."
           }
         }
       }
@@ -27361,43 +27361,43 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cómo solicitar una provisional ballot"
+            "value": "Cómo solicitar una boleta provisional"
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "Paano humiling ng provisional ballot"
+            "value": "Paano humiling ng pansamantalang balota"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cách yêu cầu provisional ballot"
+            "value": "Cách yêu cầu lá phiếu tạm thời"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "如何申请provisional ballot"
+            "value": "如何申请临时选票"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "如何申请provisional ballot"
+            "value": "如何申請臨時選票"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "How to request a provisional ballot"
+            "value": "Comment demander un bulletin provisoire"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "How to request a provisional ballot"
+            "value": "So beantragen Sie einen vorläufigen Stimmzettel"
           }
         }
       }
@@ -27408,49 +27408,49 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "1. Tell the poll worker: “I want to vote by provisional ballot.”"
+            "value": "1. Tell the poll worker: \"I want to vote by provisional ballot.\""
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "1. Dile al trabajador electoral: “Quiero votar con provisional ballot.”"
+            "value": "1. Dile al trabajador electoral: \"Quiero votar con una boleta provisional.\""
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "1. Sabihin sa poll worker: “I want to vote by provisional ballot.”"
+            "value": "1. Sabihin sa poll worker: \"Gusto kong bumoto gamit ang pansamantalang balota.\""
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "1. Nói với nhân viên điểm bỏ phiếu: “I want to vote by provisional ballot.”"
+            "value": "1. Nói với nhân viên điểm bỏ phiếu: \"Tôi muốn bỏ phiếu bằng lá phiếu tạm thời.\""
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "1. 告诉工作人员：“I want to vote by provisional ballot.”"
+            "value": "1. 告诉投票工作人员：“我想使用临时选票投票。”"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "1. 告诉工作人员：“I want to vote by provisional ballot.”"
+            "value": "1. 告訴投票工作人員：「我想使用臨時選票投票。」"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "1. Tell the poll worker: “I want to vote by provisional ballot.”"
+            "value": "1. Dites à l’agent électoral : \"Je souhaite voter avec un bulletin provisoire.\""
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "1. Tell the poll worker: “I want to vote by provisional ballot.”"
+            "value": "1. Sagen Sie der Wahlhelferin oder dem Wahlhelfer: \"Ich möchte mit einem vorläufigen Stimmzettel abstimmen.\""
           }
         }
       }
@@ -27467,43 +27467,43 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "2. Completa cuidadosamente el sobre de provisional ballot y proporciona cualquier dato de ID solicitado."
+            "value": "2. Completa con cuidado el sobre de la boleta provisional y proporciona los datos de identificación solicitados."
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "2. Maingat na kumpletuhin ang sobre ng provisional ballot at ibigay ang anumang hinihinging detalye ng ID."
+            "value": "2. Maingat na punan ang sobre ng pansamantalang balota at ibigay ang anumang hinihinging detalye ng ID."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "2. Điền cẩn thận phong bì provisional ballot và cung cấp mọi thông tin ID được yêu cầu."
+            "value": "2. Điền cẩn thận phong bì của lá phiếu tạm thời và cung cấp thông tin nhận dạng được yêu cầu."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "2. 仔细填写provisional ballot信封，并提供所需ID信息。"
+            "value": "2. 仔细填写临时选票信封，并提供所要求的身份证明信息。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "2. 仔细填写provisional ballot信封，并提供所需ID信息。"
+            "value": "2. 仔細填寫臨時選票信封，並提供所要求的身分證明資訊。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "2. Complete the provisional ballot envelope carefully and provide any requested ID details."
+            "value": "2. Remplissez soigneusement l’enveloppe du bulletin provisoire et fournissez les informations d’identité demandées."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "2. Complete the provisional ballot envelope carefully and provide any requested ID details."
+            "value": "2. Füllen Sie den Umschlag für den vorläufigen Stimmzettel sorgfältig aus und geben Sie angeforderte Ausweisdaten an."
           }
         }
       }
@@ -27514,49 +27514,49 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Get a receipt or tracking and confirm cure deadlines before leaving."
+            "value": "3. Get a receipt or tracking details and confirm cure deadlines before leaving."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "3. Pide un recibo o método de seguimiento y confirma cualquier plazo de corrección antes de irte."
+            "value": "3. Solicita un comprobante o seguimiento y confirma los plazos de corrección antes de irte."
           }
         },
         "fil": {
           "stringUnit": {
             "state": "translated",
-            "value": "3. Humingi ng resibo o paraan ng pagsubaybay at kumpirmahin ang anumang cure deadline bago umalis."
+            "value": "3. Humingi ng resibo o detalye sa pagsubaybay at kumpirmahin ang mga deadline ng pag-ayos bago umalis."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "3. Yêu cầu biên nhận hoặc cách theo dõi và xác nhận mọi hạn chót sửa lỗi trước khi rời đi."
+            "value": "3. Nhận biên nhận hoặc thông tin theo dõi và xác nhận các hạn chót sửa lỗi trước khi rời đi."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "3. 索取回执或追踪方式，并在离开前确认任何补救截止日期。"
+            "value": "3. 在离开前获取回执或追踪信息，并确认补救截止日期。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "3. 索取回执或追踪方式，并在离开前确认任何补救截止日期。"
+            "value": "3. 在離開前取得收據或追蹤資訊，並確認補救截止日期。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Get a receipt or tracking and confirm cure deadlines before leaving."
+            "value": "3. Demandez un reçu ou un numéro de suivi et confirmez les délais de correction avant de partir."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Get a receipt or tracking and confirm cure deadlines before leaving."
+            "value": "3. Lassen Sie sich eine Quittung oder Nachverfolgungsdaten geben und bestätigen Sie die Fristen zur Korrektur, bevor Sie gehen."
           }
         }
       }
@@ -33652,6 +33652,1066 @@
           "stringUnit": {
             "state": "translated",
             "value": "Die Stichwahl-Demo mit Schwellenwert ansehen"
+          }
+        }
+      }
+    },
+    "app.timeline.action.open_voting_guide": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Voting Guide"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir guía de votación"
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buksan ang gabay sa pagboto"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở hướng dẫn bỏ phiếu"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开投票指南"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開啟投票指南"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir le guide de vote"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wahlleitfaden öffnen"
+          }
+        }
+      }
+    },
+    "app.timeline.mayoral.stage.primary": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mayor Primary"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Primaria para la alcaldía"
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Primary ng Alkalde"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bầu cử sơ bộ thị trưởng"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市长初选"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市長初選"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Primaire municipale (maire)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bürgermeister-Vorwahl"
+          }
+        }
+      }
+    },
+    "app.timeline.mayoral.stage.runoff": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mayor Runoff"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segunda vuelta para la alcaldía"
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Runoff ng Alkalde"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bầu cử vòng hai thị trưởng"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市长决选"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市長決選"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Second tour municipal (maire)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bürgermeister-Stichwahl"
+          }
+        }
+      }
+    },
+    "app.timeline.mayoral.stage.general": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mayor General"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elección general para la alcaldía"
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pangkalahatang Halalan ng Alkalde"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tổng tuyển cử thị trưởng"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市长普选"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市長普選"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Élection générale municipale (maire)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bürgermeister-Hauptwahl"
+          }
+        }
+      }
+    },
+    "app.timeline.mayoral.subtitle.primary": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mayoral Primary Election"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elección primaria para la alcaldía"
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Primary na Halalan para sa Alkalde"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bầu cử sơ bộ thị trưởng"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市长初选"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市長初選"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Élection primaire à la mairie"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bürgermeister-Vorwahl"
+          }
+        }
+      }
+    },
+    "app.timeline.mayoral.subtitle.runoff": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mayoral Runoff Election"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segunda vuelta para la alcaldía"
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Runoff na Halalan para sa Alkalde"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bầu cử vòng hai thị trưởng"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市长决选"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市長決選"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Second tour municipal"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bürgermeister-Stichwahl"
+          }
+        }
+      }
+    },
+    "app.timeline.mayoral.subtitle.general": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mayoral General Election"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elección general para la alcaldía"
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pangkalahatang Halalan para sa Alkalde"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tổng tuyển cử thị trưởng"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市长普选"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市長普選"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Élection générale municipale"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bürgermeister-Hauptwahl"
+          }
+        }
+      }
+    },
+    "app.timeline.ballot.general_election.term": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "general election"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "elección general"
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pangkalahatang halalan"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tổng tuyển cử"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大选"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大選"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "élection générale"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hauptwahl"
+          }
+        }
+      }
+    },
+    "app.timeline.ballot.general.eligible_voter_state": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Any eligible registered voter in the state may vote in the general election."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cualquier votante registrado elegible del estado puede votar en la elección general."
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maaaring bumoto sa pangkalahatang halalan ang sinumang kwalipikadong rehistradong botante sa estado."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bất kỳ cử tri đã đăng ký đủ điều kiện nào trong bang đều có thể bỏ phiếu trong cuộc tổng tuyển cử."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "该州任何符合资格且已登记的选民都可以在大选中投票。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "該州任何符合資格且已登記的選民都可以在大選中投票。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tout électeur inscrit admissible dans l'État peut voter à l'élection générale."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jede wahlberechtigte registrierte Person im Bundesstaat kann an der Hauptwahl teilnehmen."
+          }
+        }
+      }
+    },
+    "app.timeline.ballot.general.eligible_voter_state_senate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Any eligible registered voter in the state may vote in the U.S. Senate general election when a Senate seat is on that state's ballot."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cualquier votante registrado elegible del estado puede votar en la elección general del Senado de EE. UU. cuando un escaño del Senado de ese estado esté en la boleta."
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maaaring bumoto sa pangkalahatang halalan para sa U.S. Senate ang sinumang kwalipikadong rehistradong botante sa estado kapag nasa balota ang upuan ng Senado ng estadong iyon."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bất kỳ cử tri đã đăng ký đủ điều kiện nào trong bang đều có thể bỏ phiếu trong cuộc tổng tuyển cử Thượng viện Hoa Kỳ khi ghế Thượng viện của bang đó có trên lá phiếu."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当该州的参议院席位出现在选票上时，该州任何符合资格且已登记的选民都可以在美国参议院大选中投票。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "當該州的參議院席位出現在選票上時，該州任何符合資格且已登記的選民都可以在美國參議院大選中投票。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tout électeur inscrit admissible dans l'État peut voter à l'élection générale du Sénat des États-Unis lorsqu'un siège de sénateur de cet État figure sur le bulletin."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jede wahlberechtigte registrierte Person im Bundesstaat kann bei der US-Senats-Hauptwahl abstimmen, wenn ein Senatssitz dieses Bundesstaats auf dem Stimmzettel steht."
+          }
+        }
+      }
+    },
+    "app.timeline.ballot.general.eligible_voter_house_district": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Any eligible registered voter in the voter's U.S. House district may vote when that district's seat is on the ballot."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cualquier votante registrado elegible del distrito de la Cámara de Representantes de EE. UU. del votante puede votar cuando el escaño de ese distrito esté en la boleta."
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maaaring bumoto ang sinumang kwalipikadong rehistradong botante sa distrito ng U.S. House ng botante kapag nasa balota ang upuan ng distritong iyon."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bất kỳ cử tri đã đăng ký đủ điều kiện nào trong khu vực Hạ viện Hoa Kỳ của cử tri đều có thể bỏ phiếu khi ghế của khu vực đó có trên lá phiếu."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当该选区席位出现在选票上时，选民所在美国众议院选区内任何符合资格且已登记的选民都可以投票。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "當該選區席位出現在選票上時，選民所在美國眾議院選區內任何符合資格且已登記的選民都可以投票。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tout électeur inscrit admissible dans la circonscription de la Chambre des représentants des États-Unis de l'électeur peut voter lorsque le siège de cette circonscription figure sur le bulletin."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jede wahlberechtigte registrierte Person im US-Repräsentantenhaus-Wahlkreis der Wählerin oder des Wählers kann abstimmen, wenn der Sitz dieses Wahlkreises auf dem Stimmzettel steht."
+          }
+        }
+      }
+    },
+    "app.timeline.ballot.general.eligible_voter_house_at_large": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is an at-large U.S. House state; any eligible registered voter in the state may vote when the seat is on the ballot."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este es un estado con escaño general en la Cámara de Representantes de EE. UU.; cualquier votante registrado elegible del estado puede votar cuando el escaño esté en la boleta."
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ito ay isang at-large na estado para sa U.S. House; maaaring bumoto ang sinumang kwalipikadong rehistradong botante sa estado kapag nasa balota ang puwestong iyon."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đây là bang bầu cử at-large cho Hạ viện Hoa Kỳ; bất kỳ cử tri đã đăng ký đủ điều kiện nào trong bang đều có thể bỏ phiếu khi ghế đó có trên lá phiếu."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这是一个美国众议院全州席位州；当该席位出现在选票上时，该州任何符合资格且已登记的选民都可以投票。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "這是一個美國眾議院全州席位州；當該席位出現在選票上時，該州任何符合資格且已登記的選民都可以投票。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il s'agit d'un État avec siège at-large à la Chambre des représentants des États-Unis; tout électeur inscrit admissible dans l'État peut voter lorsque ce siège figure sur le bulletin."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dies ist ein US-Repräsentantenhaus-At-Large-Bundesstaat; jede wahlberechtigte registrierte Person im Bundesstaat kann abstimmen, wenn der Sitz auf dem Stimmzettel steht."
+          }
+        }
+      }
+    },
+    "app.timeline.ballot.general.eligible_voter_municipal_mayor": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only eligible registered voters who reside in the municipality may vote in a mayoral election."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo los votantes registrados elegibles que residen en el municipio pueden votar en una elección de alcalde."
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tanging mga kwalipikadong rehistradong botanteng naninirahan sa munisipalidad ang maaaring bumoto sa halalan ng alkalde."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chỉ những cử tri đã đăng ký đủ điều kiện cư trú trong đô thị mới có thể bỏ phiếu trong cuộc bầu cử thị trưởng."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "只有居住在该市镇且符合资格并已登记的选民才能在市长选举中投票。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "只有居住在該市鎮且符合資格並已登記的選民才能在市長選舉中投票。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seuls les électeurs inscrits admissibles qui résident dans la municipalité peuvent voter à une élection municipale (maire)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur wahlberechtigte registrierte Personen mit Wohnsitz in der Gemeinde können bei einer Bürgermeisterwahl abstimmen."
+          }
+        }
+      }
+    },
+    "app.registration.step1.why_register.dropdown.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Why do I need to Register?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Por qué debo registrarme?"
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bakit kailangan kong magparehistro?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vì sao tôi cần đăng ký?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我为什么需要登记？"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我為什麼需要登記？"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pourquoi dois-je m’inscrire ?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warum muss ich mich registrieren?"
+          }
+        }
+      }
+    },
+    "app.registration.dropdown.why_register.intro.prefix": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The "
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los partidos "
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ang mga partidong "
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đảng "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ""
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ""
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les partis "
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Parteien "
+          }
+        }
+      }
+    },
+    "app.registration.dropdown.why_register.intro.middle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " and "
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " y "
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " at "
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " và "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "和"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "和"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " et "
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " und "
+          }
+        }
+      }
+    },
+    "app.registration.dropdown.why_register.intro.suffix": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " parties are the two largest in the United States. In many states, primary ballot eligibility depends on your current party registration."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " son los dos partidos más grandes de Estados Unidos. En muchos estados, la elegibilidad para votar en la primaria depende de tu afiliación partidaria actual."
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " ang dalawang pinakamalaking partido sa Estados Unidos. Sa maraming estado, nakadepende sa kasalukuyan mong party registration ang pagiging kwalipikado sa primary ballot."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " là hai đảng lớn nhất ở Hoa Kỳ. Ở nhiều bang, quyền bỏ phiếu sơ bộ phụ thuộc vào đăng ký đảng hiện tại của bạn."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "是美国最大的两个政党。在许多州，参加初选的资格取决于你当前的政党登记。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "是美國最大的兩個政黨。在許多州，參加初選的資格取決於你當前的政黨登記。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " sont les deux plus grands partis aux États-Unis. Dans de nombreux États, l’accès au bulletin de primaire dépend de votre affiliation politique actuelle."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " sind die beiden größten Parteien in den USA. In vielen Bundesstaaten hängt die Teilnahme an der Vorwahl von Ihrer aktuellen Parteiregistrierung ab."
+          }
+        }
+      }
+    },
+    "app.registration.dropdown.why_register.example.p1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Example: In a closed primary, a voter registered as Independent may not be able to vote in either party primary."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ejemplo: En una primaria cerrada, un votante registrado como independiente podría no poder votar en ninguna primaria de partido."
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Halimbawa: Sa closed primary, ang botanteng rehistradong Independent ay maaaring hindi makaboto sa primary ng alinmang partido."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ví dụ: Trong bầu cử sơ bộ kín, cử tri đăng ký là Independent có thể không được bỏ phiếu trong sơ bộ của cả hai đảng."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "示例：在封闭式初选中，登记为无党派（Independent）的选民可能无法参加任一政党的初选。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "示例：在封閉式初選中，登記為無黨派（Independent）的選民可能無法參加任一政黨的初選。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exemple : dans une primaire fermée, un électeur inscrit comme indépendant peut ne pas pouvoir voter dans la primaire de l’un ou l’autre parti."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beispiel: In einer geschlossenen Vorwahl kann eine als unabhängig registrierte Person möglicherweise in keiner der beiden Parteivorwahlen abstimmen."
+          }
+        }
+      }
+    },
+    "app.registration.step2.poll_issues.dropdown.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If Issues Emerge at the Polls"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si surgen problemas en las urnas"
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kung may lumitaw na isyu sa presinto"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nếu phát sinh vấn đề tại điểm bỏ phiếu"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "如果在投票点出现问题"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "如果在投票點出現問題"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En cas de problème au bureau de vote"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn am Wahllokal Probleme auftreten"
+          }
+        }
+      }
+    },
+    "app.registration.step3.ballot_error.dropdown.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How to Correct Error on a Ballot"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cómo corregir un error en la boleta"
+          }
+        },
+        "fil": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paano itama ang error sa balota"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cách sửa lỗi trên lá phiếu"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "如何更正选票错误"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "如何更正選票錯誤"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comment corriger une erreur sur un bulletin"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "So korrigieren Sie einen Fehler auf dem Stimmzettel"
           }
         }
       }

@@ -10,7 +10,7 @@ import SwiftUI
 import WidgetKit
 
 struct Voting_UI_Island_CardControl: ControlWidget {
-    static let kind: String = "Turnout-the-Vote.VoteNow-Information-Page.Voting UI Island Card"
+    static let kind: String = "Turnout-the-Vote.Civica-Information-Page.Voting UI Island Card"
 
     var body: some ControlWidgetConfiguration {
         AppIntentControlConfiguration(

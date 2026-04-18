@@ -8,7 +8,7 @@ struct SupabaseHealthStatus: Sendable {
 }
 
 enum SupabaseHealthCheck {
-    private static let logger = Logger(subsystem: "VoteNow", category: "SupabaseHealthCheck")
+    private static let logger = Logger(subsystem: "Civica", category: "SupabaseHealthCheck")
 
     /// Lightweight connectivity ping to Supabase Auth settings endpoint.
     static func run(config: SupabaseConfig = .current) async -> SupabaseHealthStatus {

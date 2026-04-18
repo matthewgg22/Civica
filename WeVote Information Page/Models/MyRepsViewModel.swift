@@ -98,7 +98,7 @@ enum RepsLocationResolverError: LocalizedError {
         case .notFound:
             return "We couldn't find that U.S. location. Try a full address with city and state."
         case .outsideUS:
-            return "VoteNow currently supports U.S. addresses only."
+            return "Civica currently supports U.S. addresses only."
         case .missingCoordinate:
             return "We couldn't determine a map coordinate for that location."
         case .missingPostalCode:
@@ -150,7 +150,7 @@ private let usStateNameToCodeMap: [String: String] = [
 private let usStateAndTerritoryCodes: Set<String> = Set(usStateNameToCodeMap.values)
 private let usTerritoryCodes: Set<String> = ["AS", "GU", "MP", "PR", "VI"]
 
-private func normalizedUSStateCode(from raw: String?) -> String? {
+func normalizedUSStateCode(from raw: String?) -> String? {
     guard let raw = raw?
         .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
         .lowercased()
@@ -231,6 +231,9 @@ enum RepsLookupInputParser {
         if looksLikeAddress(trimmed) {
             return .address(trimmed)
         }
+        if let normalizedStateInput = normalizedStateLookupInput(from: trimmed) {
+            return .generalLocation(normalizedStateInput)
+        }
         if looksLikeGeneralLocation(trimmed) {
             return .generalLocation(trimmed)
         }
@@ -278,6 +281,36 @@ enum RepsLookupInputParser {
         guard words.count <= 4 else { return false }
 
         return true
+    }
+
+    private static func normalizedStateLookupInput(from input: String) -> String? {
+        let trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+
+        if let direct = normalizedUSStateCode(from: trimmed) {
+            return direct
+        }
+
+        let splitCandidates = trimmed
+            .split(separator: "-", maxSplits: 1, omittingEmptySubsequences: true)
+            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
+        if let first = splitCandidates.first,
+           let normalized = normalizedUSStateCode(from: first) {
+            return normalized
+        }
+        if splitCandidates.count > 1,
+           let normalized = normalizedUSStateCode(from: splitCandidates[1]) {
+            return normalized
+        }
+
+        for token in trimmed.split(separator: ",") {
+            let candidate = String(token).trimmingCharacters(in: .whitespacesAndNewlines)
+            if let normalized = normalizedUSStateCode(from: candidate) {
+                return normalized
+            }
+        }
+
+        return nil
     }
 }
 
@@ -327,9 +360,9 @@ enum USGeoGuard {
 }
 
 private enum MyRepsTrustCopy {
-    static let invalidInput = "Enter a valid U.S. ZIP, full address, city, or state."
-    static let invalidZip = "Enter a 5-digit U.S. ZIP code (e.g., 10001)."
-    static let usOnly = "VoteNow only supports U.S. locations."
+    static let invalidZip = "Invalid ZIP code"
+    static let unresolvedState = "We couldn't determine your state"
+    static let usOnly = "Location outside the U.S."
 }
 
 private enum AddressLookupErrorCode {
@@ -405,6 +438,7 @@ private final class USCurrentLocationProvider: NSObject, CLLocationManagerDelega
     }
 }
 
+@MainActor
 final class MyRepsViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var executiveReps: [Official] = []
@@ -426,14 +460,19 @@ final class MyRepsViewModel: ObservableObject {
     @Published var resolvedStateCode: String?
     @Published var politicalGeography: PoliticalGeography?
     @Published var mapViewportResetID = UUID()
+    @Published var timelineDataErrorMessage: String?
 
     private let registry: RepsProviderRegistry
     private let openStatesService = OpenStatesStateLegislativeService()
     private let geocoder = CLGeocoder()
     private let politicalGeographyService = PoliticalGeographyService()
     private let locationProvider = USCurrentLocationProvider()
-    private let logger = Logger(subsystem: "VoteNow", category: "MyRepsViewModel")
+    private let logger = Logger(subsystem: "Civica", category: "MyRepsViewModel")
     private var lookupToken = UUID()
+    private let registryLookupQueue = DispatchQueue(
+        label: "com.civica.myreps.registry-lookup",
+        qos: .userInitiated
+    )
     private var locationResolveTask: Task<Void, Never>?
     private var zipCoordinateCache: [String: RepsGeoCoordinate] = [:]
     private var zipLocalityCache: [String: String] = [:]
@@ -456,20 +495,34 @@ final class MyRepsViewModel: ObservableObject {
         return formatter
     }()
 
-    private static let timelineRecordsByState: [String: TimelineStateElectionRecord] = {
+    private struct TimelineRecordsLoadResult {
+        let recordsByState: [String: TimelineStateElectionRecord]
+        let errorMessage: String?
+    }
+
+    private let timelineRecordsByState: [String: TimelineStateElectionRecord]
+
+    private static let timelineRecordsLoadResult: TimelineRecordsLoadResult = {
+        let logger = Logger(subsystem: "Civica", category: "MyRepsViewModel")
         guard
             let url = Bundle.main.url(forResource: "USMidterm2026ElectionDates", withExtension: "json"),
             let data = try? Data(contentsOf: url),
             let records = try? JSONDecoder().decode([TimelineStateElectionRecord].self, from: data)
         else {
-            return [:]
+            let message = "Election reminder data is unavailable right now. Try again after restarting the app."
+            logger.error("Failed to load USMidterm2026ElectionDates.json for reminder timeline.")
+            return TimelineRecordsLoadResult(recordsByState: [:], errorMessage: message)
         }
-
-        return Dictionary(uniqueKeysWithValues: records.map { ($0.state_code.uppercased(), $0) })
+        return TimelineRecordsLoadResult(
+            recordsByState: Dictionary(uniqueKeysWithValues: records.map { ($0.state_code.uppercased(), $0) }),
+            errorMessage: nil
+        )
     }()
 
     init(registry: RepsProviderRegistry = .defaultRegistry()) {
         self.registry = registry
+        self.timelineRecordsByState = Self.timelineRecordsLoadResult.recordsByState
+        self.timelineDataErrorMessage = Self.timelineRecordsLoadResult.errorMessage
     }
 
     deinit {
@@ -527,6 +580,9 @@ final class MyRepsViewModel: ObservableObject {
         errorMessage = nil
         zipMapLookupState = .idle
         isGeneralLocationSearchResult = false
+        detectedStateCode = nil
+        resolvedLocationSelection = nil
+        lastTrackedLookupErrorCode = nil
         clearReps()
         clearZipMapHighlight()
         resetMapToNationalView()
@@ -613,72 +669,74 @@ final class MyRepsViewModel: ObservableObject {
         errorMessage = nil
 
         locationProvider.requestCurrentLocation { [weak self] result in
-            guard let self else { return }
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let coordinate):
-                    guard USGeoGuard.isAllowedUSCoordinate(coordinate) else {
-                        self.isLoading = false
-                        self.zipMapLookupState = .outsideUSBlocked
-                        self.errorMessage = MyRepsTrustCopy.usOnly
-                        self.clearReps()
-                        self.resetMapToNationalView()
-                        self.trackNonSensitiveEvent("zip_outside_us_blocked")
-                        return
-                    }
+            Task { [weak self] in
+                guard let self else { return }
+                await MainActor.run {
+                    switch result {
+                    case .success(let coordinate):
+                        guard USGeoGuard.isAllowedUSCoordinate(coordinate) else {
+                            self.isLoading = false
+                            self.zipMapLookupState = .outsideUSBlocked
+                            self.errorMessage = MyRepsTrustCopy.usOnly
+                            self.clearReps()
+                            self.resetMapToNationalView()
+                            self.trackNonSensitiveEvent("zip_outside_us_blocked")
+                            return
+                        }
 
-                    Task { [weak self] in
-                        guard let self else { return }
-                        let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+                        Task { [weak self] in
+                            guard let self else { return }
+                            let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
 
-                        do {
-                            let placemarks = try await self.geocoder.reverseGeocodeLocation(location)
-                            if Task.isCancelled { return }
-                            let resolvedPlacemark = self.bestUSPlacemark(from: placemarks, zip: nil) ?? placemarks.first
+                            do {
+                                let placemarks = try await self.geocoder.reverseGeocodeLocation(location)
+                                if Task.isCancelled { return }
+                                let resolvedPlacemark = self.bestUSPlacemark(from: placemarks, zip: nil) ?? placemarks.first
 
-                            await MainActor.run {
-                                guard token == self.lookupToken else { return }
-                                guard let placemark = resolvedPlacemark else {
+                                await MainActor.run {
+                                    guard token == self.lookupToken else { return }
+                                    guard let placemark = resolvedPlacemark else {
+                                        self.isLoading = false
+                                        self.zipMapLookupState = .error
+                                        self.errorMessage = "Unable to resolve your current address."
+                                        self.clearReps()
+                                        self.resetMapToNationalView()
+                                        return
+                                    }
+
+                                    let region = self.buildRegion(
+                                        for: placemark,
+                                        coordinate: coordinate,
+                                        fallbackMeters: 3500
+                                    )
+
+                                    self.handleResolvedLocation(
+                                        userInput: placemark.postalCode ?? "Current Location",
+                                        source: .address,
+                                        coordinate: coordinate,
+                                        region: region,
+                                        placemark: placemark,
+                                        token: token
+                                    )
+                                }
+                            } catch {
+                                await MainActor.run {
+                                    guard token == self.lookupToken else { return }
                                     self.isLoading = false
                                     self.zipMapLookupState = .error
-                                    self.errorMessage = "Unable to resolve your current address."
+                                    self.errorMessage = "Unable to use current location right now."
                                     self.clearReps()
                                     self.resetMapToNationalView()
-                                    return
                                 }
-
-                                let region = self.buildRegion(
-                                    for: placemark,
-                                    coordinate: coordinate,
-                                    fallbackMeters: 3500
-                                )
-
-                                self.handleResolvedLocation(
-                                    userInput: placemark.postalCode ?? "Current Location",
-                                    source: .address,
-                                    coordinate: coordinate,
-                                    region: region,
-                                    placemark: placemark,
-                                    token: token
-                                )
-                            }
-                        } catch {
-                            await MainActor.run {
-                                guard token == self.lookupToken else { return }
-                                self.isLoading = false
-                                self.zipMapLookupState = .error
-                                self.errorMessage = "Unable to use current location right now."
-                                self.clearReps()
-                                self.resetMapToNationalView()
                             }
                         }
+                    case .failure:
+                        self.isLoading = false
+                        self.zipMapLookupState = .error
+                        self.errorMessage = "Unable to use current location right now."
+                        self.clearReps()
+                        self.resetMapToNationalView()
                     }
-                case .failure:
-                    self.isLoading = false
-                    self.zipMapLookupState = .error
-                    self.errorMessage = "Unable to use current location right now."
-                    self.clearReps()
-                    self.resetMapToNationalView()
                 }
             }
         }
@@ -978,9 +1036,12 @@ final class MyRepsViewModel: ObservableObject {
         guard let lookupZIP else {
             isLoading = false
             zipMapLookupState = .error
-            errorMessage = isGeneralLocationLookup
-                ? "We couldn't determine a U.S. state from that location."
-                : RepsLocationResolverError.missingPostalCode.errorDescription
+            if case .zip = parsed {
+                errorMessage = MyRepsTrustCopy.invalidZip
+                zipMapLookupState = .invalidInput
+            } else {
+                errorMessage = MyRepsTrustCopy.unresolvedState
+            }
             clearReps()
             resetMapToNationalView()
             return
@@ -1081,7 +1142,7 @@ final class MyRepsViewModel: ObservableObject {
 
     private func scheduleElectionRemindersAfterAddressResolution(zip: String, stateCode: String?) {
         reminderSchedulingTask?.cancel()
-        reminderSchedulingTask = Task { @MainActor [weak self] in
+        reminderSchedulingTask = Task { [weak self] in
             guard let self else { return }
             guard await SupabaseManager.shared.currentUserIDIfAvailable() != nil else {
                 logger.debug("Skipping scheduled reminder insert because no authenticated user exists.")
@@ -1136,9 +1197,14 @@ final class MyRepsViewModel: ObservableObject {
                 created = true
                 logger.info("Election reminders scheduled for electionID \(nextElection.electionID, privacy: .public).")
                 // Secondary review signal: successful reminder creation.
+                let hasLocationContext = self.resolvedCoordinate != nil
+                    || self.resolvedLocationSelection != nil
+                    || !(self.resolvedStateCode?.isEmpty ?? true)
+                    || zip.count == 5
                 ReviewPromptManager.shared.markReminderCreated(
                     isInErrorState: self.errorMessage != nil,
-                    isFlowInterrupted: false
+                    isFlowInterrupted: false,
+                    hasLocationSet: hasLocationContext
                 )
             } catch {
                 if Task.isCancelled {
@@ -1257,7 +1323,7 @@ final class MyRepsViewModel: ObservableObject {
     }
 
     private func loadTimelineRecord(for stateCode: String) -> TimelineStateElectionRecord? {
-        Self.timelineRecordsByState[stateCode.uppercased()]
+        timelineRecordsByState[stateCode.uppercased()]
     }
 
     private func projectedPresidentialPrimaryISO(from midtermPrimaryISO: String?) -> String {
@@ -1290,82 +1356,110 @@ final class MyRepsViewModel: ObservableObject {
     ) {
         guard token == lookupToken else { return }
 
-        do {
-            let result = try registry.lookup(zip: zip, coordinate: coordinate, locality: locality)
+        Task { [weak self] in
+            guard let self else { return }
 
-            switch scope {
-            case .allReps:
-                executiveReps = applyLevel(.federal, to: result.executive)
-                federalReps = dedupedOfficials(applyLevel(.federal, to: result.federal))
-                stateReps = applyLevel(.state, to: result.state)
-                cityReps = applyLevel(.local, to: result.city)
-                isGeneralLocationSearchResult = false
-            case .stateLevelOnly:
-                executiveReps = applyLevel(.federal, to: result.executive)
-                federalReps = dedupedOfficials(
-                    applyLevel(.federal, to: result.federal).filter(isStatewideFederalOfficial)
+            do {
+                let result = try await self.lookupRepresentativesOffMain(
+                    zip: zip,
+                    coordinate: coordinate,
+                    locality: locality
                 )
-                stateReps = applyLevel(.state, to: result.state).filter(isStatewideStateOfficial)
-                cityReps = []
-                isGeneralLocationSearchResult = true
-            }
+                guard token == self.lookupToken else { return }
 
-            if zipMapLookupState != .outsideUSBlocked {
-                zipMapLookupState = .resolvedUSCoordinate
-            }
-
-            let didResolveAnyReps = !executiveReps.isEmpty
-                || !federalReps.isEmpty
-                || !stateReps.isEmpty
-                || !cityReps.isEmpty
-            if didResolveAnyReps {
-                // Secondary review signal: successful representative lookup.
-                Task { @MainActor in
-                    ReviewPromptManager.shared.markRepLookupSuccess(
-                        isInErrorState: self.errorMessage != nil,
-                        isFlowInterrupted: self.isLoading
+                switch scope {
+                case .allReps:
+                    executiveReps = applyLevel(.federal, to: result.executive)
+                    federalReps = dedupedOfficials(applyLevel(.federal, to: result.federal))
+                    stateReps = applyLevel(.state, to: result.state)
+                    cityReps = applyLevel(.local, to: result.city)
+                    isGeneralLocationSearchResult = false
+                case .stateLevelOnly:
+                    executiveReps = applyLevel(.federal, to: result.executive)
+                    federalReps = dedupedOfficials(
+                        applyLevel(.federal, to: result.federal).filter(isStatewideFederalOfficial)
                     )
+                    stateReps = applyLevel(.state, to: result.state).filter(isStatewideStateOfficial)
+                    cityReps = []
+                    isGeneralLocationSearchResult = true
                 }
-            }
 
-            guard let coordinate else {
-                isLoading = false
-                return
-            }
+                if zipMapLookupState != .outsideUSBlocked {
+                    zipMapLookupState = .resolvedUSCoordinate
+                }
 
-            let expectedStateCode = detectedStateCode ?? registry.resolvedStateCode(for: zip)
-            Task { [weak self] in
-                guard let self else { return }
-                if Task.isCancelled { return }
+                let didResolveAnyReps = !executiveReps.isEmpty
+                    || !federalReps.isEmpty
+                    || !stateReps.isEmpty
+                    || !cityReps.isEmpty
+                if didResolveAnyReps {
+                    // Secondary review signal: successful representative lookup.
+                    Task {
+                        let hasLocationContext = self.resolvedLocationSelection != nil
+                            || coordinate != nil
+                            || zip.count == 5
+                        ReviewPromptManager.shared.markRepLookupSuccess(
+                            isInErrorState: self.errorMessage != nil,
+                            isFlowInterrupted: self.isLoading,
+                            hasLocationSet: hasLocationContext
+                        )
+                    }
+                }
+
+                guard let coordinate else {
+                    isLoading = false
+                    return
+                }
+
+                let expectedStateCode = detectedStateCode ?? registry.resolvedStateCode(for: zip)
                 let openStatesOfficials = await self.openStatesService.lookupStateLegislators(
                     zip: zip,
                     coordinate: coordinate,
                     expectedStateCode: expectedStateCode
                 )
                 if Task.isCancelled { return }
+                guard token == self.lookupToken else { return }
 
-                await MainActor.run {
-                    guard token == self.lookupToken else { return }
-                    self.stateReps = self.dedupedOfficials(
-                        self.stateReps + self.applyLevel(.state, to: openStatesOfficials)
-                    )
-                    self.isLoading = false
+                stateReps = dedupedOfficials(
+                    stateReps + applyLevel(.state, to: openStatesOfficials)
+                )
+                isLoading = false
+            } catch let providerError as RepsProviderError {
+                guard token == self.lookupToken else { return }
+                errorMessage = providerError.errorDescription
+                if zipMapLookupState != .outsideUSBlocked {
+                    zipMapLookupState = .error
+                }
+                clearReps()
+                isLoading = false
+            } catch {
+                guard token == self.lookupToken else { return }
+                errorMessage = "Unexpected error while loading representatives."
+                if zipMapLookupState != .outsideUSBlocked {
+                    zipMapLookupState = .error
+                }
+                clearReps()
+                isLoading = false
+            }
+        }
+    }
+
+    private func lookupRepresentativesOffMain(
+        zip: String,
+        coordinate: RepsGeoCoordinate?,
+        locality: String?
+    ) async throws -> RepsLookupResult {
+        let lookupQueue = registryLookupQueue
+        let registry = self.registry
+        return try await withCheckedThrowingContinuation { continuation in
+            lookupQueue.async {
+                do {
+                    let result = try registry.lookup(zip: zip, coordinate: coordinate, locality: locality)
+                    continuation.resume(returning: result)
+                } catch {
+                    continuation.resume(throwing: error)
                 }
             }
-        } catch let providerError as RepsProviderError {
-            errorMessage = providerError.errorDescription
-            if zipMapLookupState != .outsideUSBlocked {
-                zipMapLookupState = .error
-            }
-            clearReps()
-            isLoading = false
-        } catch {
-            errorMessage = "Unexpected error while loading representatives."
-            if zipMapLookupState != .outsideUSBlocked {
-                zipMapLookupState = .error
-            }
-            clearReps()
-            isLoading = false
         }
     }
 
@@ -1786,7 +1880,7 @@ final class MyRepsViewModel: ObservableObject {
             clearReps()
         case AddressLookupErrorCode.invalidAddress:
             zipMapLookupState = .error
-            errorMessage = MyRepsTrustCopy.invalidInput
+            errorMessage = MyRepsTrustCopy.unresolvedState
             clearReps()
         case AddressLookupErrorCode.notUS:
             zipMapLookupState = .outsideUSBlocked
@@ -1797,10 +1891,10 @@ final class MyRepsViewModel: ObservableObject {
             let digitsOnly = String(input.filter(\.isNumber))
             if digitsOnly.count == 5 {
                 zipMapLookupState = .invalidInput
-                errorMessage = "We couldn't find that ZIP in the U.S. Try another 5-digit ZIP."
+                errorMessage = MyRepsTrustCopy.invalidZip
             } else {
                 zipMapLookupState = .error
-                errorMessage = RepsLocationResolverError.notFound.errorDescription
+                errorMessage = MyRepsTrustCopy.unresolvedState
             }
             clearReps()
         default:

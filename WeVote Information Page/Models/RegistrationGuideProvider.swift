@@ -1,4 +1,18 @@
 import Foundation
+import OSLog
+
+enum RegistrationGuideDataDiagnostics {
+    static var onLoadFailure: ((_ resource: String, _ reason: String) -> Void)?
+    private static let logger = Logger(subsystem: "Civica", category: "RegistrationGuideData")
+
+    static func reportLoadFailure(resource: String, reason: String) {
+        logger.error("Bundle fallback triggered for \(resource, privacy: .public): \(reason, privacy: .public)")
+        #if DEBUG
+        assertionFailure("RegistrationGuide data load fallback for \(resource): \(reason)")
+        #endif
+        onLoadFailure?(resource, reason)
+    }
+}
 
 private let voterRegistrationPortalURLByStateCode: [String: String] = [
     "AL": "https://voterinfo.sos.alabama.gov/",
@@ -175,18 +189,50 @@ private struct BundleRegistrationGuideContentProvider {
     }
 
     private func loadMidtermRecordsByState() -> [String: MidtermRecord] {
-        guard let url = bundle.url(forResource: "USMidterm2026ElectionDates", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let decoded = try? JSONDecoder().decode([MidtermRecord].self, from: data) else {
+        guard let url = bundle.url(forResource: "USMidterm2026ElectionDates", withExtension: "json") else {
+            RegistrationGuideDataDiagnostics.reportLoadFailure(
+                resource: "USMidterm2026ElectionDates.json",
+                reason: "missing bundle resource"
+            )
+            return [:]
+        }
+        guard let data = try? Data(contentsOf: url) else {
+            RegistrationGuideDataDiagnostics.reportLoadFailure(
+                resource: "USMidterm2026ElectionDates.json",
+                reason: "unable to read bundle data"
+            )
+            return [:]
+        }
+        guard let decoded = try? JSONDecoder().decode([MidtermRecord].self, from: data) else {
+            RegistrationGuideDataDiagnostics.reportLoadFailure(
+                resource: "USMidterm2026ElectionDates.json",
+                reason: "decode failure"
+            )
             return [:]
         }
         return Dictionary(uniqueKeysWithValues: decoded.map { ($0.state_code, $0) })
     }
 
     private func loadTopics() -> [DatasetTopic]? {
-        guard let url = bundle.url(forResource: "RegistrationGuideTopics", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let decoded = try? JSONDecoder().decode([DatasetTopic].self, from: data) else {
+        guard let url = bundle.url(forResource: "RegistrationGuideTopics", withExtension: "json") else {
+            RegistrationGuideDataDiagnostics.reportLoadFailure(
+                resource: "RegistrationGuideTopics.json",
+                reason: "missing bundle resource"
+            )
+            return nil
+        }
+        guard let data = try? Data(contentsOf: url) else {
+            RegistrationGuideDataDiagnostics.reportLoadFailure(
+                resource: "RegistrationGuideTopics.json",
+                reason: "unable to read bundle data"
+            )
+            return nil
+        }
+        guard let decoded = try? JSONDecoder().decode([DatasetTopic].self, from: data) else {
+            RegistrationGuideDataDiagnostics.reportLoadFailure(
+                resource: "RegistrationGuideTopics.json",
+                reason: "decode failure"
+            )
             return nil
         }
         return decoded

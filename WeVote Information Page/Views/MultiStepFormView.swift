@@ -972,11 +972,6 @@ struct AbsenteeView: View {
 
                         requestDeadlinesSection
 
-                        Text(l("app.mapv.absentee.note.request_vs_early", "This section is for absentee/mail ballot requests. Early-voting deadlines can be different."))
-                            .font(.footnote.weight(.semibold))
-                            .foregroundColor(VoteNowColors.primaryText)
-                            .fixedSize(horizontal: false, vertical: true)
-
                         Text(l("app.mapv.absentee.note.confirm_official", "Deadlines can change. Confirm details with your official election office site."))
                             .font(.footnote)
                             .foregroundColor(VoteNowColors.mutedText)
@@ -1024,12 +1019,13 @@ struct AbsenteeView: View {
     @ViewBuilder
     private var requestDeadlinesSection: some View {
         if let deadlines = selectedRequestDeadlines {
+            let rows = requestDeadlineRows(for: deadlines)
             VStack(alignment: .leading, spacing: 10) {
                 Text(l("app.mapv.absentee.deadlines.title", "Request deadlines"))
                     .font(.subheadline.weight(.semibold))
                     .foregroundColor(VoteNowColors.primaryText)
 
-                ForEach(Array(requestDeadlineRows(for: deadlines).enumerated()), id: \.element.label) { index, row in
+                ForEach(Array(rows.enumerated()), id: \.element.label) { index, row in
                     VStack(alignment: .leading, spacing: 4) {
                         Text(row.label)
                             .font(.subheadline.weight(.semibold))
@@ -1043,7 +1039,7 @@ struct AbsenteeView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                    if index < 2 {
+                    if index < rows.count - 1 {
                         Divider()
                             .background(VoteNowColors.primaryCTA.opacity(0.2))
                     }
@@ -1111,21 +1107,44 @@ struct AbsenteeView: View {
 
     private func requestDeadlineRows(for record: MailBallotRequestDeadlines) -> [AbsenteeDeadlineRow] {
         let electionDay = nextTimelineElection?.electionDay
+        let inPersonRaw = record.methods.inPerson
+        let byMailRaw = record.methods.byMail
+        let onlineEmailRaw = record.methods.onlineEmail
 
-        return [
-            AbsenteeDeadlineRow(
+        var rows: [AbsenteeDeadlineRow] = []
+
+        // Hide sections that are explicitly marked N/A for these method groups.
+        if !isMarkedNotApplicable(inPersonRaw) {
+            rows.append(AbsenteeDeadlineRow(
                 label: l("app.mapv.absentee.deadlines.method.in_person", "In person"),
-                value: requestDeadlineValue(record.methods.inPerson, electionDay: electionDay)
-            ),
-            AbsenteeDeadlineRow(
+                value: requestDeadlineValue(inPersonRaw, electionDay: electionDay)
+            ))
+        }
+
+        rows.append(AbsenteeDeadlineRow(
                 label: l("app.mapv.absentee.deadlines.method.by_mail", "By mail"),
-                value: requestDeadlineValue(record.methods.byMail, electionDay: electionDay)
-            ),
-            AbsenteeDeadlineRow(
+                value: requestDeadlineValue(byMailRaw, electionDay: electionDay)
+            ))
+
+        if !isMarkedNotApplicable(onlineEmailRaw) {
+            rows.append(AbsenteeDeadlineRow(
                 label: l("app.mapv.absentee.deadlines.method.online_email_fax", "Online / email / fax"),
-                value: requestDeadlineValue(record.methods.onlineEmail, electionDay: electionDay)
-            ),
-        ]
+                value: requestDeadlineValue(onlineEmailRaw, electionDay: electionDay)
+            ))
+        }
+
+        return rows
+    }
+
+    private func isMarkedNotApplicable(_ rawValue: String?) -> Bool {
+        guard let rawValue else { return false }
+        let normalized = rawValue
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+        guard !normalized.isEmpty else { return false }
+
+        let compact = normalized.replacingOccurrences(of: " ", with: "")
+        return compact.contains("n/a") || compact == "na"
     }
 
     private func requestDeadlineValue(_ value: String?, electionDay: Date?) -> String {
@@ -2482,26 +2501,30 @@ struct StepFourView: View {
                         buttonTitle: l("app.mapv.step4.action.add_calendar", "Add to Calendar")
                     )
 
-                    ShareLink(
-                        item: shareURL,
-                        subject: Text(l("app.mapv.share.title", "My Plan to Vote")),
-                        message: Text(l("app.mapv.step4.share_message", "Here is my voting plan."))
-                    ) {
-                        Label(l("app.mapv.step4.action.share_plan", "Share Plan"), systemImage: "square.and.arrow.up")
-                            .font(.subheadline.weight(.semibold))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
+                    if VoteNowLaunchFeatures.shareActionsEnabled {
+                        ShareLink(
+                            item: shareURL,
+                            subject: Text(l("app.mapv.share.title", "My Plan to Vote")),
+                            message: Text(l("app.mapv.step4.share_message", "Here is my voting plan."))
+                        ) {
+                            Label(l("app.mapv.step4.action.share_plan", "Share Plan"), systemImage: "square.and.arrow.up")
+                                .font(.subheadline.weight(.semibold))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                        }
+                        .buttonStyle(.plain)
+                        .background(VoteNowColors.infoSurfaceBlue)
+                        .foregroundColor(VoteNowColors.primaryText)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     }
-                    .buttonStyle(.plain)
-                    .background(VoteNowColors.infoSurfaceBlue)
-                    .foregroundColor(VoteNowColors.primaryText)
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
 
-                Text(l("app.mapv.step4.share_hint", "Share via text, WhatsApp, or any app in your share sheet."))
-                    .font(.caption)
-                    .foregroundColor(VoteNowColors.mutedText)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                if VoteNowLaunchFeatures.shareActionsEnabled {
+                    Text(l("app.mapv.step4.share_hint", "Share via text, WhatsApp, or any app in your share sheet."))
+                        .font(.caption)
+                        .foregroundColor(VoteNowColors.mutedText)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
             .padding(.horizontal)
             .padding(.vertical, 6)

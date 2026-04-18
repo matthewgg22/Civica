@@ -507,7 +507,8 @@ struct PollingLocationsView: View {
         // Secondary review signal: successful polling-place lookup.
         ReviewPromptManager.shared.markPollingPlaceLookupSuccess(
             isInErrorState: false,
-            isFlowInterrupted: false
+            isFlowInterrupted: false,
+            hasLocationSet: locationManager.location != nil || selectedPlace != nil
         )
     }
 }

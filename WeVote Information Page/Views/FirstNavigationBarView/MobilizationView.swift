@@ -235,22 +235,24 @@ struct MobilizationView: View {
                                         y: planCardShadowBoost ? 8 : 3
                                     )
 
-                                Button {
-                                    shareMapvCard()
-                                } label: {
-                                    Label(l("app.how_to_vote.action.share_plan", "Share My Plan"), systemImage: "square.and.arrow.up")
-                                        .font(.subheadline.weight(.semibold))
-                                        .lineLimit(1)
-                                        .minimumScaleFactor(0.7)
-                                        .frame(maxWidth: .infinity)
-                                        .padding(.vertical, 11)
+                                if VoteNowLaunchFeatures.shareActionsEnabled {
+                                    Button {
+                                        shareMapvCard()
+                                    } label: {
+                                        Label(l("app.how_to_vote.action.share_plan", "Share My Plan"), systemImage: "square.and.arrow.up")
+                                            .font(.subheadline.weight(.semibold))
+                                            .lineLimit(1)
+                                            .minimumScaleFactor(0.7)
+                                            .frame(maxWidth: .infinity)
+                                            .padding(.vertical, 11)
+                                    }
+                                    .buttonStyle(MAPVUtilityButtonStyle(
+                                        fill: VoteNowColors.primaryCTA,
+                                        foreground: .white,
+                                        border: VoteNowColors.primaryCTA.opacity(0.85)
+                                    ))
+                                    .padding(.horizontal)
                                 }
-                                .buttonStyle(MAPVUtilityButtonStyle(
-                                    fill: VoteNowColors.primaryCTA,
-                                    foreground: .white,
-                                    border: VoteNowColors.primaryCTA.opacity(0.85)
-                                ))
-                                .padding(.horizontal)
                             }
                         } else {
                             Button(l("app.how_to_vote.action.make_plan", "Make a Plan to Vote")) {
@@ -650,7 +652,7 @@ enum SectionType: CaseIterable {
 struct FeedbackView: View {
     @Environment(\.locale) private var locale
     @Environment(\.dismiss) private var dismiss
-    private let logger = Logger(subsystem: "VoteNow", category: "FeedbackView")
+    private let logger = Logger(subsystem: "Civica", category: "FeedbackView")
 
     private enum FeedbackCategory: String, CaseIterable, Identifiable {
         case idea
@@ -716,7 +718,7 @@ struct FeedbackView: View {
                     Text(l("app.feedback.college_endeavor.title", "We Want to Hear From You!"))
                         .font(.title3.weight(.bold))
 
-                    Text(l("app.feedback.college_endeavor.body", "VoteNow is an endeavor built to support all Americans vote by reducing logistical friction. As a college student endeavor, we want to learn from you and your experience voting. Your feedback is invaluable to improve the app and the voter experience."))
+                    Text(l("app.feedback.college_endeavor.body", "Civica is an endeavor built to support all Americans vote by reducing logistical friction. As a college student endeavor, we want to learn from you and your experience voting. Your feedback is invaluable to improve the app and the voter experience."))
                         .font(.body)
                         .foregroundColor(VoteNowColors.mutedText)
                         .fixedSize(horizontal: false, vertical: true)

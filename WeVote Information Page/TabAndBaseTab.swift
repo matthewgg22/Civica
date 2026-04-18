@@ -17,6 +17,47 @@ struct TabAndBaseTab: View {
     @State private var showRegReminder = false
     @State private var showMayorModal  = false
     @State private var showMyInfoPanel = false
+    private let zipStateResolver = USZipStateResolver()
+
+    private var callTabUserZip: String {
+        let resolvedAddressZip = String((repsVM.resolvedLocationSelection?.postalCode ?? "").filter(\.isNumber).prefix(5))
+        if resolvedAddressZip.count == 5 { return resolvedAddressZip }
+        let addressZip = String(planVM.userAddress.zip.filter(\.isNumber).prefix(5))
+        if addressZip.count == 5 { return addressZip }
+        let fallbackZip = String(planVM.zip.filter(\.isNumber).prefix(5))
+        return fallbackZip.count == 5 ? fallbackZip : ""
+    }
+
+    private var callTabAddressLine: String {
+        let city = {
+            let resolvedCity = repsVM.resolvedLocationSelection?.city?
+                .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if !resolvedCity.isEmpty { return resolvedCity }
+            return planVM.userAddress.city.trimmingCharacters(in: .whitespacesAndNewlines)
+        }()
+
+        let state = normalizedUSStateCode(from: repsVM.resolvedStateCode)
+            ?? normalizedUSStateCode(from: repsVM.detectedStateCode)
+            ?? normalizedUSStateCode(from: planVM.userAddress.state)
+            ?? (!callTabUserZip.isEmpty ? zipStateResolver.stateCode(for: callTabUserZip) : nil)
+
+        if !city.isEmpty, let state, !callTabUserZip.isEmpty {
+            return "\(city), \(state) (\(callTabUserZip))"
+        }
+        if !city.isEmpty, let state {
+            return "\(city), \(state)"
+        }
+        if let state, !callTabUserZip.isEmpty {
+            return "\(state) (\(callTabUserZip))"
+        }
+        if !callTabUserZip.isEmpty {
+            return callTabUserZip
+        }
+        if let state {
+            return state
+        }
+        return planVM.homeAddress.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -31,14 +72,8 @@ struct TabAndBaseTab: View {
             NavigationStack {
                 IssueCallCenterView(
                     federalReps: repsVM.federalReps,
-                    userZip: {
-                        let resolvedAddressZip = String((repsVM.resolvedLocationSelection?.postalCode ?? "").filter(\.isNumber).prefix(5))
-                        if resolvedAddressZip.count == 5 { return resolvedAddressZip }
-                        let addressZip = String(planVM.userAddress.zip.filter(\.isNumber).prefix(5))
-                        if addressZip.count == 5 { return addressZip }
-                        let fallbackZip = String(planVM.zip.filter(\.isNumber).prefix(5))
-                        return fallbackZip.count == 5 ? fallbackZip : ""
-                    }(),
+                    userZip: callTabUserZip,
+                    userAddressLine: callTabAddressLine,
                     initialTab: .examples,
                     showsReturnHomeButton: false,
                     hidesTabBar: false

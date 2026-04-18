@@ -9,6 +9,41 @@ import SwiftUI
 import UIKit
 import LinkPresentation
 
+enum VoteNowLaunchFeatures {
+    // Share actions are parked for future features.
+    static let shareActionsEnabled = false
+    // MAPC is parked for this launch; keep only the current script flow visible.
+    static let mapcEnabled = false
+    static let mapcPipelineV3FlagKey = "mapc_pipeline_v3_enabled"
+
+    static func resolvedMAPCV3Enabled(
+        userDefaults: UserDefaults = .standard,
+        environment: [String: String] = ProcessInfo.processInfo.environment
+    ) -> Bool {
+        guard mapcEnabled else { return false }
+
+        if let boolValue = userDefaults.object(forKey: mapcPipelineV3FlagKey) as? Bool {
+            return boolValue
+        }
+        if let stringValue = userDefaults.string(forKey: mapcPipelineV3FlagKey),
+           let parsed = parseBooleanFlag(stringValue) {
+            return parsed
+        }
+        if let envValue = environment[mapcPipelineV3FlagKey],
+           let parsed = parseBooleanFlag(envValue) {
+            return parsed
+        }
+        return mapcEnabled
+    }
+
+    private static func parseBooleanFlag(_ rawValue: String) -> Bool? {
+        let normalized = rawValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if ["1", "true", "yes", "on"].contains(normalized) { return true }
+        if ["0", "false", "no", "off"].contains(normalized) { return false }
+        return nil
+    }
+}
+
 func localizedCatalogString(
     _ key: String,
     tableName: String,
@@ -60,7 +95,6 @@ extension Notification.Name {
     static let openMailInBallotRequest = Notification.Name("openMailInBallotRequest")
     static let openVotingStepsTab = Notification.Name("openVotingStepsTab")
     static let openMyInfoPanel = Notification.Name("openMyInfoPanel")
-    static let openHiddenHowToVoteFeatures = Notification.Name("openHiddenHowToVoteFeatures")
 }
 
 private enum WhyVoteOverlayUserInfoKey {
@@ -240,10 +274,10 @@ struct PageHeader: View {
 
 struct VoteNowLogoIcon: View {
     var size: CGFloat = 50
-    var backgroundColor: Color = Color(red: 0.68, green: 0.84, blue: 0.90) // #ADD7E5-ish icon tone
-    var stripeColor: Color = Color(red: 223.0 / 255.0, green: 88.0 / 255.0, blue: 69.0 / 255.0) // #DF5845
+    var backgroundColor: Color = VoteNowColors.softBlue
+    var stripeColor: Color = VoteNowColors.softRed
     var cornerRadiusScale: CGFloat = 0.24
-    var borderColor: Color = VoteNowColors.surfaceWhite.opacity(0.9)
+    var borderColor: Color = VoteNowColors.iconOnPrimaryBorder
     var borderWidth: CGFloat = 0.6
     var shadowColor: Color = VoteNowColors.primaryText.opacity(0.14)
 
@@ -314,7 +348,7 @@ extension VoteNowLogoIcon {
 
 private struct VoteNowTabBarsIcon: View {
     var size: CGFloat = 28
-    var color: Color = Color(red: 223.0 / 255.0, green: 88.0 / 255.0, blue: 69.0 / 255.0)
+    var color: Color = VoteNowColors.softRed
     var horizontalStretch: CGFloat = 1.5
 
     var body: some View {
@@ -365,7 +399,7 @@ struct WhyVoteFloodOverlay: View {
     var originInSpreadSpace: CGPoint?
 
     @State private var dynamicFloodColor: Color = VoteNowColors.brandSoftBlue
-    private let accent = Color(red: 223.0 / 255.0, green: 88.0 / 255.0, blue: 69.0 / 255.0) // #DF5845
+    private let accent = VoteNowColors.softRed
     private let logoSize: CGFloat = 50
     private let headerHorizontalPadding: CGFloat = 16
     // Matches page layout: outer content padding (16) + header top padding (4).
@@ -414,10 +448,10 @@ struct WhyVoteFloodOverlay: View {
                         } label: {
                             VoteNowLogoIcon(
                                 size: logoSize,
-                                backgroundColor: .white, // inverse from blue -> white
+                                backgroundColor: VoteNowColors.iconOnPrimarySurface,
                                 stripeColor: accent,
-                                borderColor: .white.opacity(0.9),
-                                shadowColor: .black.opacity(0.14)
+                                borderColor: VoteNowColors.iconOnPrimaryBorder,
+                                shadowColor: VoteNowColors.shadowSoft
                             )
                             .frame(width: logoSize, height: logoSize)
                             .fixedSize(horizontal: true, vertical: true)
@@ -458,7 +492,7 @@ struct WhyVoteFloodOverlay: View {
                             .fontWeight(.bold)
                             .lineLimit(1)
                             .frame(height: logoSize, alignment: .center)
-                            .foregroundColor(.white)
+                            .foregroundColor(VoteNowColors.onPrimaryText)
                             .opacity(spread > 0.65 ? 1 : 0)
 
                         Spacer(minLength: 0)
@@ -500,8 +534,8 @@ struct WhyCallFloodOverlay: View {
     var originInSpreadSpace: CGPoint?
     var onStartCalling: () -> Void = {}
 
-    private let floodColor = Color(red: 173.0 / 255.0, green: 215.0 / 255.0, blue: 229.0 / 255.0)
-    private let accent = Color(red: 223.0 / 255.0, green: 88.0 / 255.0, blue: 69.0 / 255.0)
+    private let floodColor = VoteNowColors.brandSoftBlue
+    private let accent = VoteNowColors.softRed
     private let logoSize: CGFloat = 50
     private let headerHorizontalPadding: CGFloat = 16
     private let headerTopPadding: CGFloat = 10
@@ -549,10 +583,10 @@ struct WhyCallFloodOverlay: View {
                         } label: {
                             VoteNowLogoIcon(
                                 size: logoSize,
-                                backgroundColor: .white,
+                                backgroundColor: VoteNowColors.iconOnPrimarySurface,
                                 stripeColor: accent,
-                                borderColor: .white.opacity(0.9),
-                                shadowColor: .black.opacity(0.14)
+                                borderColor: VoteNowColors.iconOnPrimaryBorder,
+                                shadowColor: VoteNowColors.shadowSoft
                             )
                             .frame(width: logoSize, height: logoSize)
                             .fixedSize(horizontal: true, vertical: true)
@@ -816,7 +850,7 @@ private struct WhyCallStatCard: View {
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(uiColor: .secondarySystemBackground))
+        .background(VoteNowColors.surfaceSecondary)
         .clipShape(RoundedRectangle(cornerRadius: VoteNowColors.cardCornerRadius, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: VoteNowColors.cardCornerRadius, style: .continuous)
@@ -840,7 +874,7 @@ private struct WhyCallReasonCard: View {
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(uiColor: .secondarySystemBackground))
+        .background(VoteNowColors.surfaceSecondary)
         .clipShape(RoundedRectangle(cornerRadius: VoteNowColors.cardCornerRadius, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: VoteNowColors.cardCornerRadius, style: .continuous)
@@ -1260,7 +1294,7 @@ private enum VoteNowSharePreviewRenderer {
             logoPath.stroke()
 
             drawText(
-                "VoteNow",
+                "Civica",
                 font: UIFont.systemFont(ofSize: 32, weight: .bold),
                 color: UIColor(white: 1.0, alpha: 0.98),
                 rect: CGRect(x: logoRect.minX, y: logoRect.maxY + 8, width: logoRect.width, height: 36),

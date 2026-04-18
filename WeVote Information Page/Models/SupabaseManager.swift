@@ -473,7 +473,7 @@ final class SupabaseManager {
     static let shared = SupabaseManager()
 
     private let client: AppSupabaseClient
-    private let logger = Logger(subsystem: "VoteNow", category: "SupabaseManager")
+    private let logger = Logger(subsystem: "Civica", category: "SupabaseManager")
 
     private var cachedSession: SupabaseSession?
     private var signInTask: Task<SupabaseSession, Error>?
@@ -1305,7 +1305,7 @@ final class SupabaseManager {
     }
 
     func sendTestPush(
-        title: String = "VoteNow",
+        title: String = "Civica",
         body: String = "Your voting plan is set."
     ) async throws -> String {
         try await signInAnonymouslyIfNeeded()

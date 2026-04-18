@@ -6,7 +6,7 @@ struct ReviewPromptView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Did VoteNow help you make your plan?")
+            Text("Did Civica help you make your plan?")
                 .font(.title3.weight(.semibold))
                 .foregroundColor(VoteNowColors.primaryText)
 

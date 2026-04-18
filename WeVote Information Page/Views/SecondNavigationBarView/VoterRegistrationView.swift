@@ -32,6 +32,14 @@ private struct RegistrationSectionMinYPreferenceKey: PreferenceKey {
     }
 }
 
+private struct StickyGuideStripHeightPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
+}
+
 private struct BottomRoundedRectangle: Shape {
     let radius: CGFloat
 
@@ -110,37 +118,27 @@ struct VoterRegistrationView: View {
     @State private var showMailInBallotPage = false
     @State private var showingDeadlineActions = false
     @State private var measuredStickyHeaderHeight: CGFloat = 0
+    @State private var measuredStickyGuideStripHeight: CGFloat = 0
     @State private var registrationGuideStripMinY: CGFloat = .greatestFiniteMagnitude
     @State private var currentlyViewedPhase: VoterRegistrationCard.Phase?
+    @State private var guidePhaseSelectionLock: VoterRegistrationCard.Phase?
+    @State private var guidePhaseSelectionLockToken = UUID()
     @State private var showStepOneWhyRegisterDropdown = false
     @State private var showStepTwoPollIssuesDropdown = false
     @State private var showStepThreeBallotErrorDropdown = false
 
     private let contextResolver = ElectionGuideContextResolver()
     private let contentProvider = RegistrationGuideContentProvider()
+    private let zipStateResolver = USZipStateResolver()
     private let stickyHeaderMinHeight: CGFloat = 84
     private let voteGovURL = URL(string: "https://www.vote.gov/") ?? URL(fileURLWithPath: "/")
     private let defaultProvisionalBallotURL = URL(string: "https://www.eac.gov/research-and-data/provisional-voting")
         ?? URL(fileURLWithPath: "/")
-    private let howToVoteDeepLink = URL(string: "votenow://mapv")
+    private let unresolvedLocationMessage = "Enter a valid address to see your voting information."
+    // MAPV route is parked for this launch; keep Step 2 pointing to Voting Steps.
+    private let howToVoteDeepLink = URL(string: "votenow://registration")
         ?? URL(string: "https://www.vote.gov/")
         ?? URL(fileURLWithPath: "/")
-    private static let stateVotingFeaturesByCode: [String: RegistrationPrimaryFeature] = {
-        guard let url = Bundle.main.url(forResource: "USVotingFeaturesByJurisdiction", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let decoded = try? JSONDecoder().decode([String: RegistrationPrimaryFeature].self, from: data) else {
-            return [:]
-        }
-        return decoded
-    }()
-    private static let primaryTypeDataset: RegistrationPrimaryTypeDataset? = {
-        guard let url = Bundle.main.url(forResource: "ElectionEligibilityDataset", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let decoded = try? JSONDecoder().decode(RegistrationPrimaryTypeDataset.self, from: data) else {
-            return nil
-        }
-        return decoded
-    }()
     private var dropdownRevealAnimation: Animation {
         .interactiveSpring(response: 0.34, dampingFraction: 0.9, blendDuration: 0.18)
     }
@@ -191,46 +189,6 @@ struct VoterRegistrationView: View {
         return start < day ? election.startDate : nil
     }
 
-    private var primaryTypeLabelForState: String? {
-        guard let stateCode = registrationStateCode?.uppercased() else { return nil }
-
-        if let feature = Self.stateVotingFeaturesByCode[stateCode] {
-            let category = feature.primaryCategory.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !category.isEmpty {
-                return category
-            }
-        }
-
-        guard let summary = Self.primaryTypeDataset?.state_summary.first(where: {
-            $0.state_abbr.uppercased() == stateCode
-        }) else {
-            return nil
-        }
-
-        if guideContext?.electionType == .presidential {
-            let presidential = summary.presidential_primary_type_2026
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-            if !presidential.isEmpty {
-                return presidential
-            }
-        }
-
-        let statePrimary = summary.state_primary_type_2026
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        return statePrimary.isEmpty ? nil : statePrimary
-    }
-
-    private var isClosedPrimaryState: Bool {
-        guard let label = primaryTypeLabelForState?.lowercased() else { return false }
-        if label.contains("partially") { return false }
-        if label.contains("open") { return false }
-        return label.contains("closed")
-    }
-
-    private var closedPrimaryStateCodeLabel: String {
-        registrationStateCode ?? l("app.registration.provisional.state_prefix", "State")
-    }
-
     private var prePhaseTargetDate: Date? {
         let registration = guideContent?.registrationDeadline
         let earlyVoting = nextUpcomingEarlyVotingDate
@@ -261,7 +219,7 @@ struct VoterRegistrationView: View {
 
         let start = duringPhaseStartText
         let end = formattedPhaseDate(nextUpcomingElectionDay)
-        return lf("app.registration.phase.vote.header.range", "VOTE (%@ - %@)", start, end)
+        return lf("app.registration.phase.vote.header.range", "VOTE: (%@ - %@)", start, end)
     }
 
     private var postPhaseHeaderText: String {
@@ -344,20 +302,8 @@ struct VoterRegistrationView: View {
     }
 
     private var locationSubtitle: String {
-        let parts = [
-            planVM.userAddress.street.trimmingCharacters(in: .whitespacesAndNewlines),
-            planVM.userAddress.city.trimmingCharacters(in: .whitespacesAndNewlines),
-            planVM.userAddress.state.trimmingCharacters(in: .whitespacesAndNewlines),
-            planVM.userAddress.zip.trimmingCharacters(in: .whitespacesAndNewlines)
-        ].filter { !$0.isEmpty }
-
-        if !parts.isEmpty {
-            return parts.joined(separator: ", ")
-        }
-
-        let zip = String(planVM.zip.filter(\.isNumber).prefix(5))
-        if zip.count == 5 {
-            return zip
+        if let resolvedLocationSummary {
+            return resolvedLocationSummary
         }
 
         return l("app.registration.location.set_address", "Set your address in My Reps")
@@ -475,25 +421,29 @@ struct VoterRegistrationView: View {
 
     private enum RegistrationLaunchState {
         case loading
-        case empty
-        case error
+        case success
+        case setupNeeded
+        case failure
     }
 
-    private var registrationLaunchState: RegistrationLaunchState? {
-        if repsVM.isLoading, guideContext == nil {
+    private var registrationLaunchState: RegistrationLaunchState {
+        let hasResolvedSelection = repsVM.resolvedLocationSelection != nil
+        let hasResolvedRepsState = !(repsVM.resolvedStateCode?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+        let hasResolvedLocationContext = hasResolvedSelection || hasResolvedRepsState
+
+        if repsVM.isLoading, !hasResolvedLocationContext {
             return .loading
         }
 
-        let hasLocationContext = registrationStateCode != nil || normalizedShareZip != nil
-        if !hasLocationContext && groupedSections.isEmpty {
-            return .empty
+        guard hasResolvedLocationContext, registrationStateCode != nil else {
+            return .setupNeeded
         }
 
-        if hasLocationContext && groupedSections.isEmpty {
-            return .error
+        guard guideContext != nil || nextUpcomingElection != nil else {
+            return .failure
         }
 
-        return nil
+        return .success
     }
 
     @ViewBuilder
@@ -508,16 +458,18 @@ struct VoterRegistrationView: View {
                 primaryAction: {
                     repsVM.centerOnCurrentLocation()
                 },
-                secondaryActionTitle: l("app.reps.action.edit_location", "Edit Location"),
+                secondaryActionTitle: l("app.reps.action.edit_location", "Change Location"),
                 secondaryAction: {
                     openMyInfoPanel()
                 }
             )
-        case .empty:
+        case .success:
+            EmptyView()
+        case .setupNeeded:
             LaunchFlowStateCard(
                 state: .empty,
                 title: l("app.registration.launch_state.empty.title", "Set your location to continue"),
-                message: l("app.registration.launch_state.empty.body", "Add your address so we can show the right voting guide for your area."),
+                message: l("app.registration.launch_state.empty.body.recoverable", unresolvedLocationMessage),
                 primaryActionTitle: l("app.registration.launch_state.empty.action.primary", "Set My Address"),
                 primaryAction: {
                     openMyInfoPanel()
@@ -527,18 +479,18 @@ struct VoterRegistrationView: View {
                     repsVM.centerOnCurrentLocation()
                 }
             )
-        case .error:
+        case .failure:
             LaunchFlowStateCard(
                 state: .error,
-                title: l("app.registration.launch_state.error.title", "We couldn’t load this voting guide"),
-                message: l("app.registration.launch_state.error.body", "Try again now, or use Vote.gov as a backup."),
+                title: l("app.registration.launch_state.error.title", "We couldn’t load your voting information"),
+                message: l("app.registration.launch_state.error.body.recoverable", "Try again or edit your location."),
                 primaryActionTitle: l("app.registration.launch_state.error.action.primary", "Retry"),
                 primaryAction: {
                     retryRegistrationGuideLoad()
                 },
-                secondaryActionTitle: l("app.registration.launch_state.error.action.secondary", "Go to Vote.gov"),
+                secondaryActionTitle: l("app.reps.action.edit_location", "Edit location"),
                 secondaryAction: {
-                    openURL(voteGovURL)
+                    openMyInfoPanel()
                 }
             )
         }
@@ -552,9 +504,9 @@ struct VoterRegistrationView: View {
                         overscrollBackground
 
                         ScrollView(.vertical) {
-                            if let launchState = registrationLaunchState {
+                            if registrationLaunchState != .success {
                                 VStack(spacing: 0) {
-                                    registrationLaunchStateCard(for: launchState)
+                                    registrationLaunchStateCard(for: registrationLaunchState)
                                         .padding(.horizontal, 16)
                                         .padding(.top, 10)
                                         .padding(.bottom, 14)
@@ -584,7 +536,7 @@ struct VoterRegistrationView: View {
                         .scrollIndicators(.hidden)
                         .coordinateSpace(name: "VoterRegistrationScroll")
 
-                        if registrationLaunchState == nil {
+                        if registrationLaunchState == .success {
                             stickyGuideStripDock(proxy: proxy)
                                 .padding(.top, stickyHeaderOffset)
                                 .frame(maxWidth: .infinity, alignment: .top)
@@ -607,7 +559,7 @@ struct VoterRegistrationView: View {
                                 Button {
                                     openMyInfoPanel()
                                 } label: {
-                                    Text(l("app.reps.action.edit_location", "Edit Location"))
+                                    Text(l("app.reps.action.edit_location", "Change Location"))
                                         .font(.callout.weight(.semibold))
                                         .italic()
                                         .foregroundColor(VoteNowColors.primaryCTA)
@@ -647,6 +599,10 @@ struct VoterRegistrationView: View {
                     .onPreferenceChange(RegistrationSectionMinYPreferenceKey.self) { positions in
                         updateCurrentlyViewedPhase(with: positions)
                     }
+                    .onPreferenceChange(StickyGuideStripHeightPreferenceKey.self) { height in
+                        guard height > 0 else { return }
+                        measuredStickyGuideStripHeight = height
+                    }
                 }
             }
             .navigationBarHidden(true)
@@ -661,8 +617,10 @@ struct VoterRegistrationView: View {
                 isPresented: $showingDeadlineActions,
                 titleVisibility: .hidden
             ) {
-                Button(l("app.registration.action.share_deadline", "Share Deadline")) {
-                    shareRegistrationDeadline()
+                if VoteNowLaunchFeatures.shareActionsEnabled {
+                    Button(l("app.registration.action.share_deadline", "Share Deadline")) {
+                        shareRegistrationDeadline()
+                    }
                 }
             }
         }
@@ -708,6 +666,13 @@ struct VoterRegistrationView: View {
                 )
             }
         )
+        .overlay(alignment: .top) {
+            Color.clear
+                .frame(height: 1)
+                .id(sectionTopAnchorID(for: section.phase))
+                .offset(y: -guideStripTapLandingOffset)
+                .allowsHitTesting(false)
+        }
     }
 
     @ViewBuilder
@@ -818,7 +783,7 @@ struct VoterRegistrationView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
                     .background(VoteNowColors.primaryCTA)
-                    .foregroundColor(.white)
+                    .foregroundColor(VoteNowColors.onPrimaryText)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
             }
@@ -867,7 +832,12 @@ struct VoterRegistrationView: View {
                 }
             } label: {
                 HStack(spacing: 8) {
-                    Text("Why do I need to Register?")
+                    Text(
+                        l(
+                            "app.registration.step1.why_register.dropdown.title",
+                            "Why do I need to Register?"
+                        )
+                    )
                         .font(.callout.weight(.semibold))
                         .foregroundColor(VoteNowColors.primaryCTA)
 
@@ -1011,7 +981,7 @@ struct VoterRegistrationView: View {
                     .font(.subheadline.weight(.semibold))
                     .padding(.horizontal, 16)
                     .padding(.vertical, 9)
-                    .foregroundColor(.white)
+                    .foregroundColor(VoteNowColors.onPrimaryText)
                     .background(VoteNowColors.primaryCTA)
                     .clipShape(Capsule())
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -1124,7 +1094,9 @@ struct VoterRegistrationView: View {
             HStack(alignment: .top, spacing: 10) {
                 stepHeaderBlock(stepLabel: card.stepLabel, title: card.title)
                 Spacer(minLength: 0)
-                deadlineShareIconButton
+                if VoteNowLaunchFeatures.shareActionsEnabled {
+                    deadlineShareIconButton
+                }
             }
         } else {
             stepHeaderBlock(stepLabel: card.stepLabel, title: card.title)
@@ -1150,13 +1122,13 @@ struct VoterRegistrationView: View {
             HStack(spacing: 10) {
                 Text(title)
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(.white)
+                    .foregroundColor(VoteNowColors.onPrimaryText)
                 Spacer(minLength: 8)
                 ZStack {
                     Circle()
-                        .fill(.white)
+                        .fill(VoteNowColors.iconOnPrimarySurface)
                     Circle()
-                        .stroke(.white.opacity(0.86), lineWidth: 1)
+                        .stroke(VoteNowColors.iconOnPrimaryBorder, lineWidth: 1)
                     Image(systemName: "arrow.up.right")
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(VoteNowColors.primaryCTA)
@@ -1178,17 +1150,29 @@ struct VoterRegistrationView: View {
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
-            Text(title)
-                .font(.subheadline.weight(.semibold))
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 11)
-                .foregroundColor(isEnabled ? .white : VoteNowColors.mutedText)
-                .background(isEnabled ? VoteNowColors.primaryCTA : VoteNowColors.borderWarm.opacity(0.55))
-                .clipShape(Capsule(style: .continuous))
+            HStack(spacing: 6) {
+                Image(systemName: isEnabled ? "checkmark.circle" : "lock.fill")
+                    .font(.caption.weight(.bold))
+                Text(isEnabled ? title : "\(title) (Unavailable)")
+                    .font(.subheadline.weight(.semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 11)
+            .foregroundColor(isEnabled ? VoteNowColors.onPrimaryText : VoteNowColors.mutedText)
+            .background(isEnabled ? VoteNowColors.primaryCTA : VoteNowColors.secondaryButtonFillDisabled)
+            .overlay(
+                Capsule(style: .continuous)
+                    .stroke(
+                        isEnabled ? VoteNowColors.primaryCTA.opacity(0.25) : VoteNowColors.secondaryButtonDisabledBorder,
+                        lineWidth: 1
+                    )
+            )
+            .clipShape(Capsule(style: .continuous))
         }
         .buttonStyle(.plain)
         .disabled(!isEnabled)
-        .opacity(isEnabled ? 1 : 0.86)
     }
 
     private func deadlineActionRow(
@@ -1210,21 +1194,23 @@ struct VoterRegistrationView: View {
             )
             .clipShape(Capsule())
 
-            Button {
-                openDeadlineActions()
-            } label: {
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(VoteNowColors.primaryCTA)
-                    .frame(width: 30, height: 30)
-                    .background(
-                        Circle()
-                            .fill(VoteNowColors.infoSurfaceBlue)
-                    )
+            if VoteNowLaunchFeatures.shareActionsEnabled {
+                Button {
+                    openDeadlineActions()
+                } label: {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(VoteNowColors.primaryCTA)
+                        .frame(width: 30, height: 30)
+                        .background(
+                            Circle()
+                                .fill(VoteNowColors.infoSurfaceBlue)
+                        )
+                }
+                .buttonStyle(.plain)
+                .contentShape(Circle())
+                .accessibilityLabel(l("app.registration.action.accessibility", "Registration actions"))
             }
-            .buttonStyle(.plain)
-            .contentShape(Circle())
-            .accessibilityLabel(l("app.registration.action.accessibility", "Registration actions"))
         }
     }
 
@@ -1335,7 +1321,7 @@ struct VoterRegistrationView: View {
             } label: {
                 Text(l("app.guide.voting.by_mail.cta.more_info", "Mail ballot rules"))
                     .font(.caption.weight(.semibold))
-                    .foregroundColor(.white)
+                    .foregroundColor(VoteNowColors.onPrimaryText)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 7)
                     .background(VoteNowColors.primaryCTA)
@@ -1378,16 +1364,27 @@ struct VoterRegistrationView: View {
     }
 
     private var earlyVoteTimelineValue: String {
+        if let startDate = nextUpcomingEarlyVotingDate {
+            return lf(
+                "app.guide.voting.early_vote.starts_only",
+                "Starts %@",
+                Self.monthDayYearDisplayFormatter.string(from: startDate)
+            )
+        }
+
         let value = nextUpcomingEarlyVotingValue.trimmingCharacters(in: .whitespacesAndNewlines)
         let tbd = l("app.registration.date_tbd", "Date TBD")
         guard !value.isEmpty else { return tbd }
         if value.caseInsensitiveCompare(tbd) == .orderedSame {
             return tbd
         }
-        if value.lowercased().hasPrefix("starts ") {
-            return value
-        }
-        return lf("app.guide.voting.early_vote.starts_only", "Starts %@", value)
+
+        let normalizedValue = value.replacingOccurrences(
+            of: #"(?i)^starts\s+"#,
+            with: "",
+            options: .regularExpression
+        )
+        return lf("app.guide.voting.early_vote.starts_only", "Starts %@", normalizedValue)
     }
 
     private var voteByMailDeadlineValue: String {
@@ -1457,15 +1454,50 @@ struct VoterRegistrationView: View {
 
         let earlyVotingText = election.earlyVotingText?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         if !earlyVotingText.isEmpty {
+            if let normalized = normalizedEarlyVoteDateText(from: earlyVotingText) {
+                return normalized
+            }
             return earlyVotingText
         }
 
         let calendar = Calendar.current
         if !calendar.isDate(election.startDate, inSameDayAs: election.electionDay) {
-            return formattedElectionDay(election.startDate)
+            return Self.monthDayYearDisplayFormatter.string(from: election.startDate)
         }
 
         return fallback
+    }
+
+    private func normalizedEarlyVoteDateText(from raw: String) -> String? {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+
+        let withoutStarts = trimmed.replacingOccurrences(
+            of: #"(?i)^starts\s+"#,
+            with: "",
+            options: .regularExpression
+        )
+        let candidate = withoutStarts.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !candidate.isEmpty else { return nil }
+
+        if let directISO = Self.isoDateFormatter.date(from: candidate) {
+            return Self.monthDayYearDisplayFormatter.string(from: directISO)
+        }
+
+        if let isoMatch = candidate.range(of: #"\b\d{4}-\d{2}-\d{2}\b"#, options: .regularExpression) {
+            let isoToken = String(candidate[isoMatch])
+            if let parsed = Self.isoDateFormatter.date(from: isoToken) {
+                return Self.monthDayYearDisplayFormatter.string(from: parsed)
+            }
+        }
+
+        for formatter in Self.earlyVoteInputFormatters {
+            if let parsed = formatter.date(from: candidate) {
+                return Self.monthDayYearDisplayFormatter.string(from: parsed)
+            }
+        }
+
+        return nil
     }
 
     private func openMailInBallotRequest() {
@@ -1678,6 +1710,14 @@ struct VoterRegistrationView: View {
             .padding(.horizontal, 16)
             .padding(.top, 0)
             .padding(.bottom, 4)
+            .background(
+                GeometryReader { geo in
+                    Color.clear.preference(
+                        key: StickyGuideStripHeightPreferenceKey.self,
+                        value: geo.size.height
+                    )
+                }
+            )
     }
 
     private func registrationGuideStripButton(
@@ -1688,11 +1728,7 @@ struct VoterRegistrationView: View {
         let isActive = phase == activeGuidePhase
         let accent = guidePhaseHighlightColor(for: phase)
         return Button {
-            currentlyViewedPhase = phase
-            let target = preferredScrollTarget(for: phase)
-            withAnimation(.interactiveSpring(response: 0.72, dampingFraction: 0.9, blendDuration: 0.2)) {
-                proxy.scrollTo(target, anchor: .top)
-            }
+            jumpToGuidePhase(phase, proxy: proxy)
         } label: {
             Text(title)
                 .font(.headline.weight(isActive ? .bold : .semibold))
@@ -1709,10 +1745,93 @@ struct VoterRegistrationView: View {
         .buttonStyle(GuideStripTapFeedbackStyle(accent: accent, isActive: isActive))
     }
 
+    private struct GuideScrollJump {
+        let firstTarget: AnyHashable
+        let firstAnchor: UnitPoint
+        let secondTarget: AnyHashable
+        let secondAnchor: UnitPoint
+    }
+
+    private func jumpToGuidePhase(_ phase: VoterRegistrationCard.Phase, proxy: ScrollViewProxy) {
+        currentlyViewedPhase = phase
+        guidePhaseSelectionLock = phase
+        let token = UUID()
+        guidePhaseSelectionLockToken = token
+
+        let jump = scrollJump(for: phase)
+
+        withAnimation(.interactiveSpring(response: 0.72, dampingFraction: 0.9, blendDuration: 0.2)) {
+            proxy.scrollTo(jump.firstTarget, anchor: jump.firstAnchor)
+        }
+
+        // Lazy stacks can occasionally miss a single jump while layout settles.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+            withAnimation(.easeInOut(duration: 0.26)) {
+                proxy.scrollTo(jump.secondTarget, anchor: jump.secondAnchor)
+            }
+        }
+
+        // Hold selection through animated travel to avoid transient middle-step highlights.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            guard guidePhaseSelectionLockToken == token else { return }
+            guidePhaseSelectionLock = nil
+            currentlyViewedPhase = phase
+        }
+    }
+
+    private func scrollJump(for phase: VoterRegistrationCard.Phase) -> GuideScrollJump {
+        let sectionTarget = AnyHashable(phase)
+        let fallbackTarget = preferredScrollTarget(for: phase)
+
+        switch phase {
+        case .preElection, .duringElection:
+            let hasPhaseSection = groupedSections.contains(where: { $0.phase == phase })
+            let bufferedTopTarget = hasPhaseSection
+                ? AnyHashable(sectionTopAnchorID(for: phase))
+                : fallbackTarget
+            return GuideScrollJump(
+                firstTarget: hasPhaseSection ? sectionTarget : fallbackTarget,
+                firstAnchor: .top,
+                secondTarget: bufferedTopTarget,
+                secondAnchor: .top
+            )
+        case .postElection:
+            let postSectionTarget = groupedSections.contains(where: { $0.phase == .postElection })
+                ? sectionTarget
+                : fallbackTarget
+            let postCardTarget = cards.last(where: { $0.phase == .postElection })
+                .map { AnyHashable($0.id) } ?? postSectionTarget
+            return GuideScrollJump(
+                firstTarget: postSectionTarget,
+                firstAnchor: .top,
+                secondTarget: postCardTarget,
+                secondAnchor: .bottom
+            )
+        }
+    }
+
+    private func sectionTopAnchorID(for phase: VoterRegistrationCard.Phase) -> String {
+        "guide-top-anchor-\(phase)"
+    }
+
+    private var guideStripTapLandingOffset: CGFloat {
+        let stripHeight = measuredStickyGuideStripHeight > 0 ? measuredStickyGuideStripHeight : 42
+        return stripHeight + 12
+    }
+
     private func preferredScrollTarget(for phase: VoterRegistrationCard.Phase) -> AnyHashable {
+        if groupedSections.contains(where: { $0.phase == phase }) {
+            return AnyHashable(phase)
+        }
+
+        if let firstSection = groupedSections.first {
+            return AnyHashable(firstSection.phase)
+        }
+
         if let primaryCard = cards.first(where: { $0.phase == phase }) {
             return AnyHashable(primaryCard.id)
         }
+
         return AnyHashable(phase)
     }
 
@@ -1721,7 +1840,7 @@ struct VoterRegistrationView: View {
         case .preElection:
             return VoteNowColors.primaryCTA
         case .duringElection:
-            return VoteNowColors.warningAmber
+            return VoteNowColors.timelineFocusGold
         case .postElection:
             return VoteNowColors.successGreen
         }
@@ -1759,20 +1878,38 @@ struct VoterRegistrationView: View {
     }
 
     private var headerLocationSubtitle: String {
-        let state = (registrationStateCode ?? planVM.userAddress.state)
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        let zip = normalizedShareZip?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-
-        if !state.isEmpty && !zip.isEmpty {
-            return "\(state), \(zip)"
+        if let resolvedLocationSummary {
+            return resolvedLocationSummary
         }
-        if !state.isEmpty {
-            return state
+        return l("app.registration.location.setup_needed", unresolvedLocationMessage)
+    }
+
+    private var resolvedLocationCity: String? {
+        let resolvedCity = repsVM.resolvedLocationSelection?.city?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !resolvedCity.isEmpty {
+            return resolvedCity
+        }
+
+        let enteredCity = planVM.userAddress.city.trimmingCharacters(in: .whitespacesAndNewlines)
+        return enteredCity.isEmpty ? nil : enteredCity
+    }
+
+    private var resolvedLocationSummary: String? {
+        guard let state = registrationStateCode else { return nil }
+        let zip = normalizedShareZip?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let city = resolvedLocationCity?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+        if !city.isEmpty && !zip.isEmpty {
+            return "\(city), \(state) (\(zip))"
+        }
+        if !city.isEmpty {
+            return "\(city), \(state)"
         }
         if !zip.isEmpty {
-            return zip
+            return "\(state) (\(zip))"
         }
-        return l("app.registration.location.set_address", "Set your address in My Reps")
+        return state
     }
 
     private var readinessTitleText: String {
@@ -1804,10 +1941,12 @@ struct VoterRegistrationView: View {
     }
 
     private var activeGuidePhase: VoterRegistrationCard.Phase {
-        currentlyViewedPhase ?? phaseForNow
+        guidePhaseSelectionLock ?? currentlyViewedPhase ?? phaseForNow
     }
 
     private func updateCurrentlyViewedPhase(with positions: [String: CGFloat]) {
+        guard guidePhaseSelectionLock == nil else { return }
+
         let tracked = groupedSections.compactMap { section -> (phase: VoterRegistrationCard.Phase, minY: CGFloat)? in
             guard let minY = positions[section.id] else { return nil }
             return (phase: section.phase, minY: minY)
@@ -1817,6 +1956,10 @@ struct VoterRegistrationView: View {
         let targetY = stickyHeaderOffset + 8
         let sorted = tracked.sorted { $0.minY < $1.minY }
         let nextPhase: VoterRegistrationCard.Phase? = {
+            if let post = sorted.first(where: { $0.phase == .postElection }),
+               post.minY <= targetY + 260 {
+                return .postElection
+            }
             if let visible = sorted.last(where: { $0.minY <= targetY }) {
                 return visible.phase
             }
@@ -1873,10 +2016,24 @@ struct VoterRegistrationView: View {
            code.count == 2 {
             return code.uppercased()
         }
-        let entered = planVM.userAddress.state.trimmingCharacters(in: .whitespacesAndNewlines)
-        if entered.count == 2 {
-            return entered.uppercased()
+
+        if let resolved = normalizedUSStateCode(from: repsVM.resolvedStateCode) {
+            return resolved
         }
+        if let detected = normalizedUSStateCode(from: repsVM.detectedStateCode) {
+            return detected
+        }
+        if let entered = normalizedUSStateCode(from: planVM.userAddress.state) {
+            return entered
+        }
+        if let entered = normalizedUSStateCode(from: repsVM.resolvedLocationSelection?.administrativeArea) {
+            return entered
+        }
+
+        if let zip = normalizedShareZip, zip.count == 5 {
+            return zipStateResolver.stateCode(for: zip)
+        }
+
         return nil
     }
 
@@ -2037,6 +2194,7 @@ struct VoterRegistrationView: View {
         case .goToHowToVoteTab:
             openURL(howToVoteDeepLink)
         case .shareDeadline:
+            guard VoteNowLaunchFeatures.shareActionsEnabled else { return }
             shareRegistrationDeadline()
         }
     }
@@ -2253,20 +2411,25 @@ struct VoterRegistrationView: View {
         formatter.dateFormat = "MMMM d, yyyy"
         return formatter
     }()
-}
 
-private struct RegistrationPrimaryFeature: Decodable {
-    let primaryCategory: String
-}
-
-private struct RegistrationPrimaryTypeDataset: Decodable {
-    let state_summary: [RegistrationPrimaryTypeStateSummary]
-}
-
-private struct RegistrationPrimaryTypeStateSummary: Decodable {
-    let state_abbr: String
-    let state_primary_type_2026: String
-    let presidential_primary_type_2026: String
+    private static let earlyVoteInputFormatters: [DateFormatter] = {
+        let patterns = [
+            "MMMM d, yyyy",
+            "MMM d, yyyy",
+            "MMMM d yyyy",
+            "MMM d yyyy",
+            "M/d/yyyy",
+            "MM/dd/yyyy"
+        ]
+        return patterns.map { pattern in
+            let formatter = DateFormatter()
+            formatter.calendar = Calendar(identifier: .gregorian)
+            formatter.locale = Locale(identifier: "en_US_POSIX")
+            formatter.timeZone = TimeZone.current
+            formatter.dateFormat = pattern
+            return formatter
+        }
+    }()
 }
 
 struct VoterRegistrationView_Previews: PreviewProvider {

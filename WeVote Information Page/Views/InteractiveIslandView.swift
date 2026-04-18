@@ -10,7 +10,7 @@ import SwiftUI
 import UserNotifications
 import OSLog
 
-private let islandLogger = Logger(subsystem: "VoteNow", category: "InteractiveIsland")
+private let islandLogger = Logger(subsystem: "Civica", category: "InteractiveIsland")
 
 // MARK: - Model
 

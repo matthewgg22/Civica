@@ -12,6 +12,10 @@ import UIKit
 struct LoadingView: View {
     let selectedStateName: String?
     let selectedZip: String?
+    let statusMessage: String?
+    let onTapDismiss: (() -> Void)?
+    @State private var timelineRecords: [MidtermElectionBundleRecord] = []
+    @State private var hasRequestedTimelineRecords = false
 
     private let splashBlue = VoteNowColors.brandSoftBlue
     private let logoRed = Color(red: 1.0, green: 0.30, blue: 0.24)
@@ -36,6 +40,68 @@ struct LoadingView: View {
         return raw.uppercased()
     }
 
+    private var nextVotingChanceLine: String {
+        switch votingReadinessStatus {
+        case .eligibleNow:
+            return "You Can Vote Now!"
+        case .daysUntil(let days):
+            let clampedDays = max(days, 0)
+            let dayWord = clampedDays == 1 ? "Day" : "Days"
+            return "Vote in \(clampedDays) \(dayWord)"
+        case .unknown:
+            return "Getting your voting timeline ready..."
+        }
+    }
+
+    private let nextChanceFontSize: CGFloat = 18
+
+    private var nextChanceFont: Font {
+        if let name = aptosFontName {
+            return .custom(name, size: nextChanceFontSize)
+        }
+        return .system(size: nextChanceFontSize, weight: .black, design: .default)
+    }
+
+    private var aptosFontName: String? {
+        let candidates = [
+            "Aptos-Bold",
+            "AptosDisplay-Bold",
+            "Aptos Display Bold",
+            "Aptos Bold",
+            "AptosDisplay-Regular",
+            "Aptos-Regular",
+            "Aptos Display",
+            "Aptos"
+        ]
+        return candidates.first { UIFont(name: $0, size: nextChanceFontSize) != nil }
+    }
+
+    private var votingReadinessStatus: VotingReadinessStatus {
+        guard let selected = normalizedStateName,
+              let record = timelineRecords.first(where: {
+                  $0.state_name.uppercased() == selected || $0.state_code.uppercased() == selected
+              }) else {
+            return .unknown
+        }
+
+        let windows = voteWindows(for: record)
+        guard !windows.isEmpty else { return .unknown }
+
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+
+        if windows.contains(where: { today >= $0.start && today <= $0.end }) {
+            return .eligibleNow
+        }
+
+        guard let nextStart = windows.map(\.start).filter({ $0 >= today }).min() else {
+            return .unknown
+        }
+
+        let days = calendar.dateComponents([.day], from: today, to: nextStart).day ?? 0
+        return .daysUntil(max(days, 0))
+    }
+
     private var scrollingStateNames: [String] {
         let uppercasedBase = stateNames.map { $0.uppercased() }
         guard let selected = normalizedStateName else { return uppercasedBase }
@@ -52,9 +118,16 @@ struct LoadingView: View {
     private let marqueeSpeed: CGFloat = 30
     private let marqueeBottomPadding: CGFloat = 38
 
-    init(selectedStateName: String? = nil, selectedZip: String? = nil) {
+    init(
+        selectedStateName: String? = nil,
+        selectedZip: String? = nil,
+        statusMessage: String? = nil,
+        onTapDismiss: (() -> Void)? = nil
+    ) {
         self.selectedStateName = selectedStateName
         self.selectedZip = selectedZip
+        self.statusMessage = statusMessage
+        self.onTapDismiss = onTapDismiss
     }
 
     var body: some View {
@@ -67,6 +140,23 @@ struct LoadingView: View {
                 .scaleEffect(0.85) // true 15% uniform shrink
                 .offset(y: -130) // significantly higher on screen
                 .accessibilityHidden(true)
+
+            VStack(spacing: 8) {
+                Text(nextVotingChanceLine)
+                    .font(nextChanceFont)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(marqueeRed)
+                    .padding(.horizontal, 20)
+
+                if let statusMessage, !statusMessage.isEmpty {
+                    Text(statusMessage)
+                        .font(.footnote.weight(.semibold))
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(marqueeRed.opacity(0.92))
+                        .padding(.horizontal, 24)
+                }
+            }
+            .offset(y: 10)
 
             VStack(spacing: 2) { // closer together
                 // Top line: reverse/back-leaning + scroll left
@@ -88,7 +178,55 @@ struct LoadingView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
             .padding(.bottom, marqueeBottomPadding)
         }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            onTapDismiss?()
+        }
+        .onAppear {
+            guard !hasRequestedTimelineRecords else { return }
+            hasRequestedTimelineRecords = true
+            MidtermElectionBundleStore.shared.loadRecordsIfNeeded { loadedRecords in
+                timelineRecords = loadedRecords
+            }
+        }
     }
+
+    private func voteWindows(for record: MidtermElectionBundleRecord) -> [VotingWindow] {
+        var windows: [VotingWindow] = []
+
+        addVotingWindow(earlyVoteISO: record.early_voting_primary, electionISO: record.primary_date, to: &windows)
+        addVotingWindow(earlyVoteISO: nil, electionISO: record.primary_runoff_date, to: &windows)
+        addVotingWindow(earlyVoteISO: record.early_voting_general, electionISO: record.general_election_date, to: &windows)
+
+        return windows
+    }
+
+    private func addVotingWindow(earlyVoteISO: String?, electionISO: String?, to windows: inout [VotingWindow]) {
+        guard let electionDay = Self.isoDayFormatter.date(from: electionISO ?? "") else { return }
+        let earlyVoteStart = Self.isoDayFormatter.date(from: earlyVoteISO ?? "")
+        let start = min(earlyVoteStart ?? electionDay, electionDay)
+        windows.append(VotingWindow(start: start, end: electionDay))
+    }
+
+    private enum VotingReadinessStatus {
+        case eligibleNow
+        case daysUntil(Int)
+        case unknown
+    }
+
+    private struct VotingWindow {
+        let start: Date
+        let end: Date
+    }
+
+    private static let isoDayFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
 }
 
 private struct StateMarqueeLine: View {

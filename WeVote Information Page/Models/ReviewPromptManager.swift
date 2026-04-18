@@ -26,6 +26,7 @@ final class ReviewPromptManager: ObservableObject {
     private var firstOpenDate: Date?
     private var sessionCount: Int
     private var meaningfulActionCount: Int
+    private var repLookupSuccessCount: Int
     private var lastPromptDate: Date?
     private var lastPromptDecision: PromptDecision?
     private var didChooseNotNow: Bool
@@ -37,6 +38,7 @@ final class ReviewPromptManager: ObservableObject {
         static let firstOpenDate = "review_prompt.first_open_date"
         static let sessionCount = "review_prompt.session_count"
         static let meaningfulActionCount = "review_prompt.meaningful_action_count"
+        static let repLookupSuccessCount = "review_prompt.rep_lookup_success_count"
         static let lastPromptDate = "review_prompt.last_prompt_date"
         static let lastPromptDecision = "review_prompt.last_prompt_decision"
         static let didChooseNotNow = "review_prompt.did_choose_not_now"
@@ -53,6 +55,7 @@ final class ReviewPromptManager: ObservableObject {
         firstOpenDate = userDefaults.object(forKey: Key.firstOpenDate) as? Date
         sessionCount = userDefaults.integer(forKey: Key.sessionCount)
         meaningfulActionCount = userDefaults.integer(forKey: Key.meaningfulActionCount)
+        repLookupSuccessCount = userDefaults.integer(forKey: Key.repLookupSuccessCount)
         lastPromptDate = userDefaults.object(forKey: Key.lastPromptDate) as? Date
         if let rawDecision = userDefaults.string(forKey: Key.lastPromptDecision) {
             lastPromptDecision = PromptDecision(rawValue: rawDecision)
@@ -66,7 +69,7 @@ final class ReviewPromptManager: ObservableObject {
     }
 
     // Call on each fresh app launch/session start.
-    func onAppLaunch(now: Date = Date()) {
+    func onSessionStart(now: Date = Date()) {
         if let lastSessionRecordedAt,
            now.timeIntervalSince(lastSessionRecordedAt) < 60 {
             return
@@ -84,15 +87,21 @@ final class ReviewPromptManager: ObservableObject {
         defaults.set(now, forKey: Key.lastSessionRecordedAt)
     }
 
+    func onAppLaunch(now: Date = Date()) {
+        onSessionStart(now: now)
+    }
+
     func markMAPCCompleted(
         isInErrorState: Bool = false,
         isFlowInterrupted: Bool = false,
+        hasLocationSet: Bool = false,
         now: Date = Date()
     ) {
         registerMeaningfulAction(
             .mapcCompleted,
             isInErrorState: isInErrorState,
             isFlowInterrupted: isFlowInterrupted,
+            hasLocationSet: hasLocationSet,
             now: now
         )
     }
@@ -100,12 +109,14 @@ final class ReviewPromptManager: ObservableObject {
     func markReminderCreated(
         isInErrorState: Bool = false,
         isFlowInterrupted: Bool = false,
+        hasLocationSet: Bool = false,
         now: Date = Date()
     ) {
         registerMeaningfulAction(
             .reminderCreated,
             isInErrorState: isInErrorState,
             isFlowInterrupted: isFlowInterrupted,
+            hasLocationSet: hasLocationSet,
             now: now
         )
     }
@@ -113,12 +124,14 @@ final class ReviewPromptManager: ObservableObject {
     func markPollingPlaceLookupSuccess(
         isInErrorState: Bool = false,
         isFlowInterrupted: Bool = false,
+        hasLocationSet: Bool = false,
         now: Date = Date()
     ) {
         registerMeaningfulAction(
             .pollingPlaceLookupSuccess,
             isInErrorState: isInErrorState,
             isFlowInterrupted: isFlowInterrupted,
+            hasLocationSet: hasLocationSet,
             now: now
         )
     }
@@ -126,12 +139,14 @@ final class ReviewPromptManager: ObservableObject {
     func markRepLookupSuccess(
         isInErrorState: Bool = false,
         isFlowInterrupted: Bool = false,
+        hasLocationSet: Bool = false,
         now: Date = Date()
     ) {
         registerMeaningfulAction(
             .repLookupSuccess,
             isInErrorState: isInErrorState,
             isFlowInterrupted: isFlowInterrupted,
+            hasLocationSet: hasLocationSet,
             now: now
         )
     }
@@ -174,44 +189,52 @@ final class ReviewPromptManager: ObservableObject {
         _ action: MeaningfulAction,
         isInErrorState: Bool,
         isFlowInterrupted: Bool,
+        hasLocationSet: Bool,
         now: Date
     ) {
+        guard hasLocationSet else { return }
+        guard !isInErrorState else { return }
+        guard !isFlowInterrupted else { return }
+
         meaningfulActionCount += 1
         defaults.set(meaningfulActionCount, forKey: Key.meaningfulActionCount)
+        if action == .repLookupSuccess {
+            repLookupSuccessCount += 1
+            defaults.set(repLookupSuccessCount, forKey: Key.repLookupSuccessCount)
+        }
+
         evaluatePromptReadiness(
             trigger: action,
-            isInErrorState: isInErrorState,
-            isFlowInterrupted: isFlowInterrupted,
             now: now
         )
     }
 
     private func evaluatePromptReadiness(
         trigger: MeaningfulAction,
-        isInErrorState: Bool,
-        isFlowInterrupted: Bool,
         now: Date
     ) {
+        let minSecondsSinceSessionStart: TimeInterval = 120
+        let promptCooldownDays: Double = 30
+        let minRepLookupSuccessesBeforePrompt = 2
+
         guard !isPrePromptPresented else { return }
-        guard !isInErrorState else { return }
-        guard !isFlowInterrupted else { return }
         guard !hasRatedAlready else { return }
         guard !hasPermanentlyDismissed else { return }
         guard sessionCount >= 2 else { return }
         guard meaningfulActionCount >= 1 else { return }
-        guard let firstOpenDate else { return }
+        guard let sessionStartedAt = lastSessionRecordedAt else { return }
+        guard now.timeIntervalSince(sessionStartedAt) >= minSecondsSinceSessionStart else { return }
 
-        let hoursSinceFirstOpen = now.timeIntervalSince(firstOpenDate) / 3600
-        guard hoursSinceFirstOpen >= 24 else { return }
+        if trigger == .repLookupSuccess {
+            guard repLookupSuccessCount >= minRepLookupSuccessesBeforePrompt else { return }
+        }
 
         if let lastPromptDate {
             let daysSincePrompt = now.timeIntervalSince(lastPromptDate) / (24 * 3600)
-            guard daysSincePrompt >= 90 else { return }
+            guard daysSincePrompt >= promptCooldownDays else { return }
         }
 
         pendingTrigger = trigger
-        lastPromptDate = now
-        defaults.set(now, forKey: Key.lastPromptDate)
         isPrePromptPresented = true
     }
 

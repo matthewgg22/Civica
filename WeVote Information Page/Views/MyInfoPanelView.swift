@@ -68,7 +68,6 @@ struct MyInfoPanelView: View {
     @State private var addressSaveError: String?
     @State private var activeResolutionStartedAt: Date?
     @FocusState private var locationFieldFocused: Bool
-    private let zipStateResolver = USZipStateResolver()
 
     private var selectedLanguage: LanguageOption {
         LanguageOption.fromStoredCode(preferredLanguageCode) ?? .english
@@ -76,6 +75,20 @@ struct MyInfoPanelView: View {
 
     private var sectionCornerRadius: CGFloat {
         VoteNowColors.cardCornerRadius
+    }
+
+    private var locationSummaryText: String? {
+        let selection = repsVM.resolvedLocationSelection
+        let city = (selection?.city ?? planVM.userAddress.city)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let stateRaw = (selection?.administrativeArea ?? planVM.userAddress.state)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let stateCode = normalizedUSStateCode(from: stateRaw) ?? stateRaw.uppercased()
+        let zipCandidate = selection?.postalCode ?? planVM.userAddress.zip
+        let zip = USZipInputValidator.normalizedPrimaryZIP(from: zipCandidate)
+
+        guard !city.isEmpty, stateCode.count == 2, let zip else { return nil }
+        return "Using: \(city), \(stateCode) (\(zip))"
     }
 
     var body: some View {
@@ -135,6 +148,22 @@ struct MyInfoPanelView: View {
                             .font(.footnote)
                             .foregroundColor(VoteNowColors.mutedText)
 
+                        if let locationSummaryText {
+                            HStack(spacing: 8) {
+                                Text(locationSummaryText)
+                                    .font(.footnote.weight(.semibold))
+                                    .foregroundColor(VoteNowColors.mutedText)
+                                    .lineLimit(1)
+                                Spacer(minLength: 6)
+                                Button("Edit location") {
+                                    locationFieldFocused = true
+                                }
+                                .font(.footnote.weight(.semibold))
+                                .foregroundColor(VoteNowColors.primaryCTA)
+                                .buttonStyle(.plain)
+                            }
+                        }
+
                         Button {
                             useCurrentAddressTapped()
                         } label: {
@@ -189,6 +218,15 @@ struct MyInfoPanelView: View {
                             Text(addressSaveError)
                                 .font(.footnote)
                                 .foregroundColor(VoteNowColors.urgentCTA)
+                        }
+
+                        if addressSaveError == nil,
+                           let timelineDataError = repsVM.timelineDataErrorMessage?
+                            .trimmingCharacters(in: .whitespacesAndNewlines),
+                           !timelineDataError.isEmpty {
+                            Text(timelineDataError)
+                                .font(.footnote)
+                                .foregroundColor(VoteNowColors.warningAmber)
                         }
                     }
                     .padding(12)
@@ -351,8 +389,11 @@ struct MyInfoPanelView: View {
                         return
                     }
 
-                    if isSavingAddress {
-                        addressSaveError = "We couldn’t verify that address. Try a full street address or ZIP code."
+                    if isSavingAddress || isResolvingCurrentAddress {
+                        let specificError = repsVM.errorMessage?.trimmingCharacters(in: .whitespacesAndNewlines)
+                        addressSaveError = (specificError?.isEmpty == false)
+                            ? specificError
+                            : "We couldn’t verify that address. Try a full street address or ZIP code."
                     }
                     resetActiveResolutionState()
                 }
@@ -399,19 +440,6 @@ struct MyInfoPanelView: View {
             addressSaveError = nil
             showInvalidZipAlert = true
             return
-        }
-
-        if let normalizedZip = USZipInputValidator.normalizedPrimaryZIP(from: trimmedInput) {
-            planVM.zip = normalizedZip
-            var updatedAddress = planVM.userAddress
-            if updatedAddress.zip != normalizedZip {
-                updatedAddress.zip = normalizedZip
-            }
-            if let inferredStateCode = zipStateResolver.stateCode(for: normalizedZip),
-               updatedAddress.state != inferredStateCode {
-                updatedAddress.state = inferredStateCode
-            }
-            planVM.userAddress = updatedAddress
         }
 
         addressSaveError = nil

@@ -2,8 +2,8 @@ import SwiftUI
 
 struct SupportVoteView: View {
     @Environment(\.locale) private var locale
-    private let pageBackground = Color(red: 172.0 / 255.0, green: 213.0 / 255.0, blue: 227.0 / 255.0) // #ACD5E3
-    private let warmSupportYellow = Color(hex: "#F3D487")
+    private let pageBackground = VoteNowColors.supportPageBackground
+    private let warmSupportYellow = VoteNowColors.supportWarmSurface
 
     private enum PresetAmount: Hashable, CaseIterable {
         case five
@@ -69,7 +69,7 @@ struct SupportVoteView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
-                    PageHeader(title: Text(l("app.support_vote.page_title", "Support VoteNow")))
+                    PageHeader(title: Text(l("app.support_vote.page_title", "Support Civica")))
 
                     missionCard
                     donationCard
@@ -93,7 +93,7 @@ struct SupportVoteView: View {
                 .font(.title3.weight(.bold))
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text(l("app.support_vote.mission.body", "VoteNow's mission is to empower every American to vote by being the least friction companion to support participation. We believe that reducing logistical friction-deadlines, locations, ID rules, and confusing steps-is essential to authentic voting help."))
+            Text(l("app.support_vote.mission.body", "Civica's mission is to empower every American to vote by being the least friction companion to support participation. We believe that reducing logistical friction-deadlines, locations, ID rules, and confusing steps-is essential to authentic voting help."))
                 .font(.body)
                 .foregroundStyle(VoteNowColors.mutedText)
                 .fixedSize(horizontal: false, vertical: true)
@@ -168,7 +168,7 @@ struct SupportVoteView: View {
             if let amount = resolvedAmount {
                 Text("\(l("app.support_vote.amount.selected_prefix", "Donation amount:")) \(formattedCurrency(amount))")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(isAmountValid ? .primary : .red)
+                    .foregroundColor(isAmountValid ? VoteNowColors.primaryText : VoteNowColors.richRed)
             } else {
                 Text(l("app.support_vote.amount.select_to_continue", "Select an amount to continue."))
                     .font(.subheadline)
@@ -194,22 +194,22 @@ struct SupportVoteView: View {
             }
 
             if let error = applePayManager.errorMessage, !error.isEmpty {
-                Text(error)
+                Label(error, systemImage: "exclamationmark.triangle.fill")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(VoteNowColors.richRed)
                     .padding(10)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(VoteNowColors.richRed.opacity(0.08))
+                    .background(VoteNowColors.statusErrorSurface)
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
 
             if let success = applePayManager.successMessage, !success.isEmpty {
-                Text(success)
+                Label(success, systemImage: "checkmark.circle.fill")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(.green)
+                    .foregroundStyle(VoteNowColors.successGreen)
                     .padding(10)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.green.opacity(0.10))
+                    .background(VoteNowColors.statusSuccessSurface)
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
 
@@ -241,7 +241,7 @@ struct SupportVoteView: View {
             supportBullet(l("app.support_vote.disrupt.bullet_3", "Voters become targets, not long-term users"))
             supportBullet(l("app.support_vote.disrupt.bullet_4", "The system optimizes for winning - not serving"))
 
-            Text(l("app.support_vote.disrupt.footer", "VoteNow is built around servicing YOU, the voter."))
+            Text(l("app.support_vote.disrupt.footer", "Civica is built around servicing YOU, the voter."))
                 .font(.subheadline.weight(.semibold))
                 .padding(.top, 4)
         }

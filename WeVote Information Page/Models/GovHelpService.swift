@@ -24,7 +24,7 @@ enum GovHelpServiceError: LocalizedError {
 
 final class GovHelpService {
     private let client: AppSupabaseClient
-    private let logger = Logger(subsystem: "VoteNow", category: "GovHelpService")
+    private let logger = Logger(subsystem: "Civica", category: "GovHelpService")
     private let legacyFunctionSlug = "super-function"
 
     init(client: AppSupabaseClient = SupabaseClientProvider.shared.client) {

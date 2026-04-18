@@ -1,4 +1,18 @@
 import Foundation
+import OSLog
+
+enum ElectionGuideDataDiagnostics {
+    static var onLoadFailure: ((_ resource: String, _ reason: String) -> Void)?
+    private static let logger = Logger(subsystem: "Civica", category: "ElectionGuideData")
+
+    static func reportLoadFailure(resource: String, reason: String) {
+        logger.error("Bundle fallback triggered for \(resource, privacy: .public): \(reason, privacy: .public)")
+        #if DEBUG
+        assertionFailure("ElectionGuide data load fallback for \(resource): \(reason)")
+        #endif
+        onLoadFailure?(resource, reason)
+    }
+}
 
 enum ElectionGuideType: String, Codable {
     case midterm
@@ -147,9 +161,25 @@ struct ElectionGuideContextResolver {
     }
 
     private func loadMidtermRecordsByState() -> [String: StateMidtermElectionRecord] {
-        guard let url = bundle.url(forResource: "USMidterm2026ElectionDates", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let decoded = try? JSONDecoder().decode([StateMidtermElectionRecord].self, from: data) else {
+        guard let url = bundle.url(forResource: "USMidterm2026ElectionDates", withExtension: "json") else {
+            ElectionGuideDataDiagnostics.reportLoadFailure(
+                resource: "USMidterm2026ElectionDates.json",
+                reason: "missing bundle resource"
+            )
+            return [:]
+        }
+        guard let data = try? Data(contentsOf: url) else {
+            ElectionGuideDataDiagnostics.reportLoadFailure(
+                resource: "USMidterm2026ElectionDates.json",
+                reason: "unable to read bundle data"
+            )
+            return [:]
+        }
+        guard let decoded = try? JSONDecoder().decode([StateMidtermElectionRecord].self, from: data) else {
+            ElectionGuideDataDiagnostics.reportLoadFailure(
+                resource: "USMidterm2026ElectionDates.json",
+                reason: "decode failure"
+            )
             return [:]
         }
         return Dictionary(uniqueKeysWithValues: decoded.map { ($0.state_code, $0) })
@@ -174,8 +204,13 @@ struct ElectionGuideContextResolver {
         }
 
         // Placeholder presidential timing for pre-integration testing.
-        candidates.append(EventCandidate(type: .presidential, phase: .primary, date: Date.from("2028-03-15")))
-        candidates.append(EventCandidate(type: .presidential, phase: .general, date: Date.from("2028-11-07")))
+        // If a literal fails parsing, skip it instead of showing an incorrect "today" date.
+        if let presidentialPrimaryDate = Date.from("2028-03-15") {
+            candidates.append(EventCandidate(type: .presidential, phase: .primary, date: presidentialPrimaryDate))
+        }
+        if let presidentialGeneralDate = Date.from("2028-11-07") {
+            candidates.append(EventCandidate(type: .presidential, phase: .general, date: presidentialGeneralDate))
+        }
 
         return candidates
     }
@@ -268,9 +303,25 @@ private struct BundleElectionGuideContentProvider {
     }
 
     private func loadTopics() -> [DatasetTopic]? {
-        guard let url = bundle.url(forResource: "ElectionGuideTopics", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let decoded = try? JSONDecoder().decode([DatasetTopic].self, from: data) else {
+        guard let url = bundle.url(forResource: "ElectionGuideTopics", withExtension: "json") else {
+            ElectionGuideDataDiagnostics.reportLoadFailure(
+                resource: "ElectionGuideTopics.json",
+                reason: "missing bundle resource"
+            )
+            return nil
+        }
+        guard let data = try? Data(contentsOf: url) else {
+            ElectionGuideDataDiagnostics.reportLoadFailure(
+                resource: "ElectionGuideTopics.json",
+                reason: "unable to read bundle data"
+            )
+            return nil
+        }
+        guard let decoded = try? JSONDecoder().decode([DatasetTopic].self, from: data) else {
+            ElectionGuideDataDiagnostics.reportLoadFailure(
+                resource: "ElectionGuideTopics.json",
+                reason: "decode failure"
+            )
             return nil
         }
         return decoded

@@ -24,7 +24,7 @@ final class LocationManager: NSObject, ObservableObject {
     @Published var authorizationStatus: CLAuthorizationStatus
 
     private let manager = CLLocationManager()
-    private let logger = Logger(subsystem: "VoteNow", category: "LocationManager")
+    private let logger = Logger(subsystem: "Civica", category: "LocationManager")
     private var hasPublishedInitialLocation = false
 
     override init() {

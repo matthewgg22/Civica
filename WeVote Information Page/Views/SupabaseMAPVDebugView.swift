@@ -3,7 +3,7 @@ import OSLog
 
 #if DEBUG
 struct SupabaseMAPVDebugView: View {
-    private let logger = Logger(subsystem: "VoteNow", category: "SupabaseMAPVDebug")
+    private let logger = Logger(subsystem: "Civica", category: "SupabaseMAPVDebug")
     @State private var plans: [MapvPlan] = []
     @State private var statusText = "Idle"
     @State private var isWorking = false

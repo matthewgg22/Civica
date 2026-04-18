@@ -73,7 +73,7 @@ enum DatabaseServiceError: LocalizedError {
 
 final class DatabaseService {
     private let client: AppSupabaseClient
-    private let logger = Logger(subsystem: "VoteNow", category: "DatabaseService")
+    private let logger = Logger(subsystem: "Civica", category: "DatabaseService")
 
     init(client: AppSupabaseClient = SupabaseClientProvider.shared.client) {
         self.client = client

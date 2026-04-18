@@ -58,7 +58,7 @@ final class NotificationPermissionManager: ObservableObject {
 }
 
 enum LocalNotificationScheduler {
-    private static let logger = Logger(subsystem: "VoteNow", category: "LocalNotificationScheduler")
+    private static let logger = Logger(subsystem: "Civica", category: "LocalNotificationScheduler")
 
     static func scheduleReminders(
         for payload: MAPVCalendarPlanPayload,
@@ -131,7 +131,7 @@ struct PrePermissionSheetView: View {
             Text("Stay on track")
                 .font(.title3.weight(.bold))
 
-            Text("Allow notifications so VoteNow can remind you on Election Day and if your polling place window changes.")
+            Text("Allow notifications so Civica can remind you on Election Day and if your polling place window changes.")
                 .font(.subheadline)
                 .foregroundStyle(VoteNowColors.mutedText)
 

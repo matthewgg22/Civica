@@ -12,7 +12,7 @@ import OSLog
 
 // MARK: - AppDelegate with APNs + Supabase support
 final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
-    private let logger = Logger(subsystem: "VoteNow", category: "AppDelegate")
+    private let logger = Logger(subsystem: "Civica", category: "AppDelegate")
 
     func application(
         _ application: UIApplication,

@@ -254,7 +254,7 @@ _SHARE_CARD_DEFAULTS: dict[str, dict[str, str]] = {
     },
     "civic": {
         "title": "Take Civic Action in Minutes",
-        "subtitle": "VoteNow gives you a script, contacts, and call steps so you can act now.",
+        "subtitle": "Civica gives you a script, contacts, and call steps so you can act now.",
         "cta": "Take Action",
         "badge": "Script Ready",
         "target": "civic",
@@ -345,7 +345,7 @@ def _build_share_info_rows(card_type: str, params: dict[str, str]) -> list[tuple
         if issue:
             rows.append(("Issue", issue))
         if calls:
-            rows.append(("VoteNow Calls", calls))
+            rows.append(("Civica Calls", calls))
 
     return rows
 
@@ -431,7 +431,7 @@ def _build_share_svg(card_type: str, title: str, subtitle: str, badge: str, cta:
   <rect x="79" y="590" width="19" height="3.2" fill="#DF5845"/>
   <rect x="870" y="500" width="252" height="56" rx="28" fill="#E1593B" />
   <text x="996" y="536" text-anchor="middle" fill="#FFFFFF" font-size="26" font-family="system-ui,-apple-system,Segoe UI,sans-serif" font-weight="600">{safe_cta}</text>
-  <text x="116" y="587" fill="rgba(255,255,255,0.98)" font-size="30" font-family="system-ui,-apple-system,Segoe UI,sans-serif" font-weight="700">VoteNow</text>
+  <text x="116" y="587" fill="rgba(255,255,255,0.98)" font-size="30" font-family="system-ui,-apple-system,Segoe UI,sans-serif" font-weight="700">Civica</text>
 </svg>"""
 
 
@@ -547,13 +547,13 @@ def get_openstates_people_geo(lat: float, lng: float, include: str | None = "lin
 
 
 if FastAPI is not None:
-    app = FastAPI(title="VoteNow Civic API", version="1.0.0")
+    app = FastAPI(title="Civica Civic API", version="1.0.0")
 
     @app.get("/")
     def root_status() -> dict[str, Any]:
         return {
             "ok": True,
-            "service": "VoteNow Civic API",
+            "service": "Civica Civic API",
             "version": "1.0.0",
         }
 
@@ -900,7 +900,7 @@ if FastAPI is not None:
         )
         preview_url = f"https://votenow.app/share/preview/{resolved}.svg?{preview_query}"
         app_deep_link = _build_share_deep_link(resolved_target, query_items)
-        app_store_url = "https://apps.apple.com/us/search?term=VoteNow"
+        app_store_url = "https://apps.apple.com/us/search?term=Civica"
         web_pairs = canonical_pairs + [("open", "web")]
         web_url = f"https://votenow.app/share/{resolved}?{urlencode(web_pairs)}"
 
@@ -931,10 +931,10 @@ if FastAPI is not None:
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{safe_title} | VoteNow</title>
+  <title>{safe_title} | Civica</title>
   <meta name="description" content="{escape(resolved_subtitle, quote=True)}" />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="VoteNow" />
+  <meta property="og:site_name" content="Civica" />
   <meta property="og:title" content="{escape(resolved_title, quote=True)}" />
   <meta property="og:description" content="{escape(resolved_subtitle, quote=True)}" />
   <meta property="og:url" content="{safe_canonical}" />
@@ -943,7 +943,7 @@ if FastAPI is not None:
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="{escape(resolved_title, quote=True)}" />
   <meta property="al:ios:url" content="{safe_deep_link}" />
-  <meta property="al:ios:app_name" content="VoteNow" />
+  <meta property="al:ios:app_name" content="Civica" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="{escape(resolved_title, quote=True)}" />
   <meta name="twitter:description" content="{escape(resolved_subtitle, quote=True)}" />
@@ -1110,7 +1110,7 @@ if FastAPI is not None:
     <header class="hero">
       <div class="brand-pill">
         <span class="app-icon" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" role="img" aria-label="VoteNow icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" role="img" aria-label="Civica icon">
             <rect x="1" y="1" width="26" height="26" rx="7" fill="#ADD7E5" stroke="rgba(255,255,255,0.74)" stroke-width="1.3"/>
             <rect x="14.4" y="7.2" width="8" height="2" fill="#DF5846"/>
             <rect x="14.4" y="10.6" width="8" height="2" fill="#DF5846"/>
@@ -1120,7 +1120,7 @@ if FastAPI is not None:
           </svg>
         </span>
         <span class="brand-copy">
-          <strong>VoteNow</strong>
+          <strong>Civica</strong>
           <small>Civic action made clear</small>
         </span>
       </div>
@@ -1134,9 +1134,9 @@ if FastAPI is not None:
       <div class="actions">
         <a class="button" id="open-app" href="{safe_deep_link}">{safe_cta}</a>
         <a class="button secondary" href="{safe_web_url}">Open in Browser</a>
-        <a class="button tertiary" href="{safe_app_store_url}">Get VoteNow</a>
+        <a class="button tertiary" href="{safe_app_store_url}">Get Civica</a>
       </div>
-      <div class="brand">VoteNow civic action card</div>
+      <div class="brand">Civica civic action card</div>
     </section>
   </article>
   <script>
@@ -1149,7 +1149,7 @@ if FastAPI is not None:
       const isBot = /bot|crawler|spider|facebookexternalhit|twitterbot|slackbot|whatsapp|telegram|discord|snapchat/i.test(ua);
       const isMobile = /iphone|ipad|ipod|android/i.test(ua.toLowerCase());
 
-      const tryOpenVoteNow = () => {{
+      const tryOpenCivica = () => {{
         let becameHidden = false;
         const onVisibilityChange = () => {{
           if (document.hidden) {{
@@ -1170,12 +1170,12 @@ if FastAPI is not None:
       if (openButton) {{
         openButton.addEventListener("click", (event) => {{
           event.preventDefault();
-          tryOpenVoteNow();
+          tryOpenCivica();
         }});
       }}
 
       if (!isBot && isMobile && !openInWebMode) {{
-        window.setTimeout(tryOpenVoteNow, 120);
+        window.setTimeout(tryOpenCivica, 120);
       }}
     }})();
   </script>

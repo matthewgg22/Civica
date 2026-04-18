@@ -13,7 +13,7 @@ final class AuthStore: ObservableObject {
     @Published var lastError: String?
 
     private let client: AppSupabaseClient
-    private let logger = Logger(subsystem: "VoteNow", category: "AuthStore")
+    private let logger = Logger(subsystem: "Civica", category: "AuthStore")
     private var authStateTask: Task<Void, Never>?
     private var lastRefreshAttemptAt: Date = .distantPast
     private let refreshThrottle: TimeInterval = 300

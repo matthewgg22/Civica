@@ -7,9 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C36C730C2F415639007CB83D /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C36C730B2F415639007CB83D /* WidgetKit.framework */; };
 		C36C730E2F415639007CB83D /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C36C730D2F415639007CB83D /* SwiftUI.framework */; };
-		C36C731F2F41563B007CB83D /* Voting UI Island CardExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C36C73092F415639007CB83D /* Voting UI Island CardExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C36C75A12F427A1F007CB83D /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = C36C75A02F427A1F007CB83D /* Supabase */; };
 		C3B8633D2D9B08630092C1CB /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C3B8633C2D9B08630092C1CB /* FirebaseAnalytics */; };
 		C3B8633F2D9B08630092C1CB /* FirebaseAnalyticsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = C3B8633E2D9B08630092C1CB /* FirebaseAnalyticsOnDeviceConversion */; };
@@ -20,13 +18,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		C36C731D2F41563B007CB83D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C3B862E02D9A42E00092C1CB /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C36C73082F415639007CB83D;
-			remoteInfo = "Voting UI Island CardExtension";
-		};
 		C3B862F92D9A42E20092C1CB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C3B862E02D9A42E00092C1CB /* Project object */;
@@ -42,20 +33,6 @@
 			remoteInfo = "WeVote Information Page";
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		C36C73242F41563B007CB83D /* Embed Foundation Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				C36C731F2F41563B007CB83D /* Voting UI Island CardExtension.appex in Embed Foundation Extensions */,
-			);
-			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		C36C73092F415639007CB83D /* Voting UI Island CardExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Voting UI Island CardExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -110,7 +87,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C36C730E2F415639007CB83D /* SwiftUI.framework in Frameworks */,
-				C36C730C2F415639007CB83D /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,12 +187,10 @@
 				C3B862E42D9A42E00092C1CB /* Sources */,
 				C3B862E52D9A42E00092C1CB /* Frameworks */,
 				C31696FA2DE0F9E50041FF2C /* Resources */,
-				C36C73242F41563B007CB83D /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				C36C731E2F41563B007CB83D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				C3B862EA2D9A42E00092C1CB /* WeVote Information Page */,
@@ -404,11 +378,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		C36C731E2F41563B007CB83D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C36C73082F415639007CB83D /* Voting UI Island CardExtension */;
-			targetProxy = C36C731D2F41563B007CB83D /* PBXContainerItemProxy */;
-		};
 		C3B862FA2D9A42E20092C1CB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C3B862E72D9A42E00092C1CB /* VoteNow */;
@@ -427,9 +396,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 687GD7CA6J;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Voting UI Island Card/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Voting UI Island Card";
@@ -443,6 +412,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.VoteNow-Information-Page.Voting-UI-Island-Card";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -455,9 +425,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 687GD7CA6J;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Voting UI Island Card/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Voting UI Island Card";
@@ -471,6 +441,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.VoteNow-Information-Page.Voting-UI-Island-Card";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -604,12 +575,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = VoteNow.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WeVote Information Page/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 687GD7CA6J;
+				DEVELOPMENT_TEAM = 687GD7CA6J;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "WeVote-Information-Page-Info.plist";
@@ -630,7 +600,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.VoteNow-Information-Page";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = VoteNow_Dev_Push_Profile_ApplePay;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -644,12 +613,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = VoteNow.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WeVote Information Page/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 687GD7CA6J;
+				DEVELOPMENT_TEAM = 687GD7CA6J;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "WeVote-Information-Page-Info.plist";
@@ -670,7 +638,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.VoteNow-Information-Page";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = VoteNow_Dev_Push_Profile_ApplePay;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

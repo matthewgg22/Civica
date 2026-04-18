@@ -4,6 +4,8 @@ import json
 import logging
 import math
 import os
+import threading
+import time
 import uuid
 from datetime import datetime, timezone
 from html import escape
@@ -36,6 +38,65 @@ from .service import CivicService
 
 logger = logging.getLogger(__name__)
 
+try:
+    _AUTH_VERIFICATION_CACHE_TTL_SECONDS = max(
+        0, int(os.environ.get("SUPABASE_AUTH_VERIFY_CACHE_TTL_SECONDS", "60"))
+    )
+except ValueError:
+    _AUTH_VERIFICATION_CACHE_TTL_SECONDS = 60
+
+try:
+    _AUTH_VERIFICATION_CACHE_MAX_ENTRIES = max(
+        1, int(os.environ.get("SUPABASE_AUTH_VERIFY_CACHE_MAX_ENTRIES", "2048"))
+    )
+except ValueError:
+    _AUTH_VERIFICATION_CACHE_MAX_ENTRIES = 2048
+
+_auth_verification_cache_lock = threading.Lock()
+_auth_verification_cache: dict[str, tuple[float, str]] = {}
+
+
+def _auth_cache_get(access_token: str) -> str | None:
+    if _AUTH_VERIFICATION_CACHE_TTL_SECONDS <= 0:
+        return None
+    now = time.monotonic()
+    with _auth_verification_cache_lock:
+        entry = _auth_verification_cache.get(access_token)
+        if entry is None:
+            return None
+        expires_at, user_id = entry
+        if expires_at <= now:
+            _auth_verification_cache.pop(access_token, None)
+            return None
+        return user_id
+
+
+def _auth_cache_set(access_token: str, user_id: str) -> None:
+    if _AUTH_VERIFICATION_CACHE_TTL_SECONDS <= 0:
+        return
+    now = time.monotonic()
+    expires_at = now + _AUTH_VERIFICATION_CACHE_TTL_SECONDS
+    with _auth_verification_cache_lock:
+        # Trim expired entries opportunistically.
+        expired_keys = [k for k, (exp, _) in _auth_verification_cache.items() if exp <= now]
+        for key in expired_keys:
+            _auth_verification_cache.pop(key, None)
+
+        if (
+            access_token not in _auth_verification_cache
+            and len(_auth_verification_cache) >= _AUTH_VERIFICATION_CACHE_MAX_ENTRIES
+        ):
+            oldest_key = next(iter(_auth_verification_cache), None)
+            if oldest_key is not None:
+                _auth_verification_cache.pop(oldest_key, None)
+
+        _auth_verification_cache[access_token] = (expires_at, user_id)
+
+
+def _auth_cache_delete(access_token: str) -> None:
+    with _auth_verification_cache_lock:
+        _auth_verification_cache.pop(access_token, None)
+
 
 def _marker_logging_enabled() -> bool:
     value = os.environ.get("VOTENOW_DEBUG_MARKER_LOGS", "")
@@ -49,12 +110,51 @@ def _log_marker(marker: str, payload: Any | None = None) -> None:
         logger.info(marker)
         return
     try:
-        if isinstance(payload, str):
-            logger.info("%s %s", marker, payload)
-        else:
-            logger.info("%s %s", marker, json.dumps(payload, ensure_ascii=False, default=str))
+        logger.info("%s %s", marker, json.dumps(_log_payload_metadata(payload), ensure_ascii=False, default=str))
     except Exception:
-        logger.info("%s %s", marker, str(payload))
+        logger.info("%s payload_type=%s", marker, type(payload).__name__)
+
+
+_SENSITIVE_LOG_FIELDS = {
+    "concern_text",
+    "notes",
+    "full_address",
+    "user_address",
+    "address",
+    "zip",
+    "zip_code",
+    "user_zip",
+    "message_text",
+    "raw_user_issue",
+    "accumulated_context",
+    "final_script",
+    "script",
+}
+
+
+def _log_payload_metadata(payload: Any) -> dict[str, Any]:
+    metadata: dict[str, Any] = {"type": type(payload).__name__}
+    try:
+        metadata["approx_bytes"] = len(json.dumps(payload, ensure_ascii=False, default=str))
+    except Exception:
+        metadata["approx_bytes"] = None
+
+    if isinstance(payload, dict):
+        keys = [str(key) for key in payload.keys()]
+        normalized = [key.lower() for key in keys]
+        metadata["top_level_keys"] = sorted(keys)
+        metadata["top_level_key_count"] = len(keys)
+        sensitive_present = sorted({key for key in normalized if key in _SENSITIVE_LOG_FIELDS})
+        if sensitive_present:
+            metadata["redacted_top_level_fields"] = sensitive_present
+        if "session" in payload:
+            metadata["has_session"] = isinstance(payload.get("session"), dict)
+        if isinstance(payload.get("options"), list):
+            metadata["options_count"] = len(payload.get("options", []))
+    elif isinstance(payload, list):
+        metadata["item_count"] = len(payload)
+
+    return metadata
 
 
 def _is_production_env() -> bool:
@@ -200,6 +300,36 @@ def _coerce_rep_contexts(payload: dict[str, Any]) -> list[RepContext]:
     return normalized
 
 
+def _validate_script_package_targeting(
+    target_reps: list[RepTarget],
+    rep_contexts: list[RepContext],
+) -> None:
+    if not target_reps:
+        raise ValueError("target_reps must include at least one target.")
+
+    if not rep_contexts:
+        raise ValueError("rep_contexts are required for the requested target_reps.")
+
+    required_house = 1 if RepTarget.HOUSE in target_reps else 0
+    required_senate = sum(1 for target in target_reps if target in {RepTarget.SENATE_1, RepTarget.SENATE_2})
+
+    available_house = sum(1 for context in rep_contexts if context.chamber == "house")
+    available_senate = sum(1 for context in rep_contexts if context.chamber == "senate")
+
+    missing_parts: list[str] = []
+    if required_house > available_house:
+        missing_parts.append("house rep_context")
+    if required_senate > available_senate:
+        missing_parts.append("senate rep_context")
+
+    if missing_parts:
+        raise ValueError(
+            "Missing required rep_contexts for requested target_reps: "
+            + ", ".join(missing_parts)
+            + "."
+        )
+
+
 def parse_resolve_request(payload: dict[str, Any], user_id: str) -> AssistantResolveRequest:
     return AssistantResolveRequest(
         user_id=user_id,
@@ -265,12 +395,15 @@ def parse_issue_brief_request(payload: dict[str, Any], user_id: str) -> IssueBri
 
 
 def parse_script_package_request(payload: dict[str, Any], user_id: str) -> ScriptPackageRequest:
+    target_reps = _coerce_rep_targets(payload)
+    rep_contexts = _coerce_rep_contexts(payload)
+    _validate_script_package_targeting(target_reps, rep_contexts)
     return ScriptPackageRequest(
         user_id=user_id,
         concern_text=_required_string(payload, "concern_text"),
         selected_ask=Ask(_required_string(payload, "selected_ask")),
-        target_reps=_coerce_rep_targets(payload),
-        rep_contexts=_coerce_rep_contexts(payload),
+        target_reps=target_reps,
+        rep_contexts=rep_contexts,
         optional_bill_ref=_optional_string(payload, "optional_bill_ref"),
         allow_revision=_coerce_bool(payload.get("allow_revision"), "allow_revision", default=True),
         user_zip=_optional_string(payload, "user_zip") or _optional_string(payload, "zip"),
@@ -429,26 +562,32 @@ def post_issue_brief(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
 
 def post_script_package(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
     parsed = parse_script_package_request(payload, user_id)
-
-    _log_marker("=== PARSED SCRIPT PACKAGE REQUEST START ===")
-    _log_marker(
-        "=== PARSED SCRIPT PACKAGE REQUEST PAYLOAD ===",
+    parsed_payload = (
         parsed.model_dump() if hasattr(parsed, "model_dump")
         else parsed.dict() if hasattr(parsed, "dict")
         else parsed.to_dict() if hasattr(parsed, "to_dict")
         else parsed.__dict__
     )
+
+    _log_marker("=== PARSED SCRIPT PACKAGE REQUEST START ===")
+    _log_marker(
+        "=== PARSED SCRIPT PACKAGE REQUEST METADATA ===",
+        parsed_payload
+    )
     _log_marker("=== PARSED SCRIPT PACKAGE REQUEST END ===")
 
     response = script_package_service.create_package(parsed)
-
-    _log_marker("=== SCRIPT PACKAGE RESPONSE START ===")
-    _log_marker(
-        "=== SCRIPT PACKAGE RESPONSE PAYLOAD ===",
+    response_payload = (
         response.model_dump() if hasattr(response, "model_dump")
         else response.dict() if hasattr(response, "dict")
         else response.to_dict() if hasattr(response, "to_dict")
         else response.__dict__
+    )
+
+    _log_marker("=== SCRIPT PACKAGE RESPONSE START ===")
+    _log_marker(
+        "=== SCRIPT PACKAGE RESPONSE METADATA ===",
+        response_payload
     )
     _log_marker("=== SCRIPT PACKAGE RESPONSE END ===")
 
@@ -462,28 +601,20 @@ def post_script_feedback(payload: dict[str, Any], user_id: str) -> dict[str, Any
 
 
 def post_script_chat_turn(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
-    logger.info("🧭 [Founder Trace][Backend] /script-chat-turn received raw body=%s", json.dumps(payload, ensure_ascii=False, default=str))
+    logger.info(
+        "🧭 [Founder Trace][Backend] /script-chat-turn received payload_metadata=%s",
+        json.dumps(_log_payload_metadata(payload), ensure_ascii=False, default=str),
+    )
     parsed = parse_script_chat_turn_request(payload, user_id)
     logger.info(
-        "🧭 [Founder Trace][Backend] /script-chat-turn parsed session_id=%s role=%s turn_index=%s message_type=%s",
-        parsed.session_id,
+        "🧭 [Founder Trace][Backend] /script-chat-turn parsed session_id_present=%s role=%s turn_index=%s message_type=%s",
+        bool(parsed.session_id),
         parsed.role,
         parsed.turn_index,
         parsed.message_type,
     )
     script_package_service.record_chat_turn(parsed)
     return {"ok": True}
-
-
-def _record_script_chat_turn_async(payload: dict[str, Any], user_id: str) -> None:
-    try:
-        post_script_chat_turn(payload, user_id)
-    except Exception as exc:
-        logger.warning(
-            "Failed to record script chat turn asynchronously; continuing. error=%s",
-            exc,
-            exc_info=exc,
-        )
 
 
 def _mapc_v3_detail(exc: MAPCPipelineV3Error) -> dict[str, str]:
@@ -513,13 +644,6 @@ def _mapc_v3_payload_session_id(payload: dict[str, Any]) -> str:
     if isinstance(raw_root, str):
         return raw_root.strip()
     return ""
-
-
-def _mapc_v3_payload_preview(payload: dict[str, Any], limit: int = 2400) -> str:
-    serialized = json.dumps(payload, ensure_ascii=False, default=str)
-    if len(serialized) > limit:
-        return f"{serialized[:limit]}...<truncated>"
-    return serialized
 
 
 def post_mapc_v3_interpret(payload: dict[str, Any], user_id: str) -> dict[str, Any]:
@@ -556,12 +680,11 @@ def post_mapc_v3_background(payload: dict[str, Any], user_id: str) -> dict[str, 
     payload_state = _mapc_v3_payload_session_state(payload)
     payload_session_id = _mapc_v3_payload_session_id(payload)
     logger.info(
-        "🧭 [Founder Trace][Backend] /mapc/background received user_id=%s session_id=%s session_state=%s",
-        user_id,
-        payload_session_id or "<missing>",
+        "🧭 [Founder Trace][Backend] /mapc/background request session_id_present=%s session_state=%s payload_metadata=%s",
+        bool(payload_session_id),
         payload_state or "<missing>",
+        json.dumps(_log_payload_metadata(payload), ensure_ascii=False, default=str),
     )
-    logger.info("🧭 [Founder Trace][Backend] /mapc/background body=%s", _mapc_v3_payload_preview(payload))
     logger.info(
         "🧭 [Founder Trace][Backend] Supabase thread/session read-write in this route: none (MAPC uses in-memory session cache)."
     )
@@ -580,7 +703,10 @@ def post_mapc_v3_background(payload: dict[str, Any], user_id: str) -> dict[str, 
         }
     try:
         response = mapc_pipeline_v3_service.background(payload, user_id=user_id)
-        logger.info("🧭 [Founder Trace][Backend] /mapc/background response=%s", _mapc_v3_payload_preview(response))
+        logger.info(
+            "🧭 [Founder Trace][Backend] /mapc/background response_metadata=%s",
+            json.dumps(_log_payload_metadata(response), ensure_ascii=False, default=str),
+        )
         return response
     except MAPCPipelineV3Error as exc:
         raise ValueError(json.dumps(_mapc_v3_detail(exc))) from exc
@@ -591,19 +717,21 @@ def post_mapc_v3_script(payload: dict[str, Any], user_id: str) -> dict[str, Any]
     payload_session_id = _mapc_v3_payload_session_id(payload)
     selected_option_id = str(payload.get("selected_option_id", "")).strip()
     logger.info(
-        "🧭 [Founder Trace][Backend] /mapc/script received user_id=%s session_id=%s session_state=%s selected_option_id=%s",
-        user_id,
-        payload_session_id or "<missing>",
+        "🧭 [Founder Trace][Backend] /mapc/script request session_id_present=%s session_state=%s selected_option_id_present=%s payload_metadata=%s",
+        bool(payload_session_id),
         payload_state or "<missing>",
-        selected_option_id or "<missing>",
+        bool(selected_option_id),
+        json.dumps(_log_payload_metadata(payload), ensure_ascii=False, default=str),
     )
-    logger.info("🧭 [Founder Trace][Backend] /mapc/script body=%s", _mapc_v3_payload_preview(payload))
     logger.info(
         "🧭 [Founder Trace][Backend] Supabase thread/session read-write in this route: none (MAPC uses in-memory session cache)."
     )
     try:
         response = mapc_pipeline_v3_service.script(payload, user_id=user_id)
-        logger.info("🧭 [Founder Trace][Backend] /mapc/script response=%s", _mapc_v3_payload_preview(response))
+        logger.info(
+            "🧭 [Founder Trace][Backend] /mapc/script response_metadata=%s",
+            json.dumps(_log_payload_metadata(response), ensure_ascii=False, default=str),
+        )
         return response
     except MAPCPipelineV3Error as exc:
         raise ValueError(json.dumps(_mapc_v3_detail(exc))) from exc
@@ -651,7 +779,7 @@ _SHARE_CARD_DEFAULTS: dict[str, dict[str, str]] = {
     },
     "civic": {
         "title": "Take Civic Action in Minutes",
-        "subtitle": "VoteNow gives you a script, contacts, and call steps so you can act now.",
+        "subtitle": "Civica gives you a script, contacts, and call steps so you can act now.",
         "cta": "Take Action",
         "badge": "Script Ready",
         "target": "civic",
@@ -742,7 +870,7 @@ def _build_share_info_rows(card_type: str, params: dict[str, str]) -> list[tuple
         if issue:
             rows.append(("Issue", issue))
         if calls:
-            rows.append(("VoteNow Calls", calls))
+            rows.append(("Civica Calls", calls))
 
     return rows
 
@@ -828,16 +956,15 @@ def _build_share_svg(card_type: str, title: str, subtitle: str, badge: str, cta:
   <rect x="79" y="590" width="19" height="3.2" fill="#DF5845"/>
   <rect x="870" y="500" width="252" height="56" rx="28" fill="#E1593B" />
   <text x="996" y="536" text-anchor="middle" fill="#FFFFFF" font-size="26" font-family="system-ui,-apple-system,Segoe UI,sans-serif" font-weight="600">{safe_cta}</text>
-  <text x="116" y="587" fill="rgba(255,255,255,0.98)" font-size="30" font-family="system-ui,-apple-system,Segoe UI,sans-serif" font-weight="700">VoteNow</text>
+  <text x="116" y="587" fill="rgba(255,255,255,0.98)" font-size="30" font-family="system-ui,-apple-system,Segoe UI,sans-serif" font-weight="700">Civica</text>
 </svg>"""
 
 
 try:
-    from fastapi import BackgroundTasks, FastAPI, HTTPException, Request
+    from fastapi import FastAPI, HTTPException, Request
     from fastapi.responses import HTMLResponse, Response
 except Exception:  # pragma: no cover
     FastAPI = None
-    BackgroundTasks = Any
     HTTPException = Exception
     Request = Any
     HTMLResponse = None
@@ -865,6 +992,10 @@ def _resolve_authenticated_user_id(access_token: str) -> str:
             detail="Supabase auth verification is not configured (requires SUPABASE_URL plus SUPABASE_ANON_KEY or SUPABASE_SERVICE_ROLE_KEY).",
         )
 
+    cached_user_id = _auth_cache_get(access_token)
+    if cached_user_id:
+        return cached_user_id
+
     request = urllib.request.Request(
         f"{supabase_url}/auth/v1/user",
         method="GET",
@@ -879,6 +1010,7 @@ def _resolve_authenticated_user_id(access_token: str) -> str:
             payload = json.loads(response.read().decode("utf-8"))
     except urllib.error.HTTPError as exc:
         if exc.code in {401, 403}:
+            _auth_cache_delete(access_token)
             raise HTTPException(status_code=401, detail="Invalid or expired token.") from exc
         raise HTTPException(status_code=502, detail="Auth verification failed.") from exc
     except (urllib.error.URLError, json.JSONDecodeError) as exc:
@@ -886,7 +1018,9 @@ def _resolve_authenticated_user_id(access_token: str) -> str:
 
     user_id = str(payload.get("id", "")).strip()
     if not user_id:
+        _auth_cache_delete(access_token)
         raise HTTPException(status_code=401, detail="Invalid auth context.")
+    _auth_cache_set(access_token, user_id)
     return user_id
 
 
@@ -895,13 +1029,21 @@ def require_authenticated_user_id(request: Request) -> str:
     return _resolve_authenticated_user_id(access_token)
 
 
+def _resolve_anonymous_user_id(request: Request) -> str:
+    anonymous_header = str(request.headers.get("x-anonymous-id", "")).strip()
+    if anonymous_header:
+        return str(uuid.uuid5(uuid.NAMESPACE_DNS, anonymous_header))
+    logger.warning("[civic] missing X-Anonymous-ID header; using ephemeral anonymous user id")
+    return str(uuid.uuid4())
+
+
 def resolve_authenticated_or_anonymous_user_id(request: Request) -> str:
     try:
         return require_authenticated_user_id(request)
     except HTTPException as exc:
-        if getattr(exc, "status_code", None) in {401, 403, 500, 502}:
+        if getattr(exc, "status_code", None) in {401, 403}:
             logger.warning("[civic] falling back to anonymous user context status=%s", exc.status_code)
-            return str(uuid.uuid4())
+            return _resolve_anonymous_user_id(request)
         raise
 
 
@@ -926,6 +1068,11 @@ def _run_endpoint(
 
 
 def get_openstates_people_geo(lat: float, lng: float, include: str | None = "links") -> dict[str, Any]:
+    params = {
+        "lat": f"{lat:.6f}",
+        "lng": f"{lng:.6f}",
+        "include": "links" if (include or "").strip().lower() == "links" else "links",
+    }
     try:
         if not math.isfinite(lat) or not math.isfinite(lng):
             raise ValueError("Invalid coordinates.")
@@ -934,14 +1081,13 @@ def get_openstates_people_geo(lat: float, lng: float, include: str | None = "lin
 
         api_key = os.environ.get("OPENSTATES_API_KEY", "").strip()
         if not api_key or api_key == "YOUR_OPENSTATES_API_KEY":
-            logger.warning("OpenStates API key is not configured; returning empty result.")
-            return {"results": []}
-
-        params = {
-            "lat": f"{lat:.6f}",
-            "lng": f"{lng:.6f}",
-            "include": "links" if (include or "").strip().lower() == "links" else "links",
-        }
+            logger.warning("OpenStates API key is not configured.")
+            return {
+                "status": "error",
+                "error_code": "openstates_not_configured",
+                "message": "OpenStates API key is not configured.",
+                "results": [],
+            }
 
         openstates_request = urllib.request.Request(
             f"https://v3.openstates.org/people.geo?{urlencode(params)}",
@@ -956,29 +1102,47 @@ def get_openstates_people_geo(lat: float, lng: float, include: str | None = "lin
             payload = json.loads(response.read().decode("utf-8"))
 
         if not isinstance(payload, dict):
-            return {"results": []}
-        return payload
+            return {
+                "status": "error",
+                "error_code": "openstates_invalid_response",
+                "message": "OpenStates returned an invalid response shape.",
+                "results": [],
+            }
+        results = payload.get("results")
+        if not isinstance(results, list):
+            results = []
+        return {
+            "status": "ok",
+            "error_code": None,
+            "message": None,
+            "results": results,
+        }
     except Exception as exc:
         logger.warning(
-            "OpenStates lookup failed; returning empty result. lat=%s lng=%s include=%s error=%s",
+            "OpenStates lookup failed. lat=%s lng=%s include=%s error=%s",
             lat,
             lng,
             include,
             exc,
             exc_info=exc,
         )
-        return {"results": []}
+        return {
+            "status": "error",
+            "error_code": "openstates_upstream_failure",
+            "message": "OpenStates request failed.",
+            "results": [],
+        }
 
 
 if FastAPI is not None:
-    app = FastAPI(title="VoteNow Civic API", version="1.0.0")
+    app = FastAPI(title="Civica Civic API", version="1.0.0")
     bad_request = (ValueError, TypeError)
 
     @app.get("/")
     def root_status() -> dict[str, Any]:
         return {
             "ok": True,
-            "service": "VoteNow Civic API",
+            "service": "Civica Civic API",
             "version": "1.0.0",
         }
 
@@ -1014,7 +1178,7 @@ if FastAPI is not None:
     @app.post("/api/v1/civic/script-package")
     def civic_script_package(payload: dict[str, Any], request: Request) -> dict[str, Any]:
         _log_marker("=== SCRIPT PACKAGE RAW PAYLOAD START ===")
-        _log_marker("=== SCRIPT PACKAGE RAW PAYLOAD DATA ===", payload)
+        _log_marker("=== SCRIPT PACKAGE REQUEST METADATA ===", payload)
         _log_marker("=== SCRIPT PACKAGE RAW PAYLOAD END ===")
         return _run_endpoint(
             lambda: post_script_package(payload, resolve_authenticated_or_anonymous_user_id(request)),
@@ -1032,18 +1196,11 @@ if FastAPI is not None:
     def civic_script_chat_turn(
         payload: dict[str, Any],
         request: Request,
-        background_tasks: BackgroundTasks,
     ) -> dict[str, Any]:
-        try:
-            user_id = resolve_authenticated_or_anonymous_user_id(request)
-            background_tasks.add_task(_record_script_chat_turn_async, payload, user_id)
-        except Exception as exc:
-            logger.warning(
-                "Failed to enqueue script chat turn; returning ok immediately. error=%s",
-                exc,
-                exc_info=exc,
-            )
-        return {"ok": True}
+        return _run_endpoint(
+            lambda: post_script_chat_turn(payload, resolve_authenticated_or_anonymous_user_id(request)),
+            bad_request_exceptions=bad_request,
+        )
 
     @app.post("/api/v2/civic/mapc/interpret")
     def civic_mapc_v3_interpret(payload: dict[str, Any], request: Request) -> dict[str, Any]:
@@ -1336,7 +1493,7 @@ if FastAPI is not None:
         )
         preview_url = f"https://votenow.app/share/preview/{resolved}.svg?{preview_query}"
         app_deep_link = _build_share_deep_link(resolved_target, query_items)
-        app_store_url = "https://apps.apple.com/us/search?term=VoteNow"
+        app_store_url = "https://apps.apple.com/us/search?term=Civica"
         web_pairs = canonical_pairs + [("open", "web")]
         web_url = f"https://votenow.app/share/{resolved}?{urlencode(web_pairs)}"
 
@@ -1367,10 +1524,10 @@ if FastAPI is not None:
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{safe_title} | VoteNow</title>
+  <title>{safe_title} | Civica</title>
   <meta name="description" content="{escape(resolved_subtitle, quote=True)}" />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="VoteNow" />
+  <meta property="og:site_name" content="Civica" />
   <meta property="og:title" content="{escape(resolved_title, quote=True)}" />
   <meta property="og:description" content="{escape(resolved_subtitle, quote=True)}" />
   <meta property="og:url" content="{safe_canonical}" />
@@ -1379,7 +1536,7 @@ if FastAPI is not None:
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="{escape(resolved_title, quote=True)}" />
   <meta property="al:ios:url" content="{safe_deep_link}" />
-  <meta property="al:ios:app_name" content="VoteNow" />
+  <meta property="al:ios:app_name" content="Civica" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="{escape(resolved_title, quote=True)}" />
   <meta name="twitter:description" content="{escape(resolved_subtitle, quote=True)}" />
@@ -1546,7 +1703,7 @@ if FastAPI is not None:
     <header class="hero">
       <div class="brand-pill">
         <span class="app-icon" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" role="img" aria-label="VoteNow icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" role="img" aria-label="Civica icon">
             <rect x="1" y="1" width="26" height="26" rx="7" fill="#ADD7E5" stroke="rgba(255,255,255,0.74)" stroke-width="1.3"/>
             <rect x="14.4" y="7.2" width="8" height="2" fill="#DF5846"/>
             <rect x="14.4" y="10.6" width="8" height="2" fill="#DF5846"/>
@@ -1556,7 +1713,7 @@ if FastAPI is not None:
           </svg>
         </span>
         <span class="brand-copy">
-          <strong>VoteNow</strong>
+          <strong>Civica</strong>
           <small>Civic action made clear</small>
         </span>
       </div>
@@ -1570,9 +1727,9 @@ if FastAPI is not None:
       <div class="actions">
         <a class="button" id="open-app" href="{safe_deep_link}">{safe_cta}</a>
         <a class="button secondary" href="{safe_web_url}">Open in Browser</a>
-        <a class="button tertiary" href="{safe_app_store_url}">Get VoteNow</a>
+        <a class="button tertiary" href="{safe_app_store_url}">Get Civica</a>
       </div>
-      <div class="brand">VoteNow civic action card</div>
+      <div class="brand">Civica civic action card</div>
     </section>
   </article>
   <script>
@@ -1585,7 +1742,7 @@ if FastAPI is not None:
       const isBot = /bot|crawler|spider|facebookexternalhit|twitterbot|slackbot|whatsapp|telegram|discord|snapchat/i.test(ua);
       const isMobile = /iphone|ipad|ipod|android/i.test(ua.toLowerCase());
 
-      const tryOpenVoteNow = () => {{
+      const tryOpenCivica = () => {{
         let becameHidden = false;
         const onVisibilityChange = () => {{
           if (document.hidden) {{
@@ -1606,12 +1763,12 @@ if FastAPI is not None:
       if (openButton) {{
         openButton.addEventListener("click", (event) => {{
           event.preventDefault();
-          tryOpenVoteNow();
+          tryOpenCivica();
         }});
       }}
 
       if (!isBot && isMobile && !openInWebMode) {{
-        window.setTimeout(tryOpenVoteNow, 120);
+        window.setTimeout(tryOpenCivica, 120);
       }}
     }})();
   </script>

@@ -19,15 +19,23 @@ struct SupabaseStatusView: View {
                 .font(.headline)
 
             Group {
-                statusRow(label: "Auth", value: authStore.isSignedIn ? "Signed In" : "Signed Out")
-                statusRow(label: "User ID", value: authStore.userIDDisplay)
-                statusRow(label: "Health", value: healthDisplayText)
+                statusRow(
+                    label: "Auth",
+                    value: authStore.isSignedIn ? "Signed In" : "Signed Out",
+                    indicator: authIndicator
+                )
+                statusRow(label: "User ID", value: authStore.userIDDisplay, indicator: nil)
+                statusRow(label: "Health", value: healthDisplayText, indicator: healthIndicator)
             }
 
             if let error = authStore.lastError, !error.isEmpty {
                 Text(error)
                     .font(.footnote.weight(.semibold))
                     .foregroundColor(VoteNowColors.richRed)
+                    .padding(10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(VoteNowColors.statusErrorSurface)
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
 
             HStack(spacing: 8) {
@@ -73,7 +81,11 @@ struct SupabaseStatusView: View {
         .padding(12)
         .background(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(VoteNowColors.infoSurfaceBlue)
+                .fill(VoteNowColors.secondaryButtonFill)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(VoteNowColors.primaryCTA.opacity(0.18), lineWidth: 1)
         )
         .task {
             guard shouldAutoRefresh else { return }
@@ -98,19 +110,73 @@ struct SupabaseStatusView: View {
         return "Failed"
     }
 
+    private var authIndicator: StatusIndicator {
+        if authStore.isSignedIn {
+            return StatusIndicator(
+                iconName: "checkmark.circle.fill",
+                tint: VoteNowColors.successGreen,
+                surface: VoteNowColors.statusSuccessSurface
+            )
+        }
+        return StatusIndicator(
+            iconName: "person.crop.circle.badge.xmark",
+            tint: VoteNowColors.neutralStatus,
+            surface: VoteNowColors.statusNeutralSurface
+        )
+    }
+
+    private var healthIndicator: StatusIndicator {
+        guard let healthStatus else {
+            return StatusIndicator(
+                iconName: "questionmark.circle",
+                tint: VoteNowColors.neutralStatus,
+                surface: VoteNowColors.statusNeutralSurface
+            )
+        }
+        if healthStatus.isHealthy {
+            return StatusIndicator(
+                iconName: "checkmark.seal.fill",
+                tint: VoteNowColors.successGreen,
+                surface: VoteNowColors.statusSuccessSurface
+            )
+        }
+        return StatusIndicator(
+            iconName: "exclamationmark.triangle.fill",
+            tint: VoteNowColors.richRed,
+            surface: VoteNowColors.statusErrorSurface
+        )
+    }
+
     @ViewBuilder
-    private func statusRow(label: String, value: String) -> some View {
+    private func statusRow(label: String, value: String, indicator: StatusIndicator?) -> some View {
         HStack {
             Text(label)
                 .font(.subheadline.weight(.semibold))
             Spacer()
-            Text(value)
-                .font(.subheadline)
-                .foregroundStyle(VoteNowColors.mutedText)
-                .multilineTextAlignment(.trailing)
-                .lineLimit(2)
+            HStack(spacing: 6) {
+                if let indicator {
+                    Image(systemName: indicator.iconName)
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(indicator.tint)
+                        .padding(4)
+                        .background(indicator.surface)
+                        .clipShape(Circle())
+                        .accessibilityHidden(true)
+                }
+                Text(value)
+                    .font(.subheadline)
+                    .foregroundStyle(VoteNowColors.mutedText)
+                    .multilineTextAlignment(.trailing)
+                    .lineLimit(2)
+            }
         }
     }
+}
+
+private struct StatusIndicator {
+    let iconName: String
+    let tint: Color
+    let surface: Color
 }
 
 private extension AuthStore {

@@ -649,7 +649,7 @@ class ScriptPackageService:
             evidence_warning=evidence_warning,
             key_facts=key_facts if key_facts else [IssueFact(
                 fact="Evidence is limited; this script uses broad issue framing.",
-                source_name="VoteNow",
+                source_name="Civica",
                 source_url=None,
                 published_at=None,
             )],
@@ -798,6 +798,7 @@ class ScriptPackageService:
             )
         except Exception as exc:
             logger.warning("script chat turn insert failed: %s", type(exc).__name__)
+            raise
 
     def _generate_llm_draft_if_needed(
         self,

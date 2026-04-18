@@ -19,7 +19,7 @@ enum GeocodingServiceError: LocalizedError {
         case .noResult:
             return "Location not found. Try adding more detail."
         case .outsideUS:
-            return "VoteNow currently supports U.S. election lookups."
+            return "Civica currently supports U.S. election lookups."
         case .missingCoordinate:
             return "Location found, but coordinates were unavailable."
         }

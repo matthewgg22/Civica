@@ -55,6 +55,17 @@ struct LaunchFlowStateCard: View {
         }
     }
 
+    private var stateLabel: String {
+        switch state {
+        case .loading:
+            return "Loading"
+        case .empty:
+            return "Action Needed"
+        case .error:
+            return "Error"
+        }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .center, spacing: 10) {
@@ -72,6 +83,14 @@ struct LaunchFlowStateCard: View {
                     .font(.headline.weight(.semibold))
                     .foregroundColor(VoteNowColors.primaryText)
             }
+
+            Text(stateLabel)
+                .font(.caption2.weight(.bold))
+                .foregroundColor(iconColor)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(iconColor.opacity(0.14))
+                .clipShape(Capsule())
 
             Text(message)
                 .font(.subheadline)
@@ -105,33 +124,52 @@ private struct LaunchFlowPrimaryCTAButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.subheadline.weight(.semibold))
-            .foregroundColor(.white)
+            .foregroundColor(VoteNowColors.onPrimaryText)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(VoteNowColors.ctaBlue)
-                    .opacity(isEnabled ? (configuration.isPressed ? 0.84 : 1.0) : 0.5)
+                    .fill(backgroundColor(isPressed: configuration.isPressed))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(VoteNowColors.primaryCTA.opacity(0.24), lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.99 : 1)
             .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
+
+    private func backgroundColor(isPressed: Bool) -> Color {
+        guard isEnabled else { return VoteNowColors.ctaBlueDisabled }
+        return isPressed ? VoteNowColors.ctaBluePressed : VoteNowColors.ctaBlue
+    }
 }
 
 private struct LaunchFlowSecondaryCTAButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.subheadline.weight(.semibold))
-            .foregroundColor(VoteNowColors.primaryCTA)
+            .foregroundColor(isEnabled ? VoteNowColors.primaryCTA : VoteNowColors.mutedText)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(VoteNowColors.infoSurfaceBlue.opacity(configuration.isPressed ? 0.55 : 0.8))
+                    .fill(backgroundColor(isPressed: configuration.isPressed))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(VoteNowColors.primaryCTA.opacity(0.55), lineWidth: 1)
+                    .stroke(borderColor, lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.99 : 1)
             .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+    }
+
+    private func backgroundColor(isPressed: Bool) -> Color {
+        guard isEnabled else { return VoteNowColors.secondaryButtonFillDisabled }
+        return isPressed ? VoteNowColors.secondaryButtonFillPressed : VoteNowColors.secondaryButtonFill
+    }
+
+    private var borderColor: Color {
+        isEnabled ? VoteNowColors.secondaryButtonBorder : VoteNowColors.secondaryButtonDisabledBorder
     }
 }

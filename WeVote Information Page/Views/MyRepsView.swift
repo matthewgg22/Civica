@@ -14,6 +14,7 @@ struct MyRepsView: View {
     @State private var showMyInfoSheet = false
     @State private var showGovHelpChat = false
     @State private var showFullScreenMap = false
+    @State private var matchedCountAnimationRevision = 0
     private let isGovHelpChatEnabled = false
 
     private static let stateCodeToName: [String: String] = [
@@ -80,6 +81,63 @@ struct MyRepsView: View {
         String(planVM.zip.filter(\.isNumber).prefix(5))
     }
 
+    private var headerLocationSubtitle: String {
+        let city = headerLocationCity
+        let state = headerLocationStateCode
+        let zip = headerLocationZip
+
+        if !city.isEmpty, let state, let zip {
+            return "\(city), \(state) (\(zip))"
+        }
+        if !city.isEmpty, let state {
+            return "\(city), \(state)"
+        }
+        if let state, let zip {
+            return "\(state) (\(zip))"
+        }
+        if let zip {
+            return zip
+        }
+        if let state {
+            return state
+        }
+
+        return l("app.timeline.location.set_address", "Set your address in My Reps")
+    }
+
+    private var headerLocationCity: String {
+        let resolvedCity = repsVM.resolvedLocationSelection?.city?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !resolvedCity.isEmpty { return resolvedCity }
+        return planVM.userAddress.city.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var headerLocationStateCode: String? {
+        if let resolved = normalizedUSStateCode(from: repsVM.resolvedStateCode) {
+            return resolved
+        }
+        if let detected = normalizedUSStateCode(from: repsVM.detectedStateCode) {
+            return detected
+        }
+        if let entered = normalizedUSStateCode(from: planVM.userAddress.state) {
+            return entered
+        }
+        if let zip = headerLocationZip {
+            return USZipStateResolver().stateCode(for: zip)
+        }
+        return nil
+    }
+
+    private var headerLocationZip: String? {
+        let addressZip = String(planVM.userAddress.zip.filter(\.isNumber).prefix(5))
+        if addressZip.count == 5 { return addressZip }
+
+        let resolvedZip = String((repsVM.resolvedLocationSelection?.postalCode ?? "").filter(\.isNumber).prefix(5))
+        if resolvedZip.count == 5 { return resolvedZip }
+
+        return normalizedZip.count == 5 ? normalizedZip : nil
+    }
+
     private enum RepsLaunchState {
         case loading
         case empty
@@ -119,6 +177,12 @@ struct MyRepsView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         PageHeader(title: Text("app.page.my_reps", tableName: "AppShell"))
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
+                            Text(headerLocationSubtitle)
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundColor(VoteNowColors.mutedText)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.84)
+
                             Spacer(minLength: 8)
                             myInfoQuickAction
                         }
@@ -141,16 +205,6 @@ struct MyRepsView: View {
                             }
 
                             if !sections.isEmpty {
-                                HStack(spacing: 6) {
-                                    Text("Matched:")
-                                        .font(.system(size: 13, weight: .semibold))
-                                        .foregroundColor(VoteNowColors.primaryText)
-                                    Text("\(matchedFederalCount) federal · \(matchedStateCount) state · \(matchedLocalCount) local")
-                                        .font(.system(size: 13, weight: .medium))
-                                        .foregroundColor(VoteNowColors.mutedText)
-                                }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-
                                 ForEach(sections) { section in
                                     RepresentativeSection(
                                         title: section.title,
@@ -198,6 +252,8 @@ struct MyRepsView: View {
                 if !display.isEmpty {
                     setLocationInputSilently(display)
                 }
+                // Only animate matched counts when the user resolves a new address/location.
+                matchedCountAnimationRevision += 1
             }
         }
         .sheet(isPresented: $showMyInfoSheet) {
@@ -231,6 +287,54 @@ struct MyRepsView: View {
                 }
             )
         }
+    }
+
+    private var matchedSummaryPill: some View {
+        HStack(spacing: 6) {
+            Text("Matched")
+                .foregroundColor(VoteNowColors.primaryText)
+
+            ForEach(Array(matchedSegments.enumerated()), id: \.element.id) { index, segment in
+                if index > 0 {
+                    Text("·")
+                        .foregroundColor(VoteNowColors.borderWarm)
+                }
+
+                Text("\(segment.count)")
+                    .foregroundColor(segment.countColor)
+                    .contentTransition(.numericText())
+                    .animation(.spring(response: 0.28, dampingFraction: 0.86), value: matchedCountAnimationRevision)
+                Text(segment.title)
+                    .foregroundColor(VoteNowColors.mutedText)
+            }
+        }
+        .font(.system(size: 13, weight: .semibold, design: .rounded))
+        .lineLimit(1)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 7)
+        .background(VoteNowColors.surfaceWhite.opacity(0.96))
+        .overlay(
+            Capsule()
+                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+        )
+        .clipShape(Capsule())
+        .shadow(color: VoteNowColors.primaryText.opacity(0.08), radius: 3, x: 0, y: 1)
+    }
+
+    private struct MatchedSegment: Identifiable {
+        let id: String
+        let title: String
+        let count: Int
+        let countColor: Color
+    }
+
+    private var matchedSegments: [MatchedSegment] {
+        [
+            MatchedSegment(id: "federal", title: "Federal", count: matchedFederalCount, countColor: VoteNowColors.richBlue),
+            MatchedSegment(id: "state", title: "State", count: matchedStateCount, countColor: VoteNowColors.successGreen),
+            MatchedSegment(id: "local", title: "Local", count: matchedLocalCount, countColor: VoteNowColors.warningAmber)
+        ]
+        .filter { $0.count > 0 }
     }
 
     private var chatButton: some View {
@@ -332,7 +436,7 @@ struct MyRepsView: View {
             locationFieldFocused = false
             showMyInfoSheet = true
         } label: {
-            Text(l("app.reps.action.edit_location", "Edit Location"))
+            Text(l("app.reps.action.edit_location", "Change Location"))
                 .font(.callout.weight(.semibold))
                 .italic()
                 .foregroundColor(VoteNowColors.primaryCTA)
@@ -363,6 +467,13 @@ struct MyRepsView: View {
                 }
             )
             .frame(height: 215)
+            .overlay(alignment: .bottom) {
+                if !sections.isEmpty {
+                    matchedSummaryPill
+                        .padding(.bottom, 10)
+                        .zIndex(2)
+                }
+            }
             .overlay(alignment: .topTrailing) {
                 Button {
                     showFullScreenMap = true
@@ -476,10 +587,17 @@ struct MyRepsView: View {
                 }
             )
         case .error:
+            let trimmedErrorMessage = repsVM.errorMessage?
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            let resolvedErrorMessage: String? = {
+                guard let trimmedErrorMessage, !trimmedErrorMessage.isEmpty else { return nil }
+                return trimmedErrorMessage
+            }()
             LaunchFlowStateCard(
                 state: .error,
                 title: l("app.reps.error_title", "We couldn’t load your representatives"),
-                message: l("app.reps.error_retry_hint", "Try again or use your current location."),
+                message: resolvedErrorMessage
+                    ?? l("app.reps.error_retry_hint", "Try again or use your current location."),
                 primaryActionTitle: l("app.reps.action.retry", "Retry"),
                 primaryAction: {
                     submitLookupOrFallback()
@@ -496,11 +614,6 @@ struct MyRepsView: View {
     private func submitLookup() {
         let trimmed = locationInput.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
-
-        if let zip = USZipInputValidator.normalizedPrimaryZIP(from: trimmed) {
-            planVM.zip = zip
-            planVM.userAddress.zip = zip
-        }
 
         locationFieldFocused = false
         repsVM.resolveLocationInput(trimmed)
@@ -543,13 +656,6 @@ struct MyRepsView: View {
         locationFieldFocused = false
 
         repsVM.focusMapStateFromTap(tappedCode)
-        guard repsVM.resolvedStateCode == tappedCode else { return }
-
-        planVM.userAddress.state = tappedCode
-        if let zip = repsVM.representativeZIP(for: tappedCode) {
-            planVM.zip = zip
-            planVM.userAddress.zip = zip
-        }
     }
 
     private func setLocationInputSilently(_ value: String) {

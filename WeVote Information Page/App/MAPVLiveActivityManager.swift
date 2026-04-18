@@ -6,7 +6,7 @@ import OSLog
 @MainActor
 final class MAPVLiveActivityManager: ObservableObject {
     static let shared = MAPVLiveActivityManager()
-    private let logger = Logger(subsystem: "VoteNow", category: "MAPVLiveActivity")
+    private let logger = Logger(subsystem: "Civica", category: "MAPVLiveActivity")
 
     private init() {}
 

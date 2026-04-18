@@ -22,9 +22,9 @@ private struct WidgetExtensionProvider: TimelineProvider {
 struct MAPVLiveActivityWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "MAPVLiveActivityWidget", provider: WidgetExtensionProvider()) { _ in
-            Text("VoteNow")
+            Text("Civica")
         }
-        .configurationDisplayName("VoteNow")
-        .description("VoteNow widget extension")
+        .configurationDisplayName("Civica")
+        .description("Civica widget extension")
     }
 }

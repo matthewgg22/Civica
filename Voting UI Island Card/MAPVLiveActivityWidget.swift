@@ -40,6 +40,8 @@ struct MAPVLiveActivityWidget: Widget {
                 DynamicIslandExpandedRegion(.leading) {
                     HStack(spacing: 6) {
                         VoteNowMiniLogo(size: 22)
+                        Image(systemName: statusIcon(for: context.state.status))
+                            .font(.caption2.weight(.bold))
                         Text(context.state.statusPillText)
                             .font(.caption.weight(.semibold))
                             .lineLimit(1)
@@ -93,13 +95,17 @@ struct MAPVLiveActivityWidget: Widget {
     }
 
     private func statusPill(for state: MAPVLiveActivityAttributes.ContentState) -> some View {
-        Text(state.statusPillText)
-            .font(.caption2.weight(.bold))
-            .foregroundStyle(.white)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 3)
-            .background(pillColor(for: state.statusColorToken))
-            .clipShape(Capsule())
+        HStack(spacing: 4) {
+            Image(systemName: statusIcon(for: state.status))
+                .font(.caption2.weight(.bold))
+            Text(state.statusPillText)
+                .font(.caption2.weight(.bold))
+        }
+        .foregroundStyle(.white)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 3)
+        .background(pillColor(for: state.statusColorToken))
+        .clipShape(Capsule())
     }
 
     private func distanceText(for state: MAPVLiveActivityAttributes.ContentState) -> String {
@@ -145,12 +151,31 @@ struct MAPVLiveActivityWidget: Widget {
 
     private func pillColor(for token: MAPVStatusColorToken) -> Color {
         switch token {
-        case .blue: return Color(red: 0.12, green: 0.38, blue: 0.75)
-        case .green: return .green
-        case .orange: return .orange
-        case .red: return .red
-        case .gray: return .gray
-        case .indigo: return .indigo
+        case .blue: return Color(hex: "#246AA8")
+        case .green: return Color(hex: "#176E49")
+        case .orange: return Color(hex: "#9A5A14")
+        case .red: return Color(hex: "#C84637")
+        case .gray: return Color(hex: "#5A5F66")
+        case .indigo: return Color(hex: "#4F46A5")
+        }
+    }
+
+    private func statusIcon(for status: MAPVDisplayStatus) -> String {
+        switch status {
+        case .scheduled:
+            return "calendar"
+        case .open:
+            return "checkmark.circle"
+        case .enRoute:
+            return "location.fill"
+        case .closingSoon:
+            return "exclamationmark.circle"
+        case .closed:
+            return "lock.fill"
+        case .completed:
+            return "checkmark.circle.fill"
+        case .missed:
+            return "xmark.circle.fill"
         }
     }
 }
@@ -185,7 +210,7 @@ private struct DayTimelineView: View {
                     Capsule()
                         .fill(
                             LinearGradient(
-                                colors: [Color.green.opacity(0.85), Color.yellow.opacity(0.9)],
+                                colors: [Color(hex: "#176E49").opacity(0.85), Color(hex: "#9A5A14").opacity(0.9)],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
@@ -221,6 +246,22 @@ private struct DayTimelineView: View {
         guard total > 0 else { return 0 }
         let elapsed = date.timeIntervalSince(start)
         return CGFloat(max(0, min(elapsed / total, 1)))
+    }
+}
+
+private extension Color {
+    init(hex: String) {
+        let cleaned = hex
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: "#", with: "")
+
+        var value: UInt64 = 0
+        Scanner(string: cleaned).scanHexInt64(&value)
+
+        let r = Double((value & 0xFF0000) >> 16) / 255
+        let g = Double((value & 0x00FF00) >> 8) / 255
+        let b = Double(value & 0x0000FF) / 255
+        self.init(.sRGB, red: r, green: g, blue: b, opacity: 1)
     }
 }
 

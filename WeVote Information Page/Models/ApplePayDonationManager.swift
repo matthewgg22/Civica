@@ -92,7 +92,7 @@ final class ApplePayDonationManager: NSObject, ObservableObject {
 
         let amountNumber = NSDecimalNumber(decimal: amount)
         request.paymentSummaryItems = [
-            PKPaymentSummaryItem(label: "VoteNow Donation", amount: amountNumber, type: .final),
+            PKPaymentSummaryItem(label: "Civica Donation", amount: amountNumber, type: .final),
             PKPaymentSummaryItem(label: "Total", amount: amountNumber, type: .final)
         ]
         return request

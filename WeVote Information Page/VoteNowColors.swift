@@ -2,34 +2,64 @@ import SwiftUI
 import UIKit
 
 enum VoteNowColors {
-    // Core Brand Pastels
-    static let brandSoftBlue = Color(hex: "#B3DEF2")
-    static let brandSoftRed = Color(hex: "#DF5846")
+    // Semantic surfaces and text
+    static let canvasBackground = Color.dynamic(light: "#FFF8F3", dark: "#111418")
+    static let surfacePrimary = Color.dynamic(light: "#FFFFFF", dark: "#1B1F24")
+    static let surfaceSecondary = Color.dynamic(light: "#F7FAFD", dark: "#242A31")
+    static let borderSubtle = Color.dynamic(light: "#F1DDD3", dark: "#3A434D")
+    static let textPrimary = Color.dynamic(light: "#1F1B16", dark: "#F2F5F8")
+    static let textSecondary = Color.dynamic(light: "#6B5B54", dark: "#BCC6D0")
+    static let onPrimaryText = Color.dynamic(light: "#FFFFFF", dark: "#F8FBFF")
+    static let iconOnPrimarySurface = Color.dynamic(light: "#FFFFFF", dark: "#DCE8F4")
+    static let iconOnPrimaryBorder = Color.dynamic(light: "#FFFFFFE0", dark: "#DCE8F4E0")
+    static let shadowSoft = Color.dynamic(light: "#00000029", dark: "#00000080")
 
-    // Warm Neutrals
-    static let appBackground = Color(hex: "#FFF8F3")
-    static let surfaceWhite = Color(hex: "#FFFFFF")
-    static let borderWarm = Color(hex: "#F1DDD3")
-    static let mutedText = Color(hex: "#6B5B54")
-    static let primaryText = Color(hex: "#1F1B16")
+    // Core Brand tones
+    static let brandSoftBlue = Color.dynamic(light: "#B3DEF2", dark: "#3A596F")
+    static let brandSoftRed = Color.dynamic(light: "#DF5846", dark: "#8E3F36")
 
-    // Rich CTA Colors
-    static let ctaBlue = Color(hex: "#2B76B9")
-    static let ctaRed = Color(hex: "#C84637")
-    static let successGreen = Color(hex: "#1F8A5B")
-    static let warningAmber = Color(hex: "#D98B2B")
+    // Accent and state colors
+    static let ctaBlue = Color.dynamic(light: "#246AA8", dark: "#246AA8")
+    static let ctaBluePressed = Color.dynamic(light: "#1E5E95", dark: "#1E5E95")
+    static let ctaBlueDisabled = Color.dynamic(light: "#56738E", dark: "#506984")
+    static let ctaRed = Color.dynamic(light: "#C84637", dark: "#C84637")
+    static let ctaRedPressed = Color.dynamic(light: "#A1372B", dark: "#A1372B")
+    static let ctaRedDisabled = Color.dynamic(light: "#A35B53", dark: "#9D5952")
+    static let successGreen = Color.dynamic(light: "#176E49", dark: "#176E49")
+    static let warningAmber = Color.dynamic(light: "#9A5A14", dark: "#9A5A14")
+    static let neutralStatus = Color.dynamic(light: "#5A5F66", dark: "#5A5F66")
+    static let indigoStatus = Color.dynamic(light: "#4F46A5", dark: "#4F46A5")
 
     // Backward-compatible aliases used across existing views
     static let richBlue = ctaBlue
     static let richRed = ctaRed
     static let softBlue = brandSoftBlue
     static let softRed = brandSoftRed
-    static let background = appBackground
+    static let background = canvasBackground
+    static let appBackground = canvasBackground
+    static let surfaceWhite = surfacePrimary
+    static let borderWarm = borderSubtle
+    static let mutedText = textSecondary
+    static let primaryText = textPrimary
 
     static let primaryCTA = ctaBlue
     static let urgentCTA = ctaRed
-    static let infoSurfaceBlue = brandSoftBlue.opacity(0.32)
-    static let infoSurfaceRed = brandSoftRed.opacity(0.14)
+    static let infoSurfaceBlue = Color.dynamic(light: "#B3DEF252", dark: "#3A596F5F")
+    static let infoSurfaceRed = Color.dynamic(light: "#DF584624", dark: "#8E3F3638")
+    static let statusSuccessSurface = successGreen.opacity(0.14)
+    static let statusWarningSurface = warningAmber.opacity(0.15)
+    static let statusErrorSurface = urgentCTA.opacity(0.13)
+    static let statusInfoSurface = primaryCTA.opacity(0.12)
+    static let statusNeutralSurface = neutralStatus.opacity(0.13)
+    static let secondaryButtonFill = surfaceSecondary
+    static let secondaryButtonFillPressed = Color.dynamic(light: "#EAF4FB", dark: "#313B47")
+    static let secondaryButtonFillDisabled = Color.dynamic(light: "#EEF3F7", dark: "#252C33")
+    static let secondaryButtonBorder = ctaBlue.opacity(0.62)
+    static let secondaryButtonDisabledBorder = Color.dynamic(light: "#A5B4C2", dark: "#4D5A67")
+    static let mapvCardBackground = Color.dynamic(light: "#F3EBCB", dark: "#2A241B")
+    static let supportPageBackground = Color.dynamic(light: "#ACD5E3", dark: "#1A2833")
+    static let supportWarmSurface = Color.dynamic(light: "#F3D487", dark: "#3A2D15")
+    static let timelineFocusGold = Color.dynamic(light: "#D79B1F", dark: "#F3D487")
     static let cardCornerRadius: CGFloat = 12
 }
 
@@ -37,6 +67,15 @@ enum VoteNowColors {
 typealias VoteNowColor = VoteNowColors
 
 extension Color {
+    static func dynamic(light: String, dark: String) -> Color {
+        Color(
+            uiColor: UIColor { traits in
+                let hex = traits.userInterfaceStyle == .dark ? dark : light
+                return UIColor(hex: hex)
+            }
+        )
+    }
+
     init(hex: String) {
         let cleaned = hex
             .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -106,14 +145,22 @@ struct VoteNowPrimaryCTAButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundColor(.white)
+            .foregroundColor(VoteNowColors.onPrimaryText)
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(VoteNowColors.ctaBlue)
-                    .opacity(isEnabled ? (configuration.isPressed ? 0.84 : 1.0) : 0.5)
+                    .fill(backgroundColor(isPressed: configuration.isPressed))
             )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(VoteNowColors.primaryCTA.opacity(0.24), lineWidth: 1)
+            )
+    }
+
+    private func backgroundColor(isPressed: Bool) -> Color {
+        guard isEnabled else { return VoteNowColors.ctaBlueDisabled }
+        return isPressed ? VoteNowColors.ctaBluePressed : VoteNowColors.ctaBlue
     }
 }
 
@@ -122,14 +169,22 @@ struct VoteNowUrgentCTAButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundColor(.white)
+            .foregroundColor(VoteNowColors.onPrimaryText)
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(VoteNowColors.ctaRed)
-                    .opacity(isEnabled ? (configuration.isPressed ? 0.84 : 1.0) : 0.5)
+                    .fill(backgroundColor(isPressed: configuration.isPressed))
             )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(VoteNowColors.urgentCTA.opacity(0.24), lineWidth: 1)
+            )
+    }
+
+    private func backgroundColor(isPressed: Bool) -> Color {
+        guard isEnabled else { return VoteNowColors.ctaRedDisabled }
+        return isPressed ? VoteNowColors.ctaRedPressed : VoteNowColors.ctaRed
     }
 }
 

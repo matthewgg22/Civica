@@ -10,6 +10,7 @@ struct IssueCallCenterView: View {
     @StateObject private var viewModel: IssueCallCenterViewModel
     @StateObject private var waterfallController = EmojiWaterfallController()
     @AppStorage("feature.call_score_v1_enabled") private var callScoreV1Enabled = true
+    @AppStorage("onboarding.call_tab_intro_seen") private var hasSeenCallTabIntro = false
     @FocusState private var focusedField: FocusedField?
     @State private var shareItems: [Any] = []
     @State private var showingShareSheet = false
@@ -37,6 +38,8 @@ struct IssueCallCenterView: View {
     @State private var assistantMessages: [AssistantChatMessage] = []
     @State private var assistantIsThinking = false
     @State private var assistantFlowStage: AssistantFlowStage = .awaitingPrompt
+    @State private var showCallTabIntro = false
+    @State private var dismissedResidencyNoticeText: String?
     @State private var hasPostedCurrentDraftBackground = false
     @State private var animatedAssistantMessageIDs: Set<UUID> = []
     @State private var pendingBackgroundMessageID: UUID?
@@ -236,6 +239,13 @@ struct IssueCallCenterView: View {
             locale: locale,
             fallback: fallback
         )
+    }
+
+    private var hasReviewLocationContext: Bool {
+        if !userAddressLine.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return true
+        }
+        return !viewModel.repTargets.isEmpty
     }
 
     private var selectableAsks: [CivicAsk] {
@@ -552,6 +562,11 @@ struct IssueCallCenterView: View {
                 .zIndex(11)
                 .allowsHitTesting(false)
 
+            if showCallTabIntro {
+                callTabIntroOverlay
+                    .zIndex(20)
+                    .transition(.opacity)
+            }
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
@@ -597,6 +612,7 @@ struct IssueCallCenterView: View {
             if let activeID = viewModel.activeBriefID {
                 synchronizeScriptAccordionState(for: activeID)
             }
+            presentCallTabIntroIfNeeded()
         }
         .onDisappear {
             mapcTransitionResetTask?.cancel()
@@ -645,9 +661,6 @@ struct IssueCallCenterView: View {
             guard viewModel.shouldPromptForPendingCallCompletion() else { return }
             guard lastPromptedLaunchEventID != pending.launchEventID else { return }
             lastPromptedLaunchEventID = pending.launchEventID
-            Task {
-                await viewModel.confirmPendingCallCompletion(completed: true)
-            }
         }
         .onChange(of: viewModel.pendingCallLaunch?.launchEventID) { _, newValue in
             if newValue == nil {
@@ -687,6 +700,69 @@ struct IssueCallCenterView: View {
         }
         .onChange(of: viewModel.appWideCompletedCallsByIssueID) { _, _ in
             pruneResolvedOptimisticIssueGains()
+        }
+    }
+
+    private var callTabIntroOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.35)
+                .ignoresSafeArea()
+
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Call Your Reps")
+                    .font(.title3.weight(.bold))
+                    .foregroundColor(VoteNowColors.primaryText)
+
+                Text("Pick an issue, use a script, and log what happened after each call.")
+                    .font(.subheadline)
+                    .foregroundColor(VoteNowColors.mutedText)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Button("Ready to Call!") {
+                    dismissCallTabIntro()
+                }
+                .font(.headline.weight(.semibold))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 11)
+                .foregroundColor(.white)
+                .background(VoteNowColors.primaryCTA)
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("issue_call.intro.ready")
+            }
+            .padding(16)
+            .background(VoteNowColors.surfaceWhite)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+            )
+            .shadow(color: VoteNowColors.primaryText.opacity(0.2), radius: 14, x: 0, y: 4)
+            .padding(.horizontal, 20)
+        }
+    }
+
+    private func presentCallTabIntroIfNeeded() {
+        guard !hasSeenCallTabIntro else { return }
+        guard !showCallTabIntro else { return }
+        guard !isMAPCMode else { return }
+        if reduceMotion {
+            showCallTabIntro = true
+        } else {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                showCallTabIntro = true
+            }
+        }
+    }
+
+    private func dismissCallTabIntro() {
+        hasSeenCallTabIntro = true
+        if reduceMotion {
+            showCallTabIntro = false
+        } else {
+            withAnimation(.easeInOut(duration: 0.18)) {
+                showCallTabIntro = false
+            }
         }
     }
 
@@ -769,7 +845,7 @@ struct IssueCallCenterView: View {
                     Button {
                         openMyInfoPanel()
                     } label: {
-                        Text(l("app.reps.action.edit_location", "Edit Location"))
+                        Text(l("app.reps.action.edit_location", "Change Location"))
                             .font(.callout.weight(.semibold))
                             .italic()
                             .foregroundColor(VoteNowColors.primaryCTA)
@@ -781,39 +857,42 @@ struct IssueCallCenterView: View {
             .padding(.leading, 72)
             .padding(.top, -6)
 
-            if !residencyNotice.isEmpty {
+            if !residencyNotice.isEmpty && dismissedResidencyNoticeText != residencyNotice {
                 residencyNoticeView
                     .padding(.top, 8)
             }
         }
         .padding(.horizontal, 16)
-        .padding(.top, 2)
+        .padding(.top, 8)
         .padding(.bottom, 2)
         .background(VoteNowColors.brandSoftBlue)
     }
 
     private var residencyNoticeView: some View {
-        HStack(alignment: .top, spacing: 8) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.caption.weight(.bold))
-                .foregroundColor(Color(hex: "#9A6500"))
-                .padding(.top, 1)
-            Button {
-                openMyInfoPanel()
-            } label: {
-                (
-                    Text("\(residencyNotice) ")
-                        .font(.caption.weight(.semibold))
-                        .foregroundColor(Color(hex: "#6E4A00"))
-                    + Text(l("app.issue_call.location.change_address", "Change to your Address..."))
-                        .font(.caption.weight(.bold))
-                        .italic()
-                        .foregroundColor(VoteNowColors.primaryCTA)
-                )
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity, alignment: .leading)
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .top, spacing: 8) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.caption.weight(.bold))
+                    .foregroundColor(Color(hex: "#9A6500"))
+                    .padding(.top, 1)
+                Button {
+                    openMyInfoPanel()
+                } label: {
+                    (
+                        Text("\(residencyNotice) ")
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(Color(hex: "#6E4A00"))
+                        + Text(l("app.issue_call.location.change_address", "Change to your Address..."))
+                            .font(.caption.weight(.bold))
+                            .italic()
+                            .foregroundColor(VoteNowColors.primaryCTA)
+                    )
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
+            .padding(.trailing, 30)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 10)
@@ -824,6 +903,25 @@ struct IssueCallCenterView: View {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .stroke(Color(hex: "#F2D38B"), lineWidth: 1)
         )
+        .overlay(alignment: .topTrailing) {
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    dismissedResidencyNoticeText = residencyNotice
+                }
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.caption2.weight(.bold))
+                    .foregroundColor(Color(hex: "#6E4A00"))
+                    .frame(width: 28, height: 28)
+                    .background(Color(hex: "#FFE8B8"))
+                    .clipShape(Circle())
+            }
+            .buttonStyle(.plain)
+            .contentShape(Rectangle())
+            .accessibilityLabel(l("app.issue_call.location.warning.dismiss", "Dismiss warning"))
+            .padding(.top, 4)
+            .padding(.trailing, 4)
+        }
     }
 
     private func openMyInfoPanel() {
@@ -1170,13 +1268,6 @@ struct IssueCallCenterView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
-                    #if DEBUG
-                    if viewModel.mapcPipelineV3Enabled {
-                        // mapc_pipeline_v3 — remove flag check after rollout confirmed
-                        mapcV3DebugBadge
-                    }
-                    #endif
-
                     if viewModel.lastCompletionResult != nil {
                         completionFeedbackCard
                     }
@@ -1410,10 +1501,6 @@ struct IssueCallCenterView: View {
         VStack(alignment: .leading, spacing: 8) {
             if viewModel.mapcPipelineV3Enabled {
                 // mapc_pipeline_v3 — remove flag check after rollout confirmed
-                Text("I read this as: \(viewModel.mapcV3DisplayIssue)")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundColor(VoteNowColors.primaryText)
-
                 Text("Pick the first action you want the office to take.")
                     .font(.caption.weight(.semibold))
                     .foregroundColor(VoteNowColors.mutedText)
@@ -1548,7 +1635,7 @@ struct IssueCallCenterView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundColor(VoteNowColors.primaryText)
 
-                Text("Looks right moves to final approval. Fix this keeps this ask and lets you adjust details.")
+                Text("Looks right approves this script and moves you into call flow.")
                     .font(.caption.weight(.semibold))
                     .foregroundColor(VoteNowColors.mutedText)
 
@@ -1596,32 +1683,9 @@ struct IssueCallCenterView: View {
 
     private var assistantStartMAPCActions: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Your call guide is ready. Approve and call, or fix the wording first.")
+            Text("Approve and call when ready.")
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(VoteNowColors.primaryText)
-
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 145), spacing: 8)], spacing: 8) {
-                ForEach(MAPCAgenticStrategyChip.allCases) { chip in
-                    Button {
-                        applyMAPCAgenticStrategyChip(chip)
-                    } label: {
-                        Text(chip.rawValue)
-                            .font(.caption.weight(.semibold))
-                            .foregroundColor(VoteNowColors.primaryText)
-                            .multilineTextAlignment(.leading)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 9)
-                            .background(VoteNowColors.surfaceWhite)
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
-                            )
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
 
             HStack(spacing: 8) {
                 Button {
@@ -2159,8 +2223,10 @@ struct IssueCallCenterView: View {
         assistantFlowStage = .awaitingMapcStart
     }
 
-    private func startMAPCFromChat() {
-        guard assistantFlowStage == .awaitingMapcStart else { return }
+    private func startMAPCFromChat(force: Bool = false) {
+        if !force {
+            guard assistantFlowStage == .awaitingMapcStart else { return }
+        }
         if viewModel.mapcPipelineV3Enabled && !hasAcceptedCurrentMAPCV3Preview {
             // mapc_pipeline_v3 — remove flag check after rollout confirmed
             appendAssistantBotMessage(
@@ -2175,11 +2241,6 @@ struct IssueCallCenterView: View {
         // mapc_pipeline_v3 — remove flag check after rollout confirmed
         viewModel.markMAPCV3ApprovedByUser()
         viewModel.approveGeneratedDraft()
-        appendAssistantBotMessage(
-            "Your call guide is ready. Approve and call, or fix the wording first.",
-            kind: .plain,
-            messageType: "mapc_launch"
-        )
         assistantFlowStage = .awaitingPrompt
         hasPostedCurrentDraftBackground = false
         hasAcceptedCurrentMAPCV3Preview = false
@@ -2190,6 +2251,7 @@ struct IssueCallCenterView: View {
         isScriptPreviewReadyForMAPCActions = false
         currentBackgroundDiscussionOptions = []
         suppressTranslationForNextBackground = false
+        clearAssistantChatForMAPCEntry()
     }
 
     private func applyMAPCAgenticStrategyChip(_ chip: MAPCAgenticStrategyChip) {
@@ -2313,12 +2375,6 @@ struct IssueCallCenterView: View {
 
     private func selectMAPCV3OptionInChat(_ option: CivicMAPCV3PreparedOption) {
         guard !assistantIsThinking, !viewModel.isSubmitting else { return }
-        print(
-            "🧭 [Founder Trace] User tapped follow-up option. " +
-            "option_id=\(option.optionID) " +
-            "ask_type=\(option.askType) " +
-            "display_ask=\(option.displayAsk)"
-        )
         if isMAPCV3OtherOption(option) {
             // mapc_pipeline_v3 — remove flag check after rollout confirmed
             promptForCustomMAPCV3ConcernInput()
@@ -2379,11 +2435,11 @@ struct IssueCallCenterView: View {
     private func confirmMAPCV3PreviewInChat() {
         guard !assistantIsThinking, !viewModel.isSubmitting else { return }
         // mapc_pipeline_v3 — remove flag check after rollout confirmed
-        // Preview confirmation now happens after preview is visible; no regeneration here.
+        // Preview confirmation now immediately advances into approval/call flow.
         appendAssistantUserMessage("Selected: Looks right", messageType: "preview_confirm")
         hasAcceptedCurrentMAPCV3Preview = true
         viewModel.mapcV3SessionState = "script_shown"
-        assistantFlowStage = .awaitingMapcStart
+        startMAPCFromChat(force: true)
     }
 
     private func processMAPCV3ConfirmedResult() {
@@ -2588,6 +2644,12 @@ struct IssueCallCenterView: View {
     }
 
     private func hasDisallowedPlaceholder(in script: String) -> Bool {
+        let allowedPlaceholders: Set<String> = [
+            "[zip]",
+            "[first name]",
+            "[first_name]",
+            "[your first name]"
+        ]
         let nsrange = NSRange(script.startIndex..<script.endIndex, in: script)
         guard let regex = try? NSRegularExpression(pattern: #"\[[^\]]+\]"#, options: []) else {
             return false
@@ -2595,8 +2657,11 @@ struct IssueCallCenterView: View {
         let matches = regex.matches(in: script, options: [], range: nsrange)
         for match in matches {
             guard let range = Range(match.range, in: script) else { continue }
-            let token = script[range].lowercased()
-            if token != "[zip]" {
+            let token = script[range]
+                .lowercased()
+                .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            if !allowedPlaceholders.contains(token) {
                 return true
             }
         }
@@ -2641,16 +2706,23 @@ struct IssueCallCenterView: View {
     private func closeRequestsPositionOrNextStep(_ script: String) -> Bool {
         let sentences = splitSentences(script)
         guard let last = sentences.last else { return false }
-        let lowered = normalizeLintText(last)
-
-        if lowered.contains("position") && (lowered.contains("office") || lowered.contains("member")) {
-            return true
+        let recent = sentences.suffix(2).map(normalizeLintText(_:))
+        for lowered in recent {
+            if lowered.contains("thank you") || lowered.contains("thanks") {
+                return true
+            }
+            if lowered.contains("position") && (lowered.contains("office") || lowered.contains("member")) {
+                return true
+            }
+            if lowered.contains("next step") {
+                return true
+            }
+            let supportPattern = #"(whether|will)\s+the\s+office\s+(support|oppose|back|vote|fund|investigate|require|restrict|issue)"#
+            if lowered.range(of: supportPattern, options: .regularExpression) != nil {
+                return true
+            }
         }
-        if lowered.contains("next step") {
-            return true
-        }
-        let supportPattern = #"(whether|will)\s+the\s+office\s+(support|oppose|back|vote|fund|investigate|require|restrict|issue)"#
-        return lowered.range(of: supportPattern, options: .regularExpression) != nil
+        return false
     }
 
     private func directRawIssueCopyDetected(script: String, rawIssue: String) -> Bool {
@@ -3423,7 +3495,8 @@ struct IssueCallCenterView: View {
                         DispatchQueue.main.async {
                             ReviewPromptManager.shared.markMAPCCompleted(
                                 isInErrorState: viewModel.errorMessage != nil,
-                                isFlowInterrupted: showingShareSheet
+                                isFlowInterrupted: showingShareSheet,
+                                hasLocationSet: hasReviewLocationContext
                             )
                         }
                         startMAPCCallGainAnimation(gain: mapcGain)
@@ -3699,6 +3772,7 @@ struct IssueCallCenterView: View {
                             focusedField = nil
                             didCompleteMAPC = false
                             isTalkingPointsExpanded = false
+                            clearAssistantChatForMAPCEntry()
                             withAnimation(.easeInOut(duration: 0.28)) {
                                 viewModel.startMAPC(from: example)
                             }
@@ -4056,6 +4130,7 @@ struct IssueCallCenterView: View {
                             didCompleteMAPC = false
                             mapcSessionLoggedBriefIDs.removeAll()
                             mapcOptimisticIssueGains.removeAll()
+                            clearAssistantChatForMAPCEntry()
                             viewModel.reopen(historyGroup: group.representativeGroup)
                         } label: {
                             Text(l("app.issue_call.history.reopen", "Call again"))
@@ -4315,23 +4390,26 @@ struct IssueCallCenterView: View {
         return l("app.issue_call.title", "Call Your Reps")
     }
 
+    @ViewBuilder
     private var shareActionButton: some View {
-        Button {
-            shareCurrentCivicCard()
-        } label: {
-            Image(systemName: "square.and.arrow.up")
-                .font(.subheadline.weight(.semibold))
-                .foregroundColor(VoteNowColors.primaryCTA)
-                .frame(width: 34, height: 34)
-                .background(VoteNowColors.surfaceWhite)
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .stroke(VoteNowColors.primaryCTA.opacity(0.4), lineWidth: 1)
-                )
+        if VoteNowLaunchFeatures.shareActionsEnabled {
+            Button {
+                shareCurrentCivicCard()
+            } label: {
+                Image(systemName: "square.and.arrow.up")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(VoteNowColors.primaryCTA)
+                    .frame(width: 34, height: 34)
+                    .background(VoteNowColors.surfaceWhite)
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .stroke(VoteNowColors.primaryCTA.opacity(0.4), lineWidth: 1)
+                    )
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("issue_call.share")
         }
-        .buttonStyle(.plain)
-        .accessibilityIdentifier("issue_call.share")
     }
 
     private func shareCurrentCivicCard() {
@@ -4342,7 +4420,7 @@ struct IssueCallCenterView: View {
         let subtitle = summary.isEmpty
             ? l(
                 "app.issue_call.share.subtitle.default",
-                "VoteNow gives you a script, contact details, and call steps so you can act in minutes."
+                "Civica gives you a script, contact details, and call steps so you can act in minutes."
             )
             : summary
 
@@ -4559,6 +4637,30 @@ struct IssueCallCenterView: View {
         } else {
             viewModel.resetScriptChatSession()
         }
+    }
+
+    private func clearAssistantChatForMAPCEntry() {
+        let introMessage = AssistantChatMessage.assistant(Self.assistantIntroText)
+        assistantMessages = [introMessage]
+        assistantComposerText = ""
+        assistantIsThinking = false
+        assistantFlowStage = .awaitingPrompt
+        hasPostedCurrentDraftBackground = false
+        pendingBackgroundMessageID = nil
+        isBackgroundMessageReadyForActions = false
+        pendingScriptPreviewMessageID = nil
+        queuedScriptPreviewMessage = nil
+        isScriptPreviewReadyForMAPCActions = false
+        currentBackgroundDiscussionOptions = []
+        hasPickedDiscussionOptionInCurrentCycle = false
+        previewLintBlocked = false
+        hasRetriedPreviewLintRegeneration = false
+        hasAcceptedCurrentMAPCV3Preview = false
+        awaitingCustomAgenticStrategyInput = false
+        awaitingCustomAskInput = false
+        suppressTranslationForNextBackground = false
+        animatedAssistantMessageIDs = [introMessage.id]
+        viewModel.resetScriptChatSession()
     }
 
     private func appendAssistantUserMessage(

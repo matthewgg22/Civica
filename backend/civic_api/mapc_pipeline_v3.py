@@ -115,7 +115,7 @@ Return JSON only:
 
 Hard constraints:
 1. Target 43 to 97 words total for each script.
-2. Required structure: constituent introduction, then issue framing in 1 to 2 sentences, then one clear ask, then one or two reasons, then a close that requests a specific action or the office's stated position.
+2. Required structure: constituent introduction, then issue framing in 1 to 2 sentences, then one clear ask, then one or two reasons, then a courteous close ending with "Thank you."
 3. Average sentence length must be 18 words or fewer.
 4. The ask sentence must use active voice.
 5. The constituent's identity or location must appear within the first 2 sentences.
@@ -123,7 +123,7 @@ Hard constraints:
 7. No acronyms unless defined first.
 8. No template markers of any kind except [ZIP], which the user fills in before placing the call.
 9. Do not paste user text verbatim. Synthesize it into natural spoken language.
-10. Do not close with "consider". The close must request a specific action or ask the office to state its position.
+10. Do not close with "consider". End with a direct courteous close and "Thank you."
 11. The phrase "oppose this issue" is prohibited because it is not a meaningful congressional ask.
 12. [ZIP] represents the caller's ZIP code and must only appear in a location context such as 'I'm calling from [ZIP]' or 'I'm a constituent in [ZIP].' Never place [ZIP] after 'my name is' or any name-reference phrasing."""
 
@@ -196,7 +196,8 @@ class MAPCPipelineV3Service:
 
     @property
     def enabled(self) -> bool:
-        return _env_flag("mapc_pipeline_v3_enabled", default=True)
+        # Launch default is off; can be explicitly enabled in controlled environments.
+        return _env_flag("mapc_pipeline_v3_enabled", default=False)
 
     def interpret(self, payload: dict[str, Any], user_id: str) -> dict[str, Any]:
         self._require_enabled()
@@ -915,7 +916,7 @@ class MAPCPipelineV3Service:
                 "Apply strict MAPC script lint. Remove placeholders except [ZIP]. Keep [ZIP] only in a location phrase. "
                 "Do not write 'support this issue' or 'oppose this issue'. Avoid malformed asks. "
                 "Keep the ask sentence specific and actionable in plain spoken language. "
-                "Close by asking the office's position, the member's next step, or whether the office will support the action. "
+                "End with a courteous close that says thank you. "
                 "Do not copy raw user wording verbatim."
             )
             scripts = {k: _normalized_text(retried.get(k)) for k in scripts}
@@ -1885,13 +1886,13 @@ def _deterministic_action_sentence(selected_option: dict[str, Any], session_obj:
         if _contains_concrete_action_verb(candidate):
             return f"Please {candidate}."
     mapping: tuple[tuple[str, str], ...] = (
-        ("legislation", "Please vote yes on this legislative action and state the office position."),
+        ("legislation", "Please vote yes on this legislative action."),
         ("appropriations", "Please fund this priority in the next appropriations package."),
         ("funding", "Please fund this priority in the next appropriations package."),
         ("oversight", "Please require public reporting deadlines and oversight updates."),
         ("reporting", "Please require public reporting deadlines and oversight updates."),
-        ("nomination", "Please issue a public statement and share the office vote position."),
-        ("vote", "Please vote yes on this action and share the office position."),
+        ("nomination", "Please issue a public statement on this nomination."),
+        ("vote", "Please vote yes on this action."),
         ("public_statement", "Please issue a clear public statement on this action."),
         ("sanctions", "Please investigate sanctions enforcement and require public reporting."),
         ("export", "Please investigate export-control enforcement and require public reporting."),
@@ -1906,8 +1907,8 @@ def _deterministic_action_sentence(selected_option: dict[str, Any], session_obj:
             return sentence
     stance = _normalized_text(session_obj.get("stance")).lower()
     if stance == "oppose":
-        return "Please oppose this specific policy action and state the office position."
-    return "Please support this specific policy action and state the office position."
+        return "Please oppose this specific policy action."
+    return "Please support this specific policy action."
 
 
 def _inject_missing_action_sentence(script: str, action_sentence: str) -> str:
@@ -1963,14 +1964,14 @@ def _build_lint_safe_scripts(*, session_obj: dict[str, Any], selected_option: di
         f"I'm calling about {issue_phrase}. "
         f"{action_sentence}. "
         f"This would help address {target_phrase} and improve accountability. "
-        "Will the office support this action and share the member's next step?"
+        "Thank you for your time."
     )
     voicemail_script = (
         "Hi, I'm a constituent from [ZIP], and I'm leaving a quick message. "
         f"I'm calling about {issue_phrase}. "
         f"{action_sentence}. "
         f"This would help address {target_phrase}. "
-        "Please share whether the office will support this action and the member's next step."
+        "Thank you."
     )
 
     return (
@@ -1983,10 +1984,12 @@ def _close_requests_position_or_next_step(script: str) -> bool:
     sentences = _sentence_list(script)
     if not sentences:
         return False
-    # Accept the closing request if it appears in the final sentence
+    # Accept courteous MAPC closes if they appear in the final sentence
     # or the second-to-last sentence (padding may append one last sentence).
     candidate_closes = [line.lower() for line in sentences[-2:]]
     for close_line in candidate_closes:
+        if "thank you" in close_line or close_line.strip().endswith("thanks"):
+            return True
         if ("office" in close_line or "member" in close_line) and "position" in close_line:
             return True
         if "next step" in close_line:
@@ -2321,12 +2324,12 @@ def _offline_script(*, session_obj: dict[str, Any], selected_option: dict[str, A
     live = (
         f"Hi, I’m a constituent from [ZIP]. I’m calling about {issue.lower()}. "
         f"Please {ask.lower()}. This step would address a concrete public harm and improve accountability. "
-        "Families need timely action, not delay. Will the office support this action this session and share its position?"
+        "Families need timely action, not delay. Thank you for your time."
     )
     voicemail = (
         f"Hi, I’m a constituent from [ZIP] calling about {issue.lower()}. "
         f"Please {ask.lower()}. This action would improve accountability and protect affected families. "
-        "Please share whether the office supports this action and what step comes next."
+        "Thank you."
     )
     live = _pad_to_min_words(live, minimum=43)
     voicemail = _pad_to_min_words(voicemail, minimum=43)
@@ -2385,5 +2388,5 @@ def _pad_to_min_words(text: str, minimum: int) -> str:
     if _word_count(padded) >= minimum:
         return padded
     while _word_count(padded) < minimum:
-        padded += " Please share the office position."
+        padded += " Thank you for your time."
     return padded
