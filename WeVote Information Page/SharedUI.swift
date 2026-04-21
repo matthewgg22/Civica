@@ -1073,7 +1073,16 @@ struct VoteNowShareCardPayload {
     }
 
     var shareURL: URL? {
-        guard var components = URLComponents(string: "https://votenow.app/share/\(cardType.rawValue)") else {
+        let configuredBase = (
+            Bundle.main.object(forInfoDictionaryKey: "SHARE_WEB_BASE_URL") as? String
+        )?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let fallbackBase = (
+            Bundle.main.object(forInfoDictionaryKey: "CIVIC_API_BASE_URL") as? String
+        )?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let base = (configuredBase?.isEmpty == false ? configuredBase : fallbackBase) ?? "https://votenow-botr.onrender.com"
+        let normalizedBase = base.hasSuffix("/") ? String(base.dropLast()) : base
+
+        guard var components = URLComponents(string: "\(normalizedBase)/share/\(cardType.rawValue)") else {
             return nil
         }
 
