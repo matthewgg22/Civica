@@ -1,0 +1,240 @@
+import Foundation
+
+// EXPERIMENTAL SILOED MODULE:
+// Static state resource references for prototype guidance only.
+// Keep this as local constants data (no scraping, no runtime fetches).
+//
+// Timeline values below are adapted from:
+// /Users/matthewgreer-gentis/Downloads/SNAP_Application_Timeline_50_States_App_Memo.xlsx
+// (State Timelines + Process Timeline sheets).
+enum SNAPStateResources {
+    static let massachusetts = SNAPStateResource(
+        stateCode: "MA",
+        displayName: "Massachusetts",
+        agencyName: "Department of Transitional Assistance",
+        officialApplicationLabel: "DTA Connect",
+        // TODO(legal/source-verification): Confirm final public application URL with approved policy/compliance source.
+        officialApplicationURL: "https://dtaconnect.eohhs.mass.gov/",
+        // TODO(legal/source-verification): Replace with confirmed public helpline label/number from approved source.
+        phoneHelpLabel: "DTA Assistance Line (placeholder)",
+        notes: "Massachusetts residents generally apply through DTA Connect or official DTA channels."
+    )
+
+    static func resource(for stateCode: String?) -> SNAPStateResource? {
+        let normalized = normalizedStateCode(stateCode)
+        switch normalized {
+        case "MA":
+            return massachusetts
+        default:
+            return nil
+        }
+    }
+
+    static func timelineContext(for stateCode: String?) -> SNAPStateTimelineContext? {
+        let normalized = normalizedStateCode(stateCode)
+        return stateTimelineByCode[normalized]
+    }
+
+    static let federalTimelineSummary = SNAPFederalTimelineSummary(
+        regularSNAPDeadline: "Most completed SNAP applications get a decision within 30 days.",
+        expeditedSNAPDeadline: "If you qualify for expedited SNAP, benefits can be available within 7 days.",
+        firstContactGuidance: "You may hear from the office by phone, mail, text, email, or portal message while your case is being reviewed.",
+        interviewTiming: "Many people need an interview. Try to answer calls and return missed calls quickly.",
+        documentsVerificationWindow: "If documents are requested, you usually have at least 10 days to send them.",
+        expeditedCriteria: "Expedited screening may apply if your income and available cash are very low compared with basic costs like housing and utilities."
+    )
+
+    static let processTimelineSteps: [SNAPProcessTimelineStep] = [
+        .init(
+            stepNumber: 1,
+            appStatusLabel: "Application submitted",
+            typicalDayRange: "Day 0",
+            applicantAction: "Save your confirmation details and gather basic documents if you have them.",
+            appFriendlyCopy: "We received your SNAP application. The review clock starts today."
+        ),
+        .init(
+            stepNumber: 2,
+            appStatusLabel: "Expedited screening",
+            typicalDayRange: "Day 0-7",
+            applicantAction: "If money is very tight, tell the office right away so they can check faster processing.",
+            appFriendlyCopy: "We are checking whether your case qualifies for faster SNAP processing."
+        ),
+        .init(
+            stepNumber: 3,
+            appStatusLabel: "Interview needed",
+            typicalDayRange: "As soon as possible",
+            applicantAction: "Watch for a call or message and respond quickly if you miss it.",
+            appFriendlyCopy: "You may need an interview before your SNAP decision. Watch for a call or notice."
+        ),
+        .init(
+            stepNumber: 4,
+            appStatusLabel: "Documents needed",
+            typicalDayRange: "Usually after interview or notice",
+            applicantAction: "Send requested documents by the due date. Ask for help if you cannot get a document.",
+            appFriendlyCopy: "We may need documents to finish your case. Send them by the due date on your notice."
+        ),
+        .init(
+            stepNumber: 5,
+            appStatusLabel: "Expedited benefits",
+            typicalDayRange: "By Day 7",
+            applicantAction: "Check EBT card and PIN delivery or pickup details.",
+            appFriendlyCopy: "If you qualify for expedited SNAP, benefits should be available within 7 calendar days."
+        ),
+        .init(
+            stepNumber: 6,
+            appStatusLabel: "Regular decision",
+            typicalDayRange: "By Day 30",
+            applicantAction: "Check your notice for approval, amount, or next steps.",
+            appFriendlyCopy: "Most completed SNAP applications should receive a decision or benefits within 30 calendar days."
+        ),
+        .init(
+            stepNumber: 7,
+            appStatusLabel: "Missed interview",
+            typicalDayRange: "Before Day 30",
+            applicantAction: "Contact the office immediately to reschedule; do not wait for Day 30.",
+            appFriendlyCopy: "You missed an interview. Contact the SNAP office as soon as possible to reschedule."
+        ),
+        .init(
+            stepNumber: 8,
+            appStatusLabel: "Still processing",
+            typicalDayRange: "After Day 30",
+            applicantAction: "Call the office, check your portal, and review notices for what to do next.",
+            appFriendlyCopy: "Your case is past the usual 30-day window. Contact the SNAP office for status and next steps."
+        )
+    ]
+
+    private static let stateTimelineByCode: [String: SNAPStateTimelineContext] = [
+        "AL": makeTimeline(stateCode: "AL", displayName: "Alabama", onTimeRateFY2024: 0.9302, timelinessBand: "High on-time (90%+)"),
+        "AK": makeTimeline(stateCode: "AK", displayName: "Alaska", onTimeRateFY2024: 0.5793, timelinessBand: "Watch closely (<75%)"),
+        "AZ": makeTimeline(stateCode: "AZ", displayName: "Arizona", onTimeRateFY2024: 0.9029, timelinessBand: "High on-time (90%+)"),
+        "AR": makeTimeline(stateCode: "AR", displayName: "Arkansas", onTimeRateFY2024: 0.6194, timelinessBand: "Watch closely (<75%)"),
+        "CA": makeTimeline(stateCode: "CA", displayName: "California", onTimeRateFY2024: 0.8021, timelinessBand: "Moderate / monitor"),
+        "CO": makeTimeline(stateCode: "CO", displayName: "Colorado", onTimeRateFY2024: 0.6687, timelinessBand: "Watch closely (<75%)"),
+        "CT": makeTimeline(stateCode: "CT", displayName: "Connecticut", onTimeRateFY2024: 0.8911, timelinessBand: "Moderate / monitor"),
+        "DE": makeTimeline(stateCode: "DE", displayName: "Delaware", onTimeRateFY2024: 0.7508, timelinessBand: "Moderate / monitor"),
+        "FL": makeTimeline(stateCode: "FL", displayName: "Florida", onTimeRateFY2024: 0.6331, timelinessBand: "Watch closely (<75%)"),
+        "GA": makeTimeline(stateCode: "GA", displayName: "Georgia", onTimeRateFY2024: 0.6722, timelinessBand: "Watch closely (<75%)"),
+        "HI": makeTimeline(stateCode: "HI", displayName: "Hawaii", onTimeRateFY2024: 0.6887, timelinessBand: "Watch closely (<75%)"),
+        "ID": makeTimeline(stateCode: "ID", displayName: "Idaho", onTimeRateFY2024: 0.9102, timelinessBand: "High on-time (90%+)"),
+        "IL": makeTimeline(stateCode: "IL", displayName: "Illinois", onTimeRateFY2024: 0.9356, timelinessBand: "High on-time (90%+)"),
+        "IN": makeTimeline(stateCode: "IN", displayName: "Indiana", onTimeRateFY2024: 0.8004, timelinessBand: "Moderate / monitor"),
+        "IA": makeTimeline(stateCode: "IA", displayName: "Iowa", onTimeRateFY2024: 0.6466, timelinessBand: "Watch closely (<75%)"),
+        "KS": makeTimeline(stateCode: "KS", displayName: "Kansas", onTimeRateFY2024: 0.8199, timelinessBand: "Moderate / monitor"),
+        "KY": makeTimeline(stateCode: "KY", displayName: "Kentucky", onTimeRateFY2024: 0.8738, timelinessBand: "Moderate / monitor"),
+        "LA": makeTimeline(stateCode: "LA", displayName: "Louisiana", onTimeRateFY2024: 0.8708, timelinessBand: "Moderate / monitor"),
+        "ME": makeTimeline(stateCode: "ME", displayName: "Maine", onTimeRateFY2024: 0.6493, timelinessBand: "Watch closely (<75%)"),
+        "MD": makeTimeline(stateCode: "MD", displayName: "Maryland", onTimeRateFY2024: 0.9104, timelinessBand: "High on-time (90%+)"),
+        "MA": makeTimeline(stateCode: "MA", displayName: "Massachusetts", onTimeRateFY2024: 0.8545, timelinessBand: "Moderate / monitor"),
+        "MI": makeTimeline(stateCode: "MI", displayName: "Michigan", onTimeRateFY2024: 0.7605, timelinessBand: "Moderate / monitor"),
+        "MN": makeTimeline(stateCode: "MN", displayName: "Minnesota", onTimeRateFY2024: 0.8037, timelinessBand: "Moderate / monitor"),
+        "MS": makeTimeline(stateCode: "MS", displayName: "Mississippi", onTimeRateFY2024: 0.7938, timelinessBand: "Moderate / monitor"),
+        "MO": makeTimeline(stateCode: "MO", displayName: "Missouri", onTimeRateFY2024: 0.7828, timelinessBand: "Moderate / monitor"),
+        "MT": makeTimeline(stateCode: "MT", displayName: "Montana", onTimeRateFY2024: 0.6688, timelinessBand: "Watch closely (<75%)"),
+        "NE": makeTimeline(stateCode: "NE", displayName: "Nebraska", onTimeRateFY2024: 0.8896, timelinessBand: "Moderate / monitor"),
+        "NV": makeTimeline(stateCode: "NV", displayName: "Nevada", onTimeRateFY2024: 0.9309, timelinessBand: "High on-time (90%+)"),
+        "NH": makeTimeline(stateCode: "NH", displayName: "New Hampshire", onTimeRateFY2024: 0.8932, timelinessBand: "Moderate / monitor"),
+        "NJ": makeTimeline(stateCode: "NJ", displayName: "New Jersey", onTimeRateFY2024: 0.7761, timelinessBand: "Moderate / monitor"),
+        "NM": makeTimeline(stateCode: "NM", displayName: "New Mexico", onTimeRateFY2024: 0.5236, timelinessBand: "Watch closely (<75%)"),
+        "NY": makeTimeline(stateCode: "NY", displayName: "New York", onTimeRateFY2024: 0.8161, timelinessBand: "Moderate / monitor"),
+        "NC": makeTimeline(stateCode: "NC", displayName: "North Carolina", onTimeRateFY2024: 0.8440, timelinessBand: "Moderate / monitor"),
+        "ND": makeTimeline(stateCode: "ND", displayName: "North Dakota", onTimeRateFY2024: 0.5702, timelinessBand: "Watch closely (<75%)"),
+        "OH": makeTimeline(stateCode: "OH", displayName: "Ohio", onTimeRateFY2024: 0.9193, timelinessBand: "High on-time (90%+)"),
+        "OK": makeTimeline(stateCode: "OK", displayName: "Oklahoma", onTimeRateFY2024: 0.8865, timelinessBand: "Moderate / monitor"),
+        "OR": makeTimeline(stateCode: "OR", displayName: "Oregon", onTimeRateFY2024: 0.7183, timelinessBand: "Watch closely (<75%)"),
+        "PA": makeTimeline(stateCode: "PA", displayName: "Pennsylvania", onTimeRateFY2024: 0.9029, timelinessBand: "High on-time (90%+)"),
+        "RI": makeTimeline(stateCode: "RI", displayName: "Rhode Island", onTimeRateFY2024: 0.9352, timelinessBand: "High on-time (90%+)"),
+        "SC": makeTimeline(stateCode: "SC", displayName: "South Carolina", onTimeRateFY2024: 0.7348, timelinessBand: "Watch closely (<75%)"),
+        "SD": makeTimeline(stateCode: "SD", displayName: "South Dakota", onTimeRateFY2024: 0.8589, timelinessBand: "Moderate / monitor"),
+        "TN": makeTimeline(stateCode: "TN", displayName: "Tennessee", onTimeRateFY2024: 0.4272, timelinessBand: "Watch closely (<75%)"),
+        "TX": makeTimeline(stateCode: "TX", displayName: "Texas", onTimeRateFY2024: 0.7548, timelinessBand: "Moderate / monitor"),
+        "UT": makeTimeline(stateCode: "UT", displayName: "Utah", onTimeRateFY2024: 0.8982, timelinessBand: "Moderate / monitor"),
+        "VT": makeTimeline(stateCode: "VT", displayName: "Vermont", onTimeRateFY2024: 0.8447, timelinessBand: "Moderate / monitor"),
+        "VA": makeTimeline(stateCode: "VA", displayName: "Virginia", onTimeRateFY2024: 0.8323, timelinessBand: "Moderate / monitor"),
+        "WA": makeTimeline(stateCode: "WA", displayName: "Washington", onTimeRateFY2024: 0.9036, timelinessBand: "High on-time (90%+)"),
+        "WV": makeTimeline(stateCode: "WV", displayName: "West Virginia", onTimeRateFY2024: 0.7580, timelinessBand: "Moderate / monitor"),
+        "WI": makeTimeline(stateCode: "WI", displayName: "Wisconsin", onTimeRateFY2024: 0.9562, timelinessBand: "High on-time (90%+)"),
+        "WY": makeTimeline(stateCode: "WY", displayName: "Wyoming", onTimeRateFY2024: 0.9043, timelinessBand: "High on-time (90%+)")
+    ]
+
+    private static let standardFollowUpInApp = "If you do not get an interview or notice by around Day 10-14, check your portal or call the SNAP office."
+    private static let earlyFollowUpInApp = "Follow up early: check your portal or call around Day 7-10, and again before Day 30 if needed."
+
+    private static func followUpSuggestion(for timelinessBand: String) -> String {
+        if timelinessBand.contains("Watch closely") {
+            return earlyFollowUpInApp
+        }
+        return standardFollowUpInApp
+    }
+
+    private static func makeTimeline(
+        stateCode: String,
+        displayName: String,
+        onTimeRateFY2024: Double,
+        timelinessBand: String
+    ) -> SNAPStateTimelineContext {
+        SNAPStateTimelineContext(
+            stateCode: stateCode,
+            displayName: displayName,
+            onTimeRateFY2024: onTimeRateFY2024,
+            timelinessBand: timelinessBand,
+            suggestedFollowUpInApp: followUpSuggestion(for: timelinessBand)
+        )
+    }
+
+    private static func normalizedStateCode(_ stateCode: String?) -> String {
+        (stateCode ?? "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .uppercased()
+    }
+}
+
+struct SNAPStateResource: Equatable {
+    let stateCode: String
+    let displayName: String
+    let agencyName: String
+    let officialApplicationLabel: String
+    let officialApplicationURL: String
+    let phoneHelpLabel: String
+    let notes: String
+}
+
+struct SNAPStateTimelineContext: Equatable {
+    let stateCode: String
+    let displayName: String
+    let onTimeRateFY2024: Double
+    let timelinessBand: String
+    let suggestedFollowUpInApp: String
+
+    var onTimeRatePercentText: String {
+        String(format: "%.1f%%", onTimeRateFY2024 * 100)
+    }
+
+    var laymanBandLabel: String {
+        if timelinessBand.contains("High on-time") {
+            return "Usually on time"
+        }
+        if timelinessBand.contains("Watch closely") {
+            return "Delays are more common"
+        }
+        return "Mixed timing"
+    }
+}
+
+struct SNAPFederalTimelineSummary: Equatable {
+    let regularSNAPDeadline: String
+    let expeditedSNAPDeadline: String
+    let firstContactGuidance: String
+    let interviewTiming: String
+    let documentsVerificationWindow: String
+    let expeditedCriteria: String
+}
+
+struct SNAPProcessTimelineStep: Equatable, Identifiable {
+    let stepNumber: Int
+    let appStatusLabel: String
+    let typicalDayRange: String
+    let applicantAction: String
+    let appFriendlyCopy: String
+
+    var id: Int { stepNumber }
+}

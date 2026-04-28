@@ -119,6 +119,7 @@ enum Tab: CaseIterable {
     case callYourReps
     case electionTimeline
     case registration
+    case snap
 
     var iconName: String {
         switch self {
@@ -126,6 +127,7 @@ enum Tab: CaseIterable {
         case .callYourReps:       return "phone.fill"
         case .electionTimeline:   return "calendar"
         case .registration:       return "person.badge.plus"
+        case .snap:               return "heart.text.square"
         }
     }
 }
@@ -204,6 +206,33 @@ struct ContentView: View {
     private var launchOverlayStatusMessage: String? {
         guard launchReadinessTimedOut, !isLaunchReadyForDismissal else { return nil }
         return "Still loading your secure session and election data..."
+    }
+
+    private var snapPrefillZip: String? {
+        let addressZip = String(planVM.userAddress.zip.filter(\.isNumber).prefix(5))
+        if addressZip.count == 5 { return addressZip }
+
+        let resolvedSelectionZip = String((repsVM.resolvedLocationSelection?.postalCode ?? "").filter(\.isNumber).prefix(5))
+        if resolvedSelectionZip.count == 5 { return resolvedSelectionZip }
+
+        let fallbackZip = String(planVM.zip.filter(\.isNumber).prefix(5))
+        return fallbackZip.count == 5 ? fallbackZip : nil
+    }
+
+    private var snapPrefillStateCode: String? {
+        if let resolved = normalizedUSStateCode(from: repsVM.resolvedStateCode) {
+            return resolved
+        }
+        if let detected = normalizedUSStateCode(from: repsVM.detectedStateCode) {
+            return detected
+        }
+        if let entered = normalizedUSStateCode(from: planVM.userAddress.state) {
+            return entered
+        }
+        if let zip = snapPrefillZip {
+            return zipStateResolver.stateCode(for: zip)
+        }
+        return nil
     }
 
     private func handleElectionDeepLink(_ url: URL) {
@@ -572,6 +601,18 @@ struct ContentView: View {
                 }
                 .tag(Tab.registration)
 
+            // 5. SNAP Application Assistant (feature-flagged)
+            if SNAPFeatureFlag.isEnabled {
+                SNAPEntryView(
+                    initialStateCode: snapPrefillStateCode,
+                    initialZipCode: snapPrefillZip
+                )
+                    .tabItem {
+                        Label("Gov Applications", systemImage: Tab.snap.iconName)
+                    }
+                    .tag(Tab.snap)
+            }
+
         }
         .environmentObject(mapvPlanStore)
         .coordinateSpace(name: "SpreadSpace")
@@ -672,7 +713,6 @@ struct ContentView: View {
                 .environmentObject(planVM)
                 .environmentObject(repsVM)
         }
-
         // Civic Scorecard sheet
         .sheet(isPresented: $showCivicScorecard) {
             CivicScorecardView()
