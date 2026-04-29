@@ -1,6 +1,9 @@
 import Foundation
 #if canImport(FirebaseAnalytics)
 import FirebaseAnalytics
+#if canImport(FirebaseCore)
+import FirebaseCore
+#endif
 #endif
 
 // EXPERIMENTAL SILOED MODULE:
@@ -67,6 +70,13 @@ enum SNAPAnalytics {
         // Privacy boundary: never add free-text answers, demographic details,
         // addresses, ZIP, household size, income, student answers, or identifiers.
         #if canImport(FirebaseAnalytics)
+        #if canImport(FirebaseCore)
+        guard FirebaseApp.app() != nil else {
+            // Firebase is linked but not configured for this build target.
+            // Keep SNAP analytics as a no-op to avoid noisy AppMeasurement logs.
+            return
+        }
+        #endif
         Analytics.logEvent(event, parameters: params.isEmpty ? nil : params)
         #else
         // No analytics provider configured: intentionally no-op.
@@ -79,7 +89,9 @@ enum SNAPAnalytics {
 private extension SNAPDraftStep {
     var analyticsName: String {
         switch self {
+        case .whereApplyingFrom: return "where_applying_from"
         case .householdBasics: return "household_basics"
+        case .applicantAge: return "applicant_age"
         case .addressContact: return "address_contact"
         case .income: return "income"
         case .studentStatus: return "student_status"

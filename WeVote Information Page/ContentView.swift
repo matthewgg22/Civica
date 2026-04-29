@@ -169,6 +169,7 @@ struct ContentView: View {
     @State private var showCivicScorecard = false
     @State private var showRegReminder    = false
     @State private var showMyInfoPanel    = false
+    @State private var myInfoFocusLanguageSection = false
     @State private var selectedElection: Election?
     @State private var showLaunchOverlay  = true
     @State private var showWhyVoteOverlay = false
@@ -702,14 +703,20 @@ struct ContentView: View {
                 selectedTab = .registration
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .openMyInfoPanel)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .openMyInfoPanel)) { notification in
             DispatchQueue.main.async {
+                let requestedSection = (notification.userInfo?["section"] as? String)?
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .lowercased()
+                myInfoFocusLanguageSection = requestedSection == "language"
                 showMyInfoPanel = true
             }
         }
 
-        .sheet(isPresented: $showMyInfoPanel) {
-            MyInfoPanelView()
+        .sheet(isPresented: $showMyInfoPanel, onDismiss: {
+            myInfoFocusLanguageSection = false
+        }) {
+            MyInfoPanelView(focusLanguageSection: myInfoFocusLanguageSection)
                 .environmentObject(planVM)
                 .environmentObject(repsVM)
         }

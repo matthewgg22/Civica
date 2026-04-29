@@ -9,6 +9,10 @@
 import SwiftUI
 
 struct MyInfoPanelView: View {
+    private enum SectionAnchor {
+        static let language = "my_info.language.section.anchor"
+    }
+
     private enum LanguageOption: String, CaseIterable {
         case english = "en"
         case spanish = "es"
@@ -68,6 +72,11 @@ struct MyInfoPanelView: View {
     @State private var addressSaveError: String?
     @State private var activeResolutionStartedAt: Date?
     @FocusState private var locationFieldFocused: Bool
+    let focusLanguageSection: Bool
+
+    init(focusLanguageSection: Bool = false) {
+        self.focusLanguageSection = focusLanguageSection
+    }
 
     private var selectedLanguage: LanguageOption {
         LanguageOption.fromStoredCode(preferredLanguageCode) ?? .english
@@ -93,8 +102,9 @@ struct MyInfoPanelView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
+            ScrollViewReader { proxy in
+                Form {
+                    Section {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack(spacing: 10) {
                             TextField(
@@ -246,49 +256,50 @@ struct MyInfoPanelView: View {
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
 
-                Section {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("my_info.language.title", tableName: "MyInfoPanel")
-                            .font(.subheadline.weight(.semibold))
-                            .padding(.bottom, 2)
+                    Section {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("my_info.language.title", tableName: "MyInfoPanel")
+                                .font(.subheadline.weight(.semibold))
+                                .padding(.bottom, 2)
 
-                        ForEach(LanguageOption.allCases, id: \.self) { option in
-                            Button {
-                                preferredLanguageCode = option.rawValue
-                            } label: {
-                                HStack {
-                                    languageLabel(for: option)
-                                        .foregroundColor(VoteNowColors.primaryText)
-                                    Spacer()
-                                    Image(systemName: selectedLanguage == option ? "largecircle.fill.circle" : "circle")
-                                        .foregroundColor(selectedLanguage == option ? .blue : .secondary)
+                            ForEach(LanguageOption.allCases, id: \.self) { option in
+                                Button {
+                                    preferredLanguageCode = option.rawValue
+                                } label: {
+                                    HStack {
+                                        languageLabel(for: option)
+                                            .foregroundColor(VoteNowColors.primaryText)
+                                        Spacer()
+                                        Image(systemName: selectedLanguage == option ? "largecircle.fill.circle" : "circle")
+                                            .foregroundColor(selectedLanguage == option ? .blue : .secondary)
+                                    }
                                 }
+                                .buttonStyle(.plain)
                             }
-                            .buttonStyle(.plain)
-                        }
 
-                        Text("my_info.language.disclaimer", tableName: "MyInfoPanel")
-                            .font(.footnote)
-                            .foregroundColor(VoteNowColors.mutedText)
-                            .italic()
-                            .padding(.top, 4)
+                            Text("my_info.language.disclaimer", tableName: "MyInfoPanel")
+                                .font(.footnote)
+                                .foregroundColor(VoteNowColors.mutedText)
+                                .italic()
+                                .padding(.top, 4)
+                        }
+                        .padding(12)
+                        .background(
+                            RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
+                                .fill(VoteNowColors.surfaceWhite)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
+                                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                        )
+                    } header: {
+                        Text("my_info.section.accessibility.header", tableName: "MyInfoPanel")
+                            .font(.headline.weight(.bold))
+                            .textCase(nil)
                     }
-                    .padding(12)
-                    .background(
-                        RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
-                            .fill(VoteNowColors.surfaceWhite)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
-                            .stroke(VoteNowColors.borderWarm, lineWidth: 1)
-                    )
-                } header: {
-                    Text("my_info.section.accessibility.header", tableName: "MyInfoPanel")
-                        .font(.headline.weight(.bold))
-                        .textCase(nil)
-                }
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
+                    .id(SectionAnchor.language)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
 
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
@@ -326,76 +337,84 @@ struct MyInfoPanelView: View {
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
             }
-            .scrollContentBackground(.hidden)
-            .background(VoteNowColors.appBackground)
-            .navigationTitle(Text(l("my_info.navigation.title.location_profile", "Voting Location")))
-            .navigationBarTitleDisplayMode(.large)
-            .sheet(isPresented: $showFeedbackSheet) {
-                NavigationStack {
-                    FeedbackView()
-                }
-            }
-            .alert(isPresented: $showInvalidZipAlert) {
-                Alert(
-                    title: Text("my_info.alert.invalid_zip.title", tableName: "MyInfoPanel"),
-                    message: Text("my_info.alert.invalid_zip.message", tableName: "MyInfoPanel"),
-                    dismissButton: .default(Text("my_info.alert.invalid_zip.ok", tableName: "MyInfoPanel"))
-                )
-            }
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .cancel) {
-                        dismiss()
-                    } label: {
-                        Text("my_info.action.cancel", tableName: "MyInfoPanel")
+                .scrollContentBackground(.hidden)
+                .background(VoteNowColors.appBackground)
+                .navigationTitle(Text(l("my_info.navigation.title.location_profile", "Voting Location")))
+                .navigationBarTitleDisplayMode(.large)
+                .sheet(isPresented: $showFeedbackSheet) {
+                    NavigationStack {
+                        FeedbackView()
                     }
                 }
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-                    Button(l("app.reps.action.done", "Done")) {
-                        locationFieldFocused = false
+                .alert(isPresented: $showInvalidZipAlert) {
+                    Alert(
+                        title: Text("my_info.alert.invalid_zip.title", tableName: "MyInfoPanel"),
+                        message: Text("my_info.alert.invalid_zip.message", tableName: "MyInfoPanel"),
+                        dismissButton: .default(Text("my_info.alert.invalid_zip.ok", tableName: "MyInfoPanel"))
+                    )
+                }
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button(role: .cancel) {
+                            dismiss()
+                        } label: {
+                            Text("my_info.action.cancel", tableName: "MyInfoPanel")
+                        }
+                    }
+                    ToolbarItemGroup(placement: .keyboard) {
+                        Spacer()
+                        Button(l("app.reps.action.done", "Done")) {
+                            locationFieldFocused = false
+                        }
                     }
                 }
-            }
-            .onAppear {
-                seedLookupInputIfNeeded()
-                preferredLanguageCode = selectedLanguage.rawValue
-            }
-            .onChange(of: repsVM.resolvedLocationSelection) { _, _ in
-                guard isResolvingCurrentAddress || isSavingAddress else { return }
-                guard let selection = repsVM.resolvedLocationSelection else { return }
-                guard selectionBelongsToActiveResolution(selection) else { return }
-                if applyCurrentAddressToInput(includeFallback: false) {
-                    syncPlanAddressFromResolvedSelection()
-                    addressSaveError = nil
-                    resetActiveResolutionState()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                        dismiss()
+                .onAppear {
+                    seedLookupInputIfNeeded()
+                    preferredLanguageCode = selectedLanguage.rawValue
+
+                    guard focusLanguageSection else { return }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            proxy.scrollTo(SectionAnchor.language, anchor: .top)
+                        }
                     }
                 }
-            }
-            .onChange(of: repsVM.isLoading) { _, isLoading in
-                guard isResolvingCurrentAddress || isSavingAddress else { return }
-                if !isLoading {
-                    if let selection = repsVM.resolvedLocationSelection,
-                       selectionBelongsToActiveResolution(selection),
-                       applyCurrentAddressToInput(includeFallback: false) {
+                .onChange(of: repsVM.resolvedLocationSelection) { _, _ in
+                    guard isResolvingCurrentAddress || isSavingAddress else { return }
+                    guard let selection = repsVM.resolvedLocationSelection else { return }
+                    guard selectionBelongsToActiveResolution(selection) else { return }
+                    if applyCurrentAddressToInput(includeFallback: false) {
                         syncPlanAddressFromResolvedSelection()
                         addressSaveError = nil
                         resetActiveResolutionState()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                             dismiss()
                         }
-                        return
                     }
+                }
+                .onChange(of: repsVM.isLoading) { _, isLoading in
+                    guard isResolvingCurrentAddress || isSavingAddress else { return }
+                    if !isLoading {
+                        if let selection = repsVM.resolvedLocationSelection,
+                           selectionBelongsToActiveResolution(selection),
+                           applyCurrentAddressToInput(includeFallback: false) {
+                            syncPlanAddressFromResolvedSelection()
+                            addressSaveError = nil
+                            resetActiveResolutionState()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                                dismiss()
+                            }
+                            return
+                        }
 
-                    if isSavingAddress || isResolvingCurrentAddress {
-                        let specificError = repsVM.errorMessage?.trimmingCharacters(in: .whitespacesAndNewlines)
-                        addressSaveError = (specificError?.isEmpty == false)
-                            ? specificError
-                            : "We couldn’t verify that address. Try a full street address or ZIP code."
+                        if isSavingAddress || isResolvingCurrentAddress {
+                            let specificError = repsVM.errorMessage?.trimmingCharacters(in: .whitespacesAndNewlines)
+                            addressSaveError = (specificError?.isEmpty == false)
+                                ? specificError
+                                : "We couldn’t verify that address. Try a full street address or ZIP code."
+                        }
+                        resetActiveResolutionState()
                     }
-                    resetActiveResolutionState()
                 }
             }
         }

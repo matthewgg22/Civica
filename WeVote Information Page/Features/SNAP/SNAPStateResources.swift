@@ -35,6 +35,11 @@ enum SNAPStateResources {
         return stateTimelineByCode[normalized]
     }
 
+    static func administeringAgencyName(for stateCode: String?) -> String? {
+        let normalized = normalizedStateCode(stateCode)
+        return snapAgencyByStateCode[normalized]
+    }
+
     static let federalTimelineSummary = SNAPFederalTimelineSummary(
         regularSNAPDeadline: "Most completed SNAP applications get a decision within 30 days.",
         expeditedSNAPDeadline: "If you qualify for expedited SNAP, benefits can be available within 7 days.",
@@ -47,10 +52,10 @@ enum SNAPStateResources {
     static let processTimelineSteps: [SNAPProcessTimelineStep] = [
         .init(
             stepNumber: 1,
-            appStatusLabel: "Application submitted",
+            appStatusLabel: "Prep checklist completed",
             typicalDayRange: "Day 0",
             applicantAction: "Save your confirmation details and gather basic documents if you have them.",
-            appFriendlyCopy: "We received your SNAP application. The review clock starts today."
+            appFriendlyCopy: "Your SNAP draft is complete. The review clock starts when you submit through your official state process."
         ),
         .init(
             stepNumber: 2,
@@ -78,7 +83,7 @@ enum SNAPStateResources {
             appStatusLabel: "Expedited benefits",
             typicalDayRange: "By Day 7",
             applicantAction: "Check EBT card and PIN delivery or pickup details.",
-            appFriendlyCopy: "If you qualify for expedited SNAP, benefits should be available within 7 calendar days."
+            appFriendlyCopy: "If you qualify for expedited SNAP, benefits can be available within 7 calendar days."
         ),
         .init(
             stepNumber: 6,
@@ -154,6 +159,64 @@ enum SNAPStateResources {
         "WV": makeTimeline(stateCode: "WV", displayName: "West Virginia", onTimeRateFY2024: 0.7580, timelinessBand: "Moderate / monitor"),
         "WI": makeTimeline(stateCode: "WI", displayName: "Wisconsin", onTimeRateFY2024: 0.9562, timelinessBand: "High on-time (90%+)"),
         "WY": makeTimeline(stateCode: "WY", displayName: "Wyoming", onTimeRateFY2024: 0.9043, timelinessBand: "High on-time (90%+)")
+    ]
+
+    // Source: /Users/matthewgreer-gentis/Downloads/snap_state_agencies.xlsx
+    // Sheet: "SNAP Agencies" (Jurisdiction + State SNAP Agency columns).
+    // Static reference data only; no network fetch at runtime.
+    // TODO(legal/source-verification): Confirm this list against approved policy/legal source before production release.
+    private static let snapAgencyByStateCode: [String: String] = [
+        "AL": "Alabama Department of Human Resources",
+        "AK": "Alaska Department of Health",
+        "AZ": "Arizona Department of Economic Security",
+        "AR": "Arkansas Department of Human Services",
+        "CA": "California Department of Social Services",
+        "CO": "Colorado Department of Human Services",
+        "CT": "Connecticut Department of Social Services",
+        "DE": "Delaware Department of Health and Human Services",
+        "DC": "District of Columbia Department of Human Services",
+        "FL": "Florida Department of Children and Families",
+        "GA": "Georgia Department of Human Services",
+        "HI": "Hawaii Department of Human Services",
+        "ID": "Idaho Department of Health and Welfare",
+        "IL": "Illinois Department of Human Services",
+        "IN": "Indiana Family and Social Services Administration",
+        "IA": "Iowa Department of Health and Human Services",
+        "KS": "Kansas Department for Children and Families",
+        "KY": "Kentucky Cabinet for Health and Family Services",
+        "LA": "Louisiana Department of Children & Family Services",
+        "ME": "Maine Department of Health and Human Services",
+        "MD": "Maryland Department of Human Services",
+        "MA": "Massachusetts Department of Transitional Assistance",
+        "MI": "Michigan Department of Health and Human Services",
+        "MN": "Minnesota Department of Children, Youth, and Families",
+        "MS": "Mississippi Department of Human Services",
+        "MO": "Missouri Department of Social Services",
+        "MT": "Montana Department of Public Health and Human Services",
+        "NE": "Nebraska Department of Health and Human Services",
+        "NV": "Nevada Department of Health and Human Services",
+        "NH": "New Hampshire Department of Health and Human Services",
+        "NJ": "New Jersey Department of Human Services",
+        "NM": "New Mexico Health Care Authority",
+        "NY": "New York State Office of Temporary and Disability Assistance",
+        "NC": "North Carolina Department of Health and Human Services",
+        "ND": "North Dakota Health and Human Services",
+        "OH": "Ohio Department of Job and Family Services",
+        "OK": "Oklahoma Human Services / Oklahoma Department of Human Services",
+        "OR": "Oregon Department of Human Services",
+        "PA": "Pennsylvania Department of Human Services",
+        "RI": "Rhode Island Department of Human Services",
+        "SC": "South Carolina Department of Social Services",
+        "SD": "South Dakota Department of Social Services",
+        "TN": "Tennessee Department of Human Services",
+        "TX": "Texas Health and Human Services Commission",
+        "UT": "Utah Department of Workforce Services",
+        "VT": "Vermont Agency of Human Services, Department for Children and Families",
+        "VA": "Virginia Department of Social Services",
+        "WA": "Washington State Department of Social and Health Services",
+        "WV": "West Virginia Department of Human Services",
+        "WI": "Wisconsin Department of Health Services",
+        "WY": "Wyoming Department of Family Services"
     ]
 
     private static let standardFollowUpInApp = "If you do not get an interview or notice by around Day 10-14, check your portal or call the SNAP office."

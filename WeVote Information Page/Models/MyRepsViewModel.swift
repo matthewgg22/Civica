@@ -1131,7 +1131,9 @@ final class MyRepsViewModel: ObservableObject {
         )
         isGeneralLocationSearchResult = isGeneralLocationLookup
 
-        logger.info("Address search resolved from source \(source.rawValue, privacy: .public).")
+        #if DEBUG
+        logger.debug("Address search resolved from source \(source.rawValue, privacy: .public).")
+        #endif
         if !isGeneralLocationLookup {
             scheduleElectionRemindersAfterAddressResolution(
                 zip: lookupZIP,

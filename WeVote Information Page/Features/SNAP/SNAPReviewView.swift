@@ -25,6 +25,11 @@ struct SNAPReviewView: View {
                     .font(.footnote)
                     .foregroundStyle(VoteNowColors.warningAmber)
 
+                Text(SNAPCopy.globalDisclaimer)
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
                 SNAPReviewSectionCard(
                     title: "Household",
                     rows: [
@@ -41,7 +46,7 @@ struct SNAPReviewView: View {
                         ("State", displayOptionalString(viewModel.application.state)),
                         ("ZIP code", displayOptionalString(viewModel.application.zipCode))
                     ],
-                    onEdit: { goToDraftStep(.householdBasics) }
+                    onEdit: { goToDraftStep(.whereApplyingFrom) }
                 )
 
                 SNAPReviewSectionCard(

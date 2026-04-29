@@ -78,7 +78,7 @@ struct SNAPPrivacyBoundaryTests {
         viewModel.resetDraft()
 
         #expect(viewModel.currentStep == .entry)
-        #expect(viewModel.draftStep == .householdBasics)
+        #expect(viewModel.draftStep == .whereApplyingFrom)
         #expect(viewModel.acceptedPrivacyNotice == false)
         #expect(viewModel.submittedAt == nil)
         #expect(viewModel.hasStartedGuidedDraft == false)
@@ -127,6 +127,58 @@ struct SNAPPrivacyBoundaryTests {
         viewModel.applyLocationPrefill(stateCode: "CA", zipCode: "94102")
         #expect(viewModel.application.state == "NY")
         #expect(viewModel.application.zipCode == "10001")
+    }
+
+    @MainActor
+    @Test func selectingUnhousedSetsExpeditedCandidateFlags() {
+        let viewModel = SNAPApplicationViewModel()
+
+        viewModel.updateHousingStatus(.unhoused)
+
+        #expect(viewModel.application.housingStatus == .unhoused)
+        #expect(viewModel.application.expeditedCandidate == true)
+        #expect(viewModel.application.expeditedReason == "unhoused")
+        #expect(viewModel.application.requiresPermanentAddress == false)
+        #expect(viewModel.application.allowCollateralContact == true)
+        #expect(viewModel.application.allowPostponedVerification == true)
+    }
+
+    @MainActor
+    @Test func selectingStableHousingDoesNotSetExpeditedCandidateFromHousingOnly() {
+        let viewModel = SNAPApplicationViewModel()
+
+        viewModel.updateHousingStatus(.stableHome)
+
+        #expect(viewModel.application.housingStatus == .stableHome)
+        #expect(viewModel.application.expeditedCandidate == false)
+        #expect(viewModel.application.expeditedReason == nil)
+        #expect(viewModel.application.requiresPermanentAddress == true)
+    }
+
+    @MainActor
+    @Test func unhousedDoesNotRequirePermanentAddress() {
+        let viewModel = SNAPApplicationViewModel()
+        viewModel.updateHousingStatus(.unhoused)
+
+        #expect(viewModel.application.requiresPermanentAddress == false)
+        #expect(viewModel.canContinueDraftStep == false)
+
+        viewModel.application.state = "MA"
+        #expect(viewModel.canContinueDraftStep == true)
+    }
+
+    @MainActor
+    @Test func userCanChooseRegularApplicationInsteadOfExpeditedPath() {
+        let viewModel = SNAPApplicationViewModel()
+        viewModel.updateHousingStatus(.unhoused)
+
+        viewModel.startExpeditedPath()
+        #expect(viewModel.application.isExpeditedPathActive == true)
+        #expect(viewModel.application.choseRegularPathInsteadOfExpedited == false)
+
+        viewModel.continueRegularApplicationPath()
+        #expect(viewModel.application.isExpeditedPathActive == false)
+        #expect(viewModel.application.choseRegularPathInsteadOfExpedited == true)
     }
 
     @Test func analyticsPayloadOnlyUsesAllowedKeysAndNoAnswers() {

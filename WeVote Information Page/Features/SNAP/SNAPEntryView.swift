@@ -81,7 +81,7 @@ struct SNAPEntryView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 16) {
+            VStack(spacing: 0) {
                 VStack(alignment: .leading, spacing: 0) {
                     PageHeader(title: "Gov Applications")
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
@@ -112,114 +112,126 @@ struct SNAPEntryView: View {
                 .padding(.bottom, 8)
                 .background(VoteNowColors.brandSoftBlue)
 
-                NavigationLink {
-                    SNAPEligibilityIntroView(viewModel: viewModel)
-                        .navigationBarTitleDisplayMode(.inline)
-                } label: {
-                    VStack(spacing: 12) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                .fill(VoteNowColors.primaryCTA)
-                                .frame(width: 124, height: 124)
-
-                            VStack(spacing: 8) {
-                                Image(systemName: "bag.fill")
-                                    .font(.system(size: 38, weight: .bold))
-                                    .foregroundStyle(.white)
-                                Text("SNAP")
-                                    .font(.headline.weight(.bold))
-                                    .foregroundStyle(.white)
-                            }
-                        }
-                        .shadow(color: VoteNowColors.primaryCTA.opacity(0.22), radius: 14, x: 0, y: 8)
-
-                        Text("Supplemental Nutrition\nAssistance Program")
-                            .font(.headline)
-                            .foregroundStyle(VoteNowColors.textPrimary)
-                            .multilineTextAlignment(.center)
-                    }
-                }
-                .buttonStyle(.plain)
-
-                if let submittedAt = viewModel.submittedAt {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("SNAP Application Status")
-                            .font(.headline.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textPrimary)
-
-                        HStack(spacing: 8) {
-                            Text("Status:")
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(VoteNowColors.textSecondary)
-                            Text("Draft Completed")
-                                .font(.subheadline.weight(.bold))
-                                .foregroundStyle(VoteNowColors.successGreen)
-                        }
-
-                        HStack(spacing: 8) {
-                            Text("Date:")
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(VoteNowColors.textSecondary)
-                            Text(statusDateText(from: submittedAt))
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(VoteNowColors.textPrimary)
-                        }
-
-                        NavigationLink {
-                            SNAPStepContainerView(viewModel: viewModel, onClose: nil)
-                                .navigationTitle("SNAP Eligibility Questionaire")
-                                .navigationBarTitleDisplayMode(.inline)
-                                .onAppear {
-                                    viewModel.jumpToDraftStep(.reviewDraft)
-                                }
-                        } label: {
-                            Text("See responses")
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(VoteNowColors.primaryCTA)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(14)
-                    .background(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .fill(VoteNowColors.surfacePrimary)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
-                    )
-                }
-
-                #if DEBUG
-                if SNAPFeatureFlag.showDebugEntry {
+                VStack(spacing: 16) {
                     NavigationLink {
-                        SNAPDebugChecklistView()
-                            .navigationTitle("SNAP QA Checklist")
+                        SNAPEligibilityIntroView(viewModel: viewModel)
                             .navigationBarTitleDisplayMode(.inline)
                     } label: {
-                        Label("Developer QA checklist", systemImage: "checklist")
-                            .font(.subheadline.weight(.semibold))
+                        VStack(spacing: 12) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .fill(VoteNowColors.surfacePrimary)
+                                    .frame(width: 156, height: 156)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                            .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                                    )
+
+                                Image("SNAPOfficialLogo")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 124, height: 124)
+                            }
+                            .shadow(color: VoteNowColors.primaryCTA.opacity(0.14), radius: 8, x: 0, y: 4)
+
+                            Text("Supplemental Nutrition\nAssistance Program")
+                                .font(.headline)
+                                .foregroundStyle(VoteNowColors.textPrimary)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding(.vertical, 4)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    Text(SNAPCopy.globalDisclaimer)
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+
+                    if let submittedAt = viewModel.submittedAt {
+                        NavigationLink {
+                            SNAPStepContainerView(viewModel: viewModel, onClose: nil)
+                                .navigationTitle("SNAP Eligibility Questionnaire")
+                                .navigationBarTitleDisplayMode(.inline)
+                                .onAppear {
+                                    viewModel.jumpToDraftStep(.nextSteps)
+                                }
+                        } label: {
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text("SNAP prep status")
+                                    .font(.headline.weight(.semibold))
+                                    .foregroundStyle(VoteNowColors.textPrimary)
+
+                                HStack(spacing: 8) {
+                                    Text("Status:")
+                                        .font(.subheadline.weight(.semibold))
+                                        .foregroundStyle(VoteNowColors.textSecondary)
+                                    Text("Prep checklist completed")
+                                        .font(.subheadline.weight(.bold))
+                                        .foregroundStyle(VoteNowColors.successGreen)
+                                }
+
+                                HStack(spacing: 8) {
+                                    Text("Date:")
+                                        .font(.subheadline.weight(.semibold))
+                                        .foregroundStyle(VoteNowColors.textSecondary)
+                                    Text(statusDateText(from: submittedAt))
+                                        .font(.subheadline.weight(.semibold))
+                                        .foregroundStyle(VoteNowColors.textPrimary)
+                                }
+
+                                Text("Open next steps")
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(VoteNowColors.primaryCTA)
+                            }
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(12)
+                            .padding(14)
                             .background(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
                                     .fill(VoteNowColors.surfacePrimary)
                             )
                             .overlay(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
                                     .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
                             )
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
-                    .padding(.top, 8)
-                }
-                #endif
 
-                Spacer()
+                    #if DEBUG
+                    if SNAPFeatureFlag.showDebugEntry {
+                        NavigationLink {
+                            SNAPDebugChecklistView()
+                                .navigationTitle("SNAP QA Checklist")
+                                .navigationBarTitleDisplayMode(.inline)
+                        } label: {
+                            Label("Developer QA checklist", systemImage: "checklist")
+                                .font(.subheadline.weight(.semibold))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(12)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                        .fill(VoteNowColors.surfacePrimary)
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                        .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                                )
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.top, 8)
+                    }
+                    #endif
+
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+                .padding(.bottom, 16)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .background(VoteNowColors.brandSoftBlue)
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 16)
             .background(VoteNowColors.brandSoftBlue.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

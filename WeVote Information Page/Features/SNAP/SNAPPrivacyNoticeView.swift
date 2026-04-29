@@ -3,6 +3,7 @@ import SwiftUI
 // EXPERIMENTAL SILOED MODULE: privacy notice gate shown before prototype intake.
 struct SNAPPrivacyNoticeView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
     @ObservedObject var viewModel: SNAPApplicationViewModel
     @State private var continueToEligibility = false
     @State private var hasTrackedPrivacyView = false
@@ -15,13 +16,13 @@ struct SNAPPrivacyNoticeView: View {
                     .foregroundStyle(VoteNowColors.textPrimary)
 
                 privacySection(
-                    title: "Assistant status",
-                    body: "This is a guided draft tool to help you organize a SNAP application. It is not the official government SNAP application."
+                    title: "What this tool does",
+                    body: "This tool helps you prepare for SNAP. It does not submit an official application and does not decide eligibility."
                 )
 
                 privacySection(
                     title: "What not to enter",
-                    body: "Do not enter immigration documents, bank account numbers, or private medical details in this draft."
+                    body: "Do not enter Social Security numbers, bank account numbers, immigration document numbers, or upload documents here."
                 )
 
                 privacySection(
@@ -31,7 +32,7 @@ struct SNAPPrivacyNoticeView: View {
 
                 privacySection(
                     title: "Official submission",
-                    body: "This prototype does not submit a SNAP application."
+                    body: "To get benefits, you must submit through your official state SNAP process."
                 )
 
                 Text("This screen does not determine eligibility or approval.")
@@ -39,11 +40,20 @@ struct SNAPPrivacyNoticeView: View {
                     .foregroundStyle(VoteNowColors.textSecondary)
 
                 VStack(spacing: 10) {
-                    Button("I understand — continue") {
+                    Button("Continue to SNAP prep") {
                         viewModel.acceptedPrivacyNotice = true
                         continueToEligibility = true
                     }
                     .buttonStyle(VoteNowPrimaryCTAButtonStyle())
+
+                    if let officialURL {
+                        Button("Go to official application") {
+                            openURL(officialURL)
+                        }
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(VoteNowColors.primaryCTA)
+                        .buttonStyle(.plain)
+                    }
 
                     Button("Go back") {
                         dismiss()
@@ -65,6 +75,13 @@ struct SNAPPrivacyNoticeView: View {
             hasTrackedPrivacyView = true
             SNAPAnalytics.trackPrivacyNoticeViewed()
         }
+    }
+
+    private var officialURL: URL? {
+        guard let resource = SNAPStateResources.resource(for: viewModel.application.state) else {
+            return nil
+        }
+        return URL(string: resource.officialApplicationURL)
     }
 
     @ViewBuilder

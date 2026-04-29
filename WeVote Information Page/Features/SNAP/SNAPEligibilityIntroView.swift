@@ -7,38 +7,27 @@ struct SNAPEligibilityIntroView: View {
     @State private var continueToGuidedDraft = false
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
+        ZStack {
+            VoteNowColors.brandSoftBlue.ignoresSafeArea()
+
+            ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
-                    HStack(alignment: .center, spacing: 10) {
-                        Image(systemName: "bag.fill")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(VoteNowColors.primaryCTA)
-                            .frame(width: 30, height: 30)
-                            .background(
-                                Circle()
-                                    .fill(VoteNowColors.statusInfoSurface)
-                            )
+                    VStack(alignment: .leading, spacing: 14) {
+                        SNAPIntroHeader(title: "What is SNAP?")
 
-                        Text("What is SNAP?")
-                            .font(.title3.weight(.bold))
-                            .foregroundStyle(VoteNowColors.textPrimary)
-                    }
-
-                    Text("SNAP most commonly stands for the Supplemental Nutrition Assistance Program in the United States.")
+                    Text("The Supplemental Nutrition Assistance Program (commonly referred to as SNAP) is a U.S. government program that helps low-income individuals and families buy food.")
                         .font(.body.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .foregroundStyle(Color.black)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    Text("It’s a government program that helps low-income individuals and families buy food.")
-                        .font(.body)
-                        .foregroundStyle(VoteNowColors.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
+                    Text("If DTA approves your application...")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Color.black)
 
                     VStack(alignment: .leading, spacing: 10) {
                         SNAPDescriptionRow(
                             iconName: "creditcard",
-                            text: "Monthly benefits are loaded onto an EBT (Electronic Benefits Transfer) card."
+                            text: "Monthly benefits are loaded onto an Electronic Benefits Transfer (EBT) card."
                         )
                         SNAPDescriptionRow(
                             iconName: "cart",
@@ -46,7 +35,7 @@ struct SNAPEligibilityIntroView: View {
                         )
                         SNAPDescriptionRow(
                             iconName: "carrot",
-                            text: "SNAP can buy eligible food items (fruits, vegetables, meat, dairy, bread, and more)."
+                            text: "SNAP can buy eligible food items to fruits, vegetables, meat, dairy, bread, and more."
                         )
                         SNAPDescriptionRow(
                             iconName: "xmark.circle",
@@ -54,67 +43,96 @@ struct SNAPEligibilityIntroView: View {
                         )
                     }
                     .padding(.top, 2)
-                }
-                .padding(.vertical, 8)
+                    }
+                    .padding(.vertical, 8)
 
                 if let submittedAt = viewModel.submittedAt {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("SNAP Application Status")
-                            .font(.headline.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textPrimary)
-
-                        HStack(spacing: 8) {
-                            Text("Status:")
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(VoteNowColors.textSecondary)
-                            Text("Draft Completed")
-                                .font(.subheadline.weight(.bold))
-                                .foregroundStyle(VoteNowColors.successGreen)
-                        }
-
-                        HStack(spacing: 8) {
-                            Text("Date:")
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(VoteNowColors.textSecondary)
-                            Text(statusDateText(from: submittedAt))
-                                .font(.subheadline.weight(.semibold))
+                    Button {
+                        viewModel.jumpToDraftStep(.nextSteps)
+                        continueToGuidedDraft = true
+                    } label: {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("SNAP prep status")
+                                .font(.headline.weight(.semibold))
                                 .foregroundStyle(VoteNowColors.textPrimary)
-                        }
 
-                        Button("See responses") {
-                            viewModel.jumpToDraftStep(.reviewDraft)
+                            HStack(spacing: 8) {
+                                Text("Status:")
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(VoteNowColors.textSecondary)
+                                Text("Prep checklist completed")
+                                    .font(.subheadline.weight(.bold))
+                                    .foregroundStyle(VoteNowColors.successGreen)
+                            }
+
+                            HStack(spacing: 8) {
+                                Text("Date:")
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(VoteNowColors.textSecondary)
+                                Text(statusDateText(from: submittedAt))
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(VoteNowColors.textPrimary)
+                            }
+
+                            Text("Open next steps")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(VoteNowColors.primaryCTA)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .fill(VoteNowColors.surfacePrimary)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                    Text(SNAPCopy.globalDisclaimer)
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    HStack {
+                        Spacer(minLength: 0)
+                        Button("Prepare my SNAP application") {
                             continueToGuidedDraft = true
                         }
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.primaryCTA)
+                        .buttonStyle(VoteNowPrimaryCTAButtonStyle())
+                        Spacer(minLength: 0)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(14)
-                    .background(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .fill(VoteNowColors.surfacePrimary)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
-                    )
-                }
 
-                Button("Confirm Eligibity and Apply") {
-                    continueToGuidedDraft = true
+                    Button {
+                        NotificationCenter.default.post(
+                            name: .openMyInfoPanel,
+                            object: nil,
+                            userInfo: ["section": "language"]
+                        )
+                    } label: {
+                        Text("Need language assistance?")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(VoteNowColors.primaryCTA)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.vertical, 8)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(VoteNowPrimaryCTAButtonStyle())
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(16)
             }
-            .padding(16)
+            .background(VoteNowColors.brandSoftBlue)
         }
-        .background(VoteNowColors.brandSoftBlue.ignoresSafeArea())
         .toolbarBackground(VoteNowColors.brandSoftBlue, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationDestination(isPresented: $continueToGuidedDraft) {
             SNAPStepContainerView(viewModel: viewModel) {
                 dismiss()
             }
-            .navigationTitle("SNAP Eligibility Questionaire")
+            .navigationTitle("SNAP Eligibility Questionnaire")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 viewModel.resetDraftFlow()
@@ -127,6 +145,42 @@ struct SNAPEligibilityIntroView: View {
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         return formatter.string(from: date)
+    }
+}
+
+private struct SNAPIntroHeader: View {
+    let title: String
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 14) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(VoteNowColors.surfacePrimary)
+                    .frame(width: 56, height: 56)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                    )
+                    .shadow(color: VoteNowColors.primaryCTA.opacity(0.14), radius: 6, x: 0, y: 3)
+
+                Image("SNAPOfficialLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 44, height: 44)
+                    .accessibilityHidden(true)
+            }
+
+            Text(title)
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundStyle(Color.black)
+                .lineLimit(1)
+                .minimumScaleFactor(0.84)
+                .padding(.top, 2)
+                .frame(minHeight: 56, alignment: .topLeading)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.top, 4)
     }
 }
 
@@ -144,7 +198,7 @@ private struct SNAPDescriptionRow: View {
 
             Text(text)
                 .font(.subheadline)
-                .foregroundStyle(VoteNowColors.textSecondary)
+                .foregroundStyle(Color.black)
                 .fixedSize(horizontal: false, vertical: true)
         }
     }

@@ -1,5 +1,7 @@
 import SwiftUI
 import UIKit
+import MapKit
+import Network
 
 // EXPERIMENTAL SILOED MODULE: iPhone-first SNAP guided flow.
 // One short question group per screen to reduce navigation burden.
@@ -8,9 +10,29 @@ struct SNAPApplicationView: View {
     @FocusState private var focusedField: FocusedField?
     @State private var showingChecklistShareSheet = false
     @State private var checklistShareItems: [Any] = []
+    @State private var isWhereApplyingFromWhyExpanded = false
+    @State private var isHouseholdBasicsWhyExpanded = false
+    @State private var isApplicantAgeWhyExpanded = false
+    @State private var isContactInformationWhyExpanded = false
+    @State private var isIncomeWhyExpanded = false
+    @State private var isStudentStatusWhyExpanded = false
+    @State private var isExpensesWhyExpanded = false
+    @State private var isDocumentsWhyExpanded = false
+    @State private var isReviewWhyExpanded = false
+    @State private var isNextStepsWhyExpanded = false
+    @State private var residentialAddressSearchText: String = ""
+    @StateObject private var residentialAddressAutocomplete = SNAPAddressAutocomplete()
     private enum FocusedField: Hashable {
-        case zipCode
+        case residentialStreetAddress
+        case residentialCity
+        case residentialZIP
+        case contactEmail
+        case contactPhone
         case monthlyIncome
+        case earnedGrossPay
+        case earnedHoursPerWeek
+        case gigGrossReceipts
+        case gigBusinessExpenses
         case rent
         case utilities
         case childcare
@@ -80,8 +102,12 @@ struct SNAPApplicationView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             switch viewModel.draftStep {
+            case .whereApplyingFrom:
+                whereApplyingFromStep
             case .householdBasics:
                 householdBasicsStep
+            case .applicantAge:
+                applicantAgeStep
             case .addressContact:
                 addressContactStep
             case .income:
@@ -111,65 +137,25 @@ struct SNAPApplicationView: View {
         }
     }
 
-    private var householdBasicsStep: some View {
+    private var whereApplyingFromStep: some View {
         VStack(spacing: 12) {
             SNAPSectionCard(
-                title: "Your food household",
-                helper: nil
+                title: "Where are you currently residing?",
+                helper: nil,
+                headerAccessory: {
+                    SNAPCardInfoButton(
+                        isExpanded: $isWhereApplyingFromWhyExpanded,
+                        label: "Why we ask"
+                    )
+                }
             ) {
                 SNAPStepGuidanceRows(
-                    whatText: "Tell us who is in your food household, your age, your state, ZIP code, and your general housing situation.",
-                    whyText: "These details help organize the information you may need when you continue to your official state SNAP application.",
-                    doNotShareText: "Do not enter names, Social Security numbers, full addresses, immigration details, or private information about other household members."
+                    whatText: "",
+                    whyText: "SNAP websites, timelines, and instructions vary by state. This helps us guide you to the right official path.",
+                    doNotShareText: "Do not enter names, Social Security numbers, full addresses, immigration details, or other private identifying information.",
+                    isWhyExpanded: $isWhereApplyingFromWhyExpanded
                 ) {
 
-                SNAPInputLabel(
-                    "Household size",
-                    badge: .required(isMissing: householdSizeIsMissingAfterContinueAttempt)
-                )
-                Picker("Household size", selection: householdSizeSelection) {
-                    Text("Select household size").tag(0)
-                    ForEach(1..<11) { count in
-                        Text("\(count)").tag(count)
-                    }
-                    Text("11 or more").tag(11)
-                }
-                .pickerStyle(.menu)
-                .snapFieldSurface()
-
-                Text("Count the people who usually buy food and prepare meals with you. Do not include roommates or others who keep food separate.")
-                    .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                SNAPInputLabel("Applicant age", badge: .optional)
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Text("Age: \(viewModel.application.applicantAge ?? 18)")
-                            .font(.body.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textPrimary)
-                        Spacer(minLength: 0)
-                        Text("0-120")
-                            .font(.caption)
-                            .foregroundStyle(VoteNowColors.textSecondary)
-                    }
-
-                    Slider(value: applicantAgeSliderValue, in: 0...120, step: 1)
-                        .tint(VoteNowColors.primaryCTA)
-                        .padding(.horizontal, 4)
-                }
-
-                Text(applicantBirthdayRangeText)
-                    .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-
-            SNAPSectionCard(
-                title: "Where you are applying from",
-                helper: nil
-            ) {
                 SNAPInputLabel(
                     "State",
                     badge: .required(isMissing: stateIsMissingAfterContinueAttempt)
@@ -181,41 +167,456 @@ struct SNAPApplicationView: View {
                     }
                 }
                 .pickerStyle(.menu)
-                .snapCompactFieldSurface()
-                .disabled(viewModel.isStateGeofenced)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .snapCompactFieldSurface(highlightPrefilled: viewModel.isStateUsingPrefill)
+                .modifier(
+                    SNAPRequiredFieldShake(
+                        isActive: stateIsMissingAfterContinueAttempt,
+                        trigger: viewModel.draftContinueAttemptToken
+                    )
+                )
 
-                if viewModel.isStateGeofenced {
-                    Text("State is locked to your saved address for location-based SNAP guidance.")
+                if let prefillNoteText {
+                    Text(prefillNoteText)
                         .font(.footnote)
                         .foregroundStyle(VoteNowColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
-                SNAPInputLabel(
-                    "ZIP code",
-                    badge: .required(isMissing: zipCodeIsMissingAfterContinueAttempt)
-                )
-                TextField("ZIP code", text: zipCodeBinding)
-                    .keyboardType(.numberPad)
-                    .focused($focusedField, equals: .zipCode)
-                    .snapCompactTextFieldStyle()
-
-                Text("We use this only to point you toward the right official state process. SNAP websites and instructions vary by state.")
-                    .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
+                if let selectedStateAgencyName {
+                    Text("Your Application will be evaluated by the \(selectedStateAgencyName)")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
 
                 SNAPOptionalEnumPicker(
                     title: "Housing status",
-                    badge: .optional,
-                    selection: $viewModel.application.housingStatus,
+                    badge: .required(isMissing: housingStatusIsMissingAfterContinueAttempt),
+                    selection: housingStatusBinding,
+                    compact: true,
+                    condensed: true,
+                    isMissingRequired: housingStatusIsMissingAfterContinueAttempt,
+                    shakeToken: viewModel.draftContinueAttemptToken,
                     label: { $0.label }
                 )
 
-                Text("Choose the option that best describes where you are staying right now. This is optional in this draft.")
+                housingStatusExamplesBlock
+
+                if viewModel.application.housingStatus == .unhoused {
+                    SNAPSectionCard(
+                        title: "⚡ You may qualify for faster SNAP help",
+                        helper: nil
+                    ) {
+                        Text("Because you selected that you do not have stable housing, you may qualify for expedited SNAP processing. You do not need a permanent address to continue. We'll help you prioritize the fastest path.")
+                            .font(.footnote)
+                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        Button("Start expedited SNAP path") {
+                            viewModel.startExpeditedPath()
+                        }
+                        .buttonStyle(VoteNowPrimaryCTAButtonStyle())
+
+                        Button("Continue regular application") {
+                            viewModel.continueRegularApplicationPath()
+                        }
+                        .buttonStyle(.plain)
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(VoteNowColors.primaryCTA)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+
+                    if viewModel.application.isExpeditedPathActive {
+                        SNAPSectionCard(
+                            title: "Expedited SNAP path",
+                            helper: "Minimum details to help prepare for faster review."
+                        ) {
+                            SNAPYesNoSegmentedQuestion(
+                                title: "Do you have any form of ID?",
+                                value: $viewModel.application.expeditedHasAnyID
+                            )
+
+                            SNAPInputLabel("What type of ID do you have?", badge: .optional)
+                            TextField("Optional", text: $viewModel.application.expeditedIDType)
+                                .textInputAutocapitalization(.words)
+                                .snapCompactTextFieldStyle()
+
+                            SNAPYesNoSegmentedQuestion(
+                                title: "Do you currently have any income?",
+                                value: $viewModel.application.expeditedHasCurrentIncome
+                            )
+
+                            SNAPInputLabel("About how much income did you receive this month?", badge: .optionalEstimate)
+                            HStack(spacing: 8) {
+                                Text("$")
+                                    .font(.body.weight(.semibold))
+                                    .foregroundStyle(VoteNowColors.textPrimary)
+
+                                TextField("0", text: $viewModel.application.expeditedCurrentMonthIncomeAmount)
+                                    .keyboardType(.decimalPad)
+
+                                Spacer(minLength: 0)
+                            }
+                            .snapCompactFieldSurface()
+
+                            SNAPInputLabel("About how much cash or bank money do you have right now?", badge: .optionalEstimate)
+                            HStack(spacing: 8) {
+                                Text("$")
+                                    .font(.body.weight(.semibold))
+                                    .foregroundStyle(VoteNowColors.textPrimary)
+
+                                TextField("0", text: $viewModel.application.expeditedCashOrBankAmountNow)
+                                    .keyboardType(.decimalPad)
+
+                                Spacer(minLength: 0)
+                            }
+                            .snapCompactFieldSurface()
+
+                            SNAPYesNoSegmentedQuestion(
+                                title: "Is there someone who can confirm your situation if needed?",
+                                value: $viewModel.application.expeditedHasCollateralContact
+                            )
+
+                            if viewModel.application.expeditedHasCollateralContact == true {
+                                SNAPInputLabel("Collateral contact name", badge: .optional)
+                                TextField("Optional", text: $viewModel.application.expeditedCollateralContactName)
+                                    .textInputAutocapitalization(.words)
+                                    .snapCompactTextFieldStyle()
+
+                                SNAPInputLabel("Collateral contact role", badge: .optional)
+                                TextField("Optional", text: $viewModel.application.expeditedCollateralContactRole)
+                                    .textInputAutocapitalization(.words)
+                                    .snapCompactTextFieldStyle()
+
+                                SNAPInputLabel("Collateral contact phone or email", badge: .optional)
+                                TextField("Optional", text: $viewModel.application.expeditedCollateralContactValue)
+                                    .textInputAutocapitalization(.never)
+                                    .keyboardType(.emailAddress)
+                                    .snapCompactTextFieldStyle()
+                            }
+
+                            SNAPOptionalEnumPicker(
+                                title: "Best way for the SNAP agency to contact you",
+                                badge: .optional,
+                                selection: $viewModel.application.expeditedBestAgencyContactMethod,
+                                compact: true,
+                                label: { $0.label }
+                            )
+                        }
+
+                        SNAPSectionCard(
+                            title: "Expedited SNAP checklist",
+                            helper: nil
+                        ) {
+                            Text("You may qualify for expedited review.")
+                                .font(.footnote.weight(.semibold))
+                                .foregroundStyle(VoteNowColors.textPrimary)
+                                .fixedSize(horizontal: false, vertical: true)
+
+                            Text("Identity is the most important item to verify first.")
+                                .font(.footnote)
+                                .foregroundStyle(VoteNowColors.textSecondary)
+                                .fixedSize(horizontal: false, vertical: true)
+
+                            Text("Other documents may be requested later.")
+                                .font(.footnote)
+                                .foregroundStyle(VoteNowColors.textSecondary)
+                                .fixedSize(horizontal: false, vertical: true)
+
+                            Text("A SNAP worker may still need to interview you.")
+                                .font(.footnote)
+                                .foregroundStyle(VoteNowColors.textSecondary)
+                                .fixedSize(horizontal: false, vertical: true)
+
+                            Button("Continue to application summary") {
+                                viewModel.jumpToDraftStep(.reviewDraft)
+                            }
+                            .buttonStyle(VoteNowPrimaryCTAButtonStyle())
+                        }
+                    }
+                }
+
+                if shouldCollectResidentialAddress {
+                    SNAPInputLabel(
+                        "Residency address",
+                        badge: .optional
+                    )
+                    TextField("Start typing address", text: residentialAddressSearchBinding)
+                        .textInputAutocapitalization(.words)
+                        .focused($focusedField, equals: .residentialStreetAddress)
+                        .snapCompactTextFieldStyle()
+
+                    if !residentialAddressAutocomplete.suggestions.isEmpty {
+                        VStack(alignment: .leading, spacing: 0) {
+                            ForEach(Array(residentialAddressAutocomplete.suggestions.enumerated()), id: \.element.id) { index, suggestion in
+                                Button {
+                                    applyResidentialAddressSuggestion(suggestion)
+                                } label: {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(suggestion.title)
+                                            .font(.subheadline.weight(.semibold))
+                                            .foregroundStyle(VoteNowColors.textPrimary)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        if !suggestion.subtitle.isEmpty {
+                                            Text(suggestion.subtitle)
+                                                .font(.footnote)
+                                                .foregroundStyle(VoteNowColors.textSecondary)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                        }
+                                    }
+                                    .padding(.vertical, 10)
+                                    .contentShape(Rectangle())
+                                }
+                                .buttonStyle(.plain)
+
+                                if index < residentialAddressAutocomplete.suggestions.count - 1 {
+                                    Divider()
+                                }
+                            }
+                        }
+                        .snapCompactFieldSurface()
+                    }
+
+                    if let issue = residentialAddressAutocomplete.lookupIssue {
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack(spacing: 8) {
+                                Text(issue.message)
+                                    .font(.footnote)
+                                    .foregroundStyle(VoteNowColors.textSecondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+
+                                Spacer(minLength: 0)
+
+                                Button("Retry") {
+                                    residentialAddressAutocomplete.retryLastQuery()
+                                }
+                                .font(.footnote.weight(.semibold))
+                                .foregroundStyle(VoteNowColors.primaryCTA)
+                                .buttonStyle(.plain)
+                            }
+
+                            if issue.showsOfflineHint {
+                                Text("You may be offline. Check your connection and try again.")
+                                    .font(.footnote)
+                                    .foregroundStyle(VoteNowColors.textSecondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .fill(VoteNowColors.surfaceSecondary)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                        )
+                    }
+
+                    SNAPInputLabel(
+                        "City",
+                        badge: .required(isMissing: residentialCityIsMissingAfterContinueAttempt)
+                    )
+                    TextField("City", text: residentialCityBinding)
+                        .textInputAutocapitalization(.words)
+                        .focused($focusedField, equals: .residentialCity)
+                        .snapCompactTextFieldStyle()
+                        .modifier(
+                            SNAPRequiredFieldShake(
+                                isActive: residentialCityIsMissingAfterContinueAttempt,
+                                trigger: viewModel.draftContinueAttemptToken
+                            )
+                        )
+
+                    SNAPInputLabel(
+                        "ZIP code",
+                        badge: .required(isMissing: residentialZIPIsMissingAfterContinueAttempt)
+                    )
+                    TextField("ZIP code", text: residentialZIPBinding)
+                        .keyboardType(.numberPad)
+                        .focused($focusedField, equals: .residentialZIP)
+                        .snapCondensedTextFieldStyle(highlightPrefilled: viewModel.isZIPUsingPrefill)
+                        .modifier(
+                            SNAPRequiredFieldShake(
+                                isActive: residentialZIPIsMissingAfterContinueAttempt,
+                                trigger: viewModel.draftContinueAttemptToken
+                            )
+                        )
+                }
+
+                if viewModel.application.housingStatus == .unhoused {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Unhoused support")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(VoteNowColors.textPrimary)
+
+                        Text("You can apply without a permanent address.")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(VoteNowColors.primaryCTA)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        Text("Add a safe mailing address, shelter, phone, email, or trusted contact where the SNAP office can reach you.")
+                            .font(.footnote)
+                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        Text("Residency checks can be flexible when standard proof is hard to provide.")
+                            .font(.footnote)
+                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        Text("Homelessness alone does not guarantee emergency SNAP, so we will still check emergency criteria.")
+                            .font(.footnote)
+                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(VoteNowColors.surfacePrimary)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                    )
+                }
+                }
+            }
+        }
+        .onChange(of: viewModel.application.housingStatus) { _, newValue in
+            if newValue == .unhoused {
+                viewModel.application.residentialStreetAddress = ""
+                viewModel.application.residentialCity = ""
+                viewModel.application.residentialZIP = ""
+                residentialAddressSearchText = ""
+                residentialAddressAutocomplete.clear()
+            }
+        }
+        .onChange(of: shouldCollectResidentialAddress) { _, shouldCollect in
+            if !shouldCollect {
+                residentialAddressSearchText = ""
+                residentialAddressAutocomplete.clear()
+            }
+        }
+    }
+
+    private var householdBasicsStep: some View {
+        VStack(spacing: 12) {
+            SNAPSectionCard(
+                title: "Your food household",
+                helper: nil,
+                headerAccessory: {
+                    SNAPCardInfoButton(
+                        isExpanded: $isHouseholdBasicsWhyExpanded,
+                        label: "Why we ask"
+                    )
+                }
+            ) {
+                SNAPStepGuidanceRows(
+                    whatText: "Tell us who is in your food household.",
+                    whyText: "For SNAP, your household means people who buy and prepare food together. Some people who live together usually must be counted together, like spouses and children under 22 living with a parent.",
+                    doNotShareText: "Do not enter names, Social Security numbers, or private information about other household members.",
+                    isWhyExpanded: $isHouseholdBasicsWhyExpanded
+                ) {
+
+                SNAPInputLabel(
+                    "Household size",
+                    badge: .required(isMissing: householdSizeIsMissingAfterContinueAttempt)
+                )
+                Picker("Household size", selection: householdSizeSelection) {
+                    Text("Select household size").tag(0)
+                    ForEach(1..<11) { count in
+                        Text(count == 1 ? "1 (yourself)" : "\(count)").tag(count)
+                    }
+                    Text("11 or more").tag(11)
+                }
+                .pickerStyle(.menu)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .snapFieldSurface()
+                .modifier(
+                    SNAPRequiredFieldShake(
+                        isActive: householdSizeIsMissingAfterContinueAttempt,
+                        trigger: viewModel.draftContinueAttemptToken
+                    )
+                )
+
+                Text("DO COUNT: People you usually buy and prepare food with.\nDON'T COUNT: Roommates or others who buy and prepare food separately.")
                     .font(.footnote)
                     .foregroundStyle(VoteNowColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
+
+                Divider()
+                    .padding(.vertical, 4)
+
+                if shouldAskMultiPersonHouseholdFollowUps {
+                    SNAPTernaryChoiceQuestion(
+                        title: "Do you buy and prepare most food with anyone else?",
+                        value: $viewModel.application.buysAndPreparesFoodWithOthers,
+                        badge: nil
+                    )
+
+                    SNAPTernaryChoiceQuestion(
+                        title: "Does a spouse live with you?",
+                        value: spouseLivesChoiceBinding,
+                        badge: nil
+                    )
+
+                    SNAPTernaryChoiceQuestion(
+                        title: "Does any child under 22 live with a parent in the home?",
+                        value: childUnder22ChoiceBinding,
+                        badge: nil
+                    )
+
+                    SNAPTernaryChoiceQuestion(
+                        title: "Any children in the household?",
+                        value: childrenInHouseholdChoiceBinding,
+                        badge: nil
+                    )
+                }
+
+                SNAPTernaryChoiceQuestion(
+                    title: "Anyone age 60 or older?",
+                    value: anyoneAge60OrOlderChoiceBinding,
+                    badge: nil
+                )
+
+                SNAPTernaryChoiceQuestion(
+                    title: "Anyone with a disability?",
+                    value: anyoneWithDisabilityChoiceBinding,
+                    badge: nil,
+                    infoText: "A SNAP disability is a long-term physical or mental condition that significantly limits daily activities or work, or receiving benefits like Supplemental Security Income or Social Security Disability Insurance."
+                )
+
+                SNAPTernaryChoiceQuestion(
+                    title: "Anyone pregnant?",
+                    value: anyonePregnantChoiceBinding,
+                    badge: nil
+                )
+
+                SNAPTernaryChoiceQuestion(
+                    title: "Anyone currently unhoused, in a shelter, couch-surfing, or without a fixed mailing address?",
+                    value: unhousedOrNoFixedMailingChoiceBinding,
+                    badge: nil
+                )
+
+                if viewModel.application.anyoneUnhousedOrNoFixedMailingAddress == .yes {
+                    SNAPOptionalEnumPicker(
+                        title: "Preferred safe mailing/contact option",
+                        badge: nil,
+                        selection: $viewModel.application.preferredSafeMailingContactOption,
+                        compact: true,
+                        label: { $0.label }
+                    )
+
+                    Text("Do not enter a full address here. Just choose the safest option for contact.")
+                        .font(.footnote)
+                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                }
             }
 
             Text("This draft does not need names, SSNs, or full addresses.")
@@ -225,17 +626,97 @@ struct SNAPApplicationView: View {
         }
     }
 
+    private var applicantAgeStep: some View {
+        VStack(spacing: 12) {
+            SNAPSectionCard(
+                title: "",
+                helper: nil,
+                headerAccessory: {
+                    SNAPCardInfoButton(
+                        isExpanded: $isApplicantAgeWhyExpanded,
+                        label: "Why we ask"
+                    )
+                }
+            ) {
+                SNAPStepGuidanceRows(
+                    whatText: "Use the birth date of the person preparing this SNAP draft.",
+                    whyText: "Official applications often ask for applicant age. This helps organize the interview prep details.",
+                    doNotShareText: "Do not enter Social Security numbers or other sensitive identifiers.",
+                    isWhyExpanded: $isApplicantAgeWhyExpanded
+                ) {
+                    SNAPInputLabel(
+                        "Applicant age",
+                        badge: .required(isMissing: applicantAgeIsMissingAfterContinueAttempt)
+                    )
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(spacing: 10) {
+                            Text("Age: \(viewModel.application.applicantAge ?? ageInYears(from: applicantDateOfBirthBinding.wrappedValue))")
+                                .font(.footnote.weight(.semibold))
+                                .foregroundStyle(VoteNowColors.textSecondary)
+
+                            Spacer(minLength: 0)
+
+                            Button("Clear") {
+                                viewModel.application.applicantDateOfBirth = nil
+                                viewModel.application.applicantAge = nil
+                            }
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(VoteNowColors.primaryCTA)
+                            .buttonStyle(.plain)
+                        }
+
+                        DatePicker(
+                            "Applicant date of birth",
+                            selection: applicantDateOfBirthBinding,
+                            in: ...Date(),
+                            displayedComponents: .date
+                        )
+                        .datePickerStyle(.wheel)
+                        .labelsHidden()
+                        .frame(maxWidth: .infinity, minHeight: 128, maxHeight: 128, alignment: .leading)
+                        .clipped()
+                        .padding(.horizontal, 4)
+                    }
+                    .snapCompactFieldSurface()
+                }
+            }
+        }
+    }
+
     private var addressContactStep: some View {
         VStack(spacing: 12) {
             SNAPSectionCard(
-                title: "Contact preference",
-                helper: nil
+                title: "Contact information",
+                helper: nil,
+                headerAccessory: {
+                    SNAPCardInfoButton(
+                        isExpanded: $isContactInformationWhyExpanded,
+                        label: "Why we ask"
+                    )
+                }
             ) {
                 SNAPStepGuidanceRows(
                     whatText: "Choose the easiest way for someone to reach you if you later ask for help with your application.",
                     whyText: "This helps prepare for follow-up support, but it does not contact you or submit anything by itself.",
-                    doNotShareText: "Do not enter your phone number, email, mailing address, or other contact details unless a specific field asks for it."
+                    doNotShareText: "Do not enter Social Security numbers, bank account numbers, immigration document numbers, or upload document images here.",
+                    isWhyExpanded: $isContactInformationWhyExpanded
                 ) {
+
+                SNAPInputLabel("Email", badge: .optional)
+                TextField("name@example.com", text: contactEmailBinding)
+                    .keyboardType(.emailAddress)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .textContentType(.emailAddress)
+                    .focused($focusedField, equals: .contactEmail)
+                    .snapCompactTextFieldStyle()
+
+                SNAPInputLabel("Phone Number", badge: .optional)
+                TextField("(555) 123-4567", text: contactPhoneBinding)
+                    .keyboardType(.phonePad)
+                    .textContentType(.telephoneNumber)
+                    .focused($focusedField, equals: .contactPhone)
+                    .snapCompactTextFieldStyle()
 
                 SNAPInputLabel("Preferred contact method", badge: .optional)
 
@@ -260,7 +741,7 @@ struct SNAPApplicationView: View {
                     }
                 }
 
-                Text("Pick the method you would prefer if you later choose to get help. This draft will not send messages automatically.")
+                Text("This draft will not send messages automatically.")
                     .font(.footnote)
                     .foregroundStyle(VoteNowColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -273,19 +754,30 @@ struct SNAPApplicationView: View {
         VStack(spacing: 12) {
             SNAPSectionCard(
                 title: "Income details",
-                helper: nil
+                helper: nil,
+                headerAccessory: {
+                    SNAPCardInfoButton(
+                        isExpanded: $isIncomeWhyExpanded,
+                        label: "Why we ask"
+                    )
+                }
             ) {
                 SNAPStepGuidanceRows(
-                    whatText: "Enter your work status, a monthly income estimate, and whether your income changes from month to month.",
-                    whyText: "Official SNAP applications often ask about income. This draft helps you prepare those answers, but it does not calculate benefits or approval.",
-                    doNotShareText: "Do not enter Social Security numbers, employer EINs, bank account numbers, routing numbers, paystub images, or tax documents."
+                    whatText: "Enter your work status, monthly income estimate, and whether your income changes month to month. SNAP usually asks about income before taxes. Estimates are okay for prep.",
+                    whyText: "Official SNAP applications often ask about income. Emergency review may consider gross income, liquid resources, and whether housing + utility costs are higher than income/resources. For gig or self-employed work, we look at earnings and allowable costs, not just paystubs.",
+                    doNotShareText: "Do not enter Social Security numbers, employer EINs, bank account numbers, routing numbers, paystub images, or tax documents.",
+                    isWhyExpanded: $isIncomeWhyExpanded
                 ) {
 
                 SNAPOptionalEnumPicker(
                     title: "Employment status",
                     badge: .required(),
                     selection: $viewModel.application.employmentStatus,
-                    label: { $0.label }
+                    compact: true,
+                    isMissingRequired: employmentStatusIsMissingAfterContinueAttempt,
+                    shakeToken: viewModel.draftContinueAttemptToken,
+                    label: { $0.label },
+                    selectedHelperText: { $0.exampleText }
                 )
 
                 Text("Choose the option that best describes your current work situation.")
@@ -305,21 +797,16 @@ struct SNAPApplicationView: View {
 
                     Spacer(minLength: 0)
 
-                    Text("/ month")
+                    Text("/month, pre-tax")
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(VoteNowColors.textSecondary)
                 }
-                .font(.body)
-                .frame(maxWidth: .infinity, minHeight: 52, alignment: .leading)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(VoteNowColors.surfacePrimary)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                .snapCompactFieldSurface()
+                .modifier(
+                    SNAPRequiredFieldShake(
+                        isActive: monthlyIncomeIsMissingAfterContinueAttempt,
+                        trigger: viewModel.draftContinueAttemptToken
+                    )
                 )
 
                 Text(annualIncomeEstimateText)
@@ -334,14 +821,209 @@ struct SNAPApplicationView: View {
 
                 SNAPYesNoSegmentedQuestion(
                     title: "Does your income change month to month?",
-                    value: $viewModel.application.incomeChangesMonthToMonth
+                    value: $viewModel.application.incomeChangesMonthToMonth,
+                    isMissingRequired: incomeChangesIsMissingAfterContinueAttempt,
+                    shakeToken: viewModel.draftContinueAttemptToken
                 )
 
                 Text("Answer yes if your income is not the same every month, such as changing hours, tips, seasonal work, gig work, or irregular pay.")
                     .font(.footnote)
                     .foregroundStyle(VoteNowColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
+
+                Divider()
+                    .padding(.vertical, 4)
+
+                if isEmploymentPrimarilyEmployerBased {
+                    Toggle("Also have self-employed/gig income?", isOn: alsoHasSelfEmploymentIncomeBinding)
+                        .font(.footnote)
+                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .toggleStyle(.switch)
+                } else if isEmploymentPrimarilySelfEmployed {
+                    Toggle("Also have employer income?", isOn: alsoHasEmployerIncomeBinding)
+                        .font(.footnote)
+                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .toggleStyle(.switch)
                 }
+
+                if shouldShowEmployerIncomeSection {
+                    Text("Earned income")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(VoteNowColors.textPrimary)
+                    SNAPInputLabel("Employer or job type", badge: .optional)
+                    TextField("Optional", text: $viewModel.application.employerOrJobType)
+                        .textInputAutocapitalization(.words)
+                        .snapCompactTextFieldStyle()
+
+                    SNAPInputLabel("Gross pay amount", badge: .optionalEstimate)
+                    HStack(spacing: 8) {
+                        Text("$")
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(VoteNowColors.textPrimary)
+
+                        TextField("0", text: $viewModel.application.earnedGrossPayAmount)
+                            .keyboardType(.decimalPad)
+                            .focused($focusedField, equals: .earnedGrossPay)
+
+                        Spacer(minLength: 0)
+
+                        Text("/ month")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(VoteNowColors.textSecondary)
+                    }
+                    .snapCompactFieldSurface()
+
+                    SNAPOptionalEnumPicker(
+                        title: "Pay frequency",
+                        badge: .optional,
+                        selection: $viewModel.application.earnedPayFrequency,
+                        compact: true,
+                        label: { $0.label }
+                    )
+
+                    SNAPInputLabel("Approximate hours per week", badge: .optional)
+                    TextField("0", text: $viewModel.application.earnedHoursPerWeek)
+                        .keyboardType(.decimalPad)
+                        .focused($focusedField, equals: .earnedHoursPerWeek)
+                        .snapCompactTextFieldStyle()
+
+                    SNAPTernaryChoiceQuestion(
+                        title: "Recent job loss or stopped work?",
+                        value: recentJobLossChoiceBinding
+                    )
+
+                    SNAPInputLabel("Last pay date", badge: .optional)
+                    if viewModel.application.earnedLastPayDate != nil {
+                        HStack(spacing: 10) {
+                            DatePicker(
+                                "Last pay date",
+                                selection: earnedLastPayDateBinding,
+                                displayedComponents: .date
+                            )
+                            .labelsHidden()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                            Button("Clear") {
+                                viewModel.application.earnedLastPayDate = nil
+                            }
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(VoteNowColors.primaryCTA)
+                            .buttonStyle(.plain)
+                        }
+                        .snapCompactFieldSurface()
+                    } else {
+                        Button("Add date (optional)") {
+                            viewModel.application.earnedLastPayDate = Date()
+                        }
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(VoteNowColors.primaryCTA)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .snapCompactFieldSurface()
+                        .buttonStyle(.plain)
+                    }
+                }
+
+                Divider()
+                    .padding(.vertical, 4)
+
+                if shouldShowSelfEmploymentIncomeSection {
+                    Text("Self-employment or gig income")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(VoteNowColors.textPrimary)
+
+                    SNAPInputLabel("Type of work or platform", badge: .optional)
+                    TextField("Optional", text: $viewModel.application.gigWorkTypeOrPlatform)
+                        .textInputAutocapitalization(.words)
+                        .snapCompactTextFieldStyle()
+
+                    SNAPInputLabel("Gross receipts this month", badge: .optionalEstimate)
+                    HStack(spacing: 8) {
+                        Text("$")
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(VoteNowColors.textPrimary)
+
+                        TextField("0", text: $viewModel.application.gigGrossReceiptsThisMonth)
+                            .keyboardType(.decimalPad)
+                            .focused($focusedField, equals: .gigGrossReceipts)
+
+                        Spacer(minLength: 0)
+
+                        Text("/ month")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(VoteNowColors.textSecondary)
+                    }
+                    .snapCompactFieldSurface()
+
+                    SNAPInputLabel("Business/work expenses this month", badge: .optionalEstimate)
+                    HStack(spacing: 8) {
+                        Text("$")
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(VoteNowColors.textPrimary)
+
+                        TextField("0", text: $viewModel.application.gigBusinessExpensesThisMonth)
+                            .keyboardType(.decimalPad)
+                            .focused($focusedField, equals: .gigBusinessExpenses)
+
+                        Spacer(minLength: 0)
+
+                        Text("/ month")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(VoteNowColors.textSecondary)
+                    }
+                    .snapCompactFieldSurface()
+
+                    SNAPTernaryChoiceQuestion(
+                        title: "Income varies month to month?",
+                        value: $viewModel.application.gigIncomeVariesMonthToMonth
+                    )
+                }
+
+                if shouldShowStandaloneRecentJobLossQuestion {
+                    SNAPTernaryChoiceQuestion(
+                        title: "Recent job loss or stopped work?",
+                        value: recentJobLossChoiceBinding
+                    )
+                }
+
+                Divider()
+                    .padding(.vertical, 4)
+
+                Text("Do you currently recieve unearned or other Income?")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(VoteNowColors.textPrimary)
+
+                LazyVGrid(
+                    columns: [GridItem(.flexible()), GridItem(.flexible())],
+                    alignment: .center,
+                    spacing: 10
+                ) {
+                    ForEach(SNAPOtherIncomeSource.allCases) { source in
+                        SNAPSelectableOptionButton(
+                            title: source.label,
+                            isSelected: viewModel.application.otherIncomeSources.contains(source),
+                            minHeight: 62,
+                            multilineCentered: true,
+                            lineLimit: 2
+                        ) {
+                            toggleOtherIncomeSource(source)
+                        }
+                    }
+                }
+                }
+            }
+        }
+        .onChange(of: viewModel.application.employmentStatus) { _, newValue in
+            guard let newValue else { return }
+            switch newValue {
+            case .selfEmployed:
+                viewModel.application.selfEmployedOrGigWork = .yes
+                viewModel.application.worksForEmployer = .no
+            case .employedFullTime, .employedPartTime:
+                viewModel.application.worksForEmployer = .yes
+                viewModel.application.selfEmployedOrGigWork = .no
+            case .unemployed, .unableToWork:
+                viewModel.application.worksForEmployer = .no
+                viewModel.application.selfEmployedOrGigWork = .no
             }
         }
     }
@@ -350,27 +1032,36 @@ struct SNAPApplicationView: View {
         VStack(spacing: 12) {
             SNAPSectionCard(
                 title: "Student questions",
-                helper: nil
+                helper: nil,
+                headerAccessory: {
+                    SNAPCardInfoButton(
+                        isExpanded: $isStudentStatusWhyExpanded,
+                        label: "Why we ask"
+                    )
+                }
             ) {
                 SNAPStepGuidanceRows(
-                    whatText: "Tell us whether you are enrolled in higher education and answer a few follow-up questions only if that applies to you.",
+                    whatText: "Tell us whether you are enrolled in higher education",
                     whyText: "Student information can affect what documents or explanations the official application may request. This draft does not decide whether you qualify.",
-                    doNotShareText: "Do not enter school ID numbers, transcripts, financial aid records, immigration information, or private details about your child or school."
+                    doNotShareText: "Do not enter school ID numbers, transcripts, financial aid records, immigration information, or private details about your child or school.",
+                    isWhyExpanded: $isStudentStatusWhyExpanded
                 ) {
 
                 SNAPYesNoSegmentedQuestion(
                     title: "Are you currently enrolled in higher education?",
-                    value: currentlyEnrolledBinding
+                    value: currentlyEnrolledBinding,
+                    isMissingRequired: studentEnrollmentIsMissingAfterContinueAttempt,
+                    shakeToken: viewModel.draftContinueAttemptToken
                 )
 
-                Text("Include college, community college, trade school, university, or similar programs.")
+                Text("inlcude College / University (undergraduate), Graduate / Professional school, Vocational / Trade school, formal Technical or certificate programs, Technical or certificate programs, GED or adult basic education")
                     .font(.footnote)
                     .foregroundStyle(VoteNowColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 if viewModel.application.isCurrentlyEnrolledInHigherEducation == true {
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Students are still eligibly for SNAP. These questions questions help organize what the official application asks next")
+                        Text("Students may still qualify for SNAP. These questions help organize what the official application asks next.")
                             .font(.subheadline.weight(.medium))
                             .foregroundStyle(VoteNowColors.textPrimary)
                     }
@@ -386,7 +1077,9 @@ struct SNAPApplicationView: View {
 
                     SNAPYesNoSegmentedQuestion(
                         title: "Are you enrolled at least half-time?",
-                        value: $viewModel.application.isEnrolledAtLeastHalfTime
+                        value: $viewModel.application.isEnrolledAtLeastHalfTime,
+                        isMissingRequired: enrolledHalfTimeIsMissingAfterContinueAttempt,
+                        shakeToken: viewModel.draftContinueAttemptToken
                     )
                     Text("Use your school's definition of half-time if you know it. If you are unsure, choose the closest answer and confirm later.")
                         .font(.footnote)
@@ -395,25 +1088,31 @@ struct SNAPApplicationView: View {
 
                     SNAPYesNoSegmentedQuestion(
                         title: "Do you work at least 20 hours per week?",
-                        value: $viewModel.application.worksAtLeastTwentyHoursPerWeek
+                        value: $viewModel.application.worksAtLeastTwentyHoursPerWeek,
+                        isMissingRequired: worksTwentyHoursIsMissingAfterContinueAttempt,
+                        shakeToken: viewModel.draftContinueAttemptToken
                     )
-                    Text("Use your usual weekly hours. Do not include employer IDs or paystub details.")
+                    Text("Use your usual weekly hours.")
                         .font(.footnote)
                         .foregroundStyle(VoteNowColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
 
                     SNAPYesNoSegmentedQuestion(
                         title: "Do you participate in work-study?",
-                        value: $viewModel.application.participatesInWorkStudy
+                        value: $viewModel.application.participatesInWorkStudy,
+                        isMissingRequired: workStudyIsMissingAfterContinueAttempt,
+                        shakeToken: viewModel.draftContinueAttemptToken
                     )
-                    Text("Answer yes only if you are officially part of a work-study program.")
+                    Text("Ex: A school-arranged job funded partly by the government that lets students earn money while enrolled.")
                         .font(.footnote)
                         .foregroundStyle(VoteNowColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
 
                     SNAPYesNoSegmentedQuestion(
                         title: "Are you responsible for a dependent child?",
-                        value: dependentChildResponsibilityBinding
+                        value: dependentChildResponsibilityBinding,
+                        isMissingRequired: dependentChildIsMissingAfterContinueAttempt,
+                        shakeToken: viewModel.draftContinueAttemptToken
                     )
                     Text("Answer based on your current responsibility.")
                         .font(.footnote)
@@ -429,12 +1128,19 @@ struct SNAPApplicationView: View {
         VStack(spacing: 12) {
             SNAPSectionCard(
                 title: "Expense estimates",
-                helper: nil
+                helper: nil,
+                headerAccessory: {
+                    SNAPCardInfoButton(
+                        isExpanded: $isExpensesWhyExpanded,
+                        label: "Why we ask"
+                    )
+                }
             ) {
                 SNAPStepGuidanceRows(
-                    whatText: "Enter broad monthly estimates for housing, utilities, childcare if applicable, and out-of-pocket medical costs if you want to include them.",
-                    whyText: "Some official applications ask about certain costs. This draft helps you collect estimates before you continue.",
-                    doNotShareText: "Do not enter medical diagnoses, medical history, account numbers, landlord private details, or document images."
+                    whatText: "",
+                    whyText: "Rent and utilities may affect your SNAP amount. Utilities, including basic internet in some cases, can matter in official review. This draft helps you collect estimates before you continue.",
+                    doNotShareText: "Do not enter medical diagnoses, medical history, account numbers, landlord private details, or document images.",
+                    isWhyExpanded: $isExpensesWhyExpanded
                 ) {
 
                 SNAPInputLabel("Monthly rent or housing", badge: .required())
@@ -454,6 +1160,12 @@ struct SNAPApplicationView: View {
                         .foregroundStyle(VoteNowColors.textSecondary)
                 }
                 .snapCompactFieldSurface()
+                .modifier(
+                    SNAPRequiredFieldShake(
+                        isActive: rentIsMissingAfterContinueAttempt,
+                        trigger: viewModel.draftContinueAttemptToken
+                    )
+                )
 
                 Text("Enter your usual monthly rent, mortgage, or housing payment estimate.")
                     .font(.footnote)
@@ -477,6 +1189,12 @@ struct SNAPApplicationView: View {
                         .foregroundStyle(VoteNowColors.textSecondary)
                 }
                 .snapCompactFieldSurface()
+                .modifier(
+                    SNAPRequiredFieldShake(
+                        isActive: utilitiesIsMissingAfterContinueAttempt,
+                        trigger: viewModel.draftContinueAttemptToken
+                    )
+                )
 
                 Text("Enter a broad monthly estimate for utilities such as electricity, gas, water, heat, or phone, if applicable.")
                     .font(.footnote)
@@ -526,7 +1244,7 @@ struct SNAPApplicationView: View {
                 }
                 .snapCompactFieldSurface()
 
-                Text("Optional. Enter only a dollar estimate. Do not include diagnoses, prescriptions, or medical history.")
+                Text("Enter only a dollar estimate. Do not include diagnoses, prescriptions, or medical history.")
                     .font(.footnote)
                     .foregroundStyle(VoteNowColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -539,17 +1257,36 @@ struct SNAPApplicationView: View {
         VStack(spacing: 12) {
             SNAPSectionCard(
                 title: "Checklist items",
-                helper: nil
+                helper: nil,
+                headerAccessory: {
+                    SNAPCardInfoButton(
+                        isExpanded: $isDocumentsWhyExpanded,
+                        label: "Why we ask"
+                    )
+                }
             ) {
                 SNAPStepGuidanceRows(
                     whatText: "Mark documents you already have or may want to gather before using the official application.",
                     whyText: "Having documents ready can make the official application process easier. This checklist does not upload, store, or submit documents.",
-                    doNotShareText: "Do not upload document images, type document numbers, or enter immigration details in this draft."
+                    doNotShareText: "Do not upload document images, type document numbers, or enter immigration details in this draft.",
+                    isWhyExpanded: $isDocumentsWhyExpanded
                 ) {
 
-                Text("You may not need every item. Requirements vary by state and household.")
+                Text("Upload once. We'll use a document anywhere it helps.")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(VoteNowColors.primaryCTA)
+
+                Text("You may not need every document right away. Upload what you have now; the agency may ask for more later.")
                     .font(.footnote)
                     .foregroundStyle(VoteNowColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if viewModel.application.expeditedCandidate {
+                    Text("Expedited path: focus on Identity first. Other documents can be added later.")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
 
                 ForEach(visibleChecklistDocuments) { document in
                     let hasDocument = viewModel.application.documentsAvailable.contains(document)
@@ -561,10 +1298,44 @@ struct SNAPApplicationView: View {
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundStyle(hasDocument ? VoteNowColors.primaryCTA : VoteNowColors.textSecondary)
 
-                            Text(document.label)
-                                .font(.subheadline)
-                                .foregroundStyle(VoteNowColors.textPrimary)
-                                .multilineTextAlignment(.leading)
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack(spacing: 8) {
+                                    Text(document.label)
+                                        .font(.subheadline)
+                                        .foregroundStyle(VoteNowColors.textPrimary)
+                                        .multilineTextAlignment(.leading)
+
+                                    Text("Helpful")
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(VoteNowColors.textSecondary)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 3)
+                                        .background(
+                                            Capsule(style: .continuous)
+                                                .fill(VoteNowColors.surfaceSecondary)
+                                        )
+                                        .overlay(
+                                            Capsule(style: .continuous)
+                                                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                                        )
+                                }
+
+                                if let helperText = documentHelperText(for: document) {
+                                    Text(helperText)
+                                        .font(.footnote.weight(.semibold))
+                                        .foregroundStyle(VoteNowColors.textSecondary)
+                                        .multilineTextAlignment(.leading)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+
+                                if let exampleText = documentExampleText(for: document) {
+                                    Text(exampleText)
+                                        .font(.caption)
+                                        .foregroundStyle(VoteNowColors.textSecondary)
+                                        .multilineTextAlignment(.leading)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                            }
 
                             Spacer(minLength: 0)
 
@@ -619,13 +1390,27 @@ struct SNAPApplicationView: View {
         VStack(spacing: 12) {
             SNAPSectionCard(
                 title: "Before continuing",
-                helper: nil
+                helper: nil,
+                headerAccessory: {
+                    SNAPCardInfoButton(
+                        isExpanded: $isReviewWhyExpanded,
+                        label: "Why we ask"
+                    )
+                }
             ) {
                 SNAPStepGuidanceRows(
-                    whatText: "Check your answers before using them on the official state application.",
+                    whatText: "",
                     whyText: "Reviewing now can help you catch missing or incorrect information before you continue.",
-                    doNotShareText: "Do not add extra sensitive information. Only correct the fields this assistant asks for."
+                    doNotShareText: "Do not add extra sensitive information. Only correct the fields this assistant asks for.",
+                    isWhyExpanded: $isReviewWhyExpanded
                 ) {
+                Text("Required Sections: \(requiredSectionsCompletedCount) of \(requiredSectionsTotalCount)")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(VoteNowColors.textPrimary)
+
+                Text("Optional Sections: \(optionalSectionsCompletedCount) of \(optionalSectionsTotalCount)")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(VoteNowColors.textSecondary)
 
                 Text("When this looks right, continue to the next step. This still does not submit your SNAP application.")
                     .font(.footnote.weight(.semibold))
@@ -658,14 +1443,15 @@ struct SNAPApplicationView: View {
                         }
 
                         ForEach(section.rows) { row in
+                            let isMissingRequired = row.isRequired && row.value == "Not provided"
                             HStack(alignment: .top, spacing: 10) {
                                 Text(row.label)
                                     .font(.footnote.weight(.semibold))
-                                    .foregroundStyle(VoteNowColors.textSecondary)
+                                    .foregroundStyle(isMissingRequired ? VoteNowColors.urgentCTA : VoteNowColors.textSecondary)
                                 Spacer(minLength: 8)
                                 Text(row.value)
                                     .font(.footnote)
-                                    .foregroundStyle(VoteNowColors.textSecondary)
+                                    .foregroundStyle(isMissingRequired ? VoteNowColors.urgentCTA : VoteNowColors.textSecondary)
                                     .multilineTextAlignment(.trailing)
                             }
                             .padding(.vertical, 1)
@@ -678,70 +1464,163 @@ struct SNAPApplicationView: View {
                     }
                 }
             }
+
+            SNAPSectionCard(
+                title: "Interview Prep Summary",
+                helper: nil
+            ) {
+                Text("Use this to prepare for your SNAP interview. This is not an official eligibility decision.")
+                    .font(.footnote)
+                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text("For prep only")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(VoteNowColors.primaryCTA)
+
+                Text("DTA/the state SNAP agency makes the final decision.")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                SNAPInterviewSummarySection(
+                    title: "Expedited screening",
+                    rows: [
+                        .init(label: "User estimate", value: viewModel.expeditedScreeningResult.label)
+                    ]
+                )
+
+                SNAPInterviewSummarySection(
+                    title: "Official application",
+                    rows: officialApplicationSummaryRows
+                )
+
+                SNAPInterviewSummarySection(
+                    title: "Household notes",
+                    rows: householdSummaryRows
+                )
+
+                SNAPInterviewSummarySection(
+                    title: "Income notes",
+                    rows: incomeSummaryRows
+                )
+
+                SNAPInterviewSummarySection(
+                    title: "Housing/utilities notes",
+                    rows: housingUtilitySummaryRows
+                )
+
+                SNAPInterviewSummarySection(
+                    title: "Documents",
+                    rows: documentsSummaryRows
+                )
+
+                SNAPInterviewSummarySection(
+                    title: "What to tell the SNAP office",
+                    rows: [
+                        .init(label: "User estimate", value: viewModel.interviewPrepSummaryText)
+                    ]
+                )
+
+                if !followUpRisks.isEmpty {
+                    SNAPInterviewSummarySection(
+                        title: "Follow-up risks",
+                        rows: followUpRisks.map { risk in
+                            .init(label: "Warning", value: risk)
+                        }
+                    )
+                }
+            }
         }
     }
 
     private var nextStepsStep: some View {
         VStack(spacing: 12) {
             SNAPSectionCard(
-                title: "Next-step checklist",
+                title: "Timeline at a glance",
                 helper: nil
             ) {
-                SNAPStepGuidanceRows(
-                    whatText: "Use your draft and checklist to continue with your official state SNAP application.",
-                    whyText: "This assistant helped you prepare. Your application is not submitted until you complete it through the official process.",
-                    doNotShareText: "Only enter sensitive information, such as SSN or document details, on the official state application website or with a trusted benefits worker.",
-                    whyLabel: "Why this matters"
-                ) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("You may need expedited SNAP screening")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(VoteNowColors.textPrimary)
 
-                VStack(spacing: 10) {
-                    SNAPNextStepRow(
-                        title: "Open your official state SNAP application site.",
-                        detail: "Use the state listed in your draft."
-                    )
-                    SNAPNextStepRow(
-                        title: "Keep this draft nearby.",
-                        detail: "Copy only the answers that the official application asks for."
-                    )
-                    SNAPNextStepRow(
-                        title: "Gather documents if requested.",
-                        detail: "You may not need every item in your checklist."
-                    )
-                    SNAPNextStepRow(
-                        title: "Ask for help if anything is unclear.",
-                        detail: "A benefits navigator or official agency worker can help you confirm details."
-                    )
-                }
-                }
-            }
+                    Text("You may qualify for emergency SNAP. If the SNAP office confirms eligibility, benefits can be available within 7 calendar days.")
+                        .font(.footnote)
+                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
 
-            SNAPSectionCard(
-                title: "What happens next",
-                helper: nil
-            ) {
-                if let stateTimeline = selectedStateTimeline {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("\(stateTimeline.displayName) timeline snapshot")
+                    Text(SNAPCopy.globalDisclaimer)
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(VoteNowColors.primaryCTA)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(VoteNowColors.surfacePrimary)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                )
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Day tracker")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(VoteNowColors.textPrimary)
+
+                    if let officialSubmissionDate = viewModel.application.officialSNAPApplicationSubmissionDate {
+                        HStack(spacing: 8) {
+                            Text("Day \(daysSinceDate(officialSubmissionDate))")
+                                .font(.subheadline.weight(.bold))
+                                .foregroundStyle(VoteNowColors.primaryCTA)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 4)
+                                .background(
+                                    Capsule(style: .continuous)
+                                        .fill(VoteNowColors.statusInfoSurface)
+                                )
+
+                            Text("since official application submission")
+                                .font(.footnote)
+                                .foregroundStyle(VoteNowColors.textSecondary)
+                        }
+
+                        Text("Official application date: \(compactDateText(from: officialSubmissionDate))")
+                            .font(.footnote)
+                            .foregroundStyle(VoteNowColors.textSecondary)
+                    } else {
+                        Text("SNAP clock has not started in this app")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(VoteNowColors.textPrimary)
 
-                        HStack(spacing: 8) {
-                            Text("Recent on-time rate:")
-                                .font(.footnote.weight(.semibold))
-                                .foregroundStyle(VoteNowColors.textSecondary)
-                            Text(stateTimeline.onTimeRatePercentText)
-                                .font(.footnote.weight(.bold))
-                                .foregroundStyle(VoteNowColors.textPrimary)
-                        }
-
-                        Text(stateTimeline.laymanBandLabel)
-                            .font(.footnote.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.primaryCTA)
-
-                        Text("This is recent statewide performance, not a guarantee for your case.")
+                        Text("The SNAP timeline starts after your official application is submitted to DTA/the state SNAP agency.")
                             .font(.footnote)
                             .foregroundStyle(VoteNowColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
+                    }
+
+                    if let submittedAt = viewModel.submittedAt {
+                        Text("Prep checklist completed \(compactDateText(from: submittedAt))")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(VoteNowColors.successGreen)
+                    }
+                }
+                .padding(.bottom, 4)
+
+                if let stateTimeline = selectedStateTimeline {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("\(stateTimeline.displayName) update")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(VoteNowColors.textPrimary)
+
+                        Text("Recent on-time rate: \(stateTimeline.onTimeRatePercentText)")
+                            .font(.footnote)
+                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+
                     }
                     .padding(.bottom, 4)
                 } else {
@@ -749,6 +1628,12 @@ struct SNAPApplicationView: View {
                         .font(.footnote)
                         .foregroundStyle(VoteNowColors.textSecondary)
                 }
+
+                SNAPTimelineMilestoneRow(
+                    dayRange: "Day 0",
+                    title: "Submit official application",
+                    detail: "Use your state portal to submit your official SNAP application."
+                )
 
                 SNAPTimelineMilestoneRow(
                     dayRange: "By Day 30",
@@ -761,31 +1646,46 @@ struct SNAPApplicationView: View {
                     title: "Expedited SNAP timing",
                     detail: SNAPStateResources.federalTimelineSummary.expeditedSNAPDeadline
                 )
+            }
 
-                Text("Simple timeline")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.textPrimary)
-                    .padding(.top, 2)
-
-                ForEach(SNAPStateResources.processTimelineSteps) { step in
-                    SNAPTimelineMilestoneRow(
-                        dayRange: step.typicalDayRange,
-                        title: step.appStatusLabel,
-                        detail: step.appFriendlyCopy
+            SNAPSectionCard(
+                title: "Next-step checklist",
+                helper: nil,
+                headerAccessory: {
+                    SNAPCardInfoButton(
+                        isExpanded: $isNextStepsWhyExpanded,
+                        label: "Why this matters"
                     )
                 }
+            ) {
+                SNAPStepGuidanceRows(
+                    whatText: "Use your draft and checklist to continue with your official state SNAP application.",
+                    whyText: "This assistant helped you prepare. Your application is not submitted until you complete it through the official process.",
+                    doNotShareText: "Only enter sensitive information, such as SSN or document details, on the official state application website or with a trusted benefits worker.",
+                    whyLabel: "Why this matters",
+                    isWhyExpanded: $isNextStepsWhyExpanded
+                ) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Document follow-up")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(VoteNowColors.textPrimary)
 
-                if let stateTimeline = selectedStateTimeline {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Suggested follow-up")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textPrimary)
-                        Text(stateTimeline.suggestedFollowUpInApp)
-                            .font(.footnote)
-                            .foregroundStyle(VoteNowColors.textSecondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .padding(.top, 4)
+                    Text("Identity is needed first. Send what you have now; missing non-identity items should not by itself delay emergency processing.")
+                        .font(.footnote)
+                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(VoteNowColors.surfacePrimary)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                )
+
                 }
             }
 
@@ -816,11 +1716,68 @@ struct SNAPApplicationView: View {
         }
     }
 
+    private func documentExampleText(for document: SNAPDocumentType) -> String? {
+        switch document {
+        case .photoID:
+            return "Ex: Driver's license, state ID, passport, school ID, shelter ID, or collateral contact."
+        case .proofOfAddress:
+            if viewModel.application.housingStatus == .unhoused {
+                return "Ex: Official mail, shelter letter, landlord letter, or letter from someone you stay with. A permanent address is not required when you are unhoused."
+            }
+            return "Ex: Lease, utility bill, official mail, shelter letter, landlord letter, or letter from someone you stay with."
+        case .proofOfIncome:
+            return "Ex: Pay stubs, employer letter, unemployment statement, Social Security/SSI/SSDI award letter, VA benefit letter, child support record, or cash assistance notice."
+        case .rentOrHousingCostProof:
+            return "Ex: Lease, rent receipt, mortgage statement, landlord letter, or written note showing what you pay."
+        case .utilityBill:
+            return "Ex: Electric, gas, heating, water/sewer, phone, or internet bill."
+        case .studentStatusDocuments:
+            return "Ex: Class schedule, enrollment letter, school registration record, financial aid letter, or work-study award/approval."
+        case .workStatusOrExemptions:
+            return "Ex: Pay stubs, employer letter, work schedule, disability benefit letter, doctor note, caregiving statement, or school/work-study proof."
+        case .childcareCostProof:
+            return "Ex: Childcare invoices, provider receipts, or a written statement showing what you pay each month."
+        case .immigrationDocumentsIfRelevant:
+            return "Ex: Only if the official application asks. Bring what the state office requests for your household."
+        }
+    }
+
+    private func documentHelperText(for document: SNAPDocumentType) -> String? {
+        switch document {
+        case .photoID:
+            return "Proves you are who you say you are."
+        case .proofOfAddress:
+            return "Proves you live in the state where you are applying."
+        case .proofOfIncome:
+            return "Proves money coming into your household."
+        case .rentOrHousingCostProof:
+            return "May increase your SNAP amount by showing rent or housing costs."
+        case .utilityBill:
+            return "May increase your SNAP amount by showing utility expenses."
+        case .studentStatusDocuments:
+            return "Helps determine student SNAP eligibility."
+        case .workStatusOrExemptions:
+            return "Helps confirm employment or reasons work rules may not apply."
+        case .childcareCostProof, .immigrationDocumentsIfRelevant:
+            return nil
+        }
+    }
+
     private var householdSizeSelection: Binding<Int> {
         Binding<Int>(
             get: { viewModel.application.householdSize ?? 0 },
             set: { newValue in
                 viewModel.application.householdSize = newValue == 0 ? nil : newValue
+                if newValue == 1 {
+                    // Hide and clear multi-person-only follow-ups for single-person households.
+                    viewModel.application.buysAndPreparesFoodWithOthers = nil
+                    viewModel.application.spouseLivesWithUser = nil
+                    viewModel.application.childUnder22LivesWithParentInHome = nil
+                    viewModel.application.childrenInHousehold = nil
+                    viewModel.application.hasSpouseInHousehold = nil
+                    viewModel.application.hasChildUnder22LivingWithParent = nil
+                    viewModel.application.hasChildren = nil
+                }
             }
         )
     }
@@ -832,15 +1789,54 @@ struct SNAPApplicationView: View {
     private var reviewSectionSummaries: [SNAPReviewSectionSummary] {
         [
             SNAPReviewSectionSummary(
+                id: "where_applying_from",
+                title: "Where are you currently residing?",
+                step: .whereApplyingFrom,
+                status: locationReviewStatus,
+                rows: [
+                    SNAPReviewSectionRow(label: "State", value: normalized(viewModel.application.state).isEmpty ? "Not provided" : normalized(viewModel.application.state), isRequired: true),
+                    SNAPReviewSectionRow(label: "City", value: normalized(viewModel.application.residentialCity).isEmpty ? "Not provided" : normalized(viewModel.application.residentialCity), isRequired: shouldCollectResidentialAddress),
+                    SNAPReviewSectionRow(label: "ZIP code", value: normalized(viewModel.application.residentialZIP).isEmpty ? "Not provided" : normalized(viewModel.application.residentialZIP), isRequired: shouldCollectResidentialAddress),
+                    SNAPReviewSectionRow(label: "Housing status", value: viewModel.application.housingStatus?.label ?? "Not provided", isRequired: true)
+                ]
+            ),
+            SNAPReviewSectionSummary(
                 id: "household_basics",
-                title: "Household basics",
+                title: "Your Food Household",
                 step: .householdBasics,
                 status: householdReviewStatus,
                 rows: [
-                    SNAPReviewSectionRow(label: "Food household size", value: displayOptionalInt(viewModel.application.householdSize)),
-                    SNAPReviewSectionRow(label: "Applicant age", value: displayOptionalInt(viewModel.application.applicantAge)),
-                    SNAPReviewSectionRow(label: "State and ZIP", value: displayStateZIP()),
-                    SNAPReviewSectionRow(label: "Housing status", value: viewModel.application.housingStatus?.label ?? "Not provided")
+                    SNAPReviewSectionRow(label: "Food household size", value: displayOptionalInt(viewModel.application.householdSize), isRequired: true),
+                    SNAPReviewSectionRow(label: "Buy/prepare food with others", value: ternaryChoiceText(viewModel.application.buysAndPreparesFoodWithOthers)),
+                    SNAPReviewSectionRow(label: "Spouse lives with you", value: ternaryChoiceText(viewModel.application.spouseLivesWithUser)),
+                    SNAPReviewSectionRow(label: "Child under 22 with parent in home", value: ternaryChoiceText(viewModel.application.childUnder22LivesWithParentInHome)),
+                    SNAPReviewSectionRow(label: "Children in household", value: ternaryChoiceText(viewModel.application.childrenInHousehold)),
+                    SNAPReviewSectionRow(label: "Anyone age 60 or older", value: ternaryChoiceText(viewModel.application.anyoneAge60OrOlder)),
+                    SNAPReviewSectionRow(label: "Anyone with a disability", value: ternaryChoiceText(viewModel.application.anyoneWithDisability)),
+                    SNAPReviewSectionRow(label: "Anyone pregnant", value: ternaryChoiceText(viewModel.application.anyonePregnant)),
+                    SNAPReviewSectionRow(label: "Anyone unhoused / no fixed mailing address", value: ternaryChoiceText(viewModel.application.anyoneUnhousedOrNoFixedMailingAddress)),
+                    SNAPReviewSectionRow(label: "Safe mailing/contact option", value: viewModel.application.preferredSafeMailingContactOption?.label ?? "Not provided")
+                ]
+            ),
+            SNAPReviewSectionSummary(
+                id: "applicant_age",
+                title: "Applicant age",
+                step: .applicantAge,
+                status: applicantAgeReviewStatus,
+                rows: [
+                    SNAPReviewSectionRow(label: "Date of birth", value: viewModel.application.applicantDateOfBirth.map(readableDate) ?? "Not provided", isRequired: true),
+                    SNAPReviewSectionRow(label: "Age", value: displayOptionalInt(viewModel.application.applicantAge))
+                ]
+            ),
+            SNAPReviewSectionSummary(
+                id: "contact_preference",
+                title: "Contact information",
+                step: .addressContact,
+                status: contactReviewStatus,
+                rows: [
+                    SNAPReviewSectionRow(label: "Preferred contact method", value: viewModel.application.preferredContactMethod?.label ?? "Not provided"),
+                    SNAPReviewSectionRow(label: "Email", value: normalized(viewModel.application.contactEmail).isEmpty ? "Not provided" : normalized(viewModel.application.contactEmail)),
+                    SNAPReviewSectionRow(label: "Phone Number", value: normalized(viewModel.application.contactPhone).isEmpty ? "Not provided" : normalized(viewModel.application.contactPhone))
                 ]
             ),
             SNAPReviewSectionSummary(
@@ -849,9 +1845,12 @@ struct SNAPApplicationView: View {
                 step: .income,
                 status: incomeReviewStatus,
                 rows: [
-                    SNAPReviewSectionRow(label: "Employment status", value: viewModel.application.employmentStatus?.label ?? "Not provided"),
-                    SNAPReviewSectionRow(label: "Estimated monthly income", value: displayCurrency(viewModel.application.monthlyIncomeEstimate)),
-                    SNAPReviewSectionRow(label: "Income changes month to month", value: yesNoUnknown(viewModel.application.incomeChangesMonthToMonth))
+                    SNAPReviewSectionRow(label: "Employment status", value: viewModel.application.employmentStatus?.label ?? "Not provided", isRequired: true),
+                    SNAPReviewSectionRow(label: "Estimated monthly income", value: displayCurrency(viewModel.application.monthlyIncomeEstimate), isRequired: true),
+                    SNAPReviewSectionRow(label: "Income changes month to month", value: yesNoUnknown(viewModel.application.incomeChangesMonthToMonth), isRequired: true),
+                    SNAPReviewSectionRow(label: "Works for employer", value: ternaryChoiceText(viewModel.application.worksForEmployer)),
+                    SNAPReviewSectionRow(label: "Self-employed or gig work", value: ternaryChoiceText(viewModel.application.selfEmployedOrGigWork)),
+                    SNAPReviewSectionRow(label: "Other income sources", value: viewModel.application.otherIncomeSources.isEmpty ? "None selected" : "\(viewModel.application.otherIncomeSources.count) selected")
                 ]
             ),
             SNAPReviewSectionSummary(
@@ -882,15 +1881,16 @@ struct SNAPApplicationView: View {
         var rows: [SNAPReviewSectionRow] = [
             SNAPReviewSectionRow(
                 label: "Enrolled in higher education",
-                value: yesNoUnknown(viewModel.application.isCurrentlyEnrolledInHigherEducation)
+                value: yesNoUnknown(viewModel.application.isCurrentlyEnrolledInHigherEducation),
+                isRequired: true
             )
         ]
 
         if viewModel.application.isCurrentlyEnrolledInHigherEducation == true {
-            rows.append(SNAPReviewSectionRow(label: "Enrolled at least half-time", value: yesNoUnknown(viewModel.application.isEnrolledAtLeastHalfTime)))
-            rows.append(SNAPReviewSectionRow(label: "Works at least 20 hours/week", value: yesNoUnknown(viewModel.application.worksAtLeastTwentyHoursPerWeek)))
-            rows.append(SNAPReviewSectionRow(label: "Participates in work-study", value: yesNoUnknown(viewModel.application.participatesInWorkStudy)))
-            rows.append(SNAPReviewSectionRow(label: "Responsible for dependent child", value: yesNoUnknown(viewModel.application.isResponsibleForDependentChild)))
+            rows.append(SNAPReviewSectionRow(label: "Enrolled at least half-time", value: yesNoUnknown(viewModel.application.isEnrolledAtLeastHalfTime), isRequired: true))
+            rows.append(SNAPReviewSectionRow(label: "Works at least 20 hours/week", value: yesNoUnknown(viewModel.application.worksAtLeastTwentyHoursPerWeek), isRequired: true))
+            rows.append(SNAPReviewSectionRow(label: "Participates in work-study", value: yesNoUnknown(viewModel.application.participatesInWorkStudy), isRequired: true))
+            rows.append(SNAPReviewSectionRow(label: "Responsible for dependent child", value: yesNoUnknown(viewModel.application.isResponsibleForDependentChild), isRequired: true))
         } else if viewModel.application.isCurrentlyEnrolledInHigherEducation == false {
             rows.append(SNAPReviewSectionRow(label: "Follow-up questions", value: "Not required"))
         }
@@ -900,8 +1900,8 @@ struct SNAPApplicationView: View {
 
     private var expensesReviewRows: [SNAPReviewSectionRow] {
         var rows: [SNAPReviewSectionRow] = [
-            SNAPReviewSectionRow(label: "Monthly rent or housing", value: displayCurrency(viewModel.application.rentOrHousingCost)),
-            SNAPReviewSectionRow(label: "Monthly utilities", value: displayCurrency(viewModel.application.utilitiesCost))
+            SNAPReviewSectionRow(label: "Monthly rent or housing", value: displayCurrency(viewModel.application.rentOrHousingCost), isRequired: true),
+            SNAPReviewSectionRow(label: "Monthly utilities", value: displayCurrency(viewModel.application.utilitiesCost), isRequired: true)
         ]
 
         if shouldShowChildcareExpensesField {
@@ -944,17 +1944,49 @@ struct SNAPApplicationView: View {
 
     private var householdReviewStatus: SNAPReviewSectionStatus {
         let isMissingRequired = viewModel.application.householdSize == nil
-            || isBlank(viewModel.application.state)
-            || isBlank(viewModel.application.zipCode)
 
         if isMissingRequired {
             return .missingRequiredInfo
         }
 
-        let hasMissingOptional = viewModel.application.applicantAge == nil
-            || viewModel.application.housingStatus == nil
+        let hasMissingOptional =
+            (shouldAskMultiPersonHouseholdFollowUps && (
+                viewModel.application.buysAndPreparesFoodWithOthers == nil
+                    || viewModel.application.spouseLivesWithUser == nil
+                    || viewModel.application.childUnder22LivesWithParentInHome == nil
+                    || viewModel.application.childrenInHousehold == nil
+            ))
+            || viewModel.application.anyoneAge60OrOlder == nil
+            || viewModel.application.anyoneWithDisability == nil
+            || viewModel.application.anyonePregnant == nil
+            || viewModel.application.anyoneUnhousedOrNoFixedMailingAddress == nil
 
         return hasMissingOptional ? .optionalNotProvided : .complete
+    }
+
+    private var applicantAgeReviewStatus: SNAPReviewSectionStatus {
+        let hasAge = viewModel.application.applicantDateOfBirth != nil || viewModel.application.applicantAge != nil
+        return hasAge ? .complete : .missingRequiredInfo
+    }
+
+    private var locationReviewStatus: SNAPReviewSectionStatus {
+        let isMissingRequired = isBlank(viewModel.application.state)
+
+        if isMissingRequired {
+            return .missingRequiredInfo
+        }
+
+        if viewModel.application.housingStatus == nil {
+            return .missingRequiredInfo
+        }
+
+        if shouldCollectResidentialAddress
+            && (isBlank(viewModel.application.residentialCity)
+                || isBlank(viewModel.application.residentialZIP)) {
+            return .missingRequiredInfo
+        }
+
+        return .complete
     }
 
     private var incomeReviewStatus: SNAPReviewSectionStatus {
@@ -963,6 +1995,14 @@ struct SNAPApplicationView: View {
             || viewModel.application.incomeChangesMonthToMonth == nil
 
         return isMissingRequired ? .missingRequiredInfo : .complete
+    }
+
+    private var contactReviewStatus: SNAPReviewSectionStatus {
+        let hasMethod = viewModel.application.preferredContactMethod != nil
+        let hasEmail = !isBlank(viewModel.application.contactEmail)
+        let hasPhone = !isBlank(viewModel.application.contactPhone)
+
+        return (hasMethod || hasEmail || hasPhone) ? .complete : .optionalNotProvided
     }
 
     private var studentReviewStatus: SNAPReviewSectionStatus {
@@ -1001,25 +2041,185 @@ struct SNAPApplicationView: View {
         viewModel.application.documentsAvailable.isEmpty ? .optionalNotProvided : .complete
     }
 
+    private var requiredSectionsTotalCount: Int {
+        reviewSectionSummaries.filter { !isOptionalReviewSection($0.step) }.count
+    }
+
+    private var optionalSectionsTotalCount: Int {
+        reviewSectionSummaries.filter { isOptionalReviewSection($0.step) }.count
+    }
+
+    private var requiredSectionsCompletedCount: Int {
+        reviewSectionSummaries.filter { !isOptionalReviewSection($0.step) && $0.status == .complete }.count
+    }
+
+    private var optionalSectionsCompletedCount: Int {
+        reviewSectionSummaries.filter { isOptionalReviewSection($0.step) && $0.status == .complete }.count
+    }
+
+    private func isOptionalReviewSection(_ step: SNAPDraftStep) -> Bool {
+        switch step {
+        case .addressContact, .documentsChecklist:
+            return true
+        default:
+            return false
+        }
+    }
+
+    private var officialApplicationSummaryRows: [SNAPInterviewSummaryRow] {
+        let submitted = viewModel.application.hasSubmittedOfficialSNAPApplication
+        let submittedDate = viewModel.application.officialSNAPApplicationSubmissionDate
+
+        switch submitted {
+        case .some(true):
+            if let submittedDate {
+                return [.init(label: "Submitted date", value: readableDate(submittedDate))]
+            }
+            return [.init(label: "Submitted date", value: "Unknown")]
+        case .some(false):
+            return [.init(label: "Status", value: "Not submitted yet")]
+        case .none:
+            return [.init(label: "Status", value: "Unknown")]
+        }
+    }
+
+    private var householdSummaryRows: [SNAPInterviewSummaryRow] {
+        var rows: [SNAPInterviewSummaryRow] = []
+        rows.append(.init(label: "Household size", value: displayOptionalInt(viewModel.application.householdSize)))
+        rows.append(.init(label: "Buy/prepare food with others", value: ternaryChoiceText(viewModel.application.buysAndPreparesFoodWithOthers)))
+        rows.append(.init(label: "Spouse in household", value: ternaryChoiceText(viewModel.application.spouseLivesWithUser)))
+        rows.append(.init(label: "Child under 22 living with parent", value: ternaryChoiceText(viewModel.application.childUnder22LivesWithParentInHome)))
+        rows.append(.init(label: "Children in household", value: ternaryChoiceText(viewModel.application.childrenInHousehold)))
+        rows.append(.init(label: "Anyone age 60 or older", value: ternaryChoiceText(viewModel.application.anyoneAge60OrOlder)))
+        rows.append(.init(label: "Anyone with disability", value: ternaryChoiceText(viewModel.application.anyoneWithDisability)))
+        rows.append(.init(label: "Anyone pregnant", value: ternaryChoiceText(viewModel.application.anyonePregnant)))
+        rows.append(.init(label: "Anyone unhoused / no fixed mailing address", value: ternaryChoiceText(viewModel.application.anyoneUnhousedOrNoFixedMailingAddress)))
+        rows.append(.init(label: "Safe mailing/contact option", value: viewModel.application.preferredSafeMailingContactOption?.label ?? "Not provided"))
+
+        return rows
+    }
+
+    private var incomeSummaryRows: [SNAPInterviewSummaryRow] {
+        var rows: [SNAPInterviewSummaryRow] = [
+            .init(
+                label: "Income sources",
+                value: incomeSourcesSummaryText
+            ),
+            .init(
+                label: "Income varies month to month",
+                value: yesNoUnknown(viewModel.application.incomeChangesMonthToMonth)
+            ),
+            .init(
+                label: "Works for employer",
+                value: ternaryChoiceText(viewModel.application.worksForEmployer)
+            ),
+            .init(
+                label: "Self-employed or gig work",
+                value: ternaryChoiceText(viewModel.application.selfEmployedOrGigWork)
+            ),
+            .init(
+                label: "Pay frequency",
+                value: viewModel.application.earnedPayFrequency?.label ?? "Not provided"
+            )
+        ]
+
+        if viewModel.application.selfEmployedOrGigWork == .yes || viewModel.application.employmentStatus == .selfEmployed {
+            rows.append(.init(label: "Self-employment / gig work", value: "Yes"))
+            rows.append(.init(label: "Gross receipts this month", value: displayCurrency(viewModel.application.gigGrossReceiptsThisMonth)))
+            rows.append(.init(label: "Business/work expenses this month", value: displayCurrency(viewModel.application.gigBusinessExpensesThisMonth)))
+            rows.append(.init(label: "Gig income varies month to month", value: ternaryChoiceText(viewModel.application.gigIncomeVariesMonthToMonth)))
+        }
+
+        rows.append(.init(label: "Recent job loss or stopped work", value: ternaryChoiceText(viewModel.application.recentJobLossOrStoppedWorkChoice)))
+
+        return rows
+    }
+
+    private var housingUtilitySummaryRows: [SNAPInterviewSummaryRow] {
+        var rows: [SNAPInterviewSummaryRow] = [
+            .init(label: "Rent/mortgage/shelter (User estimate)", value: displayCurrency(firstNonBlank(viewModel.application.expeditedHousingCostEstimate, viewModel.application.rentOrHousingCost))),
+            .init(label: "Utilities (User estimate)", value: displayCurrency(firstNonBlank(viewModel.application.expeditedUtilityEstimate, viewModel.application.utilitiesCost)))
+        ]
+
+        rows.append(
+            .init(
+                label: "Pays utilities",
+                value: yesNoUnknown(viewModel.application.expeditedPaysUtilities)
+            )
+        )
+
+        if viewModel.application.housingStatus == .unhoused {
+            rows.append(.init(label: "No fixed mailing address", value: "Yes"))
+        }
+
+        return rows
+    }
+
+    private var documentsSummaryRows: [SNAPInterviewSummaryRow] {
+        let visible = visibleChecklistDocuments
+        let ready = visible.filter { viewModel.application.documentsAvailable.contains($0) }
+        let missingOrNotSureCount = max(0, visible.count - ready.count)
+        return [
+            .init(label: "Ready", value: "\(ready.count)"),
+            .init(label: "Missing", value: "\(missingOrNotSureCount)"),
+            .init(label: "Not sure", value: "\(missingOrNotSureCount)")
+        ]
+    }
+
+    private var followUpRisks: [String] {
+        var risks: [String] = []
+
+        if viewModel.application.officialSNAPApplicationSubmissionDate == nil {
+            risks.append("No official application date is recorded yet.")
+        }
+        if viewModel.application.preferredContactMethod == nil {
+            let hasDirectContact =
+                !normalized(viewModel.application.contactEmail).isEmpty
+                || !normalized(viewModel.application.contactPhone).isEmpty
+            if !hasDirectContact {
+                risks.append("No safe contact method is selected.")
+            }
+        }
+        if viewModel.application.interviewScheduledOrCompleted != true {
+            risks.append("Interview is not marked as scheduled/completed.")
+        }
+        if viewModel.application.documentDueDate == nil {
+            risks.append("Document due date is missing.")
+        }
+        if viewModel.expeditedScreeningResult == .unclear {
+            risks.append("Expedited screening is unclear because income/resources/housing details are incomplete.")
+        }
+
+        return risks
+    }
+
+    private var incomeSourcesSummaryText: String {
+        if !normalized(viewModel.application.incomeSourceNotes).isEmpty {
+            return normalized(viewModel.application.incomeSourceNotes)
+        }
+
+        if !viewModel.application.otherIncomeSources.isEmpty {
+            return viewModel.application.otherIncomeSources.map(\.label).joined(separator: ", ")
+        }
+
+        if !normalized(viewModel.application.gigWorkTypeOrPlatform).isEmpty {
+            return normalized(viewModel.application.gigWorkTypeOrPlatform)
+        }
+
+        if !normalized(viewModel.application.employerOrJobType).isEmpty {
+            return normalized(viewModel.application.employerOrJobType)
+        }
+
+        if let employmentStatus = viewModel.application.employmentStatus {
+            return employmentStatus.label
+        }
+
+        return "Not provided"
+    }
+
     private func displayOptionalInt(_ value: Int?) -> String {
         guard let value else { return "Not provided" }
         return "\(value)"
-    }
-
-    private func displayStateZIP() -> String {
-        let state = normalized(viewModel.application.state)
-        let zip = normalized(viewModel.application.zipCode)
-
-        if state.isEmpty && zip.isEmpty {
-            return "Not provided"
-        }
-        if state.isEmpty {
-            return zip
-        }
-        if zip.isEmpty {
-            return state
-        }
-        return "\(state), \(zip)"
     }
 
     private func displayCurrency(_ value: String?) -> String {
@@ -1034,6 +2234,22 @@ struct SNAPApplicationView: View {
         return value ? "Yes" : "No"
     }
 
+    private func ternaryChoiceText(_ value: SNAPTernaryChoice?) -> String {
+        guard let value else { return "Not provided" }
+        return value.label
+    }
+
+    private func boolValue(from choice: SNAPTernaryChoice?) -> Bool? {
+        switch choice {
+        case .some(.yes):
+            return true
+        case .some(.no):
+            return false
+        case .some(.notSure), .none:
+            return nil
+        }
+    }
+
     private func normalized(_ value: String?) -> String {
         (value ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
     }
@@ -1042,26 +2258,87 @@ struct SNAPApplicationView: View {
         normalized(value).isEmpty
     }
 
+    private func firstNonBlank(_ values: String?...) -> String? {
+        for value in values {
+            let normalizedValue = normalized(value)
+            if !normalizedValue.isEmpty {
+                return normalizedValue
+            }
+        }
+        return nil
+    }
+
+    private func readableDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return formatter.string(from: date)
+    }
+
     private var stateSelection: Binding<String> {
         Binding<String>(
             get: { viewModel.application.state ?? "" },
             set: { newValue in
-                if viewModel.isStateGeofenced {
-                    return
-                }
                 let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
                 viewModel.application.state = trimmed.isEmpty ? nil : trimmed
             }
         )
     }
 
-    private var zipCodeBinding: Binding<String> {
+    private var housingStatusBinding: Binding<HousingStatus?> {
+        Binding<HousingStatus?>(
+            get: { viewModel.application.housingStatus },
+            set: { newValue in
+                viewModel.updateHousingStatus(newValue)
+            }
+        )
+    }
+
+    private var residentialCityBinding: Binding<String> {
         Binding<String>(
-            get: { viewModel.application.zipCode ?? "" },
+            get: { viewModel.application.residentialCity },
+            set: { newValue in
+                viewModel.application.residentialCity = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+        )
+    }
+
+    private var residentialZIPBinding: Binding<String> {
+        Binding<String>(
+            get: { viewModel.application.residentialZIP },
             set: { newValue in
                 let digitsOnly = newValue.filter(\.isNumber)
-                let trimmed = String(digitsOnly.prefix(5))
-                viewModel.application.zipCode = trimmed.isEmpty ? nil : trimmed
+                viewModel.application.residentialZIP = String(digitsOnly.prefix(5))
+            }
+        )
+    }
+
+    private var residentialAddressSearchBinding: Binding<String> {
+        Binding<String>(
+            get: { residentialAddressSearchText },
+            set: { newValue in
+                residentialAddressSearchText = newValue
+                residentialAddressAutocomplete.updateQuery(newValue)
+            }
+        )
+    }
+
+    private var contactEmailBinding: Binding<String> {
+        Binding<String>(
+            get: { viewModel.application.contactEmail },
+            set: { newValue in
+                viewModel.application.contactEmail = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+        )
+    }
+
+    private var contactPhoneBinding: Binding<String> {
+        Binding<String>(
+            get: { viewModel.application.contactPhone },
+            set: { newValue in
+                let filtered = newValue.filter { character in
+                    character.isNumber || character == " " || character == "-" || character == "(" || character == ")"
+                }
+                viewModel.application.contactPhone = filtered
             }
         )
     }
@@ -1074,14 +2351,99 @@ struct SNAPApplicationView: View {
 
     private var stateIsMissingAfterContinueAttempt: Bool {
         viewModel.hasAttemptedDraftContinue
-            && viewModel.draftStep == .householdBasics
+            && viewModel.draftStep == .whereApplyingFrom
             && (viewModel.application.state ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    private var zipCodeIsMissingAfterContinueAttempt: Bool {
+    private var housingStatusIsMissingAfterContinueAttempt: Bool {
         viewModel.hasAttemptedDraftContinue
-            && viewModel.draftStep == .householdBasics
-            && (viewModel.application.zipCode ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && viewModel.draftStep == .whereApplyingFrom
+            && viewModel.application.housingStatus == nil
+    }
+
+    private var residentialCityIsMissingAfterContinueAttempt: Bool {
+        viewModel.hasAttemptedDraftContinue
+            && viewModel.draftStep == .whereApplyingFrom
+            && shouldCollectResidentialAddress
+            && normalized(viewModel.application.residentialCity).isEmpty
+    }
+
+    private var residentialZIPIsMissingAfterContinueAttempt: Bool {
+        viewModel.hasAttemptedDraftContinue
+            && viewModel.draftStep == .whereApplyingFrom
+            && shouldCollectResidentialAddress
+            && normalized(viewModel.application.residentialZIP).isEmpty
+    }
+
+    private var employmentStatusIsMissingAfterContinueAttempt: Bool {
+        viewModel.hasAttemptedDraftContinue
+            && viewModel.draftStep == .income
+            && viewModel.application.employmentStatus == nil
+    }
+
+    private var monthlyIncomeIsMissingAfterContinueAttempt: Bool {
+        viewModel.hasAttemptedDraftContinue
+            && viewModel.draftStep == .income
+            && normalized(viewModel.application.monthlyIncomeEstimate).isEmpty
+    }
+
+    private var applicantAgeIsMissingAfterContinueAttempt: Bool {
+        viewModel.hasAttemptedDraftContinue
+            && viewModel.draftStep == .applicantAge
+            && viewModel.application.applicantDateOfBirth == nil
+            && viewModel.application.applicantAge == nil
+    }
+
+    private var incomeChangesIsMissingAfterContinueAttempt: Bool {
+        viewModel.hasAttemptedDraftContinue
+            && viewModel.draftStep == .income
+            && viewModel.application.incomeChangesMonthToMonth == nil
+    }
+
+    private var studentEnrollmentIsMissingAfterContinueAttempt: Bool {
+        viewModel.hasAttemptedDraftContinue
+            && viewModel.draftStep == .studentStatus
+            && viewModel.application.isCurrentlyEnrolledInHigherEducation == nil
+    }
+
+    private var enrolledHalfTimeIsMissingAfterContinueAttempt: Bool {
+        viewModel.hasAttemptedDraftContinue
+            && viewModel.draftStep == .studentStatus
+            && viewModel.application.isCurrentlyEnrolledInHigherEducation == true
+            && viewModel.application.isEnrolledAtLeastHalfTime == nil
+    }
+
+    private var worksTwentyHoursIsMissingAfterContinueAttempt: Bool {
+        viewModel.hasAttemptedDraftContinue
+            && viewModel.draftStep == .studentStatus
+            && viewModel.application.isCurrentlyEnrolledInHigherEducation == true
+            && viewModel.application.worksAtLeastTwentyHoursPerWeek == nil
+    }
+
+    private var workStudyIsMissingAfterContinueAttempt: Bool {
+        viewModel.hasAttemptedDraftContinue
+            && viewModel.draftStep == .studentStatus
+            && viewModel.application.isCurrentlyEnrolledInHigherEducation == true
+            && viewModel.application.participatesInWorkStudy == nil
+    }
+
+    private var dependentChildIsMissingAfterContinueAttempt: Bool {
+        viewModel.hasAttemptedDraftContinue
+            && viewModel.draftStep == .studentStatus
+            && viewModel.application.isCurrentlyEnrolledInHigherEducation == true
+            && viewModel.application.isResponsibleForDependentChild == nil
+    }
+
+    private var rentIsMissingAfterContinueAttempt: Bool {
+        viewModel.hasAttemptedDraftContinue
+            && viewModel.draftStep == .expenses
+            && normalized(viewModel.application.rentOrHousingCost).isEmpty
+    }
+
+    private var utilitiesIsMissingAfterContinueAttempt: Bool {
+        viewModel.hasAttemptedDraftContinue
+            && viewModel.draftStep == .expenses
+            && normalized(viewModel.application.utilitiesCost).isEmpty
     }
 
     private var currentlyEnrolledBinding: Binding<Bool?> {
@@ -1129,27 +2491,225 @@ struct SNAPApplicationView: View {
         )
     }
 
+    private var spouseLivesChoiceBinding: Binding<SNAPTernaryChoice?> {
+        Binding<SNAPTernaryChoice?>(
+            get: { viewModel.application.spouseLivesWithUser },
+            set: { newValue in
+                viewModel.application.spouseLivesWithUser = newValue
+                viewModel.application.hasSpouseInHousehold = boolValue(from: newValue)
+            }
+        )
+    }
+
+    private var childUnder22ChoiceBinding: Binding<SNAPTernaryChoice?> {
+        Binding<SNAPTernaryChoice?>(
+            get: { viewModel.application.childUnder22LivesWithParentInHome },
+            set: { newValue in
+                viewModel.application.childUnder22LivesWithParentInHome = newValue
+                viewModel.application.hasChildUnder22LivingWithParent = boolValue(from: newValue)
+            }
+        )
+    }
+
+    private var childrenInHouseholdChoiceBinding: Binding<SNAPTernaryChoice?> {
+        Binding<SNAPTernaryChoice?>(
+            get: { viewModel.application.childrenInHousehold },
+            set: { newValue in
+                viewModel.application.childrenInHousehold = newValue
+                viewModel.application.hasChildren = boolValue(from: newValue)
+            }
+        )
+    }
+
+    private var anyoneAge60OrOlderChoiceBinding: Binding<SNAPTernaryChoice?> {
+        Binding<SNAPTernaryChoice?>(
+            get: { viewModel.application.anyoneAge60OrOlder },
+            set: { newValue in
+                viewModel.application.anyoneAge60OrOlder = newValue
+                viewModel.application.isSeniorHousehold = boolValue(from: newValue)
+            }
+        )
+    }
+
+    private var anyoneWithDisabilityChoiceBinding: Binding<SNAPTernaryChoice?> {
+        Binding<SNAPTernaryChoice?>(
+            get: { viewModel.application.anyoneWithDisability },
+            set: { newValue in
+                viewModel.application.anyoneWithDisability = newValue
+                viewModel.application.hasDisabilityInHousehold = boolValue(from: newValue)
+            }
+        )
+    }
+
+    private var anyonePregnantChoiceBinding: Binding<SNAPTernaryChoice?> {
+        Binding<SNAPTernaryChoice?>(
+            get: { viewModel.application.anyonePregnant },
+            set: { newValue in
+                viewModel.application.anyonePregnant = newValue
+                viewModel.application.isPregnant = boolValue(from: newValue)
+            }
+        )
+    }
+
+    private var unhousedOrNoFixedMailingChoiceBinding: Binding<SNAPTernaryChoice?> {
+        Binding<SNAPTernaryChoice?>(
+            get: { viewModel.application.anyoneUnhousedOrNoFixedMailingAddress },
+            set: { newValue in
+                viewModel.application.anyoneUnhousedOrNoFixedMailingAddress = newValue
+
+                if newValue == .yes {
+                    viewModel.updateHousingStatus(.unhoused)
+                } else if viewModel.application.housingStatus == .unhoused,
+                          (newValue == .no || newValue == .notSure) {
+                    viewModel.updateHousingStatus(nil)
+                }
+
+                if newValue != .yes {
+                    viewModel.application.preferredSafeMailingContactOption = nil
+                }
+            }
+        )
+    }
+
+    private var recentJobLossChoiceBinding: Binding<SNAPTernaryChoice?> {
+        Binding<SNAPTernaryChoice?>(
+            get: { viewModel.application.recentJobLossOrStoppedWorkChoice },
+            set: { newValue in
+                viewModel.application.recentJobLossOrStoppedWorkChoice = newValue
+                switch newValue {
+                case .some(.yes):
+                    viewModel.application.recentJobLossOrStoppedWork = true
+                case .some(.no):
+                    viewModel.application.recentJobLossOrStoppedWork = false
+                case .some(.notSure), .none:
+                    viewModel.application.recentJobLossOrStoppedWork = nil
+                }
+            }
+        )
+    }
+
+    private var earnedLastPayDateBinding: Binding<Date> {
+        Binding<Date>(
+            get: { viewModel.application.earnedLastPayDate ?? Date() },
+            set: { newValue in
+                viewModel.application.earnedLastPayDate = newValue
+            }
+        )
+    }
+
     private var shouldShowChildcareExpensesField: Bool {
         viewModel.application.isResponsibleForDependentChild == true
+    }
+
+    private var shouldCollectResidentialAddress: Bool {
+        switch viewModel.application.housingStatus {
+        case .stableHome, .temporaryHousing, .stayingWithOthers:
+            return true
+        case .unhoused, .none:
+            return false
+        }
+    }
+
+    private var shouldAskMultiPersonHouseholdFollowUps: Bool {
+        (viewModel.application.householdSize ?? 0) > 1
+    }
+
+    private var isEmploymentPrimarilyEmployerBased: Bool {
+        switch viewModel.application.employmentStatus {
+        case .employedFullTime, .employedPartTime:
+            return true
+        default:
+            return false
+        }
+    }
+
+    private var isEmploymentPrimarilySelfEmployed: Bool {
+        viewModel.application.employmentStatus == .selfEmployed
+    }
+
+    private var isEmploymentNotWorking: Bool {
+        switch viewModel.application.employmentStatus {
+        case .unemployed, .unableToWork:
+            return true
+        default:
+            return false
+        }
+    }
+
+    private var shouldShowEmployerIncomeSection: Bool {
+        isEmploymentPrimarilyEmployerBased || viewModel.application.worksForEmployer == .yes
+    }
+
+    private var shouldShowSelfEmploymentIncomeSection: Bool {
+        isEmploymentPrimarilySelfEmployed || viewModel.application.selfEmployedOrGigWork == .yes
+    }
+
+    private var shouldShowStandaloneRecentJobLossQuestion: Bool {
+        isEmploymentNotWorking
+    }
+
+    private var alsoHasSelfEmploymentIncomeBinding: Binding<Bool> {
+        Binding<Bool>(
+            get: { viewModel.application.selfEmployedOrGigWork == .yes },
+            set: { isOn in
+                viewModel.application.selfEmployedOrGigWork = isOn ? .yes : .no
+                if !isOn {
+                    viewModel.application.gigWorkTypeOrPlatform = ""
+                    viewModel.application.gigGrossReceiptsThisMonth = ""
+                    viewModel.application.gigBusinessExpensesThisMonth = ""
+                    viewModel.application.gigIncomeVariesMonthToMonth = nil
+                }
+            }
+        )
+    }
+
+    private var alsoHasEmployerIncomeBinding: Binding<Bool> {
+        Binding<Bool>(
+            get: { viewModel.application.worksForEmployer == .yes },
+            set: { isOn in
+                viewModel.application.worksForEmployer = isOn ? .yes : .no
+                if !isOn {
+                    viewModel.application.employerOrJobType = ""
+                    viewModel.application.earnedGrossPayAmount = ""
+                    viewModel.application.earnedPayFrequency = nil
+                    viewModel.application.earnedHoursPerWeek = ""
+                    viewModel.application.earnedLastPayDate = nil
+                    if isEmploymentPrimarilySelfEmployed {
+                        viewModel.application.recentJobLossOrStoppedWorkChoice = nil
+                        viewModel.application.recentJobLossOrStoppedWork = nil
+                    }
+                }
+            }
+        )
     }
 
     private var visibleChecklistDocuments: [SNAPDocumentType] {
         let shouldShowStudentDocuments = viewModel.application.isCurrentlyEnrolledInHigherEducation == true
             || viewModel.application.studentStatus == .currentlyStudent
-        let shouldShowChildcareDocuments = viewModel.application.isResponsibleForDependentChild == true
-        // No dedicated immigration relevance question exists yet in this prototype,
-        // so keep this hidden until that gate is explicitly implemented.
-        let shouldShowImmigrationDocuments = false
+        let isWorkingOrUnableStatus: Bool = {
+            switch viewModel.application.employmentStatus {
+            case .employedFullTime, .employedPartTime, .selfEmployed, .unableToWork:
+                return true
+            default:
+                return false
+            }
+        }()
+        let shouldShowWorkStatusDocuments =
+            isWorkingOrUnableStatus
+            || viewModel.application.anyoneWithDisability == .yes
+            || viewModel.application.hasDisabilityInHousehold == true
+            || viewModel.application.isResponsibleForDependentChild == true
+            || viewModel.application.isCurrentlyEnrolledInHigherEducation == true
 
         return SNAPDocumentType.allCases.filter { document in
             if document == .studentStatusDocuments {
                 return shouldShowStudentDocuments
             }
-            if document == .childcareCostProof {
-                return shouldShowChildcareDocuments
+            if document == .workStatusOrExemptions {
+                return shouldShowWorkStatusDocuments
             }
-            if document == .immigrationDocumentsIfRelevant {
-                return shouldShowImmigrationDocuments
+            if document == .childcareCostProof || document == .immigrationDocumentsIfRelevant {
+                return false
             }
             return true
         }
@@ -1176,7 +2736,7 @@ struct SNAPApplicationView: View {
         Still to gather:
         \(remainingLines.joined(separator: "\n"))
 
-        You may not need every item. Requirements vary by state and household.
+        You may not need every document right away. Upload what you have now; the agency may ask for more later.
         This checklist is for preparation only and does not submit a SNAP application.
         """
     }
@@ -1267,35 +2827,24 @@ struct SNAPApplicationView: View {
         }
     }
 
-    private var applicantBirthdayRangeText: String {
-        let selectedAge = viewModel.application.applicantAge ?? 18
-        return "Estimated birthday range: \(birthMonthRangeText(for: selectedAge))"
-    }
-
-    private func birthMonthRangeText(for age: Int) -> String {
-        let now = Date()
-        let calendar = Calendar.current
-        let formatter = DateFormatter()
-        formatter.locale = Locale.current
-        formatter.dateFormat = "LLLL yyyy"
-
-        guard
-            let earliest = calendar.date(byAdding: .year, value: -(age + 1), to: now),
-            let latest = calendar.date(byAdding: .year, value: -age, to: now)
-        else {
-            return "Unavailable"
-        }
-
-        return "\(formatter.string(from: earliest)) - \(formatter.string(from: latest))"
-    }
-
-    private var applicantAgeSliderValue: Binding<Double> {
-        Binding<Double>(
-            get: { Double(viewModel.application.applicantAge ?? 18) },
+    private var applicantDateOfBirthBinding: Binding<Date> {
+        Binding<Date>(
+            get: {
+                viewModel.application.applicantDateOfBirth
+                    ?? (Calendar.current.date(byAdding: .year, value: -18, to: Date()) ?? Date())
+            },
             set: { newValue in
-                viewModel.application.applicantAge = Int(newValue.rounded())
+                viewModel.application.applicantDateOfBirth = newValue
+                viewModel.application.applicantAge = ageInYears(from: newValue)
             }
         )
+    }
+
+    private func ageInYears(from birthDate: Date) -> Int {
+        let calendar = Calendar.current
+        let now = Date()
+        let components = calendar.dateComponents([.year], from: birthDate, to: now)
+        return max(0, components.year ?? 0)
     }
 
     private func toggleDocument(_ document: SNAPDocumentType) {
@@ -1306,6 +2855,14 @@ struct SNAPApplicationView: View {
         }
     }
 
+    private func toggleOtherIncomeSource(_ source: SNAPOtherIncomeSource) {
+        if viewModel.application.otherIncomeSources.contains(source) {
+            viewModel.application.otherIncomeSources.removeAll { $0 == source }
+        } else {
+            viewModel.application.otherIncomeSources.append(source)
+        }
+    }
+
     private var annualIncomeEstimateText: String {
         guard let monthly = parsedPositiveAmount(from: viewModel.application.monthlyIncomeEstimate) else {
             return "Estimate ~$0 annual income"
@@ -1313,6 +2870,93 @@ struct SNAPApplicationView: View {
 
         let annual = monthly * 12
         return "Estimate ~\(formatCurrency(annual)) annual income"
+    }
+
+    private var prefillNoteText: String? {
+        switch (viewModel.isStateUsingPrefill, viewModel.isZIPUsingPrefill) {
+        case (true, true):
+            return "State and ZIP were pre-filled from the address listed in the app. You can change them here."
+        case (true, false):
+            return "State was pre-filled from the address listed in the app. You can change it here."
+        case (false, true):
+            return "ZIP was pre-filled from the address listed in the app. You can change it here."
+        case (false, false):
+            return nil
+        }
+    }
+
+    private var selectedStateAgencyName: String? {
+        SNAPStateResources.administeringAgencyName(for: viewModel.application.state)
+    }
+
+    @ViewBuilder
+    private var housingStatusExamplesBlock: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            if let selectedStatus = viewModel.application.housingStatus {
+                housingStatusExampleRow(for: selectedStatus)
+            } else {
+                ForEach(HousingStatus.allCases) { status in
+                    housingStatusExampleRow(for: status)
+                }
+            }
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(VoteNowColors.surfacePrimary)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+        )
+    }
+
+    @ViewBuilder
+    private func housingStatusExampleRow(for status: HousingStatus) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(housingStatusHeading(for: status))
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(VoteNowColors.textPrimary)
+
+            Text(housingStatusExampleText(for: status))
+                .font(.footnote)
+                .foregroundStyle(VoteNowColors.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if status == .stayingWithOthers {
+                Text("Follow-up in this flow: Do you buy and prepare your own food separately?")
+                    .font(.footnote)
+                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    private func housingStatusHeading(for status: HousingStatus) -> String {
+        switch status {
+        case .stableHome:
+            return "🏠 Stable housing"
+        case .temporaryHousing:
+            return "🔄 Temporary housing"
+        case .stayingWithOthers:
+            return "🛋️ Staying with others"
+        case .unhoused:
+            return "🚫 Unhoused"
+        }
+    }
+
+    private func housingStatusExampleText(for status: HousingStatus) -> String {
+        switch status {
+        case .stableHome:
+            return "(Ex:) Renting an apartment, owning a home, living in public housing, or staying in a long-term room rental"
+        case .temporaryHousing:
+            return "(Ex:) Hotel or motel, short-term sublet, Airbnb, or a transitional housing program"
+        case .stayingWithOthers:
+            return "(Ex:) Couch-surfing, staying with friends or family, or living with someone without a lease"
+        case .unhoused:
+            return "(Ex:) Staying in a shelter, living in a car, or sleeping outside or in a public place"
+        }
     }
 
     private func parsedPositiveAmount(from text: String) -> Double? {
@@ -1330,6 +2974,195 @@ struct SNAPApplicationView: View {
         formatter.minimumFractionDigits = 0
         return formatter.string(from: NSNumber(value: value)) ?? "$0"
     }
+
+    private func daysSinceDate(_ date: Date) -> Int {
+        let calendar = Calendar.current
+        let fromDate = calendar.startOfDay(for: date)
+        let toDate = calendar.startOfDay(for: Date())
+        let dayDelta = calendar.dateComponents([.day], from: fromDate, to: toDate).day ?? 0
+        return max(0, dayDelta)
+    }
+
+    private func compactDateText(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return formatter.string(from: date)
+    }
+
+    private func applyResidentialAddressSuggestion(_ suggestion: SNAPAddressSuggestion) {
+        viewModel.application.residentialStreetAddress = suggestion.title
+        if let parsedCity = parseCity(from: suggestion.subtitle) {
+            viewModel.application.residentialCity = parsedCity
+        }
+        if let parsedZIP = parseZIP(from: suggestion.subtitle) {
+            viewModel.application.residentialZIP = parsedZIP
+        }
+        if let parsedStateCode = parseStateCode(from: suggestion.subtitle) {
+            viewModel.application.state = parsedStateCode
+        }
+
+        residentialAddressSearchText = suggestion.fullText
+        residentialAddressAutocomplete.clear()
+        focusedField = nil
+    }
+
+    private func parseCity(from subtitle: String) -> String? {
+        let firstPart = subtitle.split(separator: ",").first.map(String.init)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return firstPart.isEmpty ? nil : firstPart
+    }
+
+    private func parseZIP(from subtitle: String) -> String? {
+        let digits = subtitle.filter(\.isNumber)
+        guard digits.count >= 5 else { return nil }
+        return String(digits.prefix(5))
+    }
+
+    private func parseStateCode(from subtitle: String) -> String? {
+        let upper = subtitle.uppercased()
+        for state in supportedStates {
+            if upper.contains(state.name.uppercased()) {
+                return state.code
+            }
+        }
+
+        let tokens = upper
+            .components(separatedBy: CharacterSet.letters.inverted)
+            .filter { $0.count == 2 }
+
+        let supportedCodes = Set(supportedStates.map(\.code))
+        for token in tokens {
+            if supportedCodes.contains(token) {
+                return token
+            }
+        }
+        return nil
+    }
+}
+
+private struct SNAPAddressSuggestion: Identifiable {
+    let id: String
+    let title: String
+    let subtitle: String
+
+    var fullText: String {
+        if subtitle.isEmpty { return title }
+        return "\(title), \(subtitle)"
+    }
+}
+
+private final class SNAPAddressAutocomplete: NSObject, ObservableObject, MKLocalSearchCompleterDelegate {
+    struct LookupIssue: Equatable {
+        let message: String
+        let showsOfflineHint: Bool
+    }
+
+    @Published private(set) var suggestions: [SNAPAddressSuggestion] = []
+    @Published private(set) var lookupIssue: LookupIssue?
+
+    private let completer: MKLocalSearchCompleter = {
+        let completer = MKLocalSearchCompleter()
+        completer.resultTypes = .address
+        return completer
+    }()
+    private let pathMonitor = NWPathMonitor()
+    private let pathMonitorQueue = DispatchQueue(label: "SNAPAddressAutocomplete.Network")
+    private var isCurrentlyOffline = false
+    private var lastQuery: String = ""
+
+    override init() {
+        super.init()
+        completer.delegate = self
+        pathMonitor.pathUpdateHandler = { [weak self] path in
+            let offline = path.status != .satisfied
+            DispatchQueue.main.async {
+                self?.isCurrentlyOffline = offline
+            }
+        }
+        pathMonitor.start(queue: pathMonitorQueue)
+    }
+
+    deinit {
+        pathMonitor.cancel()
+    }
+
+    func updateQuery(_ query: String) {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        lastQuery = trimmed
+        guard trimmed.count >= 3 else {
+            suggestions = []
+            lookupIssue = nil
+            completer.queryFragment = ""
+            return
+        }
+        lookupIssue = nil
+        completer.queryFragment = trimmed
+    }
+
+    func clear() {
+        suggestions = []
+        lookupIssue = nil
+        lastQuery = ""
+        completer.queryFragment = ""
+    }
+
+    func retryLastQuery() {
+        guard lastQuery.count >= 3 else { return }
+        lookupIssue = nil
+        // Force a fresh request on the same fragment.
+        completer.queryFragment = ""
+        completer.queryFragment = lastQuery
+    }
+
+    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+        lookupIssue = nil
+        suggestions = completer.results.prefix(6).map { result in
+            SNAPAddressSuggestion(
+                id: "\(result.title)|\(result.subtitle)",
+                title: result.title,
+                subtitle: result.subtitle
+            )
+        }
+    }
+
+    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
+        suggestions = []
+        lookupIssue = buildLookupIssue(from: error)
+    }
+
+    private func buildLookupIssue(from error: Error) -> LookupIssue {
+        let nsError = error as NSError
+        let loweredDescription = nsError.localizedDescription.lowercased()
+        let isTimedOut =
+            nsError.domain == NSURLErrorDomain
+            && nsError.code == NSURLErrorTimedOut
+            || loweredDescription.contains("timed out")
+        let isOfflineError =
+            (nsError.domain == NSURLErrorDomain && (
+                nsError.code == NSURLErrorNotConnectedToInternet
+                    || nsError.code == NSURLErrorNetworkConnectionLost
+            ))
+            || isCurrentlyOffline
+
+        if isTimedOut {
+            return LookupIssue(
+                message: "Address search timed out.",
+                showsOfflineHint: true
+            )
+        }
+
+        if isOfflineError {
+            return LookupIssue(
+                message: "Address search needs an internet connection.",
+                showsOfflineHint: true
+            )
+        }
+
+        return LookupIssue(
+            message: "Address search is unavailable right now.",
+            showsOfflineHint: false
+        )
+    }
 }
 
 private struct SNAPStepGuidanceRows<Content: View>: View {
@@ -1337,48 +3170,79 @@ private struct SNAPStepGuidanceRows<Content: View>: View {
     let whyText: String
     let doNotShareText: String
     var whyLabel: String = "Why we ask"
+    @Binding var isWhyExpanded: Bool
     @ViewBuilder let content: Content
-
-    @State private var isWhyExpanded = false
-    @State private var isPrivacyExpanded = false
 
     init(
         whatText: String,
         whyText: String,
         doNotShareText: String,
         whyLabel: String = "Why we ask",
+        isWhyExpanded: Binding<Bool>,
         @ViewBuilder content: () -> Content
     ) {
         self.whatText = whatText
         self.whyText = whyText
         self.doNotShareText = doNotShareText
         self.whyLabel = whyLabel
+        _isWhyExpanded = isWhyExpanded
         self.content = content()
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(whatText)
-                .font(.footnote)
-                .foregroundStyle(VoteNowColors.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
+            if isWhyExpanded {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(whyLabel)
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(VoteNowColors.textPrimary)
+                    Text(whyText)
+                        .font(.footnote)
+                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(VoteNowColors.surfacePrimary)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                )
+            }
 
-            SNAPInlineDisclosureRow(
-                iconName: "info.circle",
-                title: whyLabel,
-                detailText: whyText,
-                isExpanded: $isWhyExpanded
-            )
+            if !whatText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                Text(whatText)
+                    .font(.footnote)
+                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
 
             content
-
-            SNAPInlineDisclosureRow(
-                iconName: "lock.shield",
-                title: "Do not share",
-                detailText: doNotShareText,
-                isExpanded: $isPrivacyExpanded
-            )
         }
+    }
+}
+
+private struct SNAPCardInfoButton: View {
+    @Binding var isExpanded: Bool
+    let label: String
+
+    var body: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.18)) {
+                isExpanded.toggle()
+            }
+        } label: {
+            Image(systemName: "info.circle")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(VoteNowColors.primaryCTA)
+                .frame(width: 22, height: 22)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
+        .accessibilityHint("Shows or hides why this information is asked.")
     }
 }
 
@@ -1452,10 +3316,60 @@ private struct SNAPReviewSectionSummary: Identifiable {
     let rows: [SNAPReviewSectionRow]
 }
 
+private struct SNAPInterviewSummaryRow: Identifiable {
+    let id = UUID()
+    let label: String
+    let value: String
+}
+
+private struct SNAPInterviewSummarySection: View {
+    let title: String
+    let rows: [SNAPInterviewSummaryRow]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(VoteNowColors.textPrimary)
+
+            ForEach(rows) { row in
+                HStack(alignment: .top, spacing: 10) {
+                    Text(row.label)
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(VoteNowColors.textSecondary)
+                    Spacer(minLength: 10)
+                    Text(row.value)
+                        .font(.footnote)
+                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .multilineTextAlignment(.trailing)
+                }
+            }
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(VoteNowColors.surfacePrimary)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+        )
+    }
+}
+
 private struct SNAPReviewSectionRow: Identifiable {
     let id = UUID()
     let label: String
     let value: String
+    let isRequired: Bool
+
+    init(label: String, value: String, isRequired: Bool = false) {
+        self.label = label
+        self.value = value
+        self.isRequired = isRequired
+    }
 }
 
 private struct SNAPReviewStatusBadge: View {
@@ -1596,6 +3510,8 @@ private struct SNAPSectionCard<Content: View>: View {
     let title: String
     let helper: String?
     let titleAlignment: Alignment
+    let hasHeaderAccessory: Bool
+    let headerAccessory: AnyView
     @ViewBuilder let content: Content
 
     init(
@@ -1607,16 +3523,43 @@ private struct SNAPSectionCard<Content: View>: View {
         self.title = title
         self.helper = helper
         self.titleAlignment = titleAlignment
+        self.hasHeaderAccessory = false
+        self.headerAccessory = AnyView(EmptyView())
+        self.content = content()
+    }
+
+    init<HeaderAccessory: View>(
+        title: String,
+        helper: String?,
+        titleAlignment: Alignment = .leading,
+        @ViewBuilder headerAccessory: () -> HeaderAccessory,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.title = title
+        self.helper = helper
+        self.titleAlignment = titleAlignment
+        self.hasHeaderAccessory = true
+        self.headerAccessory = AnyView(headerAccessory())
         self.content = content()
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            if !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                Text(title)
-                    .font(.headline)
-                    .foregroundStyle(VoteNowColors.textPrimary)
-                    .frame(maxWidth: .infinity, alignment: titleAlignment)
+            if !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || hasHeaderAccessory {
+                HStack(alignment: .center, spacing: 8) {
+                    if !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        Text(title)
+                            .font(.headline)
+                            .foregroundStyle(VoteNowColors.textPrimary)
+                            .frame(maxWidth: .infinity, alignment: titleAlignment)
+                    } else {
+                        Spacer(minLength: 0)
+                    }
+
+                    if hasHeaderAccessory {
+                        headerAccessory
+                    }
+                }
             }
 
             if let helper, !helper.isEmpty {
@@ -1657,9 +3600,18 @@ private struct SNAPInputLabel: View {
 
             Spacer(minLength: 8)
 
-            if let badge {
+            if let badge, shouldRenderBadge(badge) {
                 SNAPFieldBadgeChip(badge: badge)
             }
+        }
+    }
+
+    private func shouldRenderBadge(_ badge: SNAPFieldBadge) -> Bool {
+        switch badge.style {
+        case .required, .requiredAttention:
+            return true
+        case .optional, .optionalEstimate:
+            return false
         }
     }
 }
@@ -1776,7 +3728,7 @@ private extension View {
             )
     }
 
-    func snapCompactTextFieldStyle() -> some View {
+    func snapCompactTextFieldStyle(highlightPrefilled: Bool = false) -> some View {
         self
             .font(.body)
             .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
@@ -1784,15 +3736,15 @@ private extension View {
             .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(VoteNowColors.surfacePrimary)
+                    .fill(highlightPrefilled ? VoteNowColors.warningAmber.opacity(0.12) : VoteNowColors.surfacePrimary)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                    .stroke(highlightPrefilled ? VoteNowColors.warningAmber.opacity(0.3) : VoteNowColors.borderSubtle, lineWidth: 1)
             )
     }
 
-    func snapCompactFieldSurface() -> some View {
+    func snapCompactFieldSurface(highlightPrefilled: Bool = false) -> some View {
         self
             .font(.body)
             .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
@@ -1800,18 +3752,158 @@ private extension View {
             .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(VoteNowColors.surfacePrimary)
+                    .fill(highlightPrefilled ? VoteNowColors.warningAmber.opacity(0.12) : VoteNowColors.surfacePrimary)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                    .stroke(highlightPrefilled ? VoteNowColors.warningAmber.opacity(0.3) : VoteNowColors.borderSubtle, lineWidth: 1)
             )
+    }
+
+    func snapCondensedTextFieldStyle(highlightPrefilled: Bool = false) -> some View {
+        self
+            .font(.body)
+            .frame(maxWidth: .infinity, minHeight: 36, alignment: .leading)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                    .fill(highlightPrefilled ? VoteNowColors.warningAmber.opacity(0.12) : VoteNowColors.surfacePrimary)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                    .stroke(highlightPrefilled ? VoteNowColors.warningAmber.opacity(0.3) : VoteNowColors.borderSubtle, lineWidth: 1)
+            )
+    }
+
+    func snapCondensedFieldSurface(highlightPrefilled: Bool = false) -> some View {
+        self
+            .font(.body)
+            .frame(maxWidth: .infinity, minHeight: 36, alignment: .leading)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                    .fill(highlightPrefilled ? VoteNowColors.warningAmber.opacity(0.12) : VoteNowColors.surfacePrimary)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                    .stroke(highlightPrefilled ? VoteNowColors.warningAmber.opacity(0.3) : VoteNowColors.borderSubtle, lineWidth: 1)
+            )
+    }
+}
+
+private struct SNAPRequiredFieldShake: ViewModifier {
+    let isActive: Bool
+    let trigger: Int
+    @State private var shakeAttempts: CGFloat = 0
+
+    func body(content: Content) -> some View {
+        content
+            .modifier(SNAPShakeEffect(animatableData: shakeAttempts))
+            .onChange(of: trigger) { _, _ in
+                guard isActive else { return }
+                withAnimation(.linear(duration: 0.32)) {
+                    shakeAttempts += 1
+                }
+            }
+    }
+}
+
+private struct SNAPShakeEffect: GeometryEffect {
+    var amount: CGFloat = 8
+    var shakesPerUnit: CGFloat = 3
+    var animatableData: CGFloat
+
+    func effectValue(size: CGSize) -> ProjectionTransform {
+        ProjectionTransform(
+            CGAffineTransform(
+                translationX: amount * sin(animatableData * .pi * shakesPerUnit),
+                y: 0
+            )
+        )
+    }
+}
+
+private struct SNAPTernaryChoiceQuestion: View {
+    let title: String
+    @Binding var value: SNAPTernaryChoice?
+    var badge: SNAPFieldBadge? = .optional
+    var infoText: String?
+    @State private var isInfoExpanded = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .center, spacing: 6) {
+                SNAPInputLabel(title, badge: badge)
+
+                if let infoText, !infoText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.18)) {
+                            isInfoExpanded.toggle()
+                        }
+                    } label: {
+                        Image(systemName: "info.circle")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(VoteNowColors.primaryCTA)
+                            .frame(width: 20, height: 20)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("More information")
+                }
+            }
+
+            HStack(spacing: 10) {
+                choiceButton(.yes)
+                choiceButton(.no)
+                choiceButton(.notSure)
+            }
+            .frame(maxWidth: .infinity, minHeight: 44)
+
+            if isInfoExpanded,
+               let infoText,
+               !infoText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                Text(infoText)
+                    .font(.footnote)
+                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    private func choiceButton(_ choice: SNAPTernaryChoice) -> some View {
+        Button {
+            if value == choice {
+                value = nil
+            } else {
+                value = choice
+            }
+        } label: {
+            Text(choice.label)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(value == choice ? VoteNowColors.primaryCTA : VoteNowColors.textPrimary)
+                .frame(maxWidth: .infinity, minHeight: 44)
+                .background(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(value == choice ? VoteNowColors.statusInfoSurface : VoteNowColors.surfacePrimary)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .stroke(
+                            value == choice ? VoteNowColors.primaryCTA.opacity(0.45) : VoteNowColors.borderSubtle,
+                            lineWidth: 1
+                        )
+                )
+        }
+        .buttonStyle(.plain)
     }
 }
 
 private struct SNAPYesNoSegmentedQuestion: View {
     let title: String
     @Binding var value: Bool?
+    var isMissingRequired: Bool = false
+    var shakeToken: Int = 0
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -1831,6 +3923,12 @@ private struct SNAPYesNoSegmentedQuestion: View {
             }
             .frame(maxWidth: .infinity, minHeight: 44)
         }
+        .modifier(
+            SNAPRequiredFieldShake(
+                isActive: isMissingRequired,
+                trigger: shakeToken
+            )
+        )
     }
 
     private func yesNoButton(
@@ -1862,14 +3960,37 @@ private struct SNAPYesNoSegmentedQuestion: View {
 private struct SNAPSelectableOptionButton: View {
     let title: String
     let isSelected: Bool
+    let minHeight: CGFloat
+    let multilineCentered: Bool
+    let lineLimit: Int?
     let action: () -> Void
+
+    init(
+        title: String,
+        isSelected: Bool,
+        minHeight: CGFloat = 44,
+        multilineCentered: Bool = false,
+        lineLimit: Int? = nil,
+        action: @escaping () -> Void
+    ) {
+        self.title = title
+        self.isSelected = isSelected
+        self.minHeight = minHeight
+        self.multilineCentered = multilineCentered
+        self.lineLimit = lineLimit
+        self.action = action
+    }
 
     var body: some View {
         Button(action: action) {
             Text(title)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(isSelected ? VoteNowColors.primaryCTA : VoteNowColors.textPrimary)
-                .frame(maxWidth: .infinity, minHeight: 44)
+                .multilineTextAlignment(multilineCentered ? .center : .leading)
+                .lineLimit(lineLimit)
+                .minimumScaleFactor(multilineCentered ? 0.85 : 1.0)
+                .frame(maxWidth: .infinity, minHeight: minHeight, alignment: .center)
+                .padding(.horizontal, 8)
                 .background(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
                         .fill(isSelected ? VoteNowColors.statusInfoSurface : VoteNowColors.surfacePrimary)
@@ -1891,41 +4012,118 @@ where Option.RawValue == String, Option.AllCases: RandomAccessCollection, Option
     let title: String
     let badge: SNAPFieldBadge?
     @Binding var selection: Option?
+    let compact: Bool
+    let condensed: Bool
+    let isMissingRequired: Bool
+    let shakeToken: Int
     let label: (Option) -> String
+    let selectedHelperText: ((Option) -> String?)?
 
     init(
         title: String,
         badge: SNAPFieldBadge? = nil,
         selection: Binding<Option?>,
-        label: @escaping (Option) -> String
+        compact: Bool = false,
+        condensed: Bool = false,
+        isMissingRequired: Bool = false,
+        shakeToken: Int = 0,
+        label: @escaping (Option) -> String,
+        selectedHelperText: ((Option) -> String?)? = nil
     ) {
         self.title = title
         self.badge = badge
         self._selection = selection
+        self.compact = compact
+        self.condensed = condensed
+        self.isMissingRequired = isMissingRequired
+        self.shakeToken = shakeToken
         self.label = label
+        self.selectedHelperText = selectedHelperText
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             SNAPInputLabel(title, badge: badge)
 
-            Picker(title, selection: selectionBinding) {
-                Text("Select one").tag("")
+            Menu {
+                Button("Select one") {
+                    selection = nil
+                }
+
                 ForEach(Array(Option.allCases), id: \.rawValue) { option in
-                    Text(label(option)).tag(option.rawValue)
+                    Button(label(option)) {
+                        selection = option
+                    }
+                }
+            } label: {
+                HStack(spacing: 8) {
+                    Text(selectedLabel)
+                        .foregroundStyle(selection == nil ? VoteNowColors.textSecondary : VoteNowColors.textPrimary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    Image(systemName: "chevron.down")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(VoteNowColors.textSecondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(accessibilitySelectionLabel)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .buttonStyle(.plain)
+            .modifier(SNAPEnumPickerSurfaceModifier(compact: compact, condensed: condensed))
+            .modifier(
+                SNAPRequiredFieldShake(
+                    isActive: isMissingRequired,
+                    trigger: shakeToken
+                )
+            )
+
+            if let selectedHelperText, let selection {
+                let helper = selectedHelperText(selection)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                if !helper.isEmpty {
+                    Text(helper)
+                        .font(.footnote)
+                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
-            .pickerStyle(.menu)
-            .snapFieldSurface()
         }
     }
 
-    private var selectionBinding: Binding<String> {
-        Binding<String>(
-            get: { selection?.rawValue ?? "" },
-            set: { newValue in
-                selection = newValue.isEmpty ? nil : Option(rawValue: newValue)
+    private var selectedLabel: String {
+        guard let selection else { return "Select one" }
+        return label(selection)
+    }
+
+    private var accessibilitySelectionLabel: String {
+        guard let selection else {
+            return "\(title), Select one"
+        }
+
+        if let selectedHelperText {
+            let helper = selectedHelperText(selection)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if !helper.isEmpty {
+                return "\(title), \(label(selection)). \(helper)"
             }
-        )
+        }
+
+        return "\(title), \(label(selection))"
+    }
+}
+
+private struct SNAPEnumPickerSurfaceModifier: ViewModifier {
+    let compact: Bool
+    let condensed: Bool
+
+    func body(content: Content) -> some View {
+        if condensed {
+            content.snapCondensedFieldSurface()
+        } else if compact {
+            content.snapCompactFieldSurface()
+        } else {
+            content.snapFieldSurface()
+        }
     }
 }

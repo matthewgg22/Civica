@@ -2,6 +2,11 @@ import Foundation
 
 // EXPERIMENTAL SILOED MODULE: SNAP flow models.
 // All data in this file is in-memory only and scoped to the SNAP module.
+enum SNAPCopy {
+    // Global product/compliance disclaimer for prototype screens.
+    static let globalDisclaimer = "This app helps prepare and screen applications. State SNAP agency makes final decision."
+}
+
 enum SNAPApplicationStep: Int, CaseIterable, Identifiable {
     case eligibilityIntro
     case privacyNotice
@@ -25,7 +30,9 @@ enum SNAPApplicationStep: Int, CaseIterable, Identifiable {
 // EXPERIMENTAL SILOED MODULE:
 // iPhone-first guided draft steps. One question group per screen.
 enum SNAPDraftStep: Int, CaseIterable, Identifiable {
+    case whereApplyingFrom
     case householdBasics
+    case applicantAge
     case addressContact
     case income
     case studentStatus
@@ -38,8 +45,10 @@ enum SNAPDraftStep: Int, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .householdBasics: return "Household basics"
-        case .addressContact: return "Contact preference"
+        case .whereApplyingFrom: return "Where are you currently residing?"
+        case .householdBasics: return "Your Food Household"
+        case .applicantAge: return "Applicant age"
+        case .addressContact: return "Contact information"
         case .income: return "Income"
         case .studentStatus: return "Student status"
         case .expenses: return "Monthly expenses"
@@ -51,8 +60,12 @@ enum SNAPDraftStep: Int, CaseIterable, Identifiable {
 
     var helperCopy: String {
         switch self {
+        case .whereApplyingFrom:
+            return "Share your state, housing status, and address details when requested."
         case .householdBasics:
             return "Start with who lives with you and shares food costs."
+        case .applicantAge:
+            return "Add your date of birth so we can estimate applicant age."
         case .addressContact:
             return "Choose how you would prefer to be reached if you later ask for help."
         case .income:
@@ -89,9 +102,30 @@ struct SNAPApplicationDraft {
     // until a formal privacy and security review is complete.
     var householdSize: Int?
     var applicantAge: Int?
+    var applicantDateOfBirth: Date?
     var state: String?
     var zipCode: String?
+    var residentialStreetAddress: String = ""
+    var residentialCity: String = ""
+    var residentialZIP: String = ""
     var housingStatus: HousingStatus?
+    var expeditedCandidate: Bool = false
+    var expeditedReason: String?
+    var requiresPermanentAddress: Bool = true
+    var allowCollateralContact: Bool = false
+    var allowPostponedVerification: Bool = false
+    var isExpeditedPathActive: Bool = false
+    var choseRegularPathInsteadOfExpedited: Bool = false
+    var expeditedHasAnyID: Bool?
+    var expeditedIDType: String = ""
+    var expeditedHasCurrentIncome: Bool?
+    var expeditedCurrentMonthIncomeAmount: String = ""
+    var expeditedCashOrBankAmountNow: String = ""
+    var expeditedHasCollateralContact: Bool?
+    var expeditedCollateralContactName: String = ""
+    var expeditedCollateralContactRole: String = ""
+    var expeditedCollateralContactValue: String = ""
+    var expeditedBestAgencyContactMethod: ExpeditedAgencyContactMethod?
     var studentStatus: StudentStatus?
     var isCurrentlyEnrolledInHigherEducation: Bool?
     var isEnrolledAtLeastHalfTime: Bool?
@@ -101,6 +135,28 @@ struct SNAPApplicationDraft {
     var monthlyIncomeEstimate: String = ""
     var incomeChangesMonthToMonth: Bool?
     var employmentStatus: EmploymentStatus?
+    var buysAndPreparesFoodWithOthers: SNAPTernaryChoice?
+    var spouseLivesWithUser: SNAPTernaryChoice?
+    var childUnder22LivesWithParentInHome: SNAPTernaryChoice?
+    var childrenInHousehold: SNAPTernaryChoice?
+    var anyoneAge60OrOlder: SNAPTernaryChoice?
+    var anyoneWithDisability: SNAPTernaryChoice?
+    var anyonePregnant: SNAPTernaryChoice?
+    var anyoneUnhousedOrNoFixedMailingAddress: SNAPTernaryChoice?
+    var preferredSafeMailingContactOption: SNAPSafeMailingContactOption?
+    var worksForEmployer: SNAPTernaryChoice?
+    var employerOrJobType: String = ""
+    var earnedGrossPayAmount: String = ""
+    var earnedPayFrequency: SNAPPayFrequency?
+    var earnedHoursPerWeek: String = ""
+    var recentJobLossOrStoppedWorkChoice: SNAPTernaryChoice?
+    var earnedLastPayDate: Date?
+    var selfEmployedOrGigWork: SNAPTernaryChoice?
+    var gigWorkTypeOrPlatform: String = ""
+    var gigGrossReceiptsThisMonth: String = ""
+    var gigBusinessExpensesThisMonth: String = ""
+    var gigIncomeVariesMonthToMonth: SNAPTernaryChoice?
+    var otherIncomeSources: [SNAPOtherIncomeSource] = []
     var rentOrHousingCost: String = ""
     var utilitiesCost: String = ""
     var childcareCostEstimate: String = ""
@@ -108,7 +164,25 @@ struct SNAPApplicationDraft {
     var hasChildren: Bool?
     var hasDisabilityInHousehold: Bool?
     var isSeniorHousehold: Bool?
+    var isPregnant: Bool?
+    var hasSpouseInHousehold: Bool?
+    var hasChildUnder22LivingWithParent: Bool?
+    var hasSubmittedOfficialSNAPApplication: Bool?
+    var officialSNAPApplicationSubmissionDate: Date?
+    var interviewScheduledOrCompleted: Bool?
+    var documentDueDate: Date?
+    var incomeSourceNotes: String = ""
+    var recentJobLossOrStoppedWork: Bool?
+    var expeditedGrossIncomeEstimate: String = ""
+    var expeditedLiquidResourcesEstimate: String = ""
+    var expeditedHousingCostEstimate: String = ""
+    var expeditedPaysUtilities: Bool?
+    var expeditedUtilityEstimate: String = ""
+    var expeditedIsMigrantOrSeasonalFarmworker: Bool?
+    var expeditedHasIdentityProofAvailable: Bool?
     var preferredContactMethod: PreferredContactMethod?
+    var contactEmail: String = ""
+    var contactPhone: String = ""
     var documentsAvailable: [SNAPDocumentType] = []
 
     // Guardrail reminder: this prototype must not include SSN, full immigration status,
@@ -142,6 +216,22 @@ enum HousingStatus: String, CaseIterable, Identifiable {
         case .temporaryHousing: return "Temporary housing"
         case .stayingWithOthers: return "Staying with others"
         case .unhoused: return "Unhoused"
+        }
+    }
+}
+
+enum ExpeditedAgencyContactMethod: String, CaseIterable, Identifiable {
+    case phone = "phone"
+    case email = "email"
+    case other = "other"
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .phone: return "Phone Number"
+        case .email: return "Email"
+        case .other: return "Other"
         }
     }
 }
@@ -182,6 +272,103 @@ enum EmploymentStatus: String, CaseIterable, Identifiable {
         case .unableToWork: return "Unable to work"
         }
     }
+
+    var exampleText: String {
+        switch self {
+        case .employedFullTime:
+            return "Ex: Working 35+ hours per week at a job or salary position."
+        case .employedPartTime:
+            return "Ex: Working fewer than 35 hours per week, including hourly or irregular shifts."
+        case .selfEmployed:
+            return "Ex: Freelancing, gig work like Uber or DoorDash, contract work, or running a small business."
+        case .unemployed:
+            return "Ex: Unemployed, between jobs, recently laid off, or not earning income right now."
+        case .unableToWork:
+            return "Ex: A disability, medical condition, or caregiving responsibility prevents you from working."
+        }
+    }
+}
+
+enum SNAPTernaryChoice: String, CaseIterable, Identifiable {
+    case yes = "yes"
+    case no = "no"
+    case notSure = "not_sure"
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .yes: return "Yes"
+        case .no: return "No"
+        case .notSure: return "Not sure"
+        }
+    }
+}
+
+enum SNAPPayFrequency: String, CaseIterable, Identifiable {
+    case weekly = "weekly"
+    case everyTwoWeeks = "every_two_weeks"
+    case twiceAMonth = "twice_a_month"
+    case monthly = "monthly"
+    case irregular = "irregular"
+    case notSure = "not_sure"
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .weekly: return "Weekly"
+        case .everyTwoWeeks: return "Every 2 weeks"
+        case .twiceAMonth: return "Twice a month"
+        case .monthly: return "Monthly"
+        case .irregular: return "Irregular"
+        case .notSure: return "Not sure"
+        }
+    }
+}
+
+enum SNAPOtherIncomeSource: String, CaseIterable, Identifiable {
+    case unemployment = "unemployment"
+    case socialSecurity = "social_security_ssi_ssdi"
+    case vaBenefits = "va_benefits"
+    case childSupportReceived = "child_support_received"
+    case cashHelpOrGifts = "cash_help_or_gifts"
+    case otherRecurringSupport = "other_recurring_support"
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .unemployment: return "Unemployment"
+        case .socialSecurity: return "Social Security / SSI / SSDI"
+        case .vaBenefits: return "VA benefits"
+        case .childSupportReceived: return "Child support received"
+        case .cashHelpOrGifts: return "Cash help / gifts from others"
+        case .otherRecurringSupport: return "Other recurring support"
+        }
+    }
+}
+
+enum SNAPSafeMailingContactOption: String, CaseIterable, Identifiable {
+    case shelter = "shelter"
+    case friendOrRelative = "friend_or_relative"
+    case authorizedHelper = "authorized_helper"
+    case emailOrPortal = "email_or_portal"
+    case phone = "phone"
+    case notSure = "not_sure"
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .shelter: return "Shelter"
+        case .friendOrRelative: return "Friend/relative"
+        case .authorizedHelper: return "Authorized helper"
+        case .emailOrPortal: return "Email/portal"
+        case .phone: return "Phone Number"
+        case .notSure: return "Not sure"
+        }
+    }
 }
 
 enum PreferredContactMethod: String, CaseIterable, Identifiable {
@@ -209,6 +396,7 @@ enum SNAPDocumentType: String, CaseIterable, Identifiable {
     case rentOrHousingCostProof = "rent_or_housing_cost_proof"
     case utilityBill = "utility_bill"
     case studentStatusDocuments = "student_status_documents"
+    case workStatusOrExemptions = "work_status_or_exemptions"
     case childcareCostProof = "childcare_cost_proof"
     case immigrationDocumentsIfRelevant = "immigration_documents_if_relevant"
 
@@ -216,12 +404,13 @@ enum SNAPDocumentType: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .photoID: return "Photo ID, if requested later"
-        case .proofOfAddress: return "Proof of address"
-        case .proofOfIncome: return "Proof of income"
-        case .rentOrHousingCostProof: return "Rent or housing cost proof"
-        case .utilityBill: return "Utility bill"
-        case .studentStatusDocuments: return "Student status documents"
+        case .photoID: return "Identity"
+        case .proofOfAddress: return "Residency"
+        case .proofOfIncome: return "Income"
+        case .rentOrHousingCostProof: return "Shelter / Housing Costs"
+        case .utilityBill: return "Utility Costs"
+        case .studentStatusDocuments: return "Student Status"
+        case .workStatusOrExemptions: return "Work Status / Exemptions"
         case .childcareCostProof: return "Childcare cost proof"
         case .immigrationDocumentsIfRelevant: return "Immigration-related documents, only if the official application asks"
         }

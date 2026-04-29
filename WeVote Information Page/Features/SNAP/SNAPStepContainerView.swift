@@ -14,7 +14,7 @@ struct SNAPStepContainerView: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Current step")
+                        Text(viewModel.draftStep == .nextSteps ? "Current page" : "Current step")
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(VoteNowColors.textSecondary)
                         Text(viewModel.draftStepHeaderTitle)
@@ -27,39 +27,43 @@ struct SNAPStepContainerView: View {
                         .foregroundStyle(VoteNowColors.textSecondary)
                 }
 
-                HStack(spacing: 6) {
-                    ForEach(Array(SNAPDraftStep.allCases.enumerated()), id: \.offset) { index, step in
-                        Button {
-                            if selectedProgressStep == step {
-                                selectedProgressStep = nil
-                            } else {
-                                selectedProgressStep = step
+                if viewModel.draftStep != .nextSteps {
+                    HStack(spacing: 6) {
+                        ForEach(Array(viewModel.questionnaireSteps.enumerated()), id: \.offset) { index, step in
+                            Button {
+                                if selectedProgressStep == step {
+                                    selectedProgressStep = nil
+                                } else {
+                                    selectedProgressStep = step
+                                }
+                            } label: {
+                                Capsule(style: .continuous)
+                                    .fill(progressBarFillColor(for: step, index: index))
+                                    .frame(maxWidth: .infinity, minHeight: 10, maxHeight: 10)
+                                    .overlay(
+                                        Capsule(style: .continuous)
+                                            .stroke(
+                                                selectedProgressStep == step
+                                                    ? VoteNowColors.primaryCTA
+                                                    : VoteNowColors.borderSubtle.opacity(0.45),
+                                                lineWidth: selectedProgressStep == step ? 1.5 : 1
+                                            )
+                                    )
                             }
-                        } label: {
-                            Capsule(style: .continuous)
-                                .fill(progressBarFillColor(for: index))
-                                .frame(maxWidth: .infinity, minHeight: 10, maxHeight: 10)
-                                .overlay(
-                                    Capsule(style: .continuous)
-                                        .stroke(
-                                            selectedProgressStep == step
-                                                ? VoteNowColors.primaryCTA
-                                                : VoteNowColors.borderSubtle.opacity(0.45),
-                                            lineWidth: selectedProgressStep == step ? 1.5 : 1
-                                        )
-                                )
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
                 }
 
-                if let selectedProgressStep {
+                if let selectedProgressStep, viewModel.draftStep != .nextSteps {
+                    let selectedIndex = viewModel.questionnaireSteps.firstIndex(of: selectedProgressStep) ?? 0
+                    let currentIndex = viewModel.questionnaireSteps.firstIndex(of: viewModel.draftStep) ?? 0
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Section \(selectedProgressStep.rawValue + 1): \(selectedProgressStep.title)")
+                        Text("Section \(selectedIndex + 1): \(selectedProgressStep.title)")
                             .font(.footnote.weight(.semibold))
                             .foregroundStyle(VoteNowColors.textPrimary)
 
-                        if selectedProgressStep.rawValue < viewModel.draftStep.rawValue {
+                        if selectedIndex < currentIndex {
                             Button("Go to section") {
                                 viewModel.jumpToDraftStep(selectedProgressStep)
                             }
@@ -127,12 +131,6 @@ struct SNAPStepContainerView: View {
                     .foregroundStyle(VoteNowColors.textSecondary)
                     .frame(maxWidth: .infinity, alignment: .center)
 
-                if let hint = viewModel.draftValidationHint, viewModel.hasAttemptedDraftContinue {
-                    Text(hint)
-                        .font(.footnote)
-                        .foregroundStyle(VoteNowColors.warningAmber)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
             }
             .padding(.horizontal, 12)
             .padding(.top, 8)
@@ -200,18 +198,28 @@ struct SNAPStepContainerView: View {
         }
     }
 
-    private func progressBarFillColor(for index: Int) -> Color {
-        if index < viewModel.draftStep.rawValue {
-            // Completed sections
-            return VoteNowColors.infoSurfaceBlue
+    private func progressBarFillColor(for step: SNAPDraftStep, index: Int) -> Color {
+        let completionState = viewModel.completionState(for: step)
+        let currentIndex = viewModel.questionnaireSteps.firstIndex(of: viewModel.draftStep)
+
+        if let currentIndex, index > currentIndex {
+            // Upcoming sections
+            return Color.white
         }
 
-        if index == viewModel.draftStep.rawValue {
-            // Currently viewed section
-            return VoteNowColors.primaryCTA
+        switch completionState {
+        case .missingRequired:
+            return VoteNowColors.urgentCTA.opacity(0.88)
+        case .missingOptional:
+            return VoteNowColors.warningAmber.opacity(0.82)
+        case .complete:
+            return currentIndex == index
+                ? VoteNowColors.primaryCTA
+                : VoteNowColors.successGreen.opacity(0.9)
+        case .notStarted:
+            return currentIndex == index
+                ? VoteNowColors.warningAmber.opacity(0.72)
+                : Color.white
         }
-
-        // Upcoming sections
-        return Color.white
     }
 }
