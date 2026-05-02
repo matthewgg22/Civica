@@ -107,6 +107,29 @@ private struct VoterRegistrationCard: Identifiable {
     let secondaryAction: Action?
 }
 
+private struct DemoElectionOverviewContest {
+    let office: String
+    let scopeOrDistrict: String
+    let numberToNominate: Int
+    let candidates: [String]
+}
+
+private struct DemoElectionOverviewPayload {
+    let electionName: String
+    let electionDateISO: String
+    let earlyVotingStartISO: String
+    let earlyVotingEndISO: String
+    let status: String
+    let sourcePrintedAt: String
+    let state: String
+    let district: String
+    let county: String
+    let primaryType: String
+    let partyBallot: String
+    let contests: [DemoElectionOverviewContest]
+    let notes: [String]
+}
+
 // MARK: - VoterRegistrationView
 struct VoterRegistrationView: View {
     @Environment(\.openURL) private var openURL
@@ -126,6 +149,7 @@ struct VoterRegistrationView: View {
     @State private var showStepOneWhyRegisterDropdown = false
     @State private var showStepTwoPollIssuesDropdown = false
     @State private var showStepThreeBallotErrorDropdown = false
+    @State private var pendingScrollTargetID: AnyHashable?
 
     private let contextResolver = ElectionGuideContextResolver()
     private let contentProvider = RegistrationGuideContentProvider()
@@ -135,6 +159,7 @@ struct VoterRegistrationView: View {
     private let defaultProvisionalBallotURL = URL(string: "https://www.eac.gov/research-and-data/provisional-voting")
         ?? URL(fileURLWithPath: "/")
     private let unresolvedLocationMessage = "Enter a valid address to see your voting information."
+    private let electionOverviewAnchorID = "registration-election-overview-anchor"
     // MAPV route is parked for this launch; keep Step 2 pointing to Voting Steps.
     private let howToVoteDeepLink = URL(string: "votenow://registration")
         ?? URL(string: "https://www.vote.gov/")
@@ -307,6 +332,55 @@ struct VoterRegistrationView: View {
         }
 
         return l("app.registration.location.set_address", "Set your address in My Reps")
+    }
+
+    private var demoElectionOverviewPayload: DemoElectionOverviewPayload {
+        DemoElectionOverviewPayload(
+            electionName: "Primary Election 2026",
+            electionDateISO: "2026-06-23",
+            earlyVotingStartISO: "2026-06-13",
+            earlyVotingEndISO: "2026-06-21",
+            status: "Tentative / subject to change",
+            sourcePrintedAt: "2026-05-01T14:21:29",
+            state: "NY",
+            district: "NY-12",
+            county: "New York",
+            primaryType: "Closed primary",
+            partyBallot: "Democratic",
+            contests: [
+                DemoElectionOverviewContest(
+                    office: "State Comptroller",
+                    scopeOrDistrict: "Citywide listing / statewide office",
+                    numberToNominate: 1,
+                    candidates: [
+                        "Thomas P. DiNapoli",
+                        "Drew Warshaw",
+                        "Raj Goyle"
+                    ]
+                ),
+                DemoElectionOverviewContest(
+                    office: "Representative in Congress",
+                    scopeOrDistrict: "12th Congressional District",
+                    numberToNominate: 1,
+                    candidates: [
+                        "Nina Schwalbe",
+                        "Patrick Timmins",
+                        "Chris Diep",
+                        "George Conway",
+                        "Laura Dunn",
+                        "Micah C. Lasher",
+                        "Alex Bores",
+                        "Jack Kennedy Schlossberg",
+                        "Micah Bergdale"
+                    ]
+                )
+            ],
+            notes: [
+                "Candidate list is tentative and subject to change.",
+                "Exact voter ballots may include address-specific State Senate, Assembly, City Council District 3, State Committee, Judicial Convention delegate, alternate delegate, or county committee contests.",
+                "The official NYC BOE primary contest list reviewed here shows the NY-12 congressional contest under the Democratic Party section."
+            ]
+        )
     }
 
     private var cards: [VoterRegistrationCard] {
@@ -603,6 +677,13 @@ struct VoterRegistrationView: View {
                         guard height > 0 else { return }
                         measuredStickyGuideStripHeight = height
                     }
+                    .onChange(of: pendingScrollTargetID) { _, target in
+                        guard let target else { return }
+                        withAnimation(.easeInOut(duration: 0.26)) {
+                            proxy.scrollTo(target, anchor: .top)
+                        }
+                        pendingScrollTargetID = nil
+                    }
                 }
             }
             .navigationBarHidden(true)
@@ -697,6 +778,8 @@ struct VoterRegistrationView: View {
             }
 
             if card.kind == .thenVote {
+                preMapvElectionOverviewPanel
+                    .id(electionOverviewAnchorID)
                 thenVoteTimelinePanel
             }
 
@@ -740,9 +823,8 @@ struct VoterRegistrationView: View {
                 .fixedSize(horizontal: false, vertical: true)
             }
 
-            // Step 2 "See Voting Options" CTA is parked for a future release.
-            // See: WeVote Information Page/_FutureFeatures/Step2GoToHowToVoteCTA.md
-            if card.kind != .whyRegister && card.kind != .absenteeCure && card.kind != .deadline && card.kind != .thenVote {
+            // Step 2 CTA now jumps users to the election overview area in this flow.
+            if card.kind != .whyRegister && card.kind != .absenteeCure && card.kind != .deadline {
                 if card.kind == .check {
                     if card.id == "step-3-post-check" {
                         ballotStatusPrimaryButton(
@@ -1302,6 +1384,88 @@ struct VoterRegistrationView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
+    private var preMapvElectionOverviewPanel: some View {
+        let payload = demoElectionOverviewPayload
+
+        return VStack(alignment: .leading, spacing: 10) {
+            Text("Election Overview (Demo)")
+                .font(.subheadline.weight(.bold))
+                .foregroundColor(VoteNowColors.primaryText)
+
+            Text("Address on file: \(locationSubtitle)")
+                .font(.callout.weight(.semibold))
+                .foregroundColor(VoteNowColors.primaryText)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text("\(payload.electionName) • \(formattedOverviewDate(payload.electionDateISO))")
+                .font(.callout.weight(.semibold))
+                .foregroundColor(VoteNowColors.primaryText)
+                .fixedSize(horizontal: false, vertical: true)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Early voting: \(formattedOverviewDate(payload.earlyVotingStartISO)) to \(formattedOverviewDate(payload.earlyVotingEndISO))")
+                Text("Status: \(payload.status)")
+                Text("Party ballot: \(payload.partyBallot)")
+                Text("Jurisdiction: \(payload.state), \(payload.county) County, \(payload.district)")
+                Text("Primary type: \(payload.primaryType)")
+            }
+            .font(.footnote)
+            .foregroundColor(VoteNowColors.mutedText)
+            .fixedSize(horizontal: false, vertical: true)
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Contests")
+                    .font(.callout.weight(.semibold))
+                    .foregroundColor(VoteNowColors.primaryText)
+
+                ForEach(Array(payload.contests.enumerated()), id: \.offset) { _, contest in
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(contest.office)
+                            .font(.footnote.weight(.semibold))
+                            .foregroundColor(VoteNowColors.primaryText)
+                        Text("\(contest.scopeOrDistrict) • Nominate \(contest.numberToNominate)")
+                            .font(.caption)
+                            .foregroundColor(VoteNowColors.mutedText)
+                        Text("Candidates: \(contest.candidates.joined(separator: ", "))")
+                            .font(.caption)
+                            .foregroundColor(VoteNowColors.mutedText)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(.bottom, 2)
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Notes")
+                    .font(.callout.weight(.semibold))
+                    .foregroundColor(VoteNowColors.primaryText)
+
+                ForEach(payload.notes, id: \.self) { note in
+                    HStack(alignment: .top, spacing: 6) {
+                        Text("•")
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(VoteNowColors.primaryCTA)
+                        Text(note)
+                            .font(.caption)
+                            .foregroundColor(VoteNowColors.mutedText)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+            }
+
+            Text("Source printed at: \(payload.sourcePrintedAt)")
+                .font(.caption2)
+                .foregroundColor(VoteNowColors.mutedText)
+        }
+        .padding(12)
+        .background(VoteNowColors.infoSurfaceBlue.opacity(0.62))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(VoteNowColors.primaryCTA.opacity(0.16), lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
     private var thenVoteTimelinePanel: some View {
         VStack(alignment: .leading, spacing: 10) {
             thenVoteTimelineRow(
@@ -1342,6 +1506,15 @@ struct VoterRegistrationView: View {
                 .stroke(VoteNowColors.primaryCTA.opacity(0.16), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
+    private func formattedOverviewDate(_ isoDate: String) -> String {
+        let value = isoDate.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !value.isEmpty else { return isoDate }
+        guard let date = Self.isoDateFormatter.date(from: value) else {
+            return isoDate
+        }
+        return Self.monthDayYearDisplayFormatter.string(from: date)
     }
 
     private func thenVoteTimelineRow(symbolName: String, title: String, body: String) -> some View {
@@ -2192,7 +2365,11 @@ struct VoterRegistrationView: View {
         case .openURL(let url):
             openURL(url)
         case .goToHowToVoteTab:
-            openURL(howToVoteDeepLink)
+            if case .success = registrationLaunchState {
+                pendingScrollTargetID = AnyHashable(electionOverviewAnchorID)
+            } else {
+                openURL(howToVoteDeepLink)
+            }
         case .shareDeadline:
             guard VoteNowLaunchFeatures.shareActionsEnabled else { return }
             shareRegistrationDeadline()
