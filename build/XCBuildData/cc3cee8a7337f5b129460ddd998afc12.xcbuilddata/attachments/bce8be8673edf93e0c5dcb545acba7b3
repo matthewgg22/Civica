@@ -1,4 +1,0 @@
-module nanopb {
-umbrella "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/nanopb/spm_headers"
-export *
-}

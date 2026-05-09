@@ -1,4 +1,0 @@
-module StripeUICore {
-header "StripeUICore-Swift.h"
-export *
-}

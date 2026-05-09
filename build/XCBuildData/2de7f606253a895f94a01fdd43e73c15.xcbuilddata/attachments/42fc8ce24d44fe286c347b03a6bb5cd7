@@ -1,4 +1,0 @@
-module FirebaseAnalyticsWrapper {
-umbrella "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/firebase-ios-sdk/FirebaseAnalyticsWrapper/include"
-export *
-}
