@@ -6,11 +6,11 @@ import WidgetKit
 struct MAPVLiveActivityWidget: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: MAPVLiveActivityAttributes.self) { context in
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                HStack(spacing: CivicaSpacing.sm) {
                     CivicaMiniLogo(size: 24)
                     Text(context.attributes.electionTitle)
-                        .font(.headline)
+                        .font(CivicaTypography.sectionHeader)
                         .lineLimit(1)
                     Spacer(minLength: 6)
                     statusPill(for: context.state)
@@ -30,7 +30,7 @@ struct MAPVLiveActivityWidget: Widget {
                         .lineLimit(1)
                         .minimumScaleFactor(0.75)
                 }
-                .font(.caption2.weight(.semibold))
+                .font(CivicaTypography.captionStrong)
                 .foregroundStyle(.secondary)
             }
             .padding(10)
@@ -41,9 +41,9 @@ struct MAPVLiveActivityWidget: Widget {
                     HStack(spacing: 6) {
                         CivicaMiniLogo(size: 22)
                         Image(systemName: statusIcon(for: context.state.status))
-                            .font(.caption2.weight(.bold))
+                            .font(CivicaTypography.captionBold)
                         Text(context.state.statusPillText)
-                            .font(.caption.weight(.semibold))
+                            .font(CivicaTypography.captionStrong)
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
                     }
@@ -51,7 +51,7 @@ struct MAPVLiveActivityWidget: Widget {
                 DynamicIslandExpandedRegion(.trailing) {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text(distanceText(for: context.state))
-                            .font(.caption2.weight(.semibold))
+                            .font(CivicaTypography.captionStrong)
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)
                         Text(etaText(for: context.state))
@@ -77,7 +77,7 @@ struct MAPVLiveActivityWidget: Widget {
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.74)
                         }
-                        .font(.caption2)
+                        .font(CivicaTypography.caption)
                         .foregroundStyle(.secondary)
                     }
                 }
@@ -95,14 +95,14 @@ struct MAPVLiveActivityWidget: Widget {
     }
 
     private func statusPill(for state: MAPVLiveActivityAttributes.ContentState) -> some View {
-        HStack(spacing: 4) {
+        HStack(spacing: CivicaSpacing.xs) {
             Image(systemName: statusIcon(for: state.status))
-                .font(.caption2.weight(.bold))
+                .font(CivicaTypography.captionBold)
             Text(state.statusPillText)
-                .font(.caption2.weight(.bold))
+                .font(CivicaTypography.captionBold)
         }
         .foregroundStyle(.white)
-        .padding(.horizontal, 8)
+        .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, 3)
         .background(pillColor(for: state.statusColorToken))
         .clipShape(Capsule())
@@ -192,7 +192,7 @@ private struct DayTimelineView: View {
         let closeProgress = max(openProgress, normalizedProgress(for: pollingClose, start: dayStart, end: dayEnd))
         let nowProgress = normalizedProgress(for: now, start: dayStart, end: dayEnd)
 
-        return VStack(spacing: 4) {
+        return VStack(spacing: CivicaSpacing.xs) {
             GeometryReader { geo in
                 let width = geo.size.width
                 let horizontalInset: CGFloat = 4
@@ -246,22 +246,6 @@ private struct DayTimelineView: View {
         guard total > 0 else { return 0 }
         let elapsed = date.timeIntervalSince(start)
         return CGFloat(max(0, min(elapsed / total, 1)))
-    }
-}
-
-private extension Color {
-    init(hex: String) {
-        let cleaned = hex
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .replacingOccurrences(of: "#", with: "")
-
-        var value: UInt64 = 0
-        Scanner(string: cleaned).scanHexInt64(&value)
-
-        let r = Double((value & 0xFF0000) >> 16) / 255
-        let g = Double((value & 0x00FF00) >> 8) / 255
-        let b = Double(value & 0x0000FF) / 255
-        self.init(.sRGB, red: r, green: g, blue: b, opacity: 1)
     }
 }
 
