@@ -249,7 +249,7 @@ private struct IssueEmojiGlyph: View {
 struct HowCallsBecomeSignalCardDemo: View {
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            VStack(spacing: CivicaSpacing.lg) {
                 HowCallsBecomeSignalCard()
 
                 VStack(alignment: .leading, spacing: 10) {
@@ -264,7 +264,7 @@ struct HowCallsBecomeSignalCardDemo: View {
                 .background(Color(uiColor: .secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
-            .padding(16)
+            .padding(CivicaSpacing.lg)
         }
         .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
     }

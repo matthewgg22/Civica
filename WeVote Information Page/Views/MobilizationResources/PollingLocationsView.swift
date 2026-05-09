@@ -49,7 +49,7 @@ struct PollingLocationsView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            VStack(spacing: CivicaSpacing.lg) {
                 if showArchiveDisclaimer {
                     archiveDisclaimerCard
                 }
@@ -132,13 +132,13 @@ struct PollingLocationsView: View {
                 endPoint: .trailing
             )
         )
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         .shadow(color: .blue.opacity(0.18), radius: 6, x: 0, y: 3)
         .padding(.horizontal)
     }
 
     private var archiveDisclaimerCard: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(
                 l(
                     "app.polling_locations.archive.title",
@@ -158,12 +158,12 @@ struct PollingLocationsView: View {
             .foregroundColor(CivicaColors.textSecondary)
             .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(12)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.infoSurfaceBlue)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.ctaBlue.opacity(0.16), lineWidth: 1)
         )
         .padding(.horizontal)
@@ -191,7 +191,7 @@ struct PollingLocationsView: View {
             region = context.region
         }
         .frame(height: 250)
-        .cornerRadius(12)
+        .cornerRadius(CivicaRadius.lg)
         .padding(.horizontal)
     }
     
@@ -206,7 +206,7 @@ struct PollingLocationsView: View {
     
     @ViewBuilder
     private func placeRow(_ place: PollingPlace) -> some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .top, spacing: CivicaSpacing.md) {
             PollingLocationPinView(isSelected: selectedPlace?.id == place.id)
                 .scaleEffect(0.9)
 
@@ -249,10 +249,10 @@ struct PollingLocationsView: View {
             }
             .buttonStyle(.plain)
         }
-        .padding(12)
+        .padding(CivicaSpacing.md)
         .contentShape(Rectangle())
         .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(
                     selectedPlace?.id == place.id
                     ? CivicaColors.ctaBlue.opacity(0.14)
@@ -260,7 +260,7 @@ struct PollingLocationsView: View {
                 )
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(
                     selectedPlace?.id == place.id
                     ? CivicaColors.ctaBlue.opacity(0.45)

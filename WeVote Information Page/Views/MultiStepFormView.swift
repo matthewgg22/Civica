@@ -100,7 +100,7 @@ struct MultiStepFormView: View {
                 return AnyView(AbsenteeView())
             }
             return AnyView(
-                VStack(spacing: 16) {
+                VStack(spacing: CivicaSpacing.lg) {
                     Text(l("app.mapv.step2.choose_polling_location", "Choose a polling location near you."))
                         .font(.subheadline.weight(.semibold))
                         .multilineTextAlignment(.leading)
@@ -419,7 +419,7 @@ private struct MAPVFlowView: View {
     }
 
     private var controls: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: CivicaSpacing.md) {
             Button(l("app.mapv.action.back", "Back")) {
                 onBack()
             }
@@ -647,7 +647,7 @@ struct StepOneView: View {
     let electionDayLine: String
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: CivicaSpacing.lg) {
             Text(l("app.mapv.step1.prompt", "How would you like to vote?"))
                 .font(.title3.weight(.bold))
                 .multilineTextAlignment(.center)
@@ -660,7 +660,7 @@ struct StepOneView: View {
                 isSelected: selectedMethod == .early,
                 action: { selectedMethod = .early }
             ) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     (Text(l("app.mapv.step1.pros_prefix", "Pros:")).bold() + Text(" " + l("app.mapv.step1.early.pros", "Flexibility, Shorter Wait Times, Avoids Last-Minute Issues")))
                     Text(earlyVotingLine)
                         .bold()
@@ -674,7 +674,7 @@ struct StepOneView: View {
                 isSelected: selectedMethod == .mail,
                 action: { selectedMethod = .mail }
             ) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     (Text(l("app.mapv.step1.pros_prefix", "Pros:")).bold() + Text(" " + l("app.mapv.step1.mail.pros", "Convenience, Extended Time, Accessibility")))
                     Text(l("app.mapv.step1.mail.request_by", "Request by: June 14, 2025"))
                         .bold()
@@ -688,7 +688,7 @@ struct StepOneView: View {
                 isSelected: selectedMethod == .election,
                 action: { selectedMethod = .election }
             ) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text(electionDayLine)
                         .bold()
                     Text(l("app.mapv.step1.election.poll_hours", "Polls 6 AM – 9 PM"))
@@ -696,7 +696,7 @@ struct StepOneView: View {
                 }
             }
         }
-        .padding(.horizontal, 8)
+        .padding(.horizontal, CivicaSpacing.sm)
     }
 
     private func methodTitle(for method: VotingMethod) -> String {
@@ -873,14 +873,14 @@ struct AbsenteeView: View {
                 Text(l("app.mapv.absentee.hero_title", "📬 Request Your Mail-in Ballot"))
                     .font(.title2.weight(.bold))
                     .foregroundColor(CivicaColors.textPrimary)
-                    .padding(.top, 8)
+                    .padding(.top, CivicaSpacing.sm)
 
                 Text(addressLine)
                     .font(.subheadline.weight(.semibold))
                     .foregroundColor(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                     Text(l("app.mapv.absentee.what_mail_in.title", "What is mail-in voting?"))
                         .font(.headline.weight(.semibold))
                         .foregroundColor(CivicaColors.textPrimary)
@@ -889,15 +889,15 @@ struct AbsenteeView: View {
                         .foregroundColor(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(12)
+                .padding(CivicaSpacing.md)
                 .background(CivicaColors.surfacePrimary)
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                         .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
 
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                     Text(l("app.mapv.absentee.what_absentee.title", "What is absentee voting?"))
                         .font(.headline.weight(.semibold))
                         .foregroundColor(CivicaColors.textPrimary)
@@ -906,16 +906,16 @@ struct AbsenteeView: View {
                         .foregroundColor(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(12)
+                .padding(CivicaSpacing.md)
                 .background(CivicaColors.surfacePrimary)
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                         .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
 
                 if let jurisdiction = selectedJurisdiction {
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                         HStack(alignment: .center, spacing: 10) {
                             if let flagAsset = StateFlagCatalog.assetName(for: jurisdiction.code) {
                                 Image(flagAsset)
@@ -944,7 +944,7 @@ struct AbsenteeView: View {
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 11)
                                     .background(CivicaColors.ctaBlue)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                             }
                             .accessibilityLabel(
                                 lf(
@@ -1026,7 +1026,7 @@ struct AbsenteeView: View {
                     .foregroundColor(CivicaColors.textPrimary)
 
                 ForEach(Array(rows.enumerated()), id: \.element.label) { index, row in
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text(row.label)
                             .font(.subheadline.weight(.semibold))
                             .foregroundColor(CivicaColors.textSecondary)
@@ -1072,12 +1072,12 @@ struct AbsenteeView: View {
                     .accessibilityLabel(l("app.mapv.absentee.source.a11y", "Open request deadline source"))
                 }
             }
-            .padding(12)
+            .padding(CivicaSpacing.md)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.infoSurfaceBlue)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                     .stroke(CivicaColors.ctaBlue.opacity(0.18), lineWidth: 1)
             )
         } else {
@@ -1086,7 +1086,7 @@ struct AbsenteeView: View {
     }
 
     private var fallbackDeadlinesCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(l("app.mapv.absentee.deadlines.title", "Request deadlines"))
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(CivicaColors.textPrimary)
@@ -1095,12 +1095,12 @@ struct AbsenteeView: View {
                 .foregroundColor(CivicaColors.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(12)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.infoSurfaceBlue)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.ctaBlue.opacity(0.18), lineWidth: 1)
         )
     }
@@ -1305,7 +1305,7 @@ struct StepThreeView: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: CivicaSpacing.lg) {
             Text(l("app.mapv.step3.prompt", "Pick your voting time"))
                 .font(.title.weight(.bold))
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -1352,11 +1352,11 @@ struct StepThreeView: View {
             }
             .padding(14)
             .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                     .fill(selectedTimeColor.opacity(0.18))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                     .stroke(selectedTimeColor.opacity(0.48), lineWidth: 1)
             )
             .padding(.horizontal)
@@ -1489,7 +1489,7 @@ private struct MAPVDayRailSelector: View {
     }
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: CivicaSpacing.sm) {
             if weekOffset > 0 {
                 Button {
                     if reduceMotion {
@@ -1508,7 +1508,7 @@ private struct MAPVDayRailSelector: View {
                 .accessibilityLabel(l("app.mapv.step3.dayrail.previous_week", "Previous week"))
             }
 
-            HStack(spacing: 4) {
+            HStack(spacing: CivicaSpacing.xs) {
                 ForEach(displayedDates, id: \.self) { day in
                     dayCell(for: day)
                 }
@@ -1531,9 +1531,9 @@ private struct MAPVDayRailSelector: View {
             .buttonStyle(.plain)
             .accessibilityLabel(l("app.mapv.step3.dayrail.next_week", "Next week"))
         }
-        .padding(8)
+        .padding(CivicaSpacing.sm)
         .background(CivicaColors.infoSurfaceBlue.opacity(0.6))
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         .onAppear {
             guard isActive else { return }
             if selectedDate < normalizedStartDate {
@@ -1920,7 +1920,7 @@ private struct CrowdCueBubble: View {
             Spacer(minLength: 0)
         }
         .foregroundStyle(cue.tint.opacity(0.96))
-        .padding(.horizontal, 8)
+        .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, 6)
         .background(
             Capsule(style: .continuous)
@@ -1954,13 +1954,13 @@ private struct MAPVTimeSlider: View {
     }
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: CivicaSpacing.sm) {
             GeometryReader { geo in
                 let width = max(geo.size.width, 1)
                 let thumbX = width * progress
                 let highlightWidth: CGFloat = 60
 
-                VStack(spacing: 8) {
+                VStack(spacing: CivicaSpacing.sm) {
                     MAPVTimeVisualOverlay(
                         progress: progress,
                         isDragging: isDragging,
@@ -2031,7 +2031,7 @@ private struct MAPVTimeSlider: View {
             }
             .frame(height: MAPVTimeVisualConstants.overlayHeight + MAPVTimeVisualConstants.trackHeight + MAPVTimeVisualConstants.emojiStripHeight + 18)
 
-            HStack(spacing: 8) {
+            HStack(spacing: CivicaSpacing.sm) {
                 Text(Self.timeFormatter.string(from: openDate))
                     .font(.caption)
                     .foregroundStyle(CivicaColors.textSecondary)
@@ -2210,7 +2210,7 @@ private struct MAPVTimeVisualOverlay: View {
 
             ZStack {
                 // Subtle time-of-day gradient along the overlay region.
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                     .fill(
                         LinearGradient(
                             colors: [
@@ -2479,7 +2479,7 @@ struct StepFourView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text(l("app.mapv.step4.almost_done", "You're almost done."))
                         .font(.subheadline.weight(.semibold))
                         .foregroundColor(CivicaColors.textSecondary)
@@ -2510,12 +2510,12 @@ struct StepFourView: View {
                             Label(l("app.mapv.step4.action.share_plan", "Share Plan"), systemImage: "square.and.arrow.up")
                                 .font(.subheadline.weight(.semibold))
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 12)
+                                .padding(.vertical, CivicaSpacing.md)
                         }
                         .buttonStyle(.plain)
                         .background(CivicaColors.infoSurfaceBlue)
                         .foregroundColor(CivicaColors.textPrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                     }
                 }
 

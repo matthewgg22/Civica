@@ -142,7 +142,7 @@ struct PrePermissionSheetView: View {
                     .padding(.vertical, 11)
                     .background(CivicaColors.infoSurfaceBlue)
                     .foregroundStyle(CivicaColors.textPrimary)
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
 
                 Button("Allow Reminders", action: onAllow)
                     .font(.subheadline.weight(.semibold))
@@ -150,7 +150,7 @@ struct PrePermissionSheetView: View {
                     .padding(.vertical, 11)
                     .background(CivicaColors.ctaBlue)
                     .foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
             }
         }
         .padding(18)
@@ -188,7 +188,7 @@ struct AddToCalendarButtonView: View {
         Button {
             beginTapFlow()
         } label: {
-            HStack(spacing: 8) {
+            HStack(spacing: CivicaSpacing.sm) {
                 if isWorking {
                     ProgressView()
                         .progressViewStyle(.circular)
@@ -207,7 +207,7 @@ struct AddToCalendarButtonView: View {
         .buttonStyle(.plain)
         .background(CivicaColors.ctaBlue)
         .foregroundStyle(.white)
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         .disabled(isWorking)
         .sheet(isPresented: $showSoftAsk) {
             PrePermissionSheetView(

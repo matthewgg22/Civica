@@ -5,7 +5,7 @@ struct IssueCodePickerView: View {
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
+            HStack(spacing: CivicaSpacing.sm) {
                 ForEach(IssueCode.allCases) { issue in
                     let isSelected = selectedIssue == issue
                     Button {
@@ -15,8 +15,8 @@ struct IssueCodePickerView: View {
                             .font(.caption.weight(.semibold))
                             .foregroundColor(isSelected ? .white : CivicaColors.textPrimary)
                             .lineLimit(1)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, CivicaSpacing.md)
+                            .padding(.vertical, CivicaSpacing.sm)
                             .background(isSelected ? CivicaColors.ctaBlue : CivicaColors.surfacePrimary)
                             .clipShape(Capsule())
                             .overlay(
@@ -66,7 +66,7 @@ private struct IssueCodePickerPreviewWrapper: View {
             .foregroundColor(CivicaColors.textPrimary)
             .padding(10)
             .background(CivicaColors.infoSurfaceBlue)
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         }
         .padding()
         .background(CivicaColors.brandSoftBlue.opacity(0.25))

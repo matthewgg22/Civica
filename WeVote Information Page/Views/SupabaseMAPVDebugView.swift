@@ -9,7 +9,7 @@ struct SupabaseMAPVDebugView: View {
     @State private var isWorking = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             Text("Supabase MAPV Debug")
                 .font(.headline)
 
@@ -44,13 +44,13 @@ struct SupabaseMAPVDebugView: View {
                             .font(.footnote)
                             .foregroundStyle(CivicaColors.textSecondary)
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, CivicaSpacing.xs)
                 }
             }
         }
-        .padding(12)
+        .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(CivicaColors.infoSurfaceBlue)
         )
         .task { await runStartupAuth() }
