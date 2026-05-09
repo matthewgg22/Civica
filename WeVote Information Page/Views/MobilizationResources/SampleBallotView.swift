@@ -255,10 +255,10 @@ struct SampleBallotView: View {
                         .font(.footnote)
                         .foregroundColor(CivicaColors.textSecondary)
                 }
-                .padding(12)
+                .padding(CivicaSpacing.md)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(CivicaColors.infoSurfaceBlue)
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
 
                 if filteredRaces.isEmpty {
                     Text(l("app.sample_ballot.empty.no_match", "No candidates match your selected party registration in this sample."))
@@ -273,7 +273,7 @@ struct SampleBallotView: View {
                     let maxRank = rankLimit(for: compact)
                     let ranked = rankedCandidates(for: raceKey, from: compact)
 
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                         HStack {
                             Text(race.office)
                                 .font(.headline)
@@ -297,7 +297,7 @@ struct SampleBallotView: View {
                             .padding(10)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(CivicaColors.brandSoftBlue.opacity(0.08))
-                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                         }
 
                         ForEach(compact) { candidate in
@@ -310,9 +310,9 @@ struct SampleBallotView: View {
                     }
                     .padding(14)
                     .background(CivicaColors.canvasBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                             .stroke(CivicaColors.borderSubtle.opacity(0.2), lineWidth: 1)
                     )
                 }
@@ -372,7 +372,7 @@ struct CandidateRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Text(summary.name)
                     .font(.subheadline.weight(.semibold))
                     .fixedSize(horizontal: false, vertical: true)
@@ -381,8 +381,8 @@ struct CandidateRow: View {
                     ForEach(summary.parties, id: \.self) { party in
                         Text(displayPartyLabel(party))
                             .font(.caption2.weight(.semibold))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
+                            .padding(.horizontal, CivicaSpacing.sm)
+                            .padding(.vertical, CivicaSpacing.xs)
                             .background(color(for: party).opacity(0.12))
                             .foregroundColor(color(for: party))
                             .clipShape(Capsule())
@@ -394,7 +394,7 @@ struct CandidateRow: View {
 
             Spacer()
 
-            VStack(alignment: .trailing, spacing: 8) {
+            VStack(alignment: .trailing, spacing: CivicaSpacing.sm) {
                 if let url = summary.website {
                     Link(destination: url) {
                         Image(systemName: "link.circle.fill")
@@ -418,17 +418,17 @@ struct CandidateRow: View {
                         .padding(.vertical, 6)
                         .background(CivicaColors.canvasBackground)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                                 .stroke(CivicaColors.borderSubtle.opacity(0.35), lineWidth: 1)
                         )
-                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                 }
             }
         }
         .padding(.vertical, 6)
-        .padding(.horizontal, 12)
+        .padding(.horizontal, CivicaSpacing.md)
         .background(CivicaColors.infoSurfaceBlue)
-        .cornerRadius(8)
+        .cornerRadius(CivicaRadius.sm)
     }
 
     private func l(_ key: String, _ fallback: String) -> String {

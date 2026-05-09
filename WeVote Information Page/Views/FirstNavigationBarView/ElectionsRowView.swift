@@ -31,7 +31,7 @@ struct ElectionsRowView: View {
                         ForEach(elections.indices, id: \.self) { idx in
                             let election = elections[idx]
 
-                            VStack(spacing: 12) {
+                            VStack(spacing: CivicaSpacing.md) {
                                 // 1. Centered, bold title
                                 Text(election.name)
                                     .font(.title2)
@@ -78,7 +78,7 @@ struct ElectionsRowView: View {
                                 }
                                 .padding(.horizontal)
                             }
-                            .padding(.vertical, 16)
+                            .padding(.vertical, CivicaSpacing.lg)
                             .padding(.horizontal)
 
                             if idx < elections.count - 1 {

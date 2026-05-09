@@ -19,7 +19,7 @@ struct TurnoutExplorer: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             Text("Move the slider to see how big each age group shows up to vote in the U.S. electorate")
                 .font(.subheadline)
                 .foregroundColor(CivicaColors.textSecondary)
@@ -36,10 +36,10 @@ struct TurnoutExplorer: View {
             }
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         .sheet(isPresented: $showMethodologySheet) {
             MethodologySheet()
         }
@@ -73,7 +73,7 @@ struct TurnoutExplorer: View {
                     selectedRange = clampedRange(selectedRange, within: stops)
                 }
         } else if let loadError = store.loadError {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Text("Turnout explorer data is unavailable right now.")
                     .font(.subheadline.weight(.semibold))
                     .foregroundColor(CivicaColors.textPrimary)
@@ -84,7 +84,7 @@ struct TurnoutExplorer: View {
             .padding(10)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.surfacePrimary)
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         } else {
             HStack(spacing: 10) {
                 ProgressView()
@@ -92,7 +92,7 @@ struct TurnoutExplorer: View {
                     .font(.subheadline)
                     .foregroundColor(CivicaColors.textSecondary)
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, CivicaSpacing.sm)
         }
     }
 
@@ -103,7 +103,7 @@ struct TurnoutExplorer: View {
         let summary = adapter.selectionSummary(for: selectedElectionType, range: activeRange)
         let diagnostics = adapter.diagnostics(for: selectedElectionType)
 
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             if !stops.isEmpty {
                 AgeTurnoutBandSlider(
                     stops: stops,
@@ -129,14 +129,14 @@ struct TurnoutExplorer: View {
                 let palette = TurnoutGraphPalette.palette(forTurnoutRate: summary.turnoutRatePct)
                 ElectorateDonut(summary: summary, palette: palette)
 
-                HStack(spacing: 12) {
+                HStack(spacing: CivicaSpacing.md) {
                     LegendKey(color: palette.votedColor, text: "voted")
                     LegendKey(color: palette.nonvotingColor, text: "eligible but did not vote")
                     LegendKey(color: CivicaColors.textPrimary.opacity(0.18), text: "everyone else")
                 }
 
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(alignment: .top, spacing: 8) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                    HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                         MetricMiniStat(
                             title: "Eligible share",
                             value: TurnoutExplorerFormatters.percent(summary.eligibleSharePct),
@@ -168,7 +168,7 @@ struct TurnoutExplorer: View {
                     )
                 }
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     let lines = representationScaleLines(for: summary)
                     ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
                         Text(line)
@@ -200,7 +200,7 @@ struct TurnoutExplorer: View {
                 Text("No turnout record is available for this age range in the selected election type.")
                     .font(.subheadline)
                     .foregroundColor(CivicaColors.textSecondary)
-                    .padding(.vertical, 8)
+                    .padding(.vertical, CivicaSpacing.sm)
             }
         }
     }
@@ -326,7 +326,7 @@ private struct ElectionTypeSegmentedControl: View {
     let onSelect: (TurnoutElectionType) -> Void
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: CivicaSpacing.sm) {
             segment(label: "Presidential", isSelected: selected == .presidential) {
                 onSelect(.presidential)
             }
@@ -661,7 +661,7 @@ private struct TurnoutRiskMap: View {
                             }
                         }
                         .frame(width: barWidth)
-                        .padding(.vertical, 4)
+                        .padding(.vertical, CivicaSpacing.xs)
                         .background(
                             RoundedRectangle(cornerRadius: 6, style: .continuous)
                                 .fill(inSelection ? CivicaColors.ctaBlue.opacity(0.12) : Color.clear)
@@ -763,7 +763,7 @@ private struct ElectorateDonut: View {
                     .font(.footnote)
                     .foregroundColor(CivicaColors.textSecondary)
             }
-            .padding(.horizontal, 8)
+            .padding(.horizontal, CivicaSpacing.sm)
         }
         .frame(maxWidth: .infinity)
         .frame(height: 180)
@@ -815,7 +815,7 @@ private struct MetricStat: View {
     var borderColor: Color = CivicaColors.textPrimary.opacity(0.06)
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(title)
                 .font(.footnote.weight(.semibold))
                 .foregroundColor(CivicaColors.textSecondary)
@@ -831,9 +831,9 @@ private struct MetricStat: View {
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(backgroundColor)
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                 .stroke(borderColor, lineWidth: 1)
         )
     }
@@ -858,13 +858,13 @@ private struct MetricMiniStat: View {
                 .minimumScaleFactor(0.72)
                 .lineLimit(1)
         }
-        .padding(.horizontal, 8)
+        .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, 7)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(backgroundColor)
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                 .stroke(borderColor, lineWidth: 1)
         )
     }
@@ -892,7 +892,7 @@ private struct MethodologySheet: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                     methodologyRow("Historical turnout from U.S. Census Bureau CPS Voting and Registration tables")
                     methodologyRow("This is descriptive historical data, not a prediction about you")
                     methodologyRow("Rates are based on reported voting among the citizen voting-age population")
@@ -901,7 +901,7 @@ private struct MethodologySheet: View {
                     methodologyRow("Counts are shown in thousands in the source data and may be displayed as rounded millions in the UI")
                     methodologyRow("Primary elections are not included in this dataset")
                 }
-                .padding(16)
+                .padding(CivicaSpacing.lg)
             }
             .navigationTitle("How this data works")
             .navigationBarTitleDisplayMode(.inline)
@@ -917,7 +917,7 @@ private struct MethodologySheet: View {
     }
 
     private func methodologyRow(_ text: String) -> some View {
-        HStack(alignment: .top, spacing: 8) {
+        HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Circle()
                 .fill(CivicaColors.ctaBlue)
                 .frame(width: 6, height: 6)

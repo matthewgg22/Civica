@@ -67,7 +67,7 @@ struct RaceCandidatesView: View {
                                 .clipShape(Circle())
                                 .shadow(radius: 3)
 
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                                 Text(candidate.name)
                                     .font(.headline)
 
@@ -89,7 +89,7 @@ struct RaceCandidatesView: View {
                                         .foregroundColor(CivicaColors.textSecondary)
                                 }
                             }
-                            .padding(.leading, 8)
+                            .padding(.leading, CivicaSpacing.sm)
                         }
                         Divider()
                     }

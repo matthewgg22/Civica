@@ -78,9 +78,9 @@ struct SupportVoteView: View {
 
                     Spacer(minLength: 24)
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, CivicaSpacing.lg)
                 .padding(.top, 10)
-                .padding(.bottom, 24)
+                .padding(.bottom, CivicaSpacing.xl)
             }
         }
         .scrollDismissesKeyboard(.interactively)
@@ -136,7 +136,7 @@ struct SupportVoteView: View {
     }
 
     private func supportBullet(_ text: String) -> some View {
-        HStack(alignment: .top, spacing: 8) {
+        HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Text("•")
                 .font(.headline)
             Text(text)
@@ -176,7 +176,7 @@ struct SupportVoteView: View {
             }
 
             // Current rollout uses an Apple Pay donation flow from this page.
-            ApplePayButton(type: .donate, style: .black, cornerRadius: 12) {
+            ApplePayButton(type: .donate, style: .black, cornerRadius: CivicaRadius.lg) {
                 guard let amount = resolvedAmount else { return }
                 Task {
                     await applePayManager.startDonation(amount: amount)
@@ -200,7 +200,7 @@ struct SupportVoteView: View {
                     .padding(10)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.statusErrorSurface)
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
             }
 
             if let success = applePayManager.successMessage, !success.isEmpty {
@@ -210,7 +210,7 @@ struct SupportVoteView: View {
                     .padding(10)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.statusSuccessSurface)
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
             }
 
         }
@@ -243,7 +243,7 @@ struct SupportVoteView: View {
 
             Text(l("app.support_vote.disrupt.footer", "Civica is built around servicing YOU, the voter."))
                 .font(.subheadline.weight(.semibold))
-                .padding(.top, 4)
+                .padding(.top, CivicaSpacing.xs)
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -258,7 +258,7 @@ struct SupportVoteView: View {
     }
 
     private var amountPickerGrid: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: CivicaSpacing.sm) {
             ForEach(PresetAmount.allCases, id: \.self) { preset in
                 Button {
                     selectedAmount = preset
@@ -275,12 +275,12 @@ struct SupportVoteView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
                         .background(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                                 .fill(selectedAmount == preset ? CivicaColors.ctaBlue : CivicaColors.infoSurfaceBlue)
                         )
                         .foregroundStyle(selectedAmount == preset ? CivicaColors.surfacePrimary : CivicaColors.textPrimary)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                                 .stroke(selectedAmount == preset ? CivicaColors.ctaBlue : CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
                         )
                 }
