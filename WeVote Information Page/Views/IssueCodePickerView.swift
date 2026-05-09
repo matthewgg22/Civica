@@ -12,7 +12,7 @@ struct IssueCodePickerView: View {
                         selectedIssue = issue
                     } label: {
                         Text(issue.displayName)
-                            .font(.caption.weight(.semibold))
+                            .font(CivicaTypography.captionStrong)
                             .foregroundColor(isSelected ? .white : CivicaColors.textPrimary)
                             .lineLimit(1)
                             .padding(.horizontal, CivicaSpacing.md)

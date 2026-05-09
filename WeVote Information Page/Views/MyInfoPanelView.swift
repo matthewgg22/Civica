@@ -155,20 +155,20 @@ struct MyInfoPanelView: View {
                         }
 
                         Text("my_info.zip.helper", tableName: "MyInfoPanel")
-                            .font(.footnote)
+                            .font(CivicaTypography.footnote)
                             .foregroundColor(CivicaColors.textSecondary)
 
                         if let locationSummaryText {
                             HStack(spacing: CivicaSpacing.sm) {
                                 Text(locationSummaryText)
-                                    .font(.footnote.weight(.semibold))
+                                    .font(CivicaTypography.footnoteStrong)
                                     .foregroundColor(CivicaColors.textSecondary)
                                     .lineLimit(1)
                                 Spacer(minLength: 6)
                                 Button("Edit location") {
                                     locationFieldFocused = true
                                 }
-                                .font(.footnote.weight(.semibold))
+                                .font(CivicaTypography.footnoteStrong)
                                 .foregroundColor(CivicaColors.ctaBlue)
                                 .buttonStyle(.plain)
                             }
@@ -183,7 +183,7 @@ struct MyInfoPanelView: View {
                                 : l("my_info.action.use_current_location", "Use Current Location"),
                                 systemImage: "location.fill"
                             )
-                            .font(.subheadline.weight(.semibold))
+                            .font(CivicaTypography.subheadStrong)
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(.horizontal, CivicaSpacing.md)
                             .padding(.vertical, CivicaSpacing.sm)
@@ -208,14 +208,14 @@ struct MyInfoPanelView: View {
                                     ProgressView()
                                         .controlSize(.small)
                                     Text(l("my_info.action.save_location.loading", "Saving Location..."))
-                                        .font(.subheadline.weight(.semibold))
+                                        .font(CivicaTypography.subheadStrong)
                                 }
                                 .frame(maxWidth: .infinity, alignment: .center)
                                 .padding(.horizontal, CivicaSpacing.md)
                                 .padding(.vertical, CivicaSpacing.sm)
                             } else {
                                 Text(l("my_info.action.save_location", "Save Location"))
-                                    .font(.subheadline.weight(.semibold))
+                                    .font(CivicaTypography.subheadStrong)
                                     .frame(maxWidth: .infinity, alignment: .center)
                                     .padding(.horizontal, CivicaSpacing.md)
                                     .padding(.vertical, CivicaSpacing.sm)
@@ -226,7 +226,7 @@ struct MyInfoPanelView: View {
 
                         if let addressSaveError {
                             Text(addressSaveError)
-                                .font(.footnote)
+                                .font(CivicaTypography.footnote)
                                 .foregroundColor(CivicaColors.ctaRed)
                         }
 
@@ -235,7 +235,7 @@ struct MyInfoPanelView: View {
                             .trimmingCharacters(in: .whitespacesAndNewlines),
                            !timelineDataError.isEmpty {
                             Text(timelineDataError)
-                                .font(.footnote)
+                                .font(CivicaTypography.footnote)
                                 .foregroundColor(CivicaColors.warningAmber)
                         }
                     }
@@ -250,7 +250,7 @@ struct MyInfoPanelView: View {
                     )
                 } header: {
                     Text("my_info.section.zip.header", tableName: "MyInfoPanel")
-                        .font(.headline.weight(.bold))
+                        .font(CivicaTypography.sectionHeaderBold)
                         .textCase(nil)
                 }
                 .listRowBackground(Color.clear)
@@ -259,7 +259,7 @@ struct MyInfoPanelView: View {
                     Section {
                         VStack(alignment: .leading, spacing: 6) {
                             Text("my_info.language.title", tableName: "MyInfoPanel")
-                                .font(.subheadline.weight(.semibold))
+                                .font(CivicaTypography.subheadStrong)
                                 .padding(.bottom, 2)
 
                             ForEach(LanguageOption.allCases, id: \.self) { option in
@@ -278,7 +278,7 @@ struct MyInfoPanelView: View {
                             }
 
                             Text("my_info.language.disclaimer", tableName: "MyInfoPanel")
-                                .font(.footnote)
+                                .font(CivicaTypography.footnote)
                                 .foregroundColor(CivicaColors.textSecondary)
                                 .italic()
                                 .padding(.top, CivicaSpacing.xs)
@@ -294,7 +294,7 @@ struct MyInfoPanelView: View {
                         )
                     } header: {
                         Text("my_info.section.accessibility.header", tableName: "MyInfoPanel")
-                            .font(.headline.weight(.bold))
+                            .font(CivicaTypography.sectionHeaderBold)
                             .textCase(nil)
                     }
                     .id(SectionAnchor.language)
@@ -310,7 +310,7 @@ struct MyInfoPanelView: View {
                                 String(localized: "app.how_to_vote.section.feedback", table: "AppShell"),
                                 systemImage: "bubble.left.and.bubble.right.fill"
                             )
-                            .font(.subheadline.weight(.semibold))
+                            .font(CivicaTypography.subheadStrong)
                             .foregroundColor(CivicaColors.ctaBlue)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 7)

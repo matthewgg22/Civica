@@ -178,7 +178,7 @@ struct MyRepsView: View {
                         PageHeader(title: Text("app.page.my_reps", tableName: "AppShell"))
                         HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                             Text(headerLocationSubtitle)
-                                .font(.subheadline.weight(.semibold))
+                                .font(CivicaTypography.subheadStrong)
                                 .foregroundColor(CivicaColors.textSecondary)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.84)
@@ -437,7 +437,7 @@ struct MyRepsView: View {
             showMyInfoSheet = true
         } label: {
             Text(l("app.reps.action.edit_location", "Change Location"))
-                .font(.callout.weight(.semibold))
+                .font(CivicaTypography.supportStrong)
                 .italic()
                 .foregroundColor(CivicaColors.ctaBlue)
                 .lineLimit(1)
