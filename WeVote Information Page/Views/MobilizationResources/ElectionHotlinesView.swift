@@ -14,16 +14,15 @@ struct ElectionHotlinesView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 Text(l("app.election_hotlines.title", "📞 Election Hotlines"))
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+                    .font(CivicaTypography.pageTitle)
                     .padding(.top)
 
                 VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                     Text(l("app.election_hotlines.general.title", "🗳️ General Voter Hotline"))
-                        .font(.headline)
+                        .font(CivicaTypography.sectionHeader)
 
                     Text(l("app.election_hotlines.general.body", "Have questions about how, when, or where to vote? Contact this hotline to get clear info from trained professionals."))
-                        .font(.subheadline)
+                        .font(CivicaTypography.subhead)
                         .foregroundColor(CivicaColors.textSecondary)
 
                     HStack {
@@ -37,10 +36,10 @@ struct ElectionHotlinesView: View {
 
                 VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                     Text(l("app.election_hotlines.intimidation.title", "🚨 Report Voter Intimidation"))
-                        .font(.headline)
+                        .font(CivicaTypography.sectionHeader)
 
                     Text(l("app.election_hotlines.intimidation.body", "If you or someone you know is being threatened or blocked from voting, call this national hotline immediately."))
-                        .font(.subheadline)
+                        .font(CivicaTypography.subhead)
                         .foregroundColor(CivicaColors.textSecondary)
 
                     HStack {

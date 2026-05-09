@@ -767,7 +767,7 @@ struct VotingMethodCard<Details: View>: View {
                 }
 
                 detailsContent
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
                     .foregroundColor(CivicaColors.textPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -939,7 +939,7 @@ struct AbsenteeView: View {
                         if let requestURL = jurisdiction.requestApplyURL {
                             Link(destination: requestURL) {
                                 Text(l("app.mapv.absentee.action.request_apply", "Request / Apply for a mail ballot"))
-                                    .font(.headline)
+                                    .font(CivicaTypography.sectionHeader)
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 11)
@@ -987,7 +987,7 @@ struct AbsenteeView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
                     Text(l("app.mapv.absentee.fallback.jurisdiction_missing", "We could not detect your jurisdiction yet. Enter your address in My Reps to auto-load absentee and mail-ballot request details."))
-                        .font(.subheadline)
+                        .font(CivicaTypography.subhead)
                         .foregroundColor(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
 
@@ -1091,7 +1091,7 @@ struct AbsenteeView: View {
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(CivicaColors.textPrimary)
             Text(l("app.mapv.absentee.deadlines.fallback", "Deadlines vary. Check your election office."))
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
                 .foregroundColor(CivicaColors.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -1312,7 +1312,7 @@ struct StepThreeView: View {
                 .padding(.horizontal)
 
             Text(l("app.mapv.step3.helper", "Drag the slider to set your planned arrival time."))
-                .font(.caption)
+                .font(CivicaTypography.caption)
                 .foregroundColor(CivicaColors.textSecondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
@@ -1913,7 +1913,7 @@ private struct CrowdCueBubble: View {
                     .lineLimit(1)
                     .truncationMode(.tail)
                 Text(detail)
-                    .font(.caption2)
+                    .font(CivicaTypography.caption)
                     .lineLimit(1)
                     .truncationMode(.tail)
             }
@@ -2033,7 +2033,7 @@ private struct MAPVTimeSlider: View {
 
             HStack(spacing: CivicaSpacing.sm) {
                 Text(Self.timeFormatter.string(from: openDate))
-                    .font(.caption)
+                    .font(CivicaTypography.caption)
                     .foregroundStyle(CivicaColors.textSecondary)
                     .frame(width: 52, alignment: .leading)
 
@@ -2049,7 +2049,7 @@ private struct MAPVTimeSlider: View {
                 Spacer(minLength: 4)
 
                 Text(Self.timeFormatter.string(from: closeDate))
-                    .font(.caption)
+                    .font(CivicaTypography.caption)
                     .foregroundStyle(CivicaColors.textSecondary)
                     .frame(width: 52, alignment: .trailing)
             }
@@ -2484,7 +2484,7 @@ struct StepFourView: View {
                         .font(.subheadline.weight(.semibold))
                         .foregroundColor(CivicaColors.textSecondary)
                     Text(l("app.mapv.step4.review_card", "Review your card before you finish."))
-                        .font(.subheadline)
+                        .font(CivicaTypography.subhead)
                         .foregroundColor(.secondary.opacity(0.85))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -2521,7 +2521,7 @@ struct StepFourView: View {
 
                 if CivicaLaunchFeatures.shareActionsEnabled {
                     Text(l("app.mapv.step4.share_hint", "Share via text, WhatsApp, or any app in your share sheet."))
-                        .font(.caption)
+                        .font(CivicaTypography.caption)
                         .foregroundColor(CivicaColors.textSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
