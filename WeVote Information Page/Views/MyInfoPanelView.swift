@@ -374,7 +374,7 @@ struct MyInfoPanelView: View {
 
                     guard focusLanguageSection else { return }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                        withAnimation(.easeInOut(duration: 0.2)) {
+                        withAnimation(CivicaAnimation.standard) {
                             proxy.scrollTo(SectionAnchor.language, anchor: .top)
                         }
                     }

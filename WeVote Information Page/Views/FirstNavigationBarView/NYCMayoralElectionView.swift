@@ -758,21 +758,21 @@ struct NYCMayoralElectionView: View {
         }
 
         if target == .voterID {
-            withAnimation(.easeOut(duration: 0.18)) {
+            withAnimation(CivicaAnimation.snap) {
                 proxy.scrollTo(GuideCardAnchor.voterID.rawValue, anchor: .top)
             }
             return
         }
 
         guard let index = targetCardIndex(for: target) else { return }
-        withAnimation(.easeOut(duration: 0.18)) {
+        withAnimation(CivicaAnimation.snap) {
             proxy.scrollTo(guideCardScrollID(index: index), anchor: .top)
         }
     }
 
     private func scrollToGuideMiniNavSection(_ section: GuideMiniNavSection, proxy: ScrollViewProxy) {
         let target = guideMiniNavTargetID(for: section)
-        withAnimation(.easeOut(duration: 0.18)) {
+        withAnimation(CivicaAnimation.snap) {
             proxy.scrollTo(target, anchor: .top)
         }
     }
@@ -2623,7 +2623,7 @@ struct NYCMayoralElectionView: View {
                 let isExpanded = expandedBallotMeasureKeys.contains(itemKey)
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Button {
-                        withAnimation(.easeInOut(duration: 0.2)) {
+                        withAnimation(CivicaAnimation.standard) {
                             if isExpanded {
                                 expandedBallotMeasureKeys.remove(itemKey)
                             } else {

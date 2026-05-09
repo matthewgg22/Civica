@@ -217,7 +217,7 @@ struct HoldToConfirmButton: View {
         if reduceMotion {
             progress = 0
         } else {
-            withAnimation(.easeOut(duration: 0.18)) {
+            withAnimation(CivicaAnimation.snap) {
                 progress = 0
             }
         }

@@ -434,7 +434,7 @@ private struct MAPVFlowView: View {
                 canTapStep: flowModel.canJump(to:),
                 compact: true,
                 onTap: { idx in
-                    withAnimation(reduceMotion ? .easeInOut(duration: 0.12) : .easeInOut(duration: 0.24)) {
+                    withAnimation(reduceMotion ? CivicaAnimation.fast : .easeInOut(duration: 0.24)) {
                         flowModel.jump(to: idx, reduceMotion: reduceMotion)
                     }
                 }
@@ -511,7 +511,7 @@ private struct MAPVStepPager: View {
                 }
             }
             .offset(x: (-CGFloat(currentIndex) * geo.size.width) + dragOffset)
-            .animation(reduceMotion ? .easeInOut(duration: 0.12) : .easeInOut(duration: 0.24), value: currentIndex)
+            .animation(reduceMotion ? CivicaAnimation.fast : .easeInOut(duration: 0.24), value: currentIndex)
             .clipped()
             .contentShape(Rectangle())
             .gesture(
@@ -527,13 +527,13 @@ private struct MAPVStepPager: View {
 
                         if moveForward, currentIndex < stepCount - 1, canSwipeForward() {
                             direction = .forward
-                            withAnimation(reduceMotion ? .easeInOut(duration: 0.12) : .easeInOut(duration: 0.24)) {
+                            withAnimation(reduceMotion ? CivicaAnimation.fast : .easeInOut(duration: 0.24)) {
                                 currentIndex += 1
                             }
                             onStepChanged(currentIndex)
                         } else if moveBackward, currentIndex > 0 {
                             direction = .backward
-                            withAnimation(reduceMotion ? .easeInOut(duration: 0.12) : .easeInOut(duration: 0.24)) {
+                            withAnimation(reduceMotion ? CivicaAnimation.fast : .easeInOut(duration: 0.24)) {
                                 currentIndex -= 1
                             }
                             onStepChanged(currentIndex)
@@ -1495,7 +1495,7 @@ private struct MAPVDayRailSelector: View {
                     if reduceMotion {
                         weekOffset -= 1
                     } else {
-                        withAnimation(.easeInOut(duration: 0.2)) {
+                        withAnimation(CivicaAnimation.standard) {
                             weekOffset -= 1
                         }
                     }
@@ -1519,7 +1519,7 @@ private struct MAPVDayRailSelector: View {
                 if reduceMotion {
                     weekOffset += 1
                 } else {
-                    withAnimation(.easeInOut(duration: 0.2)) {
+                    withAnimation(CivicaAnimation.standard) {
                         weekOffset += 1
                     }
                 }
@@ -2276,7 +2276,7 @@ private struct MAPVTimeVisualOverlay: View {
                     .shadow(color: Color.orange.opacity(0.30 + (0.20 * middayStrength)), radius: 6, x: 0, y: 2)
                     .position(x: centerX, y: sunY)
             }
-            .animation(reduceMotion ? nil : .easeOut(duration: 0.18), value: clampedP)
+            .animation(reduceMotion ? nil : CivicaAnimation.snap, value: clampedP)
         }
         .allowsHitTesting(false)
     }

@@ -262,7 +262,7 @@ struct RunoffThresholdGateView: View {
     private func pagerDot(for page: RunoffStagePage) -> some View {
         let isSelected = currentStagePage == page
         return Button {
-            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
+            withAnimation(reduceMotion ? nil : CivicaAnimation.standard) {
                 currentStagePage = page
             }
         } label: {
