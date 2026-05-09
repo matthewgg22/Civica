@@ -171,7 +171,7 @@ struct MyRepsView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                VoteNowColors.appBackground.ignoresSafeArea()
+                CivicaColors.appBackground.ignoresSafeArea()
 
                 VStack(spacing: 0) {
                     VStack(alignment: .leading, spacing: 0) {
@@ -179,7 +179,7 @@ struct MyRepsView: View {
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             Text(headerLocationSubtitle)
                                 .font(.subheadline.weight(.semibold))
-                                .foregroundColor(VoteNowColors.mutedText)
+                                .foregroundColor(CivicaColors.mutedText)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.84)
 
@@ -192,7 +192,7 @@ struct MyRepsView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
                     .padding(.bottom, 8)
-                    .background(VoteNowColors.appBackground)
+                    .background(CivicaColors.appBackground)
 
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
@@ -292,12 +292,12 @@ struct MyRepsView: View {
     private var matchedSummaryPill: some View {
         HStack(spacing: 6) {
             Text("Matched")
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(CivicaColors.primaryText)
 
             ForEach(Array(matchedSegments.enumerated()), id: \.element.id) { index, segment in
                 if index > 0 {
                     Text("·")
-                        .foregroundColor(VoteNowColors.borderWarm)
+                        .foregroundColor(CivicaColors.borderWarm)
                 }
 
                 Text("\(segment.count)")
@@ -305,20 +305,20 @@ struct MyRepsView: View {
                     .contentTransition(.numericText())
                     .animation(.spring(response: 0.28, dampingFraction: 0.86), value: matchedCountAnimationRevision)
                 Text(segment.title)
-                    .foregroundColor(VoteNowColors.mutedText)
+                    .foregroundColor(CivicaColors.mutedText)
             }
         }
         .font(.system(size: 13, weight: .semibold, design: .rounded))
         .lineLimit(1)
         .padding(.horizontal, 12)
         .padding(.vertical, 7)
-        .background(VoteNowColors.surfaceWhite.opacity(0.96))
+        .background(CivicaColors.surfaceWhite.opacity(0.96))
         .overlay(
             Capsule()
-                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                .stroke(CivicaColors.borderWarm, lineWidth: 1)
         )
         .clipShape(Capsule())
-        .shadow(color: VoteNowColors.primaryText.opacity(0.08), radius: 3, x: 0, y: 1)
+        .shadow(color: CivicaColors.primaryText.opacity(0.08), radius: 3, x: 0, y: 1)
     }
 
     private struct MatchedSegment: Identifiable {
@@ -330,9 +330,9 @@ struct MyRepsView: View {
 
     private var matchedSegments: [MatchedSegment] {
         [
-            MatchedSegment(id: "federal", title: "Federal", count: matchedFederalCount, countColor: VoteNowColors.richBlue),
-            MatchedSegment(id: "state", title: "State", count: matchedStateCount, countColor: VoteNowColors.successGreen),
-            MatchedSegment(id: "local", title: "Local", count: matchedLocalCount, countColor: VoteNowColors.warningAmber)
+            MatchedSegment(id: "federal", title: "Federal", count: matchedFederalCount, countColor: CivicaColors.richBlue),
+            MatchedSegment(id: "state", title: "State", count: matchedStateCount, countColor: CivicaColors.successGreen),
+            MatchedSegment(id: "local", title: "Local", count: matchedLocalCount, countColor: CivicaColors.warningAmber)
         ]
         .filter { $0.count > 0 }
     }
@@ -346,9 +346,9 @@ struct MyRepsView: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 12)
-                .background(VoteNowColors.primaryCTA)
+                .background(CivicaColors.primaryCTA)
                 .clipShape(Capsule())
-                .shadow(color: VoteNowColors.primaryText.opacity(0.18), radius: 4, x: 0, y: 2)
+                .shadow(color: CivicaColors.primaryText.opacity(0.18), radius: 4, x: 0, y: 2)
         }
         .buttonStyle(.plain)
     }
@@ -369,11 +369,11 @@ struct MyRepsView: View {
                     .padding(.leading, 12)
                     .padding(.trailing, 44)
                     .padding(.vertical, 12)
-                    .background(VoteNowColors.surfaceWhite)
+                    .background(CivicaColors.surfaceWhite)
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                            .stroke(CivicaColors.borderWarm, lineWidth: 1)
                     )
                     .onChange(of: locationInput) { _, newValue in
                         if suppressLocationInputTypingHandler {
@@ -422,7 +422,7 @@ struct MyRepsView: View {
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(.white)
                     .frame(width: 32, height: 32)
-                    .background(VoteNowColors.primaryCTA)
+                    .background(CivicaColors.primaryCTA)
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
@@ -439,7 +439,7 @@ struct MyRepsView: View {
             Text(l("app.reps.action.edit_location", "Change Location"))
                 .font(.callout.weight(.semibold))
                 .italic()
-                .foregroundColor(VoteNowColors.primaryCTA)
+                .foregroundColor(CivicaColors.primaryCTA)
                 .lineLimit(1)
         }
         .buttonStyle(.plain)
@@ -454,7 +454,7 @@ struct MyRepsView: View {
                 : l("app.reps.coverage.matched", "Your address matches you to your district")
             )
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(CivicaColors.primaryText)
 
             MyRepsCoverageMapView(
                 mapMode: repsVM.mapMode,
@@ -480,14 +480,14 @@ struct MyRepsView: View {
                 } label: {
                     Image(systemName: "arrow.up.left.and.arrow.down.right")
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(VoteNowColors.primaryCTA)
+                        .foregroundColor(CivicaColors.primaryCTA)
                         .padding(10)
-                        .background(VoteNowColors.surfaceWhite.opacity(0.96))
+                        .background(CivicaColors.surfaceWhite.opacity(0.96))
                         .overlay(
                             Circle()
-                                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                                .stroke(CivicaColors.borderWarm, lineWidth: 1)
                         )
-                        .shadow(color: VoteNowColors.primaryText.opacity(0.08), radius: 3, x: 0, y: 1)
+                        .shadow(color: CivicaColors.primaryText.opacity(0.08), radius: 3, x: 0, y: 1)
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
@@ -513,7 +513,7 @@ struct MyRepsView: View {
                 )
             )
             .font(.system(size: 13, weight: .medium))
-            .foregroundColor(VoteNowColors.mutedText)
+            .foregroundColor(CivicaColors.mutedText)
             .frame(maxWidth: .infinity, alignment: .leading)
 
             if case .focused = repsVM.mapMode {
@@ -521,7 +521,7 @@ struct MyRepsView: View {
                     repsVM.resetMapToNationalView()
                 }
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(VoteNowColors.primaryCTA)
+                .foregroundColor(CivicaColors.primaryCTA)
                 .buttonStyle(.plain)
             }
         }
@@ -677,7 +677,7 @@ private struct MyRepsFullScreenMapView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            VoteNowColors.appBackground
+            CivicaColors.appBackground
                 .ignoresSafeArea()
 
             MyRepsCoverageMapView(
@@ -696,14 +696,14 @@ private struct MyRepsFullScreenMapView: View {
                 } label: {
                     Image(systemName: "xmark")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(VoteNowColors.primaryCTA)
+                        .foregroundColor(CivicaColors.primaryCTA)
                         .frame(width: 34, height: 34)
-                        .background(VoteNowColors.surfaceWhite.opacity(0.96))
+                        .background(CivicaColors.surfaceWhite.opacity(0.96))
                         .overlay(
                             Circle()
-                                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                                .stroke(CivicaColors.borderWarm, lineWidth: 1)
                         )
-                        .shadow(color: VoteNowColors.primaryText.opacity(0.08), radius: 3, x: 0, y: 1)
+                        .shadow(color: CivicaColors.primaryText.opacity(0.08), radius: 3, x: 0, y: 1)
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
@@ -715,15 +715,15 @@ private struct MyRepsFullScreenMapView: View {
                         onResetMap()
                     }
                     .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(VoteNowColors.primaryCTA)
+                    .foregroundColor(CivicaColors.primaryCTA)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
-                    .background(VoteNowColors.surfaceWhite.opacity(0.96))
+                    .background(CivicaColors.surfaceWhite.opacity(0.96))
                     .overlay(
                         Capsule()
-                            .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                            .stroke(CivicaColors.borderWarm, lineWidth: 1)
                     )
-                    .shadow(color: VoteNowColors.primaryText.opacity(0.08), radius: 3, x: 0, y: 1)
+                    .shadow(color: CivicaColors.primaryText.opacity(0.08), radius: 3, x: 0, y: 1)
                     .clipShape(Capsule())
                     .buttonStyle(.plain)
                 }

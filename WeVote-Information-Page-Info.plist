@@ -30,6 +30,6 @@
 		<string>remote-notification</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>VoteNow uses the camera only when you choose to capture and attach a photo in the app.</string>
+	<string>Civica uses the camera only when you choose to capture and attach a photo in the app.</string>
 </dict>
 </plist>

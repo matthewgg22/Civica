@@ -31,10 +31,10 @@ struct SupabaseStatusView: View {
             if let error = authStore.lastError, !error.isEmpty {
                 Text(error)
                     .font(.footnote.weight(.semibold))
-                    .foregroundColor(VoteNowColors.richRed)
+                    .foregroundColor(CivicaColors.richRed)
                     .padding(10)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(VoteNowColors.statusErrorSurface)
+                    .background(CivicaColors.statusErrorSurface)
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
 
@@ -81,11 +81,11 @@ struct SupabaseStatusView: View {
         .padding(12)
         .background(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(VoteNowColors.secondaryButtonFill)
+                .fill(CivicaColors.secondaryButtonFill)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(VoteNowColors.primaryCTA.opacity(0.18), lineWidth: 1)
+                .stroke(CivicaColors.primaryCTA.opacity(0.18), lineWidth: 1)
         )
         .task {
             guard shouldAutoRefresh else { return }
@@ -114,14 +114,14 @@ struct SupabaseStatusView: View {
         if authStore.isSignedIn {
             return StatusIndicator(
                 iconName: "checkmark.circle.fill",
-                tint: VoteNowColors.successGreen,
-                surface: VoteNowColors.statusSuccessSurface
+                tint: CivicaColors.successGreen,
+                surface: CivicaColors.statusSuccessSurface
             )
         }
         return StatusIndicator(
             iconName: "person.crop.circle.badge.xmark",
-            tint: VoteNowColors.neutralStatus,
-            surface: VoteNowColors.statusNeutralSurface
+            tint: CivicaColors.neutralStatus,
+            surface: CivicaColors.statusNeutralSurface
         )
     }
 
@@ -129,21 +129,21 @@ struct SupabaseStatusView: View {
         guard let healthStatus else {
             return StatusIndicator(
                 iconName: "questionmark.circle",
-                tint: VoteNowColors.neutralStatus,
-                surface: VoteNowColors.statusNeutralSurface
+                tint: CivicaColors.neutralStatus,
+                surface: CivicaColors.statusNeutralSurface
             )
         }
         if healthStatus.isHealthy {
             return StatusIndicator(
                 iconName: "checkmark.seal.fill",
-                tint: VoteNowColors.successGreen,
-                surface: VoteNowColors.statusSuccessSurface
+                tint: CivicaColors.successGreen,
+                surface: CivicaColors.statusSuccessSurface
             )
         }
         return StatusIndicator(
             iconName: "exclamationmark.triangle.fill",
-            tint: VoteNowColors.richRed,
-            surface: VoteNowColors.statusErrorSurface
+            tint: CivicaColors.richRed,
+            surface: CivicaColors.statusErrorSurface
         )
     }
 
@@ -165,7 +165,7 @@ struct SupabaseStatusView: View {
                 }
                 Text(value)
                     .font(.subheadline)
-                    .foregroundStyle(VoteNowColors.mutedText)
+                    .foregroundStyle(CivicaColors.mutedText)
                     .multilineTextAlignment(.trailing)
                     .lineLimit(2)
             }

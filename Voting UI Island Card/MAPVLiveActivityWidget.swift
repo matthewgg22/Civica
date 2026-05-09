@@ -8,7 +8,7 @@ struct MAPVLiveActivityWidget: Widget {
         ActivityConfiguration(for: MAPVLiveActivityAttributes.self) { context in
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 8) {
-                    VoteNowMiniLogo(size: 24)
+                    CivicaMiniLogo(size: 24)
                     Text(context.attributes.electionTitle)
                         .font(.headline)
                         .lineLimit(1)
@@ -39,7 +39,7 @@ struct MAPVLiveActivityWidget: Widget {
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
                     HStack(spacing: 6) {
-                        VoteNowMiniLogo(size: 22)
+                        CivicaMiniLogo(size: 22)
                         Image(systemName: statusIcon(for: context.state.status))
                             .font(.caption2.weight(.bold))
                         Text(context.state.statusPillText)
@@ -82,7 +82,7 @@ struct MAPVLiveActivityWidget: Widget {
                     }
                 }
             } compactLeading: {
-                VoteNowMiniLogo(size: 18)
+                CivicaMiniLogo(size: 18)
             } compactTrailing: {
                 Text(compactETAText(for: context.state))
                     .font(.caption2.monospacedDigit())
@@ -265,7 +265,7 @@ private extension Color {
     }
 }
 
-private struct VoteNowMiniLogo: View {
+private struct CivicaMiniLogo: View {
     let size: CGFloat
 
     var body: some View {

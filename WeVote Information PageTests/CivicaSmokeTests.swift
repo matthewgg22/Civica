@@ -8,7 +8,7 @@
 import Testing
 @testable import VoteNow
 
-struct WeVote_Information_PageTests {
+struct CivicaSmokeTests {
 
     @Test func example() async throws {
         // Write your test here and use APIs like `#expect(...)` to check expected conditions.

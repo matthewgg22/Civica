@@ -1,11 +1,11 @@
 import SwiftUI
 
-enum VoteNowDualOrbitPathStyle {
+enum CivicaDualOrbitPathStyle {
     case automatic
     case roundedRect(cornerRadius: CGFloat)
 }
 
-private enum VoteNowDualOrbitRuntime {
+private enum CivicaDualOrbitRuntime {
     static var isEnabled: Bool {
         // Temporarily disabled while tracking intermittent CoreGraphics NaN path warnings.
         false
@@ -15,7 +15,7 @@ private enum VoteNowDualOrbitRuntime {
 /// Reusable always-on CTA border effect for pill buttons.
 /// Two colored segments run the same capsule path with dynamic z-order:
 /// the segment currently "ahead" is rendered last, so it occludes the trailing one.
-struct VoteNowPillDualOrbitModifier: ViewModifier {
+struct CivicaPillDualOrbitModifier: ViewModifier {
     var enabled: Bool? = nil
     var redColor: Color = Color(hex: "#E14D3A")
     var blueColor: Color = Color(hex: "#2F83D1").opacity(0.80)
@@ -29,12 +29,12 @@ struct VoteNowPillDualOrbitModifier: ViewModifier {
     var sliceFadeFactor: Double = 0.72
     /// 0 keeps red/blue exactly opposite (full ring when segmentLength is 0.5).
     var speedVariance: Double = 0.03
-    var pathStyle: VoteNowDualOrbitPathStyle = .automatic
+    var pathStyle: CivicaDualOrbitPathStyle = .automatic
 
     func body(content: Content) -> some View {
         content.overlay {
-            if enabled ?? VoteNowDualOrbitRuntime.isEnabled {
-                VoteNowPillDualOrbitLayer(
+            if enabled ?? CivicaDualOrbitRuntime.isEnabled {
+                CivicaPillDualOrbitLayer(
                     redColor: redColor,
                     blueColor: blueColor,
                     strokeThickness: strokeThickness,
@@ -55,7 +55,7 @@ struct VoteNowPillDualOrbitModifier: ViewModifier {
     }
 }
 
-private struct VoteNowPillDualOrbitLayer: View {
+private struct CivicaPillDualOrbitLayer: View {
     let redColor: Color
     let blueColor: Color
     let strokeThickness: CGFloat
@@ -67,7 +67,7 @@ private struct VoteNowPillDualOrbitLayer: View {
     let separatorThickness: CGFloat
     let sliceFadeFactor: Double
     let speedVariance: Double
-    let pathStyle: VoteNowDualOrbitPathStyle
+    let pathStyle: CivicaDualOrbitPathStyle
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -333,10 +333,10 @@ extension View {
         separatorThickness: CGFloat = 0.8,
         sliceFadeFactor: Double = 0.72,
         speedVariance: Double = 0.03,
-        pathStyle: VoteNowDualOrbitPathStyle = .automatic
+        pathStyle: CivicaDualOrbitPathStyle = .automatic
     ) -> some View {
         modifier(
-            VoteNowPillDualOrbitModifier(
+            CivicaPillDualOrbitModifier(
                 enabled: enabled,
                 redColor: redColor,
                 blueColor: blueColor,
@@ -362,11 +362,11 @@ extension View {
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
-            .background(VoteNowColors.primaryCTA)
+            .background(CivicaColors.primaryCTA)
             .clipShape(Capsule(style: .continuous))
             .voteNowPillDualOrbit()
     }
     .buttonStyle(.plain)
     .padding()
-    .background(VoteNowColors.brandSoftBlue)
+    .background(CivicaColors.brandSoftBlue)
 }

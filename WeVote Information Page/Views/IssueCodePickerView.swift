@@ -13,15 +13,15 @@ struct IssueCodePickerView: View {
                     } label: {
                         Text(issue.displayName)
                             .font(.caption.weight(.semibold))
-                            .foregroundColor(isSelected ? .white : VoteNowColors.primaryText)
+                            .foregroundColor(isSelected ? .white : CivicaColors.primaryText)
                             .lineLimit(1)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
-                            .background(isSelected ? VoteNowColors.primaryCTA : VoteNowColors.surfaceWhite)
+                            .background(isSelected ? CivicaColors.primaryCTA : CivicaColors.surfaceWhite)
                             .clipShape(Capsule())
                             .overlay(
                                 Capsule()
-                                    .stroke(isSelected ? VoteNowColors.primaryCTA : VoteNowColors.borderWarm, lineWidth: 1)
+                                    .stroke(isSelected ? CivicaColors.primaryCTA : CivicaColors.borderWarm, lineWidth: 1)
                             )
                     }
                     .buttonStyle(.plain)
@@ -63,13 +63,13 @@ private struct IssueCodePickerPreviewWrapper: View {
                 )
             )
             .font(.subheadline)
-            .foregroundColor(VoteNowColors.primaryText)
+            .foregroundColor(CivicaColors.primaryText)
             .padding(10)
-            .background(VoteNowColors.infoSurfaceBlue)
+            .background(CivicaColors.infoSurfaceBlue)
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         }
         .padding()
-        .background(VoteNowColors.brandSoftBlue.opacity(0.25))
+        .background(CivicaColors.brandSoftBlue.opacity(0.25))
     }
 }
 

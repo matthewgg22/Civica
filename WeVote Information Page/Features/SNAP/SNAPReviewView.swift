@@ -19,15 +19,15 @@ struct SNAPReviewView: View {
             VStack(alignment: .leading, spacing: 14) {
                 Text("Review your SNAP draft")
                     .font(.title3.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.textPrimary)
+                    .foregroundStyle(CivicaColors.textPrimary)
 
                 Text("Review this before using it to complete your official state application.")
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.warningAmber)
+                    .foregroundStyle(CivicaColors.warningAmber)
 
                 Text(SNAPCopy.globalDisclaimer)
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 SNAPReviewSectionCard(
@@ -97,11 +97,11 @@ struct SNAPReviewView: View {
                         viewModel.goNext()
                     }
                 }
-                .buttonStyle(VoteNowPrimaryCTAButtonStyle())
+                .buttonStyle(CivicaPrimaryCTAButtonStyle())
             }
             .padding(16)
         }
-        .background(VoteNowColors.brandSoftBlue.ignoresSafeArea())
+        .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
         .onAppear {
             viewModel.markReviewViewed()
         }
@@ -155,25 +155,25 @@ private struct SNAPReviewSectionCard: View {
             HStack {
                 Text(title)
                     .font(.headline)
-                    .foregroundStyle(VoteNowColors.textPrimary)
+                    .foregroundStyle(CivicaColors.textPrimary)
                 Spacer()
                 Button("Edit") {
                     onEdit()
                 }
                 .font(.subheadline.weight(.semibold))
                 .buttonStyle(.plain)
-                .foregroundStyle(VoteNowColors.primaryCTA)
+                .foregroundStyle(CivicaColors.primaryCTA)
             }
 
             ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
                 HStack(alignment: .top) {
                     Text(row.label)
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .foregroundStyle(CivicaColors.textPrimary)
                     Spacer(minLength: 12)
                     Text(row.value)
                         .font(.subheadline)
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .multilineTextAlignment(.trailing)
                 }
             }
@@ -181,11 +181,11 @@ private struct SNAPReviewSectionCard: View {
         .padding(14)
         .background(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(VoteNowColors.surfacePrimary)
+                .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
     }
 }

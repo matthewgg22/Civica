@@ -14,8 +14,8 @@ struct MarbleSimulationView: View {
 
     private let voterPresets = [100]
     private let palette: [Color] = [
-        VoteNowColors.brandSoftBlue,
-        VoteNowColors.brandSoftRed,
+        CivicaColors.brandSoftBlue,
+        CivicaColors.brandSoftRed,
         Color(hex: "#88C7A8"),
         Color(hex: "#F1B76A"),
         Color(hex: "#A8A3D5"),
@@ -98,9 +98,9 @@ struct MarbleSimulationView: View {
     private var backgroundLayer: some View {
         LinearGradient(
             colors: [
-                VoteNowColors.appBackground,
-                VoteNowColors.brandSoftBlue.opacity(0.18),
-                VoteNowColors.brandSoftRed.opacity(0.10)
+                CivicaColors.appBackground,
+                CivicaColors.brandSoftBlue.opacity(0.18),
+                CivicaColors.brandSoftRed.opacity(0.10)
             ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
@@ -115,7 +115,7 @@ struct MarbleSimulationView: View {
             } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.title2)
-                    .foregroundColor(VoteNowColors.primaryText.opacity(0.7))
+                    .foregroundColor(CivicaColors.primaryText.opacity(0.7))
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Close ranked-choice simulation")
@@ -123,11 +123,11 @@ struct MarbleSimulationView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
                     .font(.title2.weight(.black))
-                    .foregroundColor(VoteNowColors.primaryText)
+                    .foregroundColor(CivicaColors.primaryText)
 
                 Text("Watch how your vote moves")
                     .font(.subheadline)
-                    .foregroundColor(VoteNowColors.mutedText)
+                    .foregroundColor(CivicaColors.mutedText)
             }
             .onLongPressGesture(minimumDuration: 1.1) {
                 showAdminPanel = true
@@ -137,7 +137,7 @@ struct MarbleSimulationView: View {
 
             Text(controller.stageText)
                 .font(.caption.weight(.semibold))
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(CivicaColors.primaryText)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
                 .background(Capsule().fill(Color.white.opacity(0.9)))
@@ -160,11 +160,11 @@ struct MarbleSimulationView: View {
         return HStack(alignment: .firstTextBaseline, spacing: 8) {
             Text("Round \(roundNumber)")
                 .font(.subheadline.weight(.semibold))
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(CivicaColors.primaryText)
 
             Text(roundStatusSummaryText)
                 .font(.caption.weight(.semibold))
-                .foregroundColor(VoteNowColors.mutedText)
+                .foregroundColor(CivicaColors.mutedText)
                 .lineLimit(1)
                 .minimumScaleFactor(0.86)
         }
@@ -209,12 +209,12 @@ struct MarbleSimulationView: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(controller.featuredBallotBannerTitle)
                 .font(.caption.weight(.semibold))
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(CivicaColors.primaryText)
                 .lineLimit(2)
                 .minimumScaleFactor(0.85)
             Text(controller.featuredBallotBannerDetail)
                 .font(.caption)
-                .foregroundColor(VoteNowColors.mutedText)
+                .foregroundColor(CivicaColors.mutedText)
                 .lineLimit(3)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -226,7 +226,7 @@ struct MarbleSimulationView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                .stroke(CivicaColors.borderWarm, lineWidth: 1)
         )
     }
 
@@ -240,7 +240,7 @@ struct MarbleSimulationView: View {
                         .fill(Color.white.opacity(0.9))
                         .overlay(
                             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .stroke(VoteNowColors.borderWarm, lineWidth: 1.2)
+                                .stroke(CivicaColors.borderWarm, lineWidth: 1.2)
                         )
 
                     Canvas { context, size in
@@ -289,7 +289,7 @@ struct MarbleSimulationView: View {
         }
         .buttonStyle(
             RoundedControlButtonStyle(
-                fill: VoteNowColors.primaryCTA,
+                fill: CivicaColors.primaryCTA,
                 minHeight: isEmbedded ? 44 : 52,
                 verticalPadding: isEmbedded ? 3 : 6
             )
@@ -309,7 +309,7 @@ struct MarbleSimulationView: View {
                 } label: {
                     Image(systemName: "chevron.right.circle.fill")
                         .font(.title3)
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(CivicaColors.mutedText)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Collapse round details")
@@ -355,7 +355,7 @@ struct MarbleSimulationView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                .stroke(CivicaColors.borderWarm, lineWidth: 1)
         )
     }
 
@@ -365,7 +365,7 @@ struct MarbleSimulationView: View {
         } label: {
             Image(systemName: "chevron.left.circle.fill")
                 .font(.title2)
-                .foregroundColor(VoteNowColors.mutedText)
+                .foregroundColor(CivicaColors.mutedText)
                 .padding(.top, 8)
         }
         .buttonStyle(.plain)
@@ -393,7 +393,7 @@ struct MarbleSimulationView: View {
         } label: {
             Text("Round story")
                 .font(.subheadline.weight(.semibold))
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(CivicaColors.primaryText)
         }
         .padding(12)
         .background(
@@ -402,7 +402,7 @@ struct MarbleSimulationView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                .stroke(CivicaColors.borderWarm, lineWidth: 1)
         )
     }
 
@@ -467,12 +467,12 @@ struct MarbleSimulationView: View {
 
             let isActive = controller.isCandidateActive(candidate.id)
             let isWinner = controller.hasCompleted && controller.winnerCandidateID == candidate.id
-            let candidateColor = isWinner ? VoteNowColors.warningAmber : color(for: candidate.id)
+            let candidateColor = isWinner ? CivicaColors.warningAmber : color(for: candidate.id)
             let fill = isActive
                 ? candidateColor.opacity(0.18)
                 : Color.gray.opacity(0.20)
             let stroke = controller.highlightedCandidateID == candidate.id
-                ? VoteNowColors.warningAmber
+                ? CivicaColors.warningAmber
                 : (isActive
                     ? candidateColor.opacity(0.65)
                     : Color.gray.opacity(0.70))
@@ -491,7 +491,7 @@ struct MarbleSimulationView: View {
             let percent = Int((share * 100).rounded())
             let countText = Text("\(count)")
                 .font(.system(size: 15, weight: .bold))
-                .foregroundColor(isActive ? VoteNowColors.primaryText : Color.gray)
+                .foregroundColor(isActive ? CivicaColors.primaryText : Color.gray)
             context.draw(countText, at: CGPoint(x: frame.midX, y: frame.minY + 14))
 
             let trackFrame = CGRect(
@@ -530,13 +530,13 @@ struct MarbleSimulationView: View {
             let statusEmoji = controller.candidateOutcomeEmoji(for: candidate.id)
             let outcomeLabel = Text("\(statusEmoji) \(outcomeText) • \(percent)%")
                 .font(.system(size: 8.5, weight: .semibold))
-                .foregroundColor(isActive ? VoteNowColors.mutedText : Color.gray)
+                .foregroundColor(isActive ? CivicaColors.mutedText : Color.gray)
             context.draw(outcomeLabel, at: CGPoint(x: frame.midX, y: frame.minY + 38))
 
             if controller.showCandidateLabels {
                 let labelText = Text("\(controller.candidateEmoji(for: candidate.id)) \(controller.shortCandidateLabel(for: candidate.id))")
                     .font(.system(size: 10, weight: .semibold))
-                    .foregroundColor((isActive ? VoteNowColors.primaryText : Color.gray).opacity(0.92))
+                    .foregroundColor((isActive ? CivicaColors.primaryText : Color.gray).opacity(0.92))
                 context.draw(labelText, at: CGPoint(x: frame.midX, y: frame.maxY + 14))
             }
         }
@@ -570,7 +570,7 @@ struct MarbleSimulationView: View {
             )
             context.fill(
                 Path(roundedRect: progressRect, cornerRadius: 10),
-                with: .color(VoteNowColors.warningAmber.opacity(0.23))
+                with: .color(CivicaColors.warningAmber.opacity(0.23))
             )
         }
         context.stroke(
@@ -583,18 +583,18 @@ struct MarbleSimulationView: View {
             let compactPercent = Int((inactiveFraction * 100).rounded())
             let compactLabel = Text("Inactive \(controller.exhaustedCount) • \(compactPercent)%")
                 .font(.system(size: 9, weight: .semibold))
-                .foregroundColor(VoteNowColors.mutedText)
+                .foregroundColor(CivicaColors.mutedText)
             context.draw(compactLabel, at: CGPoint(x: frame.midX, y: frame.midY))
         } else {
             let label = Text("No more ranked choices")
                 .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(VoteNowColors.mutedText)
+                .foregroundColor(CivicaColors.mutedText)
             context.draw(label, at: CGPoint(x: frame.midX, y: frame.minY + 16))
 
             let percent = Int((inactiveFraction * 100).rounded())
             let countText = Text("Inactive: \(controller.exhaustedCount) (\(percent)%)")
                 .font(.system(size: 10, weight: .bold))
-                .foregroundColor(VoteNowColors.mutedText)
+                .foregroundColor(CivicaColors.mutedText)
             context.draw(countText, at: CGPoint(x: frame.midX, y: frame.maxY - 12))
         }
     }
@@ -636,7 +636,7 @@ struct MarbleSimulationView: View {
 
             if controller.selectedBallotID == marble.ballotID {
                 let ring = CGRect(x: point.x - 6.0, y: point.y - 6.0, width: 12.0, height: 12.0)
-                context.stroke(Ellipse().path(in: ring), with: .color(VoteNowColors.warningAmber), lineWidth: 1.8)
+                context.stroke(Ellipse().path(in: ring), with: .color(CivicaColors.warningAmber), lineWidth: 1.8)
             }
         }
     }
@@ -723,16 +723,16 @@ struct MarbleSimulationView: View {
         VStack(alignment: .leading, spacing: 5) {
             Text(title)
                 .font(.caption.weight(.bold))
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(CivicaColors.primaryText)
             Text(body)
                 .font(.caption)
-                .foregroundColor(VoteNowColors.mutedText)
+                .foregroundColor(CivicaColors.mutedText)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(8)
         .background(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(VoteNowColors.appBackground.opacity(0.7))
+                .fill(CivicaColors.appBackground.opacity(0.7))
         )
     }
 
@@ -795,7 +795,7 @@ private struct RoundedControlButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.subheadline.weight(.semibold))
-            .foregroundColor(VoteNowColors.primaryText)
+            .foregroundColor(CivicaColors.primaryText)
             .lineLimit(1)
             .minimumScaleFactor(0.88)
             .frame(maxWidth: .infinity, minHeight: minHeight)
@@ -807,7 +807,7 @@ private struct RoundedControlButtonStyle: ButtonStyle {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                    .stroke(CivicaColors.borderWarm, lineWidth: 1)
             )
     }
 }

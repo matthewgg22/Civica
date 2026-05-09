@@ -36,7 +36,7 @@
 		C36C73092F415639007CB83D /* Voting UI Island CardExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Voting UI Island CardExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C36C730B2F415639007CB83D /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		C36C730D2F415639007CB83D /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
-		C3A44ADE2DE392D000858A5E /* VoteNow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VoteNow.entitlements; sourceTree = "<group>"; };
+		C3A44ADE2DE392D000858A5E /* Civica.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Civica.entitlements; sourceTree = "<group>"; };
 		C3B862E82D9A42E00092C1CB /* VoteNow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VoteNow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3B862F82D9A42E20092C1CB /* VoteNowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoteNowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3B863022D9A42E20092C1CB /* VoteNowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoteNowUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -130,7 +130,7 @@
 			isa = PBXGroup;
 			children = (
 				C3D06EF42DE94769009F3459 /* WeVote-Information-Page-Info.plist */,
-				C3A44ADE2DE392D000858A5E /* VoteNow.entitlements */,
+				C3A44ADE2DE392D000858A5E /* Civica.entitlements */,
 				C3B862EA2D9A42E00092C1CB /* WeVote Information Page */,
 				C3B862FB2D9A42E20092C1CB /* WeVote Information PageTests */,
 				C3B863052D9A42E20092C1CB /* WeVote Information PageUITests */,
@@ -568,7 +568,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
-				CODE_SIGN_ENTITLEMENTS = VoteNow.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Civica.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -577,7 +577,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "WeVote-Information-Page-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_CFBundleDisplayName = Civica;
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "This app needs calendar access so it can add your voting plan as an event.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to calculate distances to polling places.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
@@ -606,7 +606,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
-				CODE_SIGN_ENTITLEMENTS = VoteNow.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Civica.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -615,7 +615,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "WeVote-Information-Page-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_CFBundleDisplayName = Civica;
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "This app needs calendar access so it can add your voting plan as an event.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to calculate distances to polling places.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
@@ -809,7 +809,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "WeVote-Information-Page-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "VoteNow SNAP Dev";
+				INFOPLIST_KEY_CFBundleDisplayName = "Civica SNAP Dev";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "This app needs calendar access so it can add your voting plan as an event.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to calculate distances to polling places.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;

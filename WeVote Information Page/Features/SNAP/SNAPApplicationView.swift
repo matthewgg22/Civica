@@ -179,14 +179,14 @@ struct SNAPApplicationView: View {
                 if let prefillNoteText {
                     Text(prefillNoteText)
                         .font(.footnote)
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
                 if let selectedStateAgencyName {
                     Text("Your Application will be evaluated by the \(selectedStateAgencyName)")
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .foregroundStyle(CivicaColors.textPrimary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
@@ -210,20 +210,20 @@ struct SNAPApplicationView: View {
                     ) {
                         Text("Because you selected that you do not have stable housing, you may qualify for expedited SNAP processing. You do not need a permanent address to continue. We'll help you prioritize the fastest path.")
                             .font(.footnote)
-                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .foregroundStyle(CivicaColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
 
                         Button("Start expedited SNAP path") {
                             viewModel.startExpeditedPath()
                         }
-                        .buttonStyle(VoteNowPrimaryCTAButtonStyle())
+                        .buttonStyle(CivicaPrimaryCTAButtonStyle())
 
                         Button("Continue regular application") {
                             viewModel.continueRegularApplicationPath()
                         }
                         .buttonStyle(.plain)
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.primaryCTA)
+                        .foregroundStyle(CivicaColors.primaryCTA)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
@@ -251,7 +251,7 @@ struct SNAPApplicationView: View {
                             HStack(spacing: 8) {
                                 Text("$")
                                     .font(.body.weight(.semibold))
-                                    .foregroundStyle(VoteNowColors.textPrimary)
+                                    .foregroundStyle(CivicaColors.textPrimary)
 
                                 TextField("0", text: $viewModel.application.expeditedCurrentMonthIncomeAmount)
                                     .keyboardType(.decimalPad)
@@ -264,7 +264,7 @@ struct SNAPApplicationView: View {
                             HStack(spacing: 8) {
                                 Text("$")
                                     .font(.body.weight(.semibold))
-                                    .foregroundStyle(VoteNowColors.textPrimary)
+                                    .foregroundStyle(CivicaColors.textPrimary)
 
                                 TextField("0", text: $viewModel.application.expeditedCashOrBankAmountNow)
                                     .keyboardType(.decimalPad)
@@ -311,28 +311,28 @@ struct SNAPApplicationView: View {
                         ) {
                             Text("You may qualify for expedited review.")
                                 .font(.footnote.weight(.semibold))
-                                .foregroundStyle(VoteNowColors.textPrimary)
+                                .foregroundStyle(CivicaColors.textPrimary)
                                 .fixedSize(horizontal: false, vertical: true)
 
                             Text("Identity is the most important item to verify first.")
                                 .font(.footnote)
-                                .foregroundStyle(VoteNowColors.textSecondary)
+                                .foregroundStyle(CivicaColors.textSecondary)
                                 .fixedSize(horizontal: false, vertical: true)
 
                             Text("Other documents may be requested later.")
                                 .font(.footnote)
-                                .foregroundStyle(VoteNowColors.textSecondary)
+                                .foregroundStyle(CivicaColors.textSecondary)
                                 .fixedSize(horizontal: false, vertical: true)
 
                             Text("A SNAP worker may still need to interview you.")
                                 .font(.footnote)
-                                .foregroundStyle(VoteNowColors.textSecondary)
+                                .foregroundStyle(CivicaColors.textSecondary)
                                 .fixedSize(horizontal: false, vertical: true)
 
                             Button("Continue to application summary") {
                                 viewModel.jumpToDraftStep(.reviewDraft)
                             }
-                            .buttonStyle(VoteNowPrimaryCTAButtonStyle())
+                            .buttonStyle(CivicaPrimaryCTAButtonStyle())
                         }
                     }
                 }
@@ -356,12 +356,12 @@ struct SNAPApplicationView: View {
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(suggestion.title)
                                             .font(.subheadline.weight(.semibold))
-                                            .foregroundStyle(VoteNowColors.textPrimary)
+                                            .foregroundStyle(CivicaColors.textPrimary)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                         if !suggestion.subtitle.isEmpty {
                                             Text(suggestion.subtitle)
                                                 .font(.footnote)
-                                                .foregroundStyle(VoteNowColors.textSecondary)
+                                                .foregroundStyle(CivicaColors.textSecondary)
                                                 .frame(maxWidth: .infinity, alignment: .leading)
                                         }
                                     }
@@ -383,7 +383,7 @@ struct SNAPApplicationView: View {
                             HStack(spacing: 8) {
                                 Text(issue.message)
                                     .font(.footnote)
-                                    .foregroundStyle(VoteNowColors.textSecondary)
+                                    .foregroundStyle(CivicaColors.textSecondary)
                                     .fixedSize(horizontal: false, vertical: true)
 
                                 Spacer(minLength: 0)
@@ -392,14 +392,14 @@ struct SNAPApplicationView: View {
                                     residentialAddressAutocomplete.retryLastQuery()
                                 }
                                 .font(.footnote.weight(.semibold))
-                                .foregroundStyle(VoteNowColors.primaryCTA)
+                                .foregroundStyle(CivicaColors.primaryCTA)
                                 .buttonStyle(.plain)
                             }
 
                             if issue.showsOfflineHint {
                                 Text("You may be offline. Check your connection and try again.")
                                     .font(.footnote)
-                                    .foregroundStyle(VoteNowColors.textSecondary)
+                                    .foregroundStyle(CivicaColors.textSecondary)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                         }
@@ -407,11 +407,11 @@ struct SNAPApplicationView: View {
                         .padding(.vertical, 8)
                         .background(
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .fill(VoteNowColors.surfaceSecondary)
+                                .fill(CivicaColors.surfaceSecondary)
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                         )
                     }
 
@@ -450,37 +450,37 @@ struct SNAPApplicationView: View {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Unhoused support")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textPrimary)
+                            .foregroundStyle(CivicaColors.textPrimary)
 
                         Text("You can apply without a permanent address.")
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.primaryCTA)
+                            .foregroundStyle(CivicaColors.primaryCTA)
                             .fixedSize(horizontal: false, vertical: true)
 
                         Text("Add a safe mailing address, shelter, phone, email, or trusted contact where the SNAP office can reach you.")
                             .font(.footnote)
-                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .foregroundStyle(CivicaColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
 
                         Text("Residency checks can be flexible when standard proof is hard to provide.")
                             .font(.footnote)
-                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .foregroundStyle(CivicaColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
 
                         Text("Homelessness alone does not guarantee emergency SNAP, so we will still check emergency criteria.")
                             .font(.footnote)
-                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .foregroundStyle(CivicaColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(.horizontal, 10)
                     .padding(.vertical, 8)
                     .background(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(VoteNowColors.surfacePrimary)
+                            .fill(CivicaColors.surfacePrimary)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                            .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                     )
                 }
                 }
@@ -545,7 +545,7 @@ struct SNAPApplicationView: View {
 
                 Text("DO COUNT: People you usually buy and prepare food with.\nDON'T COUNT: Roommates or others who buy and prepare food separately.")
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Divider()
@@ -613,7 +613,7 @@ struct SNAPApplicationView: View {
 
                     Text("Do not enter a full address here. Just choose the safest option for contact.")
                         .font(.footnote)
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 }
@@ -621,7 +621,7 @@ struct SNAPApplicationView: View {
 
             Text("This draft does not need names, SSNs, or full addresses.")
                 .font(.footnote.weight(.semibold))
-                .foregroundStyle(VoteNowColors.textSecondary)
+                .foregroundStyle(CivicaColors.textSecondary)
                 .padding(.horizontal, 4)
         }
     }
@@ -652,7 +652,7 @@ struct SNAPApplicationView: View {
                         HStack(spacing: 10) {
                             Text("Age: \(viewModel.application.applicantAge ?? ageInYears(from: applicantDateOfBirthBinding.wrappedValue))")
                                 .font(.footnote.weight(.semibold))
-                                .foregroundStyle(VoteNowColors.textSecondary)
+                                .foregroundStyle(CivicaColors.textSecondary)
 
                             Spacer(minLength: 0)
 
@@ -661,7 +661,7 @@ struct SNAPApplicationView: View {
                                 viewModel.application.applicantAge = nil
                             }
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.primaryCTA)
+                            .foregroundStyle(CivicaColors.primaryCTA)
                             .buttonStyle(.plain)
                         }
 
@@ -743,7 +743,7 @@ struct SNAPApplicationView: View {
 
                 Text("This draft will not send messages automatically.")
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
                 }
             }
@@ -782,14 +782,14 @@ struct SNAPApplicationView: View {
 
                 Text("Choose the option that best describes your current work situation.")
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 SNAPInputLabel("Estimated monthly income", badge: .required())
                 HStack(spacing: 8) {
                     Text("$")
                         .font(.body.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .foregroundStyle(CivicaColors.textPrimary)
 
                     TextField("0", text: $viewModel.application.monthlyIncomeEstimate)
                         .keyboardType(.decimalPad)
@@ -799,7 +799,7 @@ struct SNAPApplicationView: View {
 
                     Text("/month, pre-tax")
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                 }
                 .snapCompactFieldSurface()
                 .modifier(
@@ -811,12 +811,12 @@ struct SNAPApplicationView: View {
 
                 Text(annualIncomeEstimateText)
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Text("Use your best estimate before taxes. Exact numbers may be needed later on the official application.")
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 SNAPYesNoSegmentedQuestion(
@@ -828,7 +828,7 @@ struct SNAPApplicationView: View {
 
                 Text("Answer yes if your income is not the same every month, such as changing hours, tips, seasonal work, gig work, or irregular pay.")
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Divider()
@@ -837,19 +837,19 @@ struct SNAPApplicationView: View {
                 if isEmploymentPrimarilyEmployerBased {
                     Toggle("Also have self-employed/gig income?", isOn: alsoHasSelfEmploymentIncomeBinding)
                         .font(.footnote)
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .toggleStyle(.switch)
                 } else if isEmploymentPrimarilySelfEmployed {
                     Toggle("Also have employer income?", isOn: alsoHasEmployerIncomeBinding)
                         .font(.footnote)
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .toggleStyle(.switch)
                 }
 
                 if shouldShowEmployerIncomeSection {
                     Text("Earned income")
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .foregroundStyle(CivicaColors.textPrimary)
                     SNAPInputLabel("Employer or job type", badge: .optional)
                     TextField("Optional", text: $viewModel.application.employerOrJobType)
                         .textInputAutocapitalization(.words)
@@ -859,7 +859,7 @@ struct SNAPApplicationView: View {
                     HStack(spacing: 8) {
                         Text("$")
                             .font(.body.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textPrimary)
+                            .foregroundStyle(CivicaColors.textPrimary)
 
                         TextField("0", text: $viewModel.application.earnedGrossPayAmount)
                             .keyboardType(.decimalPad)
@@ -869,7 +869,7 @@ struct SNAPApplicationView: View {
 
                         Text("/ month")
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .foregroundStyle(CivicaColors.textSecondary)
                     }
                     .snapCompactFieldSurface()
 
@@ -907,7 +907,7 @@ struct SNAPApplicationView: View {
                                 viewModel.application.earnedLastPayDate = nil
                             }
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.primaryCTA)
+                            .foregroundStyle(CivicaColors.primaryCTA)
                             .buttonStyle(.plain)
                         }
                         .snapCompactFieldSurface()
@@ -916,7 +916,7 @@ struct SNAPApplicationView: View {
                             viewModel.application.earnedLastPayDate = Date()
                         }
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.primaryCTA)
+                        .foregroundStyle(CivicaColors.primaryCTA)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .snapCompactFieldSurface()
                         .buttonStyle(.plain)
@@ -929,7 +929,7 @@ struct SNAPApplicationView: View {
                 if shouldShowSelfEmploymentIncomeSection {
                     Text("Self-employment or gig income")
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .foregroundStyle(CivicaColors.textPrimary)
 
                     SNAPInputLabel("Type of work or platform", badge: .optional)
                     TextField("Optional", text: $viewModel.application.gigWorkTypeOrPlatform)
@@ -940,7 +940,7 @@ struct SNAPApplicationView: View {
                     HStack(spacing: 8) {
                         Text("$")
                             .font(.body.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textPrimary)
+                            .foregroundStyle(CivicaColors.textPrimary)
 
                         TextField("0", text: $viewModel.application.gigGrossReceiptsThisMonth)
                             .keyboardType(.decimalPad)
@@ -950,7 +950,7 @@ struct SNAPApplicationView: View {
 
                         Text("/ month")
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .foregroundStyle(CivicaColors.textSecondary)
                     }
                     .snapCompactFieldSurface()
 
@@ -958,7 +958,7 @@ struct SNAPApplicationView: View {
                     HStack(spacing: 8) {
                         Text("$")
                             .font(.body.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textPrimary)
+                            .foregroundStyle(CivicaColors.textPrimary)
 
                         TextField("0", text: $viewModel.application.gigBusinessExpensesThisMonth)
                             .keyboardType(.decimalPad)
@@ -968,7 +968,7 @@ struct SNAPApplicationView: View {
 
                         Text("/ month")
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .foregroundStyle(CivicaColors.textSecondary)
                     }
                     .snapCompactFieldSurface()
 
@@ -990,7 +990,7 @@ struct SNAPApplicationView: View {
 
                 Text("Do you currently recieve unearned or other Income?")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.textPrimary)
+                    .foregroundStyle(CivicaColors.textPrimary)
 
                 LazyVGrid(
                     columns: [GridItem(.flexible()), GridItem(.flexible())],
@@ -1056,23 +1056,23 @@ struct SNAPApplicationView: View {
 
                 Text("inlcude College / University (undergraduate), Graduate / Professional school, Vocational / Trade school, formal Technical or certificate programs, Technical or certificate programs, GED or adult basic education")
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 if viewModel.application.isCurrentlyEnrolledInHigherEducation == true {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Students may still qualify for SNAP. These questions help organize what the official application asks next.")
                             .font(.subheadline.weight(.medium))
-                            .foregroundStyle(VoteNowColors.textPrimary)
+                            .foregroundStyle(CivicaColors.textPrimary)
                     }
                     .padding(12)
                     .background(
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(VoteNowColors.infoSurfaceBlue.opacity(0.28))
+                            .fill(CivicaColors.infoSurfaceBlue.opacity(0.28))
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                            .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                     )
 
                     SNAPYesNoSegmentedQuestion(
@@ -1083,7 +1083,7 @@ struct SNAPApplicationView: View {
                     )
                     Text("Use your school's definition of half-time if you know it. If you are unsure, choose the closest answer and confirm later.")
                         .font(.footnote)
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
 
                     SNAPYesNoSegmentedQuestion(
@@ -1094,7 +1094,7 @@ struct SNAPApplicationView: View {
                     )
                     Text("Use your usual weekly hours.")
                         .font(.footnote)
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
 
                     SNAPYesNoSegmentedQuestion(
@@ -1105,7 +1105,7 @@ struct SNAPApplicationView: View {
                     )
                     Text("Ex: A school-arranged job funded partly by the government that lets students earn money while enrolled.")
                         .font(.footnote)
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
 
                     SNAPYesNoSegmentedQuestion(
@@ -1116,7 +1116,7 @@ struct SNAPApplicationView: View {
                     )
                     Text("Answer based on your current responsibility.")
                         .font(.footnote)
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 }
@@ -1147,7 +1147,7 @@ struct SNAPApplicationView: View {
                 HStack(spacing: 8) {
                     Text("$")
                         .font(.body.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .foregroundStyle(CivicaColors.textPrimary)
 
                     TextField("0", text: $viewModel.application.rentOrHousingCost)
                         .keyboardType(.decimalPad)
@@ -1157,7 +1157,7 @@ struct SNAPApplicationView: View {
 
                     Text("/ monthly")
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                 }
                 .snapCompactFieldSurface()
                 .modifier(
@@ -1169,14 +1169,14 @@ struct SNAPApplicationView: View {
 
                 Text("Enter your usual monthly rent, mortgage, or housing payment estimate.")
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 SNAPInputLabel("Monthly utilities", badge: .required())
                 HStack(spacing: 8) {
                     Text("$")
                         .font(.body.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .foregroundStyle(CivicaColors.textPrimary)
 
                     TextField("0", text: $viewModel.application.utilitiesCost)
                         .keyboardType(.decimalPad)
@@ -1186,7 +1186,7 @@ struct SNAPApplicationView: View {
 
                     Text("/ monthly")
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                 }
                 .snapCompactFieldSurface()
                 .modifier(
@@ -1198,7 +1198,7 @@ struct SNAPApplicationView: View {
 
                 Text("Enter a broad monthly estimate for utilities such as electricity, gas, water, heat, or phone, if applicable.")
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 if shouldShowChildcareExpensesField {
@@ -1206,7 +1206,7 @@ struct SNAPApplicationView: View {
                     HStack(spacing: 8) {
                         Text("$")
                             .font(.body.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textPrimary)
+                            .foregroundStyle(CivicaColors.textPrimary)
 
                         TextField("0", text: $viewModel.application.childcareCostEstimate)
                             .keyboardType(.decimalPad)
@@ -1216,13 +1216,13 @@ struct SNAPApplicationView: View {
 
                         Text("/ monthly")
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .foregroundStyle(CivicaColors.textSecondary)
                     }
                     .snapCompactFieldSurface()
 
                     Text("Enter a monthly estimate only if childcare costs apply to you.")
                         .font(.footnote)
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
@@ -1230,7 +1230,7 @@ struct SNAPApplicationView: View {
                 HStack(spacing: 8) {
                     Text("$")
                         .font(.body.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .foregroundStyle(CivicaColors.textPrimary)
 
                     TextField("0", text: $viewModel.application.medicalExpensesEstimate)
                         .keyboardType(.decimalPad)
@@ -1240,13 +1240,13 @@ struct SNAPApplicationView: View {
 
                     Text("/ monthly")
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                 }
                 .snapCompactFieldSurface()
 
                 Text("Enter only a dollar estimate. Do not include diagnoses, prescriptions, or medical history.")
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
                 }
             }
@@ -1274,17 +1274,17 @@ struct SNAPApplicationView: View {
 
                 Text("Upload once. We'll use a document anywhere it helps.")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.primaryCTA)
+                    .foregroundStyle(CivicaColors.primaryCTA)
 
                 Text("You may not need every document right away. Upload what you have now; the agency may ask for more later.")
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 if viewModel.application.expeditedCandidate {
                     Text("Expedited path: focus on Identity first. Other documents can be added later.")
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .foregroundStyle(CivicaColors.textPrimary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
@@ -1296,34 +1296,34 @@ struct SNAPApplicationView: View {
                         HStack(spacing: 10) {
                             Text(hasDocument ? "●" : "○")
                                 .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(hasDocument ? VoteNowColors.primaryCTA : VoteNowColors.textSecondary)
+                                .foregroundStyle(hasDocument ? CivicaColors.primaryCTA : CivicaColors.textSecondary)
 
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack(spacing: 8) {
                                     Text(document.label)
                                         .font(.subheadline)
-                                        .foregroundStyle(VoteNowColors.textPrimary)
+                                        .foregroundStyle(CivicaColors.textPrimary)
                                         .multilineTextAlignment(.leading)
 
                                     Text("Helpful")
                                         .font(.caption.weight(.semibold))
-                                        .foregroundStyle(VoteNowColors.textSecondary)
+                                        .foregroundStyle(CivicaColors.textSecondary)
                                         .padding(.horizontal, 8)
                                         .padding(.vertical, 3)
                                         .background(
                                             Capsule(style: .continuous)
-                                                .fill(VoteNowColors.surfaceSecondary)
+                                                .fill(CivicaColors.surfaceSecondary)
                                         )
                                         .overlay(
                                             Capsule(style: .continuous)
-                                                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                                                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                                         )
                                 }
 
                                 if let helperText = documentHelperText(for: document) {
                                     Text(helperText)
                                         .font(.footnote.weight(.semibold))
-                                        .foregroundStyle(VoteNowColors.textSecondary)
+                                        .foregroundStyle(CivicaColors.textSecondary)
                                         .multilineTextAlignment(.leading)
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
@@ -1331,7 +1331,7 @@ struct SNAPApplicationView: View {
                                 if let exampleText = documentExampleText(for: document) {
                                     Text(exampleText)
                                         .font(.caption)
-                                        .foregroundStyle(VoteNowColors.textSecondary)
+                                        .foregroundStyle(CivicaColors.textSecondary)
                                         .multilineTextAlignment(.leading)
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
@@ -1341,16 +1341,16 @@ struct SNAPApplicationView: View {
 
                             Text(hasDocument ? "Have this" : "Still need / Not sure")
                                 .font(.caption.weight(.semibold))
-                                .foregroundStyle(hasDocument ? VoteNowColors.primaryCTA : VoteNowColors.textSecondary)
+                                .foregroundStyle(hasDocument ? CivicaColors.primaryCTA : CivicaColors.textSecondary)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
                                 .background(
                                     Capsule(style: .continuous)
-                                        .fill(hasDocument ? VoteNowColors.statusInfoSurface : VoteNowColors.surfaceSecondary)
+                                        .fill(hasDocument ? CivicaColors.statusInfoSurface : CivicaColors.surfaceSecondary)
                                 )
                                 .overlay(
                                     Capsule(style: .continuous)
-                                        .stroke(hasDocument ? VoteNowColors.primaryCTA.opacity(0.28) : VoteNowColors.borderSubtle, lineWidth: 1)
+                                        .stroke(hasDocument ? CivicaColors.primaryCTA.opacity(0.28) : CivicaColors.borderSubtle, lineWidth: 1)
                                 )
                         }
                         .padding(.horizontal, 12)
@@ -1358,11 +1358,11 @@ struct SNAPApplicationView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(
                             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .fill(VoteNowColors.surfacePrimary)
+                                .fill(CivicaColors.surfacePrimary)
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                         )
                     }
                     .buttonStyle(.plain)
@@ -1370,7 +1370,7 @@ struct SNAPApplicationView: View {
 
                 Text("This step does not store document images.")
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
 
                 Button("Save checklist to Images") {
                     // EXPERIMENTAL SILOED MODULE:
@@ -1406,15 +1406,15 @@ struct SNAPApplicationView: View {
                 ) {
                 Text("Required Sections: \(requiredSectionsCompletedCount) of \(requiredSectionsTotalCount)")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.textPrimary)
+                    .foregroundStyle(CivicaColors.textPrimary)
 
                 Text("Optional Sections: \(optionalSectionsCompletedCount) of \(optionalSectionsTotalCount)")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
 
                 Text("When this looks right, continue to the next step. This still does not submit your SNAP application.")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.warningAmber)
+                    .foregroundStyle(CivicaColors.warningAmber)
                     .fixedSize(horizontal: false, vertical: true)
                 }
             }
@@ -1429,7 +1429,7 @@ struct SNAPApplicationView: View {
                         HStack(spacing: 10) {
                             Text(section.title)
                                 .font(.headline.weight(.bold))
-                                .foregroundStyle(VoteNowColors.primaryCTA)
+                                .foregroundStyle(CivicaColors.primaryCTA)
 
                             SNAPReviewStatusBadge(status: section.status)
 
@@ -1439,7 +1439,7 @@ struct SNAPApplicationView: View {
                                 viewModel.jumpToDraftStep(section.step)
                             }
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.primaryCTA)
+                            .foregroundStyle(CivicaColors.primaryCTA)
                         }
 
                         ForEach(section.rows) { row in
@@ -1447,11 +1447,11 @@ struct SNAPApplicationView: View {
                             HStack(alignment: .top, spacing: 10) {
                                 Text(row.label)
                                     .font(.footnote.weight(.semibold))
-                                    .foregroundStyle(isMissingRequired ? VoteNowColors.urgentCTA : VoteNowColors.textSecondary)
+                                    .foregroundStyle(isMissingRequired ? CivicaColors.urgentCTA : CivicaColors.textSecondary)
                                 Spacer(minLength: 8)
                                 Text(row.value)
                                     .font(.footnote)
-                                    .foregroundStyle(isMissingRequired ? VoteNowColors.urgentCTA : VoteNowColors.textSecondary)
+                                    .foregroundStyle(isMissingRequired ? CivicaColors.urgentCTA : CivicaColors.textSecondary)
                                     .multilineTextAlignment(.trailing)
                             }
                             .padding(.vertical, 1)
@@ -1471,16 +1471,16 @@ struct SNAPApplicationView: View {
             ) {
                 Text("Use this to prepare for your SNAP interview. This is not an official eligibility decision.")
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Text("For prep only")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.primaryCTA)
+                    .foregroundStyle(CivicaColors.primaryCTA)
 
                 Text("DTA/the state SNAP agency makes the final decision.")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 SNAPInterviewSummarySection(
@@ -1543,69 +1543,69 @@ struct SNAPApplicationView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("You may need expedited SNAP screening")
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .foregroundStyle(CivicaColors.textPrimary)
 
                     Text("You may qualify for emergency SNAP. If the SNAP office confirms eligibility, benefits can be available within 7 calendar days.")
                         .font(.footnote)
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
 
                     Text(SNAPCopy.globalDisclaimer)
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.primaryCTA)
+                        .foregroundStyle(CivicaColors.primaryCTA)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 8)
                 .background(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(VoteNowColors.surfacePrimary)
+                        .fill(CivicaColors.surfacePrimary)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Day tracker")
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .foregroundStyle(CivicaColors.textPrimary)
 
                     if let officialSubmissionDate = viewModel.application.officialSNAPApplicationSubmissionDate {
                         HStack(spacing: 8) {
                             Text("Day \(daysSinceDate(officialSubmissionDate))")
                                 .font(.subheadline.weight(.bold))
-                                .foregroundStyle(VoteNowColors.primaryCTA)
+                                .foregroundStyle(CivicaColors.primaryCTA)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 4)
                                 .background(
                                     Capsule(style: .continuous)
-                                        .fill(VoteNowColors.statusInfoSurface)
+                                        .fill(CivicaColors.statusInfoSurface)
                                 )
 
                             Text("since official application submission")
                                 .font(.footnote)
-                                .foregroundStyle(VoteNowColors.textSecondary)
+                                .foregroundStyle(CivicaColors.textSecondary)
                         }
 
                         Text("Official application date: \(compactDateText(from: officialSubmissionDate))")
                             .font(.footnote)
-                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .foregroundStyle(CivicaColors.textSecondary)
                     } else {
                         Text("SNAP clock has not started in this app")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textPrimary)
+                            .foregroundStyle(CivicaColors.textPrimary)
 
                         Text("The SNAP timeline starts after your official application is submitted to DTA/the state SNAP agency.")
                             .font(.footnote)
-                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .foregroundStyle(CivicaColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
 
                     if let submittedAt = viewModel.submittedAt {
                         Text("Prep checklist completed \(compactDateText(from: submittedAt))")
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.successGreen)
+                            .foregroundStyle(CivicaColors.successGreen)
                     }
                 }
                 .padding(.bottom, 4)
@@ -1614,11 +1614,11 @@ struct SNAPApplicationView: View {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("\(stateTimeline.displayName) update")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textPrimary)
+                            .foregroundStyle(CivicaColors.textPrimary)
 
                         Text("Recent on-time rate: \(stateTimeline.onTimeRatePercentText)")
                             .font(.footnote)
-                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .foregroundStyle(CivicaColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
 
                     }
@@ -1626,7 +1626,7 @@ struct SNAPApplicationView: View {
                 } else {
                     Text("State-specific timing details will appear after you select a state.")
                         .font(.footnote)
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                 }
 
                 SNAPTimelineMilestoneRow(
@@ -1668,22 +1668,22 @@ struct SNAPApplicationView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Document follow-up")
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .foregroundStyle(CivicaColors.textPrimary)
 
                     Text("Identity is needed first. Send what you have now; missing non-identity items should not by itself delay emergency processing.")
                         .font(.footnote)
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 8)
                 .background(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(VoteNowColors.surfacePrimary)
+                        .fill(CivicaColors.surfacePrimary)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
 
                 }
@@ -1692,26 +1692,26 @@ struct SNAPApplicationView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Your draft is ready.")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.textPrimary)
+                    .foregroundStyle(CivicaColors.textPrimary)
 
                 Text("Not submitted yet.")
                     .font(.headline.weight(.bold))
-                    .foregroundStyle(VoteNowColors.warningAmber)
+                    .foregroundStyle(CivicaColors.warningAmber)
 
                 Text("Next: continue through your official state SNAP application.")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.textPrimary)
+                    .foregroundStyle(CivicaColors.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding(14)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(VoteNowColors.statusWarningSurface)
+                    .fill(CivicaColors.statusWarningSurface)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(VoteNowColors.warningAmber.opacity(0.45), lineWidth: 1)
+                    .stroke(CivicaColors.warningAmber.opacity(0.45), lineWidth: 1)
             )
         }
     }
@@ -2904,11 +2904,11 @@ struct SNAPApplicationView: View {
         .padding(.vertical, 8)
         .background(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(VoteNowColors.surfacePrimary)
+                .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
     }
 
@@ -2917,17 +2917,17 @@ struct SNAPApplicationView: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(housingStatusHeading(for: status))
                 .font(.footnote.weight(.semibold))
-                .foregroundStyle(VoteNowColors.textPrimary)
+                .foregroundStyle(CivicaColors.textPrimary)
 
             Text(housingStatusExampleText(for: status))
                 .font(.footnote)
-                .foregroundStyle(VoteNowColors.textSecondary)
+                .foregroundStyle(CivicaColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             if status == .stayingWithOthers {
                 Text("Follow-up in this flow: Do you buy and prepare your own food separately?")
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
@@ -3195,28 +3195,28 @@ private struct SNAPStepGuidanceRows<Content: View>: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(whyLabel)
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .foregroundStyle(CivicaColors.textPrimary)
                     Text(whyText)
                         .font(.footnote)
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
                 .background(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(VoteNowColors.surfacePrimary)
+                        .fill(CivicaColors.surfacePrimary)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
             }
 
             if !whatText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 Text(whatText)
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
@@ -3237,7 +3237,7 @@ private struct SNAPCardInfoButton: View {
         } label: {
             Image(systemName: "info.circle")
                 .font(.footnote.weight(.semibold))
-                .foregroundStyle(VoteNowColors.primaryCTA)
+                .foregroundStyle(CivicaColors.primaryCTA)
                 .frame(width: 22, height: 22)
         }
         .buttonStyle(.plain)
@@ -3262,18 +3262,18 @@ private struct SNAPInlineDisclosureRow: View {
                 HStack(spacing: 8) {
                     Image(systemName: iconName)
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.primaryCTA)
+                        .foregroundStyle(CivicaColors.primaryCTA)
                         .frame(width: 16)
 
                     Text(title)
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .foregroundStyle(CivicaColors.textPrimary)
 
                     Spacer(minLength: 0)
 
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.caption.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                 }
             }
             .buttonStyle(.plain)
@@ -3281,7 +3281,7 @@ private struct SNAPInlineDisclosureRow: View {
             if isExpanded {
                 Text(detailText)
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
@@ -3289,11 +3289,11 @@ private struct SNAPInlineDisclosureRow: View {
         .padding(.vertical, 10)
         .background(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(VoteNowColors.surfacePrimary)
+                .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
     }
 
@@ -3330,17 +3330,17 @@ private struct SNAPInterviewSummarySection: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(VoteNowColors.textPrimary)
+                .foregroundStyle(CivicaColors.textPrimary)
 
             ForEach(rows) { row in
                 HStack(alignment: .top, spacing: 10) {
                     Text(row.label)
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                     Spacer(minLength: 10)
                     Text(row.value)
                         .font(.footnote)
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .multilineTextAlignment(.trailing)
                 }
             }
@@ -3350,11 +3350,11 @@ private struct SNAPInterviewSummarySection: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(VoteNowColors.surfacePrimary)
+                .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
     }
 }
@@ -3405,33 +3405,33 @@ private struct SNAPReviewStatusBadge: View {
     private var foregroundColor: Color {
         switch status {
         case .complete:
-            return VoteNowColors.successGreen
+            return CivicaColors.successGreen
         case .missingRequiredInfo:
-            return VoteNowColors.warningAmber
+            return CivicaColors.warningAmber
         case .optionalNotProvided:
-            return VoteNowColors.textSecondary
+            return CivicaColors.textSecondary
         }
     }
 
     private var backgroundColor: Color {
         switch status {
         case .complete:
-            return VoteNowColors.statusSuccessSurface
+            return CivicaColors.statusSuccessSurface
         case .missingRequiredInfo:
-            return VoteNowColors.statusWarningSurface
+            return CivicaColors.statusWarningSurface
         case .optionalNotProvided:
-            return VoteNowColors.surfaceSecondary
+            return CivicaColors.surfaceSecondary
         }
     }
 
     private var borderColor: Color {
         switch status {
         case .complete:
-            return VoteNowColors.successGreen.opacity(0.3)
+            return CivicaColors.successGreen.opacity(0.3)
         case .missingRequiredInfo:
-            return VoteNowColors.warningAmber.opacity(0.4)
+            return CivicaColors.warningAmber.opacity(0.4)
         case .optionalNotProvided:
-            return VoteNowColors.borderSubtle
+            return CivicaColors.borderSubtle
         }
     }
 }
@@ -3444,18 +3444,18 @@ private struct SNAPNextStepRow: View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: "checkmark.circle.fill")
                 .font(.subheadline)
-                .foregroundStyle(VoteNowColors.primaryCTA)
+                .foregroundStyle(CivicaColors.primaryCTA)
                 .padding(.top, 2)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.textPrimary)
+                    .foregroundStyle(CivicaColors.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Text(detail)
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
@@ -3474,22 +3474,22 @@ private struct SNAPTimelineMilestoneRow: View {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text(dayRange)
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.primaryCTA)
+                    .foregroundStyle(CivicaColors.primaryCTA)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
                     .background(
                         Capsule(style: .continuous)
-                            .fill(VoteNowColors.statusInfoSurface)
+                            .fill(CivicaColors.statusInfoSurface)
                     )
 
                 Text(title)
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.textPrimary)
+                    .foregroundStyle(CivicaColors.textPrimary)
             }
 
             Text(detail)
                 .font(.footnote)
-                .foregroundStyle(VoteNowColors.textSecondary)
+                .foregroundStyle(CivicaColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -3497,11 +3497,11 @@ private struct SNAPTimelineMilestoneRow: View {
         .padding(.vertical, 8)
         .background(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(VoteNowColors.surfacePrimary)
+                .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
     }
 }
@@ -3550,7 +3550,7 @@ private struct SNAPSectionCard<Content: View>: View {
                     if !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                         Text(title)
                             .font(.headline)
-                            .foregroundStyle(VoteNowColors.textPrimary)
+                            .foregroundStyle(CivicaColors.textPrimary)
                             .frame(maxWidth: .infinity, alignment: titleAlignment)
                     } else {
                         Spacer(minLength: 0)
@@ -3565,7 +3565,7 @@ private struct SNAPSectionCard<Content: View>: View {
             if let helper, !helper.isEmpty {
                 Text(helper)
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
             }
 
             content
@@ -3573,11 +3573,11 @@ private struct SNAPSectionCard<Content: View>: View {
         .padding(14)
         .background(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(VoteNowColors.surfacePrimary)
+                .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
     }
 }
@@ -3595,7 +3595,7 @@ private struct SNAPInputLabel: View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
             Text(text)
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(VoteNowColors.textPrimary)
+                .foregroundStyle(CivicaColors.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
 
             Spacer(minLength: 8)
@@ -3661,37 +3661,37 @@ private struct SNAPFieldBadgeChip: View {
     private var foregroundColor: Color {
         switch badge.style {
         case .required:
-            return VoteNowColors.primaryCTA
+            return CivicaColors.primaryCTA
         case .requiredAttention:
-            return VoteNowColors.warningAmber
+            return CivicaColors.warningAmber
         case .optional, .optionalEstimate:
-            return VoteNowColors.textSecondary
+            return CivicaColors.textSecondary
         }
     }
 
     private var backgroundColor: Color {
         switch badge.style {
         case .required:
-            return VoteNowColors.statusInfoSurface
+            return CivicaColors.statusInfoSurface
         case .requiredAttention:
-            return VoteNowColors.statusWarningSurface
+            return CivicaColors.statusWarningSurface
         case .optional:
-            return VoteNowColors.surfaceSecondary
+            return CivicaColors.surfaceSecondary
         case .optionalEstimate:
-            return VoteNowColors.infoSurfaceBlue.opacity(0.52)
+            return CivicaColors.infoSurfaceBlue.opacity(0.52)
         }
     }
 
     private var borderColor: Color {
         switch badge.style {
         case .required:
-            return VoteNowColors.primaryCTA.opacity(0.32)
+            return CivicaColors.primaryCTA.opacity(0.32)
         case .requiredAttention:
-            return VoteNowColors.warningAmber.opacity(0.42)
+            return CivicaColors.warningAmber.opacity(0.42)
         case .optional:
-            return VoteNowColors.borderSubtle
+            return CivicaColors.borderSubtle
         case .optionalEstimate:
-            return VoteNowColors.primaryCTA.opacity(0.2)
+            return CivicaColors.primaryCTA.opacity(0.2)
         }
     }
 }
@@ -3704,11 +3704,11 @@ private extension View {
             .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(VoteNowColors.surfacePrimary)
+                    .fill(CivicaColors.surfacePrimary)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                    .stroke(CivicaColors.borderSubtle, lineWidth: 1)
             )
     }
 
@@ -3720,11 +3720,11 @@ private extension View {
             .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(VoteNowColors.surfacePrimary)
+                    .fill(CivicaColors.surfacePrimary)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                    .stroke(CivicaColors.borderSubtle, lineWidth: 1)
             )
     }
 
@@ -3736,11 +3736,11 @@ private extension View {
             .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(highlightPrefilled ? VoteNowColors.warningAmber.opacity(0.12) : VoteNowColors.surfacePrimary)
+                    .fill(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.12) : CivicaColors.surfacePrimary)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(highlightPrefilled ? VoteNowColors.warningAmber.opacity(0.3) : VoteNowColors.borderSubtle, lineWidth: 1)
+                    .stroke(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.3) : CivicaColors.borderSubtle, lineWidth: 1)
             )
     }
 
@@ -3752,11 +3752,11 @@ private extension View {
             .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(highlightPrefilled ? VoteNowColors.warningAmber.opacity(0.12) : VoteNowColors.surfacePrimary)
+                    .fill(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.12) : CivicaColors.surfacePrimary)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(highlightPrefilled ? VoteNowColors.warningAmber.opacity(0.3) : VoteNowColors.borderSubtle, lineWidth: 1)
+                    .stroke(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.3) : CivicaColors.borderSubtle, lineWidth: 1)
             )
     }
 
@@ -3768,11 +3768,11 @@ private extension View {
             .padding(.vertical, 6)
             .background(
                 RoundedRectangle(cornerRadius: 9, style: .continuous)
-                    .fill(highlightPrefilled ? VoteNowColors.warningAmber.opacity(0.12) : VoteNowColors.surfacePrimary)
+                    .fill(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.12) : CivicaColors.surfacePrimary)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 9, style: .continuous)
-                    .stroke(highlightPrefilled ? VoteNowColors.warningAmber.opacity(0.3) : VoteNowColors.borderSubtle, lineWidth: 1)
+                    .stroke(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.3) : CivicaColors.borderSubtle, lineWidth: 1)
             )
     }
 
@@ -3784,11 +3784,11 @@ private extension View {
             .padding(.vertical, 6)
             .background(
                 RoundedRectangle(cornerRadius: 9, style: .continuous)
-                    .fill(highlightPrefilled ? VoteNowColors.warningAmber.opacity(0.12) : VoteNowColors.surfacePrimary)
+                    .fill(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.12) : CivicaColors.surfacePrimary)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 9, style: .continuous)
-                    .stroke(highlightPrefilled ? VoteNowColors.warningAmber.opacity(0.3) : VoteNowColors.borderSubtle, lineWidth: 1)
+                    .stroke(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.3) : CivicaColors.borderSubtle, lineWidth: 1)
             )
     }
 }
@@ -3845,7 +3845,7 @@ private struct SNAPTernaryChoiceQuestion: View {
                     } label: {
                         Image(systemName: "info.circle")
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.primaryCTA)
+                            .foregroundStyle(CivicaColors.primaryCTA)
                             .frame(width: 20, height: 20)
                     }
                     .buttonStyle(.plain)
@@ -3865,7 +3865,7 @@ private struct SNAPTernaryChoiceQuestion: View {
                !infoText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 Text(infoText)
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
@@ -3881,16 +3881,16 @@ private struct SNAPTernaryChoiceQuestion: View {
         } label: {
             Text(choice.label)
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(value == choice ? VoteNowColors.primaryCTA : VoteNowColors.textPrimary)
+                .foregroundStyle(value == choice ? CivicaColors.primaryCTA : CivicaColors.textPrimary)
                 .frame(maxWidth: .infinity, minHeight: 44)
                 .background(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(value == choice ? VoteNowColors.statusInfoSurface : VoteNowColors.surfacePrimary)
+                        .fill(value == choice ? CivicaColors.statusInfoSurface : CivicaColors.surfacePrimary)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
                         .stroke(
-                            value == choice ? VoteNowColors.primaryCTA.opacity(0.45) : VoteNowColors.borderSubtle,
+                            value == choice ? CivicaColors.primaryCTA.opacity(0.45) : CivicaColors.borderSubtle,
                             lineWidth: 1
                         )
                 )
@@ -3909,7 +3909,7 @@ private struct SNAPYesNoSegmentedQuestion: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(VoteNowColors.textPrimary)
+                .foregroundStyle(CivicaColors.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
 
             HStack(spacing: 10) {
@@ -3939,16 +3939,16 @@ private struct SNAPYesNoSegmentedQuestion: View {
         Button(action: action) {
             Text(title)
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(isSelected ? VoteNowColors.primaryCTA : VoteNowColors.textPrimary)
+                .foregroundStyle(isSelected ? CivicaColors.primaryCTA : CivicaColors.textPrimary)
                 .frame(maxWidth: .infinity, minHeight: 44)
                 .background(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(isSelected ? VoteNowColors.statusInfoSurface : VoteNowColors.surfacePrimary)
+                        .fill(isSelected ? CivicaColors.statusInfoSurface : CivicaColors.surfacePrimary)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
                         .stroke(
-                            isSelected ? VoteNowColors.primaryCTA.opacity(0.45) : VoteNowColors.borderSubtle,
+                            isSelected ? CivicaColors.primaryCTA.opacity(0.45) : CivicaColors.borderSubtle,
                             lineWidth: 1
                         )
                 )
@@ -3985,7 +3985,7 @@ private struct SNAPSelectableOptionButton: View {
         Button(action: action) {
             Text(title)
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(isSelected ? VoteNowColors.primaryCTA : VoteNowColors.textPrimary)
+                .foregroundStyle(isSelected ? CivicaColors.primaryCTA : CivicaColors.textPrimary)
                 .multilineTextAlignment(multilineCentered ? .center : .leading)
                 .lineLimit(lineLimit)
                 .minimumScaleFactor(multilineCentered ? 0.85 : 1.0)
@@ -3993,12 +3993,12 @@ private struct SNAPSelectableOptionButton: View {
                 .padding(.horizontal, 8)
                 .background(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(isSelected ? VoteNowColors.statusInfoSurface : VoteNowColors.surfacePrimary)
+                        .fill(isSelected ? CivicaColors.statusInfoSurface : CivicaColors.surfacePrimary)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
                         .stroke(
-                            isSelected ? VoteNowColors.primaryCTA.opacity(0.45) : VoteNowColors.borderSubtle,
+                            isSelected ? CivicaColors.primaryCTA.opacity(0.45) : CivicaColors.borderSubtle,
                             lineWidth: 1
                         )
                 )
@@ -4058,12 +4058,12 @@ where Option.RawValue == String, Option.AllCases: RandomAccessCollection, Option
             } label: {
                 HStack(spacing: 8) {
                     Text(selectedLabel)
-                        .foregroundStyle(selection == nil ? VoteNowColors.textSecondary : VoteNowColors.textPrimary)
+                        .foregroundStyle(selection == nil ? CivicaColors.textSecondary : CivicaColors.textPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     Image(systemName: "chevron.down")
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(Rectangle())
@@ -4085,7 +4085,7 @@ where Option.RawValue == String, Option.AllCases: RandomAccessCollection, Option
                 if !helper.isEmpty {
                     Text(helper)
                         .font(.footnote)
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }

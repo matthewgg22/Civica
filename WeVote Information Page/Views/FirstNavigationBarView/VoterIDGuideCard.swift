@@ -189,16 +189,16 @@ struct VoterIDGuideCard: View {
     }
 
     private var categoryAccentColor: Color {
-        guard let metric else { return VoteNowColors.primaryCTA }
+        guard let metric else { return CivicaColors.primaryCTA }
         switch requirementClassification(for: metric) {
         case .photoRequired:
-            return VoteNowColors.richRed
+            return CivicaColors.richRed
         case .nonPhotoAccepted:
-            return VoteNowColors.warningAmber
+            return CivicaColors.warningAmber
         case .noDocument:
-            return VoteNowColors.successGreen
+            return CivicaColors.successGreen
         case .conditional:
-            return VoteNowColors.primaryCTA
+            return CivicaColors.primaryCTA
         }
     }
 
@@ -239,18 +239,18 @@ struct VoterIDGuideCard: View {
                 HStack(alignment: .top, spacing: 10) {
                     Image(systemName: "person.text.rectangle.fill")
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(VoteNowColors.primaryCTA)
+                        .foregroundColor(CivicaColors.primaryCTA)
                         .frame(width: 30, height: 30)
-                        .background(VoteNowColors.primaryCTA.opacity(0.12))
+                        .background(CivicaColors.primaryCTA.opacity(0.12))
                         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(headerText)
                             .font(.subheadline.weight(.semibold))
-                            .foregroundColor(VoteNowColors.mutedText)
+                            .foregroundColor(CivicaColors.mutedText)
                         Text(stateHeaderText)
                             .font(.headline.weight(.bold))
-                            .foregroundColor(VoteNowColors.primaryText)
+                            .foregroundColor(CivicaColors.primaryText)
                             .lineLimit(2)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -283,7 +283,7 @@ struct VoterIDGuideCard: View {
                 if shouldShowRequirementSummary(for: metric) {
                     Text(requirementSummaryText)
                         .font(.subheadline.weight(.semibold))
-                        .foregroundColor(VoteNowColors.primaryText)
+                        .foregroundColor(CivicaColors.primaryText)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
@@ -292,42 +292,42 @@ struct VoterIDGuideCard: View {
                         if let heading = acceptedOptionsHeadingText(for: metric) {
                             Text(heading)
                                 .font(.caption.weight(.semibold))
-                                .foregroundColor(VoteNowColors.mutedText)
+                                .foregroundColor(CivicaColors.mutedText)
                         }
                         Text(options)
                             .font(.caption)
-                            .foregroundColor(VoteNowColors.primaryText)
+                            .foregroundColor(CivicaColors.primaryText)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(.horizontal, 10)
                     .padding(.vertical, 8)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(VoteNowColors.infoSurfaceBlue.opacity(0.35))
+                    .background(CivicaColors.infoSurfaceBlue.opacity(0.35))
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
 
                 if let note = supplementalNoteText(for: metric) {
                     Text(note)
                         .font(.caption)
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(CivicaColors.mutedText)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 8)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(VoteNowColors.appBackground.opacity(0.88))
+                        .background(CivicaColors.appBackground.opacity(0.88))
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
             } else {
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "location.slash")
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(VoteNowColors.primaryCTA)
+                        .foregroundColor(CivicaColors.primaryCTA)
                     Text(missingStatePromptText)
                         .font(.subheadline.weight(.semibold))
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(CivicaColors.mutedText)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(10)
-                .background(VoteNowColors.infoSurfaceBlue.opacity(0.48))
+                .background(CivicaColors.infoSurfaceBlue.opacity(0.48))
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
         }
@@ -338,8 +338,8 @@ struct VoterIDGuideCard: View {
                 .fill(
                     LinearGradient(
                         colors: [
-                            VoteNowColors.surfaceWhite,
-                            VoteNowColors.brandSoftBlue.opacity(0.09)
+                            CivicaColors.surfaceWhite,
+                            CivicaColors.brandSoftBlue.opacity(0.09)
                         ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
@@ -348,9 +348,9 @@ struct VoterIDGuideCard: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(VoteNowColors.primaryCTA.opacity(0.16), lineWidth: 1)
+                .stroke(CivicaColors.primaryCTA.opacity(0.16), lineWidth: 1)
         )
-        .shadow(color: VoteNowColors.primaryText.opacity(0.07), radius: 4, x: 0, y: 2)
+        .shadow(color: CivicaColors.primaryText.opacity(0.07), radius: 4, x: 0, y: 2)
     }
 
     @ViewBuilder
@@ -363,19 +363,19 @@ struct VoterIDGuideCard: View {
                 .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 7, style: .continuous)
-                        .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                        .stroke(CivicaColors.borderWarm, lineWidth: 1)
                 )
                 .background(
                     RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .fill(VoteNowColors.surfaceWhite)
+                        .fill(CivicaColors.surfaceWhite)
                 )
                 .opensMyInfoPanelOnLongPress()
         } else {
             Image(systemName: "location.slash")
                 .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(VoteNowColors.primaryCTA)
+                .foregroundColor(CivicaColors.primaryCTA)
                 .frame(width: 28, height: 28)
-                .background(VoteNowColors.primaryCTA.opacity(0.10))
+                .background(CivicaColors.primaryCTA.opacity(0.10))
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         }
     }

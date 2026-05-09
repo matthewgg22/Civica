@@ -912,7 +912,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
     }
 
     private var mapcPipelineV3Enabled: Bool {
-        VoteNowLaunchFeatures.resolvedMAPCV3Enabled()
+        CivicaLaunchFeatures.resolvedMAPCV3Enabled()
     }
 
     private func createScriptPackageV3(
@@ -1689,7 +1689,7 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
                 fallbackUsed: "none",
                 refusalReason: nil
             ),
-            policyFlags: [VoteNowLaunchFeatures.mapcPipelineV3FlagKey]
+            policyFlags: [CivicaLaunchFeatures.mapcPipelineV3FlagKey]
         )
     }
 
@@ -2727,7 +2727,7 @@ final class IssueCallCenterViewModel: ObservableObject {
     }
 
     var mapcPipelineV3Enabled: Bool {
-        VoteNowLaunchFeatures.resolvedMAPCV3Enabled()
+        CivicaLaunchFeatures.resolvedMAPCV3Enabled()
     }
 
     var availableFilters: [CivicRepFilter] {

@@ -87,7 +87,7 @@ struct SNAPEntryView: View {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text(headerLocationSubtitle)
                             .font(.subheadline.weight(.semibold))
-                            .foregroundColor(VoteNowColors.mutedText)
+                            .foregroundColor(CivicaColors.mutedText)
                             .lineLimit(1)
                             .minimumScaleFactor(0.84)
 
@@ -99,7 +99,7 @@ struct SNAPEntryView: View {
                             Text("Edit location")
                                 .font(.callout.weight(.semibold))
                                 .italic()
-                                .foregroundColor(VoteNowColors.primaryCTA)
+                                .foregroundColor(CivicaColors.primaryCTA)
                                 .lineLimit(1)
                         }
                         .buttonStyle(.plain)
@@ -110,7 +110,7 @@ struct SNAPEntryView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 8)
                 .padding(.bottom, 8)
-                .background(VoteNowColors.brandSoftBlue)
+                .background(CivicaColors.brandSoftBlue)
 
                 VStack(spacing: 16) {
                     NavigationLink {
@@ -120,11 +120,11 @@ struct SNAPEntryView: View {
                         VStack(spacing: 12) {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                    .fill(VoteNowColors.surfacePrimary)
+                                    .fill(CivicaColors.surfacePrimary)
                                     .frame(width: 156, height: 156)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                            .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                                            .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                                     )
 
                                 Image("SNAPOfficialLogo")
@@ -132,11 +132,11 @@ struct SNAPEntryView: View {
                                     .scaledToFit()
                                     .frame(width: 124, height: 124)
                             }
-                            .shadow(color: VoteNowColors.primaryCTA.opacity(0.14), radius: 8, x: 0, y: 4)
+                            .shadow(color: CivicaColors.primaryCTA.opacity(0.14), radius: 8, x: 0, y: 4)
 
                             Text("Supplemental Nutrition\nAssistance Program")
                                 .font(.headline)
-                                .foregroundStyle(VoteNowColors.textPrimary)
+                                .foregroundStyle(CivicaColors.textPrimary)
                                 .multilineTextAlignment(.center)
                         }
                         .padding(.vertical, 4)
@@ -145,7 +145,7 @@ struct SNAPEntryView: View {
                     .buttonStyle(.plain)
                     Text(SNAPCopy.globalDisclaimer)
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
 
@@ -161,39 +161,39 @@ struct SNAPEntryView: View {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("SNAP prep status")
                                     .font(.headline.weight(.semibold))
-                                    .foregroundStyle(VoteNowColors.textPrimary)
+                                    .foregroundStyle(CivicaColors.textPrimary)
 
                                 HStack(spacing: 8) {
                                     Text("Status:")
                                         .font(.subheadline.weight(.semibold))
-                                        .foregroundStyle(VoteNowColors.textSecondary)
+                                        .foregroundStyle(CivicaColors.textSecondary)
                                     Text("Prep checklist completed")
                                         .font(.subheadline.weight(.bold))
-                                        .foregroundStyle(VoteNowColors.successGreen)
+                                        .foregroundStyle(CivicaColors.successGreen)
                                 }
 
                                 HStack(spacing: 8) {
                                     Text("Date:")
                                         .font(.subheadline.weight(.semibold))
-                                        .foregroundStyle(VoteNowColors.textSecondary)
+                                        .foregroundStyle(CivicaColors.textSecondary)
                                     Text(statusDateText(from: submittedAt))
                                         .font(.subheadline.weight(.semibold))
-                                        .foregroundStyle(VoteNowColors.textPrimary)
+                                        .foregroundStyle(CivicaColors.textPrimary)
                                 }
 
                                 Text("Open next steps")
                                     .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(VoteNowColors.primaryCTA)
+                                    .foregroundStyle(CivicaColors.primaryCTA)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(14)
                             .background(
                                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                    .fill(VoteNowColors.surfacePrimary)
+                                    .fill(CivicaColors.surfacePrimary)
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                    .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                                    .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                             )
                         }
                         .buttonStyle(.plain)
@@ -212,11 +212,11 @@ struct SNAPEntryView: View {
                                 .padding(12)
                                 .background(
                                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                        .fill(VoteNowColors.surfacePrimary)
+                                        .fill(CivicaColors.surfacePrimary)
                                 )
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                        .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                                 )
                         }
                         .buttonStyle(.plain)
@@ -230,9 +230,9 @@ struct SNAPEntryView: View {
                 .padding(.top, 16)
                 .padding(.bottom, 16)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .background(VoteNowColors.brandSoftBlue)
+                .background(CivicaColors.brandSoftBlue)
             }
-            .background(VoteNowColors.brandSoftBlue.ignoresSafeArea())
+            .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 if showsCloseButton {
@@ -245,7 +245,7 @@ struct SNAPEntryView: View {
                 }
             }
         }
-        .toolbarBackground(VoteNowColors.brandSoftBlue, for: .navigationBar)
+        .toolbarBackground(CivicaColors.brandSoftBlue, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .onAppear {
             applyAddressGeofencePrefill()

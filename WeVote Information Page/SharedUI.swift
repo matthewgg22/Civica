@@ -9,7 +9,7 @@ import SwiftUI
 import UIKit
 import LinkPresentation
 
-enum VoteNowLaunchFeatures {
+enum CivicaLaunchFeatures {
     // Share actions are parked for future features.
     static let shareActionsEnabled = false
     // MAPC is parked for this launch; keep only the current script flow visible.
@@ -148,7 +148,7 @@ private struct MyInfoLongPressModifier: ViewModifier {
             .overlay {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .stroke(
-                        VoteNowColors.primaryCTA.opacity(showActivationRing ? 0.76 : (isPressing ? 0.34 : 0)),
+                        CivicaColors.primaryCTA.opacity(showActivationRing ? 0.76 : (isPressing ? 0.34 : 0)),
                         lineWidth: showActivationRing ? 2 : 1
                     )
                     .padding(-2)
@@ -231,7 +231,7 @@ struct PageHeader: View {
                         ]
                     )
                 } label: {
-                    VoteNowLogoIcon(size: iconSize)
+                    CivicaLogoIcon(size: iconSize)
                         .frame(width: iconSize, height: iconSize)
                         .fixedSize(horizontal: true, vertical: true)
                         .reportFrame(in: .named("SpreadSpace"))
@@ -246,7 +246,7 @@ struct PageHeader: View {
                     )
                 )
             } else {
-                VoteNowLogoIcon(size: iconSize)
+                CivicaLogoIcon(size: iconSize)
                     .frame(width: iconSize, height: iconSize)
                     .fixedSize(horizontal: true, vertical: true)
                     .accessibilityHidden(true)
@@ -272,14 +272,14 @@ struct PageHeader: View {
     }
 }
 
-struct VoteNowLogoIcon: View {
+struct CivicaLogoIcon: View {
     var size: CGFloat = 50
-    var backgroundColor: Color = VoteNowColors.softBlue
-    var stripeColor: Color = VoteNowColors.softRed
+    var backgroundColor: Color = CivicaColors.softBlue
+    var stripeColor: Color = CivicaColors.softRed
     var cornerRadiusScale: CGFloat = 0.24
-    var borderColor: Color = VoteNowColors.iconOnPrimaryBorder
+    var borderColor: Color = CivicaColors.iconOnPrimaryBorder
     var borderWidth: CGFloat = 0.6
-    var shadowColor: Color = VoteNowColors.primaryText.opacity(0.14)
+    var shadowColor: Color = CivicaColors.primaryText.opacity(0.14)
 
     var body: some View {
         let stripeScaleY: CGFloat = size < 30 ? 0.95 : 0.80
@@ -332,23 +332,23 @@ struct VoteNowLogoIcon: View {
     }
 }
 
-extension VoteNowLogoIcon {
+extension CivicaLogoIcon {
     static let tabBarUIImage: UIImage = {
-        let renderer = ImageRenderer(content: VoteNowLogoIcon(size: 28))
+        let renderer = ImageRenderer(content: CivicaLogoIcon(size: 28))
         renderer.scale = UIScreen.main.scale
         return (renderer.uiImage ?? UIImage()).withRenderingMode(.alwaysOriginal)
     }()
 
     static let tabBarBarsUIImage: UIImage = {
-        let renderer = ImageRenderer(content: VoteNowTabBarsIcon(size: 22))
+        let renderer = ImageRenderer(content: CivicaTabBarsIcon(size: 22))
         renderer.scale = UIScreen.main.scale
         return (renderer.uiImage ?? UIImage()).withRenderingMode(.alwaysOriginal)
     }()
 }
 
-private struct VoteNowTabBarsIcon: View {
+private struct CivicaTabBarsIcon: View {
     var size: CGFloat = 28
-    var color: Color = VoteNowColors.softRed
+    var color: Color = CivicaColors.softRed
     var horizontalStretch: CGFloat = 1.5
 
     var body: some View {
@@ -398,8 +398,8 @@ struct WhyVoteFloodOverlay: View {
     @Binding var isPresented: Bool
     var originInSpreadSpace: CGPoint?
 
-    @State private var dynamicFloodColor: Color = VoteNowColors.brandSoftBlue
-    private let accent = VoteNowColors.softRed
+    @State private var dynamicFloodColor: Color = CivicaColors.brandSoftBlue
+    private let accent = CivicaColors.softRed
     private let logoSize: CGFloat = 50
     private let headerHorizontalPadding: CGFloat = 16
     // Matches page layout: outer content padding (16) + header top padding (4).
@@ -446,18 +446,18 @@ struct WhyVoteFloodOverlay: View {
                                 isPresented = false
                             }
                         } label: {
-                            VoteNowLogoIcon(
+                            CivicaLogoIcon(
                                 size: logoSize,
-                                backgroundColor: VoteNowColors.iconOnPrimarySurface,
+                                backgroundColor: CivicaColors.iconOnPrimarySurface,
                                 stripeColor: accent,
-                                borderColor: VoteNowColors.iconOnPrimaryBorder,
-                                shadowColor: VoteNowColors.shadowSoft
+                                borderColor: CivicaColors.iconOnPrimaryBorder,
+                                shadowColor: CivicaColors.shadowSoft
                             )
                             .frame(width: logoSize, height: logoSize)
                             .fixedSize(horizontal: true, vertical: true)
                             .voteNowPillDualOrbit(
-                                redColor: VoteNowColors.ctaRed.opacity(0.94),
-                                blueColor: VoteNowColors.ctaBlue.opacity(0.88),
+                                redColor: CivicaColors.ctaRed.opacity(0.94),
+                                blueColor: CivicaColors.ctaBlue.opacity(0.88),
                                 strokeThickness: 2.4,
                                 loopDuration: 5.2,
                                 glowIntensity: 0.22,
@@ -492,7 +492,7 @@ struct WhyVoteFloodOverlay: View {
                             .fontWeight(.bold)
                             .lineLimit(1)
                             .frame(height: logoSize, alignment: .center)
-                            .foregroundColor(VoteNowColors.onPrimaryText)
+                            .foregroundColor(CivicaColors.onPrimaryText)
                             .opacity(spread > 0.65 ? 1 : 0)
 
                         Spacer(minLength: 0)
@@ -512,7 +512,7 @@ struct WhyVoteFloodOverlay: View {
             .onAppear {
                 spread = 0.001
                 resolvedOriginInSpreadSpace = nil
-                dynamicFloodColor = VoteNowColors.brandSoftBlue
+                dynamicFloodColor = CivicaColors.brandSoftBlue
                 DispatchQueue.main.async {
                     if let provided = originInSpreadSpace, provided != .zero {
                         resolvedOriginInSpreadSpace = provided
@@ -534,8 +534,8 @@ struct WhyCallFloodOverlay: View {
     var originInSpreadSpace: CGPoint?
     var onStartCalling: () -> Void = {}
 
-    private let floodColor = VoteNowColors.brandSoftBlue
-    private let accent = VoteNowColors.softRed
+    private let floodColor = CivicaColors.brandSoftBlue
+    private let accent = CivicaColors.softRed
     private let logoSize: CGFloat = 50
     private let headerHorizontalPadding: CGFloat = 16
     private let headerTopPadding: CGFloat = 10
@@ -581,18 +581,18 @@ struct WhyCallFloodOverlay: View {
                                 isPresented = false
                             }
                         } label: {
-                            VoteNowLogoIcon(
+                            CivicaLogoIcon(
                                 size: logoSize,
-                                backgroundColor: VoteNowColors.iconOnPrimarySurface,
+                                backgroundColor: CivicaColors.iconOnPrimarySurface,
                                 stripeColor: accent,
-                                borderColor: VoteNowColors.iconOnPrimaryBorder,
-                                shadowColor: VoteNowColors.shadowSoft
+                                borderColor: CivicaColors.iconOnPrimaryBorder,
+                                shadowColor: CivicaColors.shadowSoft
                             )
                             .frame(width: logoSize, height: logoSize)
                             .fixedSize(horizontal: true, vertical: true)
                             .voteNowPillDualOrbit(
-                                redColor: VoteNowColors.ctaRed.opacity(0.94),
-                                blueColor: VoteNowColors.ctaBlue.opacity(0.88),
+                                redColor: CivicaColors.ctaRed.opacity(0.94),
+                                blueColor: CivicaColors.ctaBlue.opacity(0.88),
                                 strokeThickness: 2.4,
                                 loopDuration: 5.2,
                                 glowIntensity: 0.22,
@@ -795,14 +795,14 @@ struct WhyCallView: View {
                 systemImage: "bubble.left.and.bubble.right.fill"
             )
             .font(.subheadline.weight(.semibold))
-            .foregroundColor(VoteNowColors.primaryCTA)
+            .foregroundColor(CivicaColors.primaryCTA)
             .padding(.horizontal, 10)
             .padding(.vertical, 7)
-            .background(VoteNowColors.surfaceWhite)
+            .background(CivicaColors.surfaceWhite)
             .clipShape(Capsule(style: .continuous))
             .overlay(
                 Capsule(style: .continuous)
-                    .stroke(VoteNowColors.primaryCTA.opacity(0.34), lineWidth: 1)
+                    .stroke(CivicaColors.primaryCTA.opacity(0.34), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
@@ -838,7 +838,7 @@ private struct WhyCallStatCard: View {
         VStack(alignment: .leading, spacing: 6) {
             Text(stat.value)
                 .font(.title2.weight(.bold))
-                .foregroundStyle(VoteNowColors.primaryCTA)
+                .foregroundStyle(CivicaColors.primaryCTA)
             if !stat.title.isEmpty {
                 Text(stat.title)
                     .font(.headline)
@@ -850,11 +850,11 @@ private struct WhyCallStatCard: View {
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(VoteNowColors.surfaceSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: VoteNowColors.cardCornerRadius, style: .continuous))
+        .background(CivicaColors.surfaceSecondary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: VoteNowColors.cardCornerRadius, style: .continuous)
-                .stroke(VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous)
+                .stroke(CivicaColors.primaryText.opacity(0.08), lineWidth: 1)
         )
         .accessibilityElement(children: .combine)
     }
@@ -874,11 +874,11 @@ private struct WhyCallReasonCard: View {
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(VoteNowColors.surfaceSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: VoteNowColors.cardCornerRadius, style: .continuous))
+        .background(CivicaColors.surfaceSecondary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: VoteNowColors.cardCornerRadius, style: .continuous)
-                .stroke(VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous)
+                .stroke(CivicaColors.primaryText.opacity(0.08), lineWidth: 1)
         )
         .accessibilityElement(children: .combine)
     }
@@ -895,7 +895,7 @@ private struct WhyCallBottomCTA: View {
             if !note.isEmpty {
                 Text(note)
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.mutedText)
+                    .foregroundStyle(CivicaColors.mutedText)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
@@ -904,7 +904,7 @@ private struct WhyCallBottomCTA: View {
                     .font(.headline)
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(VoteNowPrimaryCTAButtonStyle())
+            .buttonStyle(CivicaPrimaryCTAButtonStyle())
             .accessibilityLabel(
                 localizedCatalogString(
                     "app.accessibility.issue_call.start",
@@ -924,16 +924,16 @@ struct WhyCallView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             WhyCallView(content: .live, onStartCalling: {})
-                .background(VoteNowColors.brandSoftBlue.ignoresSafeArea())
+                .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
                 .previewDisplayName("Default")
 
             WhyCallView(content: .live, onStartCalling: {})
-                .background(VoteNowColors.brandSoftBlue.ignoresSafeArea())
+                .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
                 .preferredColorScheme(.dark)
                 .previewDisplayName("Dark")
 
             WhyCallView(content: .live, onStartCalling: {})
-                .background(VoteNowColors.brandSoftBlue.ignoresSafeArea())
+                .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
                 .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
                 .previewDisplayName("AXXXL")
         }
@@ -1028,23 +1028,23 @@ private struct WhyVoteDirectionalRevealMask: Shape {
     }
 }
 
-enum VoteNowShareCardType: String {
+enum CivicaShareCardType: String {
     case election
     case registration
     case mapv
     case civic
 }
 
-enum VoteNowShareTarget: String {
+enum CivicaShareTarget: String {
     case election
     case registration
     case mapv
     case civic
 }
 
-struct VoteNowShareCardPayload {
-    let cardType: VoteNowShareCardType
-    let target: VoteNowShareTarget
+struct CivicaShareCardPayload {
+    let cardType: CivicaShareCardType
+    let target: CivicaShareTarget
     let title: String
     let subtitle: String
     let cta: String
@@ -1053,8 +1053,8 @@ struct VoteNowShareCardPayload {
     let details: [URLQueryItem]
 
     init(
-        cardType: VoteNowShareCardType,
-        target: VoteNowShareTarget,
+        cardType: CivicaShareCardType,
+        target: CivicaShareTarget,
         title: String,
         subtitle: String,
         cta: String,
@@ -1139,21 +1139,21 @@ struct VoteNowShareCardPayload {
     }
 }
 
-enum VoteNowShareComposer {
-    static func activityItems(for payload: VoteNowShareCardPayload) -> [Any] {
+enum CivicaShareComposer {
+    static func activityItems(for payload: CivicaShareCardPayload) -> [Any] {
         var items: [Any] = []
         if !payload.shareMessage.isEmpty {
             items.append(payload.shareMessage)
         }
-        items.append(VoteNowShareActivityItemSource(payload: payload))
+        items.append(CivicaShareActivityItemSource(payload: payload))
         return items
     }
 }
 
-final class VoteNowShareActivityItemSource: NSObject, UIActivityItemSource {
-    private let payload: VoteNowShareCardPayload
+final class CivicaShareActivityItemSource: NSObject, UIActivityItemSource {
+    private let payload: CivicaShareCardPayload
 
-    init(payload: VoteNowShareCardPayload) {
+    init(payload: CivicaShareCardPayload) {
         self.payload = payload
         super.init()
     }
@@ -1182,14 +1182,14 @@ final class VoteNowShareActivityItemSource: NSObject, UIActivityItemSource {
         metadata.originalURL = payload.shareURL
         metadata.url = payload.shareURL
 
-        let previewImage = VoteNowSharePreviewRenderer.image(for: payload)
+        let previewImage = CivicaSharePreviewRenderer.image(for: payload)
         metadata.imageProvider = NSItemProvider(object: previewImage)
-        metadata.iconProvider = NSItemProvider(object: VoteNowSharePreviewRenderer.logoImage)
+        metadata.iconProvider = NSItemProvider(object: CivicaSharePreviewRenderer.logoImage)
         return metadata
     }
 }
 
-private enum VoteNowSharePreviewRenderer {
+private enum CivicaSharePreviewRenderer {
     static let logoImage: UIImage = {
         if let icons = Bundle.main.infoDictionary?["CFBundleIcons"] as? [String: Any],
            let primaryIcon = icons["CFBundlePrimaryIcon"] as? [String: Any],
@@ -1198,10 +1198,10 @@ private enum VoteNowSharePreviewRenderer {
            let icon = UIImage(named: iconName) {
             return icon
         }
-        return VoteNowLogoIcon.tabBarUIImage
+        return CivicaLogoIcon.tabBarUIImage
     }()
 
-    static func image(for payload: VoteNowShareCardPayload) -> UIImage {
+    static func image(for payload: CivicaShareCardPayload) -> UIImage {
         let size = CGSize(width: 1200, height: 630)
         let renderer = UIGraphicsImageRenderer(size: size)
         return renderer.image { context in
@@ -1327,7 +1327,7 @@ private enum VoteNowSharePreviewRenderer {
     }
 
     private static func drawBackground(
-        for type: VoteNowShareCardType,
+        for type: CivicaShareCardType,
         in rect: CGRect,
         context: CGContext
     ) {

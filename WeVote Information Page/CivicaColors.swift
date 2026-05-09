@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-enum VoteNowColors {
+enum CivicaColors {
     // Semantic surfaces and text
     static let canvasBackground = Color.dynamic(light: "#FFF8F3", dark: "#111418")
     static let surfacePrimary = Color.dynamic(light: "#FFFFFF", dark: "#1B1F24")
@@ -62,9 +62,6 @@ enum VoteNowColors {
     static let timelineFocusGold = Color.dynamic(light: "#D79B1F", dark: "#F3D487")
     static let cardCornerRadius: CGFloat = 12
 }
-
-// Backward-compatible typealias so existing references continue compiling.
-typealias VoteNowColor = VoteNowColors
 
 extension Color {
     static func dynamic(light: String, dark: String) -> Color {
@@ -140,12 +137,12 @@ extension UIColor {
     }
 }
 
-struct VoteNowPrimaryCTAButtonStyle: ButtonStyle {
+struct CivicaPrimaryCTAButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundColor(VoteNowColors.onPrimaryText)
+            .foregroundColor(CivicaColors.onPrimaryText)
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
             .background(
@@ -154,22 +151,22 @@ struct VoteNowPrimaryCTAButtonStyle: ButtonStyle {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(VoteNowColors.primaryCTA.opacity(0.24), lineWidth: 1)
+                    .stroke(CivicaColors.primaryCTA.opacity(0.24), lineWidth: 1)
             )
     }
 
     private func backgroundColor(isPressed: Bool) -> Color {
-        guard isEnabled else { return VoteNowColors.ctaBlueDisabled }
-        return isPressed ? VoteNowColors.ctaBluePressed : VoteNowColors.ctaBlue
+        guard isEnabled else { return CivicaColors.ctaBlueDisabled }
+        return isPressed ? CivicaColors.ctaBluePressed : CivicaColors.ctaBlue
     }
 }
 
-struct VoteNowUrgentCTAButtonStyle: ButtonStyle {
+struct CivicaUrgentCTAButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundColor(VoteNowColors.onPrimaryText)
+            .foregroundColor(CivicaColors.onPrimaryText)
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
             .background(
@@ -178,16 +175,12 @@ struct VoteNowUrgentCTAButtonStyle: ButtonStyle {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(VoteNowColors.urgentCTA.opacity(0.24), lineWidth: 1)
+                    .stroke(CivicaColors.urgentCTA.opacity(0.24), lineWidth: 1)
             )
     }
 
     private func backgroundColor(isPressed: Bool) -> Color {
-        guard isEnabled else { return VoteNowColors.ctaRedDisabled }
-        return isPressed ? VoteNowColors.ctaRedPressed : VoteNowColors.ctaRed
+        guard isEnabled else { return CivicaColors.ctaRedDisabled }
+        return isPressed ? CivicaColors.ctaRedPressed : CivicaColors.ctaRed
     }
 }
-
-// Backward-compatible aliases for existing call sites.
-typealias PrimaryButtonStyle = VoteNowPrimaryCTAButtonStyle
-typealias UrgentButtonStyle = VoteNowUrgentCTAButtonStyle
