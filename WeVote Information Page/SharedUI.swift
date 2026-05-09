@@ -346,9 +346,6 @@ extension CivicaLogoIcon {
     }()
 }
 
-// Deprecation shim: keep CivicaLogoIcon name compiling while call sites migrate.
-typealias VoteNowLogoIcon = CivicaLogoIcon
-
 private struct CivicaTabBarsIcon: View {
     var size: CGFloat = 28
     var color: Color = CivicaColors.softRed

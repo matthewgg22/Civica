@@ -1,7 +1,5 @@
 //
-//
-//
-//  WeVote_Information_PageApp.swift
+//  CivicaApp.swift
 //  WeVote Information Page
 //
 //  Created by Matthew Greer-Gentis on 3/30/25.
@@ -44,7 +42,7 @@ enum PreferredLanguageCode {
 }
 
 @main
-struct WeVote_Information_PageApp: App {
+struct CivicaApp: App {
     private let logger = Logger(subsystem: "Civica", category: "App")
     private static let bootstrapLogger = Logger(subsystem: "Civica", category: "AppBootstrap")
 

@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class WeVote_Information_PageUITestsLaunchTests: XCTestCase {
+final class CivicaUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
