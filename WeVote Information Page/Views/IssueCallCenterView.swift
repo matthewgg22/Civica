@@ -4432,7 +4432,7 @@ struct IssueCallCenterView: View {
             details.append(URLQueryItem(name: "issue_id", value: issueID))
         }
 
-        let payload = VoteNowShareCardPayload(
+        let payload = CivicaShareCardPayload(
             cardType: .civic,
             target: .civic,
             title: "Take Action: \(issueHeadline)",
@@ -4443,7 +4443,7 @@ struct IssueCallCenterView: View {
             details: details
         )
 
-        shareItems = VoteNowShareComposer.activityItems(for: payload)
+        shareItems = CivicaShareComposer.activityItems(for: payload)
         showingShareSheet = true
     }
 

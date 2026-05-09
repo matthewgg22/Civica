@@ -2992,7 +2992,7 @@ struct ElectionTimelineView: View {
         }
         details.append(URLQueryItem(name: "state_name", value: stateText))
 
-        let payload = VoteNowShareCardPayload(
+        let payload = CivicaShareCardPayload(
             cardType: .election,
             target: .election,
             title: "Upcoming Election: \(headerTitle(for: election))",
@@ -3003,7 +3003,7 @@ struct ElectionTimelineView: View {
             details: details
         )
 
-        shareItems = VoteNowShareComposer.activityItems(for: payload)
+        shareItems = CivicaShareComposer.activityItems(for: payload)
         showingShareSheet = true
     }
 

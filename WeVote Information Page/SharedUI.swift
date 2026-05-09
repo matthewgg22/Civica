@@ -1031,23 +1031,23 @@ private struct WhyVoteDirectionalRevealMask: Shape {
     }
 }
 
-enum VoteNowShareCardType: String {
+enum CivicaShareCardType: String {
     case election
     case registration
     case mapv
     case civic
 }
 
-enum VoteNowShareTarget: String {
+enum CivicaShareTarget: String {
     case election
     case registration
     case mapv
     case civic
 }
 
-struct VoteNowShareCardPayload {
-    let cardType: VoteNowShareCardType
-    let target: VoteNowShareTarget
+struct CivicaShareCardPayload {
+    let cardType: CivicaShareCardType
+    let target: CivicaShareTarget
     let title: String
     let subtitle: String
     let cta: String
@@ -1056,8 +1056,8 @@ struct VoteNowShareCardPayload {
     let details: [URLQueryItem]
 
     init(
-        cardType: VoteNowShareCardType,
-        target: VoteNowShareTarget,
+        cardType: CivicaShareCardType,
+        target: CivicaShareTarget,
         title: String,
         subtitle: String,
         cta: String,
@@ -1142,21 +1142,21 @@ struct VoteNowShareCardPayload {
     }
 }
 
-enum VoteNowShareComposer {
-    static func activityItems(for payload: VoteNowShareCardPayload) -> [Any] {
+enum CivicaShareComposer {
+    static func activityItems(for payload: CivicaShareCardPayload) -> [Any] {
         var items: [Any] = []
         if !payload.shareMessage.isEmpty {
             items.append(payload.shareMessage)
         }
-        items.append(VoteNowShareActivityItemSource(payload: payload))
+        items.append(CivicaShareActivityItemSource(payload: payload))
         return items
     }
 }
 
-final class VoteNowShareActivityItemSource: NSObject, UIActivityItemSource {
-    private let payload: VoteNowShareCardPayload
+final class CivicaShareActivityItemSource: NSObject, UIActivityItemSource {
+    private let payload: CivicaShareCardPayload
 
-    init(payload: VoteNowShareCardPayload) {
+    init(payload: CivicaShareCardPayload) {
         self.payload = payload
         super.init()
     }
@@ -1185,14 +1185,14 @@ final class VoteNowShareActivityItemSource: NSObject, UIActivityItemSource {
         metadata.originalURL = payload.shareURL
         metadata.url = payload.shareURL
 
-        let previewImage = VoteNowSharePreviewRenderer.image(for: payload)
+        let previewImage = CivicaSharePreviewRenderer.image(for: payload)
         metadata.imageProvider = NSItemProvider(object: previewImage)
-        metadata.iconProvider = NSItemProvider(object: VoteNowSharePreviewRenderer.logoImage)
+        metadata.iconProvider = NSItemProvider(object: CivicaSharePreviewRenderer.logoImage)
         return metadata
     }
 }
 
-private enum VoteNowSharePreviewRenderer {
+private enum CivicaSharePreviewRenderer {
     static let logoImage: UIImage = {
         if let icons = Bundle.main.infoDictionary?["CFBundleIcons"] as? [String: Any],
            let primaryIcon = icons["CFBundlePrimaryIcon"] as? [String: Any],
@@ -1204,7 +1204,7 @@ private enum VoteNowSharePreviewRenderer {
         return CivicaLogoIcon.tabBarUIImage
     }()
 
-    static func image(for payload: VoteNowShareCardPayload) -> UIImage {
+    static func image(for payload: CivicaShareCardPayload) -> UIImage {
         let size = CGSize(width: 1200, height: 630)
         let renderer = UIGraphicsImageRenderer(size: size)
         return renderer.image { context in
@@ -1330,7 +1330,7 @@ private enum VoteNowSharePreviewRenderer {
     }
 
     private static func drawBackground(
-        for type: VoteNowShareCardType,
+        for type: CivicaShareCardType,
         in rect: CGRect,
         context: CGContext
     ) {

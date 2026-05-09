@@ -2391,7 +2391,7 @@ struct VoterRegistrationView: View {
             details.append(URLQueryItem(name: "deadline", value: deadline))
         }
 
-        let payload = VoteNowShareCardPayload(
+        let payload = CivicaShareCardPayload(
             cardType: .registration,
             target: .registration,
             title: l("app.registration.share.headline", "Check Your Registration"),
@@ -2405,7 +2405,7 @@ struct VoterRegistrationView: View {
             details: details
         )
 
-        shareItems = VoteNowShareComposer.activityItems(for: payload)
+        shareItems = CivicaShareComposer.activityItems(for: payload)
         showingShareSheet = true
     }
 

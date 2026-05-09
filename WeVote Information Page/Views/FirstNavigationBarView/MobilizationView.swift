@@ -441,7 +441,7 @@ struct MobilizationView: View {
             details.append(URLQueryItem(name: "election", value: electionTitle))
         }
 
-        let payload = VoteNowShareCardPayload(
+        let payload = CivicaShareCardPayload(
             cardType: .mapv,
             target: .mapv,
             title: l("app.mapv.share.headline.plan_now", "Make Your Plan to Vote"),
@@ -455,7 +455,7 @@ struct MobilizationView: View {
             details: details
         )
 
-        shareItems = VoteNowShareComposer.activityItems(for: payload)
+        shareItems = CivicaShareComposer.activityItems(for: payload)
         showingShare = true
     }
 
