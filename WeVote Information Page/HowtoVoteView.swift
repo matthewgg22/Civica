@@ -33,7 +33,7 @@ struct HowToVoteView: View {
                                 .environmentObject(planVM)
                         ) {
                             Label(l("app.how_to_vote.action.make_plan", "Make a Plan to Vote"), systemImage: "calendar.badge.plus")
-                                .font(.headline.weight(.semibold))
+                                .font(CivicaTypography.sectionHeader)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity, alignment: .center)
                                 .padding(.vertical, 12)

@@ -324,7 +324,7 @@ struct ElectionTimelineView: View {
                 PageHeader(title: Text("app.page.election_timeline", tableName: "AppShell"))
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
                     Text(timelineAddressSubtitle)
-                        .font(.subheadline.weight(.semibold))
+                        .font(CivicaTypography.subheadStrong)
                         .foregroundColor(VoteNowColors.mutedText)
                         .lineLimit(1)
                         .minimumScaleFactor(0.84)
@@ -335,7 +335,7 @@ struct ElectionTimelineView: View {
                         openMyInfoPanel()
                     } label: {
                         Text(l("app.reps.action.edit_location", "Change Location"))
-                            .font(.callout.weight(.semibold))
+                            .font(CivicaTypography.supportStrong)
                             .italic()
                             .foregroundColor(VoteNowColors.primaryCTA)
                             .lineLimit(1)
@@ -706,7 +706,7 @@ struct ElectionTimelineView: View {
                     )
 
                     Text("TODAY")
-                        .font(.caption.weight(.bold))
+                        .font(CivicaTypography.captionBold)
                         .foregroundColor(VoteNowColors.mutedText)
                         .position(x: xPadding + 10, y: lineY + 18)
 
@@ -729,7 +729,7 @@ struct ElectionTimelineView: View {
                         )
 
                         Text(marker.label)
-                            .font(.caption.weight(.semibold))
+                            .font(CivicaTypography.captionStrong)
                             .foregroundColor(VoteNowColors.mutedText.opacity(0.9))
                             .position(x: markerX, y: lineY + 18)
                     }
@@ -796,7 +796,7 @@ struct ElectionTimelineView: View {
                         .animation(.easeInOut(duration: 0.22), value: focusedTimelineElectionID)
 
                         Text(Self.timelineMonthDayFormatter.string(from: point.election.electionDay))
-                            .font(.footnote.weight(.semibold))
+                            .font(CivicaTypography.footnoteStrong)
                             .foregroundColor(VoteNowColors.timelineFocusGold)
                             .shadow(color: VoteNowColors.warningAmber.opacity(0.28), radius: 0.8, x: 0, y: 0.4)
                             .lineLimit(1)
@@ -839,7 +839,7 @@ struct ElectionTimelineView: View {
                     chancesToVoteUntilNextPresident(in: sorted)
                 )
             )
-                .font(.footnote.weight(.semibold))
+                .font(CivicaTypography.footnoteStrong)
                 .italic()
                 .foregroundColor(VoteNowColors.primaryText)
                 .lineLimit(1)
@@ -872,7 +872,7 @@ struct ElectionTimelineView: View {
         onTap: @escaping () -> Void
     ) -> some View {
         Text(text)
-            .font(.footnote.weight(.semibold))
+            .font(CivicaTypography.footnoteStrong)
             .foregroundColor(VoteNowColors.timelineFocusGold)
             .shadow(color: VoteNowColors.warningAmber.opacity(0.28), radius: 0.8, x: 0, y: 0.4)
             .lineLimit(1)
@@ -932,7 +932,7 @@ struct ElectionTimelineView: View {
     @ViewBuilder
     private func timelineYearBookmark(_ year: String) -> some View {
         Text(year)
-            .font(.callout.weight(.bold))
+            .font(CivicaTypography.supportBold)
             .foregroundColor(VoteNowColors.richRed)
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
@@ -968,7 +968,7 @@ struct ElectionTimelineView: View {
 
                     HStack(spacing: 8) {
                         Text(stateName(for: election))
-                            .font(.subheadline.weight(.semibold))
+                            .font(CivicaTypography.subheadStrong)
                             .foregroundColor(VoteNowColors.mutedText)
                             .lineLimit(1)
                     }
@@ -997,7 +997,7 @@ struct ElectionTimelineView: View {
             if isMostUpcoming {
                 HStack(alignment: .center, spacing: 8) {
                     Text(registrationDeadlinePillText(for: election))
-                        .font(.caption.weight(.semibold))
+                        .font(CivicaTypography.captionStrong)
                         .foregroundColor(countdownForegroundColor(for: election))
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
@@ -1029,7 +1029,7 @@ struct ElectionTimelineView: View {
 
             HStack(alignment: .center, spacing: 8) {
                 Text(electionCountdownAndDeadlineText(for: election))
-                    .font(.caption.weight(.semibold))
+                    .font(CivicaTypography.captionStrong)
                     .foregroundColor(countdownForegroundColor(for: election))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
@@ -1038,7 +1038,7 @@ struct ElectionTimelineView: View {
 
                 if let partyBadge = primaryPartyBadge(for: election) {
                     Text(partyBadge.title)
-                        .font(.caption.weight(.semibold))
+                        .font(CivicaTypography.captionStrong)
                         .foregroundColor(partyBadge.foreground)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
@@ -1057,7 +1057,7 @@ struct ElectionTimelineView: View {
                     openVotingStepsTab()
                 } label: {
                     Label(l("app.timeline.action.open_voting_guide", "Open Voting Guide"), systemImage: "list.bullet.clipboard.fill")
-                        .font(.subheadline.weight(.semibold))
+                        .font(CivicaTypography.subheadStrong)
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
                 .buttonStyle(VoteNowPrimaryCTAButtonStyle())
@@ -1090,7 +1090,7 @@ struct ElectionTimelineView: View {
                     .padding(.top, 6)
                 } label: {
                     Text(l("app.timeline.disclosure.preliminary", "What's on your ballot"))
-                        .font(.subheadline.weight(.semibold))
+                        .font(CivicaTypography.subheadStrong)
                         .foregroundColor(VoteNowColors.primaryText)
                 }
                 .tint(VoteNowColors.primaryCTA)
@@ -1101,7 +1101,7 @@ struct ElectionTimelineView: View {
                     ForEach(Array(advisoryLines.enumerated()), id: \.offset) { _, advisory in
                         HStack(alignment: .top, spacing: 6) {
                             Image(systemName: "exclamationmark.triangle.fill")
-                                .font(.caption2.weight(.semibold))
+                                .font(CivicaTypography.captionStrong)
                                 .foregroundColor(VoteNowColors.warningAmber)
                                 .padding(.top, 1)
                             Text(advisory)
@@ -1196,7 +1196,7 @@ struct ElectionTimelineView: View {
             Rectangle()
                 .fill(VoteNowColors.infoSurfaceBlue)
             Text(code ?? "US")
-                .font(.caption2.weight(.bold))
+                .font(CivicaTypography.captionBold)
                 .foregroundColor(VoteNowColors.primaryCTA)
         }
     }
@@ -1260,15 +1260,15 @@ struct ElectionTimelineView: View {
         VStack(alignment: .center, spacing: 4) {
             HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.caption.weight(.semibold))
+                    .font(CivicaTypography.captionStrong)
                     .foregroundColor(VoteNowColors.primaryCTA)
                 Text(title)
-                    .font(.caption.weight(.semibold))
+                    .font(CivicaTypography.captionStrong)
                     .foregroundColor(VoteNowColors.mutedText)
             }
             .frame(maxWidth: .infinity, alignment: .center)
             Text(value)
-                .font(.subheadline.weight(.semibold))
+                .font(CivicaTypography.subheadStrong)
                 .foregroundColor(VoteNowColors.primaryText)
                 .lineLimit(2)
                 .minimumScaleFactor(0.85)
@@ -1422,10 +1422,10 @@ struct ElectionTimelineView: View {
 
                 (
                     Text(item.title)
-                        .font(.caption.weight(.semibold))
+                        .font(CivicaTypography.captionStrong)
                         .foregroundColor(ballotPartyColor(for: item.party))
                     + Text(": ")
-                        .font(.caption.weight(.semibold))
+                        .font(CivicaTypography.captionStrong)
                         .foregroundColor(VoteNowColors.primaryText)
                     + Text(item.detail)
                         .font(CivicaTypography.caption)
@@ -1437,12 +1437,12 @@ struct ElectionTimelineView: View {
             if let incumbent = item.incumbent, !incumbent.isEmpty {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Text("◦")
-                        .font(.caption2.weight(.semibold))
+                        .font(CivicaTypography.captionStrong)
                         .foregroundColor(VoteNowColors.mutedText)
                         .frame(width: 10, alignment: .leading)
 
                     styledIncumbentText(incumbent)
-                        .font(.caption2.weight(.semibold))
+                        .font(CivicaTypography.captionStrong)
                         .opensMyInfoPanelOnLongPress()
                 }
                 .padding(.leading, 16)
@@ -2939,7 +2939,7 @@ struct ElectionTimelineView: View {
     private func detailRow(label: String, value: String) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
             Text(label)
-                .font(.caption.weight(.semibold))
+                .font(CivicaTypography.captionStrong)
                 .foregroundColor(VoteNowColors.mutedText)
             Spacer(minLength: 8)
             Text(value)

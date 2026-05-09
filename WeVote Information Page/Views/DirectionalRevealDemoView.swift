@@ -33,7 +33,7 @@ struct DirectionalRevealDemoView: View {
                     .fill(Color(red: 0.68, green: 0.84, blue: 0.90))
                     .overlay(alignment: .topLeading) {
                         Text("Directional Reveal")
-                            .font(.headline.weight(.semibold))
+                            .font(CivicaTypography.sectionHeader)
                             .foregroundStyle(.white.opacity(0.95))
                             .padding(20)
                     }

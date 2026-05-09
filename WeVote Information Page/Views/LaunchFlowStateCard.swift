@@ -80,12 +80,12 @@ struct LaunchFlowStateCard: View {
                 }
 
                 Text(title)
-                    .font(.headline.weight(.semibold))
+                    .font(CivicaTypography.sectionHeader)
                     .foregroundColor(VoteNowColors.primaryText)
             }
 
             Text(stateLabel)
-                .font(.caption2.weight(.bold))
+                .font(CivicaTypography.captionBold)
                 .foregroundColor(iconColor)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
@@ -123,7 +123,7 @@ private struct LaunchFlowPrimaryCTAButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.subheadline.weight(.semibold))
+            .font(CivicaTypography.subheadStrong)
             .foregroundColor(VoteNowColors.onPrimaryText)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(
@@ -149,7 +149,7 @@ private struct LaunchFlowSecondaryCTAButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.subheadline.weight(.semibold))
+            .font(CivicaTypography.subheadStrong)
             .foregroundColor(isEnabled ? VoteNowColors.primaryCTA : VoteNowColors.mutedText)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(

@@ -106,7 +106,7 @@ struct GovHelpChatSheetView: View {
                         HStack(spacing: 8) {
                             ProgressView()
                             Text(l("app.gov_help.thinking", "Thinking..."))
-                                .font(.footnote)
+                                .font(CivicaTypography.footnote)
                                 .foregroundColor(VoteNowColors.mutedText)
                         }
                         .padding(.horizontal, 14)
@@ -339,7 +339,7 @@ private struct GovHelpSuggestedContactsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(l("app.gov_help.suggested_contacts", "Suggested Contacts"))
-                .font(.subheadline.weight(.semibold))
+                .font(CivicaTypography.subheadStrong)
                 .foregroundColor(VoteNowColors.primaryText)
 
             ForEach(Array(contexts.enumerated()), id: \.element.repId) { idx, context in
@@ -375,13 +375,13 @@ private struct GovHelpDestinationLinksView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(l("app.gov_help.official_reporting", "Official Reporting"))
-                .font(.subheadline.weight(.semibold))
+                .font(CivicaTypography.subheadStrong)
                 .foregroundColor(VoteNowColors.primaryText)
 
             ForEach(destinations) { destination in
                 Link(destination: destination.url) {
                     Label(localizedDestinationLabel(destination), systemImage: "link")
-                        .font(.footnote.weight(.semibold))
+                        .font(CivicaTypography.footnoteStrong)
                         .foregroundColor(VoteNowColors.primaryCTA)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.vertical, 6)

@@ -46,7 +46,7 @@ struct RaceCandidatesView: View {
                             "Archived example: NYC 2025 Mayoral Democratic Primary"
                         )
                     )
-                    .font(.subheadline.weight(.semibold))
+                    .font(CivicaTypography.subheadStrong)
                     .foregroundColor(VoteNowColors.mutedText)
                     .multilineTextAlignment(.center)
                 }

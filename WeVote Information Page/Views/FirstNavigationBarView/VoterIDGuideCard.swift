@@ -246,10 +246,10 @@ struct VoterIDGuideCard: View {
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(headerText)
-                            .font(.subheadline.weight(.semibold))
+                            .font(CivicaTypography.subheadStrong)
                             .foregroundColor(VoteNowColors.mutedText)
                         Text(stateHeaderText)
-                            .font(.headline.weight(.bold))
+                            .font(CivicaTypography.sectionHeaderBold)
                             .foregroundColor(VoteNowColors.primaryText)
                             .lineLimit(2)
                             .fixedSize(horizontal: false, vertical: true)
@@ -267,7 +267,7 @@ struct VoterIDGuideCard: View {
                         .font(.system(size: 12, weight: .bold))
                         .foregroundColor(categoryAccentColor)
                     Text(categoryLabelText)
-                        .font(.caption.weight(.bold))
+                        .font(CivicaTypography.captionBold)
                         .foregroundColor(categoryAccentColor)
                         .lineLimit(1)
                 }
@@ -282,7 +282,7 @@ struct VoterIDGuideCard: View {
 
                 if shouldShowRequirementSummary(for: metric) {
                     Text(requirementSummaryText)
-                        .font(.subheadline.weight(.semibold))
+                        .font(CivicaTypography.subheadStrong)
                         .foregroundColor(VoteNowColors.primaryText)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -291,7 +291,7 @@ struct VoterIDGuideCard: View {
                     VStack(alignment: .leading, spacing: 4) {
                         if let heading = acceptedOptionsHeadingText(for: metric) {
                             Text(heading)
-                                .font(.caption.weight(.semibold))
+                                .font(CivicaTypography.captionStrong)
                                 .foregroundColor(VoteNowColors.mutedText)
                         }
                         Text(options)
@@ -322,7 +322,7 @@ struct VoterIDGuideCard: View {
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(VoteNowColors.primaryCTA)
                     Text(missingStatePromptText)
-                        .font(.subheadline.weight(.semibold))
+                        .font(CivicaTypography.subheadStrong)
                         .foregroundColor(VoteNowColors.mutedText)
                         .fixedSize(horizontal: false, vertical: true)
                 }

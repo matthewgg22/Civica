@@ -23,7 +23,7 @@ struct CivicScorecardView: View {
             .font(CivicaTypography.subhead)
             Divider()
             Text("You are in the top 25% of American Voters")
-                .font(.footnote)
+                .font(CivicaTypography.footnote)
                 .padding(.bottom)
             Spacer()
         }

@@ -791,7 +791,7 @@ struct WhyCallView: View {
                 ),
                 systemImage: "bubble.left.and.bubble.right.fill"
             )
-            .font(.subheadline.weight(.semibold))
+            .font(CivicaTypography.subheadStrong)
             .foregroundColor(VoteNowColors.primaryCTA)
             .padding(.horizontal, 10)
             .padding(.vertical, 7)
@@ -891,7 +891,7 @@ private struct WhyCallBottomCTA: View {
         VStack(alignment: .leading, spacing: 10) {
             if !note.isEmpty {
                 Text(note)
-                    .font(.footnote)
+                    .font(CivicaTypography.footnote)
                     .foregroundStyle(VoteNowColors.mutedText)
                     .fixedSize(horizontal: false, vertical: true)
             }

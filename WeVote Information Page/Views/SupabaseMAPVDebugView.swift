@@ -33,15 +33,15 @@ struct SupabaseMAPVDebugView: View {
 
             if plans.isEmpty {
                 Text("No plans loaded.")
-                    .font(.footnote)
+                    .font(CivicaTypography.footnote)
                     .foregroundStyle(VoteNowColors.mutedText)
             } else {
                 ForEach(plans.prefix(5)) { plan in
                     VStack(alignment: .leading, spacing: 2) {
                         Text(plan.electionID)
-                            .font(.subheadline.weight(.semibold))
+                            .font(CivicaTypography.subheadStrong)
                         Text(plan.pollingPlace ?? "No polling place")
-                            .font(.footnote)
+                            .font(CivicaTypography.footnote)
                             .foregroundStyle(VoteNowColors.mutedText)
                     }
                     .padding(.vertical, 4)

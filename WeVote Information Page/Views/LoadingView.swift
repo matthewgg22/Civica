@@ -150,7 +150,7 @@ struct LoadingView: View {
 
                 if let statusMessage, !statusMessage.isEmpty {
                     Text(statusMessage)
-                        .font(.footnote.weight(.semibold))
+                        .font(CivicaTypography.footnoteStrong)
                         .multilineTextAlignment(.center)
                         .foregroundColor(marqueeRed.opacity(0.92))
                         .padding(.horizontal, 24)

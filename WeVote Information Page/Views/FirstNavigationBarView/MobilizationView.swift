@@ -215,7 +215,7 @@ struct MobilizationView: View {
                         VStack(alignment: .leading, spacing: 0) {
                             PageHeader(title: Text("app.page.how_to_vote", tableName: "AppShell"))
                             Text(electionSubtitleText)
-                                .font(.subheadline.weight(.semibold))
+                                .font(CivicaTypography.subheadStrong)
                                 .foregroundColor(VoteNowColors.mutedText)
                                 .padding(.leading, 72)
                                 .padding(.top, -6)
@@ -240,7 +240,7 @@ struct MobilizationView: View {
                                         shareMapvCard()
                                     } label: {
                                         Label(l("app.how_to_vote.action.share_plan", "Share My Plan"), systemImage: "square.and.arrow.up")
-                                            .font(.subheadline.weight(.semibold))
+                                            .font(CivicaTypography.subheadStrong)
                                             .lineLimit(1)
                                             .minimumScaleFactor(0.7)
                                             .frame(maxWidth: .infinity)
@@ -258,7 +258,7 @@ struct MobilizationView: View {
                             Button(l("app.how_to_vote.action.make_plan", "Make a Plan to Vote")) {
                                 showPlanSheet = true
                             }
-                            .font(.headline.weight(.semibold))
+                            .font(CivicaTypography.sectionHeader)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
                             .padding(.horizontal, 16)
@@ -716,7 +716,7 @@ struct FeedbackView: View {
 
                 VStack(alignment: .leading, spacing: 10) {
                     Text(l("app.feedback.college_endeavor.title", "We Want to Hear From You!"))
-                        .font(.title3.weight(.bold))
+                        .font(CivicaTypography.cardTitle)
 
                     Text(l("app.feedback.college_endeavor.body", "Civica is an endeavor built to support all Americans vote by reducing logistical friction. As a college student endeavor, we want to learn from you and your experience voting. Your feedback is invaluable to improve the app and the voter experience."))
                         .font(.body)
@@ -810,7 +810,7 @@ struct FeedbackView: View {
 
                     if let errorMessage {
                         Text(errorMessage)
-                            .font(.footnote.weight(.semibold))
+                            .font(CivicaTypography.footnoteStrong)
                             .foregroundColor(.red)
                     }
                 }

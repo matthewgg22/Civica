@@ -90,7 +90,7 @@ struct SupportVoteView: View {
     private var missionCard: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(l("app.support_vote.mission.title", "Empower Americans Vote!"))
-                .font(.title3.weight(.bold))
+                .font(CivicaTypography.cardTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             Text(l("app.support_vote.mission.body", "Civica's mission is to empower every American to vote by being the least friction companion to support participation. We believe that reducing logistical friction-deadlines, locations, ID rules, and confusing steps-is essential to authentic voting help."))
@@ -112,7 +112,7 @@ struct SupportVoteView: View {
     private var supportCard: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(l("app.support_vote.supports.title", "What your donation supports"))
-                .font(.headline.weight(.bold))
+                .font(CivicaTypography.sectionHeaderBold)
                 .foregroundStyle(VoteNowColors.warningAmber)
 
             Text(l("app.support_vote.supports.body", "As a college-founded civic startup, we rely on community support to keep voter tools accessible."))
@@ -167,7 +167,7 @@ struct SupportVoteView: View {
 
             if let amount = resolvedAmount {
                 Text("\(l("app.support_vote.amount.selected_prefix", "Donation amount:")) \(formattedCurrency(amount))")
-                    .font(.subheadline.weight(.semibold))
+                    .font(CivicaTypography.subheadStrong)
                     .foregroundColor(isAmountValid ? VoteNowColors.primaryText : VoteNowColors.richRed)
             } else {
                 Text(l("app.support_vote.amount.select_to_continue", "Select an amount to continue."))
@@ -189,13 +189,13 @@ struct SupportVoteView: View {
 
             if !applePayManager.canMakePayments() {
                 Text(l("app.support_vote.amount.apple_pay_unavailable", "Apple Pay is not available on this device."))
-                    .font(.footnote)
+                    .font(CivicaTypography.footnote)
                     .foregroundStyle(VoteNowColors.mutedText)
             }
 
             if let error = applePayManager.errorMessage, !error.isEmpty {
                 Label(error, systemImage: "exclamationmark.triangle.fill")
-                    .font(.footnote.weight(.semibold))
+                    .font(CivicaTypography.footnoteStrong)
                     .foregroundStyle(VoteNowColors.richRed)
                     .padding(10)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -205,7 +205,7 @@ struct SupportVoteView: View {
 
             if let success = applePayManager.successMessage, !success.isEmpty {
                 Label(success, systemImage: "checkmark.circle.fill")
-                    .font(.footnote.weight(.semibold))
+                    .font(CivicaTypography.footnoteStrong)
                     .foregroundStyle(VoteNowColors.successGreen)
                     .padding(10)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -229,7 +229,7 @@ struct SupportVoteView: View {
     private var disruptCard: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(l("app.support_vote.disrupt.title", "Disrupt the Status Quo by empowering voters, not campaigns."))
-                .font(.headline.weight(.bold))
+                .font(CivicaTypography.sectionHeaderBold)
 
             Text(l("app.support_vote.disrupt.body", "Most voter outreach in America is not funded by voters. It is funded by PACs and Super PACs. That means:"))
                 .font(CivicaTypography.subhead)
@@ -242,7 +242,7 @@ struct SupportVoteView: View {
             supportBullet(l("app.support_vote.disrupt.bullet_4", "The system optimizes for winning - not serving"))
 
             Text(l("app.support_vote.disrupt.footer", "Civica is built around servicing YOU, the voter."))
-                .font(.subheadline.weight(.semibold))
+                .font(CivicaTypography.subheadStrong)
                 .padding(.top, 4)
         }
         .padding(14)
@@ -269,7 +269,7 @@ struct SupportVoteView: View {
                     Text(preset.title.hasPrefix("app.")
                          ? l(preset.title, "Custom")
                          : preset.title)
-                        .font(.footnote.weight(.semibold))
+                        .font(CivicaTypography.footnoteStrong)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                         .frame(maxWidth: .infinity)

@@ -102,7 +102,7 @@ struct MultiStepFormView: View {
             return AnyView(
                 VStack(spacing: 16) {
                     Text(l("app.mapv.step2.choose_polling_location", "Choose a polling location near you."))
-                        .font(.subheadline.weight(.semibold))
+                        .font(CivicaTypography.subheadStrong)
                         .multilineTextAlignment(.leading)
                         .padding(.horizontal)
                     PollingLocationsView(selectedPlace: Binding(
@@ -401,7 +401,7 @@ private struct MAPVFlowView: View {
                 .frame(width: 36, height: 36)
                 .background(Circle().fill(VoteNowColors.richBlue.opacity(0.13)))
             Text(stepTitle(for: flowModel.steps[flowModel.currentStepIndex]))
-                .font(.title3.weight(.bold))
+                .font(CivicaTypography.cardTitle)
                 .lineLimit(2)
             Spacer()
         }
@@ -566,7 +566,7 @@ private struct MAPVStepIndicator: View {
                 } label: {
                     ZStack(alignment: .topTrailing) {
                         Image(systemName: symbolName(for: idx))
-                            .font(.subheadline.weight(.semibold))
+                            .font(CivicaTypography.subheadStrong)
                             .foregroundStyle(color(for: idx))
                             .frame(width: 30, height: 30)
                             .background(
@@ -649,7 +649,7 @@ struct StepOneView: View {
     var body: some View {
         VStack(spacing: 16) {
             Text(l("app.mapv.step1.prompt", "How would you like to vote?"))
-                .font(.title3.weight(.bold))
+                .font(CivicaTypography.cardTitle)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -752,7 +752,7 @@ struct VotingMethodCard<Details: View>: View {
             VStack(alignment: .leading, spacing: 10) {
                 ZStack {
                     Text(methodTitle)
-                        .font(.title3.weight(.bold))
+                        .font(CivicaTypography.cardTitle)
                         .foregroundColor(accentColor)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity, alignment: .center)
@@ -876,16 +876,16 @@ struct AbsenteeView: View {
                     .padding(.top, 8)
 
                 Text(addressLine)
-                    .font(.subheadline.weight(.semibold))
+                    .font(CivicaTypography.subheadStrong)
                     .foregroundColor(VoteNowColors.mutedText)
                     .fixedSize(horizontal: false, vertical: true)
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text(l("app.mapv.absentee.what_mail_in.title", "What is mail-in voting?"))
-                        .font(.headline.weight(.semibold))
+                        .font(CivicaTypography.sectionHeader)
                         .foregroundColor(VoteNowColors.primaryText)
                     Text(l("app.mapv.absentee.what_mail_in.body", "Mail-in voting lets eligible voters receive a ballot and return it by mail or approved drop-off methods. Some states mail ballots automatically, while others require a request."))
-                        .font(.footnote)
+                        .font(CivicaTypography.footnote)
                         .foregroundColor(VoteNowColors.mutedText)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -899,10 +899,10 @@ struct AbsenteeView: View {
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text(l("app.mapv.absentee.what_absentee.title", "What is absentee voting?"))
-                        .font(.headline.weight(.semibold))
+                        .font(CivicaTypography.sectionHeader)
                         .foregroundColor(VoteNowColors.primaryText)
                     Text(l("app.mapv.absentee.what_absentee.body", "Absentee voting is a mail-ballot process typically used when you cannot vote in person. Rules and eligibility vary by jurisdiction."))
-                        .font(.footnote)
+                        .font(CivicaTypography.footnote)
                         .foregroundColor(VoteNowColors.mutedText)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -931,7 +931,7 @@ struct AbsenteeView: View {
                             }
 
                             Text(lf("app.mapv.absentee.jurisdiction_prefix", "Jurisdiction: %@", jurisdiction.displayName))
-                                .font(.title3.weight(.bold))
+                                .font(CivicaTypography.cardTitle)
                                 .foregroundColor(VoteNowColors.primaryText)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -958,7 +958,7 @@ struct AbsenteeView: View {
                         if let officialURL = jurisdiction.officialVoterInfoURL {
                             Link(destination: officialURL) {
                                 Text(l("app.mapv.absentee.action.official_info", "Official voter info"))
-                                    .font(.subheadline.weight(.semibold))
+                                    .font(CivicaTypography.subheadStrong)
                                     .foregroundColor(VoteNowColors.primaryCTA)
                             }
                             .accessibilityLabel(
@@ -973,7 +973,7 @@ struct AbsenteeView: View {
                         requestDeadlinesSection
 
                         Text(l("app.mapv.absentee.note.confirm_official", "Deadlines can change. Confirm details with your official election office site."))
-                            .font(.footnote)
+                            .font(CivicaTypography.footnote)
                             .foregroundColor(VoteNowColors.mutedText)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -1022,13 +1022,13 @@ struct AbsenteeView: View {
             let rows = requestDeadlineRows(for: deadlines)
             VStack(alignment: .leading, spacing: 10) {
                 Text(l("app.mapv.absentee.deadlines.title", "Request deadlines"))
-                    .font(.subheadline.weight(.semibold))
+                    .font(CivicaTypography.subheadStrong)
                     .foregroundColor(VoteNowColors.primaryText)
 
                 ForEach(Array(rows.enumerated()), id: \.element.label) { index, row in
                     VStack(alignment: .leading, spacing: 4) {
                         Text(row.label)
-                            .font(.subheadline.weight(.semibold))
+                            .font(CivicaTypography.subheadStrong)
                             .foregroundColor(VoteNowColors.mutedText)
 
                         styledDeadlineValueText(row.value)
@@ -1050,11 +1050,11 @@ struct AbsenteeView: View {
                         ForEach(conventions, id: \.self) { note in
                             HStack(alignment: .top, spacing: 7) {
                                 Text("•")
-                                    .font(.caption.weight(.bold))
+                                    .font(CivicaTypography.captionBold)
                                     .foregroundColor(VoteNowColors.mutedText)
                                     .padding(.top, 2)
                                 Text(note)
-                                    .font(.footnote)
+                                    .font(CivicaTypography.footnote)
                                     .foregroundColor(VoteNowColors.mutedText)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
@@ -1066,7 +1066,7 @@ struct AbsenteeView: View {
                 if let sourceURL = URL(string: deadlines.sourceURL) {
                     Link(destination: sourceURL) {
                         Text(l("app.mapv.absentee.source", "Source"))
-                            .font(.footnote.weight(.semibold))
+                            .font(CivicaTypography.footnoteStrong)
                             .foregroundColor(VoteNowColors.primaryCTA)
                     }
                     .accessibilityLabel(l("app.mapv.absentee.source.a11y", "Open request deadline source"))
@@ -1088,7 +1088,7 @@ struct AbsenteeView: View {
     private var fallbackDeadlinesCard: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(l("app.mapv.absentee.deadlines.title", "Request deadlines"))
-                .font(.subheadline.weight(.semibold))
+                .font(CivicaTypography.subheadStrong)
                 .foregroundColor(VoteNowColors.primaryText)
             Text(l("app.mapv.absentee.deadlines.fallback", "Deadlines vary. Check your election office."))
                 .font(CivicaTypography.subhead)
@@ -1318,7 +1318,7 @@ struct StepThreeView: View {
                 .padding(.horizontal)
 
             Text(dayRailMonthLabel)
-                .font(.subheadline.weight(.semibold))
+                .font(CivicaTypography.subheadStrong)
                 .foregroundColor(VoteNowColors.primaryText)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
@@ -1343,7 +1343,7 @@ struct StepThreeView: View {
 
             HStack(spacing: 10) {
                 Text(l("app.mapv.step3.selected_time", "Selected Time"))
-                    .font(.headline.weight(.semibold))
+                    .font(CivicaTypography.sectionHeader)
                     .foregroundColor(VoteNowColors.primaryText)
                 Spacer()
                 Text(Self.timeFormatter.string(from: chosenVotingTime))
@@ -1581,11 +1581,11 @@ private struct MAPVDayRailSelector: View {
         } label: {
             VStack(spacing: 2) {
                 Text(formatDayAbbrev(day))
-                    .font(.caption2.weight(.semibold))
+                    .font(CivicaTypography.captionStrong)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                 Text(formatDayNumber(day))
-                    .font(.caption.weight(.semibold))
+                    .font(CivicaTypography.captionStrong)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }
@@ -1906,10 +1906,10 @@ private struct CrowdCueBubble: View {
     var body: some View {
         HStack(spacing: 6) {
             Image(systemName: cue.symbolName)
-                .font(.caption2.weight(.bold))
+                .font(CivicaTypography.captionBold)
             VStack(alignment: .leading, spacing: 1) {
                 Text(headline)
-                    .font(.caption.weight(.bold))
+                    .font(CivicaTypography.captionBold)
                     .lineLimit(1)
                     .truncationMode(.tail)
                 Text(detail)
@@ -2481,7 +2481,7 @@ struct StepFourView: View {
             VStack(alignment: .leading, spacing: 14) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(l("app.mapv.step4.almost_done", "You're almost done."))
-                        .font(.subheadline.weight(.semibold))
+                        .font(CivicaTypography.subheadStrong)
                         .foregroundColor(VoteNowColors.mutedText)
                     Text(l("app.mapv.step4.review_card", "Review your card before you finish."))
                         .font(CivicaTypography.subhead)
@@ -2508,7 +2508,7 @@ struct StepFourView: View {
                             message: Text(l("app.mapv.step4.share_message", "Here is my voting plan."))
                         ) {
                             Label(l("app.mapv.step4.action.share_plan", "Share Plan"), systemImage: "square.and.arrow.up")
-                                .font(.subheadline.weight(.semibold))
+                                .font(CivicaTypography.subheadStrong)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
                         }

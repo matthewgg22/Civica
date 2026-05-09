@@ -16,7 +16,7 @@ struct ReviewPromptView: View {
 
             HStack(spacing: 10) {
                 Button("Not now", action: onNotNow)
-                    .font(.headline.weight(.semibold))
+                    .font(CivicaTypography.sectionHeader)
                     .foregroundColor(VoteNowColors.primaryText)
                     .frame(maxWidth: .infinity, minHeight: 44)
                     .background(VoteNowColors.surfaceWhite)
@@ -27,7 +27,7 @@ struct ReviewPromptView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
 
                 Button("Rate the App", action: onRateApp)
-                    .font(.headline.weight(.semibold))
+                    .font(CivicaTypography.sectionHeader)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, minHeight: 44)
                     .background(VoteNowColors.primaryCTA)

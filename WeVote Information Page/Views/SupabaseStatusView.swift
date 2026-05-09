@@ -30,7 +30,7 @@ struct SupabaseStatusView: View {
 
             if let error = authStore.lastError, !error.isEmpty {
                 Text(error)
-                    .font(.footnote.weight(.semibold))
+                    .font(CivicaTypography.footnoteStrong)
                     .foregroundColor(VoteNowColors.richRed)
                     .padding(10)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -151,12 +151,12 @@ struct SupabaseStatusView: View {
     private func statusRow(label: String, value: String, indicator: StatusIndicator?) -> some View {
         HStack {
             Text(label)
-                .font(.subheadline.weight(.semibold))
+                .font(CivicaTypography.subheadStrong)
             Spacer()
             HStack(spacing: 6) {
                 if let indicator {
                     Image(systemName: indicator.iconName)
-                        .font(.caption.weight(.bold))
+                        .font(CivicaTypography.captionBold)
                         .foregroundStyle(indicator.tint)
                         .padding(4)
                         .background(indicator.surface)
