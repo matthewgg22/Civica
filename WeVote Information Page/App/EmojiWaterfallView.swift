@@ -109,7 +109,7 @@ struct EmojiWaterfallView: View {
             }
         }
         .opacity(controller.isActive ? 1 : 0)
-        .animation(reduceMotion ? nil : .easeOut(duration: 0.18), value: controller.isActive)
+        .animation(reduceMotion ? nil : CivicaAnimation.snap, value: controller.isActive)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
     }

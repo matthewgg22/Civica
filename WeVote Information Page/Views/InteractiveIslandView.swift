@@ -230,7 +230,7 @@ struct InteractiveIslandView: View {
             islandLogger.debug("Island tapped; expanding: \(!isExpanded, privacy: .public)")
             withAnimation { isExpanded.toggle() }
         }
-        .animation(.easeInOut(duration: 0.3), value: isExpanded)
+        .animation(CivicaAnimation.slow, value: isExpanded)
         .onReceive(countdownTimer) { input in now = input }
         .onAppear(perform: scheduleVoteReminder)
     }

@@ -361,7 +361,7 @@ struct ElectionTimelineView: View {
 
                     // A quick follow-up pass makes dot taps resilient while card frames are still updating.
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.14) {
-                        withAnimation(.easeInOut(duration: 0.2)) {
+                        withAnimation(CivicaAnimation.standard) {
                             scrollProxy.scrollTo(electionID, anchor: .top)
                         }
                     }
@@ -431,7 +431,7 @@ struct ElectionTimelineView: View {
                                     totalCount: visibleElections.count,
                                     showYearLabel: priorYear != currentYear,
                                     onCardTap: {
-                                        _ = withAnimation(.easeInOut(duration: 0.2)) {
+                                        _ = withAnimation(CivicaAnimation.standard) {
                                             if expandedCardIDs.contains(election.id) {
                                                 expandedCardIDs.remove(election.id)
                                             } else {
@@ -460,7 +460,7 @@ struct ElectionTimelineView: View {
                                 .offset(x: cardHorizontalOffset(for: election.id))
                                 .opacity(cardOpacity(for: election.id))
                                 .zIndex(cardZIndex(for: election.id))
-                                .animation(.easeInOut(duration: 0.2), value: focusedTimelineElectionID)
+                                .animation(CivicaAnimation.standard, value: focusedTimelineElectionID)
                                 .padding(.bottom, index == visibleElections.count - 1 ? 0 : 14)
                             }
 
@@ -792,7 +792,7 @@ struct ElectionTimelineView: View {
                         .opacity(dotOpacity)
                         .position(x: pointX, y: lineY)
                         .contentShape(Rectangle())
-                        .animation(.easeInOut(duration: 0.2), value: isFocused)
+                        .animation(CivicaAnimation.standard, value: isFocused)
                         .animation(.easeInOut(duration: 0.22), value: focusedTimelineElectionID)
 
                         Text(Self.timelineMonthDayFormatter.string(from: point.election.electionDay))

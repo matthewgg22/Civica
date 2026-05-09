@@ -199,7 +199,7 @@ struct IssueCallCenterView: View {
 
     private var mapcCardAnimation: Animation {
         reduceMotion
-        ? .easeInOut(duration: 0.3)
+        ? CivicaAnimation.slow
         : .interactiveSpring(response: 0.52, dampingFraction: 0.9, blendDuration: 0.22)
     }
 
@@ -749,7 +749,7 @@ struct IssueCallCenterView: View {
         if reduceMotion {
             showCallTabIntro = true
         } else {
-            withAnimation(.easeInOut(duration: 0.2)) {
+            withAnimation(CivicaAnimation.standard) {
                 showCallTabIntro = true
             }
         }
@@ -905,7 +905,7 @@ struct IssueCallCenterView: View {
         )
         .overlay(alignment: .topTrailing) {
             Button {
-                withAnimation(.easeInOut(duration: 0.2)) {
+                withAnimation(CivicaAnimation.standard) {
                     dismissedResidencyNoticeText = residencyNotice
                 }
             } label: {
@@ -1194,7 +1194,7 @@ struct IssueCallCenterView: View {
     private func launchStatePrimaryAction(for state: IssueCallLaunchState) {
         switch state {
         case .loading:
-            withAnimation(.easeInOut(duration: 0.2)) {
+            withAnimation(CivicaAnimation.standard) {
                 viewModel.selectedTab = .assistant
             }
         case .empty, .error:
@@ -1317,13 +1317,13 @@ struct IssueCallCenterView: View {
             .scrollDismissesKeyboard(.interactively)
             .onChange(of: assistantMessages.count) { _, _ in
                 guard let lastID = assistantMessages.last?.id else { return }
-                withAnimation(.easeOut(duration: 0.18)) {
+                withAnimation(CivicaAnimation.snap) {
                     proxy.scrollTo(lastID, anchor: .bottom)
                 }
             }
             .onChange(of: assistantIsThinking) { _, thinking in
                 guard thinking else { return }
-                withAnimation(.easeOut(duration: 0.18)) {
+                withAnimation(CivicaAnimation.snap) {
                     proxy.scrollTo("assistant-typing", anchor: .bottom)
                 }
             }
@@ -1339,7 +1339,7 @@ struct IssueCallCenterView: View {
                 case .awaitingPrompt:
                     return
                 }
-                withAnimation(.easeOut(duration: 0.18)) {
+                withAnimation(CivicaAnimation.snap) {
                     proxy.scrollTo(anchorID, anchor: .bottom)
                 }
             }
@@ -1407,7 +1407,7 @@ struct IssueCallCenterView: View {
                                 animatedAssistantMessageIDs.insert(message.id)
                                 if pendingBackgroundMessageID == message.id {
                                     pendingBackgroundMessageID = nil
-                                    withAnimation(.easeOut(duration: 0.18)) {
+                                    withAnimation(CivicaAnimation.snap) {
                                         isBackgroundMessageReadyForActions = true
                                     }
                                     if let queuedScriptMessage = queuedScriptPreviewMessage {
@@ -1424,7 +1424,7 @@ struct IssueCallCenterView: View {
                                 }
                                 if pendingScriptPreviewMessageID == message.id {
                                     pendingScriptPreviewMessageID = nil
-                                    withAnimation(.easeOut(duration: 0.18)) {
+                                    withAnimation(CivicaAnimation.snap) {
                                         isScriptPreviewReadyForMAPCActions = true
                                     }
                                 }
@@ -2109,7 +2109,7 @@ struct IssueCallCenterView: View {
             pendingBackgroundMessageID = nil
             pendingScriptPreviewMessageID = nil
             queuedScriptPreviewMessage = nil
-            withAnimation(.easeOut(duration: 0.18)) {
+            withAnimation(CivicaAnimation.snap) {
                 isBackgroundMessageReadyForActions = true
                 isScriptPreviewReadyForMAPCActions = false
             }
@@ -2360,7 +2360,7 @@ struct IssueCallCenterView: View {
         pendingBackgroundMessageID = nil
         pendingScriptPreviewMessageID = nil
         queuedScriptPreviewMessage = nil
-        withAnimation(.easeOut(duration: 0.18)) {
+        withAnimation(CivicaAnimation.snap) {
             isBackgroundMessageReadyForActions = false
             isScriptPreviewReadyForMAPCActions = false
         }
@@ -2397,7 +2397,7 @@ struct IssueCallCenterView: View {
         pendingBackgroundMessageID = nil
         pendingScriptPreviewMessageID = nil
         queuedScriptPreviewMessage = nil
-        withAnimation(.easeOut(duration: 0.18)) {
+        withAnimation(CivicaAnimation.snap) {
             isBackgroundMessageReadyForActions = false
             isScriptPreviewReadyForMAPCActions = false
         }
@@ -2420,7 +2420,7 @@ struct IssueCallCenterView: View {
         hasAcceptedCurrentMAPCV3Preview = false
         hasPickedDiscussionOptionInCurrentCycle = false
         assistantFlowStage = .awaitingPreviewConfirmation
-        withAnimation(.easeOut(duration: 0.18)) {
+        withAnimation(CivicaAnimation.snap) {
             isBackgroundMessageReadyForActions = false
             isScriptPreviewReadyForMAPCActions = false
         }
@@ -2483,7 +2483,7 @@ struct IssueCallCenterView: View {
                 pendingBackgroundMessageID = nil
                 pendingScriptPreviewMessageID = nil
                 queuedScriptPreviewMessage = nil
-                withAnimation(.easeOut(duration: 0.18)) {
+                withAnimation(CivicaAnimation.snap) {
                     isBackgroundMessageReadyForActions = false
                     isScriptPreviewReadyForMAPCActions = true
                 }
@@ -2540,7 +2540,7 @@ struct IssueCallCenterView: View {
                 pendingBackgroundMessageID = nil
                 pendingScriptPreviewMessageID = nil
                 queuedScriptPreviewMessage = nil
-                withAnimation(.easeOut(duration: 0.18)) {
+                withAnimation(CivicaAnimation.snap) {
                     isBackgroundMessageReadyForActions = false
                     isScriptPreviewReadyForMAPCActions = true
                 }
@@ -3372,7 +3372,7 @@ struct IssueCallCenterView: View {
             if condensedForMAPC {
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Button {
-                        withAnimation(.easeInOut(duration: 0.2)) {
+                        withAnimation(CivicaAnimation.standard) {
                             if isVoicemailExpanded {
                                 expandedVoicemailBriefIDs.remove(brief.id)
                                 expandedLiveBriefIDs.insert(brief.id)
@@ -3736,7 +3736,7 @@ struct IssueCallCenterView: View {
                         }
 
                         Button {
-                            withAnimation(.easeInOut(duration: 0.2)) {
+                            withAnimation(CivicaAnimation.standard) {
                                 if expandedPremadeLiveScriptIDs.contains(example.id) {
                                     expandedPremadeLiveScriptIDs.remove(example.id)
                                 } else {
@@ -3963,7 +3963,7 @@ struct IssueCallCenterView: View {
                         .transition(.move(edge: .top).combined(with: .opacity))
                 }
             }
-            .animation(.easeInOut(duration: 0.2), value: showGainBadge)
+            .animation(CivicaAnimation.standard, value: showGainBadge)
             .frame(maxWidth: .infinity, alignment: .leading)
 
             if showGainBadge {
@@ -4903,7 +4903,7 @@ struct IssueCallCenterView: View {
                     Button {
                         guard !isVoicemailLocked else { return }
                         if outcome == .voicemail {
-                            withAnimation(.easeInOut(duration: 0.2)) {
+                            withAnimation(CivicaAnimation.standard) {
                                 expandedVoicemailBriefIDs.insert(brief.id)
                                 expandedLiveBriefIDs.remove(brief.id)
                             }
@@ -5240,7 +5240,7 @@ struct IssueCallCenterView: View {
 
     private var scriptInputsToggleButton: some View {
         Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
+            withAnimation(CivicaAnimation.standard) {
                 isTalkingPointsExpanded.toggle()
             }
         } label: {

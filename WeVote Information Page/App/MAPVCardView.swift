@@ -213,7 +213,7 @@ struct MAPVCardView: View {
                 .stroke(CivicaColors.ctaBlue.opacity(0.25), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous))
-        .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: presentation.status)
+        .animation(reduceMotion ? nil : CivicaAnimation.standard, value: presentation.status)
     }
 
     private func progressSection(plan: MAPVPlan) -> some View {
