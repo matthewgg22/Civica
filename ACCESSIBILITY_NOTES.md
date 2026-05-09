@@ -1,7 +1,7 @@
 # Accessibility Notes
 
 ## What Changed
-- Updated central color tokens in `/WeVote Information Page/VoteNowColors.swift` to improve contrast for semantic states and controls:
+- Updated central color tokens in `/WeVote Information Page/CivicaColors.swift` to improve contrast for semantic states and controls:
   - Darkened `ctaBlue`, `successGreen`, and `warningAmber` for stronger text/icon contrast.
   - Added explicit pressed/disabled button tokens (`ctaBluePressed`, `ctaBlueDisabled`, `ctaRedPressed`, `ctaRedDisabled`).
   - Added semantic status surface tokens for success/warning/error/info/neutral messaging.
@@ -14,7 +14,7 @@
   - `/WeVote Information Page/Views/SupportVoteView.swift` success/error messages now use labeled icon callouts.
   - `/WeVote Information Page/Views/SecondNavigationBarView/VoterRegistrationView.swift` ballot-status disabled state now includes lock icon + `Unavailable` text.
 - Updated affected button styles to use explicit high-contrast normal/pressed/disabled colors instead of opacity-only dimming:
-  - `/WeVote Information Page/VoteNowColors.swift`
+  - `/WeVote Information Page/CivicaColors.swift`
   - `/WeVote Information Page/App/MAPVCardView.swift`
   - `/WeVote Information Page/App/HoldToConfirmButton.swift`
   - `/WeVote Information Page/Views/LaunchFlowStateCard.swift`

@@ -1,4 +1,4 @@
-# VoteNow Launch Smoke Checklist
+# Civica Launch Smoke Checklist
 
 ## 1. Auth + Session
 - Sign in (OTP) and verify home loads without auth errors.
