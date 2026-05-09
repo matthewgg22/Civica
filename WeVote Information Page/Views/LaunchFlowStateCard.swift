@@ -93,7 +93,7 @@ struct LaunchFlowStateCard: View {
                 .clipShape(Capsule())
 
             Text(message)
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
                 .foregroundColor(CivicaColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
 

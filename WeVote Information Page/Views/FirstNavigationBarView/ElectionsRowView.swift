@@ -40,12 +40,12 @@ struct ElectionsRowView: View {
 
                                 // 2. Subtitle
                                 Text(election.subtitle)
-                                    .font(.headline)
+                                    .font(CivicaTypography.sectionHeader)
                                     .multilineTextAlignment(.center)
 
                                 // 3. Registration deadline
                                 Text("Registration Deadline: \(Self.dateFormatter.string(from: election.registrationDeadline))")
-                                    .font(.subheadline)
+                                    .font(CivicaTypography.subhead)
                                     .multilineTextAlignment(.center)
 
                                 Divider().background(Color.gray)
@@ -53,10 +53,10 @@ struct ElectionsRowView: View {
                                 // 4. Early Voting row
                                 HStack {
                                     Text("Early Voting Start:")
-                                        .font(.subheadline)
+                                        .font(CivicaTypography.subhead)
                                     Spacer()
                                     Text(Self.dateFormatter.string(from: election.startDate))
-                                        .font(.subheadline)
+                                        .font(CivicaTypography.subhead)
                                     Spacer()
                                     Text(countdownString(to: election.startDate))
                                         .font(.caption.monospacedDigit())
@@ -67,10 +67,10 @@ struct ElectionsRowView: View {
                                 // 5. Election Day row
                                 HStack {
                                     Text("Election Day:")
-                                        .font(.subheadline)
+                                        .font(CivicaTypography.subhead)
                                     Spacer()
                                     Text(Self.dateFormatter.string(from: election.electionDay))
-                                        .font(.subheadline)
+                                        .font(CivicaTypography.subhead)
                                     Spacer()
                                     Text(countdownString(to: election.electionDay))
                                         .font(.caption.monospacedDigit())

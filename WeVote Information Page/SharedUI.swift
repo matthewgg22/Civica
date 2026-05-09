@@ -253,8 +253,7 @@ struct PageHeader: View {
             }
 
             title
-                .font(.largeTitle)
-                .fontWeight(.bold)
+                .font(CivicaTypography.pageTitle)
                 .lineLimit(1)
                 .minimumScaleFactor(0.84)
                 .padding(.top, 2)
@@ -488,8 +487,7 @@ struct WhyVoteFloodOverlay: View {
                                 fallback: "Why Vote?"
                             )
                         )
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
+                            .font(CivicaTypography.pageTitle)
                             .lineLimit(1)
                             .frame(height: logoSize, alignment: .center)
                             .foregroundColor(CivicaColors.onPrimaryText)
@@ -623,8 +621,7 @@ struct WhyCallFloodOverlay: View {
                                 fallback: "Why calls reps"
                             )
                         )
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
+                            .font(CivicaTypography.pageTitle)
                             .lineLimit(1)
                             .frame(height: logoSize, alignment: .center)
                             .foregroundColor(accent)
@@ -749,7 +746,7 @@ struct WhyCallView: View {
                             fallback: "Impact of Calling your Reps"
                         )
                     )
-                        .font(.headline)
+                        .font(CivicaTypography.sectionHeader)
                         .foregroundStyle(.primary)
 
                     ForEach(content.stats) { stat in
@@ -841,7 +838,7 @@ private struct WhyCallStatCard: View {
                 .foregroundStyle(CivicaColors.ctaBlue)
             if !stat.title.isEmpty {
                 Text(stat.title)
-                    .font(.headline)
+                    .font(CivicaTypography.sectionHeader)
                     .foregroundStyle(.primary)
             }
             Text(stat.body)
@@ -866,7 +863,7 @@ private struct WhyCallReasonCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(reason.title)
-                .font(.headline)
+                .font(CivicaTypography.sectionHeader)
                 .foregroundStyle(.primary)
             Text(reason.body)
                 .font(.body)
@@ -901,7 +898,7 @@ private struct WhyCallBottomCTA: View {
 
             Button(action: action) {
                 Text(title)
-                    .font(.headline)
+                    .font(CivicaTypography.sectionHeader)
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(CivicaPrimaryCTAButtonStyle())

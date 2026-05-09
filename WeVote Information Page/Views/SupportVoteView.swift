@@ -116,7 +116,7 @@ struct SupportVoteView: View {
                 .foregroundStyle(CivicaColors.warningAmber)
 
             Text(l("app.support_vote.supports.body", "As a college-founded civic startup, we rely on community support to keep voter tools accessible."))
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
                 .foregroundStyle(CivicaColors.textSecondary)
 
             supportBullet(l("app.support_vote.supports.bullet_1", "No ads or paywalls"))
@@ -138,16 +138,16 @@ struct SupportVoteView: View {
     private func supportBullet(_ text: String) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Text("•")
-                .font(.headline)
+                .font(CivicaTypography.sectionHeader)
             Text(text)
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
         }
     }
 
     private var donationCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text(l("app.support_vote.amount.title", "Choose amount"))
-                .font(.headline)
+                .font(CivicaTypography.sectionHeader)
 
             amountPickerGrid
 
@@ -160,7 +160,7 @@ struct SupportVoteView: View {
                         .accessibilityLabel(l("app.support_vote.amount.custom_accessibility", "Custom donation amount in dollars"))
 
                     Text(l("app.support_vote.amount.range_hint", "Minimum $1, maximum $500"))
-                        .font(.caption)
+                        .font(CivicaTypography.caption)
                         .foregroundStyle(CivicaColors.textSecondary)
                 }
             }
@@ -171,7 +171,7 @@ struct SupportVoteView: View {
                     .foregroundColor(isAmountValid ? CivicaColors.textPrimary : CivicaColors.ctaRed)
             } else {
                 Text(l("app.support_vote.amount.select_to_continue", "Select an amount to continue."))
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
                     .foregroundStyle(CivicaColors.textSecondary)
             }
 
@@ -232,7 +232,7 @@ struct SupportVoteView: View {
                 .font(.headline.weight(.bold))
 
             Text(l("app.support_vote.disrupt.body", "Most voter outreach in America is not funded by voters. It is funded by PACs and Super PACs. That means:"))
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
                 .foregroundStyle(CivicaColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
 

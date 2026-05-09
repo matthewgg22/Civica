@@ -231,11 +231,11 @@ struct WhyVoteView: View {
                             zip
                         )
                     )
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
                     .foregroundColor(CivicaColors.textSecondary)
                 } else {
                     Text(l("app.why_vote.state_missing.enter_zip", "Enter a ZIP in My Representatives to load your state profile."))
-                        .font(.subheadline)
+                        .font(CivicaTypography.subhead)
                         .foregroundColor(CivicaColors.textSecondary)
                 }
             }
@@ -306,12 +306,12 @@ struct WhyVoteView: View {
                 let card = whyCareCards[selectedWhyCareCard]
                 VStack(alignment: .leading, spacing: 6) {
                     Text(card.title)
-                        .font(.headline)
+                        .font(CivicaTypography.sectionHeader)
                         .foregroundColor(CivicaColors.textPrimary)
                         .id("power-title-\(selectedWhyCareCard)")
                         .transition(.opacity)
                     Text(card.body)
-                        .font(.subheadline)
+                        .font(CivicaTypography.subhead)
                         .foregroundColor(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                         .id("power-body-\(selectedWhyCareCard)")

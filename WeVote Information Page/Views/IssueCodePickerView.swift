@@ -52,7 +52,7 @@ private struct IssueCodePickerPreviewWrapper: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(senatorName)
-                .font(.headline)
+                .font(CivicaTypography.sectionHeader)
             IssueCodePickerView(selectedIssue: $selectedIssue)
 
             Text(
@@ -62,7 +62,7 @@ private struct IssueCodePickerPreviewWrapper: View {
                     assignedCommittees: assignedCommittees
                 )
             )
-            .font(.subheadline)
+            .font(CivicaTypography.subhead)
             .foregroundColor(CivicaColors.textPrimary)
             .padding(10)
             .background(CivicaColors.infoSurfaceBlue)
