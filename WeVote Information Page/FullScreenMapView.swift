@@ -2,7 +2,7 @@
 //
 //
 //  FullScreenMapView.swift
-//  VoteNow
+//  Civica
 //
 //  Created by Matthew Greer-Gentis on 5/25/25.
 //  Updated on 05/27/25 to use SwiftUI dismiss action

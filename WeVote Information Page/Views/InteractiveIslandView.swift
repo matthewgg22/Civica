@@ -1,7 +1,7 @@
 //
 //
 //  InteractiveIslandView.swift
-//  VoteNow
+//  Civica
 //
 //  Created by Matthew Greer-Gentis on 5/28/25.
 //  Updated by ChatGPT on 05/28/25 (added debug tap & contentShape)
