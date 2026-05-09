@@ -1,7 +1,7 @@
 import SwiftUI
 
 // EXPERIMENTAL SILOED MODULE:
-// Shared SNAP button styles to keep prototype UI aligned with base VoteNow palette.
+// Shared SNAP button styles to keep prototype UI aligned with base Civica palette.
 struct SNAPSecondaryCTAButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
 

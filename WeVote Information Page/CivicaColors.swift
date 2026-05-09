@@ -184,10 +184,3 @@ struct CivicaUrgentCTAButtonStyle: ButtonStyle {
         return isPressed ? CivicaColors.ctaRedPressed : CivicaColors.ctaRed
     }
 }
-
-// Deprecation shims: keep VoteNow* names compiling while call sites migrate to Civica*.
-typealias VoteNowColors                = CivicaColors
-typealias VoteNowPrimaryCTAButtonStyle = CivicaPrimaryCTAButtonStyle
-typealias VoteNowUrgentCTAButtonStyle  = CivicaUrgentCTAButtonStyle
-typealias PrimaryButtonStyle           = CivicaPrimaryCTAButtonStyle
-typealias UrgentButtonStyle            = CivicaUrgentCTAButtonStyle
