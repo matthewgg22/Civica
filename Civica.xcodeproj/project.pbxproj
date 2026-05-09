@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C343D0BC2FAFDCE300D0F262 /* CivicaDesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = C343D0BB2FAFDCE300D0F262 /* CivicaDesignSystem */; };
 		C36C730E2F415639007CB83D /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C36C730D2F415639007CB83D /* SwiftUI.framework */; };
 		C36C75A12F427A1F007CB83D /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = C36C75A02F427A1F007CB83D /* Supabase */; };
+		C3B10CE52FAFDA0F00961818 /* CivicaDesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = C3B10CE42FAFDA0F00961818 /* CivicaDesignSystem */; };
 		C3B8633D2D9B08630092C1CB /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C3B8633C2D9B08630092C1CB /* FirebaseAnalytics */; };
 		C3B863432D9B08630092C1CB /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = C3B863422D9B08630092C1CB /* FirebaseAppCheck */; };
 		C3B863452D9B08630092C1CB /* FirebaseAppDistribution-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = C3B863442D9B08630092C1CB /* FirebaseAppDistribution-Beta */; };
@@ -96,6 +98,8 @@
 				C36C75A12F427A1F007CB83D /* Supabase in Frameworks */,
 				C3B863432D9B08630092C1CB /* FirebaseAppCheck in Frameworks */,
 				C3B8633D2D9B08630092C1CB /* FirebaseAnalytics in Frameworks */,
+				C3B10CE52FAFDA0F00961818 /* CivicaDesignSystem in Frameworks */,
+				C343D0BC2FAFDCE300D0F262 /* CivicaDesignSystem in Frameworks */,
 				C3B863452D9B08630092C1CB /* FirebaseAppDistribution-Beta in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -198,6 +202,8 @@
 				C3B8633C2D9B08630092C1CB /* FirebaseAnalytics */,
 				C3B863422D9B08630092C1CB /* FirebaseAppCheck */,
 				C3B863442D9B08630092C1CB /* FirebaseAppDistribution-Beta */,
+				C3B10CE42FAFDA0F00961818 /* CivicaDesignSystem */,
+				C343D0BB2FAFDCE300D0F262 /* CivicaDesignSystem */,
 			);
 			productName = "WeVote Information Page";
 			productReference = C3B862E82D9A42E00092C1CB /* VoteNow.app */;
@@ -275,7 +281,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C3B862E32D9A42E00092C1CB /* Build configuration list for PBXProject "VoteNow" */;
+			buildConfigurationList = C3B862E32D9A42E00092C1CB /* Build configuration list for PBXProject "Civica" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -295,6 +301,7 @@
 				D1A5B00131A9000100ABCDEF /* XCRemoteSwiftPackageReference "stripe-ios-spm" */,
 				C3B8633B2D9B07130092C1CB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				C36C759F2F42719F007CB83D /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				C343D0BA2FAFDCE300D0F262 /* XCLocalSwiftPackageReference "../../../../votenow-package-setup/CivicaDesignSystem" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C3B862E92D9A42E00092C1CB /* Products */;
@@ -390,9 +397,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 687GD7CA6J;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Voting UI Island Card/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Voting UI Island Card";
@@ -406,7 +413,6 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.Civica.Voting-UI-Island-Card";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -419,9 +425,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 687GD7CA6J;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Voting UI Island Card/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Voting UI Island Card";
@@ -435,7 +441,6 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.Civica.Voting-UI-Island-Card";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -727,7 +732,28 @@
 		C3BDC9882FA04AFA00CE69FB /* Debug SNAP */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 687GD7CA6J;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Voting UI Island Card/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Voting UI Island Card";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.VoteNow-Information-Page.snapdev.Voting-UI-Island-Card";
 				PRODUCT_NAME = "Voting UI Island CardExtension";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug SNAP";
 		};
@@ -846,7 +872,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C3B862E32D9A42E00092C1CB /* Build configuration list for PBXProject "VoteNow" */ = {
+		C3B862E32D9A42E00092C1CB /* Build configuration list for PBXProject "Civica" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C3B8630A2D9A42E20092C1CB /* Debug */,
@@ -888,6 +914,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		C343D0BA2FAFDCE300D0F262 /* XCLocalSwiftPackageReference "../../../../votenow-package-setup/CivicaDesignSystem" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../../../votenow-package-setup/CivicaDesignSystem";
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		C36C759F2F42719F007CB83D /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -916,10 +949,18 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		C343D0BB2FAFDCE300D0F262 /* CivicaDesignSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CivicaDesignSystem;
+		};
 		C36C75A02F427A1F007CB83D /* Supabase */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C36C759F2F42719F007CB83D /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Supabase;
+		};
+		C3B10CE42FAFDA0F00961818 /* CivicaDesignSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CivicaDesignSystem;
 		};
 		C3B8633C2D9B08630092C1CB /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;

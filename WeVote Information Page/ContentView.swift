@@ -8,11 +8,12 @@
 //  Updated by ChatGPT on 05/23/25 (expanded TabView & added repsVM injection)
 //
 
-import SwiftUI
-import UIKit   // only needed if you reference UITabBar dimensions elsewhere
+import CivicaDesignSystem
 import CoreLocation
-import StoreKit
 import OSLog
+import StoreKit
+import SwiftUI
+import UIKit
 
 // MARK: – Safe-Indexing Helper
 extension Collection {

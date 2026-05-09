@@ -3,7 +3,7 @@ import SwiftUI
 /// Semantic elevation tiers. Each token represents a visual role; the actual
 /// radius/x/y values are kept inside the View extension below so call sites
 /// stay readable. Color and opacity are overridable for special cases.
-enum CivicaShadow {
+public enum CivicaShadow {
     /// Whisper-thin hairline lift (radius 3, y 1, default opacity 0.08).
     /// Used for low-elevation borders, focused inputs, subtle separators.
     case hairline
@@ -15,7 +15,7 @@ enum CivicaShadow {
     case floating
 }
 
-extension View {
+public extension View {
     /// Apply a Civica semantic shadow. `color` defaults to `CivicaColors.textPrimary`
     /// and `opacity` defaults to the per-tier value defined in `CivicaShadow`.
     func civicaShadow(

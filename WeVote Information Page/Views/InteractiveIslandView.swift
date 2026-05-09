@@ -6,9 +6,10 @@
 //  Created by Matthew Greer-Gentis on 5/28/25.
 //  Updated by ChatGPT on 05/28/25 (added debug tap & contentShape)
 //
+import CivicaDesignSystem
+import OSLog
 import SwiftUI
 import UserNotifications
-import OSLog
 
 private let islandLogger = Logger(subsystem: "Civica", category: "InteractiveIsland")
 

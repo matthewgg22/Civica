@@ -1,5 +1,6 @@
-import SwiftUI
+import CivicaDesignSystem
 import OSLog
+import SwiftUI
 
 #if DEBUG
 struct SupabaseMAPVDebugView: View {

@@ -10,8 +10,9 @@
 // Created by Matthew Greer-Gentis on 5/16/25.
 // Updated by ChatGPT on 5/27/25
 
-import SwiftUI
+import CivicaDesignSystem
 import MapKit
+import SwiftUI
 
 struct PollingPlaceDetailSheet: View {
     let place: PollingPlace

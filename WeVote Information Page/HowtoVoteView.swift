@@ -7,6 +7,7 @@
 //  Updated by ChatGPT on 5/19/25.
 //
 
+import CivicaDesignSystem
 import SwiftUI
 
 struct HowToVoteView: View {

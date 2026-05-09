@@ -6,8 +6,9 @@
 //  Updated by ChatGPT on 5/18/25.
 //
 
-import SwiftUI
+import CivicaDesignSystem
 import MapKit
+import SwiftUI
 
 struct PollingPlaceDetailView: View {
     let place: PollingPlace

@@ -5,6 +5,7 @@
 //  Created by Matthew Greer-Gentis on 4/30/25.
 //
 
+import CivicaDesignSystem
 import SwiftUI
 
 struct ElectionTabView: View {

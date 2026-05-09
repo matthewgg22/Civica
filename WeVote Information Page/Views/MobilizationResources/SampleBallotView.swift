@@ -5,6 +5,7 @@
 //
 //  Updated by ChatGPT on 05/20/25.
 
+import CivicaDesignSystem
 import SwiftUI
 
 // MARK: - Models & Sample Data

@@ -1,7 +1,8 @@
-import SwiftUI
+import CivicaDesignSystem
 import MapKit
-import UIKit
 import QuartzCore
+import SwiftUI
+import UIKit
 
 struct MyRepsView: View {
     @EnvironmentObject private var planVM: PlanViewModel

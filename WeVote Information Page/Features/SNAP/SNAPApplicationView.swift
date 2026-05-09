@@ -1,7 +1,8 @@
-import SwiftUI
-import UIKit
+import CivicaDesignSystem
 import MapKit
 import Network
+import SwiftUI
+import UIKit
 
 // EXPERIMENTAL SILOED MODULE: iPhone-first SNAP guided flow.
 // One short question group per screen to reduce navigation burden.

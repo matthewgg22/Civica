@@ -5,6 +5,7 @@
 //  Created by Matthew Greer-Gentis on 4/8/25.
 //
 
+import CivicaDesignSystem
 import SwiftUI
 
 struct RegistrationCheckView: View {

@@ -6,6 +6,7 @@
 //  Updated by ChatGPT on 05/21/25
 //  ⇢ uses the shared Tab enum from ContentView.swift
 
+import CivicaDesignSystem
 import SwiftUI
 
 struct TabAndBaseTab: View {
