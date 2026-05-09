@@ -890,7 +890,7 @@ final class USSenatorsProvider: RepsProvider {
     }
 }
 
-final class StateCongressionalBoundaryResolver {
+final class StateCongressionalBoundaryResolver: @unchecked Sendable {
     private struct BoundaryPayload: Codable {
         let districts: [DistrictBoundary]
     }
@@ -903,8 +903,10 @@ final class StateCongressionalBoundaryResolver {
 
     private let bundle: Bundle
     private let resourceName: String
+    private let lock = NSLock()
     private var boundaries: [DistrictBoundary] = []
-    private var isLoaded = false
+    private var attemptedLocalLoad = false
+    private var remoteFetchTask: Task<Void, Never>?
 
     init(resourceName: String, bundle: Bundle = .main) {
         self.resourceName = resourceName
@@ -944,19 +946,109 @@ final class StateCongressionalBoundaryResolver {
         return nil
     }
 
+    /// Warm in-memory and on-disk cache without blocking the caller.
+    /// Call once the user's state is known so async remote fetch has time to
+    /// complete before they need a district lookup.
+    func prefetch() {
+        _ = loadIfNeeded()
+    }
+
     private func loadIfNeeded() -> Bool {
-        guard !isLoaded else { return !boundaries.isEmpty }
+        lock.lock()
+        defer { lock.unlock() }
 
-        defer { isLoaded = true }
+        if !boundaries.isEmpty { return true }
+        if attemptedLocalLoad { return false }
 
+        attemptedLocalLoad = true
+
+        if let cached = readCache() {
+            boundaries = cached
+            return true
+        }
+
+        if let bundled = readBundle() {
+            boundaries = bundled
+            return true
+        }
+
+        triggerRemoteFetchLocked()
+        return false
+    }
+
+    private func readCache() -> [DistrictBoundary]? {
+        guard let url = Self.cacheURL(for: resourceName),
+              FileManager.default.fileExists(atPath: url.path),
+              let data = try? Data(contentsOf: url),
+              let payload = try? JSONDecoder().decode(BoundaryPayload.self, from: data) else {
+            return nil
+        }
+        return payload.districts
+    }
+
+    private func readBundle() -> [DistrictBoundary]? {
         guard let url = bundle.url(forResource: resourceName, withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let payload = try? JSONDecoder().decode(BoundaryPayload.self, from: data) else {
-            return false
+            return nil
         }
+        return payload.districts
+    }
 
-        boundaries = payload.districts
-        return !boundaries.isEmpty
+    private func triggerRemoteFetchLocked() {
+        guard remoteFetchTask == nil, let remoteURL = Self.remoteURL(for: resourceName) else {
+            return
+        }
+        remoteFetchTask = Task.detached { [weak self] in
+            await self?.performRemoteFetch(from: remoteURL)
+        }
+    }
+
+    private func performRemoteFetch(from url: URL) async {
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+                return
+            }
+            let payload = try JSONDecoder().decode(BoundaryPayload.self, from: data)
+            if let cacheURL = Self.cacheURL(for: resourceName) {
+                try? data.write(to: cacheURL, options: .atomic)
+            }
+            lock.lock()
+            boundaries = payload.districts
+            lock.unlock()
+        } catch {
+            // Leave fetch task slot occupied; resolver instance stays cold for
+            // this app launch. Next launch retries via the same lazy path.
+        }
+    }
+
+    private static var supabaseStorageBase: URL? {
+        guard let urlString = Bundle.main.object(forInfoDictionaryKey: "SUPABASE_URL") as? String,
+              let baseURL = URL(string: urlString) else {
+            return nil
+        }
+        return baseURL.appendingPathComponent("storage/v1/object/public/districts", isDirectory: true)
+    }
+
+    private static func remoteURL(for resourceName: String) -> URL? {
+        supabaseStorageBase?.appendingPathComponent("\(resourceName).json")
+    }
+
+    private static func cacheURL(for resourceName: String) -> URL? {
+        guard let cachesDir = try? FileManager.default.url(
+            for: .cachesDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: false
+        ) else {
+            return nil
+        }
+        let dir = cachesDir.appendingPathComponent("districts", isDirectory: true)
+        if !FileManager.default.fileExists(atPath: dir.path) {
+            try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        }
+        return dir.appendingPathComponent("\(resourceName).json")
     }
 
     private func contains(pointLon: Double, pointLat: Double, in ring: [[Double]]) -> Bool {
