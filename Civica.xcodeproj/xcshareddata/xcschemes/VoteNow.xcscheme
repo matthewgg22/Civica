@@ -18,7 +18,7 @@
                BlueprintIdentifier = "C3B862E72D9A42E00092C1CB"
                BuildableName = "VoteNow.app"
                BlueprintName = "VoteNow"
-               ReferencedContainer = "container:VoteNow.xcodeproj">
+               ReferencedContainer = "container:Civica.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,7 +47,7 @@
             BlueprintIdentifier = "C3B862E72D9A42E00092C1CB"
             BuildableName = "VoteNow.app"
             BlueprintName = "VoteNow"
-            ReferencedContainer = "container:VoteNow.xcodeproj">
+            ReferencedContainer = "container:Civica.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
@@ -71,7 +71,7 @@
             BlueprintIdentifier = "C3B862E72D9A42E00092C1CB"
             BuildableName = "VoteNow.app"
             BlueprintName = "VoteNow"
-            ReferencedContainer = "container:VoteNow.xcodeproj">
+            ReferencedContainer = "container:Civica.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

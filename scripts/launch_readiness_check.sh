@@ -9,13 +9,13 @@ RUN_XCODEBUILD=0 ./scripts/run_local_checks.sh
 
 echo "[2/5] Debug build"
 set -o pipefail
-xcodebuild -project "VoteNow.xcodeproj" -scheme "VoteNow" -configuration Debug -destination "generic/platform=iOS" \
+xcodebuild -project "Civica.xcodeproj" -scheme "VoteNow" -configuration Debug -destination "generic/platform=iOS" \
   -derivedDataPath "$ROOT_DIR/build/launch-debug-derived" \
   CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build \
   2>&1 | rg -n "BUILD SUCCEEDED|BUILD FAILED|error:|warning:"
 
 echo "[3/5] Release build"
-xcodebuild -project "VoteNow.xcodeproj" -scheme "VoteNow" -configuration Release -destination "generic/platform=iOS" \
+xcodebuild -project "Civica.xcodeproj" -scheme "VoteNow" -configuration Release -destination "generic/platform=iOS" \
   -derivedDataPath "$ROOT_DIR/build/launch-release-derived" \
   CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build \
   2>&1 | rg -n "BUILD SUCCEEDED|BUILD FAILED|error:|warning:"
