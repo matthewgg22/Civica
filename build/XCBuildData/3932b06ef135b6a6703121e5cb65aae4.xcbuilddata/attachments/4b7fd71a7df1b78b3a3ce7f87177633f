@@ -1,4 +1,0 @@
-module GoogleAppMeasurementOnDeviceConversionTarget {
-umbrella "/Users/matthewgreer-gentis/Library/Developer/Xcode/DerivedData/VoteNow-cktkuchqiificgfdghgiirrdvopo/SourcePackages/checkouts/GoogleAppMeasurement/GoogleAppMeasurementOnDeviceConversionWrapper/include"
-export *
-}

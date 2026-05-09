@@ -7,3 +7,6 @@ build/
 *.tmp
 **/xcuserdata/
 WeVote Information Page 2/
+.venv/
+__pycache__/
+*.pyc
