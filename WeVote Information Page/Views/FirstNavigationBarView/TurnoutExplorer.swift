@@ -1090,19 +1090,11 @@ private final class TurnoutExplorerStore: ObservableObject {
 
     private func load() {
         do {
-            let dataset = try USAgeTurnoutDataset.loadEmbedded()
+            let dataset = try USAgeTurnoutDataset.loadFromBundle()
             adapter = TurnoutExplorerDataAdapter(dataset: dataset)
             loadError = nil
-            return
         } catch {
-            do {
-                let dataset = try USAgeTurnoutDataset.loadFromBundle()
-                adapter = TurnoutExplorerDataAdapter(dataset: dataset)
-                loadError = nil
-                return
-            } catch {
-                loadError = "Failed to load age turnout dataset: \(error.localizedDescription)"
-            }
+            loadError = "Failed to load age turnout dataset: \(error.localizedDescription)"
         }
     }
 }

@@ -98,16 +98,7 @@ public struct USAgeTurnoutDataset: Codable, Sendable {
                 return try JSONDecoder().decode(USAgeTurnoutDataset.self, from: data)
             }
         }
-        return try loadEmbedded()
-    }
-
-    public static func loadEmbedded() throws -> USAgeTurnoutDataset {
-        let data = Data(USAgeTurnoutEmbedded.json.utf8)
-        return try JSONDecoder().decode(USAgeTurnoutDataset.self, from: data)
-    }
-
-    public static var embedded: USAgeTurnoutDataset {
-        get throws { try loadEmbedded() }
+        throw CocoaError(.fileNoSuchFile)
     }
 
     private final class BundleToken: NSObject {}
