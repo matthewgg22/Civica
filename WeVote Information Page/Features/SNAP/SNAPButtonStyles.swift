@@ -8,8 +8,8 @@ struct SNAPSecondaryCTAButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .foregroundColor(isEnabled ? CivicaColors.ctaBlue : CivicaColors.ctaBlueDisabled)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
+            .padding(.horizontal, CivicaSpacing.md)
+            .padding(.vertical, CivicaSpacing.sm)
             .background(
                 RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .fill(configuration.isPressed ? CivicaColors.secondaryButtonFillPressed : CivicaColors.secondaryButtonFill)

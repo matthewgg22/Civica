@@ -106,7 +106,7 @@ struct MyInfoPanelView: View {
                 Form {
                     Section {
                     VStack(alignment: .leading, spacing: CivicaSpacing.md) {
-                        HStack(spacing: 10) {
+                        HStack(spacing: CivicaSpacing.sm) {
                             TextField(
                                 "",
                                 text: $locationInput,
@@ -257,10 +257,10 @@ struct MyInfoPanelView: View {
                 .listRowSeparator(.hidden)
 
                     Section {
-                        VStack(alignment: .leading, spacing: 6) {
+                        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                             Text("my_info.language.title", tableName: "MyInfoPanel")
                                 .font(CivicaTypography.subheadStrong)
-                                .padding(.bottom, 2)
+                                .padding(.bottom, CivicaSpacing.xs)
 
                             ForEach(LanguageOption.allCases, id: \.self) { option in
                                 Button {
@@ -312,8 +312,8 @@ struct MyInfoPanelView: View {
                             )
                             .font(CivicaTypography.subheadStrong)
                             .foregroundColor(CivicaColors.ctaBlue)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 7)
+                            .padding(.horizontal, CivicaSpacing.sm)
+                            .padding(.vertical, CivicaSpacing.sm)
                             .frame(maxWidth: .infinity)
                             .background(CivicaColors.surfacePrimary)
                             .clipShape(Capsule(style: .continuous))

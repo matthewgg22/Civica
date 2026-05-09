@@ -22,7 +22,7 @@ struct MAPVLiveActivityWidget: Widget {
                     pollingClose: context.state.pollingClose
                 )
 
-                HStack(spacing: 10) {
+                HStack(spacing: CivicaSpacing.sm) {
                     Label(distanceText(for: context.state), systemImage: "location.circle.fill")
                     Label(etaText(for: context.state), systemImage: "clock.fill")
                     Spacer(minLength: 0)
@@ -33,12 +33,12 @@ struct MAPVLiveActivityWidget: Widget {
                 .font(CivicaTypography.captionStrong)
                 .foregroundStyle(.secondary)
             }
-            .padding(10)
+            .padding(CivicaSpacing.sm)
             .widgetURL(destinationURL(for: context))
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    HStack(spacing: 6) {
+                    HStack(spacing: CivicaSpacing.xs) {
                         CivicaMiniLogo(size: 22)
                         Image(systemName: statusIcon(for: context.state.status))
                             .font(CivicaTypography.captionBold)
@@ -49,7 +49,7 @@ struct MAPVLiveActivityWidget: Widget {
                     }
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    VStack(alignment: .trailing, spacing: 2) {
+                    VStack(alignment: .trailing, spacing: CivicaSpacing.xs) {
                         Text(distanceText(for: context.state))
                             .font(CivicaTypography.captionStrong)
                             .lineLimit(1)
@@ -60,13 +60,13 @@ struct MAPVLiveActivityWidget: Widget {
                     }
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         DayTimelineView(
                             now: context.state.now,
                             pollingOpen: context.state.pollingOpen,
                             pollingClose: context.state.pollingClose
                         )
-                        HStack(spacing: 6) {
+                        HStack(spacing: CivicaSpacing.xs) {
                             Image(systemName: "mappin.and.ellipse")
                             Text(context.state.pollingPlaceShortName)
                                 .lineLimit(1)
@@ -103,7 +103,7 @@ struct MAPVLiveActivityWidget: Widget {
         }
         .foregroundStyle(.white)
         .padding(.horizontal, CivicaSpacing.sm)
-        .padding(.vertical, 3)
+        .padding(.vertical, CivicaSpacing.xs)
         .background(pillColor(for: state.statusColorToken))
         .clipShape(Capsule())
     }

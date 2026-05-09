@@ -64,7 +64,7 @@ struct HoldToConfirmButton: View {
                     RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                         .stroke(borderColor, lineWidth: 1)
 
-                    HStack(spacing: 6) {
+                    HStack(spacing: CivicaSpacing.xs) {
                         Image(systemName: leadingIcon)
                             .font(CivicaTypography.captionBold)
                         Text(buttonText)

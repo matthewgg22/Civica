@@ -119,11 +119,11 @@ struct SNAPEntryView: View {
                     } label: {
                         VStack(spacing: CivicaSpacing.md) {
                             ZStack {
-                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                                     .fill(CivicaColors.surfacePrimary)
                                     .frame(width: 156, height: 156)
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                                             .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                                     )
 
@@ -158,7 +158,7 @@ struct SNAPEntryView: View {
                                     viewModel.jumpToDraftStep(.nextSteps)
                                 }
                         } label: {
-                            VStack(alignment: .leading, spacing: 10) {
+                            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                                 Text("SNAP prep status")
                                     .font(CivicaTypography.sectionHeader)
                                     .foregroundStyle(CivicaColors.textPrimary)
@@ -186,13 +186,13 @@ struct SNAPEntryView: View {
                                     .foregroundStyle(CivicaColors.ctaBlue)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(14)
+                            .padding(CivicaSpacing.md)
                             .background(
-                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                                     .fill(CivicaColors.surfacePrimary)
                             )
                             .overlay(
-                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                                     .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                             )
                         }

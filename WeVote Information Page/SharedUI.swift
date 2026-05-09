@@ -214,7 +214,7 @@ struct PageHeader: View {
     }
 
     var body: some View {
-        HStack(alignment: .top, spacing: 14) {
+        HStack(alignment: .top, spacing: CivicaSpacing.md) {
             if enableWhyVoteTap {
                 Button {
                     guard iconFrameInSpreadSpace != .zero else { return }
@@ -256,7 +256,7 @@ struct PageHeader: View {
                 .font(CivicaTypography.pageTitle)
                 .lineLimit(1)
                 .minimumScaleFactor(0.84)
-                .padding(.top, 2)
+                .padding(.top, CivicaSpacing.xs)
                 .frame(minHeight: iconSize, alignment: .topLeading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -737,7 +737,7 @@ struct WhyCallView: View {
             LazyVStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 WhyCallHero(content: content)
 
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                     Text(
                         localizedCatalogString(
                             "app.why_call.impact.header",
@@ -768,8 +768,8 @@ struct WhyCallView: View {
                 feedbackButton
             }
             .padding(.horizontal, CivicaSpacing.lg)
-            .padding(.top, 14)
-            .padding(.bottom, 20)
+            .padding(.top, CivicaSpacing.md)
+            .padding(.bottom, CivicaSpacing.lg)
         }
         .sheet(isPresented: $showFeedbackSheet) {
             NavigationStack {
@@ -793,8 +793,8 @@ struct WhyCallView: View {
             )
             .font(CivicaTypography.subheadStrong)
             .foregroundColor(CivicaColors.ctaBlue)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 7)
+            .padding(.horizontal, CivicaSpacing.sm)
+            .padding(.vertical, CivicaSpacing.sm)
             .background(CivicaColors.surfacePrimary)
             .clipShape(Capsule(style: .continuous))
             .overlay(
@@ -832,7 +832,7 @@ private struct WhyCallStatCard: View {
     let stat: WhyCallStat
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(stat.value)
                 .font(.title2.weight(.bold))
                 .foregroundStyle(CivicaColors.ctaBlue)
@@ -845,7 +845,7 @@ private struct WhyCallStatCard: View {
                 .font(.body)
                 .foregroundStyle(.primary)
         }
-        .padding(14)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.surfaceSecondary)
         .clipShape(RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous))
@@ -861,7 +861,7 @@ private struct WhyCallReasonCard: View {
     let reason: WhyCallReason
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(reason.title)
                 .font(CivicaTypography.sectionHeader)
                 .foregroundStyle(.primary)
@@ -869,7 +869,7 @@ private struct WhyCallReasonCard: View {
                 .font(.body)
                 .foregroundStyle(.primary)
         }
-        .padding(14)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.surfaceSecondary)
         .clipShape(RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous))
@@ -888,7 +888,7 @@ private struct WhyCallBottomCTA: View {
     let action: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             if !note.isEmpty {
                 Text(note)
                     .font(CivicaTypography.footnote)
@@ -912,8 +912,8 @@ private struct WhyCallBottomCTA: View {
             )
         }
         .padding(.horizontal, CivicaSpacing.lg)
-        .padding(.top, 10)
-        .padding(.bottom, 10)
+        .padding(.top, CivicaSpacing.sm)
+        .padding(.bottom, CivicaSpacing.sm)
     }
 }
 

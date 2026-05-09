@@ -35,7 +35,7 @@ struct DirectionalRevealDemoView: View {
                         Text("Directional Reveal")
                             .font(CivicaTypography.sectionHeader)
                             .foregroundStyle(.white.opacity(0.95))
-                            .padding(20)
+                            .padding(CivicaSpacing.lg)
                     }
 
                 // Solid color overlay, revealed by directional mask
@@ -78,7 +78,7 @@ struct DirectionalRevealDemoView: View {
                                     )
                             }
                         )
-                        .padding(20)
+                        .padding(CivicaSpacing.lg)
                     }
                 }
             }
@@ -87,7 +87,7 @@ struct DirectionalRevealDemoView: View {
                 RoundedRectangle(cornerRadius: containerCornerRadius, style: .continuous)
                     .strokeBorder(CivicaColors.surfacePrimary.opacity(0.4), lineWidth: 1)
             }
-            .padding(20)
+            .padding(CivicaSpacing.lg)
             .onPreferenceChange(IconCenterPreferenceKey.self) { newCenter in
                 guard let newCenter else { return }
                 iconCenterGlobal = newCenter

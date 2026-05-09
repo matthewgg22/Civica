@@ -90,7 +90,7 @@ struct MultiStepFormView: View {
                     ),
                     earlyVotingLine: timelineEarlyVotingLine,
                     electionDayLine: timelineElectionDayLine)
-                    .padding(.vertical, 6)
+                    .padding(.vertical, CivicaSpacing.xs)
                 }
                 .scrollIndicators(.hidden)
             )
@@ -110,7 +110,7 @@ struct MultiStepFormView: View {
                         set: { flowModel.setPollingPlace($0) }
                     ), isActive: flowModel.currentStepIndex == 1)
                 }
-                .padding(.vertical, 6)
+                .padding(.vertical, CivicaSpacing.xs)
             )
 
         case 2:
@@ -357,7 +357,7 @@ private struct MAPVFlowView: View {
             TimeReactiveBackground(sliderValue: $timeSliderValue)
                 .ignoresSafeArea()
 
-            VStack(spacing: 14) {
+            VStack(spacing: CivicaSpacing.md) {
                 header
 
                 MAPVStepPager(
@@ -374,17 +374,17 @@ private struct MAPVFlowView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(
                     ZStack {
-                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
                             .fill(CivicaColors.canvasBackground.opacity(0.92))
-                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
                             .fill(theme.cardScrimColor.opacity(theme.cardScrimOpacity))
                     }
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
                         .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
                 )
-                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous))
                 .shadow(color: .black.opacity(0.10 + (theme.ambientOverlayOpacity * 0.18)), radius: 14, x: 0, y: 8)
 
                 controls
@@ -394,7 +394,7 @@ private struct MAPVFlowView: View {
     }
 
     private var header: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: CivicaSpacing.sm) {
             Image(systemName: flowModel.steps[flowModel.currentStepIndex].icon)
                 .font(.title2.weight(.bold))
                 .foregroundStyle(CivicaColors.ctaBlue)
@@ -593,7 +593,7 @@ private struct MAPVStepIndicator: View {
                 )
             }
         }
-        .padding(.horizontal, 2)
+        .padding(.horizontal, CivicaSpacing.xs)
     }
 
     private func symbolName(for index: Int) -> String {
@@ -749,7 +749,7 @@ struct VotingMethodCard<Details: View>: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 ZStack {
                     Text(methodTitle)
                         .font(CivicaTypography.cardTitle)
@@ -771,15 +771,15 @@ struct VotingMethodCard<Details: View>: View {
                     .foregroundColor(CivicaColors.textPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(14)
+            .padding(CivicaSpacing.md)
             .frame(maxWidth: .infinity)
             .frame(minHeight: 150, alignment: .topLeading)
             .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                     .fill(isSelected ? accentColor.opacity(0.20) : accentColor.opacity(0.08))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                     .stroke(
                         isSelected ? accentColor : accentColor.opacity(0.45),
                         lineWidth: isSelected ? 1.6 : 1
@@ -869,7 +869,7 @@ struct AbsenteeView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                 Text(l("app.mapv.absentee.hero_title", "📬 Request Your Mail-in Ballot"))
                     .font(.title2.weight(.bold))
                     .foregroundColor(CivicaColors.textPrimary)
@@ -916,15 +916,15 @@ struct AbsenteeView: View {
 
                 if let jurisdiction = selectedJurisdiction {
                     VStack(alignment: .leading, spacing: CivicaSpacing.md) {
-                        HStack(alignment: .center, spacing: 10) {
+                        HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                             if let flagAsset = StateFlagCatalog.assetName(for: jurisdiction.code) {
                                 Image(flagAsset)
                                     .resizable()
                                     .scaledToFill()
                                     .frame(width: 62.4, height: 40.8)
-                                    .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+                                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: 7, style: .continuous)
+                                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                                             .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                                     )
                                     .opensMyInfoPanelOnLongPress()
@@ -942,7 +942,7 @@ struct AbsenteeView: View {
                                     .font(CivicaTypography.sectionHeader)
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 11)
+                                    .padding(.vertical, CivicaSpacing.md)
                                     .background(CivicaColors.ctaBlue)
                                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                             }
@@ -977,11 +977,11 @@ struct AbsenteeView: View {
                             .foregroundColor(CivicaColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
-                    .padding(14)
+                    .padding(CivicaSpacing.md)
                     .background(CivicaColors.surfacePrimary)
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                             .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                     )
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -1020,7 +1020,7 @@ struct AbsenteeView: View {
     private var requestDeadlinesSection: some View {
         if let deadlines = selectedRequestDeadlines {
             let rows = requestDeadlineRows(for: deadlines)
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Text(l("app.mapv.absentee.deadlines.title", "Request deadlines"))
                     .font(CivicaTypography.subheadStrong)
                     .foregroundColor(CivicaColors.textPrimary)
@@ -1046,13 +1046,13 @@ struct AbsenteeView: View {
                 }
 
                 if let conventions = deadlines.conventions, !conventions.isEmpty {
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         ForEach(conventions, id: \.self) { note in
-                            HStack(alignment: .top, spacing: 7) {
+                            HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                                 Text("•")
                                     .font(CivicaTypography.captionBold)
                                     .foregroundColor(CivicaColors.textSecondary)
-                                    .padding(.top, 2)
+                                    .padding(.top, CivicaSpacing.xs)
                                 Text(note)
                                     .font(CivicaTypography.footnote)
                                     .foregroundColor(CivicaColors.textSecondary)
@@ -1060,7 +1060,7 @@ struct AbsenteeView: View {
                             }
                         }
                     }
-                    .padding(.top, 2)
+                    .padding(.top, CivicaSpacing.xs)
                 }
 
                 if let sourceURL = URL(string: deadlines.sourceURL) {
@@ -1341,7 +1341,7 @@ struct StepThreeView: View {
             )
             .padding(.horizontal)
 
-            HStack(spacing: 10) {
+            HStack(spacing: CivicaSpacing.sm) {
                 Text(l("app.mapv.step3.selected_time", "Selected Time"))
                     .font(CivicaTypography.sectionHeader)
                     .foregroundColor(CivicaColors.textPrimary)
@@ -1350,7 +1350,7 @@ struct StepThreeView: View {
                     .font(.title3.monospacedDigit().weight(.bold))
                     .foregroundColor(CivicaColors.textPrimary)
             }
-            .padding(14)
+            .padding(CivicaSpacing.md)
             .background(
                 RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                     .fill(selectedTimeColor.opacity(0.18))
@@ -1579,7 +1579,7 @@ private struct MAPVDayRailSelector: View {
             selectedDate = max(updated, mergeDate(normalizedStartDate, withTimeFrom: updated))
             onUserSelectedDay?()
         } label: {
-            VStack(spacing: 2) {
+            VStack(spacing: CivicaSpacing.xs) {
                 Text(formatDayAbbrev(day))
                     .font(CivicaTypography.captionStrong)
                     .lineLimit(1)
@@ -1590,7 +1590,7 @@ private struct MAPVDayRailSelector: View {
                     .minimumScaleFactor(0.8)
             }
             .frame(maxWidth: .infinity, minHeight: 42)
-            .padding(.vertical, 7)
+            .padding(.vertical, CivicaSpacing.sm)
             .background(
                 RoundedRectangle(cornerRadius: MAPVDayRailConstants.cellCornerRadius, style: .continuous)
                     .fill(isSelected ? CivicaColors.ctaBlue.opacity(0.20) : CivicaColors.surfacePrimary.opacity(0.65))
@@ -1904,10 +1904,10 @@ private struct CrowdCueBubble: View {
     let detail: String
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: CivicaSpacing.xs) {
             Image(systemName: cue.symbolName)
                 .font(CivicaTypography.captionBold)
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(headline)
                     .font(CivicaTypography.captionBold)
                     .lineLimit(1)
@@ -1921,7 +1921,7 @@ private struct CrowdCueBubble: View {
         }
         .foregroundStyle(cue.tint.opacity(0.96))
         .padding(.horizontal, CivicaSpacing.sm)
-        .padding(.vertical, 6)
+        .padding(.vertical, CivicaSpacing.xs)
         .background(
             Capsule(style: .continuous)
                 .fill(cue.tint.opacity(0.16))
@@ -2478,7 +2478,7 @@ struct StepFourView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text(l("app.mapv.step4.almost_done", "You're almost done."))
                         .font(CivicaTypography.subheadStrong)
@@ -2495,7 +2495,7 @@ struct StepFourView: View {
                     isVotedActionEnabled: false
                 )
 
-                HStack(spacing: 10) {
+                HStack(spacing: CivicaSpacing.sm) {
                     AddToCalendarButtonView(
                         payload: calendarPayload,
                         buttonTitle: l("app.mapv.step4.action.add_calendar", "Add to Calendar")
@@ -2527,7 +2527,7 @@ struct StepFourView: View {
                 }
             }
             .padding(.horizontal)
-            .padding(.vertical, 6)
+            .padding(.vertical, CivicaSpacing.xs)
         }
         .onDisappear {
             previewWaterfallController.stop()

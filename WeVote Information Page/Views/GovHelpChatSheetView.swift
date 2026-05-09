@@ -109,8 +109,8 @@ struct GovHelpChatSheetView: View {
                                 .font(CivicaTypography.footnote)
                                 .foregroundColor(CivicaColors.textSecondary)
                         }
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 10)
+                        .padding(.horizontal, CivicaSpacing.md)
+                        .padding(.vertical, CivicaSpacing.sm)
                         .background(CivicaColors.surfacePrimary)
                         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                         .overlay(
@@ -120,7 +120,7 @@ struct GovHelpChatSheetView: View {
                         .id("typing")
                     }
                 }
-                .padding(14)
+                .padding(CivicaSpacing.md)
             }
             .onChange(of: messages.count) { _, _ in
                 guard let last = messages.last else { return }
@@ -147,7 +147,7 @@ struct GovHelpChatSheetView: View {
                 .font(.body)
                 .foregroundColor(message.isError ? CivicaColors.ctaRed : (isUser ? .white : CivicaColors.textPrimary))
                 .padding(.horizontal, CivicaSpacing.md)
-                .padding(.vertical, 10)
+                .padding(.vertical, CivicaSpacing.sm)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                         .fill(messageBackgroundColor(message, isUser: isUser))
@@ -349,7 +349,7 @@ private struct GovHelpSuggestedContactsView: View {
                 }
             }
         }
-        .padding(10)
+        .padding(CivicaSpacing.sm)
         .background(CivicaColors.infoSurfaceBlue.opacity(0.45))
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         .overlay(
@@ -384,11 +384,11 @@ private struct GovHelpDestinationLinksView: View {
                         .font(CivicaTypography.footnoteStrong)
                         .foregroundColor(CivicaColors.ctaBlue)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.vertical, 6)
+                        .padding(.vertical, CivicaSpacing.xs)
                 }
             }
         }
-        .padding(10)
+        .padding(CivicaSpacing.sm)
         .background(CivicaColors.surfacePrimary)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         .overlay(

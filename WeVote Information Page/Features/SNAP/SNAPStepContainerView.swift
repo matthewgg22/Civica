@@ -11,9 +11,9 @@ struct SNAPStepContainerView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 HStack {
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text(viewModel.draftStep == .nextSteps ? "Current page" : "Current step")
                             .font(CivicaTypography.captionStrong)
                             .foregroundStyle(CivicaColors.textSecondary)
@@ -28,7 +28,7 @@ struct SNAPStepContainerView: View {
                 }
 
                 if viewModel.draftStep != .nextSteps {
-                    HStack(spacing: 6) {
+                    HStack(spacing: CivicaSpacing.xs) {
                         ForEach(Array(viewModel.questionnaireSteps.enumerated()), id: \.offset) { index, step in
                             Button {
                                 if selectedProgressStep == step {
@@ -58,7 +58,7 @@ struct SNAPStepContainerView: View {
                 if let selectedProgressStep, viewModel.draftStep != .nextSteps {
                     let selectedIndex = viewModel.questionnaireSteps.firstIndex(of: selectedProgressStep) ?? 0
                     let currentIndex = viewModel.questionnaireSteps.firstIndex(of: viewModel.draftStep) ?? 0
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text("Section \(selectedIndex + 1): \(selectedProgressStep.title)")
                             .font(CivicaTypography.footnoteStrong)
                             .foregroundStyle(CivicaColors.textPrimary)
@@ -80,7 +80,7 @@ struct SNAPStepContainerView: View {
                                 .foregroundStyle(CivicaColors.textSecondary)
                         }
                     }
-                    .padding(.horizontal, 10)
+                    .padding(.horizontal, CivicaSpacing.sm)
                     .padding(.vertical, CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(
@@ -95,7 +95,7 @@ struct SNAPStepContainerView: View {
             }
             .padding(.horizontal, CivicaSpacing.lg)
             .padding(.top, CivicaSpacing.md)
-            .padding(.bottom, 10)
+            .padding(.bottom, CivicaSpacing.sm)
             .background(CivicaColors.brandSoftBlue)
 
             Divider()
@@ -110,8 +110,8 @@ struct SNAPStepContainerView: View {
         }
         .safeAreaInset(edge: .bottom) {
             Divider()
-            VStack(alignment: .leading, spacing: 6) {
-                HStack(spacing: 10) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                HStack(spacing: CivicaSpacing.sm) {
                     Button("Back") {
                         viewModel.goBackDraftFlow()
                     }
@@ -134,7 +134,7 @@ struct SNAPStepContainerView: View {
             }
             .padding(.horizontal, CivicaSpacing.md)
             .padding(.top, CivicaSpacing.sm)
-            .padding(.bottom, 10)
+            .padding(.bottom, CivicaSpacing.sm)
             .background(CivicaColors.surfacePrimary)
         }
         .toolbar(.hidden, for: .tabBar)

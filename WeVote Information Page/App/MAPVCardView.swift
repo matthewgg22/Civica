@@ -83,15 +83,15 @@ struct MAPVCardView: View {
                     .minimumScaleFactor(0.58)
                     .allowsTightening(true)
                 Spacer(minLength: 8)
-                HStack(spacing: 5) {
+                HStack(spacing: CivicaSpacing.xs) {
                     Image(systemName: statusIcon(for: presentation.status))
                         .font(CivicaTypography.captionBold)
                     Text(presentation.statusPillText)
                         .font(CivicaTypography.captionBold)
                 }
                 .foregroundStyle(CivicaColors.onPrimaryText)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
+                .padding(.horizontal, CivicaSpacing.sm)
+                .padding(.vertical, CivicaSpacing.xs)
                 .background(color(for: presentation.statusColorToken))
                 .clipShape(Capsule())
                 .accessibilityElement(children: .combine)
@@ -105,7 +105,7 @@ struct MAPVCardView: View {
             }
 
             if completionIsTerminal == false && !plan.isCompleted {
-                HStack(spacing: 10) {
+                HStack(spacing: CivicaSpacing.sm) {
                     Text(presentation.primaryCountdownText)
                         .font(CivicaTypography.subheadStrong)
                     Spacer(minLength: 8)
@@ -128,7 +128,7 @@ struct MAPVCardView: View {
                     .font(CivicaTypography.subhead)
             }
 
-            VStack(spacing: 10) {
+            VStack(spacing: CivicaSpacing.sm) {
                 HStack(spacing: CivicaSpacing.sm) {
                     Button {
                         onChangePlanTapped?()
@@ -203,7 +203,7 @@ struct MAPVCardView: View {
                     .foregroundStyle(CivicaColors.textSecondary)
             }
         }
-        .padding(14)
+        .padding(CivicaSpacing.md)
         .background(
             RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
                 .fill(CivicaColors.mapvCardBackground)
@@ -222,7 +222,7 @@ struct MAPVCardView: View {
         let openProgress = normalizedProgress(for: plan.pollingOpen, start: dayStart, end: dayEnd)
         let closeProgress = normalizedProgress(for: plan.pollingClose, start: dayStart, end: dayEnd)
 
-        return VStack(spacing: 6) {
+        return VStack(spacing: CivicaSpacing.xs) {
             GeometryReader { geo in
                 let width = geo.size.width
                 let clampedNow = max(0, min(normalizedProgress(for: now, start: dayStart, end: dayEnd), 1))
@@ -303,7 +303,7 @@ struct MAPVCardView: View {
                 .font(CivicaTypography.subhead)
                 .foregroundStyle(CivicaColors.textSecondary)
         }
-        .padding(14)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
@@ -313,7 +313,7 @@ struct MAPVCardView: View {
 
     @ViewBuilder
     private func completionSummaryCard(status: UserElectionStatusRecord?, plan: MAPVPlan) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Label("Completed", systemImage: "checkmark.circle.fill")
                 .font(CivicaTypography.captionBold)
                 .foregroundStyle(CivicaColors.successGreen)
@@ -331,7 +331,7 @@ struct MAPVCardView: View {
                     .foregroundStyle(CivicaColors.textSecondary)
             }
         }
-        .padding(10)
+        .padding(CivicaSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
@@ -429,14 +429,14 @@ struct MAPVCardView: View {
             .font(CivicaTypography.subheadStrong)
             .foregroundStyle(CivicaColors.textPrimary)
             .padding(.horizontal, CivicaSpacing.md)
-            .padding(.vertical, 10)
+            .padding(.vertical, CivicaSpacing.sm)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: 11, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .fill(CivicaColors.surfacePrimary.opacity(0.92))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 11, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .stroke(CivicaColors.ctaBlue.opacity(0.38), lineWidth: 1)
             )
         }
@@ -571,13 +571,13 @@ private struct MAPVPrimaryActionButtonStyle: ButtonStyle {
             .lineLimit(1)
             .minimumScaleFactor(0.78)
             .padding(.horizontal, CivicaSpacing.md)
-            .padding(.vertical, 11)
+            .padding(.vertical, CivicaSpacing.md)
             .background(
-                RoundedRectangle(cornerRadius: 11, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .fill(backgroundColor(isPressed: configuration.isPressed))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 11, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .stroke(CivicaColors.ctaBlue.opacity(0.24), lineWidth: 1)
             )
     }
@@ -599,8 +599,8 @@ private struct MAPVSecondaryActionButtonStyle: ButtonStyle {
             .foregroundStyle(isEnabled ? CivicaColors.textPrimary : CivicaColors.textSecondary)
             .lineLimit(1)
             .minimumScaleFactor(0.78)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 9)
+            .padding(.horizontal, CivicaSpacing.sm)
+            .padding(.vertical, CivicaSpacing.sm)
             .background(
                 RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .fill(backgroundColor(isPressed: configuration.isPressed))

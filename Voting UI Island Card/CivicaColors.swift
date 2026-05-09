@@ -131,8 +131,8 @@ struct CivicaPrimaryCTAButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .foregroundColor(CivicaColors.onPrimaryText)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
+            .padding(.horizontal, CivicaSpacing.md)
+            .padding(.vertical, CivicaSpacing.sm)
             .background(
                 RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .fill(backgroundColor(isPressed: configuration.isPressed))
@@ -155,8 +155,8 @@ struct CivicaUrgentCTAButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .foregroundColor(CivicaColors.onPrimaryText)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
+            .padding(.horizontal, CivicaSpacing.md)
+            .padding(.vertical, CivicaSpacing.sm)
             .background(
                 RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .fill(backgroundColor(isPressed: configuration.isPressed))

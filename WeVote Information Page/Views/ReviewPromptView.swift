@@ -14,7 +14,7 @@ struct ReviewPromptView: View {
                 .font(.body)
                 .foregroundColor(CivicaColors.textSecondary)
 
-            HStack(spacing: 10) {
+            HStack(spacing: CivicaSpacing.sm) {
                 Button("Not now", action: onNotNow)
                     .font(CivicaTypography.sectionHeader)
                     .foregroundColor(CivicaColors.textPrimary)
@@ -34,7 +34,7 @@ struct ReviewPromptView: View {
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
             }
         }
-        .padding(20)
+        .padding(CivicaSpacing.lg)
         .presentationDetents([.height(250)])
         .presentationDragIndicator(.visible)
     }

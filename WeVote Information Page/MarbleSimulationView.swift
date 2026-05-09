@@ -73,15 +73,15 @@ struct MarbleSimulationView: View {
                             }
                         }
                     } else {
-                        VStack(spacing: 10) {
+                        VStack(spacing: CivicaSpacing.sm) {
                             stageAndControls
                             compactInfoPanel
                         }
                     }
                 }
-                .padding(.horizontal, 14)
-                .padding(.top, 10)
-                .padding(.bottom, 10)
+                .padding(.horizontal, CivicaSpacing.md)
+                .padding(.top, CivicaSpacing.sm)
+                .padding(.bottom, CivicaSpacing.sm)
             }
         }
         .onAppear {
@@ -109,7 +109,7 @@ struct MarbleSimulationView: View {
     }
 
     private var header: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: CivicaSpacing.sm) {
             Button {
                 dismiss()
             } label: {
@@ -120,7 +120,7 @@ struct MarbleSimulationView: View {
             .buttonStyle(.plain)
             .accessibilityLabel("Close ranked-choice simulation")
 
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(title)
                     .font(.title2.weight(.black))
                     .foregroundColor(CivicaColors.textPrimary)
@@ -138,14 +138,14 @@ struct MarbleSimulationView: View {
             Text(controller.stageText)
                 .font(CivicaTypography.captionStrong)
                 .foregroundColor(CivicaColors.textPrimary)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
+                .padding(.horizontal, CivicaSpacing.sm)
+                .padding(.vertical, CivicaSpacing.xs)
                 .background(Capsule().fill(Color.white.opacity(0.9)))
         }
     }
 
     private var stageAndControls: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: CivicaSpacing.sm) {
             if !isEmbedded && controller.shouldShowFeaturedBallotBanner {
                 featuredBallotBanner
             }
@@ -169,7 +169,7 @@ struct MarbleSimulationView: View {
                 .minimumScaleFactor(0.86)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 2)
+        .padding(.horizontal, CivicaSpacing.xs)
     }
 
     private var roundStatusSummaryText: String {
@@ -218,7 +218,7 @@ struct MarbleSimulationView: View {
                 .lineLimit(3)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 10)
+        .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, CivicaSpacing.sm)
         .background(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
@@ -236,10 +236,10 @@ struct MarbleSimulationView: View {
                 let now = timeline.date.timeIntervalSinceReferenceDate
 
                 ZStack {
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
                         .fill(Color.white.opacity(0.9))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
                                 .stroke(CivicaColors.borderSubtle, lineWidth: 1.2)
                         )
 
@@ -299,7 +299,7 @@ struct MarbleSimulationView: View {
     }
 
     private var sideInfoPanel: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             HStack {
                 Text("Round story")
                     .font(CivicaTypography.sectionHeader)
@@ -350,11 +350,11 @@ struct MarbleSimulationView: View {
         }
         .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(Color.white.opacity(0.92))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
     }
@@ -389,7 +389,7 @@ struct MarbleSimulationView: View {
                 }
 
             }
-            .padding(.top, 6)
+            .padding(.top, CivicaSpacing.xs)
         } label: {
             Text("Round story")
                 .font(CivicaTypography.subheadStrong)
@@ -397,11 +397,11 @@ struct MarbleSimulationView: View {
         }
         .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(Color.white.opacity(0.92))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
     }
@@ -477,8 +477,8 @@ struct MarbleSimulationView: View {
                     ? candidateColor.opacity(0.65)
                     : Color.gray.opacity(0.70))
 
-            context.fill(Path(roundedRect: frame, cornerRadius: 13), with: .color(fill))
-            context.stroke(Path(roundedRect: frame, cornerRadius: 13), with: .color(stroke), lineWidth: controller.highlightedCandidateID == candidate.id ? 3 : 1.2)
+            context.fill(Path(roundedRect: frame, cornerRadius: CivicaRadius.lg), with: .color(fill))
+            context.stroke(Path(roundedRect: frame, cornerRadius: CivicaRadius.lg), with: .color(stroke), lineWidth: controller.highlightedCandidateID == candidate.id ? 3 : 1.2)
 
             let count = counts[candidate.id, default: 0]
             let share: Double
@@ -720,7 +720,7 @@ struct MarbleSimulationView: View {
     }
 
     private func infoBadge(title: String, body: String) -> some View {
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(title)
                 .font(CivicaTypography.captionBold)
                 .foregroundColor(CivicaColors.textPrimary)
@@ -799,7 +799,7 @@ private struct RoundedControlButtonStyle: ButtonStyle {
             .lineLimit(1)
             .minimumScaleFactor(0.88)
             .frame(maxWidth: .infinity, minHeight: minHeight)
-            .padding(.horizontal, 10)
+            .padding(.horizontal, CivicaSpacing.sm)
             .padding(.vertical, verticalPadding)
             .background(
                 RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)

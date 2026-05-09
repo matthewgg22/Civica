@@ -11,8 +11,8 @@ struct SNAPEligibilityIntroView: View {
             CivicaColors.brandSoftBlue.ignoresSafeArea()
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 14) {
-                    VStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.md) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                         SNAPIntroHeader(title: "What is SNAP?")
 
                     Text("The Supplemental Nutrition Assistance Program (commonly referred to as SNAP) is a U.S. government program that helps low-income individuals and families buy food.")
@@ -24,7 +24,7 @@ struct SNAPEligibilityIntroView: View {
                         .font(CivicaTypography.subheadStrong)
                         .foregroundStyle(Color.black)
 
-                    VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                         SNAPDescriptionRow(
                             iconName: "creditcard",
                             text: "Monthly benefits are loaded onto an Electronic Benefits Transfer (EBT) card."
@@ -42,7 +42,7 @@ struct SNAPEligibilityIntroView: View {
                             text: "SNAP cannot be used for alcohol, tobacco, or hot prepared meals."
                         )
                     }
-                    .padding(.top, 2)
+                    .padding(.top, CivicaSpacing.xs)
                     }
                     .padding(.vertical, CivicaSpacing.sm)
 
@@ -51,7 +51,7 @@ struct SNAPEligibilityIntroView: View {
                         viewModel.jumpToDraftStep(.nextSteps)
                         continueToGuidedDraft = true
                     } label: {
-                        VStack(alignment: .leading, spacing: 10) {
+                        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                             Text("SNAP prep status")
                                 .font(CivicaTypography.sectionHeader)
                                 .foregroundStyle(CivicaColors.textPrimary)
@@ -79,13 +79,13 @@ struct SNAPEligibilityIntroView: View {
                                 .foregroundStyle(CivicaColors.ctaBlue)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(14)
+                        .padding(CivicaSpacing.md)
                         .background(
-                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                                 .fill(CivicaColors.surfacePrimary)
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                                 .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                         )
                     }
@@ -152,7 +152,7 @@ private struct SNAPIntroHeader: View {
     let title: String
 
     var body: some View {
-        HStack(alignment: .top, spacing: 14) {
+        HStack(alignment: .top, spacing: CivicaSpacing.md) {
             ZStack {
                 RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                     .fill(CivicaColors.surfacePrimary)
@@ -175,7 +175,7 @@ private struct SNAPIntroHeader: View {
                 .foregroundStyle(Color.black)
                 .lineLimit(1)
                 .minimumScaleFactor(0.84)
-                .padding(.top, 2)
+                .padding(.top, CivicaSpacing.xs)
                 .frame(minHeight: 56, alignment: .topLeading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -188,12 +188,12 @@ private struct SNAPDescriptionRow: View {
     let text: String
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
+        HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Image(systemName: iconName)
                 .font(CivicaTypography.footnoteStrong)
                 .foregroundStyle(CivicaColors.ctaBlue)
                 .frame(width: 20, height: 20)
-                .padding(.top, 1)
+                .padding(.top, CivicaSpacing.xs)
 
             Text(text)
                 .font(CivicaTypography.subhead)

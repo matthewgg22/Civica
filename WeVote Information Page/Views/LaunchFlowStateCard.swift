@@ -68,7 +68,7 @@ struct LaunchFlowStateCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
-            HStack(alignment: .center, spacing: 10) {
+            HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                 if state == .loading {
                     ProgressView()
                         .progressViewStyle(.circular)

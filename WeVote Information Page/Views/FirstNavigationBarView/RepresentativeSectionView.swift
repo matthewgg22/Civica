@@ -268,8 +268,8 @@ struct RepRow: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 7) {
-            HStack(spacing: 14) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            HStack(spacing: CivicaSpacing.md) {
                 RepHeadshotView(rep: rep)
                 .frame(width: 65, height: 65)
                 .clipShape(Circle())
@@ -308,7 +308,7 @@ struct RepRow: View {
                         Button {
                             handleActionTap(action)
                         } label: {
-                            HStack(spacing: 6) {
+                            HStack(spacing: CivicaSpacing.xs) {
                                 Image(systemName: action.systemImage)
                                 Text(action.title)
                             }
@@ -384,7 +384,7 @@ struct RepresentativeSection: View {
     var body: some View {
         VStack(spacing: 0) {
             header
-                .padding(.bottom, 10)
+                .padding(.bottom, CivicaSpacing.sm)
 
             ForEach(Array(officials.enumerated()), id: \.element.id) { index, official in
                 RepRow(rep: official)
@@ -393,7 +393,7 @@ struct RepresentativeSection: View {
                 }
             }
         }
-        .padding(.horizontal, 14)
+        .padding(.horizontal, CivicaSpacing.md)
         .padding(.vertical, CivicaSpacing.md)
         .background(CivicaColors.infoSurfaceBlue)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous))
@@ -426,7 +426,7 @@ struct RepresentativeSection: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 29, height: 29)
-                .padding(5)
+                .padding(CivicaSpacing.xs)
                 .background(CivicaColors.ctaBlue.opacity(0.30))
                 .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                 .overlay(
@@ -466,9 +466,9 @@ struct RepresentativeSection: View {
                     .resizable()
                     .scaledToFill()
                     .frame(width: 42, height: 32)
-                    .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 7, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                             .stroke(CivicaColors.ctaBlue.opacity(0.30), lineWidth: 0.9)
                     )
                     .shadow(color: CivicaColors.textPrimary.opacity(0.22), radius: 4, x: 0, y: 2)
@@ -480,9 +480,9 @@ struct RepresentativeSection: View {
                     .frame(width: 22, height: 22)
                     .padding(CivicaSpacing.xs)
                     .background(CivicaColors.ctaBlue.opacity(0.30))
-                    .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 4, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                             .stroke(CivicaColors.ctaBlue.opacity(0.40), lineWidth: 1.3)
                     )
             }

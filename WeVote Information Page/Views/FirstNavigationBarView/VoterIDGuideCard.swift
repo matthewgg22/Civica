@@ -236,7 +236,7 @@ struct VoterIDGuideCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
-                HStack(alignment: .top, spacing: 10) {
+                HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                     Image(systemName: "person.text.rectangle.fill")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(CivicaColors.ctaBlue)
@@ -244,7 +244,7 @@ struct VoterIDGuideCard: View {
                         .background(CivicaColors.ctaBlue.opacity(0.12))
                         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
 
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text(headerText)
                             .font(CivicaTypography.subheadStrong)
                             .foregroundColor(CivicaColors.textSecondary)
@@ -271,8 +271,8 @@ struct VoterIDGuideCard: View {
                         .foregroundColor(categoryAccentColor)
                         .lineLimit(1)
                 }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
+                .padding(.horizontal, CivicaSpacing.sm)
+                .padding(.vertical, CivicaSpacing.xs)
                 .background(categoryAccentColor.opacity(0.12))
                 .overlay(
                     Capsule()
@@ -299,7 +299,7 @@ struct VoterIDGuideCard: View {
                             .foregroundColor(CivicaColors.textPrimary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
-                    .padding(.horizontal, 10)
+                    .padding(.horizontal, CivicaSpacing.sm)
                     .padding(.vertical, CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.infoSurfaceBlue.opacity(0.35))
@@ -310,7 +310,7 @@ struct VoterIDGuideCard: View {
                     Text(note)
                         .font(CivicaTypography.caption)
                         .foregroundColor(CivicaColors.textSecondary)
-                        .padding(.horizontal, 10)
+                        .padding(.horizontal, CivicaSpacing.sm)
                         .padding(.vertical, CivicaSpacing.sm)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(CivicaColors.canvasBackground.opacity(0.88))
@@ -326,7 +326,7 @@ struct VoterIDGuideCard: View {
                         .foregroundColor(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(10)
+                .padding(CivicaSpacing.sm)
                 .background(CivicaColors.infoSurfaceBlue.opacity(0.48))
                 .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
             }
@@ -360,9 +360,9 @@ struct VoterIDGuideCard: View {
                 .resizable()
                 .scaledToFill()
                 .frame(width: stateFlagSize.width, height: stateFlagSize.height)
-                .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 7, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                         .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
                 .background(

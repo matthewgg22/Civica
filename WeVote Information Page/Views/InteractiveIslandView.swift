@@ -71,8 +71,8 @@ struct ExpandedCardView: View {
                 Text("Polls Open")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.white)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, CivicaSpacing.sm)
+                    .padding(.vertical, CivicaSpacing.xs)
                     .background(Color.green)
                     .cornerRadius(CivicaRadius.lg)
             }

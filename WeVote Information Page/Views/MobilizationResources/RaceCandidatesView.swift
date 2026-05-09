@@ -34,7 +34,7 @@ struct RaceCandidatesView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .center, spacing: 20) {
+            VStack(alignment: .center, spacing: CivicaSpacing.lg) {
                 Text(l("app.race_candidates.title.truthful", "Candidates in this race"))
                     .font(CivicaTypography.pageTitle)
                     .multilineTextAlignment(.center)
@@ -57,7 +57,7 @@ struct RaceCandidatesView: View {
                     .multilineTextAlignment(.center)
 
                 ForEach(candidates) { candidate in
-                    VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                         HStack(alignment: .top) {
                             Image(candidate.imageName)
                                 .resizable()
