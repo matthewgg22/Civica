@@ -1930,7 +1930,7 @@ private struct CrowdCueBubble: View {
             Capsule(style: .continuous)
                 .stroke(cue.tint.opacity(0.55), lineWidth: 1)
         )
-        .shadow(color: .black.opacity(0.10), radius: 3, x: 0, y: 1)
+        .civicaShadow(.hairline, color: .black, opacity: 0.10)
         .allowsHitTesting(false)
     }
 }

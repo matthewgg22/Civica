@@ -96,7 +96,7 @@ struct ElectionTimelineCardView: View {
             RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
                 .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
-        .shadow(color: CivicaColors.textPrimary.opacity(0.06), radius: 3, x: 0, y: 1)
+        .civicaShadow(.hairline, opacity: 0.06)
     }
 
     private func l(_ key: String, _ fallback: String) -> String {
