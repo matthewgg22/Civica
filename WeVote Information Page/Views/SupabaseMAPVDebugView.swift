@@ -15,7 +15,7 @@ struct SupabaseMAPVDebugView: View {
 
             Text(statusText)
                 .font(.subheadline)
-                .foregroundStyle(VoteNowColors.mutedText)
+                .foregroundStyle(VoteNowColors.textSecondary)
 
             HStack(spacing: 10) {
                 Button("DEBUG: Insert MAPV") {
@@ -34,7 +34,7 @@ struct SupabaseMAPVDebugView: View {
             if plans.isEmpty {
                 Text("No plans loaded.")
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.mutedText)
+                    .foregroundStyle(VoteNowColors.textSecondary)
             } else {
                 ForEach(plans.prefix(5)) { plan in
                     VStack(alignment: .leading, spacing: 2) {
@@ -42,7 +42,7 @@ struct SupabaseMAPVDebugView: View {
                             .font(.subheadline.weight(.semibold))
                         Text(plan.pollingPlace ?? "No polling place")
                             .font(.footnote)
-                            .foregroundStyle(VoteNowColors.mutedText)
+                            .foregroundStyle(VoteNowColors.textSecondary)
                     }
                     .padding(.vertical, 4)
                 }

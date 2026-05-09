@@ -44,7 +44,7 @@ struct SNAPStepContainerView: View {
                                         Capsule(style: .continuous)
                                             .stroke(
                                                 selectedProgressStep == step
-                                                    ? VoteNowColors.primaryCTA
+                                                    ? VoteNowColors.ctaBlue
                                                     : VoteNowColors.borderSubtle.opacity(0.45),
                                                 lineWidth: selectedProgressStep == step ? 1.5 : 1
                                             )
@@ -68,7 +68,7 @@ struct SNAPStepContainerView: View {
                                 viewModel.jumpToDraftStep(selectedProgressStep)
                             }
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.primaryCTA)
+                            .foregroundStyle(VoteNowColors.ctaBlue)
                             .buttonStyle(.plain)
                         } else if selectedProgressStep == viewModel.draftStep {
                             Text("You are currently on this section.")
@@ -209,12 +209,12 @@ struct SNAPStepContainerView: View {
 
         switch completionState {
         case .missingRequired:
-            return VoteNowColors.urgentCTA.opacity(0.88)
+            return VoteNowColors.ctaRed.opacity(0.88)
         case .missingOptional:
             return VoteNowColors.warningAmber.opacity(0.82)
         case .complete:
             return currentIndex == index
-                ? VoteNowColors.primaryCTA
+                ? VoteNowColors.ctaBlue
                 : VoteNowColors.successGreen.opacity(0.9)
         case .notStarted:
             return currentIndex == index

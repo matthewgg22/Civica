@@ -18,8 +18,8 @@ struct Candidate: Identifiable, Hashable {
     // Party color: blue for Dems, red for Repubs, default for others
     var partyColor: Color {
         let normalized = party.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        if normalized.contains("democrat") { return VoteNowColors.richBlue }
-        if normalized.contains("republican") { return VoteNowColors.richRed }
+        if normalized.contains("democrat") { return VoteNowColors.ctaBlue }
+        if normalized.contains("republican") { return VoteNowColors.ctaRed }
         return .primary
     }
 }
@@ -232,7 +232,7 @@ struct SampleBallotView: View {
                         )
                     )
                     .font(.footnote.weight(.semibold))
-                    .foregroundColor(VoteNowColors.mutedText)
+                    .foregroundColor(VoteNowColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
                 }
 
@@ -243,17 +243,17 @@ struct SampleBallotView: View {
                     )
                 )
                     .font(.subheadline)
-                    .foregroundColor(VoteNowColors.mutedText)
+                    .foregroundColor(VoteNowColors.textSecondary)
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(l("app.sample_ballot.ranked_choice.title", "Ranked-Choice Prep"))
                         .font(.subheadline.weight(.semibold))
                     Text(l("app.sample_ballot.ranked_choice.body_1", "This sample is structured for ranked-choice voting, so you can set your candidate order now before entering the voting booth."))
                         .font(.footnote)
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
                     Text(l("app.sample_ballot.ranked_choice.body_2", "Only candidates matching your selected party registration are shown."))
                         .font(.footnote)
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
                 }
                 .padding(12)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -263,7 +263,7 @@ struct SampleBallotView: View {
                 if filteredRaces.isEmpty {
                     Text(l("app.sample_ballot.empty.no_match", "No candidates match your selected party registration in this sample."))
                         .font(.footnote)
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
@@ -280,18 +280,18 @@ struct SampleBallotView: View {
                             Spacer()
                             Text(lf("app.sample_ballot.count.candidates", "%d candidates", compact.count))
                                 .font(.caption)
-                                .foregroundColor(VoteNowColors.mutedText)
+                                .foregroundColor(VoteNowColors.textSecondary)
                         }
 
                         if !ranked.isEmpty {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text(l("app.sample_ballot.order.title", "Your Ballot Order"))
                                     .font(.caption.weight(.semibold))
-                                    .foregroundColor(VoteNowColors.mutedText)
+                                    .foregroundColor(VoteNowColors.textSecondary)
                                 ForEach(ranked, id: \.candidate.id) { entry in
                                     Text("\(entry.rank). \(entry.candidate.name)")
                                         .font(.caption)
-                                        .foregroundColor(VoteNowColors.primaryText)
+                                        .foregroundColor(VoteNowColors.textPrimary)
                                 }
                             }
                             .padding(10)
@@ -309,11 +309,11 @@ struct SampleBallotView: View {
                         }
                     }
                     .padding(14)
-                    .background(VoteNowColors.background)
+                    .background(VoteNowColors.canvasBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .stroke(VoteNowColors.borderWarm.opacity(0.2), lineWidth: 1)
+                            .stroke(VoteNowColors.borderSubtle.opacity(0.2), lineWidth: 1)
                     )
                 }
             }
@@ -349,8 +349,8 @@ struct CandidateRow: View {
 
     private func color(for party: String) -> Color {
         let normalized = party.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        if normalized.contains("democrat") { return VoteNowColors.richBlue }
-        if normalized.contains("republican") { return VoteNowColors.richRed }
+        if normalized.contains("democrat") { return VoteNowColors.ctaBlue }
+        if normalized.contains("republican") { return VoteNowColors.ctaRed }
         return .secondary
     }
 
@@ -399,7 +399,7 @@ struct CandidateRow: View {
                     Link(destination: url) {
                         Image(systemName: "link.circle.fill")
                             .font(.title3)
-                            .foregroundColor(VoteNowColors.richBlue)
+                            .foregroundColor(VoteNowColors.ctaBlue)
                     }
                 }
 
@@ -416,10 +416,10 @@ struct CandidateRow: View {
                         .foregroundColor(rankSelection == 0 ? .secondary : .blue)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 6)
-                        .background(VoteNowColors.background)
+                        .background(VoteNowColors.canvasBackground)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                .stroke(VoteNowColors.borderWarm.opacity(0.35), lineWidth: 1)
+                                .stroke(VoteNowColors.borderSubtle.opacity(0.35), lineWidth: 1)
                         )
                         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 }

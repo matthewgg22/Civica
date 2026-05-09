@@ -51,7 +51,7 @@ struct SNAPPrivacyNoticeView: View {
                             openURL(officialURL)
                         }
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.primaryCTA)
+                        .foregroundStyle(VoteNowColors.ctaBlue)
                         .buttonStyle(.plain)
                     }
 

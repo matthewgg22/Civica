@@ -37,7 +37,7 @@ struct HowToVoteView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity, alignment: .center)
                                 .padding(.vertical, 12)
-                                .background(VoteNowColors.primaryCTA)
+                                .background(VoteNowColors.ctaBlue)
                                 .clipShape(Capsule(style: .continuous))
                                 .voteNowPillDualOrbit(
                                     redColor: VoteNowColors.ctaRed.opacity(0.94),

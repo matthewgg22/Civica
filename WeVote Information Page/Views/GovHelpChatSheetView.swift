@@ -77,7 +77,7 @@ struct GovHelpChatSheetView: View {
                 chatBody
                 composer
             }
-            .background(VoteNowColors.background)
+            .background(VoteNowColors.canvasBackground)
             .navigationTitle(Text("app.gov_help.title", tableName: "AppShell"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -107,15 +107,15 @@ struct GovHelpChatSheetView: View {
                             ProgressView()
                             Text(l("app.gov_help.thinking", "Thinking..."))
                                 .font(.footnote)
-                                .foregroundColor(VoteNowColors.mutedText)
+                                .foregroundColor(VoteNowColors.textSecondary)
                         }
                         .padding(.horizontal, 14)
                         .padding(.vertical, 10)
-                        .background(VoteNowColors.surfaceWhite)
+                        .background(VoteNowColors.surfacePrimary)
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
                         )
                         .id("typing")
                     }
@@ -145,7 +145,7 @@ struct GovHelpChatSheetView: View {
         VStack(alignment: isUser ? .trailing : .leading, spacing: 8) {
             Text(message.text)
                 .font(.body)
-                .foregroundColor(message.isError ? VoteNowColors.richRed : (isUser ? .white : VoteNowColors.primaryText))
+                .foregroundColor(message.isError ? VoteNowColors.ctaRed : (isUser ? .white : VoteNowColors.textPrimary))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
                 .background(
@@ -154,7 +154,7 @@ struct GovHelpChatSheetView: View {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .stroke(message.isError ? VoteNowColors.richRed.opacity(0.45) : Color.clear, lineWidth: 1)
+                        .stroke(message.isError ? VoteNowColors.ctaRed.opacity(0.45) : Color.clear, lineWidth: 1)
                 )
                 .frame(maxWidth: .infinity, alignment: isUser ? .trailing : .leading)
 
@@ -186,14 +186,14 @@ struct GovHelpChatSheetView: View {
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(width: 38, height: 38)
-                    .background(VoteNowColors.primaryCTA)
+                    .background(VoteNowColors.ctaBlue)
                     .clipShape(Circle())
             }
             .disabled(trimmedInput.isEmpty || isSending)
             .opacity((trimmedInput.isEmpty || isSending) ? 0.45 : 1)
         }
         .padding(12)
-        .background(VoteNowColors.surfaceWhite)
+        .background(VoteNowColors.surfacePrimary)
         .overlay(alignment: .top) {
             Divider()
         }
@@ -274,7 +274,7 @@ struct GovHelpChatSheetView: View {
         if message.isError {
             return VoteNowColors.infoSurfaceRed
         }
-        return isUser ? VoteNowColors.primaryCTA : VoteNowColors.surfaceWhite
+        return isUser ? VoteNowColors.ctaBlue : VoteNowColors.surfacePrimary
     }
 
     private func contexts(for recommendedIDs: [String]) -> [RepCardContext] {
@@ -340,7 +340,7 @@ private struct GovHelpSuggestedContactsView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(l("app.gov_help.suggested_contacts", "Suggested Contacts"))
                 .font(.subheadline.weight(.semibold))
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(VoteNowColors.textPrimary)
 
             ForEach(Array(contexts.enumerated()), id: \.element.repId) { idx, context in
                 RepRow(rep: context.official)
@@ -354,7 +354,7 @@ private struct GovHelpSuggestedContactsView: View {
         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
         )
     }
 
@@ -376,24 +376,24 @@ private struct GovHelpDestinationLinksView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(l("app.gov_help.official_reporting", "Official Reporting"))
                 .font(.subheadline.weight(.semibold))
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(VoteNowColors.textPrimary)
 
             ForEach(destinations) { destination in
                 Link(destination: destination.url) {
                     Label(localizedDestinationLabel(destination), systemImage: "link")
                         .font(.footnote.weight(.semibold))
-                        .foregroundColor(VoteNowColors.primaryCTA)
+                        .foregroundColor(VoteNowColors.ctaBlue)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.vertical, 6)
                 }
             }
         }
         .padding(10)
-        .background(VoteNowColors.surfaceWhite)
+        .background(VoteNowColors.surfacePrimary)
         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
         )
     }
 

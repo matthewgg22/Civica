@@ -375,14 +375,14 @@ private struct MAPVFlowView: View {
                 .background(
                     ZStack {
                         RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .fill(VoteNowColors.background.opacity(0.92))
+                            .fill(VoteNowColors.canvasBackground.opacity(0.92))
                         RoundedRectangle(cornerRadius: 18, style: .continuous)
                             .fill(theme.cardScrimColor.opacity(theme.cardScrimOpacity))
                     }
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .stroke(VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
+                        .stroke(VoteNowColors.textPrimary.opacity(0.08), lineWidth: 1)
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 .shadow(color: .black.opacity(0.10 + (theme.ambientOverlayOpacity * 0.18)), radius: 14, x: 0, y: 8)
@@ -397,9 +397,9 @@ private struct MAPVFlowView: View {
         HStack(spacing: 10) {
             Image(systemName: flowModel.steps[flowModel.currentStepIndex].icon)
                 .font(.title2.weight(.bold))
-                .foregroundStyle(VoteNowColors.richBlue)
+                .foregroundStyle(VoteNowColors.ctaBlue)
                 .frame(width: 36, height: 36)
-                .background(Circle().fill(VoteNowColors.richBlue.opacity(0.13)))
+                .background(Circle().fill(VoteNowColors.ctaBlue.opacity(0.13)))
             Text(stepTitle(for: flowModel.steps[flowModel.currentStepIndex]))
                 .font(.title3.weight(.bold))
                 .lineLimit(2)
@@ -446,7 +446,7 @@ private struct MAPVFlowView: View {
                     onNext()
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(VoteNowColors.primaryCTA)
+                .tint(VoteNowColors.ctaBlue)
                 .frame(minWidth: 78)
                 .disabled(!flowModel.canAdvance(from: flowModel.currentStepIndex))
                 .accessibilityHint(
@@ -459,7 +459,7 @@ private struct MAPVFlowView: View {
                     onFinish()
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(VoteNowColors.primaryCTA)
+                .tint(VoteNowColors.ctaBlue)
                 .frame(minWidth: 78)
                 .disabled(!flowModel.canAdvance(from: flowModel.currentStepIndex))
                 .accessibilityHint(l("app.mapv.accessibility.hint.finish", "Build your final voter plan card"))
@@ -603,7 +603,7 @@ private struct MAPVStepIndicator: View {
     }
 
     private func color(for index: Int) -> Color {
-        if index == currentStep { return VoteNowColors.richBlue }
+        if index == currentStep { return VoteNowColors.ctaBlue }
         if isStepComplete(index) { return .green }
         return .secondary
     }
@@ -611,7 +611,7 @@ private struct MAPVStepIndicator: View {
     private func background(for index: Int) -> Color {
         if index == currentStep { return Color.blue.opacity(0.14) }
         if isStepComplete(index) { return Color.green.opacity(0.12) }
-        return VoteNowColors.borderWarm.opacity(0.10)
+        return VoteNowColors.borderSubtle.opacity(0.10)
     }
 
     private func stepTitle(for step: MAPVStep) -> String {
@@ -670,7 +670,7 @@ struct StepOneView: View {
             VotingMethodCard(
                 methodTitle: methodTitle(for: .mail),
                 emoji: "✉️",
-                accentColor: VoteNowColors.primaryCTA,
+                accentColor: VoteNowColors.ctaBlue,
                 isSelected: selectedMethod == .mail,
                 action: { selectedMethod = .mail }
             ) {
@@ -768,7 +768,7 @@ struct VotingMethodCard<Details: View>: View {
 
                 detailsContent
                     .font(.subheadline)
-                    .foregroundColor(VoteNowColors.primaryText)
+                    .foregroundColor(VoteNowColors.textPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(14)
@@ -785,9 +785,9 @@ struct VotingMethodCard<Details: View>: View {
                         lineWidth: isSelected ? 1.6 : 1
                     )
             )
-            .shadow(color: VoteNowColors.primaryText.opacity(0.1), radius: 3, x: 0, y: 2)
+            .shadow(color: VoteNowColors.textPrimary.opacity(0.1), radius: 3, x: 0, y: 2)
         }
-        .foregroundColor(VoteNowColors.primaryText)
+        .foregroundColor(VoteNowColors.textPrimary)
         .buttonStyle(.plain)
     }
 }
@@ -872,46 +872,46 @@ struct AbsenteeView: View {
             VStack(alignment: .leading, spacing: 14) {
                 Text(l("app.mapv.absentee.hero_title", "📬 Request Your Mail-in Ballot"))
                     .font(.title2.weight(.bold))
-                    .foregroundColor(VoteNowColors.primaryText)
+                    .foregroundColor(VoteNowColors.textPrimary)
                     .padding(.top, 8)
 
                 Text(addressLine)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(VoteNowColors.mutedText)
+                    .foregroundColor(VoteNowColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text(l("app.mapv.absentee.what_mail_in.title", "What is mail-in voting?"))
                         .font(.headline.weight(.semibold))
-                        .foregroundColor(VoteNowColors.primaryText)
+                        .foregroundColor(VoteNowColors.textPrimary)
                     Text(l("app.mapv.absentee.what_mail_in.body", "Mail-in voting lets eligible voters receive a ballot and return it by mail or approved drop-off methods. Some states mail ballots automatically, while others require a request."))
                         .font(.footnote)
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(12)
-                .background(VoteNowColors.surfaceWhite)
+                .background(VoteNowColors.surfacePrimary)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                        .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
                 )
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text(l("app.mapv.absentee.what_absentee.title", "What is absentee voting?"))
                         .font(.headline.weight(.semibold))
-                        .foregroundColor(VoteNowColors.primaryText)
+                        .foregroundColor(VoteNowColors.textPrimary)
                     Text(l("app.mapv.absentee.what_absentee.body", "Absentee voting is a mail-ballot process typically used when you cannot vote in person. Rules and eligibility vary by jurisdiction."))
                         .font(.footnote)
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(12)
-                .background(VoteNowColors.surfaceWhite)
+                .background(VoteNowColors.surfacePrimary)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                        .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
                 )
 
                 if let jurisdiction = selectedJurisdiction {
@@ -925,14 +925,14 @@ struct AbsenteeView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 7, style: .continuous)
-                                            .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                                            .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
                                     )
                                     .opensMyInfoPanelOnLongPress()
                             }
 
                             Text(lf("app.mapv.absentee.jurisdiction_prefix", "Jurisdiction: %@", jurisdiction.displayName))
                                 .font(.title3.weight(.bold))
-                                .foregroundColor(VoteNowColors.primaryText)
+                                .foregroundColor(VoteNowColors.textPrimary)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -943,7 +943,7 @@ struct AbsenteeView: View {
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 11)
-                                    .background(VoteNowColors.primaryCTA)
+                                    .background(VoteNowColors.ctaBlue)
                                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                             }
                             .accessibilityLabel(
@@ -959,7 +959,7 @@ struct AbsenteeView: View {
                             Link(destination: officialURL) {
                                 Text(l("app.mapv.absentee.action.official_info", "Official voter info"))
                                     .font(.subheadline.weight(.semibold))
-                                    .foregroundColor(VoteNowColors.primaryCTA)
+                                    .foregroundColor(VoteNowColors.ctaBlue)
                             }
                             .accessibilityLabel(
                                 lf(
@@ -974,21 +974,21 @@ struct AbsenteeView: View {
 
                         Text(l("app.mapv.absentee.note.confirm_official", "Deadlines can change. Confirm details with your official election office site."))
                             .font(.footnote)
-                            .foregroundColor(VoteNowColors.mutedText)
+                            .foregroundColor(VoteNowColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(14)
-                    .background(VoteNowColors.surfaceWhite)
+                    .background(VoteNowColors.surfacePrimary)
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                            .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
                     )
                     .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
                     Text(l("app.mapv.absentee.fallback.jurisdiction_missing", "We could not detect your jurisdiction yet. Enter your address in My Reps to auto-load absentee and mail-ballot request details."))
                         .font(.subheadline)
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
 
                     fallbackDeadlinesCard
@@ -996,7 +996,7 @@ struct AbsenteeView: View {
             }
             .padding()
         }
-        .background(VoteNowColors.appBackground)
+        .background(VoteNowColors.canvasBackground)
         .navigationTitle(l("app.mail_ballot.navigation.title", "Request Mail-in Ballot"))
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
@@ -1023,17 +1023,17 @@ struct AbsenteeView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text(l("app.mapv.absentee.deadlines.title", "Request deadlines"))
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(VoteNowColors.primaryText)
+                    .foregroundColor(VoteNowColors.textPrimary)
 
                 ForEach(Array(rows.enumerated()), id: \.element.label) { index, row in
                     VStack(alignment: .leading, spacing: 4) {
                         Text(row.label)
                             .font(.subheadline.weight(.semibold))
-                            .foregroundColor(VoteNowColors.mutedText)
+                            .foregroundColor(VoteNowColors.textSecondary)
 
                         styledDeadlineValueText(row.value)
                             .font(.body)
-                            .foregroundColor(VoteNowColors.primaryText)
+                            .foregroundColor(VoteNowColors.textPrimary)
                             .fixedSize(horizontal: false, vertical: true)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -1041,7 +1041,7 @@ struct AbsenteeView: View {
 
                     if index < rows.count - 1 {
                         Divider()
-                            .background(VoteNowColors.primaryCTA.opacity(0.2))
+                            .background(VoteNowColors.ctaBlue.opacity(0.2))
                     }
                 }
 
@@ -1051,11 +1051,11 @@ struct AbsenteeView: View {
                             HStack(alignment: .top, spacing: 7) {
                                 Text("•")
                                     .font(.caption.weight(.bold))
-                                    .foregroundColor(VoteNowColors.mutedText)
+                                    .foregroundColor(VoteNowColors.textSecondary)
                                     .padding(.top, 2)
                                 Text(note)
                                     .font(.footnote)
-                                    .foregroundColor(VoteNowColors.mutedText)
+                                    .foregroundColor(VoteNowColors.textSecondary)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                         }
@@ -1067,7 +1067,7 @@ struct AbsenteeView: View {
                     Link(destination: sourceURL) {
                         Text(l("app.mapv.absentee.source", "Source"))
                             .font(.footnote.weight(.semibold))
-                            .foregroundColor(VoteNowColors.primaryCTA)
+                            .foregroundColor(VoteNowColors.ctaBlue)
                     }
                     .accessibilityLabel(l("app.mapv.absentee.source.a11y", "Open request deadline source"))
                 }
@@ -1078,7 +1078,7 @@ struct AbsenteeView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(VoteNowColors.primaryCTA.opacity(0.18), lineWidth: 1)
+                    .stroke(VoteNowColors.ctaBlue.opacity(0.18), lineWidth: 1)
             )
         } else {
             fallbackDeadlinesCard
@@ -1089,10 +1089,10 @@ struct AbsenteeView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(l("app.mapv.absentee.deadlines.title", "Request deadlines"))
                 .font(.subheadline.weight(.semibold))
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(VoteNowColors.textPrimary)
             Text(l("app.mapv.absentee.deadlines.fallback", "Deadlines vary. Check your election office."))
                 .font(.subheadline)
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(VoteNowColors.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(12)
@@ -1101,7 +1101,7 @@ struct AbsenteeView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(VoteNowColors.primaryCTA.opacity(0.18), lineWidth: 1)
+                .stroke(VoteNowColors.ctaBlue.opacity(0.18), lineWidth: 1)
         )
     }
 
@@ -1313,13 +1313,13 @@ struct StepThreeView: View {
 
             Text(l("app.mapv.step3.helper", "Drag the slider to set your planned arrival time."))
                 .font(.caption)
-                .foregroundColor(VoteNowColors.mutedText)
+                .foregroundColor(VoteNowColors.textSecondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
 
             Text(dayRailMonthLabel)
                 .font(.subheadline.weight(.semibold))
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(VoteNowColors.textPrimary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
 
@@ -1344,11 +1344,11 @@ struct StepThreeView: View {
             HStack(spacing: 10) {
                 Text(l("app.mapv.step3.selected_time", "Selected Time"))
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(VoteNowColors.primaryText)
+                    .foregroundColor(VoteNowColors.textPrimary)
                 Spacer()
                 Text(Self.timeFormatter.string(from: chosenVotingTime))
                     .font(.title3.monospacedDigit().weight(.bold))
-                    .foregroundColor(VoteNowColors.primaryText)
+                    .foregroundColor(VoteNowColors.textPrimary)
             }
             .padding(14)
             .background(
@@ -1593,11 +1593,11 @@ private struct MAPVDayRailSelector: View {
             .padding(.vertical, 7)
             .background(
                 RoundedRectangle(cornerRadius: MAPVDayRailConstants.cellCornerRadius, style: .continuous)
-                    .fill(isSelected ? VoteNowColors.richBlue.opacity(0.20) : VoteNowColors.surfaceWhite.opacity(0.65))
+                    .fill(isSelected ? VoteNowColors.ctaBlue.opacity(0.20) : VoteNowColors.surfacePrimary.opacity(0.65))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: MAPVDayRailConstants.cellCornerRadius, style: .continuous)
-                    .stroke(isSelected ? VoteNowColors.richBlue : VoteNowColors.primaryText.opacity(0.08), lineWidth: isSelected ? 1.2 : 1)
+                    .stroke(isSelected ? VoteNowColors.ctaBlue : VoteNowColors.textPrimary.opacity(0.08), lineWidth: isSelected ? 1.2 : 1)
             )
         }
         .buttonStyle(.plain)
@@ -1770,9 +1770,9 @@ private enum CrowdCue: String {
 
     var tint: Color {
         switch self {
-        case .good: return VoteNowColors.primaryCTA
+        case .good: return VoteNowColors.ctaBlue
         case .busy: return VoteNowColors.warningAmber
-        case .neutral: return VoteNowColors.mutedText
+        case .neutral: return VoteNowColors.textSecondary
         }
     }
 
@@ -1990,16 +1990,16 @@ private struct MAPVTimeSlider: View {
                             .frame(height: MAPVTimeVisualConstants.trackHeight)
 
                         Capsule()
-                            .fill(VoteNowColors.primaryCTA.opacity(0.16))
+                            .fill(VoteNowColors.ctaBlue.opacity(0.16))
                             .frame(width: highlightWidth, height: MAPVTimeVisualConstants.trackHeight + 6)
                             .offset(x: min(max(thumbX - (highlightWidth / 2), 0), width - highlightWidth))
 
                         Circle()
-                            .fill(VoteNowColors.surfaceWhite)
+                            .fill(VoteNowColors.surfacePrimary)
                             .frame(width: MAPVTimeVisualConstants.thumbSize, height: MAPVTimeVisualConstants.thumbSize)
                             .overlay(
                                 Circle()
-                                    .stroke(VoteNowColors.richBlue.opacity(0.75), lineWidth: 3)
+                                    .stroke(VoteNowColors.ctaBlue.opacity(0.75), lineWidth: 3)
                             )
                             .shadow(color: .black.opacity(0.20), radius: 4, x: 0, y: 2)
                             .offset(x: thumbX - (MAPVTimeVisualConstants.thumbSize / 2))
@@ -2034,7 +2034,7 @@ private struct MAPVTimeSlider: View {
             HStack(spacing: 8) {
                 Text(Self.timeFormatter.string(from: openDate))
                     .font(.caption)
-                    .foregroundStyle(VoteNowColors.mutedText)
+                    .foregroundStyle(VoteNowColors.textSecondary)
                     .frame(width: 52, alignment: .leading)
 
                 Spacer(minLength: 4)
@@ -2050,7 +2050,7 @@ private struct MAPVTimeSlider: View {
 
                 Text(Self.timeFormatter.string(from: closeDate))
                     .font(.caption)
-                    .foregroundStyle(VoteNowColors.mutedText)
+                    .foregroundStyle(VoteNowColors.textSecondary)
                     .frame(width: 52, alignment: .trailing)
             }
         }
@@ -2252,7 +2252,7 @@ private struct MAPVTimeVisualOverlay: View {
                         .stroke(
                             LinearGradient(
                                 colors: [
-                                    VoteNowColors.surfaceWhite.opacity(0.60),
+                                    VoteNowColors.surfacePrimary.opacity(0.60),
                                     Color(red: 0.95, green: 0.67, blue: 0.37).opacity(0.75),
                                     Color(red: 0.70, green: 0.58, blue: 0.92).opacity(0.60)
                                 ],
@@ -2482,7 +2482,7 @@ struct StepFourView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(l("app.mapv.step4.almost_done", "You're almost done."))
                         .font(.subheadline.weight(.semibold))
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
                     Text(l("app.mapv.step4.review_card", "Review your card before you finish."))
                         .font(.subheadline)
                         .foregroundColor(.secondary.opacity(0.85))
@@ -2514,7 +2514,7 @@ struct StepFourView: View {
                         }
                         .buttonStyle(.plain)
                         .background(VoteNowColors.infoSurfaceBlue)
-                        .foregroundColor(VoteNowColors.primaryText)
+                        .foregroundColor(VoteNowColors.textPrimary)
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     }
                 }
@@ -2522,7 +2522,7 @@ struct StepFourView: View {
                 if VoteNowLaunchFeatures.shareActionsEnabled {
                     Text(l("app.mapv.step4.share_hint", "Share via text, WhatsApp, or any app in your share sheet."))
                         .font(.caption)
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }

@@ -7,7 +7,7 @@ struct SNAPSecondaryCTAButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundColor(isEnabled ? VoteNowColors.primaryCTA : VoteNowColors.ctaBlueDisabled)
+            .foregroundColor(isEnabled ? VoteNowColors.ctaBlue : VoteNowColors.ctaBlueDisabled)
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
             .background(

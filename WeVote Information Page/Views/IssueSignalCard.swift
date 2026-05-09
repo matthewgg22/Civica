@@ -255,7 +255,7 @@ struct HowCallsBecomeSignalCardDemo: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Only 23% of constituents call their reps annually")
                         .font(.headline)
-                        .foregroundStyle(VoteNowColors.primaryCTA)
+                        .foregroundStyle(VoteNowColors.ctaBlue)
                     Text("When fewer people call, each call carries more signal.")
                         .font(.subheadline)
                 }

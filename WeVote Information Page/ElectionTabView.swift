@@ -19,7 +19,7 @@ struct ElectionTabView: View {
 
       Text(election.subtitle)
         .font(.headline)
-        .foregroundColor(VoteNowColors.mutedText)
+        .foregroundColor(VoteNowColors.textSecondary)
 
       Divider()
 

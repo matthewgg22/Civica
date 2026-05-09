@@ -148,7 +148,7 @@ private struct MyInfoLongPressModifier: ViewModifier {
             .overlay {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .stroke(
-                        VoteNowColors.primaryCTA.opacity(showActivationRing ? 0.76 : (isPressing ? 0.34 : 0)),
+                        VoteNowColors.ctaBlue.opacity(showActivationRing ? 0.76 : (isPressing ? 0.34 : 0)),
                         lineWidth: showActivationRing ? 2 : 1
                     )
                     .padding(-2)
@@ -274,12 +274,12 @@ struct PageHeader: View {
 
 struct VoteNowLogoIcon: View {
     var size: CGFloat = 50
-    var backgroundColor: Color = VoteNowColors.softBlue
-    var stripeColor: Color = VoteNowColors.softRed
+    var backgroundColor: Color = VoteNowColors.brandSoftBlue
+    var stripeColor: Color = VoteNowColors.brandSoftRed
     var cornerRadiusScale: CGFloat = 0.24
     var borderColor: Color = VoteNowColors.iconOnPrimaryBorder
     var borderWidth: CGFloat = 0.6
-    var shadowColor: Color = VoteNowColors.primaryText.opacity(0.14)
+    var shadowColor: Color = VoteNowColors.textPrimary.opacity(0.14)
 
     var body: some View {
         let stripeScaleY: CGFloat = size < 30 ? 0.95 : 0.80
@@ -348,7 +348,7 @@ extension VoteNowLogoIcon {
 
 private struct VoteNowTabBarsIcon: View {
     var size: CGFloat = 28
-    var color: Color = VoteNowColors.softRed
+    var color: Color = VoteNowColors.brandSoftRed
     var horizontalStretch: CGFloat = 1.5
 
     var body: some View {
@@ -399,7 +399,7 @@ struct WhyVoteFloodOverlay: View {
     var originInSpreadSpace: CGPoint?
 
     @State private var dynamicFloodColor: Color = VoteNowColors.brandSoftBlue
-    private let accent = VoteNowColors.softRed
+    private let accent = VoteNowColors.brandSoftRed
     private let logoSize: CGFloat = 50
     private let headerHorizontalPadding: CGFloat = 16
     // Matches page layout: outer content padding (16) + header top padding (4).
@@ -535,7 +535,7 @@ struct WhyCallFloodOverlay: View {
     var onStartCalling: () -> Void = {}
 
     private let floodColor = VoteNowColors.brandSoftBlue
-    private let accent = VoteNowColors.softRed
+    private let accent = VoteNowColors.brandSoftRed
     private let logoSize: CGFloat = 50
     private let headerHorizontalPadding: CGFloat = 16
     private let headerTopPadding: CGFloat = 10
@@ -795,14 +795,14 @@ struct WhyCallView: View {
                 systemImage: "bubble.left.and.bubble.right.fill"
             )
             .font(.subheadline.weight(.semibold))
-            .foregroundColor(VoteNowColors.primaryCTA)
+            .foregroundColor(VoteNowColors.ctaBlue)
             .padding(.horizontal, 10)
             .padding(.vertical, 7)
-            .background(VoteNowColors.surfaceWhite)
+            .background(VoteNowColors.surfacePrimary)
             .clipShape(Capsule(style: .continuous))
             .overlay(
                 Capsule(style: .continuous)
-                    .stroke(VoteNowColors.primaryCTA.opacity(0.34), lineWidth: 1)
+                    .stroke(VoteNowColors.ctaBlue.opacity(0.34), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
@@ -838,7 +838,7 @@ private struct WhyCallStatCard: View {
         VStack(alignment: .leading, spacing: 6) {
             Text(stat.value)
                 .font(.title2.weight(.bold))
-                .foregroundStyle(VoteNowColors.primaryCTA)
+                .foregroundStyle(VoteNowColors.ctaBlue)
             if !stat.title.isEmpty {
                 Text(stat.title)
                     .font(.headline)
@@ -854,7 +854,7 @@ private struct WhyCallStatCard: View {
         .clipShape(RoundedRectangle(cornerRadius: VoteNowColors.cardCornerRadius, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: VoteNowColors.cardCornerRadius, style: .continuous)
-                .stroke(VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
+                .stroke(VoteNowColors.textPrimary.opacity(0.08), lineWidth: 1)
         )
         .accessibilityElement(children: .combine)
     }
@@ -878,7 +878,7 @@ private struct WhyCallReasonCard: View {
         .clipShape(RoundedRectangle(cornerRadius: VoteNowColors.cardCornerRadius, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: VoteNowColors.cardCornerRadius, style: .continuous)
-                .stroke(VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
+                .stroke(VoteNowColors.textPrimary.opacity(0.08), lineWidth: 1)
         )
         .accessibilityElement(children: .combine)
     }
@@ -895,7 +895,7 @@ private struct WhyCallBottomCTA: View {
             if !note.isEmpty {
                 Text(note)
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.mutedText)
+                    .foregroundStyle(VoteNowColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
 

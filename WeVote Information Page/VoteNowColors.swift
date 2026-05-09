@@ -2,6 +2,8 @@ import SwiftUI
 import UIKit
 
 enum VoteNowColors {
+    private static let statusSurfaceAlpha: Double = 0.13
+
     // Semantic surfaces and text
     static let canvasBackground = Color.dynamic(light: "#FFF8F3", dark: "#111418")
     static let surfacePrimary = Color.dynamic(light: "#FFFFFF", dark: "#1B1F24")
@@ -16,7 +18,7 @@ enum VoteNowColors {
 
     // Core Brand tones
     static let brandSoftBlue = Color.dynamic(light: "#B3DEF2", dark: "#3A596F")
-    static let brandSoftRed = Color.dynamic(light: "#DF5846", dark: "#8E3F36")
+    static let brandSoftRed = Color.dynamic(light: "#E88578", dark: "#8E3F36")
 
     // Accent and state colors
     static let ctaBlue = Color.dynamic(light: "#246AA8", dark: "#246AA8")
@@ -30,27 +32,13 @@ enum VoteNowColors {
     static let neutralStatus = Color.dynamic(light: "#5A5F66", dark: "#5A5F66")
     static let indigoStatus = Color.dynamic(light: "#4F46A5", dark: "#4F46A5")
 
-    // Backward-compatible aliases used across existing views
-    static let richBlue = ctaBlue
-    static let richRed = ctaRed
-    static let softBlue = brandSoftBlue
-    static let softRed = brandSoftRed
-    static let background = canvasBackground
-    static let appBackground = canvasBackground
-    static let surfaceWhite = surfacePrimary
-    static let borderWarm = borderSubtle
-    static let mutedText = textSecondary
-    static let primaryText = textPrimary
-
-    static let primaryCTA = ctaBlue
-    static let urgentCTA = ctaRed
     static let infoSurfaceBlue = Color.dynamic(light: "#B3DEF252", dark: "#3A596F5F")
     static let infoSurfaceRed = Color.dynamic(light: "#DF584624", dark: "#8E3F3638")
-    static let statusSuccessSurface = successGreen.opacity(0.14)
-    static let statusWarningSurface = warningAmber.opacity(0.15)
-    static let statusErrorSurface = urgentCTA.opacity(0.13)
-    static let statusInfoSurface = primaryCTA.opacity(0.12)
-    static let statusNeutralSurface = neutralStatus.opacity(0.13)
+    static let statusSuccessSurface = successGreen.opacity(statusSurfaceAlpha)
+    static let statusWarningSurface = warningAmber.opacity(statusSurfaceAlpha)
+    static let statusErrorSurface = ctaRed.opacity(statusSurfaceAlpha)
+    static let statusInfoSurface = ctaBlue.opacity(statusSurfaceAlpha)
+    static let statusNeutralSurface = neutralStatus.opacity(statusSurfaceAlpha)
     static let secondaryButtonFill = surfaceSecondary
     static let secondaryButtonFillPressed = Color.dynamic(light: "#EAF4FB", dark: "#313B47")
     static let secondaryButtonFillDisabled = Color.dynamic(light: "#EEF3F7", dark: "#252C33")
@@ -62,9 +50,6 @@ enum VoteNowColors {
     static let timelineFocusGold = Color.dynamic(light: "#D79B1F", dark: "#F3D487")
     static let cardCornerRadius: CGFloat = 12
 }
-
-// Backward-compatible typealias so existing references continue compiling.
-typealias VoteNowColor = VoteNowColors
 
 extension Color {
     static func dynamic(light: String, dark: String) -> Color {
@@ -154,7 +139,7 @@ struct VoteNowPrimaryCTAButtonStyle: ButtonStyle {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(VoteNowColors.primaryCTA.opacity(0.24), lineWidth: 1)
+                    .stroke(VoteNowColors.ctaBlue.opacity(0.24), lineWidth: 1)
             )
     }
 
@@ -178,7 +163,7 @@ struct VoteNowUrgentCTAButtonStyle: ButtonStyle {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(VoteNowColors.urgentCTA.opacity(0.24), lineWidth: 1)
+                    .stroke(VoteNowColors.ctaRed.opacity(0.24), lineWidth: 1)
             )
     }
 

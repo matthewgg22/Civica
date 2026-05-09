@@ -129,14 +129,14 @@ struct HoldToConfirmButton: View {
         if isConfirmed {
             return VoteNowColors.successGreen.opacity(0.82)
         }
-        return VoteNowColors.primaryCTA.opacity(0.34 + (Double(progress) * 0.42))
+        return VoteNowColors.ctaBlue.opacity(0.34 + (Double(progress) * 0.42))
     }
 
     private var textColor: Color {
         if isConfirmed {
-            return VoteNowColors.surfaceWhite
+            return VoteNowColors.surfacePrimary
         }
-        return progress > 0.52 ? VoteNowColors.surfaceWhite : VoteNowColors.primaryText
+        return progress > 0.52 ? VoteNowColors.surfacePrimary : VoteNowColors.textPrimary
     }
 
     private var buttonText: String {

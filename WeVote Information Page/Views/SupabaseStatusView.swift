@@ -31,7 +31,7 @@ struct SupabaseStatusView: View {
             if let error = authStore.lastError, !error.isEmpty {
                 Text(error)
                     .font(.footnote.weight(.semibold))
-                    .foregroundColor(VoteNowColors.richRed)
+                    .foregroundColor(VoteNowColors.ctaRed)
                     .padding(10)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(VoteNowColors.statusErrorSurface)
@@ -85,7 +85,7 @@ struct SupabaseStatusView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(VoteNowColors.primaryCTA.opacity(0.18), lineWidth: 1)
+                .stroke(VoteNowColors.ctaBlue.opacity(0.18), lineWidth: 1)
         )
         .task {
             guard shouldAutoRefresh else { return }
@@ -142,7 +142,7 @@ struct SupabaseStatusView: View {
         }
         return StatusIndicator(
             iconName: "exclamationmark.triangle.fill",
-            tint: VoteNowColors.richRed,
+            tint: VoteNowColors.ctaRed,
             surface: VoteNowColors.statusErrorSurface
         )
     }
@@ -165,7 +165,7 @@ struct SupabaseStatusView: View {
                 }
                 Text(value)
                     .font(.subheadline)
-                    .foregroundStyle(VoteNowColors.mutedText)
+                    .foregroundStyle(VoteNowColors.textSecondary)
                     .multilineTextAlignment(.trailing)
                     .lineLimit(2)
             }

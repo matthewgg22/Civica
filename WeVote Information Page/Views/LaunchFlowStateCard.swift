@@ -47,11 +47,11 @@ struct LaunchFlowStateCard: View {
     private var iconColor: Color {
         switch state {
         case .loading:
-            return VoteNowColors.primaryCTA
+            return VoteNowColors.ctaBlue
         case .empty:
-            return VoteNowColors.mutedText
+            return VoteNowColors.textSecondary
         case .error:
-            return VoteNowColors.urgentCTA
+            return VoteNowColors.ctaRed
         }
     }
 
@@ -81,7 +81,7 @@ struct LaunchFlowStateCard: View {
 
                 Text(title)
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(VoteNowColors.primaryText)
+                    .foregroundColor(VoteNowColors.textPrimary)
             }
 
             Text(stateLabel)
@@ -94,7 +94,7 @@ struct LaunchFlowStateCard: View {
 
             Text(message)
                 .font(.subheadline)
-                .foregroundColor(VoteNowColors.mutedText)
+                .foregroundColor(VoteNowColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             if let primaryActionTitle, let primaryAction {
@@ -109,11 +109,11 @@ struct LaunchFlowStateCard: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(VoteNowColors.surfaceWhite)
+        .background(VoteNowColors.surfacePrimary)
         .clipShape(RoundedRectangle(cornerRadius: VoteNowColors.cardCornerRadius, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: VoteNowColors.cardCornerRadius, style: .continuous)
-                .stroke(VoteNowColors.borderWarm.opacity(0.72), lineWidth: 1)
+                .stroke(VoteNowColors.borderSubtle.opacity(0.72), lineWidth: 1)
         )
     }
 }
@@ -132,7 +132,7 @@ private struct LaunchFlowPrimaryCTAButtonStyle: ButtonStyle {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(VoteNowColors.primaryCTA.opacity(0.24), lineWidth: 1)
+                    .stroke(VoteNowColors.ctaBlue.opacity(0.24), lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.99 : 1)
             .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
@@ -150,7 +150,7 @@ private struct LaunchFlowSecondaryCTAButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.subheadline.weight(.semibold))
-            .foregroundColor(isEnabled ? VoteNowColors.primaryCTA : VoteNowColors.mutedText)
+            .foregroundColor(isEnabled ? VoteNowColors.ctaBlue : VoteNowColors.textSecondary)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)

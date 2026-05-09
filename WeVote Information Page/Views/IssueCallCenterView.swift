@@ -499,8 +499,8 @@ struct IssueCallCenterView: View {
         ]
 
         var map: [String: Color] = [
-            Self.allExamplesFilterLabel.lowercased(): VoteNowColors.primaryCTA,
-            Self.urgentExamplesFilterLabel.lowercased(): VoteNowColors.urgentCTA,
+            Self.allExamplesFilterLabel.lowercased(): VoteNowColors.ctaBlue,
+            Self.urgentExamplesFilterLabel.lowercased(): VoteNowColors.ctaRed,
             Self.searchExamplesFilterLabel.lowercased(): Color(hex: "#0F766E")
         ]
         let categories = exampleCategoryOptions.filter {
@@ -711,11 +711,11 @@ struct IssueCallCenterView: View {
             VStack(alignment: .leading, spacing: 12) {
                 Text("Call Your Reps")
                     .font(.title3.weight(.bold))
-                    .foregroundColor(VoteNowColors.primaryText)
+                    .foregroundColor(VoteNowColors.textPrimary)
 
                 Text("Pick an issue, use a script, and log what happened after each call.")
                     .font(.subheadline)
-                    .foregroundColor(VoteNowColors.mutedText)
+                    .foregroundColor(VoteNowColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Button("Ready to Call!") {
@@ -725,19 +725,19 @@ struct IssueCallCenterView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 11)
                 .foregroundColor(.white)
-                .background(VoteNowColors.primaryCTA)
+                .background(VoteNowColors.ctaBlue)
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 .buttonStyle(.plain)
                 .accessibilityIdentifier("issue_call.intro.ready")
             }
             .padding(16)
-            .background(VoteNowColors.surfaceWhite)
+            .background(VoteNowColors.surfacePrimary)
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                    .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
             )
-            .shadow(color: VoteNowColors.primaryText.opacity(0.2), radius: 14, x: 0, y: 4)
+            .shadow(color: VoteNowColors.textPrimary.opacity(0.2), radius: 14, x: 0, y: 4)
             .padding(.horizontal, 20)
         }
     }
@@ -773,7 +773,7 @@ struct IssueCallCenterView: View {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text(userAddressLine)
                             .font(.title3.weight(.semibold))
-                            .foregroundColor(VoteNowColors.mutedText)
+                            .foregroundColor(VoteNowColors.textSecondary)
                             .lineLimit(2)
                             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -819,7 +819,7 @@ struct IssueCallCenterView: View {
                                 .foregroundColor(.white)
                                 .frame(minWidth: 58, minHeight: 32, alignment: .center)
                                 .padding(.horizontal, 8)
-                                .background(VoteNowColors.primaryCTA)
+                                .background(VoteNowColors.ctaBlue)
                                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                         }
                         .buttonStyle(.plain)
@@ -833,7 +833,7 @@ struct IssueCallCenterView: View {
                 if !userAddressLine.isEmpty {
                     Text(userAddressLine)
                         .font(.subheadline.weight(.semibold))
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
                         .lineLimit(1)
                         .minimumScaleFactor(0.84)
                         .truncationMode(.tail)
@@ -848,7 +848,7 @@ struct IssueCallCenterView: View {
                         Text(l("app.reps.action.edit_location", "Change Location"))
                             .font(.callout.weight(.semibold))
                             .italic()
-                            .foregroundColor(VoteNowColors.primaryCTA)
+                            .foregroundColor(VoteNowColors.ctaBlue)
                             .lineLimit(1)
                     }
                     .buttonStyle(.plain)
@@ -885,7 +885,7 @@ struct IssueCallCenterView: View {
                         + Text(l("app.issue_call.location.change_address", "Change to your Address..."))
                             .font(.caption.weight(.bold))
                             .italic()
-                            .foregroundColor(VoteNowColors.primaryCTA)
+                            .foregroundColor(VoteNowColors.ctaBlue)
                     )
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -938,26 +938,26 @@ struct IssueCallCenterView: View {
 
                 Text(label)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor((isComplete || isCurrent) ? .white : VoteNowColors.primaryText)
+                    .foregroundColor((isComplete || isCurrent) ? .white : VoteNowColors.textPrimary)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .background(
                         isComplete
                         ? VoteNowColors.warningAmber
                         : (isCurrent
-                           ? (isLastStep ? VoteNowColors.successGreen : VoteNowColors.primaryCTA)
-                           : VoteNowColors.surfaceWhite)
+                           ? (isLastStep ? VoteNowColors.successGreen : VoteNowColors.ctaBlue)
+                           : VoteNowColors.surfacePrimary)
                     )
                     .clipShape(Capsule())
                     .overlay(
                         Capsule()
-                            .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                            .stroke(VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
                     )
 
                 if index < safeProgressLabelCount - 1 {
                     Image(systemName: "chevron.right")
                         .font(.footnote.weight(.bold))
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
                 }
             }
         }
@@ -982,13 +982,13 @@ struct IssueCallCenterView: View {
         .padding(.vertical, 5)
         .background(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(VoteNowColors.surfaceWhite)
+                .fill(VoteNowColors.surfacePrimary)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(VoteNowColors.primaryCTA.opacity(0.22), lineWidth: 2)
+                .stroke(VoteNowColors.ctaBlue.opacity(0.22), lineWidth: 2)
         )
-        .shadow(color: VoteNowColors.primaryText.opacity(0.06), radius: 6, x: 0, y: 2)
+        .shadow(color: VoteNowColors.textPrimary.opacity(0.06), radius: 6, x: 0, y: 2)
         .padding(.horizontal, 16)
         .padding(.top, 2)
         .padding(.bottom, 4)
@@ -1008,7 +1008,7 @@ struct IssueCallCenterView: View {
         } label: {
             Text(tabNavigationTitle(for: tab))
                 .font(.caption.weight(isActive ? .bold : .semibold))
-                .foregroundColor(isActive ? .white : VoteNowColors.primaryText)
+                .foregroundColor(isActive ? .white : VoteNowColors.textPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.68)
                 .allowsTightening(true)
@@ -1060,13 +1060,13 @@ struct IssueCallCenterView: View {
     private func issueCallTopTabHighlightColor(for tab: CivicIssueCallTab) -> Color {
         switch tab {
         case .assistant:
-            return VoteNowColors.primaryCTA
+            return VoteNowColors.ctaBlue
         case .examples:
             return VoteNowColors.warningAmber
         case .civicScore:
             return VoteNowColors.successGreen
         case .history:
-            return VoteNowColors.primaryCTA
+            return VoteNowColors.ctaBlue
         }
     }
 
@@ -1240,7 +1240,7 @@ struct IssueCallCenterView: View {
                 } else {
                     Text(l("app.issue_call.empty.filtered", "No briefs match this representative filter."))
                         .font(.subheadline)
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
                 }
             }
             .padding(.horizontal, 16)
@@ -1282,15 +1282,15 @@ struct IssueCallCenterView: View {
                             AssistantThinkingLogoView()
                             Text("Building background + script preview…")
                                 .font(.footnote)
-                                .foregroundColor(VoteNowColors.mutedText)
+                                .foregroundColor(VoteNowColors.textSecondary)
                         }
                         .padding(.horizontal, 14)
                         .padding(.vertical, 10)
-                        .background(VoteNowColors.surfaceWhite)
+                        .background(VoteNowColors.surfacePrimary)
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                                .stroke(VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
                         )
                         .id("assistant-typing")
                     }
@@ -1354,19 +1354,19 @@ struct IssueCallCenterView: View {
         return VStack(alignment: .leading, spacing: 4) {
             Text("MAPC v3 \(viewModel.generationPath) | reason: \(reasonCode)")
                 .font(.caption2.weight(.semibold))
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(VoteNowColors.textPrimary)
             Text("fallback: \(fallback) | reset: \(reset)")
                 .font(.caption2)
-                .foregroundColor(VoteNowColors.mutedText)
+                .foregroundColor(VoteNowColors.textSecondary)
                 .lineLimit(2)
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
-        .background(VoteNowColors.surfaceWhite)
+        .background(VoteNowColors.surfacePrimary)
         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                .stroke(VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
         )
     }
     #endif
@@ -1381,11 +1381,11 @@ struct IssueCallCenterView: View {
                 if message.kind == .structured {
                     Text("Issue Snapshot")
                         .font(.caption.weight(.semibold))
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
                 } else if message.kind == .script {
                     Text("Script Preview")
                         .font(.caption.weight(.semibold))
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
                 }
 
                 if isUser {
@@ -1432,7 +1432,7 @@ struct IssueCallCenterView: View {
                         }
                     )
                     .font(message.kind == .structured ? .system(.footnote, design: .monospaced) : .body)
-                    .foregroundColor(VoteNowColors.primaryText)
+                    .foregroundColor(VoteNowColors.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
                     .textSelection(.enabled)
                 }
@@ -1441,11 +1441,11 @@ struct IssueCallCenterView: View {
             .padding(.vertical, 10)
             .background(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(isUser ? VoteNowColors.primaryCTA : VoteNowColors.surfaceWhite)
+                    .fill(isUser ? VoteNowColors.ctaBlue : VoteNowColors.surfacePrimary)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(isUser ? .clear : VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                    .stroke(isUser ? .clear : VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
             )
             .frame(maxWidth: .infinity, alignment: isUser ? .trailing : .leading)
             if !isUser { Spacer(minLength: 28) }
@@ -1475,7 +1475,7 @@ struct IssueCallCenterView: View {
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(width: 36, height: 36)
-                    .background(VoteNowColors.primaryCTA)
+                    .background(VoteNowColors.ctaBlue)
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
@@ -1486,13 +1486,13 @@ struct IssueCallCenterView: View {
         .padding(.vertical, 10)
         .background(
             Capsule(style: .continuous)
-                .fill(VoteNowColors.surfaceWhite)
+                .fill(VoteNowColors.surfacePrimary)
         )
         .overlay(
             Capsule(style: .continuous)
-                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                .stroke(VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
         )
-        .shadow(color: VoteNowColors.primaryText.opacity(0.05), radius: 5, x: 0, y: 2)
+        .shadow(color: VoteNowColors.textPrimary.opacity(0.05), radius: 5, x: 0, y: 2)
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
     }
@@ -1503,7 +1503,7 @@ struct IssueCallCenterView: View {
                 // mapc_pipeline_v3 — remove flag check after rollout confirmed
                 Text("Pick the first action you want the office to take.")
                     .font(.caption.weight(.semibold))
-                    .foregroundColor(VoteNowColors.mutedText)
+                    .foregroundColor(VoteNowColors.textSecondary)
 
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 165), spacing: 8)], spacing: 8) {
                     ForEach(Array(viewModel.mapcV3AskOptions.prefix(4))) { option in
@@ -1512,16 +1512,16 @@ struct IssueCallCenterView: View {
                         } label: {
                             Text(sanitizedMAPCV3OptionLabel(option.displayAsk))
                                 .font(.caption.weight(.semibold))
-                                .foregroundColor(VoteNowColors.primaryText)
+                                .foregroundColor(VoteNowColors.textPrimary)
                                 .multilineTextAlignment(.leading)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 9)
-                                .background(VoteNowColors.surfaceWhite)
+                                .background(VoteNowColors.surfacePrimary)
                                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                        .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                                        .stroke(VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
                                 )
                         }
                         .buttonStyle(.plain)
@@ -1530,12 +1530,12 @@ struct IssueCallCenterView: View {
             } else {
                 Text("Does this match what you meant?")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(VoteNowColors.primaryText)
+                    .foregroundColor(VoteNowColors.textPrimary)
 
                 if !hasPickedDiscussionOptionInCurrentCycle && !discussionOptionsForCurrentBackground.isEmpty {
                     Text("Pick a direction and I’ll execute it in the script:")
                         .font(.caption.weight(.semibold))
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
 
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 165), spacing: 8)], spacing: 8) {
                         ForEach(discussionOptionsForCurrentBackground, id: \.self) { option in
@@ -1544,16 +1544,16 @@ struct IssueCallCenterView: View {
                             } label: {
                                 Text(option)
                                     .font(.caption.weight(.semibold))
-                                    .foregroundColor(VoteNowColors.primaryText)
+                                    .foregroundColor(VoteNowColors.textPrimary)
                                     .multilineTextAlignment(.leading)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 9)
-                                    .background(VoteNowColors.surfaceWhite)
+                                    .background(VoteNowColors.surfacePrimary)
                                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                            .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                                            .stroke(VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
                                     )
                             }
                             .buttonStyle(.plain)
@@ -1567,14 +1567,14 @@ struct IssueCallCenterView: View {
                     } label: {
                         Text("Revise")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundColor(VoteNowColors.primaryText)
+                            .foregroundColor(VoteNowColors.textPrimary)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
-                            .background(VoteNowColors.surfaceWhite)
+                            .background(VoteNowColors.surfacePrimary)
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                                    .stroke(VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
                             )
                     }
                     .buttonStyle(.plain)
@@ -1587,7 +1587,7 @@ struct IssueCallCenterView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
-                            .background(VoteNowColors.primaryCTA)
+                            .background(VoteNowColors.ctaBlue)
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     }
                     .buttonStyle(.plain)
@@ -1595,11 +1595,11 @@ struct IssueCallCenterView: View {
             }
         }
         .padding(12)
-        .background(VoteNowColors.surfaceWhite.opacity(0.6))
+        .background(VoteNowColors.surfacePrimary.opacity(0.6))
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                .stroke(VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
         )
     }
 
@@ -1608,36 +1608,36 @@ struct IssueCallCenterView: View {
             if previewLintBlocked {
                 Text("I hit a snag, but I still have your issue.")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(VoteNowColors.primaryText)
+                    .foregroundColor(VoteNowColors.textPrimary)
 
                 Text("Pick a fix or restate the action you want.")
                     .font(.caption.weight(.semibold))
-                    .foregroundColor(VoteNowColors.mutedText)
+                    .foregroundColor(VoteNowColors.textSecondary)
 
                 Button {
                     fixMAPCV3PreviewInChat()
                 } label: {
                     Text("Fix this")
                         .font(.subheadline.weight(.semibold))
-                        .foregroundColor(VoteNowColors.primaryText)
+                        .foregroundColor(VoteNowColors.textPrimary)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
-                        .background(VoteNowColors.surfaceWhite)
+                        .background(VoteNowColors.surfacePrimary)
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                                .stroke(VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
                         )
                 }
                 .buttonStyle(.plain)
             } else {
                 Text("Review the draft preview below.")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(VoteNowColors.primaryText)
+                    .foregroundColor(VoteNowColors.textPrimary)
 
                 Text("Looks right approves this script and moves you into call flow.")
                     .font(.caption.weight(.semibold))
-                    .foregroundColor(VoteNowColors.mutedText)
+                    .foregroundColor(VoteNowColors.textSecondary)
 
                 HStack(spacing: 8) {
                     Button {
@@ -1645,14 +1645,14 @@ struct IssueCallCenterView: View {
                     } label: {
                         Text("Fix this")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundColor(VoteNowColors.primaryText)
+                            .foregroundColor(VoteNowColors.textPrimary)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
-                            .background(VoteNowColors.surfaceWhite)
+                            .background(VoteNowColors.surfacePrimary)
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                                    .stroke(VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
                             )
                     }
                     .buttonStyle(.plain)
@@ -1665,7 +1665,7 @@ struct IssueCallCenterView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
-                            .background(VoteNowColors.primaryCTA)
+                            .background(VoteNowColors.ctaBlue)
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     }
                     .buttonStyle(.plain)
@@ -1673,11 +1673,11 @@ struct IssueCallCenterView: View {
             }
         }
         .padding(12)
-        .background(VoteNowColors.surfaceWhite.opacity(0.6))
+        .background(VoteNowColors.surfacePrimary.opacity(0.6))
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                .stroke(VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
         )
     }
 
@@ -1685,7 +1685,7 @@ struct IssueCallCenterView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Approve and call when ready.")
                 .font(.subheadline.weight(.semibold))
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(VoteNowColors.textPrimary)
 
             HStack(spacing: 8) {
                 Button {
@@ -1696,18 +1696,18 @@ struct IssueCallCenterView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
-                        .background(VoteNowColors.primaryCTA)
+                        .background(VoteNowColors.ctaBlue)
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
                 .buttonStyle(.plain)
             }
         }
         .padding(12)
-        .background(VoteNowColors.surfaceWhite.opacity(0.6))
+        .background(VoteNowColors.surfacePrimary.opacity(0.6))
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                .stroke(VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
         )
     }
 
@@ -1736,11 +1736,11 @@ struct IssueCallCenterView: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 10)
             .accessibilityIdentifier("issue_call.concern_input")
-            .background(VoteNowColors.surfaceWhite)
+            .background(VoteNowColors.surfacePrimary)
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                    .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
             )
 
             if !viewModel.mapcPipelineV3Enabled {
@@ -1756,15 +1756,15 @@ struct IssueCallCenterView: View {
                             } label: {
                                 Text(ask.title)
                                     .font(.caption.weight(.semibold))
-                                    .foregroundColor(viewModel.selectedAsk == ask ? .white : VoteNowColors.primaryText)
+                                    .foregroundColor(viewModel.selectedAsk == ask ? .white : VoteNowColors.textPrimary)
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 8)
                                     .frame(maxWidth: .infinity)
-                                    .background(viewModel.selectedAsk == ask ? VoteNowColors.primaryCTA : VoteNowColors.surfaceWhite)
+                                    .background(viewModel.selectedAsk == ask ? VoteNowColors.ctaBlue : VoteNowColors.surfacePrimary)
                                     .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 9, style: .continuous)
-                                            .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                                            .stroke(VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
                                     )
                             }
                             .buttonStyle(.plain)
@@ -1788,11 +1788,11 @@ struct IssueCallCenterView: View {
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 10)
-            .background(VoteNowColors.surfaceWhite)
+            .background(VoteNowColors.surfacePrimary)
             .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 9, style: .continuous)
-                    .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                    .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
             )
             .accessibilityIdentifier("issue_call.bill_input")
 
@@ -1810,7 +1810,7 @@ struct IssueCallCenterView: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
-                .background(viewModel.canSubmit ? VoteNowColors.primaryCTA : VoteNowColors.mutedText.opacity(0.45))
+                .background(viewModel.canSubmit ? VoteNowColors.ctaBlue : VoteNowColors.textSecondary.opacity(0.45))
                 .clipShape(RoundedRectangle(cornerRadius: 11, style: .continuous))
             }
             .buttonStyle(.plain)
@@ -1818,11 +1818,11 @@ struct IssueCallCenterView: View {
             .accessibilityIdentifier("issue_call.generate")
         }
         .padding(12)
-        .background(VoteNowColors.surfaceWhite.opacity(0.55))
+        .background(VoteNowColors.surfacePrimary.opacity(0.55))
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+                .stroke(VoteNowColors.borderSubtle.opacity(0.7), lineWidth: 1)
         )
     }
 
@@ -3058,7 +3058,7 @@ struct IssueCallCenterView: View {
 
             Text("Looks right? Use this script. Not right? Revise and regenerate.")
                 .font(.subheadline)
-                .foregroundColor(VoteNowColors.mutedText)
+                .foregroundColor(VoteNowColors.textSecondary)
 
             HStack(spacing: 8) {
                 Button {
@@ -3067,14 +3067,14 @@ struct IssueCallCenterView: View {
                 } label: {
                     Text("Revise")
                         .font(.subheadline.weight(.semibold))
-                        .foregroundColor(VoteNowColors.primaryText)
+                        .foregroundColor(VoteNowColors.textPrimary)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
-                        .background(VoteNowColors.surfaceWhite)
+                        .background(VoteNowColors.surfacePrimary)
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                                .stroke(VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
                         )
                 }
                 .buttonStyle(.plain)
@@ -3093,18 +3093,18 @@ struct IssueCallCenterView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
-                        .background(VoteNowColors.primaryCTA)
+                        .background(VoteNowColors.ctaBlue)
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
                 .buttonStyle(.plain)
             }
         }
         .padding(12)
-        .background(VoteNowColors.surfaceWhite.opacity(0.55))
+        .background(VoteNowColors.surfacePrimary.opacity(0.55))
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+                .stroke(VoteNowColors.borderSubtle.opacity(0.7), lineWidth: 1)
         )
     }
 
@@ -3112,17 +3112,17 @@ struct IssueCallCenterView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Draft preview for \(brief.repName)")
                 .font(.subheadline.weight(.semibold))
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(VoteNowColors.textPrimary)
 
             scriptBlock(title: "Live-call Script (Draft)", text: maskedRepresentativePreviewText(brief.liveScript, brief: brief))
             scriptBlock(title: "Voicemail Script (Draft)", text: maskedRepresentativePreviewText(brief.voicemailScript, brief: brief))
         }
         .padding(12)
-        .background(VoteNowColors.surfaceWhite)
+        .background(VoteNowColors.surfacePrimary)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+                .stroke(VoteNowColors.borderSubtle.opacity(0.7), lineWidth: 1)
         )
     }
 
@@ -3149,7 +3149,7 @@ struct IssueCallCenterView: View {
             if !isMAPCMode, !isIssueSummaryDuplicate {
                 Text(cleanedIssueSummaryForTopCard(viewModel.issueSummary))
                     .font(.subheadline)
-                    .foregroundColor(VoteNowColors.primaryText)
+                    .foregroundColor(VoteNowColors.textPrimary)
             }
 
             if !talkingPoints.isEmpty && isTalkingPointsExpanded && !isMAPCMode {
@@ -3160,7 +3160,7 @@ struct IssueCallCenterView: View {
                         ForEach(Array(talkingPoints.enumerated()), id: \.offset) { _, point in
                             Text("• \(point)")
                                 .font(.caption)
-                                .foregroundColor(VoteNowColors.primaryText)
+                                .foregroundColor(VoteNowColors.textPrimary)
                         }
                     }
                     .padding(.top, 4)
@@ -3179,12 +3179,12 @@ struct IssueCallCenterView: View {
         }
         .padding(isMAPCMode ? 0 : 10)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(isMAPCMode ? Color.clear : VoteNowColors.surfaceWhite)
+        .background(isMAPCMode ? Color.clear : VoteNowColors.surfacePrimary)
         .clipShape(RoundedRectangle(cornerRadius: isMAPCMode ? 0 : 12, style: .continuous))
         .overlay {
             if !isMAPCMode {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+                    .stroke(VoteNowColors.borderSubtle.opacity(0.7), lineWidth: 1)
             }
         }
     }
@@ -3249,20 +3249,20 @@ struct IssueCallCenterView: View {
                     .clipShape(Circle())
                     .overlay(
                         Circle()
-                            .stroke(VoteNowColors.borderWarm.opacity(0.9), lineWidth: 1)
+                            .stroke(VoteNowColors.borderSubtle.opacity(0.9), lineWidth: 1)
                     )
-                    .shadow(color: VoteNowColors.primaryText.opacity(0.06), radius: 2, x: 0, y: 1)
+                    .shadow(color: VoteNowColors.textPrimary.opacity(0.06), radius: 2, x: 0, y: 1)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(displayRepName)
                         .font(.headline)
                     Text(displayOfficeType)
                         .font(.subheadline)
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
             if let official, let district = official.district {
                 Text(district)
                     .font(.caption)
-                    .foregroundColor(VoteNowColors.mutedText)
+                    .foregroundColor(VoteNowColors.textSecondary)
             }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -3299,7 +3299,7 @@ struct IssueCallCenterView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 11)
-                            .background(primaryCallURL == nil ? VoteNowColors.mutedText.opacity(0.45) : VoteNowColors.primaryCTA)
+                            .background(primaryCallURL == nil ? VoteNowColors.textSecondary.opacity(0.45) : VoteNowColors.ctaBlue)
                             .clipShape(Capsule(style: .continuous))
                             .voteNowPillDualOrbit(
                                 enabled: true,
@@ -3322,7 +3322,7 @@ struct IssueCallCenterView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 11)
-                            .background(primaryCallURL == nil ? VoteNowColors.mutedText.opacity(0.45) : VoteNowColors.primaryCTA)
+                            .background(primaryCallURL == nil ? VoteNowColors.textSecondary.opacity(0.45) : VoteNowColors.ctaBlue)
                             .clipShape(Capsule(style: .continuous))
                         }
                     }
@@ -3385,11 +3385,11 @@ struct IssueCallCenterView: View {
                         HStack(spacing: 8) {
                             Text("Voicemail Script")
                                 .font(.subheadline.weight(.semibold))
-                                .foregroundColor(VoteNowColors.primaryText)
+                                .foregroundColor(VoteNowColors.textPrimary)
                             Spacer(minLength: 0)
                             Image(systemName: isVoicemailExpanded ? "chevron.up" : "chevron.down")
                                 .font(.caption.weight(.bold))
-                                .foregroundColor(VoteNowColors.primaryCTA)
+                                .foregroundColor(VoteNowColors.ctaBlue)
                         }
                         .padding(.horizontal, 10)
                         .padding(.vertical, 8)
@@ -3398,7 +3398,7 @@ struct IssueCallCenterView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: 9, style: .continuous)
-                                .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                                .stroke(VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
                         )
                     }
                     .buttonStyle(.plain)
@@ -3442,7 +3442,7 @@ struct IssueCallCenterView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
-                                .background(VoteNowColors.primaryCTA)
+                                .background(VoteNowColors.ctaBlue)
                                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                         }
                         .buttonStyle(.plain)
@@ -3458,10 +3458,10 @@ struct IssueCallCenterView: View {
         }
         .padding(12)
         .id(brief.id)
-        .background(VoteNowColors.surfaceWhite)
+        .background(VoteNowColors.surfacePrimary)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .shadow(
-            color: condensedForMAPC ? VoteNowColors.primaryText.opacity(0.08) : .clear,
+            color: condensedForMAPC ? VoteNowColors.textPrimary.opacity(0.08) : .clear,
             radius: condensedForMAPC ? 6 : 0,
             x: 0,
             y: condensedForMAPC ? 2 : 0
@@ -3470,8 +3470,8 @@ struct IssueCallCenterView: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(
                     condensedForMAPC
-                    ? VoteNowColors.borderWarm.opacity(0.5)
-                    : (isActive ? VoteNowColors.primaryCTA : VoteNowColors.borderWarm.opacity(0.7)),
+                    ? VoteNowColors.borderSubtle.opacity(0.5)
+                    : (isActive ? VoteNowColors.ctaBlue : VoteNowColors.borderSubtle.opacity(0.7)),
                     lineWidth: condensedForMAPC ? 0.9 : 1
                 )
         )
@@ -3524,7 +3524,7 @@ struct IssueCallCenterView: View {
             .background(
                 canAdvance
                 ? VoteNowColors.warningAmber
-                : VoteNowColors.mutedText.opacity(0.45)
+                : VoteNowColors.textSecondary.opacity(0.45)
             )
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         }
@@ -3608,7 +3608,7 @@ struct IssueCallCenterView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "magnifyingglass")
                             .font(.caption.weight(.semibold))
-                            .foregroundColor(VoteNowColors.mutedText)
+                            .foregroundColor(VoteNowColors.textSecondary)
                         TextField(
                             l("app.issue_call.examples.search_placeholder", "Search premade scripts"),
                             text: $exampleSearchQuery
@@ -3620,23 +3620,23 @@ struct IssueCallCenterView: View {
                     }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 10)
-                    .background(VoteNowColors.surfaceWhite)
+                    .background(VoteNowColors.surfacePrimary)
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+                            .stroke(VoteNowColors.borderSubtle.opacity(0.7), lineWidth: 1)
                     )
                 }
 
                 if viewModel.examples.isEmpty {
                     Text(l("app.issue_call.examples.empty", "No example cards are available right now."))
                         .font(.subheadline)
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
                 } else if filteredExamples.isEmpty {
                     VStack(alignment: .leading, spacing: 10) {
                         Text(l("app.issue_call.examples.empty_for_category", "No examples match this category yet."))
                             .font(.subheadline)
-                            .foregroundColor(VoteNowColors.mutedText)
+                            .foregroundColor(VoteNowColors.textSecondary)
 
                         if selectedExampleCategory.caseInsensitiveCompare(Self.searchExamplesFilterLabel) == .orderedSame {
                             Button {
@@ -3649,7 +3649,7 @@ struct IssueCallCenterView: View {
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 10)
                                 .frame(maxWidth: .infinity, alignment: .center)
-                                .background(VoteNowColors.primaryCTA)
+                                .background(VoteNowColors.ctaBlue)
                                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                                 .voteNowPillDualOrbit(
                                     redColor: VoteNowColors.ctaRed.opacity(0.94),
@@ -3721,16 +3721,16 @@ struct IssueCallCenterView: View {
                         }
 
                         emphasizedPromptText(example.summary, baseFont: .subheadline)
-                            .foregroundColor(VoteNowColors.primaryText)
+                            .foregroundColor(VoteNowColors.textPrimary)
                             .fixedSize(horizontal: false, vertical: true)
 
                         if let actionSentence = premadeOptionalDisplayText(example.actionSentence) {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Action request")
                                     .font(.caption.weight(.semibold))
-                                    .foregroundColor(VoteNowColors.mutedText)
+                                    .foregroundColor(VoteNowColors.textSecondary)
                                 emphasizedPromptText(actionSentence, baseFont: .subheadline)
-                                    .foregroundColor(VoteNowColors.primaryText)
+                                    .foregroundColor(VoteNowColors.textPrimary)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                         }
@@ -3747,11 +3747,11 @@ struct IssueCallCenterView: View {
                             HStack(spacing: 8) {
                                 Text("Live-call Script")
                                     .font(.subheadline.weight(.semibold))
-                                    .foregroundColor(VoteNowColors.primaryText)
+                                    .foregroundColor(VoteNowColors.textPrimary)
                                 Spacer(minLength: 0)
                                 Image(systemName: expandedPremadeLiveScriptIDs.contains(example.id) ? "chevron.up" : "chevron.down")
                                     .font(.caption.weight(.bold))
-                                    .foregroundColor(VoteNowColors.primaryCTA)
+                                    .foregroundColor(VoteNowColors.ctaBlue)
                             }
                             .padding(.horizontal, 10)
                             .padding(.vertical, 8)
@@ -3782,18 +3782,18 @@ struct IssueCallCenterView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 10)
-                                .background(VoteNowColors.primaryCTA)
+                                .background(VoteNowColors.ctaBlue)
                                 .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
                         }
                         .buttonStyle(.plain)
                         .disabled(viewModel.isSubmitting)
                     }
                     .padding(12)
-                    .background(VoteNowColors.surfaceWhite)
+                    .background(VoteNowColors.surfacePrimary)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+                            .stroke(VoteNowColors.borderSubtle.opacity(0.7), lineWidth: 1)
                     )
                     .transition(.move(edge: .top).combined(with: .opacity))
                 }
@@ -3811,15 +3811,15 @@ struct IssueCallCenterView: View {
                             Image(systemName: showAllPremadeExamples ? "chevron.up" : "chevron.down")
                                 .font(.caption.weight(.semibold))
                         }
-                        .foregroundColor(VoteNowColors.primaryCTA)
+                        .foregroundColor(VoteNowColors.ctaBlue)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 10)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(VoteNowColors.surfaceWhite)
+                        .background(VoteNowColors.surfacePrimary)
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+                                .stroke(VoteNowColors.borderSubtle.opacity(0.7), lineWidth: 1)
                         )
                     }
                     .buttonStyle(.plain)
@@ -3876,26 +3876,26 @@ struct IssueCallCenterView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("How calling works")
                         .font(.headline)
-                        .foregroundColor(VoteNowColors.primaryText)
+                        .foregroundColor(VoteNowColors.textPrimary)
                     Text("1. Keep your issue specific so the script is clear and actionable.")
                         .font(.subheadline)
-                        .foregroundColor(VoteNowColors.primaryText)
+                        .foregroundColor(VoteNowColors.textPrimary)
                     Text("2. Include a concrete congressional action (support, oppose, fund, vote, or oversight).")
                         .font(.subheadline)
-                        .foregroundColor(VoteNowColors.primaryText)
+                        .foregroundColor(VoteNowColors.textPrimary)
                     Text("3. Add a bill, program, or agency when possible to improve personalization.")
                         .font(.subheadline)
-                        .foregroundColor(VoteNowColors.primaryText)
+                        .foregroundColor(VoteNowColors.textPrimary)
                     Text("4. Use the generated script as a guide, then personalize your opening line and local impact.")
                         .font(.subheadline)
-                        .foregroundColor(VoteNowColors.primaryText)
+                        .foregroundColor(VoteNowColors.textPrimary)
                 }
                 .padding(12)
-                .background(VoteNowColors.surfaceWhite)
+                .background(VoteNowColors.surfacePrimary)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+                        .stroke(VoteNowColors.borderSubtle.opacity(0.7), lineWidth: 1)
                 )
             }
             .padding(.horizontal, 16)
@@ -3925,22 +3925,22 @@ struct IssueCallCenterView: View {
 
             Text(outcomeSummaryLine)
                 .font(.subheadline.weight(.semibold))
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(VoteNowColors.textPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
 
             Text("\(displayedTotalCalls.formatted(.number)) \(l("app.issue_call.score.stats.community_calls", "Community calls"))")
                 .font(.caption)
-                .foregroundColor(VoteNowColors.mutedText)
+                .foregroundColor(VoteNowColors.textSecondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(VoteNowColors.surfaceWhite)
+        .background(VoteNowColors.surfacePrimary)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+                .stroke(VoteNowColors.borderSubtle.opacity(0.7), lineWidth: 1)
         )
     }
 
@@ -3954,7 +3954,7 @@ struct IssueCallCenterView: View {
             HStack(alignment: .firstTextBaseline, spacing: 10) {
                 Text("\(displayedUserCalls.formatted(.number)) \(l("app.issue_call.score.stats.your_calls", "Your calls"))")
                     .font(.system(size: 36, weight: .bold, design: .rounded))
-                    .foregroundColor(VoteNowColors.primaryCTA)
+                    .foregroundColor(VoteNowColors.ctaBlue)
 
                 if showGainBadge {
                     Text("+\(gain)")
@@ -3979,10 +3979,10 @@ struct IssueCallCenterView: View {
         HStack(alignment: .firstTextBaseline, spacing: 10) {
             Text(value.formatted(.number))
                 .font(.title3.weight(.bold))
-                .foregroundColor(VoteNowColors.primaryCTA)
+                .foregroundColor(VoteNowColors.ctaBlue)
             Text(label)
                 .font(.subheadline)
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(VoteNowColors.textPrimary)
         }
     }
 
@@ -4019,7 +4019,7 @@ struct IssueCallCenterView: View {
                                 .joined(separator: ", ")
                         )
                         .font(.caption)
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
                     }
                 } else {
                     Text(l("app.issue_call.completion.no_change", "No score change"))
@@ -4029,16 +4029,16 @@ struct IssueCallCenterView: View {
                         ?? l("app.issue_call.completion.duplicate_default", "A recent duplicate call was logged, so score and leaderboard counts did not change.")
                     )
                     .font(.caption)
-                    .foregroundColor(VoteNowColors.mutedText)
+                    .foregroundColor(VoteNowColors.textSecondary)
                 }
             }
             .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(VoteNowColors.surfaceWhite)
+            .background(VoteNowColors.surfacePrimary)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+                    .stroke(VoteNowColors.borderSubtle.opacity(0.7), lineWidth: 1)
             )
         }
     }
@@ -4052,7 +4052,7 @@ struct IssueCallCenterView: View {
             if trackerGroups.isEmpty {
                 Text(l("app.issue_call.history.empty", "Your call history will appear here after you generate and log call briefs."))
                     .font(.subheadline)
-                    .foregroundColor(VoteNowColors.mutedText)
+                    .foregroundColor(VoteNowColors.textSecondary)
             } else {
                 ForEach(trackerGroups.prefix(4)) { group in
                     let outcomeRows = trackerOutcomeRows(for: group)
@@ -4073,7 +4073,7 @@ struct IssueCallCenterView: View {
                         HStack(alignment: .center, spacing: 10) {
                             Text(group.date.formatted(date: .abbreviated, time: .shortened))
                                 .font(.caption)
-                                .foregroundColor(VoteNowColors.mutedText)
+                                .foregroundColor(VoteNowColors.textSecondary)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 5)
                                 .background(VoteNowColors.infoSurfaceBlue)
@@ -4088,7 +4088,7 @@ struct IssueCallCenterView: View {
                                 )
                             )
                                 .font(.caption2.weight(.semibold))
-                                .foregroundColor(VoteNowColors.mutedText)
+                                .foregroundColor(VoteNowColors.textSecondary)
                         }
 
                         trackerIssueProgressBar(completedCalls: displayedCompletedCalls)
@@ -4103,7 +4103,7 @@ struct IssueCallCenterView: View {
                                         VStack(alignment: .center, spacing: 2) {
                                             Text(trackerDisplayLastName(from: row.repName))
                                                 .font(.caption.weight(.semibold))
-                                                .foregroundColor(VoteNowColors.primaryText)
+                                                .foregroundColor(VoteNowColors.textPrimary)
                                                 .lineLimit(1)
                                                 .multilineTextAlignment(.center)
                                             Text(row.outcome.title)
@@ -4139,18 +4139,18 @@ struct IssueCallCenterView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 8)
-                                .background(VoteNowColors.primaryCTA)
+                                .background(VoteNowColors.ctaBlue)
                                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         }
                         .buttonStyle(.plain)
                     }
                     .padding(12)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(VoteNowColors.surfaceWhite)
+                    .background(VoteNowColors.surfacePrimary)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .stroke(VoteNowColors.borderWarm.opacity(0.7), lineWidth: 1)
+                            .stroke(VoteNowColors.borderSubtle.opacity(0.7), lineWidth: 1)
                     )
                 }
             }
@@ -4260,12 +4260,12 @@ struct IssueCallCenterView: View {
                     .fill(VoteNowColors.infoSurfaceBlue)
 
                 Capsule()
-                    .fill(VoteNowColors.primaryCTA)
+                    .fill(VoteNowColors.ctaBlue)
                     .frame(width: filledWidth)
             }
             .overlay(
                 Capsule()
-                    .stroke(VoteNowColors.borderWarm.opacity(0.5), lineWidth: 0.7)
+                    .stroke(VoteNowColors.borderSubtle.opacity(0.5), lineWidth: 0.7)
             )
         }
         .frame(maxWidth: .infinity)
@@ -4398,13 +4398,13 @@ struct IssueCallCenterView: View {
             } label: {
                 Image(systemName: "square.and.arrow.up")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(VoteNowColors.primaryCTA)
+                    .foregroundColor(VoteNowColors.ctaBlue)
                     .frame(width: 34, height: 34)
-                    .background(VoteNowColors.surfaceWhite)
+                    .background(VoteNowColors.surfacePrimary)
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(VoteNowColors.primaryCTA.opacity(0.4), lineWidth: 1)
+                            .stroke(VoteNowColors.ctaBlue.opacity(0.4), lineWidth: 1)
                     )
             }
             .buttonStyle(.plain)
@@ -4727,7 +4727,7 @@ struct IssueCallCenterView: View {
                 }
             }
             emphasizedPromptText(text, baseFont: .footnote)
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(VoteNowColors.textPrimary)
                 .lineLimit(textLineLimit)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -4738,7 +4738,7 @@ struct IssueCallCenterView: View {
         .overlay {
             if usesMapcCardChrome {
                 RoundedRectangle(cornerRadius: 9, style: .continuous)
-                    .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                    .stroke(VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
             }
         }
     }
@@ -4752,7 +4752,7 @@ struct IssueCallCenterView: View {
                 ForEach(Array(talkingPoints.enumerated()), id: \.offset) { _, point in
                     Text("• \(point)")
                         .font(.caption)
-                        .foregroundColor(VoteNowColors.primaryText)
+                        .foregroundColor(VoteNowColors.textPrimary)
                 }
             }
             .padding(.top, 2)
@@ -4764,7 +4764,7 @@ struct IssueCallCenterView: View {
         .overlay {
             if usesMapcCardChrome {
                 RoundedRectangle(cornerRadius: 9, style: .continuous)
-                    .stroke(VoteNowColors.borderWarm.opacity(0.8), lineWidth: 1)
+                    .stroke(VoteNowColors.borderSubtle.opacity(0.8), lineWidth: 1)
             }
         }
     }
@@ -4777,7 +4777,7 @@ struct IssueCallCenterView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
                 .multilineTextAlignment(.center)
             emphasizedPromptText(text, baseFont: .footnote)
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(VoteNowColors.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(10)
@@ -4829,7 +4829,7 @@ struct IssueCallCenterView: View {
             if let telURL = URL(string: "tel:\(phone.filter(\.isNumber))"), !phone.filter(\.isNumber).isEmpty {
                 Link(phone, destination: telURL)
                     .font(.caption)
-                    .foregroundColor(VoteNowColors.primaryCTA)
+                    .foregroundColor(VoteNowColors.ctaBlue)
             } else {
                 Text(phone)
                     .font(.caption)
@@ -4926,12 +4926,12 @@ struct IssueCallCenterView: View {
                             .background(
                                 selectedOutcome == outcome
                                 ? outcomeColor(for: outcome)
-                                : VoteNowColors.primaryCTA
+                                : VoteNowColors.ctaBlue
                             )
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .stroke(VoteNowColors.borderWarm.opacity(0.95), lineWidth: 1)
+                                    .stroke(VoteNowColors.borderSubtle.opacity(0.95), lineWidth: 1)
                             )
                     }
                     .buttonStyle(.plain)
@@ -4991,7 +4991,7 @@ struct IssueCallCenterView: View {
             return VoteNowColors.warningAmber
         case .voicemail:
             // Neutral status (neither positive nor negative).
-            return VoteNowColors.mutedText
+            return VoteNowColors.textSecondary
         case .unavailable:
             // Explicit muted gray for unreachable outcomes.
             return Color.gray
@@ -5001,9 +5001,9 @@ struct IssueCallCenterView: View {
         case .supportive:
             return VoteNowColors.successGreen
         case .opposed:
-            return VoteNowColors.urgentCTA
+            return VoteNowColors.ctaRed
         case .other:
-            return VoteNowColors.mutedText
+            return VoteNowColors.textSecondary
         }
     }
 
@@ -5036,7 +5036,7 @@ struct IssueCallCenterView: View {
         case .undecided, .stafferReached:
             return VoteNowColors.infoSurfaceBlue
         case .voicemail, .other:
-            return VoteNowColors.borderWarm.opacity(0.58)
+            return VoteNowColors.borderSubtle.opacity(0.58)
         case .unavailable:
             return Color.gray.opacity(0.2)
         case .followUpRequested:
@@ -5044,7 +5044,7 @@ struct IssueCallCenterView: View {
         case .supportive:
             return VoteNowColors.successGreen.opacity(0.18)
         case .opposed:
-            return VoteNowColors.urgentCTA.opacity(0.18)
+            return VoteNowColors.ctaRed.opacity(0.18)
         }
     }
 
@@ -5250,7 +5250,7 @@ struct IssueCallCenterView: View {
                 Image(systemName: isTalkingPointsExpanded ? "chevron.up" : "chevron.down")
                     .font(.caption2.weight(.bold))
             }
-            .foregroundColor(VoteNowColors.primaryCTA)
+            .foregroundColor(VoteNowColors.ctaBlue)
             .padding(.horizontal, 8)
             .padding(.vertical, 5)
             .background(VoteNowColors.infoSurfaceBlue)
@@ -5281,7 +5281,7 @@ struct IssueCallCenterView: View {
         if let mapped = exampleCategoryColorMap[normalized] {
             return mapped
         }
-        return VoteNowColors.primaryCTA
+        return VoteNowColors.ctaBlue
     }
 }
 
@@ -5475,7 +5475,7 @@ private struct IssueCallRepHeadshotView: View {
                 .resizable()
                 .scaledToFit()
                 .padding(8)
-                .foregroundColor(VoteNowColors.mutedText.opacity(0.55))
+                .foregroundColor(VoteNowColors.textSecondary.opacity(0.55))
         }
     }
 

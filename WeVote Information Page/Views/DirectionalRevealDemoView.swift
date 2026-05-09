@@ -61,11 +61,11 @@ struct DirectionalRevealDemoView: View {
                         } label: {
                             Image(systemName: "bolt.fill")
                                 .font(.system(size: 20, weight: .bold))
-                                .foregroundStyle(VoteNowColors.surfaceWhite)
+                                .foregroundStyle(VoteNowColors.surfacePrimary)
                                 .frame(width: 56, height: 56)
                                 .background(
                                     Circle()
-                                        .fill(VoteNowColors.primaryText.opacity(0.32))
+                                        .fill(VoteNowColors.textPrimary.opacity(0.32))
                                 )
                         }
                         .buttonStyle(.plain)
@@ -85,7 +85,7 @@ struct DirectionalRevealDemoView: View {
             .clipShape(RoundedRectangle(cornerRadius: containerCornerRadius, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: containerCornerRadius, style: .continuous)
-                    .strokeBorder(VoteNowColors.surfaceWhite.opacity(0.4), lineWidth: 1)
+                    .strokeBorder(VoteNowColors.surfacePrimary.opacity(0.4), lineWidth: 1)
             }
             .padding(20)
             .onPreferenceChange(IconCenterPreferenceKey.self) { newCenter in

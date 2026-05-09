@@ -112,7 +112,7 @@ struct MAPVCardView: View {
                     if !presentation.secondaryMetaText.isEmpty {
                         Text(presentation.secondaryMetaText)
                             .font(.subheadline)
-                            .foregroundStyle(VoteNowColors.mutedText)
+                            .foregroundStyle(VoteNowColors.textSecondary)
                             .lineLimit(1)
                     }
                 }
@@ -182,7 +182,7 @@ struct MAPVCardView: View {
 
                     Text(l("app.mapv.card.action.voted_hint", "Press and hold for 5 seconds to confirm."))
                         .font(.caption2.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.mutedText)
+                        .foregroundStyle(VoteNowColors.textSecondary)
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
@@ -200,7 +200,7 @@ struct MAPVCardView: View {
             if !liveActivitiesAvailable {
                 Text(l("app.mapv.card.live_activity.disabled_detail", "Live Activities are disabled on this device. Enable them in Settings."))
                     .font(.caption)
-                    .foregroundStyle(VoteNowColors.mutedText)
+                    .foregroundStyle(VoteNowColors.textSecondary)
             }
         }
         .padding(14)
@@ -210,7 +210,7 @@ struct MAPVCardView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
-                .stroke(VoteNowColors.richBlue.opacity(0.25), lineWidth: 1)
+                .stroke(VoteNowColors.ctaBlue.opacity(0.25), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous))
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: presentation.status)
@@ -256,20 +256,20 @@ struct MAPVCardView: View {
                         .frame(width: 21, height: 21)
                         .background(
                             Circle()
-                                .fill(VoteNowColors.background.opacity(0.95))
+                                .fill(VoteNowColors.canvasBackground.opacity(0.95))
                                 .overlay(
                                     Circle()
-                                        .stroke(VoteNowColors.primaryText.opacity(0.7), lineWidth: 0.8)
+                                        .stroke(VoteNowColors.textPrimary.opacity(0.7), lineWidth: 0.8)
                                 )
                         )
                         .offset(x: min(max(closeX - 10.5, 0), width - 21))
 
                     Circle()
-                        .fill(VoteNowColors.surfaceWhite)
+                        .fill(VoteNowColors.surfacePrimary)
                         .frame(width: 14, height: 14)
                         .overlay(
                             Circle()
-                                .stroke(VoteNowColors.primaryText.opacity(0.75), lineWidth: 1.5)
+                                .stroke(VoteNowColors.textPrimary.opacity(0.75), lineWidth: 1.5)
                         )
                         .shadow(color: VoteNowColors.shadowSoft, radius: 2, x: 0, y: 1)
                         .offset(x: min(max(nowX - 7, 0), width - 14))
@@ -284,7 +284,7 @@ struct MAPVCardView: View {
                 Text(shortTime(dayEnd.addingTimeInterval(-60)))
             }
             .font(.subheadline.weight(.semibold))
-            .foregroundStyle(VoteNowColors.primaryText)
+            .foregroundStyle(VoteNowColors.textPrimary)
         }
     }
 
@@ -301,7 +301,7 @@ struct MAPVCardView: View {
                 .font(.headline)
             Text(l("app.mapv.card.empty.body", "No plan saved yet. Build your voting plan to enable a live activity."))
                 .font(.subheadline)
-                .foregroundStyle(VoteNowColors.mutedText)
+                .foregroundStyle(VoteNowColors.textSecondary)
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -328,7 +328,7 @@ struct MAPVCardView: View {
             if let source = status?.completionSource, !source.isEmpty {
                 Text("Source: \(source)")
                     .font(.caption)
-                    .foregroundStyle(VoteNowColors.mutedText)
+                    .foregroundStyle(VoteNowColors.textSecondary)
             }
         }
         .padding(10)
@@ -372,10 +372,10 @@ struct MAPVCardView: View {
 
     private func color(for token: MAPVStatusColorToken) -> Color {
         switch token {
-        case .blue: return VoteNowColors.primaryCTA
+        case .blue: return VoteNowColors.ctaBlue
         case .green: return VoteNowColors.successGreen
         case .orange: return VoteNowColors.warningAmber
-        case .red: return VoteNowColors.richRed
+        case .red: return VoteNowColors.ctaRed
         case .gray: return VoteNowColors.neutralStatus
         case .indigo: return VoteNowColors.indigoStatus
         }
@@ -427,17 +427,17 @@ struct MAPVCardView: View {
                     .font(.caption.weight(.bold))
             }
             .font(.subheadline.weight(.semibold))
-            .foregroundStyle(VoteNowColors.primaryText)
+            .foregroundStyle(VoteNowColors.textPrimary)
             .padding(.horizontal, 12)
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: 11, style: .continuous)
-                    .fill(VoteNowColors.surfaceWhite.opacity(0.92))
+                    .fill(VoteNowColors.surfacePrimary.opacity(0.92))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 11, style: .continuous)
-                    .stroke(VoteNowColors.primaryCTA.opacity(0.38), lineWidth: 1)
+                    .stroke(VoteNowColors.ctaBlue.opacity(0.38), lineWidth: 1)
             )
         }
     }
@@ -578,13 +578,13 @@ private struct MAPVPrimaryActionButtonStyle: ButtonStyle {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 11, style: .continuous)
-                    .stroke(VoteNowColors.primaryCTA.opacity(0.24), lineWidth: 1)
+                    .stroke(VoteNowColors.ctaBlue.opacity(0.24), lineWidth: 1)
             )
     }
 
     private func backgroundColor(isPressed: Bool) -> Color {
         guard isEnabled else { return VoteNowColors.ctaBlueDisabled }
-        return isPressed ? VoteNowColors.ctaBluePressed : VoteNowColors.primaryCTA
+        return isPressed ? VoteNowColors.ctaBluePressed : VoteNowColors.ctaBlue
     }
 }
 
@@ -596,7 +596,7 @@ private struct MAPVSecondaryActionButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.subheadline.weight(.semibold))
-            .foregroundStyle(isEnabled ? VoteNowColors.primaryText : VoteNowColors.mutedText)
+            .foregroundStyle(isEnabled ? VoteNowColors.textPrimary : VoteNowColors.textSecondary)
             .lineLimit(1)
             .minimumScaleFactor(0.78)
             .padding(.horizontal, 10)

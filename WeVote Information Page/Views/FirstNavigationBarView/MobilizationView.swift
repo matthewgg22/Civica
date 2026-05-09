@@ -207,7 +207,7 @@ struct MobilizationView: View {
 
     var body: some View {
         ZStack {
-            VoteNowColors.appBackground.ignoresSafeArea()
+            VoteNowColors.canvasBackground.ignoresSafeArea()
 
             NavigationStack {
                 ScrollView {
@@ -216,7 +216,7 @@ struct MobilizationView: View {
                             PageHeader(title: Text("app.page.how_to_vote", tableName: "AppShell"))
                             Text(electionSubtitleText)
                                 .font(.subheadline.weight(.semibold))
-                                .foregroundColor(VoteNowColors.mutedText)
+                                .foregroundColor(VoteNowColors.textSecondary)
                                 .padding(.leading, 72)
                                 .padding(.top, -6)
                         }
@@ -247,9 +247,9 @@ struct MobilizationView: View {
                                             .padding(.vertical, 11)
                                     }
                                     .buttonStyle(MAPVUtilityButtonStyle(
-                                        fill: VoteNowColors.primaryCTA,
+                                        fill: VoteNowColors.ctaBlue,
                                         foreground: .white,
-                                        border: VoteNowColors.primaryCTA.opacity(0.85)
+                                        border: VoteNowColors.ctaBlue.opacity(0.85)
                                     ))
                                     .padding(.horizontal)
                                 }
@@ -262,7 +262,7 @@ struct MobilizationView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
                             .padding(.horizontal, 16)
-                            .background(VoteNowColors.richBlue)
+                            .background(VoteNowColors.ctaBlue)
                             .foregroundColor(.white)
                             .clipShape(Capsule(style: .continuous))
                             .voteNowPillDualOrbit(
@@ -291,11 +291,11 @@ struct MobilizationView: View {
                                                 .fixedSize(horizontal: true, vertical: true)
                                         } else if section == .feedback {
                                             Image(systemName: "bubble.left.and.bubble.right.fill")
-                                                .foregroundColor(VoteNowColors.primaryCTA)
+                                                .foregroundColor(VoteNowColors.ctaBlue)
                                                 .frame(width: 30, alignment: .center)
                                         }
                                         Text(section.localizedTitle(locale: locale))
-                                            .foregroundColor(VoteNowColors.primaryText)
+                                            .foregroundColor(VoteNowColors.textPrimary)
                                             .lineLimit(1)
                                             .minimumScaleFactor(0.9)
                                         Spacer()
@@ -305,13 +305,13 @@ struct MobilizationView: View {
                                 Divider()
                             }
                         }
-                        .background(VoteNowColors.background)
+                        .background(VoteNowColors.canvasBackground)
                         .cornerRadius(8)
                         .padding(.horizontal)
                     }
                     .padding(.vertical)
                 }
-                .background(VoteNowColors.appBackground)
+                .background(VoteNowColors.canvasBackground)
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationDestination(isPresented: $showMailInBallotRequest) {
                     MailInBallotView()
@@ -720,7 +720,7 @@ struct FeedbackView: View {
 
                     Text(l("app.feedback.college_endeavor.body", "Civica is an endeavor built to support all Americans vote by reducing logistical friction. As a college student endeavor, we want to learn from you and your experience voting. Your feedback is invaluable to improve the app and the voter experience."))
                         .font(.body)
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(VoteNowColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(14)
@@ -747,26 +747,26 @@ struct FeedbackView: View {
                         .autocorrectionDisabled(true)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 10)
-                        .background(VoteNowColors.surfaceWhite)
+                        .background(VoteNowColors.surfacePrimary)
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
                         )
 
                     ZStack(alignment: .topLeading) {
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(VoteNowColors.surfaceWhite)
+                            .fill(VoteNowColors.surfacePrimary)
                             .frame(minHeight: 170)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                                    .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
                             )
 
                         if feedbackText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             Text(l("app.feedback.message.placeholder", "Tell us what felt confusing, frustrating, or helpful."))
                                 .font(.subheadline)
-                                .foregroundColor(VoteNowColors.mutedText)
+                                .foregroundColor(VoteNowColors.textSecondary)
                                 .padding(.horizontal, 14)
                                 .padding(.vertical, 14)
                                 .allowsHitTesting(false)
@@ -801,7 +801,7 @@ struct FeedbackView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .background(canSend ? VoteNowColors.primaryCTA : VoteNowColors.borderWarm.opacity(0.6))
+                        .background(canSend ? VoteNowColors.ctaBlue : VoteNowColors.borderSubtle.opacity(0.6))
                         .foregroundColor(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     }
@@ -818,11 +818,11 @@ struct FeedbackView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
                     RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .fill(VoteNowColors.background)
+                        .fill(VoteNowColors.canvasBackground)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                        .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
                 )
             }
             .padding(.horizontal, 16)
@@ -835,7 +835,7 @@ struct FeedbackView: View {
                 completeSubmissionFlow()
             }
         }
-        .background(VoteNowColors.background)
+        .background(VoteNowColors.canvasBackground)
         .onChange(of: feedbackText) { _, _ in
             if errorMessage != nil { errorMessage = nil }
         }
@@ -927,7 +927,7 @@ private struct FeedbackSubmissionConfirmationView: View {
 
             Text(l("app.feedback.success.screen.body", "Thank you for sharing your experience. Returning you now."))
                 .font(.body)
-                .foregroundColor(VoteNowColors.mutedText)
+                .foregroundColor(VoteNowColors.textSecondary)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -937,7 +937,7 @@ private struct FeedbackSubmissionConfirmationView: View {
             .font(.headline)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
-            .background(VoteNowColors.primaryCTA)
+            .background(VoteNowColors.ctaBlue)
             .foregroundColor(.white)
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             .buttonStyle(.plain)
@@ -948,7 +948,7 @@ private struct FeedbackSubmissionConfirmationView: View {
         .padding(.horizontal, 20)
         .padding(.vertical, 24)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(VoteNowColors.background)
+        .background(VoteNowColors.canvasBackground)
         .navigationBarBackButtonHidden(true)
         .task {
             guard !hasTriggeredAutoReturn else { return }

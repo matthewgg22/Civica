@@ -76,7 +76,7 @@ struct SNAPEligibilityIntroView: View {
 
                             Text("Open next steps")
                                 .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(VoteNowColors.primaryCTA)
+                                .foregroundStyle(VoteNowColors.ctaBlue)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(14)
@@ -115,7 +115,7 @@ struct SNAPEligibilityIntroView: View {
                     } label: {
                         Text("Need language assistance?")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.primaryCTA)
+                            .foregroundStyle(VoteNowColors.ctaBlue)
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(.vertical, 8)
                     }
@@ -161,7 +161,7 @@ private struct SNAPIntroHeader: View {
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
                             .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
                     )
-                    .shadow(color: VoteNowColors.primaryCTA.opacity(0.14), radius: 6, x: 0, y: 3)
+                    .shadow(color: VoteNowColors.ctaBlue.opacity(0.14), radius: 6, x: 0, y: 3)
 
                 Image("SNAPOfficialLogo")
                     .resizable()
@@ -192,7 +192,7 @@ private struct SNAPDescriptionRow: View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: iconName)
                 .font(.footnote.weight(.semibold))
-                .foregroundStyle(VoteNowColors.primaryCTA)
+                .foregroundStyle(VoteNowColors.ctaBlue)
                 .frame(width: 20, height: 20)
                 .padding(.top, 1)
 

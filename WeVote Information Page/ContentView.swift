@@ -617,7 +617,7 @@ struct ContentView: View {
         }
         .environmentObject(mapvPlanStore)
         .coordinateSpace(name: "SpreadSpace")
-        .tint(VoteNowColors.primaryCTA)
+        .tint(VoteNowColors.ctaBlue)
         .overlay {
             if showWhyVoteOverlay {
                 WhyVoteFloodOverlay(

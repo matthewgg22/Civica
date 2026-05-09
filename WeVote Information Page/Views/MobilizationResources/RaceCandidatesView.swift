@@ -48,7 +48,7 @@ struct RaceCandidatesView: View {
                         )
                     )
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(VoteNowColors.mutedText)
+                    .foregroundColor(VoteNowColors.textSecondary)
                     .multilineTextAlignment(.center)
                 }
 
@@ -73,7 +73,7 @@ struct RaceCandidatesView: View {
 
                                 Text(localizedExperience(for: candidate))
                                     .font(.subheadline)
-                                    .foregroundColor(VoteNowColors.mutedText)
+                                    .foregroundColor(VoteNowColors.textSecondary)
 
                                 Text("\(l("app.race_candidates.announced_prefix", "Announced:")) \(candidate.announcedDate)")
                                     .font(.caption)
@@ -82,11 +82,11 @@ struct RaceCandidatesView: View {
                                 if let websiteURL = URL(string: candidate.websiteURL) {
                                     Link(l("app.race_candidates.website", "Website"), destination: websiteURL)
                                         .font(.caption)
-                                        .foregroundColor(VoteNowColors.richBlue)
+                                        .foregroundColor(VoteNowColors.ctaBlue)
                                 } else {
                                     Text(l("app.race_candidates.website", "Website"))
                                         .font(.caption)
-                                        .foregroundColor(VoteNowColors.mutedText)
+                                        .foregroundColor(VoteNowColors.textSecondary)
                                 }
                             }
                             .padding(.leading, 8)

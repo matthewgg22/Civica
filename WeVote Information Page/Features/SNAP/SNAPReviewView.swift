@@ -162,7 +162,7 @@ private struct SNAPReviewSectionCard: View {
                 }
                 .font(.subheadline.weight(.semibold))
                 .buttonStyle(.plain)
-                .foregroundStyle(VoteNowColors.primaryCTA)
+                .foregroundStyle(VoteNowColors.ctaBlue)
             }
 
             ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
