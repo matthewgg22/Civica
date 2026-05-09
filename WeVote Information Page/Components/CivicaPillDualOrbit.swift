@@ -362,7 +362,7 @@ extension View {
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
-            .background(CivicaColors.primaryCTA)
+            .background(CivicaColors.ctaBlue)
             .clipShape(Capsule(style: .continuous))
             .voteNowPillDualOrbit()
     }

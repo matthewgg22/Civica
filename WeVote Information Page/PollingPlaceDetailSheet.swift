@@ -71,7 +71,7 @@ struct PollingPlaceDetailSheet: View {
                     .font(.headline)
                 Text(place.address)
                     .font(.subheadline)
-                    .foregroundColor(CivicaColors.mutedText)
+                    .foregroundColor(CivicaColors.textSecondary)
 
                 // 3) Your DisclosureGroup hours
                 hoursView

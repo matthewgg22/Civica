@@ -87,7 +87,7 @@ struct SNAPEntryView: View {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text(headerLocationSubtitle)
                             .font(.subheadline.weight(.semibold))
-                            .foregroundColor(CivicaColors.mutedText)
+                            .foregroundColor(CivicaColors.textSecondary)
                             .lineLimit(1)
                             .minimumScaleFactor(0.84)
 
@@ -99,7 +99,7 @@ struct SNAPEntryView: View {
                             Text("Edit location")
                                 .font(.callout.weight(.semibold))
                                 .italic()
-                                .foregroundColor(CivicaColors.primaryCTA)
+                                .foregroundColor(CivicaColors.ctaBlue)
                                 .lineLimit(1)
                         }
                         .buttonStyle(.plain)
@@ -132,7 +132,7 @@ struct SNAPEntryView: View {
                                     .scaledToFit()
                                     .frame(width: 124, height: 124)
                             }
-                            .shadow(color: CivicaColors.primaryCTA.opacity(0.14), radius: 8, x: 0, y: 4)
+                            .shadow(color: CivicaColors.ctaBlue.opacity(0.14), radius: 8, x: 0, y: 4)
 
                             Text("Supplemental Nutrition\nAssistance Program")
                                 .font(.headline)
@@ -183,7 +183,7 @@ struct SNAPEntryView: View {
 
                                 Text("Open next steps")
                                     .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(CivicaColors.primaryCTA)
+                                    .foregroundStyle(CivicaColors.ctaBlue)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(14)

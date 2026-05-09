@@ -171,7 +171,7 @@ struct MyRepsView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                CivicaColors.appBackground.ignoresSafeArea()
+                CivicaColors.canvasBackground.ignoresSafeArea()
 
                 VStack(spacing: 0) {
                     VStack(alignment: .leading, spacing: 0) {
@@ -179,7 +179,7 @@ struct MyRepsView: View {
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             Text(headerLocationSubtitle)
                                 .font(.subheadline.weight(.semibold))
-                                .foregroundColor(CivicaColors.mutedText)
+                                .foregroundColor(CivicaColors.textSecondary)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.84)
 
@@ -192,7 +192,7 @@ struct MyRepsView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
                     .padding(.bottom, 8)
-                    .background(CivicaColors.appBackground)
+                    .background(CivicaColors.canvasBackground)
 
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
@@ -292,12 +292,12 @@ struct MyRepsView: View {
     private var matchedSummaryPill: some View {
         HStack(spacing: 6) {
             Text("Matched")
-                .foregroundColor(CivicaColors.primaryText)
+                .foregroundColor(CivicaColors.textPrimary)
 
             ForEach(Array(matchedSegments.enumerated()), id: \.element.id) { index, segment in
                 if index > 0 {
                     Text("·")
-                        .foregroundColor(CivicaColors.borderWarm)
+                        .foregroundColor(CivicaColors.borderSubtle)
                 }
 
                 Text("\(segment.count)")
@@ -305,20 +305,20 @@ struct MyRepsView: View {
                     .contentTransition(.numericText())
                     .animation(.spring(response: 0.28, dampingFraction: 0.86), value: matchedCountAnimationRevision)
                 Text(segment.title)
-                    .foregroundColor(CivicaColors.mutedText)
+                    .foregroundColor(CivicaColors.textSecondary)
             }
         }
         .font(.system(size: 13, weight: .semibold, design: .rounded))
         .lineLimit(1)
         .padding(.horizontal, 12)
         .padding(.vertical, 7)
-        .background(CivicaColors.surfaceWhite.opacity(0.96))
+        .background(CivicaColors.surfacePrimary.opacity(0.96))
         .overlay(
             Capsule()
-                .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
         .clipShape(Capsule())
-        .shadow(color: CivicaColors.primaryText.opacity(0.08), radius: 3, x: 0, y: 1)
+        .shadow(color: CivicaColors.textPrimary.opacity(0.08), radius: 3, x: 0, y: 1)
     }
 
     private struct MatchedSegment: Identifiable {
@@ -330,7 +330,7 @@ struct MyRepsView: View {
 
     private var matchedSegments: [MatchedSegment] {
         [
-            MatchedSegment(id: "federal", title: "Federal", count: matchedFederalCount, countColor: CivicaColors.richBlue),
+            MatchedSegment(id: "federal", title: "Federal", count: matchedFederalCount, countColor: CivicaColors.ctaBlue),
             MatchedSegment(id: "state", title: "State", count: matchedStateCount, countColor: CivicaColors.successGreen),
             MatchedSegment(id: "local", title: "Local", count: matchedLocalCount, countColor: CivicaColors.warningAmber)
         ]
@@ -346,9 +346,9 @@ struct MyRepsView: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 12)
-                .background(CivicaColors.primaryCTA)
+                .background(CivicaColors.ctaBlue)
                 .clipShape(Capsule())
-                .shadow(color: CivicaColors.primaryText.opacity(0.18), radius: 4, x: 0, y: 2)
+                .shadow(color: CivicaColors.textPrimary.opacity(0.18), radius: 4, x: 0, y: 2)
         }
         .buttonStyle(.plain)
     }
@@ -369,11 +369,11 @@ struct MyRepsView: View {
                     .padding(.leading, 12)
                     .padding(.trailing, 44)
                     .padding(.vertical, 12)
-                    .background(CivicaColors.surfaceWhite)
+                    .background(CivicaColors.surfacePrimary)
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                            .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                     )
                     .onChange(of: locationInput) { _, newValue in
                         if suppressLocationInputTypingHandler {
@@ -422,7 +422,7 @@ struct MyRepsView: View {
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(.white)
                     .frame(width: 32, height: 32)
-                    .background(CivicaColors.primaryCTA)
+                    .background(CivicaColors.ctaBlue)
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
@@ -439,7 +439,7 @@ struct MyRepsView: View {
             Text(l("app.reps.action.edit_location", "Change Location"))
                 .font(.callout.weight(.semibold))
                 .italic()
-                .foregroundColor(CivicaColors.primaryCTA)
+                .foregroundColor(CivicaColors.ctaBlue)
                 .lineLimit(1)
         }
         .buttonStyle(.plain)
@@ -454,7 +454,7 @@ struct MyRepsView: View {
                 : l("app.reps.coverage.matched", "Your address matches you to your district")
             )
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(CivicaColors.primaryText)
+                .foregroundColor(CivicaColors.textPrimary)
 
             MyRepsCoverageMapView(
                 mapMode: repsVM.mapMode,
@@ -480,14 +480,14 @@ struct MyRepsView: View {
                 } label: {
                     Image(systemName: "arrow.up.left.and.arrow.down.right")
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(CivicaColors.primaryCTA)
+                        .foregroundColor(CivicaColors.ctaBlue)
                         .padding(10)
-                        .background(CivicaColors.surfaceWhite.opacity(0.96))
+                        .background(CivicaColors.surfacePrimary.opacity(0.96))
                         .overlay(
                             Circle()
-                                .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                         )
-                        .shadow(color: CivicaColors.primaryText.opacity(0.08), radius: 3, x: 0, y: 1)
+                        .shadow(color: CivicaColors.textPrimary.opacity(0.08), radius: 3, x: 0, y: 1)
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
@@ -513,7 +513,7 @@ struct MyRepsView: View {
                 )
             )
             .font(.system(size: 13, weight: .medium))
-            .foregroundColor(CivicaColors.mutedText)
+            .foregroundColor(CivicaColors.textSecondary)
             .frame(maxWidth: .infinity, alignment: .leading)
 
             if case .focused = repsVM.mapMode {
@@ -521,7 +521,7 @@ struct MyRepsView: View {
                     repsVM.resetMapToNationalView()
                 }
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(CivicaColors.primaryCTA)
+                .foregroundColor(CivicaColors.ctaBlue)
                 .buttonStyle(.plain)
             }
         }
@@ -677,7 +677,7 @@ private struct MyRepsFullScreenMapView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            CivicaColors.appBackground
+            CivicaColors.canvasBackground
                 .ignoresSafeArea()
 
             MyRepsCoverageMapView(
@@ -696,14 +696,14 @@ private struct MyRepsFullScreenMapView: View {
                 } label: {
                     Image(systemName: "xmark")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(CivicaColors.primaryCTA)
+                        .foregroundColor(CivicaColors.ctaBlue)
                         .frame(width: 34, height: 34)
-                        .background(CivicaColors.surfaceWhite.opacity(0.96))
+                        .background(CivicaColors.surfacePrimary.opacity(0.96))
                         .overlay(
                             Circle()
-                                .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                         )
-                        .shadow(color: CivicaColors.primaryText.opacity(0.08), radius: 3, x: 0, y: 1)
+                        .shadow(color: CivicaColors.textPrimary.opacity(0.08), radius: 3, x: 0, y: 1)
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
@@ -715,15 +715,15 @@ private struct MyRepsFullScreenMapView: View {
                         onResetMap()
                     }
                     .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(CivicaColors.primaryCTA)
+                    .foregroundColor(CivicaColors.ctaBlue)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
-                    .background(CivicaColors.surfaceWhite.opacity(0.96))
+                    .background(CivicaColors.surfacePrimary.opacity(0.96))
                     .overlay(
                         Capsule()
-                            .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                            .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                     )
-                    .shadow(color: CivicaColors.primaryText.opacity(0.08), radius: 3, x: 0, y: 1)
+                    .shadow(color: CivicaColors.textPrimary.opacity(0.08), radius: 3, x: 0, y: 1)
                     .clipShape(Capsule())
                     .buttonStyle(.plain)
                 }

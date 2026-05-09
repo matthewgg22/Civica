@@ -31,7 +31,7 @@ struct SupabaseStatusView: View {
             if let error = authStore.lastError, !error.isEmpty {
                 Text(error)
                     .font(.footnote.weight(.semibold))
-                    .foregroundColor(CivicaColors.richRed)
+                    .foregroundColor(CivicaColors.ctaRed)
                     .padding(10)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.statusErrorSurface)
@@ -85,7 +85,7 @@ struct SupabaseStatusView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(CivicaColors.primaryCTA.opacity(0.18), lineWidth: 1)
+                .stroke(CivicaColors.ctaBlue.opacity(0.18), lineWidth: 1)
         )
         .task {
             guard shouldAutoRefresh else { return }
@@ -142,7 +142,7 @@ struct SupabaseStatusView: View {
         }
         return StatusIndicator(
             iconName: "exclamationmark.triangle.fill",
-            tint: CivicaColors.richRed,
+            tint: CivicaColors.ctaRed,
             surface: CivicaColors.statusErrorSurface
         )
     }
@@ -165,7 +165,7 @@ struct SupabaseStatusView: View {
                 }
                 Text(value)
                     .font(.subheadline)
-                    .foregroundStyle(CivicaColors.mutedText)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .multilineTextAlignment(.trailing)
                     .lineLimit(2)
             }

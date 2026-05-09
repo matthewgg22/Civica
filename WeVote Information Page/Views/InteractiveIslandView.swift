@@ -79,13 +79,13 @@ struct ExpandedCardView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
 
-            Divider().background(CivicaColors.surfaceWhite)
+            Divider().background(CivicaColors.surfacePrimary)
 
             // Day Tracker
             VStack(spacing: 12) {
                 ZStack {
                     Capsule()
-                        .fill(CivicaColors.borderWarm.opacity(0.4))
+                        .fill(CivicaColors.borderSubtle.opacity(0.4))
                         .frame(width: barWidth, height: barHeight)
                     Capsule()
                         .fill(
@@ -97,7 +97,7 @@ struct ExpandedCardView: View {
                         )
                         .frame(width: barWidth, height: barHeight)
                     Circle()
-                        .fill(CivicaColors.surfaceWhite)
+                        .fill(CivicaColors.surfacePrimary)
                         .frame(width: 8, height: 8)
                         .offset(x: dotX)
                     Text("▲")
@@ -126,7 +126,7 @@ struct ExpandedCardView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
 
-            Divider().background(CivicaColors.surfaceWhite)
+            Divider().background(CivicaColors.surfacePrimary)
 
             // My Plan to Vote
             VStack(alignment: .leading, spacing: 8) {
@@ -150,7 +150,7 @@ struct ExpandedCardView: View {
                         .foregroundColor(.white)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(CivicaColors.surfaceWhite, lineWidth: 1)
+                                .stroke(CivicaColors.surfacePrimary, lineWidth: 1)
                         )
                 }
                 .padding(.top, 8)
@@ -162,7 +162,7 @@ struct ExpandedCardView: View {
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(CivicaColors.surfaceWhite, lineWidth: 1)
+                .stroke(CivicaColors.surfacePrimary, lineWidth: 1)
         )
         .frame(width: 360)
         .transition(.scale.combined(with: .opacity))
@@ -222,7 +222,7 @@ struct InteractiveIslandView: View {
                 )
             } else {
                 Text("Loading…")
-                    .foregroundColor(CivicaColors.mutedText)
+                    .foregroundColor(CivicaColors.textSecondary)
             }
         }
         .contentShape(Rectangle())                    // make full area tappable
