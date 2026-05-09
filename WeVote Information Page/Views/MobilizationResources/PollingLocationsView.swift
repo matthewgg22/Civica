@@ -120,7 +120,7 @@ struct PollingLocationsView: View {
             showFullMap = true
         } label: {
             Label(l("app.polling_locations.action.show_full_map", "Show Full Map"), systemImage: "map")
-                .font(.subheadline.weight(.semibold))
+                .font(CivicaTypography.subheadStrong)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 10)
         }
@@ -145,7 +145,7 @@ struct PollingLocationsView: View {
                     "Archived Example: NYC 2025 Polling Locations"
                 )
             )
-            .font(.subheadline.weight(.bold))
+            .font(CivicaTypography.subheadBold)
             .foregroundColor(CivicaColors.textPrimary)
 
             Text(
@@ -154,7 +154,7 @@ struct PollingLocationsView: View {
                     "This list is a fixed historical example and may not match your current polling place."
                 )
             )
-            .font(.footnote)
+            .font(CivicaTypography.footnote)
             .foregroundColor(CivicaColors.textSecondary)
             .fixedSize(horizontal: false, vertical: true)
         }
@@ -522,7 +522,7 @@ private struct PollingLocationPinView: View {
                 .fill(isSelected ? Color(red: 0.87, green: 0.35, blue: 0.27) : CivicaColors.ctaBlue)
                 .frame(width: 24, height: 24)
             Image(systemName: "mappin")
-                .font(.caption.bold())
+                .font(CivicaTypography.captionBold)
                 .foregroundColor(.white)
         }
         .overlay(

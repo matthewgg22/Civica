@@ -129,7 +129,7 @@ struct PrePermissionSheetView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Stay on track")
-                .font(.title3.weight(.bold))
+                .font(CivicaTypography.cardTitle)
 
             Text("Allow notifications so Civica can remind you on Election Day and if your polling place window changes.")
                 .font(CivicaTypography.subhead)
@@ -137,7 +137,7 @@ struct PrePermissionSheetView: View {
 
             HStack(spacing: 10) {
                 Button("Not Now", action: onNotNow)
-                    .font(.subheadline.weight(.semibold))
+                    .font(CivicaTypography.subheadStrong)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 11)
                     .background(CivicaColors.infoSurfaceBlue)
@@ -145,7 +145,7 @@ struct PrePermissionSheetView: View {
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
 
                 Button("Allow Reminders", action: onAllow)
-                    .font(.subheadline.weight(.semibold))
+                    .font(CivicaTypography.subheadStrong)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 11)
                     .background(CivicaColors.ctaBlue)
@@ -200,7 +200,7 @@ struct AddToCalendarButtonView: View {
                 Text(buttonTitle)
                     .lineLimit(1)
             }
-            .font(.subheadline.weight(.semibold))
+            .font(CivicaTypography.subheadStrong)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 11)
         }

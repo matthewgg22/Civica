@@ -75,10 +75,10 @@ struct TurnoutExplorer: View {
         } else if let loadError = store.loadError {
             VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Text("Turnout explorer data is unavailable right now.")
-                    .font(.subheadline.weight(.semibold))
+                    .font(CivicaTypography.subheadStrong)
                     .foregroundColor(CivicaColors.textPrimary)
                 Text(loadError)
-                    .font(.footnote)
+                    .font(CivicaTypography.footnote)
                     .foregroundColor(CivicaColors.textSecondary)
             }
             .padding(10)
@@ -191,7 +191,7 @@ struct TurnoutExplorer: View {
                     showMethodologySheet = true
                 } label: {
                     Text("How this data works")
-                        .font(.footnote.weight(.semibold))
+                        .font(CivicaTypography.footnoteStrong)
                         .foregroundColor(CivicaColors.ctaBlue)
                 }
                 .buttonStyle(.plain)
@@ -340,7 +340,7 @@ private struct ElectionTypeSegmentedControl: View {
     private func segment(label: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(label)
-                .font(.footnote.weight(.semibold))
+                .font(CivicaTypography.footnoteStrong)
                 .foregroundColor(isSelected ? .white : CivicaColors.textPrimary)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 10)
@@ -391,7 +391,7 @@ private struct AgeTurnoutBandSlider: View {
         VStack(alignment: .leading, spacing: 2) {
             HStack(alignment: .top, spacing: 10) {
                 Text(activeLabel)
-                    .font(.footnote.weight(.semibold))
+                    .font(CivicaTypography.footnoteStrong)
                     .foregroundColor(CivicaColors.textPrimary)
 
                 Spacer(minLength: 8)
@@ -399,7 +399,7 @@ private struct AgeTurnoutBandSlider: View {
                 if let eligiblePopulationThousands {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text("\(TurnoutExplorerFormatters.compactPopulationFromThousands(eligiblePopulationThousands)) eligible")
-                            .font(.caption.weight(.semibold))
+                            .font(CivicaTypography.captionStrong)
                             .foregroundColor(CivicaColors.textPrimary)
                             .monospacedDigit()
 
@@ -487,7 +487,7 @@ private struct AgeTurnoutBandSlider: View {
                 Spacer()
 
                 Text(activeLabel.replacingOccurrences(of: "Ages ", with: "").replacingOccurrences(of: "Age ", with: ""))
-                    .font(.caption2.weight(.semibold))
+                    .font(CivicaTypography.captionStrong)
                     .foregroundColor(CivicaColors.textPrimary)
 
                 Spacer()
@@ -625,7 +625,7 @@ private struct TurnoutRiskMap: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Turnout pressure map: Taller and redder bars indicate larger turnout/representation problems.")
-                .font(.footnote.weight(.semibold))
+                .font(CivicaTypography.footnoteStrong)
                 .foregroundColor(CivicaColors.textSecondary)
 
             GeometryReader { geo in
@@ -760,7 +760,7 @@ private struct ElectorateDonut: View {
                     .minimumScaleFactor(0.8)
 
                 Text("of this age group voted")
-                    .font(.footnote)
+                    .font(CivicaTypography.footnote)
                     .foregroundColor(CivicaColors.textSecondary)
             }
             .padding(.horizontal, CivicaSpacing.sm)
@@ -817,13 +817,13 @@ private struct MetricStat: View {
     var body: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(title)
-                .font(.footnote.weight(.semibold))
+                .font(CivicaTypography.footnoteStrong)
                 .foregroundColor(CivicaColors.textSecondary)
             Text(value)
-                .font(.title3.weight(.bold))
+                .font(CivicaTypography.cardTitle)
                 .foregroundColor(CivicaColors.textPrimary)
             Text(helper)
-                .font(.footnote)
+                .font(CivicaTypography.footnote)
                 .foregroundColor(CivicaColors.textSecondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.72)
@@ -848,12 +848,12 @@ private struct MetricMiniStat: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(title)
-                .font(.caption2.weight(.semibold))
+                .font(CivicaTypography.captionStrong)
                 .foregroundColor(CivicaColors.textSecondary)
                 .lineLimit(1)
 
             Text(value)
-                .font(.headline.weight(.bold))
+                .font(CivicaTypography.sectionHeaderBold)
                 .foregroundColor(CivicaColors.textPrimary)
                 .minimumScaleFactor(0.72)
                 .lineLimit(1)

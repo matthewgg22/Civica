@@ -186,7 +186,7 @@ struct NYCMayoralElectionView: View {
             PageHeader(title: Text("app.page.election_guide", tableName: "AppShell"))
             HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                 Text(electionSubtitleText)
-                    .font(.subheadline.weight(.semibold))
+                    .font(CivicaTypography.subheadStrong)
                     .foregroundColor(CivicaColors.textSecondary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.84)
@@ -197,7 +197,7 @@ struct NYCMayoralElectionView: View {
                     openMyInfoPanel()
                 } label: {
                     Text(l("app.reps.action.my_info", "My Info") + "...")
-                        .font(.callout.weight(.semibold))
+                        .font(CivicaTypography.supportStrong)
                         .italic()
                         .foregroundColor(CivicaColors.ctaBlue)
                         .lineLimit(1)
@@ -337,7 +337,7 @@ struct NYCMayoralElectionView: View {
                     scrollToGuideMiniNavSection(section, proxy: proxy)
                 } label: {
                     Text(section.title)
-                        .font(.callout.weight(.semibold))
+                        .font(CivicaTypography.supportStrong)
                         .foregroundColor(
                             selectedGuideMiniNavSection == section ? section.tintColor : CivicaColors.textSecondary
                         )
@@ -384,7 +384,7 @@ struct NYCMayoralElectionView: View {
 
     private func guideMiniNavEarmarker() -> some View {
         Text("|")
-            .font(.footnote.weight(.semibold))
+            .font(CivicaTypography.footnoteStrong)
             .foregroundColor(CivicaColors.textSecondary.opacity(0.72))
             .padding(.horizontal, 0)
             .accessibilityHidden(true)
@@ -411,7 +411,7 @@ struct NYCMayoralElectionView: View {
                UIImage(named: assetName) != nil {
                 HStack(alignment: .top, spacing: 10) {
                     Text(card.title)
-                        .font(.headline.weight(.bold))
+                        .font(CivicaTypography.sectionHeaderBold)
                         .italic()
                         .foregroundColor(card.accent.color)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -429,7 +429,7 @@ struct NYCMayoralElectionView: View {
                 }
             } else {
                 Text(card.title)
-                    .font(.headline.weight(.bold))
+                    .font(CivicaTypography.sectionHeaderBold)
                     .italic()
                     .foregroundColor(card.accent.color)
             }
@@ -505,7 +505,7 @@ struct NYCMayoralElectionView: View {
 
                     VStack(alignment: .leading, spacing: 3) {
                         Text(item.label)
-                            .font(.caption2.weight(.bold))
+                            .font(CivicaTypography.captionBold)
                             .foregroundColor(Color(hex: "#5A43B5"))
                             .padding(.horizontal, 7)
                             .padding(.vertical, 2)
@@ -2634,7 +2634,7 @@ struct NYCMayoralElectionView: View {
                         HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                                 Text(parsed.title)
-                                    .font(.subheadline.weight(.semibold))
+                                    .font(CivicaTypography.subheadStrong)
                                     .foregroundColor(CivicaColors.textPrimary)
                                     .multilineTextAlignment(.leading)
                                     .lineLimit(isExpanded ? nil : 2)
@@ -2642,12 +2642,12 @@ struct NYCMayoralElectionView: View {
 
                                 if let dateText = parsed.dateText {
                                     Text(dateText)
-                                        .font(.caption.weight(.semibold))
+                                        .font(CivicaTypography.captionStrong)
                                         .foregroundColor(CivicaColors.textSecondary)
                                 }
 
                                 Text(isExpanded ? "Tap to collapse" : "Tap to expand")
-                                    .font(.caption2.weight(.semibold))
+                                    .font(CivicaTypography.captionStrong)
                                     .foregroundColor(CivicaColors.ctaBlue)
                             }
 
@@ -2769,7 +2769,7 @@ struct NYCMayoralElectionView: View {
                 openMailInBallotRequest()
             } label: {
                 Text(l("app.guide.voting.by_mail.cta", "Open Request Mail-in Ballot"))
-                    .font(.caption.weight(.semibold))
+                    .font(CivicaTypography.captionStrong)
                     .foregroundColor(.white)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 7)

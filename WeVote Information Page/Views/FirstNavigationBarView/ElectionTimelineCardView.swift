@@ -16,7 +16,7 @@ struct ElectionTimelineCardView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             HStack(alignment: .top, spacing: 10) {
                 Text(stateLabel)
-                    .font(.subheadline.weight(.semibold))
+                    .font(CivicaTypography.subheadStrong)
                     .foregroundColor(CivicaColors.textPrimary)
                     .lineLimit(1)
 
@@ -53,14 +53,14 @@ struct ElectionTimelineCardView: View {
 
             HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                 Text(electionDateText)
-                    .font(.subheadline.weight(.semibold))
+                    .font(CivicaTypography.subheadStrong)
                     .foregroundColor(CivicaColors.textPrimary)
 
                 Spacer(minLength: 8)
 
                 if let badgeText, !badgeText.isEmpty {
                     Text(badgeText)
-                        .font(.caption.weight(.semibold))
+                        .font(CivicaTypography.captionStrong)
                         .foregroundColor(CivicaColors.ctaBlue)
                         .padding(.horizontal, 9)
                         .padding(.vertical, CivicaSpacing.xs)
@@ -74,7 +74,7 @@ struct ElectionTimelineCardView: View {
                     Text(canMakePlan
                          ? l("app.timeline.mapv.button.make_plan", "Make a Plan to Vote")
                          : l("app.timeline.mapv.button.passed", "Election Day Passed"))
-                        .font(.subheadline.weight(.semibold))
+                        .font(CivicaTypography.subheadStrong)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
                 }

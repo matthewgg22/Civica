@@ -231,7 +231,7 @@ struct SampleBallotView: View {
                             "Archived example: NYC 2025 mayoral-cycle ballot. This is not a live personalized ballot."
                         )
                     )
-                    .font(.footnote.weight(.semibold))
+                    .font(CivicaTypography.footnoteStrong)
                     .foregroundColor(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
                 }
@@ -247,12 +247,12 @@ struct SampleBallotView: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(l("app.sample_ballot.ranked_choice.title", "Ranked-Choice Prep"))
-                        .font(.subheadline.weight(.semibold))
+                        .font(CivicaTypography.subheadStrong)
                     Text(l("app.sample_ballot.ranked_choice.body_1", "This sample is structured for ranked-choice voting, so you can set your candidate order now before entering the voting booth."))
-                        .font(.footnote)
+                        .font(CivicaTypography.footnote)
                         .foregroundColor(CivicaColors.textSecondary)
                     Text(l("app.sample_ballot.ranked_choice.body_2", "Only candidates matching your selected party registration are shown."))
-                        .font(.footnote)
+                        .font(CivicaTypography.footnote)
                         .foregroundColor(CivicaColors.textSecondary)
                 }
                 .padding(CivicaSpacing.md)
@@ -262,7 +262,7 @@ struct SampleBallotView: View {
 
                 if filteredRaces.isEmpty {
                     Text(l("app.sample_ballot.empty.no_match", "No candidates match your selected party registration in this sample."))
-                        .font(.footnote)
+                        .font(CivicaTypography.footnote)
                         .foregroundColor(CivicaColors.textSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -286,7 +286,7 @@ struct SampleBallotView: View {
                         if !ranked.isEmpty {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text(l("app.sample_ballot.order.title", "Your Ballot Order"))
-                                    .font(.caption.weight(.semibold))
+                                    .font(CivicaTypography.captionStrong)
                                     .foregroundColor(CivicaColors.textSecondary)
                                 ForEach(ranked, id: \.candidate.id) { entry in
                                     Text("\(entry.rank). \(entry.candidate.name)")
@@ -374,13 +374,13 @@ struct CandidateRow: View {
         HStack(alignment: .top, spacing: 10) {
             VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Text(summary.name)
-                    .font(.subheadline.weight(.semibold))
+                    .font(CivicaTypography.subheadStrong)
                     .fixedSize(horizontal: false, vertical: true)
 
                 HStack(spacing: 6) {
                     ForEach(summary.parties, id: \.self) { party in
                         Text(displayPartyLabel(party))
-                            .font(.caption2.weight(.semibold))
+                            .font(CivicaTypography.captionStrong)
                             .padding(.horizontal, CivicaSpacing.sm)
                             .padding(.vertical, CivicaSpacing.xs)
                             .background(color(for: party).opacity(0.12))
@@ -412,7 +412,7 @@ struct CandidateRow: View {
                     Text(rankSelection == 0
                          ? l("app.sample_ballot.rank.set", "Set Rank")
                          : lf("app.sample_ballot.rank.option", "Rank %d", rankSelection))
-                        .font(.caption.weight(.semibold))
+                        .font(CivicaTypography.captionStrong)
                         .foregroundColor(rankSelection == 0 ? .secondary : .blue)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 6)

@@ -327,7 +327,7 @@ struct WhyVoteView: View {
             showFeedbackSheet = true
         } label: {
             Label(l("app.how_to_vote.section.feedback", "Feedback"), systemImage: "bubble.left.and.bubble.right.fill")
-                .font(.subheadline.weight(.semibold))
+                .font(CivicaTypography.subheadStrong)
                 .foregroundColor(CivicaColors.ctaBlue)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 7)
@@ -496,7 +496,7 @@ private struct OutOfTenTurnoutRowView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(label)
-                .font(.subheadline.weight(.semibold))
+                .font(CivicaTypography.subheadStrong)
                 .foregroundColor(CivicaColors.textPrimary)
 
             HStack(spacing: 0) {
@@ -511,11 +511,11 @@ private struct OutOfTenTurnoutRowView: View {
 
             HStack(alignment: .firstTextBaseline) {
                 Text(summary)
-                    .font(.footnote)
+                    .font(CivicaTypography.footnote)
                     .foregroundColor(CivicaColors.textSecondary)
                 Spacer(minLength: 8)
                 Text(formattedPercent)
-                    .font(.footnote.weight(.semibold))
+                    .font(CivicaTypography.footnoteStrong)
                     .foregroundColor(CivicaColors.textPrimary)
             }
         }
