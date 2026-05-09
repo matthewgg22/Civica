@@ -105,7 +105,7 @@ struct MyInfoPanelView: View {
             ScrollViewReader { proxy in
                 Form {
                     Section {
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                         HStack(spacing: 10) {
                             TextField(
                                 "",
@@ -117,12 +117,12 @@ struct MyInfoPanelView: View {
                                 .autocorrectionDisabled()
                                 .submitLabel(.search)
                                 .focused($locationFieldFocused)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 12)
+                                .padding(.horizontal, CivicaSpacing.md)
+                                .padding(.vertical, CivicaSpacing.md)
                                 .background(VoteNowColors.surfacePrimary)
-                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                                         .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
                                 )
                                 .onChange(of: locationInput) { _, newValue in
@@ -159,7 +159,7 @@ struct MyInfoPanelView: View {
                             .foregroundColor(VoteNowColors.textSecondary)
 
                         if let locationSummaryText {
-                            HStack(spacing: 8) {
+                            HStack(spacing: CivicaSpacing.sm) {
                                 Text(locationSummaryText)
                                     .font(.footnote.weight(.semibold))
                                     .foregroundColor(VoteNowColors.textSecondary)
@@ -185,14 +185,14 @@ struct MyInfoPanelView: View {
                             )
                             .font(.subheadline.weight(.semibold))
                             .frame(maxWidth: .infinity, alignment: .center)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, CivicaSpacing.md)
+                            .padding(.vertical, CivicaSpacing.sm)
                         }
                         .background(VoteNowColors.surfacePrimary)
                         .foregroundColor(VoteNowColors.ctaBlue)
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                                 .stroke(VoteNowColors.ctaBlue.opacity(0.22), lineWidth: 1)
                         )
                         .buttonStyle(.plain)
@@ -204,21 +204,21 @@ struct MyInfoPanelView: View {
                             }
                         } label: {
                             if isSavingAddress {
-                                HStack(spacing: 8) {
+                                HStack(spacing: CivicaSpacing.sm) {
                                     ProgressView()
                                         .controlSize(.small)
                                     Text(l("my_info.action.save_location.loading", "Saving Location..."))
                                         .font(.subheadline.weight(.semibold))
                                 }
                                 .frame(maxWidth: .infinity, alignment: .center)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
+                                .padding(.horizontal, CivicaSpacing.md)
+                                .padding(.vertical, CivicaSpacing.sm)
                             } else {
                                 Text(l("my_info.action.save_location", "Save Location"))
                                     .font(.subheadline.weight(.semibold))
                                     .frame(maxWidth: .infinity, alignment: .center)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, CivicaSpacing.md)
+                                    .padding(.vertical, CivicaSpacing.sm)
                             }
                         }
                         .buttonStyle(VoteNowPrimaryCTAButtonStyle())
@@ -239,7 +239,7 @@ struct MyInfoPanelView: View {
                                 .foregroundColor(VoteNowColors.warningAmber)
                         }
                     }
-                    .padding(12)
+                    .padding(CivicaSpacing.md)
                     .background(
                         RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
                             .fill(VoteNowColors.infoSurfaceBlue.opacity(0.44))
@@ -281,9 +281,9 @@ struct MyInfoPanelView: View {
                                 .font(.footnote)
                                 .foregroundColor(VoteNowColors.textSecondary)
                                 .italic()
-                                .padding(.top, 4)
+                                .padding(.top, CivicaSpacing.xs)
                         }
-                        .padding(12)
+                        .padding(CivicaSpacing.md)
                         .background(
                             RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
                                 .fill(VoteNowColors.surfacePrimary)
@@ -302,7 +302,7 @@ struct MyInfoPanelView: View {
                     .listRowSeparator(.hidden)
 
                 Section {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                         Button {
                             showFeedbackSheet = true
                         } label: {
@@ -324,7 +324,7 @@ struct MyInfoPanelView: View {
                         }
                         .buttonStyle(.plain)
                     }
-                    .padding(12)
+                    .padding(CivicaSpacing.md)
                     .background(
                         RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
                             .fill(VoteNowColors.surfacePrimary)

@@ -274,7 +274,7 @@ struct RepRow: View {
                 .frame(width: 65, height: 65)
                 .clipShape(Circle())
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text(displayName)
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(VoteNowColors.textPrimary)
@@ -303,7 +303,7 @@ struct RepRow: View {
             }
 
             if !contactActions.isEmpty {
-                HStack(spacing: 8) {
+                HStack(spacing: CivicaSpacing.sm) {
                     ForEach(contactActions) { action in
                         Button {
                             handleActionTap(action)
@@ -318,7 +318,7 @@ struct RepRow: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity, minHeight: 36)
                             .background(VoteNowColors.ctaBlue)
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                         }
                         .buttonStyle(.plain)
                     }
@@ -326,7 +326,7 @@ struct RepRow: View {
                 .frame(maxWidth: .infinity)
             }
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, CivicaSpacing.sm)
         .alert(l("app.reps.alert.phone_unavailable.title", "Phone Not Available"), isPresented: $showPhoneFallbackAlert) {
             Button(l("app.reps.alert.phone_unavailable.ok", "OK"), role: .cancel) {}
         } message: {
@@ -394,11 +394,11 @@ struct RepresentativeSection: View {
             }
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 12)
+        .padding(.vertical, CivicaSpacing.md)
         .background(VoteNowColors.infoSurfaceBlue)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
                 .stroke(VoteNowColors.ctaBlue.opacity(0.22), lineWidth: 1)
         )
     }
@@ -406,7 +406,7 @@ struct RepresentativeSection: View {
     private var header: some View {
         HStack {
             Spacer(minLength: 0)
-            HStack(spacing: 8) {
+            HStack(spacing: CivicaSpacing.sm) {
                 headerIcon
                 Text(displayTitle)
                     .font(.system(size: 20, weight: .semibold))
@@ -428,9 +428,9 @@ struct RepresentativeSection: View {
                 .frame(width: 29, height: 29)
                 .padding(5)
                 .background(VoteNowColors.ctaBlue.opacity(0.30))
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                         .stroke(VoteNowColors.ctaBlue.opacity(0.40), lineWidth: 1.3)
                 )
         case "federal legislative":
@@ -440,22 +440,22 @@ struct RepresentativeSection: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 32, height: 32)
-                    .padding(4)
+                    .padding(CivicaSpacing.xs)
                     .background(VoteNowColors.ctaBlue.opacity(0.30))
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                             .stroke(VoteNowColors.ctaBlue.opacity(0.40), lineWidth: 1.3)
                     )
             } else {
                 Text("🏛️")
                     .font(.system(size: 24))
                     .frame(width: 32, height: 32)
-                    .padding(4)
+                    .padding(CivicaSpacing.xs)
                     .background(VoteNowColors.ctaBlue.opacity(0.30))
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                             .stroke(VoteNowColors.ctaBlue.opacity(0.40), lineWidth: 1.3)
                     )
             }
@@ -478,7 +478,7 @@ struct RepresentativeSection: View {
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(VoteNowColors.ctaBlue)
                     .frame(width: 22, height: 22)
-                    .padding(4)
+                    .padding(CivicaSpacing.xs)
                     .background(VoteNowColors.ctaBlue.opacity(0.30))
                     .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                     .overlay(

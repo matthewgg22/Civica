@@ -176,7 +176,7 @@ struct MyRepsView: View {
                 VStack(spacing: 0) {
                     VStack(alignment: .leading, spacing: 0) {
                         PageHeader(title: Text("app.page.my_reps", tableName: "AppShell"))
-                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                             Text(headerLocationSubtitle)
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundColor(VoteNowColors.textSecondary)
@@ -189,13 +189,13 @@ struct MyRepsView: View {
                         .padding(.leading, 72)
                         .padding(.top, -6)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
-                    .padding(.bottom, 8)
+                    .padding(.horizontal, CivicaSpacing.lg)
+                    .padding(.top, CivicaSpacing.sm)
+                    .padding(.bottom, CivicaSpacing.sm)
                     .background(VoteNowColors.canvasBackground)
 
                     ScrollView {
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                             searchCard
 
                             locationCoverageCard()
@@ -213,8 +213,8 @@ struct MyRepsView: View {
                                 }
                             }
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 16)
+                        .padding(.horizontal, CivicaSpacing.lg)
+                        .padding(.bottom, CivicaSpacing.lg)
                     }
                     .scrollDismissesKeyboard(.interactively)
                 }
@@ -225,9 +225,9 @@ struct MyRepsView: View {
                         Spacer(minLength: 0)
                         chatButton
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
-                    .padding(.bottom, 8)
+                    .padding(.horizontal, CivicaSpacing.lg)
+                    .padding(.top, CivicaSpacing.sm)
+                    .padding(.bottom, CivicaSpacing.sm)
                 }
             }
             .onAppear {
@@ -310,7 +310,7 @@ struct MyRepsView: View {
         }
         .font(.system(size: 13, weight: .semibold, design: .rounded))
         .lineLimit(1)
-        .padding(.horizontal, 12)
+        .padding(.horizontal, CivicaSpacing.md)
         .padding(.vertical, 7)
         .background(VoteNowColors.surfacePrimary.opacity(0.96))
         .overlay(
@@ -345,7 +345,7 @@ struct MyRepsView: View {
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 14)
-                .padding(.vertical, 12)
+                .padding(.vertical, CivicaSpacing.md)
                 .background(VoteNowColors.ctaBlue)
                 .clipShape(Capsule())
                 .shadow(color: VoteNowColors.textPrimary.opacity(0.18), radius: 4, x: 0, y: 2)
@@ -366,13 +366,13 @@ struct MyRepsView: View {
                     .autocorrectionDisabled()
                     .submitLabel(.search)
                     .focused($locationFieldFocused)
-                    .padding(.leading, 12)
+                    .padding(.leading, CivicaSpacing.md)
                     .padding(.trailing, 44)
-                    .padding(.vertical, 12)
+                    .padding(.vertical, CivicaSpacing.md)
                     .background(VoteNowColors.surfacePrimary)
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                             .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
                     )
                     .onChange(of: locationInput) { _, newValue in
@@ -494,7 +494,7 @@ struct MyRepsView: View {
                 .padding(10)
                 .accessibilityLabel(l("app.reps.coverage.open_full_map", "Open full map"))
             }
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
 
             Text(
                 isStateOnlyInput
@@ -716,8 +716,8 @@ private struct MyRepsFullScreenMapView: View {
                     }
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(VoteNowColors.ctaBlue)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, CivicaSpacing.md)
+                    .padding(.vertical, CivicaSpacing.sm)
                     .background(VoteNowColors.surfacePrimary.opacity(0.96))
                     .overlay(
                         Capsule()

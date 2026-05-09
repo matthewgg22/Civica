@@ -12,13 +12,13 @@ struct ElectionHotlinesView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 Text(l("app.election_hotlines.title", "📞 Election Hotlines"))
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .padding(.top)
 
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                     Text(l("app.election_hotlines.general.title", "🗳️ General Voter Hotline"))
                         .font(.headline)
 
@@ -35,7 +35,7 @@ struct ElectionHotlinesView: View {
 
                 Divider()
 
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                     Text(l("app.election_hotlines.intimidation.title", "🚨 Report Voter Intimidation"))
                         .font(.headline)
 

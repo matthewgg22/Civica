@@ -146,7 +146,7 @@ private struct MyInfoLongPressModifier: ViewModifier {
         content
             .scaleEffect(isPressing ? 0.97 : 1.0)
             .overlay {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                     .stroke(
                         VoteNowColors.ctaBlue.opacity(showActivationRing ? 0.76 : (isPressing ? 0.34 : 0)),
                         lineWidth: showActivationRing ? 2 : 1
@@ -261,7 +261,7 @@ struct PageHeader: View {
                 .frame(minHeight: iconSize, alignment: .topLeading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.top, 4)
+        .padding(.top, CivicaSpacing.xs)
         .onPreferenceChange(FramePreferenceKey.self) { newFrame in
             guard newFrame != .zero else { return }
             guard newFrame != iconFrameInSpreadSpace else { return }
@@ -437,7 +437,7 @@ struct WhyVoteFloodOverlay: View {
                     .ignoresSafeArea()
 
                 VStack(alignment: .leading, spacing: 0) {
-                    HStack(alignment: .center, spacing: 12) {
+                    HStack(alignment: .center, spacing: CivicaSpacing.md) {
                         Button {
                             withAnimation(.easeOut(duration: max(0.2, duration * 0.5))) {
                                 spread = 0.001
@@ -572,7 +572,7 @@ struct WhyCallFloodOverlay: View {
                     .ignoresSafeArea()
 
                 VStack(alignment: .leading, spacing: 0) {
-                    HStack(alignment: .center, spacing: 12) {
+                    HStack(alignment: .center, spacing: CivicaSpacing.md) {
                         Button {
                             withAnimation(.easeOut(duration: max(0.2, duration * 0.5))) {
                                 spread = 0.001
@@ -737,7 +737,7 @@ struct WhyCallView: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 16) {
+            LazyVStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 WhyCallHero(content: content)
 
                 VStack(alignment: .leading, spacing: 10) {
@@ -770,7 +770,7 @@ struct WhyCallView: View {
 
                 feedbackButton
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, CivicaSpacing.lg)
             .padding(.top, 14)
             .padding(.bottom, 20)
         }
@@ -814,7 +814,7 @@ private struct WhyCallHero: View {
     let content: WhyCallContent
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             if !content.title.isEmpty {
                 Text(content.title)
                     .font(.title.bold())
@@ -914,7 +914,7 @@ private struct WhyCallBottomCTA: View {
                 )
             )
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, CivicaSpacing.lg)
         .padding(.top, 10)
         .padding(.bottom, 10)
     }

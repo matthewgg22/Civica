@@ -96,14 +96,14 @@ struct GovHelpChatSheetView: View {
     private var chatBody: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 12) {
+                LazyVStack(alignment: .leading, spacing: CivicaSpacing.md) {
                     ForEach(messages) { message in
                         messageRow(message)
                             .id(message.id)
                     }
 
                     if isSending {
-                        HStack(spacing: 8) {
+                        HStack(spacing: CivicaSpacing.sm) {
                             ProgressView()
                             Text(l("app.gov_help.thinking", "Thinking..."))
                                 .font(.footnote)
@@ -112,9 +112,9 @@ struct GovHelpChatSheetView: View {
                         .padding(.horizontal, 14)
                         .padding(.vertical, 10)
                         .background(VoteNowColors.surfacePrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                                 .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
                         )
                         .id("typing")
@@ -142,18 +142,18 @@ struct GovHelpChatSheetView: View {
     private func messageRow(_ message: GovHelpChatMessage) -> some View {
         let isUser = message.role == .user
 
-        VStack(alignment: isUser ? .trailing : .leading, spacing: 8) {
+        VStack(alignment: isUser ? .trailing : .leading, spacing: CivicaSpacing.sm) {
             Text(message.text)
                 .font(.body)
                 .foregroundColor(message.isError ? VoteNowColors.ctaRed : (isUser ? .white : VoteNowColors.textPrimary))
-                .padding(.horizontal, 12)
+                .padding(.horizontal, CivicaSpacing.md)
                 .padding(.vertical, 10)
                 .background(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                         .fill(messageBackgroundColor(message, isUser: isUser))
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                         .stroke(message.isError ? VoteNowColors.ctaRed.opacity(0.45) : Color.clear, lineWidth: 1)
                 )
                 .frame(maxWidth: .infinity, alignment: isUser ? .trailing : .leading)
@@ -173,7 +173,7 @@ struct GovHelpChatSheetView: View {
     }
 
     private var composer: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: CivicaSpacing.sm) {
             TextField(l("app.gov_help.input.placeholder", "Describe what you need help with"), text: $inputText, axis: .vertical)
                 .lineLimit(1...4)
                 .textFieldStyle(.roundedBorder)
@@ -192,7 +192,7 @@ struct GovHelpChatSheetView: View {
             .disabled(trimmedInput.isEmpty || isSending)
             .opacity((trimmedInput.isEmpty || isSending) ? 0.45 : 1)
         }
-        .padding(12)
+        .padding(CivicaSpacing.md)
         .background(VoteNowColors.surfacePrimary)
         .overlay(alignment: .top) {
             Divider()
@@ -337,7 +337,7 @@ private struct GovHelpSuggestedContactsView: View {
     @Environment(\.locale) private var locale
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(l("app.gov_help.suggested_contacts", "Suggested Contacts"))
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(VoteNowColors.textPrimary)
@@ -351,9 +351,9 @@ private struct GovHelpSuggestedContactsView: View {
         }
         .padding(10)
         .background(VoteNowColors.infoSurfaceBlue.opacity(0.45))
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                 .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
         )
     }
@@ -373,7 +373,7 @@ private struct GovHelpDestinationLinksView: View {
     @Environment(\.locale) private var locale
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(l("app.gov_help.official_reporting", "Official Reporting"))
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(VoteNowColors.textPrimary)
@@ -390,9 +390,9 @@ private struct GovHelpDestinationLinksView: View {
         }
         .padding(10)
         .background(VoteNowColors.surfacePrimary)
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                 .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
         )
     }

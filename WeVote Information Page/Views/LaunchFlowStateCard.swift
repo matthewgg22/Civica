@@ -67,7 +67,7 @@ struct LaunchFlowStateCard: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             HStack(alignment: .center, spacing: 10) {
                 if state == .loading {
                     ProgressView()
@@ -87,8 +87,8 @@ struct LaunchFlowStateCard: View {
             Text(stateLabel)
                 .font(.caption2.weight(.bold))
                 .foregroundColor(iconColor)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
+                .padding(.horizontal, CivicaSpacing.sm)
+                .padding(.vertical, CivicaSpacing.xs)
                 .background(iconColor.opacity(0.14))
                 .clipShape(Capsule())
 
@@ -107,7 +107,7 @@ struct LaunchFlowStateCard: View {
                     .buttonStyle(LaunchFlowSecondaryCTAButtonStyle())
             }
         }
-        .padding(12)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(VoteNowColors.surfacePrimary)
         .clipShape(RoundedRectangle(cornerRadius: VoteNowColors.cardCornerRadius, style: .continuous))
@@ -127,11 +127,11 @@ private struct LaunchFlowPrimaryCTAButtonStyle: ButtonStyle {
             .foregroundColor(VoteNowColors.onPrimaryText)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .fill(backgroundColor(isPressed: configuration.isPressed))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .stroke(VoteNowColors.ctaBlue.opacity(0.24), lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.99 : 1)
@@ -153,11 +153,11 @@ private struct LaunchFlowSecondaryCTAButtonStyle: ButtonStyle {
             .foregroundColor(isEnabled ? VoteNowColors.ctaBlue : VoteNowColors.textSecondary)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .fill(backgroundColor(isPressed: configuration.isPressed))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .stroke(borderColor, lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.99 : 1)

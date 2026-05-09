@@ -192,9 +192,9 @@ struct WhyVoteView: View {
                     Color.clear
                         .frame(height: 24)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
-                .padding(.bottom, 12)
+                .padding(.horizontal, CivicaSpacing.lg)
+                .padding(.top, CivicaSpacing.lg)
+                .padding(.bottom, CivicaSpacing.md)
             }
         }
         .navigationTitle(l("app.page.why_vote.turnout_combined", "Why Vote? Historical Turnout by Age"))
@@ -218,7 +218,7 @@ struct WhyVoteView: View {
            let info = stateInfo {
             outOfTenComparisonSection(for: turnoutPair, info: info)
         } else {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Text(outOfTenHeader())
                     .font(.title3.weight(.semibold))
                     .foregroundColor(VoteNowColors.textPrimary)
@@ -243,18 +243,18 @@ struct WhyVoteView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(VoteNowColors.surfacePrimary.opacity(0.72))
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                     .stroke(VoteNowColors.textPrimary.opacity(0.08), lineWidth: 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         }
     }
 
     private func outOfTenComparisonSection(for turnoutPair: ComparableTurnoutPair, info: StateVoteInfo) -> some View {
         let primaryTurnout = dataStore.primaryTurnoutPercent(for: info.stateCode) ?? turnoutPair.midtermTurnout
 
-        return VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .center, spacing: 8) {
+        return VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                 Text(outOfTenHeader(for: info))
                     .font(.title3.weight(.semibold))
                     .foregroundColor(VoteNowColors.textPrimary)
@@ -264,7 +264,7 @@ struct WhyVoteView: View {
                 stateFlagBadge(for: info.stateCode)
             }
 
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                 OutOfTenTurnoutRowView(
                     label: "\(turnoutPair.presidentialYear) Presidential",
                     turnoutPercent: turnoutPair.presidentialTurnout,
@@ -290,15 +290,15 @@ struct WhyVoteView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(VoteNowColors.surfacePrimary.opacity(0.72))
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                     .stroke(VoteNowColors.textPrimary.opacity(0.08), lineWidth: 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         }
     }
 
     private var powerOfVoteSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(l("app.why_vote.why_care.title", "The power of a vote"))
                 .font(.title3.weight(.semibold))
 

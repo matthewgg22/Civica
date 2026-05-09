@@ -13,7 +13,7 @@ struct ElectionTimelineCardView: View {
     let onFlag: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             HStack(alignment: .top, spacing: 10) {
                 Text(stateLabel)
                     .font(.subheadline.weight(.semibold))
@@ -51,7 +51,7 @@ struct ElectionTimelineCardView: View {
                 }
             }
 
-            HStack(alignment: .center, spacing: 8) {
+            HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                 Text(electionDateText)
                     .font(.subheadline.weight(.semibold))
                     .foregroundColor(VoteNowColors.textPrimary)
@@ -63,7 +63,7 @@ struct ElectionTimelineCardView: View {
                         .font(.caption.weight(.semibold))
                         .foregroundColor(VoteNowColors.ctaBlue)
                         .padding(.horizontal, 9)
-                        .padding(.vertical, 4)
+                        .padding(.vertical, CivicaSpacing.xs)
                         .background(VoteNowColors.infoSurfaceBlue)
                         .clipShape(Capsule())
                 }
@@ -82,18 +82,18 @@ struct ElectionTimelineCardView: View {
                 .disabled(!canMakePlan)
                 .foregroundColor(canMakePlan ? .white : VoteNowColors.textPrimary.opacity(0.75))
                 .background(
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                         .fill(canMakePlan ? VoteNowColors.ctaBlue : VoteNowColors.infoSurfaceBlue)
                 )
             }
         }
         .padding(14)
         .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
                 .fill(VoteNowColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
                 .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
         )
         .shadow(color: VoteNowColors.textPrimary.opacity(0.06), radius: 3, x: 0, y: 1)

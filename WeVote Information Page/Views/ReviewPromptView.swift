@@ -5,7 +5,7 @@ struct ReviewPromptView: View {
     let onNotNow: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
             Text("Did Civica help you make your plan?")
                 .font(.title3.weight(.semibold))
                 .foregroundColor(VoteNowColors.textPrimary)
@@ -21,17 +21,17 @@ struct ReviewPromptView: View {
                     .frame(maxWidth: .infinity, minHeight: 44)
                     .background(VoteNowColors.surfacePrimary)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                             .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
                     )
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
 
                 Button("Rate the App", action: onRateApp)
                     .font(.headline.weight(.semibold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, minHeight: 44)
                     .background(VoteNowColors.ctaBlue)
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
             }
         }
         .padding(20)

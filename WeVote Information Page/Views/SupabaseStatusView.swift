@@ -14,7 +14,7 @@ struct SupabaseStatusView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             Text("Supabase Status")
                 .font(.headline)
 
@@ -35,10 +35,10 @@ struct SupabaseStatusView: View {
                     .padding(10)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(VoteNowColors.statusErrorSurface)
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
             }
 
-            HStack(spacing: 8) {
+            HStack(spacing: CivicaSpacing.sm) {
                 TextField("Email for OTP sign-in", text: $otpEmail)
                     .textInputAutocapitalization(.never)
                     .keyboardType(.emailAddress)
@@ -78,13 +78,13 @@ struct SupabaseStatusView: View {
                 .disabled(!authStore.isSignedIn)
             }
         }
-        .padding(12)
+        .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(VoteNowColors.secondaryButtonFill)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(VoteNowColors.ctaBlue.opacity(0.18), lineWidth: 1)
         )
         .task {
@@ -158,7 +158,7 @@ struct SupabaseStatusView: View {
                     Image(systemName: indicator.iconName)
                         .font(.caption.weight(.bold))
                         .foregroundStyle(indicator.tint)
-                        .padding(4)
+                        .padding(CivicaSpacing.xs)
                         .background(indicator.surface)
                         .clipShape(Circle())
                         .accessibilityHidden(true)
