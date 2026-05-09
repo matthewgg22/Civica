@@ -340,7 +340,7 @@ extension CivicaLogoIcon {
     }()
 
     static let tabBarBarsUIImage: UIImage = {
-        let renderer = ImageRenderer(content: VoteNowTabBarsIcon(size: 22))
+        let renderer = ImageRenderer(content: CivicaTabBarsIcon(size: 22))
         renderer.scale = UIScreen.main.scale
         return (renderer.uiImage ?? UIImage()).withRenderingMode(.alwaysOriginal)
     }()
@@ -349,7 +349,7 @@ extension CivicaLogoIcon {
 // Deprecation shim: keep CivicaLogoIcon name compiling while call sites migrate.
 typealias VoteNowLogoIcon = CivicaLogoIcon
 
-private struct VoteNowTabBarsIcon: View {
+private struct CivicaTabBarsIcon: View {
     var size: CGFloat = 28
     var color: Color = CivicaColors.softRed
     var horizontalStretch: CGFloat = 1.5

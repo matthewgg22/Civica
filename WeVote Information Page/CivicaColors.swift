@@ -63,9 +63,6 @@ enum CivicaColors {
     static let cardCornerRadius: CGFloat = 12
 }
 
-// Backward-compatible typealias so existing references continue compiling.
-typealias VoteNowColor = CivicaColors
-
 extension Color {
     static func dynamic(light: String, dark: String) -> Color {
         Color(
