@@ -45,7 +45,7 @@ struct RegistrationCheckView: View {
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(VoteNowColors.richBlue.cornerRadius(10))
+                        .background(CivicaColors.richBlue.cornerRadius(10))
                         .foregroundColor(.white)
                 }
 

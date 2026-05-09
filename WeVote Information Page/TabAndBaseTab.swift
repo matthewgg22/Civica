@@ -82,7 +82,7 @@ struct TabAndBaseTab: View {
                 .environmentObject(planVM)
                 .environmentObject(repsVM)
                 .tabItem {
-                    Image(uiImage: VoteNowLogoIcon.tabBarBarsUIImage)
+                    Image(uiImage: CivicaLogoIcon.tabBarBarsUIImage)
                         .renderingMode(.original)
                     Text("Call Your Reps")
                 }
@@ -103,7 +103,7 @@ struct TabAndBaseTab: View {
         }
         .environmentObject(planVM)
         .environmentObject(repsVM)
-        .tint(VoteNowColors.primaryCTA)
+        .tint(CivicaColors.primaryCTA)
         .overlay(alignment: .topTrailing) {
             Button { showMyInfoPanel = true } label: {
                 Image(systemName: "person.crop.circle.fill")

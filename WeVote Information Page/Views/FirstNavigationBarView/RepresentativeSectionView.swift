@@ -3,9 +3,9 @@ import UIKit
 
 private func partyTint(_ party: String?) -> Color {
     let normalized = (party ?? "").lowercased()
-    if normalized.contains("democrat") { return VoteNowColors.richBlue }
-    if normalized.contains("republican") { return VoteNowColors.richRed }
-    return VoteNowColors.mutedText
+    if normalized.contains("democrat") { return CivicaColors.richBlue }
+    if normalized.contains("republican") { return CivicaColors.richRed }
+    return CivicaColors.mutedText
 }
 
 private func shouldOpenMyInfoFromParty(_ party: String?) -> Bool {
@@ -109,7 +109,7 @@ private struct RepHeadshotView: View {
             Image(systemName: "person.crop.circle.fill")
                 .resizable()
                 .scaledToFit()
-                .foregroundColor(VoteNowColors.mutedText.opacity(0.45))
+                .foregroundColor(CivicaColors.mutedText.opacity(0.45))
         }
     }
 
@@ -277,7 +277,7 @@ struct RepRow: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(displayName)
                         .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(VoteNowColors.primaryText)
+                        .foregroundColor(CivicaColors.primaryText)
                         .lineLimit(1)
                         .minimumScaleFactor(0.72)
 
@@ -293,7 +293,7 @@ struct RepRow: View {
                     if let districtLabel {
                         Text(districtLabel)
                             .font(.system(size: 16, weight: .regular))
-                            .foregroundColor(VoteNowColors.mutedText)
+                            .foregroundColor(CivicaColors.mutedText)
                             .lineLimit(1)
                             .minimumScaleFactor(0.72)
                     }
@@ -317,7 +317,7 @@ struct RepRow: View {
                             .minimumScaleFactor(0.75)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity, minHeight: 36)
-                            .background(VoteNowColors.primaryCTA)
+                            .background(CivicaColors.primaryCTA)
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                         }
                         .buttonStyle(.plain)
@@ -395,11 +395,11 @@ struct RepresentativeSection: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
-        .background(VoteNowColors.infoSurfaceBlue)
+        .background(CivicaColors.infoSurfaceBlue)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(VoteNowColors.primaryCTA.opacity(0.22), lineWidth: 1)
+                .stroke(CivicaColors.primaryCTA.opacity(0.22), lineWidth: 1)
         )
     }
 
@@ -410,7 +410,7 @@ struct RepresentativeSection: View {
                 headerIcon
                 Text(displayTitle)
                     .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(VoteNowColors.primaryCTA)
+                    .foregroundColor(CivicaColors.primaryCTA)
                     .lineLimit(1)
                     .minimumScaleFactor(0.72)
             }
@@ -427,11 +427,11 @@ struct RepresentativeSection: View {
                 .scaledToFit()
                 .frame(width: 29, height: 29)
                 .padding(5)
-                .background(VoteNowColors.primaryCTA.opacity(0.30))
+                .background(CivicaColors.primaryCTA.opacity(0.30))
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .stroke(VoteNowColors.primaryCTA.opacity(0.40), lineWidth: 1.3)
+                        .stroke(CivicaColors.primaryCTA.opacity(0.40), lineWidth: 1.3)
                 )
         case "federal legislative":
             if UIImage(named: "CapitolIcon") != nil {
@@ -441,22 +441,22 @@ struct RepresentativeSection: View {
                     .scaledToFit()
                     .frame(width: 32, height: 32)
                     .padding(4)
-                    .background(VoteNowColors.primaryCTA.opacity(0.30))
+                    .background(CivicaColors.primaryCTA.opacity(0.30))
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8, style: .continuous)
-                            .stroke(VoteNowColors.primaryCTA.opacity(0.40), lineWidth: 1.3)
+                            .stroke(CivicaColors.primaryCTA.opacity(0.40), lineWidth: 1.3)
                     )
             } else {
                 Text("🏛️")
                     .font(.system(size: 24))
                     .frame(width: 32, height: 32)
                     .padding(4)
-                    .background(VoteNowColors.primaryCTA.opacity(0.30))
+                    .background(CivicaColors.primaryCTA.opacity(0.30))
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8, style: .continuous)
-                            .stroke(VoteNowColors.primaryCTA.opacity(0.40), lineWidth: 1.3)
+                            .stroke(CivicaColors.primaryCTA.opacity(0.40), lineWidth: 1.3)
                     )
             }
         case "state":
@@ -469,27 +469,27 @@ struct RepresentativeSection: View {
                     .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 7, style: .continuous)
-                            .stroke(VoteNowColors.primaryCTA.opacity(0.30), lineWidth: 0.9)
+                            .stroke(CivicaColors.primaryCTA.opacity(0.30), lineWidth: 0.9)
                     )
-                    .shadow(color: VoteNowColors.primaryText.opacity(0.22), radius: 4, x: 0, y: 2)
+                    .shadow(color: CivicaColors.primaryText.opacity(0.22), radius: 4, x: 0, y: 2)
                     .opensMyInfoPanelOnLongPress()
             } else {
                 Image(systemName: "map.fill")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(VoteNowColors.primaryCTA)
+                    .foregroundColor(CivicaColors.primaryCTA)
                     .frame(width: 22, height: 22)
                     .padding(4)
-                    .background(VoteNowColors.primaryCTA.opacity(0.30))
+                    .background(CivicaColors.primaryCTA.opacity(0.30))
                     .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 4, style: .continuous)
-                            .stroke(VoteNowColors.primaryCTA.opacity(0.40), lineWidth: 1.3)
+                            .stroke(CivicaColors.primaryCTA.opacity(0.40), lineWidth: 1.3)
                     )
             }
         default:
             Image(systemName: "building.2.fill")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(VoteNowColors.primaryCTA)
+                .foregroundColor(CivicaColors.primaryCTA)
                 .frame(width: 22, height: 22)
         }
     }
@@ -552,7 +552,7 @@ struct RepresentativeSectionView_Previews: PreviewProvider {
             ]
         )
         .padding()
-        .background(VoteNowColors.appBackground)
+        .background(CivicaColors.appBackground)
         .previewLayout(.sizeThatFits)
     }
 }

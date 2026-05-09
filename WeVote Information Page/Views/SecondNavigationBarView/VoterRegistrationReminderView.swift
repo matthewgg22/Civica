@@ -42,7 +42,7 @@ struct VoterRegistrationReminderView: View {
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(VoteNowColors.richBlue.cornerRadius(8))
+                    .background(CivicaColors.richBlue.cornerRadius(8))
                     .foregroundColor(.white)
             }
 

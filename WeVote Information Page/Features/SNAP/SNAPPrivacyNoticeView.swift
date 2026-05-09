@@ -13,7 +13,7 @@ struct SNAPPrivacyNoticeView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Before You Start")
                     .font(.title3.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.textPrimary)
+                    .foregroundStyle(CivicaColors.textPrimary)
 
                 privacySection(
                     title: "What this tool does",
@@ -37,21 +37,21 @@ struct SNAPPrivacyNoticeView: View {
 
                 Text("This screen does not determine eligibility or approval.")
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
 
                 VStack(spacing: 10) {
                     Button("Continue to SNAP prep") {
                         viewModel.acceptedPrivacyNotice = true
                         continueToEligibility = true
                     }
-                    .buttonStyle(VoteNowPrimaryCTAButtonStyle())
+                    .buttonStyle(CivicaPrimaryCTAButtonStyle())
 
                     if let officialURL {
                         Button("Go to official application") {
                             openURL(officialURL)
                         }
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.primaryCTA)
+                        .foregroundStyle(CivicaColors.primaryCTA)
                         .buttonStyle(.plain)
                     }
 
@@ -64,7 +64,7 @@ struct SNAPPrivacyNoticeView: View {
             }
             .padding(16)
         }
-        .background(VoteNowColors.brandSoftBlue.ignoresSafeArea())
+        .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
         .navigationDestination(isPresented: $continueToEligibility) {
             SNAPEligibilityIntroView(viewModel: viewModel)
                 .navigationTitle("Check what you may need")
@@ -89,20 +89,20 @@ struct SNAPPrivacyNoticeView: View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title)
                 .font(.headline)
-                .foregroundStyle(VoteNowColors.textPrimary)
+                .foregroundStyle(CivicaColors.textPrimary)
             Text(body)
                 .font(.body)
-                .foregroundStyle(VoteNowColors.textSecondary)
+                .foregroundStyle(CivicaColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(14)
         .background(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(VoteNowColors.surfacePrimary)
+                .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
     }
 }

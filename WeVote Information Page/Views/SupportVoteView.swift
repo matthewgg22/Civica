@@ -2,8 +2,8 @@ import SwiftUI
 
 struct SupportVoteView: View {
     @Environment(\.locale) private var locale
-    private let pageBackground = VoteNowColors.supportPageBackground
-    private let warmSupportYellow = VoteNowColors.supportWarmSurface
+    private let pageBackground = CivicaColors.supportPageBackground
+    private let warmSupportYellow = CivicaColors.supportWarmSurface
 
     private enum PresetAmount: Hashable, CaseIterable {
         case five
@@ -95,17 +95,17 @@ struct SupportVoteView: View {
 
             Text(l("app.support_vote.mission.body", "Civica's mission is to empower every American to vote by being the least friction companion to support participation. We believe that reducing logistical friction-deadlines, locations, ID rules, and confusing steps-is essential to authentic voting help."))
                 .font(.body)
-                .foregroundStyle(VoteNowColors.mutedText)
+                .foregroundStyle(CivicaColors.mutedText)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(14)
         .background(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(VoteNowColors.background)
+                .fill(CivicaColors.background)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
+                .stroke(CivicaColors.primaryText.opacity(0.08), lineWidth: 1)
         )
     }
 
@@ -113,11 +113,11 @@ struct SupportVoteView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text(l("app.support_vote.supports.title", "What your donation supports"))
                 .font(.headline.weight(.bold))
-                .foregroundStyle(VoteNowColors.warningAmber)
+                .foregroundStyle(CivicaColors.warningAmber)
 
             Text(l("app.support_vote.supports.body", "As a college-founded civic startup, we rely on community support to keep voter tools accessible."))
                 .font(.subheadline)
-                .foregroundStyle(VoteNowColors.mutedText)
+                .foregroundStyle(CivicaColors.mutedText)
 
             supportBullet(l("app.support_vote.supports.bullet_1", "No ads or paywalls"))
             supportBullet(l("app.support_vote.supports.bullet_2", "Nonpartisan voting logistics"))
@@ -131,7 +131,7 @@ struct SupportVoteView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(VoteNowColors.warningAmber.opacity(0.58), lineWidth: 1)
+                .stroke(CivicaColors.warningAmber.opacity(0.58), lineWidth: 1)
         )
     }
 
@@ -161,18 +161,18 @@ struct SupportVoteView: View {
 
                     Text(l("app.support_vote.amount.range_hint", "Minimum $1, maximum $500"))
                         .font(.caption)
-                        .foregroundStyle(VoteNowColors.mutedText)
+                        .foregroundStyle(CivicaColors.mutedText)
                 }
             }
 
             if let amount = resolvedAmount {
                 Text("\(l("app.support_vote.amount.selected_prefix", "Donation amount:")) \(formattedCurrency(amount))")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(isAmountValid ? VoteNowColors.primaryText : VoteNowColors.richRed)
+                    .foregroundColor(isAmountValid ? CivicaColors.primaryText : CivicaColors.richRed)
             } else {
                 Text(l("app.support_vote.amount.select_to_continue", "Select an amount to continue."))
                     .font(.subheadline)
-                    .foregroundStyle(VoteNowColors.mutedText)
+                    .foregroundStyle(CivicaColors.mutedText)
             }
 
             // Current rollout uses an Apple Pay donation flow from this page.
@@ -190,26 +190,26 @@ struct SupportVoteView: View {
             if !applePayManager.canMakePayments() {
                 Text(l("app.support_vote.amount.apple_pay_unavailable", "Apple Pay is not available on this device."))
                     .font(.footnote)
-                    .foregroundStyle(VoteNowColors.mutedText)
+                    .foregroundStyle(CivicaColors.mutedText)
             }
 
             if let error = applePayManager.errorMessage, !error.isEmpty {
                 Label(error, systemImage: "exclamationmark.triangle.fill")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.richRed)
+                    .foregroundStyle(CivicaColors.richRed)
                     .padding(10)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(VoteNowColors.statusErrorSurface)
+                    .background(CivicaColors.statusErrorSurface)
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
 
             if let success = applePayManager.successMessage, !success.isEmpty {
                 Label(success, systemImage: "checkmark.circle.fill")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(VoteNowColors.successGreen)
+                    .foregroundStyle(CivicaColors.successGreen)
                     .padding(10)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(VoteNowColors.statusSuccessSurface)
+                    .background(CivicaColors.statusSuccessSurface)
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
 
@@ -222,7 +222,7 @@ struct SupportVoteView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(VoteNowColors.warningAmber.opacity(0.58), lineWidth: 1)
+                .stroke(CivicaColors.warningAmber.opacity(0.58), lineWidth: 1)
         )
     }
 
@@ -233,7 +233,7 @@ struct SupportVoteView: View {
 
             Text(l("app.support_vote.disrupt.body", "Most voter outreach in America is not funded by voters. It is funded by PACs and Super PACs. That means:"))
                 .font(.subheadline)
-                .foregroundStyle(VoteNowColors.mutedText)
+                .foregroundStyle(CivicaColors.mutedText)
                 .fixedSize(horizontal: false, vertical: true)
 
             supportBullet(l("app.support_vote.disrupt.bullet_1", "Messaging is designed to move votes for a side"))
@@ -249,11 +249,11 @@ struct SupportVoteView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(VoteNowColors.background)
+                .fill(CivicaColors.background)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
+                .stroke(CivicaColors.primaryText.opacity(0.08), lineWidth: 1)
         )
     }
 
@@ -276,12 +276,12 @@ struct SupportVoteView: View {
                         .frame(height: 40)
                         .background(
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .fill(selectedAmount == preset ? VoteNowColors.richBlue : VoteNowColors.infoSurfaceBlue)
+                                .fill(selectedAmount == preset ? CivicaColors.richBlue : CivicaColors.infoSurfaceBlue)
                         )
-                        .foregroundStyle(selectedAmount == preset ? VoteNowColors.surfaceWhite : VoteNowColors.primaryText)
+                        .foregroundStyle(selectedAmount == preset ? CivicaColors.surfaceWhite : CivicaColors.primaryText)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(selectedAmount == preset ? VoteNowColors.richBlue : VoteNowColors.primaryText.opacity(0.08), lineWidth: 1)
+                                .stroke(selectedAmount == preset ? CivicaColors.richBlue : CivicaColors.primaryText.opacity(0.08), lineWidth: 1)
                         )
                 }
                 .buttonStyle(.plain)

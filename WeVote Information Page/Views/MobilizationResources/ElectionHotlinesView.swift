@@ -24,11 +24,11 @@ struct ElectionHotlinesView: View {
 
                     Text(l("app.election_hotlines.general.body", "Have questions about how, when, or where to vote? Contact this hotline to get clear info from trained professionals."))
                         .font(.subheadline)
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(CivicaColors.mutedText)
 
                     HStack {
                         Image(systemName: "phone.circle.fill")
-                            .foregroundColor(VoteNowColors.richBlue)
+                            .foregroundColor(CivicaColors.richBlue)
                         hotlineNumberLink(display: "(866-390-2992)", digits: "8663902992")
                     }
                 }
@@ -41,11 +41,11 @@ struct ElectionHotlinesView: View {
 
                     Text(l("app.election_hotlines.intimidation.body", "If you or someone you know is being threatened or blocked from voting, call this national hotline immediately."))
                         .font(.subheadline)
-                        .foregroundColor(VoteNowColors.mutedText)
+                        .foregroundColor(CivicaColors.mutedText)
 
                     HStack {
                         Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundColor(VoteNowColors.richRed)
+                            .foregroundColor(CivicaColors.richRed)
                         hotlineNumberLink(display: "(866-868-3692)", digits: "8668683692")
                     }
                 }
@@ -70,7 +70,7 @@ struct ElectionHotlinesView: View {
         if let telURL = URL(string: "tel:\(digits)") {
             Link(display, destination: telURL)
                 .fontWeight(.medium)
-                .foregroundColor(VoteNowColors.primaryCTA)
+                .foregroundColor(CivicaColors.primaryCTA)
         } else {
             Text(display)
                 .fontWeight(.medium)

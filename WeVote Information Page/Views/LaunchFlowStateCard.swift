@@ -47,11 +47,11 @@ struct LaunchFlowStateCard: View {
     private var iconColor: Color {
         switch state {
         case .loading:
-            return VoteNowColors.primaryCTA
+            return CivicaColors.primaryCTA
         case .empty:
-            return VoteNowColors.mutedText
+            return CivicaColors.mutedText
         case .error:
-            return VoteNowColors.urgentCTA
+            return CivicaColors.urgentCTA
         }
     }
 
@@ -81,7 +81,7 @@ struct LaunchFlowStateCard: View {
 
                 Text(title)
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(VoteNowColors.primaryText)
+                    .foregroundColor(CivicaColors.primaryText)
             }
 
             Text(stateLabel)
@@ -94,7 +94,7 @@ struct LaunchFlowStateCard: View {
 
             Text(message)
                 .font(.subheadline)
-                .foregroundColor(VoteNowColors.mutedText)
+                .foregroundColor(CivicaColors.mutedText)
                 .fixedSize(horizontal: false, vertical: true)
 
             if let primaryActionTitle, let primaryAction {
@@ -109,11 +109,11 @@ struct LaunchFlowStateCard: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(VoteNowColors.surfaceWhite)
-        .clipShape(RoundedRectangle(cornerRadius: VoteNowColors.cardCornerRadius, style: .continuous))
+        .background(CivicaColors.surfaceWhite)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: VoteNowColors.cardCornerRadius, style: .continuous)
-                .stroke(VoteNowColors.borderWarm.opacity(0.72), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous)
+                .stroke(CivicaColors.borderWarm.opacity(0.72), lineWidth: 1)
         )
     }
 }
@@ -124,7 +124,7 @@ private struct LaunchFlowPrimaryCTAButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.subheadline.weight(.semibold))
-            .foregroundColor(VoteNowColors.onPrimaryText)
+            .foregroundColor(CivicaColors.onPrimaryText)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
@@ -132,15 +132,15 @@ private struct LaunchFlowPrimaryCTAButtonStyle: ButtonStyle {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(VoteNowColors.primaryCTA.opacity(0.24), lineWidth: 1)
+                    .stroke(CivicaColors.primaryCTA.opacity(0.24), lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.99 : 1)
             .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
 
     private func backgroundColor(isPressed: Bool) -> Color {
-        guard isEnabled else { return VoteNowColors.ctaBlueDisabled }
-        return isPressed ? VoteNowColors.ctaBluePressed : VoteNowColors.ctaBlue
+        guard isEnabled else { return CivicaColors.ctaBlueDisabled }
+        return isPressed ? CivicaColors.ctaBluePressed : CivicaColors.ctaBlue
     }
 }
 
@@ -150,7 +150,7 @@ private struct LaunchFlowSecondaryCTAButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.subheadline.weight(.semibold))
-            .foregroundColor(isEnabled ? VoteNowColors.primaryCTA : VoteNowColors.mutedText)
+            .foregroundColor(isEnabled ? CivicaColors.primaryCTA : CivicaColors.mutedText)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
@@ -165,11 +165,11 @@ private struct LaunchFlowSecondaryCTAButtonStyle: ButtonStyle {
     }
 
     private func backgroundColor(isPressed: Bool) -> Color {
-        guard isEnabled else { return VoteNowColors.secondaryButtonFillDisabled }
-        return isPressed ? VoteNowColors.secondaryButtonFillPressed : VoteNowColors.secondaryButtonFill
+        guard isEnabled else { return CivicaColors.secondaryButtonFillDisabled }
+        return isPressed ? CivicaColors.secondaryButtonFillPressed : CivicaColors.secondaryButtonFill
     }
 
     private var borderColor: Color {
-        isEnabled ? VoteNowColors.secondaryButtonBorder : VoteNowColors.secondaryButtonDisabledBorder
+        isEnabled ? CivicaColors.secondaryButtonBorder : CivicaColors.secondaryButtonDisabledBorder
     }
 }

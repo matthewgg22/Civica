@@ -8,21 +8,21 @@ struct ReviewPromptView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Did Civica help you make your plan?")
                 .font(.title3.weight(.semibold))
-                .foregroundColor(VoteNowColors.primaryText)
+                .foregroundColor(CivicaColors.primaryText)
 
             Text("If so, would you mind giving us a quick App Store rating? It helps more voters discover the app.")
                 .font(.body)
-                .foregroundColor(VoteNowColors.mutedText)
+                .foregroundColor(CivicaColors.mutedText)
 
             HStack(spacing: 10) {
                 Button("Not now", action: onNotNow)
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(VoteNowColors.primaryText)
+                    .foregroundColor(CivicaColors.primaryText)
                     .frame(maxWidth: .infinity, minHeight: 44)
-                    .background(VoteNowColors.surfaceWhite)
+                    .background(CivicaColors.surfaceWhite)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .stroke(VoteNowColors.borderWarm, lineWidth: 1)
+                            .stroke(CivicaColors.borderWarm, lineWidth: 1)
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
 
@@ -30,7 +30,7 @@ struct ReviewPromptView: View {
                     .font(.headline.weight(.semibold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, minHeight: 44)
-                    .background(VoteNowColors.primaryCTA)
+                    .background(CivicaColors.primaryCTA)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
         }

@@ -33,8 +33,8 @@ struct TimeReactiveBackground: View {
             if theme.sunGlowIntensity > 0.001 {
                 RadialGradient(
                     colors: [
-                        VoteNowColors.brandSoftRed.opacity(theme.sunGlowIntensity * 0.24),
-                        VoteNowColors.warningAmber.opacity(theme.sunGlowIntensity * 0.34),
+                        CivicaColors.brandSoftRed.opacity(theme.sunGlowIntensity * 0.24),
+                        CivicaColors.warningAmber.opacity(theme.sunGlowIntensity * 0.34),
                         .clear
                     ],
                     center: .top,

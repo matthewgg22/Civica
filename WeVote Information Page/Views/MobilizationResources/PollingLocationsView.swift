@@ -146,7 +146,7 @@ struct PollingLocationsView: View {
                 )
             )
             .font(.subheadline.weight(.bold))
-            .foregroundColor(VoteNowColors.primaryText)
+            .foregroundColor(CivicaColors.primaryText)
 
             Text(
                 l(
@@ -155,16 +155,16 @@ struct PollingLocationsView: View {
                 )
             )
             .font(.footnote)
-            .foregroundColor(VoteNowColors.mutedText)
+            .foregroundColor(CivicaColors.mutedText)
             .fixedSize(horizontal: false, vertical: true)
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(VoteNowColors.infoSurfaceBlue)
+        .background(CivicaColors.infoSurfaceBlue)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(VoteNowColors.primaryCTA.opacity(0.16), lineWidth: 1)
+                .stroke(CivicaColors.primaryCTA.opacity(0.16), lineWidth: 1)
         )
         .padding(.horizontal)
     }
@@ -217,7 +217,7 @@ struct PollingLocationsView: View {
 
                 Text(place.address)
                     .font(.caption)
-                    .foregroundColor(VoteNowColors.mutedText)
+                    .foregroundColor(CivicaColors.mutedText)
                     .lineLimit(1)
 
                 HStack(spacing: 10) {
@@ -226,12 +226,12 @@ struct PollingLocationsView: View {
                         systemImage: "location"
                     )
                     .font(.caption)
-                    .foregroundColor(VoteNowColors.mutedText)
+                    .foregroundColor(CivicaColors.mutedText)
 
                     if place.hours != "--" {
                         Label(place.hours, systemImage: "clock")
                             .font(.caption)
-                            .foregroundColor(VoteNowColors.mutedText)
+                            .foregroundColor(CivicaColors.mutedText)
                     }
                 }
             }
@@ -245,7 +245,7 @@ struct PollingLocationsView: View {
             } label: {
                 Image(systemName: "arrow.triangle.turn.up.right.diamond.fill")
                     .font(.title3)
-                    .foregroundColor(VoteNowColors.richBlue)
+                    .foregroundColor(CivicaColors.richBlue)
             }
             .buttonStyle(.plain)
         }
@@ -255,16 +255,16 @@ struct PollingLocationsView: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .fill(
                     selectedPlace?.id == place.id
-                    ? VoteNowColors.richBlue.opacity(0.14)
-                    : VoteNowColors.infoSurfaceBlue
+                    ? CivicaColors.richBlue.opacity(0.14)
+                    : CivicaColors.infoSurfaceBlue
                 )
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(
                     selectedPlace?.id == place.id
-                    ? VoteNowColors.richBlue.opacity(0.45)
-                    : VoteNowColors.primaryText.opacity(0.05),
+                    ? CivicaColors.richBlue.opacity(0.45)
+                    : CivicaColors.primaryText.opacity(0.05),
                     lineWidth: 1
                 )
         )
@@ -519,7 +519,7 @@ private struct PollingLocationPinView: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(isSelected ? Color(red: 0.87, green: 0.35, blue: 0.27) : VoteNowColors.richBlue)
+                .fill(isSelected ? Color(red: 0.87, green: 0.35, blue: 0.27) : CivicaColors.richBlue)
                 .frame(width: 24, height: 24)
             Image(systemName: "mappin")
                 .font(.caption.bold())
@@ -527,7 +527,7 @@ private struct PollingLocationPinView: View {
         }
         .overlay(
             Circle()
-                .stroke(VoteNowColors.surfaceWhite, lineWidth: 2)
+                .stroke(CivicaColors.surfaceWhite, lineWidth: 2)
         )
         .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
     }
