@@ -2430,7 +2430,7 @@ struct StepFourView: View {
         "\(Self.timeFormatter.string(from: previewPlan.pollingOpen)) - \(Self.timeFormatter.string(from: previewPlan.pollingClose))"
     }
 
-    private var shareCardPayload: VoteNowShareCardPayload {
+    private var shareCardPayload: CivicaShareCardPayload {
         var details: [URLQueryItem] = [
             URLQueryItem(name: "election", value: previewPlan.electionTitle),
             URLQueryItem(name: "day", value: Self.isoDateFormatter.string(from: previewPlan.electionDate)),
@@ -2440,7 +2440,7 @@ struct StepFourView: View {
             details.append(URLQueryItem(name: "state", value: stateCode))
         }
 
-        return VoteNowShareCardPayload(
+        return CivicaShareCardPayload(
             cardType: .mapv,
             target: .mapv,
             title: l("app.mapv.share.headline.plan_now", "Make Your Plan to Vote"),
