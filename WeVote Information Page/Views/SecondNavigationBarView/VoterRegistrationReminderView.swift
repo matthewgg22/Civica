@@ -39,7 +39,7 @@ struct VoterRegistrationReminderView: View {
 
             Link(destination: checkStatusURL) {
                 Text(checkStatusLabel)
-                    .font(.headline)
+                    .font(CivicaTypography.sectionHeader)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(VoteNowColors.richBlue.cornerRadius(8))

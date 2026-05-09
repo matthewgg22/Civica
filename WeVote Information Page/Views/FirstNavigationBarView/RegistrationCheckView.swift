@@ -42,7 +42,7 @@ struct RegistrationCheckView: View {
 
                 Link(destination: checkStatusURL) {
                     Text(checkStatusLabel)
-                        .font(.headline)
+                        .font(CivicaTypography.sectionHeader)
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(VoteNowColors.richBlue.cornerRadius(10))

@@ -36,8 +36,7 @@ struct RaceCandidatesView: View {
         ScrollView {
             VStack(alignment: .center, spacing: 20) {
                 Text(l("app.race_candidates.title.truthful", "Candidates in this race"))
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+                    .font(CivicaTypography.pageTitle)
                     .multilineTextAlignment(.center)
 
                 if showArchiveDisclaimer {
@@ -69,23 +68,23 @@ struct RaceCandidatesView: View {
 
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(candidate.name)
-                                    .font(.headline)
+                                    .font(CivicaTypography.sectionHeader)
 
                                 Text(localizedExperience(for: candidate))
-                                    .font(.subheadline)
+                                    .font(CivicaTypography.subhead)
                                     .foregroundColor(VoteNowColors.mutedText)
 
                                 Text("\(l("app.race_candidates.announced_prefix", "Announced:")) \(candidate.announcedDate)")
-                                    .font(.caption)
+                                    .font(CivicaTypography.caption)
                                     .foregroundColor(.gray)
 
                                 if let websiteURL = URL(string: candidate.websiteURL) {
                                     Link(l("app.race_candidates.website", "Website"), destination: websiteURL)
-                                        .font(.caption)
+                                        .font(CivicaTypography.caption)
                                         .foregroundColor(VoteNowColors.richBlue)
                                 } else {
                                     Text(l("app.race_candidates.website", "Website"))
-                                        .font(.caption)
+                                        .font(CivicaTypography.caption)
                                         .foregroundColor(VoteNowColors.mutedText)
                                 }
                             }

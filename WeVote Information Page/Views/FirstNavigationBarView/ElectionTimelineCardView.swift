@@ -39,13 +39,13 @@ struct ElectionTimelineCardView: View {
 
             VStack(alignment: .leading, spacing: 5) {
                 Text(titleText)
-                    .font(.headline)
+                    .font(CivicaTypography.sectionHeader)
                     .foregroundColor(VoteNowColors.primaryText)
                     .lineLimit(2)
 
                 if let subtitleText, !subtitleText.isEmpty {
                     Text(subtitleText)
-                        .font(.subheadline)
+                        .font(CivicaTypography.subhead)
                         .foregroundColor(VoteNowColors.mutedText)
                         .lineLimit(2)
                 }

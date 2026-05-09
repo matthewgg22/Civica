@@ -732,7 +732,7 @@ struct FeedbackView: View {
 
                 VStack(alignment: .leading, spacing: 10) {
                     Text(l("app.feedback.share.title", "Share your feedback"))
-                        .font(.headline)
+                        .font(CivicaTypography.sectionHeader)
 
                     Picker(l("app.feedback.category.label", "Category"), selection: $selectedCategory) {
                         ForEach(FeedbackCategory.allCases) { item in
@@ -765,7 +765,7 @@ struct FeedbackView: View {
 
                         if feedbackText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             Text(l("app.feedback.message.placeholder", "Tell us what felt confusing, frustrating, or helpful."))
-                                .font(.subheadline)
+                                .font(CivicaTypography.subhead)
                                 .foregroundColor(VoteNowColors.mutedText)
                                 .padding(.horizontal, 14)
                                 .padding(.vertical, 14)
@@ -792,11 +792,11 @@ struct FeedbackView: View {
                                     ProgressView()
                                         .tint(.white)
                                     Text(l("app.feedback.action.sending", "Sending..."))
-                                        .font(.headline)
+                                        .font(CivicaTypography.sectionHeader)
                                 }
                             } else {
                                 Text(l("app.feedback.action.send", "Send Feedback"))
-                                    .font(.headline)
+                                    .font(CivicaTypography.sectionHeader)
                             }
                         }
                         .frame(maxWidth: .infinity)
@@ -934,7 +934,7 @@ private struct FeedbackSubmissionConfirmationView: View {
             Button(l("app.feedback.success.screen.action", "Return")) {
                 onContinue()
             }
-            .font(.headline)
+            .font(CivicaTypography.sectionHeader)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
             .background(VoteNowColors.primaryCTA)

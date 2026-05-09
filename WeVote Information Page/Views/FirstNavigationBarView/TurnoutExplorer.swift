@@ -21,7 +21,7 @@ struct TurnoutExplorer: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Move the slider to see how big each age group shows up to vote in the U.S. electorate")
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
                 .foregroundColor(VoteNowColors.mutedText)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -89,7 +89,7 @@ struct TurnoutExplorer: View {
             HStack(spacing: 10) {
                 ProgressView()
                 Text("Loading historical turnout data…")
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
                     .foregroundColor(VoteNowColors.mutedText)
             }
             .padding(.vertical, 8)
@@ -198,7 +198,7 @@ struct TurnoutExplorer: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             } else {
                 Text("No turnout record is available for this age range in the selected election type.")
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
                     .foregroundColor(VoteNowColors.mutedText)
                     .padding(.vertical, 8)
             }
@@ -405,7 +405,7 @@ private struct AgeTurnoutBandSlider: View {
 
                         if let votedThousands {
                             Text("\(TurnoutExplorerFormatters.compactPopulationFromThousands(votedThousands)) voted")
-                                .font(.caption2)
+                                .font(CivicaTypography.caption)
                                 .foregroundColor(VoteNowColors.mutedText)
                                 .monospacedDigit()
                         }
@@ -481,7 +481,7 @@ private struct AgeTurnoutBandSlider: View {
 
             HStack {
                 Text(stops.first?.label ?? "")
-                    .font(.caption2)
+                    .font(CivicaTypography.caption)
                     .foregroundColor(VoteNowColors.mutedText)
 
                 Spacer()
@@ -493,7 +493,7 @@ private struct AgeTurnoutBandSlider: View {
                 Spacer()
 
                 Text(stops.last?.label ?? "")
-                    .font(.caption2)
+                    .font(CivicaTypography.caption)
                     .foregroundColor(VoteNowColors.mutedText)
             }
         }
@@ -675,7 +675,7 @@ private struct TurnoutRiskMap: View {
             if let first = diagnostics[safe: visibleRange.lowerBound]?.label,
                let last = diagnostics[safe: visibleRange.upperBound]?.label {
                 Text("Showing ages \(first) to \(last)")
-                    .font(.caption2)
+                    .font(CivicaTypography.caption)
                     .foregroundColor(VoteNowColors.mutedText)
             }
         }
@@ -880,7 +880,7 @@ private struct LegendKey: View {
                 .fill(color)
                 .frame(width: 8, height: 8)
             Text(text)
-                .font(.caption)
+                .font(CivicaTypography.caption)
                 .foregroundColor(VoteNowColors.mutedText)
         }
     }
@@ -923,7 +923,7 @@ private struct MethodologySheet: View {
                 .frame(width: 6, height: 6)
                 .padding(.top, 6)
             Text(text)
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
                 .foregroundColor(VoteNowColors.primaryText)
                 .fixedSize(horizontal: false, vertical: true)
         }

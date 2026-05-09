@@ -802,7 +802,7 @@ struct VoterRegistrationView: View {
                                     .font(.callout.weight(.semibold))
                                     .foregroundColor(VoteNowColors.primaryCTA)
                                 Text(bullet)
-                                    .font(.callout)
+                                    .font(CivicaTypography.support)
                                     .foregroundColor(VoteNowColors.primaryText)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
@@ -818,7 +818,7 @@ struct VoterRegistrationView: View {
                         "Voters receive notification and can cure the ballot within a deadline."
                     )
                 )
-                .font(.callout)
+                .font(CivicaTypography.support)
                 .foregroundColor(VoteNowColors.primaryText)
                 .fixedSize(horizontal: false, vertical: true)
             }
@@ -834,7 +834,7 @@ struct VoterRegistrationView: View {
                             handleCardAction(card.primaryAction)
                         }
                         Text(checkBallotStatusDisclaimerText)
-                            .font(.caption)
+                            .font(CivicaTypography.caption)
                             .foregroundColor(VoteNowColors.mutedText)
                             .fixedSize(horizontal: false, vertical: true)
                     } else {
@@ -861,7 +861,7 @@ struct VoterRegistrationView: View {
                     Button(card.primaryActionTitle) {
                         handleCardAction(card.primaryAction)
                     }
-                    .font(.headline)
+                    .font(CivicaTypography.sectionHeader)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
                     .background(VoteNowColors.primaryCTA)
@@ -953,7 +953,7 @@ struct VoterRegistrationView: View {
                             )
                         )
                     )
-                    .font(.callout)
+                    .font(CivicaTypography.support)
                     .foregroundColor(VoteNowColors.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
 
@@ -963,7 +963,7 @@ struct VoterRegistrationView: View {
                             "Example: In a closed primary, a voter registered as Independent may not be able to vote in either party primary."
                         )
                     )
-                    .font(.callout)
+                    .font(CivicaTypography.support)
                     .foregroundColor(VoteNowColors.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
 
@@ -1030,7 +1030,7 @@ struct VoterRegistrationView: View {
                             "A provisional ballot is a ballot that’s set aside at the polls and reviewed later to determine if it can be counted."
                         )
                     )
-                    .font(.callout)
+                    .font(CivicaTypography.support)
                     .foregroundColor(VoteNowColors.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
 
@@ -1049,7 +1049,7 @@ struct VoterRegistrationView: View {
                                         .font(.callout.weight(.semibold))
                                         .foregroundColor(VoteNowColors.primaryCTA)
                                     Text(bullet)
-                                        .font(.callout)
+                                        .font(CivicaTypography.support)
                                         .foregroundColor(VoteNowColors.primaryText)
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
@@ -1122,7 +1122,7 @@ struct VoterRegistrationView: View {
                             "If your absentee ballot has an issue, your state may allow a cure process to fix and count it before the deadline."
                         )
                     )
-                    .font(.callout)
+                    .font(CivicaTypography.support)
                     .foregroundColor(VoteNowColors.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
 
@@ -1133,7 +1133,7 @@ struct VoterRegistrationView: View {
                                     .font(.callout.weight(.semibold))
                                     .foregroundColor(VoteNowColors.primaryCTA)
                                 Text(bullet)
-                                    .font(.callout)
+                                    .font(CivicaTypography.support)
                                     .foregroundColor(VoteNowColors.primaryText)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
@@ -1146,7 +1146,7 @@ struct VoterRegistrationView: View {
                             "Voters receive notification and can cure the ballot within a deadline."
                         )
                     )
-                    .font(.callout)
+                    .font(CivicaTypography.support)
                     .foregroundColor(VoteNowColors.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
                 }
@@ -1364,7 +1364,7 @@ struct VoterRegistrationView: View {
                     "Use your state’s official voter lookup to verify your registration details are active and accurate."
                 )
             )
-            .font(.callout)
+            .font(CivicaTypography.support)
             .foregroundColor(VoteNowColors.primaryText)
             .fixedSize(horizontal: false, vertical: true)
 
@@ -1424,10 +1424,10 @@ struct VoterRegistrationView: View {
                             .font(.footnote.weight(.semibold))
                             .foregroundColor(VoteNowColors.primaryText)
                         Text("\(contest.scopeOrDistrict) • Nominate \(contest.numberToNominate)")
-                            .font(.caption)
+                            .font(CivicaTypography.caption)
                             .foregroundColor(VoteNowColors.mutedText)
                         Text("Candidates: \(contest.candidates.joined(separator: ", "))")
-                            .font(.caption)
+                            .font(CivicaTypography.caption)
                             .foregroundColor(VoteNowColors.mutedText)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -1446,7 +1446,7 @@ struct VoterRegistrationView: View {
                             .font(.caption.weight(.semibold))
                             .foregroundColor(VoteNowColors.primaryCTA)
                         Text(note)
-                            .font(.caption)
+                            .font(CivicaTypography.caption)
                             .foregroundColor(VoteNowColors.mutedText)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -1454,7 +1454,7 @@ struct VoterRegistrationView: View {
             }
 
             Text("Source printed at: \(payload.sourcePrintedAt)")
-                .font(.caption2)
+                .font(CivicaTypography.caption)
                 .foregroundColor(VoteNowColors.mutedText)
         }
         .padding(12)
@@ -1528,7 +1528,7 @@ struct VoterRegistrationView: View {
                 Text(title).bold()
                 + Text(": \(body)")
             )
-            .font(.callout)
+            .font(CivicaTypography.support)
             .foregroundColor(VoteNowColors.primaryText)
             .fixedSize(horizontal: false, vertical: true)
 
@@ -1765,7 +1765,7 @@ struct VoterRegistrationView: View {
                     .font(.headline.weight(.bold))
                     .foregroundColor(VoteNowColors.primaryText)
                 Text(l("app.guide.error.no_upcoming", "No upcoming elections found for your state."))
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
                     .foregroundColor(VoteNowColors.mutedText)
             }
         }
@@ -2267,7 +2267,7 @@ struct VoterRegistrationView: View {
                     )
                 )
             )
-            .font(.callout)
+            .font(CivicaTypography.support)
             .foregroundColor(VoteNowColors.primaryText)
             .fixedSize(horizontal: false, vertical: true)
             .opensMyInfoPanelOnLongPress()
@@ -2327,7 +2327,7 @@ struct VoterRegistrationView: View {
 
     private func requestStepLine(_ text: String) -> some View {
         Text(text)
-            .font(.callout)
+            .font(CivicaTypography.support)
             .foregroundColor(VoteNowColors.primaryText)
             .fixedSize(horizontal: false, vertical: true)
     }

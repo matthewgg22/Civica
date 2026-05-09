@@ -222,7 +222,7 @@ struct SampleBallotView: View {
         ScrollView(.vertical) {
             VStack(alignment: .leading, spacing: 20) {
                 Text(l("app.sample_ballot.title.truthful", "Example ballot"))
-                    .font(.largeTitle).bold()
+                    .font(CivicaTypography.pageTitle)
 
                 if showArchiveDisclaimer {
                     Text(
@@ -242,7 +242,7 @@ struct SampleBallotView: View {
                         "Preview candidates by race. Party filter from My Information is applied."
                     )
                 )
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
                     .foregroundColor(VoteNowColors.mutedText)
 
                 VStack(alignment: .leading, spacing: 6) {
@@ -276,10 +276,10 @@ struct SampleBallotView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
                             Text(race.office)
-                                .font(.headline)
+                                .font(CivicaTypography.sectionHeader)
                             Spacer()
                             Text(lf("app.sample_ballot.count.candidates", "%d candidates", compact.count))
-                                .font(.caption)
+                                .font(CivicaTypography.caption)
                                 .foregroundColor(VoteNowColors.mutedText)
                         }
 
@@ -290,7 +290,7 @@ struct SampleBallotView: View {
                                     .foregroundColor(VoteNowColors.mutedText)
                                 ForEach(ranked, id: \.candidate.id) { entry in
                                     Text("\(entry.rank). \(entry.candidate.name)")
-                                        .font(.caption)
+                                        .font(CivicaTypography.caption)
                                         .foregroundColor(VoteNowColors.primaryText)
                                 }
                             }

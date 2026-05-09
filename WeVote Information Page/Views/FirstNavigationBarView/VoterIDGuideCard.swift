@@ -295,7 +295,7 @@ struct VoterIDGuideCard: View {
                                 .foregroundColor(VoteNowColors.mutedText)
                         }
                         Text(options)
-                            .font(.caption)
+                            .font(CivicaTypography.caption)
                             .foregroundColor(VoteNowColors.primaryText)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -308,7 +308,7 @@ struct VoterIDGuideCard: View {
 
                 if let note = supplementalNoteText(for: metric) {
                     Text(note)
-                        .font(.caption)
+                        .font(CivicaTypography.caption)
                         .foregroundColor(VoteNowColors.mutedText)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 8)

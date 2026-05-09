@@ -16,7 +16,7 @@ struct SupabaseStatusView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Supabase Status")
-                .font(.headline)
+                .font(CivicaTypography.sectionHeader)
 
             Group {
                 statusRow(
@@ -164,7 +164,7 @@ struct SupabaseStatusView: View {
                         .accessibilityHidden(true)
                 }
                 Text(value)
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
                     .foregroundStyle(VoteNowColors.mutedText)
                     .multilineTextAlignment(.trailing)
                     .lineLimit(2)

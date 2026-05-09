@@ -444,7 +444,7 @@ struct NYCMayoralElectionView: View {
                 ballotMeasuresBodyView(intro: card.body, items: card.ballotItems ?? [])
             } else {
                 Text(card.body)
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
                     .foregroundColor(VoteNowColors.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -500,7 +500,7 @@ struct NYCMayoralElectionView: View {
             ForEach(Array(items.enumerated()), id: \.offset) { _, item in
                 HStack(alignment: .top, spacing: 8) {
                     Text(item.icon)
-                        .font(.caption)
+                        .font(CivicaTypography.caption)
                         .padding(.top, 1)
 
                     VStack(alignment: .leading, spacing: 3) {
@@ -515,7 +515,7 @@ struct NYCMayoralElectionView: View {
                             )
 
                         Text(item.value)
-                            .font(.caption)
+                            .font(CivicaTypography.caption)
                             .foregroundColor(VoteNowColors.primaryText)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -2346,19 +2346,19 @@ struct NYCMayoralElectionView: View {
     private func primaryGuideBodyView(_ context: ElectionGuidePrimaryCardContext) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(context.primaryTypeDescription)
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
                 .foregroundColor(VoteNowColors.primaryText)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, 2)
 
             if context.usesTopTwoStyle {
                 Text("• All voters use one ballot with candidates from multiple parties.")
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
                     .foregroundColor(VoteNowColors.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Text("• The top finishers advance to the general election regardless of party.")
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
                     .foregroundColor(VoteNowColors.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
             } else {
@@ -2371,7 +2371,7 @@ struct NYCMayoralElectionView: View {
                     + Text(": Only Democrats advance to the general election.")
                         .foregroundColor(VoteNowColors.primaryText)
                 )
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
                 .fixedSize(horizontal: false, vertical: true)
 
                 (
@@ -2383,7 +2383,7 @@ struct NYCMayoralElectionView: View {
                     + Text(": Only Republicans advance to the general election.")
                         .foregroundColor(VoteNowColors.primaryText)
                 )
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
                 .fixedSize(horizontal: false, vertical: true)
 
                 (
@@ -2395,7 +2395,7 @@ struct NYCMayoralElectionView: View {
                     + Text(": Ballot access depends on your state's primary rules.")
                         .foregroundColor(VoteNowColors.primaryText)
                 )
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
                 .fixedSize(horizontal: false, vertical: true)
             }
 
@@ -2406,13 +2406,13 @@ struct NYCMayoralElectionView: View {
                     + Text(startDateText).bold()
                     + Text(").")
                 )
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
                 .foregroundColor(VoteNowColors.primaryText)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 8)
             } else {
                 Text("Whoever wins the primary advances to the General Election.")
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
                     .foregroundColor(VoteNowColors.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 8)
@@ -2420,7 +2420,7 @@ struct NYCMayoralElectionView: View {
 
             if let runoffLine = context.runoffLine {
                 Text("• \(runoffLine)")
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
                     .foregroundColor(VoteNowColors.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -2446,12 +2446,12 @@ struct NYCMayoralElectionView: View {
                             Text(office).bold()
                             + Text(remainder)
                         )
-                        .font(.subheadline)
+                        .font(CivicaTypography.subhead)
                         .foregroundColor(VoteNowColors.primaryText)
                         .fixedSize(horizontal: false, vertical: true)
                     } else {
                         Text(firstLine)
-                            .font(.subheadline)
+                            .font(CivicaTypography.subhead)
                             .foregroundColor(VoteNowColors.primaryText)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -2476,12 +2476,12 @@ struct NYCMayoralElectionView: View {
                 + Text(": \(parsed.body)")
                 + (parsed.monthYearSuffix.map { Text(" (\($0))").bold().italic() } ?? Text(""))
             )
-            .font(.subheadline)
+            .font(CivicaTypography.subhead)
             .foregroundColor(VoteNowColors.primaryText)
             .fixedSize(horizontal: false, vertical: true)
         } else {
             Text(line)
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
                 .foregroundColor(VoteNowColors.primaryText)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -2612,7 +2612,7 @@ struct NYCMayoralElectionView: View {
         VStack(alignment: .leading, spacing: 10) {
             if !intro.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 Text(intro)
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
                     .foregroundColor(VoteNowColors.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -2665,13 +2665,13 @@ struct NYCMayoralElectionView: View {
                         VStack(alignment: .leading, spacing: 6) {
                             if !parsed.summary.isEmpty {
                                 Text(parsed.summary)
-                                    .font(.subheadline)
+                                    .font(CivicaTypography.subhead)
                                     .foregroundColor(VoteNowColors.primaryText)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
 
                             Text(deeperBallotMeasureContext(for: parsed))
-                                .font(.caption)
+                                .font(CivicaTypography.caption)
                                 .foregroundColor(VoteNowColors.mutedText)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
@@ -2691,7 +2691,7 @@ struct NYCMayoralElectionView: View {
             }
 
             Text("Disclosure: Descriptions are pulled from official bill text.")
-                .font(.caption)
+                .font(CivicaTypography.caption)
                 .foregroundColor(VoteNowColors.mutedText)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 2)
@@ -2752,7 +2752,7 @@ struct NYCMayoralElectionView: View {
                 + Text(l("app.guide.voting.early_vote.label", "Early Vote")).bold()
                 + Text(": \(lf("app.guide.voting.early_vote.body", "Starts %@. Vote in person before Election Day.", context.earlyVoteDateText))")
             )
-            .font(.subheadline)
+            .font(CivicaTypography.subhead)
             .foregroundColor(VoteNowColors.primaryText)
             .fixedSize(horizontal: false, vertical: true)
 
@@ -2761,7 +2761,7 @@ struct NYCMayoralElectionView: View {
                 + Text(l("app.guide.voting.by_mail.label", "Vote by Mail")).bold()
                 + Text(": \(l("app.guide.voting.by_mail.body", "Request and return your mail ballot by your state's deadlines."))")
             )
-            .font(.subheadline)
+            .font(CivicaTypography.subhead)
             .foregroundColor(VoteNowColors.primaryText)
             .fixedSize(horizontal: false, vertical: true)
 
@@ -2783,7 +2783,7 @@ struct NYCMayoralElectionView: View {
                 + Text(l("app.guide.voting.election_day.label", "Election Day")).bold()
                 + Text(": \(lf("app.guide.voting.election_day.body", "Vote in person on %@.", context.electionDayDateText))")
             )
-            .font(.subheadline)
+            .font(CivicaTypography.subhead)
             .foregroundColor(VoteNowColors.primaryText)
             .fixedSize(horizontal: false, vertical: true)
         }

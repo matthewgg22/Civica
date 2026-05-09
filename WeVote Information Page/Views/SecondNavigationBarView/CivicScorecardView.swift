@@ -12,7 +12,7 @@ struct CivicScorecardView: View {
     var body: some View {
         VStack(spacing: 20) {
             Text("Civic Scorecard: 3 🔥")
-                .font(.headline)
+                .font(CivicaTypography.sectionHeader)
                 .padding(.top)
             Divider()
             VStack(alignment: .leading, spacing: 10) {
@@ -20,7 +20,7 @@ struct CivicScorecardView: View {
                 Text("1x Primary Election")
                 Text("1x Gubernational Election")
             }
-            .font(.subheadline)
+            .font(CivicaTypography.subhead)
             Divider()
             Text("You are in the top 25% of American Voters")
                 .font(.footnote)

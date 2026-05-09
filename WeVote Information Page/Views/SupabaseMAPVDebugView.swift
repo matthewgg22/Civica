@@ -11,10 +11,10 @@ struct SupabaseMAPVDebugView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Supabase MAPV Debug")
-                .font(.headline)
+                .font(CivicaTypography.sectionHeader)
 
             Text(statusText)
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
                 .foregroundStyle(VoteNowColors.mutedText)
 
             HStack(spacing: 10) {

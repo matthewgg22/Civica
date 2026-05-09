@@ -216,7 +216,7 @@ struct PollingLocationsView: View {
                     .lineLimit(1)
 
                 Text(place.address)
-                    .font(.caption)
+                    .font(CivicaTypography.caption)
                     .foregroundColor(VoteNowColors.mutedText)
                     .lineLimit(1)
 
@@ -225,12 +225,12 @@ struct PollingLocationsView: View {
                         place.distance == "--" ? l("app.polling_locations.distance.updating", "Distance updating...") : place.distance,
                         systemImage: "location"
                     )
-                    .font(.caption)
+                    .font(CivicaTypography.caption)
                     .foregroundColor(VoteNowColors.mutedText)
 
                     if place.hours != "--" {
                         Label(place.hours, systemImage: "clock")
-                            .font(.caption)
+                            .font(CivicaTypography.caption)
                             .foregroundColor(VoteNowColors.mutedText)
                     }
                 }

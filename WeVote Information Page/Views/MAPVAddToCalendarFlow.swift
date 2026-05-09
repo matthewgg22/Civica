@@ -132,7 +132,7 @@ struct PrePermissionSheetView: View {
                 .font(.title3.weight(.bold))
 
             Text("Allow notifications so Civica can remind you on Election Day and if your polling place window changes.")
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
                 .foregroundStyle(VoteNowColors.mutedText)
 
             HStack(spacing: 10) {

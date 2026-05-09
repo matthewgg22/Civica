@@ -408,13 +408,13 @@ struct ElectionTimelineView: View {
                         } else {
                             if let errorMessage {
                                 Text(errorMessage)
-                                    .font(.subheadline)
+                                    .font(CivicaTypography.subhead)
                                     .foregroundColor(VoteNowColors.urgentCTA)
                             }
 
                             if visibleElections.isEmpty, errorMessage == nil {
                                 Text(l("app.timeline.empty.none_for_state", "No upcoming elections found for that state yet."))
-                                    .font(.subheadline)
+                                    .font(CivicaTypography.subhead)
                                     .foregroundColor(VoteNowColors.mutedText)
                             }
                         }
@@ -961,7 +961,7 @@ struct ElectionTimelineView: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(headerTitle(for: election))
-                        .font(.headline)
+                        .font(CivicaTypography.sectionHeader)
                         .foregroundColor(VoteNowColors.primaryText)
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
@@ -975,7 +975,7 @@ struct ElectionTimelineView: View {
 
                     if let subtitleText = displaySubtitleText(for: election), !subtitleText.isEmpty {
                         Text(subtitleText)
-                            .font(.subheadline)
+                            .font(CivicaTypography.subhead)
                             .foregroundColor(VoteNowColors.mutedText)
                             .lineLimit(2)
                     }
@@ -1105,7 +1105,7 @@ struct ElectionTimelineView: View {
                                 .foregroundColor(VoteNowColors.warningAmber)
                                 .padding(.top, 1)
                             Text(advisory)
-                                .font(.caption)
+                                .font(CivicaTypography.caption)
                                 .foregroundColor(VoteNowColors.mutedText)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
@@ -1390,7 +1390,7 @@ struct ElectionTimelineView: View {
         } else {
             let isPrimaryType = trimmed.lowercased().hasPrefix("primary type:")
             ballotIntroLineText(trimmed)
-                .font(.caption)
+                .font(CivicaTypography.caption)
                 .foregroundColor(isPrimaryType ? VoteNowColors.primaryText : VoteNowColors.mutedText)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -1428,7 +1428,7 @@ struct ElectionTimelineView: View {
                         .font(.caption.weight(.semibold))
                         .foregroundColor(VoteNowColors.primaryText)
                     + Text(item.detail)
-                        .font(.caption)
+                        .font(CivicaTypography.caption)
                         .foregroundColor(VoteNowColors.mutedText)
                 )
                 .opensMyInfoPanelOnLongPress(when: shouldOpenMyInfoFromPartyItem(item.party))
@@ -2943,7 +2943,7 @@ struct ElectionTimelineView: View {
                 .foregroundColor(VoteNowColors.mutedText)
             Spacer(minLength: 8)
             Text(value)
-                .font(.caption)
+                .font(CivicaTypography.caption)
                 .foregroundColor(VoteNowColors.primaryText)
                 .multilineTextAlignment(.trailing)
         }
