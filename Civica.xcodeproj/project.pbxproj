@@ -40,7 +40,7 @@
 		C3B862E82D9A42E00092C1CB /* VoteNow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VoteNow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3B862F82D9A42E20092C1CB /* VoteNowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoteNowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3B863022D9A42E20092C1CB /* VoteNowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoteNowUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		C3D06EF42DE94769009F3459 /* WeVote-Information-Page-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WeVote-Information-Page-Info.plist"; sourceTree = "<group>"; };
+		C3D06EF42DE94769009F3459 /* Civica-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Civica-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -129,7 +129,7 @@
 		C3B862DF2D9A42E00092C1CB = {
 			isa = PBXGroup;
 			children = (
-				C3D06EF42DE94769009F3459 /* WeVote-Information-Page-Info.plist */,
+				C3D06EF42DE94769009F3459 /* Civica-Info.plist */,
 				C3A44ADE2DE392D000858A5E /* Civica.entitlements */,
 				C3B862EA2D9A42E00092C1CB /* WeVote Information Page */,
 				C3B862FB2D9A42E20092C1CB /* WeVote Information PageTests */,
@@ -576,7 +576,7 @@
 				DEVELOPMENT_TEAM = 687GD7CA6J;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "WeVote-Information-Page-Info.plist";
+				INFOPLIST_FILE = "Civica-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Civica;
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "This app needs calendar access so it can add your voting plan as an event.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to calculate distances to polling places.";
@@ -614,7 +614,7 @@
 				DEVELOPMENT_TEAM = 687GD7CA6J;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "WeVote-Information-Page-Info.plist";
+				INFOPLIST_FILE = "Civica-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Civica;
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "This app needs calendar access so it can add your voting plan as an event.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to calculate distances to polling places.";
@@ -808,7 +808,7 @@
 				DEVELOPMENT_TEAM = 687GD7CA6J;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "WeVote-Information-Page-Info.plist";
+				INFOPLIST_FILE = "Civica-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Civica SNAP Dev";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "This app needs calendar access so it can add your voting plan as an event.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to calculate distances to polling places.";
