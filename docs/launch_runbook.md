@@ -1,4 +1,4 @@
-# VoteNow Launch Runbook
+# Civica Launch Runbook
 
 ## Goal
 Ship tonight with stable auth/session handling, resilient Supabase writes, and validated RLS/migrations.

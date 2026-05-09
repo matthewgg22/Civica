@@ -1,6 +1,6 @@
-# VoteNow Metrics Data Ingestion
+# Civica Metrics Data Ingestion
 
-This project includes a reproducible ingestion pipeline for the VoteNow voter participation metrics workbook.
+This project includes a reproducible ingestion pipeline for the Civica voter participation metrics workbook.
 
 ## Source Workbook
 
