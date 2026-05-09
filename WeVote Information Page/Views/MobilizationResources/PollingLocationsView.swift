@@ -9,9 +9,10 @@
 //  Updated on 05/27/25 — row highlighting, Maps integration, compiler-friendly
 //
 
-import SwiftUI
-import MapKit
+import CivicaDesignSystem
 import CoreLocation
+import MapKit
+import SwiftUI
 
 struct PollingLocationsView: View {
     private static let fallbackCenter = CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060)

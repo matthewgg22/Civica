@@ -1,3 +1,4 @@
+import CivicaDesignSystem
 import SwiftUI
 
 // EXPERIMENTAL SILOED MODULE: eligibility intro screen with mock, non-sensitive inputs.

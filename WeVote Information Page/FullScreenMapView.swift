@@ -8,8 +8,9 @@
 //  Updated on 05/27/25 to use SwiftUI dismiss action
 //
 
-import SwiftUI
+import CivicaDesignSystem
 import MapKit
+import SwiftUI
 
 struct FullScreenMapView: View {
     @Environment(\.dismiss) private var dismiss

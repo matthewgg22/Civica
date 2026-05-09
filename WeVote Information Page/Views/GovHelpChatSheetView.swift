@@ -1,3 +1,4 @@
+import CivicaDesignSystem
 import SwiftUI
 
 private struct GovHelpChatMessage: Identifiable {

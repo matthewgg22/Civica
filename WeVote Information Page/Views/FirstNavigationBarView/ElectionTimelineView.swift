@@ -1,6 +1,7 @@
+import CivicaDesignSystem
+import OSLog
 import SwiftUI
 import UIKit
-import OSLog
 
 private struct MidtermStateElectionRecord: Decodable {
     let state_name: String

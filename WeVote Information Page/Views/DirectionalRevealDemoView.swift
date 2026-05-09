@@ -5,6 +5,7 @@
 //  Directional "shockwave" reveal micro-interaction demo.
 //
 
+import CivicaDesignSystem
 import SwiftUI
 
 struct DirectionalRevealDemoView: View {

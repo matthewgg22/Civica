@@ -6,6 +6,7 @@
 //  Created by Matthew Greer-Gentis on 5/15/25.
 //  Updated by ChatGPT on 05/31/25 — safer dismiss logic and empty location check
 
+import CivicaDesignSystem
 import SwiftUI
 
 struct MyInfoPanelView: View {

@@ -1,6 +1,7 @@
+import CivicaDesignSystem
+import Combine
 import SwiftUI
 import UIKit
-import Combine
 
 private struct GuideSectionFramesPreferenceKey: PreferenceKey {
     static var defaultValue: [GuideMiniNavSection: CGRect] = [:]

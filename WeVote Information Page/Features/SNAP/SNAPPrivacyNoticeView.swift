@@ -1,3 +1,4 @@
+import CivicaDesignSystem
 import SwiftUI
 
 // EXPERIMENTAL SILOED MODULE: privacy notice gate shown before prototype intake.
