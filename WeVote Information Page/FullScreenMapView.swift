@@ -90,7 +90,7 @@ private struct FullMapPollingPinView: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(isSelected ? Color(red: 0.87, green: 0.35, blue: 0.27) : CivicaColors.richBlue)
+                .fill(isSelected ? Color(red: 0.87, green: 0.35, blue: 0.27) : CivicaColors.ctaBlue)
                 .frame(width: 28, height: 28)
             Image(systemName: "mappin")
                 .font(.footnote.bold())
@@ -98,7 +98,7 @@ private struct FullMapPollingPinView: View {
         }
         .overlay(
             Circle()
-                .stroke(CivicaColors.surfaceWhite, lineWidth: 2)
+                .stroke(CivicaColors.surfacePrimary, lineWidth: 2)
         )
         .shadow(color: .black.opacity(0.2), radius: 3, x: 0, y: 2)
     }

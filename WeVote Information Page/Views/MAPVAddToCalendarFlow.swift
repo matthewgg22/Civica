@@ -133,7 +133,7 @@ struct PrePermissionSheetView: View {
 
             Text("Allow notifications so Civica can remind you on Election Day and if your polling place window changes.")
                 .font(.subheadline)
-                .foregroundStyle(CivicaColors.mutedText)
+                .foregroundStyle(CivicaColors.textSecondary)
 
             HStack(spacing: 10) {
                 Button("Not Now", action: onNotNow)
@@ -141,14 +141,14 @@ struct PrePermissionSheetView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 11)
                     .background(CivicaColors.infoSurfaceBlue)
-                    .foregroundStyle(CivicaColors.primaryText)
+                    .foregroundStyle(CivicaColors.textPrimary)
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
                 Button("Allow Reminders", action: onAllow)
                     .font(.subheadline.weight(.semibold))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 11)
-                    .background(CivicaColors.richBlue)
+                    .background(CivicaColors.ctaBlue)
                     .foregroundStyle(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
@@ -205,7 +205,7 @@ struct AddToCalendarButtonView: View {
             .padding(.vertical, 11)
         }
         .buttonStyle(.plain)
-        .background(CivicaColors.richBlue)
+        .background(CivicaColors.ctaBlue)
         .foregroundStyle(.white)
         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         .disabled(isWorking)

@@ -129,14 +129,14 @@ struct HoldToConfirmButton: View {
         if isConfirmed {
             return CivicaColors.successGreen.opacity(0.82)
         }
-        return CivicaColors.primaryCTA.opacity(0.34 + (Double(progress) * 0.42))
+        return CivicaColors.ctaBlue.opacity(0.34 + (Double(progress) * 0.42))
     }
 
     private var textColor: Color {
         if isConfirmed {
-            return CivicaColors.surfaceWhite
+            return CivicaColors.surfacePrimary
         }
-        return progress > 0.52 ? CivicaColors.surfaceWhite : CivicaColors.primaryText
+        return progress > 0.52 ? CivicaColors.surfacePrimary : CivicaColors.textPrimary
     }
 
     private var buttonText: String {

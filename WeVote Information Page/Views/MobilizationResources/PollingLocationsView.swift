@@ -146,7 +146,7 @@ struct PollingLocationsView: View {
                 )
             )
             .font(.subheadline.weight(.bold))
-            .foregroundColor(CivicaColors.primaryText)
+            .foregroundColor(CivicaColors.textPrimary)
 
             Text(
                 l(
@@ -155,7 +155,7 @@ struct PollingLocationsView: View {
                 )
             )
             .font(.footnote)
-            .foregroundColor(CivicaColors.mutedText)
+            .foregroundColor(CivicaColors.textSecondary)
             .fixedSize(horizontal: false, vertical: true)
         }
         .padding(12)
@@ -164,7 +164,7 @@ struct PollingLocationsView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(CivicaColors.primaryCTA.opacity(0.16), lineWidth: 1)
+                .stroke(CivicaColors.ctaBlue.opacity(0.16), lineWidth: 1)
         )
         .padding(.horizontal)
     }
@@ -217,7 +217,7 @@ struct PollingLocationsView: View {
 
                 Text(place.address)
                     .font(.caption)
-                    .foregroundColor(CivicaColors.mutedText)
+                    .foregroundColor(CivicaColors.textSecondary)
                     .lineLimit(1)
 
                 HStack(spacing: 10) {
@@ -226,12 +226,12 @@ struct PollingLocationsView: View {
                         systemImage: "location"
                     )
                     .font(.caption)
-                    .foregroundColor(CivicaColors.mutedText)
+                    .foregroundColor(CivicaColors.textSecondary)
 
                     if place.hours != "--" {
                         Label(place.hours, systemImage: "clock")
                             .font(.caption)
-                            .foregroundColor(CivicaColors.mutedText)
+                            .foregroundColor(CivicaColors.textSecondary)
                     }
                 }
             }
@@ -245,7 +245,7 @@ struct PollingLocationsView: View {
             } label: {
                 Image(systemName: "arrow.triangle.turn.up.right.diamond.fill")
                     .font(.title3)
-                    .foregroundColor(CivicaColors.richBlue)
+                    .foregroundColor(CivicaColors.ctaBlue)
             }
             .buttonStyle(.plain)
         }
@@ -255,7 +255,7 @@ struct PollingLocationsView: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .fill(
                     selectedPlace?.id == place.id
-                    ? CivicaColors.richBlue.opacity(0.14)
+                    ? CivicaColors.ctaBlue.opacity(0.14)
                     : CivicaColors.infoSurfaceBlue
                 )
         )
@@ -263,8 +263,8 @@ struct PollingLocationsView: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(
                     selectedPlace?.id == place.id
-                    ? CivicaColors.richBlue.opacity(0.45)
-                    : CivicaColors.primaryText.opacity(0.05),
+                    ? CivicaColors.ctaBlue.opacity(0.45)
+                    : CivicaColors.textPrimary.opacity(0.05),
                     lineWidth: 1
                 )
         )
@@ -519,7 +519,7 @@ private struct PollingLocationPinView: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(isSelected ? Color(red: 0.87, green: 0.35, blue: 0.27) : CivicaColors.richBlue)
+                .fill(isSelected ? Color(red: 0.87, green: 0.35, blue: 0.27) : CivicaColors.ctaBlue)
                 .frame(width: 24, height: 24)
             Image(systemName: "mappin")
                 .font(.caption.bold())
@@ -527,7 +527,7 @@ private struct PollingLocationPinView: View {
         }
         .overlay(
             Circle()
-                .stroke(CivicaColors.surfaceWhite, lineWidth: 2)
+                .stroke(CivicaColors.surfacePrimary, lineWidth: 2)
         )
         .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
     }

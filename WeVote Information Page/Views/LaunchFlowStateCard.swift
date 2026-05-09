@@ -47,11 +47,11 @@ struct LaunchFlowStateCard: View {
     private var iconColor: Color {
         switch state {
         case .loading:
-            return CivicaColors.primaryCTA
+            return CivicaColors.ctaBlue
         case .empty:
-            return CivicaColors.mutedText
+            return CivicaColors.textSecondary
         case .error:
-            return CivicaColors.urgentCTA
+            return CivicaColors.ctaRed
         }
     }
 
@@ -81,7 +81,7 @@ struct LaunchFlowStateCard: View {
 
                 Text(title)
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(CivicaColors.primaryText)
+                    .foregroundColor(CivicaColors.textPrimary)
             }
 
             Text(stateLabel)
@@ -94,7 +94,7 @@ struct LaunchFlowStateCard: View {
 
             Text(message)
                 .font(.subheadline)
-                .foregroundColor(CivicaColors.mutedText)
+                .foregroundColor(CivicaColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             if let primaryActionTitle, let primaryAction {
@@ -109,11 +109,11 @@ struct LaunchFlowStateCard: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(CivicaColors.surfaceWhite)
+        .background(CivicaColors.surfacePrimary)
         .clipShape(RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous)
-                .stroke(CivicaColors.borderWarm.opacity(0.72), lineWidth: 1)
+                .stroke(CivicaColors.borderSubtle.opacity(0.72), lineWidth: 1)
         )
     }
 }
@@ -132,7 +132,7 @@ private struct LaunchFlowPrimaryCTAButtonStyle: ButtonStyle {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(CivicaColors.primaryCTA.opacity(0.24), lineWidth: 1)
+                    .stroke(CivicaColors.ctaBlue.opacity(0.24), lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.99 : 1)
             .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
@@ -150,7 +150,7 @@ private struct LaunchFlowSecondaryCTAButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.subheadline.weight(.semibold))
-            .foregroundColor(isEnabled ? CivicaColors.primaryCTA : CivicaColors.mutedText)
+            .foregroundColor(isEnabled ? CivicaColors.ctaBlue : CivicaColors.textSecondary)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)

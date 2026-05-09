@@ -13,15 +13,15 @@ struct IssueCodePickerView: View {
                     } label: {
                         Text(issue.displayName)
                             .font(.caption.weight(.semibold))
-                            .foregroundColor(isSelected ? .white : CivicaColors.primaryText)
+                            .foregroundColor(isSelected ? .white : CivicaColors.textPrimary)
                             .lineLimit(1)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
-                            .background(isSelected ? CivicaColors.primaryCTA : CivicaColors.surfaceWhite)
+                            .background(isSelected ? CivicaColors.ctaBlue : CivicaColors.surfacePrimary)
                             .clipShape(Capsule())
                             .overlay(
                                 Capsule()
-                                    .stroke(isSelected ? CivicaColors.primaryCTA : CivicaColors.borderWarm, lineWidth: 1)
+                                    .stroke(isSelected ? CivicaColors.ctaBlue : CivicaColors.borderSubtle, lineWidth: 1)
                             )
                     }
                     .buttonStyle(.plain)
@@ -63,7 +63,7 @@ private struct IssueCodePickerPreviewWrapper: View {
                 )
             )
             .font(.subheadline)
-            .foregroundColor(CivicaColors.primaryText)
+            .foregroundColor(CivicaColors.textPrimary)
             .padding(10)
             .background(CivicaColors.infoSurfaceBlue)
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))

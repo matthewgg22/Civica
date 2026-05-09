@@ -148,7 +148,7 @@ private struct MyInfoLongPressModifier: ViewModifier {
             .overlay {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .stroke(
-                        CivicaColors.primaryCTA.opacity(showActivationRing ? 0.76 : (isPressing ? 0.34 : 0)),
+                        CivicaColors.ctaBlue.opacity(showActivationRing ? 0.76 : (isPressing ? 0.34 : 0)),
                         lineWidth: showActivationRing ? 2 : 1
                     )
                     .padding(-2)
@@ -274,12 +274,12 @@ struct PageHeader: View {
 
 struct CivicaLogoIcon: View {
     var size: CGFloat = 50
-    var backgroundColor: Color = CivicaColors.softBlue
-    var stripeColor: Color = CivicaColors.softRed
+    var backgroundColor: Color = CivicaColors.brandSoftBlue
+    var stripeColor: Color = CivicaColors.brandSoftRed
     var cornerRadiusScale: CGFloat = 0.24
     var borderColor: Color = CivicaColors.iconOnPrimaryBorder
     var borderWidth: CGFloat = 0.6
-    var shadowColor: Color = CivicaColors.primaryText.opacity(0.14)
+    var shadowColor: Color = CivicaColors.textPrimary.opacity(0.14)
 
     var body: some View {
         let stripeScaleY: CGFloat = size < 30 ? 0.95 : 0.80
@@ -348,7 +348,7 @@ extension CivicaLogoIcon {
 
 private struct CivicaTabBarsIcon: View {
     var size: CGFloat = 28
-    var color: Color = CivicaColors.softRed
+    var color: Color = CivicaColors.brandSoftRed
     var horizontalStretch: CGFloat = 1.5
 
     var body: some View {
@@ -399,7 +399,7 @@ struct WhyVoteFloodOverlay: View {
     var originInSpreadSpace: CGPoint?
 
     @State private var dynamicFloodColor: Color = CivicaColors.brandSoftBlue
-    private let accent = CivicaColors.softRed
+    private let accent = CivicaColors.brandSoftRed
     private let logoSize: CGFloat = 50
     private let headerHorizontalPadding: CGFloat = 16
     // Matches page layout: outer content padding (16) + header top padding (4).
@@ -535,7 +535,7 @@ struct WhyCallFloodOverlay: View {
     var onStartCalling: () -> Void = {}
 
     private let floodColor = CivicaColors.brandSoftBlue
-    private let accent = CivicaColors.softRed
+    private let accent = CivicaColors.brandSoftRed
     private let logoSize: CGFloat = 50
     private let headerHorizontalPadding: CGFloat = 16
     private let headerTopPadding: CGFloat = 10
@@ -795,14 +795,14 @@ struct WhyCallView: View {
                 systemImage: "bubble.left.and.bubble.right.fill"
             )
             .font(.subheadline.weight(.semibold))
-            .foregroundColor(CivicaColors.primaryCTA)
+            .foregroundColor(CivicaColors.ctaBlue)
             .padding(.horizontal, 10)
             .padding(.vertical, 7)
-            .background(CivicaColors.surfaceWhite)
+            .background(CivicaColors.surfacePrimary)
             .clipShape(Capsule(style: .continuous))
             .overlay(
                 Capsule(style: .continuous)
-                    .stroke(CivicaColors.primaryCTA.opacity(0.34), lineWidth: 1)
+                    .stroke(CivicaColors.ctaBlue.opacity(0.34), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
@@ -838,7 +838,7 @@ private struct WhyCallStatCard: View {
         VStack(alignment: .leading, spacing: 6) {
             Text(stat.value)
                 .font(.title2.weight(.bold))
-                .foregroundStyle(CivicaColors.primaryCTA)
+                .foregroundStyle(CivicaColors.ctaBlue)
             if !stat.title.isEmpty {
                 Text(stat.title)
                     .font(.headline)
@@ -854,7 +854,7 @@ private struct WhyCallStatCard: View {
         .clipShape(RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous)
-                .stroke(CivicaColors.primaryText.opacity(0.08), lineWidth: 1)
+                .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
         )
         .accessibilityElement(children: .combine)
     }
@@ -878,7 +878,7 @@ private struct WhyCallReasonCard: View {
         .clipShape(RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous)
-                .stroke(CivicaColors.primaryText.opacity(0.08), lineWidth: 1)
+                .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
         )
         .accessibilityElement(children: .combine)
     }
@@ -895,7 +895,7 @@ private struct WhyCallBottomCTA: View {
             if !note.isEmpty {
                 Text(note)
                     .font(.footnote)
-                    .foregroundStyle(CivicaColors.mutedText)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
