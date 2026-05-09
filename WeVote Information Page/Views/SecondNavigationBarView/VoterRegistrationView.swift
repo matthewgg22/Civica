@@ -161,7 +161,7 @@ struct VoterRegistrationView: View {
     private let unresolvedLocationMessage = "Enter a valid address to see your voting information."
     private let electionOverviewAnchorID = "registration-election-overview-anchor"
     // MAPV route is parked for this launch; keep Step 2 pointing to Voting Steps.
-    private let howToVoteDeepLink = URL(string: "votenow://registration")
+    private let howToVoteDeepLink = URL(string: "civica://registration")
         ?? URL(string: "https://www.vote.gov/")
         ?? URL(fileURLWithPath: "/")
     private var dropdownRevealAnimation: Animation {

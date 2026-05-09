@@ -57,7 +57,7 @@ struct MAPVPlan: Codable, Identifiable, Equatable {
     }
 
     var appDeepLinkURL: URL? {
-        URL(string: "votenow://mapv")
+        URL(string: "civica://mapv")
     }
 
     static func fromWizard(

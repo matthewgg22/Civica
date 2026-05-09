@@ -136,7 +136,7 @@ final class MAPVLiveActivityManager: ObservableObject {
             distanceMiles: distanceMiles,
             etaMinutes: etaMinutes,
             pollingPlaceShortName: shortLocationName(from: plan.pollingPlaceName),
-            deepLinkURL: plan.appDeepLinkURL?.absoluteString ?? "votenow://mapv",
+            deepLinkURL: plan.appDeepLinkURL?.absoluteString ?? "civica://mapv",
             directionsURL: plan.mapsURL?.absoluteString
         )
     }
