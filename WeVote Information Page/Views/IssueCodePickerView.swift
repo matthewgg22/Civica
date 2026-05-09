@@ -29,8 +29,8 @@ struct IssueCodePickerView: View {
                     .accessibilityAddTraits(isSelected ? .isSelected : [])
                 }
             }
-            .padding(.horizontal, 2)
-            .padding(.vertical, 2)
+            .padding(.horizontal, CivicaSpacing.xs)
+            .padding(.vertical, CivicaSpacing.xs)
         }
     }
 }
@@ -50,7 +50,7 @@ private struct IssueCodePickerPreviewWrapper: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(senatorName)
                 .font(CivicaTypography.sectionHeader)
             IssueCodePickerView(selectedIssue: $selectedIssue)
@@ -64,7 +64,7 @@ private struct IssueCodePickerPreviewWrapper: View {
             )
             .font(CivicaTypography.subhead)
             .foregroundColor(CivicaColors.textPrimary)
-            .padding(10)
+            .padding(CivicaSpacing.sm)
             .background(CivicaColors.infoSurfaceBlue)
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         }

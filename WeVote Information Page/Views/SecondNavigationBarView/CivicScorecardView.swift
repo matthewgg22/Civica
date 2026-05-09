@@ -10,12 +10,12 @@ import SwiftUI
 // MARK: - CivicScorecardView
 struct CivicScorecardView: View {
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: CivicaSpacing.lg) {
             Text("Civic Scorecard: 3 🔥")
                 .font(CivicaTypography.sectionHeader)
                 .padding(.top)
             Divider()
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Text("1x General Election")
                 Text("1x Primary Election")
                 Text("1x Gubernational Election")

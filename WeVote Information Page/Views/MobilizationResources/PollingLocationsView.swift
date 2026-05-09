@@ -122,7 +122,7 @@ struct PollingLocationsView: View {
             Label(l("app.polling_locations.action.show_full_map", "Show Full Map"), systemImage: "map")
                 .font(CivicaTypography.subheadStrong)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 10)
+                .padding(.vertical, CivicaSpacing.sm)
         }
         .foregroundColor(.white)
         .background(
@@ -196,7 +196,7 @@ struct PollingLocationsView: View {
     }
     
     private var placeList: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: CivicaSpacing.sm) {
             ForEach(pollingLocations) { place in
                 placeRow(place)
             }
@@ -210,7 +210,7 @@ struct PollingLocationsView: View {
             PollingLocationPinView(isSelected: selectedPlace?.id == place.id)
                 .scaleEffect(0.9)
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(place.name)
                     .font(.subheadline.weight(selectedPlace?.id == place.id ? .bold : .semibold))
                     .lineLimit(1)
@@ -220,7 +220,7 @@ struct PollingLocationsView: View {
                     .foregroundColor(CivicaColors.textSecondary)
                     .lineLimit(1)
 
-                HStack(spacing: 10) {
+                HStack(spacing: CivicaSpacing.sm) {
                     Label(
                         place.distance == "--" ? l("app.polling_locations.distance.updating", "Distance updating...") : place.distance,
                         systemImage: "location"

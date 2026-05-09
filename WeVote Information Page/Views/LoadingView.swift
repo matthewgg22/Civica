@@ -146,7 +146,7 @@ struct LoadingView: View {
                     .font(nextChanceFont)
                     .multilineTextAlignment(.center)
                     .foregroundColor(marqueeRed)
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, CivicaSpacing.lg)
 
                 if let statusMessage, !statusMessage.isEmpty {
                     Text(statusMessage)
@@ -158,7 +158,7 @@ struct LoadingView: View {
             }
             .offset(y: 10)
 
-            VStack(spacing: 2) { // closer together
+            VStack(spacing: CivicaSpacing.xs) { // closer together
                 // Top line: reverse/back-leaning + scroll left
                 StateMarqueeLine(
                     states: scrollingStateNames,

@@ -27,7 +27,7 @@ struct MapvShareCardView: View {
             )
             .ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 header
                 details
                 Spacer(minLength: 0)
@@ -38,7 +38,7 @@ struct MapvShareCardView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text("Civica")
                 .font(.system(size: 20, weight: .semibold))
                 .opacity(0.8)
@@ -56,7 +56,7 @@ struct MapvShareCardView: View {
     }
 
     private var details: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             infoRow(label: "When", value: "\(voteDateText) • \(voteTimeText)")
             infoRow(label: "Where", value: locationLine1)
             if let l2 = locationLine2, !l2.isEmpty {
@@ -67,9 +67,9 @@ struct MapvShareCardView: View {
             Text("Tip: Bring any required ID and give yourself extra time for lines.")
                 .font(.system(size: 16, weight: .regular))
                 .opacity(0.8)
-                .padding(.top, 6)
+                .padding(.top, CivicaSpacing.xs)
         }
-        .padding(22)
+        .padding(CivicaSpacing.xl)
         .background(
             RoundedRectangle(cornerRadius: 28, style: .continuous)
                 .fill(Color(.systemBackground).opacity(0.85))
@@ -78,11 +78,11 @@ struct MapvShareCardView: View {
     }
 
     private var footer: some View {
-        HStack(alignment: .center, spacing: 18) {
+        HStack(alignment: .center, spacing: CivicaSpacing.lg) {
             QRCodeView(text: shareURLString)
                 .frame(width: 140, height: 140)
                 .background(Color.white)
-                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous))
 
             VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Text("Open this plan")
@@ -95,7 +95,7 @@ struct MapvShareCardView: View {
 
             Spacer()
         }
-        .padding(18)
+        .padding(CivicaSpacing.lg)
         .background(
             RoundedRectangle(cornerRadius: 26, style: .continuous)
                 .fill(Color(.secondarySystemBackground).opacity(0.9))
@@ -103,7 +103,7 @@ struct MapvShareCardView: View {
     }
 
     private func infoRow(label: String, value: String) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: 14) {
+        HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.md) {
             if !label.isEmpty {
                 Text(label)
                     .font(.system(size: 16, weight: .semibold))

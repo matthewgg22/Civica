@@ -18,7 +18,7 @@ import UIKit   // for UIApplication.shared
 struct TransportationHelpView: View {
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            VStack(spacing: CivicaSpacing.lg) {
                 Text("Getting to the polls shouldn't be a barrier to voting.")
                     .font(.title2)
                     .multilineTextAlignment(.center)

@@ -201,7 +201,7 @@ public struct WhyVoteAgeTurnoutSection: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
             Text("Historical turnout by age")
                 .font(.title2.weight(.semibold))
 
@@ -220,11 +220,11 @@ public struct WhyVoteAgeTurnoutSection: View {
 
             if let snapshot = WhyVoteAgeTurnoutStore.snapshot(dataset: dataset, selection: selection) {
                 VStack(alignment: .leading, spacing: 12) {
-                    HStack(alignment: .center, spacing: 20) {
+                    HStack(alignment: .center, spacing: CivicaSpacing.lg) {
                         ElectorateDonut(snapshot: snapshot)
                             .frame(width: 180, height: 180)
 
-                        VStack(alignment: .leading, spacing: 10) {
+                        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                             LabelValue(label: "Age", value: snapshot.point.label)
                             LabelValue(label: "Turnout", value: WhyVoteAgeTurnoutFormatter.percent(snapshot.turnoutRatePct))
                             LabelValue(label: "Share of eligible electorate", value: WhyVoteAgeTurnoutFormatter.percent(snapshot.eligibleSharePct))
@@ -232,7 +232,7 @@ public struct WhyVoteAgeTurnoutSection: View {
                         }
                     }
 
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text("Age")
                             .font(.headline)
                         Slider(
@@ -263,7 +263,7 @@ public struct WhyVoteAgeTurnoutSection: View {
                 }
             }
         }
-        .padding(20)
+        .padding(CivicaSpacing.lg)
         .background(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .fill(Color(uiColor: .secondarySystemBackground))
@@ -342,7 +342,7 @@ private struct LabelValue: View {
     let value: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(label)
                 .font(.caption)
                 .foregroundStyle(.secondary)

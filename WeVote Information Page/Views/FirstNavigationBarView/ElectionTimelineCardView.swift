@@ -14,7 +14,7 @@ struct ElectionTimelineCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
-            HStack(alignment: .top, spacing: 10) {
+            HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                 Text(stateLabel)
                     .font(CivicaTypography.subheadStrong)
                     .foregroundColor(CivicaColors.textPrimary)
@@ -37,7 +37,7 @@ struct ElectionTimelineCardView: View {
                 .accessibilityLabel(l("app.timeline.flag.accessibility", "Flag election"))
             }
 
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(titleText)
                     .font(CivicaTypography.sectionHeader)
                     .foregroundColor(CivicaColors.textPrimary)
@@ -62,7 +62,7 @@ struct ElectionTimelineCardView: View {
                     Text(badgeText)
                         .font(CivicaTypography.captionStrong)
                         .foregroundColor(CivicaColors.ctaBlue)
-                        .padding(.horizontal, 9)
+                        .padding(.horizontal, CivicaSpacing.sm)
                         .padding(.vertical, CivicaSpacing.xs)
                         .background(CivicaColors.infoSurfaceBlue)
                         .clipShape(Capsule())
@@ -76,7 +76,7 @@ struct ElectionTimelineCardView: View {
                          : l("app.timeline.mapv.button.passed", "Election Day Passed"))
                         .font(CivicaTypography.subheadStrong)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
+                        .padding(.vertical, CivicaSpacing.sm)
                 }
                 .buttonStyle(.plain)
                 .disabled(!canMakePlan)
@@ -87,7 +87,7 @@ struct ElectionTimelineCardView: View {
                 )
             }
         }
-        .padding(14)
+        .padding(CivicaSpacing.md)
         .background(
             RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)

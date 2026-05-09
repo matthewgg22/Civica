@@ -68,7 +68,7 @@ struct SupportVoteView: View {
                 .ignoresSafeArea()
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                     PageHeader(title: Text(l("app.support_vote.page_title", "Support Civica")))
 
                     missionCard
@@ -79,7 +79,7 @@ struct SupportVoteView: View {
                     Spacer(minLength: 24)
                 }
                 .padding(.horizontal, CivicaSpacing.lg)
-                .padding(.top, 10)
+                .padding(.top, CivicaSpacing.sm)
                 .padding(.bottom, CivicaSpacing.xl)
             }
         }
@@ -88,7 +88,7 @@ struct SupportVoteView: View {
     }
 
     private var missionCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(l("app.support_vote.mission.title", "Empower Americans Vote!"))
                 .font(CivicaTypography.cardTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -98,19 +98,19 @@ struct SupportVoteView: View {
                 .foregroundStyle(CivicaColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(14)
+        .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(CivicaColors.canvasBackground)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
         )
     }
 
     private var supportCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(l("app.support_vote.supports.title", "What your donation supports"))
                 .font(CivicaTypography.sectionHeaderBold)
                 .foregroundStyle(CivicaColors.warningAmber)
@@ -123,14 +123,14 @@ struct SupportVoteView: View {
             supportBullet(l("app.support_vote.supports.bullet_2", "Nonpartisan voting logistics"))
             supportBullet(l("app.support_vote.supports.bullet_3", "Fast, accessible UX improvements"))
         }
-        .padding(14)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(warmSupportYellow)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.warningAmber.opacity(0.58), lineWidth: 1)
         )
     }
@@ -145,14 +145,14 @@ struct SupportVoteView: View {
     }
 
     private var donationCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             Text(l("app.support_vote.amount.title", "Choose amount"))
                 .font(CivicaTypography.sectionHeader)
 
             amountPickerGrid
 
             if selectedAmount == .custom {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     TextField(l("app.support_vote.amount.custom_placeholder", "Enter amount (USD)"), text: $customAmountText)
                         .keyboardType(.decimalPad)
                         .textFieldStyle(.roundedBorder)
@@ -197,7 +197,7 @@ struct SupportVoteView: View {
                 Label(error, systemImage: "exclamationmark.triangle.fill")
                     .font(CivicaTypography.footnoteStrong)
                     .foregroundStyle(CivicaColors.ctaRed)
-                    .padding(10)
+                    .padding(CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.statusErrorSurface)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
@@ -207,27 +207,27 @@ struct SupportVoteView: View {
                 Label(success, systemImage: "checkmark.circle.fill")
                     .font(CivicaTypography.footnoteStrong)
                     .foregroundStyle(CivicaColors.successGreen)
-                    .padding(10)
+                    .padding(CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.statusSuccessSurface)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
             }
 
         }
-        .padding(14)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(warmSupportYellow)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.warningAmber.opacity(0.58), lineWidth: 1)
         )
     }
 
     private var disruptCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(l("app.support_vote.disrupt.title", "Disrupt the Status Quo by empowering voters, not campaigns."))
                 .font(CivicaTypography.sectionHeaderBold)
 
@@ -245,14 +245,14 @@ struct SupportVoteView: View {
                 .font(CivicaTypography.subheadStrong)
                 .padding(.top, CivicaSpacing.xs)
         }
-        .padding(14)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(CivicaColors.canvasBackground)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
         )
     }

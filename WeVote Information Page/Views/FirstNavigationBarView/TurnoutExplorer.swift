@@ -27,7 +27,7 @@ struct TurnoutExplorer: View {
 
             content
         }
-        .padding(14)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             ZStack {
@@ -81,12 +81,12 @@ struct TurnoutExplorer: View {
                     .font(CivicaTypography.footnote)
                     .foregroundColor(CivicaColors.textSecondary)
             }
-            .padding(10)
+            .padding(CivicaSpacing.sm)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.surfacePrimary)
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         } else {
-            HStack(spacing: 10) {
+            HStack(spacing: CivicaSpacing.sm) {
                 ProgressView()
                 Text("Loading historical turnout data…")
                     .font(CivicaTypography.subhead)
@@ -343,13 +343,13 @@ private struct ElectionTypeSegmentedControl: View {
                 .font(CivicaTypography.footnoteStrong)
                 .foregroundColor(isSelected ? .white : CivicaColors.textPrimary)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 10)
+                .padding(.vertical, CivicaSpacing.sm)
                 .background(
-                    RoundedRectangle(cornerRadius: 9, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                         .fill(isSelected ? CivicaColors.ctaBlue : CivicaColors.surfacePrimary)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 9, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                         .stroke(CivicaColors.textPrimary.opacity(0.10), lineWidth: 1)
                 )
         }
@@ -388,8 +388,8 @@ private struct AgeTurnoutBandSlider: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            HStack(alignment: .top, spacing: 10) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+            HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                 Text(activeLabel)
                     .font(CivicaTypography.footnoteStrong)
                     .foregroundColor(CivicaColors.textPrimary)
@@ -397,7 +397,7 @@ private struct AgeTurnoutBandSlider: View {
                 Spacer(minLength: 8)
 
                 if let eligiblePopulationThousands {
-                    VStack(alignment: .trailing, spacing: 2) {
+                    VStack(alignment: .trailing, spacing: CivicaSpacing.xs) {
                         Text("\(TurnoutExplorerFormatters.compactPopulationFromThousands(eligiblePopulationThousands)) eligible")
                             .font(CivicaTypography.captionStrong)
                             .foregroundColor(CivicaColors.textPrimary)
@@ -623,7 +623,7 @@ private struct TurnoutRiskMap: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text("Turnout pressure map: Taller and redder bars indicate larger turnout/representation problems.")
                 .font(CivicaTypography.footnoteStrong)
                 .foregroundColor(CivicaColors.textSecondary)
@@ -641,7 +641,7 @@ private struct TurnoutRiskMap: View {
                         let barHeight = 8 + (normalizedRisk * 34)
                         let inSelection = selectedRange.contains(globalIndex)
 
-                        VStack(spacing: 3) {
+                        VStack(spacing: CivicaSpacing.xs) {
                             Capsule(style: .continuous)
                                 .fill(riskColor(for: item).opacity(0.55 + (normalizedRisk * 0.45)))
                                 .frame(width: barWidth, height: barHeight)
@@ -663,7 +663,7 @@ private struct TurnoutRiskMap: View {
                         .frame(width: barWidth)
                         .padding(.vertical, CivicaSpacing.xs)
                         .background(
-                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                                 .fill(inSelection ? CivicaColors.ctaBlue.opacity(0.12) : Color.clear)
                         )
                     }
@@ -753,7 +753,7 @@ private struct ElectorateDonut: View {
                 .rotationEffect(.degrees(-90))
                 .animation(.easeInOut(duration: 0.35), value: eligibleEnd)
 
-            VStack(spacing: 2) {
+            VStack(spacing: CivicaSpacing.xs) {
                 Text(TurnoutExplorerFormatters.percent(summary.turnoutRatePct))
                     .font(.system(size: 34, weight: .bold, design: .rounded))
                     .foregroundColor(palette.votedColor)
@@ -828,7 +828,7 @@ private struct MetricStat: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.72)
         }
-        .padding(10)
+        .padding(CivicaSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(backgroundColor)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
@@ -846,7 +846,7 @@ private struct MetricMiniStat: View {
     var borderColor: Color = CivicaColors.textPrimary.opacity(0.06)
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(title)
                 .font(CivicaTypography.captionStrong)
                 .foregroundColor(CivicaColors.textSecondary)
@@ -859,7 +859,7 @@ private struct MetricMiniStat: View {
                 .lineLimit(1)
         }
         .padding(.horizontal, CivicaSpacing.sm)
-        .padding(.vertical, 7)
+        .padding(.vertical, CivicaSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(backgroundColor)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
@@ -875,7 +875,7 @@ private struct LegendKey: View {
     let text: String
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: CivicaSpacing.xs) {
             Circle()
                 .fill(color)
                 .frame(width: 8, height: 8)
@@ -921,7 +921,7 @@ private struct MethodologySheet: View {
             Circle()
                 .fill(CivicaColors.ctaBlue)
                 .frame(width: 6, height: 6)
-                .padding(.top, 6)
+                .padding(.top, CivicaSpacing.xs)
             Text(text)
                 .font(CivicaTypography.subhead)
                 .foregroundColor(CivicaColors.textPrimary)

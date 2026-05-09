@@ -39,7 +39,7 @@ struct SNAPPrivacyNoticeView: View {
                     .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.textSecondary)
 
-                VStack(spacing: 10) {
+                VStack(spacing: CivicaSpacing.sm) {
                     Button("Continue to SNAP prep") {
                         viewModel.acceptedPrivacyNotice = true
                         continueToEligibility = true
@@ -86,7 +86,7 @@ struct SNAPPrivacyNoticeView: View {
 
     @ViewBuilder
     private func privacySection(title: String, body: String) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(title)
                 .font(CivicaTypography.sectionHeader)
                 .foregroundStyle(CivicaColors.textPrimary)
@@ -95,7 +95,7 @@ struct SNAPPrivacyNoticeView: View {
                 .foregroundStyle(CivicaColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(14)
+        .padding(CivicaSpacing.md)
         .background(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)

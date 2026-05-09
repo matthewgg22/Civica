@@ -82,7 +82,7 @@ struct SNAPDebugChecklistView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.md) {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text("SNAP QA Checklist")
                         .font(.title3.weight(.semibold))
                         .foregroundStyle(CivicaColors.textPrimary)
@@ -93,23 +93,23 @@ struct SNAPDebugChecklistView: View {
                         .font(CivicaTypography.footnoteStrong)
                         .foregroundStyle(passedCount == items.count ? CivicaColors.successGreen : CivicaColors.warningAmber)
                 }
-                .padding(14)
+                .padding(CivicaSpacing.md)
                 .background(
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                         .fill(CivicaColors.surfacePrimary)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                         .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
 
                 ForEach(items) { item in
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                             Image(systemName: item.passed ? "checkmark.seal.fill" : "exclamationmark.triangle.fill")
                                 .foregroundStyle(item.passed ? CivicaColors.successGreen : CivicaColors.warningAmber)
                                 .font(CivicaTypography.subhead)
-                                .padding(.top, 2)
+                                .padding(.top, CivicaSpacing.xs)
                             Text(item.title)
                                 .font(CivicaTypography.subheadStrong)
                                 .foregroundStyle(CivicaColors.textPrimary)

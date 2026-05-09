@@ -16,7 +16,7 @@ struct SNAPReviewView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                 Text("Review your SNAP draft")
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(CivicaColors.textPrimary)
@@ -151,7 +151,7 @@ private struct SNAPReviewSectionCard: View {
     let onEdit: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             HStack {
                 Text(title)
                     .font(CivicaTypography.sectionHeader)
@@ -178,7 +178,7 @@ private struct SNAPReviewSectionCard: View {
                 }
             }
         }
-        .padding(14)
+        .padding(CivicaSpacing.md)
         .background(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)

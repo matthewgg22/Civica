@@ -220,7 +220,7 @@ struct SampleBallotView: View {
 
     var body: some View {
         ScrollView(.vertical) {
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 Text(l("app.sample_ballot.title.truthful", "Example ballot"))
                     .font(CivicaTypography.pageTitle)
 
@@ -245,7 +245,7 @@ struct SampleBallotView: View {
                     .font(CivicaTypography.subhead)
                     .foregroundColor(CivicaColors.textSecondary)
 
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text(l("app.sample_ballot.ranked_choice.title", "Ranked-Choice Prep"))
                         .font(CivicaTypography.subheadStrong)
                     Text(l("app.sample_ballot.ranked_choice.body_1", "This sample is structured for ranked-choice voting, so you can set your candidate order now before entering the voting booth."))
@@ -284,7 +284,7 @@ struct SampleBallotView: View {
                         }
 
                         if !ranked.isEmpty {
-                            VStack(alignment: .leading, spacing: 6) {
+                            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                                 Text(l("app.sample_ballot.order.title", "Your Ballot Order"))
                                     .font(CivicaTypography.captionStrong)
                                     .foregroundColor(CivicaColors.textSecondary)
@@ -294,7 +294,7 @@ struct SampleBallotView: View {
                                         .foregroundColor(CivicaColors.textPrimary)
                                 }
                             }
-                            .padding(10)
+                            .padding(CivicaSpacing.sm)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(CivicaColors.brandSoftBlue.opacity(0.08))
                             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
@@ -308,7 +308,7 @@ struct SampleBallotView: View {
                             )
                         }
                     }
-                    .padding(14)
+                    .padding(CivicaSpacing.md)
                     .background(CivicaColors.canvasBackground)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
                     .overlay(
@@ -371,13 +371,13 @@ struct CandidateRow: View {
     }
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
+        HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Text(summary.name)
                     .font(CivicaTypography.subheadStrong)
                     .fixedSize(horizontal: false, vertical: true)
 
-                HStack(spacing: 6) {
+                HStack(spacing: CivicaSpacing.xs) {
                     ForEach(summary.parties, id: \.self) { party in
                         Text(displayPartyLabel(party))
                             .font(CivicaTypography.captionStrong)
@@ -414,8 +414,8 @@ struct CandidateRow: View {
                          : lf("app.sample_ballot.rank.option", "Rank %d", rankSelection))
                         .font(CivicaTypography.captionStrong)
                         .foregroundColor(rankSelection == 0 ? .secondary : .blue)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
+                        .padding(.horizontal, CivicaSpacing.sm)
+                        .padding(.vertical, CivicaSpacing.xs)
                         .background(CivicaColors.canvasBackground)
                         .overlay(
                             RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
@@ -425,7 +425,7 @@ struct CandidateRow: View {
                 }
             }
         }
-        .padding(.vertical, 6)
+        .padding(.vertical, CivicaSpacing.xs)
         .padding(.horizontal, CivicaSpacing.md)
         .background(CivicaColors.infoSurfaceBlue)
         .cornerRadius(CivicaRadius.sm)

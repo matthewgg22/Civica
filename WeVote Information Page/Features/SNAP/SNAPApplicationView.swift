@@ -100,7 +100,7 @@ struct SNAPApplicationView: View {
     ]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             switch viewModel.draftStep {
             case .whereApplyingFrom:
                 whereApplyingFromStep
@@ -353,7 +353,7 @@ struct SNAPApplicationView: View {
                                 Button {
                                     applyResidentialAddressSuggestion(suggestion)
                                 } label: {
-                                    VStack(alignment: .leading, spacing: 2) {
+                                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                                         Text(suggestion.title)
                                             .font(CivicaTypography.subheadStrong)
                                             .foregroundStyle(CivicaColors.textPrimary)
@@ -365,7 +365,7 @@ struct SNAPApplicationView: View {
                                                 .frame(maxWidth: .infinity, alignment: .leading)
                                         }
                                     }
-                                    .padding(.vertical, 10)
+                                    .padding(.vertical, CivicaSpacing.sm)
                                     .contentShape(Rectangle())
                                 }
                                 .buttonStyle(.plain)
@@ -379,7 +379,7 @@ struct SNAPApplicationView: View {
                     }
 
                     if let issue = residentialAddressAutocomplete.lookupIssue {
-                        VStack(alignment: .leading, spacing: 6) {
+                        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                             HStack(spacing: CivicaSpacing.sm) {
                                 Text(issue.message)
                                     .font(CivicaTypography.footnote)
@@ -403,7 +403,7 @@ struct SNAPApplicationView: View {
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                         }
-                        .padding(.horizontal, 10)
+                        .padding(.horizontal, CivicaSpacing.sm)
                         .padding(.vertical, CivicaSpacing.sm)
                         .background(
                             RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
@@ -447,7 +447,7 @@ struct SNAPApplicationView: View {
                 }
 
                 if viewModel.application.housingStatus == .unhoused {
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text("Unhoused support")
                             .font(CivicaTypography.subheadStrong)
                             .foregroundStyle(CivicaColors.textPrimary)
@@ -472,7 +472,7 @@ struct SNAPApplicationView: View {
                             .foregroundStyle(CivicaColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
-                    .padding(.horizontal, 10)
+                    .padding(.horizontal, CivicaSpacing.sm)
                     .padding(.vertical, CivicaSpacing.sm)
                     .background(
                         RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
@@ -649,7 +649,7 @@ struct SNAPApplicationView: View {
                         badge: .required(isMissing: applicantAgeIsMissingAfterContinueAttempt)
                     )
                     VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-                        HStack(spacing: 10) {
+                        HStack(spacing: CivicaSpacing.sm) {
                             Text("Age: \(viewModel.application.applicantAge ?? ageInYears(from: applicantDateOfBirthBinding.wrappedValue))")
                                 .font(CivicaTypography.footnoteStrong)
                                 .foregroundStyle(CivicaColors.textSecondary)
@@ -722,10 +722,10 @@ struct SNAPApplicationView: View {
 
                 LazyVGrid(
                     columns: [
-                        GridItem(.flexible(), spacing: 10),
-                        GridItem(.flexible(), spacing: 10)
+                        GridItem(.flexible(), spacing: CivicaSpacing.sm),
+                        GridItem(.flexible(), spacing: CivicaSpacing.sm)
                     ],
-                    spacing: 10
+                    spacing: CivicaSpacing.sm
                 ) {
                     ForEach(PreferredContactMethod.allCases) { method in
                         SNAPSelectableOptionButton(
@@ -894,7 +894,7 @@ struct SNAPApplicationView: View {
 
                     SNAPInputLabel("Last pay date", badge: .optional)
                     if viewModel.application.earnedLastPayDate != nil {
-                        HStack(spacing: 10) {
+                        HStack(spacing: CivicaSpacing.sm) {
                             DatePicker(
                                 "Last pay date",
                                 selection: earnedLastPayDateBinding,
@@ -995,7 +995,7 @@ struct SNAPApplicationView: View {
                 LazyVGrid(
                     columns: [GridItem(.flexible()), GridItem(.flexible())],
                     alignment: .center,
-                    spacing: 10
+                    spacing: CivicaSpacing.sm
                 ) {
                     ForEach(SNAPOtherIncomeSource.allCases) { source in
                         SNAPSelectableOptionButton(
@@ -1060,7 +1060,7 @@ struct SNAPApplicationView: View {
                     .fixedSize(horizontal: false, vertical: true)
 
                 if viewModel.application.isCurrentlyEnrolledInHigherEducation == true {
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text("Students may still qualify for SNAP. These questions help organize what the official application asks next.")
                             .font(CivicaTypography.subhead)
                             .foregroundStyle(CivicaColors.textPrimary)
@@ -1293,7 +1293,7 @@ struct SNAPApplicationView: View {
                     Button {
                         toggleDocument(document)
                     } label: {
-                        HStack(spacing: 10) {
+                        HStack(spacing: CivicaSpacing.sm) {
                             Text(hasDocument ? "●" : "○")
                                 .font(CivicaTypography.subheadStrong)
                                 .foregroundStyle(hasDocument ? CivicaColors.ctaBlue : CivicaColors.textSecondary)
@@ -1309,7 +1309,7 @@ struct SNAPApplicationView: View {
                                         .font(CivicaTypography.captionStrong)
                                         .foregroundStyle(CivicaColors.textSecondary)
                                         .padding(.horizontal, CivicaSpacing.sm)
-                                        .padding(.vertical, 3)
+                                        .padding(.vertical, CivicaSpacing.xs)
                                         .background(
                                             Capsule(style: .continuous)
                                                 .fill(CivicaColors.surfaceSecondary)
@@ -1425,8 +1425,8 @@ struct SNAPApplicationView: View {
                 titleAlignment: .center
             ) {
                 ForEach(Array(reviewSectionSummaries.enumerated()), id: \.element.id) { index, section in
-                    VStack(alignment: .leading, spacing: 10) {
-                        HStack(spacing: 10) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                        HStack(spacing: CivicaSpacing.sm) {
                             Text(section.title)
                                 .font(CivicaTypography.sectionHeaderBold)
                                 .foregroundStyle(CivicaColors.ctaBlue)
@@ -1444,7 +1444,7 @@ struct SNAPApplicationView: View {
 
                         ForEach(section.rows) { row in
                             let isMissingRequired = row.isRequired && row.value == "Not provided"
-                            HStack(alignment: .top, spacing: 10) {
+                            HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                                 Text(row.label)
                                     .font(CivicaTypography.footnoteStrong)
                                     .foregroundStyle(isMissingRequired ? CivicaColors.ctaRed : CivicaColors.textSecondary)
@@ -1454,12 +1454,12 @@ struct SNAPApplicationView: View {
                                     .foregroundStyle(isMissingRequired ? CivicaColors.ctaRed : CivicaColors.textSecondary)
                                     .multilineTextAlignment(.trailing)
                             }
-                            .padding(.vertical, 1)
+                            .padding(.vertical, CivicaSpacing.xs)
                         }
 
                         if index < reviewSectionSummaries.count - 1 {
                             Divider()
-                                .padding(.top, 2)
+                                .padding(.top, CivicaSpacing.xs)
                         }
                     }
                 }
@@ -1540,7 +1540,7 @@ struct SNAPApplicationView: View {
                 title: "Timeline at a glance",
                 helper: nil
             ) {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text("You may need expedited SNAP screening")
                         .font(CivicaTypography.subheadStrong)
                         .foregroundStyle(CivicaColors.textPrimary)
@@ -1555,7 +1555,7 @@ struct SNAPApplicationView: View {
                         .foregroundStyle(CivicaColors.ctaBlue)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(.horizontal, 10)
+                .padding(.horizontal, CivicaSpacing.sm)
                 .padding(.vertical, CivicaSpacing.sm)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
@@ -1576,7 +1576,7 @@ struct SNAPApplicationView: View {
                             Text("Day \(daysSinceDate(officialSubmissionDate))")
                                 .font(CivicaTypography.subheadBold)
                                 .foregroundStyle(CivicaColors.ctaBlue)
-                                .padding(.horizontal, 10)
+                                .padding(.horizontal, CivicaSpacing.sm)
                                 .padding(.vertical, CivicaSpacing.xs)
                                 .background(
                                     Capsule(style: .continuous)
@@ -1611,7 +1611,7 @@ struct SNAPApplicationView: View {
                 .padding(.bottom, CivicaSpacing.xs)
 
                 if let stateTimeline = selectedStateTimeline {
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text("\(stateTimeline.displayName) update")
                             .font(CivicaTypography.subheadStrong)
                             .foregroundStyle(CivicaColors.textPrimary)
@@ -1665,7 +1665,7 @@ struct SNAPApplicationView: View {
                     whyLabel: "Why this matters",
                     isWhyExpanded: $isNextStepsWhyExpanded
                 ) {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text("Document follow-up")
                         .font(CivicaTypography.subheadStrong)
                         .foregroundStyle(CivicaColors.textPrimary)
@@ -1675,7 +1675,7 @@ struct SNAPApplicationView: View {
                         .foregroundStyle(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(.horizontal, 10)
+                .padding(.horizontal, CivicaSpacing.sm)
                 .padding(.vertical, CivicaSpacing.sm)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
@@ -1689,7 +1689,7 @@ struct SNAPApplicationView: View {
                 }
             }
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text("Your draft is ready.")
                     .font(CivicaTypography.sectionHeader)
                     .foregroundStyle(CivicaColors.textPrimary)
@@ -1703,14 +1703,14 @@ struct SNAPApplicationView: View {
                     .foregroundStyle(CivicaColors.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(14)
+            .padding(CivicaSpacing.md)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                     .fill(CivicaColors.statusWarningSurface)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                     .stroke(CivicaColors.warningAmber.opacity(0.45), lineWidth: 1)
             )
         }
@@ -2900,7 +2900,7 @@ struct SNAPApplicationView: View {
                 }
             }
         }
-        .padding(.horizontal, 10)
+        .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, CivicaSpacing.sm)
         .background(
             RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
@@ -3190,9 +3190,9 @@ private struct SNAPStepGuidanceRows<Content: View>: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             if isWhyExpanded {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text(whyLabel)
                         .font(CivicaTypography.footnoteStrong)
                         .foregroundStyle(CivicaColors.textPrimary)
@@ -3202,7 +3202,7 @@ private struct SNAPStepGuidanceRows<Content: View>: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(.horizontal, CivicaSpacing.md)
-                .padding(.vertical, 10)
+                .padding(.vertical, CivicaSpacing.sm)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                         .fill(CivicaColors.surfacePrimary)
@@ -3286,7 +3286,7 @@ private struct SNAPInlineDisclosureRow: View {
             }
         }
         .padding(.horizontal, CivicaSpacing.md)
-        .padding(.vertical, 10)
+        .padding(.vertical, CivicaSpacing.sm)
         .background(
             RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)
@@ -3333,7 +3333,7 @@ private struct SNAPInterviewSummarySection: View {
                 .foregroundStyle(CivicaColors.textPrimary)
 
             ForEach(rows) { row in
-                HStack(alignment: .top, spacing: 10) {
+                HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                     Text(row.label)
                         .font(CivicaTypography.footnoteStrong)
                         .foregroundStyle(CivicaColors.textSecondary)
@@ -3345,7 +3345,7 @@ private struct SNAPInterviewSummarySection: View {
                 }
             }
         }
-        .padding(.horizontal, 10)
+        .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, CivicaSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
@@ -3441,13 +3441,13 @@ private struct SNAPNextStepRow: View {
     let detail: String
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
+        HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Image(systemName: "checkmark.circle.fill")
                 .font(.subheadline)
                 .foregroundStyle(CivicaColors.ctaBlue)
-                .padding(.top, 2)
+                .padding(.top, CivicaSpacing.xs)
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(title)
                     .font(CivicaTypography.subheadStrong)
                     .foregroundStyle(CivicaColors.textPrimary)
@@ -3470,13 +3470,13 @@ private struct SNAPTimelineMilestoneRow: View {
     let detail: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                 Text(dayRange)
                     .font(CivicaTypography.captionStrong)
                     .foregroundStyle(CivicaColors.ctaBlue)
                     .padding(.horizontal, CivicaSpacing.sm)
-                    .padding(.vertical, 3)
+                    .padding(.vertical, CivicaSpacing.xs)
                     .background(
                         Capsule(style: .continuous)
                             .fill(CivicaColors.statusInfoSurface)
@@ -3493,7 +3493,7 @@ private struct SNAPTimelineMilestoneRow: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 10)
+        .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, CivicaSpacing.sm)
         .background(
             RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
@@ -3544,7 +3544,7 @@ private struct SNAPSectionCard<Content: View>: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             if !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || hasHeaderAccessory {
                 HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                     if !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -3570,13 +3570,13 @@ private struct SNAPSectionCard<Content: View>: View {
 
             content
         }
-        .padding(14)
+        .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
     }
@@ -3700,7 +3700,7 @@ private extension View {
     func snapFieldSurface() -> some View {
         self
             .frame(maxWidth: .infinity, minHeight: 52, alignment: .leading)
-            .padding(.horizontal, 14)
+            .padding(.horizontal, CivicaSpacing.md)
             .padding(.vertical, CivicaSpacing.md)
             .background(
                 RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
@@ -3716,7 +3716,7 @@ private extension View {
         self
             .font(.body)
             .frame(maxWidth: .infinity, minHeight: 52, alignment: .leading)
-            .padding(.horizontal, 14)
+            .padding(.horizontal, CivicaSpacing.md)
             .padding(.vertical, CivicaSpacing.md)
             .background(
                 RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
@@ -3764,14 +3764,14 @@ private extension View {
         self
             .font(.body)
             .frame(maxWidth: .infinity, minHeight: 36, alignment: .leading)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
+            .padding(.horizontal, CivicaSpacing.sm)
+            .padding(.vertical, CivicaSpacing.xs)
             .background(
-                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                     .fill(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.12) : CivicaColors.surfacePrimary)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                     .stroke(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.3) : CivicaColors.borderSubtle, lineWidth: 1)
             )
     }
@@ -3780,14 +3780,14 @@ private extension View {
         self
             .font(.body)
             .frame(maxWidth: .infinity, minHeight: 36, alignment: .leading)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
+            .padding(.horizontal, CivicaSpacing.sm)
+            .padding(.vertical, CivicaSpacing.xs)
             .background(
-                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                     .fill(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.12) : CivicaColors.surfacePrimary)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                     .stroke(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.3) : CivicaColors.borderSubtle, lineWidth: 1)
             )
     }
@@ -3834,7 +3834,7 @@ private struct SNAPTernaryChoiceQuestion: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-            HStack(alignment: .center, spacing: 6) {
+            HStack(alignment: .center, spacing: CivicaSpacing.xs) {
                 SNAPInputLabel(title, badge: badge)
 
                 if let infoText, !infoText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -3853,7 +3853,7 @@ private struct SNAPTernaryChoiceQuestion: View {
                 }
             }
 
-            HStack(spacing: 10) {
+            HStack(spacing: CivicaSpacing.sm) {
                 choiceButton(.yes)
                 choiceButton(.no)
                 choiceButton(.notSure)
@@ -3912,7 +3912,7 @@ private struct SNAPYesNoSegmentedQuestion: View {
                 .foregroundStyle(CivicaColors.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
 
-            HStack(spacing: 10) {
+            HStack(spacing: CivicaSpacing.sm) {
                 yesNoButton(title: "Yes", isSelected: value == true) {
                     value = true
                 }

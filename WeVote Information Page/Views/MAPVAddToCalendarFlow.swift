@@ -127,7 +127,7 @@ struct PrePermissionSheetView: View {
     let onNotNow: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             Text("Stay on track")
                 .font(CivicaTypography.cardTitle)
 
@@ -135,11 +135,11 @@ struct PrePermissionSheetView: View {
                 .font(CivicaTypography.subhead)
                 .foregroundStyle(CivicaColors.textSecondary)
 
-            HStack(spacing: 10) {
+            HStack(spacing: CivicaSpacing.sm) {
                 Button("Not Now", action: onNotNow)
                     .font(CivicaTypography.subheadStrong)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 11)
+                    .padding(.vertical, CivicaSpacing.md)
                     .background(CivicaColors.infoSurfaceBlue)
                     .foregroundStyle(CivicaColors.textPrimary)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
@@ -147,13 +147,13 @@ struct PrePermissionSheetView: View {
                 Button("Allow Reminders", action: onAllow)
                     .font(CivicaTypography.subheadStrong)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 11)
+                    .padding(.vertical, CivicaSpacing.md)
                     .background(CivicaColors.ctaBlue)
                     .foregroundStyle(.white)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
             }
         }
-        .padding(18)
+        .padding(CivicaSpacing.lg)
         .presentationDetents([.height(250)])
         .presentationDragIndicator(.visible)
     }
@@ -202,7 +202,7 @@ struct AddToCalendarButtonView: View {
             }
             .font(CivicaTypography.subheadStrong)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 11)
+            .padding(.vertical, CivicaSpacing.md)
         }
         .buttonStyle(.plain)
         .background(CivicaColors.ctaBlue)

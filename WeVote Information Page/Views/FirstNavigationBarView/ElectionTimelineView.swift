@@ -376,7 +376,7 @@ struct ElectionTimelineView: View {
                 }
 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 14) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                         if timelineLoadState == .loading {
                             LaunchFlowStateCard(
                                 state: .loading,
@@ -466,8 +466,8 @@ struct ElectionTimelineView: View {
 
                             if let trailingYearLabel {
                                 timelineYearBookmark(trailingYearLabel)
-                                    .padding(.top, 10)
-                                    .padding(.leading, 1)
+                                    .padding(.top, CivicaSpacing.sm)
+                                    .padding(.leading, CivicaSpacing.xs)
                             }
 
                             // Allow the final card to scroll far enough to become the focused timeline item.
@@ -476,7 +476,7 @@ struct ElectionTimelineView: View {
                                 .accessibilityHidden(true)
                         }
                     }
-                    .padding(.leading, 10)
+                    .padding(.leading, CivicaSpacing.sm)
                     .padding(.trailing, CivicaSpacing.lg)
                     .padding(.bottom, CivicaSpacing.lg)
                 }
@@ -637,7 +637,7 @@ struct ElectionTimelineView: View {
         let focusedID = focusedTimelineElectionID ?? sorted.first?.id
         let focusedIndex = sorted.firstIndex(where: { $0.id == focusedID }) ?? 0
 
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             GeometryReader { proxy in
                 let chartHeight: CGFloat = 84
                 let lineY: CGFloat = 34
@@ -689,7 +689,7 @@ struct ElectionTimelineView: View {
                         let shadeWidth = max(2, electionX - startX)
 
                         if shadeWidth > 1 {
-                            RoundedRectangle(cornerRadius: 5, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                                 .fill(CivicaColors.ctaBlue.opacity(0.2))
                                 .frame(width: shadeWidth, height: 14)
                                 .position(x: startX + (shadeWidth / 2), y: lineY)
@@ -803,7 +803,7 @@ struct ElectionTimelineView: View {
                             .minimumScaleFactor(0.85)
                             .allowsTightening(true)
                             .frame(width: dateWidth, alignment: .center)
-                            .padding(.vertical, 1)
+                            .padding(.vertical, CivicaSpacing.xs)
                             .position(x: clampedDateX, y: bottomY)
                             .opacity(detailOpacity)
                             .scaleEffect(detailScale)
@@ -848,9 +848,9 @@ struct ElectionTimelineView: View {
                 .padding(.top, -2)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.horizontal, 6)
-        .padding(.bottom, 6)
-        .padding(.top, 2)
+        .padding(.horizontal, CivicaSpacing.xs)
+        .padding(.bottom, CivicaSpacing.xs)
+        .padding(.top, CivicaSpacing.xs)
         .background(
             RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous)
                 .fill(CivicaColors.infoSurfaceBlue)
@@ -882,7 +882,7 @@ struct ElectionTimelineView: View {
             .allowsTightening(true)
             .frame(width: width, alignment: .center)
             .padding(.horizontal, CivicaSpacing.xs)
-            .padding(.vertical, 1)
+            .padding(.vertical, CivicaSpacing.xs)
             .position(x: x, y: y)
             .opacity(opacity)
             .scaleEffect(scale)
@@ -934,8 +934,8 @@ struct ElectionTimelineView: View {
         Text(year)
             .font(CivicaTypography.supportBold)
             .foregroundColor(CivicaColors.ctaRed)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
+            .padding(.horizontal, CivicaSpacing.sm)
+            .padding(.vertical, CivicaSpacing.xs)
     }
 
     private func calendarYear(for date: Date) -> Int {
@@ -956,10 +956,10 @@ struct ElectionTimelineView: View {
         let advisoryLines = advisoryMessages(for: election)
 
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
-            HStack(alignment: .center, spacing: 10) {
+            HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                 stateFlagView(for: election)
 
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text(headerTitle(for: election))
                         .font(CivicaTypography.sectionHeader)
                         .foregroundColor(CivicaColors.textPrimary)
@@ -999,8 +999,8 @@ struct ElectionTimelineView: View {
                     Text(registrationDeadlinePillText(for: election))
                         .font(CivicaTypography.captionStrong)
                         .foregroundColor(countdownForegroundColor(for: election))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
+                        .padding(.horizontal, CivicaSpacing.sm)
+                        .padding(.vertical, CivicaSpacing.xs)
                         .background(countdownBackgroundColor(for: election))
                         .clipShape(Capsule())
                         .lineLimit(1)
@@ -1011,7 +1011,7 @@ struct ElectionTimelineView: View {
                 }
             }
 
-            HStack(alignment: .top, spacing: 10) {
+            HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                 keyDateTile(
                     title: l("app.timeline.date_tile.early_voting", "Early Voting"),
                     value: earlyVotingText(for: election),
@@ -1031,8 +1031,8 @@ struct ElectionTimelineView: View {
                 Text(electionCountdownAndDeadlineText(for: election))
                     .font(CivicaTypography.captionStrong)
                     .foregroundColor(countdownForegroundColor(for: election))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
+                    .padding(.horizontal, CivicaSpacing.sm)
+                    .padding(.vertical, CivicaSpacing.xs)
                     .background(countdownBackgroundColor(for: election))
                     .clipShape(Capsule())
 
@@ -1041,7 +1041,7 @@ struct ElectionTimelineView: View {
                         .font(CivicaTypography.captionStrong)
                         .foregroundColor(partyBadge.foreground)
                         .padding(.horizontal, CivicaSpacing.sm)
-                        .padding(.vertical, 3)
+                        .padding(.vertical, CivicaSpacing.xs)
                         .background(partyBadge.background)
                         .clipShape(Capsule())
                         .lineLimit(1)
@@ -1077,7 +1077,7 @@ struct ElectionTimelineView: View {
                         }
                     )
                 ) {
-                    VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                         if let intro = ballotContent.introText, !intro.isEmpty {
                             ballotIntroView(intro)
                         }
@@ -1087,7 +1087,7 @@ struct ElectionTimelineView: View {
                         }
 
                     }
-                    .padding(.top, 6)
+                    .padding(.top, CivicaSpacing.xs)
                 } label: {
                     Text(l("app.timeline.disclosure.preliminary", "What's on your ballot"))
                         .font(CivicaTypography.subheadStrong)
@@ -1097,13 +1097,13 @@ struct ElectionTimelineView: View {
             }
 
             if !advisoryLines.isEmpty {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     ForEach(Array(advisoryLines.enumerated()), id: \.offset) { _, advisory in
-                        HStack(alignment: .top, spacing: 6) {
+                        HStack(alignment: .top, spacing: CivicaSpacing.xs) {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .font(CivicaTypography.captionStrong)
                                 .foregroundColor(CivicaColors.warningAmber)
-                                .padding(.top, 1)
+                                .padding(.top, CivicaSpacing.xs)
                             Text(advisory)
                                 .font(CivicaTypography.caption)
                                 .foregroundColor(CivicaColors.textSecondary)
@@ -1113,7 +1113,7 @@ struct ElectionTimelineView: View {
                 }
             }
         }
-        .padding(14)
+        .padding(CivicaSpacing.md)
         .background(
             RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)
@@ -1155,9 +1155,9 @@ struct ElectionTimelineView: View {
                 .resizable()
                 .scaledToFill()
                 .frame(width: flagSize.width, height: flagSize.height)
-                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                         .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
                 .opensMyInfoPanelOnLongPress()
@@ -1173,18 +1173,18 @@ struct ElectionTimelineView: View {
                 }
             }
             .frame(width: flagSize.width, height: flagSize.height)
-            .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                     .stroke(CivicaColors.borderSubtle, lineWidth: 1)
             )
             .opensMyInfoPanelOnLongPress()
         } else {
             stateFlagFallback(for: code)
                 .frame(width: flagSize.width, height: flagSize.height)
-                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                         .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
                 .opensMyInfoPanelOnLongPress()
@@ -1258,7 +1258,7 @@ struct ElectionTimelineView: View {
     @ViewBuilder
     private func keyDateTile(title: String, value: String, icon: String, useTintedBackground: Bool) -> some View {
         VStack(alignment: .center, spacing: CivicaSpacing.xs) {
-            HStack(spacing: 6) {
+            HStack(spacing: CivicaSpacing.xs) {
                 Image(systemName: icon)
                     .font(CivicaTypography.captionStrong)
                     .foregroundColor(CivicaColors.ctaBlue)
@@ -1275,7 +1275,7 @@ struct ElectionTimelineView: View {
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, alignment: .center)
-        .padding(.horizontal, 10)
+        .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, CivicaSpacing.sm)
         .background(
             RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
@@ -1435,7 +1435,7 @@ struct ElectionTimelineView: View {
             }
 
             if let incumbent = item.incumbent, !incumbent.isEmpty {
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.xs) {
                     Text("◦")
                         .font(CivicaTypography.captionStrong)
                         .foregroundColor(CivicaColors.textSecondary)

@@ -221,7 +221,7 @@ struct MyRepsView: View {
             }
             .safeAreaInset(edge: .bottom) {
                 if isGovHelpChatEnabled {
-                    HStack(spacing: 10) {
+                    HStack(spacing: CivicaSpacing.sm) {
                         Spacer(minLength: 0)
                         chatButton
                     }
@@ -290,7 +290,7 @@ struct MyRepsView: View {
     }
 
     private var matchedSummaryPill: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: CivicaSpacing.xs) {
             Text("Matched")
                 .foregroundColor(CivicaColors.textPrimary)
 
@@ -311,7 +311,7 @@ struct MyRepsView: View {
         .font(.system(size: 13, weight: .semibold, design: .rounded))
         .lineLimit(1)
         .padding(.horizontal, CivicaSpacing.md)
-        .padding(.vertical, 7)
+        .padding(.vertical, CivicaSpacing.sm)
         .background(CivicaColors.surfacePrimary.opacity(0.96))
         .overlay(
             Capsule()
@@ -344,7 +344,7 @@ struct MyRepsView: View {
             Label(l("app.reps.action.chat", "Chat"), systemImage: "message.fill")
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(.white)
-                .padding(.horizontal, 14)
+                .padding(.horizontal, CivicaSpacing.md)
                 .padding(.vertical, CivicaSpacing.md)
                 .background(CivicaColors.ctaBlue)
                 .clipShape(Capsule())
@@ -354,7 +354,7 @@ struct MyRepsView: View {
     }
 
     private var searchCard: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: CivicaSpacing.sm) {
             ZStack(alignment: .trailing) {
                 TextField(
                     "",
@@ -408,7 +408,7 @@ struct MyRepsView: View {
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
-                .padding(.trailing, 10)
+                .padding(.trailing, CivicaSpacing.sm)
                 .opacity(locationInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.45 : 1.0)
                 .disabled(locationInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
@@ -447,7 +447,7 @@ struct MyRepsView: View {
 
     @ViewBuilder
     private func locationCoverageCard() -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(
                 repsVM.resolvedCoordinate == nil
                 ? l("app.reps.coverage.find_district", "Find your district by entering your address")
@@ -470,7 +470,7 @@ struct MyRepsView: View {
             .overlay(alignment: .bottom) {
                 if !sections.isEmpty {
                     matchedSummaryPill
-                        .padding(.bottom, 10)
+                        .padding(.bottom, CivicaSpacing.sm)
                         .zIndex(2)
                 }
             }
@@ -481,7 +481,7 @@ struct MyRepsView: View {
                     Image(systemName: "arrow.up.left.and.arrow.down.right")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(CivicaColors.ctaBlue)
-                        .padding(10)
+                        .padding(CivicaSpacing.sm)
                         .background(CivicaColors.surfacePrimary.opacity(0.96))
                         .overlay(
                             Circle()
@@ -491,7 +491,7 @@ struct MyRepsView: View {
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
-                .padding(10)
+                .padding(CivicaSpacing.sm)
                 .accessibilityLabel(l("app.reps.coverage.open_full_map", "Open full map"))
             }
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
@@ -690,7 +690,7 @@ private struct MyRepsFullScreenMapView: View {
             )
             .ignoresSafeArea()
 
-            HStack(spacing: 10) {
+            HStack(spacing: CivicaSpacing.sm) {
                 Button {
                     onClose()
                 } label: {
@@ -728,8 +728,8 @@ private struct MyRepsFullScreenMapView: View {
                     .buttonStyle(.plain)
                 }
             }
-            .padding(.horizontal, 14)
-            .padding(.top, 10)
+            .padding(.horizontal, CivicaSpacing.md)
+            .padding(.top, CivicaSpacing.sm)
         }
     }
 }

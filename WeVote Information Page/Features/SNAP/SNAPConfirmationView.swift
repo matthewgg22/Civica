@@ -18,7 +18,7 @@ struct SNAPConfirmationView: View {
                     .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text("State selected")
                         .font(CivicaTypography.subheadStrong)
                         .foregroundStyle(CivicaColors.textPrimary)

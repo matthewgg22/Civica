@@ -32,7 +32,7 @@ struct SupabaseStatusView: View {
                 Text(error)
                     .font(CivicaTypography.footnoteStrong)
                     .foregroundColor(CivicaColors.ctaRed)
-                    .padding(10)
+                    .padding(CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.statusErrorSurface)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
@@ -52,7 +52,7 @@ struct SupabaseStatusView: View {
                 .buttonStyle(.borderedProminent)
             }
 
-            HStack(spacing: 10) {
+            HStack(spacing: CivicaSpacing.sm) {
                 Button {
                     Task {
                         isCheckingHealth = true
@@ -153,7 +153,7 @@ struct SupabaseStatusView: View {
             Text(label)
                 .font(CivicaTypography.subheadStrong)
             Spacer()
-            HStack(spacing: 6) {
+            HStack(spacing: CivicaSpacing.xs) {
                 if let indicator {
                     Image(systemName: indicator.iconName)
                         .font(CivicaTypography.captionBold)

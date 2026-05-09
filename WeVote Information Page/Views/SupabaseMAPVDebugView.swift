@@ -17,7 +17,7 @@ struct SupabaseMAPVDebugView: View {
                 .font(CivicaTypography.subhead)
                 .foregroundStyle(CivicaColors.textSecondary)
 
-            HStack(spacing: 10) {
+            HStack(spacing: CivicaSpacing.sm) {
                 Button("DEBUG: Insert MAPV") {
                     Task { await insertDebugPlan() }
                 }
@@ -37,7 +37,7 @@ struct SupabaseMAPVDebugView: View {
                     .foregroundStyle(CivicaColors.textSecondary)
             } else {
                 ForEach(plans.prefix(5)) { plan in
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text(plan.electionID)
                             .font(CivicaTypography.subheadStrong)
                         Text(plan.pollingPlace ?? "No polling place")

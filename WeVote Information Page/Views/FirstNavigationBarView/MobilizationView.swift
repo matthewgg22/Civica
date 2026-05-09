@@ -211,7 +211,7 @@ struct MobilizationView: View {
 
             NavigationStack {
                 ScrollView {
-                    VStack(spacing: 20) {
+                    VStack(spacing: CivicaSpacing.lg) {
                         VStack(alignment: .leading, spacing: 0) {
                             PageHeader(title: Text("app.page.how_to_vote", tableName: "AppShell"))
                             Text(electionSubtitleText)
@@ -224,7 +224,7 @@ struct MobilizationView: View {
                         .padding(.horizontal)
 
                         if planVM.plan.voteTime != nil {
-                            VStack(spacing: 10) {
+                            VStack(spacing: CivicaSpacing.sm) {
                                 PlanCardView(waterfallController: waterfallController)
                                     .padding(.horizontal)
                                     .offset(x: planCardOffset)
@@ -244,7 +244,7 @@ struct MobilizationView: View {
                                             .lineLimit(1)
                                             .minimumScaleFactor(0.7)
                                             .frame(maxWidth: .infinity)
-                                            .padding(.vertical, 11)
+                                            .padding(.vertical, CivicaSpacing.md)
                                     }
                                     .buttonStyle(MAPVUtilityButtonStyle(
                                         fill: CivicaColors.ctaBlue,
@@ -284,7 +284,7 @@ struct MobilizationView: View {
                         VStack(spacing: 0) {
                             ForEach(visibleSectionTypes, id: \.self) { section in
                                 NavigationLink(destination: section.destination(selectedPlace: $selectedPlace)) {
-                                    HStack(spacing: 10) {
+                                    HStack(spacing: CivicaSpacing.sm) {
                                         if section == .supportAmericansVote {
                                             CivicaLogoIcon(size: 28)
                                                 .frame(width: 30, height: 30, alignment: .center)
@@ -714,7 +714,7 @@ struct FeedbackView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 PageHeader(title: Text(l("app.feedback.title", "Feedback")))
 
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                     Text(l("app.feedback.college_endeavor.title", "We Want to Hear From You!"))
                         .font(CivicaTypography.cardTitle)
 
@@ -723,14 +723,14 @@ struct FeedbackView: View {
                         .foregroundColor(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(14)
+                .padding(CivicaSpacing.md)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                         .fill(CivicaColors.infoSurfaceBlue)
                 )
 
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                     Text(l("app.feedback.share.title", "Share your feedback"))
                         .font(CivicaTypography.sectionHeader)
 
@@ -746,7 +746,7 @@ struct FeedbackView: View {
                         .keyboardType(.emailAddress)
                         .autocorrectionDisabled(true)
                         .padding(.horizontal, CivicaSpacing.md)
-                        .padding(.vertical, 10)
+                        .padding(.vertical, CivicaSpacing.sm)
                         .background(CivicaColors.surfacePrimary)
                         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                         .overlay(
@@ -767,15 +767,15 @@ struct FeedbackView: View {
                             Text(l("app.feedback.message.placeholder", "Tell us what felt confusing, frustrating, or helpful."))
                                 .font(CivicaTypography.subhead)
                                 .foregroundColor(CivicaColors.textSecondary)
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 14)
+                                .padding(.horizontal, CivicaSpacing.md)
+                                .padding(.vertical, CivicaSpacing.md)
                                 .allowsHitTesting(false)
                         }
 
                         TextEditor(text: $feedbackText)
                             .font(.body)
                             .scrollContentBackground(.hidden)
-                            .padding(.horizontal, 10)
+                            .padding(.horizontal, CivicaSpacing.sm)
                             .padding(.vertical, CivicaSpacing.sm)
                             .frame(minHeight: 170)
                             .focused($isFeedbackFocused)
@@ -814,14 +814,14 @@ struct FeedbackView: View {
                             .foregroundColor(.red)
                     }
                 }
-                .padding(14)
+                .padding(CivicaSpacing.md)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                         .fill(CivicaColors.canvasBackground)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                         .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
             }
@@ -914,7 +914,7 @@ private struct FeedbackSubmissionConfirmationView: View {
     @State private var hasTriggeredAutoReturn = false
 
     var body: some View {
-        VStack(spacing: 18) {
+        VStack(spacing: CivicaSpacing.lg) {
             Spacer(minLength: 16)
 
             Image(systemName: "checkmark.circle.fill")
@@ -941,11 +941,11 @@ private struct FeedbackSubmissionConfirmationView: View {
             .foregroundColor(.white)
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
             .buttonStyle(.plain)
-            .padding(.top, 6)
+            .padding(.top, CivicaSpacing.xs)
 
             Spacer()
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, CivicaSpacing.lg)
         .padding(.vertical, CivicaSpacing.xl)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(CivicaColors.canvasBackground)

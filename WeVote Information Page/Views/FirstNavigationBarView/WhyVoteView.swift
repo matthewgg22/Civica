@@ -171,7 +171,7 @@ struct WhyVoteView: View {
                 .ignoresSafeArea()
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                     TurnoutExplorer(
                         onSeeHowToVote: {
                             NotificationCenter.default.post(name: .openVotingStepsTab, object: nil)
@@ -239,7 +239,7 @@ struct WhyVoteView: View {
                         .foregroundColor(CivicaColors.textSecondary)
                 }
             }
-            .padding(14)
+            .padding(CivicaSpacing.md)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.surfacePrimary.opacity(0.72))
             .overlay(
@@ -286,7 +286,7 @@ struct WhyVoteView: View {
                     filledColor: CivicaColors.ctaBlue
                 )
             }
-            .padding(14)
+            .padding(CivicaSpacing.md)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.surfacePrimary.opacity(0.72))
             .overlay(
@@ -304,7 +304,7 @@ struct WhyVoteView: View {
 
             if !whyCareCards.isEmpty {
                 let card = whyCareCards[selectedWhyCareCard]
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text(card.title)
                         .font(CivicaTypography.sectionHeader)
                         .foregroundColor(CivicaColors.textPrimary)
@@ -329,8 +329,8 @@ struct WhyVoteView: View {
             Label(l("app.how_to_vote.section.feedback", "Feedback"), systemImage: "bubble.left.and.bubble.right.fill")
                 .font(CivicaTypography.subheadStrong)
                 .foregroundColor(CivicaColors.ctaBlue)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 7)
+                .padding(.horizontal, CivicaSpacing.sm)
+                .padding(.vertical, CivicaSpacing.sm)
                 .background(CivicaColors.surfacePrimary)
                 .clipShape(Capsule(style: .continuous))
                 .overlay(
@@ -435,9 +435,9 @@ struct WhyVoteView: View {
                 .resizable()
                 .scaledToFill()
                 .frame(width: 56, height: 40)
-                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                         .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
                 .accessibilityHidden(true)
@@ -494,7 +494,7 @@ private struct OutOfTenTurnoutRowView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(label)
                 .font(CivicaTypography.subheadStrong)
                 .foregroundColor(CivicaColors.textPrimary)

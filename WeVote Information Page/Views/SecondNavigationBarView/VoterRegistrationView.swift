@@ -582,8 +582,8 @@ struct VoterRegistrationView: View {
                                 VStack(spacing: 0) {
                                     registrationLaunchStateCard(for: registrationLaunchState)
                                         .padding(.horizontal, CivicaSpacing.lg)
-                                        .padding(.top, 10)
-                                        .padding(.bottom, 14)
+                                        .padding(.top, CivicaSpacing.sm)
+                                        .padding(.bottom, CivicaSpacing.md)
                                     Spacer(minLength: 0)
                                 }
                                 .frame(maxWidth: .infinity)
@@ -593,7 +593,7 @@ struct VoterRegistrationView: View {
                                         registrationReadinessPanel(proxy: proxy)
                                             .padding(.horizontal, CivicaSpacing.lg)
                                             .padding(.top, CivicaSpacing.sm)
-                                            .padding(.bottom, 10)
+                                            .padding(.bottom, CivicaSpacing.sm)
                                     }
                                     .frame(maxWidth: .infinity)
                                     .background(CivicaColors.canvasBackground)
@@ -716,7 +716,7 @@ struct VoterRegistrationView: View {
 
     private func sectionTimeline(_ section: RegistrationSection) -> some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(section.title)
                     .font(CivicaTypography.subheadBold)
                     .foregroundColor(CivicaColors.ctaBlue)
@@ -728,7 +728,7 @@ struct VoterRegistrationView: View {
                 }
             }
 
-            VStack(spacing: 10) {
+            VStack(spacing: CivicaSpacing.sm) {
                 ForEach(section.cards) { card in
                     registrationCard(card)
                         .id(card.id)
@@ -736,7 +736,7 @@ struct VoterRegistrationView: View {
             }
         }
         .padding(.horizontal, CivicaSpacing.lg)
-        .padding(.vertical, 10)
+        .padding(.vertical, CivicaSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.canvasBackground)
         .background(
@@ -758,7 +758,7 @@ struct VoterRegistrationView: View {
 
     @ViewBuilder
     private func registrationCard(_ card: VoterRegistrationCard) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             registrationCardHeading(card)
 
             if !card.summary.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -788,14 +788,14 @@ struct VoterRegistrationView: View {
             }
 
             if !card.bullets.isEmpty {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     ForEach(card.bullets, id: \.self) { bullet in
                         if card.kind == .provisional && isProvisionalLeadLine(bullet) {
                             Text(bullet)
                                 .font(CivicaTypography.supportBold)
                                 .foregroundColor(CivicaColors.textPrimary)
                                 .fixedSize(horizontal: false, vertical: true)
-                                .padding(.top, 2)
+                                .padding(.top, CivicaSpacing.xs)
                         } else {
                             HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                                 Text("•")
@@ -848,7 +848,7 @@ struct VoterRegistrationView: View {
                     }
                     .font(CivicaTypography.subheadStrong)
                     .padding(.horizontal, CivicaSpacing.lg)
-                    .padding(.vertical, 9)
+                    .padding(.vertical, CivicaSpacing.sm)
                     .foregroundColor(CivicaColors.ctaBlue)
                     .background(CivicaColors.ctaBlue.opacity(0.10))
                     .overlay(
@@ -968,7 +968,7 @@ struct VoterRegistrationView: View {
                     .fixedSize(horizontal: false, vertical: true)
 
                 }
-                .padding(.top, 2)
+                .padding(.top, CivicaSpacing.xs)
                 .transition(
                     .asymmetric(
                         insertion: .opacity
@@ -1013,7 +1013,7 @@ struct VoterRegistrationView: View {
             .contentShape(Rectangle())
 
             if showStepTwoPollIssuesDropdown {
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                     Text(
                         l(
                             "app.registration.card.provisional.title",
@@ -1036,7 +1036,7 @@ struct VoterRegistrationView: View {
 
                     provisionalRequestPanel
 
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         ForEach(stepTwoPointOneBullets, id: \.self) { bullet in
                             if isProvisionalLeadLine(bullet) {
                                 Text(bullet)
@@ -1062,13 +1062,13 @@ struct VoterRegistrationView: View {
                     }
                     .font(CivicaTypography.subheadStrong)
                     .padding(.horizontal, CivicaSpacing.lg)
-                    .padding(.vertical, 9)
+                    .padding(.vertical, CivicaSpacing.sm)
                     .foregroundColor(CivicaColors.onPrimaryText)
                     .background(CivicaColors.ctaBlue)
                     .clipShape(Capsule())
                     .frame(maxWidth: .infinity, alignment: .center)
                 }
-                .padding(.top, 2)
+                .padding(.top, CivicaSpacing.xs)
                 .transition(
                     .asymmetric(
                         insertion: .opacity
@@ -1079,7 +1079,7 @@ struct VoterRegistrationView: View {
                 )
             }
         }
-        .padding(.top, 6)
+        .padding(.top, CivicaSpacing.xs)
         .animation(dropdownRevealAnimation, value: showStepTwoPollIssuesDropdown)
     }
 
@@ -1110,7 +1110,7 @@ struct VoterRegistrationView: View {
             .buttonStyle(.plain)
 
             if showStepThreeBallotErrorDropdown {
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                     Text(l("app.registration.card.ballot_cure.title.updated", "Absentee Ballot Cure Process"))
                         .font(CivicaTypography.subheadBold)
                         .foregroundColor(CivicaColors.textPrimary)
@@ -1126,7 +1126,7 @@ struct VoterRegistrationView: View {
                     .foregroundColor(CivicaColors.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         ForEach(stepThreePointOneBullets, id: \.self) { bullet in
                             HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                                 Text("•")
@@ -1153,14 +1153,14 @@ struct VoterRegistrationView: View {
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .padding(.top, 6)
+        .padding(.top, CivicaSpacing.xs)
     }
 
     @ViewBuilder
     private func registrationCardHeading(_ card: VoterRegistrationCard) -> some View {
         if card.kind == .whyRegister {
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     stepHeaderBlock(stepLabel: card.stepLabel, title: card.title)
                     Text(locationSubtitle)
                         .font(CivicaTypography.captionStrong)
@@ -1173,7 +1173,7 @@ struct VoterRegistrationView: View {
                 CivicaLogoIcon(size: 38)
             }
         } else if card.kind == .deadline {
-            HStack(alignment: .top, spacing: 10) {
+            HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                 stepHeaderBlock(stepLabel: card.stepLabel, title: card.title)
                 Spacer(minLength: 0)
                 if CivicaLaunchFeatures.shareActionsEnabled {
@@ -1186,7 +1186,7 @@ struct VoterRegistrationView: View {
     }
 
     private func stepHeaderBlock(stepLabel: String, title: String) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             if !stepLabel.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 Text(stepLabel)
                     .font(CivicaTypography.supportBold)
@@ -1201,7 +1201,7 @@ struct VoterRegistrationView: View {
 
     private func checkRegistrationPrimaryButton(_ title: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            HStack(spacing: 10) {
+            HStack(spacing: CivicaSpacing.sm) {
                 Text(title)
                     .font(CivicaTypography.sectionHeader)
                     .foregroundColor(CivicaColors.onPrimaryText)
@@ -1217,8 +1217,8 @@ struct VoterRegistrationView: View {
                 }
                 .frame(width: 28, height: 28)
             }
-            .padding(.horizontal, 15)
-            .padding(.vertical, 10)
+            .padding(.horizontal, CivicaSpacing.lg)
+            .padding(.vertical, CivicaSpacing.sm)
             .frame(maxWidth: .infinity)
             .background(CivicaColors.ctaBlue)
             .clipShape(Capsule())
@@ -1232,7 +1232,7 @@ struct VoterRegistrationView: View {
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
-            HStack(spacing: 6) {
+            HStack(spacing: CivicaSpacing.xs) {
                 Image(systemName: isEnabled ? "checkmark.circle" : "lock.fill")
                     .font(CivicaTypography.captionBold)
                 Text(isEnabled ? title : "\(title) (Unavailable)")
@@ -1241,7 +1241,7 @@ struct VoterRegistrationView: View {
                     .minimumScaleFactor(0.8)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 11)
+            .padding(.vertical, CivicaSpacing.md)
             .foregroundColor(isEnabled ? CivicaColors.onPrimaryText : CivicaColors.textSecondary)
             .background(isEnabled ? CivicaColors.ctaBlue : CivicaColors.secondaryButtonFillDisabled)
             .overlay(
@@ -1261,13 +1261,13 @@ struct VoterRegistrationView: View {
         primaryTitle: String,
         primaryAction: VoterRegistrationCard.Action
     ) -> some View {
-        HStack(spacing: 10) {
+        HStack(spacing: CivicaSpacing.sm) {
             Button(primaryTitle) {
                 handleCardAction(primaryAction)
             }
             .font(CivicaTypography.subheadStrong)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 10)
+            .padding(.vertical, CivicaSpacing.sm)
             .foregroundColor(CivicaColors.ctaBlue)
             .background(CivicaColors.ctaBlue.opacity(0.10))
             .overlay(
@@ -1319,8 +1319,8 @@ struct VoterRegistrationView: View {
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 registrationStateFlag()
 
-                VStack(alignment: .leading, spacing: 6) {
-                    VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text(registrationDeadlineLabel)
                             .font(CivicaTypography.subheadStrong)
                             .foregroundColor(CivicaColors.textPrimary)
@@ -1373,7 +1373,7 @@ struct VoterRegistrationView: View {
             ) {
                 handleCardAction(.openURL(registrationPortalURL))
             }
-            .padding(.top, 2)
+            .padding(.top, CivicaSpacing.xs)
         }
         .padding(CivicaSpacing.md)
         .background(CivicaColors.infoSurfaceBlue.opacity(0.72))
@@ -1387,7 +1387,7 @@ struct VoterRegistrationView: View {
     private var preMapvElectionOverviewPanel: some View {
         let payload = demoElectionOverviewPayload
 
-        return VStack(alignment: .leading, spacing: 10) {
+        return VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text("Election Overview (Demo)")
                 .font(CivicaTypography.subheadBold)
                 .foregroundColor(CivicaColors.textPrimary)
@@ -1431,7 +1431,7 @@ struct VoterRegistrationView: View {
                             .foregroundColor(CivicaColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
-                    .padding(.bottom, 2)
+                    .padding(.bottom, CivicaSpacing.xs)
                 }
             }
 
@@ -1441,7 +1441,7 @@ struct VoterRegistrationView: View {
                     .foregroundColor(CivicaColors.textPrimary)
 
                 ForEach(payload.notes, id: \.self) { note in
-                    HStack(alignment: .top, spacing: 6) {
+                    HStack(alignment: .top, spacing: CivicaSpacing.xs) {
                         Text("•")
                             .font(CivicaTypography.captionStrong)
                             .foregroundColor(CivicaColors.ctaBlue)
@@ -1467,7 +1467,7 @@ struct VoterRegistrationView: View {
     }
 
     private var thenVoteTimelinePanel: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             thenVoteTimelineRow(
                 symbolName: "clock.fill",
                 title: l("app.guide.voting.early_vote.label", "Early Vote"),
@@ -1486,8 +1486,8 @@ struct VoterRegistrationView: View {
                 Text(l("app.guide.voting.by_mail.cta.more_info", "Mail ballot rules"))
                     .font(CivicaTypography.captionStrong)
                     .foregroundColor(CivicaColors.onPrimaryText)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 7)
+                    .padding(.horizontal, CivicaSpacing.sm)
+                    .padding(.vertical, CivicaSpacing.sm)
                     .background(CivicaColors.ctaBlue)
                     .clipShape(Capsule())
             }
@@ -1518,7 +1518,7 @@ struct VoterRegistrationView: View {
     }
 
     private func thenVoteTimelineRow(symbolName: String, title: String, body: String) -> some View {
-        HStack(alignment: .top, spacing: 10) {
+        HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Image(systemName: symbolName)
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(CivicaColors.ctaBlue)
@@ -1687,7 +1687,7 @@ struct VoterRegistrationView: View {
 
             Divider()
                 .overlay(CivicaColors.ctaBlue.opacity(0.16))
-                .padding(.top, 1)
+                .padding(.top, CivicaSpacing.xs)
 
             registrationGuideStripContent(proxy: proxy)
                 .padding(.top, 0)
@@ -1714,9 +1714,9 @@ struct VoterRegistrationView: View {
     @ViewBuilder
     private var upcomingElectionTimelinePreviewCard: some View {
         if let election = nextUpcomingElection {
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(alignment: .top, spacing: 10) {
-                    registrationStateFlag(width: 64, height: 42, cornerRadius: 6)
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                HStack(alignment: .top, spacing: CivicaSpacing.sm) {
+                    registrationStateFlag(width: 64, height: 42, cornerRadius: CivicaRadius.sm)
 
                     VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text(timelinePreviewTitle(for: election))
@@ -1739,8 +1739,8 @@ struct VoterRegistrationView: View {
                 )
                 .font(CivicaTypography.captionStrong)
                 .foregroundColor(CivicaColors.ctaBlue)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
+                .padding(.horizontal, CivicaSpacing.sm)
+                .padding(.vertical, CivicaSpacing.xs)
                 .background(CivicaColors.infoSurfaceBlue)
                 .clipShape(Capsule())
                 .lineLimit(1)
@@ -1757,10 +1757,10 @@ struct VoterRegistrationView: View {
                     )
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.top, 1)
+                .padding(.top, CivicaSpacing.xs)
             }
         } else {
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(readinessTitleText)
                     .font(CivicaTypography.sectionHeaderBold)
                     .foregroundColor(CivicaColors.textPrimary)
@@ -1772,7 +1772,7 @@ struct VoterRegistrationView: View {
     }
 
     private func readinessLeftField(_ label: String, _ value: String, valueColor: Color = CivicaColors.textPrimary) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(label)
                 .font(CivicaTypography.captionStrong)
                 .foregroundColor(CivicaColors.textSecondary)
@@ -1785,7 +1785,7 @@ struct VoterRegistrationView: View {
     }
 
     private func readinessDatePill(title: String, value: String) -> some View {
-        VStack(alignment: .center, spacing: 2) {
+        VStack(alignment: .center, spacing: CivicaSpacing.xs) {
             Text(title)
                 .font(CivicaTypography.captionBold)
                 .foregroundColor(CivicaColors.ctaBlue)
@@ -1800,7 +1800,7 @@ struct VoterRegistrationView: View {
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, alignment: .center)
-        .padding(.horizontal, 10)
+        .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, CivicaSpacing.sm)
         .background(CivicaColors.infoSurfaceBlue.opacity(0.85))
         .overlay(
@@ -1837,7 +1837,7 @@ struct VoterRegistrationView: View {
     }
 
     private func registrationGuideStripContent(proxy: ScrollViewProxy) -> some View {
-        HStack(spacing: 10) {
+        HStack(spacing: CivicaSpacing.sm) {
             registrationGuideStripButton(
                 title: l("app.registration.guide.step.register", "Register"),
                 phase: .preElection,
@@ -1861,15 +1861,15 @@ struct VoterRegistrationView: View {
             )
         }
         .frame(maxWidth: .infinity, alignment: .center)
-        .padding(.horizontal, 2)
-        .padding(.vertical, 2)
+        .padding(.horizontal, CivicaSpacing.xs)
+        .padding(.vertical, CivicaSpacing.xs)
     }
 
     @ViewBuilder
     private func stickyGuideStripDock(proxy: ScrollViewProxy) -> some View {
         registrationGuideStripContent(proxy: proxy)
             .padding(.horizontal, CivicaSpacing.md)
-            .padding(.vertical, 5)
+            .padding(.vertical, CivicaSpacing.xs)
             .background(
                 BottomRoundedRectangle(radius: 12)
                     .fill(CivicaColors.surfacePrimary)
@@ -1908,8 +1908,8 @@ struct VoterRegistrationView: View {
                 .foregroundColor(isActive ? .white : CivicaColors.textPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.86)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 3)
+                .padding(.horizontal, CivicaSpacing.sm)
+                .padding(.vertical, CivicaSpacing.xs)
                 .background(
                     Capsule(style: .continuous)
                         .fill(isActive ? accent : .clear)
@@ -2300,7 +2300,7 @@ struct VoterRegistrationView: View {
                 .font(CivicaTypography.subheadStrong)
                 .foregroundColor(CivicaColors.textPrimary)
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 requestStepLine(l("app.registration.provisional.request.step_1", "1. Tell the poll worker: “I want to vote by provisional ballot.”"))
                 requestStepLine(
                     l(

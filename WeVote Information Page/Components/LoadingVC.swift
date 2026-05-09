@@ -15,7 +15,7 @@ struct LoadingVC: View {
                 .ignoresSafeArea()
             
             // Vertical stack for the progress indicator and text.
-            VStack(spacing: 20) {
+            VStack(spacing: CivicaSpacing.lg) {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
                     .scaleEffect(1.5)
