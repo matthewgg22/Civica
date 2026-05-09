@@ -1,6 +1,6 @@
 //
 //  ShareSheet.swift
-//  VoteNow
+//  Civica
 //
 //  Created by Matthew Greer-Gentis on 2/20/26.
 //

@@ -1,6 +1,6 @@
 //
 //  PollingPlaceDetailSheet.swift
-//  VoteNow
+//  Civica
 //
 //  Created by Matthew Greer-Gentis on 5/26/25.
 //

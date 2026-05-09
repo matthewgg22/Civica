@@ -1,5 +1,5 @@
 //
-//  WeVote_Information_PageUITestsLaunchTests.swift
+//  CivicaUITestsLaunchTests.swift
 //  WeVote Information PageUITests
 //
 //  Created by Matthew Greer-Gentis on 3/30/25.

@@ -1,6 +1,6 @@
 //
 //  HomeAddressHeaderView.swift
-//  WeVote Information Page 10044
+//  WeVote Information Page
 //
 //  Created by Matthew Greer-Gentis on 4/28/25.
 //

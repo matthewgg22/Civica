@@ -1,13 +1,6 @@
 //
 //  TransportationHelpView.swift
-//  VoteNow
-//
-//  Created by Matthew Greer-Gentis on 5/19/25.
-//
-
-
-//  TransportationHelpView.swift
-//  VoteNow Future iteration
+//  Civica
 //
 //  Created by Matthew Greer-Gentis on 5/19/25.
 //
