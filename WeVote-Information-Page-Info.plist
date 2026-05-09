@@ -11,6 +11,7 @@
 			<string>Civica Deep Links</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>civica</string>
 				<string>votenow</string>
 			</array>
 		</dict>
