@@ -509,7 +509,7 @@ private struct AgeTurnoutBandSlider: View {
                 .fill(fillColor)
                 .frame(width: visualSize, height: visualSize)
                 .overlay(Circle().stroke(.white, lineWidth: 2))
-                .shadow(color: CivicaColors.textPrimary.opacity(0.18), radius: 3, x: 0, y: 1)
+                .civicaShadow(.hairline, opacity: 0.18)
         }
             .position(x: x, y: y)
             .contentShape(Rectangle())

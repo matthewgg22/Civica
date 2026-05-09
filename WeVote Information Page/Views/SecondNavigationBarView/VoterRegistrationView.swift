@@ -1879,7 +1879,7 @@ struct VoterRegistrationView: View {
                     .stroke(CivicaColors.ctaBlue.opacity(0.22), lineWidth: 2)
             )
             .clipShape(BottomRoundedRectangle(radius: 12))
-            .shadow(color: CivicaColors.textPrimary.opacity(0.06), radius: 6, x: 0, y: 2)
+            .civicaShadow(.card)
             .padding(.horizontal, CivicaSpacing.lg)
             .padding(.top, 0)
             .padding(.bottom, CivicaSpacing.xs)

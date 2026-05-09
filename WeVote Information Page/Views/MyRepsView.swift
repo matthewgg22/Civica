@@ -318,7 +318,7 @@ struct MyRepsView: View {
                 .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
         .clipShape(Capsule())
-        .shadow(color: CivicaColors.textPrimary.opacity(0.08), radius: 3, x: 0, y: 1)
+        .civicaShadow(.hairline)
     }
 
     private struct MatchedSegment: Identifiable {
@@ -487,7 +487,7 @@ struct MyRepsView: View {
                             Circle()
                                 .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                         )
-                        .shadow(color: CivicaColors.textPrimary.opacity(0.08), radius: 3, x: 0, y: 1)
+                        .civicaShadow(.hairline)
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
@@ -703,7 +703,7 @@ private struct MyRepsFullScreenMapView: View {
                             Circle()
                                 .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                         )
-                        .shadow(color: CivicaColors.textPrimary.opacity(0.08), radius: 3, x: 0, y: 1)
+                        .civicaShadow(.hairline)
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
@@ -723,7 +723,7 @@ private struct MyRepsFullScreenMapView: View {
                         Capsule()
                             .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                     )
-                    .shadow(color: CivicaColors.textPrimary.opacity(0.08), radius: 3, x: 0, y: 1)
+                    .civicaShadow(.hairline)
                     .clipShape(Capsule())
                     .buttonStyle(.plain)
                 }

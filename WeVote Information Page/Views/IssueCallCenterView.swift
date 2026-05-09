@@ -737,7 +737,7 @@ struct IssueCallCenterView: View {
                 RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                     .stroke(CivicaColors.borderSubtle, lineWidth: 1)
             )
-            .shadow(color: CivicaColors.textPrimary.opacity(0.2), radius: 14, x: 0, y: 4)
+            .civicaShadow(.floating)
             .padding(.horizontal, CivicaSpacing.lg)
         }
     }
@@ -988,7 +988,7 @@ struct IssueCallCenterView: View {
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.ctaBlue.opacity(0.22), lineWidth: 2)
         )
-        .shadow(color: CivicaColors.textPrimary.opacity(0.06), radius: 6, x: 0, y: 2)
+        .civicaShadow(.card)
         .padding(.horizontal, CivicaSpacing.lg)
         .padding(.top, CivicaSpacing.xs)
         .padding(.bottom, CivicaSpacing.xs)
