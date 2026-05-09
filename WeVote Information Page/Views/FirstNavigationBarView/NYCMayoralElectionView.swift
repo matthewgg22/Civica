@@ -749,11 +749,13 @@ struct NYCMayoralElectionView: View {
     }
 
     private func guideAnchorURL(for target: GuideCardAnchor) -> URL {
-        URL(string: "votenow-guide://\(target.rawValue)")!
+        URL(string: "civica-guide://\(target.rawValue)")!
     }
 
     private func handleIntroLink(_ url: URL, proxy: ScrollViewProxy) {
-        guard url.scheme == "votenow-guide", let host = url.host, let target = GuideCardAnchor(rawValue: host) else {
+        guard url.scheme == "civica-guide" || url.scheme == "votenow-guide",
+              let host = url.host,
+              let target = GuideCardAnchor(rawValue: host) else {
             return
         }
 

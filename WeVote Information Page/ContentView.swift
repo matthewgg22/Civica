@@ -500,7 +500,7 @@ struct ContentView: View {
 
     private func handleIncomingLink(_ url: URL) {
         let scheme = url.scheme?.lowercased() ?? ""
-        if scheme == "votenow" {
+        if scheme == "civica" || scheme == "votenow" {
             handleAppDeepLink(url)
             return
         }
