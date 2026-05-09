@@ -85,55 +85,55 @@ struct SNAPDebugChecklistView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("SNAP QA Checklist")
                         .font(.title3.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textPrimary)
+                        .foregroundStyle(CivicaColors.textPrimary)
                     Text("Developer-only build verification. Not visible in production.")
                         .font(.footnote)
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                     Text("Passed \(passedCount) of \(items.count)")
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(passedCount == items.count ? VoteNowColors.successGreen : VoteNowColors.warningAmber)
+                        .foregroundStyle(passedCount == items.count ? CivicaColors.successGreen : CivicaColors.warningAmber)
                 }
                 .padding(14)
                 .background(
                     RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .fill(VoteNowColors.surfacePrimary)
+                        .fill(CivicaColors.surfacePrimary)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
 
                 ForEach(items) { item in
                     VStack(alignment: .leading, spacing: 6) {
                         HStack(alignment: .top, spacing: 8) {
                             Image(systemName: item.passed ? "checkmark.seal.fill" : "exclamationmark.triangle.fill")
-                                .foregroundStyle(item.passed ? VoteNowColors.successGreen : VoteNowColors.warningAmber)
+                                .foregroundStyle(item.passed ? CivicaColors.successGreen : CivicaColors.warningAmber)
                                 .font(.subheadline)
                                 .padding(.top, 2)
                             Text(item.title)
                                 .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(VoteNowColors.textPrimary)
+                                .foregroundStyle(CivicaColors.textPrimary)
                             Spacer(minLength: 0)
                         }
                         Text(item.detail)
                             .font(.footnote)
-                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .foregroundStyle(CivicaColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(12)
                     .background(
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(VoteNowColors.surfacePrimary)
+                            .fill(CivicaColors.surfacePrimary)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                            .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                     )
                 }
             }
             .padding(16)
         }
-        .background(VoteNowColors.brandSoftBlue.ignoresSafeArea())
+        .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
     }
 }
 

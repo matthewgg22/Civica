@@ -23,7 +23,7 @@ struct ElectionsRowView: View {
         Group {
             if elections.isEmpty {
                 Text("No upcoming elections")
-                    .foregroundColor(VoteNowColors.mutedText)
+                    .foregroundColor(CivicaColors.mutedText)
                     .padding()
             } else {
                 ScrollView {
@@ -60,7 +60,7 @@ struct ElectionsRowView: View {
                                     Spacer()
                                     Text(countdownString(to: election.startDate))
                                         .font(.caption.monospacedDigit())
-                                        .foregroundColor(VoteNowColors.mutedText)
+                                        .foregroundColor(CivicaColors.mutedText)
                                 }
                                 .padding(.horizontal)
 
@@ -74,7 +74,7 @@ struct ElectionsRowView: View {
                                     Spacer()
                                     Text(countdownString(to: election.electionDay))
                                         .font(.caption.monospacedDigit())
-                                        .foregroundColor(VoteNowColors.mutedText)
+                                        .foregroundColor(CivicaColors.mutedText)
                                 }
                                 .padding(.horizontal)
                             }

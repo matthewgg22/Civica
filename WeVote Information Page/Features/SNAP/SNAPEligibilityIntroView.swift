@@ -8,7 +8,7 @@ struct SNAPEligibilityIntroView: View {
 
     var body: some View {
         ZStack {
-            VoteNowColors.brandSoftBlue.ignoresSafeArea()
+            CivicaColors.brandSoftBlue.ignoresSafeArea()
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
@@ -54,39 +54,39 @@ struct SNAPEligibilityIntroView: View {
                         VStack(alignment: .leading, spacing: 10) {
                             Text("SNAP prep status")
                                 .font(.headline.weight(.semibold))
-                                .foregroundStyle(VoteNowColors.textPrimary)
+                                .foregroundStyle(CivicaColors.textPrimary)
 
                             HStack(spacing: 8) {
                                 Text("Status:")
                                     .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(VoteNowColors.textSecondary)
+                                    .foregroundStyle(CivicaColors.textSecondary)
                                 Text("Prep checklist completed")
                                     .font(.subheadline.weight(.bold))
-                                    .foregroundStyle(VoteNowColors.successGreen)
+                                    .foregroundStyle(CivicaColors.successGreen)
                             }
 
                             HStack(spacing: 8) {
                                 Text("Date:")
                                     .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(VoteNowColors.textSecondary)
+                                    .foregroundStyle(CivicaColors.textSecondary)
                                 Text(statusDateText(from: submittedAt))
                                     .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(VoteNowColors.textPrimary)
+                                    .foregroundStyle(CivicaColors.textPrimary)
                             }
 
                             Text("Open next steps")
                                 .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(VoteNowColors.primaryCTA)
+                                .foregroundStyle(CivicaColors.primaryCTA)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(14)
                         .background(
                             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                .fill(VoteNowColors.surfacePrimary)
+                                .fill(CivicaColors.surfacePrimary)
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                         )
                     }
                     .buttonStyle(.plain)
@@ -94,7 +94,7 @@ struct SNAPEligibilityIntroView: View {
 
                     Text(SNAPCopy.globalDisclaimer)
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
 
                     HStack {
@@ -102,7 +102,7 @@ struct SNAPEligibilityIntroView: View {
                         Button("Prepare my SNAP application") {
                             continueToGuidedDraft = true
                         }
-                        .buttonStyle(VoteNowPrimaryCTAButtonStyle())
+                        .buttonStyle(CivicaPrimaryCTAButtonStyle())
                         Spacer(minLength: 0)
                     }
 
@@ -115,7 +115,7 @@ struct SNAPEligibilityIntroView: View {
                     } label: {
                         Text("Need language assistance?")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.primaryCTA)
+                            .foregroundStyle(CivicaColors.primaryCTA)
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(.vertical, 8)
                     }
@@ -124,9 +124,9 @@ struct SNAPEligibilityIntroView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(16)
             }
-            .background(VoteNowColors.brandSoftBlue)
+            .background(CivicaColors.brandSoftBlue)
         }
-        .toolbarBackground(VoteNowColors.brandSoftBlue, for: .navigationBar)
+        .toolbarBackground(CivicaColors.brandSoftBlue, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationDestination(isPresented: $continueToGuidedDraft) {
             SNAPStepContainerView(viewModel: viewModel) {
@@ -155,13 +155,13 @@ private struct SNAPIntroHeader: View {
         HStack(alignment: .top, spacing: 14) {
             ZStack {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(VoteNowColors.surfacePrimary)
+                    .fill(CivicaColors.surfacePrimary)
                     .frame(width: 56, height: 56)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                            .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                     )
-                    .shadow(color: VoteNowColors.primaryCTA.opacity(0.14), radius: 6, x: 0, y: 3)
+                    .shadow(color: CivicaColors.primaryCTA.opacity(0.14), radius: 6, x: 0, y: 3)
 
                 Image("SNAPOfficialLogo")
                     .resizable()
@@ -192,7 +192,7 @@ private struct SNAPDescriptionRow: View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: iconName)
                 .font(.footnote.weight(.semibold))
-                .foregroundStyle(VoteNowColors.primaryCTA)
+                .foregroundStyle(CivicaColors.primaryCTA)
                 .frame(width: 20, height: 20)
                 .padding(.top, 1)
 

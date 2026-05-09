@@ -11,7 +11,7 @@ struct LoadingVC: View {
     var body: some View {
         ZStack {
             // Semi-transparent black background covers the whole screen.
-            VoteNowColors.primaryText.opacity(0.5)
+            CivicaColors.primaryText.opacity(0.5)
                 .ignoresSafeArea()
             
             // Vertical stack for the progress indicator and text.

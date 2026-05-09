@@ -109,16 +109,16 @@ struct HoldToConfirmButton: View {
 
     private var baseBackgroundColor: Color {
         if isConfirmed {
-            return VoteNowColors.statusSuccessSurface
+            return CivicaColors.statusSuccessSurface
         }
-        return VoteNowColors.secondaryButtonFill
+        return CivicaColors.secondaryButtonFill
     }
 
     private var fillGradient: LinearGradient {
         LinearGradient(
             colors: [
-                VoteNowColors.ctaBluePressed.opacity(0.82),
-                VoteNowColors.successGreen.opacity(0.9)
+                CivicaColors.ctaBluePressed.opacity(0.82),
+                CivicaColors.successGreen.opacity(0.9)
             ],
             startPoint: .leading,
             endPoint: .trailing
@@ -127,16 +127,16 @@ struct HoldToConfirmButton: View {
 
     private var borderColor: Color {
         if isConfirmed {
-            return VoteNowColors.successGreen.opacity(0.82)
+            return CivicaColors.successGreen.opacity(0.82)
         }
-        return VoteNowColors.primaryCTA.opacity(0.34 + (Double(progress) * 0.42))
+        return CivicaColors.primaryCTA.opacity(0.34 + (Double(progress) * 0.42))
     }
 
     private var textColor: Color {
         if isConfirmed {
-            return VoteNowColors.surfaceWhite
+            return CivicaColors.surfaceWhite
         }
-        return progress > 0.52 ? VoteNowColors.surfaceWhite : VoteNowColors.primaryText
+        return progress > 0.52 ? CivicaColors.surfaceWhite : CivicaColors.primaryText
     }
 
     private var buttonText: String {

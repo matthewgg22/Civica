@@ -7,16 +7,16 @@ struct SNAPSecondaryCTAButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundColor(isEnabled ? VoteNowColors.primaryCTA : VoteNowColors.ctaBlueDisabled)
+            .foregroundColor(isEnabled ? CivicaColors.primaryCTA : CivicaColors.ctaBlueDisabled)
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(configuration.isPressed ? VoteNowColors.secondaryButtonFillPressed : VoteNowColors.secondaryButtonFill)
+                    .fill(configuration.isPressed ? CivicaColors.secondaryButtonFillPressed : CivicaColors.secondaryButtonFill)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(isEnabled ? VoteNowColors.secondaryButtonBorder : VoteNowColors.secondaryButtonDisabledBorder, lineWidth: 1)
+                    .stroke(isEnabled ? CivicaColors.secondaryButtonBorder : CivicaColors.secondaryButtonDisabledBorder, lineWidth: 1)
             )
             .opacity(configuration.isPressed ? 0.9 : 1)
     }

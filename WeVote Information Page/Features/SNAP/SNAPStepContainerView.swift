@@ -16,15 +16,15 @@ struct SNAPStepContainerView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(viewModel.draftStep == .nextSteps ? "Current page" : "Current step")
                             .font(.caption.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textSecondary)
+                            .foregroundStyle(CivicaColors.textSecondary)
                         Text(viewModel.draftStepHeaderTitle)
                             .font(.headline.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textPrimary)
+                            .foregroundStyle(CivicaColors.textPrimary)
                     }
                     Spacer()
                     Text(viewModel.draftStepNumberText)
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(VoteNowColors.textSecondary)
+                        .foregroundStyle(CivicaColors.textSecondary)
                 }
 
                 if viewModel.draftStep != .nextSteps {
@@ -44,8 +44,8 @@ struct SNAPStepContainerView: View {
                                         Capsule(style: .continuous)
                                             .stroke(
                                                 selectedProgressStep == step
-                                                    ? VoteNowColors.primaryCTA
-                                                    : VoteNowColors.borderSubtle.opacity(0.45),
+                                                    ? CivicaColors.primaryCTA
+                                                    : CivicaColors.borderSubtle.opacity(0.45),
                                                 lineWidth: selectedProgressStep == step ? 1.5 : 1
                                             )
                                     )
@@ -61,23 +61,23 @@ struct SNAPStepContainerView: View {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Section \(selectedIndex + 1): \(selectedProgressStep.title)")
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.textPrimary)
+                            .foregroundStyle(CivicaColors.textPrimary)
 
                         if selectedIndex < currentIndex {
                             Button("Go to section") {
                                 viewModel.jumpToDraftStep(selectedProgressStep)
                             }
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(VoteNowColors.primaryCTA)
+                            .foregroundStyle(CivicaColors.primaryCTA)
                             .buttonStyle(.plain)
                         } else if selectedProgressStep == viewModel.draftStep {
                             Text("You are currently on this section.")
                                 .font(.footnote)
-                                .foregroundStyle(VoteNowColors.textSecondary)
+                                .foregroundStyle(CivicaColors.textSecondary)
                         } else {
                             Text("Complete earlier sections to unlock this section.")
                                 .font(.footnote)
-                                .foregroundStyle(VoteNowColors.textSecondary)
+                                .foregroundStyle(CivicaColors.textSecondary)
                         }
                     }
                     .padding(.horizontal, 10)
@@ -85,18 +85,18 @@ struct SNAPStepContainerView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(VoteNowColors.surfacePrimary)
+                            .fill(CivicaColors.surfacePrimary)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(VoteNowColors.borderSubtle, lineWidth: 1)
+                            .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                     )
                 }
             }
             .padding(.horizontal, 16)
             .padding(.top, 12)
             .padding(.bottom, 10)
-            .background(VoteNowColors.brandSoftBlue)
+            .background(CivicaColors.brandSoftBlue)
 
             Divider()
 
@@ -122,26 +122,26 @@ struct SNAPStepContainerView: View {
                     Button(primaryButtonLabel) {
                         handlePrimaryAction()
                     }
-                    .buttonStyle(VoteNowPrimaryCTAButtonStyle())
+                    .buttonStyle(CivicaPrimaryCTAButtonStyle())
                     .frame(maxWidth: .infinity)
                 }
 
                 Text(viewModel.draftCompletionSummaryText)
                     .font(.footnote.weight(.medium))
-                    .foregroundStyle(VoteNowColors.textSecondary)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .frame(maxWidth: .infinity, alignment: .center)
 
             }
             .padding(.horizontal, 12)
             .padding(.top, 8)
             .padding(.bottom, 10)
-            .background(VoteNowColors.surfacePrimary)
+            .background(CivicaColors.surfacePrimary)
         }
         .toolbar(.hidden, for: .tabBar)
-        .toolbarBackground(VoteNowColors.brandSoftBlue, for: .navigationBar)
+        .toolbarBackground(CivicaColors.brandSoftBlue, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .ignoresSafeArea(.keyboard, edges: .bottom)
-        .background(VoteNowColors.brandSoftBlue.ignoresSafeArea())
+        .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
         .onAppear {
             viewModel.markStarted()
             if viewModel.draftStep == .reviewDraft {
@@ -209,16 +209,16 @@ struct SNAPStepContainerView: View {
 
         switch completionState {
         case .missingRequired:
-            return VoteNowColors.urgentCTA.opacity(0.88)
+            return CivicaColors.urgentCTA.opacity(0.88)
         case .missingOptional:
-            return VoteNowColors.warningAmber.opacity(0.82)
+            return CivicaColors.warningAmber.opacity(0.82)
         case .complete:
             return currentIndex == index
-                ? VoteNowColors.primaryCTA
-                : VoteNowColors.successGreen.opacity(0.9)
+                ? CivicaColors.primaryCTA
+                : CivicaColors.successGreen.opacity(0.9)
         case .notStarted:
             return currentIndex == index
-                ? VoteNowColors.warningAmber.opacity(0.72)
+                ? CivicaColors.warningAmber.opacity(0.72)
                 : Color.white
         }
     }

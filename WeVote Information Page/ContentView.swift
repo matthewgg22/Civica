@@ -574,7 +574,7 @@ struct ContentView: View {
             // 2. Call Your Reps
             CallYourRepsTabView()
                 .tabItem {
-                    Image(uiImage: VoteNowLogoIcon.tabBarBarsUIImage)
+                    Image(uiImage: CivicaLogoIcon.tabBarBarsUIImage)
                         .renderingMode(.original)
                     Text("Call Your Reps")
                 }
@@ -617,7 +617,7 @@ struct ContentView: View {
         }
         .environmentObject(mapvPlanStore)
         .coordinateSpace(name: "SpreadSpace")
-        .tint(VoteNowColors.primaryCTA)
+        .tint(CivicaColors.primaryCTA)
         .overlay {
             if showWhyVoteOverlay {
                 WhyVoteFloodOverlay(

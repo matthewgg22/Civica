@@ -362,11 +362,11 @@ extension View {
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
-            .background(VoteNowColors.primaryCTA)
+            .background(CivicaColors.primaryCTA)
             .clipShape(Capsule(style: .continuous))
             .voteNowPillDualOrbit()
     }
     .buttonStyle(.plain)
     .padding()
-    .background(VoteNowColors.brandSoftBlue)
+    .background(CivicaColors.brandSoftBlue)
 }
