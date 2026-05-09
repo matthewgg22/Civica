@@ -8,7 +8,7 @@ struct SNAPConfirmationView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 Text("Your SNAP draft is ready")
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(CivicaColors.textPrimary)
@@ -20,19 +20,19 @@ struct SNAPConfirmationView: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text("State selected")
-                        .font(.subheadline.weight(.semibold))
+                        .font(CivicaTypography.subheadStrong)
                         .foregroundStyle(CivicaColors.textPrimary)
                     Text(selectedStateLabel)
                         .font(.body)
                         .foregroundStyle(CivicaColors.textSecondary)
                 }
-                .padding(12)
+                .padding(CivicaSpacing.md)
                 .background(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                         .fill(CivicaColors.surfacePrimary)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                         .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
 
@@ -45,7 +45,7 @@ struct SNAPConfirmationView: View {
 
                 if officialURL == nil {
                     Text("Official state link coming soon.")
-                        .font(.footnote)
+                        .font(CivicaTypography.footnote)
                         .foregroundStyle(CivicaColors.textSecondary)
                 }
 
@@ -55,10 +55,10 @@ struct SNAPConfirmationView: View {
                 .buttonStyle(SNAPSecondaryCTAButtonStyle())
 
                 Text("This assistant does not submit your application.")
-                    .font(.footnote)
+                    .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.warningAmber)
             }
-            .padding(16)
+            .padding(CivicaSpacing.lg)
         }
         .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
         .onAppear {

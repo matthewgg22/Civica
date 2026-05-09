@@ -10,7 +10,7 @@ struct SNAPPrivacyNoticeView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 Text("Before You Start")
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(CivicaColors.textPrimary)
@@ -36,7 +36,7 @@ struct SNAPPrivacyNoticeView: View {
                 )
 
                 Text("This screen does not determine eligibility or approval.")
-                    .font(.footnote)
+                    .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.textSecondary)
 
                 VStack(spacing: 10) {
@@ -50,7 +50,7 @@ struct SNAPPrivacyNoticeView: View {
                         Button("Go to official application") {
                             openURL(officialURL)
                         }
-                        .font(.subheadline.weight(.semibold))
+                        .font(CivicaTypography.subheadStrong)
                         .foregroundStyle(CivicaColors.ctaBlue)
                         .buttonStyle(.plain)
                     }
@@ -60,9 +60,9 @@ struct SNAPPrivacyNoticeView: View {
                     }
                     .buttonStyle(SNAPSecondaryCTAButtonStyle())
                 }
-                .padding(.top, 4)
+                .padding(.top, CivicaSpacing.xs)
             }
-            .padding(16)
+            .padding(CivicaSpacing.lg)
         }
         .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
         .navigationDestination(isPresented: $continueToEligibility) {
@@ -88,7 +88,7 @@ struct SNAPPrivacyNoticeView: View {
     private func privacySection(title: String, body: String) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title)
-                .font(.headline)
+                .font(CivicaTypography.sectionHeader)
                 .foregroundStyle(CivicaColors.textPrimary)
             Text(body)
                 .font(.body)
@@ -97,11 +97,11 @@ struct SNAPPrivacyNoticeView: View {
         }
         .padding(14)
         .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
     }

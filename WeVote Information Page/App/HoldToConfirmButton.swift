@@ -54,21 +54,21 @@ struct HoldToConfirmButton: View {
                 let fillWidth = width * progress
 
                 ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                         .fill(baseBackgroundColor)
 
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                         .fill(fillGradient)
                         .frame(width: fillWidth)
 
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                         .stroke(borderColor, lineWidth: 1)
 
                     HStack(spacing: 6) {
                         Image(systemName: leadingIcon)
-                            .font(.caption.weight(.bold))
+                            .font(CivicaTypography.captionBold)
                         Text(buttonText)
-                            .font(.subheadline.weight(.semibold))
+                            .font(CivicaTypography.subheadStrong)
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)
                     }
@@ -76,10 +76,10 @@ struct HoldToConfirmButton: View {
                     .foregroundStyle(textColor)
                     .animation(reduceMotion ? nil : .easeInOut(duration: 0.15), value: isPressing)
                 }
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
             }
             .frame(height: 36)
-            .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .contentShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         }
         .buttonStyle(.plain)
         .disabled(isConfirmed && onReset == nil)

@@ -12,13 +12,13 @@ struct ElectionTabView: View {
   let election: Election
 
   var body: some View {
-    VStack(spacing: 16) {
+    VStack(spacing: CivicaSpacing.lg) {
       Text("\(election.name) – \(election.subtitle)")
         .font(.title2).bold()
         .multilineTextAlignment(.center)
 
       Text(election.subtitle)
-        .font(.headline)
+        .font(CivicaTypography.sectionHeader)
         .foregroundColor(CivicaColors.textSecondary)
 
       Divider()

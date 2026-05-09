@@ -22,11 +22,11 @@ struct SNAPReviewView: View {
                     .foregroundStyle(CivicaColors.textPrimary)
 
                 Text("Review this before using it to complete your official state application.")
-                    .font(.footnote)
+                    .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.warningAmber)
 
                 Text(SNAPCopy.globalDisclaimer)
-                    .font(.footnote.weight(.semibold))
+                    .font(CivicaTypography.footnoteStrong)
                     .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
@@ -99,7 +99,7 @@ struct SNAPReviewView: View {
                 }
                 .buttonStyle(CivicaPrimaryCTAButtonStyle())
             }
-            .padding(16)
+            .padding(CivicaSpacing.lg)
         }
         .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
         .onAppear {
@@ -154,13 +154,13 @@ private struct SNAPReviewSectionCard: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text(title)
-                    .font(.headline)
+                    .font(CivicaTypography.sectionHeader)
                     .foregroundStyle(CivicaColors.textPrimary)
                 Spacer()
                 Button("Edit") {
                     onEdit()
                 }
-                .font(.subheadline.weight(.semibold))
+                .font(CivicaTypography.subheadStrong)
                 .buttonStyle(.plain)
                 .foregroundStyle(CivicaColors.ctaBlue)
             }
@@ -168,11 +168,11 @@ private struct SNAPReviewSectionCard: View {
             ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
                 HStack(alignment: .top) {
                     Text(row.label)
-                        .font(.subheadline.weight(.semibold))
+                        .font(CivicaTypography.subheadStrong)
                         .foregroundStyle(CivicaColors.textPrimary)
                     Spacer(minLength: 12)
                     Text(row.value)
-                        .font(.subheadline)
+                        .font(CivicaTypography.subhead)
                         .foregroundStyle(CivicaColors.textSecondary)
                         .multilineTextAlignment(.trailing)
                 }
@@ -180,11 +180,11 @@ private struct SNAPReviewSectionCard: View {
         }
         .padding(14)
         .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
     }

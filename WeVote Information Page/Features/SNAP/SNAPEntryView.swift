@@ -84,9 +84,9 @@ struct SNAPEntryView: View {
             VStack(spacing: 0) {
                 VStack(alignment: .leading, spacing: 0) {
                     PageHeader(title: "Gov Applications")
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                         Text(headerLocationSubtitle)
-                            .font(.subheadline.weight(.semibold))
+                            .font(CivicaTypography.subheadStrong)
                             .foregroundColor(CivicaColors.textSecondary)
                             .lineLimit(1)
                             .minimumScaleFactor(0.84)
@@ -97,7 +97,7 @@ struct SNAPEntryView: View {
                             NotificationCenter.default.post(name: .openMyInfoPanel, object: nil)
                         } label: {
                             Text("Edit location")
-                                .font(.callout.weight(.semibold))
+                                .font(CivicaTypography.supportStrong)
                                 .italic()
                                 .foregroundColor(CivicaColors.ctaBlue)
                                 .lineLimit(1)
@@ -107,17 +107,17 @@ struct SNAPEntryView: View {
                     .padding(.leading, 72)
                     .padding(.top, -6)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 8)
-                .padding(.bottom, 8)
+                .padding(.horizontal, CivicaSpacing.lg)
+                .padding(.top, CivicaSpacing.sm)
+                .padding(.bottom, CivicaSpacing.sm)
                 .background(CivicaColors.brandSoftBlue)
 
-                VStack(spacing: 16) {
+                VStack(spacing: CivicaSpacing.lg) {
                     NavigationLink {
                         SNAPEligibilityIntroView(viewModel: viewModel)
                             .navigationBarTitleDisplayMode(.inline)
                     } label: {
-                        VStack(spacing: 12) {
+                        VStack(spacing: CivicaSpacing.md) {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                                     .fill(CivicaColors.surfacePrimary)
@@ -135,16 +135,16 @@ struct SNAPEntryView: View {
                             .shadow(color: CivicaColors.ctaBlue.opacity(0.14), radius: 8, x: 0, y: 4)
 
                             Text("Supplemental Nutrition\nAssistance Program")
-                                .font(.headline)
+                                .font(CivicaTypography.sectionHeader)
                                 .foregroundStyle(CivicaColors.textPrimary)
                                 .multilineTextAlignment(.center)
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, CivicaSpacing.xs)
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                     Text(SNAPCopy.globalDisclaimer)
-                        .font(.footnote.weight(.semibold))
+                        .font(CivicaTypography.footnoteStrong)
                         .foregroundStyle(CivicaColors.textSecondary)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
@@ -160,29 +160,29 @@ struct SNAPEntryView: View {
                         } label: {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("SNAP prep status")
-                                    .font(.headline.weight(.semibold))
+                                    .font(CivicaTypography.sectionHeader)
                                     .foregroundStyle(CivicaColors.textPrimary)
 
-                                HStack(spacing: 8) {
+                                HStack(spacing: CivicaSpacing.sm) {
                                     Text("Status:")
-                                        .font(.subheadline.weight(.semibold))
+                                        .font(CivicaTypography.subheadStrong)
                                         .foregroundStyle(CivicaColors.textSecondary)
                                     Text("Prep checklist completed")
-                                        .font(.subheadline.weight(.bold))
+                                        .font(CivicaTypography.subheadBold)
                                         .foregroundStyle(CivicaColors.successGreen)
                                 }
 
-                                HStack(spacing: 8) {
+                                HStack(spacing: CivicaSpacing.sm) {
                                     Text("Date:")
-                                        .font(.subheadline.weight(.semibold))
+                                        .font(CivicaTypography.subheadStrong)
                                         .foregroundStyle(CivicaColors.textSecondary)
                                     Text(statusDateText(from: submittedAt))
-                                        .font(.subheadline.weight(.semibold))
+                                        .font(CivicaTypography.subheadStrong)
                                         .foregroundStyle(CivicaColors.textPrimary)
                                 }
 
                                 Text("Open next steps")
-                                    .font(.subheadline.weight(.semibold))
+                                    .font(CivicaTypography.subheadStrong)
                                     .foregroundStyle(CivicaColors.ctaBlue)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -207,28 +207,28 @@ struct SNAPEntryView: View {
                                 .navigationBarTitleDisplayMode(.inline)
                         } label: {
                             Label("Developer QA checklist", systemImage: "checklist")
-                                .font(.subheadline.weight(.semibold))
+                                .font(CivicaTypography.subheadStrong)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(12)
+                                .padding(CivicaSpacing.md)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                                         .fill(CivicaColors.surfacePrimary)
                                 )
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                                         .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                                 )
                         }
                         .buttonStyle(.plain)
-                        .padding(.top, 8)
+                        .padding(.top, CivicaSpacing.sm)
                     }
                     #endif
 
                     Spacer()
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
-                .padding(.bottom, 16)
+                .padding(.horizontal, CivicaSpacing.lg)
+                .padding(.top, CivicaSpacing.lg)
+                .padding(.bottom, CivicaSpacing.lg)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .background(CivicaColors.brandSoftBlue)
             }

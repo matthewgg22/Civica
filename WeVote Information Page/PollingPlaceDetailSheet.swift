@@ -23,7 +23,7 @@ struct PollingPlaceDetailSheet: View {
         HStack(alignment: .top) {
             Image(systemName: "clock")
             DisclosureGroup("Tap to View Voting Hours") {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text("Early Voting Dates & Hours:")
                         .bold()
                     Text("• Saturday, June 14, 2025   9:00 AM – 5:00 PM")
@@ -36,13 +36,13 @@ struct PollingPlaceDetailSheet: View {
                     Text("• Saturday, June 21, 2025  9:00 AM – 5:00 PM")
                     Text("• Sunday, June 22, 2025    9:00 AM – 5:00 PM")
 
-                    Divider().padding(.vertical, 4)
+                    Divider().padding(.vertical, CivicaSpacing.xs)
 
                     Text("Election Day Hours:")
                         .bold()
                     Text("Tuesday, June 24, 2025   6:00 AM – 9:00 PM")
                 }
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
             }
         }
         .padding(.top)
@@ -50,7 +50,7 @@ struct PollingPlaceDetailSheet: View {
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 16) {
+            VStack(spacing: CivicaSpacing.lg) {
                 // 1) Mini map centered on this place
                 Map(
                     initialPosition: .region(
@@ -64,13 +64,13 @@ struct PollingPlaceDetailSheet: View {
                     Marker(place.name, coordinate: place.coordinate)
                 }
                 .frame(height: 200)
-                .cornerRadius(12)
+                .cornerRadius(CivicaRadius.lg)
 
                 // 2) Title + address
                 Text(place.name)
-                    .font(.headline)
+                    .font(CivicaTypography.sectionHeader)
                 Text(place.address)
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
                     .foregroundColor(CivicaColors.textSecondary)
 
                 // 3) Your DisclosureGroup hours
