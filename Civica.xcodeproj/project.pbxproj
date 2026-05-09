@@ -404,7 +404,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.VoteNow-Information-Page.Voting-UI-Island-Card";
+				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.Civica.Voting-UI-Island-Card";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -433,7 +433,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.VoteNow-Information-Page.Voting-UI-Island-Card";
+				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.Civica.Voting-UI-Island-Card";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -591,7 +591,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.VoteNow-Information-Page";
+				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.Civica";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -629,7 +629,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.VoteNow-Information-Page";
+				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.Civica";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -648,7 +648,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.WeVote-Information-PageTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.CivicaTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -667,7 +667,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.WeVote-Information-PageTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.CivicaTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -684,7 +684,7 @@
 				DEVELOPMENT_TEAM = 687GD7CA6J;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.WeVote-Information-PageUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.CivicaUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -701,7 +701,7 @@
 				DEVELOPMENT_TEAM = 687GD7CA6J;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.WeVote-Information-PageUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.CivicaUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -823,7 +823,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.VoteNow-Information-Page.snapdev";
+				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.Civica.snapdev";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG SNAP_DEV $(inherited)";
