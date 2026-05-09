@@ -81,16 +81,16 @@ struct SNAPDebugChecklistView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("SNAP QA Checklist")
                         .font(.title3.weight(.semibold))
                         .foregroundStyle(CivicaColors.textPrimary)
                     Text("Developer-only build verification. Not visible in production.")
-                        .font(.footnote)
+                        .font(CivicaTypography.footnote)
                         .foregroundStyle(CivicaColors.textSecondary)
                     Text("Passed \(passedCount) of \(items.count)")
-                        .font(.footnote.weight(.semibold))
+                        .font(CivicaTypography.footnoteStrong)
                         .foregroundStyle(passedCount == items.count ? CivicaColors.successGreen : CivicaColors.warningAmber)
                 }
                 .padding(14)
@@ -105,33 +105,33 @@ struct SNAPDebugChecklistView: View {
 
                 ForEach(items) { item in
                     VStack(alignment: .leading, spacing: 6) {
-                        HStack(alignment: .top, spacing: 8) {
+                        HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                             Image(systemName: item.passed ? "checkmark.seal.fill" : "exclamationmark.triangle.fill")
                                 .foregroundStyle(item.passed ? CivicaColors.successGreen : CivicaColors.warningAmber)
-                                .font(.subheadline)
+                                .font(CivicaTypography.subhead)
                                 .padding(.top, 2)
                             Text(item.title)
-                                .font(.subheadline.weight(.semibold))
+                                .font(CivicaTypography.subheadStrong)
                                 .foregroundStyle(CivicaColors.textPrimary)
                             Spacer(minLength: 0)
                         }
                         Text(item.detail)
-                            .font(.footnote)
+                            .font(CivicaTypography.footnote)
                             .foregroundStyle(CivicaColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
-                    .padding(12)
+                    .padding(CivicaSpacing.md)
                     .background(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                             .fill(CivicaColors.surfacePrimary)
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                             .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                     )
                 }
             }
-            .padding(16)
+            .padding(CivicaSpacing.lg)
         }
         .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
     }

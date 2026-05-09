@@ -22,7 +22,7 @@ struct LoadingVC: View {
                 
                 Text("Loading...")
                     .foregroundColor(.white)
-                    .font(.headline)
+                    .font(CivicaTypography.sectionHeader)
             }
         }
     }

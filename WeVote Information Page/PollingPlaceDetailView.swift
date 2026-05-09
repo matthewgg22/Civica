@@ -13,10 +13,9 @@ struct PollingPlaceDetailView: View {
     let place: PollingPlace
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
             Text(place.name)
-                .font(.largeTitle)
-                .bold()
+                .font(CivicaTypography.pageTitle)
 
             Text(place.address)
                 .font(.title3)
@@ -24,7 +23,7 @@ struct PollingPlaceDetailView: View {
             HStack(alignment: .top) {
                 Image(systemName: "clock")
                 DisclosureGroup("Tap to View Voting Hours") {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         // Early Voting breakdown
                         Text("Early Voting Dates & Hours:")
                             .bold()
@@ -38,17 +37,17 @@ struct PollingPlaceDetailView: View {
                         Text("• Saturday, June 21, 2025  9:00 AM – 5:00 PM")
                         Text("• Sunday, June 22, 2025    9:00 AM – 5:00 PM")
 
-                        Divider().padding(.vertical, 4)
+                        Divider().padding(.vertical, CivicaSpacing.xs)
 
                         // Election Day
                         Text("Election Day Hours:")
                             .bold()
                         Text("Tuesday, June 24, 2025   6:00 AM – 9:00 PM")
                     }
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
                 }
             }
-            .font(.subheadline)
+            .font(CivicaTypography.subhead)
 
             Map(
                 initialPosition: .region(
@@ -61,7 +60,7 @@ struct PollingPlaceDetailView: View {
                 Marker(place.name, coordinate: place.coordinate)
             }
             .frame(height: 200)
-            .cornerRadius(12)
+            .cornerRadius(CivicaRadius.lg)
 
             Spacer()
         }

@@ -15,15 +15,15 @@ struct SNAPStepContainerView: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(viewModel.draftStep == .nextSteps ? "Current page" : "Current step")
-                            .font(.caption.weight(.semibold))
+                            .font(CivicaTypography.captionStrong)
                             .foregroundStyle(CivicaColors.textSecondary)
                         Text(viewModel.draftStepHeaderTitle)
-                            .font(.headline.weight(.semibold))
+                            .font(CivicaTypography.sectionHeader)
                             .foregroundStyle(CivicaColors.textPrimary)
                     }
                     Spacer()
                     Text(viewModel.draftStepNumberText)
-                        .font(.footnote.weight(.semibold))
+                        .font(CivicaTypography.footnoteStrong)
                         .foregroundStyle(CivicaColors.textSecondary)
                 }
 
@@ -60,41 +60,41 @@ struct SNAPStepContainerView: View {
                     let currentIndex = viewModel.questionnaireSteps.firstIndex(of: viewModel.draftStep) ?? 0
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Section \(selectedIndex + 1): \(selectedProgressStep.title)")
-                            .font(.footnote.weight(.semibold))
+                            .font(CivicaTypography.footnoteStrong)
                             .foregroundStyle(CivicaColors.textPrimary)
 
                         if selectedIndex < currentIndex {
                             Button("Go to section") {
                                 viewModel.jumpToDraftStep(selectedProgressStep)
                             }
-                            .font(.footnote.weight(.semibold))
+                            .font(CivicaTypography.footnoteStrong)
                             .foregroundStyle(CivicaColors.ctaBlue)
                             .buttonStyle(.plain)
                         } else if selectedProgressStep == viewModel.draftStep {
                             Text("You are currently on this section.")
-                                .font(.footnote)
+                                .font(CivicaTypography.footnote)
                                 .foregroundStyle(CivicaColors.textSecondary)
                         } else {
                             Text("Complete earlier sections to unlock this section.")
-                                .font(.footnote)
+                                .font(CivicaTypography.footnote)
                                 .foregroundStyle(CivicaColors.textSecondary)
                         }
                     }
                     .padding(.horizontal, 10)
-                    .padding(.vertical, 8)
+                    .padding(.vertical, CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                             .fill(CivicaColors.surfacePrimary)
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                             .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                     )
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
+            .padding(.horizontal, CivicaSpacing.lg)
+            .padding(.top, CivicaSpacing.md)
             .padding(.bottom, 10)
             .background(CivicaColors.brandSoftBlue)
 
@@ -102,7 +102,7 @@ struct SNAPStepContainerView: View {
 
             ScrollView {
                 SNAPApplicationView(viewModel: viewModel)
-                    .padding(16)
+                    .padding(CivicaSpacing.lg)
                     .padding(.bottom, keyboardHeight > 0 ? keyboardHeight + 20 : 20)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -132,8 +132,8 @@ struct SNAPStepContainerView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
 
             }
-            .padding(.horizontal, 12)
-            .padding(.top, 8)
+            .padding(.horizontal, CivicaSpacing.md)
+            .padding(.top, CivicaSpacing.sm)
             .padding(.bottom, 10)
             .background(CivicaColors.surfacePrimary)
         }
