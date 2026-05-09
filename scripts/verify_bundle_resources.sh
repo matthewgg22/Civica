@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
-PBXPROJ="VoteNow.xcodeproj/project.pbxproj"
+PBXPROJ="Civica.xcodeproj/project.pbxproj"
 
 required_resources=(
   "WeVote Information Page/default.csv"

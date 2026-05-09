@@ -34,7 +34,7 @@ fi
 if [[ "${RUN_XCODEBUILD:-0}" == "1" ]]; then
   echo "[4/4] Optional Xcode build check"
   set -o pipefail
-  xcodebuild -project "VoteNow.xcodeproj" -scheme "VoteNow" -configuration Debug -destination "generic/platform=iOS" build \
+  xcodebuild -project "Civica.xcodeproj" -scheme "VoteNow" -configuration Debug -destination "generic/platform=iOS" build \
     2>&1 | rg -n "BUILD SUCCEEDED|BUILD FAILED|error:|warning:"
 else
   echo "[4/4] Optional Xcode build check skipped (set RUN_XCODEBUILD=1 to enable)"

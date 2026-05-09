@@ -21,7 +21,7 @@
 
 ## Validation
 - Built app successfully with:
-  - `xcodebuild -project "VoteNow.xcodeproj" -scheme "VoteNow" -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/VoteNowCodexA11yBuild CODE_SIGNING_ALLOWED=NO build`
+  - `xcodebuild -project "Civica.xcodeproj" -scheme "VoteNow" -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/VoteNowCodexA11yBuild CODE_SIGNING_ALLOWED=NO build`
 
 ## Remaining Risks
 - Some screens still use local hardcoded color literals and opacity blends; those paths may still contain contrast edge cases under all states.
