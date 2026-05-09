@@ -792,17 +792,6 @@ final class CivicIssueCallAPIClient: CivicIssueCallAPIClientProtocol {
         self.decoder = decoder
 
         encoder.dateEncodingStrategy = .iso8601
-        verifyDefaultCSVBundleResource()
-    }
-
-    private func verifyDefaultCSVBundleResource() {
-        // Keep this non-fatal: address search should fall back to empty/default behavior
-        // if `default.csv` is absent. Ensure `default.csv` is added to the target's
-        // Copy Bundle Resources phase in Xcode.
-        guard Bundle.main.url(forResource: "default", withExtension: "csv") != nil else {
-            logger.warning("default.csv bundle resource missing; using empty fallback.")
-            return
-        }
     }
 
     func fetchExamples(userID _: String, reps: [CivicRepTarget]) async throws -> [CivicExampleIssueCard] {
