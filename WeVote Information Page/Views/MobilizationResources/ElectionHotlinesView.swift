@@ -12,40 +12,39 @@ struct ElectionHotlinesView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 Text(l("app.election_hotlines.title", "📞 Election Hotlines"))
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+                    .font(CivicaTypography.pageTitle)
                     .padding(.top)
 
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                     Text(l("app.election_hotlines.general.title", "🗳️ General Voter Hotline"))
-                        .font(.headline)
+                        .font(CivicaTypography.sectionHeader)
 
                     Text(l("app.election_hotlines.general.body", "Have questions about how, when, or where to vote? Contact this hotline to get clear info from trained professionals."))
-                        .font(.subheadline)
-                        .foregroundColor(CivicaColors.mutedText)
+                        .font(CivicaTypography.subhead)
+                        .foregroundColor(CivicaColors.textSecondary)
 
                     HStack {
                         Image(systemName: "phone.circle.fill")
-                            .foregroundColor(CivicaColors.richBlue)
+                            .foregroundColor(CivicaColors.ctaBlue)
                         hotlineNumberLink(display: "(866-390-2992)", digits: "8663902992")
                     }
                 }
 
                 Divider()
 
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                     Text(l("app.election_hotlines.intimidation.title", "🚨 Report Voter Intimidation"))
-                        .font(.headline)
+                        .font(CivicaTypography.sectionHeader)
 
                     Text(l("app.election_hotlines.intimidation.body", "If you or someone you know is being threatened or blocked from voting, call this national hotline immediately."))
-                        .font(.subheadline)
-                        .foregroundColor(CivicaColors.mutedText)
+                        .font(CivicaTypography.subhead)
+                        .foregroundColor(CivicaColors.textSecondary)
 
                     HStack {
                         Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundColor(CivicaColors.richRed)
+                            .foregroundColor(CivicaColors.ctaRed)
                         hotlineNumberLink(display: "(866-868-3692)", digits: "8668683692")
                     }
                 }
@@ -70,7 +69,7 @@ struct ElectionHotlinesView: View {
         if let telURL = URL(string: "tel:\(digits)") {
             Link(display, destination: telURL)
                 .fontWeight(.medium)
-                .foregroundColor(CivicaColors.primaryCTA)
+                .foregroundColor(CivicaColors.ctaBlue)
         } else {
             Text(display)
                 .fontWeight(.medium)

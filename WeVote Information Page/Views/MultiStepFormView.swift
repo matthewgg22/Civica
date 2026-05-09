@@ -100,9 +100,9 @@ struct MultiStepFormView: View {
                 return AnyView(AbsenteeView())
             }
             return AnyView(
-                VStack(spacing: 16) {
+                VStack(spacing: CivicaSpacing.lg) {
                     Text(l("app.mapv.step2.choose_polling_location", "Choose a polling location near you."))
-                        .font(.subheadline.weight(.semibold))
+                        .font(CivicaTypography.subheadStrong)
                         .multilineTextAlignment(.leading)
                         .padding(.horizontal)
                     PollingLocationsView(selectedPlace: Binding(
@@ -375,14 +375,14 @@ private struct MAPVFlowView: View {
                 .background(
                     ZStack {
                         RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .fill(CivicaColors.background.opacity(0.92))
+                            .fill(CivicaColors.canvasBackground.opacity(0.92))
                         RoundedRectangle(cornerRadius: 18, style: .continuous)
                             .fill(theme.cardScrimColor.opacity(theme.cardScrimOpacity))
                     }
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .stroke(CivicaColors.primaryText.opacity(0.08), lineWidth: 1)
+                        .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 .shadow(color: .black.opacity(0.10 + (theme.ambientOverlayOpacity * 0.18)), radius: 14, x: 0, y: 8)
@@ -397,11 +397,11 @@ private struct MAPVFlowView: View {
         HStack(spacing: 10) {
             Image(systemName: flowModel.steps[flowModel.currentStepIndex].icon)
                 .font(.title2.weight(.bold))
-                .foregroundStyle(CivicaColors.richBlue)
+                .foregroundStyle(CivicaColors.ctaBlue)
                 .frame(width: 36, height: 36)
-                .background(Circle().fill(CivicaColors.richBlue.opacity(0.13)))
+                .background(Circle().fill(CivicaColors.ctaBlue.opacity(0.13)))
             Text(stepTitle(for: flowModel.steps[flowModel.currentStepIndex]))
-                .font(.title3.weight(.bold))
+                .font(CivicaTypography.cardTitle)
                 .lineLimit(2)
             Spacer()
         }
@@ -419,7 +419,7 @@ private struct MAPVFlowView: View {
     }
 
     private var controls: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: CivicaSpacing.md) {
             Button(l("app.mapv.action.back", "Back")) {
                 onBack()
             }
@@ -446,7 +446,7 @@ private struct MAPVFlowView: View {
                     onNext()
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(CivicaColors.primaryCTA)
+                .tint(CivicaColors.ctaBlue)
                 .frame(minWidth: 78)
                 .disabled(!flowModel.canAdvance(from: flowModel.currentStepIndex))
                 .accessibilityHint(
@@ -459,7 +459,7 @@ private struct MAPVFlowView: View {
                     onFinish()
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(CivicaColors.primaryCTA)
+                .tint(CivicaColors.ctaBlue)
                 .frame(minWidth: 78)
                 .disabled(!flowModel.canAdvance(from: flowModel.currentStepIndex))
                 .accessibilityHint(l("app.mapv.accessibility.hint.finish", "Build your final voter plan card"))
@@ -566,7 +566,7 @@ private struct MAPVStepIndicator: View {
                 } label: {
                     ZStack(alignment: .topTrailing) {
                         Image(systemName: symbolName(for: idx))
-                            .font(.subheadline.weight(.semibold))
+                            .font(CivicaTypography.subheadStrong)
                             .foregroundStyle(color(for: idx))
                             .frame(width: 30, height: 30)
                             .background(
@@ -603,7 +603,7 @@ private struct MAPVStepIndicator: View {
     }
 
     private func color(for index: Int) -> Color {
-        if index == currentStep { return CivicaColors.richBlue }
+        if index == currentStep { return CivicaColors.ctaBlue }
         if isStepComplete(index) { return .green }
         return .secondary
     }
@@ -611,7 +611,7 @@ private struct MAPVStepIndicator: View {
     private func background(for index: Int) -> Color {
         if index == currentStep { return Color.blue.opacity(0.14) }
         if isStepComplete(index) { return Color.green.opacity(0.12) }
-        return CivicaColors.borderWarm.opacity(0.10)
+        return CivicaColors.borderSubtle.opacity(0.10)
     }
 
     private func stepTitle(for step: MAPVStep) -> String {
@@ -647,9 +647,9 @@ struct StepOneView: View {
     let electionDayLine: String
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: CivicaSpacing.lg) {
             Text(l("app.mapv.step1.prompt", "How would you like to vote?"))
-                .font(.title3.weight(.bold))
+                .font(CivicaTypography.cardTitle)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -660,7 +660,7 @@ struct StepOneView: View {
                 isSelected: selectedMethod == .early,
                 action: { selectedMethod = .early }
             ) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     (Text(l("app.mapv.step1.pros_prefix", "Pros:")).bold() + Text(" " + l("app.mapv.step1.early.pros", "Flexibility, Shorter Wait Times, Avoids Last-Minute Issues")))
                     Text(earlyVotingLine)
                         .bold()
@@ -670,11 +670,11 @@ struct StepOneView: View {
             VotingMethodCard(
                 methodTitle: methodTitle(for: .mail),
                 emoji: "✉️",
-                accentColor: CivicaColors.primaryCTA,
+                accentColor: CivicaColors.ctaBlue,
                 isSelected: selectedMethod == .mail,
                 action: { selectedMethod = .mail }
             ) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     (Text(l("app.mapv.step1.pros_prefix", "Pros:")).bold() + Text(" " + l("app.mapv.step1.mail.pros", "Convenience, Extended Time, Accessibility")))
                     Text(l("app.mapv.step1.mail.request_by", "Request by: June 14, 2025"))
                         .bold()
@@ -688,7 +688,7 @@ struct StepOneView: View {
                 isSelected: selectedMethod == .election,
                 action: { selectedMethod = .election }
             ) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text(electionDayLine)
                         .bold()
                     Text(l("app.mapv.step1.election.poll_hours", "Polls 6 AM – 9 PM"))
@@ -696,7 +696,7 @@ struct StepOneView: View {
                 }
             }
         }
-        .padding(.horizontal, 8)
+        .padding(.horizontal, CivicaSpacing.sm)
     }
 
     private func methodTitle(for method: VotingMethod) -> String {
@@ -752,7 +752,7 @@ struct VotingMethodCard<Details: View>: View {
             VStack(alignment: .leading, spacing: 10) {
                 ZStack {
                     Text(methodTitle)
-                        .font(.title3.weight(.bold))
+                        .font(CivicaTypography.cardTitle)
                         .foregroundColor(accentColor)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity, alignment: .center)
@@ -767,8 +767,8 @@ struct VotingMethodCard<Details: View>: View {
                 }
 
                 detailsContent
-                    .font(.subheadline)
-                    .foregroundColor(CivicaColors.primaryText)
+                    .font(CivicaTypography.subhead)
+                    .foregroundColor(CivicaColors.textPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(14)
@@ -785,9 +785,9 @@ struct VotingMethodCard<Details: View>: View {
                         lineWidth: isSelected ? 1.6 : 1
                     )
             )
-            .shadow(color: CivicaColors.primaryText.opacity(0.1), radius: 3, x: 0, y: 2)
+            .shadow(color: CivicaColors.textPrimary.opacity(0.1), radius: 3, x: 0, y: 2)
         }
-        .foregroundColor(CivicaColors.primaryText)
+        .foregroundColor(CivicaColors.textPrimary)
         .buttonStyle(.plain)
     }
 }
@@ -872,50 +872,50 @@ struct AbsenteeView: View {
             VStack(alignment: .leading, spacing: 14) {
                 Text(l("app.mapv.absentee.hero_title", "📬 Request Your Mail-in Ballot"))
                     .font(.title2.weight(.bold))
-                    .foregroundColor(CivicaColors.primaryText)
-                    .padding(.top, 8)
+                    .foregroundColor(CivicaColors.textPrimary)
+                    .padding(.top, CivicaSpacing.sm)
 
                 Text(addressLine)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundColor(CivicaColors.mutedText)
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundColor(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                     Text(l("app.mapv.absentee.what_mail_in.title", "What is mail-in voting?"))
-                        .font(.headline.weight(.semibold))
-                        .foregroundColor(CivicaColors.primaryText)
+                        .font(CivicaTypography.sectionHeader)
+                        .foregroundColor(CivicaColors.textPrimary)
                     Text(l("app.mapv.absentee.what_mail_in.body", "Mail-in voting lets eligible voters receive a ballot and return it by mail or approved drop-off methods. Some states mail ballots automatically, while others require a request."))
-                        .font(.footnote)
-                        .foregroundColor(CivicaColors.mutedText)
+                        .font(CivicaTypography.footnote)
+                        .foregroundColor(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(12)
-                .background(CivicaColors.surfaceWhite)
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .padding(CivicaSpacing.md)
+                .background(CivicaColors.surfacePrimary)
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
 
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                     Text(l("app.mapv.absentee.what_absentee.title", "What is absentee voting?"))
-                        .font(.headline.weight(.semibold))
-                        .foregroundColor(CivicaColors.primaryText)
+                        .font(CivicaTypography.sectionHeader)
+                        .foregroundColor(CivicaColors.textPrimary)
                     Text(l("app.mapv.absentee.what_absentee.body", "Absentee voting is a mail-ballot process typically used when you cannot vote in person. Rules and eligibility vary by jurisdiction."))
-                        .font(.footnote)
-                        .foregroundColor(CivicaColors.mutedText)
+                        .font(CivicaTypography.footnote)
+                        .foregroundColor(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(12)
-                .background(CivicaColors.surfaceWhite)
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .padding(CivicaSpacing.md)
+                .background(CivicaColors.surfacePrimary)
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
 
                 if let jurisdiction = selectedJurisdiction {
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                         HStack(alignment: .center, spacing: 10) {
                             if let flagAsset = StateFlagCatalog.assetName(for: jurisdiction.code) {
                                 Image(flagAsset)
@@ -925,26 +925,26 @@ struct AbsenteeView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 7, style: .continuous)
-                                            .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                                            .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                                     )
                                     .opensMyInfoPanelOnLongPress()
                             }
 
                             Text(lf("app.mapv.absentee.jurisdiction_prefix", "Jurisdiction: %@", jurisdiction.displayName))
-                                .font(.title3.weight(.bold))
-                                .foregroundColor(CivicaColors.primaryText)
+                                .font(CivicaTypography.cardTitle)
+                                .foregroundColor(CivicaColors.textPrimary)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                         if let requestURL = jurisdiction.requestApplyURL {
                             Link(destination: requestURL) {
                                 Text(l("app.mapv.absentee.action.request_apply", "Request / Apply for a mail ballot"))
-                                    .font(.headline)
+                                    .font(CivicaTypography.sectionHeader)
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 11)
-                                    .background(CivicaColors.primaryCTA)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                    .background(CivicaColors.ctaBlue)
+                                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                             }
                             .accessibilityLabel(
                                 lf(
@@ -958,8 +958,8 @@ struct AbsenteeView: View {
                         if let officialURL = jurisdiction.officialVoterInfoURL {
                             Link(destination: officialURL) {
                                 Text(l("app.mapv.absentee.action.official_info", "Official voter info"))
-                                    .font(.subheadline.weight(.semibold))
-                                    .foregroundColor(CivicaColors.primaryCTA)
+                                    .font(CivicaTypography.subheadStrong)
+                                    .foregroundColor(CivicaColors.ctaBlue)
                             }
                             .accessibilityLabel(
                                 lf(
@@ -973,22 +973,22 @@ struct AbsenteeView: View {
                         requestDeadlinesSection
 
                         Text(l("app.mapv.absentee.note.confirm_official", "Deadlines can change. Confirm details with your official election office site."))
-                            .font(.footnote)
-                            .foregroundColor(CivicaColors.mutedText)
+                            .font(CivicaTypography.footnote)
+                            .foregroundColor(CivicaColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(14)
-                    .background(CivicaColors.surfaceWhite)
+                    .background(CivicaColors.surfacePrimary)
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                            .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                     )
                     .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
                     Text(l("app.mapv.absentee.fallback.jurisdiction_missing", "We could not detect your jurisdiction yet. Enter your address in My Reps to auto-load absentee and mail-ballot request details."))
-                        .font(.subheadline)
-                        .foregroundColor(CivicaColors.mutedText)
+                        .font(CivicaTypography.subhead)
+                        .foregroundColor(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
 
                     fallbackDeadlinesCard
@@ -996,7 +996,7 @@ struct AbsenteeView: View {
             }
             .padding()
         }
-        .background(CivicaColors.appBackground)
+        .background(CivicaColors.canvasBackground)
         .navigationTitle(l("app.mail_ballot.navigation.title", "Request Mail-in Ballot"))
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
@@ -1022,18 +1022,18 @@ struct AbsenteeView: View {
             let rows = requestDeadlineRows(for: deadlines)
             VStack(alignment: .leading, spacing: 10) {
                 Text(l("app.mapv.absentee.deadlines.title", "Request deadlines"))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundColor(CivicaColors.primaryText)
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundColor(CivicaColors.textPrimary)
 
                 ForEach(Array(rows.enumerated()), id: \.element.label) { index, row in
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text(row.label)
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundColor(CivicaColors.mutedText)
+                            .font(CivicaTypography.subheadStrong)
+                            .foregroundColor(CivicaColors.textSecondary)
 
                         styledDeadlineValueText(row.value)
                             .font(.body)
-                            .foregroundColor(CivicaColors.primaryText)
+                            .foregroundColor(CivicaColors.textPrimary)
                             .fixedSize(horizontal: false, vertical: true)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -1041,7 +1041,7 @@ struct AbsenteeView: View {
 
                     if index < rows.count - 1 {
                         Divider()
-                            .background(CivicaColors.primaryCTA.opacity(0.2))
+                            .background(CivicaColors.ctaBlue.opacity(0.2))
                     }
                 }
 
@@ -1050,12 +1050,12 @@ struct AbsenteeView: View {
                         ForEach(conventions, id: \.self) { note in
                             HStack(alignment: .top, spacing: 7) {
                                 Text("•")
-                                    .font(.caption.weight(.bold))
-                                    .foregroundColor(CivicaColors.mutedText)
+                                    .font(CivicaTypography.captionBold)
+                                    .foregroundColor(CivicaColors.textSecondary)
                                     .padding(.top, 2)
                                 Text(note)
-                                    .font(.footnote)
-                                    .foregroundColor(CivicaColors.mutedText)
+                                    .font(CivicaTypography.footnote)
+                                    .foregroundColor(CivicaColors.textSecondary)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                         }
@@ -1066,19 +1066,19 @@ struct AbsenteeView: View {
                 if let sourceURL = URL(string: deadlines.sourceURL) {
                     Link(destination: sourceURL) {
                         Text(l("app.mapv.absentee.source", "Source"))
-                            .font(.footnote.weight(.semibold))
-                            .foregroundColor(CivicaColors.primaryCTA)
+                            .font(CivicaTypography.footnoteStrong)
+                            .foregroundColor(CivicaColors.ctaBlue)
                     }
                     .accessibilityLabel(l("app.mapv.absentee.source.a11y", "Open request deadline source"))
                 }
             }
-            .padding(12)
+            .padding(CivicaSpacing.md)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.infoSurfaceBlue)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(CivicaColors.primaryCTA.opacity(0.18), lineWidth: 1)
+                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                    .stroke(CivicaColors.ctaBlue.opacity(0.18), lineWidth: 1)
             )
         } else {
             fallbackDeadlinesCard
@@ -1086,22 +1086,22 @@ struct AbsenteeView: View {
     }
 
     private var fallbackDeadlinesCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(l("app.mapv.absentee.deadlines.title", "Request deadlines"))
-                .font(.subheadline.weight(.semibold))
-                .foregroundColor(CivicaColors.primaryText)
+                .font(CivicaTypography.subheadStrong)
+                .foregroundColor(CivicaColors.textPrimary)
             Text(l("app.mapv.absentee.deadlines.fallback", "Deadlines vary. Check your election office."))
-                .font(.subheadline)
-                .foregroundColor(CivicaColors.primaryText)
+                .font(CivicaTypography.subhead)
+                .foregroundColor(CivicaColors.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(12)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.infoSurfaceBlue)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(CivicaColors.primaryCTA.opacity(0.18), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                .stroke(CivicaColors.ctaBlue.opacity(0.18), lineWidth: 1)
         )
     }
 
@@ -1305,21 +1305,21 @@ struct StepThreeView: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: CivicaSpacing.lg) {
             Text(l("app.mapv.step3.prompt", "Pick your voting time"))
                 .font(.title.weight(.bold))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
 
             Text(l("app.mapv.step3.helper", "Drag the slider to set your planned arrival time."))
-                .font(.caption)
-                .foregroundColor(CivicaColors.mutedText)
+                .font(CivicaTypography.caption)
+                .foregroundColor(CivicaColors.textSecondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
 
             Text(dayRailMonthLabel)
-                .font(.subheadline.weight(.semibold))
-                .foregroundColor(CivicaColors.primaryText)
+                .font(CivicaTypography.subheadStrong)
+                .foregroundColor(CivicaColors.textPrimary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
 
@@ -1343,20 +1343,20 @@ struct StepThreeView: View {
 
             HStack(spacing: 10) {
                 Text(l("app.mapv.step3.selected_time", "Selected Time"))
-                    .font(.headline.weight(.semibold))
-                    .foregroundColor(CivicaColors.primaryText)
+                    .font(CivicaTypography.sectionHeader)
+                    .foregroundColor(CivicaColors.textPrimary)
                 Spacer()
                 Text(Self.timeFormatter.string(from: chosenVotingTime))
                     .font(.title3.monospacedDigit().weight(.bold))
-                    .foregroundColor(CivicaColors.primaryText)
+                    .foregroundColor(CivicaColors.textPrimary)
             }
             .padding(14)
             .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                     .fill(selectedTimeColor.opacity(0.18))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                     .stroke(selectedTimeColor.opacity(0.48), lineWidth: 1)
             )
             .padding(.horizontal)
@@ -1489,7 +1489,7 @@ private struct MAPVDayRailSelector: View {
     }
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: CivicaSpacing.sm) {
             if weekOffset > 0 {
                 Button {
                     if reduceMotion {
@@ -1508,7 +1508,7 @@ private struct MAPVDayRailSelector: View {
                 .accessibilityLabel(l("app.mapv.step3.dayrail.previous_week", "Previous week"))
             }
 
-            HStack(spacing: 4) {
+            HStack(spacing: CivicaSpacing.xs) {
                 ForEach(displayedDates, id: \.self) { day in
                     dayCell(for: day)
                 }
@@ -1531,9 +1531,9 @@ private struct MAPVDayRailSelector: View {
             .buttonStyle(.plain)
             .accessibilityLabel(l("app.mapv.step3.dayrail.next_week", "Next week"))
         }
-        .padding(8)
+        .padding(CivicaSpacing.sm)
         .background(CivicaColors.infoSurfaceBlue.opacity(0.6))
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         .onAppear {
             guard isActive else { return }
             if selectedDate < normalizedStartDate {
@@ -1581,11 +1581,11 @@ private struct MAPVDayRailSelector: View {
         } label: {
             VStack(spacing: 2) {
                 Text(formatDayAbbrev(day))
-                    .font(.caption2.weight(.semibold))
+                    .font(CivicaTypography.captionStrong)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                 Text(formatDayNumber(day))
-                    .font(.caption.weight(.semibold))
+                    .font(CivicaTypography.captionStrong)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }
@@ -1593,11 +1593,11 @@ private struct MAPVDayRailSelector: View {
             .padding(.vertical, 7)
             .background(
                 RoundedRectangle(cornerRadius: MAPVDayRailConstants.cellCornerRadius, style: .continuous)
-                    .fill(isSelected ? CivicaColors.richBlue.opacity(0.20) : CivicaColors.surfaceWhite.opacity(0.65))
+                    .fill(isSelected ? CivicaColors.ctaBlue.opacity(0.20) : CivicaColors.surfacePrimary.opacity(0.65))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: MAPVDayRailConstants.cellCornerRadius, style: .continuous)
-                    .stroke(isSelected ? CivicaColors.richBlue : CivicaColors.primaryText.opacity(0.08), lineWidth: isSelected ? 1.2 : 1)
+                    .stroke(isSelected ? CivicaColors.ctaBlue : CivicaColors.textPrimary.opacity(0.08), lineWidth: isSelected ? 1.2 : 1)
             )
         }
         .buttonStyle(.plain)
@@ -1770,9 +1770,9 @@ private enum CrowdCue: String {
 
     var tint: Color {
         switch self {
-        case .good: return CivicaColors.primaryCTA
+        case .good: return CivicaColors.ctaBlue
         case .busy: return CivicaColors.warningAmber
-        case .neutral: return CivicaColors.mutedText
+        case .neutral: return CivicaColors.textSecondary
         }
     }
 
@@ -1906,21 +1906,21 @@ private struct CrowdCueBubble: View {
     var body: some View {
         HStack(spacing: 6) {
             Image(systemName: cue.symbolName)
-                .font(.caption2.weight(.bold))
+                .font(CivicaTypography.captionBold)
             VStack(alignment: .leading, spacing: 1) {
                 Text(headline)
-                    .font(.caption.weight(.bold))
+                    .font(CivicaTypography.captionBold)
                     .lineLimit(1)
                     .truncationMode(.tail)
                 Text(detail)
-                    .font(.caption2)
+                    .font(CivicaTypography.caption)
                     .lineLimit(1)
                     .truncationMode(.tail)
             }
             Spacer(minLength: 0)
         }
         .foregroundStyle(cue.tint.opacity(0.96))
-        .padding(.horizontal, 8)
+        .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, 6)
         .background(
             Capsule(style: .continuous)
@@ -1954,13 +1954,13 @@ private struct MAPVTimeSlider: View {
     }
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: CivicaSpacing.sm) {
             GeometryReader { geo in
                 let width = max(geo.size.width, 1)
                 let thumbX = width * progress
                 let highlightWidth: CGFloat = 60
 
-                VStack(spacing: 8) {
+                VStack(spacing: CivicaSpacing.sm) {
                     MAPVTimeVisualOverlay(
                         progress: progress,
                         isDragging: isDragging,
@@ -1990,16 +1990,16 @@ private struct MAPVTimeSlider: View {
                             .frame(height: MAPVTimeVisualConstants.trackHeight)
 
                         Capsule()
-                            .fill(CivicaColors.primaryCTA.opacity(0.16))
+                            .fill(CivicaColors.ctaBlue.opacity(0.16))
                             .frame(width: highlightWidth, height: MAPVTimeVisualConstants.trackHeight + 6)
                             .offset(x: min(max(thumbX - (highlightWidth / 2), 0), width - highlightWidth))
 
                         Circle()
-                            .fill(CivicaColors.surfaceWhite)
+                            .fill(CivicaColors.surfacePrimary)
                             .frame(width: MAPVTimeVisualConstants.thumbSize, height: MAPVTimeVisualConstants.thumbSize)
                             .overlay(
                                 Circle()
-                                    .stroke(CivicaColors.richBlue.opacity(0.75), lineWidth: 3)
+                                    .stroke(CivicaColors.ctaBlue.opacity(0.75), lineWidth: 3)
                             )
                             .shadow(color: .black.opacity(0.20), radius: 4, x: 0, y: 2)
                             .offset(x: thumbX - (MAPVTimeVisualConstants.thumbSize / 2))
@@ -2031,10 +2031,10 @@ private struct MAPVTimeSlider: View {
             }
             .frame(height: MAPVTimeVisualConstants.overlayHeight + MAPVTimeVisualConstants.trackHeight + MAPVTimeVisualConstants.emojiStripHeight + 18)
 
-            HStack(spacing: 8) {
+            HStack(spacing: CivicaSpacing.sm) {
                 Text(Self.timeFormatter.string(from: openDate))
-                    .font(.caption)
-                    .foregroundStyle(CivicaColors.mutedText)
+                    .font(CivicaTypography.caption)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .frame(width: 52, alignment: .leading)
 
                 Spacer(minLength: 4)
@@ -2049,8 +2049,8 @@ private struct MAPVTimeSlider: View {
                 Spacer(minLength: 4)
 
                 Text(Self.timeFormatter.string(from: closeDate))
-                    .font(.caption)
-                    .foregroundStyle(CivicaColors.mutedText)
+                    .font(CivicaTypography.caption)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .frame(width: 52, alignment: .trailing)
             }
         }
@@ -2210,7 +2210,7 @@ private struct MAPVTimeVisualOverlay: View {
 
             ZStack {
                 // Subtle time-of-day gradient along the overlay region.
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                     .fill(
                         LinearGradient(
                             colors: [
@@ -2252,7 +2252,7 @@ private struct MAPVTimeVisualOverlay: View {
                         .stroke(
                             LinearGradient(
                                 colors: [
-                                    CivicaColors.surfaceWhite.opacity(0.60),
+                                    CivicaColors.surfacePrimary.opacity(0.60),
                                     Color(red: 0.95, green: 0.67, blue: 0.37).opacity(0.75),
                                     Color(red: 0.70, green: 0.58, blue: 0.92).opacity(0.60)
                                 ],
@@ -2479,12 +2479,12 @@ struct StepFourView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text(l("app.mapv.step4.almost_done", "You're almost done."))
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(CivicaColors.mutedText)
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundColor(CivicaColors.textSecondary)
                     Text(l("app.mapv.step4.review_card", "Review your card before you finish."))
-                        .font(.subheadline)
+                        .font(CivicaTypography.subhead)
                         .foregroundColor(.secondary.opacity(0.85))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -2508,21 +2508,21 @@ struct StepFourView: View {
                             message: Text(l("app.mapv.step4.share_message", "Here is my voting plan."))
                         ) {
                             Label(l("app.mapv.step4.action.share_plan", "Share Plan"), systemImage: "square.and.arrow.up")
-                                .font(.subheadline.weight(.semibold))
+                                .font(CivicaTypography.subheadStrong)
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 12)
+                                .padding(.vertical, CivicaSpacing.md)
                         }
                         .buttonStyle(.plain)
                         .background(CivicaColors.infoSurfaceBlue)
-                        .foregroundColor(CivicaColors.primaryText)
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .foregroundColor(CivicaColors.textPrimary)
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                     }
                 }
 
                 if CivicaLaunchFeatures.shareActionsEnabled {
                     Text(l("app.mapv.step4.share_hint", "Share via text, WhatsApp, or any app in your share sheet."))
-                        .font(.caption)
-                        .foregroundColor(CivicaColors.mutedText)
+                        .font(CivicaTypography.caption)
+                        .foregroundColor(CivicaColors.textSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }

@@ -9,13 +9,13 @@ struct SupabaseMAPVDebugView: View {
     @State private var isWorking = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             Text("Supabase MAPV Debug")
-                .font(.headline)
+                .font(CivicaTypography.sectionHeader)
 
             Text(statusText)
-                .font(.subheadline)
-                .foregroundStyle(CivicaColors.mutedText)
+                .font(CivicaTypography.subhead)
+                .foregroundStyle(CivicaColors.textSecondary)
 
             HStack(spacing: 10) {
                 Button("DEBUG: Insert MAPV") {
@@ -33,24 +33,24 @@ struct SupabaseMAPVDebugView: View {
 
             if plans.isEmpty {
                 Text("No plans loaded.")
-                    .font(.footnote)
-                    .foregroundStyle(CivicaColors.mutedText)
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.textSecondary)
             } else {
                 ForEach(plans.prefix(5)) { plan in
                     VStack(alignment: .leading, spacing: 2) {
                         Text(plan.electionID)
-                            .font(.subheadline.weight(.semibold))
+                            .font(CivicaTypography.subheadStrong)
                         Text(plan.pollingPlace ?? "No polling place")
-                            .font(.footnote)
-                            .foregroundStyle(CivicaColors.mutedText)
+                            .font(CivicaTypography.footnote)
+                            .foregroundStyle(CivicaColors.textSecondary)
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, CivicaSpacing.xs)
                 }
             }
         }
-        .padding(12)
+        .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(CivicaColors.infoSurfaceBlue)
         )
         .task { await runStartupAuth() }

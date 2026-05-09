@@ -77,7 +77,7 @@ struct GovHelpChatSheetView: View {
                 chatBody
                 composer
             }
-            .background(CivicaColors.background)
+            .background(CivicaColors.canvasBackground)
             .navigationTitle(Text("app.gov_help.title", tableName: "AppShell"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -96,26 +96,26 @@ struct GovHelpChatSheetView: View {
     private var chatBody: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 12) {
+                LazyVStack(alignment: .leading, spacing: CivicaSpacing.md) {
                     ForEach(messages) { message in
                         messageRow(message)
                             .id(message.id)
                     }
 
                     if isSending {
-                        HStack(spacing: 8) {
+                        HStack(spacing: CivicaSpacing.sm) {
                             ProgressView()
                             Text(l("app.gov_help.thinking", "Thinking..."))
-                                .font(.footnote)
-                                .foregroundColor(CivicaColors.mutedText)
+                                .font(CivicaTypography.footnote)
+                                .foregroundColor(CivicaColors.textSecondary)
                         }
                         .padding(.horizontal, 14)
                         .padding(.vertical, 10)
-                        .background(CivicaColors.surfaceWhite)
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .background(CivicaColors.surfacePrimary)
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                         )
                         .id("typing")
                     }
@@ -142,19 +142,19 @@ struct GovHelpChatSheetView: View {
     private func messageRow(_ message: GovHelpChatMessage) -> some View {
         let isUser = message.role == .user
 
-        VStack(alignment: isUser ? .trailing : .leading, spacing: 8) {
+        VStack(alignment: isUser ? .trailing : .leading, spacing: CivicaSpacing.sm) {
             Text(message.text)
                 .font(.body)
-                .foregroundColor(message.isError ? CivicaColors.richRed : (isUser ? .white : CivicaColors.primaryText))
-                .padding(.horizontal, 12)
+                .foregroundColor(message.isError ? CivicaColors.ctaRed : (isUser ? .white : CivicaColors.textPrimary))
+                .padding(.horizontal, CivicaSpacing.md)
                 .padding(.vertical, 10)
                 .background(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                         .fill(messageBackgroundColor(message, isUser: isUser))
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .stroke(message.isError ? CivicaColors.richRed.opacity(0.45) : Color.clear, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                        .stroke(message.isError ? CivicaColors.ctaRed.opacity(0.45) : Color.clear, lineWidth: 1)
                 )
                 .frame(maxWidth: .infinity, alignment: isUser ? .trailing : .leading)
 
@@ -173,7 +173,7 @@ struct GovHelpChatSheetView: View {
     }
 
     private var composer: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: CivicaSpacing.sm) {
             TextField(l("app.gov_help.input.placeholder", "Describe what you need help with"), text: $inputText, axis: .vertical)
                 .lineLimit(1...4)
                 .textFieldStyle(.roundedBorder)
@@ -186,14 +186,14 @@ struct GovHelpChatSheetView: View {
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(width: 38, height: 38)
-                    .background(CivicaColors.primaryCTA)
+                    .background(CivicaColors.ctaBlue)
                     .clipShape(Circle())
             }
             .disabled(trimmedInput.isEmpty || isSending)
             .opacity((trimmedInput.isEmpty || isSending) ? 0.45 : 1)
         }
-        .padding(12)
-        .background(CivicaColors.surfaceWhite)
+        .padding(CivicaSpacing.md)
+        .background(CivicaColors.surfacePrimary)
         .overlay(alignment: .top) {
             Divider()
         }
@@ -274,7 +274,7 @@ struct GovHelpChatSheetView: View {
         if message.isError {
             return CivicaColors.infoSurfaceRed
         }
-        return isUser ? CivicaColors.primaryCTA : CivicaColors.surfaceWhite
+        return isUser ? CivicaColors.ctaBlue : CivicaColors.surfacePrimary
     }
 
     private func contexts(for recommendedIDs: [String]) -> [RepCardContext] {
@@ -337,10 +337,10 @@ private struct GovHelpSuggestedContactsView: View {
     @Environment(\.locale) private var locale
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(l("app.gov_help.suggested_contacts", "Suggested Contacts"))
-                .font(.subheadline.weight(.semibold))
-                .foregroundColor(CivicaColors.primaryText)
+                .font(CivicaTypography.subheadStrong)
+                .foregroundColor(CivicaColors.textPrimary)
 
             ForEach(Array(contexts.enumerated()), id: \.element.repId) { idx, context in
                 RepRow(rep: context.official)
@@ -351,10 +351,10 @@ private struct GovHelpSuggestedContactsView: View {
         }
         .padding(10)
         .background(CivicaColors.infoSurfaceBlue.opacity(0.45))
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(CivicaColors.borderWarm, lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
     }
 
@@ -373,27 +373,27 @@ private struct GovHelpDestinationLinksView: View {
     @Environment(\.locale) private var locale
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(l("app.gov_help.official_reporting", "Official Reporting"))
-                .font(.subheadline.weight(.semibold))
-                .foregroundColor(CivicaColors.primaryText)
+                .font(CivicaTypography.subheadStrong)
+                .foregroundColor(CivicaColors.textPrimary)
 
             ForEach(destinations) { destination in
                 Link(destination: destination.url) {
                     Label(localizedDestinationLabel(destination), systemImage: "link")
-                        .font(.footnote.weight(.semibold))
-                        .foregroundColor(CivicaColors.primaryCTA)
+                        .font(CivicaTypography.footnoteStrong)
+                        .foregroundColor(CivicaColors.ctaBlue)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.vertical, 6)
                 }
             }
         }
         .padding(10)
-        .background(CivicaColors.surfaceWhite)
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(CivicaColors.borderWarm, lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
     }
 

@@ -23,7 +23,7 @@ struct ElectionsRowView: View {
         Group {
             if elections.isEmpty {
                 Text("No upcoming elections")
-                    .foregroundColor(CivicaColors.mutedText)
+                    .foregroundColor(CivicaColors.textSecondary)
                     .padding()
             } else {
                 ScrollView {
@@ -31,7 +31,7 @@ struct ElectionsRowView: View {
                         ForEach(elections.indices, id: \.self) { idx in
                             let election = elections[idx]
 
-                            VStack(spacing: 12) {
+                            VStack(spacing: CivicaSpacing.md) {
                                 // 1. Centered, bold title
                                 Text(election.name)
                                     .font(.title2)
@@ -40,12 +40,12 @@ struct ElectionsRowView: View {
 
                                 // 2. Subtitle
                                 Text(election.subtitle)
-                                    .font(.headline)
+                                    .font(CivicaTypography.sectionHeader)
                                     .multilineTextAlignment(.center)
 
                                 // 3. Registration deadline
                                 Text("Registration Deadline: \(Self.dateFormatter.string(from: election.registrationDeadline))")
-                                    .font(.subheadline)
+                                    .font(CivicaTypography.subhead)
                                     .multilineTextAlignment(.center)
 
                                 Divider().background(Color.gray)
@@ -53,32 +53,32 @@ struct ElectionsRowView: View {
                                 // 4. Early Voting row
                                 HStack {
                                     Text("Early Voting Start:")
-                                        .font(.subheadline)
+                                        .font(CivicaTypography.subhead)
                                     Spacer()
                                     Text(Self.dateFormatter.string(from: election.startDate))
-                                        .font(.subheadline)
+                                        .font(CivicaTypography.subhead)
                                     Spacer()
                                     Text(countdownString(to: election.startDate))
                                         .font(.caption.monospacedDigit())
-                                        .foregroundColor(CivicaColors.mutedText)
+                                        .foregroundColor(CivicaColors.textSecondary)
                                 }
                                 .padding(.horizontal)
 
                                 // 5. Election Day row
                                 HStack {
                                     Text("Election Day:")
-                                        .font(.subheadline)
+                                        .font(CivicaTypography.subhead)
                                     Spacer()
                                     Text(Self.dateFormatter.string(from: election.electionDay))
-                                        .font(.subheadline)
+                                        .font(CivicaTypography.subhead)
                                     Spacer()
                                     Text(countdownString(to: election.electionDay))
                                         .font(.caption.monospacedDigit())
-                                        .foregroundColor(CivicaColors.mutedText)
+                                        .foregroundColor(CivicaColors.textSecondary)
                                 }
                                 .padding(.horizontal)
                             }
-                            .padding(.vertical, 16)
+                            .padding(.vertical, CivicaSpacing.lg)
                             .padding(.horizontal)
 
                             if idx < elections.count - 1 {

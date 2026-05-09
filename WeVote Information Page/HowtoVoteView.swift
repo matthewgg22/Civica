@@ -22,7 +22,7 @@ struct HowToVoteView: View {
                         PlanCardView()
                             .environmentObject(planVM)
                             .listRowInsets(.init())
-                            .padding(.vertical, 8)
+                            .padding(.vertical, CivicaSpacing.sm)
                     }
                 }
                 // 2) Otherwise, prompt to make one
@@ -33,11 +33,11 @@ struct HowToVoteView: View {
                                 .environmentObject(planVM)
                         ) {
                             Label(l("app.how_to_vote.action.make_plan", "Make a Plan to Vote"), systemImage: "calendar.badge.plus")
-                                .font(.headline.weight(.semibold))
+                                .font(CivicaTypography.sectionHeader)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity, alignment: .center)
-                                .padding(.vertical, 12)
-                                .background(CivicaColors.primaryCTA)
+                                .padding(.vertical, CivicaSpacing.md)
+                                .background(CivicaColors.ctaBlue)
                                 .clipShape(Capsule(style: .continuous))
                                 .voteNowPillDualOrbit(
                                     redColor: CivicaColors.ctaRed.opacity(0.94),
@@ -53,7 +53,7 @@ struct HowToVoteView: View {
                         }
                         .buttonStyle(.plain)
                         .listRowInsets(.init())
-                        .padding(.vertical, 8)
+                        .padding(.vertical, CivicaSpacing.sm)
                     }
                 }
 

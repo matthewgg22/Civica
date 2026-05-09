@@ -43,11 +43,11 @@ struct TransportationHelpView: View {
                             Image("UberIcon")
                                 .resizable()
                                 .frame(width: 80, height: 80)
-                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl))
                                 .shadow(radius: 5)
                         }
                         Text("Code: WEVOTE2024")
-                            .font(.subheadline)
+                            .font(CivicaTypography.subhead)
                     }
 
                     // Lyft
@@ -63,11 +63,11 @@ struct TransportationHelpView: View {
                             Image("LyftIcon")
                                 .resizable()
                                 .frame(width: 80, height: 80)
-                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl))
                                 .shadow(radius: 5)
                         }
                         Text("Code: WEVOTE2024")
-                            .font(.subheadline)
+                            .font(CivicaTypography.subhead)
                     }
                 }
                 .padding(.top)

@@ -192,9 +192,9 @@ struct WhyVoteView: View {
                     Color.clear
                         .frame(height: 24)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
-                .padding(.bottom, 12)
+                .padding(.horizontal, CivicaSpacing.lg)
+                .padding(.top, CivicaSpacing.lg)
+                .padding(.bottom, CivicaSpacing.md)
             }
         }
         .navigationTitle(l("app.page.why_vote.turnout_combined", "Why Vote? Historical Turnout by Age"))
@@ -218,10 +218,10 @@ struct WhyVoteView: View {
            let info = stateInfo {
             outOfTenComparisonSection(for: turnoutPair, info: info)
         } else {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Text(outOfTenHeader())
                     .font(.title3.weight(.semibold))
-                    .foregroundColor(CivicaColors.primaryText)
+                    .foregroundColor(CivicaColors.textPrimary)
 
                 if let zip = resolvedZipForState {
                     Text(
@@ -231,40 +231,40 @@ struct WhyVoteView: View {
                             zip
                         )
                     )
-                    .font(.subheadline)
-                    .foregroundColor(CivicaColors.mutedText)
+                    .font(CivicaTypography.subhead)
+                    .foregroundColor(CivicaColors.textSecondary)
                 } else {
                     Text(l("app.why_vote.state_missing.enter_zip", "Enter a ZIP in My Representatives to load your state profile."))
-                        .font(.subheadline)
-                        .foregroundColor(CivicaColors.mutedText)
+                        .font(CivicaTypography.subhead)
+                        .foregroundColor(CivicaColors.textSecondary)
                 }
             }
             .padding(14)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(CivicaColors.surfaceWhite.opacity(0.72))
+            .background(CivicaColors.surfacePrimary.opacity(0.72))
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(CivicaColors.primaryText.opacity(0.08), lineWidth: 1)
+                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                    .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         }
     }
 
     private func outOfTenComparisonSection(for turnoutPair: ComparableTurnoutPair, info: StateVoteInfo) -> some View {
         let primaryTurnout = dataStore.primaryTurnoutPercent(for: info.stateCode) ?? turnoutPair.midtermTurnout
 
-        return VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .center, spacing: 8) {
+        return VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                 Text(outOfTenHeader(for: info))
                     .font(.title3.weight(.semibold))
-                    .foregroundColor(CivicaColors.primaryText)
+                    .foregroundColor(CivicaColors.textPrimary)
 
                 Spacer(minLength: 8)
 
                 stateFlagBadge(for: info.stateCode)
             }
 
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                 OutOfTenTurnoutRowView(
                     label: "\(turnoutPair.presidentialYear) Presidential",
                     turnoutPercent: turnoutPair.presidentialTurnout,
@@ -283,22 +283,22 @@ struct WhyVoteView: View {
                     label: "2022 Midterm Primary",
                     turnoutPercent: primaryTurnout,
                     summary: formatTurnoutAsOutOfTen(primaryTurnout),
-                    filledColor: CivicaColors.richBlue
+                    filledColor: CivicaColors.ctaBlue
                 )
             }
             .padding(14)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(CivicaColors.surfaceWhite.opacity(0.72))
+            .background(CivicaColors.surfacePrimary.opacity(0.72))
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(CivicaColors.primaryText.opacity(0.08), lineWidth: 1)
+                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                    .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         }
     }
 
     private var powerOfVoteSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(l("app.why_vote.why_care.title", "The power of a vote"))
                 .font(.title3.weight(.semibold))
 
@@ -306,13 +306,13 @@ struct WhyVoteView: View {
                 let card = whyCareCards[selectedWhyCareCard]
                 VStack(alignment: .leading, spacing: 6) {
                     Text(card.title)
-                        .font(.headline)
-                        .foregroundColor(CivicaColors.primaryText)
+                        .font(CivicaTypography.sectionHeader)
+                        .foregroundColor(CivicaColors.textPrimary)
                         .id("power-title-\(selectedWhyCareCard)")
                         .transition(.opacity)
                     Text(card.body)
-                        .font(.subheadline)
-                        .foregroundColor(CivicaColors.mutedText)
+                        .font(CivicaTypography.subhead)
+                        .foregroundColor(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                         .id("power-body-\(selectedWhyCareCard)")
                         .transition(.opacity)
@@ -327,15 +327,15 @@ struct WhyVoteView: View {
             showFeedbackSheet = true
         } label: {
             Label(l("app.how_to_vote.section.feedback", "Feedback"), systemImage: "bubble.left.and.bubble.right.fill")
-                .font(.subheadline.weight(.semibold))
-                .foregroundColor(CivicaColors.primaryCTA)
+                .font(CivicaTypography.subheadStrong)
+                .foregroundColor(CivicaColors.ctaBlue)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 7)
-                .background(CivicaColors.surfaceWhite)
+                .background(CivicaColors.surfacePrimary)
                 .clipShape(Capsule(style: .continuous))
                 .overlay(
                     Capsule(style: .continuous)
-                        .stroke(CivicaColors.primaryCTA.opacity(0.34), lineWidth: 1)
+                        .stroke(CivicaColors.ctaBlue.opacity(0.34), lineWidth: 1)
                 )
         }
         .buttonStyle(.plain)
@@ -438,7 +438,7 @@ struct WhyVoteView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 6, style: .continuous)
-                        .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
                 .accessibilityHidden(true)
         }
@@ -496,14 +496,14 @@ private struct OutOfTenTurnoutRowView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(label)
-                .font(.subheadline.weight(.semibold))
-                .foregroundColor(CivicaColors.primaryText)
+                .font(CivicaTypography.subheadStrong)
+                .foregroundColor(CivicaColors.textPrimary)
 
             HStack(spacing: 0) {
                 ForEach(0..<10, id: \.self) { index in
                     Image(systemName: index < filledCount ? "person.fill" : "person")
                         .font(.system(size: 22, weight: .semibold))
-                        .foregroundColor(index < filledCount ? filledColor : CivicaColors.primaryText.opacity(0.28))
+                        .foregroundColor(index < filledCount ? filledColor : CivicaColors.textPrimary.opacity(0.28))
                         .frame(maxWidth: .infinity)
                         .accessibilityHidden(true)
                 }
@@ -511,12 +511,12 @@ private struct OutOfTenTurnoutRowView: View {
 
             HStack(alignment: .firstTextBaseline) {
                 Text(summary)
-                    .font(.footnote)
-                    .foregroundColor(CivicaColors.mutedText)
+                    .font(CivicaTypography.footnote)
+                    .foregroundColor(CivicaColors.textSecondary)
                 Spacer(minLength: 8)
                 Text(formattedPercent)
-                    .font(.footnote.weight(.semibold))
-                    .foregroundColor(CivicaColors.primaryText)
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundColor(CivicaColors.textPrimary)
             }
         }
         .accessibilityElement(children: .ignore)

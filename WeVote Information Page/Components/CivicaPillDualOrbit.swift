@@ -358,11 +358,11 @@ extension View {
 #Preview("Dual Orbit Pill") {
     Button {} label: {
         Label("Start Calling Reps!", systemImage: "phone.fill")
-            .font(.headline.weight(.semibold))
+            .font(CivicaTypography.sectionHeader)
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .background(CivicaColors.primaryCTA)
+            .padding(.vertical, CivicaSpacing.md)
+            .background(CivicaColors.ctaBlue)
             .clipShape(Capsule(style: .continuous))
             .voteNowPillDualOrbit()
     }

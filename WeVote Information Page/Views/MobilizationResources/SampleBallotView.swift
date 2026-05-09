@@ -18,8 +18,8 @@ struct Candidate: Identifiable, Hashable {
     // Party color: blue for Dems, red for Repubs, default for others
     var partyColor: Color {
         let normalized = party.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        if normalized.contains("democrat") { return CivicaColors.richBlue }
-        if normalized.contains("republican") { return CivicaColors.richRed }
+        if normalized.contains("democrat") { return CivicaColors.ctaBlue }
+        if normalized.contains("republican") { return CivicaColors.ctaRed }
         return .primary
     }
 }
@@ -222,7 +222,7 @@ struct SampleBallotView: View {
         ScrollView(.vertical) {
             VStack(alignment: .leading, spacing: 20) {
                 Text(l("app.sample_ballot.title.truthful", "Example ballot"))
-                    .font(.largeTitle).bold()
+                    .font(CivicaTypography.pageTitle)
 
                 if showArchiveDisclaimer {
                     Text(
@@ -231,8 +231,8 @@ struct SampleBallotView: View {
                             "Archived example: NYC 2025 mayoral-cycle ballot. This is not a live personalized ballot."
                         )
                     )
-                    .font(.footnote.weight(.semibold))
-                    .foregroundColor(CivicaColors.mutedText)
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundColor(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
                 }
 
@@ -242,28 +242,28 @@ struct SampleBallotView: View {
                         "Preview candidates by race. Party filter from My Information is applied."
                     )
                 )
-                    .font(.subheadline)
-                    .foregroundColor(CivicaColors.mutedText)
+                    .font(CivicaTypography.subhead)
+                    .foregroundColor(CivicaColors.textSecondary)
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(l("app.sample_ballot.ranked_choice.title", "Ranked-Choice Prep"))
-                        .font(.subheadline.weight(.semibold))
+                        .font(CivicaTypography.subheadStrong)
                     Text(l("app.sample_ballot.ranked_choice.body_1", "This sample is structured for ranked-choice voting, so you can set your candidate order now before entering the voting booth."))
-                        .font(.footnote)
-                        .foregroundColor(CivicaColors.mutedText)
+                        .font(CivicaTypography.footnote)
+                        .foregroundColor(CivicaColors.textSecondary)
                     Text(l("app.sample_ballot.ranked_choice.body_2", "Only candidates matching your selected party registration are shown."))
-                        .font(.footnote)
-                        .foregroundColor(CivicaColors.mutedText)
+                        .font(CivicaTypography.footnote)
+                        .foregroundColor(CivicaColors.textSecondary)
                 }
-                .padding(12)
+                .padding(CivicaSpacing.md)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(CivicaColors.infoSurfaceBlue)
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
 
                 if filteredRaces.isEmpty {
                     Text(l("app.sample_ballot.empty.no_match", "No candidates match your selected party registration in this sample."))
-                        .font(.footnote)
-                        .foregroundColor(CivicaColors.mutedText)
+                        .font(CivicaTypography.footnote)
+                        .foregroundColor(CivicaColors.textSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
@@ -273,31 +273,31 @@ struct SampleBallotView: View {
                     let maxRank = rankLimit(for: compact)
                     let ranked = rankedCandidates(for: raceKey, from: compact)
 
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                         HStack {
                             Text(race.office)
-                                .font(.headline)
+                                .font(CivicaTypography.sectionHeader)
                             Spacer()
                             Text(lf("app.sample_ballot.count.candidates", "%d candidates", compact.count))
-                                .font(.caption)
-                                .foregroundColor(CivicaColors.mutedText)
+                                .font(CivicaTypography.caption)
+                                .foregroundColor(CivicaColors.textSecondary)
                         }
 
                         if !ranked.isEmpty {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text(l("app.sample_ballot.order.title", "Your Ballot Order"))
-                                    .font(.caption.weight(.semibold))
-                                    .foregroundColor(CivicaColors.mutedText)
+                                    .font(CivicaTypography.captionStrong)
+                                    .foregroundColor(CivicaColors.textSecondary)
                                 ForEach(ranked, id: \.candidate.id) { entry in
                                     Text("\(entry.rank). \(entry.candidate.name)")
-                                        .font(.caption)
-                                        .foregroundColor(CivicaColors.primaryText)
+                                        .font(CivicaTypography.caption)
+                                        .foregroundColor(CivicaColors.textPrimary)
                                 }
                             }
                             .padding(10)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(CivicaColors.brandSoftBlue.opacity(0.08))
-                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                         }
 
                         ForEach(compact) { candidate in
@@ -309,11 +309,11 @@ struct SampleBallotView: View {
                         }
                     }
                     .padding(14)
-                    .background(CivicaColors.background)
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .background(CivicaColors.canvasBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .stroke(CivicaColors.borderWarm.opacity(0.2), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                            .stroke(CivicaColors.borderSubtle.opacity(0.2), lineWidth: 1)
                     )
                 }
             }
@@ -349,8 +349,8 @@ struct CandidateRow: View {
 
     private func color(for party: String) -> Color {
         let normalized = party.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        if normalized.contains("democrat") { return CivicaColors.richBlue }
-        if normalized.contains("republican") { return CivicaColors.richRed }
+        if normalized.contains("democrat") { return CivicaColors.ctaBlue }
+        if normalized.contains("republican") { return CivicaColors.ctaRed }
         return .secondary
     }
 
@@ -372,17 +372,17 @@ struct CandidateRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Text(summary.name)
-                    .font(.subheadline.weight(.semibold))
+                    .font(CivicaTypography.subheadStrong)
                     .fixedSize(horizontal: false, vertical: true)
 
                 HStack(spacing: 6) {
                     ForEach(summary.parties, id: \.self) { party in
                         Text(displayPartyLabel(party))
-                            .font(.caption2.weight(.semibold))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
+                            .font(CivicaTypography.captionStrong)
+                            .padding(.horizontal, CivicaSpacing.sm)
+                            .padding(.vertical, CivicaSpacing.xs)
                             .background(color(for: party).opacity(0.12))
                             .foregroundColor(color(for: party))
                             .clipShape(Capsule())
@@ -394,12 +394,12 @@ struct CandidateRow: View {
 
             Spacer()
 
-            VStack(alignment: .trailing, spacing: 8) {
+            VStack(alignment: .trailing, spacing: CivicaSpacing.sm) {
                 if let url = summary.website {
                     Link(destination: url) {
                         Image(systemName: "link.circle.fill")
                             .font(.title3)
-                            .foregroundColor(CivicaColors.richBlue)
+                            .foregroundColor(CivicaColors.ctaBlue)
                     }
                 }
 
@@ -412,23 +412,23 @@ struct CandidateRow: View {
                     Text(rankSelection == 0
                          ? l("app.sample_ballot.rank.set", "Set Rank")
                          : lf("app.sample_ballot.rank.option", "Rank %d", rankSelection))
-                        .font(.caption.weight(.semibold))
+                        .font(CivicaTypography.captionStrong)
                         .foregroundColor(rankSelection == 0 ? .secondary : .blue)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 6)
-                        .background(CivicaColors.background)
+                        .background(CivicaColors.canvasBackground)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                .stroke(CivicaColors.borderWarm.opacity(0.35), lineWidth: 1)
+                            RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                                .stroke(CivicaColors.borderSubtle.opacity(0.35), lineWidth: 1)
                         )
-                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                 }
             }
         }
         .padding(.vertical, 6)
-        .padding(.horizontal, 12)
+        .padding(.horizontal, CivicaSpacing.md)
         .background(CivicaColors.infoSurfaceBlue)
-        .cornerRadius(8)
+        .cornerRadius(CivicaRadius.sm)
     }
 
     private func l(_ key: String, _ fallback: String) -> String {

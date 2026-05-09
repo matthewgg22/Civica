@@ -165,23 +165,23 @@ struct RunoffThresholdGateView: View {
             } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.title3)
-                    .foregroundColor(CivicaColors.primaryText.opacity(0.75))
+                    .foregroundColor(CivicaColors.textPrimary.opacity(0.75))
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Close runoff threshold gate demo")
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.headline.weight(.bold))
-                    .foregroundColor(CivicaColors.primaryText)
+                    .font(CivicaTypography.sectionHeaderBold)
+                    .foregroundColor(CivicaColors.textPrimary)
                 Text("Threshold Gate")
-                    .font(.caption)
-                    .foregroundColor(CivicaColors.mutedText)
+                    .font(CivicaTypography.caption)
+                    .foregroundColor(CivicaColors.textSecondary)
             }
 
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, CivicaSpacing.lg)
     }
 
     private func roundOneSlider(_ candidate: ThresholdGateCandidate) -> some View {
@@ -191,8 +191,8 @@ struct RunoffThresholdGateView: View {
 
         return HStack(spacing: 10) {
             Text(candidate.label)
-                .font(.subheadline.weight(.semibold))
-                .foregroundColor(CivicaColors.primaryText)
+                .font(CivicaTypography.subheadStrong)
+                .foregroundColor(CivicaColors.textPrimary)
                 .frame(width: 96, alignment: .leading)
 
             Slider(
@@ -216,18 +216,18 @@ struct RunoffThresholdGateView: View {
             .accessibilityValue("\(Int(share.rounded())) percent")
 
             Text("\(Int(share.rounded()))%")
-                .font(.caption.weight(.semibold))
-                .foregroundColor(CivicaColors.mutedText)
+                .font(CivicaTypography.captionStrong)
+                .foregroundColor(CivicaColors.textSecondary)
                 .frame(width: 42, alignment: .trailing)
         }
         .padding(.horizontal, 10)
-        .padding(.vertical, 8)
+        .padding(.vertical, CivicaSpacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                 .fill(candidateColor.opacity(0.13))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                 .stroke(candidateColor.opacity(0.35), lineWidth: 1)
         )
     }
@@ -236,7 +236,7 @@ struct RunoffThresholdGateView: View {
     private func stageScene(compact: Bool) -> some View {
         if showsPagedRunoffExperience {
             let embeddedTabHeight: CGFloat = compact ? 470 : 500
-            VStack(spacing: 8) {
+            VStack(spacing: CivicaSpacing.sm) {
                 TabView(selection: $currentStagePage) {
                     roundOneStage(compact: compact)
                         .tag(RunoffStagePage.roundOne)
@@ -267,11 +267,11 @@ struct RunoffThresholdGateView: View {
             }
         } label: {
             Circle()
-                .fill(isSelected ? CivicaColors.primaryCTA : CivicaColors.borderWarm.opacity(0.9))
+                .fill(isSelected ? CivicaColors.ctaBlue : CivicaColors.borderSubtle.opacity(0.9))
                 .frame(width: isSelected ? 10 : 8, height: isSelected ? 10 : 8)
                 .overlay(
                     Circle()
-                        .stroke(CivicaColors.primaryCTA.opacity(isSelected ? 0 : 0.35), lineWidth: 1)
+                        .stroke(CivicaColors.ctaBlue.opacity(isSelected ? 0 : 0.35), lineWidth: 1)
                 )
         }
         .buttonStyle(.plain)
@@ -281,8 +281,8 @@ struct RunoffThresholdGateView: View {
     private func roundOneStage(compact: Bool) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(roundOneHeaderText)
-                .font(.headline.weight(.semibold))
-                .foregroundColor(CivicaColors.primaryText)
+                .font(CivicaTypography.sectionHeader)
+                .foregroundColor(CivicaColors.textPrimary)
 
             GeometryReader { geometry in
                 let barAreaHeight = geometry.size.height - 42
@@ -292,7 +292,7 @@ struct RunoffThresholdGateView: View {
                 let thresholdLabelY = max(4, thresholdY - 12)
 
                 ZStack(alignment: .topLeading) {
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                         .fill(Color.white)
 
                     Path { path in
@@ -302,8 +302,8 @@ struct RunoffThresholdGateView: View {
                     .stroke(Color.black.opacity(0.6), style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
 
                     Text("\(Int(configuredThreshold))% threshold")
-                        .font(.caption2.weight(.semibold))
-                        .foregroundColor(CivicaColors.primaryText)
+                        .font(CivicaTypography.captionStrong)
+                        .foregroundColor(CivicaColors.textPrimary)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 3)
                         .background(Color.white.opacity(0.9), in: Capsule())
@@ -318,14 +318,14 @@ struct RunoffThresholdGateView: View {
                             )
                         }
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.bottom, 8)
+                    .padding(.horizontal, CivicaSpacing.md)
+                    .padding(.bottom, CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
 
                     if stage == .round1Counted && !hasMajorityWinner {
                         Text("No majority")
-                            .font(.caption.weight(.semibold))
-                            .foregroundColor(CivicaColors.primaryText)
+                            .font(CivicaTypography.captionStrong)
+                            .foregroundColor(CivicaColors.textPrimary)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 5)
                             .background(Color.white.opacity(0.9), in: Capsule())
@@ -338,8 +338,8 @@ struct RunoffThresholdGateView: View {
                     }
                 }
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
             }
             .frame(height: compact ? 176 : 216)
@@ -350,21 +350,21 @@ struct RunoffThresholdGateView: View {
 
             if roundOneResult.majorityWinnerIndex != nil {
                 Text("Outcome: 🏆 a candidate reached a majority in Round 1, so no runoff is needed.")
-                    .font(.caption)
-                    .foregroundColor(CivicaColors.mutedText)
+                    .font(CivicaTypography.caption)
+                    .foregroundColor(CivicaColors.textSecondary)
             } else {
                 Text(runoffThresholdSummaryText)
-                    .font(.caption)
-                    .foregroundColor(CivicaColors.mutedText)
+                    .font(CivicaTypography.caption)
+                    .foregroundColor(CivicaColors.textSecondary)
 
                 Text("Outcome: no majority in Round 1, so two candidates advance to runoff.")
-                    .font(.caption)
-                    .foregroundColor(CivicaColors.mutedText)
+                    .font(CivicaTypography.caption)
+                    .foregroundColor(CivicaColors.textSecondary)
 
                 if showsPagedRunoffExperience {
                     Text("Swipe right to view runoff stage")
-                        .font(.caption.weight(.semibold))
-                        .foregroundColor(CivicaColors.mutedText)
+                        .font(CivicaTypography.captionStrong)
+                        .foregroundColor(CivicaColors.textSecondary)
                 }
             }
 
@@ -373,11 +373,11 @@ struct RunoffThresholdGateView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(CivicaColors.surfaceWhite)
+                .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
     }
 
@@ -386,22 +386,22 @@ struct RunoffThresholdGateView: View {
 
         return VStack(alignment: .leading, spacing: 10) {
             Text("Runoff stage")
-                .font(.headline.weight(.semibold))
-                .foregroundColor(CivicaColors.primaryText)
+                .font(CivicaTypography.sectionHeader)
+                .foregroundColor(CivicaColors.textPrimary)
 
             if hasMajorityWinner {
                 Text("Runoff is not needed because a majority was reached in Round 1.")
-                    .font(.subheadline)
-                    .foregroundColor(CivicaColors.mutedText)
+                    .font(CivicaTypography.subhead)
+                    .foregroundColor(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             } else {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("What happens next?")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(CivicaColors.primaryText)
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundColor(CivicaColors.textPrimary)
                     Text("The top two candidates move into a runoff. The candidate with more votes in this round wins.")
-                        .font(.subheadline)
-                        .foregroundColor(CivicaColors.primaryText)
+                        .font(CivicaTypography.subhead)
+                        .foregroundColor(CivicaColors.textPrimary)
                 }
                 .padding(.bottom, 2)
 
@@ -410,13 +410,13 @@ struct RunoffThresholdGateView: View {
                 }
 
                 Text("Runoff preview based on transfer sliders.")
-                    .font(.caption)
-                    .foregroundColor(CivicaColors.mutedText)
+                    .font(CivicaTypography.caption)
+                    .foregroundColor(CivicaColors.textSecondary)
 
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Round 2 transfer controls")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(CivicaColors.primaryText)
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundColor(CivicaColors.textPrimary)
 
                     if let firstIndex = firstFinalistIndex,
                        let secondIndex = secondFinalistIndex {
@@ -428,10 +428,10 @@ struct RunoffThresholdGateView: View {
                             let toFirst = transferToFirstFinalistByCandidateID[eliminatedIndex, default: 50]
                             let toSecond = 100 - toFirst
 
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                                 Text("\(eliminatedName) support split")
-                                    .font(.subheadline.weight(.semibold))
-                                    .foregroundColor(CivicaColors.primaryText)
+                                    .font(CivicaTypography.subheadStrong)
+                                    .foregroundColor(CivicaColors.textPrimary)
 
                                 Slider(
                                     value: Binding(
@@ -449,17 +449,17 @@ struct RunoffThresholdGateView: View {
                                 .accessibilityValue("\(Int(toFirst)) percent to \(firstName), \(Int(toSecond)) percent to \(secondName)")
 
                                 Text("\(Int(toFirst))% to \(firstName), \(Int(toSecond))% to \(secondName)")
-                                    .font(.caption)
-                                    .foregroundColor(CivicaColors.mutedText)
+                                    .font(CivicaTypography.caption)
+                                    .foregroundColor(CivicaColors.textSecondary)
                             }
                             .padding(.horizontal, 10)
-                            .padding(.vertical, 8)
+                            .padding(.vertical, CivicaSpacing.sm)
                             .background(
-                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                                     .fill(colorForCandidate(eliminatedIndex).opacity(0.13))
                             )
                             .overlay(
-                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                                     .stroke(colorForCandidate(eliminatedIndex).opacity(0.35), lineWidth: 1)
                             )
                         }
@@ -468,11 +468,11 @@ struct RunoffThresholdGateView: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Why this matters")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(CivicaColors.primaryText)
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundColor(CivicaColors.textPrimary)
                     Text("Second-choice support can change final results even if a candidate leads in Round 1.")
-                        .font(.subheadline)
-                        .foregroundColor(CivicaColors.primaryText)
+                        .font(CivicaTypography.subhead)
+                        .foregroundColor(CivicaColors.textPrimary)
                 }
                 .padding(.top, 2)
             }
@@ -481,11 +481,11 @@ struct RunoffThresholdGateView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(CivicaColors.surfaceWhite)
+                .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
     }
 
@@ -498,33 +498,33 @@ struct RunoffThresholdGateView: View {
         return VStack(spacing: 6) {
             Spacer(minLength: 0)
 
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                 .fill(colorForCandidate(candidate.id))
                 .frame(height: max(12, maxHeight * CGFloat(share / max(1, displayMax))))
                 .overlay(
                     VStack(spacing: 2) {
                         Text("\(Int(share.rounded()))%")
-                            .font(.caption2.weight(.semibold))
+                            .font(CivicaTypography.captionStrong)
                         Text(roundOneOutcomeText(for: candidate.id))
-                            .font(.caption2.weight(.semibold))
+                            .font(CivicaTypography.captionStrong)
                             .lineLimit(2)
                             .multilineTextAlignment(.center)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .foregroundColor(.white)
-                    .padding(.horizontal, 4)
+                    .padding(.horizontal, CivicaSpacing.xs)
                     .padding(.vertical, 3)
                     .background(
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                             .fill(Color.black.opacity(0.22))
                     )
-                    .padding(.bottom, 4),
+                    .padding(.bottom, CivicaSpacing.xs),
                     alignment: .bottom
                 )
 
             Text(candidate.label)
-                .font(.caption2.weight(.semibold))
-                .foregroundColor(CivicaColors.primaryText)
+                .font(CivicaTypography.captionStrong)
+                .foregroundColor(CivicaColors.textPrimary)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .frame(height: 26)
@@ -545,30 +545,30 @@ struct RunoffThresholdGateView: View {
             RunoffThresholdGateEngine.candidates.first(where: { $0.id == idx })?.label
         } ?? "Finalist \(indexInRunoff + 1)"
 
-        return VStack(alignment: .leading, spacing: 4) {
+        return VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             HStack {
                 Text(label)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundColor(CivicaColors.primaryText)
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundColor(CivicaColors.textPrimary)
                 Spacer(minLength: 0)
                 Text("\(Int(share.rounded()))%")
-                    .font(.caption.weight(.semibold))
-                    .foregroundColor(CivicaColors.mutedText)
+                    .font(CivicaTypography.captionStrong)
+                    .foregroundColor(CivicaColors.textSecondary)
             }
 
             GeometryReader { geometry in
                 let clampedShare = share.isFinite ? min(max(share, 0), 100) : 0
                 let fillWidth = geometry.size.width * CGFloat(clampedShare / 100)
                 let labelWidth = min(max(44, fillWidth - 8), 110)
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                     .fill(candidateColor.opacity(0.18))
                     .overlay(alignment: .leading) {
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                             .fill(candidateColor)
                             .frame(width: fillWidth)
                             .overlay(alignment: .trailing) {
                                 Text(runoffOutcomeText(for: share, indexInRunoff: indexInRunoff))
-                                    .font(.caption2.weight(.semibold))
+                                    .font(CivicaTypography.captionStrong)
                                     .foregroundColor(.white)
                                     .lineLimit(2)
                                     .multilineTextAlignment(.center)
@@ -577,10 +577,10 @@ struct RunoffThresholdGateView: View {
                                     .padding(.horizontal, 6)
                                     .padding(.vertical, 2)
                                     .background(
-                                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                                             .fill(Color.black.opacity(0.25))
                                     )
-                                    .padding(.trailing, 4)
+                                    .padding(.trailing, CivicaSpacing.xs)
                             }
                     }
             }

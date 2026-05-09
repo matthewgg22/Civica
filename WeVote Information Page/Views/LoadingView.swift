@@ -141,7 +141,7 @@ struct LoadingView: View {
                 .offset(y: -130) // significantly higher on screen
                 .accessibilityHidden(true)
 
-            VStack(spacing: 8) {
+            VStack(spacing: CivicaSpacing.sm) {
                 Text(nextVotingChanceLine)
                     .font(nextChanceFont)
                     .multilineTextAlignment(.center)
@@ -150,10 +150,10 @@ struct LoadingView: View {
 
                 if let statusMessage, !statusMessage.isEmpty {
                     Text(statusMessage)
-                        .font(.footnote.weight(.semibold))
+                        .font(CivicaTypography.footnoteStrong)
                         .multilineTextAlignment(.center)
                         .foregroundColor(marqueeRed.opacity(0.92))
-                        .padding(.horizontal, 24)
+                        .padding(.horizontal, CivicaSpacing.xl)
                 }
             }
             .offset(y: 10)
@@ -343,7 +343,7 @@ private struct FlagMark: View {
     let color: Color
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: CivicaSpacing.sm) {
             bar(widthRatio: 0.56, alignment: .trailing)
             bar(widthRatio: 0.56, alignment: .trailing)
             bar(widthRatio: 0.56, alignment: .trailing)

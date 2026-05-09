@@ -146,9 +146,9 @@ private struct MyInfoLongPressModifier: ViewModifier {
         content
             .scaleEffect(isPressing ? 0.97 : 1.0)
             .overlay {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                     .stroke(
-                        CivicaColors.primaryCTA.opacity(showActivationRing ? 0.76 : (isPressing ? 0.34 : 0)),
+                        CivicaColors.ctaBlue.opacity(showActivationRing ? 0.76 : (isPressing ? 0.34 : 0)),
                         lineWidth: showActivationRing ? 2 : 1
                     )
                     .padding(-2)
@@ -253,15 +253,14 @@ struct PageHeader: View {
             }
 
             title
-                .font(.largeTitle)
-                .fontWeight(.bold)
+                .font(CivicaTypography.pageTitle)
                 .lineLimit(1)
                 .minimumScaleFactor(0.84)
                 .padding(.top, 2)
                 .frame(minHeight: iconSize, alignment: .topLeading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.top, 4)
+        .padding(.top, CivicaSpacing.xs)
         .onPreferenceChange(FramePreferenceKey.self) { newFrame in
             guard newFrame != .zero else { return }
             guard newFrame != iconFrameInSpreadSpace else { return }
@@ -274,12 +273,12 @@ struct PageHeader: View {
 
 struct CivicaLogoIcon: View {
     var size: CGFloat = 50
-    var backgroundColor: Color = CivicaColors.softBlue
-    var stripeColor: Color = CivicaColors.softRed
+    var backgroundColor: Color = CivicaColors.brandSoftBlue
+    var stripeColor: Color = CivicaColors.brandSoftRed
     var cornerRadiusScale: CGFloat = 0.24
     var borderColor: Color = CivicaColors.iconOnPrimaryBorder
     var borderWidth: CGFloat = 0.6
-    var shadowColor: Color = CivicaColors.primaryText.opacity(0.14)
+    var shadowColor: Color = CivicaColors.textPrimary.opacity(0.14)
 
     var body: some View {
         let stripeScaleY: CGFloat = size < 30 ? 0.95 : 0.80
@@ -348,7 +347,7 @@ extension CivicaLogoIcon {
 
 private struct CivicaTabBarsIcon: View {
     var size: CGFloat = 28
-    var color: Color = CivicaColors.softRed
+    var color: Color = CivicaColors.brandSoftRed
     var horizontalStretch: CGFloat = 1.5
 
     var body: some View {
@@ -399,7 +398,7 @@ struct WhyVoteFloodOverlay: View {
     var originInSpreadSpace: CGPoint?
 
     @State private var dynamicFloodColor: Color = CivicaColors.brandSoftBlue
-    private let accent = CivicaColors.softRed
+    private let accent = CivicaColors.brandSoftRed
     private let logoSize: CGFloat = 50
     private let headerHorizontalPadding: CGFloat = 16
     // Matches page layout: outer content padding (16) + header top padding (4).
@@ -437,7 +436,7 @@ struct WhyVoteFloodOverlay: View {
                     .ignoresSafeArea()
 
                 VStack(alignment: .leading, spacing: 0) {
-                    HStack(alignment: .center, spacing: 12) {
+                    HStack(alignment: .center, spacing: CivicaSpacing.md) {
                         Button {
                             withAnimation(.easeOut(duration: max(0.2, duration * 0.5))) {
                                 spread = 0.001
@@ -488,8 +487,7 @@ struct WhyVoteFloodOverlay: View {
                                 fallback: "Why Vote?"
                             )
                         )
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
+                            .font(CivicaTypography.pageTitle)
                             .lineLimit(1)
                             .frame(height: logoSize, alignment: .center)
                             .foregroundColor(CivicaColors.onPrimaryText)
@@ -535,7 +533,7 @@ struct WhyCallFloodOverlay: View {
     var onStartCalling: () -> Void = {}
 
     private let floodColor = CivicaColors.brandSoftBlue
-    private let accent = CivicaColors.softRed
+    private let accent = CivicaColors.brandSoftRed
     private let logoSize: CGFloat = 50
     private let headerHorizontalPadding: CGFloat = 16
     private let headerTopPadding: CGFloat = 10
@@ -572,7 +570,7 @@ struct WhyCallFloodOverlay: View {
                     .ignoresSafeArea()
 
                 VStack(alignment: .leading, spacing: 0) {
-                    HStack(alignment: .center, spacing: 12) {
+                    HStack(alignment: .center, spacing: CivicaSpacing.md) {
                         Button {
                             withAnimation(.easeOut(duration: max(0.2, duration * 0.5))) {
                                 spread = 0.001
@@ -623,8 +621,7 @@ struct WhyCallFloodOverlay: View {
                                 fallback: "Why calls reps"
                             )
                         )
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
+                            .font(CivicaTypography.pageTitle)
                             .lineLimit(1)
                             .frame(height: logoSize, alignment: .center)
                             .foregroundColor(accent)
@@ -737,7 +734,7 @@ struct WhyCallView: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 16) {
+            LazyVStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 WhyCallHero(content: content)
 
                 VStack(alignment: .leading, spacing: 10) {
@@ -749,7 +746,7 @@ struct WhyCallView: View {
                             fallback: "Impact of Calling your Reps"
                         )
                     )
-                        .font(.headline)
+                        .font(CivicaTypography.sectionHeader)
                         .foregroundStyle(.primary)
 
                     ForEach(content.stats) { stat in
@@ -770,7 +767,7 @@ struct WhyCallView: View {
 
                 feedbackButton
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, CivicaSpacing.lg)
             .padding(.top, 14)
             .padding(.bottom, 20)
         }
@@ -794,15 +791,15 @@ struct WhyCallView: View {
                 ),
                 systemImage: "bubble.left.and.bubble.right.fill"
             )
-            .font(.subheadline.weight(.semibold))
-            .foregroundColor(CivicaColors.primaryCTA)
+            .font(CivicaTypography.subheadStrong)
+            .foregroundColor(CivicaColors.ctaBlue)
             .padding(.horizontal, 10)
             .padding(.vertical, 7)
-            .background(CivicaColors.surfaceWhite)
+            .background(CivicaColors.surfacePrimary)
             .clipShape(Capsule(style: .continuous))
             .overlay(
                 Capsule(style: .continuous)
-                    .stroke(CivicaColors.primaryCTA.opacity(0.34), lineWidth: 1)
+                    .stroke(CivicaColors.ctaBlue.opacity(0.34), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
@@ -814,7 +811,7 @@ private struct WhyCallHero: View {
     let content: WhyCallContent
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             if !content.title.isEmpty {
                 Text(content.title)
                     .font(.title.bold())
@@ -838,10 +835,10 @@ private struct WhyCallStatCard: View {
         VStack(alignment: .leading, spacing: 6) {
             Text(stat.value)
                 .font(.title2.weight(.bold))
-                .foregroundStyle(CivicaColors.primaryCTA)
+                .foregroundStyle(CivicaColors.ctaBlue)
             if !stat.title.isEmpty {
                 Text(stat.title)
-                    .font(.headline)
+                    .font(CivicaTypography.sectionHeader)
                     .foregroundStyle(.primary)
             }
             Text(stat.body)
@@ -854,7 +851,7 @@ private struct WhyCallStatCard: View {
         .clipShape(RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous)
-                .stroke(CivicaColors.primaryText.opacity(0.08), lineWidth: 1)
+                .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
         )
         .accessibilityElement(children: .combine)
     }
@@ -866,7 +863,7 @@ private struct WhyCallReasonCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(reason.title)
-                .font(.headline)
+                .font(CivicaTypography.sectionHeader)
                 .foregroundStyle(.primary)
             Text(reason.body)
                 .font(.body)
@@ -878,7 +875,7 @@ private struct WhyCallReasonCard: View {
         .clipShape(RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous)
-                .stroke(CivicaColors.primaryText.opacity(0.08), lineWidth: 1)
+                .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
         )
         .accessibilityElement(children: .combine)
     }
@@ -894,14 +891,14 @@ private struct WhyCallBottomCTA: View {
         VStack(alignment: .leading, spacing: 10) {
             if !note.isEmpty {
                 Text(note)
-                    .font(.footnote)
-                    .foregroundStyle(CivicaColors.mutedText)
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
             Button(action: action) {
                 Text(title)
-                    .font(.headline)
+                    .font(CivicaTypography.sectionHeader)
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(CivicaPrimaryCTAButtonStyle())
@@ -914,7 +911,7 @@ private struct WhyCallBottomCTA: View {
                 )
             )
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, CivicaSpacing.lg)
         .padding(.top, 10)
         .padding(.bottom, 10)
     }

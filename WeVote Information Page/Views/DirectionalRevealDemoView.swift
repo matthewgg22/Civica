@@ -33,7 +33,7 @@ struct DirectionalRevealDemoView: View {
                     .fill(Color(red: 0.68, green: 0.84, blue: 0.90))
                     .overlay(alignment: .topLeading) {
                         Text("Directional Reveal")
-                            .font(.headline.weight(.semibold))
+                            .font(CivicaTypography.sectionHeader)
                             .foregroundStyle(.white.opacity(0.95))
                             .padding(20)
                     }
@@ -61,11 +61,11 @@ struct DirectionalRevealDemoView: View {
                         } label: {
                             Image(systemName: "bolt.fill")
                                 .font(.system(size: 20, weight: .bold))
-                                .foregroundStyle(CivicaColors.surfaceWhite)
+                                .foregroundStyle(CivicaColors.surfacePrimary)
                                 .frame(width: 56, height: 56)
                                 .background(
                                     Circle()
-                                        .fill(CivicaColors.primaryText.opacity(0.32))
+                                        .fill(CivicaColors.textPrimary.opacity(0.32))
                                 )
                         }
                         .buttonStyle(.plain)
@@ -85,7 +85,7 @@ struct DirectionalRevealDemoView: View {
             .clipShape(RoundedRectangle(cornerRadius: containerCornerRadius, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: containerCornerRadius, style: .continuous)
-                    .strokeBorder(CivicaColors.surfaceWhite.opacity(0.4), lineWidth: 1)
+                    .strokeBorder(CivicaColors.surfacePrimary.opacity(0.4), lineWidth: 1)
             }
             .padding(20)
             .onPreferenceChange(IconCenterPreferenceKey.self) { newCenter in

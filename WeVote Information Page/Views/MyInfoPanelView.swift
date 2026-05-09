@@ -105,7 +105,7 @@ struct MyInfoPanelView: View {
             ScrollViewReader { proxy in
                 Form {
                     Section {
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                         HStack(spacing: 10) {
                             TextField(
                                 "",
@@ -117,13 +117,13 @@ struct MyInfoPanelView: View {
                                 .autocorrectionDisabled()
                                 .submitLabel(.search)
                                 .focused($locationFieldFocused)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 12)
-                                .background(CivicaColors.surfaceWhite)
-                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                .padding(.horizontal, CivicaSpacing.md)
+                                .padding(.vertical, CivicaSpacing.md)
+                                .background(CivicaColors.surfacePrimary)
+                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                        .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                                 )
                                 .onChange(of: locationInput) { _, newValue in
                                     repsVM.handleLocationInputTyping(newValue)
@@ -155,21 +155,21 @@ struct MyInfoPanelView: View {
                         }
 
                         Text("my_info.zip.helper", tableName: "MyInfoPanel")
-                            .font(.footnote)
-                            .foregroundColor(CivicaColors.mutedText)
+                            .font(CivicaTypography.footnote)
+                            .foregroundColor(CivicaColors.textSecondary)
 
                         if let locationSummaryText {
-                            HStack(spacing: 8) {
+                            HStack(spacing: CivicaSpacing.sm) {
                                 Text(locationSummaryText)
-                                    .font(.footnote.weight(.semibold))
-                                    .foregroundColor(CivicaColors.mutedText)
+                                    .font(CivicaTypography.footnoteStrong)
+                                    .foregroundColor(CivicaColors.textSecondary)
                                     .lineLimit(1)
                                 Spacer(minLength: 6)
                                 Button("Edit location") {
                                     locationFieldFocused = true
                                 }
-                                .font(.footnote.weight(.semibold))
-                                .foregroundColor(CivicaColors.primaryCTA)
+                                .font(CivicaTypography.footnoteStrong)
+                                .foregroundColor(CivicaColors.ctaBlue)
                                 .buttonStyle(.plain)
                             }
                         }
@@ -183,17 +183,17 @@ struct MyInfoPanelView: View {
                                 : l("my_info.action.use_current_location", "Use Current Location"),
                                 systemImage: "location.fill"
                             )
-                            .font(.subheadline.weight(.semibold))
+                            .font(CivicaTypography.subheadStrong)
                             .frame(maxWidth: .infinity, alignment: .center)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, CivicaSpacing.md)
+                            .padding(.vertical, CivicaSpacing.sm)
                         }
-                        .background(CivicaColors.surfaceWhite)
-                        .foregroundColor(CivicaColors.primaryCTA)
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .background(CivicaColors.surfacePrimary)
+                        .foregroundColor(CivicaColors.ctaBlue)
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(CivicaColors.primaryCTA.opacity(0.22), lineWidth: 1)
+                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                                .stroke(CivicaColors.ctaBlue.opacity(0.22), lineWidth: 1)
                         )
                         .buttonStyle(.plain)
                         .disabled(isResolvingCurrentAddress || isSavingAddress)
@@ -204,21 +204,21 @@ struct MyInfoPanelView: View {
                             }
                         } label: {
                             if isSavingAddress {
-                                HStack(spacing: 8) {
+                                HStack(spacing: CivicaSpacing.sm) {
                                     ProgressView()
                                         .controlSize(.small)
                                     Text(l("my_info.action.save_location.loading", "Saving Location..."))
-                                        .font(.subheadline.weight(.semibold))
+                                        .font(CivicaTypography.subheadStrong)
                                 }
                                 .frame(maxWidth: .infinity, alignment: .center)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
+                                .padding(.horizontal, CivicaSpacing.md)
+                                .padding(.vertical, CivicaSpacing.sm)
                             } else {
                                 Text(l("my_info.action.save_location", "Save Location"))
-                                    .font(.subheadline.weight(.semibold))
+                                    .font(CivicaTypography.subheadStrong)
                                     .frame(maxWidth: .infinity, alignment: .center)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, CivicaSpacing.md)
+                                    .padding(.vertical, CivicaSpacing.sm)
                             }
                         }
                         .buttonStyle(CivicaPrimaryCTAButtonStyle())
@@ -226,8 +226,8 @@ struct MyInfoPanelView: View {
 
                         if let addressSaveError {
                             Text(addressSaveError)
-                                .font(.footnote)
-                                .foregroundColor(CivicaColors.urgentCTA)
+                                .font(CivicaTypography.footnote)
+                                .foregroundColor(CivicaColors.ctaRed)
                         }
 
                         if addressSaveError == nil,
@@ -235,22 +235,22 @@ struct MyInfoPanelView: View {
                             .trimmingCharacters(in: .whitespacesAndNewlines),
                            !timelineDataError.isEmpty {
                             Text(timelineDataError)
-                                .font(.footnote)
+                                .font(CivicaTypography.footnote)
                                 .foregroundColor(CivicaColors.warningAmber)
                         }
                     }
-                    .padding(12)
+                    .padding(CivicaSpacing.md)
                     .background(
                         RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
                             .fill(CivicaColors.infoSurfaceBlue.opacity(0.44))
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
-                            .stroke(CivicaColors.primaryCTA.opacity(0.10), lineWidth: 1)
+                            .stroke(CivicaColors.ctaBlue.opacity(0.10), lineWidth: 1)
                     )
                 } header: {
                     Text("my_info.section.zip.header", tableName: "MyInfoPanel")
-                        .font(.headline.weight(.bold))
+                        .font(CivicaTypography.sectionHeaderBold)
                         .textCase(nil)
                 }
                 .listRowBackground(Color.clear)
@@ -259,7 +259,7 @@ struct MyInfoPanelView: View {
                     Section {
                         VStack(alignment: .leading, spacing: 6) {
                             Text("my_info.language.title", tableName: "MyInfoPanel")
-                                .font(.subheadline.weight(.semibold))
+                                .font(CivicaTypography.subheadStrong)
                                 .padding(.bottom, 2)
 
                             ForEach(LanguageOption.allCases, id: \.self) { option in
@@ -268,7 +268,7 @@ struct MyInfoPanelView: View {
                                 } label: {
                                     HStack {
                                         languageLabel(for: option)
-                                            .foregroundColor(CivicaColors.primaryText)
+                                            .foregroundColor(CivicaColors.textPrimary)
                                         Spacer()
                                         Image(systemName: selectedLanguage == option ? "largecircle.fill.circle" : "circle")
                                             .foregroundColor(selectedLanguage == option ? .blue : .secondary)
@@ -278,23 +278,23 @@ struct MyInfoPanelView: View {
                             }
 
                             Text("my_info.language.disclaimer", tableName: "MyInfoPanel")
-                                .font(.footnote)
-                                .foregroundColor(CivicaColors.mutedText)
+                                .font(CivicaTypography.footnote)
+                                .foregroundColor(CivicaColors.textSecondary)
                                 .italic()
-                                .padding(.top, 4)
+                                .padding(.top, CivicaSpacing.xs)
                         }
-                        .padding(12)
+                        .padding(CivicaSpacing.md)
                         .background(
                             RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
-                                .fill(CivicaColors.surfaceWhite)
+                                .fill(CivicaColors.surfacePrimary)
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
-                                .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                         )
                     } header: {
                         Text("my_info.section.accessibility.header", tableName: "MyInfoPanel")
-                            .font(.headline.weight(.bold))
+                            .font(CivicaTypography.sectionHeaderBold)
                             .textCase(nil)
                     }
                     .id(SectionAnchor.language)
@@ -302,7 +302,7 @@ struct MyInfoPanelView: View {
                     .listRowSeparator(.hidden)
 
                 Section {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                         Button {
                             showFeedbackSheet = true
                         } label: {
@@ -310,35 +310,35 @@ struct MyInfoPanelView: View {
                                 String(localized: "app.how_to_vote.section.feedback", table: "AppShell"),
                                 systemImage: "bubble.left.and.bubble.right.fill"
                             )
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundColor(CivicaColors.primaryCTA)
+                            .font(CivicaTypography.subheadStrong)
+                            .foregroundColor(CivicaColors.ctaBlue)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 7)
                             .frame(maxWidth: .infinity)
-                            .background(CivicaColors.surfaceWhite)
+                            .background(CivicaColors.surfacePrimary)
                             .clipShape(Capsule(style: .continuous))
                             .overlay(
                                 Capsule(style: .continuous)
-                                    .stroke(CivicaColors.primaryCTA.opacity(0.30), lineWidth: 1)
+                                    .stroke(CivicaColors.ctaBlue.opacity(0.30), lineWidth: 1)
                             )
                         }
                         .buttonStyle(.plain)
                     }
-                    .padding(12)
+                    .padding(CivicaSpacing.md)
                     .background(
                         RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
-                            .fill(CivicaColors.surfaceWhite)
+                            .fill(CivicaColors.surfacePrimary)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
-                            .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                            .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                     )
                 }
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
             }
                 .scrollContentBackground(.hidden)
-                .background(CivicaColors.appBackground)
+                .background(CivicaColors.canvasBackground)
                 .navigationTitle(Text(l("my_info.navigation.title.location_profile", "Voting Location")))
                 .navigationBarTitleDisplayMode(.large)
                 .sheet(isPresented: $showFeedbackSheet) {

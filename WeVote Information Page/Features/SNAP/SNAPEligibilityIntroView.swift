@@ -21,7 +21,7 @@ struct SNAPEligibilityIntroView: View {
                         .fixedSize(horizontal: false, vertical: true)
 
                     Text("If DTA approves your application...")
-                        .font(.subheadline.weight(.semibold))
+                        .font(CivicaTypography.subheadStrong)
                         .foregroundStyle(Color.black)
 
                     VStack(alignment: .leading, spacing: 10) {
@@ -44,7 +44,7 @@ struct SNAPEligibilityIntroView: View {
                     }
                     .padding(.top, 2)
                     }
-                    .padding(.vertical, 8)
+                    .padding(.vertical, CivicaSpacing.sm)
 
                 if let submittedAt = viewModel.submittedAt {
                     Button {
@@ -53,30 +53,30 @@ struct SNAPEligibilityIntroView: View {
                     } label: {
                         VStack(alignment: .leading, spacing: 10) {
                             Text("SNAP prep status")
-                                .font(.headline.weight(.semibold))
+                                .font(CivicaTypography.sectionHeader)
                                 .foregroundStyle(CivicaColors.textPrimary)
 
-                            HStack(spacing: 8) {
+                            HStack(spacing: CivicaSpacing.sm) {
                                 Text("Status:")
-                                    .font(.subheadline.weight(.semibold))
+                                    .font(CivicaTypography.subheadStrong)
                                     .foregroundStyle(CivicaColors.textSecondary)
                                 Text("Prep checklist completed")
-                                    .font(.subheadline.weight(.bold))
+                                    .font(CivicaTypography.subheadBold)
                                     .foregroundStyle(CivicaColors.successGreen)
                             }
 
-                            HStack(spacing: 8) {
+                            HStack(spacing: CivicaSpacing.sm) {
                                 Text("Date:")
-                                    .font(.subheadline.weight(.semibold))
+                                    .font(CivicaTypography.subheadStrong)
                                     .foregroundStyle(CivicaColors.textSecondary)
                                 Text(statusDateText(from: submittedAt))
-                                    .font(.subheadline.weight(.semibold))
+                                    .font(CivicaTypography.subheadStrong)
                                     .foregroundStyle(CivicaColors.textPrimary)
                             }
 
                             Text("Open next steps")
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(CivicaColors.primaryCTA)
+                                .font(CivicaTypography.subheadStrong)
+                                .foregroundStyle(CivicaColors.ctaBlue)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(14)
@@ -93,7 +93,7 @@ struct SNAPEligibilityIntroView: View {
                 }
 
                     Text(SNAPCopy.globalDisclaimer)
-                        .font(.footnote.weight(.semibold))
+                        .font(CivicaTypography.footnoteStrong)
                         .foregroundStyle(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
 
@@ -114,15 +114,15 @@ struct SNAPEligibilityIntroView: View {
                         )
                     } label: {
                         Text("Need language assistance?")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(CivicaColors.primaryCTA)
+                            .font(CivicaTypography.subheadStrong)
+                            .foregroundStyle(CivicaColors.ctaBlue)
                             .frame(maxWidth: .infinity, alignment: .center)
-                            .padding(.vertical, 8)
+                            .padding(.vertical, CivicaSpacing.sm)
                     }
                     .buttonStyle(.plain)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(16)
+                .padding(CivicaSpacing.lg)
             }
             .background(CivicaColors.brandSoftBlue)
         }
@@ -154,14 +154,14 @@ private struct SNAPIntroHeader: View {
     var body: some View {
         HStack(alignment: .top, spacing: 14) {
             ZStack {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                     .fill(CivicaColors.surfacePrimary)
                     .frame(width: 56, height: 56)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                             .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                     )
-                    .shadow(color: CivicaColors.primaryCTA.opacity(0.14), radius: 6, x: 0, y: 3)
+                    .shadow(color: CivicaColors.ctaBlue.opacity(0.14), radius: 6, x: 0, y: 3)
 
                 Image("SNAPOfficialLogo")
                     .resizable()
@@ -171,8 +171,7 @@ private struct SNAPIntroHeader: View {
             }
 
             Text(title)
-                .font(.largeTitle)
-                .fontWeight(.bold)
+                .font(CivicaTypography.pageTitle)
                 .foregroundStyle(Color.black)
                 .lineLimit(1)
                 .minimumScaleFactor(0.84)
@@ -180,7 +179,7 @@ private struct SNAPIntroHeader: View {
                 .frame(minHeight: 56, alignment: .topLeading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.top, 4)
+        .padding(.top, CivicaSpacing.xs)
     }
 }
 
@@ -191,13 +190,13 @@ private struct SNAPDescriptionRow: View {
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: iconName)
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(CivicaColors.primaryCTA)
+                .font(CivicaTypography.footnoteStrong)
+                .foregroundStyle(CivicaColors.ctaBlue)
                 .frame(width: 20, height: 20)
                 .padding(.top, 1)
 
             Text(text)
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
                 .foregroundStyle(Color.black)
                 .fixedSize(horizontal: false, vertical: true)
         }

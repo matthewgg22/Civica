@@ -129,28 +129,28 @@ struct PrePermissionSheetView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Stay on track")
-                .font(.title3.weight(.bold))
+                .font(CivicaTypography.cardTitle)
 
             Text("Allow notifications so Civica can remind you on Election Day and if your polling place window changes.")
-                .font(.subheadline)
-                .foregroundStyle(CivicaColors.mutedText)
+                .font(CivicaTypography.subhead)
+                .foregroundStyle(CivicaColors.textSecondary)
 
             HStack(spacing: 10) {
                 Button("Not Now", action: onNotNow)
-                    .font(.subheadline.weight(.semibold))
+                    .font(CivicaTypography.subheadStrong)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 11)
                     .background(CivicaColors.infoSurfaceBlue)
-                    .foregroundStyle(CivicaColors.primaryText)
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .foregroundStyle(CivicaColors.textPrimary)
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
 
                 Button("Allow Reminders", action: onAllow)
-                    .font(.subheadline.weight(.semibold))
+                    .font(CivicaTypography.subheadStrong)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 11)
-                    .background(CivicaColors.richBlue)
+                    .background(CivicaColors.ctaBlue)
                     .foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
             }
         }
         .padding(18)
@@ -188,7 +188,7 @@ struct AddToCalendarButtonView: View {
         Button {
             beginTapFlow()
         } label: {
-            HStack(spacing: 8) {
+            HStack(spacing: CivicaSpacing.sm) {
                 if isWorking {
                     ProgressView()
                         .progressViewStyle(.circular)
@@ -200,14 +200,14 @@ struct AddToCalendarButtonView: View {
                 Text(buttonTitle)
                     .lineLimit(1)
             }
-            .font(.subheadline.weight(.semibold))
+            .font(CivicaTypography.subheadStrong)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 11)
         }
         .buttonStyle(.plain)
-        .background(CivicaColors.richBlue)
+        .background(CivicaColors.ctaBlue)
         .foregroundStyle(.white)
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         .disabled(isWorking)
         .sheet(isPresented: $showSoftAsk) {
             PrePermissionSheetView(

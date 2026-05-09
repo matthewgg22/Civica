@@ -207,7 +207,7 @@ struct MobilizationView: View {
 
     var body: some View {
         ZStack {
-            CivicaColors.appBackground.ignoresSafeArea()
+            CivicaColors.canvasBackground.ignoresSafeArea()
 
             NavigationStack {
                 ScrollView {
@@ -215,8 +215,8 @@ struct MobilizationView: View {
                         VStack(alignment: .leading, spacing: 0) {
                             PageHeader(title: Text("app.page.how_to_vote", tableName: "AppShell"))
                             Text(electionSubtitleText)
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundColor(CivicaColors.mutedText)
+                                .font(CivicaTypography.subheadStrong)
+                                .foregroundColor(CivicaColors.textSecondary)
                                 .padding(.leading, 72)
                                 .padding(.top, -6)
                         }
@@ -240,16 +240,16 @@ struct MobilizationView: View {
                                         shareMapvCard()
                                     } label: {
                                         Label(l("app.how_to_vote.action.share_plan", "Share My Plan"), systemImage: "square.and.arrow.up")
-                                            .font(.subheadline.weight(.semibold))
+                                            .font(CivicaTypography.subheadStrong)
                                             .lineLimit(1)
                                             .minimumScaleFactor(0.7)
                                             .frame(maxWidth: .infinity)
                                             .padding(.vertical, 11)
                                     }
                                     .buttonStyle(MAPVUtilityButtonStyle(
-                                        fill: CivicaColors.primaryCTA,
+                                        fill: CivicaColors.ctaBlue,
                                         foreground: .white,
-                                        border: CivicaColors.primaryCTA.opacity(0.85)
+                                        border: CivicaColors.ctaBlue.opacity(0.85)
                                     ))
                                     .padding(.horizontal)
                                 }
@@ -258,11 +258,11 @@ struct MobilizationView: View {
                             Button(l("app.how_to_vote.action.make_plan", "Make a Plan to Vote")) {
                                 showPlanSheet = true
                             }
-                            .font(.headline.weight(.semibold))
+                            .font(CivicaTypography.sectionHeader)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .padding(.horizontal, 16)
-                            .background(CivicaColors.richBlue)
+                            .padding(.vertical, CivicaSpacing.md)
+                            .padding(.horizontal, CivicaSpacing.lg)
+                            .background(CivicaColors.ctaBlue)
                             .foregroundColor(.white)
                             .clipShape(Capsule(style: .continuous))
                             .voteNowPillDualOrbit(
@@ -291,11 +291,11 @@ struct MobilizationView: View {
                                                 .fixedSize(horizontal: true, vertical: true)
                                         } else if section == .feedback {
                                             Image(systemName: "bubble.left.and.bubble.right.fill")
-                                                .foregroundColor(CivicaColors.primaryCTA)
+                                                .foregroundColor(CivicaColors.ctaBlue)
                                                 .frame(width: 30, alignment: .center)
                                         }
                                         Text(section.localizedTitle(locale: locale))
-                                            .foregroundColor(CivicaColors.primaryText)
+                                            .foregroundColor(CivicaColors.textPrimary)
                                             .lineLimit(1)
                                             .minimumScaleFactor(0.9)
                                         Spacer()
@@ -305,13 +305,13 @@ struct MobilizationView: View {
                                 Divider()
                             }
                         }
-                        .background(CivicaColors.background)
-                        .cornerRadius(8)
+                        .background(CivicaColors.canvasBackground)
+                        .cornerRadius(CivicaRadius.sm)
                         .padding(.horizontal)
                     }
                     .padding(.vertical)
                 }
-                .background(CivicaColors.appBackground)
+                .background(CivicaColors.canvasBackground)
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationDestination(isPresented: $showMailInBallotRequest) {
                     MailInBallotView()
@@ -711,16 +711,16 @@ struct FeedbackView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 PageHeader(title: Text(l("app.feedback.title", "Feedback")))
 
                 VStack(alignment: .leading, spacing: 10) {
                     Text(l("app.feedback.college_endeavor.title", "We Want to Hear From You!"))
-                        .font(.title3.weight(.bold))
+                        .font(CivicaTypography.cardTitle)
 
                     Text(l("app.feedback.college_endeavor.body", "Civica is an endeavor built to support all Americans vote by reducing logistical friction. As a college student endeavor, we want to learn from you and your experience voting. Your feedback is invaluable to improve the app and the voter experience."))
                         .font(.body)
-                        .foregroundColor(CivicaColors.mutedText)
+                        .foregroundColor(CivicaColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(14)
@@ -732,7 +732,7 @@ struct FeedbackView: View {
 
                 VStack(alignment: .leading, spacing: 10) {
                     Text(l("app.feedback.share.title", "Share your feedback"))
-                        .font(.headline)
+                        .font(CivicaTypography.sectionHeader)
 
                     Picker(l("app.feedback.category.label", "Category"), selection: $selectedCategory) {
                         ForEach(FeedbackCategory.allCases) { item in
@@ -745,28 +745,28 @@ struct FeedbackView: View {
                         .textInputAutocapitalization(.never)
                         .keyboardType(.emailAddress)
                         .autocorrectionDisabled(true)
-                        .padding(.horizontal, 12)
+                        .padding(.horizontal, CivicaSpacing.md)
                         .padding(.vertical, 10)
-                        .background(CivicaColors.surfaceWhite)
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .background(CivicaColors.surfacePrimary)
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                         )
 
                     ZStack(alignment: .topLeading) {
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(CivicaColors.surfaceWhite)
+                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                            .fill(CivicaColors.surfacePrimary)
                             .frame(minHeight: 170)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                                    .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                             )
 
                         if feedbackText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             Text(l("app.feedback.message.placeholder", "Tell us what felt confusing, frustrating, or helpful."))
-                                .font(.subheadline)
-                                .foregroundColor(CivicaColors.mutedText)
+                                .font(CivicaTypography.subhead)
+                                .foregroundColor(CivicaColors.textSecondary)
                                 .padding(.horizontal, 14)
                                 .padding(.vertical, 14)
                                 .allowsHitTesting(false)
@@ -776,7 +776,7 @@ struct FeedbackView: View {
                             .font(.body)
                             .scrollContentBackground(.hidden)
                             .padding(.horizontal, 10)
-                            .padding(.vertical, 8)
+                            .padding(.vertical, CivicaSpacing.sm)
                             .frame(minHeight: 170)
                             .focused($isFeedbackFocused)
                     }
@@ -788,29 +788,29 @@ struct FeedbackView: View {
                     } label: {
                         Group {
                             if isSending {
-                                HStack(spacing: 8) {
+                                HStack(spacing: CivicaSpacing.sm) {
                                     ProgressView()
                                         .tint(.white)
                                     Text(l("app.feedback.action.sending", "Sending..."))
-                                        .font(.headline)
+                                        .font(CivicaTypography.sectionHeader)
                                 }
                             } else {
                                 Text(l("app.feedback.action.send", "Send Feedback"))
-                                    .font(.headline)
+                                    .font(CivicaTypography.sectionHeader)
                             }
                         }
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(canSend ? CivicaColors.primaryCTA : CivicaColors.borderWarm.opacity(0.6))
+                        .padding(.vertical, CivicaSpacing.md)
+                        .background(canSend ? CivicaColors.ctaBlue : CivicaColors.borderSubtle.opacity(0.6))
                         .foregroundColor(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                     }
                     .buttonStyle(.plain)
                     .disabled(!canSend)
 
                     if let errorMessage {
                         Text(errorMessage)
-                            .font(.footnote.weight(.semibold))
+                            .font(CivicaTypography.footnoteStrong)
                             .foregroundColor(.red)
                     }
                 }
@@ -818,15 +818,15 @@ struct FeedbackView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
                     RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .fill(CivicaColors.background)
+                        .fill(CivicaColors.canvasBackground)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                 )
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 16)
+            .padding(.horizontal, CivicaSpacing.lg)
+            .padding(.vertical, CivicaSpacing.lg)
         }
         .scrollDismissesKeyboard(.interactively)
         .navigationBarTitleDisplayMode(.inline)
@@ -835,7 +835,7 @@ struct FeedbackView: View {
                 completeSubmissionFlow()
             }
         }
-        .background(CivicaColors.background)
+        .background(CivicaColors.canvasBackground)
         .onChange(of: feedbackText) { _, _ in
             if errorMessage != nil { errorMessage = nil }
         }
@@ -927,28 +927,28 @@ private struct FeedbackSubmissionConfirmationView: View {
 
             Text(l("app.feedback.success.screen.body", "Thank you for sharing your experience. Returning you now."))
                 .font(.body)
-                .foregroundColor(CivicaColors.mutedText)
+                .foregroundColor(CivicaColors.textSecondary)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
 
             Button(l("app.feedback.success.screen.action", "Return")) {
                 onContinue()
             }
-            .font(.headline)
+            .font(CivicaTypography.sectionHeader)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .background(CivicaColors.primaryCTA)
+            .padding(.vertical, CivicaSpacing.md)
+            .background(CivicaColors.ctaBlue)
             .foregroundColor(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
             .buttonStyle(.plain)
             .padding(.top, 6)
 
             Spacer()
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 24)
+        .padding(.vertical, CivicaSpacing.xl)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(CivicaColors.background)
+        .background(CivicaColors.canvasBackground)
         .navigationBarBackButtonHidden(true)
         .task {
             guard !hasTriggeredAutoReturn else { return }
@@ -986,11 +986,11 @@ private struct MAPVUtilityButtonStyle: ButtonStyle {
         configuration.label
             .foregroundColor(foreground.opacity(isEnabled ? 1 : 0.6))
             .background(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .fill(fill.opacity(isEnabled ? (configuration.isPressed ? 0.86 : 1.0) : 0.55))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .stroke(border.opacity(isEnabled ? 1 : 0.5), lineWidth: 1)
             )
     }

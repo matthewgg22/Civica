@@ -14,9 +14,9 @@ struct SupabaseStatusView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             Text("Supabase Status")
-                .font(.headline)
+                .font(CivicaTypography.sectionHeader)
 
             Group {
                 statusRow(
@@ -30,15 +30,15 @@ struct SupabaseStatusView: View {
 
             if let error = authStore.lastError, !error.isEmpty {
                 Text(error)
-                    .font(.footnote.weight(.semibold))
-                    .foregroundColor(CivicaColors.richRed)
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundColor(CivicaColors.ctaRed)
                     .padding(10)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.statusErrorSurface)
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
             }
 
-            HStack(spacing: 8) {
+            HStack(spacing: CivicaSpacing.sm) {
                 TextField("Email for OTP sign-in", text: $otpEmail)
                     .textInputAutocapitalization(.never)
                     .keyboardType(.emailAddress)
@@ -78,14 +78,14 @@ struct SupabaseStatusView: View {
                 .disabled(!authStore.isSignedIn)
             }
         }
-        .padding(12)
+        .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(CivicaColors.secondaryButtonFill)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(CivicaColors.primaryCTA.opacity(0.18), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                .stroke(CivicaColors.ctaBlue.opacity(0.18), lineWidth: 1)
         )
         .task {
             guard shouldAutoRefresh else { return }
@@ -142,7 +142,7 @@ struct SupabaseStatusView: View {
         }
         return StatusIndicator(
             iconName: "exclamationmark.triangle.fill",
-            tint: CivicaColors.richRed,
+            tint: CivicaColors.ctaRed,
             surface: CivicaColors.statusErrorSurface
         )
     }
@@ -151,21 +151,21 @@ struct SupabaseStatusView: View {
     private func statusRow(label: String, value: String, indicator: StatusIndicator?) -> some View {
         HStack {
             Text(label)
-                .font(.subheadline.weight(.semibold))
+                .font(CivicaTypography.subheadStrong)
             Spacer()
             HStack(spacing: 6) {
                 if let indicator {
                     Image(systemName: indicator.iconName)
-                        .font(.caption.weight(.bold))
+                        .font(CivicaTypography.captionBold)
                         .foregroundStyle(indicator.tint)
-                        .padding(4)
+                        .padding(CivicaSpacing.xs)
                         .background(indicator.surface)
                         .clipShape(Circle())
                         .accessibilityHidden(true)
                 }
                 Text(value)
-                    .font(.subheadline)
-                    .foregroundStyle(CivicaColors.mutedText)
+                    .font(CivicaTypography.subhead)
+                    .foregroundStyle(CivicaColors.textSecondary)
                     .multilineTextAlignment(.trailing)
                     .lineLimit(2)
             }

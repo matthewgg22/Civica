@@ -70,8 +70,8 @@ struct MAPVCardView: View {
         let completionStatus = mapvPlanStore.userElectionStatus
         let completionIsTerminal = completionStatus?.completionState.isTerminal == true
 
-        return VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
+        return VStack(alignment: .leading, spacing: CivicaSpacing.md) {
+            HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                 Label {
                     Text(displayElectionHeader(for: plan.electionTitle))
                 } icon: {
@@ -85,9 +85,9 @@ struct MAPVCardView: View {
                 Spacer(minLength: 8)
                 HStack(spacing: 5) {
                     Image(systemName: statusIcon(for: presentation.status))
-                        .font(.caption2.weight(.bold))
+                        .font(CivicaTypography.captionBold)
                     Text(presentation.statusPillText)
-                        .font(.caption2.weight(.bold))
+                        .font(CivicaTypography.captionBold)
                 }
                 .foregroundStyle(CivicaColors.onPrimaryText)
                 .padding(.horizontal, 10)
@@ -107,29 +107,29 @@ struct MAPVCardView: View {
             if completionIsTerminal == false && !plan.isCompleted {
                 HStack(spacing: 10) {
                     Text(presentation.primaryCountdownText)
-                        .font(.subheadline.weight(.semibold))
+                        .font(CivicaTypography.subheadStrong)
                     Spacer(minLength: 8)
                     if !presentation.secondaryMetaText.isEmpty {
                         Text(presentation.secondaryMetaText)
-                            .font(.subheadline)
-                            .foregroundStyle(CivicaColors.mutedText)
+                            .font(CivicaTypography.subhead)
+                            .foregroundStyle(CivicaColors.textSecondary)
                             .lineLimit(1)
                     }
                 }
             }
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(l("app.mapv.card.plan_title_colon", "My Plan to Vote:"))
-                    .font(.subheadline.weight(.semibold))
+                    .font(CivicaTypography.subheadStrong)
                 Text(planDateTime(plan.plannedArrival))
                 Text(plan.pollingPlaceName)
                     .lineLimit(2)
                     .minimumScaleFactor(0.85)
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
             }
 
             VStack(spacing: 10) {
-                HStack(spacing: 8) {
+                HStack(spacing: CivicaSpacing.sm) {
                     Button {
                         onChangePlanTapped?()
                     } label: {
@@ -181,8 +181,8 @@ struct MAPVCardView: View {
                     .disabled(!isVotedActionEnabled)
 
                     Text(l("app.mapv.card.action.voted_hint", "Press and hold for 5 seconds to confirm."))
-                        .font(.caption2.weight(.semibold))
-                        .foregroundStyle(CivicaColors.mutedText)
+                        .font(CivicaTypography.captionStrong)
+                        .foregroundStyle(CivicaColors.textSecondary)
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
@@ -192,15 +192,15 @@ struct MAPVCardView: View {
                 set: { mapvPlanStore.setLiveActivityEnabled($0) }
             )) {
                 Text(l("app.mapv.card.live_activity.toggle", "Enable Live Activity"))
-                    .font(.subheadline.weight(.semibold))
+                    .font(CivicaTypography.subheadStrong)
             }
             .toggleStyle(.switch)
             .disabled(!liveActivitiesAvailable)
 
             if !liveActivitiesAvailable {
                 Text(l("app.mapv.card.live_activity.disabled_detail", "Live Activities are disabled on this device. Enable them in Settings."))
-                    .font(.caption)
-                    .foregroundStyle(CivicaColors.mutedText)
+                    .font(CivicaTypography.caption)
+                    .foregroundStyle(CivicaColors.textSecondary)
             }
         }
         .padding(14)
@@ -210,7 +210,7 @@ struct MAPVCardView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
-                .stroke(CivicaColors.richBlue.opacity(0.25), lineWidth: 1)
+                .stroke(CivicaColors.ctaBlue.opacity(0.25), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous))
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: presentation.status)
@@ -256,20 +256,20 @@ struct MAPVCardView: View {
                         .frame(width: 21, height: 21)
                         .background(
                             Circle()
-                                .fill(CivicaColors.background.opacity(0.95))
+                                .fill(CivicaColors.canvasBackground.opacity(0.95))
                                 .overlay(
                                     Circle()
-                                        .stroke(CivicaColors.primaryText.opacity(0.7), lineWidth: 0.8)
+                                        .stroke(CivicaColors.textPrimary.opacity(0.7), lineWidth: 0.8)
                                 )
                         )
                         .offset(x: min(max(closeX - 10.5, 0), width - 21))
 
                     Circle()
-                        .fill(CivicaColors.surfaceWhite)
+                        .fill(CivicaColors.surfacePrimary)
                         .frame(width: 14, height: 14)
                         .overlay(
                             Circle()
-                                .stroke(CivicaColors.primaryText.opacity(0.75), lineWidth: 1.5)
+                                .stroke(CivicaColors.textPrimary.opacity(0.75), lineWidth: 1.5)
                         )
                         .shadow(color: CivicaColors.shadowSoft, radius: 2, x: 0, y: 1)
                         .offset(x: min(max(nowX - 7, 0), width - 14))
@@ -283,8 +283,8 @@ struct MAPVCardView: View {
                 Spacer()
                 Text(shortTime(dayEnd.addingTimeInterval(-60)))
             }
-            .font(.subheadline.weight(.semibold))
-            .foregroundStyle(CivicaColors.primaryText)
+            .font(CivicaTypography.subheadStrong)
+            .foregroundStyle(CivicaColors.textPrimary)
         }
     }
 
@@ -296,12 +296,12 @@ struct MAPVCardView: View {
     }
 
     private var emptyCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(l("app.mapv.card.empty.title", "My Plan to Vote"))
-                .font(.headline)
+                .font(CivicaTypography.sectionHeader)
             Text(l("app.mapv.card.empty.body", "No plan saved yet. Build your voting plan to enable a live activity."))
-                .font(.subheadline)
-                .foregroundStyle(CivicaColors.mutedText)
+                .font(CivicaTypography.subhead)
+                .foregroundStyle(CivicaColors.textSecondary)
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -315,30 +315,30 @@ struct MAPVCardView: View {
     private func completionSummaryCard(status: UserElectionStatusRecord?, plan: MAPVPlan) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Label("Completed", systemImage: "checkmark.circle.fill")
-                .font(.caption.weight(.bold))
+                .font(CivicaTypography.captionBold)
                 .foregroundStyle(CivicaColors.successGreen)
             Text("You’re done for this election")
-                .font(.headline.weight(.bold))
+                .font(CivicaTypography.sectionHeaderBold)
             Text("Completion method: \(completionMethodText(status: status, plan: plan))")
-                .font(.subheadline)
+                .font(CivicaTypography.subhead)
             if let completedAt = status?.completedAt ?? plan.completedAt {
                 Text("Completion timestamp: \(planDateTime(completedAt))")
-                    .font(.subheadline)
+                    .font(CivicaTypography.subhead)
             }
             if let source = status?.completionSource, !source.isEmpty {
                 Text("Source: \(source)")
-                    .font(.caption)
-                    .foregroundStyle(CivicaColors.mutedText)
+                    .font(CivicaTypography.caption)
+                    .foregroundStyle(CivicaColors.textSecondary)
             }
         }
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(CivicaColors.statusSuccessSurface)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.successGreen.opacity(0.58), lineWidth: 1)
         )
     }
@@ -372,10 +372,10 @@ struct MAPVCardView: View {
 
     private func color(for token: MAPVStatusColorToken) -> Color {
         switch token {
-        case .blue: return CivicaColors.primaryCTA
+        case .blue: return CivicaColors.ctaBlue
         case .green: return CivicaColors.successGreen
         case .orange: return CivicaColors.warningAmber
-        case .red: return CivicaColors.richRed
+        case .red: return CivicaColors.ctaRed
         case .gray: return CivicaColors.neutralStatus
         case .indigo: return CivicaColors.indigoStatus
         }
@@ -419,25 +419,25 @@ struct MAPVCardView: View {
                 mapvPlanStore.resetCompleted()
             }
         } label: {
-            HStack(spacing: 8) {
+            HStack(spacing: CivicaSpacing.sm) {
                 Label("Update completion status", systemImage: "checkmark.circle")
                     .lineLimit(1)
                 Spacer(minLength: 6)
                 Image(systemName: "chevron.down")
-                    .font(.caption.weight(.bold))
+                    .font(CivicaTypography.captionBold)
             }
-            .font(.subheadline.weight(.semibold))
-            .foregroundStyle(CivicaColors.primaryText)
-            .padding(.horizontal, 12)
+            .font(CivicaTypography.subheadStrong)
+            .foregroundStyle(CivicaColors.textPrimary)
+            .padding(.horizontal, CivicaSpacing.md)
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: 11, style: .continuous)
-                    .fill(CivicaColors.surfaceWhite.opacity(0.92))
+                    .fill(CivicaColors.surfacePrimary.opacity(0.92))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 11, style: .continuous)
-                    .stroke(CivicaColors.primaryCTA.opacity(0.38), lineWidth: 1)
+                    .stroke(CivicaColors.ctaBlue.opacity(0.38), lineWidth: 1)
             )
         }
     }
@@ -566,11 +566,11 @@ private struct MAPVPrimaryActionButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.subheadline.weight(.semibold))
+            .font(CivicaTypography.subheadStrong)
             .foregroundStyle(CivicaColors.onPrimaryText)
             .lineLimit(1)
             .minimumScaleFactor(0.78)
-            .padding(.horizontal, 12)
+            .padding(.horizontal, CivicaSpacing.md)
             .padding(.vertical, 11)
             .background(
                 RoundedRectangle(cornerRadius: 11, style: .continuous)
@@ -578,13 +578,13 @@ private struct MAPVPrimaryActionButtonStyle: ButtonStyle {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 11, style: .continuous)
-                    .stroke(CivicaColors.primaryCTA.opacity(0.24), lineWidth: 1)
+                    .stroke(CivicaColors.ctaBlue.opacity(0.24), lineWidth: 1)
             )
     }
 
     private func backgroundColor(isPressed: Bool) -> Color {
         guard isEnabled else { return CivicaColors.ctaBlueDisabled }
-        return isPressed ? CivicaColors.ctaBluePressed : CivicaColors.primaryCTA
+        return isPressed ? CivicaColors.ctaBluePressed : CivicaColors.ctaBlue
     }
 }
 
@@ -595,18 +595,18 @@ private struct MAPVSecondaryActionButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.subheadline.weight(.semibold))
-            .foregroundStyle(isEnabled ? CivicaColors.primaryText : CivicaColors.mutedText)
+            .font(CivicaTypography.subheadStrong)
+            .foregroundStyle(isEnabled ? CivicaColors.textPrimary : CivicaColors.textSecondary)
             .lineLimit(1)
             .minimumScaleFactor(0.78)
             .padding(.horizontal, 10)
             .padding(.vertical, 9)
             .background(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .fill(backgroundColor(isPressed: configuration.isPressed))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .stroke(borderColor, lineWidth: 1)
             )
     }

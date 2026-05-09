@@ -15,15 +15,15 @@ struct HomeAddressHeaderView: View {
         HStack {
             Image(systemName: "house.fill")
                 .foregroundColor(.white)
-                .padding(.leading, 8)
+                .padding(.leading, CivicaSpacing.sm)
             TextField("Enter your home address", text: $address, onCommit: {
                 onSubmit?()
             })
             .textFieldStyle(RoundedBorderTextFieldStyle())
-            .padding(.vertical, 8)
-            .padding(.horizontal, 4)
+            .padding(.vertical, CivicaSpacing.sm)
+            .padding(.horizontal, CivicaSpacing.xs)
         }
         .padding(.horizontal)
-        .background(CivicaColors.richBlue)
+        .background(CivicaColors.ctaBlue)
     }
 }

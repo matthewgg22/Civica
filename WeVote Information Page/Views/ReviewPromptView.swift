@@ -5,33 +5,33 @@ struct ReviewPromptView: View {
     let onNotNow: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
             Text("Did Civica help you make your plan?")
                 .font(.title3.weight(.semibold))
-                .foregroundColor(CivicaColors.primaryText)
+                .foregroundColor(CivicaColors.textPrimary)
 
             Text("If so, would you mind giving us a quick App Store rating? It helps more voters discover the app.")
                 .font(.body)
-                .foregroundColor(CivicaColors.mutedText)
+                .foregroundColor(CivicaColors.textSecondary)
 
             HStack(spacing: 10) {
                 Button("Not now", action: onNotNow)
-                    .font(.headline.weight(.semibold))
-                    .foregroundColor(CivicaColors.primaryText)
+                    .font(CivicaTypography.sectionHeader)
+                    .foregroundColor(CivicaColors.textPrimary)
                     .frame(maxWidth: .infinity, minHeight: 44)
-                    .background(CivicaColors.surfaceWhite)
+                    .background(CivicaColors.surfacePrimary)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .stroke(CivicaColors.borderWarm, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                            .stroke(CivicaColors.borderSubtle, lineWidth: 1)
                     )
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
 
                 Button("Rate the App", action: onRateApp)
-                    .font(.headline.weight(.semibold))
+                    .font(CivicaTypography.sectionHeader)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, minHeight: 44)
-                    .background(CivicaColors.primaryCTA)
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .background(CivicaColors.ctaBlue)
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
             }
         }
         .padding(20)

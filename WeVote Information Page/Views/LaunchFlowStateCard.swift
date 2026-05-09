@@ -47,11 +47,11 @@ struct LaunchFlowStateCard: View {
     private var iconColor: Color {
         switch state {
         case .loading:
-            return CivicaColors.primaryCTA
+            return CivicaColors.ctaBlue
         case .empty:
-            return CivicaColors.mutedText
+            return CivicaColors.textSecondary
         case .error:
-            return CivicaColors.urgentCTA
+            return CivicaColors.ctaRed
         }
     }
 
@@ -67,7 +67,7 @@ struct LaunchFlowStateCard: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             HStack(alignment: .center, spacing: 10) {
                 if state == .loading {
                     ProgressView()
@@ -80,21 +80,21 @@ struct LaunchFlowStateCard: View {
                 }
 
                 Text(title)
-                    .font(.headline.weight(.semibold))
-                    .foregroundColor(CivicaColors.primaryText)
+                    .font(CivicaTypography.sectionHeader)
+                    .foregroundColor(CivicaColors.textPrimary)
             }
 
             Text(stateLabel)
-                .font(.caption2.weight(.bold))
+                .font(CivicaTypography.captionBold)
                 .foregroundColor(iconColor)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
+                .padding(.horizontal, CivicaSpacing.sm)
+                .padding(.vertical, CivicaSpacing.xs)
                 .background(iconColor.opacity(0.14))
                 .clipShape(Capsule())
 
             Text(message)
-                .font(.subheadline)
-                .foregroundColor(CivicaColors.mutedText)
+                .font(CivicaTypography.subhead)
+                .foregroundColor(CivicaColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             if let primaryActionTitle, let primaryAction {
@@ -107,13 +107,13 @@ struct LaunchFlowStateCard: View {
                     .buttonStyle(LaunchFlowSecondaryCTAButtonStyle())
             }
         }
-        .padding(12)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(CivicaColors.surfaceWhite)
+        .background(CivicaColors.surfacePrimary)
         .clipShape(RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous)
-                .stroke(CivicaColors.borderWarm.opacity(0.72), lineWidth: 1)
+                .stroke(CivicaColors.borderSubtle.opacity(0.72), lineWidth: 1)
         )
     }
 }
@@ -123,16 +123,16 @@ private struct LaunchFlowPrimaryCTAButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.subheadline.weight(.semibold))
+            .font(CivicaTypography.subheadStrong)
             .foregroundColor(CivicaColors.onPrimaryText)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .fill(backgroundColor(isPressed: configuration.isPressed))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(CivicaColors.primaryCTA.opacity(0.24), lineWidth: 1)
+                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    .stroke(CivicaColors.ctaBlue.opacity(0.24), lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.99 : 1)
             .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
@@ -149,15 +149,15 @@ private struct LaunchFlowSecondaryCTAButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.subheadline.weight(.semibold))
-            .foregroundColor(isEnabled ? CivicaColors.primaryCTA : CivicaColors.mutedText)
+            .font(CivicaTypography.subheadStrong)
+            .foregroundColor(isEnabled ? CivicaColors.ctaBlue : CivicaColors.textSecondary)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .fill(backgroundColor(isPressed: configuration.isPressed))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                     .stroke(borderColor, lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.99 : 1)

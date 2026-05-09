@@ -29,7 +29,7 @@ struct VoterRegistrationReminderView: View {
     }
 
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: CivicaSpacing.xl) {
             Text("Voter Registration")
                 .font(.title2)
                 .bold()
@@ -39,10 +39,10 @@ struct VoterRegistrationReminderView: View {
 
             Link(destination: checkStatusURL) {
                 Text(checkStatusLabel)
-                    .font(.headline)
+                    .font(CivicaTypography.sectionHeader)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(CivicaColors.richBlue.cornerRadius(8))
+                    .background(CivicaColors.ctaBlue.cornerRadius(CivicaRadius.sm))
                     .foregroundColor(.white)
             }
 
@@ -52,7 +52,7 @@ struct VoterRegistrationReminderView: View {
                 // Dismiss
                 selectedTab = .myReps
             }
-            .padding(.top, 12)
+            .padding(.top, CivicaSpacing.md)
         }
         .padding()
     }

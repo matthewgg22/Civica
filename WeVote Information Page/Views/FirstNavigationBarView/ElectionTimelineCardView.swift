@@ -13,11 +13,11 @@ struct ElectionTimelineCardView: View {
     let onFlag: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             HStack(alignment: .top, spacing: 10) {
                 Text(stateLabel)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundColor(CivicaColors.primaryText)
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundColor(CivicaColors.textPrimary)
                     .lineLimit(1)
 
                 Spacer(minLength: 8)
@@ -25,7 +25,7 @@ struct ElectionTimelineCardView: View {
                 Button(action: onFlag) {
                     Image(systemName: "flag")
                         .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(CivicaColors.primaryCTA)
+                        .foregroundColor(CivicaColors.ctaBlue)
                         .frame(width: 36, height: 36)
                         .background(
                             Circle()
@@ -39,31 +39,31 @@ struct ElectionTimelineCardView: View {
 
             VStack(alignment: .leading, spacing: 5) {
                 Text(titleText)
-                    .font(.headline)
-                    .foregroundColor(CivicaColors.primaryText)
+                    .font(CivicaTypography.sectionHeader)
+                    .foregroundColor(CivicaColors.textPrimary)
                     .lineLimit(2)
 
                 if let subtitleText, !subtitleText.isEmpty {
                     Text(subtitleText)
-                        .font(.subheadline)
-                        .foregroundColor(CivicaColors.mutedText)
+                        .font(CivicaTypography.subhead)
+                        .foregroundColor(CivicaColors.textSecondary)
                         .lineLimit(2)
                 }
             }
 
-            HStack(alignment: .center, spacing: 8) {
+            HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                 Text(electionDateText)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundColor(CivicaColors.primaryText)
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundColor(CivicaColors.textPrimary)
 
                 Spacer(minLength: 8)
 
                 if let badgeText, !badgeText.isEmpty {
                     Text(badgeText)
-                        .font(.caption.weight(.semibold))
-                        .foregroundColor(CivicaColors.primaryCTA)
+                        .font(CivicaTypography.captionStrong)
+                        .foregroundColor(CivicaColors.ctaBlue)
                         .padding(.horizontal, 9)
-                        .padding(.vertical, 4)
+                        .padding(.vertical, CivicaSpacing.xs)
                         .background(CivicaColors.infoSurfaceBlue)
                         .clipShape(Capsule())
                 }
@@ -74,29 +74,29 @@ struct ElectionTimelineCardView: View {
                     Text(canMakePlan
                          ? l("app.timeline.mapv.button.make_plan", "Make a Plan to Vote")
                          : l("app.timeline.mapv.button.passed", "Election Day Passed"))
-                        .font(.subheadline.weight(.semibold))
+                        .font(CivicaTypography.subheadStrong)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
                 }
                 .buttonStyle(.plain)
                 .disabled(!canMakePlan)
-                .foregroundColor(canMakePlan ? .white : CivicaColors.primaryText.opacity(0.75))
+                .foregroundColor(canMakePlan ? .white : CivicaColors.textPrimary.opacity(0.75))
                 .background(
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(canMakePlan ? CivicaColors.primaryCTA : CivicaColors.infoSurfaceBlue)
+                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                        .fill(canMakePlan ? CivicaColors.ctaBlue : CivicaColors.infoSurfaceBlue)
                 )
             }
         }
         .padding(14)
         .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(CivicaColors.surfaceWhite)
+            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
+                .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(CivicaColors.borderWarm, lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
+                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
         )
-        .shadow(color: CivicaColors.primaryText.opacity(0.06), radius: 3, x: 0, y: 1)
+        .shadow(color: CivicaColors.textPrimary.opacity(0.06), radius: 3, x: 0, y: 1)
     }
 
     private func l(_ key: String, _ fallback: String) -> String {

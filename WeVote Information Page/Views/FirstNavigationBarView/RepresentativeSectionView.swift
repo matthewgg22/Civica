@@ -3,9 +3,9 @@ import UIKit
 
 private func partyTint(_ party: String?) -> Color {
     let normalized = (party ?? "").lowercased()
-    if normalized.contains("democrat") { return CivicaColors.richBlue }
-    if normalized.contains("republican") { return CivicaColors.richRed }
-    return CivicaColors.mutedText
+    if normalized.contains("democrat") { return CivicaColors.ctaBlue }
+    if normalized.contains("republican") { return CivicaColors.ctaRed }
+    return CivicaColors.textSecondary
 }
 
 private func shouldOpenMyInfoFromParty(_ party: String?) -> Bool {
@@ -109,7 +109,7 @@ private struct RepHeadshotView: View {
             Image(systemName: "person.crop.circle.fill")
                 .resizable()
                 .scaledToFit()
-                .foregroundColor(CivicaColors.mutedText.opacity(0.45))
+                .foregroundColor(CivicaColors.textSecondary.opacity(0.45))
         }
     }
 
@@ -274,10 +274,10 @@ struct RepRow: View {
                 .frame(width: 65, height: 65)
                 .clipShape(Circle())
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text(displayName)
                         .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(CivicaColors.primaryText)
+                        .foregroundColor(CivicaColors.textPrimary)
                         .lineLimit(1)
                         .minimumScaleFactor(0.72)
 
@@ -293,7 +293,7 @@ struct RepRow: View {
                     if let districtLabel {
                         Text(districtLabel)
                             .font(.system(size: 16, weight: .regular))
-                            .foregroundColor(CivicaColors.mutedText)
+                            .foregroundColor(CivicaColors.textSecondary)
                             .lineLimit(1)
                             .minimumScaleFactor(0.72)
                     }
@@ -303,7 +303,7 @@ struct RepRow: View {
             }
 
             if !contactActions.isEmpty {
-                HStack(spacing: 8) {
+                HStack(spacing: CivicaSpacing.sm) {
                     ForEach(contactActions) { action in
                         Button {
                             handleActionTap(action)
@@ -317,8 +317,8 @@ struct RepRow: View {
                             .minimumScaleFactor(0.75)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity, minHeight: 36)
-                            .background(CivicaColors.primaryCTA)
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .background(CivicaColors.ctaBlue)
+                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                         }
                         .buttonStyle(.plain)
                     }
@@ -326,7 +326,7 @@ struct RepRow: View {
                 .frame(maxWidth: .infinity)
             }
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, CivicaSpacing.sm)
         .alert(l("app.reps.alert.phone_unavailable.title", "Phone Not Available"), isPresented: $showPhoneFallbackAlert) {
             Button(l("app.reps.alert.phone_unavailable.ok", "OK"), role: .cancel) {}
         } message: {
@@ -394,23 +394,23 @@ struct RepresentativeSection: View {
             }
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 12)
+        .padding(.vertical, CivicaSpacing.md)
         .background(CivicaColors.infoSurfaceBlue)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(CivicaColors.primaryCTA.opacity(0.22), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
+                .stroke(CivicaColors.ctaBlue.opacity(0.22), lineWidth: 1)
         )
     }
 
     private var header: some View {
         HStack {
             Spacer(minLength: 0)
-            HStack(spacing: 8) {
+            HStack(spacing: CivicaSpacing.sm) {
                 headerIcon
                 Text(displayTitle)
                     .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(CivicaColors.primaryCTA)
+                    .foregroundColor(CivicaColors.ctaBlue)
                     .lineLimit(1)
                     .minimumScaleFactor(0.72)
             }
@@ -427,11 +427,11 @@ struct RepresentativeSection: View {
                 .scaledToFit()
                 .frame(width: 29, height: 29)
                 .padding(5)
-                .background(CivicaColors.primaryCTA.opacity(0.30))
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .background(CivicaColors.ctaBlue.opacity(0.30))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .stroke(CivicaColors.primaryCTA.opacity(0.40), lineWidth: 1.3)
+                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                        .stroke(CivicaColors.ctaBlue.opacity(0.40), lineWidth: 1.3)
                 )
         case "federal legislative":
             if UIImage(named: "CapitolIcon") != nil {
@@ -440,23 +440,23 @@ struct RepresentativeSection: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 32, height: 32)
-                    .padding(4)
-                    .background(CivicaColors.primaryCTA.opacity(0.30))
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .padding(CivicaSpacing.xs)
+                    .background(CivicaColors.ctaBlue.opacity(0.30))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
-                            .stroke(CivicaColors.primaryCTA.opacity(0.40), lineWidth: 1.3)
+                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                            .stroke(CivicaColors.ctaBlue.opacity(0.40), lineWidth: 1.3)
                     )
             } else {
                 Text("🏛️")
                     .font(.system(size: 24))
                     .frame(width: 32, height: 32)
-                    .padding(4)
-                    .background(CivicaColors.primaryCTA.opacity(0.30))
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .padding(CivicaSpacing.xs)
+                    .background(CivicaColors.ctaBlue.opacity(0.30))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
-                            .stroke(CivicaColors.primaryCTA.opacity(0.40), lineWidth: 1.3)
+                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                            .stroke(CivicaColors.ctaBlue.opacity(0.40), lineWidth: 1.3)
                     )
             }
         case "state":
@@ -469,27 +469,27 @@ struct RepresentativeSection: View {
                     .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 7, style: .continuous)
-                            .stroke(CivicaColors.primaryCTA.opacity(0.30), lineWidth: 0.9)
+                            .stroke(CivicaColors.ctaBlue.opacity(0.30), lineWidth: 0.9)
                     )
-                    .shadow(color: CivicaColors.primaryText.opacity(0.22), radius: 4, x: 0, y: 2)
+                    .shadow(color: CivicaColors.textPrimary.opacity(0.22), radius: 4, x: 0, y: 2)
                     .opensMyInfoPanelOnLongPress()
             } else {
                 Image(systemName: "map.fill")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(CivicaColors.primaryCTA)
+                    .foregroundColor(CivicaColors.ctaBlue)
                     .frame(width: 22, height: 22)
-                    .padding(4)
-                    .background(CivicaColors.primaryCTA.opacity(0.30))
+                    .padding(CivicaSpacing.xs)
+                    .background(CivicaColors.ctaBlue.opacity(0.30))
                     .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 4, style: .continuous)
-                            .stroke(CivicaColors.primaryCTA.opacity(0.40), lineWidth: 1.3)
+                            .stroke(CivicaColors.ctaBlue.opacity(0.40), lineWidth: 1.3)
                     )
             }
         default:
             Image(systemName: "building.2.fill")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(CivicaColors.primaryCTA)
+                .foregroundColor(CivicaColors.ctaBlue)
                 .frame(width: 22, height: 22)
         }
     }
@@ -552,7 +552,7 @@ struct RepresentativeSectionView_Previews: PreviewProvider {
             ]
         )
         .padding()
-        .background(CivicaColors.appBackground)
+        .background(CivicaColors.canvasBackground)
         .previewLayout(.sizeThatFits)
     }
 }

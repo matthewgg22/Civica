@@ -36,8 +36,7 @@ struct RaceCandidatesView: View {
         ScrollView {
             VStack(alignment: .center, spacing: 20) {
                 Text(l("app.race_candidates.title.truthful", "Candidates in this race"))
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+                    .font(CivicaTypography.pageTitle)
                     .multilineTextAlignment(.center)
 
                 if showArchiveDisclaimer {
@@ -47,8 +46,8 @@ struct RaceCandidatesView: View {
                             "Archived example: NYC 2025 Mayoral Democratic Primary"
                         )
                     )
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundColor(CivicaColors.mutedText)
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundColor(CivicaColors.textSecondary)
                     .multilineTextAlignment(.center)
                 }
 
@@ -67,29 +66,29 @@ struct RaceCandidatesView: View {
                                 .clipShape(Circle())
                                 .shadow(radius: 3)
 
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                                 Text(candidate.name)
-                                    .font(.headline)
+                                    .font(CivicaTypography.sectionHeader)
 
                                 Text(localizedExperience(for: candidate))
-                                    .font(.subheadline)
-                                    .foregroundColor(CivicaColors.mutedText)
+                                    .font(CivicaTypography.subhead)
+                                    .foregroundColor(CivicaColors.textSecondary)
 
                                 Text("\(l("app.race_candidates.announced_prefix", "Announced:")) \(candidate.announcedDate)")
-                                    .font(.caption)
+                                    .font(CivicaTypography.caption)
                                     .foregroundColor(.gray)
 
                                 if let websiteURL = URL(string: candidate.websiteURL) {
                                     Link(l("app.race_candidates.website", "Website"), destination: websiteURL)
-                                        .font(.caption)
-                                        .foregroundColor(CivicaColors.richBlue)
+                                        .font(CivicaTypography.caption)
+                                        .foregroundColor(CivicaColors.ctaBlue)
                                 } else {
                                     Text(l("app.race_candidates.website", "Website"))
-                                        .font(.caption)
-                                        .foregroundColor(CivicaColors.mutedText)
+                                        .font(CivicaTypography.caption)
+                                        .foregroundColor(CivicaColors.textSecondary)
                                 }
                             }
-                            .padding(.leading, 8)
+                            .padding(.leading, CivicaSpacing.sm)
                         }
                         Divider()
                     }

@@ -31,21 +31,21 @@ struct RegistrationCheckView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 Text("Are You Registered to Vote?")
                     .font(.title2)
                     .bold()
 
                 Text("Use the button below to check your current voter registration status.")
                     .font(.body)
-                    .padding(.bottom, 24)
+                    .padding(.bottom, CivicaSpacing.xl)
 
                 Link(destination: checkStatusURL) {
                     Text(checkStatusLabel)
-                        .font(.headline)
+                        .font(CivicaTypography.sectionHeader)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(CivicaColors.richBlue.cornerRadius(10))
+                        .background(CivicaColors.ctaBlue.cornerRadius(CivicaRadius.md))
                         .foregroundColor(.white)
                 }
 
