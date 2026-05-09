@@ -185,7 +185,10 @@ struct MobilizationView: View {
 
     private var visibleSectionTypes: [SectionType] {
         SectionType.allCases.filter { section in
-            !section.requiresNYC2025Archive || shouldShowNYC2025ArchiveResources
+            if section == .supportAmericansVote, !CivicaLaunchFeatures.donationsEnabled {
+                return false
+            }
+            return !section.requiresNYC2025Archive || shouldShowNYC2025ArchiveResources
         }
     }
 

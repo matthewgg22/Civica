@@ -14,6 +14,8 @@ enum CivicaLaunchFeatures {
     static let shareActionsEnabled = false
     // MAPC is parked for this launch; keep only the current script flow visible.
     static let mapcEnabled = false
+    // Donations / Apple Pay are parked until merchant + Stripe are configured.
+    static let donationsEnabled = false
     static let mapcPipelineV3FlagKey = "mapc_pipeline_v3_enabled"
 
     static func resolvedMAPCV3Enabled(
