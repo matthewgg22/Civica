@@ -7,6 +7,7 @@ enum SNAPRoute: Int, CaseIterable, Identifiable {
     case privacyNotice
     case eligibilityIntro
     case application
+    case conversation
     case review
     case confirmation
 
@@ -28,7 +29,22 @@ enum SNAPRouter {
         return orderedRoutes[index - 1]
     }
 
+    /// The screener body route — `.conversation` when the conversation flag
+    /// is on, `.application` otherwise. Used by the entry view to pick which
+    /// view to mount after the privacy notice.
+    static var screenerRoute: SNAPRoute {
+        SNAPFeatureFlag.isConversationEnabled ? .conversation : .application
+    }
+
     static var orderedRoutes: [SNAPRoute] {
-        [.entry, .privacyNotice, .eligibilityIntro, .application, .review, .confirmation]
+        let screener = screenerRoute
+        return [
+            .entry,
+            .privacyNotice,
+            .eligibilityIntro,
+            screener,
+            .review,
+            .confirmation
+        ]
     }
 }
