@@ -1,54 +1,72 @@
 import SwiftUI
 import UIKit
 
+// Widget extension keeps its own copy of the design tokens because it cannot
+// import the CivicaDesignSystem Swift Package directly. Values mirror the
+// main package — keep them in sync when updating either side.
+
 enum CivicaColors {
     private static let statusSurfaceAlpha: Double = 0.13
 
-    // Semantic surfaces and text
-    static let canvasBackground = Color.dynamic(light: "#FFF8F3", dark: "#111418")
+    // Semantic surfaces and text (mirrored from package)
     static let surfacePrimary = Color.dynamic(light: "#FFFFFF", dark: "#1B1F24")
     static let surfaceSecondary = Color.dynamic(light: "#F7FAFD", dark: "#242A31")
-    static let borderSubtle = Color.dynamic(light: "#F1DDD3", dark: "#3A434D")
-    static let textPrimary = Color.dynamic(light: "#1F1B16", dark: "#F2F5F8")
-    static let textSecondary = Color.dynamic(light: "#6B5B54", dark: "#BCC6D0")
     static let onPrimaryText = Color.dynamic(light: "#FFFFFF", dark: "#F8FBFF")
     static let iconOnPrimarySurface = Color.dynamic(light: "#FFFFFF", dark: "#DCE8F4")
     static let iconOnPrimaryBorder = Color.dynamic(light: "#FFFFFFE0", dark: "#DCE8F4E0")
     static let shadowSoft = Color.dynamic(light: "#00000029", dark: "#00000080")
 
-    // Core Brand tones
-    static let brandSoftBlue = Color.dynamic(light: "#B3DEF2", dark: "#3A596F")
-    static let brandSoftRed = Color.dynamic(light: "#E88578", dark: "#8E3F36")
+    // MARK: - Civica v1 brand (HANDOFF.md, locked May 10, 2026)
 
-    // Accent and state colors
-    static let ctaBlue = Color.dynamic(light: "#246AA8", dark: "#246AA8")
-    static let ctaBluePressed = Color.dynamic(light: "#1E5E95", dark: "#1E5E95")
-    static let ctaBlueDisabled = Color.dynamic(light: "#56738E", dark: "#506984")
-    static let ctaRed = Color.dynamic(light: "#C84637", dark: "#C84637")
-    static let ctaRedPressed = Color.dynamic(light: "#A1372B", dark: "#A1372B")
-    static let ctaRedDisabled = Color.dynamic(light: "#A35B53", dark: "#9D5952")
-    static let successGreen = Color.dynamic(light: "#176E49", dark: "#176E49")
-    static let warningAmber = Color.dynamic(light: "#9A5A14", dark: "#9A5A14")
-    static let neutralStatus = Color.dynamic(light: "#5A5F66", dark: "#5A5F66")
-    static let indigoStatus = Color.dynamic(light: "#4F46A5", dark: "#4F46A5")
+    /// Primary brand. Brick on Paper 6.42:1, on White 7.06:1 (AAA).
+    static let brickPrimary         = Color.dynamic(light: "#9C3A24", dark: "#E8856E")
+    static let brickPrimaryPressed  = Color.dynamic(light: "#84311E", dark: "#D26A52")
+    static let brickPrimaryDisabled = Color.dynamic(light: "#B07A6E", dark: "#9D5C4D")
 
-    static let infoSurfaceBlue = Color.dynamic(light: "#B3DEF252", dark: "#3A596F5F")
-    static let infoSurfaceRed = Color.dynamic(light: "#DF584624", dark: "#8E3F3638")
-    static let statusSuccessSurface = successGreen.opacity(statusSurfaceAlpha)
+    /// Accent teal. Deltas, success, on-target SLA only. Never body. Never paragraphs.
+    static let accentTeal           = Color.dynamic(light: "#2A6F66", dark: "#5FA89E")
+
+    /// Warm white background. Pure white reserved for printed output.
+    static let paper                = Color.dynamic(light: "#F5F2EC", dark: "#111418")
+
+    /// Primary text.
+    static let ink                  = Color.dynamic(light: "#1A1714", dark: "#F2F5F8")
+
+    /// Secondary text.
+    static let graphite             = Color.dynamic(light: "#5A544D", dark: "#BCC6D0")
+
+    /// Tertiary text / placeholder copy.
+    static let muted                = Color.dynamic(light: "#8A8278", dark: "#9AA0A6")
+
+    /// 7% black/white border. The only divider color.
+    static let hairline             = Color.dynamic(light: "#00000012", dark: "#FFFFFF12")
+
+    /// Democrat party color. Mode-invariant.
+    static let partyDemocrat        = Color.dynamic(light: "#246AA8", dark: "#246AA8")
+
+    /// Republican party color. Mode-invariant.
+    static let partyRepublican      = Color.dynamic(light: "#C84637", dark: "#C84637")
+
+    /// Destructive / error states.
+    static let destructive          = Color.dynamic(light: "#C84637", dark: "#E07060")
+    static let destructivePressed   = Color.dynamic(light: "#A1372B", dark: "#C45848")
+    static let destructiveDisabled  = Color.dynamic(light: "#A35B53", dark: "#9D5952")
+
+    /// Soft warm/cool surface washes (solid pastels — `.opacity(...)` chains compose predictably).
+    static let brickSurface         = Color.dynamic(light: "#F1D4C8", dark: "#4A2A22")
+    static let tealSurface          = Color.dynamic(light: "#BCE0DA", dark: "#2C4D49")
+
+    // MARK: - Status colors (not addressed by handoff; carried forward)
+
+    static let warningAmber         = Color.dynamic(light: "#9A5A14", dark: "#9A5A14")
+    static let neutralStatus        = Color.dynamic(light: "#5A5F66", dark: "#5A5F66")
+    static let indigoStatus         = Color.dynamic(light: "#4F46A5", dark: "#4F46A5")
+
+    static let statusSuccessSurface = accentTeal.opacity(statusSurfaceAlpha)
     static let statusWarningSurface = warningAmber.opacity(statusSurfaceAlpha)
-    static let statusErrorSurface = ctaRed.opacity(statusSurfaceAlpha)
-    static let statusInfoSurface = ctaBlue.opacity(statusSurfaceAlpha)
+    static let statusErrorSurface   = destructive.opacity(statusSurfaceAlpha)
+    static let statusInfoSurface    = brickPrimary.opacity(statusSurfaceAlpha)
     static let statusNeutralSurface = neutralStatus.opacity(statusSurfaceAlpha)
-    static let secondaryButtonFill = surfaceSecondary
-    static let secondaryButtonFillPressed = Color.dynamic(light: "#EAF4FB", dark: "#313B47")
-    static let secondaryButtonFillDisabled = Color.dynamic(light: "#EEF3F7", dark: "#252C33")
-    static let secondaryButtonBorder = ctaBlue.opacity(0.62)
-    static let secondaryButtonDisabledBorder = Color.dynamic(light: "#A5B4C2", dark: "#4D5A67")
-    static let mapvCardBackground = Color.dynamic(light: "#F3EBCB", dark: "#2A241B")
-    static let supportPageBackground = Color.dynamic(light: "#ACD5E3", dark: "#1A2833")
-    static let supportWarmSurface = Color.dynamic(light: "#F3D487", dark: "#3A2D15")
-    static let timelineFocusGold = Color.dynamic(light: "#D79B1F", dark: "#F3D487")
-    static let cardCornerRadius: CGFloat = 12
 }
 
 extension Color {
@@ -122,53 +140,5 @@ extension UIColor {
             blue: CGFloat(b) / 255.0,
             alpha: CGFloat(a) / 255.0
         )
-    }
-}
-
-struct CivicaPrimaryCTAButtonStyle: ButtonStyle {
-    @Environment(\.isEnabled) private var isEnabled
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .foregroundColor(CivicaColors.onPrimaryText)
-            .padding(.horizontal, CivicaSpacing.md)
-            .padding(.vertical, CivicaSpacing.sm)
-            .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                    .fill(backgroundColor(isPressed: configuration.isPressed))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                    .stroke(CivicaColors.ctaBlue.opacity(0.24), lineWidth: 1)
-            )
-    }
-
-    private func backgroundColor(isPressed: Bool) -> Color {
-        guard isEnabled else { return CivicaColors.ctaBlueDisabled }
-        return isPressed ? CivicaColors.ctaBluePressed : CivicaColors.ctaBlue
-    }
-}
-
-struct CivicaUrgentCTAButtonStyle: ButtonStyle {
-    @Environment(\.isEnabled) private var isEnabled
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .foregroundColor(CivicaColors.onPrimaryText)
-            .padding(.horizontal, CivicaSpacing.md)
-            .padding(.vertical, CivicaSpacing.sm)
-            .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                    .fill(backgroundColor(isPressed: configuration.isPressed))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                    .stroke(CivicaColors.ctaRed.opacity(0.24), lineWidth: 1)
-            )
-    }
-
-    private func backgroundColor(isPressed: Bool) -> Color {
-        guard isEnabled else { return CivicaColors.ctaRedDisabled }
-        return isPressed ? CivicaColors.ctaRedPressed : CivicaColors.ctaRed
     }
 }
