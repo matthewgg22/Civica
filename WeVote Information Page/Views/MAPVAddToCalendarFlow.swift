@@ -141,7 +141,7 @@ struct PrePermissionSheetView: View {
                     .font(CivicaTypography.subheadStrong)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, CivicaSpacing.md)
-                    .background(CivicaColors.infoSurfaceBlue)
+                    .background(CivicaColors.tealSurface)
                     .foregroundStyle(CivicaColors.ink)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
 

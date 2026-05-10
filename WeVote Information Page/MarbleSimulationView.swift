@@ -15,8 +15,8 @@ struct MarbleSimulationView: View {
 
     private let voterPresets = [100]
     private let palette: [Color] = [
-        CivicaColors.brandSoftBlue,
-        CivicaColors.brandSoftRed,
+        CivicaColors.tealSurface,
+        CivicaColors.brickSurface,
         Color(hex: "#88C7A8"),
         Color(hex: "#F1B76A"),
         Color(hex: "#A8A3D5"),
@@ -100,8 +100,8 @@ struct MarbleSimulationView: View {
         LinearGradient(
             colors: [
                 CivicaColors.paper,
-                CivicaColors.brandSoftBlue.opacity(0.18),
-                CivicaColors.brandSoftRed.opacity(0.10)
+                CivicaColors.tealSurface.opacity(0.18),
+                CivicaColors.brickSurface.opacity(0.10)
             ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing

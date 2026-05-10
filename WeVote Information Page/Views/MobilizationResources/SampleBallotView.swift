@@ -258,7 +258,7 @@ struct SampleBallotView: View {
                 }
                 .padding(CivicaSpacing.md)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(CivicaColors.infoSurfaceBlue)
+                .background(CivicaColors.tealSurface)
                 .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
 
                 if filteredRaces.isEmpty {
@@ -297,7 +297,7 @@ struct SampleBallotView: View {
                             }
                             .padding(CivicaSpacing.sm)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(CivicaColors.brandSoftBlue.opacity(0.08))
+                            .background(CivicaColors.tealSurface.opacity(0.08))
                             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                         }
 
@@ -320,7 +320,7 @@ struct SampleBallotView: View {
             }
             .padding()
         }
-        .background(CivicaColors.infoSurfaceBlue)
+        .background(CivicaColors.tealSurface)
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: planVM.selectedParty) { _, _ in
             raceRankings = [:]
@@ -428,7 +428,7 @@ struct CandidateRow: View {
         }
         .padding(.vertical, CivicaSpacing.xs)
         .padding(.horizontal, CivicaSpacing.md)
-        .background(CivicaColors.infoSurfaceBlue)
+        .background(CivicaColors.tealSurface)
         .cornerRadius(CivicaRadius.sm)
     }
 

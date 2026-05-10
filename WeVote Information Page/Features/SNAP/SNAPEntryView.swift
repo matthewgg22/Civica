@@ -111,7 +111,7 @@ struct SNAPEntryView: View {
                 .padding(.horizontal, CivicaSpacing.lg)
                 .padding(.top, CivicaSpacing.sm)
                 .padding(.bottom, CivicaSpacing.sm)
-                .background(CivicaColors.brandSoftBlue)
+                .background(CivicaColors.tealSurface)
 
                 VStack(spacing: CivicaSpacing.lg) {
                     NavigationLink {
@@ -231,9 +231,9 @@ struct SNAPEntryView: View {
                 .padding(.top, CivicaSpacing.lg)
                 .padding(.bottom, CivicaSpacing.lg)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .background(CivicaColors.brandSoftBlue)
+                .background(CivicaColors.tealSurface)
             }
-            .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
+            .background(CivicaColors.tealSurface.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 if showsCloseButton {
@@ -246,7 +246,7 @@ struct SNAPEntryView: View {
                 }
             }
         }
-        .toolbarBackground(CivicaColors.brandSoftBlue, for: .navigationBar)
+        .toolbarBackground(CivicaColors.tealSurface, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .onAppear {
             applyAddressGeofencePrefill()

@@ -18,7 +18,7 @@ struct LoadingView: View {
     @State private var timelineRecords: [MidtermElectionBundleRecord] = []
     @State private var hasRequestedTimelineRecords = false
 
-    private let splashBlue = CivicaColors.brandSoftBlue
+    private let splashBlue = CivicaColors.tealSurface
     private let logoRed = Color(red: 1.0, green: 0.30, blue: 0.24)
     private let marqueeRed = Color(red: 223.0 / 255.0, green: 87.0 / 255.0, blue: 70.0 / 255.0) // #DF5746
 

@@ -243,7 +243,7 @@ struct MyInfoPanelView: View {
                     .padding(CivicaSpacing.md)
                     .background(
                         RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
-                            .fill(CivicaColors.infoSurfaceBlue.opacity(0.44))
+                            .fill(CivicaColors.tealSurface.opacity(0.44))
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)

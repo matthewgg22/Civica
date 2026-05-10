@@ -854,7 +854,7 @@ struct ElectionTimelineView: View {
         .padding(.top, CivicaSpacing.xs)
         .background(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                .fill(CivicaColors.infoSurfaceBlue)
+                .fill(CivicaColors.tealSurface)
         )
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
@@ -1195,7 +1195,7 @@ struct ElectionTimelineView: View {
     private func stateFlagFallback(for code: String?) -> some View {
         ZStack {
             Rectangle()
-                .fill(CivicaColors.infoSurfaceBlue)
+                .fill(CivicaColors.tealSurface)
             Text(code ?? "US")
                 .font(CivicaTypography.captionBold)
                 .foregroundColor(CivicaColors.brickPrimary)
@@ -1280,7 +1280,7 @@ struct ElectionTimelineView: View {
         .padding(.vertical, CivicaSpacing.sm)
         .background(
             RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                .fill(useTintedBackground ? CivicaColors.infoSurfaceBlue.opacity(0.42) : CivicaColors.surfacePrimary)
+                .fill(useTintedBackground ? CivicaColors.tealSurface.opacity(0.42) : CivicaColors.surfacePrimary)
         )
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
@@ -1549,19 +1549,19 @@ struct ElectionTimelineView: View {
             return PartyBadgeStyle(
                 title: l("app.timeline.party.democrat", "Democrat"),
                 foreground: CivicaColors.brickPrimary,
-                background: CivicaColors.infoSurfaceBlue
+                background: CivicaColors.tealSurface
             )
         case .republican:
             return PartyBadgeStyle(
                 title: l("app.timeline.party.republican", "Republican"),
                 foreground: CivicaColors.ctaRed,
-                background: CivicaColors.infoSurfaceBlue
+                background: CivicaColors.tealSurface
             )
         case .independent:
             return PartyBadgeStyle(
                 title: l("app.timeline.party.independent", "Independent"),
                 foreground: CivicaColors.ink,
-                background: CivicaColors.infoSurfaceBlue
+                background: CivicaColors.tealSurface
             )
         }
     }

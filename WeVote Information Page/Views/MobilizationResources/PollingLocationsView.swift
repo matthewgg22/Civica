@@ -161,7 +161,7 @@ struct PollingLocationsView: View {
         }
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(CivicaColors.infoSurfaceBlue)
+        .background(CivicaColors.tealSurface)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
@@ -257,7 +257,7 @@ struct PollingLocationsView: View {
                 .fill(
                     selectedPlace?.id == place.id
                     ? CivicaColors.brickPrimary.opacity(0.14)
-                    : CivicaColors.infoSurfaceBlue
+                    : CivicaColors.tealSurface
                 )
         )
         .overlay(

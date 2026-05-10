@@ -1075,7 +1075,7 @@ struct AbsenteeView: View {
             }
             .padding(CivicaSpacing.md)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(CivicaColors.infoSurfaceBlue)
+            .background(CivicaColors.tealSurface)
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
@@ -1098,7 +1098,7 @@ struct AbsenteeView: View {
         }
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(CivicaColors.infoSurfaceBlue)
+        .background(CivicaColors.tealSurface)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
@@ -1533,7 +1533,7 @@ private struct MAPVDayRailSelector: View {
             .accessibilityLabel(l("app.mapv.step3.dayrail.next_week", "Next week"))
         }
         .padding(CivicaSpacing.sm)
-        .background(CivicaColors.infoSurfaceBlue.opacity(0.6))
+        .background(CivicaColors.tealSurface.opacity(0.6))
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         .onAppear {
             guard isActive else { return }
@@ -1973,7 +1973,7 @@ private struct MAPVTimeSlider: View {
 
                     ZStack(alignment: .leading) {
                         Capsule()
-                            .fill(CivicaColors.infoSurfaceBlue)
+                            .fill(CivicaColors.tealSurface)
                             .frame(height: MAPVTimeVisualConstants.trackHeight)
 
                         Capsule()
@@ -2514,7 +2514,7 @@ struct StepFourView: View {
                                 .padding(.vertical, CivicaSpacing.md)
                         }
                         .buttonStyle(.plain)
-                        .background(CivicaColors.infoSurfaceBlue)
+                        .background(CivicaColors.tealSurface)
                         .foregroundColor(CivicaColors.ink)
                         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                     }

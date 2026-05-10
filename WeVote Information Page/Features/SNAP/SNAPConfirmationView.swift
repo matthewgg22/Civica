@@ -61,7 +61,7 @@ struct SNAPConfirmationView: View {
             }
             .padding(CivicaSpacing.lg)
         }
-        .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
+        .background(CivicaColors.tealSurface.ignoresSafeArea())
         .onAppear {
             viewModel.markNextStepsViewed()
         }

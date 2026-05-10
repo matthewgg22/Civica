@@ -277,7 +277,7 @@ struct SupportVoteView: View {
                         .frame(height: 40)
                         .background(
                             RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                                .fill(selectedAmount == preset ? CivicaColors.brickPrimary : CivicaColors.infoSurfaceBlue)
+                                .fill(selectedAmount == preset ? CivicaColors.brickPrimary : CivicaColors.tealSurface)
                         )
                         .foregroundStyle(selectedAmount == preset ? CivicaColors.surfacePrimary : CivicaColors.ink)
                         .overlay(

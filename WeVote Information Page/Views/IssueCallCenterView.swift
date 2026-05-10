@@ -323,7 +323,7 @@ struct IssueCallCenterView: View {
     private static let moreExamplesFilterToken = "__more_examples_filter__"
     private static let premadeCollapsedCardLimit = 3
     private static let premadeCollapsedCategoryRowLimit = 3
-    private static let mapcScriptCardBackground = CivicaColors.brandSoftBlue.opacity(0.55)
+    private static let mapcScriptCardBackground = CivicaColors.tealSurface.opacity(0.55)
 
     private var exampleCategoryOptions: [String] {
         var seen = Set<String>()
@@ -556,7 +556,7 @@ struct IssueCallCenterView: View {
                     }
                 }
             }
-            .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
+            .background(CivicaColors.tealSurface.ignoresSafeArea())
 
             EmojiWaterfallView(controller: waterfallController)
                 .ignoresSafeArea()
@@ -866,7 +866,7 @@ struct IssueCallCenterView: View {
         .padding(.horizontal, CivicaSpacing.lg)
         .padding(.top, CivicaSpacing.sm)
         .padding(.bottom, CivicaSpacing.xs)
-        .background(CivicaColors.brandSoftBlue)
+        .background(CivicaColors.tealSurface)
     }
 
     private var residencyNoticeView: some View {
@@ -993,7 +993,7 @@ struct IssueCallCenterView: View {
         .padding(.horizontal, CivicaSpacing.lg)
         .padding(.top, CivicaSpacing.xs)
         .padding(.bottom, CivicaSpacing.xs)
-        .background(CivicaColors.brandSoftBlue)
+        .background(CivicaColors.tealSurface)
         .accessibilityIdentifier("issue_call.tabs")
     }
 
@@ -1138,7 +1138,7 @@ struct IssueCallCenterView: View {
             Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(CivicaColors.brandSoftBlue)
+        .background(CivicaColors.tealSurface)
     }
 
     private func launchStateVisualState(for state: IssueCallLaunchState) -> LaunchFlowVisualState {
@@ -1256,7 +1256,7 @@ struct IssueCallCenterView: View {
             assistantChatBody
             assistantChatComposer
         }
-        .background(CivicaColors.brandSoftBlue)
+        .background(CivicaColors.tealSurface)
         .onAppear {
             seedAssistantChatIfNeeded()
             if assistantComposerText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -3757,7 +3757,7 @@ struct IssueCallCenterView: View {
                             .padding(.horizontal, CivicaSpacing.sm)
                             .padding(.vertical, CivicaSpacing.sm)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(CivicaColors.infoSurfaceBlue)
+                            .background(CivicaColors.tealSurface)
                             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                         }
                         .buttonStyle(.plain)
@@ -4077,7 +4077,7 @@ struct IssueCallCenterView: View {
                                 .foregroundColor(CivicaColors.graphite)
                                 .padding(.horizontal, CivicaSpacing.sm)
                                 .padding(.vertical, CivicaSpacing.xs)
-                                .background(CivicaColors.infoSurfaceBlue)
+                                .background(CivicaColors.tealSurface)
                                 .clipShape(Capsule())
 
                             Spacer(minLength: 0)
@@ -4258,7 +4258,7 @@ struct IssueCallCenterView: View {
 
             ZStack(alignment: .leading) {
                 Capsule()
-                    .fill(CivicaColors.infoSurfaceBlue)
+                    .fill(CivicaColors.tealSurface)
 
                 Capsule()
                     .fill(CivicaColors.brickPrimary)
@@ -4734,7 +4734,7 @@ struct IssueCallCenterView: View {
         }
         .padding(CivicaSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(usesMapcCardChrome ? Self.mapcScriptCardBackground : CivicaColors.infoSurfaceBlue)
+        .background(usesMapcCardChrome ? Self.mapcScriptCardBackground : CivicaColors.tealSurface)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
         .overlay {
             if usesMapcCardChrome {
@@ -4760,7 +4760,7 @@ struct IssueCallCenterView: View {
         }
         .padding(CivicaSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(usesMapcCardChrome ? Self.mapcScriptCardBackground : CivicaColors.infoSurfaceBlue)
+        .background(usesMapcCardChrome ? Self.mapcScriptCardBackground : CivicaColors.tealSurface)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
         .overlay {
             if usesMapcCardChrome {
@@ -4783,7 +4783,7 @@ struct IssueCallCenterView: View {
         }
         .padding(CivicaSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(CivicaColors.infoSurfaceBlue)
+        .background(CivicaColors.tealSurface)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
     }
 
@@ -4863,7 +4863,7 @@ struct IssueCallCenterView: View {
                                 .font(CivicaTypography.caption)
                                 .padding(.horizontal, CivicaSpacing.sm)
                                 .padding(.vertical, CivicaSpacing.xs)
-                                .background(CivicaColors.infoSurfaceBlue)
+                                .background(CivicaColors.tealSurface)
                                 .clipShape(Capsule())
                         }
                     }
@@ -5035,7 +5035,7 @@ struct IssueCallCenterView: View {
     private func outcomeHistoryBackground(for outcome: CivicCallOutcome) -> Color {
         switch outcome {
         case .undecided, .stafferReached:
-            return CivicaColors.infoSurfaceBlue
+            return CivicaColors.tealSurface
         case .voicemail, .other:
             return CivicaColors.hairline.opacity(0.58)
         case .unavailable:
@@ -5254,7 +5254,7 @@ struct IssueCallCenterView: View {
             .foregroundColor(CivicaColors.brickPrimary)
             .padding(.horizontal, CivicaSpacing.sm)
             .padding(.vertical, CivicaSpacing.xs)
-            .background(CivicaColors.infoSurfaceBlue)
+            .background(CivicaColors.tealSurface)
             .clipShape(Capsule())
         }
         .buttonStyle(.plain)
@@ -5447,7 +5447,7 @@ private struct IssueCallRepHeadshotView: View {
                         }
                 case .empty:
                     ZStack {
-                        CivicaColors.infoSurfaceBlue
+                        CivicaColors.tealSurface
                         ProgressView().scaleEffect(0.82)
                     }
                 @unknown default:
@@ -5471,7 +5471,7 @@ private struct IssueCallRepHeadshotView: View {
 
     private var fallback: some View {
         ZStack {
-            CivicaColors.infoSurfaceBlue
+            CivicaColors.tealSurface
             Image(systemName: "person.crop.circle.fill")
                 .resizable()
                 .scaledToFit()

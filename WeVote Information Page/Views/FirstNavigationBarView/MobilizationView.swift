@@ -731,7 +731,7 @@ struct FeedbackView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                        .fill(CivicaColors.infoSurfaceBlue)
+                        .fill(CivicaColors.tealSurface)
                 )
 
                 VStack(alignment: .leading, spacing: CivicaSpacing.sm) {

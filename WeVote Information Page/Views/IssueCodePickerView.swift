@@ -66,11 +66,11 @@ private struct IssueCodePickerPreviewWrapper: View {
             .font(CivicaTypography.subhead)
             .foregroundColor(CivicaColors.ink)
             .padding(CivicaSpacing.sm)
-            .background(CivicaColors.infoSurfaceBlue)
+            .background(CivicaColors.tealSurface)
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         }
         .padding()
-        .background(CivicaColors.brandSoftBlue.opacity(0.25))
+        .background(CivicaColors.tealSurface.opacity(0.25))
     }
 }
 

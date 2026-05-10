@@ -308,7 +308,7 @@ struct MAPVCardView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
-                .fill(CivicaColors.infoSurfaceBlue)
+                .fill(CivicaColors.tealSurface)
         )
     }
 

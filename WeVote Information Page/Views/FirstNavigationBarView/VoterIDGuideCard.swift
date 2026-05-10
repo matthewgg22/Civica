@@ -303,7 +303,7 @@ struct VoterIDGuideCard: View {
                     .padding(.horizontal, CivicaSpacing.sm)
                     .padding(.vertical, CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(CivicaColors.infoSurfaceBlue.opacity(0.35))
+                    .background(CivicaColors.tealSurface.opacity(0.35))
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                 }
 
@@ -328,7 +328,7 @@ struct VoterIDGuideCard: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(CivicaSpacing.sm)
-                .background(CivicaColors.infoSurfaceBlue.opacity(0.48))
+                .background(CivicaColors.tealSurface.opacity(0.48))
                 .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
             }
         }
@@ -340,7 +340,7 @@ struct VoterIDGuideCard: View {
                     LinearGradient(
                         colors: [
                             CivicaColors.surfacePrimary,
-                            CivicaColors.brandSoftBlue.opacity(0.09)
+                            CivicaColors.tealSurface.opacity(0.09)
                         ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing

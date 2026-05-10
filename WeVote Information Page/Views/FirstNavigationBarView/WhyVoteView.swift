@@ -11,7 +11,7 @@ struct WhyVoteView: View {
     @StateObject private var dataStore = WhyVoteDataStore()
     @State private var selectedWhyCareCard = 0
     @State private var showFeedbackSheet = false
-    @State private var turnoutBackdropColor: Color = CivicaColors.brandSoftBlue
+    @State private var turnoutBackdropColor: Color = CivicaColors.tealSurface
 
     private let zipStateResolver = USZipStateResolver()
     private let powerOfVoteTimer = Timer.publish(every: 3.4, on: .main, in: .common).autoconnect()

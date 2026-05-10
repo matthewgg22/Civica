@@ -97,7 +97,7 @@ struct SNAPStepContainerView: View {
             .padding(.horizontal, CivicaSpacing.lg)
             .padding(.top, CivicaSpacing.md)
             .padding(.bottom, CivicaSpacing.sm)
-            .background(CivicaColors.brandSoftBlue)
+            .background(CivicaColors.tealSurface)
 
             Divider()
 
@@ -139,10 +139,10 @@ struct SNAPStepContainerView: View {
             .background(CivicaColors.surfacePrimary)
         }
         .toolbar(.hidden, for: .tabBar)
-        .toolbarBackground(CivicaColors.brandSoftBlue, for: .navigationBar)
+        .toolbarBackground(CivicaColors.tealSurface, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .ignoresSafeArea(.keyboard, edges: .bottom)
-        .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
+        .background(CivicaColors.tealSurface.ignoresSafeArea())
         .onAppear {
             viewModel.markStarted()
             if viewModel.draftStep == .reviewDraft {

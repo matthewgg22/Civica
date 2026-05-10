@@ -276,8 +276,8 @@ struct PageHeader: View {
 
 struct CivicaLogoIcon: View {
     var size: CGFloat = 50
-    var backgroundColor: Color = CivicaColors.brandSoftBlue
-    var stripeColor: Color = CivicaColors.brandSoftRed
+    var backgroundColor: Color = CivicaColors.tealSurface
+    var stripeColor: Color = CivicaColors.brickSurface
     var cornerRadiusScale: CGFloat = 0.24
     var borderColor: Color = CivicaColors.iconOnPrimaryBorder
     var borderWidth: CGFloat = 0.6
@@ -350,7 +350,7 @@ extension CivicaLogoIcon {
 
 private struct CivicaTabBarsIcon: View {
     var size: CGFloat = 28
-    var color: Color = CivicaColors.brandSoftRed
+    var color: Color = CivicaColors.brickSurface
     var horizontalStretch: CGFloat = 1.5
 
     var body: some View {
@@ -400,8 +400,8 @@ struct WhyVoteFloodOverlay: View {
     @Binding var isPresented: Bool
     var originInSpreadSpace: CGPoint?
 
-    @State private var dynamicFloodColor: Color = CivicaColors.brandSoftBlue
-    private let accent = CivicaColors.brandSoftRed
+    @State private var dynamicFloodColor: Color = CivicaColors.tealSurface
+    private let accent = CivicaColors.brickSurface
     private let logoSize: CGFloat = 50
     private let headerHorizontalPadding: CGFloat = 16
     // Matches page layout: outer content padding (16) + header top padding (4).
@@ -513,7 +513,7 @@ struct WhyVoteFloodOverlay: View {
             .onAppear {
                 spread = 0.001
                 resolvedOriginInSpreadSpace = nil
-                dynamicFloodColor = CivicaColors.brandSoftBlue
+                dynamicFloodColor = CivicaColors.tealSurface
                 DispatchQueue.main.async {
                     if let provided = originInSpreadSpace, provided != .zero {
                         resolvedOriginInSpreadSpace = provided
@@ -535,8 +535,8 @@ struct WhyCallFloodOverlay: View {
     var originInSpreadSpace: CGPoint?
     var onStartCalling: () -> Void = {}
 
-    private let floodColor = CivicaColors.brandSoftBlue
-    private let accent = CivicaColors.brandSoftRed
+    private let floodColor = CivicaColors.tealSurface
+    private let accent = CivicaColors.brickSurface
     private let logoSize: CGFloat = 50
     private let headerHorizontalPadding: CGFloat = 16
     private let headerTopPadding: CGFloat = 10
@@ -924,16 +924,16 @@ struct WhyCallView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             WhyCallView(content: .live, onStartCalling: {})
-                .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
+                .background(CivicaColors.tealSurface.ignoresSafeArea())
                 .previewDisplayName("Default")
 
             WhyCallView(content: .live, onStartCalling: {})
-                .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
+                .background(CivicaColors.tealSurface.ignoresSafeArea())
                 .preferredColorScheme(.dark)
                 .previewDisplayName("Dark")
 
             WhyCallView(content: .live, onStartCalling: {})
-                .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
+                .background(CivicaColors.tealSurface.ignoresSafeArea())
                 .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
                 .previewDisplayName("AXXXL")
         }

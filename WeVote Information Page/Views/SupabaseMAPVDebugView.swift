@@ -52,7 +52,7 @@ struct SupabaseMAPVDebugView: View {
         .padding(CivicaSpacing.md)
         .background(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                .fill(CivicaColors.infoSurfaceBlue)
+                .fill(CivicaColors.tealSurface)
         )
         .task { await runStartupAuth() }
     }

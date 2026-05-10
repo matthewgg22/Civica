@@ -30,7 +30,7 @@ struct ElectionTimelineCardView: View {
                         .frame(width: 36, height: 36)
                         .background(
                             Circle()
-                                .fill(CivicaColors.infoSurfaceBlue)
+                                .fill(CivicaColors.tealSurface)
                         )
                 }
                 .buttonStyle(.plain)
@@ -65,7 +65,7 @@ struct ElectionTimelineCardView: View {
                         .foregroundColor(CivicaColors.brickPrimary)
                         .padding(.horizontal, CivicaSpacing.sm)
                         .padding(.vertical, CivicaSpacing.xs)
-                        .background(CivicaColors.infoSurfaceBlue)
+                        .background(CivicaColors.tealSurface)
                         .clipShape(Capsule())
                 }
             }
@@ -84,7 +84,7 @@ struct ElectionTimelineCardView: View {
                 .foregroundColor(canMakePlan ? .white : CivicaColors.ink.opacity(0.75))
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                        .fill(canMakePlan ? CivicaColors.brickPrimary : CivicaColors.infoSurfaceBlue)
+                        .fill(canMakePlan ? CivicaColors.brickPrimary : CivicaColors.tealSurface)
                 )
             }
         }

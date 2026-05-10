@@ -369,5 +369,5 @@ extension View {
     }
     .buttonStyle(.plain)
     .padding()
-    .background(CivicaColors.brandSoftBlue)
+    .background(CivicaColors.tealSurface)
 }

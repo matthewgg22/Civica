@@ -1069,7 +1069,7 @@ struct SNAPApplicationView: View {
                     .padding(CivicaSpacing.md)
                     .background(
                         RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                            .fill(CivicaColors.infoSurfaceBlue.opacity(0.28))
+                            .fill(CivicaColors.tealSurface.opacity(0.28))
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
@@ -3679,7 +3679,7 @@ private struct SNAPFieldBadgeChip: View {
         case .optional:
             return CivicaColors.surfaceSecondary
         case .optionalEstimate:
-            return CivicaColors.infoSurfaceBlue.opacity(0.52)
+            return CivicaColors.tealSurface.opacity(0.52)
         }
     }
 

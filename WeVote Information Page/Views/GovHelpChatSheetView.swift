@@ -273,7 +273,7 @@ struct GovHelpChatSheetView: View {
 
     private func messageBackgroundColor(_ message: GovHelpChatMessage, isUser: Bool) -> Color {
         if message.isError {
-            return CivicaColors.infoSurfaceRed
+            return CivicaColors.brickSurface
         }
         return isUser ? CivicaColors.brickPrimary : CivicaColors.surfacePrimary
     }
@@ -351,7 +351,7 @@ private struct GovHelpSuggestedContactsView: View {
             }
         }
         .padding(CivicaSpacing.sm)
-        .background(CivicaColors.infoSurfaceBlue.opacity(0.45))
+        .background(CivicaColors.tealSurface.opacity(0.45))
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)

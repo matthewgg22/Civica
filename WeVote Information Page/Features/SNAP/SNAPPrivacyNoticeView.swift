@@ -65,7 +65,7 @@ struct SNAPPrivacyNoticeView: View {
             }
             .padding(CivicaSpacing.lg)
         }
-        .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
+        .background(CivicaColors.tealSurface.ignoresSafeArea())
         .navigationDestination(isPresented: $continueToEligibility) {
             SNAPEligibilityIntroView(viewModel: viewModel)
                 .navigationTitle("Check what you may need")

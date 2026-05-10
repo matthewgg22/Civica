@@ -1287,7 +1287,7 @@ struct VoterRegistrationView: View {
                         .frame(width: 30, height: 30)
                         .background(
                             Circle()
-                                .fill(CivicaColors.infoSurfaceBlue)
+                                .fill(CivicaColors.tealSurface)
                         )
                 }
                 .buttonStyle(.plain)
@@ -1307,7 +1307,7 @@ struct VoterRegistrationView: View {
                 .frame(width: 30, height: 30)
                 .background(
                     Circle()
-                        .fill(CivicaColors.infoSurfaceBlue)
+                        .fill(CivicaColors.tealSurface)
                 )
         }
         .buttonStyle(.plain)
@@ -1345,7 +1345,7 @@ struct VoterRegistrationView: View {
             }
         }
         .padding(CivicaSpacing.md)
-        .background(CivicaColors.infoSurfaceBlue)
+        .background(CivicaColors.tealSurface)
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.16), lineWidth: 1)
@@ -1377,7 +1377,7 @@ struct VoterRegistrationView: View {
             .padding(.top, CivicaSpacing.xs)
         }
         .padding(CivicaSpacing.md)
-        .background(CivicaColors.infoSurfaceBlue.opacity(0.72))
+        .background(CivicaColors.tealSurface.opacity(0.72))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 1)
@@ -1459,7 +1459,7 @@ struct VoterRegistrationView: View {
                 .foregroundColor(CivicaColors.graphite)
         }
         .padding(CivicaSpacing.md)
-        .background(CivicaColors.infoSurfaceBlue.opacity(0.62))
+        .background(CivicaColors.tealSurface.opacity(0.62))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.16), lineWidth: 1)
@@ -1501,7 +1501,7 @@ struct VoterRegistrationView: View {
             )
         }
         .padding(CivicaSpacing.md)
-        .background(CivicaColors.infoSurfaceBlue)
+        .background(CivicaColors.tealSurface)
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.16), lineWidth: 1)
@@ -1742,7 +1742,7 @@ struct VoterRegistrationView: View {
                 .foregroundColor(CivicaColors.brickPrimary)
                 .padding(.horizontal, CivicaSpacing.sm)
                 .padding(.vertical, CivicaSpacing.xs)
-                .background(CivicaColors.infoSurfaceBlue)
+                .background(CivicaColors.tealSurface)
                 .clipShape(Capsule())
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
@@ -1803,7 +1803,7 @@ struct VoterRegistrationView: View {
         .frame(maxWidth: .infinity, alignment: .center)
         .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, CivicaSpacing.sm)
-        .background(CivicaColors.infoSurfaceBlue.opacity(0.85))
+        .background(CivicaColors.tealSurface.opacity(0.85))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 1)
@@ -2176,7 +2176,7 @@ struct VoterRegistrationView: View {
         } else {
             ZStack {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(CivicaColors.infoSurfaceBlue)
+                    .fill(CivicaColors.tealSurface)
                 Text(registrationStateCode ?? "US")
                     .font(CivicaTypography.captionBold)
                     .foregroundColor(CivicaColors.brickPrimary)
@@ -2280,8 +2280,8 @@ struct VoterRegistrationView: View {
                 .fill(
                     LinearGradient(
                         colors: [
-                            CivicaColors.infoSurfaceBlue.opacity(0.78),
-                            CivicaColors.infoSurfaceBlue.opacity(0.56)
+                            CivicaColors.tealSurface.opacity(0.78),
+                            CivicaColors.tealSurface.opacity(0.56)
                         ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
@@ -2318,7 +2318,7 @@ struct VoterRegistrationView: View {
             }
         }
         .padding(CivicaSpacing.md)
-        .background(CivicaColors.infoSurfaceBlue.opacity(0.72))
+        .background(CivicaColors.tealSurface.opacity(0.72))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 1)

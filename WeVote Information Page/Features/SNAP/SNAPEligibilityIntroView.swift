@@ -9,7 +9,7 @@ struct SNAPEligibilityIntroView: View {
 
     var body: some View {
         ZStack {
-            CivicaColors.brandSoftBlue.ignoresSafeArea()
+            CivicaColors.tealSurface.ignoresSafeArea()
 
             ScrollView {
                 VStack(alignment: .leading, spacing: CivicaSpacing.md) {
@@ -125,9 +125,9 @@ struct SNAPEligibilityIntroView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(CivicaSpacing.lg)
             }
-            .background(CivicaColors.brandSoftBlue)
+            .background(CivicaColors.tealSurface)
         }
-        .toolbarBackground(CivicaColors.brandSoftBlue, for: .navigationBar)
+        .toolbarBackground(CivicaColors.tealSurface, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationDestination(isPresented: $continueToGuidedDraft) {
             SNAPStepContainerView(viewModel: viewModel) {

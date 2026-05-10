@@ -396,7 +396,7 @@ struct RepresentativeSection: View {
         }
         .padding(.horizontal, CivicaSpacing.md)
         .padding(.vertical, CivicaSpacing.md)
-        .background(CivicaColors.infoSurfaceBlue)
+        .background(CivicaColors.tealSurface)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
