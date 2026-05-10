@@ -19,8 +19,8 @@ struct Candidate: Identifiable, Hashable {
     // Party color: blue for Dems, red for Repubs, default for others
     var partyColor: Color {
         let normalized = party.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        if normalized.contains("democrat") { return CivicaColors.ctaBlue }
-        if normalized.contains("republican") { return CivicaColors.ctaRed }
+        if normalized.contains("democrat") { return CivicaColors.partyDemocrat }
+        if normalized.contains("republican") { return CivicaColors.partyRepublican }
         return .primary
     }
 }
@@ -350,8 +350,8 @@ struct CandidateRow: View {
 
     private func color(for party: String) -> Color {
         let normalized = party.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        if normalized.contains("democrat") { return CivicaColors.ctaBlue }
-        if normalized.contains("republican") { return CivicaColors.ctaRed }
+        if normalized.contains("democrat") { return CivicaColors.partyDemocrat }
+        if normalized.contains("republican") { return CivicaColors.partyRepublican }
         return .secondary
     }
 

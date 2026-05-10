@@ -270,8 +270,8 @@ struct MobilizationView: View {
                             .foregroundColor(.white)
                             .clipShape(Capsule(style: .continuous))
                             .voteNowPillDualOrbit(
-                                redColor: CivicaColors.ctaRed.opacity(0.86),
-                                blueColor: CivicaColors.ctaRed.opacity(0.58),
+                                redColor: CivicaColors.partyRepublican.opacity(0.86),
+                                blueColor: CivicaColors.partyRepublican.opacity(0.58),
                                 strokeThickness: 3.0,
                                 loopDuration: 4.95,
                                 glowIntensity: 0.30,

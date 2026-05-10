@@ -1477,9 +1477,9 @@ struct ElectionTimelineView: View {
     private func ballotPartyColor(for party: BallotParty?) -> Color {
         switch party {
         case .democrat:
-            return CivicaColors.ctaBlue
+            return CivicaColors.partyDemocrat
         case .republican:
-            return CivicaColors.ctaRed
+            return CivicaColors.partyRepublican
         default:
             return CivicaColors.textPrimary
         }

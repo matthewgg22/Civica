@@ -4,8 +4,8 @@ import UIKit
 
 private func partyTint(_ party: String?) -> Color {
     let normalized = (party ?? "").lowercased()
-    if normalized.contains("democrat") { return CivicaColors.ctaBlue }
-    if normalized.contains("republican") { return CivicaColors.ctaRed }
+    if normalized.contains("democrat") { return CivicaColors.partyDemocrat }
+    if normalized.contains("republican") { return CivicaColors.partyRepublican }
     return CivicaColors.textSecondary
 }
 

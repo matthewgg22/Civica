@@ -458,8 +458,8 @@ struct WhyVoteFloodOverlay: View {
                             .frame(width: logoSize, height: logoSize)
                             .fixedSize(horizontal: true, vertical: true)
                             .voteNowPillDualOrbit(
-                                redColor: CivicaColors.ctaRed.opacity(0.94),
-                                blueColor: CivicaColors.ctaBlue.opacity(0.88),
+                                redColor: CivicaColors.partyRepublican.opacity(0.94),
+                                blueColor: CivicaColors.partyDemocrat.opacity(0.88),
                                 strokeThickness: 2.4,
                                 loopDuration: 5.2,
                                 glowIntensity: 0.22,
@@ -592,8 +592,8 @@ struct WhyCallFloodOverlay: View {
                             .frame(width: logoSize, height: logoSize)
                             .fixedSize(horizontal: true, vertical: true)
                             .voteNowPillDualOrbit(
-                                redColor: CivicaColors.ctaRed.opacity(0.94),
-                                blueColor: CivicaColors.ctaBlue.opacity(0.88),
+                                redColor: CivicaColors.partyRepublican.opacity(0.94),
+                                blueColor: CivicaColors.partyDemocrat.opacity(0.88),
                                 strokeThickness: 2.4,
                                 loopDuration: 5.2,
                                 glowIntensity: 0.22,

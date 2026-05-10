@@ -3304,8 +3304,8 @@ struct IssueCallCenterView: View {
                             .clipShape(Capsule(style: .continuous))
                             .voteNowPillDualOrbit(
                                 enabled: true,
-                                redColor: CivicaColors.ctaRed.opacity(0.94),
-                                blueColor: CivicaColors.ctaBlue.opacity(0.88),
+                                redColor: CivicaColors.partyRepublican.opacity(0.94),
+                                blueColor: CivicaColors.partyDemocrat.opacity(0.88),
                                 strokeThickness: 2.8,
                                 loopDuration: 4.95,
                                 glowIntensity: 0.28,
@@ -3653,8 +3653,8 @@ struct IssueCallCenterView: View {
                                 .background(CivicaColors.ctaBlue)
                                 .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                                 .voteNowPillDualOrbit(
-                                    redColor: CivicaColors.ctaRed.opacity(0.94),
-                                    blueColor: CivicaColors.ctaBlue.opacity(0.88),
+                                    redColor: CivicaColors.partyRepublican.opacity(0.94),
+                                    blueColor: CivicaColors.partyDemocrat.opacity(0.88),
                                     strokeThickness: 2.4,
                                     loopDuration: 4.9,
                                     glowIntensity: 0.24,
