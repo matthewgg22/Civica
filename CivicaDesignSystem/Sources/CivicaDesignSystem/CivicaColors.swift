@@ -77,8 +77,14 @@ public enum CivicaColors {
     /// 7% black/white border. No new grays — this is the only divider color.
     public static let hairline             = Color.dynamic(light: "#00000012", dark: "#FFFFFF12")
 
+    /// Democrat party color. Mode-invariant — political colors don't shift with light/dark.
+    /// Same value as legacy `ctaBlue`; the rename clarifies the semantic role.
+    /// Also used for the patriotic red+blue chrome on the Civica logo orbit.
+    public static let partyDemocrat        = Color.dynamic(light: "#246AA8", dark: "#246AA8")
+
     /// Republican party color. Mode-invariant — political colors don't shift with light/dark.
     /// Same value as legacy `ctaRed`; the rename clarifies the semantic role.
+    /// Also used for the patriotic red+blue chrome on the Civica logo orbit.
     public static let partyRepublican      = Color.dynamic(light: "#C84637", dark: "#C84637")
 
     /// Destructive / error states (form validation, network errors, irreversible actions).
