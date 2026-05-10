@@ -131,3 +131,23 @@ For current state legislators sourced from Open States:
 - See [`docs/openstates_legislator_sync.md`](./openstates_legislator_sync.md)
 - Ingest script: `scripts/ingest_openstates_legislators.py`
 - Upsert script: `scripts/upsert_openstates_legislators.py`
+
+## Find Help Locations Sync (SNAP feature)
+
+Populates `find_help_locations` and `find_help_sources` for the
+"Find Help Near You" screen inside the SNAP feature.
+
+- Module: `backend/civic_api/find_help/`
+- Job entry point: `python -m backend.civic_api.jobs.sync_find_help_locations`
+- Cron: daily at 4am ET → `0 4 * * * python -m backend.civic_api.jobs.sync_find_help_locations`
+- Dry-run (in-memory, no Supabase writes): add `--dry-run`
+- Sources:
+  - `usda` — USDA SNAP State Directory of Resources, checked-in snapshot under `backend/civic_api/find_help/fixtures/usda_snap_state_directory.json`. Re-snapshot when the upstream page updates.
+  - `state_ma_dta` — MA Department of Transitional Assistance offices, checked-in snapshot under `fixtures/ma_dta_offices.json`.
+  - `ma_pantries` — curated public MA food pantry directory, checked-in snapshot under `fixtures/ma_pantries_seed.json`.
+  - `feeding_america` — stub (pending partnership credentials).
+  - `two_one_one` — stub (regionally fragmented; no national feed in V1).
+
+Geocoder uses Nominatim with a >1s rate-limit floor and an on-disk cache at `fixtures/geocode_cache.json`. The seed JSON ships with pre-resolved coordinates so the job runs offline.
+
+Soft-delete semantics: rows in a source that are absent from the latest fetch are flagged `active=false` rather than removed. The Supabase RPC `find_help_locations_nearby` filters on `active=true`, so inactive rows disappear from the iOS UI but stay queryable for audit/rollback.
