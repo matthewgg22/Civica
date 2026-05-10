@@ -49,6 +49,33 @@ public enum CivicaColors {
     public static let supportWarmSurface = Color.dynamic(light: "#F3D487", dark: "#3A2D15")
     public static let timelineFocusGold = Color.dynamic(light: "#D79B1F", dark: "#F3D487")
     public static let cardCornerRadius: CGFloat = 12
+
+    // MARK: - Civica v1 brand (HANDOFF.md, locked May 10, 2026)
+    // These supersede the legacy ctaBlue/ctaRed/canvasBackground/textPrimary set.
+    // Migration in progress — both old and new live here until consumers are swept.
+
+    /// Primary brand. Brick on Paper 6.42:1, on White 7.06:1 (AAA). Brick-light reads on dark surfaces.
+    public static let brickPrimary         = Color.dynamic(light: "#9C3A24", dark: "#E8856E")
+    public static let brickPrimaryPressed  = Color.dynamic(light: "#84311E", dark: "#D26A52")
+    public static let brickPrimaryDisabled = Color.dynamic(light: "#B07A6E", dark: "#9D5C4D")
+
+    /// Accent teal. **Deltas, success, on-target SLA only. Never body. Never paragraphs.**
+    public static let accentTeal           = Color.dynamic(light: "#2A6F66", dark: "#5FA89E")
+
+    /// Warm white background. Pure white reserved for printed output.
+    public static let paper                = Color.dynamic(light: "#F5F2EC", dark: "#111418")
+
+    /// Primary text.
+    public static let ink                  = Color.dynamic(light: "#1A1714", dark: "#F2F5F8")
+
+    /// Secondary text.
+    public static let graphite             = Color.dynamic(light: "#5A544D", dark: "#BCC6D0")
+
+    /// Tertiary text / placeholder copy.
+    public static let muted                = Color.dynamic(light: "#8A8278", dark: "#9AA0A6")
+
+    /// 7% black/white border. No new grays — this is the only divider color.
+    public static let hairline             = Color.dynamic(light: "#00000012", dark: "#FFFFFF12")
 }
 
 public extension Color {
