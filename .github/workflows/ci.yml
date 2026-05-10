@@ -24,10 +24,18 @@ jobs:
         with:
           xcode-version: '16.2'
 
-      - name: Show toolchain
+      - name: Show toolchain (pre-install)
         run: |
           xcodebuild -version
-          echo "--- iOS simulator runtimes ---"
+          echo "--- iOS simulator runtimes (pre-install) ---"
+          xcrun simctl list runtimes | grep iOS || true
+
+      - name: Install iOS simulator runtime
+        run: sudo xcodebuild -downloadPlatform iOS
+
+      - name: Show toolchain (post-install)
+        run: |
+          echo "--- iOS simulator runtimes (post-install) ---"
           xcrun simctl list runtimes | grep iOS || true
           echo "--- iPhone simulator devices ---"
           xcrun simctl list devices available | grep -E 'iPhone' || true
