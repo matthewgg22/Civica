@@ -16,11 +16,11 @@ public enum CivicaShadow {
 }
 
 public extension View {
-    /// Apply a Civica semantic shadow. `color` defaults to `CivicaColors.textPrimary`
+    /// Apply a Civica semantic shadow. `color` defaults to `CivicaColors.ink`
     /// and `opacity` defaults to the per-tier value defined in `CivicaShadow`.
     func civicaShadow(
         _ shadow: CivicaShadow,
-        color: Color = CivicaColors.textPrimary,
+        color: Color = CivicaColors.ink,
         opacity: Double? = nil
     ) -> some View {
         let radius: CGFloat

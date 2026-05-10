@@ -4,55 +4,7 @@ import UIKit
 public enum CivicaColors {
     private static let statusSurfaceAlpha: Double = 0.13
 
-    // Semantic surfaces and text
-    public static let canvasBackground = Color.dynamic(light: "#FFF8F3", dark: "#111418")
-    public static let surfacePrimary = Color.dynamic(light: "#FFFFFF", dark: "#1B1F24")
-    public static let surfaceSecondary = Color.dynamic(light: "#F7FAFD", dark: "#242A31")
-    public static let borderSubtle = Color.dynamic(light: "#F1DDD3", dark: "#3A434D")
-    public static let textPrimary = Color.dynamic(light: "#1F1B16", dark: "#F2F5F8")
-    public static let textSecondary = Color.dynamic(light: "#6B5B54", dark: "#BCC6D0")
-    public static let onPrimaryText = Color.dynamic(light: "#FFFFFF", dark: "#F8FBFF")
-    public static let iconOnPrimarySurface = Color.dynamic(light: "#FFFFFF", dark: "#DCE8F4")
-    public static let iconOnPrimaryBorder = Color.dynamic(light: "#FFFFFFE0", dark: "#DCE8F4E0")
-    public static let shadowSoft = Color.dynamic(light: "#00000029", dark: "#00000080")
-
-    // Core Brand tones
-    public static let brandSoftBlue = Color.dynamic(light: "#B3DEF2", dark: "#3A596F")
-    public static let brandSoftRed = Color.dynamic(light: "#E88578", dark: "#8E3F36")
-
-    // Accent and state colors
-    public static let ctaBlue = Color.dynamic(light: "#246AA8", dark: "#246AA8")
-    public static let ctaBluePressed = Color.dynamic(light: "#1E5E95", dark: "#1E5E95")
-    public static let ctaBlueDisabled = Color.dynamic(light: "#56738E", dark: "#506984")
-    public static let ctaRed = Color.dynamic(light: "#C84637", dark: "#C84637")
-    public static let ctaRedPressed = Color.dynamic(light: "#A1372B", dark: "#A1372B")
-    public static let ctaRedDisabled = Color.dynamic(light: "#A35B53", dark: "#9D5952")
-    public static let successGreen = Color.dynamic(light: "#176E49", dark: "#176E49")
-    public static let warningAmber = Color.dynamic(light: "#9A5A14", dark: "#9A5A14")
-    public static let neutralStatus = Color.dynamic(light: "#5A5F66", dark: "#5A5F66")
-    public static let indigoStatus = Color.dynamic(light: "#4F46A5", dark: "#4F46A5")
-
-    public static let infoSurfaceBlue = Color.dynamic(light: "#B3DEF252", dark: "#3A596F5F")
-    public static let infoSurfaceRed = Color.dynamic(light: "#DF584624", dark: "#8E3F3638")
-    public static let statusSuccessSurface = successGreen.opacity(statusSurfaceAlpha)
-    public static let statusWarningSurface = warningAmber.opacity(statusSurfaceAlpha)
-    public static let statusErrorSurface = ctaRed.opacity(statusSurfaceAlpha)
-    public static let statusInfoSurface = ctaBlue.opacity(statusSurfaceAlpha)
-    public static let statusNeutralSurface = neutralStatus.opacity(statusSurfaceAlpha)
-    public static let secondaryButtonFill = surfaceSecondary
-    public static let secondaryButtonFillPressed = Color.dynamic(light: "#EAF4FB", dark: "#313B47")
-    public static let secondaryButtonFillDisabled = Color.dynamic(light: "#EEF3F7", dark: "#252C33")
-    public static let secondaryButtonBorder = ctaBlue.opacity(0.62)
-    public static let secondaryButtonDisabledBorder = Color.dynamic(light: "#A5B4C2", dark: "#4D5A67")
-    public static let mapvCardBackground = Color.dynamic(light: "#F3EBCB", dark: "#2A241B")
-    public static let supportPageBackground = Color.dynamic(light: "#ACD5E3", dark: "#1A2833")
-    public static let supportWarmSurface = Color.dynamic(light: "#F3D487", dark: "#3A2D15")
-    public static let timelineFocusGold = Color.dynamic(light: "#D79B1F", dark: "#F3D487")
-    public static let cardCornerRadius: CGFloat = 12
-
     // MARK: - Civica v1 brand (HANDOFF.md, locked May 10, 2026)
-    // These supersede the legacy ctaBlue/ctaRed/canvasBackground/textPrimary set.
-    // Migration in progress — both old and new live here until consumers are swept.
 
     /// Primary brand. Brick on Paper 6.42:1, on White 7.06:1 (AAA). Brick-light reads on dark surfaces.
     public static let brickPrimary         = Color.dynamic(light: "#9C3A24", dark: "#E8856E")
@@ -78,12 +30,10 @@ public enum CivicaColors {
     public static let hairline             = Color.dynamic(light: "#00000012", dark: "#FFFFFF12")
 
     /// Democrat party color. Mode-invariant — political colors don't shift with light/dark.
-    /// Same value as legacy `ctaBlue`; the rename clarifies the semantic role.
     /// Also used for the patriotic red+blue chrome on the Civica logo orbit.
     public static let partyDemocrat        = Color.dynamic(light: "#246AA8", dark: "#246AA8")
 
     /// Republican party color. Mode-invariant — political colors don't shift with light/dark.
-    /// Same value as legacy `ctaRed`; the rename clarifies the semantic role.
     /// Also used for the patriotic red+blue chrome on the Civica logo orbit.
     public static let partyRepublican      = Color.dynamic(light: "#C84637", dark: "#C84637")
 
@@ -94,14 +44,40 @@ public enum CivicaColors {
     public static let destructiveDisabled  = Color.dynamic(light: "#A35B53", dark: "#9D5952")
 
     /// Soft brick wash — solid pastel for warm decorative tints, secondary surfaces.
-    /// Replaces legacy `brandSoftRed` and `infoSurfaceRed`. Solid so consumer
-    /// `.opacity(...)` chains compose predictably.
     public static let brickSurface         = Color.dynamic(light: "#F1D4C8", dark: "#4A2A22")
 
     /// Soft teal wash — solid pastel for cool civic-engagement backgrounds.
-    /// Replaces legacy `brandSoftBlue` and `infoSurfaceBlue`. Solid so consumer
-    /// `.opacity(...)` chains compose predictably. Civic-calm tone.
     public static let tealSurface          = Color.dynamic(light: "#BCE0DA", dark: "#2C4D49")
+
+    // MARK: - Carried-forward surfaces (not addressed by handoff)
+
+    public static let surfacePrimary       = Color.dynamic(light: "#FFFFFF", dark: "#1B1F24")
+    public static let surfaceSecondary     = Color.dynamic(light: "#F7FAFD", dark: "#242A31")
+    public static let onPrimaryText        = Color.dynamic(light: "#FFFFFF", dark: "#F8FBFF")
+    public static let iconOnPrimarySurface = Color.dynamic(light: "#FFFFFF", dark: "#DCE8F4")
+    public static let iconOnPrimaryBorder  = Color.dynamic(light: "#FFFFFFE0", dark: "#DCE8F4E0")
+    public static let shadowSoft           = Color.dynamic(light: "#00000029", dark: "#00000080")
+
+    public static let warningAmber         = Color.dynamic(light: "#9A5A14", dark: "#9A5A14")
+    public static let neutralStatus        = Color.dynamic(light: "#5A5F66", dark: "#5A5F66")
+    public static let indigoStatus         = Color.dynamic(light: "#4F46A5", dark: "#4F46A5")
+
+    public static let statusSuccessSurface = accentTeal.opacity(statusSurfaceAlpha)
+    public static let statusWarningSurface = warningAmber.opacity(statusSurfaceAlpha)
+    public static let statusErrorSurface   = destructive.opacity(statusSurfaceAlpha)
+    public static let statusInfoSurface    = brickPrimary.opacity(statusSurfaceAlpha)
+    public static let statusNeutralSurface = neutralStatus.opacity(statusSurfaceAlpha)
+
+    public static let secondaryButtonFill          = surfaceSecondary
+    public static let secondaryButtonFillPressed   = Color.dynamic(light: "#EAF4FB", dark: "#313B47")
+    public static let secondaryButtonFillDisabled  = Color.dynamic(light: "#EEF3F7", dark: "#252C33")
+    public static let secondaryButtonBorder        = brickPrimary.opacity(0.62)
+    public static let secondaryButtonDisabledBorder = Color.dynamic(light: "#A5B4C2", dark: "#4D5A67")
+
+    public static let mapvCardBackground   = Color.dynamic(light: "#F3EBCB", dark: "#2A241B")
+    public static let supportPageBackground = Color.dynamic(light: "#ACD5E3", dark: "#1A2833")
+    public static let supportWarmSurface   = Color.dynamic(light: "#F3D487", dark: "#3A2D15")
+    public static let timelineFocusGold    = Color.dynamic(light: "#D79B1F", dark: "#F3D487")
 }
 
 public extension Color {
@@ -189,43 +165,17 @@ public struct CivicaPrimaryCTAButtonStyle: ButtonStyle {
             .padding(.horizontal, CivicaSpacing.md)
             .padding(.vertical, CivicaSpacing.sm)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .fill(backgroundColor(isPressed: configuration.isPressed))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                    .stroke(CivicaColors.ctaBlue.opacity(0.24), lineWidth: 1)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                    .stroke(CivicaColors.brickPrimary.opacity(0.24), lineWidth: 1)
             )
     }
 
     private func backgroundColor(isPressed: Bool) -> Color {
-        guard isEnabled else { return CivicaColors.ctaBlueDisabled }
-        return isPressed ? CivicaColors.ctaBluePressed : CivicaColors.ctaBlue
-    }
-}
-
-public struct CivicaUrgentCTAButtonStyle: ButtonStyle {
-    @Environment(\.isEnabled) private var isEnabled
-
-    public init() {}
-
-    public func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .foregroundColor(CivicaColors.onPrimaryText)
-            .padding(.horizontal, CivicaSpacing.md)
-            .padding(.vertical, CivicaSpacing.sm)
-            .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                    .fill(backgroundColor(isPressed: configuration.isPressed))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                    .stroke(CivicaColors.ctaRed.opacity(0.24), lineWidth: 1)
-            )
-    }
-
-    private func backgroundColor(isPressed: Bool) -> Color {
-        guard isEnabled else { return CivicaColors.ctaRedDisabled }
-        return isPressed ? CivicaColors.ctaRedPressed : CivicaColors.ctaRed
+        guard isEnabled else { return CivicaColors.brickPrimaryDisabled }
+        return isPressed ? CivicaColors.brickPrimaryPressed : CivicaColors.brickPrimary
     }
 }
