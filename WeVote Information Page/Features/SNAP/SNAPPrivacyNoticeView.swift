@@ -59,7 +59,7 @@ struct SNAPPrivacyNoticeView: View {
                     Button("Go back") {
                         dismiss()
                     }
-                    .buttonStyle(SNAPSecondaryCTAButtonStyle())
+                    .buttonStyle(CivicaSecondaryCTAButtonStyle())
                 }
                 .padding(.top, CivicaSpacing.xs)
             }

@@ -1380,7 +1380,7 @@ struct SNAPApplicationView: View {
                     checklistShareItems = [makeChecklistImage()]
                     showingChecklistShareSheet = true
                 }
-                .buttonStyle(SNAPSecondaryCTAButtonStyle())
+                .buttonStyle(CivicaSecondaryCTAButtonStyle())
                 .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }

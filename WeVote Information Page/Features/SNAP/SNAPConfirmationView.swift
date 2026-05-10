@@ -53,7 +53,7 @@ struct SNAPConfirmationView: View {
                 Button("Review my draft again") {
                     viewModel.currentStep = .review
                 }
-                .buttonStyle(SNAPSecondaryCTAButtonStyle())
+                .buttonStyle(CivicaSecondaryCTAButtonStyle())
 
                 Text("This assistant does not submit your application.")
                     .font(CivicaTypography.footnote)

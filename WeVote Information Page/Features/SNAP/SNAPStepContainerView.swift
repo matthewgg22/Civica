@@ -116,7 +116,7 @@ struct SNAPStepContainerView: View {
                     Button("Back") {
                         viewModel.goBackDraftFlow()
                     }
-                    .buttonStyle(SNAPSecondaryCTAButtonStyle())
+                    .buttonStyle(CivicaSecondaryCTAButtonStyle())
                     .frame(maxWidth: .infinity)
                     .disabled(viewModel.isAtFirstDraftStep)
 

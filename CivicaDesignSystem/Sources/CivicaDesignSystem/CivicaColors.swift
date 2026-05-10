@@ -154,6 +154,8 @@ public extension UIColor {
     }
 }
 
+/// Primary CTA button. **56pt min hit target** per HANDOFF.md §1.
+/// Caller can chain `.frame(maxWidth: .infinity)` for full-width layouts.
 public struct CivicaPrimaryCTAButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
 
@@ -162,8 +164,9 @@ public struct CivicaPrimaryCTAButtonStyle: ButtonStyle {
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .foregroundColor(CivicaColors.onPrimaryText)
-            .padding(.horizontal, CivicaSpacing.md)
+            .padding(.horizontal, CivicaSpacing.lg)
             .padding(.vertical, CivicaSpacing.sm)
+            .frame(minHeight: 56)
             .background(
                 RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .fill(backgroundColor(isPressed: configuration.isPressed))
@@ -177,5 +180,31 @@ public struct CivicaPrimaryCTAButtonStyle: ButtonStyle {
     private func backgroundColor(isPressed: Bool) -> Color {
         guard isEnabled else { return CivicaColors.brickPrimaryDisabled }
         return isPressed ? CivicaColors.brickPrimaryPressed : CivicaColors.brickPrimary
+    }
+}
+
+/// Secondary CTA button. **48pt min hit target** per HANDOFF.md §1.
+/// Outlined with brick border; fill comes from `secondaryButtonFill` so the
+/// button reads as quiet beside a primary brick CTA.
+public struct CivicaSecondaryCTAButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    public init() {}
+
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundColor(isEnabled ? CivicaColors.brickPrimary : CivicaColors.brickPrimaryDisabled)
+            .padding(.horizontal, CivicaSpacing.lg)
+            .padding(.vertical, CivicaSpacing.sm)
+            .frame(minHeight: 48)
+            .background(
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                    .fill(configuration.isPressed ? CivicaColors.secondaryButtonFillPressed : CivicaColors.secondaryButtonFill)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                    .stroke(isEnabled ? CivicaColors.secondaryButtonBorder : CivicaColors.secondaryButtonDisabledBorder, lineWidth: 1)
+            )
+            .opacity(configuration.isPressed ? 0.9 : 1)
     }
 }
