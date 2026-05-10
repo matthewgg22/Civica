@@ -27,7 +27,10 @@ jobs:
       - name: Show toolchain
         run: |
           xcodebuild -version
+          echo "--- iOS simulator runtimes ---"
           xcrun simctl list runtimes | grep iOS || true
+          echo "--- iPhone simulator devices ---"
+          xcrun simctl list devices available | grep -E 'iPhone' || true
 
       - name: Build & test
         run: |
@@ -35,7 +38,7 @@ jobs:
           xcodebuild test \
             -project Civica.xcodeproj \
             -scheme VoteNow \
-            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.2' \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
             -resultBundlePath TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO
 
