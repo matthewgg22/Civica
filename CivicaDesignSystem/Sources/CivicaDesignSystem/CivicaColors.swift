@@ -93,13 +93,15 @@ public enum CivicaColors {
     public static let destructivePressed   = Color.dynamic(light: "#A1372B", dark: "#C45848")
     public static let destructiveDisabled  = Color.dynamic(light: "#A35B53", dark: "#9D5952")
 
-    /// Soft brick wash — for warm decorative tints, secondary surfaces.
-    /// Replaces legacy `brandSoftRed` semantic.
-    public static let brickSurface         = brickPrimary.opacity(0.10)
+    /// Soft brick wash — solid pastel for warm decorative tints, secondary surfaces.
+    /// Replaces legacy `brandSoftRed` and `infoSurfaceRed`. Solid so consumer
+    /// `.opacity(...)` chains compose predictably.
+    public static let brickSurface         = Color.dynamic(light: "#F1D4C8", dark: "#4A2A22")
 
-    /// Soft teal wash — for cool civic-engagement backgrounds.
-    /// Replaces legacy `brandSoftBlue` semantic. Civic-calm tone.
-    public static let tealSurface          = accentTeal.opacity(0.10)
+    /// Soft teal wash — solid pastel for cool civic-engagement backgrounds.
+    /// Replaces legacy `brandSoftBlue` and `infoSurfaceBlue`. Solid so consumer
+    /// `.opacity(...)` chains compose predictably. Civic-calm tone.
+    public static let tealSurface          = Color.dynamic(light: "#BCE0DA", dark: "#2C4D49")
 }
 
 public extension Color {
