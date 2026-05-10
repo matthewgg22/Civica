@@ -130,6 +130,25 @@ struct SNAPEligibilityIntroView: View {
         .toolbarBackground(CivicaColors.brandSoftBlue, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationDestination(isPresented: $continueToGuidedDraft) {
+            // Route dispatch: when SNAP_CONVERSATION_ENABLED is set at
+            // compile time (see SNAPFeatureFlag.isConversationEnabled),
+            // SNAPRouter.screenerRoute returns .conversation and we
+            // mount the LLM-driven chat. Otherwise we fall back to the
+            // existing static draft flow inside SNAPStepContainerView.
+            screenerDestination
+        }
+    }
+
+    @ViewBuilder
+    private var screenerDestination: some View {
+        switch SNAPRouter.screenerRoute {
+        case .conversation:
+            SNAPConversationFlowView(
+                stateCode: resolvedStateCodeForConversation(),
+                language: "en",
+                onClose: { dismiss() }
+            )
+        default:
             SNAPStepContainerView(viewModel: viewModel) {
                 dismiss()
             }
@@ -139,6 +158,16 @@ struct SNAPEligibilityIntroView: View {
                 viewModel.resetDraftFlow()
             }
         }
+    }
+
+    /// Pick the best USPS state code for the conversation pipeline.
+    /// Prefer the user's typed/geofenced state, then default to MA.
+    private func resolvedStateCodeForConversation() -> String {
+        let typed = (viewModel.application.state ?? "").trimmingCharacters(in: .whitespaces)
+        if !typed.isEmpty {
+            return typed.uppercased()
+        }
+        return "MA"
     }
 
     private func statusDateText(from date: Date) -> String {

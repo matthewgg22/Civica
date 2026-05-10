@@ -17,4 +17,14 @@ enum SNAPFeatureFlag {
     #else
     static let showDebugEntry = false
     #endif
+
+    // Conversation flow (LLM-driven screener). Sub-flag of SNAP_DEV — only
+    // meaningful when isEnabled is true. The static draft flow remains the
+    // fallback when this is false, so we can ship the new vertical without
+    // exposing it until the backend HTTP layer + privacy review have landed.
+    #if SNAP_CONVERSATION_ENABLED
+    static let isConversationEnabled = true
+    #else
+    static let isConversationEnabled = false
+    #endif
 }
