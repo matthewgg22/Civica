@@ -86,7 +86,7 @@ struct SupabaseStatusView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                .stroke(CivicaColors.ctaBlue.opacity(0.18), lineWidth: 1)
+                .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 1)
         )
         .task {
             guard shouldAutoRefresh else { return }

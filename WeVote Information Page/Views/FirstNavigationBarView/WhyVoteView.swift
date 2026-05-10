@@ -284,7 +284,7 @@ struct WhyVoteView: View {
                     label: "2022 Midterm Primary",
                     turnoutPercent: primaryTurnout,
                     summary: formatTurnoutAsOutOfTen(primaryTurnout),
-                    filledColor: CivicaColors.ctaBlue
+                    filledColor: CivicaColors.brickPrimary
                 )
             }
             .padding(CivicaSpacing.md)
@@ -329,14 +329,14 @@ struct WhyVoteView: View {
         } label: {
             Label(l("app.how_to_vote.section.feedback", "Feedback"), systemImage: "bubble.left.and.bubble.right.fill")
                 .font(CivicaTypography.subheadStrong)
-                .foregroundColor(CivicaColors.ctaBlue)
+                .foregroundColor(CivicaColors.brickPrimary)
                 .padding(.horizontal, CivicaSpacing.sm)
                 .padding(.vertical, CivicaSpacing.sm)
                 .background(CivicaColors.surfacePrimary)
                 .clipShape(Capsule(style: .continuous))
                 .overlay(
                     Capsule(style: .continuous)
-                        .stroke(CivicaColors.ctaBlue.opacity(0.34), lineWidth: 1)
+                        .stroke(CivicaColors.brickPrimary.opacity(0.34), lineWidth: 1)
                 )
         }
         .buttonStyle(.plain)

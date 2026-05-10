@@ -45,7 +45,7 @@ struct SNAPStepContainerView: View {
                                         Capsule(style: .continuous)
                                             .stroke(
                                                 selectedProgressStep == step
-                                                    ? CivicaColors.ctaBlue
+                                                    ? CivicaColors.brickPrimary
                                                     : CivicaColors.borderSubtle.opacity(0.45),
                                                 lineWidth: selectedProgressStep == step ? 1.5 : 1
                                             )
@@ -69,7 +69,7 @@ struct SNAPStepContainerView: View {
                                 viewModel.jumpToDraftStep(selectedProgressStep)
                             }
                             .font(CivicaTypography.footnoteStrong)
-                            .foregroundStyle(CivicaColors.ctaBlue)
+                            .foregroundStyle(CivicaColors.brickPrimary)
                             .buttonStyle(.plain)
                         } else if selectedProgressStep == viewModel.draftStep {
                             Text("You are currently on this section.")
@@ -215,7 +215,7 @@ struct SNAPStepContainerView: View {
             return CivicaColors.warningAmber.opacity(0.82)
         case .complete:
             return currentIndex == index
-                ? CivicaColors.ctaBlue
+                ? CivicaColors.brickPrimary
                 : CivicaColors.successGreen.opacity(0.9)
         case .notStarted:
             return currentIndex == index

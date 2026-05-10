@@ -48,7 +48,7 @@ struct LaunchFlowStateCard: View {
     private var iconColor: Color {
         switch state {
         case .loading:
-            return CivicaColors.ctaBlue
+            return CivicaColors.brickPrimary
         case .empty:
             return CivicaColors.textSecondary
         case .error:
@@ -133,15 +133,15 @@ private struct LaunchFlowPrimaryCTAButtonStyle: ButtonStyle {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                    .stroke(CivicaColors.ctaBlue.opacity(0.24), lineWidth: 1)
+                    .stroke(CivicaColors.brickPrimary.opacity(0.24), lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.99 : 1)
             .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
 
     private func backgroundColor(isPressed: Bool) -> Color {
-        guard isEnabled else { return CivicaColors.ctaBlueDisabled }
-        return isPressed ? CivicaColors.ctaBluePressed : CivicaColors.ctaBlue
+        guard isEnabled else { return CivicaColors.brickPrimaryDisabled }
+        return isPressed ? CivicaColors.brickPrimaryPressed : CivicaColors.brickPrimary
     }
 }
 
@@ -151,7 +151,7 @@ private struct LaunchFlowSecondaryCTAButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(CivicaTypography.subheadStrong)
-            .foregroundColor(isEnabled ? CivicaColors.ctaBlue : CivicaColors.textSecondary)
+            .foregroundColor(isEnabled ? CivicaColors.brickPrimary : CivicaColors.textSecondary)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(
                 RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)

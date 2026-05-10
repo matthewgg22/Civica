@@ -268,11 +268,11 @@ struct RunoffThresholdGateView: View {
             }
         } label: {
             Circle()
-                .fill(isSelected ? CivicaColors.ctaBlue : CivicaColors.borderSubtle.opacity(0.9))
+                .fill(isSelected ? CivicaColors.brickPrimary : CivicaColors.borderSubtle.opacity(0.9))
                 .frame(width: isSelected ? 10 : 8, height: isSelected ? 10 : 8)
                 .overlay(
                     Circle()
-                        .stroke(CivicaColors.ctaBlue.opacity(isSelected ? 0 : 0.35), lineWidth: 1)
+                        .stroke(CivicaColors.brickPrimary.opacity(isSelected ? 0 : 0.35), lineWidth: 1)
                 )
         }
         .buttonStyle(.plain)

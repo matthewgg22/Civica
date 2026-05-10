@@ -170,7 +170,7 @@ struct MyInfoPanelView: View {
                                     locationFieldFocused = true
                                 }
                                 .font(CivicaTypography.footnoteStrong)
-                                .foregroundColor(CivicaColors.ctaBlue)
+                                .foregroundColor(CivicaColors.brickPrimary)
                                 .buttonStyle(.plain)
                             }
                         }
@@ -190,11 +190,11 @@ struct MyInfoPanelView: View {
                             .padding(.vertical, CivicaSpacing.sm)
                         }
                         .background(CivicaColors.surfacePrimary)
-                        .foregroundColor(CivicaColors.ctaBlue)
+                        .foregroundColor(CivicaColors.brickPrimary)
                         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                                .stroke(CivicaColors.ctaBlue.opacity(0.22), lineWidth: 1)
+                                .stroke(CivicaColors.brickPrimary.opacity(0.22), lineWidth: 1)
                         )
                         .buttonStyle(.plain)
                         .disabled(isResolvingCurrentAddress || isSavingAddress)
@@ -247,7 +247,7 @@ struct MyInfoPanelView: View {
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: sectionCornerRadius, style: .continuous)
-                            .stroke(CivicaColors.ctaBlue.opacity(0.10), lineWidth: 1)
+                            .stroke(CivicaColors.brickPrimary.opacity(0.10), lineWidth: 1)
                     )
                 } header: {
                     Text("my_info.section.zip.header", tableName: "MyInfoPanel")
@@ -312,7 +312,7 @@ struct MyInfoPanelView: View {
                                 systemImage: "bubble.left.and.bubble.right.fill"
                             )
                             .font(CivicaTypography.subheadStrong)
-                            .foregroundColor(CivicaColors.ctaBlue)
+                            .foregroundColor(CivicaColors.brickPrimary)
                             .padding(.horizontal, CivicaSpacing.sm)
                             .padding(.vertical, CivicaSpacing.sm)
                             .frame(maxWidth: .infinity)
@@ -320,7 +320,7 @@ struct MyInfoPanelView: View {
                             .clipShape(Capsule(style: .continuous))
                             .overlay(
                                 Capsule(style: .continuous)
-                                    .stroke(CivicaColors.ctaBlue.opacity(0.30), lineWidth: 1)
+                                    .stroke(CivicaColors.brickPrimary.opacity(0.30), lineWidth: 1)
                             )
                         }
                         .buttonStyle(.plain)

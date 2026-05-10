@@ -338,7 +338,7 @@ struct ElectionTimelineView: View {
                         Text(l("app.reps.action.edit_location", "Change Location"))
                             .font(CivicaTypography.supportStrong)
                             .italic()
-                            .foregroundColor(CivicaColors.ctaBlue)
+                            .foregroundColor(CivicaColors.brickPrimary)
                             .lineLimit(1)
                     }
                     .buttonStyle(.plain)
@@ -691,7 +691,7 @@ struct ElectionTimelineView: View {
 
                         if shadeWidth > 1 {
                             RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
-                                .fill(CivicaColors.ctaBlue.opacity(0.2))
+                                .fill(CivicaColors.brickPrimary.opacity(0.2))
                                 .frame(width: shadeWidth, height: 14)
                                 .position(x: startX + (shadeWidth / 2), y: lineY)
                         }
@@ -777,7 +777,7 @@ struct ElectionTimelineView: View {
                         } label: {
                             ZStack {
                                 Circle()
-                                    .fill(isFocused ? CivicaColors.timelineFocusGold : CivicaColors.ctaBlue)
+                                    .fill(isFocused ? CivicaColors.timelineFocusGold : CivicaColors.brickPrimary)
                                 Circle()
                                     .stroke(Color.white, lineWidth: 2)
                                 if isFocused {
@@ -987,7 +987,7 @@ struct ElectionTimelineView: View {
                 Button(action: { handleFlagTap(for: election) }) {
                     Image(systemName: "arrowshape.turn.up.right.circle.fill")
                         .font(.system(size: 26, weight: .regular))
-                        .foregroundColor(CivicaColors.ctaBlue)
+                        .foregroundColor(CivicaColors.brickPrimary)
                         .frame(width: 30, height: 30)
                 }
                 .buttonStyle(.plain)
@@ -1094,7 +1094,7 @@ struct ElectionTimelineView: View {
                         .font(CivicaTypography.subheadStrong)
                         .foregroundColor(CivicaColors.textPrimary)
                 }
-                .tint(CivicaColors.ctaBlue)
+                .tint(CivicaColors.brickPrimary)
             }
 
             if !advisoryLines.isEmpty {
@@ -1198,7 +1198,7 @@ struct ElectionTimelineView: View {
                 .fill(CivicaColors.infoSurfaceBlue)
             Text(code ?? "US")
                 .font(CivicaTypography.captionBold)
-                .foregroundColor(CivicaColors.ctaBlue)
+                .foregroundColor(CivicaColors.brickPrimary)
         }
     }
 
@@ -1262,7 +1262,7 @@ struct ElectionTimelineView: View {
             HStack(spacing: CivicaSpacing.xs) {
                 Image(systemName: icon)
                     .font(CivicaTypography.captionStrong)
-                    .foregroundColor(CivicaColors.ctaBlue)
+                    .foregroundColor(CivicaColors.brickPrimary)
                 Text(title)
                     .font(CivicaTypography.captionStrong)
                     .foregroundColor(CivicaColors.textSecondary)
@@ -1469,7 +1469,7 @@ struct ElectionTimelineView: View {
             } else {
                 Image(systemName: "building.columns.fill")
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(CivicaColors.ctaBlue)
+                    .foregroundColor(CivicaColors.brickPrimary)
             }
         }
     }
@@ -1522,7 +1522,7 @@ struct ElectionTimelineView: View {
                 : ""
             let color: Color
             if partyToken == "D" {
-                color = CivicaColors.ctaBlue
+                color = CivicaColors.brickPrimary
             } else if partyToken == "R" {
                 color = CivicaColors.ctaRed
             } else {
@@ -1548,7 +1548,7 @@ struct ElectionTimelineView: View {
         case .democrat:
             return PartyBadgeStyle(
                 title: l("app.timeline.party.democrat", "Democrat"),
-                foreground: CivicaColors.ctaBlue,
+                foreground: CivicaColors.brickPrimary,
                 background: CivicaColors.infoSurfaceBlue
             )
         case .republican:
@@ -4456,7 +4456,7 @@ struct ElectionTimelineView: View {
     }
 
     private func countdownBackgroundColor(for election: Election) -> Color {
-        CivicaColors.ctaBlue
+        CivicaColors.brickPrimary
     }
 
     private func countdownForegroundColor(for election: Election) -> Color {

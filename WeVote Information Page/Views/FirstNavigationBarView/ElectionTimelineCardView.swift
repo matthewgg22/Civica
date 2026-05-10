@@ -26,7 +26,7 @@ struct ElectionTimelineCardView: View {
                 Button(action: onFlag) {
                     Image(systemName: "flag")
                         .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(CivicaColors.ctaBlue)
+                        .foregroundColor(CivicaColors.brickPrimary)
                         .frame(width: 36, height: 36)
                         .background(
                             Circle()
@@ -62,7 +62,7 @@ struct ElectionTimelineCardView: View {
                 if let badgeText, !badgeText.isEmpty {
                     Text(badgeText)
                         .font(CivicaTypography.captionStrong)
-                        .foregroundColor(CivicaColors.ctaBlue)
+                        .foregroundColor(CivicaColors.brickPrimary)
                         .padding(.horizontal, CivicaSpacing.sm)
                         .padding(.vertical, CivicaSpacing.xs)
                         .background(CivicaColors.infoSurfaceBlue)
@@ -84,7 +84,7 @@ struct ElectionTimelineCardView: View {
                 .foregroundColor(canMakePlan ? .white : CivicaColors.textPrimary.opacity(0.75))
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                        .fill(canMakePlan ? CivicaColors.ctaBlue : CivicaColors.infoSurfaceBlue)
+                        .fill(canMakePlan ? CivicaColors.brickPrimary : CivicaColors.infoSurfaceBlue)
                 )
             }
         }

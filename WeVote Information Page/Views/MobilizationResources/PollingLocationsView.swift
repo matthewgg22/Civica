@@ -165,7 +165,7 @@ struct PollingLocationsView: View {
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                .stroke(CivicaColors.ctaBlue.opacity(0.16), lineWidth: 1)
+                .stroke(CivicaColors.brickPrimary.opacity(0.16), lineWidth: 1)
         )
         .padding(.horizontal)
     }
@@ -246,7 +246,7 @@ struct PollingLocationsView: View {
             } label: {
                 Image(systemName: "arrow.triangle.turn.up.right.diamond.fill")
                     .font(.title3)
-                    .foregroundColor(CivicaColors.ctaBlue)
+                    .foregroundColor(CivicaColors.brickPrimary)
             }
             .buttonStyle(.plain)
         }
@@ -256,7 +256,7 @@ struct PollingLocationsView: View {
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .fill(
                     selectedPlace?.id == place.id
-                    ? CivicaColors.ctaBlue.opacity(0.14)
+                    ? CivicaColors.brickPrimary.opacity(0.14)
                     : CivicaColors.infoSurfaceBlue
                 )
         )
@@ -264,7 +264,7 @@ struct PollingLocationsView: View {
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
                 .stroke(
                     selectedPlace?.id == place.id
-                    ? CivicaColors.ctaBlue.opacity(0.45)
+                    ? CivicaColors.brickPrimary.opacity(0.45)
                     : CivicaColors.textPrimary.opacity(0.05),
                     lineWidth: 1
                 )
@@ -520,7 +520,7 @@ private struct PollingLocationPinView: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(isSelected ? Color(red: 0.87, green: 0.35, blue: 0.27) : CivicaColors.ctaBlue)
+                .fill(isSelected ? Color(red: 0.87, green: 0.35, blue: 0.27) : CivicaColors.brickPrimary)
                 .frame(width: 24, height: 24)
             Image(systemName: "mappin")
                 .font(CivicaTypography.captionBold)

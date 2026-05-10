@@ -251,9 +251,9 @@ struct MobilizationView: View {
                                             .padding(.vertical, CivicaSpacing.md)
                                     }
                                     .buttonStyle(MAPVUtilityButtonStyle(
-                                        fill: CivicaColors.ctaBlue,
+                                        fill: CivicaColors.brickPrimary,
                                         foreground: .white,
-                                        border: CivicaColors.ctaBlue.opacity(0.85)
+                                        border: CivicaColors.brickPrimary.opacity(0.85)
                                     ))
                                     .padding(.horizontal)
                                 }
@@ -266,7 +266,7 @@ struct MobilizationView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, CivicaSpacing.md)
                             .padding(.horizontal, CivicaSpacing.lg)
-                            .background(CivicaColors.ctaBlue)
+                            .background(CivicaColors.brickPrimary)
                             .foregroundColor(.white)
                             .clipShape(Capsule(style: .continuous))
                             .voteNowPillDualOrbit(
@@ -295,7 +295,7 @@ struct MobilizationView: View {
                                                 .fixedSize(horizontal: true, vertical: true)
                                         } else if section == .feedback {
                                             Image(systemName: "bubble.left.and.bubble.right.fill")
-                                                .foregroundColor(CivicaColors.ctaBlue)
+                                                .foregroundColor(CivicaColors.brickPrimary)
                                                 .frame(width: 30, alignment: .center)
                                         }
                                         Text(section.localizedTitle(locale: locale))
@@ -805,7 +805,7 @@ struct FeedbackView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, CivicaSpacing.md)
-                        .background(canSend ? CivicaColors.ctaBlue : CivicaColors.borderSubtle.opacity(0.6))
+                        .background(canSend ? CivicaColors.brickPrimary : CivicaColors.borderSubtle.opacity(0.6))
                         .foregroundColor(.white)
                         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                     }
@@ -941,7 +941,7 @@ private struct FeedbackSubmissionConfirmationView: View {
             .font(CivicaTypography.sectionHeader)
             .frame(maxWidth: .infinity)
             .padding(.vertical, CivicaSpacing.md)
-            .background(CivicaColors.ctaBlue)
+            .background(CivicaColors.brickPrimary)
             .foregroundColor(.white)
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
             .buttonStyle(.plain)

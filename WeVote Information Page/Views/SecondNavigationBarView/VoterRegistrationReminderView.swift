@@ -43,7 +43,7 @@ struct VoterRegistrationReminderView: View {
                     .font(CivicaTypography.sectionHeader)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, CivicaSpacing.md)
-                    .background(CivicaColors.ctaBlue.cornerRadius(CivicaRadius.sm))
+                    .background(CivicaColors.brickPrimary.cornerRadius(CivicaRadius.sm))
                     .foregroundColor(.white)
             }
 

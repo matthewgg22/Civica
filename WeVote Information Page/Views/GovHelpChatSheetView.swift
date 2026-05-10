@@ -187,7 +187,7 @@ struct GovHelpChatSheetView: View {
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(width: 38, height: 38)
-                    .background(CivicaColors.ctaBlue)
+                    .background(CivicaColors.brickPrimary)
                     .clipShape(Circle())
             }
             .disabled(trimmedInput.isEmpty || isSending)
@@ -275,7 +275,7 @@ struct GovHelpChatSheetView: View {
         if message.isError {
             return CivicaColors.infoSurfaceRed
         }
-        return isUser ? CivicaColors.ctaBlue : CivicaColors.surfacePrimary
+        return isUser ? CivicaColors.brickPrimary : CivicaColors.surfacePrimary
     }
 
     private func contexts(for recommendedIDs: [String]) -> [RepCardContext] {
@@ -383,7 +383,7 @@ private struct GovHelpDestinationLinksView: View {
                 Link(destination: destination.url) {
                     Label(localizedDestinationLabel(destination), systemImage: "link")
                         .font(CivicaTypography.footnoteStrong)
-                        .foregroundColor(CivicaColors.ctaBlue)
+                        .foregroundColor(CivicaColors.brickPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.vertical, CivicaSpacing.xs)
                 }

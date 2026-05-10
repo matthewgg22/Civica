@@ -331,7 +331,7 @@ struct MyRepsView: View {
 
     private var matchedSegments: [MatchedSegment] {
         [
-            MatchedSegment(id: "federal", title: "Federal", count: matchedFederalCount, countColor: CivicaColors.ctaBlue),
+            MatchedSegment(id: "federal", title: "Federal", count: matchedFederalCount, countColor: CivicaColors.brickPrimary),
             MatchedSegment(id: "state", title: "State", count: matchedStateCount, countColor: CivicaColors.successGreen),
             MatchedSegment(id: "local", title: "Local", count: matchedLocalCount, countColor: CivicaColors.warningAmber)
         ]
@@ -347,7 +347,7 @@ struct MyRepsView: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, CivicaSpacing.md)
                 .padding(.vertical, CivicaSpacing.md)
-                .background(CivicaColors.ctaBlue)
+                .background(CivicaColors.brickPrimary)
                 .clipShape(Capsule())
                 .shadow(color: CivicaColors.textPrimary.opacity(0.18), radius: 4, x: 0, y: 2)
         }
@@ -423,7 +423,7 @@ struct MyRepsView: View {
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(.white)
                     .frame(width: 32, height: 32)
-                    .background(CivicaColors.ctaBlue)
+                    .background(CivicaColors.brickPrimary)
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
@@ -440,7 +440,7 @@ struct MyRepsView: View {
             Text(l("app.reps.action.edit_location", "Change Location"))
                 .font(CivicaTypography.supportStrong)
                 .italic()
-                .foregroundColor(CivicaColors.ctaBlue)
+                .foregroundColor(CivicaColors.brickPrimary)
                 .lineLimit(1)
         }
         .buttonStyle(.plain)
@@ -481,7 +481,7 @@ struct MyRepsView: View {
                 } label: {
                     Image(systemName: "arrow.up.left.and.arrow.down.right")
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(CivicaColors.ctaBlue)
+                        .foregroundColor(CivicaColors.brickPrimary)
                         .padding(CivicaSpacing.sm)
                         .background(CivicaColors.surfacePrimary.opacity(0.96))
                         .overlay(
@@ -522,7 +522,7 @@ struct MyRepsView: View {
                     repsVM.resetMapToNationalView()
                 }
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(CivicaColors.ctaBlue)
+                .foregroundColor(CivicaColors.brickPrimary)
                 .buttonStyle(.plain)
             }
         }
@@ -697,7 +697,7 @@ private struct MyRepsFullScreenMapView: View {
                 } label: {
                     Image(systemName: "xmark")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(CivicaColors.ctaBlue)
+                        .foregroundColor(CivicaColors.brickPrimary)
                         .frame(width: 34, height: 34)
                         .background(CivicaColors.surfacePrimary.opacity(0.96))
                         .overlay(
@@ -716,7 +716,7 @@ private struct MyRepsFullScreenMapView: View {
                         onResetMap()
                     }
                     .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(CivicaColors.ctaBlue)
+                    .foregroundColor(CivicaColors.brickPrimary)
                     .padding(.horizontal, CivicaSpacing.md)
                     .padding(.vertical, CivicaSpacing.sm)
                     .background(CivicaColors.surfacePrimary.opacity(0.96))

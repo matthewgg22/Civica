@@ -277,12 +277,12 @@ struct SupportVoteView: View {
                         .frame(height: 40)
                         .background(
                             RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                                .fill(selectedAmount == preset ? CivicaColors.ctaBlue : CivicaColors.infoSurfaceBlue)
+                                .fill(selectedAmount == preset ? CivicaColors.brickPrimary : CivicaColors.infoSurfaceBlue)
                         )
                         .foregroundStyle(selectedAmount == preset ? CivicaColors.surfacePrimary : CivicaColors.textPrimary)
                         .overlay(
                             RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                                .stroke(selectedAmount == preset ? CivicaColors.ctaBlue : CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
+                                .stroke(selectedAmount == preset ? CivicaColors.brickPrimary : CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
                         )
                 }
                 .buttonStyle(.plain)

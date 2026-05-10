@@ -398,9 +398,9 @@ private struct MAPVFlowView: View {
         HStack(spacing: CivicaSpacing.sm) {
             Image(systemName: flowModel.steps[flowModel.currentStepIndex].icon)
                 .font(.title2.weight(.bold))
-                .foregroundStyle(CivicaColors.ctaBlue)
+                .foregroundStyle(CivicaColors.brickPrimary)
                 .frame(width: 36, height: 36)
-                .background(Circle().fill(CivicaColors.ctaBlue.opacity(0.13)))
+                .background(Circle().fill(CivicaColors.brickPrimary.opacity(0.13)))
             Text(stepTitle(for: flowModel.steps[flowModel.currentStepIndex]))
                 .font(CivicaTypography.cardTitle)
                 .lineLimit(2)
@@ -447,7 +447,7 @@ private struct MAPVFlowView: View {
                     onNext()
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(CivicaColors.ctaBlue)
+                .tint(CivicaColors.brickPrimary)
                 .frame(minWidth: 78)
                 .disabled(!flowModel.canAdvance(from: flowModel.currentStepIndex))
                 .accessibilityHint(
@@ -460,7 +460,7 @@ private struct MAPVFlowView: View {
                     onFinish()
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(CivicaColors.ctaBlue)
+                .tint(CivicaColors.brickPrimary)
                 .frame(minWidth: 78)
                 .disabled(!flowModel.canAdvance(from: flowModel.currentStepIndex))
                 .accessibilityHint(l("app.mapv.accessibility.hint.finish", "Build your final voter plan card"))
@@ -604,7 +604,7 @@ private struct MAPVStepIndicator: View {
     }
 
     private func color(for index: Int) -> Color {
-        if index == currentStep { return CivicaColors.ctaBlue }
+        if index == currentStep { return CivicaColors.brickPrimary }
         if isStepComplete(index) { return .green }
         return .secondary
     }
@@ -671,7 +671,7 @@ struct StepOneView: View {
             VotingMethodCard(
                 methodTitle: methodTitle(for: .mail),
                 emoji: "✉️",
-                accentColor: CivicaColors.ctaBlue,
+                accentColor: CivicaColors.brickPrimary,
                 isSelected: selectedMethod == .mail,
                 action: { selectedMethod = .mail }
             ) {
@@ -944,7 +944,7 @@ struct AbsenteeView: View {
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, CivicaSpacing.md)
-                                    .background(CivicaColors.ctaBlue)
+                                    .background(CivicaColors.brickPrimary)
                                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                             }
                             .accessibilityLabel(
@@ -960,7 +960,7 @@ struct AbsenteeView: View {
                             Link(destination: officialURL) {
                                 Text(l("app.mapv.absentee.action.official_info", "Official voter info"))
                                     .font(CivicaTypography.subheadStrong)
-                                    .foregroundColor(CivicaColors.ctaBlue)
+                                    .foregroundColor(CivicaColors.brickPrimary)
                             }
                             .accessibilityLabel(
                                 lf(
@@ -1042,7 +1042,7 @@ struct AbsenteeView: View {
 
                     if index < rows.count - 1 {
                         Divider()
-                            .background(CivicaColors.ctaBlue.opacity(0.2))
+                            .background(CivicaColors.brickPrimary.opacity(0.2))
                     }
                 }
 
@@ -1068,7 +1068,7 @@ struct AbsenteeView: View {
                     Link(destination: sourceURL) {
                         Text(l("app.mapv.absentee.source", "Source"))
                             .font(CivicaTypography.footnoteStrong)
-                            .foregroundColor(CivicaColors.ctaBlue)
+                            .foregroundColor(CivicaColors.brickPrimary)
                     }
                     .accessibilityLabel(l("app.mapv.absentee.source.a11y", "Open request deadline source"))
                 }
@@ -1079,7 +1079,7 @@ struct AbsenteeView: View {
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                    .stroke(CivicaColors.ctaBlue.opacity(0.18), lineWidth: 1)
+                    .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 1)
             )
         } else {
             fallbackDeadlinesCard
@@ -1102,7 +1102,7 @@ struct AbsenteeView: View {
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                .stroke(CivicaColors.ctaBlue.opacity(0.18), lineWidth: 1)
+                .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 1)
         )
     }
 
@@ -1594,11 +1594,11 @@ private struct MAPVDayRailSelector: View {
             .padding(.vertical, CivicaSpacing.sm)
             .background(
                 RoundedRectangle(cornerRadius: MAPVDayRailConstants.cellCornerRadius, style: .continuous)
-                    .fill(isSelected ? CivicaColors.ctaBlue.opacity(0.20) : CivicaColors.surfacePrimary.opacity(0.65))
+                    .fill(isSelected ? CivicaColors.brickPrimary.opacity(0.20) : CivicaColors.surfacePrimary.opacity(0.65))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: MAPVDayRailConstants.cellCornerRadius, style: .continuous)
-                    .stroke(isSelected ? CivicaColors.ctaBlue : CivicaColors.textPrimary.opacity(0.08), lineWidth: isSelected ? 1.2 : 1)
+                    .stroke(isSelected ? CivicaColors.brickPrimary : CivicaColors.textPrimary.opacity(0.08), lineWidth: isSelected ? 1.2 : 1)
             )
         }
         .buttonStyle(.plain)
@@ -1771,7 +1771,7 @@ private enum CrowdCue: String {
 
     var tint: Color {
         switch self {
-        case .good: return CivicaColors.ctaBlue
+        case .good: return CivicaColors.brickPrimary
         case .busy: return CivicaColors.warningAmber
         case .neutral: return CivicaColors.textSecondary
         }
@@ -1991,7 +1991,7 @@ private struct MAPVTimeSlider: View {
                             .frame(height: MAPVTimeVisualConstants.trackHeight)
 
                         Capsule()
-                            .fill(CivicaColors.ctaBlue.opacity(0.16))
+                            .fill(CivicaColors.brickPrimary.opacity(0.16))
                             .frame(width: highlightWidth, height: MAPVTimeVisualConstants.trackHeight + 6)
                             .offset(x: min(max(thumbX - (highlightWidth / 2), 0), width - highlightWidth))
 
@@ -2000,7 +2000,7 @@ private struct MAPVTimeSlider: View {
                             .frame(width: MAPVTimeVisualConstants.thumbSize, height: MAPVTimeVisualConstants.thumbSize)
                             .overlay(
                                 Circle()
-                                    .stroke(CivicaColors.ctaBlue.opacity(0.75), lineWidth: 3)
+                                    .stroke(CivicaColors.brickPrimary.opacity(0.75), lineWidth: 3)
                             )
                             .shadow(color: .black.opacity(0.20), radius: 4, x: 0, y: 2)
                             .offset(x: thumbX - (MAPVTimeVisualConstants.thumbSize / 2))

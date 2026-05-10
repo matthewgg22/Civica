@@ -200,7 +200,7 @@ struct NYCMayoralElectionView: View {
                     Text(l("app.reps.action.my_info", "My Info") + "...")
                         .font(CivicaTypography.supportStrong)
                         .italic()
-                        .foregroundColor(CivicaColors.ctaBlue)
+                        .foregroundColor(CivicaColors.brickPrimary)
                         .lineLimit(1)
                 }
                 .buttonStyle(.plain)
@@ -2368,7 +2368,7 @@ struct NYCMayoralElectionView: View {
                 (
                     Text("• ").foregroundColor(CivicaColors.textPrimary)
                     + Text("Registered Democrat")
-                        .foregroundColor(CivicaColors.ctaBlue)
+                        .foregroundColor(CivicaColors.brickPrimary)
                         .bold()
                         .fontWeight(.heavy)
                     + Text(": Only Democrats advance to the general election.")
@@ -2651,14 +2651,14 @@ struct NYCMayoralElectionView: View {
 
                                 Text(isExpanded ? "Tap to collapse" : "Tap to expand")
                                     .font(CivicaTypography.captionStrong)
-                                    .foregroundColor(CivicaColors.ctaBlue)
+                                    .foregroundColor(CivicaColors.brickPrimary)
                             }
 
                             Spacer(minLength: 8)
 
                             Image(systemName: isExpanded ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
                                 .font(.subheadline)
-                                .foregroundColor(CivicaColors.ctaBlue.opacity(0.9))
+                                .foregroundColor(CivicaColors.brickPrimary.opacity(0.9))
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -2776,7 +2776,7 @@ struct NYCMayoralElectionView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, CivicaSpacing.sm)
                     .padding(.vertical, CivicaSpacing.sm)
-                    .background(CivicaColors.ctaBlue)
+                    .background(CivicaColors.brickPrimary)
                     .clipShape(Capsule())
             }
             .buttonStyle(.plain)
@@ -3198,7 +3198,7 @@ private enum ElectionGuideCardAccent {
         case .neutral:
             return CivicaColors.textPrimary
         case .primary:
-            return CivicaColors.ctaBlue
+            return CivicaColors.brickPrimary
         case .primaryHighlight:
             return CivicaColors.successGreen
         case .midterm:
@@ -3208,7 +3208,7 @@ private enum ElectionGuideCardAccent {
         case .runoff:
             return CivicaColors.ctaRed
         case .presidential:
-            return CivicaColors.ctaBlue
+            return CivicaColors.brickPrimary
         case .special:
             return CivicaColors.ctaRed
         case .specialRules:

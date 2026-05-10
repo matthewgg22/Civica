@@ -100,7 +100,7 @@ struct SNAPEntryView: View {
                             Text("Edit location")
                                 .font(CivicaTypography.supportStrong)
                                 .italic()
-                                .foregroundColor(CivicaColors.ctaBlue)
+                                .foregroundColor(CivicaColors.brickPrimary)
                                 .lineLimit(1)
                         }
                         .buttonStyle(.plain)
@@ -133,7 +133,7 @@ struct SNAPEntryView: View {
                                     .scaledToFit()
                                     .frame(width: 124, height: 124)
                             }
-                            .shadow(color: CivicaColors.ctaBlue.opacity(0.14), radius: 8, x: 0, y: 4)
+                            .shadow(color: CivicaColors.brickPrimary.opacity(0.14), radius: 8, x: 0, y: 4)
 
                             Text("Supplemental Nutrition\nAssistance Program")
                                 .font(CivicaTypography.sectionHeader)
@@ -184,7 +184,7 @@ struct SNAPEntryView: View {
 
                                 Text("Open next steps")
                                     .font(CivicaTypography.subheadStrong)
-                                    .foregroundStyle(CivicaColors.ctaBlue)
+                                    .foregroundStyle(CivicaColors.brickPrimary)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(CivicaSpacing.md)

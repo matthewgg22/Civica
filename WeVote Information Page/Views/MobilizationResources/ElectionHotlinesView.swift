@@ -28,7 +28,7 @@ struct ElectionHotlinesView: View {
 
                     HStack {
                         Image(systemName: "phone.circle.fill")
-                            .foregroundColor(CivicaColors.ctaBlue)
+                            .foregroundColor(CivicaColors.brickPrimary)
                         hotlineNumberLink(display: "(866-390-2992)", digits: "8663902992")
                     }
                 }
@@ -70,7 +70,7 @@ struct ElectionHotlinesView: View {
         if let telURL = URL(string: "tel:\(digits)") {
             Link(display, destination: telURL)
                 .fontWeight(.medium)
-                .foregroundColor(CivicaColors.ctaBlue)
+                .foregroundColor(CivicaColors.brickPrimary)
         } else {
             Text(display)
                 .fontWeight(.medium)

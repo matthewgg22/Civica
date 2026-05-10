@@ -211,7 +211,7 @@ struct MAPVCardView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
-                .stroke(CivicaColors.ctaBlue.opacity(0.25), lineWidth: 1)
+                .stroke(CivicaColors.brickPrimary.opacity(0.25), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous))
         .animation(reduceMotion ? nil : CivicaAnimation.standard, value: presentation.status)
@@ -373,7 +373,7 @@ struct MAPVCardView: View {
 
     private func color(for token: MAPVStatusColorToken) -> Color {
         switch token {
-        case .blue: return CivicaColors.ctaBlue
+        case .blue: return CivicaColors.brickPrimary
         case .green: return CivicaColors.successGreen
         case .orange: return CivicaColors.warningAmber
         case .red: return CivicaColors.ctaRed
@@ -438,7 +438,7 @@ struct MAPVCardView: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                    .stroke(CivicaColors.ctaBlue.opacity(0.38), lineWidth: 1)
+                    .stroke(CivicaColors.brickPrimary.opacity(0.38), lineWidth: 1)
             )
         }
     }
@@ -579,13 +579,13 @@ private struct MAPVPrimaryActionButtonStyle: ButtonStyle {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                    .stroke(CivicaColors.ctaBlue.opacity(0.24), lineWidth: 1)
+                    .stroke(CivicaColors.brickPrimary.opacity(0.24), lineWidth: 1)
             )
     }
 
     private func backgroundColor(isPressed: Bool) -> Color {
-        guard isEnabled else { return CivicaColors.ctaBlueDisabled }
-        return isPressed ? CivicaColors.ctaBluePressed : CivicaColors.ctaBlue
+        guard isEnabled else { return CivicaColors.brickPrimaryDisabled }
+        return isPressed ? CivicaColors.brickPrimaryPressed : CivicaColors.brickPrimary
     }
 }
 

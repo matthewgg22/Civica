@@ -31,7 +31,7 @@ struct ReviewPromptView: View {
                     .font(CivicaTypography.sectionHeader)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, minHeight: 44)
-                    .background(CivicaColors.ctaBlue)
+                    .background(CivicaColors.brickPrimary)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
             }
         }

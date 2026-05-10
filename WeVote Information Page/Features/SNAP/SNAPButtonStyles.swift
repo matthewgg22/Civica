@@ -8,7 +8,7 @@ struct SNAPSecondaryCTAButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundColor(isEnabled ? CivicaColors.ctaBlue : CivicaColors.ctaBlueDisabled)
+            .foregroundColor(isEnabled ? CivicaColors.brickPrimary : CivicaColors.brickPrimaryDisabled)
             .padding(.horizontal, CivicaSpacing.md)
             .padding(.vertical, CivicaSpacing.sm)
             .background(

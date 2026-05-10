@@ -38,7 +38,7 @@ struct HowToVoteView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity, alignment: .center)
                                 .padding(.vertical, CivicaSpacing.md)
-                                .background(CivicaColors.ctaBlue)
+                                .background(CivicaColors.brickPrimary)
                                 .clipShape(Capsule(style: .continuous))
                                 .voteNowPillDualOrbit(
                                     redColor: CivicaColors.partyRepublican.opacity(0.94),

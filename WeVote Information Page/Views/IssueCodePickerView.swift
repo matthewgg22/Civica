@@ -18,11 +18,11 @@ struct IssueCodePickerView: View {
                             .lineLimit(1)
                             .padding(.horizontal, CivicaSpacing.md)
                             .padding(.vertical, CivicaSpacing.sm)
-                            .background(isSelected ? CivicaColors.ctaBlue : CivicaColors.surfacePrimary)
+                            .background(isSelected ? CivicaColors.brickPrimary : CivicaColors.surfacePrimary)
                             .clipShape(Capsule())
                             .overlay(
                                 Capsule()
-                                    .stroke(isSelected ? CivicaColors.ctaBlue : CivicaColors.borderSubtle, lineWidth: 1)
+                                    .stroke(isSelected ? CivicaColors.brickPrimary : CivicaColors.borderSubtle, lineWidth: 1)
                             )
                     }
                     .buttonStyle(.plain)
