@@ -6,6 +6,7 @@
 //  Updated by ChatGPT on 05/27/25 (force light mode)
 //
 
+import CivicaDesignSystem
 import SwiftUI
 import StripePaymentSheet
 import OSLog
@@ -67,6 +68,7 @@ struct CivicaApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     init() {
+        CivicaFonts.register()
         SupabaseConfig.validateLaunchConfiguration()
 
         guard let publishableKey = Self.stripePublishableKey() else {
