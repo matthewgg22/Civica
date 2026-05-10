@@ -115,7 +115,7 @@ struct SupabaseStatusView: View {
         if authStore.isSignedIn {
             return StatusIndicator(
                 iconName: "checkmark.circle.fill",
-                tint: CivicaColors.successGreen,
+                tint: CivicaColors.accentTeal,
                 surface: CivicaColors.statusSuccessSurface
             )
         }
@@ -137,7 +137,7 @@ struct SupabaseStatusView: View {
         if healthStatus.isHealthy {
             return StatusIndicator(
                 iconName: "checkmark.seal.fill",
-                tint: CivicaColors.successGreen,
+                tint: CivicaColors.accentTeal,
                 surface: CivicaColors.statusSuccessSurface
             )
         }
@@ -166,7 +166,7 @@ struct SupabaseStatusView: View {
                 }
                 Text(value)
                     .font(CivicaTypography.subhead)
-                    .foregroundStyle(CivicaColors.textSecondary)
+                    .foregroundStyle(CivicaColors.graphite)
                     .multilineTextAlignment(.trailing)
                     .lineLimit(2)
             }

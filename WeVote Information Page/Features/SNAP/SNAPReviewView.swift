@@ -20,7 +20,7 @@ struct SNAPReviewView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                 Text("Review your SNAP draft")
                     .font(.title3.weight(.semibold))
-                    .foregroundStyle(CivicaColors.textPrimary)
+                    .foregroundStyle(CivicaColors.ink)
 
                 Text("Review this before using it to complete your official state application.")
                     .font(CivicaTypography.footnote)
@@ -28,7 +28,7 @@ struct SNAPReviewView: View {
 
                 Text(SNAPCopy.globalDisclaimer)
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundStyle(CivicaColors.textSecondary)
+                    .foregroundStyle(CivicaColors.graphite)
                     .fixedSize(horizontal: false, vertical: true)
 
                 SNAPReviewSectionCard(
@@ -156,7 +156,7 @@ private struct SNAPReviewSectionCard: View {
             HStack {
                 Text(title)
                     .font(CivicaTypography.sectionHeader)
-                    .foregroundStyle(CivicaColors.textPrimary)
+                    .foregroundStyle(CivicaColors.ink)
                 Spacer()
                 Button("Edit") {
                     onEdit()
@@ -170,11 +170,11 @@ private struct SNAPReviewSectionCard: View {
                 HStack(alignment: .top) {
                     Text(row.label)
                         .font(CivicaTypography.subheadStrong)
-                        .foregroundStyle(CivicaColors.textPrimary)
+                        .foregroundStyle(CivicaColors.ink)
                     Spacer(minLength: 12)
                     Text(row.value)
                         .font(CivicaTypography.subhead)
-                        .foregroundStyle(CivicaColors.textSecondary)
+                        .foregroundStyle(CivicaColors.graphite)
                         .multilineTextAlignment(.trailing)
                 }
             }
@@ -186,7 +186,7 @@ private struct SNAPReviewSectionCard: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
 }

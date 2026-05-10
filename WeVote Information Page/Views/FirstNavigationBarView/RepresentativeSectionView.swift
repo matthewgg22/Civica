@@ -6,7 +6,7 @@ private func partyTint(_ party: String?) -> Color {
     let normalized = (party ?? "").lowercased()
     if normalized.contains("democrat") { return CivicaColors.partyDemocrat }
     if normalized.contains("republican") { return CivicaColors.partyRepublican }
-    return CivicaColors.textSecondary
+    return CivicaColors.graphite
 }
 
 private func shouldOpenMyInfoFromParty(_ party: String?) -> Bool {
@@ -110,7 +110,7 @@ private struct RepHeadshotView: View {
             Image(systemName: "person.crop.circle.fill")
                 .resizable()
                 .scaledToFit()
-                .foregroundColor(CivicaColors.textSecondary.opacity(0.45))
+                .foregroundColor(CivicaColors.graphite.opacity(0.45))
         }
     }
 
@@ -278,7 +278,7 @@ struct RepRow: View {
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text(displayName)
                         .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(CivicaColors.textPrimary)
+                        .foregroundColor(CivicaColors.ink)
                         .lineLimit(1)
                         .minimumScaleFactor(0.72)
 
@@ -294,7 +294,7 @@ struct RepRow: View {
                     if let districtLabel {
                         Text(districtLabel)
                             .font(.system(size: 16, weight: .regular))
-                            .foregroundColor(CivicaColors.textSecondary)
+                            .foregroundColor(CivicaColors.graphite)
                             .lineLimit(1)
                             .minimumScaleFactor(0.72)
                     }
@@ -472,7 +472,7 @@ struct RepresentativeSection: View {
                         RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
                             .stroke(CivicaColors.brickPrimary.opacity(0.30), lineWidth: 0.9)
                     )
-                    .shadow(color: CivicaColors.textPrimary.opacity(0.22), radius: 4, x: 0, y: 2)
+                    .shadow(color: CivicaColors.ink.opacity(0.22), radius: 4, x: 0, y: 2)
                     .opensMyInfoPanelOnLongPress()
             } else {
                 Image(systemName: "map.fill")
@@ -553,7 +553,7 @@ struct RepresentativeSectionView_Previews: PreviewProvider {
             ]
         )
         .padding()
-        .background(CivicaColors.canvasBackground)
+        .background(CivicaColors.paper)
         .previewLayout(.sizeThatFits)
     }
 }

@@ -14,7 +14,7 @@ struct SNAPPrivacyNoticeView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 Text("Before You Start")
                     .font(.title3.weight(.semibold))
-                    .foregroundStyle(CivicaColors.textPrimary)
+                    .foregroundStyle(CivicaColors.ink)
 
                 privacySection(
                     title: "What this tool does",
@@ -38,7 +38,7 @@ struct SNAPPrivacyNoticeView: View {
 
                 Text("This screen does not determine eligibility or approval.")
                     .font(CivicaTypography.footnote)
-                    .foregroundStyle(CivicaColors.textSecondary)
+                    .foregroundStyle(CivicaColors.graphite)
 
                 VStack(spacing: CivicaSpacing.sm) {
                     Button("Continue to SNAP prep") {
@@ -90,10 +90,10 @@ struct SNAPPrivacyNoticeView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(title)
                 .font(CivicaTypography.sectionHeader)
-                .foregroundStyle(CivicaColors.textPrimary)
+                .foregroundStyle(CivicaColors.ink)
             Text(body)
                 .font(.body)
-                .foregroundStyle(CivicaColors.textSecondary)
+                .foregroundStyle(CivicaColors.graphite)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(CivicaSpacing.md)
@@ -103,7 +103,7 @@ struct SNAPPrivacyNoticeView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
 }

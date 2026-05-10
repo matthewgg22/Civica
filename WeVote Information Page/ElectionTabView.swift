@@ -20,7 +20,7 @@ struct ElectionTabView: View {
 
       Text(election.subtitle)
         .font(CivicaTypography.sectionHeader)
-        .foregroundColor(CivicaColors.textSecondary)
+        .foregroundColor(CivicaColors.graphite)
 
       Divider()
 

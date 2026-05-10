@@ -23,7 +23,7 @@ struct TurnoutExplorer: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             Text("Move the slider to see how big each age group shows up to vote in the U.S. electorate")
                 .font(CivicaTypography.subhead)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
                 .fixedSize(horizontal: false, vertical: true)
 
             content
@@ -38,7 +38,7 @@ struct TurnoutExplorer: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
+                .stroke(CivicaColors.ink.opacity(0.08), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         .sheet(isPresented: $showMethodologySheet) {
@@ -77,10 +77,10 @@ struct TurnoutExplorer: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Text("Turnout explorer data is unavailable right now.")
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
                 Text(loadError)
                     .font(CivicaTypography.footnote)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
             }
             .padding(CivicaSpacing.sm)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -91,7 +91,7 @@ struct TurnoutExplorer: View {
                 ProgressView()
                 Text("Loading historical turnout data…")
                     .font(CivicaTypography.subhead)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
             }
             .padding(.vertical, CivicaSpacing.sm)
         }
@@ -133,7 +133,7 @@ struct TurnoutExplorer: View {
                 HStack(spacing: CivicaSpacing.md) {
                     LegendKey(color: palette.votedColor, text: "voted")
                     LegendKey(color: palette.nonvotingColor, text: "eligible but did not vote")
-                    LegendKey(color: CivicaColors.textPrimary.opacity(0.18), text: "everyone else")
+                    LegendKey(color: CivicaColors.ink.opacity(0.18), text: "everyone else")
                 }
 
                 VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
@@ -174,7 +174,7 @@ struct TurnoutExplorer: View {
                     ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
                         Text(line)
                             .font(index == 0 ? .subheadline.weight(.semibold) : .footnote)
-                            .foregroundColor(index == 0 ? CivicaColors.textPrimary : CivicaColors.textSecondary)
+                            .foregroundColor(index == 0 ? CivicaColors.ink : CivicaColors.graphite)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
@@ -200,7 +200,7 @@ struct TurnoutExplorer: View {
             } else {
                 Text("No turnout record is available for this age range in the selected election type.")
                     .font(CivicaTypography.subhead)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
                     .padding(.vertical, CivicaSpacing.sm)
             }
         }
@@ -342,7 +342,7 @@ private struct ElectionTypeSegmentedControl: View {
         Button(action: action) {
             Text(label)
                 .font(CivicaTypography.footnoteStrong)
-                .foregroundColor(isSelected ? .white : CivicaColors.textPrimary)
+                .foregroundColor(isSelected ? .white : CivicaColors.ink)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, CivicaSpacing.sm)
                 .background(
@@ -351,7 +351,7 @@ private struct ElectionTypeSegmentedControl: View {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
-                        .stroke(CivicaColors.textPrimary.opacity(0.10), lineWidth: 1)
+                        .stroke(CivicaColors.ink.opacity(0.10), lineWidth: 1)
                 )
         }
         .buttonStyle(.plain)
@@ -393,7 +393,7 @@ private struct AgeTurnoutBandSlider: View {
             HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                 Text(activeLabel)
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
 
                 Spacer(minLength: 8)
 
@@ -401,13 +401,13 @@ private struct AgeTurnoutBandSlider: View {
                     VStack(alignment: .trailing, spacing: CivicaSpacing.xs) {
                         Text("\(TurnoutExplorerFormatters.compactPopulationFromThousands(eligiblePopulationThousands)) eligible")
                             .font(CivicaTypography.captionStrong)
-                            .foregroundColor(CivicaColors.textPrimary)
+                            .foregroundColor(CivicaColors.ink)
                             .monospacedDigit()
 
                         if let votedThousands {
                             Text("\(TurnoutExplorerFormatters.compactPopulationFromThousands(votedThousands)) voted")
                                 .font(CivicaTypography.caption)
-                                .foregroundColor(CivicaColors.textSecondary)
+                                .foregroundColor(CivicaColors.graphite)
                                 .monospacedDigit()
                         }
                     }
@@ -427,7 +427,7 @@ private struct AgeTurnoutBandSlider: View {
 
                 ZStack(alignment: .leading) {
                     Capsule(style: .continuous)
-                        .fill(CivicaColors.textPrimary.opacity(0.12))
+                        .fill(CivicaColors.ink.opacity(0.12))
                         .frame(height: 6)
                         .padding(.horizontal, sideInset)
 
@@ -483,19 +483,19 @@ private struct AgeTurnoutBandSlider: View {
             HStack {
                 Text(stops.first?.label ?? "")
                     .font(CivicaTypography.caption)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
 
                 Spacer()
 
                 Text(activeLabel.replacingOccurrences(of: "Ages ", with: "").replacingOccurrences(of: "Age ", with: ""))
                     .font(CivicaTypography.captionStrong)
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
 
                 Spacer()
 
                 Text(stops.last?.label ?? "")
                     .font(CivicaTypography.caption)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
             }
         }
     }
@@ -627,7 +627,7 @@ private struct TurnoutRiskMap: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text("Turnout pressure map: Taller and redder bars indicate larger turnout/representation problems.")
                 .font(CivicaTypography.footnoteStrong)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
 
             GeometryReader { geo in
                 let count = max(visibleDiagnostics.count, 1)
@@ -650,7 +650,7 @@ private struct TurnoutRiskMap: View {
                             if shouldShowLabel(globalIndex: globalIndex) {
                                 Text(item.label)
                                     .font(.system(size: 9, weight: .medium))
-                                    .foregroundColor(CivicaColors.textSecondary)
+                                    .foregroundColor(CivicaColors.graphite)
                                     .lineLimit(1)
                                     .fixedSize(horizontal: true, vertical: false)
                                     .frame(width: barWidth, alignment: .center)
@@ -677,7 +677,7 @@ private struct TurnoutRiskMap: View {
                let last = diagnostics[safe: visibleRange.upperBound]?.label {
                 Text("Showing ages \(first) to \(last)")
                     .font(CivicaTypography.caption)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
             }
         }
     }
@@ -710,7 +710,7 @@ private struct TurnoutRiskMap: View {
         if diagnostic.representationGapPoints > 2 {
             return CivicaColors.brickPrimary
         }
-        return CivicaColors.successGreen
+        return CivicaColors.accentTeal
     }
 }
 
@@ -740,7 +740,7 @@ private struct ElectorateDonut: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(CivicaColors.textPrimary.opacity(0.18), lineWidth: 18)
+                .stroke(CivicaColors.ink.opacity(0.18), lineWidth: 18)
 
             Circle()
                 .trim(from: 0, to: votedFraction)
@@ -762,7 +762,7 @@ private struct ElectorateDonut: View {
 
                 Text("of this age group voted")
                     .font(CivicaTypography.footnote)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
             }
             .padding(.horizontal, CivicaSpacing.sm)
         }
@@ -801,8 +801,8 @@ private struct TurnoutGraphPalette {
             )
         default:
             return TurnoutGraphPalette(
-                votedColor: CivicaColors.successGreen,
-                nonvotingColor: CivicaColors.successGreen.opacity(0.30)
+                votedColor: CivicaColors.accentTeal,
+                nonvotingColor: CivicaColors.accentTeal.opacity(0.30)
             )
         }
     }
@@ -813,19 +813,19 @@ private struct MetricStat: View {
     let value: String
     let helper: String
     var backgroundColor: Color = CivicaColors.surfacePrimary
-    var borderColor: Color = CivicaColors.textPrimary.opacity(0.06)
+    var borderColor: Color = CivicaColors.ink.opacity(0.06)
 
     var body: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(title)
                 .font(CivicaTypography.footnoteStrong)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
             Text(value)
                 .font(CivicaTypography.cardTitle)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
             Text(helper)
                 .font(CivicaTypography.footnote)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
                 .lineLimit(1)
                 .minimumScaleFactor(0.72)
         }
@@ -844,18 +844,18 @@ private struct MetricMiniStat: View {
     let title: String
     let value: String
     var backgroundColor: Color = CivicaColors.surfacePrimary
-    var borderColor: Color = CivicaColors.textPrimary.opacity(0.06)
+    var borderColor: Color = CivicaColors.ink.opacity(0.06)
 
     var body: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(title)
                 .font(CivicaTypography.captionStrong)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
                 .lineLimit(1)
 
             Text(value)
                 .font(CivicaTypography.sectionHeaderBold)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
                 .minimumScaleFactor(0.72)
                 .lineLimit(1)
         }
@@ -882,7 +882,7 @@ private struct LegendKey: View {
                 .frame(width: 8, height: 8)
             Text(text)
                 .font(CivicaTypography.caption)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
         }
     }
 }
@@ -925,7 +925,7 @@ private struct MethodologySheet: View {
                 .padding(.top, CivicaSpacing.xs)
             Text(text)
                 .font(CivicaTypography.subhead)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
         }
     }

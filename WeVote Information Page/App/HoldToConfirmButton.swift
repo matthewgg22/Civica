@@ -119,7 +119,7 @@ struct HoldToConfirmButton: View {
         LinearGradient(
             colors: [
                 CivicaColors.brickPrimaryPressed.opacity(0.82),
-                CivicaColors.successGreen.opacity(0.9)
+                CivicaColors.accentTeal.opacity(0.9)
             ],
             startPoint: .leading,
             endPoint: .trailing
@@ -128,7 +128,7 @@ struct HoldToConfirmButton: View {
 
     private var borderColor: Color {
         if isConfirmed {
-            return CivicaColors.successGreen.opacity(0.82)
+            return CivicaColors.accentTeal.opacity(0.82)
         }
         return CivicaColors.brickPrimary.opacity(0.34 + (Double(progress) * 0.42))
     }
@@ -137,7 +137,7 @@ struct HoldToConfirmButton: View {
         if isConfirmed {
             return CivicaColors.surfacePrimary
         }
-        return progress > 0.52 ? CivicaColors.surfacePrimary : CivicaColors.textPrimary
+        return progress > 0.52 ? CivicaColors.surfacePrimary : CivicaColors.ink
     }
 
     private var buttonText: String {

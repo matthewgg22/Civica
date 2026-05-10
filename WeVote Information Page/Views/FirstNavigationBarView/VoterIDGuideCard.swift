@@ -197,7 +197,7 @@ struct VoterIDGuideCard: View {
         case .nonPhotoAccepted:
             return CivicaColors.warningAmber
         case .noDocument:
-            return CivicaColors.successGreen
+            return CivicaColors.accentTeal
         case .conditional:
             return CivicaColors.brickPrimary
         }
@@ -248,10 +248,10 @@ struct VoterIDGuideCard: View {
                     VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text(headerText)
                             .font(CivicaTypography.subheadStrong)
-                            .foregroundColor(CivicaColors.textSecondary)
+                            .foregroundColor(CivicaColors.graphite)
                         Text(stateHeaderText)
                             .font(CivicaTypography.sectionHeaderBold)
-                            .foregroundColor(CivicaColors.textPrimary)
+                            .foregroundColor(CivicaColors.ink)
                             .lineLimit(2)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -284,7 +284,7 @@ struct VoterIDGuideCard: View {
                 if shouldShowRequirementSummary(for: metric) {
                     Text(requirementSummaryText)
                         .font(CivicaTypography.subheadStrong)
-                        .foregroundColor(CivicaColors.textPrimary)
+                        .foregroundColor(CivicaColors.ink)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
@@ -293,11 +293,11 @@ struct VoterIDGuideCard: View {
                         if let heading = acceptedOptionsHeadingText(for: metric) {
                             Text(heading)
                                 .font(CivicaTypography.captionStrong)
-                                .foregroundColor(CivicaColors.textSecondary)
+                                .foregroundColor(CivicaColors.graphite)
                         }
                         Text(options)
                             .font(CivicaTypography.caption)
-                            .foregroundColor(CivicaColors.textPrimary)
+                            .foregroundColor(CivicaColors.ink)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(.horizontal, CivicaSpacing.sm)
@@ -310,11 +310,11 @@ struct VoterIDGuideCard: View {
                 if let note = supplementalNoteText(for: metric) {
                     Text(note)
                         .font(CivicaTypography.caption)
-                        .foregroundColor(CivicaColors.textSecondary)
+                        .foregroundColor(CivicaColors.graphite)
                         .padding(.horizontal, CivicaSpacing.sm)
                         .padding(.vertical, CivicaSpacing.sm)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(CivicaColors.canvasBackground.opacity(0.88))
+                        .background(CivicaColors.paper.opacity(0.88))
                         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                 }
             } else {
@@ -324,7 +324,7 @@ struct VoterIDGuideCard: View {
                         .foregroundColor(CivicaColors.brickPrimary)
                     Text(missingStatePromptText)
                         .font(CivicaTypography.subheadStrong)
-                        .foregroundColor(CivicaColors.textSecondary)
+                        .foregroundColor(CivicaColors.graphite)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(CivicaSpacing.sm)
@@ -351,7 +351,7 @@ struct VoterIDGuideCard: View {
             RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.16), lineWidth: 1)
         )
-        .shadow(color: CivicaColors.textPrimary.opacity(0.07), radius: 4, x: 0, y: 2)
+        .shadow(color: CivicaColors.ink.opacity(0.07), radius: 4, x: 0, y: 2)
     }
 
     @ViewBuilder
@@ -364,7 +364,7 @@ struct VoterIDGuideCard: View {
                 .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
-                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                        .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)

@@ -55,24 +55,24 @@ struct SNAPEligibilityIntroView: View {
                         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                             Text("SNAP prep status")
                                 .font(CivicaTypography.sectionHeader)
-                                .foregroundStyle(CivicaColors.textPrimary)
+                                .foregroundStyle(CivicaColors.ink)
 
                             HStack(spacing: CivicaSpacing.sm) {
                                 Text("Status:")
                                     .font(CivicaTypography.subheadStrong)
-                                    .foregroundStyle(CivicaColors.textSecondary)
+                                    .foregroundStyle(CivicaColors.graphite)
                                 Text("Prep checklist completed")
                                     .font(CivicaTypography.subheadBold)
-                                    .foregroundStyle(CivicaColors.successGreen)
+                                    .foregroundStyle(CivicaColors.accentTeal)
                             }
 
                             HStack(spacing: CivicaSpacing.sm) {
                                 Text("Date:")
                                     .font(CivicaTypography.subheadStrong)
-                                    .foregroundStyle(CivicaColors.textSecondary)
+                                    .foregroundStyle(CivicaColors.graphite)
                                 Text(statusDateText(from: submittedAt))
                                     .font(CivicaTypography.subheadStrong)
-                                    .foregroundStyle(CivicaColors.textPrimary)
+                                    .foregroundStyle(CivicaColors.ink)
                             }
 
                             Text("Open next steps")
@@ -87,7 +87,7 @@ struct SNAPEligibilityIntroView: View {
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                                .stroke(CivicaColors.hairline, lineWidth: 1)
                         )
                     }
                     .buttonStyle(.plain)
@@ -95,7 +95,7 @@ struct SNAPEligibilityIntroView: View {
 
                     Text(SNAPCopy.globalDisclaimer)
                         .font(CivicaTypography.footnoteStrong)
-                        .foregroundStyle(CivicaColors.textSecondary)
+                        .foregroundStyle(CivicaColors.graphite)
                         .fixedSize(horizontal: false, vertical: true)
 
                     HStack {
@@ -160,7 +160,7 @@ private struct SNAPIntroHeader: View {
                     .frame(width: 56, height: 56)
                     .overlay(
                         RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                            .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                            .stroke(CivicaColors.hairline, lineWidth: 1)
                     )
                     .shadow(color: CivicaColors.brickPrimary.opacity(0.14), radius: 6, x: 0, y: 3)
 

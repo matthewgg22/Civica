@@ -222,7 +222,7 @@ struct WhyVoteView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Text(outOfTenHeader())
                     .font(.title3.weight(.semibold))
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
 
                 if let zip = resolvedZipForState {
                     Text(
@@ -233,11 +233,11 @@ struct WhyVoteView: View {
                         )
                     )
                     .font(CivicaTypography.subhead)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
                 } else {
                     Text(l("app.why_vote.state_missing.enter_zip", "Enter a ZIP in My Representatives to load your state profile."))
                         .font(CivicaTypography.subhead)
-                        .foregroundColor(CivicaColors.textSecondary)
+                        .foregroundColor(CivicaColors.graphite)
                 }
             }
             .padding(CivicaSpacing.md)
@@ -245,7 +245,7 @@ struct WhyVoteView: View {
             .background(CivicaColors.surfacePrimary.opacity(0.72))
             .overlay(
                 RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                    .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
+                    .stroke(CivicaColors.ink.opacity(0.08), lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         }
@@ -258,7 +258,7 @@ struct WhyVoteView: View {
             HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                 Text(outOfTenHeader(for: info))
                     .font(.title3.weight(.semibold))
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
 
                 Spacer(minLength: 8)
 
@@ -270,7 +270,7 @@ struct WhyVoteView: View {
                     label: "\(turnoutPair.presidentialYear) Presidential",
                     turnoutPercent: turnoutPair.presidentialTurnout,
                     summary: formatTurnoutAsOutOfTen(turnoutPair.presidentialTurnout),
-                    filledColor: CivicaColors.successGreen
+                    filledColor: CivicaColors.accentTeal
                 )
 
                 OutOfTenTurnoutRowView(
@@ -292,7 +292,7 @@ struct WhyVoteView: View {
             .background(CivicaColors.surfacePrimary.opacity(0.72))
             .overlay(
                 RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                    .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
+                    .stroke(CivicaColors.ink.opacity(0.08), lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
         }
@@ -308,12 +308,12 @@ struct WhyVoteView: View {
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text(card.title)
                         .font(CivicaTypography.sectionHeader)
-                        .foregroundColor(CivicaColors.textPrimary)
+                        .foregroundColor(CivicaColors.ink)
                         .id("power-title-\(selectedWhyCareCard)")
                         .transition(.opacity)
                     Text(card.body)
                         .font(CivicaTypography.subhead)
-                        .foregroundColor(CivicaColors.textSecondary)
+                        .foregroundColor(CivicaColors.graphite)
                         .fixedSize(horizontal: false, vertical: true)
                         .id("power-body-\(selectedWhyCareCard)")
                         .transition(.opacity)
@@ -439,7 +439,7 @@ struct WhyVoteView: View {
                 .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
-                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                        .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
                 .accessibilityHidden(true)
         }
@@ -498,13 +498,13 @@ private struct OutOfTenTurnoutRowView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(label)
                 .font(CivicaTypography.subheadStrong)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
 
             HStack(spacing: 0) {
                 ForEach(0..<10, id: \.self) { index in
                     Image(systemName: index < filledCount ? "person.fill" : "person")
                         .font(.system(size: 22, weight: .semibold))
-                        .foregroundColor(index < filledCount ? filledColor : CivicaColors.textPrimary.opacity(0.28))
+                        .foregroundColor(index < filledCount ? filledColor : CivicaColors.ink.opacity(0.28))
                         .frame(maxWidth: .infinity)
                         .accessibilityHidden(true)
                 }
@@ -513,11 +513,11 @@ private struct OutOfTenTurnoutRowView: View {
             HStack(alignment: .firstTextBaseline) {
                 Text(summary)
                     .font(CivicaTypography.footnote)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
                 Spacer(minLength: 8)
                 Text(formattedPercent)
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
             }
         }
         .accessibilityElement(children: .ignore)

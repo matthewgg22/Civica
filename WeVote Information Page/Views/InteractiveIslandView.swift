@@ -86,7 +86,7 @@ struct ExpandedCardView: View {
             VStack(spacing: CivicaSpacing.md) {
                 ZStack {
                     Capsule()
-                        .fill(CivicaColors.borderSubtle.opacity(0.4))
+                        .fill(CivicaColors.hairline.opacity(0.4))
                         .frame(width: barWidth, height: barHeight)
                     Capsule()
                         .fill(
@@ -223,7 +223,7 @@ struct InteractiveIslandView: View {
                 )
             } else {
                 Text("Loading…")
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
             }
         }
         .contentShape(Rectangle())                    // make full area tappable

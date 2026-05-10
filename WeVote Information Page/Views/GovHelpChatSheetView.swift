@@ -78,7 +78,7 @@ struct GovHelpChatSheetView: View {
                 chatBody
                 composer
             }
-            .background(CivicaColors.canvasBackground)
+            .background(CivicaColors.paper)
             .navigationTitle(Text("app.gov_help.title", tableName: "AppShell"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -108,7 +108,7 @@ struct GovHelpChatSheetView: View {
                             ProgressView()
                             Text(l("app.gov_help.thinking", "Thinking..."))
                                 .font(CivicaTypography.footnote)
-                                .foregroundColor(CivicaColors.textSecondary)
+                                .foregroundColor(CivicaColors.graphite)
                         }
                         .padding(.horizontal, CivicaSpacing.md)
                         .padding(.vertical, CivicaSpacing.sm)
@@ -116,7 +116,7 @@ struct GovHelpChatSheetView: View {
                         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                                .stroke(CivicaColors.hairline, lineWidth: 1)
                         )
                         .id("typing")
                     }
@@ -146,7 +146,7 @@ struct GovHelpChatSheetView: View {
         VStack(alignment: isUser ? .trailing : .leading, spacing: CivicaSpacing.sm) {
             Text(message.text)
                 .font(.body)
-                .foregroundColor(message.isError ? CivicaColors.ctaRed : (isUser ? .white : CivicaColors.textPrimary))
+                .foregroundColor(message.isError ? CivicaColors.ctaRed : (isUser ? .white : CivicaColors.ink))
                 .padding(.horizontal, CivicaSpacing.md)
                 .padding(.vertical, CivicaSpacing.sm)
                 .background(
@@ -341,7 +341,7 @@ private struct GovHelpSuggestedContactsView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(l("app.gov_help.suggested_contacts", "Suggested Contacts"))
                 .font(CivicaTypography.subheadStrong)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
 
             ForEach(Array(contexts.enumerated()), id: \.element.repId) { idx, context in
                 RepRow(rep: context.official)
@@ -355,7 +355,7 @@ private struct GovHelpSuggestedContactsView: View {
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
 
@@ -377,7 +377,7 @@ private struct GovHelpDestinationLinksView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(l("app.gov_help.official_reporting", "Official Reporting"))
                 .font(CivicaTypography.subheadStrong)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
 
             ForEach(destinations) { destination in
                 Link(destination: destination.url) {
@@ -394,7 +394,7 @@ private struct GovHelpDestinationLinksView: View {
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
 

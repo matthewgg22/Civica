@@ -281,7 +281,7 @@ struct CivicaLogoIcon: View {
     var cornerRadiusScale: CGFloat = 0.24
     var borderColor: Color = CivicaColors.iconOnPrimaryBorder
     var borderWidth: CGFloat = 0.6
-    var shadowColor: Color = CivicaColors.textPrimary.opacity(0.14)
+    var shadowColor: Color = CivicaColors.ink.opacity(0.14)
 
     var body: some View {
         let stripeScaleY: CGFloat = size < 30 ? 0.95 : 0.80
@@ -851,10 +851,10 @@ private struct WhyCallStatCard: View {
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.surfaceSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous)
-                .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.ink.opacity(0.08), lineWidth: 1)
         )
         .accessibilityElement(children: .combine)
     }
@@ -875,10 +875,10 @@ private struct WhyCallReasonCard: View {
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.surfaceSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous)
-                .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.ink.opacity(0.08), lineWidth: 1)
         )
         .accessibilityElement(children: .combine)
     }
@@ -895,7 +895,7 @@ private struct WhyCallBottomCTA: View {
             if !note.isEmpty {
                 Text(note)
                     .font(CivicaTypography.footnote)
-                    .foregroundStyle(CivicaColors.textSecondary)
+                    .foregroundStyle(CivicaColors.graphite)
                     .fixedSize(horizontal: false, vertical: true)
             }
 

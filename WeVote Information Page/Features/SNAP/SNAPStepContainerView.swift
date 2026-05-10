@@ -17,15 +17,15 @@ struct SNAPStepContainerView: View {
                     VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text(viewModel.draftStep == .nextSteps ? "Current page" : "Current step")
                             .font(CivicaTypography.captionStrong)
-                            .foregroundStyle(CivicaColors.textSecondary)
+                            .foregroundStyle(CivicaColors.graphite)
                         Text(viewModel.draftStepHeaderTitle)
                             .font(CivicaTypography.sectionHeader)
-                            .foregroundStyle(CivicaColors.textPrimary)
+                            .foregroundStyle(CivicaColors.ink)
                     }
                     Spacer()
                     Text(viewModel.draftStepNumberText)
                         .font(CivicaTypography.footnoteStrong)
-                        .foregroundStyle(CivicaColors.textSecondary)
+                        .foregroundStyle(CivicaColors.graphite)
                 }
 
                 if viewModel.draftStep != .nextSteps {
@@ -46,7 +46,7 @@ struct SNAPStepContainerView: View {
                                             .stroke(
                                                 selectedProgressStep == step
                                                     ? CivicaColors.brickPrimary
-                                                    : CivicaColors.borderSubtle.opacity(0.45),
+                                                    : CivicaColors.hairline.opacity(0.45),
                                                 lineWidth: selectedProgressStep == step ? 1.5 : 1
                                             )
                                     )
@@ -62,7 +62,7 @@ struct SNAPStepContainerView: View {
                     VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text("Section \(selectedIndex + 1): \(selectedProgressStep.title)")
                             .font(CivicaTypography.footnoteStrong)
-                            .foregroundStyle(CivicaColors.textPrimary)
+                            .foregroundStyle(CivicaColors.ink)
 
                         if selectedIndex < currentIndex {
                             Button("Go to section") {
@@ -74,11 +74,11 @@ struct SNAPStepContainerView: View {
                         } else if selectedProgressStep == viewModel.draftStep {
                             Text("You are currently on this section.")
                                 .font(CivicaTypography.footnote)
-                                .foregroundStyle(CivicaColors.textSecondary)
+                                .foregroundStyle(CivicaColors.graphite)
                         } else {
                             Text("Complete earlier sections to unlock this section.")
                                 .font(CivicaTypography.footnote)
-                                .foregroundStyle(CivicaColors.textSecondary)
+                                .foregroundStyle(CivicaColors.graphite)
                         }
                     }
                     .padding(.horizontal, CivicaSpacing.sm)
@@ -90,7 +90,7 @@ struct SNAPStepContainerView: View {
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                            .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                            .stroke(CivicaColors.hairline, lineWidth: 1)
                     )
                 }
             }
@@ -129,7 +129,7 @@ struct SNAPStepContainerView: View {
 
                 Text(viewModel.draftCompletionSummaryText)
                     .font(.footnote.weight(.medium))
-                    .foregroundStyle(CivicaColors.textSecondary)
+                    .foregroundStyle(CivicaColors.graphite)
                     .frame(maxWidth: .infinity, alignment: .center)
 
             }
@@ -216,7 +216,7 @@ struct SNAPStepContainerView: View {
         case .complete:
             return currentIndex == index
                 ? CivicaColors.brickPrimary
-                : CivicaColors.successGreen.opacity(0.9)
+                : CivicaColors.accentTeal.opacity(0.9)
         case .notStarted:
             return currentIndex == index
                 ? CivicaColors.warningAmber.opacity(0.72)

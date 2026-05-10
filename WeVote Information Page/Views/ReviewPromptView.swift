@@ -9,21 +9,21 @@ struct ReviewPromptView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
             Text("Did Civica help you make your plan?")
                 .font(.title3.weight(.semibold))
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
 
             Text("If so, would you mind giving us a quick App Store rating? It helps more voters discover the app.")
                 .font(.body)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
 
             HStack(spacing: CivicaSpacing.sm) {
                 Button("Not now", action: onNotNow)
                     .font(CivicaTypography.sectionHeader)
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
                     .frame(maxWidth: .infinity, minHeight: 44)
                     .background(CivicaColors.surfacePrimary)
                     .overlay(
                         RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                            .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                            .stroke(CivicaColors.hairline, lineWidth: 1)
                     )
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
 

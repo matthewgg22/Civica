@@ -12,20 +12,20 @@ struct SNAPConfirmationView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 Text("Your SNAP draft is ready")
                     .font(.title3.weight(.semibold))
-                    .foregroundStyle(CivicaColors.textPrimary)
+                    .foregroundStyle(CivicaColors.ink)
 
                 Text("You can use this information to complete your official application through your state’s benefits website.")
                     .font(.body)
-                    .foregroundStyle(CivicaColors.textSecondary)
+                    .foregroundStyle(CivicaColors.graphite)
                     .fixedSize(horizontal: false, vertical: true)
 
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text("State selected")
                         .font(CivicaTypography.subheadStrong)
-                        .foregroundStyle(CivicaColors.textPrimary)
+                        .foregroundStyle(CivicaColors.ink)
                     Text(selectedStateLabel)
                         .font(.body)
-                        .foregroundStyle(CivicaColors.textSecondary)
+                        .foregroundStyle(CivicaColors.graphite)
                 }
                 .padding(CivicaSpacing.md)
                 .background(
@@ -34,7 +34,7 @@ struct SNAPConfirmationView: View {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                        .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
 
                 Button("Open official state SNAP website") {
@@ -47,7 +47,7 @@ struct SNAPConfirmationView: View {
                 if officialURL == nil {
                     Text("Official state link coming soon.")
                         .font(CivicaTypography.footnote)
-                        .foregroundStyle(CivicaColors.textSecondary)
+                        .foregroundStyle(CivicaColors.graphite)
                 }
 
                 Button("Review my draft again") {

@@ -48,7 +48,7 @@ struct RaceCandidatesView: View {
                         )
                     )
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
                     .multilineTextAlignment(.center)
                 }
 
@@ -73,7 +73,7 @@ struct RaceCandidatesView: View {
 
                                 Text(localizedExperience(for: candidate))
                                     .font(CivicaTypography.subhead)
-                                    .foregroundColor(CivicaColors.textSecondary)
+                                    .foregroundColor(CivicaColors.graphite)
 
                                 Text("\(l("app.race_candidates.announced_prefix", "Announced:")) \(candidate.announcedDate)")
                                     .font(CivicaTypography.caption)
@@ -86,7 +86,7 @@ struct RaceCandidatesView: View {
                                 } else {
                                     Text(l("app.race_candidates.website", "Website"))
                                         .font(CivicaTypography.caption)
-                                        .foregroundColor(CivicaColors.textSecondary)
+                                        .foregroundColor(CivicaColors.graphite)
                                 }
                             }
                             .padding(.leading, CivicaSpacing.sm)

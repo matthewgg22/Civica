@@ -147,7 +147,7 @@ struct PollingLocationsView: View {
                 )
             )
             .font(CivicaTypography.subheadBold)
-            .foregroundColor(CivicaColors.textPrimary)
+            .foregroundColor(CivicaColors.ink)
 
             Text(
                 l(
@@ -156,7 +156,7 @@ struct PollingLocationsView: View {
                 )
             )
             .font(CivicaTypography.footnote)
-            .foregroundColor(CivicaColors.textSecondary)
+            .foregroundColor(CivicaColors.graphite)
             .fixedSize(horizontal: false, vertical: true)
         }
         .padding(CivicaSpacing.md)
@@ -218,7 +218,7 @@ struct PollingLocationsView: View {
 
                 Text(place.address)
                     .font(CivicaTypography.caption)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
                     .lineLimit(1)
 
                 HStack(spacing: CivicaSpacing.sm) {
@@ -227,12 +227,12 @@ struct PollingLocationsView: View {
                         systemImage: "location"
                     )
                     .font(CivicaTypography.caption)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
 
                     if place.hours != "--" {
                         Label(place.hours, systemImage: "clock")
                             .font(CivicaTypography.caption)
-                            .foregroundColor(CivicaColors.textSecondary)
+                            .foregroundColor(CivicaColors.graphite)
                     }
                 }
             }
@@ -265,7 +265,7 @@ struct PollingLocationsView: View {
                 .stroke(
                     selectedPlace?.id == place.id
                     ? CivicaColors.brickPrimary.opacity(0.45)
-                    : CivicaColors.textPrimary.opacity(0.05),
+                    : CivicaColors.ink.opacity(0.05),
                     lineWidth: 1
                 )
         )
