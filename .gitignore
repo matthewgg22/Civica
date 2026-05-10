@@ -10,3 +10,16 @@ WeVote Information Page 2/
 .venv/
 __pycache__/
 *.pyc
+
+# Claude Code session files
+.claude/
+
+# Xcode build artifacts
+.tmp-build/
+.tmp-xcode-derived/
+*.pbxproj.bak
+*.pbxproj.bak*
+
+# Swift package build output
+**/.*build/
+CivicaDesignSystem/.build/
