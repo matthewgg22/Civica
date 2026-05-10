@@ -164,10 +164,10 @@ struct SNAPEntryView: View {
                                 )
 
                             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-                                Text("Find Help Near You")
+                                Text("find_help.entry_card.title")
                                     .font(CivicaTypography.sectionHeader)
                                     .foregroundStyle(CivicaColors.textPrimary)
-                                Text("SNAP offices and food assistance nearby")
+                                Text("find_help.entry_card.subtitle")
                                     .font(CivicaTypography.footnoteStrong)
                                     .foregroundStyle(CivicaColors.textSecondary)
                                     .lineLimit(2)

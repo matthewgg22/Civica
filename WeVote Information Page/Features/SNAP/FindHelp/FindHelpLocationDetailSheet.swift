@@ -67,8 +67,12 @@ struct FindHelpLocationDetailSheet: View {
                 Button {
                     openAppleMaps(lat: lat, lng: lng, name: location.name)
                 } label: {
-                    Label("Get Directions", systemImage: "arrow.triangle.turn.up.right.circle.fill")
-                        .frame(maxWidth: .infinity)
+                    Label {
+                        Text("find_help.detail.get_directions")
+                    } icon: {
+                        Image(systemName: "arrow.triangle.turn.up.right.circle.fill")
+                    }
+                    .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
             }
@@ -77,8 +81,12 @@ struct FindHelpLocationDetailSheet: View {
                 Button {
                     UIApplication.shared.open(url)
                 } label: {
-                    Label("Call", systemImage: "phone.fill")
-                        .frame(maxWidth: .infinity)
+                    Label {
+                        Text("find_help.detail.call")
+                    } icon: {
+                        Image(systemName: "phone.fill")
+                    }
+                    .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
             }
@@ -99,7 +107,7 @@ struct FindHelpLocationDetailSheet: View {
     }
 
     private var callAheadDisclaimer: some View {
-        Text("Call ahead to confirm hours and services. Listings are not endorsements.")
+        Text("find_help.disclaimer.call_ahead")
             .font(CivicaTypography.footnoteStrong)
             .foregroundStyle(CivicaColors.textSecondary)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -107,7 +115,7 @@ struct FindHelpLocationDetailSheet: View {
 
     private var sourceAttribution: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-            Text("Source")
+            Text("find_help.detail.source_label")
                 .font(CivicaTypography.footnoteStrong)
                 .foregroundStyle(CivicaColors.textSecondary)
                 .textCase(.uppercase)

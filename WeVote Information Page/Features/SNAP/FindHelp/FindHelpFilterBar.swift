@@ -8,10 +8,10 @@ struct FindHelpFilterBar: View {
     var body: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Picker("Show", selection: serviceTypeBinding) {
-                Text("All").tag(FindHelpServiceType?.none)
-                Text("Apply for SNAP").tag(FindHelpServiceType?.some(.snapApplicationHelp))
-                Text("Get Food").tag(FindHelpServiceType?.some(.foodAssistance))
-                Text("Both").tag(FindHelpServiceType?.some(.both))
+                Text("find_help.filter.all").tag(FindHelpServiceType?.none)
+                Text("find_help.filter.snap").tag(FindHelpServiceType?.some(.snapApplicationHelp))
+                Text("find_help.filter.food").tag(FindHelpServiceType?.some(.foodAssistance))
+                Text("find_help.filter.both").tag(FindHelpServiceType?.some(.both))
             }
             .pickerStyle(.segmented)
 
@@ -32,7 +32,7 @@ struct FindHelpFilterBar: View {
     @ViewBuilder
     private var languagePicker: some View {
         let options: [(label: String, code: String?)] = [
-            ("Any language", nil),
+            (NSLocalizedString("find_help.filter.language.any", comment: "Any language menu option"), nil),
             ("English", "en"),
             ("Español", "es"),
             ("中文", "zh-Hans"),
@@ -65,7 +65,9 @@ struct FindHelpFilterBar: View {
     }
 
     private func currentLanguageLabel(from options: [(label: String, code: String?)]) -> String {
-        guard let code = filter.languageCode else { return "Any language" }
+        guard let code = filter.languageCode else {
+            return NSLocalizedString("find_help.filter.language.any", comment: "Any language menu option")
+        }
         return options.first(where: { $0.code == code })?.label ?? code
     }
 }

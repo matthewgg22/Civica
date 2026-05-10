@@ -16,7 +16,7 @@ struct FindHelpDisclosureFooter: View {
                 HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                     Image(systemName: "info.circle.fill")
                         .foregroundStyle(CivicaColors.ctaBlue)
-                    Text(isExpanded ? Self.shortLabel : Self.shortPrompt)
+                    Text("find_help.disclosure.short")
                         .font(CivicaTypography.footnoteStrong)
                         .foregroundStyle(CivicaColors.textSecondary)
                         .multilineTextAlignment(.leading)
@@ -32,7 +32,7 @@ struct FindHelpDisclosureFooter: View {
             .buttonStyle(.plain)
 
             if isExpanded {
-                Text(Self.fullText)
+                Text("find_help.disclosure.full")
                     .font(CivicaTypography.footnoteStrong)
                     .foregroundStyle(CivicaColors.textSecondary)
                     .multilineTextAlignment(.leading)
@@ -50,10 +50,4 @@ struct FindHelpDisclosureFooter: View {
                 )
         )
     }
-
-    static let shortPrompt = "Civica is not affiliated with USDA or any state SNAP agency. Tap for sources."
-    static let shortLabel = "About this directory"
-    static let fullText = """
-    Civica is not affiliated with the U.S. Department of Agriculture or any state SNAP agency. Locations are sourced from authoritative public directories and may be out of date. Call ahead before visiting to confirm hours and services. To apply for SNAP through official channels, contact your state SNAP agency or call 1-800-221-5689.
-    """
 }

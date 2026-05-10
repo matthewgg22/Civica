@@ -5,12 +5,19 @@ import SwiftUI
 // EXPERIMENTAL SILOED MODULE: top-level entry for the Find Help directory.
 // Step 10 ships the list view + permission flow; the map view lands in Step 11.
 
+enum FindHelpDisplayMode: String, CaseIterable, Identifiable {
+    case map
+    case list
+    var id: String { rawValue }
+}
+
 struct FindHelpRootView: View {
     @StateObject private var store = FindHelpStore()
     @StateObject private var locationManager = LocationManager()
     @State private var zipFallback: String = ""
     @State private var hasTrackedEntry = false
     @State private var lastSearchedLocation: CLLocation?
+    @State private var displayMode: FindHelpDisplayMode = .map
 
     var body: some View {
         VStack(spacing: 0) {
@@ -30,7 +37,7 @@ struct FindHelpRootView: View {
             FindHelpDisclosureFooter()
         }
         .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
-        .navigationTitle("Find Help Near You")
+        .navigationTitle("find_help.entry_card.title")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(CivicaColors.brandSoftBlue, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
@@ -59,17 +66,19 @@ struct FindHelpRootView: View {
         case .authorizedWhenInUse, .authorizedAlways:
             authorizedContent
         case .denied, .restricted:
-            zipFallbackForm(message: "Location access is off. Enter your zip code to find help near you.")
+            zipFallbackForm(messageKey: "find_help.zip_fallback.prompt")
         case .notDetermined:
             VStack(spacing: CivicaSpacing.md) {
                 ProgressView()
-                Text("Requesting location permission…")
+                Text("find_help.permission.rationale")
                     .font(CivicaTypography.subheadStrong)
                     .foregroundStyle(CivicaColors.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, CivicaSpacing.lg)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         @unknown default:
-            zipFallbackForm(message: "Enter your zip code to find help near you.")
+            zipFallbackForm(messageKey: "find_help.zip_fallback.prompt")
         }
     }
 
@@ -78,7 +87,7 @@ struct FindHelpRootView: View {
         if store.isLoading && store.locations.isEmpty {
             VStack(spacing: CivicaSpacing.md) {
                 ProgressView()
-                Text("Loading nearby help…")
+                Text("find_help.loading")
                     .font(CivicaTypography.subheadStrong)
                     .foregroundStyle(CivicaColors.textSecondary)
             }
@@ -88,11 +97,49 @@ struct FindHelpRootView: View {
         } else if store.filteredLocations.isEmpty {
             emptyView
         } else {
-            FindHelpListView(
-                locations: store.filteredLocations,
-                onSelect: { store.selectLocation($0) }
-            )
+            ZStack(alignment: .bottom) {
+                Group {
+                    switch displayMode {
+                    case .map:
+                        FindHelpMapView(
+                            locations: store.filteredLocations,
+                            userLocation: store.userLocation,
+                            onSelect: { store.selectLocation($0) }
+                        )
+                        .ignoresSafeArea(edges: .bottom)
+                    case .list:
+                        FindHelpListView(
+                            locations: store.filteredLocations,
+                            onSelect: { store.selectLocation($0) }
+                        )
+                    }
+                }
+                viewModeToggle
+                    .padding(.bottom, CivicaSpacing.md)
+            }
         }
+    }
+
+    private var viewModeToggle: some View {
+        HStack(spacing: 0) {
+            ForEach(FindHelpDisplayMode.allCases) { mode in
+                Button {
+                    displayMode = mode
+                    FindHelpAnalytics.trackViewModeChanged(mode.rawValue)
+                } label: {
+                    Text(mode == .map ? "find_help.view_mode.map" : "find_help.view_mode.list")
+                        .font(CivicaTypography.footnoteStrong)
+                        .padding(.horizontal, CivicaSpacing.lg)
+                        .padding(.vertical, CivicaSpacing.sm)
+                        .foregroundStyle(mode == displayMode ? CivicaColors.onPrimaryText : CivicaColors.ctaBlue)
+                        .background(mode == displayMode ? CivicaColors.ctaBlue : Color.clear)
+                }
+            }
+        }
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(Capsule())
+        .overlay(Capsule().stroke(CivicaColors.ctaBlue.opacity(0.4), lineWidth: 1))
+        .shadow(color: CivicaColors.shadowSoft, radius: 6, x: 0, y: 2)
     }
 
     private func triggerSearchIfNeeded(for location: CLLocation) {
@@ -107,9 +154,9 @@ struct FindHelpRootView: View {
         )
     }
 
-    private func zipFallbackForm(message: String) -> some View {
+    private func zipFallbackForm(messageKey: LocalizedStringKey) -> some View {
         VStack(spacing: CivicaSpacing.lg) {
-            Text(message)
+            Text(messageKey)
                 .font(CivicaTypography.subheadStrong)
                 .foregroundStyle(CivicaColors.textSecondary)
                 .multilineTextAlignment(.center)
@@ -120,8 +167,10 @@ struct FindHelpRootView: View {
                     .textFieldStyle(.roundedBorder)
                     .frame(maxWidth: 160)
 
-                Button("Search") {
+                Button {
                     submitZipFallback()
+                } label: {
+                    Text("find_help.zip_fallback.cta")
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(zipFallback.count < 5)
@@ -172,7 +221,7 @@ struct FindHelpRootView: View {
             Image(systemName: "mappin.slash")
                 .font(.system(size: 36))
                 .foregroundStyle(CivicaColors.textSecondary)
-            Text("No help locations match your filters.")
+            Text("find_help.empty_state")
                 .font(CivicaTypography.subheadStrong)
                 .foregroundStyle(CivicaColors.textSecondary)
                 .multilineTextAlignment(.center)
