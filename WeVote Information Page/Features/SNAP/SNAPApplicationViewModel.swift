@@ -363,6 +363,10 @@ final class SNAPApplicationViewModel: ObservableObject {
             return eligibility.isMassachusettsResident != nil
         case .application:
             return canContinueDraftStep
+        case .conversation:
+            // Conversation flow manages its own continue/done state via the
+            // backend pipeline; the wrapping router doesn't gate continuation.
+            return true
         case .review:
             return true
         case .confirmation:

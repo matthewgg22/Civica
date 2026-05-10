@@ -13,7 +13,7 @@ struct SNAPApplicationWalkthroughView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             Text("Submit to Massachusetts DTA")
                 .font(CivicaTypography.cardTitle)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
 
             step(
                 number: 1,
@@ -47,7 +47,7 @@ struct SNAPApplicationWalkthroughView: View {
         }
         .padding(CivicaSpacing.lg)
         .background(CivicaColors.surfacePrimary)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
     }
 
     private func step(
@@ -62,20 +62,20 @@ struct SNAPApplicationWalkthroughView: View {
                 .font(CivicaTypography.subheadBold)
                 .foregroundColor(CivicaColors.onPrimaryText)
                 .frame(width: 28, height: 28)
-                .background(CivicaColors.ctaBlue)
+                .background(CivicaColors.brickPrimary)
                 .clipShape(Circle())
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(title)
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
                 Text(detail)
                     .font(CivicaTypography.footnote)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
                 if let action = action, let label = actionLabel {
                     Button(action: action) {
                         Text(label)
                             .font(CivicaTypography.footnoteStrong)
-                            .foregroundColor(CivicaColors.ctaBlue)
+                            .foregroundColor(CivicaColors.brickPrimary)
                     }
                 }
             }
@@ -85,7 +85,7 @@ struct SNAPApplicationWalkthroughView: View {
     private var footnote: some View {
         Text("Need help? Most DTA offices have community navigators who can walk you through the application in person.")
             .font(CivicaTypography.caption)
-            .foregroundColor(CivicaColors.textSecondary)
+            .foregroundColor(CivicaColors.graphite)
             .padding(.top, CivicaSpacing.xs)
     }
 }
@@ -95,7 +95,7 @@ struct SNAPApplicationWalkthroughView_Previews: PreviewProvider {
     static var previews: some View {
         SNAPApplicationWalkthroughView()
             .padding()
-            .background(CivicaColors.canvasBackground)
+            .background(CivicaColors.paper)
     }
 }
 #endif

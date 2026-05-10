@@ -156,36 +156,36 @@ struct SNAPEntryView: View {
                         HStack(spacing: CivicaSpacing.md) {
                             Image(systemName: "map.fill")
                                 .font(.system(size: 28))
-                                .foregroundStyle(CivicaColors.ctaBlue)
+                                .foregroundStyle(CivicaColors.brickPrimary)
                                 .frame(width: 48, height: 48)
                                 .background(
-                                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                                        .fill(CivicaColors.ctaBlue.opacity(0.12))
+                                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                                        .fill(CivicaColors.brickPrimary.opacity(0.12))
                                 )
 
                             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                                 Text("find_help.entry_card.title")
                                     .font(CivicaTypography.sectionHeader)
-                                    .foregroundStyle(CivicaColors.textPrimary)
+                                    .foregroundStyle(CivicaColors.ink)
                                 Text("find_help.entry_card.subtitle")
                                     .font(CivicaTypography.footnoteStrong)
-                                    .foregroundStyle(CivicaColors.textSecondary)
+                                    .foregroundStyle(CivicaColors.graphite)
                                     .lineLimit(2)
                             }
 
                             Spacer()
 
                             Image(systemName: "chevron.right")
-                                .foregroundStyle(CivicaColors.textSecondary)
+                                .foregroundStyle(CivicaColors.graphite)
                         }
                         .padding(CivicaSpacing.md)
                         .background(
-                            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                                 .fill(CivicaColors.surfacePrimary)
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                                .stroke(CivicaColors.hairline, lineWidth: 1)
                         )
                     }
                     .buttonStyle(.plain)

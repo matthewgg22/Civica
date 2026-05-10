@@ -24,7 +24,7 @@ struct SNAPApplicationGeneratorView: View {
             SNAPApplicationWalkthroughView()
         }
         .padding(CivicaSpacing.lg)
-        .background(CivicaColors.canvasBackground)
+        .background(CivicaColors.paper)
         .task {
             if case .idle = viewModel.phase {
                 await viewModel.generate()
@@ -41,10 +41,10 @@ struct SNAPApplicationGeneratorView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text("Your application packet")
                 .font(CivicaTypography.cardTitle)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
             Text("Save or share the summary, then finish the official application in DTA Connect.")
                 .font(CivicaTypography.subhead)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
         }
     }
 
@@ -56,36 +56,36 @@ struct SNAPApplicationGeneratorView: View {
                 ProgressView()
                 Text("Putting your packet together…")
                     .font(CivicaTypography.subhead)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
             }
             .padding(CivicaSpacing.md)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.surfacePrimary)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
         case .ready:
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: "doc.text.fill")
-                    .foregroundColor(CivicaColors.successGreen)
+                    .foregroundColor(CivicaColors.accentTeal)
                 Text("Your packet is ready.")
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
             }
             .padding(CivicaSpacing.md)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.statusSuccessSurface)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
         case .error(let message):
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundColor(CivicaColors.warningAmber)
                 Text(message)
                     .font(CivicaTypography.subhead)
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
             }
             .padding(CivicaSpacing.md)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.statusErrorSurface)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
         }
     }
 
@@ -99,9 +99,9 @@ struct SNAPApplicationGeneratorView: View {
                 Label("Save or share packet", systemImage: "square.and.arrow.up")
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, CivicaSpacing.sm)
-                    .background(CivicaColors.ctaBlue)
+                    .background(CivicaColors.brickPrimary)
                     .foregroundColor(CivicaColors.onPrimaryText)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
             }
         case .error:
             Button {
@@ -112,11 +112,11 @@ struct SNAPApplicationGeneratorView: View {
                     .padding(.vertical, CivicaSpacing.sm)
                     .background(CivicaColors.secondaryButtonFill)
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.md)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control)
                             .strokeBorder(CivicaColors.secondaryButtonBorder)
                     )
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md))
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+                    .foregroundColor(CivicaColors.ink)
             }
         case .idle, .generating:
             EmptyView()

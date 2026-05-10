@@ -25,14 +25,14 @@ import Vision
 // photo and let the backend classifier's LOW band catch it than reject
 // a passable photo.
 
-enum SNAPDocumentQualityRejection: String, Sendable {
+enum SNAPDocumentQualityRejection: String, Sendable, Equatable {
     case boundaryNotDetected = "boundary_not_detected"
     case tooBlurry = "too_blurry"
     case tooDark = "too_dark"
     case tooBright = "too_bright"
 }
 
-struct SNAPDocumentQualityResult: Sendable {
+struct SNAPDocumentQualityResult: Sendable, Equatable {
     let passed: Bool
     let rejections: [SNAPDocumentQualityRejection]
     let blurScore: Double?       // higher = sharper. ~5+ usually passes

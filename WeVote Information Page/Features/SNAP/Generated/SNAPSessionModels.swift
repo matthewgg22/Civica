@@ -75,7 +75,7 @@ struct SNAPRequiredVerification: Codable, Sendable, Hashable {
     }
 }
 
-struct SNAPEligibilityResult: Codable, Sendable {
+struct SNAPEligibilityResult: Codable, Sendable, Equatable {
     let status: SNAPEligibilityStatus
     /// Decimal arrives over the wire as a JSON string; iOS decodes to Decimal.
     let monthlyBenefit: Decimal?
@@ -100,7 +100,7 @@ struct SNAPEligibilityResult: Codable, Sendable {
 
 // MARK: - Telemetry
 
-struct SNAPTurnLLMTelemetry: Codable, Sendable {
+struct SNAPTurnLLMTelemetry: Codable, Sendable, Equatable {
     let stage: String
     let modelUsed: String
     let providerUsed: String
@@ -122,7 +122,7 @@ struct SNAPTurnLLMTelemetry: Codable, Sendable {
 
 // MARK: - TurnResult — the per-turn payload the orchestrator returns
 
-struct SNAPTurnResult: Codable, Sendable {
+struct SNAPTurnResult: Codable, Sendable, Equatable {
     let sessionId: String
     let turnIndex: Int
     let assistantQuestion: String

@@ -16,7 +16,7 @@ struct SNAPConversationView: View {
             transcriptScroll
             inputArea
         }
-        .background(CivicaColors.canvasBackground.ignoresSafeArea())
+        .background(CivicaColors.paper.ignoresSafeArea())
         .task {
             if viewModel.phase == .idle {
                 await viewModel.start()
@@ -65,24 +65,24 @@ struct SNAPConversationView: View {
                     .foregroundColor(CivicaColors.onPrimaryText)
                     .padding(.horizontal, CivicaSpacing.md)
                     .padding(.vertical, CivicaSpacing.sm)
-                    .background(CivicaColors.ctaBlue)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg))
+                    .background(CivicaColors.brickPrimary)
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
             }
         case .assistant(let turn, _):
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(turn.assistantQuestion)
                     .font(CivicaTypography.body)
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
                 if let helper = turn.helperText, !helper.isEmpty {
                     Text(helper)
                         .font(CivicaTypography.footnote)
-                        .foregroundColor(CivicaColors.textSecondary)
+                        .foregroundColor(CivicaColors.graphite)
                 }
             }
             .padding(.horizontal, CivicaSpacing.md)
             .padding(.vertical, CivicaSpacing.sm)
             .background(CivicaColors.surfaceSecondary)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -92,7 +92,7 @@ struct SNAPConversationView: View {
             ProgressView()
             Text("Thinking…")
                 .font(CivicaTypography.footnote)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
         }
         .padding(.horizontal, CivicaSpacing.md)
         .padding(.vertical, CivicaSpacing.sm)
@@ -102,26 +102,26 @@ struct SNAPConversationView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             HStack {
                 Image(systemName: result.status == .eligible ? "checkmark.seal.fill" : "info.circle.fill")
-                    .foregroundColor(result.status == .eligible ? CivicaColors.successGreen : CivicaColors.warningAmber)
+                    .foregroundColor(result.status == .eligible ? CivicaColors.accentTeal : CivicaColors.warningAmber)
                 Text(verdictHeadline(result))
                     .font(CivicaTypography.cardTitle)
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
             }
             if !result.requiredVerifications.isEmpty {
                 Text("You'll need:")
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
                 ForEach(result.requiredVerifications, id: \.code) { v in
                     HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                         Image(systemName: "doc.text")
-                            .foregroundColor(CivicaColors.textSecondary)
+                            .foregroundColor(CivicaColors.graphite)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(v.labelEn)
                                 .font(CivicaTypography.subhead)
-                                .foregroundColor(CivicaColors.textPrimary)
+                                .foregroundColor(CivicaColors.ink)
                             Text(v.explanationEn)
                                 .font(CivicaTypography.footnote)
-                                .foregroundColor(CivicaColors.textSecondary)
+                                .foregroundColor(CivicaColors.graphite)
                         }
                     }
                 }
@@ -129,16 +129,16 @@ struct SNAPConversationView: View {
             if let reason = result.ineligibilityReason {
                 Text(reason)
                     .font(CivicaTypography.body)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
             }
         }
         .padding(CivicaSpacing.lg)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.surfacePrimary)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.xl)
-                .strokeBorder(CivicaColors.borderSubtle, lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .strokeBorder(CivicaColors.hairline, lineWidth: 1)
         )
     }
 
@@ -164,11 +164,11 @@ struct SNAPConversationView: View {
                 .foregroundColor(CivicaColors.warningAmber)
             Text(message)
                 .font(CivicaTypography.subhead)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
         }
         .padding(CivicaSpacing.md)
         .background(CivicaColors.statusErrorSurface)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
     }
 
     // MARK: - Adaptive input
@@ -191,7 +191,7 @@ struct SNAPConversationView: View {
                 .padding(CivicaSpacing.lg)
                 .background(CivicaColors.surfacePrimary)
                 .overlay(alignment: .top) {
-                    Rectangle().fill(CivicaColors.borderSubtle).frame(height: 1)
+                    Rectangle().fill(CivicaColors.hairline).frame(height: 1)
                 }
         }
     }
@@ -257,23 +257,23 @@ struct SNAPConversationView: View {
         Button(action: action) {
             Text(label)
                 .font(CivicaTypography.subheadStrong)
-                .foregroundColor(style == .primary ? CivicaColors.onPrimaryText : CivicaColors.textPrimary)
+                .foregroundColor(style == .primary ? CivicaColors.onPrimaryText : CivicaColors.ink)
                 .frame(maxWidth: fullWidth ? .infinity : nil)
                 .padding(.horizontal, CivicaSpacing.lg)
                 .padding(.vertical, CivicaSpacing.sm)
                 .background(
                     style == .primary
-                        ? (enabled ? CivicaColors.ctaBlue : CivicaColors.ctaBlueDisabled)
+                        ? (enabled ? CivicaColors.brickPrimary : CivicaColors.brickPrimaryDisabled)
                         : CivicaColors.secondaryButtonFill
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.md)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control)
                         .strokeBorder(
                             style == .primary ? .clear : CivicaColors.secondaryButtonBorder,
                             lineWidth: 1
                         )
                 )
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
         }
         .disabled(!enabled)
         .accessibilityLabel(label)

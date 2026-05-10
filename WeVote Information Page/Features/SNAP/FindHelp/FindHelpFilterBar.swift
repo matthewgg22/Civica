@@ -55,11 +55,11 @@ struct FindHelpFilterBar: View {
                 Image(systemName: "chevron.down")
                     .font(.system(size: 11, weight: .semibold))
             }
-            .foregroundStyle(CivicaColors.ctaBlue)
+            .foregroundStyle(CivicaColors.brickPrimary)
             .padding(.horizontal, CivicaSpacing.md)
             .padding(.vertical, CivicaSpacing.xs)
             .background(
-                Capsule().stroke(CivicaColors.ctaBlue.opacity(0.4), lineWidth: 1)
+                Capsule().stroke(CivicaColors.brickPrimary.opacity(0.4), lineWidth: 1)
             )
         }
     }

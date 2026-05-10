@@ -13,11 +13,11 @@ struct FindHelpListView: View {
                 FindHelpListRow(location: location)
             }
             .buttonStyle(.plain)
-            .listRowBackground(CivicaColors.brandSoftBlue)
+            .listRowBackground(CivicaColors.surfaceSecondary)
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .background(CivicaColors.brandSoftBlue)
+        .background(CivicaColors.surfaceSecondary)
     }
 }
 
@@ -32,13 +32,13 @@ private struct FindHelpListRow: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(location.name)
                     .font(CivicaTypography.subheadBold)
-                    .foregroundStyle(CivicaColors.textPrimary)
+                    .foregroundStyle(CivicaColors.ink)
                     .lineLimit(2)
 
                 if let addressLine = formattedAddress() {
                     Text(addressLine)
                         .font(CivicaTypography.footnoteStrong)
-                        .foregroundStyle(CivicaColors.textSecondary)
+                        .foregroundStyle(CivicaColors.graphite)
                         .lineLimit(2)
                 }
 
@@ -46,23 +46,23 @@ private struct FindHelpListRow: View {
                     if let km = location.distanceKm {
                         Text(formatDistance(km: km))
                             .font(CivicaTypography.footnoteStrong)
-                            .foregroundStyle(CivicaColors.textSecondary)
+                            .foregroundStyle(CivicaColors.graphite)
                     }
                     Spacer()
                     Image(systemName: "chevron.right")
-                        .foregroundStyle(CivicaColors.textSecondary)
+                        .foregroundStyle(CivicaColors.graphite)
                 }
             }
         }
         .padding(.vertical, CivicaSpacing.sm)
         .padding(.horizontal, CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
 
@@ -104,7 +104,7 @@ struct ServiceTypeBadge: View {
 
     var backgroundColor: Color {
         switch serviceType {
-        case .snapApplicationHelp: return CivicaColors.ctaBlue
+        case .snapApplicationHelp: return CivicaColors.brickPrimary
         case .foodAssistance: return CivicaColors.warningAmber
         case .both: return CivicaColors.indigoStatus
         }

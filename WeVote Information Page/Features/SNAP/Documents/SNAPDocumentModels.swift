@@ -7,7 +7,7 @@ import Foundation
 
 // MARK: - Document classification
 
-enum SNAPDocumentType: String, Codable, Sendable {
+enum SNAPExtractedDocumentType: String, Codable, Sendable {
     case unknown
     case paystub
     case photoID = "photo_id"
@@ -22,8 +22,8 @@ enum SNAPDocumentConfidenceBand: String, Codable, Sendable {
     case low
 }
 
-struct SNAPDocumentClassification: Codable, Sendable {
-    let documentType: SNAPDocumentType
+struct SNAPDocumentClassification: Codable, Sendable, Equatable {
+    let documentType: SNAPExtractedDocumentType
     let confidence: Double
     let confidenceBand: SNAPDocumentConfidenceBand
     let rationale: String
@@ -56,7 +56,7 @@ enum SNAPPaystubDeductionCategory: String, Codable, Sendable {
     case other
 }
 
-struct SNAPPaystubDeduction: Codable, Sendable {
+struct SNAPPaystubDeduction: Codable, Sendable, Equatable {
     let category: SNAPPaystubDeductionCategory
     let labelAsPrinted: String
     let amount: Decimal
@@ -68,7 +68,7 @@ struct SNAPPaystubDeduction: Codable, Sendable {
     }
 }
 
-struct SNAPPaystub: Codable, Sendable {
+struct SNAPPaystub: Codable, Sendable, Equatable {
     let employerName: String
     let employerAddress: String?
     let payPeriodStart: String   // ISO YYYY-MM-DD
@@ -104,7 +104,7 @@ struct SNAPPaystub: Codable, Sendable {
 
 // MARK: - Validation flags + extraction wrapper
 
-struct SNAPValidationFlag: Codable, Sendable, Identifiable {
+struct SNAPValidationFlag: Codable, Sendable, Identifiable, Equatable {
     let code: String
     let messageEn: String
     let messageEs: String
@@ -120,7 +120,7 @@ struct SNAPValidationFlag: Codable, Sendable, Identifiable {
     }
 }
 
-struct SNAPExtractionResult: Codable, Sendable {
+struct SNAPExtractionResult: Codable, Sendable, Equatable {
     let classification: SNAPDocumentClassification
     let extractedPaystub: SNAPPaystub?
     let extractedOther: [String: String]?
@@ -151,7 +151,7 @@ struct SNAPDocumentUploadResponse: Codable, Sendable {
 struct SNAPDocumentStatusResponse: Codable, Sendable {
     let documentID: String
     let sessionID: String
-    let documentType: SNAPDocumentType
+    let documentType: SNAPExtractedDocumentType
     let onDeviceQualityPassed: Bool
     let userConfirmed: Bool
     let extraction: SNAPExtractionResult?

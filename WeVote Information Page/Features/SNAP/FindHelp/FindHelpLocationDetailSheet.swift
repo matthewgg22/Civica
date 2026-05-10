@@ -27,13 +27,13 @@ struct FindHelpLocationDetailSheet: View {
                     if let notes = location.notes, !notes.isEmpty {
                         infoBlock(title: "Notes", body: notes)
                     }
-                    Divider().background(CivicaColors.borderSubtle)
+                    Divider().background(CivicaColors.hairline)
                     callAheadDisclaimer
                     sourceAttribution
                 }
                 .padding(CivicaSpacing.lg)
             }
-            .background(CivicaColors.brandSoftBlue)
+            .background(CivicaColors.surfaceSecondary)
             .navigationTitle(location.name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -50,12 +50,12 @@ struct FindHelpLocationDetailSheet: View {
                 ServiceTypeBadge(serviceType: location.primaryServiceType)
                 Text(serviceTypeLabel(location.primaryServiceType))
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundStyle(CivicaColors.textPrimary)
+                    .foregroundStyle(CivicaColors.ink)
                 Spacer()
             }
             Text(location.name)
                 .font(CivicaTypography.sectionHeader)
-                .foregroundStyle(CivicaColors.textPrimary)
+                .foregroundStyle(CivicaColors.ink)
         }
     }
 
@@ -97,11 +97,11 @@ struct FindHelpLocationDetailSheet: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(title)
                 .font(CivicaTypography.footnoteStrong)
-                .foregroundStyle(CivicaColors.textSecondary)
+                .foregroundStyle(CivicaColors.graphite)
                 .textCase(.uppercase)
             Text(body)
                 .font(CivicaTypography.subheadStrong)
-                .foregroundStyle(CivicaColors.textPrimary)
+                .foregroundStyle(CivicaColors.ink)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -109,7 +109,7 @@ struct FindHelpLocationDetailSheet: View {
     private var callAheadDisclaimer: some View {
         Text("find_help.disclaimer.call_ahead")
             .font(CivicaTypography.footnoteStrong)
-            .foregroundStyle(CivicaColors.textSecondary)
+            .foregroundStyle(CivicaColors.graphite)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -117,15 +117,15 @@ struct FindHelpLocationDetailSheet: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text("find_help.detail.source_label")
                 .font(CivicaTypography.footnoteStrong)
-                .foregroundStyle(CivicaColors.textSecondary)
+                .foregroundStyle(CivicaColors.graphite)
                 .textCase(.uppercase)
             Text(sourceDisplayName)
                 .font(CivicaTypography.footnoteStrong)
-                .foregroundStyle(CivicaColors.textPrimary)
+                .foregroundStyle(CivicaColors.ink)
             if let lastUpdated = formattedSourceTimestamp() {
                 Text("Last updated: \(lastUpdated)")
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundStyle(CivicaColors.textSecondary)
+                    .foregroundStyle(CivicaColors.graphite)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

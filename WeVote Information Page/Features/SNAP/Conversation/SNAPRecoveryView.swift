@@ -105,17 +105,17 @@ struct SNAPRecoveryView: View {
         }
         .padding(CivicaSpacing.lg)
         .background(CivicaColors.surfacePrimary)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
     }
 
     private var header: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text("Continue an earlier application")
                 .font(CivicaTypography.cardTitle)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
             Text("We'll send you a one-time link to pick up where you left off.")
                 .font(CivicaTypography.subhead)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
         }
     }
 
@@ -132,7 +132,7 @@ struct SNAPRecoveryView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Text("Check \(viewModel.contactValue) for a one-time link.")
                     .font(CivicaTypography.subhead)
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
                 TextField("Paste the code from the link", text: $viewModel.redemptionToken)
                     .textFieldStyle(.roundedBorder)
                     .textContentType(.oneTimeCode)
@@ -146,7 +146,7 @@ struct SNAPRecoveryView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Text(message)
                     .font(CivicaTypography.subhead)
-                    .foregroundColor(CivicaColors.ctaRed)
+                    .foregroundColor(CivicaColors.destructive)
                 Button("Try again") { viewModel.objectWillChange.send() }
             }
         }
@@ -163,7 +163,7 @@ struct SNAPRecoveryView_Previews: PreviewProvider {
             )
         )
         .padding()
-        .background(CivicaColors.canvasBackground)
+        .background(CivicaColors.paper)
     }
 }
 #endif

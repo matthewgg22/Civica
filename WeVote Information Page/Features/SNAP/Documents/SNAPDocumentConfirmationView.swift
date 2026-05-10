@@ -33,17 +33,17 @@ struct SNAPDocumentConfirmationView: View {
             }
             .padding(CivicaSpacing.lg)
         }
-        .background(CivicaColors.canvasBackground)
+        .background(CivicaColors.paper)
     }
 
     private var header: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text("Does this look right?")
                 .font(CivicaTypography.cardTitle)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
             Text("We read these from your photo. Tap 'Fix something' if anything is off.")
                 .font(CivicaTypography.subhead)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
         }
     }
 
@@ -71,37 +71,37 @@ struct SNAPDocumentConfirmationView: View {
         }
         .padding(CivicaSpacing.lg)
         .background(CivicaColors.surfacePrimary)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
     }
 
     private var nonPaystubFallback: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text("We saw a \(extraction.classification.documentType.rawValue.replacingOccurrences(of: "_", with: " "))")
                 .font(CivicaTypography.subheadStrong)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
             Text("Thanks — we'll keep it on file. We'll only read paystubs in detail for now.")
                 .font(CivicaTypography.subhead)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
         }
         .padding(CivicaSpacing.lg)
         .background(CivicaColors.surfacePrimary)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
     }
 
     private func deductionsList(_ deductions: [SNAPPaystubDeduction]) -> some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text("Deductions")
                 .font(CivicaTypography.subheadStrong)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
             ForEach(deductions, id: \.labelAsPrinted) { d in
                 HStack {
                     Text(d.labelAsPrinted)
                         .font(CivicaTypography.subhead)
-                        .foregroundColor(CivicaColors.textPrimary)
+                        .foregroundColor(CivicaColors.ink)
                     Spacer()
                     Text("$\(d.amount)")
                         .font(CivicaTypography.subhead)
-                        .foregroundColor(CivicaColors.textSecondary)
+                        .foregroundColor(CivicaColors.graphite)
                 }
             }
         }
@@ -112,20 +112,20 @@ struct SNAPDocumentConfirmationView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text("A few things to double-check:")
                 .font(CivicaTypography.subheadStrong)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
             ForEach(extraction.validationFlags) { flag in
                 HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                     Image(systemName: severityIcon(flag.severity))
                         .foregroundColor(severityColor(flag.severity))
                     Text(flag.messageEn)
                         .font(CivicaTypography.footnote)
-                        .foregroundColor(CivicaColors.textPrimary)
+                        .foregroundColor(CivicaColors.ink)
                 }
             }
         }
         .padding(CivicaSpacing.md)
         .background(CivicaColors.statusWarningSurface)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
     }
 
     private var actionRow: some View {
@@ -136,18 +136,18 @@ struct SNAPDocumentConfirmationView: View {
                     .padding(.vertical, CivicaSpacing.sm)
                     .background(CivicaColors.secondaryButtonFill)
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.md)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control)
                             .strokeBorder(CivicaColors.secondaryButtonBorder)
                     )
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md))
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+                    .foregroundColor(CivicaColors.ink)
             }
             Button(action: onConfirm) {
                 Text("Looks right")
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, CivicaSpacing.sm)
-                    .background(CivicaColors.ctaBlue)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md))
+                    .background(CivicaColors.brickPrimary)
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
                     .foregroundColor(CivicaColors.onPrimaryText)
             }
         }
@@ -157,11 +157,11 @@ struct SNAPDocumentConfirmationView: View {
         HStack(alignment: .firstTextBaseline) {
             Text(label)
                 .font(CivicaTypography.subhead)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
             Spacer()
             Text(value)
                 .font(CivicaTypography.subheadStrong)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
                 .multilineTextAlignment(.trailing)
         }
     }
@@ -176,7 +176,7 @@ struct SNAPDocumentConfirmationView: View {
 
     private func severityColor(_ severity: String) -> Color {
         switch severity {
-        case "blocker": return CivicaColors.ctaRed
+        case "blocker": return CivicaColors.destructive
         case "warning": return CivicaColors.warningAmber
         default: return CivicaColors.neutralStatus
         }

@@ -15,15 +15,15 @@ struct FindHelpDisclosureFooter: View {
             } label: {
                 HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                     Image(systemName: "info.circle.fill")
-                        .foregroundStyle(CivicaColors.ctaBlue)
+                        .foregroundStyle(CivicaColors.brickPrimary)
                     Text("find_help.disclosure.short")
                         .font(CivicaTypography.footnoteStrong)
-                        .foregroundStyle(CivicaColors.textSecondary)
+                        .foregroundStyle(CivicaColors.graphite)
                         .multilineTextAlignment(.leading)
                     Spacer()
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(CivicaColors.textSecondary)
+                        .foregroundStyle(CivicaColors.graphite)
                 }
                 .padding(.horizontal, CivicaSpacing.md)
                 .padding(.vertical, CivicaSpacing.sm)
@@ -34,7 +34,7 @@ struct FindHelpDisclosureFooter: View {
             if isExpanded {
                 Text("find_help.disclosure.full")
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundStyle(CivicaColors.textSecondary)
+                    .foregroundStyle(CivicaColors.graphite)
                     .multilineTextAlignment(.leading)
                     .padding(.horizontal, CivicaSpacing.md)
                     .padding(.bottom, CivicaSpacing.sm)
@@ -44,7 +44,7 @@ struct FindHelpDisclosureFooter: View {
             CivicaColors.surfacePrimary
                 .overlay(
                     Rectangle()
-                        .fill(CivicaColors.borderSubtle)
+                        .fill(CivicaColors.hairline)
                         .frame(height: 1),
                     alignment: .top
                 )

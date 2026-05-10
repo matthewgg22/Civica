@@ -36,10 +36,10 @@ struct FindHelpRootView: View {
 
             FindHelpDisclosureFooter()
         }
-        .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
+        .background(CivicaColors.surfaceSecondary.ignoresSafeArea())
         .navigationTitle("find_help.entry_card.title")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(CivicaColors.brandSoftBlue, for: .navigationBar)
+        .toolbarBackground(CivicaColors.surfaceSecondary, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .sheet(item: $store.selectedLocation) { location in
             FindHelpLocationDetailSheet(location: location, sources: store.sources)
@@ -72,7 +72,7 @@ struct FindHelpRootView: View {
                 ProgressView()
                 Text("find_help.permission.rationale")
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundStyle(CivicaColors.textSecondary)
+                    .foregroundStyle(CivicaColors.graphite)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, CivicaSpacing.lg)
             }
@@ -89,7 +89,7 @@ struct FindHelpRootView: View {
                 ProgressView()
                 Text("find_help.loading")
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundStyle(CivicaColors.textSecondary)
+                    .foregroundStyle(CivicaColors.graphite)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if let error = store.error, store.locations.isEmpty {
@@ -131,14 +131,14 @@ struct FindHelpRootView: View {
                         .font(CivicaTypography.footnoteStrong)
                         .padding(.horizontal, CivicaSpacing.lg)
                         .padding(.vertical, CivicaSpacing.sm)
-                        .foregroundStyle(mode == displayMode ? CivicaColors.onPrimaryText : CivicaColors.ctaBlue)
-                        .background(mode == displayMode ? CivicaColors.ctaBlue : Color.clear)
+                        .foregroundStyle(mode == displayMode ? CivicaColors.onPrimaryText : CivicaColors.brickPrimary)
+                        .background(mode == displayMode ? CivicaColors.brickPrimary : Color.clear)
                 }
             }
         }
         .background(CivicaColors.surfacePrimary)
         .clipShape(Capsule())
-        .overlay(Capsule().stroke(CivicaColors.ctaBlue.opacity(0.4), lineWidth: 1))
+        .overlay(Capsule().stroke(CivicaColors.brickPrimary.opacity(0.4), lineWidth: 1))
         .shadow(color: CivicaColors.shadowSoft, radius: 6, x: 0, y: 2)
     }
 
@@ -158,7 +158,7 @@ struct FindHelpRootView: View {
         VStack(spacing: CivicaSpacing.lg) {
             Text(messageKey)
                 .font(CivicaTypography.subheadStrong)
-                .foregroundStyle(CivicaColors.textSecondary)
+                .foregroundStyle(CivicaColors.graphite)
                 .multilineTextAlignment(.center)
 
             HStack(spacing: CivicaSpacing.sm) {
@@ -179,7 +179,7 @@ struct FindHelpRootView: View {
             if let error = store.error {
                 Text(error.errorDescription ?? "Search failed.")
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundStyle(CivicaColors.ctaRed)
+                    .foregroundStyle(CivicaColors.destructive)
                     .multilineTextAlignment(.center)
             }
 
@@ -220,10 +220,10 @@ struct FindHelpRootView: View {
         VStack(spacing: CivicaSpacing.md) {
             Image(systemName: "mappin.slash")
                 .font(.system(size: 36))
-                .foregroundStyle(CivicaColors.textSecondary)
+                .foregroundStyle(CivicaColors.graphite)
             Text("find_help.empty_state")
                 .font(CivicaTypography.subheadStrong)
-                .foregroundStyle(CivicaColors.textSecondary)
+                .foregroundStyle(CivicaColors.graphite)
                 .multilineTextAlignment(.center)
         }
         .padding(CivicaSpacing.lg)
@@ -234,10 +234,10 @@ struct FindHelpRootView: View {
         VStack(spacing: CivicaSpacing.md) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 36))
-                .foregroundStyle(CivicaColors.ctaRed)
+                .foregroundStyle(CivicaColors.destructive)
             Text(message)
                 .font(CivicaTypography.subheadStrong)
-                .foregroundStyle(CivicaColors.textSecondary)
+                .foregroundStyle(CivicaColors.graphite)
                 .multilineTextAlignment(.center)
         }
         .padding(CivicaSpacing.lg)
