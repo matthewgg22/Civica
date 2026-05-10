@@ -263,7 +263,7 @@ struct HowCallsBecomeSignalCardDemo: View {
                 .padding(CivicaSpacing.md)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color(uiColor: .secondarySystemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
             }
             .padding(CivicaSpacing.lg)
         }

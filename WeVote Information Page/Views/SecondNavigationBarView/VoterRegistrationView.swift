@@ -867,7 +867,7 @@ struct VoterRegistrationView: View {
                     .padding(.vertical, CivicaSpacing.md)
                     .background(CivicaColors.brickPrimary)
                     .foregroundColor(CivicaColors.onPrimaryText)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
                 }
             }
 
@@ -1347,10 +1347,10 @@ struct VoterRegistrationView: View {
         .padding(CivicaSpacing.md)
         .background(CivicaColors.tealSurface)
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.16), lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
     }
 
     private var deadlineDoubleCheckPanel: some View {
@@ -1379,10 +1379,10 @@ struct VoterRegistrationView: View {
         .padding(CivicaSpacing.md)
         .background(CivicaColors.tealSurface.opacity(0.72))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
     }
 
     private var preMapvElectionOverviewPanel: some View {
@@ -1461,10 +1461,10 @@ struct VoterRegistrationView: View {
         .padding(CivicaSpacing.md)
         .background(CivicaColors.tealSurface.opacity(0.62))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.16), lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
     }
 
     private var thenVoteTimelinePanel: some View {
@@ -1503,10 +1503,10 @@ struct VoterRegistrationView: View {
         .padding(CivicaSpacing.md)
         .background(CivicaColors.tealSurface)
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.16), lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
     }
 
     private func formattedOverviewDate(_ isoDate: String) -> String {
@@ -1717,7 +1717,7 @@ struct VoterRegistrationView: View {
         if let election = nextUpcomingElection {
             VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 HStack(alignment: .top, spacing: CivicaSpacing.sm) {
-                    registrationStateFlag(width: 64, height: 42, cornerRadius: CivicaRadius.sm)
+                    registrationStateFlag(width: 64, height: 42, cornerRadius: CivicaRadius.control)
 
                     VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text(timelinePreviewTitle(for: election))
@@ -1805,10 +1805,10 @@ struct VoterRegistrationView: View {
         .padding(.vertical, CivicaSpacing.sm)
         .background(CivicaColors.tealSurface.opacity(0.85))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
     }
 
     private func timelinePreviewTitle(for election: Election) -> String {
@@ -2276,7 +2276,7 @@ struct VoterRegistrationView: View {
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(
                     LinearGradient(
                         colors: [
@@ -2289,10 +2289,10 @@ struct VoterRegistrationView: View {
                 )
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.24), lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
     }
 
     private var provisionalRequestPanel: some View {
@@ -2320,10 +2320,10 @@ struct VoterRegistrationView: View {
         .padding(CivicaSpacing.md)
         .background(CivicaColors.tealSurface.opacity(0.72))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
     }
 
     private func requestStepLine(_ text: String) -> some View {

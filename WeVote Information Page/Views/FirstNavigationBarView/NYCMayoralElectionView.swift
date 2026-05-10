@@ -273,7 +273,7 @@ struct NYCMayoralElectionView: View {
                     }
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .stroke(
                             focusedGuideCardIndex == -1 ? GuideMiniNavSection.voterID.selectedBorderColor : Color.clear,
                             lineWidth: 1
@@ -351,7 +351,7 @@ struct NYCMayoralElectionView: View {
                         .background(
                             Group {
                                 if selectedGuideMiniNavSection == section {
-                                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                         .fill(section.selectedBackgroundColor)
                                 } else {
                                     Color.clear
@@ -361,7 +361,7 @@ struct NYCMayoralElectionView: View {
                         .overlay(
                             Group {
                                 if selectedGuideMiniNavSection == section {
-                                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                         .stroke(section.selectedBorderColor, lineWidth: 1.1)
                                 } else {
                                     Color.clear
@@ -421,9 +421,9 @@ struct NYCMayoralElectionView: View {
                         .resizable()
                         .scaledToFill()
                         .frame(width: 54, height: 36)
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                 .stroke(CivicaColors.hairline, lineWidth: 1)
                         )
                         .opensMyInfoPanelOnLongPress()
@@ -464,9 +464,9 @@ struct NYCMayoralElectionView: View {
                     isEmbedded: true
                 )
                 .frame(height: 305)
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
                 .padding(.top, CivicaSpacing.xs)
@@ -485,11 +485,11 @@ struct NYCMayoralElectionView: View {
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(isFocused ? section.selectedBorderColor : CivicaColors.hairline, lineWidth: 1)
         )
         .shadow(color: shadowColor, radius: isFocused ? 8 : 2, x: 0, y: isFocused ? 4 : 1)
@@ -525,11 +525,11 @@ struct NYCMayoralElectionView: View {
         }
         .padding(CivicaSpacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(Color(hex: "#F7F4FF"))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(Color(hex: "#D7CCFF"), lineWidth: 1)
         )
     }
@@ -2684,11 +2684,11 @@ struct NYCMayoralElectionView: View {
                 .padding(CivicaSpacing.sm)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .fill(Color(red: 0.96, green: 0.97, blue: 0.98))
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .stroke(CivicaColors.hairline.opacity(0.8), lineWidth: 1)
                 )
             }

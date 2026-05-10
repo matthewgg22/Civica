@@ -82,11 +82,11 @@ struct SNAPEligibilityIntroView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(CivicaSpacing.md)
                         .background(
-                            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                                 .fill(CivicaColors.surfacePrimary)
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                                 .stroke(CivicaColors.hairline, lineWidth: 1)
                         )
                     }
@@ -155,11 +155,11 @@ private struct SNAPIntroHeader: View {
     var body: some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             ZStack {
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .fill(CivicaColors.surfacePrimary)
                     .frame(width: 56, height: 56)
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                             .stroke(CivicaColors.hairline, lineWidth: 1)
                     )
                     .shadow(color: CivicaColors.brickPrimary.opacity(0.14), radius: 6, x: 0, y: 3)

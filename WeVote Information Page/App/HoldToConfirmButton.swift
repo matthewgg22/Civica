@@ -55,14 +55,14 @@ struct HoldToConfirmButton: View {
                 let fillWidth = width * progress
 
                 ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .fill(baseBackgroundColor)
 
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .fill(fillGradient)
                         .frame(width: fillWidth)
 
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .stroke(borderColor, lineWidth: 1)
 
                     HStack(spacing: CivicaSpacing.xs) {
@@ -77,10 +77,10 @@ struct HoldToConfirmButton: View {
                     .foregroundStyle(textColor)
                     .animation(reduceMotion ? nil : .easeInOut(duration: 0.15), value: isPressing)
                 }
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             }
             .frame(height: 36)
-            .contentShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+            .contentShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         }
         .buttonStyle(.plain)
         .disabled(isConfirmed && onReset == nil)

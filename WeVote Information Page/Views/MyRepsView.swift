@@ -371,9 +371,9 @@ struct MyRepsView: View {
                     .padding(.trailing, 44)
                     .padding(.vertical, CivicaSpacing.md)
                     .background(CivicaColors.surfacePrimary)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                             .stroke(CivicaColors.hairline, lineWidth: 1)
                     )
                     .onChange(of: locationInput) { _, newValue in
@@ -495,7 +495,7 @@ struct MyRepsView: View {
                 .padding(CivicaSpacing.sm)
                 .accessibilityLabel(l("app.reps.coverage.open_full_map", "Open full map"))
             }
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
 
             Text(
                 isStateOnlyInput

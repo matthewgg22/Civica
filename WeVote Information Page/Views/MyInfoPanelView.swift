@@ -121,9 +121,9 @@ struct MyInfoPanelView: View {
                                 .padding(.horizontal, CivicaSpacing.md)
                                 .padding(.vertical, CivicaSpacing.md)
                                 .background(CivicaColors.surfacePrimary)
-                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                         .stroke(CivicaColors.hairline, lineWidth: 1)
                                 )
                                 .onChange(of: locationInput) { _, newValue in
@@ -191,9 +191,9 @@ struct MyInfoPanelView: View {
                         }
                         .background(CivicaColors.surfacePrimary)
                         .foregroundColor(CivicaColors.brickPrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                 .stroke(CivicaColors.brickPrimary.opacity(0.22), lineWidth: 1)
                         )
                         .buttonStyle(.plain)

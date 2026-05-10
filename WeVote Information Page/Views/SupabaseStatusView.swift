@@ -36,7 +36,7 @@ struct SupabaseStatusView: View {
                     .padding(CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.statusErrorSurface)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             }
 
             HStack(spacing: CivicaSpacing.sm) {
@@ -81,11 +81,11 @@ struct SupabaseStatusView: View {
         }
         .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(CivicaColors.secondaryButtonFill)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 1)
         )
         .task {

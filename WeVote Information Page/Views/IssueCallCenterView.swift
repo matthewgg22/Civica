@@ -727,15 +727,15 @@ struct IssueCallCenterView: View {
                 .padding(.vertical, CivicaSpacing.md)
                 .foregroundColor(.white)
                 .background(CivicaColors.brickPrimary)
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 .buttonStyle(.plain)
                 .accessibilityIdentifier("issue_call.intro.ready")
             }
             .padding(CivicaSpacing.lg)
             .background(CivicaColors.surfacePrimary)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .stroke(CivicaColors.hairline, lineWidth: 1)
             )
             .civicaShadow(.floating)
@@ -821,7 +821,7 @@ struct IssueCallCenterView: View {
                                 .frame(minWidth: 58, minHeight: 32, alignment: .center)
                                 .padding(.horizontal, CivicaSpacing.sm)
                                 .background(CivicaColors.brickPrimary)
-                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         }
                         .buttonStyle(.plain)
                         .accessibilityIdentifier("issue_call.return_home")
@@ -899,9 +899,9 @@ struct IssueCallCenterView: View {
         .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, CivicaSpacing.sm)
         .background(Color(hex: "#FFF3D6"))
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .stroke(Color(hex: "#F2D38B"), lineWidth: 1)
         )
         .overlay(alignment: .topTrailing) {
@@ -982,11 +982,11 @@ struct IssueCallCenterView: View {
         .padding(.horizontal, CivicaSpacing.md)
         .padding(.vertical, CivicaSpacing.xs)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.22), lineWidth: 2)
         )
         .civicaShadow(.card)
@@ -1288,9 +1288,9 @@ struct IssueCallCenterView: View {
                         .padding(.horizontal, CivicaSpacing.md)
                         .padding(.vertical, CivicaSpacing.sm)
                         .background(CivicaColors.surfacePrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                                 .stroke(CivicaColors.hairline.opacity(0.8), lineWidth: 1)
                         )
                         .id("assistant-typing")
@@ -1364,9 +1364,9 @@ struct IssueCallCenterView: View {
         .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, CivicaSpacing.sm)
         .background(CivicaColors.surfacePrimary)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .stroke(CivicaColors.hairline.opacity(0.8), lineWidth: 1)
         )
     }
@@ -1441,11 +1441,11 @@ struct IssueCallCenterView: View {
             .padding(.horizontal, CivicaSpacing.md)
             .padding(.vertical, CivicaSpacing.sm)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .fill(isUser ? CivicaColors.brickPrimary : CivicaColors.surfacePrimary)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .stroke(isUser ? .clear : CivicaColors.hairline.opacity(0.8), lineWidth: 1)
             )
             .frame(maxWidth: .infinity, alignment: isUser ? .trailing : .leading)
@@ -1519,9 +1519,9 @@ struct IssueCallCenterView: View {
                                 .padding(.horizontal, CivicaSpacing.sm)
                                 .padding(.vertical, CivicaSpacing.sm)
                                 .background(CivicaColors.surfacePrimary)
-                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                         .stroke(CivicaColors.hairline.opacity(0.8), lineWidth: 1)
                                 )
                         }
@@ -1551,9 +1551,9 @@ struct IssueCallCenterView: View {
                                     .padding(.horizontal, CivicaSpacing.sm)
                                     .padding(.vertical, CivicaSpacing.sm)
                                     .background(CivicaColors.surfacePrimary)
-                                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                             .stroke(CivicaColors.hairline.opacity(0.8), lineWidth: 1)
                                     )
                             }
@@ -1572,9 +1572,9 @@ struct IssueCallCenterView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, CivicaSpacing.sm)
                             .background(CivicaColors.surfacePrimary)
-                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                             .overlay(
-                                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                     .stroke(CivicaColors.hairline.opacity(0.8), lineWidth: 1)
                             )
                     }
@@ -1589,7 +1589,7 @@ struct IssueCallCenterView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, CivicaSpacing.sm)
                             .background(CivicaColors.brickPrimary)
-                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     }
                     .buttonStyle(.plain)
                 }
@@ -1597,9 +1597,9 @@ struct IssueCallCenterView: View {
         }
         .padding(CivicaSpacing.md)
         .background(CivicaColors.surfacePrimary.opacity(0.6))
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.hairline.opacity(0.8), lineWidth: 1)
         )
     }
@@ -1624,9 +1624,9 @@ struct IssueCallCenterView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, CivicaSpacing.sm)
                         .background(CivicaColors.surfacePrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                 .stroke(CivicaColors.hairline.opacity(0.8), lineWidth: 1)
                         )
                 }
@@ -1650,9 +1650,9 @@ struct IssueCallCenterView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, CivicaSpacing.sm)
                             .background(CivicaColors.surfacePrimary)
-                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                             .overlay(
-                                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                     .stroke(CivicaColors.hairline.opacity(0.8), lineWidth: 1)
                             )
                     }
@@ -1667,7 +1667,7 @@ struct IssueCallCenterView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, CivicaSpacing.sm)
                             .background(CivicaColors.brickPrimary)
-                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     }
                     .buttonStyle(.plain)
                 }
@@ -1675,9 +1675,9 @@ struct IssueCallCenterView: View {
         }
         .padding(CivicaSpacing.md)
         .background(CivicaColors.surfacePrimary.opacity(0.6))
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.hairline.opacity(0.8), lineWidth: 1)
         )
     }
@@ -1698,16 +1698,16 @@ struct IssueCallCenterView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, CivicaSpacing.sm)
                         .background(CivicaColors.brickPrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 }
                 .buttonStyle(.plain)
             }
         }
         .padding(CivicaSpacing.md)
         .background(CivicaColors.surfacePrimary.opacity(0.6))
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.hairline.opacity(0.8), lineWidth: 1)
         )
     }
@@ -1738,9 +1738,9 @@ struct IssueCallCenterView: View {
             .padding(.vertical, CivicaSpacing.sm)
             .accessibilityIdentifier("issue_call.concern_input")
             .background(CivicaColors.surfacePrimary)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(CivicaColors.hairline, lineWidth: 1)
             )
 
@@ -1762,9 +1762,9 @@ struct IssueCallCenterView: View {
                                     .padding(.vertical, CivicaSpacing.sm)
                                     .frame(maxWidth: .infinity)
                                     .background(viewModel.selectedAsk == ask ? CivicaColors.brickPrimary : CivicaColors.surfacePrimary)
-                                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                             .stroke(CivicaColors.hairline.opacity(0.8), lineWidth: 1)
                                     )
                             }
@@ -1790,9 +1790,9 @@ struct IssueCallCenterView: View {
             .padding(.horizontal, CivicaSpacing.sm)
             .padding(.vertical, CivicaSpacing.sm)
             .background(CivicaColors.surfacePrimary)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(CivicaColors.hairline, lineWidth: 1)
             )
             .accessibilityIdentifier("issue_call.bill_input")
@@ -1812,7 +1812,7 @@ struct IssueCallCenterView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, CivicaSpacing.md)
                 .background(viewModel.canSubmit ? CivicaColors.brickPrimary : CivicaColors.graphite.opacity(0.45))
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             }
             .buttonStyle(.plain)
             .disabled(!viewModel.canSubmit || viewModel.isSubmitting)
@@ -1820,9 +1820,9 @@ struct IssueCallCenterView: View {
         }
         .padding(CivicaSpacing.md)
         .background(CivicaColors.surfacePrimary.opacity(0.55))
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.hairline.opacity(0.7), lineWidth: 1)
         )
     }
@@ -3072,9 +3072,9 @@ struct IssueCallCenterView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, CivicaSpacing.sm)
                         .background(CivicaColors.surfacePrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                 .stroke(CivicaColors.hairline.opacity(0.8), lineWidth: 1)
                         )
                 }
@@ -3095,16 +3095,16 @@ struct IssueCallCenterView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, CivicaSpacing.sm)
                         .background(CivicaColors.brickPrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 }
                 .buttonStyle(.plain)
             }
         }
         .padding(CivicaSpacing.md)
         .background(CivicaColors.surfacePrimary.opacity(0.55))
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.hairline.opacity(0.7), lineWidth: 1)
         )
     }
@@ -3120,9 +3120,9 @@ struct IssueCallCenterView: View {
         }
         .padding(CivicaSpacing.md)
         .background(CivicaColors.surfacePrimary)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.hairline.opacity(0.7), lineWidth: 1)
         )
     }
@@ -3184,7 +3184,7 @@ struct IssueCallCenterView: View {
         .clipShape(RoundedRectangle(cornerRadius: isMAPCMode ? 0 : 12, style: .continuous))
         .overlay {
             if !isMAPCMode {
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .stroke(CivicaColors.hairline.opacity(0.7), lineWidth: 1)
             }
         }
@@ -3396,9 +3396,9 @@ struct IssueCallCenterView: View {
                         .padding(.vertical, CivicaSpacing.sm)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(Self.mapcScriptCardBackground)
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                 .stroke(CivicaColors.hairline.opacity(0.8), lineWidth: 1)
                         )
                     }
@@ -3444,7 +3444,7 @@ struct IssueCallCenterView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, CivicaSpacing.md)
                                 .background(CivicaColors.brickPrimary)
-                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         }
                         .buttonStyle(.plain)
                         .frame(width: 82)
@@ -3460,7 +3460,7 @@ struct IssueCallCenterView: View {
         .padding(CivicaSpacing.md)
         .id(brief.id)
         .background(CivicaColors.surfacePrimary)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .shadow(
             color: condensedForMAPC ? CivicaColors.ink.opacity(0.08) : .clear,
             radius: condensedForMAPC ? 6 : 0,
@@ -3468,7 +3468,7 @@ struct IssueCallCenterView: View {
             y: condensedForMAPC ? 2 : 0
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(
                     condensedForMAPC
                     ? CivicaColors.hairline.opacity(0.5)
@@ -3527,7 +3527,7 @@ struct IssueCallCenterView: View {
                 ? CivicaColors.warningAmber
                 : CivicaColors.graphite.opacity(0.45)
             )
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         }
         .buttonStyle(.plain)
         .disabled(!canAdvance)
@@ -3622,9 +3622,9 @@ struct IssueCallCenterView: View {
                     .padding(.horizontal, CivicaSpacing.md)
                     .padding(.vertical, CivicaSpacing.sm)
                     .background(CivicaColors.surfacePrimary)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                             .stroke(CivicaColors.hairline.opacity(0.7), lineWidth: 1)
                     )
                 }
@@ -3651,7 +3651,7 @@ struct IssueCallCenterView: View {
                                 .padding(.vertical, CivicaSpacing.sm)
                                 .frame(maxWidth: .infinity, alignment: .center)
                                 .background(CivicaColors.brickPrimary)
-                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                                 .voteNowPillDualOrbit(
                                     redColor: CivicaColors.partyRepublican.opacity(0.94),
                                     blueColor: CivicaColors.partyDemocrat.opacity(0.88),
@@ -3662,7 +3662,7 @@ struct IssueCallCenterView: View {
                                     borderInset: 0.6,
                                     segmentLength: 0.36,
                                     separatorThickness: 0.7,
-                                    pathStyle: .roundedRect(cornerRadius: CivicaRadius.md)
+                                    pathStyle: .roundedRect(cornerRadius: CivicaRadius.control)
                                 )
                             }
                             .buttonStyle(.plain)
@@ -3688,7 +3688,7 @@ struct IssueCallCenterView: View {
                         .padding(.vertical, CivicaSpacing.sm)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(exampleCategoryColor(for: example.category ?? Self.allExamplesFilterLabel))
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
 
                         HStack(spacing: CivicaSpacing.sm) {
                             if let category = example.category, !category.isEmpty {
@@ -3758,7 +3758,7 @@ struct IssueCallCenterView: View {
                             .padding(.vertical, CivicaSpacing.sm)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(CivicaColors.tealSurface)
-                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         }
                         .buttonStyle(.plain)
 
@@ -3784,16 +3784,16 @@ struct IssueCallCenterView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, CivicaSpacing.sm)
                                 .background(CivicaColors.brickPrimary)
-                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         }
                         .buttonStyle(.plain)
                         .disabled(viewModel.isSubmitting)
                     }
                     .padding(CivicaSpacing.md)
                     .background(CivicaColors.surfacePrimary)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                             .stroke(CivicaColors.hairline.opacity(0.7), lineWidth: 1)
                     )
                     .transition(.move(edge: .top).combined(with: .opacity))
@@ -3817,9 +3817,9 @@ struct IssueCallCenterView: View {
                         .padding(.vertical, CivicaSpacing.sm)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(CivicaColors.surfacePrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                 .stroke(CivicaColors.hairline.opacity(0.7), lineWidth: 1)
                         )
                     }
@@ -3893,9 +3893,9 @@ struct IssueCallCenterView: View {
                 }
                 .padding(CivicaSpacing.md)
                 .background(CivicaColors.surfacePrimary)
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .stroke(CivicaColors.hairline.opacity(0.7), lineWidth: 1)
                 )
             }
@@ -3938,9 +3938,9 @@ struct IssueCallCenterView: View {
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.surfacePrimary)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.hairline.opacity(0.7), lineWidth: 1)
         )
     }
@@ -4036,9 +4036,9 @@ struct IssueCallCenterView: View {
             .padding(CivicaSpacing.md)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.surfacePrimary)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .stroke(CivicaColors.hairline.opacity(0.7), lineWidth: 1)
             )
         }
@@ -4117,9 +4117,9 @@ struct IssueCallCenterView: View {
                                         .padding(.horizontal, CivicaSpacing.sm)
                                         .padding(.vertical, CivicaSpacing.xs)
                                         .background(outcomeHistoryBackground(for: row.outcome))
-                                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                                         .overlay(
-                                            RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                                 .stroke(outcomeColor(for: row.outcome).opacity(0.42), lineWidth: 1)
                                         )
                                     }
@@ -4141,16 +4141,16 @@ struct IssueCallCenterView: View {
                                 .padding(.horizontal, CivicaSpacing.md)
                                 .padding(.vertical, CivicaSpacing.sm)
                                 .background(CivicaColors.brickPrimary)
-                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         }
                         .buttonStyle(.plain)
                     }
                     .padding(CivicaSpacing.md)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.surfacePrimary)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                             .stroke(CivicaColors.hairline.opacity(0.7), lineWidth: 1)
                     )
                 }
@@ -4402,9 +4402,9 @@ struct IssueCallCenterView: View {
                     .foregroundColor(CivicaColors.brickPrimary)
                     .frame(width: 34, height: 34)
                     .background(CivicaColors.surfacePrimary)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                             .stroke(CivicaColors.brickPrimary.opacity(0.4), lineWidth: 1)
                     )
             }
@@ -4735,10 +4735,10 @@ struct IssueCallCenterView: View {
         .padding(CivicaSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(usesMapcCardChrome ? Self.mapcScriptCardBackground : CivicaColors.tealSurface)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         .overlay {
             if usesMapcCardChrome {
-                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(CivicaColors.hairline.opacity(0.8), lineWidth: 1)
             }
         }
@@ -4761,10 +4761,10 @@ struct IssueCallCenterView: View {
         .padding(CivicaSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(usesMapcCardChrome ? Self.mapcScriptCardBackground : CivicaColors.tealSurface)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         .overlay {
             if usesMapcCardChrome {
-                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(CivicaColors.hairline.opacity(0.8), lineWidth: 1)
             }
         }
@@ -4784,7 +4784,7 @@ struct IssueCallCenterView: View {
         .padding(CivicaSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.tealSurface)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
     }
 
     private func emphasizedPromptText(_ text: String, baseFont: Font) -> Text {
@@ -4929,9 +4929,9 @@ struct IssueCallCenterView: View {
                                 ? outcomeColor(for: outcome)
                                 : CivicaColors.brickPrimary
                             )
-                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                             .overlay(
-                                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                     .stroke(CivicaColors.hairline.opacity(0.95), lineWidth: 1)
                             )
                     }

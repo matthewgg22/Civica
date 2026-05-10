@@ -222,11 +222,11 @@ struct MarbleSimulationView: View {
         .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, CivicaSpacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(Color.white.opacity(0.9))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
@@ -237,10 +237,10 @@ struct MarbleSimulationView: View {
                 let now = timeline.date.timeIntervalSinceReferenceDate
 
                 ZStack {
-                    RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .fill(Color.white.opacity(0.9))
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                                 .stroke(CivicaColors.hairline, lineWidth: 1.2)
                         )
 
@@ -351,11 +351,11 @@ struct MarbleSimulationView: View {
         }
         .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(Color.white.opacity(0.92))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
@@ -398,11 +398,11 @@ struct MarbleSimulationView: View {
         }
         .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(Color.white.opacity(0.92))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
@@ -478,8 +478,8 @@ struct MarbleSimulationView: View {
                     ? candidateColor.opacity(0.65)
                     : Color.gray.opacity(0.70))
 
-            context.fill(Path(roundedRect: frame, cornerRadius: CivicaRadius.lg), with: .color(fill))
-            context.stroke(Path(roundedRect: frame, cornerRadius: CivicaRadius.lg), with: .color(stroke), lineWidth: controller.highlightedCandidateID == candidate.id ? 3 : 1.2)
+            context.fill(Path(roundedRect: frame, cornerRadius: CivicaRadius.card), with: .color(fill))
+            context.stroke(Path(roundedRect: frame, cornerRadius: CivicaRadius.card), with: .color(stroke), lineWidth: controller.highlightedCandidateID == candidate.id ? 3 : 1.2)
 
             let count = counts[candidate.id, default: 0]
             let share: Double
@@ -558,7 +558,7 @@ struct MarbleSimulationView: View {
         )
 
         context.fill(
-            Path(roundedRect: frame, cornerRadius: CivicaRadius.lg),
+            Path(roundedRect: frame, cornerRadius: CivicaRadius.card),
             with: .color(Color.black.opacity(0.06))
         )
         if inactiveFraction > 0 {
@@ -570,12 +570,12 @@ struct MarbleSimulationView: View {
                 height: max(0, frame.height - (fillInset * 2))
             )
             context.fill(
-                Path(roundedRect: progressRect, cornerRadius: CivicaRadius.md),
+                Path(roundedRect: progressRect, cornerRadius: CivicaRadius.control),
                 with: .color(CivicaColors.warningAmber.opacity(0.23))
             )
         }
         context.stroke(
-            Path(roundedRect: frame, cornerRadius: CivicaRadius.lg),
+            Path(roundedRect: frame, cornerRadius: CivicaRadius.card),
             with: .color(Color.black.opacity(0.18)),
             lineWidth: 1
         )
@@ -732,7 +732,7 @@ struct MarbleSimulationView: View {
         }
         .padding(CivicaSpacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .fill(CivicaColors.paper.opacity(0.7))
         )
     }
@@ -803,11 +803,11 @@ private struct RoundedControlButtonStyle: ButtonStyle {
             .padding(.horizontal, CivicaSpacing.sm)
             .padding(.vertical, verticalPadding)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .fill(fill.opacity(configuration.isPressed ? 0.78 : 1.0))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .stroke(CivicaColors.hairline, lineWidth: 1)
             )
     }

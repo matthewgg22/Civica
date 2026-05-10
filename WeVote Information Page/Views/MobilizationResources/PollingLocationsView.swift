@@ -133,7 +133,7 @@ struct PollingLocationsView: View {
                 endPoint: .trailing
             )
         )
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .shadow(color: .blue.opacity(0.18), radius: 6, x: 0, y: 3)
         .padding(.horizontal)
     }
@@ -162,9 +162,9 @@ struct PollingLocationsView: View {
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.tealSurface)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.16), lineWidth: 1)
         )
         .padding(.horizontal)
@@ -192,7 +192,7 @@ struct PollingLocationsView: View {
             region = context.region
         }
         .frame(height: 250)
-        .cornerRadius(CivicaRadius.lg)
+        .cornerRadius(CivicaRadius.card)
         .padding(.horizontal)
     }
     
@@ -253,7 +253,7 @@ struct PollingLocationsView: View {
         .padding(CivicaSpacing.md)
         .contentShape(Rectangle())
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(
                     selectedPlace?.id == place.id
                     ? CivicaColors.brickPrimary.opacity(0.14)
@@ -261,7 +261,7 @@ struct PollingLocationsView: View {
                 )
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(
                     selectedPlace?.id == place.id
                     ? CivicaColors.brickPrimary.opacity(0.45)

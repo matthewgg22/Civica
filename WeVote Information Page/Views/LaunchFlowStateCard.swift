@@ -128,11 +128,11 @@ private struct LaunchFlowPrimaryCTAButtonStyle: ButtonStyle {
             .foregroundColor(CivicaColors.onPrimaryText)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .fill(backgroundColor(isPressed: configuration.isPressed))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(CivicaColors.brickPrimary.opacity(0.24), lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.99 : 1)
@@ -154,11 +154,11 @@ private struct LaunchFlowSecondaryCTAButtonStyle: ButtonStyle {
             .foregroundColor(isEnabled ? CivicaColors.brickPrimary : CivicaColors.graphite)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .fill(backgroundColor(isPressed: configuration.isPressed))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(borderColor, lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.99 : 1)

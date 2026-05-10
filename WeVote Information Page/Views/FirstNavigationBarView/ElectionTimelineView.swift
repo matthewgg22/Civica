@@ -690,7 +690,7 @@ struct ElectionTimelineView: View {
                         let shadeWidth = max(2, electionX - startX)
 
                         if shadeWidth > 1 {
-                            RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                 .fill(CivicaColors.brickPrimary.opacity(0.2))
                                 .frame(width: shadeWidth, height: 14)
                                 .position(x: startX + (shadeWidth / 2), y: lineY)
@@ -1156,9 +1156,9 @@ struct ElectionTimelineView: View {
                 .resizable()
                 .scaledToFill()
                 .frame(width: flagSize.width, height: flagSize.height)
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
                 .opensMyInfoPanelOnLongPress()
@@ -1174,18 +1174,18 @@ struct ElectionTimelineView: View {
                 }
             }
             .frame(width: flagSize.width, height: flagSize.height)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(CivicaColors.hairline, lineWidth: 1)
             )
             .opensMyInfoPanelOnLongPress()
         } else {
             stateFlagFallback(for: code)
                 .frame(width: flagSize.width, height: flagSize.height)
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
                 .opensMyInfoPanelOnLongPress()
@@ -1279,11 +1279,11 @@ struct ElectionTimelineView: View {
         .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, CivicaSpacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .fill(useTintedBackground ? CivicaColors.tealSurface.opacity(0.42) : CivicaColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .stroke(CivicaColors.hairline.opacity(useTintedBackground ? 0.55 : 0.85), lineWidth: 1)
         )
     }

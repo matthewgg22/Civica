@@ -224,11 +224,11 @@ struct RunoffThresholdGateView: View {
         .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, CivicaSpacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .fill(candidateColor.opacity(0.13))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .stroke(candidateColor.opacity(0.35), lineWidth: 1)
         )
     }
@@ -293,7 +293,7 @@ struct RunoffThresholdGateView: View {
                 let thresholdLabelY = max(4, thresholdY - 12)
 
                 ZStack(alignment: .topLeading) {
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .fill(Color.white)
 
                     Path { path in
@@ -339,7 +339,7 @@ struct RunoffThresholdGateView: View {
                     }
                 }
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
             }
@@ -373,11 +373,11 @@ struct RunoffThresholdGateView: View {
         .padding(CivicaSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
@@ -456,11 +456,11 @@ struct RunoffThresholdGateView: View {
                             .padding(.horizontal, CivicaSpacing.sm)
                             .padding(.vertical, CivicaSpacing.sm)
                             .background(
-                                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                     .fill(colorForCandidate(eliminatedIndex).opacity(0.13))
                             )
                             .overlay(
-                                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                     .stroke(colorForCandidate(eliminatedIndex).opacity(0.35), lineWidth: 1)
                             )
                         }
@@ -481,11 +481,11 @@ struct RunoffThresholdGateView: View {
         .padding(CivicaSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
@@ -499,7 +499,7 @@ struct RunoffThresholdGateView: View {
         return VStack(spacing: CivicaSpacing.xs) {
             Spacer(minLength: 0)
 
-            RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .fill(colorForCandidate(candidate.id))
                 .frame(height: max(12, maxHeight * CGFloat(share / max(1, displayMax))))
                 .overlay(
@@ -516,7 +516,7 @@ struct RunoffThresholdGateView: View {
                     .padding(.horizontal, CivicaSpacing.xs)
                     .padding(.vertical, CivicaSpacing.xs)
                     .background(
-                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                             .fill(Color.black.opacity(0.22))
                     )
                     .padding(.bottom, CivicaSpacing.xs),
@@ -561,10 +561,10 @@ struct RunoffThresholdGateView: View {
                 let clampedShare = share.isFinite ? min(max(share, 0), 100) : 0
                 let fillWidth = geometry.size.width * CGFloat(clampedShare / 100)
                 let labelWidth = min(max(44, fillWidth - 8), 110)
-                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .fill(candidateColor.opacity(0.18))
                     .overlay(alignment: .leading) {
-                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                             .fill(candidateColor)
                             .frame(width: fillWidth)
                             .overlay(alignment: .trailing) {
@@ -578,7 +578,7 @@ struct RunoffThresholdGateView: View {
                                     .padding(.horizontal, CivicaSpacing.xs)
                                     .padding(.vertical, CivicaSpacing.xs)
                                     .background(
-                                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                             .fill(Color.black.opacity(0.25))
                                     )
                                     .padding(.trailing, CivicaSpacing.xs)

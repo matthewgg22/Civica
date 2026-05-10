@@ -83,18 +83,18 @@ struct ElectionTimelineCardView: View {
                 .disabled(!canMakePlan)
                 .foregroundColor(canMakePlan ? .white : CivicaColors.ink.opacity(0.75))
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .fill(canMakePlan ? CivicaColors.brickPrimary : CivicaColors.tealSurface)
                 )
             }
         }
         .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.hairline, lineWidth: 1)
         )
         .civicaShadow(.hairline, opacity: 0.06)

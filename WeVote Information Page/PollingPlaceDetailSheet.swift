@@ -65,7 +65,7 @@ struct PollingPlaceDetailSheet: View {
                     Marker(place.name, coordinate: place.coordinate)
                 }
                 .frame(height: 200)
-                .cornerRadius(CivicaRadius.lg)
+                .cornerRadius(CivicaRadius.card)
 
                 // 2) Title + address
                 Text(place.name)

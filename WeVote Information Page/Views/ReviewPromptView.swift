@@ -22,17 +22,17 @@ struct ReviewPromptView: View {
                     .frame(maxWidth: .infinity, minHeight: 44)
                     .background(CivicaColors.surfacePrimary)
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                             .stroke(CivicaColors.hairline, lineWidth: 1)
                     )
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
 
                 Button("Rate the App", action: onRateApp)
                     .font(CivicaTypography.sectionHeader)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, minHeight: 44)
                     .background(CivicaColors.brickPrimary)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
             }
         }
         .padding(CivicaSpacing.lg)

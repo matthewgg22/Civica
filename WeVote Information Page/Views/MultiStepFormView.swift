@@ -375,17 +375,17 @@ private struct MAPVFlowView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(
                     ZStack {
-                        RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                             .fill(CivicaColors.paper.opacity(0.92))
-                        RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                             .fill(theme.cardScrimColor.opacity(theme.cardScrimOpacity))
                     }
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .stroke(CivicaColors.ink.opacity(0.08), lineWidth: 1)
                 )
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
                 .shadow(color: .black.opacity(0.10 + (theme.ambientOverlayOpacity * 0.18)), radius: 14, x: 0, y: 8)
 
                 controls
@@ -776,11 +776,11 @@ struct VotingMethodCard<Details: View>: View {
             .frame(maxWidth: .infinity)
             .frame(minHeight: 150, alignment: .topLeading)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .fill(isSelected ? accentColor.opacity(0.20) : accentColor.opacity(0.08))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .stroke(
                         isSelected ? accentColor : accentColor.opacity(0.45),
                         lineWidth: isSelected ? 1.6 : 1
@@ -892,9 +892,9 @@ struct AbsenteeView: View {
                 }
                 .padding(CivicaSpacing.md)
                 .background(CivicaColors.surfacePrimary)
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
 
@@ -909,9 +909,9 @@ struct AbsenteeView: View {
                 }
                 .padding(CivicaSpacing.md)
                 .background(CivicaColors.surfacePrimary)
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
 
@@ -923,9 +923,9 @@ struct AbsenteeView: View {
                                     .resizable()
                                     .scaledToFill()
                                     .frame(width: 62.4, height: 40.8)
-                                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                             .stroke(CivicaColors.hairline, lineWidth: 1)
                                     )
                                     .opensMyInfoPanelOnLongPress()
@@ -945,7 +945,7 @@ struct AbsenteeView: View {
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, CivicaSpacing.md)
                                     .background(CivicaColors.brickPrimary)
-                                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                             }
                             .accessibilityLabel(
                                 lf(
@@ -980,9 +980,9 @@ struct AbsenteeView: View {
                     }
                     .padding(CivicaSpacing.md)
                     .background(CivicaColors.surfacePrimary)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                             .stroke(CivicaColors.hairline, lineWidth: 1)
                     )
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -1076,9 +1076,9 @@ struct AbsenteeView: View {
             .padding(CivicaSpacing.md)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.tealSurface)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 1)
             )
         } else {
@@ -1099,9 +1099,9 @@ struct AbsenteeView: View {
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.tealSurface)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 1)
         )
     }
@@ -1353,11 +1353,11 @@ struct StepThreeView: View {
             }
             .padding(CivicaSpacing.md)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .fill(selectedTimeColor.opacity(0.18))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .stroke(selectedTimeColor.opacity(0.48), lineWidth: 1)
             )
             .padding(.horizontal)
@@ -1534,7 +1534,7 @@ private struct MAPVDayRailSelector: View {
         }
         .padding(CivicaSpacing.sm)
         .background(CivicaColors.tealSurface.opacity(0.6))
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .onAppear {
             guard isActive else { return }
             if selectedDate < normalizedStartDate {
@@ -2211,7 +2211,7 @@ private struct MAPVTimeVisualOverlay: View {
 
             ZStack {
                 // Subtle time-of-day gradient along the overlay region.
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .fill(
                         LinearGradient(
                             colors: [
@@ -2516,7 +2516,7 @@ struct StepFourView: View {
                         .buttonStyle(.plain)
                         .background(CivicaColors.tealSurface)
                         .foregroundColor(CivicaColors.ink)
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     }
                 }
 

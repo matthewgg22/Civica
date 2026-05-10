@@ -243,7 +243,7 @@ struct VoterIDGuideCard: View {
                         .foregroundColor(CivicaColors.brickPrimary)
                         .frame(width: 30, height: 30)
                         .background(CivicaColors.brickPrimary.opacity(0.12))
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
 
                     VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text(headerText)
@@ -304,7 +304,7 @@ struct VoterIDGuideCard: View {
                     .padding(.vertical, CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.tealSurface.opacity(0.35))
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 }
 
                 if let note = supplementalNoteText(for: metric) {
@@ -315,7 +315,7 @@ struct VoterIDGuideCard: View {
                         .padding(.vertical, CivicaSpacing.sm)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(CivicaColors.paper.opacity(0.88))
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 }
             } else {
                 HStack(alignment: .top, spacing: CivicaSpacing.sm) {
@@ -329,13 +329,13 @@ struct VoterIDGuideCard: View {
                 }
                 .padding(CivicaSpacing.sm)
                 .background(CivicaColors.tealSurface.opacity(0.48))
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             }
         }
         .padding(CivicaSpacing.lg)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(
                     LinearGradient(
                         colors: [
@@ -348,7 +348,7 @@ struct VoterIDGuideCard: View {
                 )
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.16), lineWidth: 1)
         )
         .shadow(color: CivicaColors.ink.opacity(0.07), radius: 4, x: 0, y: 2)
@@ -361,13 +361,13 @@ struct VoterIDGuideCard: View {
                 .resizable()
                 .scaledToFill()
                 .frame(width: stateFlagSize.width, height: stateFlagSize.height)
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .fill(CivicaColors.surfacePrimary)
                 )
                 .opensMyInfoPanelOnLongPress()
@@ -377,7 +377,7 @@ struct VoterIDGuideCard: View {
                 .foregroundColor(CivicaColors.brickPrimary)
                 .frame(width: 28, height: 28)
                 .background(CivicaColors.brickPrimary.opacity(0.10))
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         }
     }
 

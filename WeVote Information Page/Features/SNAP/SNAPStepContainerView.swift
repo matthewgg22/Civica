@@ -85,11 +85,11 @@ struct SNAPStepContainerView: View {
                     .padding(.vertical, CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(
-                        RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                             .fill(CivicaColors.surfacePrimary)
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                             .stroke(CivicaColors.hairline, lineWidth: 1)
                     )
                 }

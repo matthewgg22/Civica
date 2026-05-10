@@ -319,7 +319,7 @@ struct RepRow: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity, minHeight: 36)
                             .background(CivicaColors.brickPrimary)
-                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         }
                         .buttonStyle(.plain)
                     }
@@ -397,9 +397,9 @@ struct RepresentativeSection: View {
         .padding(.horizontal, CivicaSpacing.md)
         .padding(.vertical, CivicaSpacing.md)
         .background(CivicaColors.tealSurface)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.brickPrimary.opacity(0.22), lineWidth: 1)
         )
     }
@@ -429,9 +429,9 @@ struct RepresentativeSection: View {
                 .frame(width: 29, height: 29)
                 .padding(CivicaSpacing.xs)
                 .background(CivicaColors.brickPrimary.opacity(0.30))
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .stroke(CivicaColors.brickPrimary.opacity(0.40), lineWidth: 1.3)
                 )
         case "federal legislative":
@@ -443,9 +443,9 @@ struct RepresentativeSection: View {
                     .frame(width: 32, height: 32)
                     .padding(CivicaSpacing.xs)
                     .background(CivicaColors.brickPrimary.opacity(0.30))
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                             .stroke(CivicaColors.brickPrimary.opacity(0.40), lineWidth: 1.3)
                     )
             } else {
@@ -454,9 +454,9 @@ struct RepresentativeSection: View {
                     .frame(width: 32, height: 32)
                     .padding(CivicaSpacing.xs)
                     .background(CivicaColors.brickPrimary.opacity(0.30))
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                             .stroke(CivicaColors.brickPrimary.opacity(0.40), lineWidth: 1.3)
                     )
             }
@@ -467,9 +467,9 @@ struct RepresentativeSection: View {
                     .resizable()
                     .scaledToFill()
                     .frame(width: 42, height: 32)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                             .stroke(CivicaColors.brickPrimary.opacity(0.30), lineWidth: 0.9)
                     )
                     .shadow(color: CivicaColors.ink.opacity(0.22), radius: 4, x: 0, y: 2)
@@ -481,9 +481,9 @@ struct RepresentativeSection: View {
                     .frame(width: 22, height: 22)
                     .padding(CivicaSpacing.xs)
                     .background(CivicaColors.brickPrimary.opacity(0.30))
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                             .stroke(CivicaColors.brickPrimary.opacity(0.40), lineWidth: 1.3)
                     )
             }

@@ -37,10 +37,10 @@ struct TurnoutExplorer: View {
             }
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.ink.opacity(0.08), lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .sheet(isPresented: $showMethodologySheet) {
             MethodologySheet()
         }
@@ -85,7 +85,7 @@ struct TurnoutExplorer: View {
             .padding(CivicaSpacing.sm)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.surfacePrimary)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         } else {
             HStack(spacing: CivicaSpacing.sm) {
                 ProgressView()
@@ -346,11 +346,11 @@ private struct ElectionTypeSegmentedControl: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, CivicaSpacing.sm)
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .fill(isSelected ? CivicaColors.brickPrimary : CivicaColors.surfacePrimary)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .stroke(CivicaColors.ink.opacity(0.10), lineWidth: 1)
                 )
         }
@@ -664,7 +664,7 @@ private struct TurnoutRiskMap: View {
                         .frame(width: barWidth)
                         .padding(.vertical, CivicaSpacing.xs)
                         .background(
-                            RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                 .fill(inSelection ? CivicaColors.brickPrimary.opacity(0.12) : Color.clear)
                         )
                     }
@@ -832,9 +832,9 @@ private struct MetricStat: View {
         .padding(CivicaSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(backgroundColor)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .stroke(borderColor, lineWidth: 1)
         )
     }
@@ -863,9 +863,9 @@ private struct MetricMiniStat: View {
         .padding(.vertical, CivicaSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(backgroundColor)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .stroke(borderColor, lineWidth: 1)
         )
     }

@@ -259,7 +259,7 @@ struct SampleBallotView: View {
                 .padding(CivicaSpacing.md)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(CivicaColors.tealSurface)
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
 
                 if filteredRaces.isEmpty {
                     Text(l("app.sample_ballot.empty.no_match", "No candidates match your selected party registration in this sample."))
@@ -298,7 +298,7 @@ struct SampleBallotView: View {
                             .padding(CivicaSpacing.sm)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(CivicaColors.tealSurface.opacity(0.08))
-                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         }
 
                         ForEach(compact) { candidate in
@@ -311,9 +311,9 @@ struct SampleBallotView: View {
                     }
                     .padding(CivicaSpacing.md)
                     .background(CivicaColors.paper)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                             .stroke(CivicaColors.hairline.opacity(0.2), lineWidth: 1)
                     )
                 }
@@ -419,17 +419,17 @@ struct CandidateRow: View {
                         .padding(.vertical, CivicaSpacing.xs)
                         .background(CivicaColors.paper)
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                 .stroke(CivicaColors.hairline.opacity(0.35), lineWidth: 1)
                         )
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 }
             }
         }
         .padding(.vertical, CivicaSpacing.xs)
         .padding(.horizontal, CivicaSpacing.md)
         .background(CivicaColors.tealSurface)
-        .cornerRadius(CivicaRadius.sm)
+        .cornerRadius(CivicaRadius.control)
     }
 
     private func l(_ key: String, _ fallback: String) -> String {

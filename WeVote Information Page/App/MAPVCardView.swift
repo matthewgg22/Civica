@@ -335,11 +335,11 @@ struct MAPVCardView: View {
         .padding(CivicaSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(CivicaColors.statusSuccessSurface)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.accentTeal.opacity(0.58), lineWidth: 1)
         )
     }
@@ -433,11 +433,11 @@ struct MAPVCardView: View {
             .padding(.vertical, CivicaSpacing.sm)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .fill(CivicaColors.surfacePrimary.opacity(0.92))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(CivicaColors.brickPrimary.opacity(0.38), lineWidth: 1)
             )
         }
@@ -574,11 +574,11 @@ private struct MAPVPrimaryActionButtonStyle: ButtonStyle {
             .padding(.horizontal, CivicaSpacing.md)
             .padding(.vertical, CivicaSpacing.md)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .fill(backgroundColor(isPressed: configuration.isPressed))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(CivicaColors.brickPrimary.opacity(0.24), lineWidth: 1)
             )
     }
@@ -603,11 +603,11 @@ private struct MAPVSecondaryActionButtonStyle: ButtonStyle {
             .padding(.horizontal, CivicaSpacing.sm)
             .padding(.vertical, CivicaSpacing.sm)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .fill(backgroundColor(isPressed: configuration.isPressed))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(borderColor, lineWidth: 1)
             )
     }

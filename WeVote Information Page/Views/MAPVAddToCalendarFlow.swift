@@ -143,7 +143,7 @@ struct PrePermissionSheetView: View {
                     .padding(.vertical, CivicaSpacing.md)
                     .background(CivicaColors.tealSurface)
                     .foregroundStyle(CivicaColors.ink)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
 
                 Button("Allow Reminders", action: onAllow)
                     .font(CivicaTypography.subheadStrong)
@@ -151,7 +151,7 @@ struct PrePermissionSheetView: View {
                     .padding(.vertical, CivicaSpacing.md)
                     .background(CivicaColors.brickPrimary)
                     .foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             }
         }
         .padding(CivicaSpacing.lg)
@@ -208,7 +208,7 @@ struct AddToCalendarButtonView: View {
         .buttonStyle(.plain)
         .background(CivicaColors.brickPrimary)
         .foregroundStyle(.white)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         .disabled(isWorking)
         .sheet(isPresented: $showSoftAsk) {
             PrePermissionSheetView(

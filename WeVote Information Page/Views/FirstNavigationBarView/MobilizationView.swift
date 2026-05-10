@@ -310,7 +310,7 @@ struct MobilizationView: View {
                             }
                         }
                         .background(CivicaColors.paper)
-                        .cornerRadius(CivicaRadius.sm)
+                        .cornerRadius(CivicaRadius.control)
                         .padding(.horizontal)
                     }
                     .padding(.vertical)
@@ -730,7 +730,7 @@ struct FeedbackView: View {
                 .padding(CivicaSpacing.md)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .fill(CivicaColors.tealSurface)
                 )
 
@@ -752,18 +752,18 @@ struct FeedbackView: View {
                         .padding(.horizontal, CivicaSpacing.md)
                         .padding(.vertical, CivicaSpacing.sm)
                         .background(CivicaColors.surfacePrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                 .stroke(CivicaColors.hairline, lineWidth: 1)
                         )
 
                     ZStack(alignment: .topLeading) {
-                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                             .fill(CivicaColors.surfacePrimary)
                             .frame(minHeight: 170)
                             .overlay(
-                                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                                     .stroke(CivicaColors.hairline, lineWidth: 1)
                             )
 
@@ -807,7 +807,7 @@ struct FeedbackView: View {
                         .padding(.vertical, CivicaSpacing.md)
                         .background(canSend ? CivicaColors.brickPrimary : CivicaColors.hairline.opacity(0.6))
                         .foregroundColor(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     }
                     .buttonStyle(.plain)
                     .disabled(!canSend)
@@ -821,11 +821,11 @@ struct FeedbackView: View {
                 .padding(CivicaSpacing.md)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .fill(CivicaColors.paper)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
             }
@@ -943,7 +943,7 @@ private struct FeedbackSubmissionConfirmationView: View {
             .padding(.vertical, CivicaSpacing.md)
             .background(CivicaColors.brickPrimary)
             .foregroundColor(.white)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             .buttonStyle(.plain)
             .padding(.top, CivicaSpacing.xs)
 
@@ -990,11 +990,11 @@ private struct MAPVUtilityButtonStyle: ButtonStyle {
         configuration.label
             .foregroundColor(foreground.opacity(isEnabled ? 1 : 0.6))
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .fill(fill.opacity(isEnabled ? (configuration.isPressed ? 0.86 : 1.0) : 0.55))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(border.opacity(isEnabled ? 1 : 0.5), lineWidth: 1)
             )
     }

@@ -113,9 +113,9 @@ struct GovHelpChatSheetView: View {
                         .padding(.horizontal, CivicaSpacing.md)
                         .padding(.vertical, CivicaSpacing.sm)
                         .background(CivicaColors.surfacePrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                 .stroke(CivicaColors.hairline, lineWidth: 1)
                         )
                         .id("typing")
@@ -150,11 +150,11 @@ struct GovHelpChatSheetView: View {
                 .padding(.horizontal, CivicaSpacing.md)
                 .padding(.vertical, CivicaSpacing.sm)
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .fill(messageBackgroundColor(message, isUser: isUser))
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .stroke(message.isError ? CivicaColors.destructive.opacity(0.45) : Color.clear, lineWidth: 1)
                 )
                 .frame(maxWidth: .infinity, alignment: isUser ? .trailing : .leading)
@@ -352,9 +352,9 @@ private struct GovHelpSuggestedContactsView: View {
         }
         .padding(CivicaSpacing.sm)
         .background(CivicaColors.tealSurface.opacity(0.45))
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
@@ -391,9 +391,9 @@ private struct GovHelpDestinationLinksView: View {
         }
         .padding(CivicaSpacing.sm)
         .background(CivicaColors.surfacePrimary)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }

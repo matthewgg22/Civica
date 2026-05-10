@@ -43,7 +43,7 @@ struct CollapsedIslandView: View {
                     .padding(.horizontal, CivicaSpacing.md)
                     .padding(.vertical, CivicaSpacing.sm)
                     .background(Color.green)
-                    .cornerRadius(CivicaRadius.xl)
+                    .cornerRadius(CivicaRadius.card)
             }
             .padding(.horizontal, CivicaSpacing.lg)
         }
@@ -75,7 +75,7 @@ struct ExpandedCardView: View {
                     .padding(.horizontal, CivicaSpacing.sm)
                     .padding(.vertical, CivicaSpacing.xs)
                     .background(Color.green)
-                    .cornerRadius(CivicaRadius.lg)
+                    .cornerRadius(CivicaRadius.card)
             }
             .padding(.horizontal, CivicaSpacing.lg)
             .padding(.vertical, CivicaSpacing.md)
@@ -150,7 +150,7 @@ struct ExpandedCardView: View {
                         .frame(maxWidth: .infinity, minHeight: 44)
                         .foregroundColor(.white)
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.sm)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control)
                                 .stroke(CivicaColors.surfacePrimary, lineWidth: 1)
                         )
                 }
@@ -160,9 +160,9 @@ struct ExpandedCardView: View {
             .padding(.vertical, CivicaSpacing.md)
         }
         .background(Color.black)
-        .cornerRadius(CivicaRadius.xl)
+        .cornerRadius(CivicaRadius.card)
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.xl)
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
                 .stroke(CivicaColors.surfacePrimary, lineWidth: 1)
         )
         .frame(width: 360)

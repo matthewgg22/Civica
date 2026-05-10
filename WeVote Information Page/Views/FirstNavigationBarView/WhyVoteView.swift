@@ -244,10 +244,10 @@ struct WhyVoteView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.surfacePrimary.opacity(0.72))
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .stroke(CivicaColors.ink.opacity(0.08), lineWidth: 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         }
     }
 
@@ -291,10 +291,10 @@ struct WhyVoteView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.surfacePrimary.opacity(0.72))
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .stroke(CivicaColors.ink.opacity(0.08), lineWidth: 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         }
     }
 
@@ -436,9 +436,9 @@ struct WhyVoteView: View {
                 .resizable()
                 .scaledToFill()
                 .frame(width: 56, height: 40)
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
                 .accessibilityHidden(true)

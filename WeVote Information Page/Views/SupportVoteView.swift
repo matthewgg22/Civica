@@ -101,11 +101,11 @@ struct SupportVoteView: View {
         }
         .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(CivicaColors.paper)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.ink.opacity(0.08), lineWidth: 1)
         )
     }
@@ -127,11 +127,11 @@ struct SupportVoteView: View {
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(warmSupportYellow)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.warningAmber.opacity(0.58), lineWidth: 1)
         )
     }
@@ -177,7 +177,7 @@ struct SupportVoteView: View {
             }
 
             // Current rollout uses an Apple Pay donation flow from this page.
-            ApplePayButton(type: .donate, style: .black, cornerRadius: CivicaRadius.lg) {
+            ApplePayButton(type: .donate, style: .black, cornerRadius: CivicaRadius.card) {
                 guard let amount = resolvedAmount else { return }
                 Task {
                     await applePayManager.startDonation(amount: amount)
@@ -201,7 +201,7 @@ struct SupportVoteView: View {
                     .padding(CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.statusErrorSurface)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             }
 
             if let success = applePayManager.successMessage, !success.isEmpty {
@@ -211,18 +211,18 @@ struct SupportVoteView: View {
                     .padding(CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.statusSuccessSurface)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             }
 
         }
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(warmSupportYellow)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.warningAmber.opacity(0.58), lineWidth: 1)
         )
     }
@@ -249,11 +249,11 @@ struct SupportVoteView: View {
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(CivicaColors.paper)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.ink.opacity(0.08), lineWidth: 1)
         )
     }
@@ -276,12 +276,12 @@ struct SupportVoteView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
                         .background(
-                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                 .fill(selectedAmount == preset ? CivicaColors.brickPrimary : CivicaColors.tealSurface)
                         )
                         .foregroundStyle(selectedAmount == preset ? CivicaColors.surfacePrimary : CivicaColors.ink)
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                 .stroke(selectedAmount == preset ? CivicaColors.brickPrimary : CivicaColors.ink.opacity(0.08), lineWidth: 1)
                         )
                 }

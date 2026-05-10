@@ -407,11 +407,11 @@ struct SNAPApplicationView: View {
                         .padding(.horizontal, CivicaSpacing.sm)
                         .padding(.vertical, CivicaSpacing.sm)
                         .background(
-                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                 .fill(CivicaColors.surfaceSecondary)
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                                 .stroke(CivicaColors.hairline, lineWidth: 1)
                         )
                     }
@@ -476,11 +476,11 @@ struct SNAPApplicationView: View {
                     .padding(.horizontal, CivicaSpacing.sm)
                     .padding(.vertical, CivicaSpacing.sm)
                     .background(
-                        RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                             .fill(CivicaColors.surfacePrimary)
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                             .stroke(CivicaColors.hairline, lineWidth: 1)
                     )
                 }
@@ -1068,11 +1068,11 @@ struct SNAPApplicationView: View {
                     }
                     .padding(CivicaSpacing.md)
                     .background(
-                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                             .fill(CivicaColors.tealSurface.opacity(0.28))
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                             .stroke(CivicaColors.hairline, lineWidth: 1)
                     )
 
@@ -1358,11 +1358,11 @@ struct SNAPApplicationView: View {
                         .padding(.vertical, CivicaSpacing.md)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(
-                            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                                 .fill(CivicaColors.surfacePrimary)
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                                 .stroke(CivicaColors.hairline, lineWidth: 1)
                         )
                     }
@@ -1559,11 +1559,11 @@ struct SNAPApplicationView: View {
                 .padding(.horizontal, CivicaSpacing.sm)
                 .padding(.vertical, CivicaSpacing.sm)
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .fill(CivicaColors.surfacePrimary)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
 
@@ -1679,11 +1679,11 @@ struct SNAPApplicationView: View {
                 .padding(.horizontal, CivicaSpacing.sm)
                 .padding(.vertical, CivicaSpacing.sm)
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .fill(CivicaColors.surfacePrimary)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
 
@@ -1707,11 +1707,11 @@ struct SNAPApplicationView: View {
             .padding(CivicaSpacing.md)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .fill(CivicaColors.statusWarningSurface)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .stroke(CivicaColors.warningAmber.opacity(0.45), lineWidth: 1)
             )
         }
@@ -2904,11 +2904,11 @@ struct SNAPApplicationView: View {
         .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, CivicaSpacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
@@ -3205,11 +3205,11 @@ private struct SNAPStepGuidanceRows<Content: View>: View {
                 .padding(.horizontal, CivicaSpacing.md)
                 .padding(.vertical, CivicaSpacing.sm)
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .fill(CivicaColors.surfacePrimary)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
             }
@@ -3289,11 +3289,11 @@ private struct SNAPInlineDisclosureRow: View {
         .padding(.horizontal, CivicaSpacing.md)
         .padding(.vertical, CivicaSpacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
@@ -3350,11 +3350,11 @@ private struct SNAPInterviewSummarySection: View {
         .padding(.vertical, CivicaSpacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
@@ -3497,11 +3497,11 @@ private struct SNAPTimelineMilestoneRow: View {
         .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, CivicaSpacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
@@ -3573,11 +3573,11 @@ private struct SNAPSectionCard<Content: View>: View {
         }
         .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
@@ -3704,11 +3704,11 @@ private extension View {
             .padding(.horizontal, CivicaSpacing.md)
             .padding(.vertical, CivicaSpacing.md)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .fill(CivicaColors.surfacePrimary)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .stroke(CivicaColors.hairline, lineWidth: 1)
             )
     }
@@ -3720,11 +3720,11 @@ private extension View {
             .padding(.horizontal, CivicaSpacing.md)
             .padding(.vertical, CivicaSpacing.md)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .fill(CivicaColors.surfacePrimary)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .stroke(CivicaColors.hairline, lineWidth: 1)
             )
     }
@@ -3736,11 +3736,11 @@ private extension View {
             .padding(.horizontal, CivicaSpacing.md)
             .padding(.vertical, CivicaSpacing.sm)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .fill(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.12) : CivicaColors.surfacePrimary)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.3) : CivicaColors.hairline, lineWidth: 1)
             )
     }
@@ -3752,11 +3752,11 @@ private extension View {
             .padding(.horizontal, CivicaSpacing.md)
             .padding(.vertical, CivicaSpacing.sm)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .fill(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.12) : CivicaColors.surfacePrimary)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.3) : CivicaColors.hairline, lineWidth: 1)
             )
     }
@@ -3768,11 +3768,11 @@ private extension View {
             .padding(.horizontal, CivicaSpacing.sm)
             .padding(.vertical, CivicaSpacing.xs)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .fill(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.12) : CivicaColors.surfacePrimary)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.3) : CivicaColors.hairline, lineWidth: 1)
             )
     }
@@ -3784,11 +3784,11 @@ private extension View {
             .padding(.horizontal, CivicaSpacing.sm)
             .padding(.vertical, CivicaSpacing.xs)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .fill(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.12) : CivicaColors.surfacePrimary)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(highlightPrefilled ? CivicaColors.warningAmber.opacity(0.3) : CivicaColors.hairline, lineWidth: 1)
             )
     }
@@ -3885,11 +3885,11 @@ private struct SNAPTernaryChoiceQuestion: View {
                 .foregroundStyle(value == choice ? CivicaColors.brickPrimary : CivicaColors.ink)
                 .frame(maxWidth: .infinity, minHeight: 44)
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .fill(value == choice ? CivicaColors.statusInfoSurface : CivicaColors.surfacePrimary)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .stroke(
                             value == choice ? CivicaColors.brickPrimary.opacity(0.45) : CivicaColors.hairline,
                             lineWidth: 1
@@ -3943,11 +3943,11 @@ private struct SNAPYesNoSegmentedQuestion: View {
                 .foregroundStyle(isSelected ? CivicaColors.brickPrimary : CivicaColors.ink)
                 .frame(maxWidth: .infinity, minHeight: 44)
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .fill(isSelected ? CivicaColors.statusInfoSurface : CivicaColors.surfacePrimary)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .stroke(
                             isSelected ? CivicaColors.brickPrimary.opacity(0.45) : CivicaColors.hairline,
                             lineWidth: 1
@@ -3993,11 +3993,11 @@ private struct SNAPSelectableOptionButton: View {
                 .frame(maxWidth: .infinity, minHeight: minHeight, alignment: .center)
                 .padding(.horizontal, CivicaSpacing.sm)
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .fill(isSelected ? CivicaColors.statusInfoSurface : CivicaColors.surfacePrimary)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .stroke(
                             isSelected ? CivicaColors.brickPrimary.opacity(0.45) : CivicaColors.hairline,
                             lineWidth: 1

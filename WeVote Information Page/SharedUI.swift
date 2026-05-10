@@ -149,7 +149,7 @@ private struct MyInfoLongPressModifier: ViewModifier {
         content
             .scaleEffect(isPressing ? 0.97 : 1.0)
             .overlay {
-                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(
                         CivicaColors.brickPrimary.opacity(showActivationRing ? 0.76 : (isPressing ? 0.34 : 0)),
                         lineWidth: showActivationRing ? 2 : 1

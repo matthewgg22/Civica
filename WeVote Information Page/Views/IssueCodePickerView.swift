@@ -67,7 +67,7 @@ private struct IssueCodePickerPreviewWrapper: View {
             .foregroundColor(CivicaColors.ink)
             .padding(CivicaSpacing.sm)
             .background(CivicaColors.tealSurface)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         }
         .padding()
         .background(CivicaColors.tealSurface.opacity(0.25))
