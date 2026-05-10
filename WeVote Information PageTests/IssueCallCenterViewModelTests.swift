@@ -168,6 +168,8 @@ struct IssueCallCenterViewModelTests {
             )
         }
 
+        func mapcV3ResolvedSessionID(from _: String) -> String? { nil }
+
         func logScriptFeedback(
             userID: String,
             packageID: String,
