@@ -36,7 +36,6 @@ jobs:
             -project Civica.xcodeproj \
             -scheme VoteNow \
             -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.2' \
-            -only-testing:'WeVote Information PageTests' \
             -resultBundlePath TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO
 
