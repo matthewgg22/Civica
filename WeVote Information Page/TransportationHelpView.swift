@@ -37,7 +37,7 @@ struct TransportationHelpView: View {
                             Image("UberIcon")
                                 .resizable()
                                 .frame(width: 80, height: 80)
-                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl))
+                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
                                 .shadow(radius: 5)
                         }
                         Text("Code: WEVOTE2024")
@@ -57,7 +57,7 @@ struct TransportationHelpView: View {
                             Image("LyftIcon")
                                 .resizable()
                                 .frame(width: 80, height: 80)
-                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl))
+                                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
                                 .shadow(radius: 5)
                         }
                         Text("Code: WEVOTE2024")

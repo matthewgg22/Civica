@@ -104,7 +104,7 @@ struct TabAndBaseTab: View {
         }
         .environmentObject(planVM)
         .environmentObject(repsVM)
-        .tint(CivicaColors.ctaBlue)
+        .tint(CivicaColors.brickPrimary)
         .overlay(alignment: .topTrailing) {
             Button { showMyInfoPanel = true } label: {
                 Image(systemName: "person.crop.circle.fill")

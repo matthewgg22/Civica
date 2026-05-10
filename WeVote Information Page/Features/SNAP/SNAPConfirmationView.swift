@@ -11,30 +11,30 @@ struct SNAPConfirmationView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 Text("Your SNAP draft is ready")
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(CivicaColors.textPrimary)
+                    .font(CivicaTypography.cardSubtitle)
+                    .foregroundStyle(CivicaColors.ink)
 
                 Text("You can use this information to complete your official application through your state’s benefits website.")
                     .font(.body)
-                    .foregroundStyle(CivicaColors.textSecondary)
+                    .foregroundStyle(CivicaColors.graphite)
                     .fixedSize(horizontal: false, vertical: true)
 
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text("State selected")
                         .font(CivicaTypography.subheadStrong)
-                        .foregroundStyle(CivicaColors.textPrimary)
+                        .foregroundStyle(CivicaColors.ink)
                     Text(selectedStateLabel)
                         .font(.body)
-                        .foregroundStyle(CivicaColors.textSecondary)
+                        .foregroundStyle(CivicaColors.graphite)
                 }
                 .padding(CivicaSpacing.md)
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .fill(CivicaColors.surfacePrimary)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                        .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
 
                 Button("Open official state SNAP website") {
@@ -47,13 +47,13 @@ struct SNAPConfirmationView: View {
                 if officialURL == nil {
                     Text("Official state link coming soon.")
                         .font(CivicaTypography.footnote)
-                        .foregroundStyle(CivicaColors.textSecondary)
+                        .foregroundStyle(CivicaColors.graphite)
                 }
 
                 Button("Review my draft again") {
                     viewModel.currentStep = .review
                 }
-                .buttonStyle(SNAPSecondaryCTAButtonStyle())
+                .buttonStyle(CivicaSecondaryCTAButtonStyle())
 
                 Text("This assistant does not submit your application.")
                     .font(CivicaTypography.footnote)
@@ -61,7 +61,7 @@ struct SNAPConfirmationView: View {
             }
             .padding(CivicaSpacing.lg)
         }
-        .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
+        .background(CivicaColors.tealSurface.ignoresSafeArea())
         .onAppear {
             viewModel.markNextStepsViewed()
         }

@@ -12,7 +12,10 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "CivicaDesignSystem"
+            name: "CivicaDesignSystem",
+            resources: [
+                .process("Resources"),
+            ]
         ),
     ]
 )

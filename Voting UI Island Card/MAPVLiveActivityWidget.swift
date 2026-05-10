@@ -151,10 +151,10 @@ struct MAPVLiveActivityWidget: Widget {
 
     private func pillColor(for token: MAPVStatusColorToken) -> Color {
         switch token {
-        case .blue: return CivicaColors.ctaBlue
-        case .green: return CivicaColors.successGreen
+        case .blue: return CivicaColors.brickPrimary
+        case .green: return CivicaColors.accentTeal
         case .orange: return CivicaColors.warningAmber
-        case .red: return CivicaColors.ctaRed
+        case .red: return CivicaColors.destructive
         case .gray: return CivicaColors.neutralStatus
         case .indigo: return CivicaColors.indigoStatus
         }
@@ -210,7 +210,7 @@ private struct DayTimelineView: View {
                     Capsule()
                         .fill(
                             LinearGradient(
-                                colors: [CivicaColors.successGreen.opacity(0.85), CivicaColors.warningAmber.opacity(0.9)],
+                                colors: [CivicaColors.accentTeal.opacity(0.85), CivicaColors.warningAmber.opacity(0.9)],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )

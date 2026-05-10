@@ -46,7 +46,7 @@ struct RegistrationCheckView: View {
                         .font(CivicaTypography.sectionHeader)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(CivicaColors.ctaBlue.cornerRadius(CivicaRadius.md))
+                        .background(CivicaColors.brickPrimary.cornerRadius(CivicaRadius.control))
                         .foregroundColor(.white)
                 }
 

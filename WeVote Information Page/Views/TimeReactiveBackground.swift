@@ -34,7 +34,7 @@ struct TimeReactiveBackground: View {
             if theme.sunGlowIntensity > 0.001 {
                 RadialGradient(
                     colors: [
-                        CivicaColors.brandSoftRed.opacity(theme.sunGlowIntensity * 0.24),
+                        CivicaColors.brickSurface.opacity(theme.sunGlowIntensity * 0.24),
                         CivicaColors.warningAmber.opacity(theme.sunGlowIntensity * 0.34),
                         .clear
                     ],

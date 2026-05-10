@@ -25,6 +25,6 @@ struct HomeAddressHeaderView: View {
             .padding(.horizontal, CivicaSpacing.xs)
         }
         .padding(.horizontal)
-        .background(CivicaColors.ctaBlue)
+        .background(CivicaColors.brickPrimary)
     }
 }

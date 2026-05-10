@@ -363,11 +363,11 @@ extension View {
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
             .padding(.vertical, CivicaSpacing.md)
-            .background(CivicaColors.ctaBlue)
+            .background(CivicaColors.brickPrimary)
             .clipShape(Capsule(style: .continuous))
             .voteNowPillDualOrbit()
     }
     .buttonStyle(.plain)
     .padding()
-    .background(CivicaColors.brandSoftBlue)
+    .background(CivicaColors.tealSurface)
 }

@@ -85,56 +85,56 @@ struct SNAPDebugChecklistView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text("SNAP QA Checklist")
-                        .font(.title3.weight(.semibold))
-                        .foregroundStyle(CivicaColors.textPrimary)
+                        .font(CivicaTypography.cardSubtitle)
+                        .foregroundStyle(CivicaColors.ink)
                     Text("Developer-only build verification. Not visible in production.")
                         .font(CivicaTypography.footnote)
-                        .foregroundStyle(CivicaColors.textSecondary)
+                        .foregroundStyle(CivicaColors.graphite)
                     Text("Passed \(passedCount) of \(items.count)")
                         .font(CivicaTypography.footnoteStrong)
-                        .foregroundStyle(passedCount == items.count ? CivicaColors.successGreen : CivicaColors.warningAmber)
+                        .foregroundStyle(passedCount == items.count ? CivicaColors.accentTeal : CivicaColors.warningAmber)
                 }
                 .padding(CivicaSpacing.md)
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .fill(CivicaColors.surfacePrimary)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                        .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
 
                 ForEach(items) { item in
                     VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                             Image(systemName: item.passed ? "checkmark.seal.fill" : "exclamationmark.triangle.fill")
-                                .foregroundStyle(item.passed ? CivicaColors.successGreen : CivicaColors.warningAmber)
+                                .foregroundStyle(item.passed ? CivicaColors.accentTeal : CivicaColors.warningAmber)
                                 .font(CivicaTypography.subhead)
                                 .padding(.top, CivicaSpacing.xs)
                             Text(item.title)
                                 .font(CivicaTypography.subheadStrong)
-                                .foregroundStyle(CivicaColors.textPrimary)
+                                .foregroundStyle(CivicaColors.ink)
                             Spacer(minLength: 0)
                         }
                         Text(item.detail)
                             .font(CivicaTypography.footnote)
-                            .foregroundStyle(CivicaColors.textSecondary)
+                            .foregroundStyle(CivicaColors.graphite)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(CivicaSpacing.md)
                     .background(
-                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                             .fill(CivicaColors.surfacePrimary)
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                            .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                            .stroke(CivicaColors.hairline, lineWidth: 1)
                     )
                 }
             }
             .padding(CivicaSpacing.lg)
         }
-        .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
+        .background(CivicaColors.tealSurface.ignoresSafeArea())
     }
 }
 

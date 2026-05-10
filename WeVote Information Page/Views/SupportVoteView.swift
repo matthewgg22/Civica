@@ -96,17 +96,17 @@ struct SupportVoteView: View {
 
             Text(l("app.support_vote.mission.body", "Civica's mission is to empower every American to vote by being the least friction companion to support participation. We believe that reducing logistical friction-deadlines, locations, ID rules, and confusing steps-is essential to authentic voting help."))
                 .font(.body)
-                .foregroundStyle(CivicaColors.textSecondary)
+                .foregroundStyle(CivicaColors.graphite)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                .fill(CivicaColors.canvasBackground)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .fill(CivicaColors.paper)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.ink.opacity(0.08), lineWidth: 1)
         )
     }
 
@@ -118,7 +118,7 @@ struct SupportVoteView: View {
 
             Text(l("app.support_vote.supports.body", "As a college-founded civic startup, we rely on community support to keep voter tools accessible."))
                 .font(CivicaTypography.subhead)
-                .foregroundStyle(CivicaColors.textSecondary)
+                .foregroundStyle(CivicaColors.graphite)
 
             supportBullet(l("app.support_vote.supports.bullet_1", "No ads or paywalls"))
             supportBullet(l("app.support_vote.supports.bullet_2", "Nonpartisan voting logistics"))
@@ -127,11 +127,11 @@ struct SupportVoteView: View {
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(warmSupportYellow)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.warningAmber.opacity(0.58), lineWidth: 1)
         )
     }
@@ -162,22 +162,22 @@ struct SupportVoteView: View {
 
                     Text(l("app.support_vote.amount.range_hint", "Minimum $1, maximum $500"))
                         .font(CivicaTypography.caption)
-                        .foregroundStyle(CivicaColors.textSecondary)
+                        .foregroundStyle(CivicaColors.graphite)
                 }
             }
 
             if let amount = resolvedAmount {
                 Text("\(l("app.support_vote.amount.selected_prefix", "Donation amount:")) \(formattedCurrency(amount))")
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundColor(isAmountValid ? CivicaColors.textPrimary : CivicaColors.ctaRed)
+                    .foregroundColor(isAmountValid ? CivicaColors.ink : CivicaColors.destructive)
             } else {
                 Text(l("app.support_vote.amount.select_to_continue", "Select an amount to continue."))
                     .font(CivicaTypography.subhead)
-                    .foregroundStyle(CivicaColors.textSecondary)
+                    .foregroundStyle(CivicaColors.graphite)
             }
 
             // Current rollout uses an Apple Pay donation flow from this page.
-            ApplePayButton(type: .donate, style: .black, cornerRadius: CivicaRadius.lg) {
+            ApplePayButton(type: .donate, style: .black, cornerRadius: CivicaRadius.card) {
                 guard let amount = resolvedAmount else { return }
                 Task {
                     await applePayManager.startDonation(amount: amount)
@@ -191,38 +191,38 @@ struct SupportVoteView: View {
             if !applePayManager.canMakePayments() {
                 Text(l("app.support_vote.amount.apple_pay_unavailable", "Apple Pay is not available on this device."))
                     .font(CivicaTypography.footnote)
-                    .foregroundStyle(CivicaColors.textSecondary)
+                    .foregroundStyle(CivicaColors.graphite)
             }
 
             if let error = applePayManager.errorMessage, !error.isEmpty {
                 Label(error, systemImage: "exclamationmark.triangle.fill")
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundStyle(CivicaColors.ctaRed)
+                    .foregroundStyle(CivicaColors.destructive)
                     .padding(CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.statusErrorSurface)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             }
 
             if let success = applePayManager.successMessage, !success.isEmpty {
                 Label(success, systemImage: "checkmark.circle.fill")
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundStyle(CivicaColors.successGreen)
+                    .foregroundStyle(CivicaColors.accentTeal)
                     .padding(CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.statusSuccessSurface)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             }
 
         }
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(warmSupportYellow)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(CivicaColors.warningAmber.opacity(0.58), lineWidth: 1)
         )
     }
@@ -234,7 +234,7 @@ struct SupportVoteView: View {
 
             Text(l("app.support_vote.disrupt.body", "Most voter outreach in America is not funded by voters. It is funded by PACs and Super PACs. That means:"))
                 .font(CivicaTypography.subhead)
-                .foregroundStyle(CivicaColors.textSecondary)
+                .foregroundStyle(CivicaColors.graphite)
                 .fixedSize(horizontal: false, vertical: true)
 
             supportBullet(l("app.support_vote.disrupt.bullet_1", "Messaging is designed to move votes for a side"))
@@ -249,12 +249,12 @@ struct SupportVoteView: View {
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                .fill(CivicaColors.canvasBackground)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .fill(CivicaColors.paper)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.ink.opacity(0.08), lineWidth: 1)
         )
     }
 
@@ -276,13 +276,13 @@ struct SupportVoteView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
                         .background(
-                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                                .fill(selectedAmount == preset ? CivicaColors.ctaBlue : CivicaColors.infoSurfaceBlue)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                                .fill(selectedAmount == preset ? CivicaColors.brickPrimary : CivicaColors.tealSurface)
                         )
-                        .foregroundStyle(selectedAmount == preset ? CivicaColors.surfacePrimary : CivicaColors.textPrimary)
+                        .foregroundStyle(selectedAmount == preset ? CivicaColors.surfacePrimary : CivicaColors.ink)
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                                .stroke(selectedAmount == preset ? CivicaColors.ctaBlue : CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                                .stroke(selectedAmount == preset ? CivicaColors.brickPrimary : CivicaColors.ink.opacity(0.08), lineWidth: 1)
                         )
                 }
                 .buttonStyle(.plain)

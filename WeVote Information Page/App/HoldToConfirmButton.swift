@@ -55,14 +55,14 @@ struct HoldToConfirmButton: View {
                 let fillWidth = width * progress
 
                 ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .fill(baseBackgroundColor)
 
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .fill(fillGradient)
                         .frame(width: fillWidth)
 
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .stroke(borderColor, lineWidth: 1)
 
                     HStack(spacing: CivicaSpacing.xs) {
@@ -77,10 +77,10 @@ struct HoldToConfirmButton: View {
                     .foregroundStyle(textColor)
                     .animation(reduceMotion ? nil : .easeInOut(duration: 0.15), value: isPressing)
                 }
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             }
             .frame(height: 36)
-            .contentShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+            .contentShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         }
         .buttonStyle(.plain)
         .disabled(isConfirmed && onReset == nil)
@@ -118,8 +118,8 @@ struct HoldToConfirmButton: View {
     private var fillGradient: LinearGradient {
         LinearGradient(
             colors: [
-                CivicaColors.ctaBluePressed.opacity(0.82),
-                CivicaColors.successGreen.opacity(0.9)
+                CivicaColors.brickPrimaryPressed.opacity(0.82),
+                CivicaColors.accentTeal.opacity(0.9)
             ],
             startPoint: .leading,
             endPoint: .trailing
@@ -128,16 +128,16 @@ struct HoldToConfirmButton: View {
 
     private var borderColor: Color {
         if isConfirmed {
-            return CivicaColors.successGreen.opacity(0.82)
+            return CivicaColors.accentTeal.opacity(0.82)
         }
-        return CivicaColors.ctaBlue.opacity(0.34 + (Double(progress) * 0.42))
+        return CivicaColors.brickPrimary.opacity(0.34 + (Double(progress) * 0.42))
     }
 
     private var textColor: Color {
         if isConfirmed {
             return CivicaColors.surfacePrimary
         }
-        return progress > 0.52 ? CivicaColors.surfacePrimary : CivicaColors.textPrimary
+        return progress > 0.52 ? CivicaColors.surfacePrimary : CivicaColors.ink
     }
 
     private var buttonText: String {

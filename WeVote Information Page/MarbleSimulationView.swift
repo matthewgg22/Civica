@@ -15,8 +15,8 @@ struct MarbleSimulationView: View {
 
     private let voterPresets = [100]
     private let palette: [Color] = [
-        CivicaColors.brandSoftBlue,
-        CivicaColors.brandSoftRed,
+        CivicaColors.tealSurface,
+        CivicaColors.brickSurface,
         Color(hex: "#88C7A8"),
         Color(hex: "#F1B76A"),
         Color(hex: "#A8A3D5"),
@@ -99,9 +99,9 @@ struct MarbleSimulationView: View {
     private var backgroundLayer: some View {
         LinearGradient(
             colors: [
-                CivicaColors.canvasBackground,
-                CivicaColors.brandSoftBlue.opacity(0.18),
-                CivicaColors.brandSoftRed.opacity(0.10)
+                CivicaColors.paper,
+                CivicaColors.tealSurface.opacity(0.18),
+                CivicaColors.brickSurface.opacity(0.10)
             ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
@@ -116,7 +116,7 @@ struct MarbleSimulationView: View {
             } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.title2)
-                    .foregroundColor(CivicaColors.textPrimary.opacity(0.7))
+                    .foregroundColor(CivicaColors.ink.opacity(0.7))
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Close ranked-choice simulation")
@@ -124,11 +124,11 @@ struct MarbleSimulationView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(title)
                     .font(.title2.weight(.black))
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
 
                 Text("Watch how your vote moves")
                     .font(CivicaTypography.subhead)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
             }
             .onLongPressGesture(minimumDuration: 1.1) {
                 showAdminPanel = true
@@ -138,7 +138,7 @@ struct MarbleSimulationView: View {
 
             Text(controller.stageText)
                 .font(CivicaTypography.captionStrong)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
                 .padding(.horizontal, CivicaSpacing.sm)
                 .padding(.vertical, CivicaSpacing.xs)
                 .background(Capsule().fill(Color.white.opacity(0.9)))
@@ -161,11 +161,11 @@ struct MarbleSimulationView: View {
         return HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
             Text("Round \(roundNumber)")
                 .font(CivicaTypography.subheadStrong)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
 
             Text(roundStatusSummaryText)
                 .font(CivicaTypography.captionStrong)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
                 .lineLimit(1)
                 .minimumScaleFactor(0.86)
         }
@@ -210,24 +210,24 @@ struct MarbleSimulationView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(controller.featuredBallotBannerTitle)
                 .font(CivicaTypography.captionStrong)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
                 .lineLimit(2)
                 .minimumScaleFactor(0.85)
             Text(controller.featuredBallotBannerDetail)
                 .font(CivicaTypography.caption)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
                 .lineLimit(3)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, CivicaSpacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(Color.white.opacity(0.9))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
 
@@ -237,11 +237,11 @@ struct MarbleSimulationView: View {
                 let now = timeline.date.timeIntervalSinceReferenceDate
 
                 ZStack {
-                    RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .fill(Color.white.opacity(0.9))
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
-                                .stroke(CivicaColors.borderSubtle, lineWidth: 1.2)
+                            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                                .stroke(CivicaColors.hairline, lineWidth: 1.2)
                         )
 
                     Canvas { context, size in
@@ -290,7 +290,7 @@ struct MarbleSimulationView: View {
         }
         .buttonStyle(
             RoundedControlButtonStyle(
-                fill: CivicaColors.ctaBlue,
+                fill: CivicaColors.brickPrimary,
                 minHeight: isEmbedded ? 44 : 52,
                 verticalPadding: isEmbedded ? 3 : 6
             )
@@ -310,7 +310,7 @@ struct MarbleSimulationView: View {
                 } label: {
                     Image(systemName: "chevron.right.circle.fill")
                         .font(.title3)
-                        .foregroundColor(CivicaColors.textSecondary)
+                        .foregroundColor(CivicaColors.graphite)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Collapse round details")
@@ -351,12 +351,12 @@ struct MarbleSimulationView: View {
         }
         .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(Color.white.opacity(0.92))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
 
@@ -366,7 +366,7 @@ struct MarbleSimulationView: View {
         } label: {
             Image(systemName: "chevron.left.circle.fill")
                 .font(.title2)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
                 .padding(.top, CivicaSpacing.sm)
         }
         .buttonStyle(.plain)
@@ -394,16 +394,16 @@ struct MarbleSimulationView: View {
         } label: {
             Text("Round story")
                 .font(CivicaTypography.subheadStrong)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
         }
         .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(Color.white.opacity(0.92))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.hairline, lineWidth: 1)
         )
     }
 
@@ -478,8 +478,8 @@ struct MarbleSimulationView: View {
                     ? candidateColor.opacity(0.65)
                     : Color.gray.opacity(0.70))
 
-            context.fill(Path(roundedRect: frame, cornerRadius: CivicaRadius.lg), with: .color(fill))
-            context.stroke(Path(roundedRect: frame, cornerRadius: CivicaRadius.lg), with: .color(stroke), lineWidth: controller.highlightedCandidateID == candidate.id ? 3 : 1.2)
+            context.fill(Path(roundedRect: frame, cornerRadius: CivicaRadius.card), with: .color(fill))
+            context.stroke(Path(roundedRect: frame, cornerRadius: CivicaRadius.card), with: .color(stroke), lineWidth: controller.highlightedCandidateID == candidate.id ? 3 : 1.2)
 
             let count = counts[candidate.id, default: 0]
             let share: Double
@@ -492,7 +492,7 @@ struct MarbleSimulationView: View {
             let percent = Int((share * 100).rounded())
             let countText = Text("\(count)")
                 .font(.system(size: 15, weight: .bold))
-                .foregroundColor(isActive ? CivicaColors.textPrimary : Color.gray)
+                .foregroundColor(isActive ? CivicaColors.ink : Color.gray)
             context.draw(countText, at: CGPoint(x: frame.midX, y: frame.minY + 14))
 
             let trackFrame = CGRect(
@@ -531,13 +531,13 @@ struct MarbleSimulationView: View {
             let statusEmoji = controller.candidateOutcomeEmoji(for: candidate.id)
             let outcomeLabel = Text("\(statusEmoji) \(outcomeText) • \(percent)%")
                 .font(.system(size: 8.5, weight: .semibold))
-                .foregroundColor(isActive ? CivicaColors.textSecondary : Color.gray)
+                .foregroundColor(isActive ? CivicaColors.graphite : Color.gray)
             context.draw(outcomeLabel, at: CGPoint(x: frame.midX, y: frame.minY + 38))
 
             if controller.showCandidateLabels {
                 let labelText = Text("\(controller.candidateEmoji(for: candidate.id)) \(controller.shortCandidateLabel(for: candidate.id))")
                     .font(.system(size: 10, weight: .semibold))
-                    .foregroundColor((isActive ? CivicaColors.textPrimary : Color.gray).opacity(0.92))
+                    .foregroundColor((isActive ? CivicaColors.ink : Color.gray).opacity(0.92))
                 context.draw(labelText, at: CGPoint(x: frame.midX, y: frame.maxY + 14))
             }
         }
@@ -558,7 +558,7 @@ struct MarbleSimulationView: View {
         )
 
         context.fill(
-            Path(roundedRect: frame, cornerRadius: CivicaRadius.lg),
+            Path(roundedRect: frame, cornerRadius: CivicaRadius.card),
             with: .color(Color.black.opacity(0.06))
         )
         if inactiveFraction > 0 {
@@ -570,12 +570,12 @@ struct MarbleSimulationView: View {
                 height: max(0, frame.height - (fillInset * 2))
             )
             context.fill(
-                Path(roundedRect: progressRect, cornerRadius: CivicaRadius.md),
+                Path(roundedRect: progressRect, cornerRadius: CivicaRadius.control),
                 with: .color(CivicaColors.warningAmber.opacity(0.23))
             )
         }
         context.stroke(
-            Path(roundedRect: frame, cornerRadius: CivicaRadius.lg),
+            Path(roundedRect: frame, cornerRadius: CivicaRadius.card),
             with: .color(Color.black.opacity(0.18)),
             lineWidth: 1
         )
@@ -584,18 +584,18 @@ struct MarbleSimulationView: View {
             let compactPercent = Int((inactiveFraction * 100).rounded())
             let compactLabel = Text("Inactive \(controller.exhaustedCount) • \(compactPercent)%")
                 .font(.system(size: 9, weight: .semibold))
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
             context.draw(compactLabel, at: CGPoint(x: frame.midX, y: frame.midY))
         } else {
             let label = Text("No more ranked choices")
                 .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
             context.draw(label, at: CGPoint(x: frame.midX, y: frame.minY + 16))
 
             let percent = Int((inactiveFraction * 100).rounded())
             let countText = Text("Inactive: \(controller.exhaustedCount) (\(percent)%)")
                 .font(.system(size: 10, weight: .bold))
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
             context.draw(countText, at: CGPoint(x: frame.midX, y: frame.maxY - 12))
         }
     }
@@ -724,16 +724,16 @@ struct MarbleSimulationView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(title)
                 .font(CivicaTypography.captionBold)
-                .foregroundColor(CivicaColors.textPrimary)
+                .foregroundColor(CivicaColors.ink)
             Text(body)
                 .font(CivicaTypography.caption)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(CivicaSpacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                .fill(CivicaColors.canvasBackground.opacity(0.7))
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                .fill(CivicaColors.paper.opacity(0.7))
         )
     }
 
@@ -796,19 +796,19 @@ private struct RoundedControlButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(CivicaTypography.subheadStrong)
-            .foregroundColor(CivicaColors.textPrimary)
+            .foregroundColor(CivicaColors.ink)
             .lineLimit(1)
             .minimumScaleFactor(0.88)
             .frame(maxWidth: .infinity, minHeight: minHeight)
             .padding(.horizontal, CivicaSpacing.sm)
             .padding(.vertical, verticalPadding)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .fill(fill.opacity(configuration.isPressed ? 0.78 : 1.0))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                    .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                    .stroke(CivicaColors.hairline, lineWidth: 1)
             )
     }
 }

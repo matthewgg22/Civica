@@ -211,7 +211,7 @@ struct MobilizationView: View {
 
     var body: some View {
         ZStack {
-            CivicaColors.canvasBackground.ignoresSafeArea()
+            CivicaColors.paper.ignoresSafeArea()
 
             NavigationStack {
                 ScrollView {
@@ -220,7 +220,7 @@ struct MobilizationView: View {
                             PageHeader(title: Text("app.page.how_to_vote", tableName: "AppShell"))
                             Text(electionSubtitleText)
                                 .font(CivicaTypography.subheadStrong)
-                                .foregroundColor(CivicaColors.textSecondary)
+                                .foregroundColor(CivicaColors.graphite)
                                 .padding(.leading, 72)
                                 .padding(.top, -6)
                         }
@@ -251,9 +251,9 @@ struct MobilizationView: View {
                                             .padding(.vertical, CivicaSpacing.md)
                                     }
                                     .buttonStyle(MAPVUtilityButtonStyle(
-                                        fill: CivicaColors.ctaBlue,
+                                        fill: CivicaColors.brickPrimary,
                                         foreground: .white,
-                                        border: CivicaColors.ctaBlue.opacity(0.85)
+                                        border: CivicaColors.brickPrimary.opacity(0.85)
                                     ))
                                     .padding(.horizontal)
                                 }
@@ -266,12 +266,12 @@ struct MobilizationView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, CivicaSpacing.md)
                             .padding(.horizontal, CivicaSpacing.lg)
-                            .background(CivicaColors.ctaBlue)
+                            .background(CivicaColors.brickPrimary)
                             .foregroundColor(.white)
                             .clipShape(Capsule(style: .continuous))
                             .voteNowPillDualOrbit(
-                                redColor: CivicaColors.ctaRed.opacity(0.86),
-                                blueColor: CivicaColors.ctaRed.opacity(0.58),
+                                redColor: CivicaColors.partyRepublican.opacity(0.86),
+                                blueColor: CivicaColors.partyRepublican.opacity(0.58),
                                 strokeThickness: 3.0,
                                 loopDuration: 4.95,
                                 glowIntensity: 0.30,
@@ -295,11 +295,11 @@ struct MobilizationView: View {
                                                 .fixedSize(horizontal: true, vertical: true)
                                         } else if section == .feedback {
                                             Image(systemName: "bubble.left.and.bubble.right.fill")
-                                                .foregroundColor(CivicaColors.ctaBlue)
+                                                .foregroundColor(CivicaColors.brickPrimary)
                                                 .frame(width: 30, alignment: .center)
                                         }
                                         Text(section.localizedTitle(locale: locale))
-                                            .foregroundColor(CivicaColors.textPrimary)
+                                            .foregroundColor(CivicaColors.ink)
                                             .lineLimit(1)
                                             .minimumScaleFactor(0.9)
                                         Spacer()
@@ -309,13 +309,13 @@ struct MobilizationView: View {
                                 Divider()
                             }
                         }
-                        .background(CivicaColors.canvasBackground)
-                        .cornerRadius(CivicaRadius.sm)
+                        .background(CivicaColors.paper)
+                        .cornerRadius(CivicaRadius.control)
                         .padding(.horizontal)
                     }
                     .padding(.vertical)
                 }
-                .background(CivicaColors.canvasBackground)
+                .background(CivicaColors.paper)
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationDestination(isPresented: $showMailInBallotRequest) {
                     MailInBallotView()
@@ -724,14 +724,14 @@ struct FeedbackView: View {
 
                     Text(l("app.feedback.college_endeavor.body", "Civica is an endeavor built to support all Americans vote by reducing logistical friction. As a college student endeavor, we want to learn from you and your experience voting. Your feedback is invaluable to improve the app and the voter experience."))
                         .font(.body)
-                        .foregroundColor(CivicaColors.textSecondary)
+                        .foregroundColor(CivicaColors.graphite)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(CivicaSpacing.md)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                        .fill(CivicaColors.infoSurfaceBlue)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                        .fill(CivicaColors.tealSurface)
                 )
 
                 VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
@@ -752,25 +752,25 @@ struct FeedbackView: View {
                         .padding(.horizontal, CivicaSpacing.md)
                         .padding(.vertical, CivicaSpacing.sm)
                         .background(CivicaColors.surfacePrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         .overlay(
-                            RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                                .stroke(CivicaColors.hairline, lineWidth: 1)
                         )
 
                     ZStack(alignment: .topLeading) {
-                        RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                             .fill(CivicaColors.surfacePrimary)
                             .frame(minHeight: 170)
                             .overlay(
-                                RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                                    .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                                    .stroke(CivicaColors.hairline, lineWidth: 1)
                             )
 
                         if feedbackText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             Text(l("app.feedback.message.placeholder", "Tell us what felt confusing, frustrating, or helpful."))
                                 .font(CivicaTypography.subhead)
-                                .foregroundColor(CivicaColors.textSecondary)
+                                .foregroundColor(CivicaColors.graphite)
                                 .padding(.horizontal, CivicaSpacing.md)
                                 .padding(.vertical, CivicaSpacing.md)
                                 .allowsHitTesting(false)
@@ -805,9 +805,9 @@ struct FeedbackView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, CivicaSpacing.md)
-                        .background(canSend ? CivicaColors.ctaBlue : CivicaColors.borderSubtle.opacity(0.6))
+                        .background(canSend ? CivicaColors.brickPrimary : CivicaColors.hairline.opacity(0.6))
                         .foregroundColor(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     }
                     .buttonStyle(.plain)
                     .disabled(!canSend)
@@ -821,12 +821,12 @@ struct FeedbackView: View {
                 .padding(CivicaSpacing.md)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                        .fill(CivicaColors.canvasBackground)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                        .fill(CivicaColors.paper)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                        .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
             }
             .padding(.horizontal, CivicaSpacing.lg)
@@ -839,7 +839,7 @@ struct FeedbackView: View {
                 completeSubmissionFlow()
             }
         }
-        .background(CivicaColors.canvasBackground)
+        .background(CivicaColors.paper)
         .onChange(of: feedbackText) { _, _ in
             if errorMessage != nil { errorMessage = nil }
         }
@@ -923,7 +923,7 @@ private struct FeedbackSubmissionConfirmationView: View {
 
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 68, weight: .semibold))
-                .foregroundColor(CivicaColors.successGreen)
+                .foregroundColor(CivicaColors.accentTeal)
 
             Text(l("app.feedback.success.screen.title", "Feedback Sent"))
                 .font(.title2.weight(.bold))
@@ -931,7 +931,7 @@ private struct FeedbackSubmissionConfirmationView: View {
 
             Text(l("app.feedback.success.screen.body", "Thank you for sharing your experience. Returning you now."))
                 .font(.body)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -941,9 +941,9 @@ private struct FeedbackSubmissionConfirmationView: View {
             .font(CivicaTypography.sectionHeader)
             .frame(maxWidth: .infinity)
             .padding(.vertical, CivicaSpacing.md)
-            .background(CivicaColors.ctaBlue)
+            .background(CivicaColors.brickPrimary)
             .foregroundColor(.white)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             .buttonStyle(.plain)
             .padding(.top, CivicaSpacing.xs)
 
@@ -952,7 +952,7 @@ private struct FeedbackSubmissionConfirmationView: View {
         .padding(.horizontal, CivicaSpacing.lg)
         .padding(.vertical, CivicaSpacing.xl)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(CivicaColors.canvasBackground)
+        .background(CivicaColors.paper)
         .navigationBarBackButtonHidden(true)
         .task {
             guard !hasTriggeredAutoReturn else { return }
@@ -990,11 +990,11 @@ private struct MAPVUtilityButtonStyle: ButtonStyle {
         configuration.label
             .foregroundColor(foreground.opacity(isEnabled ? 1 : 0.6))
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .fill(fill.opacity(isEnabled ? (configuration.isPressed ? 0.86 : 1.0) : 0.55))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(border.opacity(isEnabled ? 1 : 0.5), lineWidth: 1)
             )
     }

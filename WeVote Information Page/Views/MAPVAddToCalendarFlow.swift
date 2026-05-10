@@ -134,24 +134,24 @@ struct PrePermissionSheetView: View {
 
             Text("Allow notifications so Civica can remind you on Election Day and if your polling place window changes.")
                 .font(CivicaTypography.subhead)
-                .foregroundStyle(CivicaColors.textSecondary)
+                .foregroundStyle(CivicaColors.graphite)
 
             HStack(spacing: CivicaSpacing.sm) {
                 Button("Not Now", action: onNotNow)
                     .font(CivicaTypography.subheadStrong)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, CivicaSpacing.md)
-                    .background(CivicaColors.infoSurfaceBlue)
-                    .foregroundStyle(CivicaColors.textPrimary)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                    .background(CivicaColors.tealSurface)
+                    .foregroundStyle(CivicaColors.ink)
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
 
                 Button("Allow Reminders", action: onAllow)
                     .font(CivicaTypography.subheadStrong)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, CivicaSpacing.md)
-                    .background(CivicaColors.ctaBlue)
+                    .background(CivicaColors.brickPrimary)
                     .foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             }
         }
         .padding(CivicaSpacing.lg)
@@ -206,9 +206,9 @@ struct AddToCalendarButtonView: View {
             .padding(.vertical, CivicaSpacing.md)
         }
         .buttonStyle(.plain)
-        .background(CivicaColors.ctaBlue)
+        .background(CivicaColors.brickPrimary)
         .foregroundStyle(.white)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         .disabled(isWorking)
         .sheet(isPresented: $showSoftAsk) {
             PrePermissionSheetView(
