@@ -150,6 +150,46 @@ struct SNAPEntryView: View {
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
 
+                    NavigationLink {
+                        FindHelpRootView()
+                    } label: {
+                        HStack(spacing: CivicaSpacing.md) {
+                            Image(systemName: "map.fill")
+                                .font(.system(size: 28))
+                                .foregroundStyle(CivicaColors.ctaBlue)
+                                .frame(width: 48, height: 48)
+                                .background(
+                                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                                        .fill(CivicaColors.ctaBlue.opacity(0.12))
+                                )
+
+                            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                                Text("Find Help Near You")
+                                    .font(CivicaTypography.sectionHeader)
+                                    .foregroundStyle(CivicaColors.textPrimary)
+                                Text("SNAP offices and food assistance nearby")
+                                    .font(CivicaTypography.footnoteStrong)
+                                    .foregroundStyle(CivicaColors.textSecondary)
+                                    .lineLimit(2)
+                            }
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
+                                .foregroundStyle(CivicaColors.textSecondary)
+                        }
+                        .padding(CivicaSpacing.md)
+                        .background(
+                            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                                .fill(CivicaColors.surfacePrimary)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+                                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(.plain)
+
                     if let submittedAt = viewModel.submittedAt {
                         NavigationLink {
                             SNAPStepContainerView(viewModel: viewModel, onClose: nil)
