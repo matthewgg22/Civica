@@ -410,7 +410,7 @@ struct ElectionTimelineView: View {
                             if let errorMessage {
                                 Text(errorMessage)
                                     .font(CivicaTypography.subhead)
-                                    .foregroundColor(CivicaColors.ctaRed)
+                                    .foregroundColor(CivicaColors.destructive)
                             }
 
                             if visibleElections.isEmpty, errorMessage == nil {
@@ -670,7 +670,7 @@ struct ElectionTimelineView: View {
                         path.move(to: CGPoint(x: xPadding, y: lineY))
                         path.addLine(to: CGPoint(x: contentWidth - xPadding, y: lineY))
                     }
-                    .stroke(CivicaColors.ctaRed.opacity(0.82), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                    .stroke(CivicaColors.destructive.opacity(0.82), style: StrokeStyle(lineWidth: 2, lineCap: .round))
 
                     if let nextElection = sorted.first {
                         let startX = timelineXPosition(
@@ -702,7 +702,7 @@ struct ElectionTimelineView: View {
                         path.addLine(to: CGPoint(x: xPadding, y: lineY + 6))
                     }
                     .stroke(
-                        CivicaColors.ctaRed.opacity(0.78),
+                        CivicaColors.destructive.opacity(0.78),
                         style: StrokeStyle(lineWidth: 1.6, lineCap: .round)
                     )
 
@@ -725,7 +725,7 @@ struct ElectionTimelineView: View {
                             path.addLine(to: CGPoint(x: markerX, y: lineY + 6))
                         }
                         .stroke(
-                            CivicaColors.ctaRed.opacity(0.72),
+                            CivicaColors.destructive.opacity(0.72),
                             style: StrokeStyle(lineWidth: 1.6, lineCap: .round)
                         )
 
@@ -934,7 +934,7 @@ struct ElectionTimelineView: View {
     private func timelineYearBookmark(_ year: String) -> some View {
         Text(year)
             .font(CivicaTypography.supportBold)
-            .foregroundColor(CivicaColors.ctaRed)
+            .foregroundColor(CivicaColors.destructive)
             .padding(.horizontal, CivicaSpacing.sm)
             .padding(.vertical, CivicaSpacing.xs)
     }
@@ -1524,7 +1524,7 @@ struct ElectionTimelineView: View {
             if partyToken == "D" {
                 color = CivicaColors.brickPrimary
             } else if partyToken == "R" {
-                color = CivicaColors.ctaRed
+                color = CivicaColors.destructive
             } else {
                 color = CivicaColors.ink
             }
@@ -1554,7 +1554,7 @@ struct ElectionTimelineView: View {
         case .republican:
             return PartyBadgeStyle(
                 title: l("app.timeline.party.republican", "Republican"),
-                foreground: CivicaColors.ctaRed,
+                foreground: CivicaColors.destructive,
                 background: CivicaColors.tealSurface
             )
         case .independent:

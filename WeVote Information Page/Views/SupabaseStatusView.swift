@@ -32,7 +32,7 @@ struct SupabaseStatusView: View {
             if let error = authStore.lastError, !error.isEmpty {
                 Text(error)
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundColor(CivicaColors.ctaRed)
+                    .foregroundColor(CivicaColors.destructive)
                     .padding(CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.statusErrorSurface)
@@ -143,7 +143,7 @@ struct SupabaseStatusView: View {
         }
         return StatusIndicator(
             iconName: "exclamationmark.triangle.fill",
-            tint: CivicaColors.ctaRed,
+            tint: CivicaColors.destructive,
             surface: CivicaColors.statusErrorSurface
         )
     }

@@ -313,7 +313,7 @@ struct TurnoutExplorer: View {
 
     private func representationCardColor(for gapPoints: Double) -> Color {
         if gapPoints < -0.2 {
-            return CivicaColors.ctaRed
+            return CivicaColors.destructive
         }
         if gapPoints > 0.2 {
             return CivicaColors.brickPrimary
@@ -702,7 +702,7 @@ private struct TurnoutRiskMap: View {
 
     private func riskColor(for diagnostic: TurnoutAgeDiagnostic) -> Color {
         if diagnostic.representationGapPoints < -4 || diagnostic.turnoutRatePct < 45 {
-            return CivicaColors.ctaRed
+            return CivicaColors.destructive
         }
         if diagnostic.representationGapPoints < 0 || diagnostic.turnoutRatePct < 55 {
             return CivicaColors.warningAmber
@@ -781,8 +781,8 @@ private struct TurnoutGraphPalette {
         switch turnoutRatePct {
         case ..<40:
             return TurnoutGraphPalette(
-                votedColor: CivicaColors.ctaRed,
-                nonvotingColor: CivicaColors.ctaRed.opacity(0.34)
+                votedColor: CivicaColors.destructive,
+                nonvotingColor: CivicaColors.destructive.opacity(0.34)
             )
         case ..<50:
             return TurnoutGraphPalette(

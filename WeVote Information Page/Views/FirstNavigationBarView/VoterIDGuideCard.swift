@@ -193,7 +193,7 @@ struct VoterIDGuideCard: View {
         guard let metric else { return CivicaColors.brickPrimary }
         switch requirementClassification(for: metric) {
         case .photoRequired:
-            return CivicaColors.ctaRed
+            return CivicaColors.destructive
         case .nonPhotoAccepted:
             return CivicaColors.warningAmber
         case .noDocument:

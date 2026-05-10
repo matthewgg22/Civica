@@ -501,7 +501,7 @@ struct IssueCallCenterView: View {
 
         var map: [String: Color] = [
             Self.allExamplesFilterLabel.lowercased(): CivicaColors.brickPrimary,
-            Self.urgentExamplesFilterLabel.lowercased(): CivicaColors.ctaRed,
+            Self.urgentExamplesFilterLabel.lowercased(): CivicaColors.destructive,
             Self.searchExamplesFilterLabel.lowercased(): Color(hex: "#0F766E")
         ]
         let categories = exampleCategoryOptions.filter {
@@ -5002,7 +5002,7 @@ struct IssueCallCenterView: View {
         case .supportive:
             return CivicaColors.accentTeal
         case .opposed:
-            return CivicaColors.ctaRed
+            return CivicaColors.destructive
         case .other:
             return CivicaColors.graphite
         }
@@ -5045,7 +5045,7 @@ struct IssueCallCenterView: View {
         case .supportive:
             return CivicaColors.accentTeal.opacity(0.18)
         case .opposed:
-            return CivicaColors.ctaRed.opacity(0.18)
+            return CivicaColors.destructive.opacity(0.18)
         }
     }
 

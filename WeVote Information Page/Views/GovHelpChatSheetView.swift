@@ -146,7 +146,7 @@ struct GovHelpChatSheetView: View {
         VStack(alignment: isUser ? .trailing : .leading, spacing: CivicaSpacing.sm) {
             Text(message.text)
                 .font(.body)
-                .foregroundColor(message.isError ? CivicaColors.ctaRed : (isUser ? .white : CivicaColors.ink))
+                .foregroundColor(message.isError ? CivicaColors.destructive : (isUser ? .white : CivicaColors.ink))
                 .padding(.horizontal, CivicaSpacing.md)
                 .padding(.vertical, CivicaSpacing.sm)
                 .background(
@@ -155,7 +155,7 @@ struct GovHelpChatSheetView: View {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                        .stroke(message.isError ? CivicaColors.ctaRed.opacity(0.45) : Color.clear, lineWidth: 1)
+                        .stroke(message.isError ? CivicaColors.destructive.opacity(0.45) : Color.clear, lineWidth: 1)
                 )
                 .frame(maxWidth: .infinity, alignment: isUser ? .trailing : .leading)
 

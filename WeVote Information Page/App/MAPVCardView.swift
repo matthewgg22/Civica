@@ -376,7 +376,7 @@ struct MAPVCardView: View {
         case .blue: return CivicaColors.brickPrimary
         case .green: return CivicaColors.accentTeal
         case .orange: return CivicaColors.warningAmber
-        case .red: return CivicaColors.ctaRed
+        case .red: return CivicaColors.destructive
         case .gray: return CivicaColors.neutralStatus
         case .indigo: return CivicaColors.indigoStatus
         }

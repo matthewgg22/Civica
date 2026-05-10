@@ -1448,11 +1448,11 @@ struct SNAPApplicationView: View {
                             HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                                 Text(row.label)
                                     .font(CivicaTypography.footnoteStrong)
-                                    .foregroundStyle(isMissingRequired ? CivicaColors.ctaRed : CivicaColors.graphite)
+                                    .foregroundStyle(isMissingRequired ? CivicaColors.destructive : CivicaColors.graphite)
                                 Spacer(minLength: 8)
                                 Text(row.value)
                                     .font(CivicaTypography.footnote)
-                                    .foregroundStyle(isMissingRequired ? CivicaColors.ctaRed : CivicaColors.graphite)
+                                    .foregroundStyle(isMissingRequired ? CivicaColors.destructive : CivicaColors.graphite)
                                     .multilineTextAlignment(.trailing)
                             }
                             .padding(.vertical, CivicaSpacing.xs)

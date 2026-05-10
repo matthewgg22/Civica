@@ -475,7 +475,7 @@ struct VoterRegistrationView: View {
                 postPhaseHeaderText,
                 "",
                 CivicaColors.paper,
-                CivicaColors.ctaRed.opacity(0.72)
+                CivicaColors.destructive.opacity(0.72)
             )
         ]
 
@@ -945,7 +945,7 @@ struct VoterRegistrationView: View {
                             .fontWeight(.semibold)
                         + Text(l("app.registration.dropdown.why_register.intro.middle", " and "))
                         + Text(l("app.guide.party.republican", "Republican"))
-                            .foregroundColor(CivicaColors.ctaRed)
+                            .foregroundColor(CivicaColors.destructive)
                             .fontWeight(.semibold)
                         + Text(
                             l(
@@ -2259,7 +2259,7 @@ struct VoterRegistrationView: View {
                     .fontWeight(.semibold)
                 + Text(l("app.guide.card.party_affiliation.middle", " and "))
                 + Text(l("app.guide.party.republican", "Republican"))
-                    .foregroundColor(CivicaColors.ctaRed)
+                    .foregroundColor(CivicaColors.destructive)
                     .fontWeight(.semibold)
                 + Text(
                     l(
@@ -2349,7 +2349,7 @@ struct VoterRegistrationView: View {
         case .democrat:
             return CivicaColors.brickPrimary
         case .republican:
-            return CivicaColors.ctaRed
+            return CivicaColors.destructive
         case .independent:
             return CivicaColors.ink
         }

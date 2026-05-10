@@ -228,7 +228,7 @@ struct MyInfoPanelView: View {
                         if let addressSaveError {
                             Text(addressSaveError)
                                 .font(CivicaTypography.footnote)
-                                .foregroundColor(CivicaColors.ctaRed)
+                                .foregroundColor(CivicaColors.destructive)
                         }
 
                         if addressSaveError == nil,

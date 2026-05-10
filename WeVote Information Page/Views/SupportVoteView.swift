@@ -169,7 +169,7 @@ struct SupportVoteView: View {
             if let amount = resolvedAmount {
                 Text("\(l("app.support_vote.amount.selected_prefix", "Donation amount:")) \(formattedCurrency(amount))")
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundColor(isAmountValid ? CivicaColors.ink : CivicaColors.ctaRed)
+                    .foregroundColor(isAmountValid ? CivicaColors.ink : CivicaColors.destructive)
             } else {
                 Text(l("app.support_vote.amount.select_to_continue", "Select an amount to continue."))
                     .font(CivicaTypography.subhead)
@@ -197,7 +197,7 @@ struct SupportVoteView: View {
             if let error = applePayManager.errorMessage, !error.isEmpty {
                 Label(error, systemImage: "exclamationmark.triangle.fill")
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundStyle(CivicaColors.ctaRed)
+                    .foregroundStyle(CivicaColors.destructive)
                     .padding(CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.statusErrorSurface)

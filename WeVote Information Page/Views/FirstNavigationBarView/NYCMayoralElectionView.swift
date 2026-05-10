@@ -2380,7 +2380,7 @@ struct NYCMayoralElectionView: View {
                 (
                     Text("• ").foregroundColor(CivicaColors.ink)
                     + Text("Registered Republican")
-                        .foregroundColor(CivicaColors.ctaRed)
+                        .foregroundColor(CivicaColors.destructive)
                         .bold()
                         .fontWeight(.heavy)
                     + Text(": Only Republicans advance to the general election.")
@@ -3206,11 +3206,11 @@ private enum ElectionGuideCardAccent {
         case .general:
             return CivicaColors.accentTeal
         case .runoff:
-            return CivicaColors.ctaRed
+            return CivicaColors.destructive
         case .presidential:
             return CivicaColors.brickPrimary
         case .special:
-            return CivicaColors.ctaRed
+            return CivicaColors.destructive
         case .specialRules:
             return Color(hex: "#6A4CCF")
         case .ballotMeasures:

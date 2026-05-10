@@ -45,7 +45,7 @@ struct ElectionHotlinesView: View {
 
                     HStack {
                         Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundColor(CivicaColors.ctaRed)
+                            .foregroundColor(CivicaColors.destructive)
                         hotlineNumberLink(display: "(866-868-3692)", digits: "8668683692")
                     }
                 }

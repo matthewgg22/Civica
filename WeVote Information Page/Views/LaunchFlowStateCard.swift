@@ -52,7 +52,7 @@ struct LaunchFlowStateCard: View {
         case .empty:
             return CivicaColors.graphite
         case .error:
-            return CivicaColors.ctaRed
+            return CivicaColors.destructive
         }
     }
 

@@ -210,7 +210,7 @@ struct SNAPStepContainerView: View {
 
         switch completionState {
         case .missingRequired:
-            return CivicaColors.ctaRed.opacity(0.88)
+            return CivicaColors.destructive.opacity(0.88)
         case .missingOptional:
             return CivicaColors.warningAmber.opacity(0.82)
         case .complete:
