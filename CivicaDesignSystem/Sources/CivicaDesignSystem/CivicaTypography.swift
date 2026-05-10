@@ -7,12 +7,16 @@ public enum CivicaTypography {
     public static let cardHero            = Font.title2.weight(.semibold)
     /// 20/25 bold — small card title / subsection header.
     public static let cardTitle           = Font.title3.weight(.bold)
+    /// 20/25 semibold — quieter card title / sheet header that doesn't need full bold weight.
+    public static let cardSubtitle        = Font.title3.weight(.semibold)
     /// 17/22 semibold — list/section headers, primary card titles.
     public static let sectionHeader       = Font.headline
     /// 17/22 bold — heaviest section header.
     public static let sectionHeaderBold   = Font.headline.weight(.bold)
     /// 17/22 regular — body text, list row title.
     public static let body                = Font.body
+    /// 17/22 semibold — emphasized body, primary stat in a row.
+    public static let bodyStrong          = Font.body.weight(.semibold)
     /// 15/20 medium — emphasis subhead, stat callout.
     public static let subhead             = Font.subheadline.weight(.medium)
     /// 15/20 semibold — strongly emphasized subhead.
@@ -27,6 +31,8 @@ public enum CivicaTypography {
     public static let supportBold         = Font.callout.weight(.bold)
     /// 13/18 regular — fine print.
     public static let footnote            = Font.footnote
+    /// 13/18 medium — fine print needing slight emphasis (form helper text).
+    public static let footnoteMedium      = Font.footnote.weight(.medium)
     /// 13/18 semibold — emphasized fine print.
     public static let footnoteStrong      = Font.footnote.weight(.semibold)
     /// 12/16 regular — meta, timestamps, small captions.
