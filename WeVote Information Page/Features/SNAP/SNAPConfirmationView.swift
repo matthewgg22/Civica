@@ -11,7 +11,7 @@ struct SNAPConfirmationView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 Text("Your SNAP draft is ready")
-                    .font(.title3.weight(.semibold))
+                    .font(CivicaTypography.cardSubtitle)
                     .foregroundStyle(CivicaColors.ink)
 
                 Text("You can use this information to complete your official application through your state’s benefits website.")

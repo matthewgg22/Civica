@@ -17,7 +17,7 @@ struct SNAPEligibilityIntroView: View {
                         SNAPIntroHeader(title: "What is SNAP?")
 
                     Text("The Supplemental Nutrition Assistance Program (commonly referred to as SNAP) is a U.S. government program that helps low-income individuals and families buy food.")
-                        .font(.body.weight(.semibold))
+                        .font(CivicaTypography.bodyStrong)
                         .foregroundStyle(Color.black)
                         .fixedSize(horizontal: false, vertical: true)
 

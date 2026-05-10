@@ -128,7 +128,7 @@ struct SNAPStepContainerView: View {
                 }
 
                 Text(viewModel.draftCompletionSummaryText)
-                    .font(.footnote.weight(.medium))
+                    .font(CivicaTypography.footnoteMedium)
                     .foregroundStyle(CivicaColors.graphite)
                     .frame(maxWidth: .infinity, alignment: .center)
 

@@ -251,7 +251,7 @@ struct SNAPApplicationView: View {
                             SNAPInputLabel("About how much income did you receive this month?", badge: .optionalEstimate)
                             HStack(spacing: CivicaSpacing.sm) {
                                 Text("$")
-                                    .font(.body.weight(.semibold))
+                                    .font(CivicaTypography.bodyStrong)
                                     .foregroundStyle(CivicaColors.ink)
 
                                 TextField("0", text: $viewModel.application.expeditedCurrentMonthIncomeAmount)
@@ -264,7 +264,7 @@ struct SNAPApplicationView: View {
                             SNAPInputLabel("About how much cash or bank money do you have right now?", badge: .optionalEstimate)
                             HStack(spacing: CivicaSpacing.sm) {
                                 Text("$")
-                                    .font(.body.weight(.semibold))
+                                    .font(CivicaTypography.bodyStrong)
                                     .foregroundStyle(CivicaColors.ink)
 
                                 TextField("0", text: $viewModel.application.expeditedCashOrBankAmountNow)
@@ -789,7 +789,7 @@ struct SNAPApplicationView: View {
                 SNAPInputLabel("Estimated monthly income", badge: .required())
                 HStack(spacing: CivicaSpacing.sm) {
                     Text("$")
-                        .font(.body.weight(.semibold))
+                        .font(CivicaTypography.bodyStrong)
                         .foregroundStyle(CivicaColors.ink)
 
                     TextField("0", text: $viewModel.application.monthlyIncomeEstimate)
@@ -859,7 +859,7 @@ struct SNAPApplicationView: View {
                     SNAPInputLabel("Gross pay amount", badge: .optionalEstimate)
                     HStack(spacing: CivicaSpacing.sm) {
                         Text("$")
-                            .font(.body.weight(.semibold))
+                            .font(CivicaTypography.bodyStrong)
                             .foregroundStyle(CivicaColors.ink)
 
                         TextField("0", text: $viewModel.application.earnedGrossPayAmount)
@@ -940,7 +940,7 @@ struct SNAPApplicationView: View {
                     SNAPInputLabel("Gross receipts this month", badge: .optionalEstimate)
                     HStack(spacing: CivicaSpacing.sm) {
                         Text("$")
-                            .font(.body.weight(.semibold))
+                            .font(CivicaTypography.bodyStrong)
                             .foregroundStyle(CivicaColors.ink)
 
                         TextField("0", text: $viewModel.application.gigGrossReceiptsThisMonth)
@@ -958,7 +958,7 @@ struct SNAPApplicationView: View {
                     SNAPInputLabel("Business/work expenses this month", badge: .optionalEstimate)
                     HStack(spacing: CivicaSpacing.sm) {
                         Text("$")
-                            .font(.body.weight(.semibold))
+                            .font(CivicaTypography.bodyStrong)
                             .foregroundStyle(CivicaColors.ink)
 
                         TextField("0", text: $viewModel.application.gigBusinessExpensesThisMonth)
@@ -1147,7 +1147,7 @@ struct SNAPApplicationView: View {
                 SNAPInputLabel("Monthly rent or housing", badge: .required())
                 HStack(spacing: CivicaSpacing.sm) {
                     Text("$")
-                        .font(.body.weight(.semibold))
+                        .font(CivicaTypography.bodyStrong)
                         .foregroundStyle(CivicaColors.ink)
 
                     TextField("0", text: $viewModel.application.rentOrHousingCost)
@@ -1176,7 +1176,7 @@ struct SNAPApplicationView: View {
                 SNAPInputLabel("Monthly utilities", badge: .required())
                 HStack(spacing: CivicaSpacing.sm) {
                     Text("$")
-                        .font(.body.weight(.semibold))
+                        .font(CivicaTypography.bodyStrong)
                         .foregroundStyle(CivicaColors.ink)
 
                     TextField("0", text: $viewModel.application.utilitiesCost)
@@ -1206,7 +1206,7 @@ struct SNAPApplicationView: View {
                     SNAPInputLabel("Monthly childcare", badge: .optional)
                     HStack(spacing: CivicaSpacing.sm) {
                         Text("$")
-                            .font(.body.weight(.semibold))
+                            .font(CivicaTypography.bodyStrong)
                             .foregroundStyle(CivicaColors.ink)
 
                         TextField("0", text: $viewModel.application.childcareCostEstimate)
@@ -1230,7 +1230,7 @@ struct SNAPApplicationView: View {
                 SNAPInputLabel("Monthly medical costs", badge: .optionalEstimate)
                 HStack(spacing: CivicaSpacing.sm) {
                     Text("$")
-                        .font(.body.weight(.semibold))
+                        .font(CivicaTypography.bodyStrong)
                         .foregroundStyle(CivicaColors.ink)
 
                     TextField("0", text: $viewModel.application.medicalExpensesEstimate)

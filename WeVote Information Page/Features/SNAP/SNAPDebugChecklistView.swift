@@ -85,7 +85,7 @@ struct SNAPDebugChecklistView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text("SNAP QA Checklist")
-                        .font(.title3.weight(.semibold))
+                        .font(CivicaTypography.cardSubtitle)
                         .foregroundStyle(CivicaColors.ink)
                     Text("Developer-only build verification. Not visible in production.")
                         .font(CivicaTypography.footnote)

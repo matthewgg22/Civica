@@ -19,7 +19,7 @@ struct SNAPReviewView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                 Text("Review your SNAP draft")
-                    .font(.title3.weight(.semibold))
+                    .font(CivicaTypography.cardSubtitle)
                     .foregroundStyle(CivicaColors.ink)
 
                 Text("Review this before using it to complete your official state application.")
