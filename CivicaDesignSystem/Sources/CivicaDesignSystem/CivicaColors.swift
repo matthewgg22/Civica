@@ -76,6 +76,24 @@ public enum CivicaColors {
 
     /// 7% black/white border. No new grays — this is the only divider color.
     public static let hairline             = Color.dynamic(light: "#00000012", dark: "#FFFFFF12")
+
+    /// Republican party color. Mode-invariant — political colors don't shift with light/dark.
+    /// Same value as legacy `ctaRed`; the rename clarifies the semantic role.
+    public static let partyRepublican      = Color.dynamic(light: "#C84637", dark: "#C84637")
+
+    /// Destructive / error states (form validation, network errors, irreversible actions).
+    /// Slightly lifted in dark mode for contrast against `paper` dark surface.
+    public static let destructive          = Color.dynamic(light: "#C84637", dark: "#E07060")
+    public static let destructivePressed   = Color.dynamic(light: "#A1372B", dark: "#C45848")
+    public static let destructiveDisabled  = Color.dynamic(light: "#A35B53", dark: "#9D5952")
+
+    /// Soft brick wash — for warm decorative tints, secondary surfaces.
+    /// Replaces legacy `brandSoftRed` semantic.
+    public static let brickSurface         = brickPrimary.opacity(0.10)
+
+    /// Soft teal wash — for cool civic-engagement backgrounds.
+    /// Replaces legacy `brandSoftBlue` semantic. Civic-calm tone.
+    public static let tealSurface          = accentTeal.opacity(0.10)
 }
 
 public extension Color {
