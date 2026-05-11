@@ -9,7 +9,7 @@ import SwiftUI
 //
 // Visual cadence (top → bottom):
 //   • Small progress chip ("3 of 8") — graphite caption, optional
-//   • Question title — pageTitle, semibold, 1–2 lines max
+//   • Question title — cardHero, semibold, 1–2 lines max
 //   • Helper paragraph — body, graphite, optional
 //   • Affordance — caller provides via @ViewBuilder. Common affordances
 //     are exposed as CivicaQuestionChoices / CivicaQuestionYesNo /
@@ -77,7 +77,7 @@ struct CivicaQuestionScreen<Affordance: View>: View {
                         progressChip(progress)
                     }
                     Text(title)
-                        .font(CivicaTypography.pageTitle)
+                        .font(CivicaTypography.cardHero)
                         .foregroundStyle(CivicaColors.ink)
                         .fixedSize(horizontal: false, vertical: true)
                         .accessibilityAddTraits(.isHeader)
