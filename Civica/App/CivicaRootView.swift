@@ -41,15 +41,31 @@ struct CivicaRootView: View {
         }
     }
 
-    /// Status-aware routing (HANDOFF boards 11, 12, 24).
+    /// Status-aware routing (HANDOFF boards 11, 12, 23-denial, 24).
     /// First-time + screener-in-progress users land on the entry tile
-    /// (which leads into the conversation screener). Post-submission
-    /// users land on the waiting room. Anything in between is the
-    /// returning user home — they have an active application that
-    /// needs the next push.
+    /// (which leads into the conversation screener). Denied users
+    /// land on the denial surface with appeal + reapply paths.
+    /// Other post-submission users land on the waiting room. Anything
+    /// in between is the returning user home — they have an active
+    /// application that needs the next push.
     @ViewBuilder
     private var rootSurface: some View {
-        if statusStore.status.isPostSubmission {
+        if statusStore.status == .decisionDenied {
+            SNAPDecisionDeniedView(
+                statusStore: statusStore,
+                language: language,
+                denialReason: nil,
+                onAppeal: {
+                    // Fair-hearing flow lands in a later commit. For
+                    // now it's a no-op; the next step is a guided
+                    // appeal-letter generator + deep-link into the
+                    // state's fair-hearing portal.
+                },
+                onStartOver: {
+                    statusStore.reset()
+                }
+            )
+        } else if statusStore.status.isPostSubmission {
             SNAPWaitingRoomView(
                 statusStore: statusStore,
                 language: language,

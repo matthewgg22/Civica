@@ -116,4 +116,78 @@ enum SNAPStatusHomeStrings {
     static let statusInProgress = CivicaText("In progress", es: "En curso")
     static let statusActionNeeded = CivicaText("Action needed", es: "Acción necesaria")
     static let statusWaiting = CivicaText("Waiting", es: "En espera")
+
+    // MARK: - Denial surface (board 23 · denial path)
+    //
+    // Brand voice rule: honest acknowledgment, no fabricated optimism,
+    // no "we're working hard for you" filler. Every line below names
+    // a real next step the user can act on today.
+
+    static let deniedTitle = CivicaText(
+        "Your SNAP application was denied",
+        es: "Tu solicitud de SNAP fue denegada"
+    )
+    static let deniedBody = CivicaText(
+        "Massachusetts DTA decided you don't qualify right now. You have options — denials are not the end of the road.",
+        es: "El DTA de Massachusetts decidió que no calificas en este momento. Tienes opciones — una denegación no es el final del camino."
+    )
+    static let deniedReasonHeading = CivicaText(
+        "What the state told us",
+        es: "Lo que nos dijo el estado"
+    )
+    static let deniedReasonMissing = CivicaText(
+        "The state hasn't shared a specific reason with Civica yet. Check your DTA Connect inbox or the denial notice you received in the mail.",
+        es: "El estado todavía no ha compartido una razón específica con Civica. Revisa tu bandeja de DTA Connect o la carta de denegación que recibiste por correo."
+    )
+
+    static let deniedNextStepsHeading = CivicaText(
+        "What you can do next",
+        es: "Qué puedes hacer ahora"
+    )
+
+    // Appeal — 90-day fair hearing right is federal (7 CFR 273.15).
+    static let deniedAppealTitle = CivicaText(
+        "Request a fair hearing",
+        es: "Solicitar una audiencia justa"
+    )
+    static let deniedAppealBody = CivicaText(
+        "Federal law gives you 90 days from the denial notice to ask the state to review the decision. You can win — many denials are reversed.",
+        es: "La ley federal te da 90 días desde la carta de denegación para pedir al estado que revise la decisión. Puedes ganar — muchas denegaciones se revierten."
+    )
+
+    static let deniedReviewTitle = CivicaText(
+        "Review what you submitted",
+        es: "Revisa lo que enviaste"
+    )
+    static let deniedReviewBody = CivicaText(
+        "Sometimes a denial comes from a missing document or a number that looked wrong. Look at your application before you appeal.",
+        es: "A veces la denegación viene de un documento que falta o un número que parecía incorrecto. Mira tu solicitud antes de apelar."
+    )
+
+    static let deniedFoodHelpTitle = CivicaText(
+        "Find food help today",
+        es: "Encuentra ayuda con comida hoy"
+    )
+    static let deniedFoodHelpBody = CivicaText(
+        "Food banks, school meal programs, and community fridges don't require SNAP approval. Most are open to anyone in need.",
+        es: "Los bancos de alimentos, programas de comidas escolares y refrigeradores comunitarios no requieren aprobación de SNAP. La mayoría están abiertos a cualquier persona necesitada."
+    )
+
+    static let deniedReapplyTitle = CivicaText(
+        "Apply again when something changes",
+        es: "Solicita de nuevo cuando algo cambie"
+    )
+    static let deniedReapplyBody = CivicaText(
+        "If your income drops, your household grows, or your expenses go up, you can reapply right away. There's no waiting period.",
+        es: "Si tus ingresos bajan, tu hogar crece o tus gastos suben, puedes volver a solicitar de inmediato. No hay un período de espera."
+    )
+
+    static let deniedPrimaryActionAppeal = CivicaText(
+        "Start an appeal",
+        es: "Iniciar una apelación"
+    )
+    static let deniedSecondaryActionReapply = CivicaText(
+        "Start a new application",
+        es: "Iniciar una nueva solicitud"
+    )
 }
