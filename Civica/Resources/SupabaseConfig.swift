@@ -88,11 +88,16 @@ struct SupabaseConfig: Sendable {
         slug.range(of: #"^[a-z0-9-]+$"#, options: .regularExpression) != nil
     }
 
+    // Civica fork of this file: launch is NOT gated on Supabase.
+    // The core flow (orchestrator, eligibility verdict, PDF packet)
+    // is fully on-device. Only FindHelp's directory lookup hits
+    // Supabase, and it gracefully renders an error state when the
+    // network call fails. Logging a warning is enough — no crash.
+    //
+    // When real Supabase credentials land in the Civica Info.plist
+    // these checks become correct again; until then they're noisy
+    // launch crashers we don't want.
     private static func failLaunchConfiguration(_ message: String) {
-        #if DEBUG
-        assertionFailure(message)
-        #else
-        fatalError(message)
-        #endif
+        logger.warning("Supabase config issue: \(message, privacy: .public)")
     }
 }
