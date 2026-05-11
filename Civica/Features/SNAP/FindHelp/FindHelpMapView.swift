@@ -72,7 +72,12 @@ struct FindHelpMapView: UIViewRepresentable {
                     withIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier,
                     for: cluster
                 ) as? MKMarkerAnnotationView
-                view?.markerTintColor = UIColor.darkGray
+                // Homogeneous clusters take their category color; mixed
+                // clusters fall back to graphite so the user can read
+                // them as "various nearby" without misleading hue.
+                view?.markerTintColor = FindHelpAnnotationView.dominantColor(
+                    in: cluster.memberAnnotations
+                )
                 return view
             }
             guard let pin = annotation as? FindHelpAnnotation else { return nil }
@@ -109,15 +114,24 @@ final class FindHelpAnnotation: NSObject, MKAnnotation {
     }
 }
 
-// HANDOFF map · A board spec — custom teardrop pin with a paper-
-// colored dot inside the upper bulb. Subclasses MKAnnotationView
-// directly (not MKMarkerAnnotationView) so we control the shape
-// rather than recoloring Apple's default marker.
+// HANDOFF map · A board spec — custom teardrop pin with a category
+// glyph inside the upper bulb. Subclasses MKAnnotationView directly
+// (not MKMarkerAnnotationView) so we control the shape and inner
+// glyph rather than recoloring Apple's default marker.
 //
-// Pin colors by service type:
-//   • Brick #9C3A24    SNAP application help
-//   • Teal  #2A6F66    Food assistance
-//   • Graphite #3A342E Both
+// Pin colors by (record_kind, service_type / retailer_category):
+//   • Help directory + SNAP application help → Brick #9C3A24
+//   • Help directory + Food assistance       → Teal  #2A6F66
+//   • Help directory + Both                  → Graphite #3A342E
+//   • EBT retailer  + Supermarket            → Teal-deep #1F4F4A
+//   • EBT retailer  + Small grocer           → Amber #B5762A
+//   • EBT retailer  + Farmers market         → Green #3B6B33
+//   • EBT retailer  + Co-op                  → Indigo #3D4E6E
+//   • EBT retailer  + Restaurant RMP         → Brick #9C3A24
+//
+// Pin glyphs by the same axis use SF Symbols rendered in paper-
+// cream (#F5F2EC) inside the bulb. The glyph anchors the user's
+// read of "what kind of place is this" before the color hits.
 //
 // Path mirrors the SVG from the canvas: a 28×35 teardrop with the
 // bulb centered at (14, 14) and the point at (14, 35). The view's
@@ -128,6 +142,8 @@ final class FindHelpAnnotationView: MKAnnotationView {
 
     private static let teardropSize = CGSize(width: 28, height: 35)
     private static let paperDotSize: CGFloat = 9
+    private static let paperColor = UIColor(red: 0xF5/255, green: 0xF2/255, blue: 0xEC/255, alpha: 1)
+    private static let graphiteColor = UIColor(red: 0x3A/255, green: 0x34/255, blue: 0x2E/255, alpha: 1)
 
     override var annotation: MKAnnotation? {
         didSet {
@@ -140,26 +156,91 @@ final class FindHelpAnnotationView: MKAnnotationView {
     func configure(with location: FindHelpLocation) {
         clusteringIdentifier = "findHelpCluster"
         canShowCallout = false
-        let color = brandColor(for: location.primaryServiceType)
-        image = Self.teardropImage(fillColor: color)
+        let color = Self.pinColor(for: location)
+        let glyph = Self.glyphSymbolName(for: location)
+        image = Self.teardropImage(fillColor: color, glyphName: glyph)
         // Anchor the tip of the teardrop on the coordinate rather
         // than the bulb center — that's where map pins are expected
         // to "point at" the place they represent.
         centerOffset = CGPoint(x: 0, y: -Self.teardropSize.height / 2)
     }
 
-    private func brandColor(for serviceType: FindHelpServiceType) -> UIColor {
-        switch serviceType {
-        case .snapApplicationHelp:
-            return UIColor(red: 0x9C/255, green: 0x3A/255, blue: 0x24/255, alpha: 1)
-        case .foodAssistance:
-            return UIColor(red: 0x2A/255, green: 0x6F/255, blue: 0x66/255, alpha: 1)
-        case .both:
-            return UIColor(red: 0x3A/255, green: 0x34/255, blue: 0x2E/255, alpha: 1)
+    // MARK: - Category routing
+
+    /// Pin color for a single location. Lookups split first on
+    /// `resolvedRecordKind`, then on the relevant inner axis
+    /// (service type for help directory, retailer category for
+    /// retailers).
+    static func pinColor(for location: FindHelpLocation) -> UIColor {
+        switch location.resolvedRecordKind {
+        case .helpDirectory:
+            switch location.primaryServiceType {
+            case .snapApplicationHelp:
+                return UIColor(red: 0x9C/255, green: 0x3A/255, blue: 0x24/255, alpha: 1)
+            case .foodAssistance:
+                return UIColor(red: 0x2A/255, green: 0x6F/255, blue: 0x66/255, alpha: 1)
+            case .both:
+                return graphiteColor
+            }
+        case .ebtRetailer:
+            switch location.retailerCategory ?? .supermarket {
+            case .supermarket:
+                return UIColor(red: 0x1F/255, green: 0x4F/255, blue: 0x4A/255, alpha: 1)
+            case .smallGrocer:
+                return UIColor(red: 0xB5/255, green: 0x76/255, blue: 0x2A/255, alpha: 1)
+            case .farmersMarket:
+                return UIColor(red: 0x3B/255, green: 0x6B/255, blue: 0x33/255, alpha: 1)
+            case .coOp:
+                return UIColor(red: 0x3D/255, green: 0x4E/255, blue: 0x6E/255, alpha: 1)
+            case .restaurantRMP:
+                return UIColor(red: 0x9C/255, green: 0x3A/255, blue: 0x24/255, alpha: 1)
+            }
         }
     }
 
-    private static func teardropImage(fillColor: UIColor) -> UIImage {
+    /// SF Symbol name for a location's pin glyph. Rendered in paper-
+    /// cream inside the bulb. Fallbacks to a paper dot if the symbol
+    /// fails to load (e.g., older iOS without the named symbol).
+    static func glyphSymbolName(for location: FindHelpLocation) -> String {
+        switch location.resolvedRecordKind {
+        case .helpDirectory:
+            switch location.primaryServiceType {
+            case .snapApplicationHelp: return "doc.text.fill"
+            case .foodAssistance:      return "takeoutbag.and.cup.and.straw.fill"
+            case .both:                return "square.stack.fill"
+            }
+        case .ebtRetailer:
+            switch location.retailerCategory ?? .supermarket {
+            case .supermarket:    return "cart.fill"
+            case .smallGrocer:    return "basket.fill"
+            case .farmersMarket:  return "leaf.fill"
+            case .coOp:           return "building.2.fill"
+            case .restaurantRMP:  return "fork.knife"
+            }
+        }
+    }
+
+    /// Cluster color picker: when every member shares one category
+    /// the cluster takes that color; otherwise graphite signals
+    /// "multiple kinds nearby" without misleading hue.
+    static func dominantColor(in annotations: [MKAnnotation]) -> UIColor {
+        let locations = annotations.compactMap { ($0 as? FindHelpAnnotation)?.location }
+        guard let first = locations.first else { return graphiteColor }
+        let firstKey = categoryKey(for: first)
+        let allSame = locations.allSatisfy { categoryKey(for: $0) == firstKey }
+        return allSame ? pinColor(for: first) : graphiteColor
+    }
+
+    private static func categoryKey(for location: FindHelpLocation) -> String {
+        let kind = location.resolvedRecordKind.rawValue
+        let inner = location.retailerCategory?.rawValue
+            ?? location.primaryServiceType.rawValue
+        return "\(kind):\(inner)"
+    }
+
+    // MARK: - Drawing
+
+    private static func teardropImage(fillColor: UIColor, glyphName: String) -> UIImage {
         let size = teardropSize
         let renderer = UIGraphicsImageRenderer(size: size)
         return renderer.image { _ in
@@ -191,18 +272,35 @@ final class FindHelpAnnotationView: MKAnnotationView {
             fillColor.setFill()
             path.fill()
 
-            // Paper dot inside the bulb. Sits at y=11 (just below the
-            // bulb's vertical center) so the visual weight feels
-            // balanced against the wider point below.
-            let dotSize = paperDotSize
-            let dotRect = CGRect(
-                x: (size.width - dotSize) / 2,
-                y: 11,
-                width: dotSize,
-                height: dotSize
-            )
-            UIColor(red: 0xF5/255, green: 0xF2/255, blue: 0xEC/255, alpha: 1).setFill()
-            UIBezierPath(ovalIn: dotRect).fill()
+            // Category glyph inside the bulb. 10pt semibold reads
+            // legibly at the teardrop's small render size; centered
+            // horizontally and vertically at y=15 to match where the
+            // legacy paper-dot's visual center sat.
+            let symbolConfig = UIImage.SymbolConfiguration(pointSize: 10, weight: .semibold)
+            if let symbol = UIImage(systemName: glyphName, withConfiguration: symbolConfig)?
+                .withTintColor(paperColor, renderingMode: .alwaysOriginal) {
+                let symbolSize = symbol.size
+                let symbolRect = CGRect(
+                    x: (size.width - symbolSize.width) / 2,
+                    y: 15 - symbolSize.height / 2,
+                    width: symbolSize.width,
+                    height: symbolSize.height
+                )
+                symbol.draw(in: symbolRect)
+            } else {
+                // Legacy fallback: plain paper dot. Reached only if
+                // the SF Symbol lookup fails (which it shouldn't on
+                // any iOS the Civica target deploys to).
+                let dotSize = paperDotSize
+                let dotRect = CGRect(
+                    x: (size.width - dotSize) / 2,
+                    y: 11,
+                    width: dotSize,
+                    height: dotSize
+                )
+                paperColor.setFill()
+                UIBezierPath(ovalIn: dotRect).fill()
+            }
         }
     }
 }
