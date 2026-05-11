@@ -109,8 +109,25 @@ final class FindHelpAnnotation: NSObject, MKAnnotation {
     }
 }
 
-final class FindHelpAnnotationView: MKMarkerAnnotationView {
+// HANDOFF map · A board spec — custom teardrop pin with a paper-
+// colored dot inside the upper bulb. Subclasses MKAnnotationView
+// directly (not MKMarkerAnnotationView) so we control the shape
+// rather than recoloring Apple's default marker.
+//
+// Pin colors by service type:
+//   • Brick #9C3A24    SNAP application help
+//   • Teal  #2A6F66    Food assistance
+//   • Graphite #3A342E Both
+//
+// Path mirrors the SVG from the canvas: a 28×35 teardrop with the
+// bulb centered at (14, 14) and the point at (14, 35). The view's
+// centerOffset anchors the tip on the underlying coordinate.
+
+final class FindHelpAnnotationView: MKAnnotationView {
     static let reuseID = "FindHelpAnnotationView"
+
+    private static let teardropSize = CGSize(width: 28, height: 35)
+    private static let paperDotSize: CGFloat = 9
 
     override var annotation: MKAnnotation? {
         didSet {
@@ -123,22 +140,15 @@ final class FindHelpAnnotationView: MKMarkerAnnotationView {
     func configure(with location: FindHelpLocation) {
         clusteringIdentifier = "findHelpCluster"
         canShowCallout = false
-        glyphImage = UIImage(systemName: glyphName(for: location.primaryServiceType))
-        markerTintColor = markerColor(for: location.primaryServiceType)
+        let color = brandColor(for: location.primaryServiceType)
+        image = Self.teardropImage(fillColor: color)
+        // Anchor the tip of the teardrop on the coordinate rather
+        // than the bulb center — that's where map pins are expected
+        // to "point at" the place they represent.
+        centerOffset = CGPoint(x: 0, y: -Self.teardropSize.height / 2)
     }
 
-    private func glyphName(for serviceType: FindHelpServiceType) -> String {
-        switch serviceType {
-        case .snapApplicationHelp: return "doc.text.fill"
-        case .foodAssistance: return "fork.knife"
-        case .both: return "square.stack.fill"
-        }
-    }
-
-    // HANDOFF map · A board spec — pins map to the brand palette:
-    // Brick #9C3A24 for SNAP help, Teal #2A6F66 for food assistance,
-    // Graphite #3A342E for "both." No default iOS marker tints.
-    private func markerColor(for serviceType: FindHelpServiceType) -> UIColor {
+    private func brandColor(for serviceType: FindHelpServiceType) -> UIColor {
         switch serviceType {
         case .snapApplicationHelp:
             return UIColor(red: 0x9C/255, green: 0x3A/255, blue: 0x24/255, alpha: 1)
@@ -146,6 +156,53 @@ final class FindHelpAnnotationView: MKMarkerAnnotationView {
             return UIColor(red: 0x2A/255, green: 0x6F/255, blue: 0x66/255, alpha: 1)
         case .both:
             return UIColor(red: 0x3A/255, green: 0x34/255, blue: 0x2E/255, alpha: 1)
+        }
+    }
+
+    private static func teardropImage(fillColor: UIColor) -> UIImage {
+        let size = teardropSize
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { _ in
+            // Teardrop path — bulb top, point bottom. Bezier control
+            // points map to the SVG curve commands in the canvas spec.
+            let path = UIBezierPath()
+            path.move(to: CGPoint(x: 14, y: 0))
+            path.addCurve(
+                to: CGPoint(x: 0, y: 14),
+                controlPoint1: CGPoint(x: 6, y: 0),
+                controlPoint2: CGPoint(x: 0, y: 6)
+            )
+            path.addCurve(
+                to: CGPoint(x: 14, y: 35),
+                controlPoint1: CGPoint(x: 0, y: 22),
+                controlPoint2: CGPoint(x: 14, y: 35)
+            )
+            path.addCurve(
+                to: CGPoint(x: 28, y: 14),
+                controlPoint1: CGPoint(x: 14, y: 35),
+                controlPoint2: CGPoint(x: 28, y: 22)
+            )
+            path.addCurve(
+                to: CGPoint(x: 14, y: 0),
+                controlPoint1: CGPoint(x: 28, y: 6),
+                controlPoint2: CGPoint(x: 22, y: 0)
+            )
+            path.close()
+            fillColor.setFill()
+            path.fill()
+
+            // Paper dot inside the bulb. Sits at y=11 (just below the
+            // bulb's vertical center) so the visual weight feels
+            // balanced against the wider point below.
+            let dotSize = paperDotSize
+            let dotRect = CGRect(
+                x: (size.width - dotSize) / 2,
+                y: 11,
+                width: dotSize,
+                height: dotSize
+            )
+            UIColor(red: 0xF5/255, green: 0xF2/255, blue: 0xEC/255, alpha: 1).setFill()
+            UIBezierPath(ovalIn: dotRect).fill()
         }
     }
 }

@@ -30,6 +30,11 @@ struct FindHelpRootView: View {
     /// HANDOFF board B3; the empty-state CTA bumps to ~25 miles.
     @State private var currentRadiusKm: Double = 8.0
 
+    /// HANDOFF board A2 — after the peek sheet, this drives the full
+    /// detail sheet. Kept separate from store.selectedLocation so the
+    /// two sheets stack cleanly: peek dismisses, detail then mounts.
+    @State private var detailLocation: FindHelpLocation?
+
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
 
@@ -71,7 +76,21 @@ struct FindHelpRootView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(CivicaColors.surfaceSecondary, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
+        // Two-stage sheet: tap a pin → peek (board A2). Peek's
+        // "View details" CTA dismisses the peek, then the detail
+        // sheet mounts. Splitting them lets users skim multiple
+        // pins fast without re-mounting the dense detail every time.
         .sheet(item: $store.selectedLocation) { location in
+            FindHelpPeekSheet(
+                location: location,
+                language: language,
+                onViewDetails: {
+                    detailLocation = location
+                    store.clearSelection()
+                }
+            )
+        }
+        .sheet(item: $detailLocation) { location in
             FindHelpLocationDetailSheet(location: location, sources: store.sources)
         }
         .onAppear {
