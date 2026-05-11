@@ -17,8 +17,10 @@ import SwiftUI
 // Not wired into SNAPRouter yet — router cutover happens once all
 // nine legacy steps are migrated.
 
+enum SNAPTri: String, Equatable, Codable { case yes, no, notSure }
+
 struct SNAPIncomeAnswers: Equatable, Codable {
-    enum Tri: String, Equatable, Codable { case yes, no, notSure }
+    typealias Tri = SNAPTri
 
     var anyoneEarning: Tri?
     var grossMonthlyIncome: Decimal?
