@@ -122,6 +122,17 @@ struct HeuristicExpeditedClassifier: ExpeditedClassifier {
             z += 1.2
         }
         if draft.expenses.utilityShutoffNotice == .yes { z += 1.0 }
+        // Housing situation maps to existing HousingStatus already
+        // captured in the .whereApplying section. Unhoused is the
+        // strongest housing signal; temporary housing covers shelter
+        // and recent-move situations; staying-with-others covers
+        // doubled-up arrangements.
+        switch draft.whereApplying.housingStatus {
+        case .unhoused:           z += 1.0
+        case .temporaryHousing:   z += 0.8
+        case .stayingWithOthers:  z += 0.6
+        case .stableHome, .none:  break
+        }
         if draft.income.recentJobLoss30d == .yes { z += 0.7 }
         // Migrant/seasonal farmworker is a hard-rule trigger when paired
         // with destitute resources; this soft weight covers the case
@@ -217,15 +228,30 @@ private func buildRationale(
 // MARK: - Clarifying question
 
 /// When the triage result is `.uncertain`, returns the section + a
-/// short prompt for the most-discriminating unanswered soft signal.
-/// Returns nil when there's nothing useful to ask (e.g., user is
-/// already past every soft-signal screen).
-///
-/// Full implementation lands with the housing-situation section.
+/// short prompt for the most-discriminating unanswered soft signal —
+/// ordered by classifier weight, highest first. Returns nil when
+/// every soft-signal field is already populated or the state isn't
+/// `.uncertain`.
 func clarifyingQuestion(
     for result: ExpeditedTriageResult,
     draft: SNAPApplicationDraft
 ) -> (SNAPApplicationSection, String)? {
     guard result.state == .uncertain else { return nil }
+
+    if draft.income.liquidResources == nil {
+        return (.income, "How much cash on hand and in checking or savings?")
+    }
+    if draft.expenses.utilityShutoffNotice == nil {
+        return (.expenses, "Has a utility threatened to shut off service?")
+    }
+    if draft.whereApplying.housingStatus == nil {
+        return (.whereApplying, "Where are you living right now?")
+    }
+    if draft.income.recentJobLoss30d == nil {
+        return (.income, "Has anyone lost a job in the last 30 days?")
+    }
+    if draft.household.migrantSeasonalFarmworker == nil {
+        return (.household, "Is anyone a migrant or seasonal farmworker?")
+    }
     return nil
 }
