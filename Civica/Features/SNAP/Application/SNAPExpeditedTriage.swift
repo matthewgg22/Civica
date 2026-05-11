@@ -111,6 +111,13 @@ struct HeuristicExpeditedClassifier: ExpeditedClassifier {
     init() {}
 
     func predict(_ draft: SNAPApplicationDraft) async -> Double {
+        scoreSynchronously(draft)
+    }
+
+    /// Internal sync entry point used by `evaluateTriageSynchronously`
+    /// and the `predict` async wrapper. Kept separate from `predict`
+    /// so the protocol surface stays async-only.
+    func scoreSynchronously(_ draft: SNAPApplicationDraft) -> Double {
         var z = -1.5  // base-rate prior
 
         let gross = (draft.income.grossMonthlyIncome as NSDecimalNumber?)?.doubleValue ?? 0
@@ -170,6 +177,23 @@ func evaluateTriage(
         combinedConfidence: combined,
         state: .from(combined),
         rationale: rationale
+    )
+}
+
+/// Synchronous triage using the bundled heuristic classifier. For
+/// view code that needs a result inline without an async context.
+/// When the heuristic is replaced by an async CoreML model, callers
+/// of this entry point migrate to the async variant.
+func evaluateTriageSynchronously(draft: SNAPApplicationDraft) -> ExpeditedTriageResult {
+    let fired = firedHardRules(in: draft)
+    let soft = HeuristicExpeditedClassifier().scoreSynchronously(draft)
+    let combined = fired.isEmpty ? soft : 1.0
+    return ExpeditedTriageResult(
+        firedHardRules: fired,
+        softConfidence: soft,
+        combinedConfidence: combined,
+        state: .from(combined),
+        rationale: buildRationale(fired: fired, draft: draft, soft: soft)
     )
 }
 

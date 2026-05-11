@@ -35,11 +35,6 @@ enum SNAPStatusHomeStrings {
         "Your application is with Massachusetts DTA. Most decisions take 7–30 days. We'll let you know when something changes.",
         es: "Tu solicitud está con el DTA de Massachusetts. La mayoría de las decisiones tardan de 7 a 30 días. Te avisaremos cuando algo cambie."
     )
-    static let waitingExpedited = CivicaText(
-        "You may qualify for expedited service. DTA decides this within 7 days.",
-        es: "Puedes calificar para servicio expedito. El DTA decide esto dentro de 7 días."
-    )
-
     // MARK: - Action chips / next step prompts
 
     static let actionGeneratePacket = CivicaText(
