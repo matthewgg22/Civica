@@ -13,13 +13,27 @@ final class FindHelpStore: ObservableObject {
     @Published private(set) var isLoading: Bool = false
     @Published var error: FindHelpError?
 
+    /// True iff the most recent successful `searchNearby` call returned
+    /// bundled MA seed data because the live Supabase RPC was
+    /// unreachable. The UI can surface a "Showing offline directory"
+    /// banner off this flag; the transport-error view in
+    /// FindHelpRootView keeps its role as the last-resort path when
+    /// the fixture fallback also returns nothing.
+    @Published private(set) var isUsingFallbackData: Bool = false
+
+    private let fixtures: FindHelpFixtureLoader
+
     private let service: FindHelpServiceProtocol
     private static let logger = Logger(subsystem: "Civica", category: "FindHelpStore")
 
     private var pendingSearch: Task<Void, Never>?
 
-    init(service: FindHelpServiceProtocol = FindHelpService()) {
+    init(
+        service: FindHelpServiceProtocol = FindHelpService(),
+        fixtures: FindHelpFixtureLoader = .shared
+    ) {
         self.service = service
+        self.fixtures = fixtures
     }
 
     var filteredLocations: [FindHelpLocation] {
@@ -46,18 +60,66 @@ final class FindHelpStore: ObservableObject {
                 )
                 if Task.isCancelled { return }
                 self.locations = results
+                self.isUsingFallbackData = false
                 self.isLoading = false
             } catch let error as FindHelpError {
                 if Task.isCancelled { return }
-                self.error = error
-                self.isLoading = false
+                self.handleSearchFailure(
+                    error,
+                    lat: lat,
+                    lng: lng,
+                    radiusKm: radiusKm,
+                    serviceType: serviceType,
+                    languageCode: languageCode,
+                    maxResults: maxResults
+                )
             } catch {
                 if Task.isCancelled { return }
                 Self.logger.error("Unexpected FindHelp error: \(error.localizedDescription, privacy: .public)")
-                self.error = .network(message: error.localizedDescription)
-                self.isLoading = false
+                self.handleSearchFailure(
+                    .network(message: error.localizedDescription),
+                    lat: lat,
+                    lng: lng,
+                    radiusKm: radiusKm,
+                    serviceType: serviceType,
+                    languageCode: languageCode,
+                    maxResults: maxResults
+                )
             }
         }
+    }
+
+    /// Centralizes the post-failure decision: transport errors get a
+    /// soft fallback to bundled MA fixtures so the demo map keeps its
+    /// pins; everything else surfaces the error to the UI as before.
+    private func handleSearchFailure(
+        _ error: FindHelpError,
+        lat: Double,
+        lng: Double,
+        radiusKm: Double,
+        serviceType: FindHelpServiceType?,
+        languageCode: String?,
+        maxResults: Int
+    ) {
+        if case .network = error {
+            let fallback = fixtures.fallbackResults(
+                lat: lat,
+                lng: lng,
+                radiusKm: radiusKm,
+                serviceType: serviceType,
+                languageCode: languageCode,
+                maxResults: maxResults
+            )
+            if !fallback.isEmpty {
+                self.locations = fallback
+                self.isUsingFallbackData = true
+                self.error = nil
+                self.isLoading = false
+                return
+            }
+        }
+        self.error = error
+        self.isLoading = false
     }
 
     func loadSources() {
