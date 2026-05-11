@@ -181,6 +181,7 @@ struct FindHelpLocationDetailSheet: View {
         case .maPantries: return "Massachusetts Food Pantry Directory (curated public data)"
         case .feedingAmerica: return "Feeding America Food Bank Network"
         case .twoOneOne: return "211 Food Assistance Resources"
+        case .usdaRetailer: return "USDA SNAP Retailer Locator"
         }
     }
 

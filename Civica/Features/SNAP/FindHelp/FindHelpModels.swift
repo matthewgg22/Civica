@@ -18,6 +18,37 @@ enum FindHelpSourceId: String, Codable {
     case maPantries = "ma_pantries"
     case feedingAmerica = "feeding_america"
     case twoOneOne = "two_one_one"
+    /// USDA SNAP Retailer Locator (ArcGIS feature service). Source
+    /// for `record_kind = .ebtRetailer` rows. Currently populated
+    /// from the seed JSON only; live ingest lands in a follow-up.
+    case usdaRetailer = "usda_retailer"
+}
+
+/// Distinguishes the two stories the FindHelp map tells: where to
+/// GET help applying / find free food (`helpDirectory`), and where
+/// to SPEND EBT once you have it (`ebtRetailer`). Nullable on the
+/// model so existing live RPC payloads that don't yet carry this
+/// field decode unchanged - the computed `resolvedRecordKind`
+/// defaults to `.helpDirectory` for back-compat.
+enum FindHelpRecordKind: String, Codable, CaseIterable {
+    case helpDirectory = "help_directory"
+    case ebtRetailer = "ebt_retailer"
+}
+
+/// Retailer taxonomy used by `record_kind = .ebtRetailer` rows.
+/// USDA's raw `Store_Type` has ~10 values that aren't useful to a
+/// SNAP recipient ("Combination Grocery / Other", "Wholesaler with
+/// Retail Sales"); this enum collapses those into the 5 categories
+/// the map's category-colored pins + the "diversify revenue" filter
+/// chips will actually expose.
+enum SNAPRetailerCategory: String, Codable, CaseIterable, Identifiable {
+    case supermarket
+    case smallGrocer = "small_grocer"
+    case farmersMarket = "farmers_market"
+    case coOp = "co_op"
+    case restaurantRMP = "restaurant_rmp"
+
+    var id: String { rawValue }
 }
 
 struct FindHelpLocation: Codable, Identifiable, Equatable {
@@ -42,6 +73,12 @@ struct FindHelpLocation: Codable, Identifiable, Equatable {
     let sourceLastUpdatedAt: Date?
     let civicaLastSyncedAt: Date?
     let distanceKm: Double?
+    /// Nullable so live RPC payloads predating the discriminator
+    /// decode unchanged. Use `resolvedRecordKind` everywhere a
+    /// concrete value is needed.
+    let recordKind: FindHelpRecordKind?
+    /// Only populated on `record_kind = .ebtRetailer` rows.
+    let retailerCategory: SNAPRetailerCategory?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -65,6 +102,15 @@ struct FindHelpLocation: Codable, Identifiable, Equatable {
         case sourceLastUpdatedAt = "source_last_updated_at"
         case civicaLastSyncedAt = "civica_last_synced_at"
         case distanceKm = "distance_km"
+        case recordKind = "record_kind"
+        case retailerCategory = "retailer_category"
+    }
+
+    /// Concrete record kind for routing decisions (pin color, filter
+    /// chip matching, etc.). Live RPC rows without an explicit
+    /// `record_kind` are treated as help-directory entries.
+    var resolvedRecordKind: FindHelpRecordKind {
+        recordKind ?? .helpDirectory
     }
 
     var primaryServiceType: FindHelpServiceType {

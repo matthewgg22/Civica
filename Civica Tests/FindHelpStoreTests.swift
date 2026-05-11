@@ -117,7 +117,9 @@ struct FindHelpStoreTests {
             notes: nil,
             sourceLastUpdatedAt: nil,
             civicaLastSyncedAt: nil,
-            distanceKm: nil
+            distanceKm: nil,
+            recordKind: nil,
+            retailerCategory: nil
         )
     }
 

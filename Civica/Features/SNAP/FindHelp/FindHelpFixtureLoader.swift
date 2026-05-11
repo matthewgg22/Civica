@@ -142,7 +142,9 @@ private extension FindHelpLocation {
             notes: notes,
             sourceLastUpdatedAt: sourceLastUpdatedAt,
             civicaLastSyncedAt: civicaLastSyncedAt,
-            distanceKm: km
+            distanceKm: km,
+            recordKind: recordKind,
+            retailerCategory: retailerCategory
         )
     }
 }
