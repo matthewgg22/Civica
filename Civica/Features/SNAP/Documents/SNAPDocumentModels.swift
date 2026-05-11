@@ -13,6 +13,7 @@ enum SNAPExtractedDocumentType: String, Codable, Sendable {
     case photoID = "photo_id"
     case lease
     case utilityBill = "utility_bill"
+    case benefitsLetter = "benefits_letter"
     case other
 }
 

@@ -1,4 +1,5 @@
 import CivicaDesignSystem
+import os
 import SwiftUI
 import UIKit
 
@@ -28,6 +29,8 @@ struct SNAPDocumentsChecklistAnswers: Equatable, Codable {
 
 @MainActor
 final class SNAPDocumentsChecklistFlowViewModel: ObservableObject {
+    private static let logger = Logger(subsystem: "Civica", category: "SNAPDocumentsChecklist")
+
     @Published var answers: SNAPDocumentsChecklistAnswers
     @Published var pendingExtraction: PendingExtraction?
 
@@ -80,7 +83,9 @@ final class SNAPDocumentsChecklistFlowViewModel: ObservableObject {
             } catch {
                 // Demo-friendly: the photo is already saved, so swallowing
                 // the extraction error keeps the user on the checklist
-                // with no confusing crash or dead-end alert.
+                // with no confusing crash or dead-end alert. Logged at
+                // debug so the failure isn't invisible during dev.
+                Self.logger.debug("On-device extraction failed for \(document.rawValue, privacy: .public): \(String(describing: error), privacy: .public)")
             }
         }
     }
@@ -328,6 +333,8 @@ enum SNAPDocumentsChecklistStrings {
         case (.proofOfAddress, .spanish):                return "Prueba de donde vives"
         case (.proofOfIncome, .english):                 return "Recent paystubs or proof of income"
         case (.proofOfIncome, .spanish):                 return "Talones de pago recientes o prueba de ingresos"
+        case (.ssiOrBenefitsLetter, .english):           return "SSI, Social Security, or benefits letter"
+        case (.ssiOrBenefitsLetter, .spanish):           return "SSI, Seguro Social, o carta de beneficios"
         case (.rentOrHousingCostProof, .english):        return "Rent or housing cost"
         case (.rentOrHousingCostProof, .spanish):        return "Renta o costo de vivienda"
         case (.utilityBill, .english):                   return "A recent utility bill"
@@ -355,6 +362,8 @@ enum SNAPDocumentsChecklistStrings {
         case (.proofOfAddress, .spanish):                return "Contrato de renta, correo o recibo con tu nombre y dirección"
         case (.proofOfIncome, .english):                 return "Last 4 weeks of paystubs, or a letter from your employer"
         case (.proofOfIncome, .spanish):                 return "Talones de pago de las últimas 4 semanas, o una carta de tu empleador"
+        case (.ssiOrBenefitsLetter, .english):           return "Award letter for SSI, SSDI, retirement, VA, or unemployment"
+        case (.ssiOrBenefitsLetter, .spanish):           return "Carta de adjudicación de SSI, SSDI, jubilación, VA o desempleo"
         case (.rentOrHousingCostProof, .english):        return "Lease, mortgage statement, or shelter receipt"
         case (.rentOrHousingCostProof, .spanish):        return "Contrato, estado de cuenta de hipoteca o recibo de refugio"
         case (.utilityBill, .english):                   return "Electricity, gas, heat, water, or phone"

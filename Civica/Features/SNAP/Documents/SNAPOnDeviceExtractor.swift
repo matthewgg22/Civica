@@ -61,6 +61,21 @@ struct OnDeviceGenericDocumentFields {
     let zipCode: String?
 }
 
+@available(iOS 26, *)
+@Generable
+struct OnDeviceBenefitsLetterFields {
+    @Guide(description: "Monthly benefit amount as plain digits with decimal point (e.g. '943.00'). The SSA/SSI letter usually labels this 'Monthly Amount' or 'New Monthly Amount'. No dollar sign, no commas.")
+    let monthlyBenefitAmount: String?
+    @Guide(description: "Name of the benefits program exactly as printed (e.g. 'Supplemental Security Income', 'Social Security Disability', 'Retirement', 'VA Compensation').")
+    let programName: String?
+    @Guide(description: "Recipient full name as printed on the letter.")
+    let recipientFullName: String?
+    @Guide(description: "Letter date or 'effective' date in ISO 8601 (YYYY-MM-DD). Leave nil if ambiguous.")
+    let letterDate: String?
+    @Guide(description: "Date the new payment amount takes effect, in ISO 8601 (YYYY-MM-DD). Leave nil if not printed.")
+    let paymentStartDate: String?
+}
+
 enum SNAPOnDeviceExtractor {
     /// True only when the on-device extraction stack is actually usable:
     /// the OS is iOS 26+ and SystemLanguageModel reports available
@@ -98,6 +113,19 @@ enum SNAPOnDeviceExtractor {
                 extractedOther: nil,
                 validationFlags: validationFlags(for: paystub),
                 extractionConfidence: paystub == nil ? 0.5 : 0.85
+            )
+        case .ssiOrBenefitsLetter:
+            let response = try await session.respond(
+                to: benefitsLetterPrompt(ocrText: ocrText),
+                generating: OnDeviceBenefitsLetterFields.self
+            )
+            let extractedOther = makeExtractedOther(from: response.content)
+            return SNAPExtractionResult(
+                classification: classification,
+                extractedPaystub: nil,
+                extractedOther: extractedOther,
+                validationFlags: [],
+                extractionConfidence: extractedOther == nil ? 0.5 : 0.8
             )
         default:
             let response = try await session.respond(
@@ -163,12 +191,23 @@ enum SNAPOnDeviceExtractor {
         """
     }
 
+    private static func benefitsLetterPrompt(ocrText: String) -> String {
+        """
+        Extract structured fields from this Social Security / SSI / VA / benefits letter. Capture the monthly benefit amount, the program name as printed, the recipient's name, and any dates that label the letter or payment-start. Never extract Social Security numbers, claim numbers, or bank account or routing numbers — leave any such field nil even if visible.
+        Return monetary amounts as plain digits with a decimal point (for example '943.00'), without dollar signs or commas. Return dates as ISO 8601 (YYYY-MM-DD).
+
+        OCR text from the letter, in reading order top-to-bottom:
+        \(ocrText)
+        """
+    }
+
     // MARK: - Mapping into SNAPExtractionResult / SNAPPaystub
 
     private static func makeClassification(for snapType: SNAPDocumentType) -> SNAPDocumentClassification {
         let extracted: SNAPExtractedDocumentType
         switch snapType {
         case .proofOfIncome: extracted = .paystub
+        case .ssiOrBenefitsLetter: extracted = .benefitsLetter
         case .photoID: extracted = .photoID
         case .rentOrHousingCostProof: extracted = .lease
         case .utilityBill: extracted = .utilityBill
@@ -212,12 +251,7 @@ enum SNAPOnDeviceExtractor {
 
     private static func validationFlags(for paystub: SNAPPaystub?) -> [SNAPValidationFlag] {
         guard paystub == nil else { return [] }
-        return [SNAPValidationFlag(
-            code: "incomplete_paystub_fields",
-            messageEn: "Some pay stub fields couldn't be read confidently. Tap \"Fix something\" to fill in the missing values.",
-            messageEs: "Algunos campos del talón de pago no se pudieron leer con seguridad. Toca \"Corregir\" para completar los valores que faltan.",
-            severity: "warning"
-        )]
+        return [SNAPExtractionValidationStrings.incompletePaystubFields]
     }
 
     @available(iOS 26, *)
@@ -231,6 +265,17 @@ enum SNAPOnDeviceExtractor {
         return result.isEmpty ? nil : result
     }
 
+    @available(iOS 26, *)
+    private static func makeExtractedOther(from fields: OnDeviceBenefitsLetterFields) -> [String: String]? {
+        var result: [String: String] = [:]
+        if let value = fields.monthlyBenefitAmount, !value.isEmpty { result["amount"] = value }
+        if let value = fields.programName, !value.isEmpty { result["program"] = value }
+        if let value = fields.recipientFullName, !value.isEmpty { result["name"] = value }
+        if let value = fields.letterDate, !value.isEmpty { result["letter_date"] = value }
+        if let value = fields.paymentStartDate, !value.isEmpty { result["payment_start_date"] = value }
+        return result.isEmpty ? nil : result
+    }
+
     private static func parseDecimal(_ raw: String?) -> Decimal? {
         guard let raw, !raw.isEmpty else { return nil }
         let cleaned = raw
@@ -239,4 +284,17 @@ enum SNAPOnDeviceExtractor {
             .trimmingCharacters(in: .whitespacesAndNewlines)
         return Decimal(string: cleaned)
     }
+}
+
+// Centralized en/es copy for the validation flags the on-device
+// extractor surfaces. SNAPValidationFlag carries both languages on the
+// wire (mirrors the backend schema), so the lookup is per-flag, not via
+// CivicaText or Localizable.xcstrings.
+enum SNAPExtractionValidationStrings {
+    static let incompletePaystubFields = SNAPValidationFlag(
+        code: "incomplete_paystub_fields",
+        messageEn: "Some pay stub fields couldn't be read confidently. Tap \"Fix something\" to fill in the missing values.",
+        messageEs: "Algunos campos del talón de pago no se pudieron leer con seguridad. Toca \"Corregir\" para completar los valores que faltan.",
+        severity: "warning"
+    )
 }
