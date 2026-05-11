@@ -284,6 +284,7 @@ struct SNAPEntryView: View {
         }
         .toolbarBackground(CivicaColors.tealSurface, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
+        .preferredColorScheme(.light)
         .onAppear {
             applyAddressGeofencePrefill()
 

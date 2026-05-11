@@ -178,10 +178,27 @@ struct SNAPDecisionDeniedView: View {
 
     private var actionButtons: some View {
         VStack(spacing: CivicaSpacing.sm) {
-            CivicaPrimaryButton(
-                SNAPStatusHomeStrings.deniedPrimaryActionAppeal.value(in: language),
-                action: onAppeal
-            )
+            // Mission 13: primary action is a NavigationLink to the
+            // appeal-letter generator. onAppeal still fires for any
+            // caller-side telemetry / state work (kept as a passthrough
+            // closure even though the navigation itself is now
+            // self-contained).
+            NavigationLink {
+                SNAPAppealLetterView(language: language, onClose: {})
+            } label: {
+                Text(SNAPStatusHomeStrings.deniedPrimaryActionAppeal.value(in: language))
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.onPrimaryText)
+                    .frame(maxWidth: .infinity, minHeight: 56)
+                    .background(
+                        RoundedRectangle(cornerRadius: CivicaRadius.control)
+                            .fill(CivicaColors.brickPrimary)
+                    )
+            }
+            .simultaneousGesture(TapGesture().onEnded { onAppeal() })
+            .accessibilityLabel(SNAPStatusHomeStrings.deniedPrimaryActionAppeal.value(in: language))
+            .accessibilityAddTraits(.isButton)
+
             CivicaSecondaryButton(
                 title: SNAPStatusHomeStrings.deniedSecondaryActionReapply.value(in: language),
                 action: onStartOver

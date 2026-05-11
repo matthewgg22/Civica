@@ -25,15 +25,37 @@ struct SNAPDecisionMathView: View {
     let result: SNAPEligibilityResult
     let language: CivicaLanguage
     let onContinue: (() -> Void)?
+    /// Optional draft used to personalize the levers section
+    /// ("Three things that could change this"). When nil, the view
+    /// hydrates the latest persisted draft from disk so the levers
+    /// still appear correctly when the math view is reached via
+    /// the returning-user-home "View my result" card.
+    let draft: SNAPApplicationDraft?
 
     init(
         result: SNAPEligibilityResult,
         language: CivicaLanguage = .english,
-        onContinue: (() -> Void)? = nil
+        onContinue: (() -> Void)? = nil,
+        draft: SNAPApplicationDraft? = nil
     ) {
         self.result = result
         self.language = language
         self.onContinue = onContinue
+        self.draft = draft
+    }
+
+    private var resolvedDraft: SNAPApplicationDraft? {
+        if let draft { return draft }
+        return SNAPApplicationDraftStore().load()?.draft
+    }
+
+    /// Sync triage result derived from whatever draft is available.
+    /// Returns nil when there's no draft to score — the banner is
+    /// then hidden. This view's parent doesn't own the orchestrator's
+    /// @Published triageResult, so the math view computes its own.
+    private var triageResult: ExpeditedTriageResult? {
+        guard let draft = resolvedDraft else { return nil }
+        return evaluateTriageSynchronously(draft: draft)
     }
 
     var body: some View {
@@ -41,12 +63,29 @@ struct SNAPDecisionMathView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 verdictHeader
 
-                if result.expeditedEligible {
-                    expeditedCallout
-                }
+                SNAPExpeditedBanner(
+                    result: triageResult,
+                    draft: resolvedDraft,
+                    language: language
+                )
 
                 if let calc = result.benefitCalculation {
                     mathSection(calc)
+                }
+
+                if SNAPDecisionLeversView.shouldRender(for: result) {
+                    SNAPDecisionLeversView(
+                        result: result,
+                        draft: resolvedDraft,
+                        language: language
+                    )
+                }
+
+                if SNAPCrossProgramTeaserView.shouldRender(for: resolvedDraft) {
+                    SNAPCrossProgramTeaserView(
+                        draft: resolvedDraft,
+                        language: language
+                    )
                 }
 
                 sourcesFooter
@@ -60,35 +99,6 @@ struct SNAPDecisionMathView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle(SNAPDecisionMathStrings.pageTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
-    }
-
-    /// Federal SNAP expedited-service callout. Surfaces when the
-    /// evaluator flags the household as a likely expedited candidate
-    /// (gross < $150 OR rent+utilities > gross). 7-day decision window
-    /// instead of 30.
-    private var expeditedCallout: some View {
-        HStack(alignment: .top, spacing: CivicaSpacing.md) {
-            Image(systemName: "bolt.fill")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(CivicaColors.brickPrimary)
-                .frame(width: 24, alignment: .leading)
-                .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-                Text(SNAPDecisionMathStrings.expeditedEyebrow.value(in: language))
-                    .font(CivicaTypography.subheadStrong)
-                    .foregroundStyle(CivicaColors.ink)
-                Text(SNAPDecisionMathStrings.expeditedBody.value(in: language))
-                    .font(CivicaTypography.footnote)
-                    .foregroundStyle(CivicaColors.ink)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-        .padding(CivicaSpacing.lg)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(CivicaColors.brickSurface)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(SNAPDecisionMathStrings.expeditedEyebrow.value(in: language)). \(SNAPDecisionMathStrings.expeditedBody.value(in: language))")
     }
 
     // MARK: - Sections

@@ -24,6 +24,19 @@ struct SNAPWaitingRoomView: View {
     let language: CivicaLanguage
     let onAction: () -> Void
 
+    /// Draft loaded from SNAPApplicationDraftStore on appear. Drives the
+    /// WIC teaser gate inside SNAPSubmissionTimelineView (children
+    /// under 5 → teaser shows). Optional because users who completed
+    /// the screener via a path that bypassed the draft store will see
+    /// the timeline without the teaser, which is the correct fallback.
+    @State private var persistedDraft: SNAPApplicationDraft?
+
+    /// External link target (DTA Connect, MA WIC page) presented via
+    /// CivicaSafariSheet. The waiting room owns this rather than
+    /// pushing it to the root so the submission-timeline footer cards
+    /// can route the user directly without bouncing through onAction.
+    @State private var externalLink: URL?
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
@@ -31,7 +44,25 @@ struct SNAPWaitingRoomView: View {
                 if currentStatusHasAction {
                     actionBanner
                 }
-                whatsHappeningSection
+                if showsSubmissionTimeline {
+                    SNAPSubmissionTimelineView(
+                        submittedAt: statusStore.timestamp(for: .submittedToState) ?? Date(),
+                        language: language,
+                        showsWICTeaser: persistedDraft?.household.hasMinorInHousehold == true,
+                        onOpenWICTeaser: {
+                            externalLink = CivicaExternalLinks.maWICInfo
+                        },
+                        onContactSupport: {
+                            // v1: no in-app support inbox yet. Route
+                            // to DTA Connect; v2 wires this to a
+                            // Civica-side SMS thread per the brand
+                            // voice doc's "real person responds" promise.
+                            externalLink = CivicaExternalLinks.dtaConnect
+                        }
+                    )
+                } else {
+                    whatsHappeningSection
+                }
                 timeline
                 expeditedNoticeIfApplicable
                 findHelpLinks
@@ -41,6 +72,21 @@ struct SNAPWaitingRoomView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            persistedDraft = SNAPApplicationDraftStore().load()?.draft
+        }
+        .sheet(item: $externalLink) { url in
+            CivicaSafariSheet(url: url)
+        }
+    }
+
+    /// Render the dedicated "your application is in" timeline only on
+    /// the first beat — status exactly .submittedToState with no state
+    /// action yet. Once DTA asks for documents or schedules an
+    /// interview, the action banner + standard whatsHappeningSection
+    /// take over so the user isn't staring at a stale congratulations.
+    private var showsSubmissionTimeline: Bool {
+        statusStore.status == .submittedToState && !currentStatusHasAction
     }
 
     // MARK: - Sections
@@ -70,30 +116,49 @@ struct SNAPWaitingRoomView: View {
         )
     }
 
+    @ViewBuilder
     private var actionBanner: some View {
-        Button(action: onAction) {
-            HStack(spacing: CivicaSpacing.md) {
-                Image(systemName: "exclamationmark.circle.fill")
-                    .foregroundStyle(CivicaColors.warningAmber)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(SNAPStatusHomeStrings.statusActionNeeded.value(in: language))
-                        .font(CivicaTypography.captionStrong)
-                        .foregroundStyle(CivicaColors.warningAmber)
-                        .textCase(.uppercase)
-                        .kerning(1.2)
-                    Text(actionTitle)
-                        .font(CivicaTypography.subheadStrong)
-                        .foregroundStyle(CivicaColors.ink)
-                }
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .foregroundStyle(CivicaColors.graphite)
+        // Interview-scheduled status pushes the in-app coach instead
+        // of opening the DTA Connect portal — coaching the user
+        // through a 15-20 minute phone call is the highest-leverage
+        // thing Civica can do post-submission.
+        if statusStore.status == .interviewScheduled {
+            NavigationLink {
+                SNAPInterviewCoachView(language: language, onDismiss: {})
+            } label: {
+                actionBannerLabel
             }
-            .padding(CivicaSpacing.md)
-            .background(CivicaColors.warningAmber.opacity(0.12))
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .buttonStyle(.plain)
+        } else {
+            Button(action: onAction) {
+                actionBannerLabel
+            }
         }
+    }
+
+    private var actionBannerLabel: some View {
+        HStack(spacing: CivicaSpacing.md) {
+            Image(systemName: "exclamationmark.circle.fill")
+                .foregroundStyle(CivicaColors.warningAmber)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(SNAPStatusHomeStrings.statusActionNeeded.value(in: language))
+                    .font(CivicaTypography.captionStrong)
+                    .foregroundStyle(CivicaColors.warningAmber)
+                    .textCase(.uppercase)
+                    .kerning(1.2)
+                Text(actionTitle)
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+            }
+            Spacer()
+            Image(systemName: "chevron.right")
+                .foregroundStyle(CivicaColors.graphite)
+        }
+        .padding(CivicaSpacing.md)
+        .background(CivicaColors.warningAmber.opacity(0.12))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .accessibilityElement(children: .combine)
         .accessibilityLabel("\(SNAPStatusHomeStrings.statusActionNeeded.value(in: language)). \(actionTitle)")
     }
 
@@ -114,18 +179,11 @@ struct SNAPWaitingRoomView: View {
 
     @ViewBuilder
     private var expeditedNoticeIfApplicable: some View {
-        if isExpeditedCandidate {
-            HStack(alignment: .top, spacing: CivicaSpacing.sm) {
-                Image(systemName: "bolt.fill")
-                    .foregroundStyle(CivicaColors.brickPrimary)
-                Text(SNAPStatusHomeStrings.waitingExpedited.value(in: language))
-                    .font(CivicaTypography.footnote)
-                    .foregroundStyle(CivicaColors.ink)
-            }
-            .padding(CivicaSpacing.md)
-            .background(CivicaColors.brickSurface)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
-        }
+        SNAPExpeditedBanner(
+            result: triageResult,
+            draft: persistedDraft,
+            language: language
+        )
     }
 
     // MARK: - Status-driven copy
@@ -159,13 +217,13 @@ struct SNAPWaitingRoomView: View {
         }
     }
 
-    // Mission 7 + 8: read expeditedEligible from the eligibility
-    // result the orchestrator recorded via statusStore at screener-
-    // completion time. When true, the waitingExpedited card appears
-    // under the timeline. False if the user never completed the
-    // screener or if their answers didn't trip the expedited gates.
-    private var isExpeditedCandidate: Bool {
-        statusStore.eligibilityResult?.expeditedEligible == true
+    // The waiting room is reached after the screener and orchestrator
+    // are gone — there's no live @Published triageResult to subscribe
+    // to. We evaluate from the loaded persistedDraft @State each
+    // render. The heuristic is sync-fast; this is cheap.
+    private var triageResult: ExpeditedTriageResult? {
+        guard let draft = persistedDraft else { return nil }
+        return evaluateTriageSynchronously(draft: draft)
     }
 
     // MARK: - FindHelp links

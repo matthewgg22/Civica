@@ -23,6 +23,13 @@ struct CivicaRootView: View {
     /// so all three status surfaces share one sheet presentation.
     @State private var externalLink: URL?
 
+    /// True while the user is actively walking the recertification
+    /// flow. Routes them through CivicaSNAPFlowView with the recert
+    /// banner instead of the standard recertification intro. Cleared
+    /// when packet generation moves status forward to .packetGenerated.
+    @AppStorage("co.civica.recertInProgress")
+    private var isRecertInProgress: Bool = false
+
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
     }
@@ -64,17 +71,44 @@ struct CivicaRootView: View {
     /// needs the next push.
     @ViewBuilder
     private var rootSurface: some View {
-        if statusStore.status == .decisionDenied {
+        if isRecertInProgress {
+            // Mission 12: recertification routes through the same
+            // orchestrator as a first-time application, but with a
+            // banner that explains "this is your recert" and prior
+            // answers already pre-populated (persisted in the
+            // SNAPApplicationDraftStore from the previous cycle).
+            CivicaSNAPFlowView(language: language, recertMode: true)
+        } else if statusStore.status == .decisionDenied {
             SNAPDecisionDeniedView(
                 statusStore: statusStore,
                 language: language,
                 denialReason: nil,
                 onAppeal: {
-                    // Lands the user on MA DTA's fair-hearing
-                    // request page. Guided appeal-letter generator
-                    // is a follow-up; the external link is the
-                    // honest path today.
-                    externalLink = CivicaExternalLinks.dtaFairHearing
+                    // Mission 13: navigation to SNAPAppealLetterView
+                    // is handled by the NavigationLink inside the
+                    // denied view itself. The letter view exposes
+                    // the MA DTA fair-hearing online portal as a
+                    // secondary action so we don't double-present.
+                    // Hook left as a passthrough for telemetry.
+                },
+                onStartOver: {
+                    statusStore.reset()
+                }
+            )
+        } else if statusStore.status == .decisionApproved {
+            // MobilePendingBoard panel 3: a calm approved landing,
+            // not a celebration. Recert reminder gets set forward
+            // 12 months the same day -- approval doesn't end the
+            // relationship per the board's brief.
+            SNAPDecisionApprovedView(
+                statusStore: statusStore,
+                language: language,
+                draft: SNAPApplicationDraftStore().load()?.draft,
+                onOpenDTAConnect: {
+                    externalLink = CivicaExternalLinks.dtaConnect
+                },
+                onOpenWICTeaser: {
+                    externalLink = CivicaExternalLinks.maWICInfo
                 },
                 onStartOver: {
                     statusStore.reset()
@@ -86,14 +120,14 @@ struct CivicaRootView: View {
                 language: language,
                 deadline: statusStore.timestamp(for: .recertDue),
                 onStartRecert: {
-                    // Recert IS reapplying — the screener flow handles
-                    // both paths. When the recert-mode flag lands on
-                    // SNAPApplicationViewModel, route through it so
-                    // the conversation can shortcut the unchanged
-                    // questions ("anything different since last
-                    // time?"). For now: reset to .notStarted so the
-                    // standard screener kicks off.
-                    statusStore.reset()
+                    // Mission 12: flip into recert mode. Status stays
+                    // at .recertDue; the isRecertInProgress flag at
+                    // the root sends rootSurface to the orchestrator
+                    // with the recert banner. Critically: the draft
+                    // is NOT cleared, so prior answers come back
+                    // pre-populated and the user only changes what
+                    // changed.
+                    isRecertInProgress = true
                 },
                 onOpenDTAConnect: {
                     externalLink = CivicaExternalLinks.dtaConnect
