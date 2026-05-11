@@ -95,6 +95,25 @@ struct CivicaRootView: View {
                     statusStore.reset()
                 }
             )
+        } else if statusStore.status == .decisionApproved {
+            // MobilePendingBoard panel 3: a calm approved landing,
+            // not a celebration. Recert reminder gets set forward
+            // 12 months the same day -- approval doesn't end the
+            // relationship per the board's brief.
+            SNAPDecisionApprovedView(
+                statusStore: statusStore,
+                language: language,
+                draft: SNAPApplicationDraftStore().load()?.draft,
+                onOpenDTAConnect: {
+                    externalLink = CivicaExternalLinks.dtaConnect
+                },
+                onOpenWICTeaser: {
+                    externalLink = CivicaExternalLinks.maWICInfo
+                },
+                onStartOver: {
+                    statusStore.reset()
+                }
+            )
         } else if statusStore.status == .recertDue {
             SNAPRecertificationView(
                 statusStore: statusStore,
