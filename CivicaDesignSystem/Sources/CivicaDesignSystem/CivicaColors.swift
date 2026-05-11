@@ -24,10 +24,11 @@ public enum CivicaColors {
     public static let graphite             = Color.dynamic(light: "#5A544D", dark: "#BCC6D0")
 
     /// Tertiary text / placeholder copy.
-    public static let muted                = Color.dynamic(light: "#8A8278", dark: "#9AA0A6")
+    public static let muted                = Color.dynamic(light: "#6B655C", dark: "#9AA0A6")
 
-    /// 7% black/white border. No new grays — this is the only divider color.
-    public static let hairline             = Color.dynamic(light: "#00000012", dark: "#FFFFFF12")
+    /// 12% black on light / 7% white on dark. The light value bumped from
+    /// 7% so answer-row outlines remain visible on the cream paper.
+    public static let hairline             = Color.dynamic(light: "#00000020", dark: "#FFFFFF12")
 
     /// Democrat party color. Mode-invariant — political colors don't shift with light/dark.
     /// Also used for the patriotic red+blue chrome on the Civica logo orbit.

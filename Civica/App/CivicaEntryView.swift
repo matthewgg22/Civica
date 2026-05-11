@@ -28,7 +28,8 @@ struct CivicaEntryView: View {
                 header
                 snapTile
                 findHelpTile
-                Spacer()
+                Spacer(minLength: CivicaSpacing.xl)
+                privacyFooterLink
             }
             .padding(CivicaSpacing.xl)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -36,6 +37,34 @@ struct CivicaEntryView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    /// Quiet footer link to the data + privacy surface. Lives at the
+    /// bottom of the entry tile so it's available on every launch
+    /// without competing for attention with the primary actions.
+    /// App Store reviewers expect this kind of self-service data
+    /// access + deletion to be reachable from anywhere in the app.
+    private var privacyFooterLink: some View {
+        NavigationLink {
+            SNAPDataPrivacyView(language: language)
+        } label: {
+            HStack(spacing: CivicaSpacing.sm) {
+                Image(systemName: "lock.shield")
+                    .foregroundStyle(CivicaColors.graphite)
+                    .accessibilityHidden(true)
+                Text(CivicaEntryStrings.privacyLink.value(in: language))
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .underline()
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(CivicaColors.graphite)
+                    .accessibilityHidden(true)
+            }
+            .padding(.vertical, CivicaSpacing.sm)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(CivicaEntryStrings.privacyLink.value(in: language))
     }
 
     // MARK: - Header
@@ -158,6 +187,10 @@ enum CivicaEntryStrings {
     static let findHelpSubtitle = CivicaText(
         "Food banks, pantries, and SNAP navigators within walking distance.",
         es: "Bancos de alimentos, despensas y asesores de SNAP a distancia caminable."
+    )
+    static let privacyLink = CivicaText(
+        "Your data + privacy",
+        es: "Tus datos y privacidad"
     )
 }
 

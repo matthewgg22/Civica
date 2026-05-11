@@ -3,90 +3,82 @@ import Foundation
 // Local Swift-side eligibility evaluator. Computes a directional
 // SNAP verdict from the SNAPApplicationDraft captured by the
 // orchestrator, without an HTTP round-trip to the backend rules
-// engine. Three jobs:
+// engine.
+//
+// Behavior is delegated to a SNAPStateRuleEngine selected from
+// the applicant's chosen state. The orchestrator stays as a thin
+// composer:
 //
 //   1. Map the draft's localized household-size bucket back to an
 //      integer (1, 2, 3, 4) for FPL math.
-//   2. Apply Massachusetts BBCE — most households qualify
-//      categorically up to 200% of FY26 federal poverty guidelines,
-//      with no asset test.
-//   3. Check the SNAP student gate (7 CFR 273.5) — enrolled in
-//      higher-ed at least half-time AND no exception (20+ hr/wk
-//      work, work-study, dependent child) is a categorical
-//      disqualifier even when income passes.
+//   2. Pick the state's rules engine via SNAPRulesRegistry.
+//   3. Run the student gate, elderly/disabled BBCE exception,
+//      gross-income gate, and expedited screen using values that
+//      conformer supplies for the requested `today`.
+//   4. Stamp the conformer's policy version into the verdict so
+//      SNAPDecisionMathView can render an audit footer.
 //
 // Trade-off: this is the threshold gate, not the full federal +
 // state deduction stack. We don't compute monthly benefit amount;
 // we don't apply earned-income / standard / shelter deductions.
-// SNAPDecisionMathView renders the verdict header without the math
-// section when benefitCalculation is nil. The backend rules engine
-// in backend/civic_api/snap/rules/ remains the authoritative source
-// when it's wired in.
-//
-// Effective dates: FY26 federal poverty guidelines apply 10/01/2025
-// through 09/30/2026. Rules version stamp lets the math view show
-// the user which guideline cycle drove the verdict.
+// SNAPDecisionMathView renders the verdict header without the
+// math section when benefitCalculation is nil. The backend rules
+// engine in backend/civic_api/snap/rules/ remains the authoritative
+// source when it's wired in.
 
 enum SNAPLocalEligibilityEvaluator {
 
-    /// 200% of FY26 federal poverty guideline monthly income, the
-    /// Massachusetts BBCE gross income gate. Index 0 unused;
-    /// index 1-4 = household size. For 4+ households we use the
-    /// size-4 threshold as a conservative floor (the real threshold
-    /// for size 5+ is higher, so this can only under-estimate
-    /// eligibility, not over-estimate it).
-    private static let ma200FplMonthly: [Decimal] = [
-        0,        // unused
-        2_510,    // 1 person: $1,255 × 200%
-        3_408,    // 2 person: $1,704 × 200%
-        4_304,    // 3 person: $2,152 × 200%
-        5_200     // 4 person: $2,600 × 200%
-    ]
-
-    private static let rulesVersionStamp = "local-eval-FY26/MA-bbce-200pct"
-
     static func evaluate(_ draft: SNAPApplicationDraft, today: Date = Date()) -> SNAPEligibilityResult {
+        let rules = SNAPRulesRegistry.rules(for: draft.whereApplying.stateCode)
         let householdSize = parseHouseholdSize(draft.household.householdSize)
         let gross = draft.income.grossMonthlyIncome ?? 0
         let hasElderlyOrDisabled = draft.household.hasElderlyOrDisabled == true
-        let expedited = evaluateExpedited(draft: draft)
+        let expedited = evaluateExpedited(draft: draft, rules: rules, today: today)
 
-        var contributingFactors: [String] = ["ma_bbce_200pct_applied"]
+        var contributingFactors: [String] = [initialFactor(for: rules)]
         if expedited {
             contributingFactors.append("expedited_candidate")
         }
 
-        // Student gate first — categorical disqualifier when no
-        // exception. Yes / no on enrolled-in-higher-ed gates this
-        // entire branch; not-answered defers (insufficient info).
-        if draft.studentStatus.enrolledInHigherEd == true {
-            let halfTime = draft.studentStatus.enrolledHalfTime == true
-            if halfTime {
-                let hasException =
-                    draft.studentStatus.works20PlusHours == true
-                    || draft.studentStatus.inWorkStudy == true
-                    || draft.studentStatus.responsibleForDependentChild == true
-                if !hasException {
-                    contributingFactors.append("student_no_exception")
-                    return result(
-                        status: .ineligible,
-                        expeditedEligible: expedited,
-                        contributingFactors: contributingFactors,
-                        ineligibilityReason: ineligibilityReasonStudent,
-                        today: today
-                    )
-                } else {
-                    contributingFactors.append("student_exception_met")
-                }
+        // Student gate first — categorical disqualifier when
+        // half-time enrolled with no qualifying exception.
+        switch rules.studentExemption(for: draft, asOf: today) {
+        case .categoricallyDisqualified:
+            contributingFactors.append("student_no_exception")
+            return result(
+                status: .ineligible,
+                expeditedEligible: expedited,
+                contributingFactors: contributingFactors,
+                ineligibilityReason: ineligibilityReasonStudent,
+                rules: rules,
+                today: today
+            )
+        case .exempted(let reason):
+            // Match the pre-refactor factor only for the federal
+            // exception reasons. Less-than-half-time / state-specific
+            // reasons fall through silently to preserve today's
+            // contributingFactors output for MA.
+            switch reason {
+            case .worksTwentyHoursPerWeek,
+                 .workStudy,
+                 .dependentChildCare,
+                 .under18OrOver50,
+                 .stateSpecific:
+                contributingFactors.append("student_exception_met")
+            case .lessThanHalfTime:
+                break
             }
+        case .notSubject, .unknown:
+            break
         }
 
-        // Income gate — MA BBCE at 200% FPL. Elderly/disabled
-        // households are categorically eligible under BBCE even
-        // above this gate, so we flag them as eligible regardless
-        // of gross income for the verdict surface. The full federal
-        // rules engine computes their net-income test for benefit
-        // amount; the threshold gate is permissive on purpose.
+        // Elderly/disabled households are categorically eligible
+        // under MA BBCE regardless of gross income. Federally,
+        // elderly/disabled are exempt from the gross-income test
+        // but still need to pass net-income — since this thin
+        // gate doesn't compute net income, the permissive verdict
+        // is honest for both jurisdictions: directional eligible,
+        // backend confirms benefit amount.
         if hasElderlyOrDisabled {
             contributingFactors.append("elderly_or_disabled_in_household")
             return result(
@@ -94,22 +86,24 @@ enum SNAPLocalEligibilityEvaluator {
                 expeditedEligible: expedited,
                 contributingFactors: contributingFactors,
                 ineligibilityReason: nil,
+                rules: rules,
                 today: today
             )
         }
 
-        let threshold = ma200FplMonthly[householdSize]
+        let threshold = rules.grossIncomeLimit(householdSize: householdSize, asOf: today)
         if gross <= threshold {
-            contributingFactors.append("gross_under_200_fpl")
+            contributingFactors.append(grossUnderFactor(for: rules))
             return result(
                 status: .eligible,
                 expeditedEligible: expedited,
                 contributingFactors: contributingFactors,
                 ineligibilityReason: nil,
+                rules: rules,
                 today: today
             )
         } else {
-            contributingFactors.append("gross_over_200_fpl")
+            contributingFactors.append(grossOverFactor(for: rules))
             return result(
                 status: .ineligible,
                 expeditedEligible: expedited,
@@ -117,8 +111,10 @@ enum SNAPLocalEligibilityEvaluator {
                 ineligibilityReason: ineligibilityReasonIncome(
                     gross: gross,
                     threshold: threshold,
+                    rules: rules,
                     householdSize: householdSize
                 ),
+                rules: rules,
                 today: today
             )
         }
@@ -126,31 +122,24 @@ enum SNAPLocalEligibilityEvaluator {
 
     // MARK: - Expedited service detection (7 CFR 273.2(i))
 
-    /// Federal SNAP expedited service criteria. Households qualifying
-    /// for expedited service get a 7-day decision instead of the
-    /// standard 30-day window. Three gates:
-    ///
-    ///   1. Monthly gross income < $150 AND liquid resources ≤ $100
-    ///   2. Combined rent + utilities > gross income + liquid resources
-    ///   3. Migrant / seasonal farmworker destitute status (not asked)
-    ///
-    /// We don't collect liquid resources in the question flow. For the
-    /// verdict, we conservatively assume resources = $0 — this favors
-    /// the user (more flagged as expedited candidates) and DTA verifies
-    /// at intake. Under-detecting expedited eligibility would silently
-    /// cost a family weeks of benefits; over-detecting just tells them
-    /// to ask, which DTA can deny without harm.
-    private static func evaluateExpedited(draft: SNAPApplicationDraft) -> Bool {
+    /// Three federal gates parametrized by the active rules
+    /// engine's `expeditedCriteria(asOf:)`. The app does not
+    /// collect liquid resources today, so the gate-1 floor
+    /// conservatively assumes resources = $0 — under-detecting
+    /// expedited eligibility silently costs a family weeks of
+    /// benefits, over-detecting just prompts DTA verification.
+    private static func evaluateExpedited(
+        draft: SNAPApplicationDraft,
+        rules: SNAPStateRuleEngine,
+        today: Date
+    ) -> Bool {
         let gross = draft.income.grossMonthlyIncome ?? 0
         let rent = draft.expenses.monthlyRentOrHousing ?? 0
         let utilities = draft.expenses.monthlyUtilities ?? 0
+        let criteria = rules.expeditedCriteria(asOf: today)
 
-        // Gate 1: very low gross income, assumed resources ≤ $100.
-        if gross < 150 { return true }
-
-        // Gate 2: rent + utilities exceed gross + assumed resources.
-        if (rent + utilities) > gross { return true }
-
+        if gross < criteria.grossIncomeUnder { return true }
+        if criteria.rentPlusUtilitiesGate && (rent + utilities) > gross { return true }
         return false
     }
 
@@ -171,11 +160,27 @@ enum SNAPLocalEligibilityEvaluator {
         }
     }
 
+    /// MA preserves the pre-refactor "ma_bbce_200pct_applied" tag
+    /// bit-for-bit so existing audit trails stay consistent.
+    /// Other states emit a parallel federal-default tag.
+    private static func initialFactor(for rules: SNAPStateRuleEngine) -> String {
+        rules.stateCode == "MA" ? "ma_bbce_200pct_applied" : "federal_default_applied"
+    }
+
+    private static func grossUnderFactor(for rules: SNAPStateRuleEngine) -> String {
+        rules.stateCode == "MA" ? "gross_under_200_fpl" : "gross_under_federal_limit"
+    }
+
+    private static func grossOverFactor(for rules: SNAPStateRuleEngine) -> String {
+        rules.stateCode == "MA" ? "gross_over_200_fpl" : "gross_over_federal_limit"
+    }
+
     private static func result(
         status: SNAPEligibilityStatus,
         expeditedEligible: Bool,
         contributingFactors: [String],
         ineligibilityReason: String?,
+        rules: SNAPStateRuleEngine,
         today: Date
     ) -> SNAPEligibilityResult {
         let formatter = DateFormatter()
@@ -190,7 +195,7 @@ enum SNAPLocalEligibilityEvaluator {
             benefitCalculation: nil,
             ineligibilityReason: ineligibilityReason,
             effectiveDate: formatter.string(from: today),
-            rulesVersion: rulesVersionStamp
+            rulesVersion: rules.rulesVersion(asOf: today)
         )
     }
 
@@ -201,25 +206,30 @@ enum SNAPLocalEligibilityEvaluator {
         working at least 20 hours a week, federal or state work-study, or caring for a child.
         """
 
+    /// MA-specific wording is preserved for "Massachusetts's $X
+    /// limit"; non-MA states get the parallel federal phrasing.
     private static func ineligibilityReasonIncome(
         gross: Decimal,
         threshold: Decimal,
+        rules: SNAPStateRuleEngine,
         householdSize: Int
     ) -> String {
         let grossStr = NSDecimalNumber(decimal: gross).stringValue
         let thresholdStr = NSDecimalNumber(decimal: threshold).stringValue
+        let scope = rules.stateCode == "MA" ? "Massachusetts's" : "the federal"
         return """
             Based on your monthly income of $\(grossStr) and a household of \(householdSize), \
-            you appear to be over Massachusetts's $\(thresholdStr)/month limit. \
+            you appear to be over \(scope) $\(thresholdStr)/month limit. \
             If your income drops or your household grows, reapply right away.
             """
     }
 
-    /// Stock list of verifications a Massachusetts SNAP applicant
-    /// typically needs at the time of submission. Sourced from the
-    /// MA DTA application checklist; the backend rules engine
-    /// returns a more precise list per household — this is the
-    /// "what you'll need" floor.
+    /// Stock list of verifications a SNAP applicant typically
+    /// needs at the time of submission. Sourced from MA DTA's
+    /// application checklist; close enough to a federal floor
+    /// for non-MA states until per-state lists are wired in.
+    /// The backend rules engine returns a more precise list per
+    /// household.
     private static let defaultRequiredVerifications: [SNAPRequiredVerification] = [
         .init(
             code: "photo_id",

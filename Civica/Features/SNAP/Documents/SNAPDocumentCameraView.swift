@@ -2,26 +2,21 @@ import SwiftUI
 import UIKit
 import VisionKit
 
-// EXPERIMENTAL SILOED MODULE: SwiftUI wrapper around
-// VNDocumentCameraViewController, with an on-device quality gate that
-// runs before the captured image is handed back.
+// SwiftUI wrapper around VNDocumentCameraViewController. Returns the
+// captured UIImage alongside the on-device quality result so callers
+// can decide whether to accept low-quality captures, show a hint and
+// re-present, or block until quality passes.
 //
-// The flow:
-//   1. Present VNDocumentCameraViewController (handles boundary
-//      detection, perspective correction, multi-page capture).
-//   2. On finishWith page(s), run SNAPDocumentQualityChecker on the
-//      first page.
-//   3. If passed, return the captured image to the caller.
-//   4. If rejected, surface the hint text and re-present the camera.
-//
-// Multi-page is supported by VisionKit but Phase E ships single-page
-// only — paystubs are typically one page, and multi-page handling
-// requires a separate UI for paging through extracted pages.
+// Single-page capture only at v1 — paystubs are typically one page,
+// and multi-page UX needs a separate paging surface.
 
 struct SNAPDocumentCameraView: UIViewControllerRepresentable {
-    let onCaptured: (UIImage) -> Void
+    /// Called with the captured page image and the quality-check
+    /// result. Caller decides whether to accept either way, accept
+    /// only when `quality.passed`, or show `quality.hintMessage` as
+    /// a retake prompt.
+    let onCaptured: (UIImage, SNAPDocumentQualityResult) -> Void
     let onCancel: () -> Void
-    let onRejected: (SNAPDocumentQualityResult) -> Void
 
     func makeUIViewController(context: Context) -> VNDocumentCameraViewController {
         let controller = VNDocumentCameraViewController()
@@ -35,26 +30,19 @@ struct SNAPDocumentCameraView: UIViewControllerRepresentable {
     ) {}
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(
-            onCaptured: onCaptured,
-            onCancel: onCancel,
-            onRejected: onRejected
-        )
+        Coordinator(onCaptured: onCaptured, onCancel: onCancel)
     }
 
     final class Coordinator: NSObject, VNDocumentCameraViewControllerDelegate {
-        let onCaptured: (UIImage) -> Void
+        let onCaptured: (UIImage, SNAPDocumentQualityResult) -> Void
         let onCancel: () -> Void
-        let onRejected: (SNAPDocumentQualityResult) -> Void
 
         init(
-            onCaptured: @escaping (UIImage) -> Void,
-            onCancel: @escaping () -> Void,
-            onRejected: @escaping (SNAPDocumentQualityResult) -> Void
+            onCaptured: @escaping (UIImage, SNAPDocumentQualityResult) -> Void,
+            onCancel: @escaping () -> Void
         ) {
             self.onCaptured = onCaptured
             self.onCancel = onCancel
-            self.onRejected = onRejected
         }
 
         func documentCameraViewController(
@@ -69,11 +57,7 @@ struct SNAPDocumentCameraView: UIViewControllerRepresentable {
             Task {
                 let quality = await SNAPDocumentQualityChecker.check(image)
                 await MainActor.run {
-                    if quality.passed {
-                        onCaptured(image)
-                    } else {
-                        onRejected(quality)
-                    }
+                    onCaptured(image, quality)
                     controller.dismiss(animated: true)
                 }
             }

@@ -144,6 +144,13 @@ final class FindHelpAnnotationView: MKAnnotationView {
     private static let paperDotSize: CGFloat = 9
     private static let paperColor = UIColor(red: 0xF5/255, green: 0xF2/255, blue: 0xEC/255, alpha: 1)
     private static let graphiteColor = UIColor(red: 0x3A/255, green: 0x34/255, blue: 0x2E/255, alpha: 1)
+    /// Lighter graphite used only for MIXED-category cluster pins on
+    /// the map. The single-pin graphiteColor above is too dark to
+    /// read against dark-mode map tiles when applied to MKMarker
+    /// AnnotationView's rounded-rect marker; this lifts the cluster
+    /// off the tile without changing the teardrop fill semantics for
+    /// individual help-directory "both" pins.
+    private static let mixedClusterColor = UIColor(red: 0x6E/255, green: 0x66/255, blue: 0x5E/255, alpha: 1)
 
     override var annotation: MKAnnotation? {
         didSet {
@@ -225,10 +232,10 @@ final class FindHelpAnnotationView: MKAnnotationView {
     /// "multiple kinds nearby" without misleading hue.
     static func dominantColor(in annotations: [MKAnnotation]) -> UIColor {
         let locations = annotations.compactMap { ($0 as? FindHelpAnnotation)?.location }
-        guard let first = locations.first else { return graphiteColor }
+        guard let first = locations.first else { return mixedClusterColor }
         let firstKey = categoryKey(for: first)
         let allSame = locations.allSatisfy { categoryKey(for: $0) == firstKey }
-        return allSame ? pinColor(for: first) : graphiteColor
+        return allSame ? pinColor(for: first) : mixedClusterColor
     }
 
     private static func categoryKey(for location: FindHelpLocation) -> String {

@@ -5,12 +5,6 @@ import SwiftUI
 // EXPERIMENTAL SILOED MODULE: top-level entry for the Find Help directory.
 // Step 10 ships the list view + permission flow; the map view lands in Step 11.
 
-enum FindHelpDisplayMode: String, CaseIterable, Identifiable {
-    case map
-    case list
-    var id: String { rawValue }
-}
-
 struct FindHelpRootView: View {
     @StateObject private var store: FindHelpStore
     // Constructed with autoRequestPermission: false so the iOS dialog
@@ -20,7 +14,6 @@ struct FindHelpRootView: View {
     @State private var zipFallback: String = ""
     @State private var hasTrackedEntry = false
     @State private var lastSearchedLocation: CLLocation?
-    @State private var displayMode: FindHelpDisplayMode = .map
     /// User explicitly chose to use the zip-fallback path instead of
     /// sharing location. Sticky for the session — we don't re-prompt
     /// after they've made the call.
@@ -61,27 +54,9 @@ struct FindHelpRootView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            layerToggle
-                .padding(.horizontal, CivicaSpacing.lg)
-                .padding(.top, CivicaSpacing.md)
-
-            FindHelpFilterBar(filter: $store.filter) {
-                FindHelpAnalytics.trackFilterChanged(
-                    serviceType: store.filter.serviceType?.rawValue,
-                    languageCode: store.filter.languageCode
-                )
-                store.updateFilter(store.filter)
-            }
-            .padding(.horizontal, CivicaSpacing.lg)
-            .padding(.top, CivicaSpacing.sm)
-
-            content
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-            FindHelpDisclosureFooter()
-        }
-        .background(CivicaColors.surfaceSecondary.ignoresSafeArea())
+        content
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(CivicaColors.surfaceSecondary.ignoresSafeArea())
         .overlay { onboardingOverlay }
         .navigationTitle("find_help.entry_card.title")
         .navigationBarTitleDisplayMode(.inline)
@@ -164,25 +139,36 @@ struct FindHelpRootView: View {
         } else if store.filteredLocations.isEmpty {
             emptyView
         } else {
-            ZStack(alignment: .bottom) {
-                Group {
-                    switch displayMode {
-                    case .map:
-                        FindHelpMapView(
-                            locations: store.filteredLocations,
-                            userLocation: store.userLocation,
-                            onSelect: { store.selectLocation($0) }
+            // Step 6 bottom-sheet layout: the map fills the screen and
+            // the layer toggle, filter chips, disclosure footer, and
+            // nearby list all live in a persistent bottom sheet over
+            // it. .sheet(isPresented: .constant(true)) is bound here
+            // (not on the body) so the sheet is scoped to the happy-
+            // path branch — when state flips to loading / error /
+            // empty / permission, this branch disappears and the sheet
+            // auto-dismisses, freeing the screen for the full-screen
+            // states to take over.
+            FindHelpMapView(
+                locations: store.filteredLocations,
+                userLocation: store.userLocation,
+                onSelect: { store.selectLocation($0) }
+            )
+            .ignoresSafeArea(edges: .all)
+            .sheet(isPresented: .constant(true)) {
+                FindHelpBottomSheet(
+                    store: store,
+                    language: language,
+                    onLayerChanged: { layer in
+                        FindHelpAnalytics.trackLayerChanged(layer.rawValue)
+                    },
+                    onFilterChanged: {
+                        FindHelpAnalytics.trackFilterChanged(
+                            serviceType: store.filter.serviceType?.rawValue,
+                            languageCode: store.filter.languageCode
                         )
-                        .ignoresSafeArea(edges: .bottom)
-                    case .list:
-                        FindHelpListView(
-                            locations: store.filteredLocations,
-                            onSelect: { store.selectLocation($0) }
-                        )
+                        store.updateFilter(store.filter)
                     }
-                }
-                viewModeToggle
-                    .padding(.bottom, CivicaSpacing.md)
+                )
             }
         }
     }
@@ -210,70 +196,6 @@ struct FindHelpRootView: View {
             }
             .transition(.opacity)
         }
-    }
-
-    /// Three-way pill at the top of the screen that selects which
-    /// slice of the SNAP ecosystem renders: where to get help, where
-    /// to spend benefits, or both together. Modeled on viewModeToggle
-    /// so the two pills read as a matched pair when stacked.
-    private var layerToggle: some View {
-        HStack(spacing: 0) {
-            ForEach(FindHelpLayerSelection.allCases) { layer in
-                Button {
-                    store.layerSelection = layer
-                    FindHelpAnalytics.trackLayerChanged(layer.rawValue)
-                } label: {
-                    Text(layerLabel(for: layer))
-                        .font(CivicaTypography.footnoteStrong)
-                        .padding(.horizontal, CivicaSpacing.md)
-                        .padding(.vertical, CivicaSpacing.sm)
-                        .foregroundStyle(
-                            layer == store.layerSelection
-                                ? CivicaColors.onPrimaryText
-                                : CivicaColors.brickPrimary
-                        )
-                        .frame(maxWidth: .infinity)
-                        .background(
-                            layer == store.layerSelection
-                                ? CivicaColors.brickPrimary
-                                : Color.clear
-                        )
-                }
-            }
-        }
-        .background(CivicaColors.surfacePrimary)
-        .clipShape(Capsule())
-        .overlay(Capsule().stroke(CivicaColors.brickPrimary.opacity(0.4), lineWidth: 1))
-    }
-
-    private func layerLabel(for layer: FindHelpLayerSelection) -> String {
-        switch layer {
-        case .findHelp: return FindHelpStrings.layerFindHelp.value(in: language)
-        case .spend:    return FindHelpStrings.layerSpend.value(in: language)
-        case .both:     return FindHelpStrings.layerBoth.value(in: language)
-        }
-    }
-
-    private var viewModeToggle: some View {
-        HStack(spacing: 0) {
-            ForEach(FindHelpDisplayMode.allCases) { mode in
-                Button {
-                    displayMode = mode
-                    FindHelpAnalytics.trackViewModeChanged(mode.rawValue)
-                } label: {
-                    Text(mode == .map ? "find_help.view_mode.map" : "find_help.view_mode.list")
-                        .font(CivicaTypography.footnoteStrong)
-                        .padding(.horizontal, CivicaSpacing.lg)
-                        .padding(.vertical, CivicaSpacing.sm)
-                        .foregroundStyle(mode == displayMode ? CivicaColors.onPrimaryText : CivicaColors.brickPrimary)
-                        .background(mode == displayMode ? CivicaColors.brickPrimary : Color.clear)
-                }
-            }
-        }
-        .background(CivicaColors.surfacePrimary)
-        .clipShape(Capsule())
-        .overlay(Capsule().stroke(CivicaColors.brickPrimary.opacity(0.4), lineWidth: 1))
-        .shadow(color: CivicaColors.shadowSoft, radius: 6, x: 0, y: 2)
     }
 
     private func triggerSearchIfNeeded(for location: CLLocation) {

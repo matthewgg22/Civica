@@ -3,17 +3,28 @@ import SwiftUI
 
 struct FindHelpFilterBar: View {
     @Binding var filter: FindHelpFilterState
+    /// Active map layer. When `.spend` is selected the service-type
+    /// chips don't apply (retailers don't carry service-type tags)
+    /// so the row is hidden; the language picker stays.
+    let layerSelection: FindHelpLayerSelection
     var onChange: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-            Picker("Show", selection: serviceTypeBinding) {
-                Text("find_help.filter.all").tag(FindHelpServiceType?.none)
-                Text("find_help.filter.snap").tag(FindHelpServiceType?.some(.snapApplicationHelp))
-                Text("find_help.filter.food").tag(FindHelpServiceType?.some(.foodAssistance))
-                Text("find_help.filter.both").tag(FindHelpServiceType?.some(.both))
+            if layerSelection != .spend {
+                // Three segments fit the iPhone width without truncating
+                // "Apply for SNAP". The fourth "Both" / "Combined"
+                // category overlapped semantically with the layer toggle
+                // and was dropped from the chip row in this pass; users
+                // who want SNAP+Food locations can read the chip strip
+                // on each row's detail sheet.
+                Picker("Show", selection: serviceTypeBinding) {
+                    Text("find_help.filter.all").tag(FindHelpServiceType?.none)
+                    Text("find_help.filter.snap").tag(FindHelpServiceType?.some(.snapApplicationHelp))
+                    Text("find_help.filter.food").tag(FindHelpServiceType?.some(.foodAssistance))
+                }
+                .pickerStyle(.segmented)
             }
-            .pickerStyle(.segmented)
 
             languagePicker
         }

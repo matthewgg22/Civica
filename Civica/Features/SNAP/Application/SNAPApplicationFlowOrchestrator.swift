@@ -99,11 +99,13 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
 
     /// Clears the saved draft and snaps back to the first section.
     /// Wired to the review screen's "Clear my answers and start
-    /// over" secondary action.
+    /// over" secondary action. Also wipes any captured document
+    /// images on disk — "start over" should leave no trace.
     func resetDraft() {
         draft = SNAPApplicationDraft()
         mode = .sequential(currentSection: .whereApplying)
         store.clear()
+        SNAPCapturedDocumentStore.clearAll()
     }
 
     var isAtFirstSectionInSequence: Bool {

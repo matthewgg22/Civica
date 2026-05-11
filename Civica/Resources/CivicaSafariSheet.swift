@@ -62,6 +62,16 @@ enum CivicaExternalLinks {
     static let dtaFairHearing: URL = URL(
         string: "https://www.mass.gov/info-details/how-to-request-a-fair-hearing"
     )!
+
+    /// Massachusetts WIC Nutrition Program info page. Used by the
+    /// cross-program teaser on the verdict view when the household
+    /// has minors (WIC serves kids under 5 + pregnant / postpartum
+    /// mothers). Civica doesn't apply for WIC yet — the user follows
+    /// the link to learn about it and start the WIC application
+    /// at the state's page.
+    static let maWICInfo: URL = URL(
+        string: "https://www.mass.gov/wic-nutrition-program"
+    )!
 }
 
 // MARK: - URL identity for .sheet(item:)
