@@ -31,14 +31,24 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
 
     @Published var draft: SNAPApplicationDraft
     @Published var mode: Mode
+    /// Latest expedited-triage result, recomputed after every
+    /// `finishSection` call. Nil until the user completes the first
+    /// section. UI surfaces (decision math, waiting room) read this
+    /// to decide whether to show the expedited banner.
+    @Published var triageResult: ExpeditedTriageResult?
 
     private let store: SNAPApplicationDraftStore
+    private let classifier: any ExpeditedClassifier
 
     /// Sequential order — must match SNAPApplicationSection.allCases.
     private static let sequence: [SNAPApplicationSection] = SNAPApplicationSection.allCases
 
-    init(store: SNAPApplicationDraftStore = SNAPApplicationDraftStore()) {
+    init(
+        store: SNAPApplicationDraftStore = SNAPApplicationDraftStore(),
+        classifier: any ExpeditedClassifier = HeuristicExpeditedClassifier()
+    ) {
         self.store = store
+        self.classifier = classifier
         // Restore prior draft + resume target if one exists. Editing
         // mode at-kill-time falls back to review on resume — less
         // surprising than re-mounting a half-edited sub-flow.
@@ -55,6 +65,9 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
             self.draft = SNAPApplicationDraft()
             self.mode = .sequential(currentSection: .whereApplying)
         }
+        // Seed the triage result from any restored draft so the banner
+        // is correct on launch without waiting for a step transition.
+        recomputeTriage()
     }
 
     func finishSection(_ section: SNAPApplicationSection) {
@@ -68,7 +81,20 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
                 mode = .review
             }
         }
+        recomputeTriage()
         persist()
+    }
+
+    /// Detached so the API stays consistent when a future CoreML
+    /// classifier replaces the heuristic. Today's heuristic is
+    /// sync-fast (<1ms); the hop keeps callers off the main thread.
+    private func recomputeTriage() {
+        let snapshot = draft
+        let classifier = classifier
+        Task { [weak self] in
+            let result = await evaluateTriage(draft: snapshot, classifier: classifier)
+            await MainActor.run { self?.triageResult = result }
+        }
     }
 
     func startEditing(_ section: SNAPApplicationSection) {
@@ -106,6 +132,7 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
         mode = .sequential(currentSection: .whereApplying)
         store.clear()
         SNAPCapturedDocumentStore.clearAll()
+        triageResult = nil
     }
 
     var isAtFirstSectionInSequence: Bool {

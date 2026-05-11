@@ -19,6 +19,10 @@ import SwiftUI
 struct SNAPExpensesAnswers: Equatable, Codable {
     var monthlyRentOrHousing: Decimal?
     var monthlyUtilities: Decimal?
+    /// Whether the household has received a utility-shutoff notice —
+    /// a strong soft signal for expedited need, asked right after
+    /// utilities cost while the user is in that frame of mind.
+    var utilityShutoffNotice: SNAPTri?
     var monthlyChildcare: Decimal?
     var monthlyMedical: Decimal?
 }
@@ -26,7 +30,7 @@ struct SNAPExpensesAnswers: Equatable, Codable {
 @MainActor
 final class SNAPExpensesFlowViewModel: ObservableObject {
     enum Step: Int, CaseIterable {
-        case rent, utilities, childcare, medical
+        case rent, utilities, utilityShutoff, childcare, medical
 
         var oneBasedIndex: Int { rawValue + 1 }
         static let total = Self.allCases.count
@@ -53,10 +57,20 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
 
     func recordCurrentField() {
         switch step {
-        case .rent:      answers.monthlyRentOrHousing = decimalValue(rentField)
-        case .utilities: answers.monthlyUtilities     = decimalValue(utilitiesField)
-        case .childcare: answers.monthlyChildcare     = decimalValue(childcareField)
-        case .medical:   answers.monthlyMedical       = decimalValue(medicalField)
+        case .rent:           answers.monthlyRentOrHousing = decimalValue(rentField)
+        case .utilities:      answers.monthlyUtilities     = decimalValue(utilitiesField)
+        case .utilityShutoff: break  // bound directly into answers.utilityShutoffNotice
+        case .childcare:      answers.monthlyChildcare     = decimalValue(childcareField)
+        case .medical:        answers.monthlyMedical       = decimalValue(medicalField)
+        }
+    }
+
+    var canAdvanceFromCurrentStep: Bool {
+        switch step {
+        case .rent, .utilities, .childcare, .medical:
+            return true  // empty = $0, already a valid answer
+        case .utilityShutoff:
+            return answers.utilityShutoffNotice != nil
         }
     }
 
@@ -125,10 +139,40 @@ struct SNAPExpensesFlowView: View {
     @ViewBuilder
     private var currentScreen: some View {
         switch viewModel.step {
-        case .rent:      moneyScreen(.rent, binding: $viewModel.rentField)
-        case .utilities: moneyScreen(.utilities, binding: $viewModel.utilitiesField)
-        case .childcare: moneyScreen(.childcare, binding: $viewModel.childcareField)
-        case .medical:   moneyScreen(.medical, binding: $viewModel.medicalField)
+        case .rent:           moneyScreen(.rent, binding: $viewModel.rentField)
+        case .utilities:      moneyScreen(.utilities, binding: $viewModel.utilitiesField)
+        case .utilityShutoff: utilityShutoffScreen
+        case .childcare:      moneyScreen(.childcare, binding: $viewModel.childcareField)
+        case .medical:        moneyScreen(.medical, binding: $viewModel.medicalField)
+        }
+    }
+
+    private var utilityShutoffScreen: some View {
+        let options: [SNAPTri] = [.yes, .no, .notSure]
+        return CivicaQuestionScreen(
+            progress: progress(for: .utilityShutoff),
+            title: SNAPExpensesStrings.title(for: .utilityShutoff, language: language),
+            helper: SNAPExpensesStrings.helper(for: .utilityShutoff, language: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            CivicaQuestionChoices(
+                options: options.map { SNAPExpensesStrings.triLabel(for: $0, language: language) },
+                selection: Binding(
+                    get: {
+                        viewModel.answers.utilityShutoffNotice.map {
+                            SNAPExpensesStrings.triLabel(for: $0, language: language)
+                        }
+                    },
+                    set: { label in
+                        viewModel.answers.utilityShutoffNotice = options.first { tri in
+                            SNAPExpensesStrings.triLabel(for: tri, language: language) == label
+                        }
+                    }
+                )
+            )
         }
     }
 
@@ -215,6 +259,10 @@ enum SNAPExpensesStrings {
             return "What do you spend on utilities each month?"
         case (.utilities, .spanish):
             return "¿Cuánto gastas en servicios cada mes?"
+        case (.utilityShutoff, .english):
+            return "Have you received a shutoff notice from any utility?"
+        case (.utilityShutoff, .spanish):
+            return "¿Has recibido un aviso de corte de algún servicio?"
         case (.childcare, .english):
             return "Do you pay for childcare?"
         case (.childcare, .spanish):
@@ -236,6 +284,10 @@ enum SNAPExpensesStrings {
             return "Add up a typical month — electricity, heat, gas, water, phone. The total matters more than each line item."
         case (.utilities, .spanish):
             return "Suma un mes típico — electricidad, calefacción, gas, agua, teléfono. El total importa más que cada línea."
+        case (.utilityShutoff, .english):
+            return "A written or paper notice that power, gas, water, or heat will be cut off if you don't pay. This can speed up your SNAP application."
+        case (.utilityShutoff, .spanish):
+            return "Un aviso escrito o en papel de que cortarán la luz, el gas, el agua o la calefacción si no pagas. Esto puede acelerar tu solicitud de SNAP."
         case (.childcare, .english):
             return "Daycare, after-school, or anything that lets a working adult in your household keep working. Enter 0 if none."
         case (.childcare, .spanish):
@@ -251,6 +303,17 @@ enum SNAPExpensesStrings {
         switch language {
         case .english: return "Per month"
         case .spanish: return "Por mes"
+        }
+    }
+
+    static func triLabel(for value: SNAPTri, language: CivicaLanguage) -> String {
+        switch (value, language) {
+        case (.yes, .english):     return "Yes"
+        case (.yes, .spanish):     return "Sí"
+        case (.no, .english):      return "No"
+        case (.no, .spanish):      return "No"
+        case (.notSure, .english): return "I'm not sure"
+        case (.notSure, .spanish): return "No estoy seguro"
         }
     }
 }

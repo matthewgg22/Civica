@@ -19,6 +19,11 @@ struct SNAPHouseholdAnswers: Equatable, Codable {
     var householdSize: String?              // choice from buckets
     var hasMinorInHousehold: Bool?
     var hasElderlyOrDisabled: Bool?
+    /// Migrant or seasonal farmworker status. With low liquid resources,
+    /// satisfies 7 CFR 273.2(i)(1)(ii) (migrant/seasonal destitute) and
+    /// the household qualifies for expedited service regardless of
+    /// income. Asked as Tri because "not sure" is common.
+    var migrantSeasonalFarmworker: SNAPTri?
 
     // Categorical eligibility inputs (7 CFR 273.2(j)). The question
     // flow does not yet ask these directly -- they're plumbed
@@ -34,6 +39,7 @@ struct SNAPHouseholdAnswers: Equatable, Codable {
         householdSize != nil
             && hasMinorInHousehold != nil
             && hasElderlyOrDisabled != nil
+            && migrantSeasonalFarmworker != nil
     }
 }
 
@@ -43,6 +49,7 @@ final class SNAPHouseholdQuestionFlowViewModel: ObservableObject {
         case size
         case minors
         case elderlyOrDisabled
+        case migrantFarmworker
 
         static let total = Self.allCases.count
         var oneBasedIndex: Int { rawValue + 1 }
@@ -73,11 +80,12 @@ final class SNAPHouseholdQuestionFlowViewModel: ObservableObject {
         case .size: return answers.householdSize != nil
         case .minors: return answers.hasMinorInHousehold != nil
         case .elderlyOrDisabled: return answers.hasElderlyOrDisabled != nil
+        case .migrantFarmworker: return answers.migrantSeasonalFarmworker != nil
         }
     }
 
     var isAtFirstStep: Bool { step == .size }
-    var isAtLastStep: Bool { step == .elderlyOrDisabled }
+    var isAtLastStep: Bool { step == .migrantFarmworker }
 }
 
 struct SNAPHouseholdQuestionFlowView: View {
@@ -126,6 +134,7 @@ struct SNAPHouseholdQuestionFlowView: View {
         case .size: sizeScreen
         case .minors: minorsScreen
         case .elderlyOrDisabled: elderlyOrDisabledScreen
+        case .migrantFarmworker: migrantFarmworkerScreen
         }
     }
 
@@ -169,6 +178,39 @@ struct SNAPHouseholdQuestionFlowView: View {
                 selection: $viewModel.answers.hasMinorInHousehold,
                 yesLabel: CivicaQuestionStrings.yesLabel.value(in: language),
                 noLabel: CivicaQuestionStrings.noLabel.value(in: language)
+            )
+        }
+    }
+
+    // MARK: - Screen 4: migrant or seasonal farmworker?
+
+    private var migrantFarmworkerScreen: some View {
+        let options: [SNAPTri] = [.yes, .no, .notSure]
+        return CivicaQuestionScreen(
+            progress: progress(for: .migrantFarmworker),
+            title: SNAPHouseholdQuestionStrings.migrantFarmworkerTitle.value(in: language),
+            helper: SNAPHouseholdQuestionStrings.migrantFarmworkerHelper.value(in: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            CivicaQuestionChoices(
+                options: options.map {
+                    SNAPHouseholdQuestionStrings.migrantTriLabel(for: $0, language: language)
+                },
+                selection: Binding(
+                    get: {
+                        viewModel.answers.migrantSeasonalFarmworker.map {
+                            SNAPHouseholdQuestionStrings.migrantTriLabel(for: $0, language: language)
+                        }
+                    },
+                    set: { label in
+                        viewModel.answers.migrantSeasonalFarmworker = options.first { tri in
+                            SNAPHouseholdQuestionStrings.migrantTriLabel(for: tri, language: language) == label
+                        }
+                    }
+                )
             )
         }
     }
@@ -247,6 +289,26 @@ enum SNAPHouseholdQuestionStrings {
         "This matters for SNAP — older adults and people with disabilities get extra deductions and don't face an asset test in Massachusetts.",
         es: "Esto importa para SNAP — los adultos mayores y las personas con discapacidad reciben deducciones adicionales y no enfrentan una prueba de bienes en Massachusetts."
     )
+
+    static let migrantFarmworkerTitle = CivicaText(
+        "Is anyone in your household a migrant or seasonal farmworker?",
+        es: "¿Alguien en tu hogar es trabajador agrícola migrante o de temporada?"
+    )
+    static let migrantFarmworkerHelper = CivicaText(
+        "Yes if someone works in crops, livestock, or food processing on a seasonal or traveling basis. SNAP has a separate expedited path for farmworker households.",
+        es: "Sí si alguien trabaja en cultivos, ganadería o procesamiento de alimentos de manera estacional o viajando. SNAP tiene una vía expedita aparte para hogares de trabajadores agrícolas."
+    )
+
+    static func migrantTriLabel(for value: SNAPTri, language: CivicaLanguage) -> String {
+        switch (value, language) {
+        case (.yes, .english):     return "Yes"
+        case (.yes, .spanish):     return "Sí"
+        case (.no, .english):      return "No"
+        case (.no, .spanish):      return "No"
+        case (.notSure, .english): return "I'm not sure"
+        case (.notSure, .spanish): return "No estoy seguro"
+        }
+    }
 }
 
 #if DEBUG
