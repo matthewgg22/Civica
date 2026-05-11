@@ -70,30 +70,49 @@ struct SNAPWaitingRoomView: View {
         )
     }
 
+    @ViewBuilder
     private var actionBanner: some View {
-        Button(action: onAction) {
-            HStack(spacing: CivicaSpacing.md) {
-                Image(systemName: "exclamationmark.circle.fill")
-                    .foregroundStyle(CivicaColors.warningAmber)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(SNAPStatusHomeStrings.statusActionNeeded.value(in: language))
-                        .font(CivicaTypography.captionStrong)
-                        .foregroundStyle(CivicaColors.warningAmber)
-                        .textCase(.uppercase)
-                        .kerning(1.2)
-                    Text(actionTitle)
-                        .font(CivicaTypography.subheadStrong)
-                        .foregroundStyle(CivicaColors.ink)
-                }
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .foregroundStyle(CivicaColors.graphite)
+        // Interview-scheduled status pushes the in-app coach instead
+        // of opening the DTA Connect portal — coaching the user
+        // through a 15-20 minute phone call is the highest-leverage
+        // thing Civica can do post-submission.
+        if statusStore.status == .interviewScheduled {
+            NavigationLink {
+                SNAPInterviewCoachView(language: language, onDismiss: {})
+            } label: {
+                actionBannerLabel
             }
-            .padding(CivicaSpacing.md)
-            .background(CivicaColors.warningAmber.opacity(0.12))
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .buttonStyle(.plain)
+        } else {
+            Button(action: onAction) {
+                actionBannerLabel
+            }
         }
+    }
+
+    private var actionBannerLabel: some View {
+        HStack(spacing: CivicaSpacing.md) {
+            Image(systemName: "exclamationmark.circle.fill")
+                .foregroundStyle(CivicaColors.warningAmber)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(SNAPStatusHomeStrings.statusActionNeeded.value(in: language))
+                    .font(CivicaTypography.captionStrong)
+                    .foregroundStyle(CivicaColors.warningAmber)
+                    .textCase(.uppercase)
+                    .kerning(1.2)
+                Text(actionTitle)
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+            }
+            Spacer()
+            Image(systemName: "chevron.right")
+                .foregroundStyle(CivicaColors.graphite)
+        }
+        .padding(CivicaSpacing.md)
+        .background(CivicaColors.warningAmber.opacity(0.12))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .accessibilityElement(children: .combine)
         .accessibilityLabel("\(SNAPStatusHomeStrings.statusActionNeeded.value(in: language)). \(actionTitle)")
     }
 
