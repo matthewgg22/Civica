@@ -183,6 +183,16 @@ struct SNAPDataPrivacyView: View {
 
     private var actionRows: some View {
         VStack(spacing: CivicaSpacing.sm) {
+            NavigationLink {
+                SNAPNotificationPreviewView(language: language)
+            } label: {
+                actionRow(
+                    title: SNAPDataPrivacyStrings.notificationsYoullReceive.value(in: language),
+                    accent: CivicaColors.ink
+                )
+            }
+            .buttonStyle(.plain)
+
             Button(action: triggerDownload) {
                 actionRow(
                     title: SNAPDataPrivacyStrings.downloadCopy.value(in: language),
@@ -363,6 +373,10 @@ enum SNAPDataPrivacyStrings {
     )
 
     // Action rows
+    static let notificationsYoullReceive = CivicaText(
+        "Notifications you'll receive",
+        es: "Notificaciones que recibirás"
+    )
     static let downloadCopy = CivicaText(
         "Download a copy",
         es: "Descargar una copia"
