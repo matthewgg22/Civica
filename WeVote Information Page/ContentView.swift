@@ -115,10 +115,6 @@ final class MidtermElectionBundleStore {
 }
 
 // MARK: – Bottom-Tab Enum
-//
-// SNAP enrollment was extracted into a separate Civica iOS target (see
-// Civica/ at the repo root and the Civica.xcscheme). VoteNow is now
-// democracy-only: voting, registration, elections, reps.
 enum Tab: CaseIterable {
     case myReps
     case callYourReps
@@ -577,8 +573,6 @@ struct ContentView: View {
                     }
                 }
                 .tag(Tab.registration)
-
-            // SNAP enrollment moved to the separate Civica iOS target.
         }
         .environmentObject(mapvPlanStore)
         .coordinateSpace(name: "SpreadSpace")
