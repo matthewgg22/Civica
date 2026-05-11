@@ -7,6 +7,8 @@ struct SNAPEligibilityIntroView: View {
     @ObservedObject var viewModel: SNAPApplicationViewModel
     @State private var continueToGuidedDraft = false
     @State private var generatedFromOrchestrator: SNAPApplicationDraft?
+    @State private var orchestratorVerdict: SNAPEligibilityResult?
+    @State private var presentingVerdict: Bool = false
 
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
@@ -165,16 +167,34 @@ struct SNAPEligibilityIntroView: View {
             SNAPApplicationFlowOrchestratorView(
                 language: language,
                 onGeneratePacket: { draft in
+                    // Mission 2: run the local evaluator and push
+                    // SNAPDecisionMathView. The backend rules engine
+                    // remains the authoritative source — this is a
+                    // directional MA-BBCE threshold verdict so the
+                    // user gets immediate feedback instead of being
+                    // dropped into a no-op PDF stub.
                     generatedFromOrchestrator = draft
-                    // Packet generation hands off to
-                    // SNAPApplicationGeneratorView in a follow-up
-                    // commit — for now the orchestrator surfaces
-                    // the finished draft for downstream wiring.
+                    orchestratorVerdict = SNAPLocalEligibilityEvaluator.evaluate(draft)
+                    presentingVerdict = true
                 },
                 onDismiss: { dismiss() }
             )
             .navigationTitle("SNAP Eligibility Questionnaire")
             .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(isPresented: $presentingVerdict) {
+                if let verdict = orchestratorVerdict {
+                    SNAPDecisionMathView(
+                        result: verdict,
+                        language: language,
+                        onContinue: {
+                            // PDF-generator hand-off lands in a
+                            // follow-up. Today's "Continue" returns
+                            // the user to the entry.
+                            dismiss()
+                        }
+                    )
+                }
+            }
         }
     }
 
