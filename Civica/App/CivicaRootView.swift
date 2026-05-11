@@ -17,6 +17,7 @@ struct CivicaRootView: View {
     private var languageRaw: String = CivicaLanguage.english.rawValue
 
     @StateObject private var snapViewModel = SNAPApplicationViewModel()
+    @StateObject private var statusStore = SNAPApplicationStatusStore()
 
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
@@ -26,7 +27,7 @@ struct CivicaRootView: View {
         Group {
             if hasCompletedOnboarding {
                 NavigationStack {
-                    SNAPEntryView(viewModel: snapViewModel)
+                    rootSurface
                 }
                 .tint(CivicaColors.brickPrimary)
             } else {
@@ -37,6 +38,43 @@ struct CivicaRootView: View {
                     }
                 }
             }
+        }
+    }
+
+    /// Status-aware routing (HANDOFF boards 11, 12, 24).
+    /// First-time + screener-in-progress users land on the entry tile
+    /// (which leads into the conversation screener). Post-submission
+    /// users land on the waiting room. Anything in between is the
+    /// returning user home — they have an active application that
+    /// needs the next push.
+    @ViewBuilder
+    private var rootSurface: some View {
+        if statusStore.status.isPostSubmission {
+            SNAPWaitingRoomView(
+                statusStore: statusStore,
+                language: language,
+                onAction: {
+                    // Hook the action banner taps into the appropriate
+                    // sub-flow in a later commit (document upload,
+                    // interview prep, etc.). For now it's a no-op.
+                }
+            )
+        } else if statusStore.status.isActiveCase {
+            SNAPReturningUserHomeView(
+                statusStore: statusStore,
+                language: language,
+                onResume: {
+                    // Resume hands off to SNAPEntryView; subsequent
+                    // navigation lands the user back in the conversation
+                    // flow or the application-packet generator depending
+                    // on where they stopped.
+                },
+                onStartOver: {
+                    statusStore.reset()
+                }
+            )
+        } else {
+            SNAPEntryView(viewModel: snapViewModel)
         }
     }
 }
