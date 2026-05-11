@@ -169,6 +169,7 @@ struct SNAPEligibilityIntroView: View {
             // Replaced the legacy 4130-line SNAPApplicationView /
             // SNAPStepContainerView pair in the router cutover.
             SNAPApplicationFlowOrchestratorView(
+                viewModel: SNAPApplicationFlowOrchestratorViewModel(),
                 language: language,
                 onGeneratePacket: { draft in
                     // Mission 2 + 7: evaluate the draft, record the

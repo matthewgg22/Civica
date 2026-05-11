@@ -4,8 +4,6 @@ import SwiftUI
 // EXPERIMENTAL SILOED MODULE: root entry point for the isolated SNAP experience.
 struct SNAPEntryView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var planVM: PlanViewModel
-    @EnvironmentObject private var repsVM: MyRepsViewModel
     @StateObject private var viewModel = SNAPApplicationViewModel()
     @State private var hasTrackedEntryView = false
     @AppStorage(CivicaLanguage.defaultStorageKey)
@@ -29,33 +27,24 @@ struct SNAPEntryView: View {
         self.initialZipCode = initialZipCode
     }
 
-    private var headerLocationCity: String {
-        let resolvedCity = repsVM.resolvedLocationSelection?.city?
-            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        if !resolvedCity.isEmpty { return resolvedCity }
-        return planVM.userAddress.city.trimmingCharacters(in: .whitespacesAndNewlines)
-    }
+    // Location resolution: in the Civica app there is no shared address
+    // store yet (the VoteNow app had PlanViewModel + MyRepsViewModel for
+    // this). For now, location comes only from the `initialStateCode` /
+    // `initialZipCode` init params; ZIP-derived state is the fallback.
+    // TODO: wire a Civica-side address store and prefill from it.
+
+    private var headerLocationCity: String { "" }
 
     private var headerLocationZip: String? {
-        let addressZip = String(planVM.userAddress.zip.filter(\.isNumber).prefix(5))
-        if addressZip.count == 5 { return addressZip }
-
-        let resolvedZip = String((repsVM.resolvedLocationSelection?.postalCode ?? "").filter(\.isNumber).prefix(5))
-        if resolvedZip.count == 5 { return resolvedZip }
-
-        let fallback = String(planVM.zip.filter(\.isNumber).prefix(5))
-        return fallback.count == 5 ? fallback : nil
+        guard let initialZipCode else { return nil }
+        let digits = String(initialZipCode.filter(\.isNumber).prefix(5))
+        return digits.count == 5 ? digits : nil
     }
 
     private var headerLocationStateCode: String? {
-        if let resolved = normalizedUSStateCode(from: repsVM.resolvedStateCode) {
-            return resolved
-        }
-        if let detected = normalizedUSStateCode(from: repsVM.detectedStateCode) {
-            return detected
-        }
-        if let entered = normalizedUSStateCode(from: planVM.userAddress.state) {
-            return entered
+        if let initialStateCode {
+            let trimmed = initialStateCode.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+            if trimmed.count == 2 { return trimmed }
         }
         if let zip = headerLocationZip {
             return zipStateResolver.stateCode(for: zip)
@@ -83,7 +72,7 @@ struct SNAPEntryView: View {
         if let state {
             return state
         }
-        return "Set your address in My Reps"
+        return "Set your address"
     }
 
     var body: some View {
@@ -120,6 +109,47 @@ struct SNAPEntryView: View {
                 .background(CivicaColors.tealSurface)
 
                 VStack(spacing: CivicaSpacing.lg) {
+                    NavigationLink {
+                        SNAPEstimatorFlowView(language: language)
+                            .navigationBarTitleDisplayMode(.inline)
+                    } label: {
+                        HStack(spacing: CivicaSpacing.md) {
+                            Image(systemName: "dollarsign.circle.fill")
+                                .font(.system(size: 28))
+                                .foregroundStyle(CivicaColors.brickPrimary)
+                                .frame(width: 48, height: 48)
+                                .background(
+                                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                                        .fill(CivicaColors.brickPrimary.opacity(0.12))
+                                )
+
+                            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                                Text(SNAPBenefitEstimatorStrings.entryCardTitle.value(in: language))
+                                    .font(CivicaTypography.sectionHeader)
+                                    .foregroundStyle(CivicaColors.ink)
+                                Text(SNAPBenefitEstimatorStrings.entryCardSubtitle.value(in: language))
+                                    .font(CivicaTypography.footnoteStrong)
+                                    .foregroundStyle(CivicaColors.graphite)
+                                    .lineLimit(2)
+                            }
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
+                                .foregroundStyle(CivicaColors.graphite)
+                        }
+                        .padding(CivicaSpacing.md)
+                        .background(
+                            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                                .fill(CivicaColors.surfacePrimary)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                                .stroke(CivicaColors.hairline, lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(.plain)
+
                     NavigationLink {
                         SNAPEligibilityIntroView(viewModel: viewModel)
                             .navigationBarTitleDisplayMode(.inline)
@@ -261,12 +291,6 @@ struct SNAPEntryView: View {
             hasTrackedEntryView = true
             SNAPAnalytics.trackEntryViewed()
         }
-        .onChange(of: headerLocationStateCode) { _ in
-            applyAddressGeofencePrefill()
-        }
-        .onChange(of: headerLocationZip) { _ in
-            applyAddressGeofencePrefill()
-        }
         .onDisappear {
             viewModel.trackAbandonmentIfNeeded()
         }
@@ -343,6 +367,4 @@ struct SNAPEntryView: View {
 
 #Preview {
     SNAPEntryView()
-        .environmentObject(PlanViewModel())
-        .environmentObject(MyRepsViewModel())
 }

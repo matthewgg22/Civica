@@ -5609,7 +5609,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         let wordSet = Set(words)
 
         let knownIssueSignals: Set<String> = [
-            "crypto", "ukraine", "iran", "housing", "lihtc", "snap", "medicaid", "medicare",
+            "crypto", "ukraine", "iran", "housing", "lihtc", "medicaid", "medicare",
             "social", "security", "immigration", "climate", "voting", "election", "reproductive",
             "labor", "workers", "health", "ai", "trans", "tps", "farm", "pell", "student"
         ]
@@ -5761,7 +5761,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         let topicSignals = [
             "gun", "guns", "gun control", "firearm", "firearms", "background check", "assault weapon",
             "abortion", "reproductive", "immigration", "border", "climate", "environment", "housing",
-            "healthcare", "health care", "medicaid", "medicare", "snap", "farm", "student", "pell",
+            "healthcare", "health care", "medicaid", "medicare", "farm", "student", "pell",
             "ukraine", "iran", "crypto", "digital assets", "voting", "election", "social security"
         ]
         return topicSignals.contains(where: { loweredConcern.contains($0) })
@@ -5997,7 +5997,6 @@ final class IssueCallCenterViewModel: ObservableObject {
         let concernLower = concernText.lowercased()
         let knownAcronyms: [String: [String]] = [
             "lihtc": ["low-income housing tax credit", "low income housing tax credit", "housing tax credit"],
-            "snap": ["supplemental nutrition assistance program", "snap benefits"],
             "aca": ["affordable care act", "obamacare"],
             "epa": ["environmental protection agency"]
         ]
@@ -6484,7 +6483,7 @@ final class IssueCallCenterViewModel: ObservableObject {
         ),
         FallbackBillTemplate(
             reference: "S.3281 Restoring Food Security for American Families and Farmers Act of 2025",
-            keywords: ["snap", "food security", "farmers", "agriculture", "nutrition"],
+            keywords: ["food security", "farmers", "agriculture", "nutrition"],
             committees: ["Agriculture, Nutrition, and Forestry"]
         ),
         FallbackBillTemplate(

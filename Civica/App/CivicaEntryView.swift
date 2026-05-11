@@ -26,6 +26,7 @@ struct CivicaEntryView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 header
+                estimatorTile
                 snapTile
                 findHelpTile
                 Spacer()
@@ -36,6 +37,22 @@ struct CivicaEntryView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // MARK: - Estimator tile
+
+    private var estimatorTile: some View {
+        NavigationLink {
+            SNAPEstimatorFlowView(language: language)
+        } label: {
+            tileCard(
+                icon: "dollarsign.circle.fill",
+                iconAccent: CivicaColors.brickPrimary,
+                title: SNAPBenefitEstimatorStrings.entryCardTitle.value(in: language),
+                subtitle: SNAPBenefitEstimatorStrings.entryCardSubtitle.value(in: language)
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Header

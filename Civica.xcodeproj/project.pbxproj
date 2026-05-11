@@ -57,29 +57,8 @@
 		CCAA000000000000000000B2 /* Exceptions for "Civica" folder in "Civica" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Features/SNAP/Application/SNAPApplicationGeneratorView.swift,
-				Features/SNAP/Application/SNAPApplicationGeneratorViewModel.swift,
-				Features/SNAP/Application/SNAPApplicationWalkthroughView.swift,
-				Features/SNAP/Conversation/SNAPConversationFlowView.swift,
-				Features/SNAP/Conversation/SNAPConversationView.swift,
-				Features/SNAP/Conversation/SNAPConversationViewModel.swift,
-				Features/SNAP/Conversation/SNAPNetworkClient.swift,
-				Features/SNAP/Conversation/SNAPRecoveryStrings.swift,
-				Features/SNAP/Conversation/SNAPRecoveryView.swift,
-				Features/SNAP/SNAPAnalytics.swift,
-				Features/SNAP/SNAPApplicationViewModel.swift,
-				Features/SNAP/SNAPConfirmationView.swift,
-				Features/SNAP/SNAPDebugChecklistView.swift,
-				Features/SNAP/SNAPEligibilityIntroView.swift,
-				Features/SNAP/SNAPEntryView.swift,
-				Features/SNAP/SNAPFeatureFlag.swift,
-				Features/SNAP/SNAPPrivacyNoticeView.swift,
-				Features/SNAP/SNAPReviewView.swift,
-				Features/SNAP/SNAPRouter.swift,
-				Features/SNAP/SNAPStateResources.swift,
 				Info.plist,
 				SETUP.md,
-				Features/SNAP/Documents/SNAPDocumentUploadViewModel.swift,
 			);
 			target = CCAA000000000000000000A1 /* Civica */;
 		};
@@ -487,7 +466,28 @@
 		C3576EEC2FB18C61004FA6C3 /* Debug SNAP */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = Civica;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Civica/Civica.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 687GD7CA6J;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Civica/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.civica.benefits;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG SNAP_DEV SNAP_CONVERSATION_ENABLED";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug SNAP";
 		};
@@ -847,7 +847,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.VoteNow-Information-Page.snapdev.Voting-UI-Island-Card";
+				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.Civica.Voting-UI-Island-Card";
 				PRODUCT_NAME = "Voting UI Island CardExtension";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -864,6 +864,7 @@
 				CODE_SIGN_ENTITLEMENTS = Civica/Civica.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 687GD7CA6J;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Civica/Info.plist;
@@ -891,6 +892,7 @@
 				CODE_SIGN_ENTITLEMENTS = Civica/Civica.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 687GD7CA6J;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Civica/Info.plist;
@@ -967,7 +969,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG SNAP_DEV SNAP_CONVERSATION_ENABLED";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = "Debug SNAP";
@@ -987,7 +989,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Civica-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Civica SNAP Dev";
+				INFOPLIST_KEY_CFBundleDisplayName = Civica;
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "This app needs calendar access so it can add your voting plan as an event.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to calculate distances to polling places.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
@@ -1001,10 +1003,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.Civica.snapdev";
+				PRODUCT_BUNDLE_IDENTIFIER = "Turnout-the-Vote.Civica";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG SNAP_DEV SNAP_CONVERSATION_ENABLED";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
