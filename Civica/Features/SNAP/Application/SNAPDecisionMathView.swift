@@ -70,6 +70,13 @@ struct SNAPDecisionMathView: View {
                     )
                 }
 
+                if SNAPCrossProgramTeaserView.shouldRender(for: resolvedDraft) {
+                    SNAPCrossProgramTeaserView(
+                        draft: resolvedDraft,
+                        language: language
+                    )
+                }
+
                 sourcesFooter
 
                 if onContinue != nil {
