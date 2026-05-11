@@ -173,6 +173,15 @@ func evaluateTriage(
     )
 }
 
+/// Synchronously evaluates the 7 CFR 273.2(i) hard rules against
+/// the draft. Returns every rule that fires; an empty array means
+/// no hard rule pinned the household to expedited. Sync so it can
+/// be called from non-async paths (e.g., the legacy eligibility
+/// evaluator's `expeditedEligible` bool).
+func expeditedHardRulesFired(in draft: SNAPApplicationDraft) -> [ExpeditedHardRule] {
+    firedHardRules(in: draft)
+}
+
 private func firedHardRules(in draft: SNAPApplicationDraft) -> [ExpeditedHardRule] {
     var hits: [ExpeditedHardRule] = []
 
