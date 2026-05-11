@@ -24,6 +24,15 @@ struct SNAPIncomeAnswers: Equatable, Codable {
     var grossMonthlyIncome: Decimal?
     var incomeChangesMonthToMonth: Tri?
     var hasUnearnedIncome: Tri?
+
+    /// Optional explicit dollar amount of monthly earned income
+    /// (wages + self-employment net). Federally the 20% earned-
+    /// income deduction only applies to this portion of gross.
+    /// The current flow does not yet ask for the split -- when
+    /// nil, SNAPBenefitCalculator derives an estimate from
+    /// `anyoneEarning` + `hasUnearnedIncome`. A dedicated screen
+    /// asking the exact split lands as separate work.
+    var monthlyEarnedAmount: Decimal?
 }
 
 @MainActor
