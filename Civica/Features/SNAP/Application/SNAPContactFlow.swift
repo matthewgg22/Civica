@@ -291,7 +291,7 @@ struct SNAPContactFlowView: View {
     // MARK: - Helpers
 
     private func progress(for step: SNAPContactFlowViewModel.Step)
-        -> CivicaQuestionScreen<EmptyView>.Progress
+        -> CivicaQuestionScreenProgress
     {
         .init(current: step.oneBasedIndex, total: SNAPContactFlowViewModel.Step.total)
     }

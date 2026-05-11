@@ -186,7 +186,7 @@ struct SNAPHouseholdQuestionFlowView: View {
     // MARK: - Helpers
 
     private func progress(for step: SNAPHouseholdQuestionFlowViewModel.Step)
-        -> CivicaQuestionScreen<EmptyView>.Progress
+        -> CivicaQuestionScreenProgress
     {
         .init(
             current: step.oneBasedIndex,

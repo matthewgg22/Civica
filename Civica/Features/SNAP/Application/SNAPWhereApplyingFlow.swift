@@ -166,7 +166,7 @@ struct SNAPWhereApplyingFlowView: View {
     // MARK: - Helpers
 
     private func progress(for step: SNAPWhereApplyingFlowViewModel.Step)
-        -> CivicaQuestionScreen<EmptyView>.Progress
+        -> CivicaQuestionScreenProgress
     {
         .init(current: step.oneBasedIndex, total: SNAPWhereApplyingFlowViewModel.Step.total)
     }

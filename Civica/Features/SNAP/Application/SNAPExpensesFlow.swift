@@ -183,7 +183,7 @@ struct SNAPExpensesFlowView: View {
     // MARK: - Helpers
 
     private func progress(for step: SNAPExpensesFlowViewModel.Step)
-        -> CivicaQuestionScreen<EmptyView>.Progress
+        -> CivicaQuestionScreenProgress
     {
         .init(current: step.oneBasedIndex, total: SNAPExpensesFlowViewModel.Step.total)
     }

@@ -20,11 +20,19 @@ import SwiftUI
 // Lives in Civica/ today; promote to CivicaDesignSystem once it
 // stabilizes and VoteNow needs the same primitive.
 
+/// Hoisted out of `CivicaQuestionScreen` so the type is a single
+/// concrete struct across all generic instantiations of the screen.
+/// Otherwise `CivicaQuestionScreenProgress` and
+/// `CivicaQuestionScreen<CivicaQuestionChoices>.Progress` are
+/// distinct types in Swift's type system, and helper functions
+/// that return one can't be passed to the other.
+struct CivicaQuestionScreenProgress: Equatable {
+    let current: Int
+    let total: Int
+}
+
 struct CivicaQuestionScreen<Affordance: View>: View {
-    struct Progress: Equatable {
-        let current: Int
-        let total: Int
-    }
+    typealias Progress = CivicaQuestionScreenProgress
 
     let progress: Progress?
     let title: String

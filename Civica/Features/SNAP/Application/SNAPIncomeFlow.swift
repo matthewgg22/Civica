@@ -287,7 +287,7 @@ struct SNAPIncomeFlowView: View {
     // MARK: - Helpers
 
     private func progress(for step: SNAPIncomeFlowViewModel.Step)
-        -> CivicaQuestionScreen<EmptyView>.Progress
+        -> CivicaQuestionScreenProgress
     {
         .init(current: step.oneBasedIndex, total: SNAPIncomeFlowViewModel.Step.total)
     }
