@@ -69,10 +69,19 @@ struct SNAPDocumentsChecklistFlowView: View {
     /// for. Nil when the sheet is dismissed. Drives .sheet(item:).
     @State private var documentBeingCaptured: SNAPDocumentType?
 
-    /// Toast / hint surfaced when the on-device quality check flags
-    /// a capture as low-quality. We still save the image so the user
-    /// has something — the hint lets them choose to retake.
-    @State private var lowQualityHint: String?
+    /// Pending retry state when an on-device quality check fails.
+    /// Drives presentation of SNAPDocumentRetryView (HANDOFF
+    /// FormErrorBoard). The captured image stays saved on disk so
+    /// "Keep this photo anyway" is just a dismiss; "Take another
+    /// photo" re-presents the camera and overwrites the saved file.
+    @State private var pendingRetry: PendingRetry?
+
+    private struct PendingRetry: Identifiable {
+        let id = UUID()
+        let documentType: SNAPDocumentType
+        let image: UIImage
+        let quality: SNAPDocumentQualityResult
+    }
 
     init(
         viewModel: SNAPDocumentsChecklistFlowViewModel,
@@ -96,9 +105,6 @@ struct SNAPDocumentsChecklistFlowView: View {
             language: language
         ) {
             VStack(spacing: CivicaSpacing.sm) {
-                if let lowQualityHint {
-                    qualityHintBanner(lowQualityHint)
-                }
                 ForEach(SNAPDocumentType.allCases) { document in
                     checklistRow(for: document)
                 }
@@ -118,40 +124,57 @@ struct SNAPDocumentsChecklistFlowView: View {
             SNAPDocumentCameraView(
                 onCaptured: { image, quality in
                     viewModel.recordCapture(image, for: document)
-                    // v1: always save the capture. When the on-device
-                    // quality check trips, surface a retake hint
-                    // inline so the user can choose to re-capture.
-                    lowQualityHint = quality.passed
-                        ? nil
-                        : SNAPDocumentsChecklistStrings.qualityHintLow.value(in: language)
                     documentBeingCaptured = nil
+                    // On-device quality gate failed: surface the
+                    // FormErrorBoard recovery sheet with image
+                    // preview, a precise reason, and the retake /
+                    // keep / skip routes. Passing photos go straight
+                    // back to the checklist with the "Photo saved"
+                    // confirmation chip.
+                    if !quality.passed {
+                        pendingRetry = PendingRetry(
+                            documentType: document,
+                            image: image,
+                            quality: quality
+                        )
+                    }
                 },
                 onCancel: { documentBeingCaptured = nil }
             )
         }
-    }
-
-    private func qualityHintBanner(_ hint: String) -> some View {
-        HStack(alignment: .top, spacing: CivicaSpacing.sm) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .foregroundStyle(CivicaColors.warningAmber)
-                .accessibilityHidden(true)
-            Text(hint)
-                .font(CivicaTypography.footnote)
-                .foregroundStyle(CivicaColors.ink)
-                .fixedSize(horizontal: false, vertical: true)
-            Spacer(minLength: 0)
-            Button {
-                lowQualityHint = nil
-            } label: {
-                Image(systemName: "xmark")
-                    .foregroundStyle(CivicaColors.graphite)
+        .sheet(item: $pendingRetry) { retry in
+            NavigationStack {
+                SNAPDocumentRetryView(
+                    capturedImage: retry.image,
+                    quality: retry.quality,
+                    documentType: retry.documentType,
+                    language: language,
+                    onRetake: {
+                        // Drop the just-saved capture so the row's
+                        // "Photo saved" chip doesn't mislead the user
+                        // while they re-shoot.
+                        viewModel.clearCapture(for: retry.documentType)
+                        pendingRetry = nil
+                        // Defer presenting the camera by one runloop
+                        // tick so the retry sheet's dismiss animation
+                        // doesn't fight the camera's present animation.
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.32) {
+                            documentBeingCaptured = retry.documentType
+                        }
+                    },
+                    onKeepAnyway: {
+                        // Leave the capture in place. The DTA caseworker
+                        // will tell us if it isn't readable on their
+                        // end; until then, the user has done their part.
+                        pendingRetry = nil
+                    },
+                    onUseDifferentDocument: {
+                        viewModel.clearCapture(for: retry.documentType)
+                        pendingRetry = nil
+                    }
+                )
             }
-            .accessibilityLabel(SNAPDocumentsChecklistStrings.dismissHint.value(in: language))
         }
-        .padding(CivicaSpacing.md)
-        .background(CivicaColors.warningAmber.opacity(0.12))
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
     }
 
     private func checklistRow(for document: SNAPDocumentType) -> some View {
@@ -253,15 +276,6 @@ enum SNAPDocumentsChecklistStrings {
         "Photo saved · Tap to retake",
         es: "Foto guardada · Toca para volver a tomarla"
     )
-    static let qualityHintLow = CivicaText(
-        "We saved your photo, but it looked blurry or hard to read. Tap a row's \"Tap to retake\" link to try again.",
-        es: "Guardamos tu foto, pero se ve borrosa o difícil de leer. Toca \"Toca para volver a tomarla\" en la fila para intentarlo de nuevo."
-    )
-    static let dismissHint = CivicaText(
-        "Dismiss hint",
-        es: "Cerrar aviso"
-    )
-
     static func label(for document: SNAPDocumentType, language: CivicaLanguage) -> String {
         switch (document, language) {
         case (.photoID, .english):                       return "Photo ID"
