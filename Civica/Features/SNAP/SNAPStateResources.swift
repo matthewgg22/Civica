@@ -1,32 +1,92 @@
 import Foundation
 
-// EXPERIMENTAL SILOED MODULE:
-// Static state resource references for prototype guidance only.
-// Keep this as local constants data (no scraping, no runtime fetches).
+// SNAP state-resource lookup. Three distinct data layers:
 //
-// Timeline values below are adapted from:
-// /Users/matthewgreer-gentis/Downloads/SNAP_Application_Timeline_50_States_App_Memo.xlsx
-// (State Timelines + Process Timeline sheets).
+//   1. State agency name (50 states + DC) — local dict at the bottom
+//      of this file, sourced from snap_state_agencies.xlsx. Static
+//      reference, no network.
+//
+//   2. State timeline + on-time band (50 states) — local dict at the
+//      bottom of this file, sourced from
+//      SNAP_Application_Timeline_50_States_App_Memo.xlsx.
+//
+//   3. State application URL + helpline (currently 7 states) —
+//      loaded from Fixtures/usda_snap_state_directory.json via
+//      SNAPStateDirectoryLoader. The JSON is the source of truth;
+//      adding states is a data-drop, not a code change. Snapshot
+//      provenance lives in the JSON envelope (source + snapshot_date)
+//      so the UI can surface "Last verified MMM YYYY" when needed.
+//
+// Legal review gate: layer 3 is grounded in the USDA SNAP State
+// Directory of Resources (a public federal source). Layer 1's
+// agency-name list still carries its own verification TODO below.
 enum SNAPStateResources {
-    static let massachusetts = SNAPStateResource(
-        stateCode: "MA",
-        displayName: "Massachusetts",
-        agencyName: "Department of Transitional Assistance",
-        officialApplicationLabel: "DTA Connect",
-        // TODO(legal/source-verification): Confirm final public application URL with approved policy/compliance source.
-        officialApplicationURL: "https://dtaconnect.eohhs.mass.gov/",
-        // TODO(legal/source-verification): Replace with confirmed public helpline label/number from approved source.
-        phoneHelpLabel: "DTA Assistance Line (placeholder)",
-        notes: "Massachusetts residents generally apply through DTA Connect or official DTA channels."
-    )
 
+    /// Convenience accessor for MA-only callers. Kept for backward
+    /// compatibility; new call sites should go through `resource(for:)`.
+    static var massachusetts: SNAPStateResource? { resource(for: "MA") }
+
+    /// Returns the application-resource bundle for a state, drawing
+    /// agency name, official URL, and hotline from the bundled USDA
+    /// SNAP State Directory snapshot. Returns nil when the state is
+    /// not present in the directory snapshot — today that's any
+    /// state outside the seven the snapshot covers (MA, CA, NY, TX,
+    /// FL, PA, IL). Adding more states is a data-drop, not a code
+    /// change: extend the JSON in Fixtures/usda_snap_state_directory.json.
     static func resource(for stateCode: String?) -> SNAPStateResource? {
         let normalized = normalizedStateCode(stateCode)
-        switch normalized {
-        case "MA":
-            return massachusetts
-        default:
+        guard let entry = SNAPStateDirectoryLoader.entry(forStateCode: normalized) else {
             return nil
+        }
+        return SNAPStateResource(
+            stateCode: normalized,
+            displayName: displayName(for: normalized),
+            agencyName: entry.agencyName,
+            officialApplicationLabel: applicationLabel(for: normalized),
+            officialApplicationURL: entry.website,
+            phoneHelpLabel: phoneLabel(for: normalized, formattedHotline: entry.displayHotline),
+            notes: applicationNotes(for: normalized)
+        )
+    }
+
+    /// State display name. Pulled from the existing 50-state timeline
+    /// table so spellings stay consistent across surfaces. Falls back
+    /// to the bare state code if a code outside the timeline table
+    /// somehow reaches this path.
+    private static func displayName(for normalizedCode: String) -> String {
+        stateTimelineByCode[normalizedCode]?.displayName ?? normalizedCode
+    }
+
+    /// Editorial label for the apply-online CTA. MA uses the
+    /// MA-specific portal name ("DTA Connect"); other states get a
+    /// generic label because we don't have brand-equivalent portals
+    /// vetted yet.
+    private static func applicationLabel(for normalizedCode: String) -> String {
+        switch normalizedCode {
+        case "MA": return "DTA Connect"
+        default: return "Apply online"
+        }
+    }
+
+    /// Phone-help label includes the formatted hotline number. MA gets
+    /// the well-known "DTA Assistance Line" naming; other states use a
+    /// generic prefix.
+    private static func phoneLabel(for normalizedCode: String, formattedHotline: String) -> String {
+        switch normalizedCode {
+        case "MA": return "DTA Assistance Line · \(formattedHotline)"
+        default:   return "State SNAP helpline · \(formattedHotline)"
+        }
+    }
+
+    /// One-line editorial note about how to apply. MA has a tested
+    /// copy; other states use a generic note pointing at the agency
+    /// and helpline below.
+    private static func applicationNotes(for normalizedCode: String) -> String {
+        switch normalizedCode {
+        case "MA":
+            return "Massachusetts residents generally apply through DTA Connect or official DTA channels."
+        default:
+            return "Apply online through the state portal above or call the SNAP helpline. The agency below administers SNAP for your state."
         }
     }
 
