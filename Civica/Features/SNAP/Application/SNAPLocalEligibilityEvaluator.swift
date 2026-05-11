@@ -81,11 +81,18 @@ enum SNAPLocalEligibilityEvaluator {
         // backend confirms benefit amount.
         if hasElderlyOrDisabled {
             contributingFactors.append("elderly_or_disabled_in_household")
+            let calculation = SNAPBenefitCalculator.calculate(
+                draft: draft, rules: rules, today: today
+            )
+            if calculation.excessShelterDeduction > 0 {
+                contributingFactors.append("excess_shelter_deduction_applied")
+            }
             return result(
                 status: .eligible,
                 expeditedEligible: expedited,
                 contributingFactors: contributingFactors,
                 ineligibilityReason: nil,
+                benefitCalculation: calculation,
                 rules: rules,
                 today: today
             )
@@ -94,11 +101,18 @@ enum SNAPLocalEligibilityEvaluator {
         let threshold = rules.grossIncomeLimit(householdSize: householdSize, asOf: today)
         if gross <= threshold {
             contributingFactors.append(grossUnderFactor(for: rules))
+            let calculation = SNAPBenefitCalculator.calculate(
+                draft: draft, rules: rules, today: today
+            )
+            if calculation.excessShelterDeduction > 0 {
+                contributingFactors.append("excess_shelter_deduction_applied")
+            }
             return result(
                 status: .eligible,
                 expeditedEligible: expedited,
                 contributingFactors: contributingFactors,
                 ineligibilityReason: nil,
+                benefitCalculation: calculation,
                 rules: rules,
                 today: today
             )
@@ -122,22 +136,39 @@ enum SNAPLocalEligibilityEvaluator {
 
     // MARK: - Expedited service detection (7 CFR 273.2(i))
 
-    /// Three federal gates parametrized by the active rules
-    /// engine's `expeditedCriteria(asOf:)`. The app does not
-    /// collect liquid resources today, so the gate-1 floor
-    /// conservatively assumes resources = $0 — under-detecting
-    /// expedited eligibility silently costs a family weeks of
-    /// benefits, over-detecting just prompts DTA verification.
+    /// Two-layer expedited screen:
+    ///   1. Federal floor — 7 CFR 273.2(i) hard rules from the
+    ///      ExpeditedTriage module. Reflects the full reg
+    ///      (resources < $100, migrant/seasonal destitute, housing
+    ///      exceeds gross + resources) instead of the prior partial
+    ///      gross-only approximation.
+    ///   2. State extension — a SNAPStateRuleEngine conformer may
+    ///      report additional, more-permissive criteria via
+    ///      `expeditedCriteria(asOf:)`. Federal law lets states
+    ///      expand expedited coverage but not narrow it.
+    ///
+    /// The bool here intentionally excludes Stage 2 soft classifier
+    /// confidence — `SNAPEligibilityResult.expeditedEligible` is a
+    /// regulatory wire-shape field that should reflect deterministic
+    /// rule fires only. The richer ExpeditedTriageResult (with
+    /// confidence + state) is exposed separately via the orchestrator
+    /// for UI consumers.
     private static func evaluateExpedited(
         draft: SNAPApplicationDraft,
         rules: SNAPStateRuleEngine,
         today: Date
     ) -> Bool {
+        // Layer 1: federal hard rules.
+        if !expeditedHardRulesFired(in: draft).isEmpty { return true }
+
+        // Layer 2: state-specific extension. A federal-default
+        // conformer's criteria will overlap fully with layer 1 and
+        // contribute nothing additional; MA or other states can
+        // broaden coverage here without changing the federal floor.
         let gross = draft.income.grossMonthlyIncome ?? 0
         let rent = draft.expenses.monthlyRentOrHousing ?? 0
         let utilities = draft.expenses.monthlyUtilities ?? 0
         let criteria = rules.expeditedCriteria(asOf: today)
-
         if gross < criteria.grossIncomeUnder { return true }
         if criteria.rentPlusUtilitiesGate && (rent + utilities) > gross { return true }
         return false
@@ -180,6 +211,7 @@ enum SNAPLocalEligibilityEvaluator {
         expeditedEligible: Bool,
         contributingFactors: [String],
         ineligibilityReason: String?,
+        benefitCalculation: SNAPBenefitCalculationDetail? = nil,
         rules: SNAPStateRuleEngine,
         today: Date
     ) -> SNAPEligibilityResult {
@@ -188,11 +220,11 @@ enum SNAPLocalEligibilityEvaluator {
         formatter.locale = Locale(identifier: "en_US_POSIX")
         return SNAPEligibilityResult(
             status: status,
-            monthlyBenefit: nil,
+            monthlyBenefit: benefitCalculation?.monthlyBenefit,
             expeditedEligible: expeditedEligible,
             contributingFactors: contributingFactors,
             requiredVerifications: defaultRequiredVerifications,
-            benefitCalculation: nil,
+            benefitCalculation: benefitCalculation,
             ineligibilityReason: ineligibilityReason,
             effectiveDate: formatter.string(from: today),
             rulesVersion: rules.rulesVersion(asOf: today)

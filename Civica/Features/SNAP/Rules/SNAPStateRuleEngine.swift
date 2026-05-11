@@ -58,11 +58,54 @@ protocol SNAPStateRuleEngine {
     /// active state/area waiver.
     func abawdStatus(for draft: SNAPApplicationDraft, asOf: Date) -> ABAWDStatus
 
+    // MARK: - Deduction-stack data (drives SNAPBenefitCalculator)
+
+    /// Earned-income deduction rate (7 CFR 273.9(d)(2)). Statutory
+    /// 20%; does not vary by state or year, but threaded through
+    /// asOf: in case it ever does.
+    func earnedIncomeDeductionRate(asOf: Date) -> Decimal
+
+    /// Maximum monthly SNAP allotment for this household size
+    /// per the FNS COLA memo active on `asOf`. Size 1-8 returned
+    /// from the table directly; 9+ extrapolates with the
+    /// per-additional-person increment.
+    func maxAllotment(householdSize: Int, asOf: Date) -> Decimal
+
+    /// Federal minimum monthly benefit for 1- and 2-person
+    /// eligible households (8% of the 1-person max allotment,
+    /// rounded). Households of 3+ can be approved with $0.
+    func minimumBenefit(asOf: Date) -> Decimal
+
+    /// Asset/resource limit for the household. Federal default
+    /// distinguishes elderly/disabled. States with BBCE waive
+    /// the asset test entirely; the BBCE branch is handled at
+    /// the evaluator level, this method always returns the
+    /// federal floor.
+    func assetLimit(isElderlyOrDisabled: Bool, asOf: Date) -> Decimal
+
+    /// State-published Standard Utility Allowance for the given
+    /// tier on `asOf`. Returns nil for states without an FNS-
+    /// approved SUA chart (most use federal default = actuals).
+    /// Returns nil for tier == .none regardless of state.
+    func suaValue(tier: SUATier, asOf: Date) -> Decimal?
+
     /// Stable version stamp for the policy snapshot active on
     /// `asOf` — e.g. "MA-bbce-200pct-FY26", "federal-default-FY26".
     /// Stamped into SNAPEligibilityResult.rulesVersion for the
     /// audit footer.
     func rulesVersion(asOf: Date) -> String
+}
+
+// MARK: - Standard Utility Allowance tier
+
+/// Which row of the state SUA table the household qualifies for.
+/// `.none` means itemize actual utilities (no SUA substitution).
+/// Tiers mirror the Python backend's interfaces.py SUATier enum.
+enum SUATier: String, Equatable, Codable {
+    case none
+    case heatingCooling = "heating_cooling"
+    case nonHeating = "non_heating"
+    case phoneOnly = "phone_only"
 }
 
 // MARK: - Student exemption

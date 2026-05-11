@@ -179,18 +179,11 @@ struct SNAPWaitingRoomView: View {
 
     @ViewBuilder
     private var expeditedNoticeIfApplicable: some View {
-        if isExpeditedCandidate {
-            HStack(alignment: .top, spacing: CivicaSpacing.sm) {
-                Image(systemName: "bolt.fill")
-                    .foregroundStyle(CivicaColors.brickPrimary)
-                Text(SNAPStatusHomeStrings.waitingExpedited.value(in: language))
-                    .font(CivicaTypography.footnote)
-                    .foregroundStyle(CivicaColors.ink)
-            }
-            .padding(CivicaSpacing.md)
-            .background(CivicaColors.brickSurface)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
-        }
+        SNAPExpeditedBanner(
+            result: triageResult,
+            draft: persistedDraft,
+            language: language
+        )
     }
 
     // MARK: - Status-driven copy
@@ -224,13 +217,13 @@ struct SNAPWaitingRoomView: View {
         }
     }
 
-    // Mission 7 + 8: read expeditedEligible from the eligibility
-    // result the orchestrator recorded via statusStore at screener-
-    // completion time. When true, the waitingExpedited card appears
-    // under the timeline. False if the user never completed the
-    // screener or if their answers didn't trip the expedited gates.
-    private var isExpeditedCandidate: Bool {
-        statusStore.eligibilityResult?.expeditedEligible == true
+    // The waiting room is reached after the screener and orchestrator
+    // are gone — there's no live @Published triageResult to subscribe
+    // to. We evaluate from the loaded persistedDraft @State each
+    // render. The heuristic is sync-fast; this is cheap.
+    private var triageResult: ExpeditedTriageResult? {
+        guard let draft = persistedDraft else { return nil }
+        return evaluateTriageSynchronously(draft: draft)
     }
 
     // MARK: - FindHelp links
