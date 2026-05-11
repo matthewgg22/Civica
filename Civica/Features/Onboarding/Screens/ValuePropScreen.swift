@@ -66,10 +66,15 @@ struct OnboardingStepHeader: View {
 
             Spacer()
 
-            Text(OnboardingStrings.stepIndicatorString(currentStep: currentStep, language: language))
+            // Reuse CivicaQuestionStrings.progressLabel so the onboarding
+            // chip ("2 of 5") reads the same way as the SNAP question
+            // progress chips ("2 of 4") — same copy form, just rendered
+            // smaller here. The accessibility label keeps the "Step"
+            // prefix so VoiceOver users get the longer, contextual form.
+            Text(CivicaQuestionStrings.progressLabel(current: currentStep, total: 5, language: language))
                 .font(CivicaTypography.caption)
                 .foregroundStyle(CivicaColors.graphite)
-                .accessibilityLabel("Step \(currentStep) of 5")
+                .accessibilityLabel(OnboardingStrings.stepIndicatorString(currentStep: currentStep, language: language))
         }
     }
 }
