@@ -41,6 +41,10 @@ struct SNAPDecisionMathView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 verdictHeader
 
+                if result.expeditedEligible {
+                    expeditedCallout
+                }
+
                 if let calc = result.benefitCalculation {
                     mathSection(calc)
                 }
@@ -56,6 +60,35 @@ struct SNAPDecisionMathView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle(SNAPDecisionMathStrings.pageTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    /// Federal SNAP expedited-service callout. Surfaces when the
+    /// evaluator flags the household as a likely expedited candidate
+    /// (gross < $150 OR rent+utilities > gross). 7-day decision window
+    /// instead of 30.
+    private var expeditedCallout: some View {
+        HStack(alignment: .top, spacing: CivicaSpacing.md) {
+            Image(systemName: "bolt.fill")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(CivicaColors.brickPrimary)
+                .frame(width: 24, alignment: .leading)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Text(SNAPDecisionMathStrings.expeditedEyebrow.value(in: language))
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                Text(SNAPDecisionMathStrings.expeditedBody.value(in: language))
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.brickSurface)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(SNAPDecisionMathStrings.expeditedEyebrow.value(in: language)). \(SNAPDecisionMathStrings.expeditedBody.value(in: language))")
     }
 
     // MARK: - Sections

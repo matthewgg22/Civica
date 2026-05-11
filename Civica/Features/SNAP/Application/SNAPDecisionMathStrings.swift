@@ -112,4 +112,20 @@ enum SNAPDecisionMathStrings {
         "Back to summary",
         es: "Volver al resumen"
     )
+
+    // MARK: - Expedited service callout
+    //
+    // Federal SNAP guarantees a 7-day decision when the household
+    // qualifies for expedited service (7 CFR 273.2(i)). Surfacing
+    // it inline on the verdict screen is essential — many households
+    // qualify and don't know to ask.
+
+    static let expeditedEyebrow = CivicaText(
+        "You may qualify for expedited service",
+        es: "Es posible que califiques para servicio expedito"
+    )
+    static let expeditedBody = CivicaText(
+        "Massachusetts DTA must decide expedited applications within 7 days, not 30. When you submit, mention you may qualify for expedited service.",
+        es: "El DTA de Massachusetts debe decidir las solicitudes expeditas dentro de 7 días, no 30. Cuando envíes tu solicitud, menciona que podrías calificar para servicio expedito."
+    )
 }

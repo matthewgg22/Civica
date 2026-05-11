@@ -49,8 +49,12 @@ enum SNAPLocalEligibilityEvaluator {
         let householdSize = parseHouseholdSize(draft.household.householdSize)
         let gross = draft.income.grossMonthlyIncome ?? 0
         let hasElderlyOrDisabled = draft.household.hasElderlyOrDisabled == true
+        let expedited = evaluateExpedited(draft: draft)
 
         var contributingFactors: [String] = ["ma_bbce_200pct_applied"]
+        if expedited {
+            contributingFactors.append("expedited_candidate")
+        }
 
         // Student gate first — categorical disqualifier when no
         // exception. Yes / no on enrolled-in-higher-ed gates this
@@ -66,6 +70,7 @@ enum SNAPLocalEligibilityEvaluator {
                     contributingFactors.append("student_no_exception")
                     return result(
                         status: .ineligible,
+                        expeditedEligible: expedited,
                         contributingFactors: contributingFactors,
                         ineligibilityReason: ineligibilityReasonStudent,
                         today: today
@@ -86,6 +91,7 @@ enum SNAPLocalEligibilityEvaluator {
             contributingFactors.append("elderly_or_disabled_in_household")
             return result(
                 status: .eligible,
+                expeditedEligible: expedited,
                 contributingFactors: contributingFactors,
                 ineligibilityReason: nil,
                 today: today
@@ -97,6 +103,7 @@ enum SNAPLocalEligibilityEvaluator {
             contributingFactors.append("gross_under_200_fpl")
             return result(
                 status: .eligible,
+                expeditedEligible: expedited,
                 contributingFactors: contributingFactors,
                 ineligibilityReason: nil,
                 today: today
@@ -105,6 +112,7 @@ enum SNAPLocalEligibilityEvaluator {
             contributingFactors.append("gross_over_200_fpl")
             return result(
                 status: .ineligible,
+                expeditedEligible: expedited,
                 contributingFactors: contributingFactors,
                 ineligibilityReason: ineligibilityReasonIncome(
                     gross: gross,
@@ -114,6 +122,36 @@ enum SNAPLocalEligibilityEvaluator {
                 today: today
             )
         }
+    }
+
+    // MARK: - Expedited service detection (7 CFR 273.2(i))
+
+    /// Federal SNAP expedited service criteria. Households qualifying
+    /// for expedited service get a 7-day decision instead of the
+    /// standard 30-day window. Three gates:
+    ///
+    ///   1. Monthly gross income < $150 AND liquid resources ≤ $100
+    ///   2. Combined rent + utilities > gross income + liquid resources
+    ///   3. Migrant / seasonal farmworker destitute status (not asked)
+    ///
+    /// We don't collect liquid resources in the question flow. For the
+    /// verdict, we conservatively assume resources = $0 — this favors
+    /// the user (more flagged as expedited candidates) and DTA verifies
+    /// at intake. Under-detecting expedited eligibility would silently
+    /// cost a family weeks of benefits; over-detecting just tells them
+    /// to ask, which DTA can deny without harm.
+    private static func evaluateExpedited(draft: SNAPApplicationDraft) -> Bool {
+        let gross = draft.income.grossMonthlyIncome ?? 0
+        let rent = draft.expenses.monthlyRentOrHousing ?? 0
+        let utilities = draft.expenses.monthlyUtilities ?? 0
+
+        // Gate 1: very low gross income, assumed resources ≤ $100.
+        if gross < 150 { return true }
+
+        // Gate 2: rent + utilities exceed gross + assumed resources.
+        if (rent + utilities) > gross { return true }
+
+        return false
     }
 
     // MARK: - Helpers
@@ -135,6 +173,7 @@ enum SNAPLocalEligibilityEvaluator {
 
     private static func result(
         status: SNAPEligibilityStatus,
+        expeditedEligible: Bool,
         contributingFactors: [String],
         ineligibilityReason: String?,
         today: Date
@@ -145,7 +184,7 @@ enum SNAPLocalEligibilityEvaluator {
         return SNAPEligibilityResult(
             status: status,
             monthlyBenefit: nil,
-            expeditedEligible: false,
+            expeditedEligible: expeditedEligible,
             contributingFactors: contributingFactors,
             requiredVerifications: defaultRequiredVerifications,
             benefitCalculation: nil,

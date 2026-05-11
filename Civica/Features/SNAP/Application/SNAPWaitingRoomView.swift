@@ -159,12 +159,13 @@ struct SNAPWaitingRoomView: View {
         }
     }
 
-    // Phase E.5 hook — when we link confirmed eligibility result into the
-    // status store, we can read expedited_eligible off it here. For v1
-    // the placeholder is false (no signal yet); when wired the timeline
-    // also shows the expedited badge inline on the relevant step.
+    // Mission 7 + 8: read expeditedEligible from the eligibility
+    // result the orchestrator recorded via statusStore at screener-
+    // completion time. When true, the waitingExpedited card appears
+    // under the timeline. False if the user never completed the
+    // screener or if their answers didn't trip the expedited gates.
     private var isExpeditedCandidate: Bool {
-        false
+        statusStore.eligibilityResult?.expeditedEligible == true
     }
 
     // MARK: - FindHelp links
