@@ -14,7 +14,14 @@ import UIKit
 
 struct SNAPAppealLetterView: View {
     let language: CivicaLanguage
+    /// Optional hook for callers that want to react before the appeal
+    /// letter view pops itself off the navigation stack — e.g.
+    /// recording telemetry that the user finished the letter flow.
+    /// Pop behavior itself is owned by the view via @Environment(\.dismiss)
+    /// so an empty-closure caller still gets a working "Done for now."
     let onClose: () -> Void
+
+    @Environment(\.dismiss) private var dismiss
 
     @State private var phase: Phase = .idle
     @State private var isShareSheetPresented = false
@@ -191,7 +198,10 @@ struct SNAPAppealLetterView: View {
             )
             CivicaSecondaryButton(
                 title: SNAPAppealLetterScreenStrings.done.value(in: language),
-                action: onClose
+                action: {
+                    onClose()
+                    dismiss()
+                }
             )
         }
         .padding(.horizontal, CivicaSpacing.xl)

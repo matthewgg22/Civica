@@ -83,7 +83,17 @@ struct CivicaSNAPFlowView: View {
                         SNAPApplicationPacketView(
                             draft: draft,
                             language: language,
-                            onClose: { dismiss() }
+                            onClose: {
+                                // Explicitly unwind each navigationDestination
+                                // before popping the flow itself. A single
+                                // dismiss() from this deep in the stack
+                                // doesn't reliably propagate up two
+                                // navigationDestination layers in iOS 17+,
+                                // so we collapse them in order.
+                                presentingPacket = false
+                                presentingVerdict = false
+                                dismiss()
+                            }
                         )
                     }
                 }
