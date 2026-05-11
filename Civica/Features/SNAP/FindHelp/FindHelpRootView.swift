@@ -26,6 +26,10 @@ struct FindHelpRootView: View {
     /// after they've made the call.
     @State private var preferZipFallback: Bool = false
 
+    /// Current search radius in kilometers. Defaults to ~5 miles per
+    /// HANDOFF board B3; the empty-state CTA bumps to ~25 miles.
+    @State private var currentRadiusKm: Double = 8.0
+
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
 
@@ -116,13 +120,7 @@ struct FindHelpRootView: View {
     @ViewBuilder
     private var authorizedContent: some View {
         if store.isLoading && store.locations.isEmpty {
-            VStack(spacing: CivicaSpacing.md) {
-                ProgressView()
-                Text("find_help.loading")
-                    .font(CivicaTypography.subheadStrong)
-                    .foregroundStyle(CivicaColors.graphite)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            loadingView
         } else if let error = store.error, store.locations.isEmpty {
             errorView(error.errorDescription ?? "Could not load results.")
         } else if store.filteredLocations.isEmpty {
@@ -181,7 +179,22 @@ struct FindHelpRootView: View {
         lastSearchedLocation = location
         store.searchNearby(
             lat: location.coordinate.latitude,
-            lng: location.coordinate.longitude
+            lng: location.coordinate.longitude,
+            radiusKm: currentRadiusKm
+        )
+    }
+
+    /// Empty-state expand: bump the radius from ~5 miles to ~25
+    /// miles and re-search at whatever location is current. Used
+    /// by the HANDOFF board B3 empty-state CTA.
+    private func expandRadiusAndResearch() {
+        currentRadiusKm = 40.0  // ~25 miles
+        guard let userLocation = store.userLocation else { return }
+        lastSearchedLocation = userLocation
+        store.searchNearby(
+            lat: userLocation.coordinate.latitude,
+            lng: userLocation.coordinate.longitude,
+            radiusKm: currentRadiusKm
         )
     }
 
@@ -247,18 +260,122 @@ struct FindHelpRootView: View {
         }
     }
 
-    private var emptyView: some View {
-        VStack(spacing: CivicaSpacing.md) {
-            Image(systemName: "mappin.slash")
-                .font(.system(size: 36))
+    /// HANDOFF board B4 — "Reading the local directory…" with a
+    /// progress bar inside a paper card, not a plain spinner.
+    /// Names the work being done so the wait feels concrete.
+    private var loadingView: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            Text(FindHelpStrings.loadingEyebrow.value(in: language))
+                .font(CivicaTypography.captionStrong)
                 .foregroundStyle(CivicaColors.graphite)
-            Text("find_help.empty_state")
+                .textCase(.uppercase)
+                .kerning(1.2)
+            Text(FindHelpStrings.loadingTitle.value(in: language))
                 .font(CivicaTypography.subheadStrong)
-                .foregroundStyle(CivicaColors.graphite)
-                .multilineTextAlignment(.center)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+            ProgressView()
+                .progressViewStyle(.linear)
+                .tint(CivicaColors.brickPrimary)
+                .padding(.top, CivicaSpacing.sm)
         }
         .padding(CivicaSpacing.lg)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .padding(CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+    }
+
+    /// HANDOFF board B3 — "Nothing within 5 miles" + radius-expand
+    /// CTA + always-visible human path (phone number). Empty state
+    /// always offers a real next step, never a dead end.
+    private var emptyView: some View {
+        VStack(spacing: CivicaSpacing.lg) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                Image(systemName: "mappin.slash")
+                    .font(.system(size: 28))
+                    .foregroundStyle(CivicaColors.graphite)
+                    .accessibilityHidden(true)
+                Text(FindHelpStrings.emptyTitleFormatted(
+                    miles: milesFromRadius(currentRadiusKm),
+                    language: language
+                ))
+                .font(CivicaTypography.cardTitle)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+                Text(FindHelpStrings.emptyBody.value(in: language))
+                    .font(CivicaTypography.body)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+                if currentRadiusKm < 40.0 {
+                    Button(action: expandRadiusAndResearch) {
+                        Text(FindHelpStrings.emptyExpandCTA.value(in: language))
+                            .font(CivicaTypography.subheadStrong)
+                            .foregroundStyle(CivicaColors.onPrimaryText)
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .background(
+                                RoundedRectangle(cornerRadius: CivicaRadius.control)
+                                    .fill(CivicaColors.brickPrimary)
+                            )
+                    }
+                    .padding(.top, CivicaSpacing.sm)
+                }
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+
+            // Always-visible human path — phone number tappable
+            // via tel: scheme. The spec calls this out as
+            // mandatory on every empty state.
+            humanPathRow
+        }
+        .padding(CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+    }
+
+    private var humanPathRow: some View {
+        Button {
+            if let url = URL(string: "tel:8773822363") {
+                UIApplication.shared.open(url)
+            }
+        } label: {
+            HStack(spacing: CivicaSpacing.sm) {
+                Image(systemName: "phone.fill")
+                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .accessibilityHidden(true)
+                Text(FindHelpStrings.emptyHumanLineLabel.value(in: language))
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                Spacer(minLength: CivicaSpacing.sm)
+                Text(FindHelpStrings.emptyHumanLineNumber)
+                    .font(CivicaTypography.subheadStrong.monospacedDigit())
+                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .underline()
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(FindHelpStrings.emptyHumanLineLabel.value(in: language)). \(FindHelpStrings.emptyHumanLineNumber)")
+    }
+
+    /// Convert km to miles for user-facing copy. 8 km → 5 miles,
+    /// 40 km → 25 miles. Rounded to the nearest whole mile.
+    private func milesFromRadius(_ km: Double) -> Int {
+        Int((km * 0.6213712).rounded())
     }
 
     private func errorView(_ message: String) -> some View {

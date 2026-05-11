@@ -73,4 +73,52 @@ enum FindHelpStrings {
         "Report incorrect info",
         es: "Informar de un error"
     )
+
+    // MARK: - Loading state (board B4)
+    //
+    // HANDOFF: "Loading names the work — 'reading the county
+    // directory' not 'loading…'." Concrete framing reduces the
+    // perceived wait.
+
+    static let loadingEyebrow = CivicaText(
+        "About 2 seconds",
+        es: "Unos 2 segundos"
+    )
+    static let loadingTitle = CivicaText(
+        "Reading the local directory and food bank list…",
+        es: "Consultando el directorio local y la lista de bancos de alimentos…"
+    )
+
+    // MARK: - Empty state (board B3)
+    //
+    // HANDOFF: "Empty state always offers a human path — the phone
+    // number, every time." The radius-expand CTA covers rural users
+    // who legitimately don't have results within a tight radius.
+
+    static let emptyTitle = CivicaText(
+        "Nothing within %@ miles.",
+        es: "Nada dentro de %@ millas."
+    )
+    static let emptyBody = CivicaText(
+        "Rural areas often need a wider radius. We can also help you over the phone — that works anywhere.",
+        es: "Las áreas rurales suelen necesitar un radio más amplio. También podemos ayudarte por teléfono — eso funciona en cualquier lugar."
+    )
+    static let emptyExpandCTA = CivicaText(
+        "Search 25 miles",
+        es: "Buscar a 25 millas"
+    )
+    static let emptyHumanLineLabel = CivicaText(
+        "Talk to someone",
+        es: "Habla con alguien"
+    )
+
+    /// MA Department of Transitional Assistance assistance line. Free
+    /// across the state; used by the empty-state human-path line.
+    static let emptyHumanLineNumber = "(877) 382-2363"
+
+    /// "Nothing within 5 miles." / "Nada dentro de 5 millas." Caller
+    /// passes the formatted miles value to interpolate.
+    static func emptyTitleFormatted(miles: Int, language: CivicaLanguage) -> String {
+        emptyTitle.value(in: language).replacingOccurrences(of: "%@", with: "\(miles)")
+    }
 }
