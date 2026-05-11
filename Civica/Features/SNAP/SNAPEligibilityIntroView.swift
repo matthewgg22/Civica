@@ -9,6 +9,7 @@ struct SNAPEligibilityIntroView: View {
     @State private var generatedFromOrchestrator: SNAPApplicationDraft?
     @State private var orchestratorVerdict: SNAPEligibilityResult?
     @State private var presentingVerdict: Bool = false
+    @State private var presentingPacket: Bool = false
     /// Shared status store — injected from CivicaRootView's
     /// NavigationStack via .environmentObject so a single instance
     /// drives both the orchestrator's recordEligibilityResult call
@@ -193,12 +194,24 @@ struct SNAPEligibilityIntroView: View {
                         result: verdict,
                         language: language,
                         onContinue: {
-                            // PDF-generator hand-off lands in a
-                            // follow-up. Today's "Continue" returns
-                            // the user to the entry.
-                            dismiss()
+                            // Mission 9: chain to the packet view
+                            // which renders the user's answers into
+                            // a saveable / shareable PDF.
+                            presentingPacket = true
                         }
                     )
+                    // Inner .navigationDestination — attached to the
+                    // verdict view so the packet push fires from
+                    // there rather than from the intro screen.
+                    .navigationDestination(isPresented: $presentingPacket) {
+                        if let draft = generatedFromOrchestrator {
+                            SNAPApplicationPacketView(
+                                draft: draft,
+                                language: language,
+                                onClose: { dismiss() }
+                            )
+                        }
+                    }
                 }
             }
         }
