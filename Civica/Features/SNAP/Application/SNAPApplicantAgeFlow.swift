@@ -77,7 +77,7 @@ struct SNAPApplicantAgeFlowView: View {
     let onExit: () -> Void
 
     init(
-        viewModel: SNAPApplicantAgeFlowViewModel = SNAPApplicantAgeFlowViewModel(),
+        viewModel: SNAPApplicantAgeFlowViewModel,
         language: CivicaLanguage = .english,
         onComplete: @escaping (SNAPApplicantAgeAnswers) -> Void,
         onExit: @escaping () -> Void
@@ -179,10 +179,11 @@ enum SNAPApplicantAgeStrings {
 
 #if DEBUG
 struct SNAPApplicantAgeFlowView_Previews: PreviewProvider {
-    static var previews: some View {
+    @MainActor static var previews: some View {
         NavigationStack {
             SNAPApplicantAgeFlowView(
-                language: .english,
+                viewModel: SNAPApplicantAgeFlowViewModel(),
+            language: .english,
                 onComplete: { _ in },
                 onExit: {}
             )

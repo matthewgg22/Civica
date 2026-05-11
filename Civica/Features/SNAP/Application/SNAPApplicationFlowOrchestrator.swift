@@ -154,7 +154,7 @@ struct SNAPApplicationFlowOrchestratorView: View {
     let onDismiss: () -> Void
 
     init(
-        viewModel: SNAPApplicationFlowOrchestratorViewModel = SNAPApplicationFlowOrchestratorViewModel(),
+        viewModel: SNAPApplicationFlowOrchestratorViewModel,
         language: CivicaLanguage = .english,
         onGeneratePacket: @escaping (SNAPApplicationDraft) -> Void,
         onDismiss: @escaping () -> Void
@@ -298,10 +298,11 @@ struct SNAPApplicationFlowOrchestratorView: View {
 
 #if DEBUG
 struct SNAPApplicationFlowOrchestratorView_Previews: PreviewProvider {
-    static var previews: some View {
+    @MainActor static var previews: some View {
         NavigationStack {
             SNAPApplicationFlowOrchestratorView(
-                language: .english,
+                viewModel: SNAPApplicationFlowOrchestratorViewModel(),
+            language: .english,
                 onGeneratePacket: { _ in },
                 onDismiss: {}
             )

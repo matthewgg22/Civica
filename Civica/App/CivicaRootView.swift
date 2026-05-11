@@ -16,7 +16,6 @@ struct CivicaRootView: View {
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
 
-    @StateObject private var snapViewModel = SNAPApplicationViewModel()
     @StateObject private var statusStore = SNAPApplicationStatusStore()
 
     /// External link target presented via CivicaSafariSheet. Set from
@@ -128,13 +127,11 @@ struct CivicaRootView: View {
                 }
             )
         } else {
-            // SNAPEntryView owns its own SNAPApplicationViewModel
-            // internally — no parameter needed here. The legacy
-            // viewModel @StateObject on this root view stays around
-            // for now because other surfaces (entry's prefill,
-            // location pipeline) read it via @EnvironmentObject in
-            // the legacy code paths. Migrate that out in a follow-up.
-            SNAPEntryView()
+            // First-time / not-started users land on the Civica
+            // entry tile. Replaces the legacy SNAPEntryView, which
+            // depended on VoteNow-specific PlanViewModel /
+            // MyRepsViewModel address-prefill plumbing.
+            CivicaEntryView()
         }
     }
 }

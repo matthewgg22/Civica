@@ -132,7 +132,7 @@ struct SNAPContactFlowView: View {
     let onExit: () -> Void
 
     init(
-        viewModel: SNAPContactFlowViewModel = SNAPContactFlowViewModel(),
+        viewModel: SNAPContactFlowViewModel,
         language: CivicaLanguage = .english,
         onComplete: @escaping (SNAPContactAnswers) -> Void,
         onExit: @escaping () -> Void
@@ -369,10 +369,11 @@ enum SNAPContactStrings {
 
 #if DEBUG
 struct SNAPContactFlowView_Previews: PreviewProvider {
-    static var previews: some View {
+    @MainActor static var previews: some View {
         NavigationStack {
             SNAPContactFlowView(
-                language: .english,
+                viewModel: SNAPContactFlowViewModel(),
+            language: .english,
                 onComplete: { _ in },
                 onExit: {}
             )

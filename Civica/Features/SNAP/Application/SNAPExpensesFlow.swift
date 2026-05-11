@@ -95,7 +95,7 @@ struct SNAPExpensesFlowView: View {
     let onExit: () -> Void
 
     init(
-        viewModel: SNAPExpensesFlowViewModel = SNAPExpensesFlowViewModel(),
+        viewModel: SNAPExpensesFlowViewModel,
         language: CivicaLanguage = .english,
         onComplete: @escaping (SNAPExpensesAnswers) -> Void,
         onExit: @escaping () -> Void
@@ -254,10 +254,11 @@ enum SNAPExpensesStrings {
 
 #if DEBUG
 struct SNAPExpensesFlowView_Previews: PreviewProvider {
-    static var previews: some View {
+    @MainActor static var previews: some View {
         NavigationStack {
             SNAPExpensesFlowView(
-                language: .english,
+                viewModel: SNAPExpensesFlowViewModel(),
+            language: .english,
                 onComplete: { _ in },
                 onExit: {}
             )

@@ -77,7 +77,7 @@ struct SNAPHouseholdQuestionFlowView: View {
     let onExit: () -> Void
 
     init(
-        viewModel: SNAPHouseholdQuestionFlowViewModel = SNAPHouseholdQuestionFlowViewModel(),
+        viewModel: SNAPHouseholdQuestionFlowViewModel,
         language: CivicaLanguage = .english,
         onComplete: @escaping (SNAPHouseholdAnswers) -> Void,
         onExit: @escaping () -> Void
@@ -241,10 +241,11 @@ enum SNAPHouseholdQuestionStrings {
 
 #if DEBUG
 struct SNAPHouseholdQuestionFlowView_Previews: PreviewProvider {
-    static var previews: some View {
+    @MainActor static var previews: some View {
         NavigationStack {
             SNAPHouseholdQuestionFlowView(
-                language: .english,
+                viewModel: SNAPHouseholdQuestionFlowViewModel(),
+            language: .english,
                 onComplete: { _ in },
                 onExit: {}
             )

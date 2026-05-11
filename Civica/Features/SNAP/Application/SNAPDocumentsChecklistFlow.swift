@@ -40,7 +40,7 @@ struct SNAPDocumentsChecklistFlowView: View {
     let onExit: () -> Void
 
     init(
-        viewModel: SNAPDocumentsChecklistFlowViewModel = SNAPDocumentsChecklistFlowViewModel(),
+        viewModel: SNAPDocumentsChecklistFlowViewModel,
         language: CivicaLanguage = .english,
         onComplete: @escaping (SNAPDocumentsChecklistAnswers) -> Void,
         onExit: @escaping () -> Void
@@ -192,10 +192,11 @@ enum SNAPDocumentsChecklistStrings {
 
 #if DEBUG
 struct SNAPDocumentsChecklistFlowView_Previews: PreviewProvider {
-    static var previews: some View {
+    @MainActor static var previews: some View {
         NavigationStack {
             SNAPDocumentsChecklistFlowView(
-                language: .english,
+                viewModel: SNAPDocumentsChecklistFlowViewModel(),
+            language: .english,
                 onComplete: { _ in },
                 onExit: {}
             )

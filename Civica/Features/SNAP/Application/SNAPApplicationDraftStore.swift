@@ -18,7 +18,11 @@ import Foundation
 //     a user who killed mid-edit returns to .review rather than
 //     to the half-edited sub-flow. Less surprising on resume.
 
-@MainActor
+// Intentionally NOT @MainActor. The store reads/writes JSON to
+// UserDefaults — neither operation requires main-actor isolation.
+// Keeping it non-isolated lets the orchestrator view model's
+// default `init(store: = SNAPApplicationDraftStore())` parameter
+// evaluate cleanly from any context.
 final class SNAPApplicationDraftStore {
     enum PersistedMode: String, Codable {
         case sequential

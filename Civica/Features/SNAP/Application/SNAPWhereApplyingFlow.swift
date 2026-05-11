@@ -70,7 +70,7 @@ struct SNAPWhereApplyingFlowView: View {
     let onExit: () -> Void
 
     init(
-        viewModel: SNAPWhereApplyingFlowViewModel = SNAPWhereApplyingFlowViewModel(),
+        viewModel: SNAPWhereApplyingFlowViewModel,
         language: CivicaLanguage = .english,
         onComplete: @escaping (SNAPWhereApplyingAnswers) -> Void,
         onExit: @escaping () -> Void
@@ -245,10 +245,11 @@ enum SNAPWhereApplyingStrings {
 
 #if DEBUG
 struct SNAPWhereApplyingFlowView_Previews: PreviewProvider {
-    static var previews: some View {
+    @MainActor static var previews: some View {
         NavigationStack {
             SNAPWhereApplyingFlowView(
-                language: .english,
+                viewModel: SNAPWhereApplyingFlowViewModel(),
+            language: .english,
                 onComplete: { _ in },
                 onExit: {}
             )
