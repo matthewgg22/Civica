@@ -63,6 +63,42 @@ struct MAStateRules: SNAPStateRuleEngine {
         federal.abawdStatus(for: draft, asOf: asOf)
     }
 
+    // MARK: - Deduction-stack data
+
+    func earnedIncomeDeductionRate(asOf: Date) -> Decimal {
+        federal.earnedIncomeDeductionRate(asOf: asOf)
+    }
+
+    func maxAllotment(householdSize: Int, asOf: Date) -> Decimal {
+        federal.maxAllotment(householdSize: householdSize, asOf: asOf)
+    }
+
+    func minimumBenefit(asOf: Date) -> Decimal {
+        federal.minimumBenefit(asOf: asOf)
+    }
+
+    /// MA BBCE waives the asset test in practice — backend logic
+    /// treats this as "always passes". The federal asset-limit
+    /// dollar values are still returned here so audit math has
+    /// the federal threshold available for context.
+    func assetLimit(isElderlyOrDisabled: Bool, asOf: Date) -> Decimal {
+        federal.assetLimit(isElderlyOrDisabled: isElderlyOrDisabled, asOf: asOf)
+    }
+
+    /// MA SUA chart (FY26-seeded from backend FY25 values). Tiers:
+    /// heating_cooling = $799, non_heating = $507, phone_only = $63.
+    /// Tier `.none` returns nil so the calculator falls back to
+    /// actual utility costs.
+    func suaValue(tier: SUATier, asOf: Date) -> Decimal? {
+        let snapshot = activeSUASnapshot(asOf: asOf)
+        switch tier {
+        case .none:           return nil
+        case .heatingCooling: return snapshot.value.heatingCooling
+        case .nonHeating:     return snapshot.value.nonHeating
+        case .phoneOnly:      return snapshot.value.phoneOnly
+        }
+    }
+
     // MARK: - Version stamp
 
     func rulesVersion(asOf: Date) -> String {
@@ -102,5 +138,32 @@ private extension MAStateRules {
     func activeBBCESnapshot(asOf: Date) -> PolicySnapshot<[Decimal]> {
         Self.bbce200Snapshots.first(where: { $0.contains(asOf) })
             ?? Self.bbce200Snapshots.last!
+    }
+
+    struct MASUATable {
+        let heatingCooling: Decimal
+        let nonHeating: Decimal
+        let phoneOnly: Decimal
+    }
+
+    /// MA SUA tiers seeded from backend poverty_guidelines.py
+    /// FY25 chart (MA DTA). When MA publishes FY27 values, add a
+    /// new snapshot — don't edit the FY26 row in place.
+    static let suaSnapshots: [PolicySnapshot<MASUATable>] = [
+        .iso(
+            from: "2025-10-01",
+            to: "2026-09-30",
+            versionSuffix: "FY26",
+            value: MASUATable(
+                heatingCooling: 799,
+                nonHeating: 507,
+                phoneOnly: 63
+            )
+        )
+    ]
+
+    func activeSUASnapshot(asOf: Date) -> PolicySnapshot<MASUATable> {
+        Self.suaSnapshots.first(where: { $0.contains(asOf) })
+            ?? Self.suaSnapshots.last!
     }
 }

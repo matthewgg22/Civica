@@ -108,6 +108,53 @@ struct FederalDefaultRules: SNAPStateRuleEngine {
         return .subjectActive
     }
 
+    // MARK: - Deduction-stack data
+
+    /// 20% earned-income deduction (7 CFR 273.9(d)(2)).
+    /// Statutory; does not vary by state or year.
+    func earnedIncomeDeductionRate(asOf _: Date) -> Decimal {
+        Self.earnedIncomeDeductionRate
+    }
+
+    /// Federal FY26 max allotment table seeded from backend
+    /// poverty_guidelines.py (FY25 values stamped as FY26 per the
+    /// existing rules-version convention). Sizes 1-8 are explicit;
+    /// 9+ extrapolates with the per-additional-person increment.
+    func maxAllotment(householdSize: Int, asOf: Date) -> Decimal {
+        let snapshot = activeMaxAllotmentSnapshot(asOf: asOf)
+        let size = max(1, householdSize)
+        if let exact = snapshot.value.bySize[size] {
+            return exact
+        }
+        let largest = snapshot.value.bySize.keys.max() ?? 1
+        if size > largest, let base = snapshot.value.bySize[largest] {
+            return base + snapshot.value.eachAdditional * Decimal(size - largest)
+        }
+        return snapshot.value.bySize[1] ?? 0
+    }
+
+    /// Federal minimum benefit for 1-2 person households (8% of
+    /// 1-person max allotment, rounded). FY25 value = $23.
+    func minimumBenefit(asOf: Date) -> Decimal {
+        activeMinimumBenefitSnapshot(asOf: asOf).value
+    }
+
+    /// Federal asset/resource limits (FY25): $3000 baseline,
+    /// $4500 for households with an elderly or disabled member.
+    func assetLimit(isElderlyOrDisabled: Bool, asOf: Date) -> Decimal {
+        let snapshot = activeAssetLimitSnapshot(asOf: asOf)
+        return isElderlyOrDisabled
+            ? snapshot.value.elderlyOrDisabled
+            : snapshot.value.standardHousehold
+    }
+
+    /// Federal default has no SUA table — every state with an
+    /// SUA publishes its own and overrides this method. Returns
+    /// nil so the calculator falls back to actual utility costs.
+    func suaValue(tier _: SUATier, asOf _: Date) -> Decimal? {
+        nil
+    }
+
     // MARK: - Version stamp
 
     func rulesVersion(asOf _: Date) -> String {
@@ -121,6 +168,7 @@ private extension FederalDefaultRules {
 
     static let grossIncomeRatio: Decimal = Decimal(string: "1.30") ?? 1
     static let netIncomeRatio: Decimal = 1
+    static let earnedIncomeDeductionRate: Decimal = Decimal(string: "0.20") ?? 0.20
 
     /// FY26 monthly FPL base — 1-person $1,255/mo, +$448.33/mo
     /// per additional person. Matches the values already used by
@@ -171,6 +219,77 @@ private extension FederalDefaultRules {
     struct MonthlyFPLBase {
         let firstPerson: Decimal
         let eachAdditionalPerson: Decimal
+    }
+
+    struct MaxAllotmentTable {
+        let bySize: [Int: Decimal]
+        let eachAdditional: Decimal
+    }
+
+    struct AssetLimits {
+        let standardHousehold: Decimal
+        let elderlyOrDisabled: Decimal
+    }
+
+    /// FY26 SNAP max allotments seeded from backend
+    /// poverty_guidelines.py FY25 table (FNS COLA memo).
+    static let maxAllotmentSnapshots: [PolicySnapshot<MaxAllotmentTable>] = [
+        .iso(
+            from: "2025-10-01",
+            to: "2026-09-30",
+            versionSuffix: "FY26",
+            value: MaxAllotmentTable(
+                bySize: [
+                    1: 292,
+                    2: 536,
+                    3: 768,
+                    4: 975,
+                    5: 1_158,
+                    6: 1_390,
+                    7: 1_536,
+                    8: 1_756
+                ],
+                eachAdditional: 220
+            )
+        )
+    ]
+
+    /// FY26 federal minimum benefit (1-2 person eligible households).
+    static let minimumBenefitSnapshots: [PolicySnapshot<Decimal>] = [
+        .iso(
+            from: "2025-10-01",
+            to: "2026-09-30",
+            versionSuffix: "FY26",
+            value: 23
+        )
+    ]
+
+    /// FY26 federal asset/resource limits.
+    static let assetLimitSnapshots: [PolicySnapshot<AssetLimits>] = [
+        .iso(
+            from: "2025-10-01",
+            to: "2026-09-30",
+            versionSuffix: "FY26",
+            value: AssetLimits(
+                standardHousehold: 3_000,
+                elderlyOrDisabled: 4_500
+            )
+        )
+    ]
+
+    func activeMaxAllotmentSnapshot(asOf: Date) -> PolicySnapshot<MaxAllotmentTable> {
+        Self.maxAllotmentSnapshots.first(where: { $0.contains(asOf) })
+            ?? Self.maxAllotmentSnapshots.last!
+    }
+
+    func activeMinimumBenefitSnapshot(asOf: Date) -> PolicySnapshot<Decimal> {
+        Self.minimumBenefitSnapshots.first(where: { $0.contains(asOf) })
+            ?? Self.minimumBenefitSnapshots.last!
+    }
+
+    func activeAssetLimitSnapshot(asOf: Date) -> PolicySnapshot<AssetLimits> {
+        Self.assetLimitSnapshots.first(where: { $0.contains(asOf) })
+            ?? Self.assetLimitSnapshots.last!
     }
 
     func monthlyFPL(householdSize: Int, asOf: Date) -> Decimal {
