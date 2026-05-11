@@ -6,10 +6,18 @@ struct FindHelpLocationDetailSheet: View {
     let sources: [FindHelpSourceAttribution]
     @Environment(\.dismiss) private var dismiss
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+
+    private var language: CivicaLanguage {
+        CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+                    eyebrow
                     headerBlock
                     actionRow
                     if let address = formattedAddress() {
@@ -30,6 +38,7 @@ struct FindHelpLocationDetailSheet: View {
                     Divider().background(CivicaColors.hairline)
                     callAheadDisclaimer
                     sourceAttribution
+                    reportIncorrectLink
                 }
                 .padding(CivicaSpacing.lg)
             }
@@ -42,6 +51,37 @@ struct FindHelpLocationDetailSheet: View {
                 }
             }
         }
+    }
+
+    /// HANDOFF map · C — "Place details" eyebrow above the title.
+    /// Mono uppercase per board 33; sets the user's frame before the
+    /// dense block of place data below.
+    private var eyebrow: some View {
+        Text(FindHelpStrings.detailEyebrow.value(in: language))
+            .font(CivicaTypography.captionStrong)
+            .foregroundStyle(CivicaColors.graphite)
+            .textCase(.uppercase)
+            .kerning(1.2)
+    }
+
+    /// HANDOFF map · C — "Report incorrect info" footer link. Quiet
+    /// graphite text-link, centered. Real wiring (mailto: or a
+    /// feedback endpoint) lands in a follow-up commit; for v1 the
+    /// affordance exists so users have a visible path when hours
+    /// or addresses have drifted from the source-of-truth.
+    private var reportIncorrectLink: some View {
+        Button(action: {
+            // Hand-off lives in a later commit — mailto: composer or
+            // a feedback endpoint inside the FindHelp service.
+        }) {
+            Text(FindHelpStrings.detailReportIncorrect.value(in: language))
+                .font(CivicaTypography.footnoteStrong)
+                .foregroundStyle(CivicaColors.graphite)
+                .underline()
+        }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity, alignment: .center)
+        .padding(.top, CivicaSpacing.md)
     }
 
     private var headerBlock: some View {

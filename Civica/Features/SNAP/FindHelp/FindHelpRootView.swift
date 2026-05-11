@@ -13,11 +13,25 @@ enum FindHelpDisplayMode: String, CaseIterable, Identifiable {
 
 struct FindHelpRootView: View {
     @StateObject private var store: FindHelpStore
-    @StateObject private var locationManager = LocationManager()
+    // Constructed with autoRequestPermission: false so the iOS dialog
+    // only fires after the user taps "Share my location" on the
+    // Civica explainer screen (HANDOFF map · B1).
+    @StateObject private var locationManager = LocationManager(autoRequestPermission: false)
     @State private var zipFallback: String = ""
     @State private var hasTrackedEntry = false
     @State private var lastSearchedLocation: CLLocation?
     @State private var displayMode: FindHelpDisplayMode = .map
+    /// User explicitly chose to use the zip-fallback path instead of
+    /// sharing location. Sticky for the session — we don't re-prompt
+    /// after they've made the call.
+    @State private var preferZipFallback: Bool = false
+
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+
+    private var language: CivicaLanguage {
+        CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
 
     /// Optional filter to apply on mount. Callers like the denial /
     /// waiting / recert surfaces pre-narrow to "food assistance" or
@@ -74,23 +88,28 @@ struct FindHelpRootView: View {
 
     @ViewBuilder
     private var content: some View {
-        switch locationManager.authorizationStatus {
-        case .authorizedWhenInUse, .authorizedAlways:
-            authorizedContent
-        case .denied, .restricted:
+        // Sticky zip-fallback path overrides authorization branches:
+        // once the user chooses "Use a zip code instead" on the
+        // explainer, we don't bounce them through location states.
+        if preferZipFallback {
             zipFallbackForm(messageKey: "find_help.zip_fallback.prompt")
-        case .notDetermined:
-            VStack(spacing: CivicaSpacing.md) {
-                ProgressView()
-                Text("find_help.permission.rationale")
-                    .font(CivicaTypography.subheadStrong)
-                    .foregroundStyle(CivicaColors.graphite)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, CivicaSpacing.lg)
+        } else {
+            switch locationManager.authorizationStatus {
+            case .authorizedWhenInUse, .authorizedAlways:
+                authorizedContent
+            case .denied, .restricted:
+                zipFallbackForm(messageKey: "find_help.zip_fallback.prompt")
+            case .notDetermined:
+                // HANDOFF map · B1 — the Civica explainer runs before
+                // the iOS dialog, not as a wait-spinner after it.
+                FindHelpPermissionExplainerView(
+                    language: language,
+                    onShareLocation: { locationManager.requestPermission() },
+                    onUseZipInstead: { preferZipFallback = true }
+                )
+            @unknown default:
+                zipFallbackForm(messageKey: "find_help.zip_fallback.prompt")
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        @unknown default:
-            zipFallbackForm(messageKey: "find_help.zip_fallback.prompt")
         }
     }
 

@@ -135,11 +135,17 @@ final class FindHelpAnnotationView: MKMarkerAnnotationView {
         }
     }
 
+    // HANDOFF map · A board spec — pins map to the brand palette:
+    // Brick #9C3A24 for SNAP help, Teal #2A6F66 for food assistance,
+    // Graphite #3A342E for "both." No default iOS marker tints.
     private func markerColor(for serviceType: FindHelpServiceType) -> UIColor {
         switch serviceType {
-        case .snapApplicationHelp: return UIColor.systemBlue
-        case .foodAssistance: return UIColor.systemOrange
-        case .both: return UIColor.systemPurple
+        case .snapApplicationHelp:
+            return UIColor(red: 0x9C/255, green: 0x3A/255, blue: 0x24/255, alpha: 1)
+        case .foodAssistance:
+            return UIColor(red: 0x2A/255, green: 0x6F/255, blue: 0x66/255, alpha: 1)
+        case .both:
+            return UIColor(red: 0x3A/255, green: 0x34/255, blue: 0x2E/255, alpha: 1)
         }
     }
 }

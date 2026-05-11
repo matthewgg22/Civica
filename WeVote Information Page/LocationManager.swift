@@ -26,18 +26,36 @@ final class LocationManager: NSObject, ObservableObject {
     private let manager = CLLocationManager()
     private let logger = Logger(subsystem: "Civica", category: "LocationManager")
     private var hasPublishedInitialLocation = false
+    private let autoRequestPermission: Bool
 
-    override init() {
-        // Initialize with whatever the manager’s current status is
+    override convenience init() {
+        self.init(autoRequestPermission: true)
+    }
+
+    /// Pass `autoRequestPermission: false` from views that need to gate
+    /// the iOS dialog behind their own explainer (HANDOFF map · B1 —
+    /// "Pre-permission explainer is a Civica screen, not the iOS
+    /// dialog"). Default is true so legacy call sites preserve the
+    /// auto-prompt behavior.
+    init(autoRequestPermission: Bool) {
+        self.autoRequestPermission = autoRequestPermission
         self.authorizationStatus = manager.authorizationStatus
         super.init()
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
-        // Kick off the permission prompt
-        manager.requestWhenInUseAuthorization()
+        if autoRequestPermission {
+            manager.requestWhenInUseAuthorization()
+        }
         if manager.authorizationStatus == .authorizedAlways || manager.authorizationStatus == .authorizedWhenInUse {
             manager.requestLocation()
         }
+    }
+
+    /// Trigger the iOS authorization dialog explicitly. No-op when the
+    /// status is already determined.
+    func requestPermission() {
+        guard manager.authorizationStatus == .notDetermined else { return }
+        manager.requestWhenInUseAuthorization()
     }
 }
 
@@ -55,8 +73,12 @@ extension LocationManager: CLLocationManagerDelegate {
             // Use one-shot location requests to avoid constant map/state churn.
             manager.requestLocation()
         case .notDetermined:
-            // Still waiting on the user—ask again
-            manager.requestWhenInUseAuthorization()
+            // Re-prompt only when the call site opted into auto-prompt.
+            // Views with their own Civica explainer (FindHelp) gate
+            // the dialog manually via requestPermission().
+            if autoRequestPermission {
+                manager.requestWhenInUseAuthorization()
+            }
         default:
             // .denied, .restricted: you might show an alert in your UI
             break
