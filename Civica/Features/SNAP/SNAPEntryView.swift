@@ -8,10 +8,16 @@ struct SNAPEntryView: View {
     @EnvironmentObject private var repsVM: MyRepsViewModel
     @StateObject private var viewModel = SNAPApplicationViewModel()
     @State private var hasTrackedEntryView = false
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
     private let zipStateResolver = USZipStateResolver()
     let showsCloseButton: Bool
     let initialStateCode: String?
     let initialZipCode: String?
+
+    private var language: CivicaLanguage {
+        CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
 
     init(
         showsCloseButton: Bool = false,
@@ -190,6 +196,10 @@ struct SNAPEntryView: View {
                     }
                     .buttonStyle(.plain)
 
+                    if SNAPFeatureFlag.isConversationEnabled {
+                        recoveryEntryCard
+                    }
+
                     if let submittedAt = viewModel.submittedAt {
                         NavigationLink {
                             SNAPStepContainerView(viewModel: viewModel, onClose: nil)
@@ -304,6 +314,64 @@ struct SNAPEntryView: View {
         .onDisappear {
             viewModel.trackAbandonmentIfNeeded()
         }
+    }
+
+    /// "Continue an earlier application" — magic-link / OTP recovery
+    /// for someone who reinstalled, switched phones, or wiped their
+    /// device. Only shown when the conversation flag is on (the static
+    /// draft flow keeps its work in @AppStorage; nothing to recover).
+    private var recoveryEntryCard: some View {
+        NavigationLink {
+            SNAPRecoveryFlowView(
+                language: language,
+                onRecovered: { _ in
+                    // Phase D wrap-up: when the recovery endpoint
+                    // returns a session, hand it to the conversation
+                    // view model so the user lands back in the
+                    // transcript at the right turn. Today the response
+                    // shape is wired but no caller consumes it — the
+                    // step is a no-op until the conversation flow
+                    // accepts an injected session.
+                },
+                onClose: {}
+            )
+        } label: {
+            HStack(spacing: CivicaSpacing.md) {
+                Image(systemName: "key.fill")
+                    .font(.system(size: 24))
+                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .frame(width: 48, height: 48)
+                    .background(
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                            .fill(CivicaColors.brickPrimary.opacity(0.12))
+                    )
+
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                    Text(SNAPRecoveryStrings.entryLinkTitle.value(in: language))
+                        .font(CivicaTypography.sectionHeader)
+                        .foregroundStyle(CivicaColors.ink)
+                    Text(SNAPRecoveryStrings.entryLinkSubtitle.value(in: language))
+                        .font(CivicaTypography.footnoteStrong)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .lineLimit(2)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(CivicaColors.graphite)
+            }
+            .padding(CivicaSpacing.md)
+            .background(
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                    .fill(CivicaColors.surfacePrimary)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                    .stroke(CivicaColors.hairline, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     private func applyAddressGeofencePrefill() {
