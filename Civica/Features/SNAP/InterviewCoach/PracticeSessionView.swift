@@ -42,6 +42,7 @@ struct PracticeSessionView: View {
 
                         if case .failed(let message) = viewModel.status {
                             errorBanner(message)
+                            retryButton
                         }
 
                         if viewModel.status == .complete {
@@ -202,6 +203,22 @@ struct PracticeSessionView: View {
                 RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                     .fill(CivicaColors.destructive.opacity(0.10))
             )
+    }
+
+    private var retryButton: some View {
+        Button {
+            Task { await viewModel.retry() }
+        } label: {
+            Label("Try again", systemImage: "arrow.clockwise")
+                .font(CivicaTypography.subheadStrong)
+                .foregroundStyle(.white)
+                .padding(.horizontal, CivicaSpacing.lg)
+                .padding(.vertical, CivicaSpacing.sm)
+                .background(Capsule().fill(CivicaColors.brickPrimary))
+        }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
+        .padding(.top, CivicaSpacing.xs)
     }
 }
 

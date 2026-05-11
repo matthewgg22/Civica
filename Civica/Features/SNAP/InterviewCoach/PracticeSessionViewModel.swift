@@ -33,6 +33,13 @@ final class PracticeSessionViewModel: ObservableObject {
         )
     }
 
+    // Tracks what call last hit the network so retry() knows which one to
+    // re-issue when the user taps "Try again" after a .failed status.
+    private enum LastAttempt {
+        case turn
+        case score
+    }
+
     @Published private(set) var transcript: [InterviewTurnDTO] = []
     @Published private(set) var status: SessionStatus = .idle
     @Published private(set) var score: InterviewScoreResponseDTO?
@@ -41,6 +48,7 @@ final class PracticeSessionViewModel: ObservableObject {
     let sessionID: String
     let context: SessionContext
     private let client: InterviewCoachAPIClient
+    private var lastAttempt: LastAttempt = .turn
 
     init(context: SessionContext = .defaultMA,
          client: InterviewCoachAPIClient = InterviewCoachAPIClient()) {
@@ -65,11 +73,20 @@ final class PracticeSessionViewModel: ObservableObject {
         await requestCaseworkerTurn()
     }
 
+    func retry() async {
+        guard case .failed = status else { return }
+        switch lastAttempt {
+        case .turn:  await requestCaseworkerTurn()
+        case .score: await requestScore()
+        }
+    }
+
     func requestScore() async {
         guard score == nil else { return }
         guard !transcript.isEmpty else { return }
 
         let previous = status
+        lastAttempt = .score
         status = .scoring
         let payload = InterviewScoreRequestDTO(
             sessionId: sessionID,
@@ -96,6 +113,7 @@ final class PracticeSessionViewModel: ObservableObject {
     }
 
     private func requestCaseworkerTurn() async {
+        lastAttempt = .turn
         status = .awaitingCaseworker
         let payload = InterviewTurnRequestDTO(
             sessionId: sessionID,
