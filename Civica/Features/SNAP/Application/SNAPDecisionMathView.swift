@@ -32,6 +32,8 @@ struct SNAPDecisionMathView: View {
     /// the returning-user-home "View my result" card.
     let draft: SNAPApplicationDraft?
 
+    @State private var showsRawRulesVersion = false
+
     init(
         result: SNAPEligibilityResult,
         language: CivicaLanguage = .english,
@@ -268,9 +270,7 @@ struct SNAPDecisionMathView: View {
                     .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.graphite)
                 Spacer()
-                Text(result.rulesVersion)
-                    .font(CivicaTypography.footnote.monospacedDigit())
-                    .foregroundStyle(CivicaColors.ink)
+                rulesVersionValue
             }
             HStack {
                 Text(SNAPDecisionMathStrings.effectiveAsOf.value(in: language))
@@ -289,6 +289,120 @@ struct SNAPDecisionMathView: View {
         CivicaPrimaryButton(SNAPDecisionMathStrings.continueToPacket.value(in: language)) {
             onContinue?()
         }
+    }
+
+    // MARK: - Rules-version display
+    //
+    // The rules-version stamp is set by either the local Swift
+    // evaluator (`local-eval-FY26/MA-bbce-200pct`) or the backend
+    // rules engine (`federal-2025-05-10/MA-2025-05-10`). Both formats
+    // are debugger-friendly but not user-friendly. Show a humanized
+    // label by default; let the user tap to reveal the raw stamp so
+    // a support tech can read it back over a phone call.
+
+    private var rulesVersionValue: some View {
+        let humanized = Self.humanizedRulesVersion(result.rulesVersion, language: language)
+        let display = showsRawRulesVersion || humanized == nil ? result.rulesVersion : humanized!
+        return Button {
+            showsRawRulesVersion.toggle()
+        } label: {
+            Text(display)
+                .font(
+                    showsRawRulesVersion || humanized == nil
+                    ? CivicaTypography.footnote.monospacedDigit()
+                    : CivicaTypography.footnote
+                )
+                .foregroundStyle(CivicaColors.ink)
+                .multilineTextAlignment(.trailing)
+        }
+        .buttonStyle(.plain)
+        .disabled(humanized == nil)
+        .accessibilityLabel(display)
+        .accessibilityHint(
+            humanized == nil
+            ? ""
+            : (showsRawRulesVersion
+                ? SNAPDecisionMathStrings.rulesVersionHintHumanize.value(in: language)
+                : SNAPDecisionMathStrings.rulesVersionHintReveal.value(in: language))
+        )
+    }
+
+    /// Parse a known rules-version stamp into a human-readable label.
+    /// Returns nil for unrecognized formats so the caller can fall back
+    /// to displaying the raw stamp.
+    static func humanizedRulesVersion(_ stamp: String, language: CivicaLanguage) -> String? {
+        if let local = humanizedLocalEval(stamp) {
+            return local
+        }
+        if let federal = humanizedFederal(stamp, language: language) {
+            return federal
+        }
+        return nil
+    }
+
+    /// `local-eval-FY26/MA-bbce-200pct` → `FY2026 · Massachusetts (200% BBCE)`
+    private static func humanizedLocalEval(_ stamp: String) -> String? {
+        let prefix = "local-eval-"
+        guard stamp.hasPrefix(prefix) else { return nil }
+        let body = stamp.dropFirst(prefix.count)
+        let halves = body.split(separator: "/", maxSplits: 1, omittingEmptySubsequences: false)
+        guard halves.count == 2 else { return nil }
+        let cycleRaw = String(halves[0])
+        let stateBlock = halves[1].split(separator: "-")
+        guard stateBlock.count >= 3 else { return nil }
+        let stateAbbr = String(stateBlock[0])
+        let logic = String(stateBlock[1]).uppercased()
+        let threshold = String(stateBlock[2])
+
+        let cycle: String
+        if cycleRaw.hasPrefix("FY"), cycleRaw.count == 4 {
+            cycle = "FY20" + cycleRaw.dropFirst(2)
+        } else {
+            cycle = cycleRaw
+        }
+
+        let thresholdHuman: String
+        if threshold.hasSuffix("pct"), let n = Int(threshold.dropLast(3)) {
+            thresholdHuman = "\(n)%"
+        } else {
+            thresholdHuman = threshold
+        }
+
+        return "\(cycle) · \(stateFullName(stateAbbr)) (\(thresholdHuman) \(logic))"
+    }
+
+    /// `federal-2025-05-10/MA-2025-05-10` → `Federal rules · Massachusetts (May 2025)`
+    private static func humanizedFederal(_ stamp: String, language: CivicaLanguage) -> String? {
+        let prefix = "federal-"
+        guard stamp.hasPrefix(prefix) else { return nil }
+        let body = stamp.dropFirst(prefix.count)
+        let halves = body.split(separator: "/", maxSplits: 1, omittingEmptySubsequences: false)
+        guard halves.count == 2 else { return nil }
+        let federalDate = String(halves[0])
+        let stateParts = halves[1].split(separator: "-", maxSplits: 1, omittingEmptySubsequences: false)
+        guard stateParts.count == 2 else { return nil }
+        let stateAbbr = String(stateParts[0])
+        let monthYear = monthYearLabel(from: federalDate, language: language) ?? federalDate
+        let federalLabel = language == .english ? "Federal rules" : "Reglas federales"
+        return "\(federalLabel) · \(stateFullName(stateAbbr)) (\(monthYear))"
+    }
+
+    private static func stateFullName(_ abbr: String) -> String {
+        switch abbr.uppercased() {
+        case "MA": return "Massachusetts"
+        default: return abbr
+        }
+    }
+
+    private static func monthYearLabel(from yyyyMMdd: String, language: CivicaLanguage) -> String? {
+        let inFmt = DateFormatter()
+        inFmt.dateFormat = "yyyy-MM-dd"
+        inFmt.locale = Locale(identifier: "en_US_POSIX")
+        guard let date = inFmt.date(from: yyyyMMdd) else { return nil }
+        let outFmt = DateFormatter()
+        outFmt.locale = Locale(identifier: language == .english ? "en_US" : "es_US")
+        outFmt.dateFormat = "MMMM yyyy"
+        return outFmt.string(from: date)
     }
 
     // MARK: - Rows
