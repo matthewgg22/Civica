@@ -99,12 +99,30 @@ struct SNAPDecisionDeniedView: View {
                     body: SNAPStatusHomeStrings.deniedReviewBody.value(in: language),
                     accent: CivicaColors.ink
                 )
-                nextStepCard(
-                    icon: "fork.knife",
-                    title: SNAPStatusHomeStrings.deniedFoodHelpTitle.value(in: language),
-                    body: SNAPStatusHomeStrings.deniedFoodHelpBody.value(in: language),
-                    accent: CivicaColors.accentTeal
-                )
+                // Food-help is the one tappable next-step: pushes the
+                // FindHelp map pre-filtered to food-assistance results.
+                // Denial is the most common moment the user needs
+                // immediate food, so the affordance graduates from a
+                // passive paragraph to a real route.
+                NavigationLink {
+                    FindHelpRootView(
+                        initialFilter: FindHelpFilterState(
+                            serviceType: .foodAssistance,
+                            languageCode: nil
+                        )
+                    )
+                } label: {
+                    nextStepCard(
+                        icon: "fork.knife",
+                        title: SNAPStatusHomeStrings.deniedFoodHelpTitle.value(in: language),
+                        body: SNAPStatusHomeStrings.deniedFoodHelpBody.value(in: language),
+                        accent: CivicaColors.accentTeal,
+                        showChevron: true
+                    )
+                }
+                .buttonStyle(.plain)
+                .accessibilityHint(SNAPStatusHomeStrings.findHelpFoodLinkSubtitle.value(in: language))
+
                 nextStepCard(
                     icon: "arrow.clockwise",
                     title: SNAPStatusHomeStrings.deniedReapplyTitle.value(in: language),
@@ -119,7 +137,8 @@ struct SNAPDecisionDeniedView: View {
         icon: String,
         title: String,
         body: String,
-        accent: Color
+        accent: Color,
+        showChevron: Bool = false
     ) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: icon)
@@ -136,6 +155,13 @@ struct SNAPDecisionDeniedView: View {
                     .font(CivicaTypography.body)
                     .foregroundStyle(CivicaColors.ink)
                     .fixedSize(horizontal: false, vertical: true)
+            }
+
+            if showChevron {
+                Spacer(minLength: CivicaSpacing.sm)
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(CivicaColors.graphite)
+                    .accessibilityHidden(true)
             }
         }
         .padding(CivicaSpacing.lg)

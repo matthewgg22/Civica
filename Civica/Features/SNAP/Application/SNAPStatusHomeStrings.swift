@@ -259,4 +259,29 @@ enum SNAPStatusHomeStrings {
         "Open DTA Connect",
         es: "Abrir DTA Connect"
     )
+
+    // MARK: - FindHelp integration callouts
+    //
+    // The map module already exists in Civica/Features/SNAP/FindHelp.
+    // These strings drive deep-links from the status surfaces (denial,
+    // waiting room, recert) into the map with a pre-applied filter
+    // — food assistance vs SNAP application help.
+
+    static let findHelpFoodLinkTitle = CivicaText(
+        "See food help on the map",
+        es: "Ver ayuda con comida en el mapa"
+    )
+    static let findHelpFoodLinkSubtitle = CivicaText(
+        "Food banks, pantries, and community fridges near you. No SNAP approval required.",
+        es: "Bancos de alimentos, despensas y refrigeradores comunitarios cerca de ti. No requieren aprobación de SNAP."
+    )
+
+    static let findHelpApplicationLinkTitle = CivicaText(
+        "Get help with your application",
+        es: "Recibe ayuda con tu solicitud"
+    )
+    static let findHelpApplicationLinkSubtitle = CivicaText(
+        "Local SNAP navigators and community organizations who can help in person or on the phone.",
+        es: "Asesores locales de SNAP y organizaciones comunitarias que pueden ayudarte en persona o por teléfono."
+    )
 }

@@ -34,6 +34,7 @@ struct SNAPWaitingRoomView: View {
                 whatsHappeningSection
                 timeline
                 expeditedNoticeIfApplicable
+                findHelpLinks
             }
             .padding(CivicaSpacing.xl)
         }
@@ -164,6 +165,88 @@ struct SNAPWaitingRoomView: View {
     // also shows the expedited badge inline on the relevant step.
     private var isExpeditedCandidate: Bool {
         false
+    }
+
+    // MARK: - FindHelp links
+
+    /// Two map deep-links: food assistance for the immediate-need moment
+    /// (every waiting-room user qualifies, regardless of state status),
+    /// and SNAP application help when the state has asked for action
+    /// (documents requested / interview scheduled). The "get help"
+    /// affordance is gated on action-required states so users with a
+    /// quiet waiting room aren't pushed toward a navigator they don't
+    /// need yet.
+    private var findHelpLinks: some View {
+        VStack(spacing: CivicaSpacing.md) {
+            NavigationLink {
+                FindHelpRootView(
+                    initialFilter: FindHelpFilterState(
+                        serviceType: .foodAssistance,
+                        languageCode: nil
+                    )
+                )
+            } label: {
+                findHelpCard(
+                    icon: "fork.knife",
+                    title: SNAPStatusHomeStrings.findHelpFoodLinkTitle.value(in: language),
+                    body: SNAPStatusHomeStrings.findHelpFoodLinkSubtitle.value(in: language),
+                    accent: CivicaColors.accentTeal
+                )
+            }
+            .buttonStyle(.plain)
+
+            if currentStatusHasAction {
+                NavigationLink {
+                    FindHelpRootView(
+                        initialFilter: FindHelpFilterState(
+                            serviceType: .snapApplicationHelp,
+                            languageCode: nil
+                        )
+                    )
+                } label: {
+                    findHelpCard(
+                        icon: "person.2.fill",
+                        title: SNAPStatusHomeStrings.findHelpApplicationLinkTitle.value(in: language),
+                        body: SNAPStatusHomeStrings.findHelpApplicationLinkSubtitle.value(in: language),
+                        accent: CivicaColors.brickPrimary
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    private func findHelpCard(icon: String, title: String, body: String, accent: Color) -> some View {
+        HStack(alignment: .top, spacing: CivicaSpacing.md) {
+            Image(systemName: icon)
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(accent)
+                .frame(width: 28, alignment: .leading)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Text(title)
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                Text(body)
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: CivicaSpacing.sm)
+            Image(systemName: "chevron.right")
+                .foregroundStyle(CivicaColors.graphite)
+                .accessibilityHidden(true)
+        }
+        .padding(CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title). \(body)")
     }
 }
 

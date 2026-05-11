@@ -33,6 +33,7 @@ struct SNAPRecertificationView: View {
                 header
                 whyMattersSection
                 whatYoullNeedSection
+                findHelpLink
                 actionButtons
             }
             .padding(CivicaSpacing.xl)
@@ -140,6 +141,53 @@ struct SNAPRecertificationView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(label)
+    }
+
+    /// Recertification is the second-most-common moment a user reaches
+    /// for a SNAP navigator (after a denial). Surfacing the map filtered
+    /// to SNAP application help here, between the checklist and the
+    /// primary CTAs, gives users a real path to a human if the
+    /// in-app flow stalls.
+    private var findHelpLink: some View {
+        NavigationLink {
+            FindHelpRootView(
+                initialFilter: FindHelpFilterState(
+                    serviceType: .snapApplicationHelp,
+                    languageCode: nil
+                )
+            )
+        } label: {
+            HStack(alignment: .top, spacing: CivicaSpacing.md) {
+                Image(systemName: "person.2.fill")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .frame(width: 28, alignment: .leading)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                    Text(SNAPStatusHomeStrings.findHelpApplicationLinkTitle.value(in: language))
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundStyle(CivicaColors.ink)
+                    Text(SNAPStatusHomeStrings.findHelpApplicationLinkSubtitle.value(in: language))
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: CivicaSpacing.sm)
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(CivicaColors.graphite)
+                    .accessibilityHidden(true)
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityHint(SNAPStatusHomeStrings.findHelpApplicationLinkSubtitle.value(in: language))
     }
 
     private var actionButtons: some View {

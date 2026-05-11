@@ -12,12 +12,24 @@ enum FindHelpDisplayMode: String, CaseIterable, Identifiable {
 }
 
 struct FindHelpRootView: View {
-    @StateObject private var store = FindHelpStore()
+    @StateObject private var store: FindHelpStore
     @StateObject private var locationManager = LocationManager()
     @State private var zipFallback: String = ""
     @State private var hasTrackedEntry = false
     @State private var lastSearchedLocation: CLLocation?
     @State private var displayMode: FindHelpDisplayMode = .map
+
+    /// Optional filter to apply on mount. Callers like the denial /
+    /// waiting / recert surfaces pre-narrow to "food assistance" or
+    /// "SNAP application help" so the map opens already focused on
+    /// the right kind of resource.
+    init(initialFilter: FindHelpFilterState? = nil) {
+        let store = FindHelpStore()
+        if let initialFilter {
+            store.filter = initialFilter
+        }
+        _store = StateObject(wrappedValue: store)
+    }
 
     var body: some View {
         VStack(spacing: 0) {
