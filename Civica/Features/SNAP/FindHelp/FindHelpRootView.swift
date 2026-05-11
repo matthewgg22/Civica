@@ -141,7 +141,15 @@ struct FindHelpRootView: View {
         if store.isLoading && store.locations.isEmpty {
             loadingView
         } else if let error = store.error, store.locations.isEmpty {
-            errorView(error.errorDescription ?? "Could not load results.")
+            // Transport errors (DNS, no connection, etc.) get the
+            // rich fallback view with retry + zip-code escape +
+            // always-visible human path. Other errors fall through
+            // to the plain message view.
+            if case .network = error {
+                transportErrorView
+            } else {
+                errorView(error.errorDescription ?? "Could not load results.")
+            }
         } else if store.filteredLocations.isEmpty {
             emptyView
         } else {
@@ -409,5 +417,77 @@ struct FindHelpRootView: View {
         }
         .padding(CivicaSpacing.lg)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    /// Rich fallback for transport-layer failures (DNS, no
+    /// connection). Mirrors the empty-state skeleton — title, body,
+    /// primary retry, zip-fallback escape hatch, always-visible
+    /// human-path row — so the user always has a next step.
+    private var transportErrorView: some View {
+        VStack(spacing: CivicaSpacing.lg) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                Image(systemName: "wifi.slash")
+                    .font(.system(size: 28))
+                    .foregroundStyle(CivicaColors.graphite)
+                    .accessibilityHidden(true)
+                Text(FindHelpStrings.transportErrorTitle.value(in: language))
+                    .font(CivicaTypography.cardTitle)
+                    .foregroundStyle(CivicaColors.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(FindHelpStrings.transportErrorBody.value(in: language))
+                    .font(CivicaTypography.body)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Button(action: retryLastSearch) {
+                    Text(FindHelpStrings.transportErrorRetryCTA.value(in: language))
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundStyle(CivicaColors.onPrimaryText)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .background(
+                            RoundedRectangle(cornerRadius: CivicaRadius.control)
+                                .fill(CivicaColors.brickPrimary)
+                        )
+                }
+                .padding(.top, CivicaSpacing.sm)
+
+                Button {
+                    preferZipFallback = true
+                } label: {
+                    Text(FindHelpStrings.permissionZipCTA.value(in: language))
+                        .font(CivicaTypography.footnoteStrong)
+                        .foregroundStyle(CivicaColors.brickPrimary)
+                        .underline()
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.top, CivicaSpacing.xs)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+
+            humanPathRow
+        }
+        .padding(CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+    }
+
+    /// Re-issue the most recent search. Falls back to whatever
+    /// location the store last had if the user moved less than the
+    /// triggerSearchIfNeeded threshold (which would otherwise no-op).
+    private func retryLastSearch() {
+        let location = lastSearchedLocation ?? store.userLocation
+        guard let location else { return }
+        store.searchNearby(
+            lat: location.coordinate.latitude,
+            lng: location.coordinate.longitude,
+            radiusKm: currentRadiusKm
+        )
     }
 }

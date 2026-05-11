@@ -121,4 +121,25 @@ enum FindHelpStrings {
     static func emptyTitleFormatted(miles: Int, language: CivicaLanguage) -> String {
         emptyTitle.value(in: language).replacingOccurrences(of: "%@", with: "\(miles)")
     }
+
+    // MARK: - Transport error state
+    //
+    // Shown when the directory request fails at the transport layer
+    // (DNS failure, no connection, etc.). Same skeleton as the empty
+    // state: title, body, primary retry, zip-fallback escape hatch,
+    // always-visible human path. Never leave the user on a raw
+    // "hostname could not be found" message with no next step.
+
+    static let transportErrorTitle = CivicaText(
+        "We can't reach the directory right now.",
+        es: "Ahora mismo no podemos consultar el directorio."
+    )
+    static let transportErrorBody = CivicaText(
+        "Check your connection and try again, or use a zip code instead. The phone line below works without internet.",
+        es: "Revisa tu conexión e inténtalo de nuevo, o usa un código postal. La línea telefónica funciona sin internet."
+    )
+    static let transportErrorRetryCTA = CivicaText(
+        "Try again",
+        es: "Reintentar"
+    )
 }
