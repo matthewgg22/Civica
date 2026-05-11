@@ -52,6 +52,42 @@ struct MAStateRulesTests {
         )
     }
 
+    // MARK: - MA SUA chart
+
+    @Test func suaHeatingCoolingTier() {
+        #expect(rules.suaValue(tier: .heatingCooling, asOf: fy26Date) == 799)
+    }
+
+    @Test func suaNonHeatingTier() {
+        #expect(rules.suaValue(tier: .nonHeating, asOf: fy26Date) == 507)
+    }
+
+    @Test func suaPhoneOnlyTier() {
+        #expect(rules.suaValue(tier: .phoneOnly, asOf: fy26Date) == 63)
+    }
+
+    @Test func suaNoneTierReturnsNil() {
+        #expect(rules.suaValue(tier: .none, asOf: fy26Date) == nil)
+    }
+
+    // MARK: - Delegated methods match federal
+
+    @Test func maxAllotmentDelegatesToFederal() {
+        let federal = FederalDefaultRules()
+        #expect(
+            rules.maxAllotment(householdSize: 3, asOf: fy26Date)
+                == federal.maxAllotment(householdSize: 3, asOf: fy26Date)
+        )
+    }
+
+    @Test func minimumBenefitDelegatesToFederal() {
+        #expect(rules.minimumBenefit(asOf: fy26Date) == 23)
+    }
+
+    @Test func earnedIncomeDeductionRateIsTwentyPercent() {
+        #expect(rules.earnedIncomeDeductionRate(asOf: fy26Date) == Decimal(string: "0.20"))
+    }
+
     // MARK: - Rules-version stamp
 
     @Test func rulesVersionStampForFY26() {

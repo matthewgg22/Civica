@@ -20,9 +20,12 @@ import Foundation
 //     treated as $0.
 //   * Child support paid is not collected; treated as $0.
 //   * Standard Utility Allowance tier defaults to .heatingCooling
-//     for MA; effective utility cost is max(actual_utilities,
-//     SUA_value) so SUA-eligible households can't lose deduction
-//     by reporting low actuals.
+//     for MA when the household reports nonzero utilities;
+//     effective utility cost is max(actual_utilities, SUA_value)
+//     so SUA-eligible households can't lose deduction by reporting
+//     low actuals. A household that reports $0 utilities gets no
+//     SUA deduction (SUA is a substitution, not an additive
+//     phantom).
 //   * Medical expenses count only when the household has an elderly
 //     or disabled member, and only the portion above $35 (7 CFR
 //     273.9(d)(3)).
@@ -79,13 +82,16 @@ enum SNAPBenefitCalculator {
         if adjustedIncome < 0 { adjustedIncome = 0 }
         let halfAdjusted = adjustedIncome / 2
 
-        // Effective utility cost: max of reported actuals and the
-        // state SUA value (if any) for the elected tier. Households
-        // can't lose deduction by reporting low actuals when SUA
-        // would have been higher.
-        let suaValue = rules.suaValue(tier: inputs.suaTier, asOf: today)
+        // Effective utility cost: SUA is a *substitution* for
+        // itemized utility costs, not an additive phantom. A
+        // household with zero reported utilities does not get an
+        // SUA deduction (they declared they have no utility cost).
+        // When the user reported nonzero utilities, the SUA tier
+        // substitutes the larger of actuals and the state SUA value.
         let effectiveUtility: Decimal
-        if let sua = suaValue {
+        if inputs.actualUtilities <= 0 {
+            effectiveUtility = 0
+        } else if let sua = rules.suaValue(tier: inputs.suaTier, asOf: today) {
             effectiveUtility = max(inputs.actualUtilities, sua)
         } else {
             effectiveUtility = inputs.actualUtilities

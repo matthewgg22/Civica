@@ -194,6 +194,57 @@ struct FederalDefaultRulesTests {
         #expect(rules.studentExemption(for: draft, asOf: fy26Date) == .unknown)
     }
 
+    // MARK: - Earned-income deduction rate
+
+    @Test func earnedIncomeDeductionRateIsTwentyPercent() {
+        #expect(rules.earnedIncomeDeductionRate(asOf: fy26Date) == Decimal(string: "0.20"))
+    }
+
+    // MARK: - Max allotment (FNS COLA table)
+
+    @Test func maxAllotmentTableSizesOneThroughEight() {
+        #expect(rules.maxAllotment(householdSize: 1, asOf: fy26Date) == 292)
+        #expect(rules.maxAllotment(householdSize: 2, asOf: fy26Date) == 536)
+        #expect(rules.maxAllotment(householdSize: 3, asOf: fy26Date) == 768)
+        #expect(rules.maxAllotment(householdSize: 4, asOf: fy26Date) == 975)
+        #expect(rules.maxAllotment(householdSize: 5, asOf: fy26Date) == 1_158)
+        #expect(rules.maxAllotment(householdSize: 6, asOf: fy26Date) == 1_390)
+        #expect(rules.maxAllotment(householdSize: 7, asOf: fy26Date) == 1_536)
+        #expect(rules.maxAllotment(householdSize: 8, asOf: fy26Date) == 1_756)
+    }
+
+    @Test func maxAllotmentExtrapolatesForLargeHouseholds() {
+        // Size 9 = size 8 ($1756) + 1 * $220 = $1976
+        #expect(rules.maxAllotment(householdSize: 9, asOf: fy26Date) == 1_976)
+        // Size 12 = 1756 + 4 * 220 = 2636
+        #expect(rules.maxAllotment(householdSize: 12, asOf: fy26Date) == 2_636)
+    }
+
+    // MARK: - Minimum benefit
+
+    @Test func minimumBenefitForFY26() {
+        #expect(rules.minimumBenefit(asOf: fy26Date) == 23)
+    }
+
+    // MARK: - Asset limits
+
+    @Test func assetLimitStandardHousehold() {
+        #expect(rules.assetLimit(isElderlyOrDisabled: false, asOf: fy26Date) == 3_000)
+    }
+
+    @Test func assetLimitElderlyOrDisabled() {
+        #expect(rules.assetLimit(isElderlyOrDisabled: true, asOf: fy26Date) == 4_500)
+    }
+
+    // MARK: - SUA (federal has no chart)
+
+    @Test func federalSUAReturnsNilForAllTiers() {
+        #expect(rules.suaValue(tier: .heatingCooling, asOf: fy26Date) == nil)
+        #expect(rules.suaValue(tier: .nonHeating, asOf: fy26Date) == nil)
+        #expect(rules.suaValue(tier: .phoneOnly, asOf: fy26Date) == nil)
+        #expect(rules.suaValue(tier: .none, asOf: fy26Date) == nil)
+    }
+
     // MARK: - Rules-version stamp
 
     @Test func rulesVersionStampForFY26() {
