@@ -290,6 +290,93 @@ struct SNAPBenefitCalculatorTests {
         #expect(calc.medicalDeduction == 0)
     }
 
+    // MARK: - Earned-income split
+
+    /// anyoneEarning == .no → earned = $0 → no 20% deduction.
+    ///   earned_deduction = 0
+    ///   standard         (size 2)                  = 204
+    ///   adjusted         = 1500 - 0 - 204          = 1296
+    ///   net              = 1296
+    ///   30% of net       = round(388.8)            = 389
+    ///   benefit          = 536 - 389               = 147
+    @Test func anyoneEarningNoMeansZeroEarnedDeduction() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.stateCode = "MA"
+        draft.household.householdSize = "2 people"
+        draft.income.grossMonthlyIncome = 1_500
+        draft.income.anyoneEarning = .no // explicit no earners
+
+        let calc = SNAPBenefitCalculator.calculate(
+            draft: draft,
+            rules: MAStateRules(),
+            today: fy26Date
+        )
+
+        #expect(calc.earnedIncomeDeduction == 0)
+        #expect(calc.monthlyBenefit == 147)
+    }
+
+    /// Explicit split: gross $1500, but only $800 is earned.
+    ///   earned_deduction = 800 * 0.20             = 160
+    ///   standard         (size 2)                  = 204
+    ///   adjusted         = 1500 - 160 - 204        = 1136
+    ///   net              = 1136
+    ///   30% of net       = round(340.8)            = 341
+    ///   benefit          = 536 - 341               = 195
+    @Test func explicitEarnedAmountUsedWhenSet() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.stateCode = "MA"
+        draft.household.householdSize = "2 people"
+        draft.income.grossMonthlyIncome = 1_500
+        draft.income.monthlyEarnedAmount = 800
+
+        let calc = SNAPBenefitCalculator.calculate(
+            draft: draft,
+            rules: MAStateRules(),
+            today: fy26Date
+        )
+
+        #expect(calc.earnedIncomeDeduction == 160)
+        #expect(calc.monthlyBenefit == 195)
+    }
+
+    /// Explicit earned > gross: clamped to gross.
+    @Test func explicitEarnedAmountAboveGrossIsClampedToGross() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.stateCode = "MA"
+        draft.household.householdSize = "2 people"
+        draft.income.grossMonthlyIncome = 1_500
+        draft.income.monthlyEarnedAmount = 5_000 // > gross
+
+        let calc = SNAPBenefitCalculator.calculate(
+            draft: draft,
+            rules: MAStateRules(),
+            today: fy26Date
+        )
+
+        // Clamped to gross = 1500 → 20% = 300
+        #expect(calc.earnedIncomeDeduction == 300)
+    }
+
+    /// Default fallback (no flags set) treats all gross as earned.
+    /// Equivalent to the original "permissive default" behavior.
+    @Test func unspecifiedEarningDefaultsToFullyEarned() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.stateCode = "MA"
+        draft.household.householdSize = "2 people"
+        draft.income.grossMonthlyIncome = 1_500
+        // No anyoneEarning, no monthlyEarnedAmount.
+
+        let calc = SNAPBenefitCalculator.calculate(
+            draft: draft,
+            rules: MAStateRules(),
+            today: fy26Date
+        )
+
+        // 1500 * 0.20 = 300
+        #expect(calc.earnedIncomeDeduction == 300)
+    }
+
     // MARK: - Dependent care flows through
 
     @Test func dependentCareDeductsFromGross() {
