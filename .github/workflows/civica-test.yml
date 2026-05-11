@@ -1,0 +1,68 @@
+name: Civica build + test
+
+# Runs on every PR against codex/rebuild-feb18 (the Civica trunk)
+# so the rules engine's test target catches regressions before
+# merge. Builds only the Civica scheme (gov-benefits app); VoteNow
+# has its own pipeline.
+
+on:
+  pull_request:
+    branches:
+      - codex/rebuild-feb18
+    paths:
+      - 'Civica/**'
+      - 'Civica Tests/**'
+      - 'Civica.xcodeproj/**'
+      - 'CivicaDesignSystem/**'
+      - '.github/workflows/civica-test.yml'
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        # Pin to the Xcode version local development uses (Xcode 26.4,
+        # required for iOS 26 FoundationModels / @Generable used by the
+        # Voice extraction layer). Bump together with the project's
+        # IPHONEOS_DEPLOYMENT_TARGET / GENERATE_INFOPLIST_FILE etc.
+        run: sudo xcode-select -s /Applications/Xcode_26.4.app
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          xcrun simctl list runtimes available | head -20
+
+      - name: Build Civica scheme
+        run: |
+          xcodebuild \
+            -project Civica.xcodeproj \
+            -scheme Civica \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            -quiet \
+            build
+
+      - name: Run CivicaTests
+        run: |
+          # Booted simulator UDID from the runtime list; falls back
+          # to a destination-name spec if not pinned.
+          xcodebuild \
+            -project Civica.xcodeproj \
+            -scheme Civica \
+            -configuration Debug \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            CODE_SIGNING_ALLOWED=NO \
+            test
+
+      - name: Upload xcresult on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: civica-xcresult-${{ github.sha }}
+          path: ~/Library/Developer/Xcode/DerivedData/Civica-*/Logs/Test/*.xcresult
+          retention-days: 7
