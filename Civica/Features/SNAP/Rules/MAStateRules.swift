@@ -99,6 +99,38 @@ struct MAStateRules: SNAPStateRuleEngine {
         }
     }
 
+    /// MA hasn't yet loaded its FNS-approved ABAWD waiver list.
+    /// Returns nil to signal "data not loaded" rather than "no
+    /// waiver in effect". Civica must load the current MA waiver
+    /// list before any ABAWD-affected verdicts ship to users.
+    func abawdWaiverActive(fipsCode _: String, asOf _: Date) -> Bool? {
+        nil
+    }
+
+    /// MA categorical eligibility: pure-cash path inherited from
+    /// federal, plus BBCE (the DTA SNAP brochure trigger is met
+    /// for every screener session per existing product design).
+    /// Returns the BBCE path when none of the cash flags are set
+    /// but the applicant is in MA -- this is the policy reality
+    /// the existing grossIncomeLimit override already encodes.
+    func categoricalEligibility(
+        for draft: SNAPApplicationDraft,
+        asOf: Date
+    ) -> CategoricalEligibility {
+        let cashOutcome = federal.categoricalEligibility(
+            for: draft, asOf: asOf
+        )
+        switch cashOutcome {
+        case .categoricallyEligible:
+            return cashOutcome
+        case .notCategoricallyEligible, .unknown:
+            // MA BBCE applies to every applicant who completes the
+            // screener; surface that as the categorical path so the
+            // evaluator audit log shows MA-bbce as the rationale.
+            return .categoricallyEligible(via: .bbce(stateCode: "MA"))
+        }
+    }
+
     // MARK: - Version stamp
 
     func rulesVersion(asOf: Date) -> String {

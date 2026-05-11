@@ -58,6 +58,13 @@ protocol SNAPStateRuleEngine {
     /// active state/area waiver.
     func abawdStatus(for draft: SNAPApplicationDraft, asOf: Date) -> ABAWDStatus
 
+    /// Whether a state-wide or area-level ABAWD waiver is in
+    /// effect for the given 5-digit FIPS county code on `asOf`.
+    /// States that haven't loaded their FNS waiver list return
+    /// nil so the caller can distinguish "no waiver" from
+    /// "unknown". Federal default returns nil for everything.
+    func abawdWaiverActive(fipsCode: String, asOf: Date) -> Bool?
+
     // MARK: - Deduction-stack data (drives SNAPBenefitCalculator)
 
     /// Earned-income deduction rate (7 CFR 273.9(d)(2)). Statutory
@@ -88,6 +95,18 @@ protocol SNAPStateRuleEngine {
     /// approved SUA chart (most use federal default = actuals).
     /// Returns nil for tier == .none regardless of state.
     func suaValue(tier: SUATier, asOf: Date) -> Decimal?
+
+    /// Categorical eligibility outcome (7 CFR 273.2(j)). Pure-
+    /// cash recipients (TANF/SSI/General Assistance) are
+    /// categorically eligible and bypass income/asset tests.
+    /// States with Broad-Based Categorical Eligibility (BBCE) may
+    /// extend this further -- those overrides land per-state.
+    /// Federal default treats only the pure-cash path; BBCE is
+    /// handled in the state conformer's grossIncomeLimit override.
+    func categoricalEligibility(
+        for draft: SNAPApplicationDraft,
+        asOf: Date
+    ) -> CategoricalEligibility
 
     /// Stable version stamp for the policy snapshot active on
     /// `asOf` — e.g. "MA-bbce-200pct-FY26", "federal-default-FY26".
@@ -185,6 +204,34 @@ enum ABAWDStatus: Equatable {
 
     /// Insufficient information in the draft to evaluate.
     case unknown
+}
+
+// MARK: - Categorical eligibility
+
+/// Outcome of the categorical eligibility check (7 CFR 273.2(j)).
+/// A `.categoricallyEligible` outcome bypasses the gross/net
+/// income tests and the asset test for the household.
+enum CategoricalEligibility: Equatable {
+    /// Not categorically eligible -- income/asset tests apply.
+    case notCategoricallyEligible
+
+    /// Every household member receives TANF, SSI, or General
+    /// Assistance -- pure-cash categorical path. Income and
+    /// asset tests are bypassed federally.
+    case categoricallyEligible(via: CategoricalPath)
+
+    /// Insufficient information in the draft to evaluate.
+    case unknown
+}
+
+enum CategoricalPath: Equatable {
+    case tanf
+    case ssi
+    case generalAssistance
+    /// State-level Broad-Based Categorical Eligibility (e.g. MA's
+    /// DTA SNAP brochure trigger). Currently handled inside each
+    /// state's grossIncomeLimit override, surfaced here for audit.
+    case bbce(stateCode: String)
 }
 
 // MARK: - Policy snapshot helper

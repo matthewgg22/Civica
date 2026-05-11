@@ -155,6 +155,39 @@ struct FederalDefaultRules: SNAPStateRuleEngine {
         nil
     }
 
+    /// Federal default returns nil for waiver lookups — every
+    /// state that has FNS-approved ABAWD waivers ships its own
+    /// table. Nil means "this engine doesn't know," which the
+    /// caller distinguishes from a confirmed "no waiver in
+    /// effect" (false).
+    func abawdWaiverActive(fipsCode _: String, asOf _: Date) -> Bool? {
+        nil
+    }
+
+    /// Pure-cash categorical eligibility path per 7 CFR 273.2(j):
+    /// if every household member receives TANF, SSI, or General
+    /// Assistance, the household is categorically eligible and
+    /// bypasses income/asset tests. Returns .unknown when the
+    /// draft hasn't been asked the question yet (current state
+    /// of every draft until the question flow ships the screen).
+    func categoricalEligibility(
+        for draft: SNAPApplicationDraft,
+        asOf _: Date
+    ) -> CategoricalEligibility {
+        let tanf = draft.household.receivesTANF
+        let ssi = draft.household.receivesSSI
+        let ga = draft.household.receivesGeneralAssistance
+
+        // All three answers missing = not asked yet.
+        if tanf == nil && ssi == nil && ga == nil {
+            return .unknown
+        }
+        if tanf == true { return .categoricallyEligible(via: .tanf) }
+        if ssi == true { return .categoricallyEligible(via: .ssi) }
+        if ga == true { return .categoricallyEligible(via: .generalAssistance) }
+        return .notCategoricallyEligible
+    }
+
     // MARK: - Version stamp
 
     func rulesVersion(asOf _: Date) -> String {
