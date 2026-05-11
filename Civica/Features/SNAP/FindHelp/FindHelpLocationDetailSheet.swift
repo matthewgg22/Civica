@@ -22,19 +22,34 @@ struct FindHelpLocationDetailSheet: View {
                     chipStrip
                     actionRow
                     if let address = formattedAddress() {
-                        infoBlock(title: "Address", body: address)
+                        infoBlock(
+                            title: FindHelpStrings.detailLabelAddress.value(in: language),
+                            body: address
+                        )
                     }
                     if let phone = location.phone, !phone.isEmpty {
-                        infoBlock(title: "Phone", body: phone)
+                        infoBlock(
+                            title: FindHelpStrings.detailLabelPhone.value(in: language),
+                            body: phone
+                        )
                     }
                     if let hours = formattedHours() {
-                        infoBlock(title: "Hours", body: hours)
+                        infoBlock(
+                            title: FindHelpStrings.detailLabelHours.value(in: language),
+                            body: hours
+                        )
                     }
                     if let langs = formattedLanguages() {
-                        infoBlock(title: "Languages served", body: langs)
+                        infoBlock(
+                            title: FindHelpStrings.detailLabelLanguagesServed.value(in: language),
+                            body: langs
+                        )
                     }
                     if let notes = location.notes, !notes.isEmpty {
-                        infoBlock(title: "Notes", body: notes)
+                        infoBlock(
+                            title: FindHelpStrings.detailLabelNotes.value(in: language),
+                            body: notes
+                        )
                     }
                     Divider().background(CivicaColors.hairline)
                     callAheadDisclaimer
@@ -48,7 +63,7 @@ struct FindHelpLocationDetailSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { dismiss() }
+                    Button(FindHelpStrings.detailDoneButton.value(in: language)) { dismiss() }
                 }
             }
         }
@@ -216,7 +231,7 @@ struct FindHelpLocationDetailSheet: View {
                 .font(CivicaTypography.footnoteStrong)
                 .foregroundStyle(CivicaColors.ink)
             if let lastUpdated = formattedSourceTimestamp() {
-                Text("Last updated: \(lastUpdated)")
+                Text("\(FindHelpStrings.detailLastUpdatedPrefix.value(in: language)) \(lastUpdated)")
                     .font(CivicaTypography.footnoteStrong)
                     .foregroundStyle(CivicaColors.graphite)
             }
@@ -241,6 +256,7 @@ struct FindHelpLocationDetailSheet: View {
     private func formattedSourceTimestamp() -> String? {
         guard let date = location.sourceLastUpdatedAt ?? location.civicaLastSyncedAt else { return nil }
         let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: language == .english ? "en_US" : "es_US")
         formatter.dateStyle = .medium
         return formatter.string(from: date)
     }
@@ -262,7 +278,8 @@ struct FindHelpLocationDetailSheet: View {
         let days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
         let lines = days.compactMap { key -> String? in
             guard let value = hours[key] else { return nil }
-            return "\(key.capitalized): \(value)"
+            let dayLabel = FindHelpStrings.weekdayLabel(for: key, language: language) ?? key.capitalized
+            return "\(dayLabel): \(value)"
         }
         return lines.isEmpty ? nil : lines.joined(separator: "\n")
     }
