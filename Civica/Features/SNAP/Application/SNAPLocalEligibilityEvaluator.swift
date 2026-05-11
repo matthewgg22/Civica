@@ -81,11 +81,18 @@ enum SNAPLocalEligibilityEvaluator {
         // backend confirms benefit amount.
         if hasElderlyOrDisabled {
             contributingFactors.append("elderly_or_disabled_in_household")
+            let calculation = SNAPBenefitCalculator.calculate(
+                draft: draft, rules: rules, today: today
+            )
+            if calculation.excessShelterDeduction > 0 {
+                contributingFactors.append("excess_shelter_deduction_applied")
+            }
             return result(
                 status: .eligible,
                 expeditedEligible: expedited,
                 contributingFactors: contributingFactors,
                 ineligibilityReason: nil,
+                benefitCalculation: calculation,
                 rules: rules,
                 today: today
             )
@@ -94,11 +101,18 @@ enum SNAPLocalEligibilityEvaluator {
         let threshold = rules.grossIncomeLimit(householdSize: householdSize, asOf: today)
         if gross <= threshold {
             contributingFactors.append(grossUnderFactor(for: rules))
+            let calculation = SNAPBenefitCalculator.calculate(
+                draft: draft, rules: rules, today: today
+            )
+            if calculation.excessShelterDeduction > 0 {
+                contributingFactors.append("excess_shelter_deduction_applied")
+            }
             return result(
                 status: .eligible,
                 expeditedEligible: expedited,
                 contributingFactors: contributingFactors,
                 ineligibilityReason: nil,
+                benefitCalculation: calculation,
                 rules: rules,
                 today: today
             )
@@ -180,6 +194,7 @@ enum SNAPLocalEligibilityEvaluator {
         expeditedEligible: Bool,
         contributingFactors: [String],
         ineligibilityReason: String?,
+        benefitCalculation: SNAPBenefitCalculationDetail? = nil,
         rules: SNAPStateRuleEngine,
         today: Date
     ) -> SNAPEligibilityResult {
@@ -188,11 +203,11 @@ enum SNAPLocalEligibilityEvaluator {
         formatter.locale = Locale(identifier: "en_US_POSIX")
         return SNAPEligibilityResult(
             status: status,
-            monthlyBenefit: nil,
+            monthlyBenefit: benefitCalculation?.monthlyBenefit,
             expeditedEligible: expeditedEligible,
             contributingFactors: contributingFactors,
             requiredVerifications: defaultRequiredVerifications,
-            benefitCalculation: nil,
+            benefitCalculation: benefitCalculation,
             ineligibilityReason: ineligibilityReason,
             effectiveDate: formatter.string(from: today),
             rulesVersion: rules.rulesVersion(asOf: today)
