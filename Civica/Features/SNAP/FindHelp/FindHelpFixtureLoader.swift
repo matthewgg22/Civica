@@ -31,8 +31,13 @@ struct FindHelpFixtureLoader {
         maxResults: Int
     ) -> [FindHelpLocation] {
         let all = loadAll()
+        let region = FindHelpRegion.current
         let withDistance: [FindHelpLocation] = all.compactMap { location in
             guard let locLat = location.latitude, let locLng = location.longitude else { return nil }
+            // Region gate: when the demo is scoped to a state, any
+            // fixture rows added outside that bbox are skipped. The
+            // .nationwide case returns true and is a no-op.
+            guard region.contains(lat: locLat, lng: locLng) else { return nil }
             let distance = haversineKm(lat1: lat, lng1: lng, lat2: locLat, lng2: locLng)
             guard distance <= radiusKm else { return nil }
             if let serviceType, !matches(location, serviceType: serviceType) { return nil }
