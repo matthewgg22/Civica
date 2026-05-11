@@ -32,6 +32,13 @@
 			remoteGlobalIDString = C3B862E72D9A42E00092C1CB;
 			remoteInfo = "WeVote Information Page";
 		};
+		CCBB000000000000000000B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C3B862E02D9A42E00092C1CB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CCAA000000000000000000A1;
+			remoteInfo = Civica;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +51,7 @@
 		C3B863022D9A42E20092C1CB /* VoteNowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoteNowUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3D06EF42DE94769009F3459 /* Civica-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Civica-Info.plist"; sourceTree = "<group>"; };
 		CCAA000000000000000000A2 /* Civica.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Civica.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCBB000000000000000000A2 /* CivicaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CivicaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -66,6 +74,7 @@
 				Features/SNAP/Conversation/SNAPNetworkClient.swift,
 				Features/SNAP/Conversation/SNAPRecoveryStrings.swift,
 				Features/SNAP/Conversation/SNAPRecoveryView.swift,
+				Features/SNAP/Documents/SNAPDocumentUploadViewModel.swift,
 				Features/SNAP/SNAPAnalytics.swift,
 				Features/SNAP/SNAPApplicationViewModel.swift,
 				Features/SNAP/SNAPConfirmationView.swift,
@@ -79,9 +88,17 @@
 				Features/SNAP/SNAPStateResources.swift,
 				Info.plist,
 				SETUP.md,
-				Features/SNAP/Documents/SNAPDocumentUploadViewModel.swift,
 			);
 			target = CCAA000000000000000000A1 /* Civica */;
+		};
+		CCBB000000000000000000B2 /* Exceptions for "Civica Tests" folder in "CivicaTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				FindHelpStoreTests.swift,
+				SNAPConversationTests.swift,
+				SNAPPrivacyBoundaryTests.swift,
+			);
+			target = CCBB000000000000000000A1 /* CivicaTests */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -115,6 +132,14 @@
 				CCAA000000000000000000B2 /* Exceptions for "Civica" folder in "Civica" target */,
 			);
 			path = Civica;
+			sourceTree = "<group>";
+		};
+		CCBB000000000000000000A9 /* Civica Tests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CCBB000000000000000000B2 /* Exceptions for "Civica Tests" folder in "CivicaTests" target */,
+			);
+			path = "Civica Tests";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -163,6 +188,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CCBB000000000000000000A4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -192,6 +224,7 @@
 				C3B862FB2D9A42E20092C1CB /* WeVote Information PageTests */,
 				C3B863052D9A42E20092C1CB /* WeVote Information PageUITests */,
 				C36C730F2F415639007CB83D /* Voting UI Island Card */,
+				CCBB000000000000000000A9 /* Civica Tests */,
 				C36C730A2F415639007CB83D /* Frameworks */,
 				C3B862E92D9A42E00092C1CB /* Products */,
 				C3576C962FB18C61004FA6C3 /* Recovered References */,
@@ -206,6 +239,7 @@
 				C3B863022D9A42E20092C1CB /* VoteNowUITests.xctest */,
 				C36C73092F415639007CB83D /* Voting UI Island CardExtension.appex */,
 				CCAA000000000000000000A2 /* Civica.app */,
+				CCBB000000000000000000A2 /* CivicaTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -332,6 +366,29 @@
 			productReference = CCAA000000000000000000A2 /* Civica.app */;
 			productType = "com.apple.product-type.application";
 		};
+		CCBB000000000000000000A1 /* CivicaTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CCBB000000000000000000A6 /* Build configuration list for PBXNativeTarget "CivicaTests" */;
+			buildPhases = (
+				CCBB000000000000000000A3 /* Sources */,
+				CCBB000000000000000000A4 /* Frameworks */,
+				CCBB000000000000000000A5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CCBB000000000000000000B1 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				CCBB000000000000000000A9 /* Civica Tests */,
+			);
+			name = CivicaTests;
+			packageProductDependencies = (
+			);
+			productName = CivicaTests;
+			productReference = CCBB000000000000000000A2 /* CivicaTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -355,6 +412,10 @@
 					C3B863012D9A42E20092C1CB = {
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = C3B862E72D9A42E00092C1CB;
+					};
+					CCBB000000000000000000A1 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = CCAA000000000000000000A1;
 					};
 				};
 			};
@@ -390,6 +451,7 @@
 				C3B863012D9A42E20092C1CB /* VoteNowUITests */,
 				C36C73082F415639007CB83D /* Voting UI Island CardExtension */,
 				CCAA000000000000000000A1 /* Civica */,
+				CCBB000000000000000000A1 /* CivicaTests */,
 			);
 		};
 /* End PBXProject section */
@@ -424,6 +486,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CCAA000000000000000000A5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CCBB000000000000000000A5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -468,6 +537,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CCBB000000000000000000A3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -480,6 +556,11 @@
 			isa = PBXTargetDependency;
 			target = C3B862E72D9A42E00092C1CB /* VoteNow */;
 			targetProxy = C3B863032D9A42E20092C1CB /* PBXContainerItemProxy */;
+		};
+		CCBB000000000000000000B1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CCAA000000000000000000A1 /* Civica */;
+			targetProxy = CCBB000000000000000000B3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -864,6 +945,7 @@
 				CODE_SIGN_ENTITLEMENTS = Civica/Civica.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 687GD7CA6J;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Civica/Info.plist;
@@ -891,6 +973,7 @@
 				CODE_SIGN_ENTITLEMENTS = Civica/Civica.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 687GD7CA6J;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Civica/Info.plist;
@@ -908,6 +991,63 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
+		};
+		CCBB000000000000000000A7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.civica.benefits.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Civica.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Civica";
+			};
+			name = Debug;
+		};
+		CCBB000000000000000000A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.civica.benefits.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Civica.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Civica";
+			};
+			name = Release;
+		};
+		CCBB000000000000000000B0 /* Debug SNAP */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.civica.benefits.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Civica.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Civica";
+			};
+			name = "Debug SNAP";
 		};
 		F1A1B1C131A9000200ABCDEF /* Debug SNAP */ = {
 			isa = XCBuildConfiguration;
@@ -1070,6 +1210,16 @@
 				CCAA000000000000000000A7 /* Debug */,
 				CCAA000000000000000000A8 /* Release */,
 				C3576EEC2FB18C61004FA6C3 /* Debug SNAP */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CCBB000000000000000000A6 /* Build configuration list for PBXNativeTarget "CivicaTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CCBB000000000000000000A7 /* Debug */,
+				CCBB000000000000000000A8 /* Release */,
+				CCBB000000000000000000B0 /* Debug SNAP */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
