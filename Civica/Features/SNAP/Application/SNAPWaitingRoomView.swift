@@ -24,6 +24,19 @@ struct SNAPWaitingRoomView: View {
     let language: CivicaLanguage
     let onAction: () -> Void
 
+    /// Draft loaded from SNAPApplicationDraftStore on appear. Drives the
+    /// WIC teaser gate inside SNAPSubmissionTimelineView (children
+    /// under 5 → teaser shows). Optional because users who completed
+    /// the screener via a path that bypassed the draft store will see
+    /// the timeline without the teaser, which is the correct fallback.
+    @State private var persistedDraft: SNAPApplicationDraft?
+
+    /// External link target (DTA Connect, MA WIC page) presented via
+    /// CivicaSafariSheet. The waiting room owns this rather than
+    /// pushing it to the root so the submission-timeline footer cards
+    /// can route the user directly without bouncing through onAction.
+    @State private var externalLink: URL?
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
@@ -31,7 +44,25 @@ struct SNAPWaitingRoomView: View {
                 if currentStatusHasAction {
                     actionBanner
                 }
-                whatsHappeningSection
+                if showsSubmissionTimeline {
+                    SNAPSubmissionTimelineView(
+                        submittedAt: statusStore.timestamp(for: .submittedToState) ?? Date(),
+                        language: language,
+                        showsWICTeaser: persistedDraft?.household.hasMinorInHousehold == true,
+                        onOpenWICTeaser: {
+                            externalLink = CivicaExternalLinks.maWICInfo
+                        },
+                        onContactSupport: {
+                            // v1: no in-app support inbox yet. Route
+                            // to DTA Connect; v2 wires this to a
+                            // Civica-side SMS thread per the brand
+                            // voice doc's "real person responds" promise.
+                            externalLink = CivicaExternalLinks.dtaConnect
+                        }
+                    )
+                } else {
+                    whatsHappeningSection
+                }
                 timeline
                 expeditedNoticeIfApplicable
                 findHelpLinks
@@ -41,6 +72,21 @@ struct SNAPWaitingRoomView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            persistedDraft = SNAPApplicationDraftStore().load()?.draft
+        }
+        .sheet(item: $externalLink) { url in
+            CivicaSafariSheet(url: url)
+        }
+    }
+
+    /// Render the dedicated "your application is in" timeline only on
+    /// the first beat — status exactly .submittedToState with no state
+    /// action yet. Once DTA asks for documents or schedules an
+    /// interview, the action banner + standard whatsHappeningSection
+    /// take over so the user isn't staring at a stale congratulations.
+    private var showsSubmissionTimeline: Bool {
+        statusStore.status == .submittedToState && !currentStatusHasAction
     }
 
     // MARK: - Sections
