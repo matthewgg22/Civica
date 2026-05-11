@@ -79,6 +79,15 @@ struct FindHelpLocation: Codable, Identifiable, Equatable {
     let recordKind: FindHelpRecordKind?
     /// Only populated on `record_kind = .ebtRetailer` rows.
     let retailerCategory: SNAPRetailerCategory?
+    /// True when the retailer is also a WIC vendor. Nullable so live
+    /// rows that don't yet carry this flag decode unchanged. Surfaced
+    /// as a chip on the detail and peek sheets.
+    let acceptsWic: Bool?
+    /// True for retailers participating in the MA Healthy Incentives
+    /// Program (HIP), which matches SNAP spent on fruits and vegetables
+    /// up to a monthly cap. MA-specific today; the flag remains useful
+    /// for future state expansions that adopt similar programs.
+    let acceptsHip: Bool?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -104,6 +113,8 @@ struct FindHelpLocation: Codable, Identifiable, Equatable {
         case distanceKm = "distance_km"
         case recordKind = "record_kind"
         case retailerCategory = "retailer_category"
+        case acceptsWic = "accepts_wic"
+        case acceptsHip = "accepts_hip"
     }
 
     /// Concrete record kind for routing decisions (pin color, filter

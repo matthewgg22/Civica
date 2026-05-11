@@ -31,6 +31,7 @@ struct FindHelpPeekSheet: View {
                     .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.graphite)
             }
+            chipStrip
             Button(action: onViewDetails) {
                 Text(FindHelpPeekStrings.viewDetails.value(in: language))
                     .font(CivicaTypography.subheadStrong)
@@ -65,23 +66,62 @@ struct FindHelpPeekSheet: View {
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.pill))
     }
 
+    /// Bridges the pin renderer's UIColor palette into SwiftUI so the
+    /// peek pill matches the corresponding map pin exactly. Avoids a
+    /// second source of truth for category colors.
     private var pillColor: Color {
-        switch location.primaryServiceType {
-        case .snapApplicationHelp: return CivicaColors.brickPrimary
-        case .foodAssistance:      return CivicaColors.accentTeal
-        case .both:                return CivicaColors.graphite
-        }
+        Color(uiColor: FindHelpAnnotationView.pinColor(for: location))
     }
 
     private var pillLabel: String {
-        switch (location.primaryServiceType, language) {
-        case (.snapApplicationHelp, .english): return "SNAP HELP"
-        case (.snapApplicationHelp, .spanish): return "AYUDA CON SNAP"
-        case (.foodAssistance,      .english): return "FOOD"
-        case (.foodAssistance,      .spanish): return "COMIDA"
-        case (.both,                .english): return "SNAP + FOOD"
-        case (.both,                .spanish): return "SNAP + COMIDA"
+        switch location.resolvedRecordKind {
+        case .helpDirectory:
+            switch (location.primaryServiceType, language) {
+            case (.snapApplicationHelp, .english): return "SNAP HELP"
+            case (.snapApplicationHelp, .spanish): return "AYUDA CON SNAP"
+            case (.foodAssistance,      .english): return "FOOD"
+            case (.foodAssistance,      .spanish): return "COMIDA"
+            case (.both,                .english): return "SNAP + FOOD"
+            case (.both,                .spanish): return "SNAP + COMIDA"
+            }
+        case .ebtRetailer:
+            switch location.retailerCategory ?? .supermarket {
+            case .supermarket:    return FindHelpStrings.pillSupermarket.value(in: language)
+            case .smallGrocer:    return FindHelpStrings.pillSmallGrocer.value(in: language)
+            case .farmersMarket:  return FindHelpStrings.pillFarmersMarket.value(in: language)
+            case .coOp:           return FindHelpStrings.pillCoOp.value(in: language)
+            case .restaurantRMP:  return FindHelpStrings.pillRestaurantRMP.value(in: language)
+            }
         }
+    }
+
+    /// Eligibility chips for retailer rows only — names exactly what
+    /// payment methods work at this place. EBT is always shown for
+    /// retailers (.ebtRetailer rows are by definition SNAP-accepting);
+    /// WIC and HIP chips show only when the row carries those flags.
+    @ViewBuilder
+    private var chipStrip: some View {
+        if location.resolvedRecordKind == .ebtRetailer {
+            HStack(spacing: CivicaSpacing.xs) {
+                chip(FindHelpStrings.chipEbt.value(in: language), background: CivicaColors.accentTeal)
+                if location.acceptsWic == true {
+                    chip(FindHelpStrings.chipWic.value(in: language), background: CivicaColors.indigoStatus)
+                }
+                if location.acceptsHip == true {
+                    chip(FindHelpStrings.chipHip.value(in: language), background: CivicaColors.warningAmber)
+                }
+            }
+        }
+    }
+
+    private func chip(_ text: String, background: Color) -> some View {
+        Text(text)
+            .font(CivicaTypography.captionStrong)
+            .foregroundStyle(CivicaColors.onPrimaryText)
+            .padding(.horizontal, CivicaSpacing.sm)
+            .padding(.vertical, 3)
+            .background(background)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.pill))
     }
 
     /// "1411 E 31st St · 0.4 mi" / "1411 E 31st St · 0.4 millas".

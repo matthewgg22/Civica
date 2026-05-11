@@ -144,7 +144,9 @@ private extension FindHelpLocation {
             civicaLastSyncedAt: civicaLastSyncedAt,
             distanceKm: km,
             recordKind: recordKind,
-            retailerCategory: retailerCategory
+            retailerCategory: retailerCategory,
+            acceptsWic: acceptsWic,
+            acceptsHip: acceptsHip
         )
     }
 }

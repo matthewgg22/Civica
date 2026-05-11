@@ -19,6 +19,7 @@ struct FindHelpLocationDetailSheet: View {
                 VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                     eyebrow
                     headerBlock
+                    chipStrip
                     actionRow
                     if let address = formattedAddress() {
                         infoBlock(title: "Address", body: address)
@@ -87,8 +88,8 @@ struct FindHelpLocationDetailSheet: View {
     private var headerBlock: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             HStack(spacing: CivicaSpacing.sm) {
-                ServiceTypeBadge(serviceType: location.primaryServiceType)
-                Text(serviceTypeLabel(location.primaryServiceType))
+                categoryBadge
+                Text(serviceTypeLabel(for: location))
                     .font(CivicaTypography.subheadStrong)
                     .foregroundStyle(CivicaColors.ink)
                 Spacer()
@@ -97,6 +98,58 @@ struct FindHelpLocationDetailSheet: View {
                 .font(CivicaTypography.sectionHeader)
                 .foregroundStyle(CivicaColors.ink)
         }
+    }
+
+    /// Retailer-aware category badge. Help-directory rows reuse the
+    /// existing ServiceTypeBadge; retailer rows render a small circle
+    /// with the SF Symbol glyph + category color from the pin renderer
+    /// so the detail sheet's badge matches the map pin the user
+    /// just tapped.
+    @ViewBuilder
+    private var categoryBadge: some View {
+        if location.resolvedRecordKind == .ebtRetailer {
+            Image(systemName: FindHelpAnnotationView.glyphSymbolName(for: location))
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(CivicaColors.onPrimaryText)
+                .frame(width: 28, height: 28)
+                .background(
+                    Circle().fill(
+                        Color(uiColor: FindHelpAnnotationView.pinColor(for: location))
+                    )
+                )
+        } else {
+            ServiceTypeBadge(serviceType: location.primaryServiceType)
+        }
+    }
+
+    /// Eligibility chips for retailer rows only — names the payment
+    /// methods accepted here. EBT is implicit for any .ebtRetailer
+    /// row; WIC and HIP chips show only when the row carries those
+    /// flags from the data source (live RPC or seed fixture).
+    @ViewBuilder
+    private var chipStrip: some View {
+        if location.resolvedRecordKind == .ebtRetailer {
+            HStack(spacing: CivicaSpacing.xs) {
+                chip(FindHelpStrings.chipEbt.value(in: language), background: CivicaColors.accentTeal)
+                if location.acceptsWic == true {
+                    chip(FindHelpStrings.chipWic.value(in: language), background: CivicaColors.indigoStatus)
+                }
+                if location.acceptsHip == true {
+                    chip(FindHelpStrings.chipHip.value(in: language), background: CivicaColors.warningAmber)
+                }
+                Spacer(minLength: 0)
+            }
+        }
+    }
+
+    private func chip(_ text: String, background: Color) -> some View {
+        Text(text)
+            .font(CivicaTypography.captionStrong)
+            .foregroundStyle(CivicaColors.onPrimaryText)
+            .padding(.horizontal, CivicaSpacing.sm)
+            .padding(.vertical, 3)
+            .background(background)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.pill))
     }
 
     private var actionRow: some View {
@@ -223,11 +276,22 @@ struct FindHelpLocationDetailSheet: View {
         Locale.current.localizedString(forLanguageCode: code) ?? code
     }
 
-    private func serviceTypeLabel(_ type: FindHelpServiceType) -> String {
-        switch type {
-        case .snapApplicationHelp: return "SNAP application help"
-        case .foodAssistance: return "Food assistance"
-        case .both: return "Both"
+    private func serviceTypeLabel(for location: FindHelpLocation) -> String {
+        switch location.resolvedRecordKind {
+        case .helpDirectory:
+            switch location.primaryServiceType {
+            case .snapApplicationHelp: return "SNAP application help"
+            case .foodAssistance: return "Food assistance"
+            case .both: return "SNAP help + food"
+            }
+        case .ebtRetailer:
+            switch location.retailerCategory ?? .supermarket {
+            case .supermarket: return "Grocery"
+            case .smallGrocer: return "Local grocer"
+            case .farmersMarket: return "Farmers market"
+            case .coOp: return "Co-op"
+            case .restaurantRMP: return "Restaurant meals (RMP)"
+            }
         }
     }
 
