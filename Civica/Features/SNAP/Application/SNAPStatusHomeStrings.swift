@@ -190,4 +190,73 @@ enum SNAPStatusHomeStrings {
         "Start a new application",
         es: "Iniciar una nueva solicitud"
     )
+
+    // MARK: - Recertification surface
+    //
+    // SNAP recertification: every 12 months for most MA households,
+    // 24 months for elderly/disabled. DTA mails the notice ~45 days
+    // out. Missing the deadline means benefits stop — the surface
+    // has to be urgent without being panic-inducing.
+
+    static let recertTitle = CivicaText(
+        "Time to recertify your SNAP",
+        es: "Es hora de recertificar tu SNAP"
+    )
+    static let recertBody = CivicaText(
+        "Recertification is how Massachusetts checks that you still qualify. It's basically reapplying — most of the questions will look familiar.",
+        es: "La recertificación es cómo Massachusetts verifica que aún calificas. Básicamente es volver a solicitar — la mayoría de las preguntas te resultarán familiares."
+    )
+
+    /// "Due May 28, 2026" / "Vence el 28 de mayo de 2026". Localized
+    /// medium-date formatting via DateFormatter on the caller side;
+    /// this just slots the date into the surrounding phrase.
+    static func recertDueLine(formattedDate: String, language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return "Due by \(formattedDate)"
+        case .spanish: return "Vence el \(formattedDate)"
+        }
+    }
+    static let recertDueSoon = CivicaText(
+        "Due soon",
+        es: "Vence pronto"
+    )
+
+    static let recertWhyMattersHeading = CivicaText(
+        "Why this matters",
+        es: "Por qué importa esto"
+    )
+    static let recertWhyMattersBody = CivicaText(
+        "If you miss the deadline, your benefits stop on the last day of the month. You'd need to apply from scratch to get them back.",
+        es: "Si no cumples con la fecha límite, tus beneficios terminan el último día del mes. Tendrías que solicitar desde cero para recuperarlos."
+    )
+
+    static let recertWhatYoullNeedHeading = CivicaText(
+        "What you'll need",
+        es: "Lo que necesitarás"
+    )
+    static let recertNeedIncome = CivicaText(
+        "Recent paystubs or proof of income",
+        es: "Talones de pago recientes o prueba de ingresos"
+    )
+    static let recertNeedHousehold = CivicaText(
+        "Anyone who joined or left the household",
+        es: "Cualquier persona que se haya unido o salido del hogar"
+    )
+    static let recertNeedExpenses = CivicaText(
+        "Updated rent, utilities, or medical expenses",
+        es: "Renta, servicios o gastos médicos actualizados"
+    )
+    static let recertNeedAddress = CivicaText(
+        "Proof of address if you moved",
+        es: "Prueba de domicilio si te mudaste"
+    )
+
+    static let recertPrimaryAction = CivicaText(
+        "Start your recertification",
+        es: "Comienza tu recertificación"
+    )
+    static let recertSecondaryOpenDTA = CivicaText(
+        "Open DTA Connect",
+        es: "Abrir DTA Connect"
+    )
 }

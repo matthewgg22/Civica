@@ -41,13 +41,15 @@ struct CivicaRootView: View {
         }
     }
 
-    /// Status-aware routing (HANDOFF boards 11, 12, 23-denial, 24).
+    /// Status-aware routing (HANDOFF boards 11, 12, 23-denial, 24,
+    /// recertification).
     /// First-time + screener-in-progress users land on the entry tile
     /// (which leads into the conversation screener). Denied users
     /// land on the denial surface with appeal + reapply paths.
-    /// Other post-submission users land on the waiting room. Anything
-    /// in between is the returning user home — they have an active
-    /// application that needs the next push.
+    /// Recert-due users get the recert intro. Other post-submission
+    /// users land on the waiting room. Anything in between is the
+    /// returning user home — they have an active application that
+    /// needs the next push.
     @ViewBuilder
     private var rootSurface: some View {
         if statusStore.status == .decisionDenied {
@@ -63,6 +65,26 @@ struct CivicaRootView: View {
                 },
                 onStartOver: {
                     statusStore.reset()
+                }
+            )
+        } else if statusStore.status == .recertDue {
+            SNAPRecertificationView(
+                statusStore: statusStore,
+                language: language,
+                deadline: statusStore.timestamp(for: .recertDue),
+                onStartRecert: {
+                    // Recert IS reapplying — the screener flow handles
+                    // both paths. When the recert-mode flag lands on
+                    // SNAPApplicationViewModel, route through it so
+                    // the conversation can shortcut the unchanged
+                    // questions ("anything different since last
+                    // time?"). For now: reset to .notStarted so the
+                    // standard screener kicks off.
+                    statusStore.reset()
+                },
+                onOpenDTAConnect: {
+                    // External DTA Connect link — hand off in a later
+                    // commit (Universal Link or in-app SafariView).
                 }
             )
         } else if statusStore.status.isPostSubmission {
