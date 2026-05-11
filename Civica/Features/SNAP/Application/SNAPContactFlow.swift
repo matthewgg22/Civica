@@ -12,7 +12,7 @@ import SwiftUI
 // the user provided neither email nor phone, since there's nothing
 // meaningful to prefer.
 
-struct SNAPContactAnswers: Equatable {
+struct SNAPContactAnswers: Equatable, Codable {
     var email: String?
     var phone: String?
     var preferredMethod: PreferredContactMethod?
@@ -34,9 +34,17 @@ final class SNAPContactFlowViewModel: ObservableObject {
     }
 
     @Published var step: Step = .email
-    @Published var emailField: String = ""
-    @Published var phoneField: String = ""
-    @Published var answers = SNAPContactAnswers()
+    @Published var emailField: String
+    @Published var phoneField: String
+    @Published var answers: SNAPContactAnswers
+
+    init(answers: SNAPContactAnswers = .init()) {
+        self.answers = answers
+        // Seed transient text fields from prior answers so the user
+        // sees their saved email / phone on resume + edit.
+        self.emailField = answers.email ?? ""
+        self.phoneField = answers.phone ?? ""
+    }
 
     func recordCurrentField() {
         switch step {

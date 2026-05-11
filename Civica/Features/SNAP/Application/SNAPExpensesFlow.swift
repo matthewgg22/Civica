@@ -16,7 +16,7 @@ import SwiftUI
 // as $0 and skips the corresponding deduction. The helper copy on
 // each screen names what counts so users don't have to guess.
 
-struct SNAPExpensesAnswers: Equatable {
+struct SNAPExpensesAnswers: Equatable, Codable {
     var monthlyRentOrHousing: Decimal?
     var monthlyUtilities: Decimal?
     var monthlyChildcare: Decimal?
@@ -33,11 +33,23 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
     }
 
     @Published var step: Step = .rent
-    @Published var rentField: String = ""
-    @Published var utilitiesField: String = ""
-    @Published var childcareField: String = ""
-    @Published var medicalField: String = ""
-    @Published var answers = SNAPExpensesAnswers()
+    @Published var rentField: String
+    @Published var utilitiesField: String
+    @Published var childcareField: String
+    @Published var medicalField: String
+    @Published var answers: SNAPExpensesAnswers
+
+    init(answers: SNAPExpensesAnswers = .init()) {
+        self.answers = answers
+        func render(_ value: Decimal?) -> String {
+            guard let value else { return "" }
+            return NSDecimalNumber(decimal: value).stringValue
+        }
+        self.rentField = render(answers.monthlyRentOrHousing)
+        self.utilitiesField = render(answers.monthlyUtilities)
+        self.childcareField = render(answers.monthlyChildcare)
+        self.medicalField = render(answers.monthlyMedical)
+    }
 
     func recordCurrentField() {
         switch step {

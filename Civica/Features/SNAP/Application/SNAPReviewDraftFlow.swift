@@ -20,7 +20,7 @@ import SwiftUI
 /// Aggregates the per-step answer types into one draft model. Each
 /// field defaults to an empty value object so partial drafts render
 /// without crashing — sections with no answers show as Not Started.
-struct SNAPApplicationDraft: Equatable {
+struct SNAPApplicationDraft: Equatable, Codable {
     var whereApplying: SNAPWhereApplyingAnswers = .init()
     var applicantAge: SNAPApplicantAgeAnswers = .init()
     var household: SNAPHouseholdAnswers = .init()
@@ -33,7 +33,7 @@ struct SNAPApplicationDraft: Equatable {
 
 /// Stable identifier for which flow to jump back into when the user
 /// taps Edit on a review section.
-enum SNAPApplicationSection: String, CaseIterable, Identifiable {
+enum SNAPApplicationSection: String, CaseIterable, Identifiable, Codable {
     case whereApplying
     case applicantAge
     case household
@@ -58,7 +58,24 @@ struct SNAPReviewDraftFlowView: View {
     let language: CivicaLanguage
     let onEdit: (SNAPApplicationSection) -> Void
     let onGeneratePacket: () -> Void
+    let onStartOver: (() -> Void)?
     let onExit: () -> Void
+
+    init(
+        draft: SNAPApplicationDraft,
+        language: CivicaLanguage,
+        onEdit: @escaping (SNAPApplicationSection) -> Void,
+        onGeneratePacket: @escaping () -> Void,
+        onStartOver: (() -> Void)? = nil,
+        onExit: @escaping () -> Void
+    ) {
+        self.draft = draft
+        self.language = language
+        self.onEdit = onEdit
+        self.onGeneratePacket = onGeneratePacket
+        self.onStartOver = onStartOver
+        self.onExit = onExit
+    }
 
     var body: some View {
         CivicaQuestionScreen(
@@ -67,6 +84,10 @@ struct SNAPReviewDraftFlowView: View {
             primaryActionTitle: SNAPReviewDraftStrings.primaryAction.value(in: language),
             primaryActionEnabled: requiredSectionsAllComplete,
             onPrimary: onGeneratePacket,
+            secondaryActionTitle: onStartOver != nil
+                ? SNAPReviewDraftStrings.startOverLabel.value(in: language)
+                : nil,
+            onSecondary: onStartOver,
             language: language
         ) {
             VStack(spacing: CivicaSpacing.md) {
@@ -415,6 +436,10 @@ enum SNAPReviewDraftStrings {
         es: "Nada aquí todavía — toca Editar para añadir."
     )
     static let statusNotStarted = CivicaText("Not started", es: "No iniciado")
+    static let startOverLabel = CivicaText(
+        "Clear my answers and start over",
+        es: "Borrar mis respuestas y empezar de nuevo"
+    )
 
     static func progressLine(completed: Int, total: Int, language: CivicaLanguage) -> String {
         switch language {

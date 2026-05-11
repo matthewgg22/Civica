@@ -202,7 +202,7 @@ struct SNAPReviewLineItem: Identifiable {
     let value: String
 }
 
-enum HousingStatus: String, CaseIterable, Identifiable {
+enum HousingStatus: String, CaseIterable, Identifiable, Codable {
     case stableHome = "stable_home"
     case temporaryHousing = "temporary_housing"
     case stayingWithOthers = "staying_with_others"
@@ -371,7 +371,7 @@ enum SNAPSafeMailingContactOption: String, CaseIterable, Identifiable {
     }
 }
 
-enum PreferredContactMethod: String, CaseIterable, Identifiable {
+enum PreferredContactMethod: String, CaseIterable, Identifiable, Codable {
     case phone = "phone"
     case text = "text"
     case email = "email"
@@ -389,7 +389,7 @@ enum PreferredContactMethod: String, CaseIterable, Identifiable {
     }
 }
 
-enum SNAPDocumentType: String, CaseIterable, Identifiable {
+enum SNAPDocumentType: String, CaseIterable, Identifiable, Codable {
     case photoID = "photo_id"
     case proofOfAddress = "proof_of_address"
     case proofOfIncome = "proof_of_income"

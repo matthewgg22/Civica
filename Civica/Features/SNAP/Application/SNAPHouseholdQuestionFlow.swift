@@ -15,7 +15,7 @@ import SwiftUI
 // remaining 8 application steps will follow when the migration
 // commit lands.
 
-struct SNAPHouseholdAnswers: Equatable {
+struct SNAPHouseholdAnswers: Equatable, Codable {
     var householdSize: String?              // choice from buckets
     var hasMinorInHousehold: Bool?
     var hasElderlyOrDisabled: Bool?
@@ -39,7 +39,12 @@ final class SNAPHouseholdQuestionFlowViewModel: ObservableObject {
     }
 
     @Published var step: Step = .size
-    @Published var answers = SNAPHouseholdAnswers()
+    @Published var answers: SNAPHouseholdAnswers
+
+    /// Seed prior answers so resume / edit round-trips preserve state.
+    init(answers: SNAPHouseholdAnswers = .init()) {
+        self.answers = answers
+    }
 
     func advance() {
         if let next = Step(rawValue: step.rawValue + 1) {

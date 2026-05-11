@@ -29,11 +29,33 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
         case editing(section: SNAPApplicationSection)
     }
 
-    @Published var draft = SNAPApplicationDraft()
-    @Published var mode: Mode = .sequential(currentSection: .whereApplying)
+    @Published var draft: SNAPApplicationDraft
+    @Published var mode: Mode
+
+    private let store: SNAPApplicationDraftStore
 
     /// Sequential order — must match SNAPApplicationSection.allCases.
     private static let sequence: [SNAPApplicationSection] = SNAPApplicationSection.allCases
+
+    init(store: SNAPApplicationDraftStore = SNAPApplicationDraftStore()) {
+        self.store = store
+        // Restore prior draft + resume target if one exists. Editing
+        // mode at-kill-time falls back to review on resume — less
+        // surprising than re-mounting a half-edited sub-flow.
+        if let saved = store.load() {
+            self.draft = saved.draft
+            switch saved.mode {
+            case .sequential:
+                let section = saved.sequentialSection ?? .whereApplying
+                self.mode = .sequential(currentSection: section)
+            case .review:
+                self.mode = .review
+            }
+        } else {
+            self.draft = SNAPApplicationDraft()
+            self.mode = .sequential(currentSection: .whereApplying)
+        }
+    }
 
     func finishSection(_ section: SNAPApplicationSection) {
         switch mode {
@@ -46,10 +68,13 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
                 mode = .review
             }
         }
+        persist()
     }
 
     func startEditing(_ section: SNAPApplicationSection) {
         mode = .editing(section: section)
+        // Don't persist editing mode — kept in-memory only so resume
+        // returns to review rather than re-mounting a half-edit.
     }
 
     /// Called when a sub-flow's back-arrow exits without completing.
@@ -69,6 +94,16 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
         case .review:
             break
         }
+        persist()
+    }
+
+    /// Clears the saved draft and snaps back to the first section.
+    /// Wired to the review screen's "Clear my answers and start
+    /// over" secondary action.
+    func resetDraft() {
+        draft = SNAPApplicationDraft()
+        mode = .sequential(currentSection: .whereApplying)
+        store.clear()
     }
 
     var isAtFirstSectionInSequence: Bool {
@@ -88,6 +123,27 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
     private func previousSection(before section: SNAPApplicationSection) -> SNAPApplicationSection? {
         guard let i = Self.sequence.firstIndex(of: section), i > 0 else { return nil }
         return Self.sequence[i - 1]
+    }
+
+    private func persist() {
+        let persistedMode: SNAPApplicationDraftStore.PersistedMode
+        var sequentialSection: SNAPApplicationSection?
+        switch mode {
+        case .sequential(let current):
+            persistedMode = .sequential
+            sequentialSection = current
+        case .review:
+            persistedMode = .review
+        case .editing:
+            // Editing is transient — persist as review so resume
+            // returns to the summary, not a half-edited sub-flow.
+            persistedMode = .review
+        }
+        store.save(.init(
+            draft: draft,
+            mode: persistedMode,
+            sequentialSection: sequentialSection
+        ))
     }
 }
 
@@ -124,18 +180,26 @@ struct SNAPApplicationFlowOrchestratorView: View {
                 language: language,
                 onEdit: viewModel.startEditing,
                 onGeneratePacket: { onGeneratePacket(viewModel.draft) },
+                onStartOver: { viewModel.resetDraft() },
                 onExit: onDismiss
             )
         }
     }
 
     // MARK: - Section dispatcher
+    //
+    // Each sub-flow is constructed with the draft slice for its
+    // section so resume / edit round-trips preserve prior answers.
+    // Re-instantiating per mode change is intentional — the
+    // @StateObject inside each sub-flow re-seeds from the passed-in
+    // view model when SwiftUI rebuilds the view tree on section change.
 
     @ViewBuilder
     private func flow(for section: SNAPApplicationSection) -> some View {
         switch section {
         case .whereApplying:
             SNAPWhereApplyingFlowView(
+                viewModel: SNAPWhereApplyingFlowViewModel(answers: viewModel.draft.whereApplying),
                 language: language,
                 onComplete: { answers in
                     viewModel.draft.whereApplying = answers
@@ -145,6 +209,7 @@ struct SNAPApplicationFlowOrchestratorView: View {
             )
         case .applicantAge:
             SNAPApplicantAgeFlowView(
+                viewModel: SNAPApplicantAgeFlowViewModel(answers: viewModel.draft.applicantAge),
                 language: language,
                 onComplete: { answers in
                     viewModel.draft.applicantAge = answers
@@ -154,6 +219,7 @@ struct SNAPApplicationFlowOrchestratorView: View {
             )
         case .household:
             SNAPHouseholdQuestionFlowView(
+                viewModel: SNAPHouseholdQuestionFlowViewModel(answers: viewModel.draft.household),
                 language: language,
                 onComplete: { answers in
                     viewModel.draft.household = answers
@@ -163,6 +229,7 @@ struct SNAPApplicationFlowOrchestratorView: View {
             )
         case .contact:
             SNAPContactFlowView(
+                viewModel: SNAPContactFlowViewModel(answers: viewModel.draft.contact),
                 language: language,
                 onComplete: { answers in
                     viewModel.draft.contact = answers
@@ -172,6 +239,7 @@ struct SNAPApplicationFlowOrchestratorView: View {
             )
         case .income:
             SNAPIncomeFlowView(
+                viewModel: SNAPIncomeFlowViewModel(answers: viewModel.draft.income),
                 language: language,
                 onComplete: { answers in
                     viewModel.draft.income = answers
@@ -181,6 +249,7 @@ struct SNAPApplicationFlowOrchestratorView: View {
             )
         case .studentStatus:
             SNAPStudentStatusFlowView(
+                viewModel: SNAPStudentStatusFlowViewModel(answers: viewModel.draft.studentStatus),
                 language: language,
                 onComplete: { answers in
                     viewModel.draft.studentStatus = answers
@@ -190,6 +259,7 @@ struct SNAPApplicationFlowOrchestratorView: View {
             )
         case .expenses:
             SNAPExpensesFlowView(
+                viewModel: SNAPExpensesFlowViewModel(answers: viewModel.draft.expenses),
                 language: language,
                 onComplete: { answers in
                     viewModel.draft.expenses = answers
@@ -199,6 +269,7 @@ struct SNAPApplicationFlowOrchestratorView: View {
             )
         case .documentsChecklist:
             SNAPDocumentsChecklistFlowView(
+                viewModel: SNAPDocumentsChecklistFlowViewModel(answers: viewModel.draft.documentsChecklist),
                 language: language,
                 onComplete: { answers in
                     viewModel.draft.documentsChecklist = answers

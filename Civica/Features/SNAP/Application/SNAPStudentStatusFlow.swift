@@ -13,7 +13,7 @@ import SwiftUI
 // the only screen. The four follow-ups (half-time / 20-hr / work-
 // study / dependent-child) only render for enrolled students.
 
-struct SNAPStudentStatusAnswers: Equatable {
+struct SNAPStudentStatusAnswers: Equatable, Codable {
     var enrolledInHigherEd: Bool?
     var enrolledHalfTime: Bool?
     var works20PlusHours: Bool?
@@ -35,7 +35,11 @@ final class SNAPStudentStatusFlowViewModel: ObservableObject {
     }
 
     @Published var step: Step = .enrollment
-    @Published var answers = SNAPStudentStatusAnswers()
+    @Published var answers: SNAPStudentStatusAnswers
+
+    init(answers: SNAPStudentStatusAnswers = .init()) {
+        self.answers = answers
+    }
 
     func advance() {
         if step == .enrollment && answers.enrolledInHigherEd == false {

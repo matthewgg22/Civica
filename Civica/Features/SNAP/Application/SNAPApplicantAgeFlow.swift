@@ -14,7 +14,7 @@ import SwiftUI
 // Not wired into SNAPRouter yet — see SNAPWhereApplyingFlow.swift
 // for the migration-cutover rationale.
 
-struct SNAPApplicantAgeAnswers: Equatable {
+struct SNAPApplicantAgeAnswers: Equatable, Codable {
     var dateOfBirth: Date?
 
     var derivedAge: Int? {
@@ -28,19 +28,31 @@ struct SNAPApplicantAgeAnswers: Equatable {
 
 @MainActor
 final class SNAPApplicantAgeFlowViewModel: ObservableObject {
-    @Published var answers = SNAPApplicantAgeAnswers()
+    @Published var answers: SNAPApplicantAgeAnswers
 
     /// Default DOB shown when the user first lands on the picker —
     /// 30 years ago is roughly the median U.S. SNAP applicant age and
     /// keeps the wheel near a useful position rather than at "today".
-    @Published var pickerDate: Date = {
-        Calendar.current.date(byAdding: .year, value: -30, to: Date()) ?? Date()
-    }()
+    @Published var pickerDate: Date
 
     /// True once the user has interacted with the picker. Used to
     /// distinguish "I haven't answered yet" from "I picked today's
     /// date" — the former blocks Continue, the latter doesn't.
-    @Published var hasInteracted: Bool = false
+    @Published var hasInteracted: Bool
+
+    init(answers: SNAPApplicantAgeAnswers = .init()) {
+        self.answers = answers
+        // Seed the picker + interacted flag from prior answers so a
+        // returning user sees their previous DOB on the wheel rather
+        // than the 30-years-ago default.
+        if let dob = answers.dateOfBirth {
+            self.pickerDate = dob
+            self.hasInteracted = true
+        } else {
+            self.pickerDate = Calendar.current.date(byAdding: .year, value: -30, to: Date()) ?? Date()
+            self.hasInteracted = false
+        }
+    }
 
     var canAdvance: Bool {
         guard hasInteracted else { return false }

@@ -12,13 +12,17 @@ import SwiftUI
 // document types are nudges, not requirements. The user can
 // continue with nothing checked.
 
-struct SNAPDocumentsChecklistAnswers: Equatable {
+struct SNAPDocumentsChecklistAnswers: Equatable, Codable {
     var documentsAvailable: Set<SNAPDocumentType> = []
 }
 
 @MainActor
 final class SNAPDocumentsChecklistFlowViewModel: ObservableObject {
-    @Published var answers = SNAPDocumentsChecklistAnswers()
+    @Published var answers: SNAPDocumentsChecklistAnswers
+
+    init(answers: SNAPDocumentsChecklistAnswers = .init()) {
+        self.answers = answers
+    }
 
     func toggle(_ document: SNAPDocumentType) {
         if answers.documentsAvailable.contains(document) {

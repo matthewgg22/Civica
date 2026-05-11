@@ -15,7 +15,7 @@ import SwiftUI
 // remains the active path until all 8 legacy steps are migrated
 // and the router cuts over in one switch commit.
 
-struct SNAPWhereApplyingAnswers: Equatable {
+struct SNAPWhereApplyingAnswers: Equatable, Codable {
     /// Two-letter US state code ("MA", "NY", etc.) or "OTHER" when
     /// the user selected a state Civica doesn't tune for yet.
     var stateCode: String?
@@ -34,7 +34,11 @@ final class SNAPWhereApplyingFlowViewModel: ObservableObject {
     }
 
     @Published var step: Step = .state
-    @Published var answers = SNAPWhereApplyingAnswers()
+    @Published var answers: SNAPWhereApplyingAnswers
+
+    init(answers: SNAPWhereApplyingAnswers = .init()) {
+        self.answers = answers
+    }
 
     func advance() {
         if let next = Step(rawValue: step.rawValue + 1) {

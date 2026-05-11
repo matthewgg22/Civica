@@ -17,8 +17,8 @@ import SwiftUI
 // Not wired into SNAPRouter yet — router cutover happens once all
 // nine legacy steps are migrated.
 
-struct SNAPIncomeAnswers: Equatable {
-    enum Tri: String, Equatable { case yes, no, notSure }
+struct SNAPIncomeAnswers: Equatable, Codable {
+    enum Tri: String, Equatable, Codable { case yes, no, notSure }
 
     var anyoneEarning: Tri?
     var grossMonthlyIncome: Decimal?
@@ -39,8 +39,19 @@ final class SNAPIncomeFlowViewModel: ObservableObject {
     }
 
     @Published var step: Step = .earningPresence
-    @Published var grossIncomeField: String = ""
-    @Published var answers = SNAPIncomeAnswers()
+    @Published var grossIncomeField: String
+    @Published var answers: SNAPIncomeAnswers
+
+    init(answers: SNAPIncomeAnswers = .init()) {
+        self.answers = answers
+        // Seed the gross-income text field from the stored Decimal so
+        // resume / edit shows the prior amount.
+        if let gross = answers.grossMonthlyIncome {
+            self.grossIncomeField = NSDecimalNumber(decimal: gross).stringValue
+        } else {
+            self.grossIncomeField = ""
+        }
+    }
 
     /// Skip earned-income subquestions when the user says no one
     /// is earning. They go straight from screen 1 to screen 4.
