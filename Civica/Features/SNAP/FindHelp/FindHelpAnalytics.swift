@@ -27,4 +27,8 @@ enum FindHelpAnalytics {
     static func trackZipFallbackUsed() {
         logger.info("find_help.zip_fallback_used")
     }
+
+    static func trackLayerChanged(_ layer: String) {
+        logger.info("find_help.layer_changed layer=\(layer, privacy: .public)")
+    }
 }

@@ -56,6 +56,10 @@ struct FindHelpRootView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            layerToggle
+                .padding(.horizontal, CivicaSpacing.lg)
+                .padding(.top, CivicaSpacing.md)
+
             FindHelpFilterBar(filter: $store.filter) {
                 FindHelpAnalytics.trackFilterChanged(
                     serviceType: store.filter.serviceType?.rawValue,
@@ -64,7 +68,7 @@ struct FindHelpRootView: View {
                 store.updateFilter(store.filter)
             }
             .padding(.horizontal, CivicaSpacing.lg)
-            .padding(.top, CivicaSpacing.md)
+            .padding(.top, CivicaSpacing.sm)
 
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -173,6 +177,48 @@ struct FindHelpRootView: View {
                 viewModeToggle
                     .padding(.bottom, CivicaSpacing.md)
             }
+        }
+    }
+
+    /// Three-way pill at the top of the screen that selects which
+    /// slice of the SNAP ecosystem renders: where to get help, where
+    /// to spend benefits, or both together. Modeled on viewModeToggle
+    /// so the two pills read as a matched pair when stacked.
+    private var layerToggle: some View {
+        HStack(spacing: 0) {
+            ForEach(FindHelpLayerSelection.allCases) { layer in
+                Button {
+                    store.layerSelection = layer
+                    FindHelpAnalytics.trackLayerChanged(layer.rawValue)
+                } label: {
+                    Text(layerLabel(for: layer))
+                        .font(CivicaTypography.footnoteStrong)
+                        .padding(.horizontal, CivicaSpacing.md)
+                        .padding(.vertical, CivicaSpacing.sm)
+                        .foregroundStyle(
+                            layer == store.layerSelection
+                                ? CivicaColors.onPrimaryText
+                                : CivicaColors.brickPrimary
+                        )
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            layer == store.layerSelection
+                                ? CivicaColors.brickPrimary
+                                : Color.clear
+                        )
+                }
+            }
+        }
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(Capsule())
+        .overlay(Capsule().stroke(CivicaColors.brickPrimary.opacity(0.4), lineWidth: 1))
+    }
+
+    private func layerLabel(for layer: FindHelpLayerSelection) -> String {
+        switch layer {
+        case .findHelp: return FindHelpStrings.layerFindHelp.value(in: language)
+        case .spend:    return FindHelpStrings.layerSpend.value(in: language)
+        case .both:     return FindHelpStrings.layerBoth.value(in: language)
         }
     }
 

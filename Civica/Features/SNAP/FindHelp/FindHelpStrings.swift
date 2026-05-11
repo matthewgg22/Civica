@@ -194,4 +194,24 @@ enum FindHelpStrings {
         "MEALS PROGRAM",
         es: "COMIDAS RMP"
     )
+
+    // MARK: - Layer toggle (top of map screen)
+    //
+    // Three-way pill above the filter bar that selects which slice
+    // of the SNAP ecosystem renders. Default state is "Both" so the
+    // full ecosystem is the first impression; the user can narrow
+    // to either side when they have a specific intent.
+
+    static let layerFindHelp = CivicaText(
+        "Find help",
+        es: "Buscar ayuda"
+    )
+    static let layerSpend = CivicaText(
+        "Spend EBT",
+        es: "Gastar EBT"
+    )
+    static let layerBoth = CivicaText(
+        "Both",
+        es: "Ambos"
+    )
 }

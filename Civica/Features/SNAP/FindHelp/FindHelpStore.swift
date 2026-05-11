@@ -3,6 +3,28 @@ import CoreLocation
 import Foundation
 import OSLog
 
+/// Top-level layer the user is browsing. Drives which record_kind
+/// rows render on the map and in the list. `.both` is the default
+/// so first-time users see the full SNAP ecosystem (apply for help
+/// plus where to spend benefits) without having to discover the
+/// toggle. The toggle UI lives in FindHelpRootView; the filtering
+/// is done in `filteredLocations` here.
+enum FindHelpLayerSelection: String, CaseIterable, Identifiable {
+    case findHelp
+    case spend
+    case both
+
+    var id: String { rawValue }
+
+    func matches(_ location: FindHelpLocation) -> Bool {
+        switch self {
+        case .findHelp: return location.resolvedRecordKind == .helpDirectory
+        case .spend:    return location.resolvedRecordKind == .ebtRetailer
+        case .both:     return true
+        }
+    }
+}
+
 @MainActor
 final class FindHelpStore: ObservableObject {
     @Published private(set) var locations: [FindHelpLocation] = []
@@ -21,6 +43,12 @@ final class FindHelpStore: ObservableObject {
     /// the fixture fallback also returns nothing.
     @Published private(set) var isUsingFallbackData: Bool = false
 
+    /// Which layers of the SNAP ecosystem the user is browsing.
+    /// Drives `filteredLocations` and the layer-toggle UI. Default
+    /// is `.both` — first-time users see help directory + EBT
+    /// retailers together so the "full ecosystem" pitch lands.
+    @Published var layerSelection: FindHelpLayerSelection = .both
+
     private let fixtures: FindHelpFixtureLoader
 
     private let service: FindHelpServiceProtocol
@@ -37,7 +65,9 @@ final class FindHelpStore: ObservableObject {
     }
 
     var filteredLocations: [FindHelpLocation] {
-        locations.filter(filter.matches)
+        locations
+            .filter(layerSelection.matches)
+            .filter(filter.matches)
     }
 
     func searchNearby(lat: Double, lng: Double, radiusKm: Double = 25, maxResults: Int = 50) {
