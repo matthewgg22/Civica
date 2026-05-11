@@ -84,11 +84,12 @@ struct CivicaRootView: View {
                 language: language,
                 denialReason: nil,
                 onAppeal: {
-                    // Lands the user on MA DTA's fair-hearing
-                    // request page. Guided appeal-letter generator
-                    // is a follow-up; the external link is the
-                    // honest path today.
-                    externalLink = CivicaExternalLinks.dtaFairHearing
+                    // Mission 13: navigation to SNAPAppealLetterView
+                    // is handled by the NavigationLink inside the
+                    // denied view itself. The letter view exposes
+                    // the MA DTA fair-hearing online portal as a
+                    // secondary action so we don't double-present.
+                    // Hook left as a passthrough for telemetry.
                 },
                 onStartOver: {
                     statusStore.reset()
