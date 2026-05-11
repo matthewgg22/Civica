@@ -26,6 +26,12 @@ struct FindHelpRootView: View {
     /// after they've made the call.
     @State private var preferZipFallback: Bool = false
 
+    /// One-time first-launch onboarding card visibility. Persisted
+    /// per-install via AppStorage so the card never resurfaces after
+    /// the user dismisses it.
+    @AppStorage("find_help.has_seen_onboarding")
+    private var hasSeenOnboarding: Bool = false
+
     /// Current search radius in kilometers. Defaults to ~5 miles per
     /// HANDOFF board B3; the empty-state CTA bumps to ~25 miles.
     @State private var currentRadiusKm: Double = 8.0
@@ -76,6 +82,7 @@ struct FindHelpRootView: View {
             FindHelpDisclosureFooter()
         }
         .background(CivicaColors.surfaceSecondary.ignoresSafeArea())
+        .overlay { onboardingOverlay }
         .navigationTitle("find_help.entry_card.title")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(CivicaColors.surfaceSecondary, for: .navigationBar)
@@ -177,6 +184,31 @@ struct FindHelpRootView: View {
                 viewModeToggle
                     .padding(.bottom, CivicaSpacing.md)
             }
+        }
+    }
+
+    /// One-time first-launch onboarding card. Centered above a dimmed
+    /// black backdrop; the only dismissal path is the "Got it" CTA so
+    /// the user reads the thesis line ("SNAP works at more places than
+    /// you think") before the map becomes interactive. Once dismissed,
+    /// the @AppStorage flag flips and the overlay is gone for good.
+    @ViewBuilder
+    private var onboardingOverlay: some View {
+        if !hasSeenOnboarding {
+            ZStack {
+                Color.black.opacity(0.35)
+                    .ignoresSafeArea()
+                FindHelpOnboardingCard(
+                    language: language,
+                    onDismiss: {
+                        withAnimation(.easeOut(duration: 0.2)) {
+                            hasSeenOnboarding = true
+                        }
+                        FindHelpAnalytics.trackOnboardingDismissed()
+                    }
+                )
+            }
+            .transition(.opacity)
         }
     }
 
