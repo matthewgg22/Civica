@@ -57,36 +57,23 @@ final class OnboardingViewModel: ObservableObject {
     }
 
     // MARK: - Phone validation
+    //
+    // Delegates to USPhoneFormatter so the onboarding capture screen
+    // and the SNAP contact-flow capture screen render the same
+    // "(555) 123-4567" progression — any future tweak (e.g. closing
+    // the paren after the third digit) lives in one place.
 
-    /// 10-digit US phone number check. We don't try international v1 —
-    /// HANDOFF locks Twilio long code which is US-only at v1 anyway.
     var sanitizedPhoneDigits: String {
-        String(phoneInput.unicodeScalars.filter { CharacterSet.decimalDigits.contains($0) })
+        USPhoneFormatter.digits(phoneInput)
     }
 
     var isPhoneValid: Bool {
-        sanitizedPhoneDigits.count == 10
+        USPhoneFormatter.isComplete(phoneInput)
     }
 
     /// Friendly phone formatting `(555) 555-5555` rebuilt from current input.
     var displayedPhone: String {
-        let digits = sanitizedPhoneDigits
-        switch digits.count {
-        case 0:
-            return ""
-        case 1...3:
-            return "(\(digits)"
-        case 4...6:
-            let area = digits.prefix(3)
-            let mid = digits.suffix(digits.count - 3)
-            return "(\(area)) \(mid)"
-        default:
-            let truncated = String(digits.prefix(10))
-            let area = truncated.prefix(3)
-            let mid = truncated.dropFirst(3).prefix(3)
-            let tail = truncated.dropFirst(6)
-            return "(\(area)) \(mid)-\(tail)"
-        }
+        USPhoneFormatter.format(phoneInput)
     }
 
     func submitPhone() async {
