@@ -29,6 +29,13 @@ struct SNAPDocumentsChecklistAnswers: Equatable, Codable {
 @MainActor
 final class SNAPDocumentsChecklistFlowViewModel: ObservableObject {
     @Published var answers: SNAPDocumentsChecklistAnswers
+    @Published var pendingExtraction: PendingExtraction?
+
+    struct PendingExtraction: Identifiable {
+        let id = UUID()
+        let documentType: SNAPDocumentType
+        let result: SNAPExtractionResult
+    }
 
     init(answers: SNAPDocumentsChecklistAnswers = .init()) {
         self.answers = answers
@@ -56,6 +63,30 @@ final class SNAPDocumentsChecklistFlowViewModel: ObservableObject {
     func clearCapture(for document: SNAPDocumentType) {
         SNAPCapturedDocumentStore.delete(document)
         answers.capturedDocuments.remove(document)
+    }
+
+    /// Kick off on-device extraction for a captured image. The result is
+    /// surfaced via pendingExtraction, which the view binds to a sheet.
+    /// Silently no-ops when the device or OS can't run Foundation Models
+    /// so the existing capture flow degrades cleanly.
+    func startExtraction(image: UIImage, for document: SNAPDocumentType) {
+        guard SNAPOnDeviceExtractor.isAvailable else { return }
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            guard #available(iOS 26, *) else { return }
+            do {
+                let result = try await SNAPOnDeviceExtractor.extract(image: image, capturedAs: document)
+                self.pendingExtraction = PendingExtraction(documentType: document, result: result)
+            } catch {
+                // Demo-friendly: the photo is already saved, so swallowing
+                // the extraction error keeps the user on the checklist
+                // with no confusing crash or dead-end alert.
+            }
+        }
+    }
+
+    func dismissPendingExtraction() {
+        pendingExtraction = nil
     }
 }
 
@@ -130,17 +161,30 @@ struct SNAPDocumentsChecklistFlowView: View {
                     // preview, a precise reason, and the retake /
                     // keep / skip routes. Passing photos go straight
                     // back to the checklist with the "Photo saved"
-                    // confirmation chip.
+                    // confirmation chip and trigger on-device
+                    // extraction so the confirmation sheet can offer
+                    // pre-filled fields when Apple Intelligence is on.
                     if !quality.passed {
                         pendingRetry = PendingRetry(
                             documentType: document,
                             image: image,
                             quality: quality
                         )
+                    } else {
+                        viewModel.startExtraction(image: image, for: document)
                     }
                 },
                 onCancel: { documentBeingCaptured = nil }
             )
+        }
+        .sheet(item: $viewModel.pendingExtraction) { pending in
+            NavigationStack {
+                SNAPDocumentConfirmationView(
+                    extraction: pending.result,
+                    onConfirm: { viewModel.dismissPendingExtraction() },
+                    onCorrect: { viewModel.dismissPendingExtraction() }
+                )
+            }
         }
         .sheet(item: $pendingRetry) { retry in
             NavigationStack {
