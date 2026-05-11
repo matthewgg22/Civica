@@ -117,6 +117,12 @@ struct HeuristicExpeditedClassifier: ExpeditedClassifier {
         let rent = (draft.expenses.monthlyRentOrHousing as NSDecimalNumber?)?.doubleValue ?? 0
         let utilities = (draft.expenses.monthlyUtilities as NSDecimalNumber?)?.doubleValue ?? 0
 
+        if let resources = draft.income.liquidResources,
+           (resources as NSDecimalNumber).doubleValue < 250 {
+            z += 1.2
+        }
+        if draft.income.recentJobLoss30d == .yes { z += 0.7 }
+
         // (rent + utilities) / max(gross, 1) > 0.7
         if (rent + utilities) / max(gross, 1) > 0.7 { z += 0.6 }
 
@@ -156,18 +162,23 @@ private func firedHardRules(in draft: SNAPApplicationDraft) -> [ExpeditedHardRul
     let gross = (draft.income.grossMonthlyIncome as NSDecimalNumber?)?.doubleValue ?? 0
     let rent = (draft.expenses.monthlyRentOrHousing as NSDecimalNumber?)?.doubleValue ?? 0
     let utilities = (draft.expenses.monthlyUtilities as NSDecimalNumber?)?.doubleValue ?? 0
-    // Liquid resources field arrives with the income-flow expansion;
-    // until then treat unknown as $0, preserving the conservative
-    // behavior of the legacy evaluator.
-    let liquidResources = 0.0
+    // Treat an unanswered resources field as $0 — matches the
+    // legacy evaluator's conservative bias toward over-detection.
+    let liquidResources = (draft.income.liquidResources as NSDecimalNumber?)?.doubleValue ?? 0
+
+    // Rule (i)(i): liquid resources < $100 AND gross income < $150.
+    if liquidResources < 100 && gross < 150 {
+        hits.append(.lowIncomeLowResources)
+    }
 
     // Rule (i)(iii): housing + utilities exceed gross + resources.
     if (rent + utilities) > (gross + liquidResources) {
         hits.append(.housingExceedsResources)
     }
 
-    // Rules (i)(i) and (i)(ii) require fields that are introduced
-    // in subsequent commits — wired in when those fields land.
+    // Rule (i)(ii) (migrant/seasonal destitute) requires the
+    // migrantSeasonalFarmworker field introduced with the household
+    // expansion — wired in that commit.
 
     return hits
 }

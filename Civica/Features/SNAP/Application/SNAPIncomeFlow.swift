@@ -26,6 +26,14 @@ struct SNAPIncomeAnswers: Equatable, Codable {
     var grossMonthlyIncome: Decimal?
     var incomeChangesMonthToMonth: Tri?
     var hasUnearnedIncome: Tri?
+    /// Cash on hand + bank account balance — used by 7 CFR 273.2(i)(1)(i)
+    /// (< $100 with gross < $150) and 7 CFR 273.2(i)(1)(iii)
+    /// (housing > gross + resources). Captured separately from income
+    /// because resources and income are distinct regulatory inputs.
+    var liquidResources: Decimal?
+    /// Whether anyone in the household lost a job in the last 30 days
+    /// — a strong soft signal for expedited need.
+    var recentJobLoss30d: Tri?
 }
 
 @MainActor
@@ -35,6 +43,8 @@ final class SNAPIncomeFlowViewModel: ObservableObject {
         case grossMonthlyIncome
         case incomeVariability
         case unearnedIncome
+        case liquidResources
+        case recentJobLoss
 
         var oneBasedIndex: Int { rawValue + 1 }
         static let total = Self.allCases.count
@@ -42,6 +52,7 @@ final class SNAPIncomeFlowViewModel: ObservableObject {
 
     @Published var step: Step = .earningPresence
     @Published var grossIncomeField: String
+    @Published var liquidResourcesField: String
     @Published var answers: SNAPIncomeAnswers
 
     init(answers: SNAPIncomeAnswers = .init()) {
@@ -52,6 +63,11 @@ final class SNAPIncomeFlowViewModel: ObservableObject {
             self.grossIncomeField = NSDecimalNumber(decimal: gross).stringValue
         } else {
             self.grossIncomeField = ""
+        }
+        if let resources = answers.liquidResources {
+            self.liquidResourcesField = NSDecimalNumber(decimal: resources).stringValue
+        } else {
+            self.liquidResourcesField = ""
         }
     }
 
@@ -87,9 +103,19 @@ final class SNAPIncomeFlowViewModel: ObservableObject {
         answers.grossMonthlyIncome = Decimal(string: trimmed)
     }
 
+    func recordLiquidResourcesField() {
+        let trimmed = liquidResourcesField
+            .trimmingCharacters(in: .whitespaces)
+            .replacingOccurrences(of: ",", with: "")
+        answers.liquidResources = Decimal(string: trimmed)
+    }
+
     func advance() {
         if step == .grossMonthlyIncome {
             recordGrossIncomeField()
+        }
+        if step == .liquidResources {
+            recordLiquidResourcesField()
         }
         if let next = nextStep(after: step) {
             step = next
@@ -114,11 +140,17 @@ final class SNAPIncomeFlowViewModel: ObservableObject {
             return answers.incomeChangesMonthToMonth != nil
         case .unearnedIncome:
             return answers.hasUnearnedIncome != nil
+        case .liquidResources:
+            let trimmed = liquidResourcesField.trimmingCharacters(in: .whitespaces)
+                .replacingOccurrences(of: ",", with: "")
+            return Decimal(string: trimmed) != nil
+        case .recentJobLoss:
+            return answers.recentJobLoss30d != nil
         }
     }
 
     var isAtFirstStep: Bool { step == .earningPresence }
-    var isAtLastStep: Bool { step == .unearnedIncome }
+    var isAtLastStep: Bool { step == .recentJobLoss }
 }
 
 struct SNAPIncomeFlowView: View {
@@ -162,6 +194,8 @@ struct SNAPIncomeFlowView: View {
         case .grossMonthlyIncome: grossMonthlyIncomeScreen
         case .incomeVariability: incomeVariabilityScreen
         case .unearnedIncome:    unearnedIncomeScreen
+        case .liquidResources:   liquidResourcesScreen
+        case .recentJobLoss:     recentJobLossScreen
         }
     }
 
@@ -252,6 +286,65 @@ struct SNAPIncomeFlowView: View {
         )
     }
 
+    // MARK: - Screen 5: liquid resources
+
+    private var liquidResourcesScreen: some View {
+        CivicaQuestionScreen(
+            progress: progress(for: .liquidResources),
+            title: SNAPIncomeStrings.liquidResourcesTitle.value(in: language),
+            helper: SNAPIncomeStrings.liquidResourcesHelper.value(in: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            liquidResourcesAffordance
+        }
+    }
+
+    private var liquidResourcesAffordance: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            HStack(spacing: CivicaSpacing.sm) {
+                Text("$")
+                    .font(.system(size: 32, weight: .semibold))
+                    .foregroundStyle(CivicaColors.graphite)
+                TextField(
+                    SNAPIncomeStrings.liquidResourcesPlaceholder.value(in: language),
+                    text: $viewModel.liquidResourcesField
+                )
+                .font(.system(size: 32, weight: .semibold, design: .monospaced))
+                .foregroundStyle(CivicaColors.ink)
+                .keyboardType(.decimalPad)
+            }
+            .padding(.horizontal, CivicaSpacing.lg)
+            .padding(.vertical, CivicaSpacing.md)
+            .frame(minHeight: 72)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.control)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+            Text(SNAPIncomeStrings.liquidResourcesSuffix.value(in: language))
+                .font(CivicaTypography.footnote)
+                .foregroundStyle(CivicaColors.graphite)
+        }
+    }
+
+    // MARK: - Screen 6: recent job loss
+
+    private var recentJobLossScreen: some View {
+        triScreen(
+            step: .recentJobLoss,
+            title: SNAPIncomeStrings.recentJobLossTitle.value(in: language),
+            helper: SNAPIncomeStrings.recentJobLossHelper.value(in: language),
+            value: Binding(
+                get: { viewModel.answers.recentJobLoss30d },
+                set: { viewModel.answers.recentJobLoss30d = $0 }
+            )
+        )
+    }
+
     // MARK: - Shared 3-way affordance
 
     private func triScreen(
@@ -297,6 +390,9 @@ struct SNAPIncomeFlowView: View {
     private func advanceOrComplete() {
         if viewModel.step == .grossMonthlyIncome {
             viewModel.recordGrossIncomeField()
+        }
+        if viewModel.step == .liquidResources {
+            viewModel.recordLiquidResourcesField()
         }
         if viewModel.isAtLastStep {
             onComplete(viewModel.answers)
@@ -368,6 +464,35 @@ enum SNAPIncomeStrings {
     static let unearnedHelper = CivicaText(
         "Things like SSI, Social Security, unemployment, child support, pension, or veterans benefits. These count for SNAP too.",
         es: "Cosas como SSI, Seguro Social, desempleo, manutención de hijos, pensión o beneficios para veteranos. Estos también cuentan para SNAP."
+    )
+
+    // Screen 5 — liquid resources (cash on hand + bank balances).
+    // SNAP uses this together with gross income for the very-low-income
+    // expedited test (7 CFR 273.2(i)(1)(i)) and the housing-exceeds-
+    // resources test (7 CFR 273.2(i)(1)(iii)).
+    static let liquidResourcesTitle = CivicaText(
+        "How much cash do you have on hand and in checking or savings, total?",
+        es: "¿Cuánto efectivo tienes a mano y en cuentas de cheques o ahorros, en total?"
+    )
+    static let liquidResourcesHelper = CivicaText(
+        "Add up cash, checking, and savings across the household. Leave it at 0 if you don't have any. Retirement accounts and your home don't count.",
+        es: "Suma el efectivo, las cuentas de cheques y ahorros del hogar. Déjalo en 0 si no tienes nada. Las cuentas de jubilación y tu casa no cuentan."
+    )
+    static let liquidResourcesPlaceholder = CivicaText("0", es: "0")
+    static let liquidResourcesSuffix = CivicaText(
+        "Cash + checking + savings",
+        es: "Efectivo + cheques + ahorros"
+    )
+
+    // Screen 6 — recent job loss (last 30 days). Soft signal for the
+    // expedited classifier; not a regulatory input on its own.
+    static let recentJobLossTitle = CivicaText(
+        "Has anyone in the household lost a job in the last 30 days?",
+        es: "¿Alguien en el hogar perdió un trabajo en los últimos 30 días?"
+    )
+    static let recentJobLossHelper = CivicaText(
+        "Yes if a job ended, was laid off, or hours were cut to zero — even if you're getting unemployment.",
+        es: "Sí si un trabajo terminó, hubo despidos o las horas se redujeron a cero — incluso si está recibiendo desempleo."
     )
 }
 
