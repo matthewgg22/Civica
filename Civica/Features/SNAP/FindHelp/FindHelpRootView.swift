@@ -66,7 +66,7 @@ struct FindHelpRootView: View {
                 .padding(.horizontal, CivicaSpacing.lg)
                 .padding(.top, CivicaSpacing.md)
 
-            FindHelpFilterBar(filter: $store.filter) {
+            FindHelpFilterBar(filter: $store.filter, layerSelection: store.layerSelection) {
                 FindHelpAnalytics.trackFilterChanged(
                     serviceType: store.filter.serviceType?.rawValue,
                     languageCode: store.filter.languageCode
