@@ -67,7 +67,7 @@ struct USZipStateResolver {
     ]
 
     func stateCode(for zip: String) -> String? {
-        let normalized = String(zip.filter(\.isNumber).prefix(5))
+        let normalized = normalizeZIP(zip)
         guard normalized.count == 5 else { return nil }
 
         if normalized.hasPrefix("008") { return "VI" }
@@ -80,12 +80,83 @@ struct USZipStateResolver {
         }
         return nil
     }
+
+    func representativeZIP(for stateCode: String) -> String? {
+        let normalizedStateCode = stateCode
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .uppercased()
+
+        switch normalizedStateCode {
+        case "AS":
+            return "96799"
+        case "MP":
+            return "96950"
+        case "VI":
+            return "00802"
+        default:
+            break
+        }
+
+        guard let prefix = ranges.first(where: { $0.1 == normalizedStateCode })?.0.lowerBound else {
+            return nil
+        }
+        return String(format: "%03d01", prefix)
+    }
+
+    private func normalizeZIP(_ zip: String) -> String {
+        String(zip.filter(\.isNumber).prefix(5))
+    }
+}
+
+private let usStateNameToCodeMap: [String: String] = [
+    "alabama": "AL", "alaska": "AK", "arizona": "AZ", "arkansas": "AR", "california": "CA",
+    "colorado": "CO", "connecticut": "CT", "delaware": "DE", "florida": "FL", "georgia": "GA",
+    "hawaii": "HI", "idaho": "ID", "illinois": "IL", "indiana": "IN", "iowa": "IA",
+    "kansas": "KS", "kentucky": "KY", "louisiana": "LA", "maine": "ME", "maryland": "MD",
+    "massachusetts": "MA", "michigan": "MI", "minnesota": "MN", "mississippi": "MS", "missouri": "MO",
+    "montana": "MT", "nebraska": "NE", "nevada": "NV", "new hampshire": "NH", "new jersey": "NJ",
+    "new mexico": "NM", "new york": "NY", "north carolina": "NC", "north dakota": "ND", "ohio": "OH",
+    "oklahoma": "OK", "oregon": "OR", "pennsylvania": "PA", "rhode island": "RI", "south carolina": "SC",
+    "south dakota": "SD", "tennessee": "TN", "texas": "TX", "utah": "UT", "vermont": "VT",
+    "virginia": "VA", "washington": "WA", "west virginia": "WV", "wisconsin": "WI", "wyoming": "WY",
+    "district of columbia": "DC", "american samoa": "AS", "guam": "GU",
+    "mariana islands": "MP", "northern marianas": "MP", "cnmi": "MP",
+    "northern mariana islands": "MP", "commonwealth of the northern mariana islands": "MP",
+    "puerto rico": "PR", "us virgin islands": "VI", "u s virgin islands": "VI", "virgin islands": "VI"
+]
+
+private let usStateAndTerritoryCodes: Set<String> = Set(usStateNameToCodeMap.values)
+
+func normalizedUSStateCode(from raw: String?) -> String? {
+    guard let raw = raw?
+        .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+        .lowercased()
+        .trimmingCharacters(in: .whitespacesAndNewlines),
+          !raw.isEmpty else {
+        return nil
+    }
+
+    let stripped = raw
+        .replacingOccurrences(of: #"[^\p{L}\p{N}]+"#, with: " ", options: .regularExpression)
+        .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+        .trimmingCharacters(in: .whitespacesAndNewlines)
+
+    if stripped.count == 2 {
+        let code = stripped.uppercased()
+        return usStateAndTerritoryCodes.contains(code) ? code : nil
+    }
+
+    if let code = usStateNameToCodeMap[stripped] {
+        return code
+    }
+
+    return nil
 }
 
 extension Notification.Name {
-    // Posted from SNAPEntryView / SNAPEligibilityIntroView when the user
-    // taps "Edit location." The VoteNow target listens for this and opens
-    // its MyInfo panel; in the Civica app no listener exists yet, so the
+    // Posted from SNAPEligibilityIntroView when the user taps "Edit
+    // location." The VoteNow target listens for this and opens its
+    // MyInfo panel; in the Civica app no listener exists yet, so the
     // post is a no-op until a Civica-side address editor is wired in.
     static let openMyInfoPanel = Notification.Name("openMyInfoPanel")
 }
