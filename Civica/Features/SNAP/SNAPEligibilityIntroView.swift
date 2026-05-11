@@ -6,6 +6,14 @@ struct SNAPEligibilityIntroView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var viewModel: SNAPApplicationViewModel
     @State private var continueToGuidedDraft = false
+    @State private var generatedFromOrchestrator: SNAPApplicationDraft?
+
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+
+    private var language: CivicaLanguage {
+        CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
 
     var body: some View {
         ZStack {
@@ -149,14 +157,24 @@ struct SNAPEligibilityIntroView: View {
                 onClose: { dismiss() }
             )
         default:
-            SNAPStepContainerView(viewModel: viewModel) {
-                dismiss()
-            }
+            // Question-flow orchestrator — the new HANDOFF-cadence
+            // path that replaces the multi-field SNAPStepContainerView.
+            // The legacy view remains in the codebase for one cycle
+            // for reference; delete in a follow-up cleanup commit
+            // once this path has shipped.
+            SNAPApplicationFlowOrchestratorView(
+                language: language,
+                onGeneratePacket: { draft in
+                    generatedFromOrchestrator = draft
+                    // Packet generation hands off to
+                    // SNAPApplicationGeneratorView in a follow-up
+                    // commit — for now the orchestrator surfaces
+                    // the finished draft for downstream wiring.
+                },
+                onDismiss: { dismiss() }
+            )
             .navigationTitle("SNAP Eligibility Questionnaire")
             .navigationBarTitleDisplayMode(.inline)
-            .onAppear {
-                viewModel.resetDraftFlow()
-            }
         }
     }
 
