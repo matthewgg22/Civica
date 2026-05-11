@@ -2,8 +2,21 @@ import SwiftUI
 import CivicaDesignSystem
 
 // EXPERIMENTAL SILOED MODULE: detail screen for a single interview question.
+//
+// The question's prompt + guidance render in the language they exist in
+// the JSON corpus (English only at v1). All surrounding chrome --
+// "How to answer", "Especially relevant for", nav title, chips --
+// localizes from InterviewCoachStrings. A Spanish-only notice flags
+// the mismatch when language is .spanish.
 struct QuestionDetailView: View {
     let question: InterviewQuestion
+
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+
+    private var language: CivicaLanguage {
+        CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
 
     var body: some View {
         ScrollView {
@@ -17,8 +30,12 @@ struct QuestionDetailView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
+                if language == .spanish {
+                    englishOnlyNotice
+                }
+
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-                    Text("How to answer")
+                    Text(InterviewCoachStrings.howToAnswer.value(in: language))
                         .font(CivicaTypography.subheadStrong)
                         .foregroundStyle(CivicaColors.graphite)
 
@@ -40,13 +57,15 @@ struct QuestionDetailView: View {
 
                 if !question.archetypeTags.isEmpty {
                     VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-                        Text("Especially relevant for")
+                        Text(InterviewCoachStrings.especiallyRelevantFor.value(in: language))
                             .font(CivicaTypography.subheadStrong)
                             .foregroundStyle(CivicaColors.graphite)
 
                         HStack(spacing: CivicaSpacing.xs) {
                             ForEach(question.archetypeTags) { tag in
-                                chip(text: tag.label, tint: CivicaColors.brickPrimary.opacity(0.12), foreground: CivicaColors.brickPrimary)
+                                chip(text: tag.localizedLabel(in: language),
+                                     tint: CivicaColors.brickPrimary.opacity(0.12),
+                                     foreground: CivicaColors.brickPrimary)
                             }
                         }
                     }
@@ -59,16 +78,16 @@ struct QuestionDetailView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(CivicaColors.paper.ignoresSafeArea())
-        .navigationTitle("Practice question")
+        .navigationTitle(InterviewCoachStrings.navPracticeQuestion.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
     }
 
     private var chipRow: some View {
         HStack(spacing: CivicaSpacing.xs) {
-            chip(text: question.scenario.label,
+            chip(text: question.scenario.localizedLabel(in: language),
                  tint: CivicaColors.accentTeal.opacity(0.12),
                  foreground: CivicaColors.accentTeal)
-            chip(text: question.category.label,
+            chip(text: question.category.localizedLabel(in: language),
                  tint: CivicaColors.brickPrimary.opacity(0.12),
                  foreground: CivicaColors.brickPrimary)
         }
@@ -82,6 +101,19 @@ struct QuestionDetailView: View {
             .padding(.vertical, CivicaSpacing.xs)
             .background(
                 Capsule().fill(tint)
+            )
+    }
+
+    private var englishOnlyNotice: some View {
+        Text(InterviewCoachStrings.englishOnlyNotice.value(in: language))
+            .font(CivicaTypography.captionStrong)
+            .foregroundStyle(CivicaColors.graphite)
+            .padding(.horizontal, CivicaSpacing.sm)
+            .padding(.vertical, CivicaSpacing.xs)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                    .fill(CivicaColors.tealSurface.opacity(0.4))
             )
     }
 }

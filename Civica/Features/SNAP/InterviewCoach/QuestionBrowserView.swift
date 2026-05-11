@@ -9,17 +9,31 @@ import CivicaDesignSystem
 // (StateFlag_MA etc.) and used them in both the picker and the state
 // header. Civica's asset catalog doesn't include those flags; both
 // surfaces fall back to a code-in-a-pill until the flag bundle lands.
+//
+// Bilingual UI chrome via InterviewCoachStrings. The question prompts
+// themselves stay in the language of the JSON corpus (English at v1);
+// the Spanish-only banner flags this for non-English users.
 struct QuestionBrowserView: View {
     @ObservedObject var bank: InterviewQuestionBank
 
     @State private var selectedStateCode: String = "MA"
     @State private var selectedCategory: QuestionCategory? = nil
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+
+    private var language: CivicaLanguage {
+        CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 statePicker
                 stateHeader
+                if language == .spanish {
+                    englishOnlyNotice
+                }
                 categoryFilter
                 questionList
 
@@ -30,13 +44,26 @@ struct QuestionBrowserView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(CivicaColors.paper.ignoresSafeArea())
-        .navigationTitle("Practice questions")
+        .navigationTitle(InterviewCoachStrings.navPracticeQuestions.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var englishOnlyNotice: some View {
+        Text(InterviewCoachStrings.englishOnlyNotice.value(in: language))
+            .font(CivicaTypography.captionStrong)
+            .foregroundStyle(CivicaColors.graphite)
+            .padding(.horizontal, CivicaSpacing.sm)
+            .padding(.vertical, CivicaSpacing.xs)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                    .fill(CivicaColors.tealSurface.opacity(0.4))
+            )
     }
 
     private var statePicker: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-            Text("Pick your state")
+            Text(InterviewCoachStrings.pickYourState.value(in: language))
                 .font(CivicaTypography.captionStrong)
                 .foregroundStyle(CivicaColors.graphite)
 
@@ -54,6 +81,9 @@ struct QuestionBrowserView: View {
     private func stateChip(state: StateOption) -> some View {
         let isSupported = bank.supportedStateCodes.contains(state.code)
         let isSelected = selectedStateCode == state.code
+        let supportedSuffix = isSupported
+            ? (language == .spanish ? "disponible" : "available")
+            : (language == .spanish ? "próximamente" : "coming soon")
 
         return Button {
             guard isSupported else { return }
@@ -80,7 +110,7 @@ struct QuestionBrowserView: View {
         }
         .buttonStyle(.plain)
         .disabled(!isSupported)
-        .accessibilityLabel(Text("\(state.name) — \(isSupported ? "available" : "coming soon")"))
+        .accessibilityLabel(Text("\(state.name) — \(supportedSuffix)"))
     }
 
     private var stateHeader: some View {
@@ -93,7 +123,7 @@ struct QuestionBrowserView: View {
                 .foregroundStyle(CivicaColors.ink)
 
             if !supported {
-                Text("Coming soon")
+                Text(InterviewCoachStrings.comingSoon.value(in: language))
                     .font(CivicaTypography.captionStrong)
                     .foregroundStyle(CivicaColors.graphite)
                     .padding(.horizontal, CivicaSpacing.sm)
@@ -106,11 +136,13 @@ struct QuestionBrowserView: View {
     private var categoryFilter: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: CivicaSpacing.xs) {
-                filterChip(label: "All", isSelected: selectedCategory == nil) {
+                filterChip(label: InterviewCoachStrings.allCategories.value(in: language),
+                           isSelected: selectedCategory == nil) {
                     selectedCategory = nil
                 }
                 ForEach(QuestionCategory.allCases) { category in
-                    filterChip(label: category.label, isSelected: selectedCategory == category) {
+                    filterChip(label: category.localizedLabel(in: language),
+                               isSelected: selectedCategory == category) {
                         selectedCategory = category
                     }
                 }
@@ -162,12 +194,12 @@ struct QuestionBrowserView: View {
                     .multilineTextAlignment(.leading)
 
                 HStack(spacing: CivicaSpacing.xs) {
-                    Text(question.scenario.label)
+                    Text(question.scenario.localizedLabel(in: language))
                         .font(CivicaTypography.captionStrong)
                         .foregroundStyle(CivicaColors.accentTeal)
                     Text("·")
                         .foregroundStyle(CivicaColors.graphite)
-                    Text(question.category.label)
+                    Text(question.category.localizedLabel(in: language))
                         .font(CivicaTypography.captionStrong)
                         .foregroundStyle(CivicaColors.brickPrimary)
                 }
@@ -196,7 +228,7 @@ struct QuestionBrowserView: View {
             Image(systemName: "doc.text.magnifyingglass")
                 .font(.title)
                 .foregroundStyle(CivicaColors.graphite)
-            Text("No questions yet for this state and filter.")
+            Text(InterviewCoachStrings.emptyResults.value(in: language))
                 .font(CivicaTypography.footnoteStrong)
                 .foregroundStyle(CivicaColors.graphite)
                 .multilineTextAlignment(.center)

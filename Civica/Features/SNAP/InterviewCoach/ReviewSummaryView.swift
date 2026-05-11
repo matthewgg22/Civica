@@ -3,36 +3,45 @@ import CivicaDesignSystem
 
 // EXPERIMENTAL SILOED MODULE: review-summary screen.
 // Renders the three rubric axes as labeled progress bars with the model's
-// per-axis summary, plus per-turn notes. No persistence -- the score lives
-// in PracticeSessionViewModel for the session lifetime only.
+// per-axis summary, plus per-turn notes. UI chrome bilingual via
+// InterviewCoachStrings; the LLM-generated axis.summary and note.note
+// text comes back in whatever language the backend produced it in
+// (currently English-only -- one of the open items in BACKEND_CONTRACT).
 struct ReviewSummaryView: View {
     let score: InterviewScoreResponseDTO
+
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+
+    private var language: CivicaLanguage {
+        CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
-                Text("Session feedback")
+                Text(InterviewCoachStrings.sessionFeedbackTitle.value(in: language))
                     .font(CivicaTypography.pageTitle)
                     .foregroundStyle(CivicaColors.ink)
 
-                Text("These scores reflect how a caseworker would likely read your answers. Lower accuracy-risk and lower missing-context are better; higher completeness is better.")
+                Text(InterviewCoachStrings.sessionFeedbackIntro.value(in: language))
                     .font(CivicaTypography.footnoteStrong)
                     .foregroundStyle(CivicaColors.graphite)
 
-                axisCard(title: "Completeness",
+                axisCard(title: InterviewCoachStrings.axisCompleteness.value(in: language),
                          axis: score.completeness,
                          interpretation: .higherIsBetter,
-                         hint: "Did you address what was asked?")
+                         hint: InterviewCoachStrings.axisCompletenessHint.value(in: language))
 
-                axisCard(title: "Accuracy risk",
+                axisCard(title: InterviewCoachStrings.axisAccuracyRisk.value(in: language),
                          axis: score.accuracyRisk,
                          interpretation: .lowerIsBetter,
-                         hint: "How likely are your answers to be misread as fraud or contradiction?")
+                         hint: InterviewCoachStrings.axisAccuracyRiskHint.value(in: language))
 
-                axisCard(title: "Missing context",
+                axisCard(title: InterviewCoachStrings.axisMissingContext.value(in: language),
                          axis: score.missingContext,
                          interpretation: .lowerIsBetter,
-                         hint: "Did you leave out information that would help your case?")
+                         hint: InterviewCoachStrings.axisMissingContextHint.value(in: language))
 
                 if !score.perTurnNotes.isEmpty {
                     perTurnSection
@@ -45,7 +54,7 @@ struct ReviewSummaryView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(CivicaColors.paper.ignoresSafeArea())
-        .navigationTitle("Feedback")
+        .navigationTitle(InterviewCoachStrings.navFeedback.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -104,13 +113,13 @@ struct ReviewSummaryView: View {
 
     private var perTurnSection: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-            Text("Per-turn notes")
+            Text(InterviewCoachStrings.perTurnNotes.value(in: language))
                 .font(CivicaTypography.sectionHeader)
                 .foregroundStyle(CivicaColors.ink)
 
             ForEach(score.perTurnNotes, id: \.turnIndex) { note in
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-                    Text("Turn \(note.turnIndex + 1)")
+                    Text(InterviewCoachStrings.turnLabel(note.turnIndex + 1, language: language))
                         .font(CivicaTypography.captionStrong)
                         .foregroundStyle(CivicaColors.graphite)
 

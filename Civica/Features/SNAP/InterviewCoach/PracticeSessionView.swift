@@ -4,10 +4,20 @@ import CivicaDesignSystem
 // EXPERIMENTAL SILOED MODULE: practice session chat UI.
 // Renders the transcript as alternating bubbles, exposes a text input bar
 // at the bottom, and pushes to ReviewSummaryView once scoring completes.
+// UI chrome bilingual via InterviewCoachStrings; the LLM-generated
+// caseworker turns come back in the language the backend produced them
+// (English-only at v1 -- backend localization tracked separately).
 struct PracticeSessionView: View {
     @StateObject private var viewModel = PracticeSessionViewModel()
     @State private var showScoreSheet = false
     @FocusState private var inputFocused: Bool
+
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+
+    private var language: CivicaLanguage {
+        CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -23,7 +33,7 @@ struct PracticeSessionView: View {
                         if case .awaitingCaseworker = viewModel.status {
                             HStack(spacing: CivicaSpacing.xs) {
                                 ProgressView().controlSize(.small)
-                                Text("Caseworker is typing…")
+                                Text(InterviewCoachStrings.caseworkerTyping.value(in: language))
                                     .font(CivicaTypography.captionStrong)
                                     .foregroundStyle(CivicaColors.graphite)
                             }
@@ -33,7 +43,7 @@ struct PracticeSessionView: View {
                         if case .scoring = viewModel.status {
                             HStack(spacing: CivicaSpacing.xs) {
                                 ProgressView().controlSize(.small)
-                                Text("Scoring your session…")
+                                Text(InterviewCoachStrings.scoringSession.value(in: language))
                                     .font(CivicaTypography.captionStrong)
                                     .foregroundStyle(CivicaColors.graphite)
                             }
@@ -66,7 +76,7 @@ struct PracticeSessionView: View {
             }
         }
         .background(CivicaColors.paper.ignoresSafeArea())
-        .navigationTitle("Practice session")
+        .navigationTitle(InterviewCoachStrings.navPracticeSession.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
         .task { await viewModel.startIfNeeded() }
         .navigationDestination(isPresented: $showScoreSheet) {
@@ -91,10 +101,10 @@ struct PracticeSessionView: View {
                         .fill(CivicaColors.tealSurface)
                 )
             VStack(alignment: .leading, spacing: 0) {
-                Text("\(viewModel.context.stateName) — \(viewModel.context.scenario.label)")
+                Text("\(viewModel.context.stateName) — \(viewModel.context.scenario.localizedLabel(in: language))")
                     .font(CivicaTypography.captionStrong)
                     .foregroundStyle(CivicaColors.ink)
-                Text("\(viewModel.context.persona.label) caseworker · \(viewModel.context.archetype.label)")
+                Text("\(viewModel.context.persona.localizedLabel(in: language)) · \(viewModel.context.archetype.localizedLabel(in: language))")
                     .font(CivicaTypography.captionStrong)
                     .foregroundStyle(CivicaColors.graphite)
             }
@@ -112,7 +122,9 @@ struct PracticeSessionView: View {
 
     private var inputBar: some View {
         HStack(alignment: .bottom, spacing: CivicaSpacing.sm) {
-            TextField("Your answer…", text: $viewModel.draftResponse, axis: .vertical)
+            TextField(InterviewCoachStrings.yourAnswerPlaceholder.value(in: language),
+                      text: $viewModel.draftResponse,
+                      axis: .vertical)
                 .focused($inputFocused)
                 .textInputAutocapitalization(.sentences)
                 .font(CivicaTypography.body)
@@ -156,7 +168,7 @@ struct PracticeSessionView: View {
 
     private var completionFooter: some View {
         VStack(spacing: CivicaSpacing.sm) {
-            Text("Interview complete.")
+            Text(InterviewCoachStrings.interviewComplete.value(in: language))
                 .font(CivicaTypography.subheadStrong)
                 .foregroundStyle(CivicaColors.ink)
 
@@ -167,7 +179,7 @@ struct PracticeSessionView: View {
                         if viewModel.score != nil { showScoreSheet = true }
                     }
                 } label: {
-                    Text("Get feedback")
+                    Text(InterviewCoachStrings.getFeedback.value(in: language))
                         .font(CivicaTypography.subheadStrong)
                         .foregroundStyle(.white)
                         .padding(.horizontal, CivicaSpacing.lg)
@@ -179,7 +191,7 @@ struct PracticeSessionView: View {
                 Button {
                     showScoreSheet = true
                 } label: {
-                    Text("See feedback")
+                    Text(InterviewCoachStrings.seeFeedback.value(in: language))
                         .font(CivicaTypography.subheadStrong)
                         .foregroundStyle(.white)
                         .padding(.horizontal, CivicaSpacing.lg)
@@ -209,7 +221,8 @@ struct PracticeSessionView: View {
         Button {
             Task { await viewModel.retry() }
         } label: {
-            Label("Try again", systemImage: "arrow.clockwise")
+            Label(InterviewCoachStrings.tryAgain.value(in: language),
+                  systemImage: "arrow.clockwise")
                 .font(CivicaTypography.subheadStrong)
                 .foregroundStyle(.white)
                 .padding(.horizontal, CivicaSpacing.lg)

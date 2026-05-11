@@ -2,21 +2,28 @@ import SwiftUI
 import CivicaDesignSystem
 
 // EXPERIMENTAL SILOED MODULE:
-// Hub view for the SNAP Interview Coach. Owns the bundled question bank and
-// surfaces the available affordances. Phase 1 lights up "Browse practice
-// questions". "Start a practice session" stays disabled until Phase 2 wires
-// up the backend roleplay loop.
+// Hub view for the SNAP Interview Coach. Owns the bundled question bank
+// and surfaces the available affordances. Localized via
+// InterviewCoachStrings (UI chrome bilingual; question corpus
+// English-only until SME-reviewed Spanish JSON ships).
 struct InterviewCoachEntryView: View {
     @StateObject private var bank = InterviewQuestionBank()
+
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+
+    private var language: CivicaLanguage {
+        CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
-                Text("Practice your SNAP interview")
+                Text(InterviewCoachStrings.entryTitle.value(in: language))
                     .font(CivicaTypography.pageTitle)
                     .foregroundStyle(CivicaColors.ink)
 
-                Text("Rehearse the questions caseworkers actually ask. Pick your state, choose a scenario, and run through the kinds of prompts that decide how quickly your benefits get approved.")
+                Text(InterviewCoachStrings.entryBody.value(in: language))
                     .font(CivicaTypography.body)
                     .foregroundStyle(CivicaColors.graphite)
 
@@ -27,8 +34,8 @@ struct InterviewCoachEntryView: View {
                 NavigationLink {
                     QuestionBrowserView(bank: bank)
                 } label: {
-                    affordanceRow(title: "Browse practice questions",
-                                  subtitle: "Read sample interview questions with guidance on how to answer.",
+                    affordanceRow(title: InterviewCoachStrings.browseTitle.value(in: language),
+                                  subtitle: InterviewCoachStrings.browseSubtitle.value(in: language),
                                   systemImage: "list.bullet.rectangle",
                                   enabled: !bank.allQuestions.isEmpty)
                 }
@@ -38,8 +45,8 @@ struct InterviewCoachEntryView: View {
                 NavigationLink {
                     PracticeSessionView()
                 } label: {
-                    affordanceRow(title: "Start a practice session",
-                                  subtitle: "Roleplay with a simulated caseworker. Massachusetts initial-application scenario.",
+                    affordanceRow(title: InterviewCoachStrings.practiceTitle.value(in: language),
+                                  subtitle: InterviewCoachStrings.practiceSubtitle.value(in: language),
                                   systemImage: "person.wave.2.fill",
                                   enabled: true)
                 }
@@ -52,7 +59,7 @@ struct InterviewCoachEntryView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(CivicaColors.paper.ignoresSafeArea())
-        .navigationTitle("Interview Coach")
+        .navigationTitle(InterviewCoachStrings.navInterviewCoach.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -95,7 +102,7 @@ struct InterviewCoachEntryView: View {
     }
 
     private func loadErrorBanner(_ error: String) -> some View {
-        Text("Couldn't load practice questions: \(error)")
+        Text("\(InterviewCoachStrings.loadErrorPrefix.value(in: language)) \(error)")
             .font(CivicaTypography.footnoteStrong)
             .foregroundStyle(CivicaColors.destructive)
             .padding(CivicaSpacing.md)

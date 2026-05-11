@@ -112,3 +112,76 @@ struct InterviewQuestion: Codable, Identifiable, Hashable {
         case guidance
     }
 }
+
+// MARK: - Bilingual labels
+//
+// `label` stays as the English fallback (CaseIterable previews + dev
+// tooling still rely on it). Spanish renders are surfaced through
+// `localizedLabel(in:)`. Domain terms here are closed-set and simple
+// enough to translate safely; the open-ended question prompts and
+// guidance copy in InterviewQuestions_*.json are not, which is why
+// they stay English-only until a native reviewer signs off.
+
+extension QuestionCategory {
+    func localizedLabel(in language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return label
+        case .spanish:
+            switch self {
+            case .income: return "Ingresos"
+            case .household: return "Hogar"
+            case .expenses: return "Gastos"
+            case .workRequirements: return "Requisitos laborales"
+            case .immigration: return "Estatus migratorio"
+            case .identity: return "Identidad y documentos"
+            }
+        }
+    }
+}
+
+extension InterviewScenario {
+    func localizedLabel(in language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return label
+        case .spanish:
+            switch self {
+            case .initial: return "Solicitud inicial"
+            case .recertification: return "Recertificación"
+            case .expedited: return "Trámite urgente"
+            case .changeReporting: return "Reporte de cambios"
+            }
+        }
+    }
+}
+
+extension ApplicantArchetype {
+    func localizedLabel(in language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return label
+        case .spanish:
+            switch self {
+            case .student: return "Estudiante"
+            case .gigWorker: return "Trabajo eventual / ingreso variable"
+            case .mixedStatus: return "Hogar de estatus mixto"
+            case .unhoused: return "Sin vivienda / vivienda inestable"
+            case .senior: return "Adulto mayor (60+)"
+            }
+        }
+    }
+}
+
+extension CaseworkerArchetype {
+    func localizedLabel(in language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return label
+        case .spanish:
+            switch self {
+            case .friendlyRushed: return "Amistoso pero apurado"
+            case .formal: return "Formal / procedimental"
+            case .skeptical: return "Escéptico"
+            case .languageMismatched: return "Idioma diferente"
+            case .adversarial: return "Hostil (sondeo de fraude)"
+            }
+        }
+    }
+}
