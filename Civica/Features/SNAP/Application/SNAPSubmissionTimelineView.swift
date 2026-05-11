@@ -173,7 +173,22 @@ struct SNAPSubmissionTimelineView: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(label). \(body)\(cta.map { ". \($0)" } ?? "")")
+        .accessibilityLabel(accessibilityLabel(label: label, body: body, cta: cta))
+    }
+
+    /// Strips trailing arrow glyphs from CTA copy so VoiceOver doesn't
+    /// announce "right arrow" after every footer-card tap target.
+    private func accessibilityLabel(label: String, body: String, cta: String?) -> String {
+        var components = [label, body]
+        if let cta {
+            let stripped = cta
+                .replacingOccurrences(of: "→", with: "")
+                .trimmingCharacters(in: .whitespaces)
+            if !stripped.isEmpty {
+                components.append(stripped)
+            }
+        }
+        return components.joined(separator: ". ")
     }
 
     // MARK: - Stations

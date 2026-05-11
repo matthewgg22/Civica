@@ -146,6 +146,7 @@ struct SNAPDocumentRetryView: View {
                         Text("·")
                             .font(CivicaTypography.body)
                             .foregroundStyle(CivicaColors.graphite)
+                            .accessibilityHidden(true)
                         Text(tip)
                             .font(CivicaTypography.body)
                             .foregroundStyle(CivicaColors.ink)
@@ -200,6 +201,12 @@ struct SNAPDocumentRetryView: View {
                     .padding(.vertical, CivicaSpacing.xs)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(
+                SNAPDocumentRetryStrings.differentDocumentCTA
+                    .value(in: language)
+                    .replacingOccurrences(of: "→", with: "")
+                    .trimmingCharacters(in: .whitespaces)
+            )
         }
     }
 
