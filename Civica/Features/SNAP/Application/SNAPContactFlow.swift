@@ -235,6 +235,15 @@ struct SNAPContactFlowView: View {
         .foregroundStyle(CivicaColors.ink)
         .keyboardType(.phonePad)
         .textContentType(.telephoneNumber)
+        // Format-as-you-type — raw digits become "(555) 123-4567"
+        // progressively. Persistence stores whatever the user sees;
+        // backend submission strips back to digits via USPhoneFormatter.
+        .onChange(of: viewModel.phoneField) { _, newValue in
+            let formatted = USPhoneFormatter.format(newValue)
+            if formatted != newValue {
+                viewModel.phoneField = formatted
+            }
+        }
         .padding(.horizontal, CivicaSpacing.lg)
         .padding(.vertical, CivicaSpacing.md)
         .frame(minHeight: 56)

@@ -246,6 +246,16 @@ struct SNAPRecoveryView: View {
         .textContentType(isPhone ? .telephoneNumber : .emailAddress)
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled(true)
+        // Format-as-you-type for the phone branch. Email branch keeps
+        // user input verbatim. Recovery's redemption-token network
+        // call strips back to digits via USPhoneFormatter.digits.
+        .onChange(of: viewModel.contactValue) { _, newValue in
+            guard isPhone else { return }
+            let formatted = USPhoneFormatter.format(newValue)
+            if formatted != newValue {
+                viewModel.contactValue = formatted
+            }
+        }
         .padding(.horizontal, CivicaSpacing.lg)
         .padding(.vertical, CivicaSpacing.md)
         .frame(minHeight: 56)
