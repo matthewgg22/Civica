@@ -25,15 +25,28 @@ struct SNAPDecisionMathView: View {
     let result: SNAPEligibilityResult
     let language: CivicaLanguage
     let onContinue: (() -> Void)?
+    /// Optional draft used to personalize the levers section
+    /// ("Three things that could change this"). When nil, the view
+    /// hydrates the latest persisted draft from disk so the levers
+    /// still appear correctly when the math view is reached via
+    /// the returning-user-home "View my result" card.
+    let draft: SNAPApplicationDraft?
 
     init(
         result: SNAPEligibilityResult,
         language: CivicaLanguage = .english,
-        onContinue: (() -> Void)? = nil
+        onContinue: (() -> Void)? = nil,
+        draft: SNAPApplicationDraft? = nil
     ) {
         self.result = result
         self.language = language
         self.onContinue = onContinue
+        self.draft = draft
+    }
+
+    private var resolvedDraft: SNAPApplicationDraft? {
+        if let draft { return draft }
+        return SNAPApplicationDraftStore().load()?.draft
     }
 
     var body: some View {
@@ -47,6 +60,14 @@ struct SNAPDecisionMathView: View {
 
                 if let calc = result.benefitCalculation {
                     mathSection(calc)
+                }
+
+                if SNAPDecisionLeversView.shouldRender(for: result) {
+                    SNAPDecisionLeversView(
+                        result: result,
+                        draft: resolvedDraft,
+                        language: language
+                    )
                 }
 
                 sourcesFooter

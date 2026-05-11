@@ -75,7 +75,8 @@ struct CivicaSNAPFlowView: View {
                 SNAPDecisionMathView(
                     result: verdict,
                     language: language,
-                    onContinue: { presentingPacket = true }
+                    onContinue: { presentingPacket = true },
+                    draft: generatedDraft
                 )
                 .navigationDestination(isPresented: $presentingPacket) {
                     if let draft = generatedDraft {
