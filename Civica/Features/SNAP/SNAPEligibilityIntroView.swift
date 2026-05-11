@@ -143,8 +143,8 @@ struct SNAPEligibilityIntroView: View {
             // Route dispatch: when SNAP_CONVERSATION_ENABLED is set at
             // compile time (see SNAPFeatureFlag.isConversationEnabled),
             // SNAPRouter.screenerRoute returns .conversation and we
-            // mount the LLM-driven chat. Otherwise we fall back to the
-            // existing static draft flow inside SNAPStepContainerView.
+            // mount the LLM-driven chat. Otherwise we mount the
+            // question-flow orchestrator.
             screenerDestination
         }
     }
@@ -159,11 +159,9 @@ struct SNAPEligibilityIntroView: View {
                 onClose: { dismiss() }
             )
         default:
-            // Question-flow orchestrator — the new HANDOFF-cadence
-            // path that replaces the multi-field SNAPStepContainerView.
-            // The legacy view remains in the codebase for one cycle
-            // for reference; delete in a follow-up cleanup commit
-            // once this path has shipped.
+            // Question-flow orchestrator — the HANDOFF-cadence path.
+            // Replaced the legacy 4130-line SNAPApplicationView /
+            // SNAPStepContainerView pair in the router cutover.
             SNAPApplicationFlowOrchestratorView(
                 language: language,
                 onGeneratePacket: { draft in

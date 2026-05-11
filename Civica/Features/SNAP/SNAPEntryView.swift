@@ -200,55 +200,11 @@ struct SNAPEntryView: View {
                         recoveryEntryCard
                     }
 
-                    if let submittedAt = viewModel.submittedAt {
-                        NavigationLink {
-                            SNAPStepContainerView(viewModel: viewModel, onClose: nil)
-                                .navigationTitle("SNAP Eligibility Questionnaire")
-                                .navigationBarTitleDisplayMode(.inline)
-                                .onAppear {
-                                    viewModel.jumpToDraftStep(.nextSteps)
-                                }
-                        } label: {
-                            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-                                Text("SNAP prep status")
-                                    .font(CivicaTypography.sectionHeader)
-                                    .foregroundStyle(CivicaColors.ink)
-
-                                HStack(spacing: CivicaSpacing.sm) {
-                                    Text("Status:")
-                                        .font(CivicaTypography.subheadStrong)
-                                        .foregroundStyle(CivicaColors.graphite)
-                                    Text("Prep checklist completed")
-                                        .font(CivicaTypography.subheadBold)
-                                        .foregroundStyle(CivicaColors.accentTeal)
-                                }
-
-                                HStack(spacing: CivicaSpacing.sm) {
-                                    Text("Date:")
-                                        .font(CivicaTypography.subheadStrong)
-                                        .foregroundStyle(CivicaColors.graphite)
-                                    Text(statusDateText(from: submittedAt))
-                                        .font(CivicaTypography.subheadStrong)
-                                        .foregroundStyle(CivicaColors.ink)
-                                }
-
-                                Text("Open next steps")
-                                    .font(CivicaTypography.subheadStrong)
-                                    .foregroundStyle(CivicaColors.brickPrimary)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(CivicaSpacing.md)
-                            .background(
-                                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                                    .fill(CivicaColors.surfacePrimary)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                                    .stroke(CivicaColors.hairline, lineWidth: 1)
-                            )
-                        }
-                        .buttonStyle(.plain)
-                    }
+                    // Post-submission status used to push the legacy
+                    // SNAPStepContainerView's "next steps" view here.
+                    // Status routing now lives in CivicaRootView via
+                    // SNAPApplicationStatusStore; this card is no
+                    // longer needed.
 
                     #if DEBUG
                     if SNAPFeatureFlag.showDebugEntry {
@@ -383,12 +339,6 @@ struct SNAPEntryView: View {
         )
     }
 
-    private func statusDateText(from date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
-    }
 }
 
 #Preview {
