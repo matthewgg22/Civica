@@ -111,7 +111,62 @@ struct SNAPInterviewCoachView: View {
                 body: SNAPInterviewStrings.haveNearbyBody.value(in: language),
                 borderAccent: CivicaColors.hairline
             )
+
+            // Cross-link to the AI rehearsal flow. Only in SNAP_DEV builds
+            // while the backend Edge Functions and multi-state question
+            // banks ship; gates the same way the entry tile in
+            // CivicaEntryView does.
+            if InterviewCoachFeatureFlag.isEnabled {
+                rehearsalCard
+            }
         }
+    }
+
+    private var rehearsalCard: some View {
+        NavigationLink {
+            InterviewCoachEntryView()
+        } label: {
+            HStack(alignment: .top, spacing: CivicaSpacing.md) {
+                Image(systemName: "bubble.left.and.bubble.right.fill")
+                    .font(.title3)
+                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .frame(width: 32, alignment: .center)
+                    .accessibilityHidden(true)
+
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                    Text(SNAPInterviewStrings.rehearseHeading.value(in: language))
+                        .font(CivicaTypography.captionStrong)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .textCase(.uppercase)
+                        .kerning(1.0)
+                    Text(SNAPInterviewStrings.rehearseBody.value(in: language))
+                        .font(CivicaTypography.body)
+                        .foregroundStyle(CivicaColors.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text(SNAPInterviewStrings.rehearseAction.value(in: language))
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundStyle(CivicaColors.brickPrimary)
+                        .padding(.top, CivicaSpacing.xs)
+                }
+
+                Spacer(minLength: 0)
+
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(CivicaColors.graphite)
+                    .accessibilityHidden(true)
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.brickPrimary.opacity(0.25), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(SNAPInterviewStrings.rehearseHeading.value(in: language)). \(SNAPInterviewStrings.rehearseBody.value(in: language)). \(SNAPInterviewStrings.rehearseAction.value(in: language)).")
     }
 
     // MARK: - Phase 2: questions
