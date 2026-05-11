@@ -20,6 +20,16 @@ struct SNAPHouseholdAnswers: Equatable, Codable {
     var hasMinorInHousehold: Bool?
     var hasElderlyOrDisabled: Bool?
 
+    // Categorical eligibility inputs (7 CFR 273.2(j)). The question
+    // flow does not yet ask these directly -- they're plumbed
+    // through so SNAPRulesRegistry / SNAPLocalEligibilityEvaluator
+    // can short-circuit income/asset tests when populated. Until
+    // dedicated screens land, these stay nil and the evaluator
+    // treats them as "unknown" rather than "no".
+    var receivesTANF: Bool?
+    var receivesSSI: Bool?
+    var receivesGeneralAssistance: Bool?
+
     var isComplete: Bool {
         householdSize != nil
             && hasMinorInHousehold != nil
