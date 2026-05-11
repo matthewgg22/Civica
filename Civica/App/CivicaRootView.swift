@@ -35,6 +35,11 @@ struct CivicaRootView: View {
                     rootSurface
                 }
                 .tint(CivicaColors.brickPrimary)
+                // Single shared status store for everything below the
+                // root. SNAPEligibilityIntroView writes the verdict +
+                // advances status; CivicaRootView's rootSurface
+                // re-routes on the change.
+                .environmentObject(statusStore)
                 .sheet(item: $externalLink) { url in
                     CivicaSafariSheet(url: url)
                 }

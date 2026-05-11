@@ -9,6 +9,11 @@ struct SNAPEligibilityIntroView: View {
     @State private var generatedFromOrchestrator: SNAPApplicationDraft?
     @State private var orchestratorVerdict: SNAPEligibilityResult?
     @State private var presentingVerdict: Bool = false
+    /// Shared status store — injected from CivicaRootView's
+    /// NavigationStack via .environmentObject so a single instance
+    /// drives both the orchestrator's recordEligibilityResult call
+    /// and the root view's status-based routing.
+    @EnvironmentObject private var statusStore: SNAPApplicationStatusStore
 
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
@@ -165,14 +170,17 @@ struct SNAPEligibilityIntroView: View {
             SNAPApplicationFlowOrchestratorView(
                 language: language,
                 onGeneratePacket: { draft in
-                    // Mission 2: run the local evaluator and push
-                    // SNAPDecisionMathView. The backend rules engine
-                    // remains the authoritative source — this is a
-                    // directional MA-BBCE threshold verdict so the
-                    // user gets immediate feedback instead of being
-                    // dropped into a no-op PDF stub.
+                    // Mission 2 + 7: evaluate the draft, record the
+                    // verdict into the shared status store (which
+                    // also advances status to .screenerComplete so
+                    // CivicaRootView routes the user to the
+                    // returning-user-home on the next launch), then
+                    // push SNAPDecisionMathView for immediate
+                    // feedback.
                     generatedFromOrchestrator = draft
-                    orchestratorVerdict = SNAPLocalEligibilityEvaluator.evaluate(draft)
+                    let verdict = SNAPLocalEligibilityEvaluator.evaluate(draft)
+                    statusStore.recordEligibilityResult(verdict)
+                    orchestratorVerdict = verdict
                     presentingVerdict = true
                 },
                 onDismiss: { dismiss() }

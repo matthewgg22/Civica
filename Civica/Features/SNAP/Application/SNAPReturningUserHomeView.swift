@@ -24,6 +24,9 @@ struct SNAPReturningUserHomeView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 header
                 statusBanner
+                if let result = statusStore.eligibilityResult {
+                    verdictCard(result)
+                }
                 timeline
                 primaryActionRow
                 startOverLink
@@ -33,6 +36,75 @@ struct SNAPReturningUserHomeView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    /// "Your previous result" card — only renders when the orchestrator
+    /// has recorded a verdict via statusStore.recordEligibilityResult.
+    /// Tapping pushes SNAPDecisionMathView with the saved result so the
+    /// user can re-see the same math without re-walking the orchestrator.
+    private func verdictCard(_ result: SNAPEligibilityResult) -> some View {
+        NavigationLink {
+            SNAPDecisionMathView(result: result, language: language)
+        } label: {
+            HStack(alignment: .top, spacing: CivicaSpacing.md) {
+                Image(systemName: verdictIcon(for: result.status))
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(verdictAccent(for: result.status))
+                    .frame(width: 28, alignment: .leading)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                    Text(SNAPReturningHomeStrings.verdictCardEyebrow.value(in: language))
+                        .font(CivicaTypography.captionStrong)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .textCase(.uppercase)
+                        .kerning(1.2)
+                    Text(verdictCardTitle(for: result.status))
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundStyle(CivicaColors.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: CivicaSpacing.sm)
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(CivicaColors.graphite)
+                    .accessibilityHidden(true)
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func verdictIcon(for status: SNAPEligibilityStatus) -> String {
+        switch status {
+        case .eligible, .eligibleWithConditions: return "checkmark.seal.fill"
+        case .ineligible:                        return "info.circle.fill"
+        case .insufficientInformation:           return "questionmark.circle.fill"
+        }
+    }
+
+    private func verdictAccent(for status: SNAPEligibilityStatus) -> Color {
+        switch status {
+        case .eligible, .eligibleWithConditions: return CivicaColors.accentTeal
+        case .ineligible:                        return CivicaColors.destructive
+        case .insufficientInformation:           return CivicaColors.warningAmber
+        }
+    }
+
+    private func verdictCardTitle(for status: SNAPEligibilityStatus) -> String {
+        switch status {
+        case .eligible, .eligibleWithConditions:
+            return SNAPReturningHomeStrings.verdictCardEligible.value(in: language)
+        case .ineligible:
+            return SNAPReturningHomeStrings.verdictCardIneligible.value(in: language)
+        case .insufficientInformation:
+            return SNAPReturningHomeStrings.verdictCardNeedMore.value(in: language)
+        }
     }
 
     // MARK: - Sections
@@ -151,6 +223,28 @@ struct SNAPReturningUserHomeView: View {
         default: return CivicaColors.brickPrimary
         }
     }
+}
+
+// Strings live next to the view they drive. EN/ES parity per
+// HANDOFF #4. Decoupled from SNAPStatusHomeStrings so adding a
+// new verdict copy here doesn't dredge through the bigger file.
+enum SNAPReturningHomeStrings {
+    static let verdictCardEyebrow = CivicaText(
+        "Your previous result",
+        es: "Tu resultado anterior"
+    )
+    static let verdictCardEligible = CivicaText(
+        "You looked likely eligible. See the math.",
+        es: "Parecías probablemente elegible. Ver el cálculo."
+    )
+    static let verdictCardIneligible = CivicaText(
+        "Last time you appeared not to qualify. See why.",
+        es: "La última vez parecía que no calificabas. Ver por qué."
+    )
+    static let verdictCardNeedMore = CivicaText(
+        "We needed more info last time. See what's missing.",
+        es: "Necesitábamos más información la última vez. Ver qué falta."
+    )
 }
 
 #if DEBUG

@@ -15,12 +15,19 @@ import SwiftUI
 final class SNAPApplicationStatusStore: ObservableObject {
     @Published private(set) var status: SNAPApplicationStatus
     @Published private(set) var milestones: [SNAPApplicationStatus: Date]
+    /// The most-recent eligibility verdict for this user. Set when the
+    /// orchestrator completes and the local evaluator returns a result;
+    /// surfaced on the returning-user-home so users who reopen the app
+    /// see "your previous result was..." instead of being restarted
+    /// from zero. Persisted alongside status + milestones.
+    @Published private(set) var eligibilityResult: SNAPEligibilityResult?
 
     // Keys used for UserDefaults persistence. Defined here rather than
     // @AppStorage so the wrapping ObservableObject can re-emit on
     // change without each SwiftUI view re-reading defaults directly.
     private let statusKey = "co.civica.applicationStatus"
     private let milestonesKey = "co.civica.applicationMilestones"
+    private let eligibilityResultKey = "co.civica.eligibilityResult"
 
     init() {
         let defaults = UserDefaults.standard
@@ -39,6 +46,13 @@ final class SNAPApplicationStatusStore: ObservableObject {
         } else {
             self.milestones = [:]
         }
+
+        if let resultData = defaults.data(forKey: eligibilityResultKey),
+           let result = try? JSONDecoder().decode(SNAPEligibilityResult.self, from: resultData) {
+            self.eligibilityResult = result
+        } else {
+            self.eligibilityResult = nil
+        }
     }
 
     /// Advance to a new status; records the timestamp as a milestone.
@@ -49,11 +63,24 @@ final class SNAPApplicationStatusStore: ObservableObject {
         persist()
     }
 
+    /// Record the eligibility result and advance status to
+    /// .screenerComplete in one transition. Called by the orchestrator
+    /// when the local evaluator returns a verdict — this closes the
+    /// loop so subsequent app launches route the user to the returning-
+    /// user home with their verdict already visible.
+    func recordEligibilityResult(_ result: SNAPEligibilityResult, on date: Date = Date()) {
+        eligibilityResult = result
+        status = .screenerComplete
+        milestones[.screenerComplete] = date
+        persist()
+    }
+
     /// Reset the application back to not-started. Used by "start over"
     /// flows and after the user explicitly deletes their application.
     func reset() {
         status = .notStarted
         milestones.removeAll()
+        eligibilityResult = nil
         persist()
     }
 
@@ -72,6 +99,13 @@ final class SNAPApplicationStatusStore: ObservableObject {
         )
         if let data = try? JSONEncoder().encode(encodable) {
             defaults.set(data, forKey: milestonesKey)
+        }
+
+        if let result = eligibilityResult,
+           let resultData = try? JSONEncoder().encode(result) {
+            defaults.set(resultData, forKey: eligibilityResultKey)
+        } else {
+            defaults.removeObject(forKey: eligibilityResultKey)
         }
     }
 }
