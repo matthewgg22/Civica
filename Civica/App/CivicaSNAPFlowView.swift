@@ -27,21 +27,47 @@ struct CivicaSNAPFlowView: View {
 
     @EnvironmentObject private var statusStore: SNAPApplicationStatusStore
 
+    /// True when the user is here as part of a recertification rather
+    /// than a first-time application. Drives the inline banner that
+    /// explains "this is your recert" and primes any future per-step
+    /// copy adjustments. Status-store advancement on completion also
+    /// clears the recert-in-progress flag at the root.
+    @AppStorage("co.civica.recertInProgress")
+    private var isRecertInProgress: Bool = false
+
     let language: CivicaLanguage
+    let recertMode: Bool
+
+    init(language: CivicaLanguage, recertMode: Bool = false) {
+        self.language = language
+        self.recertMode = recertMode
+    }
 
     var body: some View {
-        SNAPApplicationFlowOrchestratorView(
-            viewModel: SNAPApplicationFlowOrchestratorViewModel(),
-            language: language,
-            onGeneratePacket: { draft in
-                let result = SNAPLocalEligibilityEvaluator.evaluate(draft)
-                statusStore.recordEligibilityResult(result)
-                generatedDraft = draft
-                verdict = result
-                presentingVerdict = true
-            },
-            onDismiss: { dismiss() }
-        )
+        VStack(spacing: 0) {
+            if recertMode {
+                recertBanner
+            }
+            SNAPApplicationFlowOrchestratorView(
+                viewModel: SNAPApplicationFlowOrchestratorViewModel(),
+                language: language,
+                onGeneratePacket: { draft in
+                    let result = SNAPLocalEligibilityEvaluator.evaluate(draft)
+                    statusStore.recordEligibilityResult(result)
+                    // Recert completion: clear the in-progress flag so
+                    // the root re-routes through normal status handling
+                    // (the verdict + packet chain advances status to
+                    // .packetGenerated).
+                    if recertMode {
+                        isRecertInProgress = false
+                    }
+                    generatedDraft = draft
+                    verdict = result
+                    presentingVerdict = true
+                },
+                onDismiss: { dismiss() }
+            )
+        }
         .navigationTitle("SNAP")
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(isPresented: $presentingVerdict) {
@@ -63,6 +89,43 @@ struct CivicaSNAPFlowView: View {
             }
         }
     }
+
+    /// Inline banner above the orchestrator when the user is here
+    /// for a recertification. Tells them prior answers are pre-
+    /// populated and that they only need to change what changed.
+    private var recertBanner: some View {
+        HStack(alignment: .top, spacing: CivicaSpacing.sm) {
+            Image(systemName: "arrow.triangle.2.circlepath")
+                .foregroundStyle(CivicaColors.brickPrimary)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(CivicaSNAPFlowStrings.recertBannerTitle.value(in: language))
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                Text(CivicaSNAPFlowStrings.recertBannerBody.value(in: language))
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(CivicaSpacing.md)
+        .background(CivicaColors.brickSurface)
+        .overlay(alignment: .bottom) {
+            Rectangle().fill(CivicaColors.hairline).frame(height: 1)
+        }
+    }
+}
+
+enum CivicaSNAPFlowStrings {
+    static let recertBannerTitle = CivicaText(
+        "You're recertifying",
+        es: "Estás recertificando"
+    )
+    static let recertBannerBody = CivicaText(
+        "Your previous answers are pre-filled — change only what's different since last time.",
+        es: "Tus respuestas anteriores están pre-llenadas — cambia solo lo que sea diferente desde la última vez."
+    )
 }
 
 #if DEBUG
