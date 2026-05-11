@@ -1,5 +1,6 @@
 import CivicaDesignSystem
 import SwiftUI
+import UIKit
 
 // Migrates the legacy "documentsChecklistStep". Unlike the other
 // migrated steps, this isn't really a question — it's a single
@@ -13,7 +14,16 @@ import SwiftUI
 // continue with nothing checked.
 
 struct SNAPDocumentsChecklistAnswers: Equatable, Codable {
+    /// Documents the user has self-reported as on-hand. Toggled by the
+    /// checklist's primary tap on each row.
     var documentsAvailable: Set<SNAPDocumentType> = []
+
+    /// Documents for which the user has captured an iOS-camera image
+    /// via the document scanner. Image bytes live on disk under
+    /// SNAPCapturedDocumentStore — this set is just the index of which
+    /// types have a saved file. Persistence keeps them in sync: if a
+    /// type is in this set, a JPEG file should exist for it.
+    var capturedDocuments: Set<SNAPDocumentType> = []
 }
 
 @MainActor
@@ -31,6 +41,22 @@ final class SNAPDocumentsChecklistFlowViewModel: ObservableObject {
             answers.documentsAvailable.insert(document)
         }
     }
+
+    /// Record a captured image for the given document type. The image
+    /// is persisted to disk via SNAPCapturedDocumentStore; the answers
+    /// just track which types have a file. Automatically marks the
+    /// document as available since the user has provably handled it.
+    func recordCapture(_ image: UIImage, for document: SNAPDocumentType) {
+        SNAPCapturedDocumentStore.save(image, as: document)
+        answers.capturedDocuments.insert(document)
+        answers.documentsAvailable.insert(document)
+    }
+
+    /// Drop the captured image for a type (e.g., user wants to retake).
+    func clearCapture(for document: SNAPDocumentType) {
+        SNAPCapturedDocumentStore.delete(document)
+        answers.capturedDocuments.remove(document)
+    }
 }
 
 struct SNAPDocumentsChecklistFlowView: View {
@@ -38,6 +64,15 @@ struct SNAPDocumentsChecklistFlowView: View {
     let language: CivicaLanguage
     let onComplete: (SNAPDocumentsChecklistAnswers) -> Void
     let onExit: () -> Void
+
+    /// Which document type the camera sheet is currently capturing
+    /// for. Nil when the sheet is dismissed. Drives .sheet(item:).
+    @State private var documentBeingCaptured: SNAPDocumentType?
+
+    /// Toast / hint surfaced when the on-device quality check flags
+    /// a capture as low-quality. We still save the image so the user
+    /// has something — the hint lets them choose to retake.
+    @State private var lowQualityHint: String?
 
     init(
         viewModel: SNAPDocumentsChecklistFlowViewModel,
@@ -61,6 +96,9 @@ struct SNAPDocumentsChecklistFlowView: View {
             language: language
         ) {
             VStack(spacing: CivicaSpacing.sm) {
+                if let lowQualityHint {
+                    qualityHintBanner(lowQualityHint)
+                }
                 ForEach(SNAPDocumentType.allCases) { document in
                     checklistRow(for: document)
                 }
@@ -76,51 +114,121 @@ struct SNAPDocumentsChecklistFlowView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(item: $documentBeingCaptured) { document in
+            SNAPDocumentCameraView(
+                onCaptured: { image, quality in
+                    viewModel.recordCapture(image, for: document)
+                    // v1: always save the capture. When the on-device
+                    // quality check trips, surface a retake hint
+                    // inline so the user can choose to re-capture.
+                    lowQualityHint = quality.passed
+                        ? nil
+                        : SNAPDocumentsChecklistStrings.qualityHintLow.value(in: language)
+                    documentBeingCaptured = nil
+                },
+                onCancel: { documentBeingCaptured = nil }
+            )
+        }
+    }
+
+    private func qualityHintBanner(_ hint: String) -> some View {
+        HStack(alignment: .top, spacing: CivicaSpacing.sm) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundStyle(CivicaColors.warningAmber)
+                .accessibilityHidden(true)
+            Text(hint)
+                .font(CivicaTypography.footnote)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+            Button {
+                lowQualityHint = nil
+            } label: {
+                Image(systemName: "xmark")
+                    .foregroundStyle(CivicaColors.graphite)
+            }
+            .accessibilityLabel(SNAPDocumentsChecklistStrings.dismissHint.value(in: language))
+        }
+        .padding(CivicaSpacing.md)
+        .background(CivicaColors.warningAmber.opacity(0.12))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
     }
 
     private func checklistRow(for document: SNAPDocumentType) -> some View {
         let isChecked = viewModel.answers.documentsAvailable.contains(document)
-        return Button {
-            viewModel.toggle(document)
-        } label: {
-            HStack(alignment: .top, spacing: CivicaSpacing.md) {
-                Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 22))
-                    .foregroundStyle(isChecked ? CivicaColors.brickPrimary : CivicaColors.graphite)
-                    .padding(.top, 2)
-                    .accessibilityHidden(true)
+        let hasCapture = viewModel.answers.capturedDocuments.contains(document)
+        return VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            // Top row: tappable toggle for "I have this" state.
+            Button {
+                viewModel.toggle(document)
+            } label: {
+                HStack(alignment: .top, spacing: CivicaSpacing.md) {
+                    Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
+                        .font(.system(size: 22))
+                        .foregroundStyle(isChecked ? CivicaColors.brickPrimary : CivicaColors.graphite)
+                        .padding(.top, 2)
+                        .accessibilityHidden(true)
 
-                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-                    Text(SNAPDocumentsChecklistStrings.label(for: document, language: language))
-                        .font(CivicaTypography.subheadStrong)
-                        .foregroundStyle(CivicaColors.ink)
-                        .multilineTextAlignment(.leading)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    if let example = SNAPDocumentsChecklistStrings.example(for: document, language: language) {
-                        Text(example)
-                            .font(CivicaTypography.footnote)
-                            .foregroundStyle(CivicaColors.graphite)
+                    VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                        Text(SNAPDocumentsChecklistStrings.label(for: document, language: language))
+                            .font(CivicaTypography.subheadStrong)
+                            .foregroundStyle(CivicaColors.ink)
                             .multilineTextAlignment(.leading)
                             .frame(maxWidth: .infinity, alignment: .leading)
+                        if let example = SNAPDocumentsChecklistStrings.example(for: document, language: language) {
+                            Text(example)
+                                .font(CivicaTypography.footnote)
+                                .foregroundStyle(CivicaColors.graphite)
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
                     }
                 }
             }
-            .padding(.horizontal, CivicaSpacing.lg)
-            .padding(.vertical, CivicaSpacing.md)
-            .frame(minHeight: 56)
-            .background(CivicaColors.surfacePrimary)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
-            .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.control)
-                    .strokeBorder(
-                        isChecked ? CivicaColors.brickPrimary : CivicaColors.hairline,
-                        lineWidth: isChecked ? 2 : 1
-                    )
-            )
+            .buttonStyle(.plain)
+            .accessibilityLabel(SNAPDocumentsChecklistStrings.label(for: document, language: language))
+            .accessibilityAddTraits(isChecked ? [.isButton, .isSelected] : .isButton)
+
+            // Bottom row: camera affordance. Tapping presents
+            // VNDocumentCameraViewController; on capture, the image
+            // is saved to disk under SNAPCapturedDocumentStore.
+            cameraButton(for: document, hasCapture: hasCapture)
+        }
+        .padding(.horizontal, CivicaSpacing.lg)
+        .padding(.vertical, CivicaSpacing.md)
+        .frame(minHeight: 56)
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.control)
+                .strokeBorder(
+                    isChecked ? CivicaColors.brickPrimary : CivicaColors.hairline,
+                    lineWidth: isChecked ? 2 : 1
+                )
+        )
+    }
+
+    private func cameraButton(for document: SNAPDocumentType, hasCapture: Bool) -> some View {
+        Button {
+            documentBeingCaptured = document
+        } label: {
+            HStack(spacing: CivicaSpacing.sm) {
+                Image(systemName: hasCapture ? "checkmark.shield.fill" : "camera.fill")
+                    .foregroundStyle(hasCapture ? CivicaColors.accentTeal : CivicaColors.brickPrimary)
+                    .accessibilityHidden(true)
+                Text(hasCapture
+                    ? SNAPDocumentsChecklistStrings.photoSaved.value(in: language)
+                    : SNAPDocumentsChecklistStrings.takePhoto.value(in: language))
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundStyle(hasCapture ? CivicaColors.accentTeal : CivicaColors.brickPrimary)
+                Spacer(minLength: 0)
+            }
+            .padding(.vertical, CivicaSpacing.xs)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(SNAPDocumentsChecklistStrings.label(for: document, language: language))
-        .accessibilityAddTraits(isChecked ? [.isButton, .isSelected] : .isButton)
+        .accessibilityLabel(hasCapture
+            ? SNAPDocumentsChecklistStrings.photoSaved.value(in: language)
+            : SNAPDocumentsChecklistStrings.takePhoto.value(in: language))
     }
 }
 
@@ -133,8 +241,25 @@ enum SNAPDocumentsChecklistStrings {
         es: "¿Cuáles de estos ya tienes?"
     )
     static let helper = CivicaText(
-        "Mark anything you already have. You don't need everything to start — Massachusetts DTA can ask for the rest later. Civica doesn't upload or store these.",
-        es: "Marca lo que ya tengas. No necesitas todo para empezar — el DTA de Massachusetts puede pedir el resto después. Civica no sube ni almacena estos documentos."
+        "Mark anything you already have, or tap \"Take a photo\" to scan a document with your camera. Civica keeps the photo on this device only — nothing uploaded.",
+        es: "Marca lo que ya tengas, o toca \"Tomar una foto\" para escanear un documento con tu cámara. Civica guarda la foto solo en este dispositivo — nada se sube."
+    )
+
+    static let takePhoto = CivicaText(
+        "Take a photo",
+        es: "Tomar una foto"
+    )
+    static let photoSaved = CivicaText(
+        "Photo saved · Tap to retake",
+        es: "Foto guardada · Toca para volver a tomarla"
+    )
+    static let qualityHintLow = CivicaText(
+        "We saved your photo, but it looked blurry or hard to read. Tap a row's \"Tap to retake\" link to try again.",
+        es: "Guardamos tu foto, pero se ve borrosa o difícil de leer. Toca \"Toca para volver a tomarla\" en la fila para intentarlo de nuevo."
+    )
+    static let dismissHint = CivicaText(
+        "Dismiss hint",
+        es: "Cerrar aviso"
     )
 
     static func label(for document: SNAPDocumentType, language: CivicaLanguage) -> String {
