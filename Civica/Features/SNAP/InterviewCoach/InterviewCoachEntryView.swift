@@ -52,6 +52,9 @@ struct InterviewCoachEntryView: View {
                 }
                 .buttonStyle(.plain)
 
+                InterviewCoachDisclaimer(language: language)
+                    .padding(.top, CivicaSpacing.sm)
+
                 Spacer(minLength: CivicaSpacing.xl)
             }
             .padding(.horizontal, CivicaSpacing.lg)

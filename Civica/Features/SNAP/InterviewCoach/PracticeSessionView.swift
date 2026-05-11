@@ -23,6 +23,8 @@ struct PracticeSessionView: View {
         VStack(spacing: 0) {
             contextHeader
 
+            InterviewCoachDisclaimer(language: language, variant: .compact)
+
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: CivicaSpacing.sm) {

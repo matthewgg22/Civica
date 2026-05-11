@@ -71,6 +71,8 @@ struct QuestionDetailView: View {
                     }
                 }
 
+                InterviewCoachDisclaimer(language: language)
+
                 Spacer(minLength: CivicaSpacing.xl)
             }
             .padding(.horizontal, CivicaSpacing.lg)

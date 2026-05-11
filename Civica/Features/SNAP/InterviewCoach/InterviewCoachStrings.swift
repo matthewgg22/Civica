@@ -148,8 +148,8 @@ enum InterviewCoachStrings {
         es: "Comentarios de la sesión"
     )
     static let sessionFeedbackIntro = CivicaText(
-        "These scores reflect how a caseworker would likely read your answers. Lower accuracy-risk and lower missing-context are better; higher completeness is better.",
-        es: "Estos puntajes reflejan cómo un trabajador social probablemente leería tus respuestas. Menos riesgo de precisión y menos contexto faltante es mejor; más completitud es mejor."
+        "This is practice feedback, not a prediction of your real interview. It reflects how a caseworker might read your answers — a learning signal, not a guarantee. Lower accuracy-risk and lower missing-context are better; higher completeness is better.",
+        es: "Estos son comentarios de práctica, no una predicción de tu entrevista real. Reflejan cómo un trabajador social podría leer tus respuestas — una señal para aprender, no una garantía. Menos riesgo de precisión y menos contexto faltante es mejor; más completitud es mejor."
     )
     static let axisCompleteness = CivicaText(
         "Completeness",
@@ -186,4 +186,22 @@ enum InterviewCoachStrings {
         case .spanish: return "Turno \(index)"
         }
     }
+
+    // MARK: Disclaimer / expectation-setting
+    //
+    // Conservative legal-protection language for the practice tool.
+    // Bilingual; rendered as a footer on every Interview Coach surface.
+    // Phrasing is intentionally cautious until MLRI / GBLS or another
+    // SNAP-knowledgeable legal partner signs off on the question bank
+    // itself.
+
+    static let disclaimerBody = CivicaText(
+        "This is a practice tool, not legal advice. For binding answers about your SNAP application, contact Massachusetts Legal Aid (mass.gov/dta) or your local DTA office. Practice prompts and AI feedback are illustrative — they may not match your situation.",
+        es: "Esto es una herramienta de práctica, no asesoría legal. Para respuestas vinculantes sobre tu solicitud de SNAP, comunícate con Asistencia Legal de Massachusetts (mass.gov/dta) o tu oficina local del DTA. Las preguntas de práctica y los comentarios de la IA son ilustrativos — pueden no aplicar a tu situación."
+    )
+
+    static let disclaimerCompact = CivicaText(
+        "Practice tool — not legal advice.",
+        es: "Herramienta de práctica — no es asesoría legal."
+    )
 }
