@@ -149,9 +149,9 @@ private struct MyInfoLongPressModifier: ViewModifier {
         content
             .scaleEffect(isPressing ? 0.97 : 1.0)
             .overlay {
-                RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(
-                        CivicaColors.ctaBlue.opacity(showActivationRing ? 0.76 : (isPressing ? 0.34 : 0)),
+                        CivicaColors.brickPrimary.opacity(showActivationRing ? 0.76 : (isPressing ? 0.34 : 0)),
                         lineWidth: showActivationRing ? 2 : 1
                     )
                     .padding(-2)
@@ -276,12 +276,12 @@ struct PageHeader: View {
 
 struct CivicaLogoIcon: View {
     var size: CGFloat = 50
-    var backgroundColor: Color = CivicaColors.brandSoftBlue
-    var stripeColor: Color = CivicaColors.brandSoftRed
+    var backgroundColor: Color = CivicaColors.tealSurface
+    var stripeColor: Color = CivicaColors.brickSurface
     var cornerRadiusScale: CGFloat = 0.24
     var borderColor: Color = CivicaColors.iconOnPrimaryBorder
     var borderWidth: CGFloat = 0.6
-    var shadowColor: Color = CivicaColors.textPrimary.opacity(0.14)
+    var shadowColor: Color = CivicaColors.ink.opacity(0.14)
 
     var body: some View {
         let stripeScaleY: CGFloat = size < 30 ? 0.95 : 0.80
@@ -350,7 +350,7 @@ extension CivicaLogoIcon {
 
 private struct CivicaTabBarsIcon: View {
     var size: CGFloat = 28
-    var color: Color = CivicaColors.brandSoftRed
+    var color: Color = CivicaColors.brickSurface
     var horizontalStretch: CGFloat = 1.5
 
     var body: some View {
@@ -400,8 +400,8 @@ struct WhyVoteFloodOverlay: View {
     @Binding var isPresented: Bool
     var originInSpreadSpace: CGPoint?
 
-    @State private var dynamicFloodColor: Color = CivicaColors.brandSoftBlue
-    private let accent = CivicaColors.brandSoftRed
+    @State private var dynamicFloodColor: Color = CivicaColors.tealSurface
+    private let accent = CivicaColors.brickSurface
     private let logoSize: CGFloat = 50
     private let headerHorizontalPadding: CGFloat = 16
     // Matches page layout: outer content padding (16) + header top padding (4).
@@ -458,8 +458,8 @@ struct WhyVoteFloodOverlay: View {
                             .frame(width: logoSize, height: logoSize)
                             .fixedSize(horizontal: true, vertical: true)
                             .voteNowPillDualOrbit(
-                                redColor: CivicaColors.ctaRed.opacity(0.94),
-                                blueColor: CivicaColors.ctaBlue.opacity(0.88),
+                                redColor: CivicaColors.partyRepublican.opacity(0.94),
+                                blueColor: CivicaColors.partyDemocrat.opacity(0.88),
                                 strokeThickness: 2.4,
                                 loopDuration: 5.2,
                                 glowIntensity: 0.22,
@@ -513,7 +513,7 @@ struct WhyVoteFloodOverlay: View {
             .onAppear {
                 spread = 0.001
                 resolvedOriginInSpreadSpace = nil
-                dynamicFloodColor = CivicaColors.brandSoftBlue
+                dynamicFloodColor = CivicaColors.tealSurface
                 DispatchQueue.main.async {
                     if let provided = originInSpreadSpace, provided != .zero {
                         resolvedOriginInSpreadSpace = provided
@@ -535,8 +535,8 @@ struct WhyCallFloodOverlay: View {
     var originInSpreadSpace: CGPoint?
     var onStartCalling: () -> Void = {}
 
-    private let floodColor = CivicaColors.brandSoftBlue
-    private let accent = CivicaColors.brandSoftRed
+    private let floodColor = CivicaColors.tealSurface
+    private let accent = CivicaColors.brickSurface
     private let logoSize: CGFloat = 50
     private let headerHorizontalPadding: CGFloat = 16
     private let headerTopPadding: CGFloat = 10
@@ -592,8 +592,8 @@ struct WhyCallFloodOverlay: View {
                             .frame(width: logoSize, height: logoSize)
                             .fixedSize(horizontal: true, vertical: true)
                             .voteNowPillDualOrbit(
-                                redColor: CivicaColors.ctaRed.opacity(0.94),
-                                blueColor: CivicaColors.ctaBlue.opacity(0.88),
+                                redColor: CivicaColors.partyRepublican.opacity(0.94),
+                                blueColor: CivicaColors.partyDemocrat.opacity(0.88),
                                 strokeThickness: 2.4,
                                 loopDuration: 5.2,
                                 glowIntensity: 0.22,
@@ -795,14 +795,14 @@ struct WhyCallView: View {
                 systemImage: "bubble.left.and.bubble.right.fill"
             )
             .font(CivicaTypography.subheadStrong)
-            .foregroundColor(CivicaColors.ctaBlue)
+            .foregroundColor(CivicaColors.brickPrimary)
             .padding(.horizontal, CivicaSpacing.sm)
             .padding(.vertical, CivicaSpacing.sm)
             .background(CivicaColors.surfacePrimary)
             .clipShape(Capsule(style: .continuous))
             .overlay(
                 Capsule(style: .continuous)
-                    .stroke(CivicaColors.ctaBlue.opacity(0.34), lineWidth: 1)
+                    .stroke(CivicaColors.brickPrimary.opacity(0.34), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
@@ -838,7 +838,7 @@ private struct WhyCallStatCard: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(stat.value)
                 .font(.title2.weight(.bold))
-                .foregroundStyle(CivicaColors.ctaBlue)
+                .foregroundStyle(CivicaColors.brickPrimary)
             if !stat.title.isEmpty {
                 Text(stat.title)
                     .font(CivicaTypography.sectionHeader)
@@ -851,10 +851,10 @@ private struct WhyCallStatCard: View {
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.surfaceSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous)
-                .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.ink.opacity(0.08), lineWidth: 1)
         )
         .accessibilityElement(children: .combine)
     }
@@ -875,10 +875,10 @@ private struct WhyCallReasonCard: View {
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.surfaceSecondary)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous)
-                .stroke(CivicaColors.textPrimary.opacity(0.08), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.ink.opacity(0.08), lineWidth: 1)
         )
         .accessibilityElement(children: .combine)
     }
@@ -895,7 +895,7 @@ private struct WhyCallBottomCTA: View {
             if !note.isEmpty {
                 Text(note)
                     .font(CivicaTypography.footnote)
-                    .foregroundStyle(CivicaColors.textSecondary)
+                    .foregroundStyle(CivicaColors.graphite)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
@@ -924,16 +924,16 @@ struct WhyCallView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             WhyCallView(content: .live, onStartCalling: {})
-                .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
+                .background(CivicaColors.tealSurface.ignoresSafeArea())
                 .previewDisplayName("Default")
 
             WhyCallView(content: .live, onStartCalling: {})
-                .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
+                .background(CivicaColors.tealSurface.ignoresSafeArea())
                 .preferredColorScheme(.dark)
                 .previewDisplayName("Dark")
 
             WhyCallView(content: .live, onStartCalling: {})
-                .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
+                .background(CivicaColors.tealSurface.ignoresSafeArea())
                 .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
                 .previewDisplayName("AXXXL")
         }

@@ -10,9 +10,10 @@ public enum CivicaSpacing {
 }
 
 public enum CivicaRadius {
-    public static let sm:   CGFloat = 8
-    public static let md:   CGFloat = 10   // matches existing button radius
-    public static let lg:   CGFloat = 12   // matches CivicaColors.cardCornerRadius
-    public static let xl:   CGFloat = 16
-    public static let pill: CGFloat = 999
+    /// 3pt — controls, chips, inline buttons.
+    public static let control: CGFloat = 3
+    /// 4pt — cards, containers, sheets.
+    public static let card:    CGFloat = 4
+    /// 99pt — status pills.
+    public static let pill:    CGFloat = 999
 }

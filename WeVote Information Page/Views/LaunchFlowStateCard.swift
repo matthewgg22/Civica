@@ -48,11 +48,11 @@ struct LaunchFlowStateCard: View {
     private var iconColor: Color {
         switch state {
         case .loading:
-            return CivicaColors.ctaBlue
+            return CivicaColors.brickPrimary
         case .empty:
-            return CivicaColors.textSecondary
+            return CivicaColors.graphite
         case .error:
-            return CivicaColors.ctaRed
+            return CivicaColors.destructive
         }
     }
 
@@ -82,7 +82,7 @@ struct LaunchFlowStateCard: View {
 
                 Text(title)
                     .font(CivicaTypography.sectionHeader)
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
             }
 
             Text(stateLabel)
@@ -95,7 +95,7 @@ struct LaunchFlowStateCard: View {
 
             Text(message)
                 .font(CivicaTypography.subhead)
-                .foregroundColor(CivicaColors.textSecondary)
+                .foregroundColor(CivicaColors.graphite)
                 .fixedSize(horizontal: false, vertical: true)
 
             if let primaryActionTitle, let primaryAction {
@@ -111,10 +111,10 @@ struct LaunchFlowStateCard: View {
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.surfacePrimary)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaColors.cardCornerRadius, style: .continuous)
-                .stroke(CivicaColors.borderSubtle.opacity(0.72), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.hairline.opacity(0.72), lineWidth: 1)
         )
     }
 }
@@ -128,20 +128,20 @@ private struct LaunchFlowPrimaryCTAButtonStyle: ButtonStyle {
             .foregroundColor(CivicaColors.onPrimaryText)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .fill(backgroundColor(isPressed: configuration.isPressed))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                    .stroke(CivicaColors.ctaBlue.opacity(0.24), lineWidth: 1)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                    .stroke(CivicaColors.brickPrimary.opacity(0.24), lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.99 : 1)
             .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
 
     private func backgroundColor(isPressed: Bool) -> Color {
-        guard isEnabled else { return CivicaColors.ctaBlueDisabled }
-        return isPressed ? CivicaColors.ctaBluePressed : CivicaColors.ctaBlue
+        guard isEnabled else { return CivicaColors.brickPrimaryDisabled }
+        return isPressed ? CivicaColors.brickPrimaryPressed : CivicaColors.brickPrimary
     }
 }
 
@@ -151,14 +151,14 @@ private struct LaunchFlowSecondaryCTAButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(CivicaTypography.subheadStrong)
-            .foregroundColor(isEnabled ? CivicaColors.ctaBlue : CivicaColors.textSecondary)
+            .foregroundColor(isEnabled ? CivicaColors.brickPrimary : CivicaColors.graphite)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
             .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .fill(backgroundColor(isPressed: configuration.isPressed))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(borderColor, lineWidth: 1)
             )
             .scaleEffect(configuration.isPressed ? 0.99 : 1)

@@ -256,18 +256,18 @@ struct HowCallsBecomeSignalCardDemo: View {
                 VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                     Text("Only 23% of constituents call their reps annually")
                         .font(CivicaTypography.sectionHeader)
-                        .foregroundStyle(CivicaColors.ctaBlue)
+                        .foregroundStyle(CivicaColors.brickPrimary)
                     Text("When fewer people call, each call carries more signal.")
                         .font(CivicaTypography.subhead)
                 }
                 .padding(CivicaSpacing.md)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color(uiColor: .secondarySystemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
             }
             .padding(CivicaSpacing.lg)
         }
-        .background(CivicaColors.brandSoftBlue.ignoresSafeArea())
+        .background(CivicaColors.tealSurface.ignoresSafeArea())
     }
 }
 

@@ -83,7 +83,7 @@ struct MapvShareCardView: View {
             QRCodeView(text: shareURLString)
                 .frame(width: 140, height: 140)
                 .background(Color.white)
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
 
             VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Text("Open this plan")
@@ -137,7 +137,7 @@ struct QRCodeView: View {
                 .resizable()
                 .scaledToFit()
         } else {
-            RoundedRectangle(cornerRadius: CivicaRadius.lg)
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
                 .fill(Color(.systemGray5))
         }
     }

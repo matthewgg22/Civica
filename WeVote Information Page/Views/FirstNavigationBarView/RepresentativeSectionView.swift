@@ -4,9 +4,9 @@ import UIKit
 
 private func partyTint(_ party: String?) -> Color {
     let normalized = (party ?? "").lowercased()
-    if normalized.contains("democrat") { return CivicaColors.ctaBlue }
-    if normalized.contains("republican") { return CivicaColors.ctaRed }
-    return CivicaColors.textSecondary
+    if normalized.contains("democrat") { return CivicaColors.partyDemocrat }
+    if normalized.contains("republican") { return CivicaColors.partyRepublican }
+    return CivicaColors.graphite
 }
 
 private func shouldOpenMyInfoFromParty(_ party: String?) -> Bool {
@@ -110,7 +110,7 @@ private struct RepHeadshotView: View {
             Image(systemName: "person.crop.circle.fill")
                 .resizable()
                 .scaledToFit()
-                .foregroundColor(CivicaColors.textSecondary.opacity(0.45))
+                .foregroundColor(CivicaColors.graphite.opacity(0.45))
         }
     }
 
@@ -278,7 +278,7 @@ struct RepRow: View {
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text(displayName)
                         .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(CivicaColors.textPrimary)
+                        .foregroundColor(CivicaColors.ink)
                         .lineLimit(1)
                         .minimumScaleFactor(0.72)
 
@@ -294,7 +294,7 @@ struct RepRow: View {
                     if let districtLabel {
                         Text(districtLabel)
                             .font(.system(size: 16, weight: .regular))
-                            .foregroundColor(CivicaColors.textSecondary)
+                            .foregroundColor(CivicaColors.graphite)
                             .lineLimit(1)
                             .minimumScaleFactor(0.72)
                     }
@@ -318,8 +318,8 @@ struct RepRow: View {
                             .minimumScaleFactor(0.75)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity, minHeight: 36)
-                            .background(CivicaColors.ctaBlue)
-                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                            .background(CivicaColors.brickPrimary)
+                            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         }
                         .buttonStyle(.plain)
                     }
@@ -396,11 +396,11 @@ struct RepresentativeSection: View {
         }
         .padding(.horizontal, CivicaSpacing.md)
         .padding(.vertical, CivicaSpacing.md)
-        .background(CivicaColors.infoSurfaceBlue)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous))
+        .background(CivicaColors.tealSurface)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
-                .stroke(CivicaColors.ctaBlue.opacity(0.22), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.brickPrimary.opacity(0.22), lineWidth: 1)
         )
     }
 
@@ -411,7 +411,7 @@ struct RepresentativeSection: View {
                 headerIcon
                 Text(displayTitle)
                     .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(CivicaColors.ctaBlue)
+                    .foregroundColor(CivicaColors.brickPrimary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.72)
             }
@@ -428,11 +428,11 @@ struct RepresentativeSection: View {
                 .scaledToFit()
                 .frame(width: 29, height: 29)
                 .padding(CivicaSpacing.xs)
-                .background(CivicaColors.ctaBlue.opacity(0.30))
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                .background(CivicaColors.brickPrimary.opacity(0.30))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
-                        .stroke(CivicaColors.ctaBlue.opacity(0.40), lineWidth: 1.3)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                        .stroke(CivicaColors.brickPrimary.opacity(0.40), lineWidth: 1.3)
                 )
         case "federal legislative":
             if UIImage(named: "CapitolIcon") != nil {
@@ -442,22 +442,22 @@ struct RepresentativeSection: View {
                     .scaledToFit()
                     .frame(width: 32, height: 32)
                     .padding(CivicaSpacing.xs)
-                    .background(CivicaColors.ctaBlue.opacity(0.30))
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                    .background(CivicaColors.brickPrimary.opacity(0.30))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
-                            .stroke(CivicaColors.ctaBlue.opacity(0.40), lineWidth: 1.3)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                            .stroke(CivicaColors.brickPrimary.opacity(0.40), lineWidth: 1.3)
                     )
             } else {
                 Text("🏛️")
                     .font(.system(size: 24))
                     .frame(width: 32, height: 32)
                     .padding(CivicaSpacing.xs)
-                    .background(CivicaColors.ctaBlue.opacity(0.30))
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                    .background(CivicaColors.brickPrimary.opacity(0.30))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
-                            .stroke(CivicaColors.ctaBlue.opacity(0.40), lineWidth: 1.3)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                            .stroke(CivicaColors.brickPrimary.opacity(0.40), lineWidth: 1.3)
                     )
             }
         case "state":
@@ -467,30 +467,30 @@ struct RepresentativeSection: View {
                     .resizable()
                     .scaledToFill()
                     .frame(width: 42, height: 32)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
-                            .stroke(CivicaColors.ctaBlue.opacity(0.30), lineWidth: 0.9)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                            .stroke(CivicaColors.brickPrimary.opacity(0.30), lineWidth: 0.9)
                     )
-                    .shadow(color: CivicaColors.textPrimary.opacity(0.22), radius: 4, x: 0, y: 2)
+                    .shadow(color: CivicaColors.ink.opacity(0.22), radius: 4, x: 0, y: 2)
                     .opensMyInfoPanelOnLongPress()
             } else {
                 Image(systemName: "map.fill")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(CivicaColors.ctaBlue)
+                    .foregroundColor(CivicaColors.brickPrimary)
                     .frame(width: 22, height: 22)
                     .padding(CivicaSpacing.xs)
-                    .background(CivicaColors.ctaBlue.opacity(0.30))
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                    .background(CivicaColors.brickPrimary.opacity(0.30))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
-                            .stroke(CivicaColors.ctaBlue.opacity(0.40), lineWidth: 1.3)
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                            .stroke(CivicaColors.brickPrimary.opacity(0.40), lineWidth: 1.3)
                     )
             }
         default:
             Image(systemName: "building.2.fill")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(CivicaColors.ctaBlue)
+                .foregroundColor(CivicaColors.brickPrimary)
                 .frame(width: 22, height: 22)
         }
     }
@@ -553,7 +553,7 @@ struct RepresentativeSectionView_Previews: PreviewProvider {
             ]
         )
         .padding()
-        .background(CivicaColors.canvasBackground)
+        .background(CivicaColors.paper)
         .previewLayout(.sizeThatFits)
     }
 }

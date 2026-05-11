@@ -190,16 +190,16 @@ struct VoterIDGuideCard: View {
     }
 
     private var categoryAccentColor: Color {
-        guard let metric else { return CivicaColors.ctaBlue }
+        guard let metric else { return CivicaColors.brickPrimary }
         switch requirementClassification(for: metric) {
         case .photoRequired:
-            return CivicaColors.ctaRed
+            return CivicaColors.destructive
         case .nonPhotoAccepted:
             return CivicaColors.warningAmber
         case .noDocument:
-            return CivicaColors.successGreen
+            return CivicaColors.accentTeal
         case .conditional:
-            return CivicaColors.ctaBlue
+            return CivicaColors.brickPrimary
         }
     }
 
@@ -240,18 +240,18 @@ struct VoterIDGuideCard: View {
                 HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                     Image(systemName: "person.text.rectangle.fill")
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(CivicaColors.ctaBlue)
+                        .foregroundColor(CivicaColors.brickPrimary)
                         .frame(width: 30, height: 30)
-                        .background(CivicaColors.ctaBlue.opacity(0.12))
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                        .background(CivicaColors.brickPrimary.opacity(0.12))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
 
                     VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                         Text(headerText)
                             .font(CivicaTypography.subheadStrong)
-                            .foregroundColor(CivicaColors.textSecondary)
+                            .foregroundColor(CivicaColors.graphite)
                         Text(stateHeaderText)
                             .font(CivicaTypography.sectionHeaderBold)
-                            .foregroundColor(CivicaColors.textPrimary)
+                            .foregroundColor(CivicaColors.ink)
                             .lineLimit(2)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -284,7 +284,7 @@ struct VoterIDGuideCard: View {
                 if shouldShowRequirementSummary(for: metric) {
                     Text(requirementSummaryText)
                         .font(CivicaTypography.subheadStrong)
-                        .foregroundColor(CivicaColors.textPrimary)
+                        .foregroundColor(CivicaColors.ink)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
@@ -293,54 +293,54 @@ struct VoterIDGuideCard: View {
                         if let heading = acceptedOptionsHeadingText(for: metric) {
                             Text(heading)
                                 .font(CivicaTypography.captionStrong)
-                                .foregroundColor(CivicaColors.textSecondary)
+                                .foregroundColor(CivicaColors.graphite)
                         }
                         Text(options)
                             .font(CivicaTypography.caption)
-                            .foregroundColor(CivicaColors.textPrimary)
+                            .foregroundColor(CivicaColors.ink)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(.horizontal, CivicaSpacing.sm)
                     .padding(.vertical, CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(CivicaColors.infoSurfaceBlue.opacity(0.35))
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                    .background(CivicaColors.tealSurface.opacity(0.35))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 }
 
                 if let note = supplementalNoteText(for: metric) {
                     Text(note)
                         .font(CivicaTypography.caption)
-                        .foregroundColor(CivicaColors.textSecondary)
+                        .foregroundColor(CivicaColors.graphite)
                         .padding(.horizontal, CivicaSpacing.sm)
                         .padding(.vertical, CivicaSpacing.sm)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(CivicaColors.canvasBackground.opacity(0.88))
-                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                        .background(CivicaColors.paper.opacity(0.88))
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 }
             } else {
                 HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                     Image(systemName: "location.slash")
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(CivicaColors.ctaBlue)
+                        .foregroundColor(CivicaColors.brickPrimary)
                     Text(missingStatePromptText)
                         .font(CivicaTypography.subheadStrong)
-                        .foregroundColor(CivicaColors.textSecondary)
+                        .foregroundColor(CivicaColors.graphite)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(CivicaSpacing.sm)
-                .background(CivicaColors.infoSurfaceBlue.opacity(0.48))
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                .background(CivicaColors.tealSurface.opacity(0.48))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             }
         }
         .padding(CivicaSpacing.lg)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(
                     LinearGradient(
                         colors: [
                             CivicaColors.surfacePrimary,
-                            CivicaColors.brandSoftBlue.opacity(0.09)
+                            CivicaColors.tealSurface.opacity(0.09)
                         ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
@@ -348,10 +348,10 @@ struct VoterIDGuideCard: View {
                 )
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
-                .stroke(CivicaColors.ctaBlue.opacity(0.16), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.brickPrimary.opacity(0.16), lineWidth: 1)
         )
-        .shadow(color: CivicaColors.textPrimary.opacity(0.07), radius: 4, x: 0, y: 2)
+        .shadow(color: CivicaColors.ink.opacity(0.07), radius: 4, x: 0, y: 2)
     }
 
     @ViewBuilder
@@ -361,23 +361,23 @@ struct VoterIDGuideCard: View {
                 .resizable()
                 .scaledToFill()
                 .frame(width: stateFlagSize.width, height: stateFlagSize.height)
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
-                        .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                        .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .fill(CivicaColors.surfacePrimary)
                 )
                 .opensMyInfoPanelOnLongPress()
         } else {
             Image(systemName: "location.slash")
                 .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(CivicaColors.ctaBlue)
+                .foregroundColor(CivicaColors.brickPrimary)
                 .frame(width: 28, height: 28)
-                .background(CivicaColors.ctaBlue.opacity(0.10))
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.sm, style: .continuous))
+                .background(CivicaColors.brickPrimary.opacity(0.10))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         }
     }
 

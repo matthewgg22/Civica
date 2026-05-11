@@ -18,4 +18,13 @@ public enum CivicaAnimation {
     /// 0.30s easeInOut — considered transitions. Section reveals, important
     /// state changes that warrant a beat of attention.
     public static let slow     = Animation.easeInOut(duration: 0.3)
+    /// 0.24s easeOut — form-step cross-fade per HANDOFF.md / canvas board on
+    /// form behavior. Used when navigating between one-question-per-screen
+    /// form steps. Honor `@Environment(\.accessibilityReduceMotion)` and pass
+    /// `nil` to `withAnimation` instead when reduce-motion is on.
+    public static let stepTransition = Animation.easeOut(duration: 0.24)
+    /// 0.08s — interval between staggered field reveals (e.g., when OCR
+    /// resolves form fields one at a time after a document scan). Use with
+    /// `Animation.delay(_:)` keyed off a row index.
+    public static let staggerInterval: Double = 0.08
 }

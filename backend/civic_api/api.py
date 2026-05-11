@@ -1138,6 +1138,26 @@ if FastAPI is not None:
     app = FastAPI(title="Civica Civic API", version="1.0.0")
     bad_request = (ValueError, TypeError)
 
+    # Mount the SNAP conversational-pipeline router. Best-effort — if
+    # the SNAP module's dependencies (Pydantic v2, anthropic SDK,
+    # cryptography) are missing in a particular deploy or a required
+    # env var (SNAP_FERNET_KEY in production) isn't set, log a clear
+    # warning and continue without SNAP rather than failing the whole
+    # API. The MyReps endpoints have nothing to do with SNAP and should
+    # keep working.
+    try:
+        from .snap.api import build_snap_router
+        from .snap.factory import build_default_orchestrator
+
+        _snap_orchestrator = build_default_orchestrator()
+        app.include_router(build_snap_router(_snap_orchestrator))
+        logger.info("SNAP router mounted at /snap/*.")
+    except Exception as snap_exc:  # noqa: BLE001
+        logger.warning(
+            "SNAP router not mounted (%s). MyReps endpoints continue unaffected.",
+            snap_exc,
+        )
+
     @app.get("/")
     def root_status() -> dict[str, Any]:
         return {

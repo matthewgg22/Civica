@@ -12,7 +12,7 @@ struct LoadingVC: View {
     var body: some View {
         ZStack {
             // Semi-transparent black background covers the whole screen.
-            CivicaColors.textPrimary.opacity(0.5)
+            CivicaColors.ink.opacity(0.5)
                 .ignoresSafeArea()
             
             // Vertical stack for the progress indicator and text.

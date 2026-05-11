@@ -1,40 +1,63 @@
 import SwiftUI
 
+/// Typography ladder, rendered in Hanken Grotesk per HANDOFF.md §1.
+/// Weights: 400 (Regular), 500 (Medium), 600 (SemiBold). The handoff caps UI
+/// type at 600 — `.bold`-flavored tokens (e.g. `pageTitle`, `cardTitle`) render
+/// in SemiBold rather than synthetic bold, so visual hierarchy must come from
+/// size/color, not extra weight.
+///
+/// Sizes use `relativeTo:` so Dynamic Type still scales the ladder. Numeric-
+/// prone tokens (body, footnote, caption tiers) include `.monospacedDigit()`
+/// to satisfy the handoff's tabular-nums money rule wherever the font is used.
 public enum CivicaTypography {
-    /// 34/41 bold — page header (PageHeader title, overlay titles).
-    public static let pageTitle           = Font.largeTitle.weight(.bold)
-    /// 22/28 semibold — card hero ("Make a Plan to Vote", "Next election").
-    public static let cardHero            = Font.title2.weight(.semibold)
-    /// 20/25 bold — small card title / subsection header.
-    public static let cardTitle           = Font.title3.weight(.bold)
-    /// 17/22 semibold — list/section headers, primary card titles.
-    public static let sectionHeader       = Font.headline
-    /// 17/22 bold — heaviest section header.
-    public static let sectionHeaderBold   = Font.headline.weight(.bold)
-    /// 17/22 regular — body text, list row title.
-    public static let body                = Font.body
-    /// 15/20 medium — emphasis subhead, stat callout.
-    public static let subhead             = Font.subheadline.weight(.medium)
-    /// 15/20 semibold — strongly emphasized subhead.
-    public static let subheadStrong       = Font.subheadline.weight(.semibold)
-    /// 15/20 bold — heaviest subhead.
-    public static let subheadBold         = Font.subheadline.weight(.bold)
-    /// 16/21 regular — supporting copy under a row title.
-    public static let support             = Font.callout
-    /// 16/21 semibold — strongly emphasized supporting copy.
-    public static let supportStrong       = Font.callout.weight(.semibold)
-    /// 16/21 bold — heaviest supporting copy.
-    public static let supportBold         = Font.callout.weight(.bold)
-    /// 13/18 regular — fine print.
-    public static let footnote            = Font.footnote
-    /// 13/18 semibold — emphasized fine print.
-    public static let footnoteStrong      = Font.footnote.weight(.semibold)
-    /// 12/16 regular — meta, timestamps, small captions.
-    public static let caption             = Font.caption
-    /// 12/16 semibold — strongly emphasized meta.
-    public static let captionStrong       = Font.caption.weight(.semibold)
-    /// 12/16 bold — heaviest meta.
-    public static let captionBold         = Font.caption.weight(.bold)
-    /// 11/14 monospace — token chips, race codes (HR-3214).
+    private static let regular  = "HankenGrotesk-Regular"
+    private static let medium   = "HankenGrotesk-Medium"
+    private static let semibold = "HankenGrotesk-SemiBold"
+
+    /// 34/41 — page header (PageHeader title, overlay titles).
+    public static let pageTitle           = Font.custom(semibold, size: 34, relativeTo: .largeTitle)
+    /// 22/28 — card hero ("Make a Plan to Vote", "Next election").
+    public static let cardHero            = Font.custom(semibold, size: 22, relativeTo: .title2)
+    /// 20/25 — small card title / subsection header.
+    public static let cardTitle           = Font.custom(semibold, size: 20, relativeTo: .title3)
+    /// 20/25 — quieter card title / sheet header. Same Hanken weight as cardTitle
+    /// since the handoff caps weight at SemiBold; differentiation should be via
+    /// hierarchy/color, not synthetic boldness.
+    public static let cardSubtitle        = Font.custom(semibold, size: 20, relativeTo: .title3)
+    /// 17/22 — list/section headers, primary card titles.
+    public static let sectionHeader       = Font.custom(semibold, size: 17, relativeTo: .headline)
+    /// 17/22 — heaviest section header. Same Hanken weight as sectionHeader.
+    public static let sectionHeaderBold   = Font.custom(semibold, size: 17, relativeTo: .headline)
+    /// 17/22 — body text, list row title.
+    public static let body                = Font.custom(regular, size: 17, relativeTo: .body).monospacedDigit()
+    /// 17/22 — emphasized body, primary stat in a row.
+    public static let bodyStrong          = Font.custom(semibold, size: 17, relativeTo: .body).monospacedDigit()
+    /// 15/20 — emphasis subhead, stat callout.
+    public static let subhead             = Font.custom(medium, size: 15, relativeTo: .subheadline)
+    /// 15/20 — strongly emphasized subhead.
+    public static let subheadStrong       = Font.custom(semibold, size: 15, relativeTo: .subheadline)
+    /// 15/20 — heaviest subhead (same Hanken weight as subheadStrong).
+    public static let subheadBold         = Font.custom(semibold, size: 15, relativeTo: .subheadline)
+    /// 16/21 — supporting copy under a row title.
+    public static let support             = Font.custom(regular, size: 16, relativeTo: .callout).monospacedDigit()
+    /// 16/21 — strongly emphasized supporting copy.
+    public static let supportStrong       = Font.custom(semibold, size: 16, relativeTo: .callout).monospacedDigit()
+    /// 16/21 — heaviest supporting copy (same Hanken weight as supportStrong).
+    public static let supportBold         = Font.custom(semibold, size: 16, relativeTo: .callout).monospacedDigit()
+    /// 13/18 — fine print.
+    public static let footnote            = Font.custom(regular, size: 13, relativeTo: .footnote).monospacedDigit()
+    /// 13/18 — fine print needing slight emphasis (form helper text).
+    public static let footnoteMedium      = Font.custom(medium, size: 13, relativeTo: .footnote).monospacedDigit()
+    /// 13/18 — emphasized fine print.
+    public static let footnoteStrong      = Font.custom(semibold, size: 13, relativeTo: .footnote).monospacedDigit()
+    /// 12/16 — meta, timestamps, small captions.
+    public static let caption             = Font.custom(regular, size: 12, relativeTo: .caption).monospacedDigit()
+    /// 12/16 — strongly emphasized meta.
+    public static let captionStrong       = Font.custom(semibold, size: 12, relativeTo: .caption).monospacedDigit()
+    /// 12/16 — heaviest meta (same Hanken weight as captionStrong).
+    public static let captionBold         = Font.custom(semibold, size: 12, relativeTo: .caption).monospacedDigit()
+    /// 11/14 monospace — token chips, race codes (HR-3214). Stays on system
+    /// monospaced (ui-monospace / SF Mono) per HANDOFF.md §1: "ui-monospace,
+    /// SF Mono, IBM Plex Mono. Metadata/labels/eyebrows only — never body."
     public static let codeChip            = Font.system(size: 11, weight: .semibold, design: .monospaced)
 }

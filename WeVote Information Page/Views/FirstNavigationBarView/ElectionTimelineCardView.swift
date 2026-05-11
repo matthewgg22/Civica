@@ -18,7 +18,7 @@ struct ElectionTimelineCardView: View {
             HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                 Text(stateLabel)
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
                     .lineLimit(1)
 
                 Spacer(minLength: 8)
@@ -26,11 +26,11 @@ struct ElectionTimelineCardView: View {
                 Button(action: onFlag) {
                     Image(systemName: "flag")
                         .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(CivicaColors.ctaBlue)
+                        .foregroundColor(CivicaColors.brickPrimary)
                         .frame(width: 36, height: 36)
                         .background(
                             Circle()
-                                .fill(CivicaColors.infoSurfaceBlue)
+                                .fill(CivicaColors.tealSurface)
                         )
                 }
                 .buttonStyle(.plain)
@@ -41,13 +41,13 @@ struct ElectionTimelineCardView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(titleText)
                     .font(CivicaTypography.sectionHeader)
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
                     .lineLimit(2)
 
                 if let subtitleText, !subtitleText.isEmpty {
                     Text(subtitleText)
                         .font(CivicaTypography.subhead)
-                        .foregroundColor(CivicaColors.textSecondary)
+                        .foregroundColor(CivicaColors.graphite)
                         .lineLimit(2)
                 }
             }
@@ -55,17 +55,17 @@ struct ElectionTimelineCardView: View {
             HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                 Text(electionDateText)
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundColor(CivicaColors.textPrimary)
+                    .foregroundColor(CivicaColors.ink)
 
                 Spacer(minLength: 8)
 
                 if let badgeText, !badgeText.isEmpty {
                     Text(badgeText)
                         .font(CivicaTypography.captionStrong)
-                        .foregroundColor(CivicaColors.ctaBlue)
+                        .foregroundColor(CivicaColors.brickPrimary)
                         .padding(.horizontal, CivicaSpacing.sm)
                         .padding(.vertical, CivicaSpacing.xs)
-                        .background(CivicaColors.infoSurfaceBlue)
+                        .background(CivicaColors.tealSurface)
                         .clipShape(Capsule())
                 }
             }
@@ -81,21 +81,21 @@ struct ElectionTimelineCardView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(!canMakePlan)
-                .foregroundColor(canMakePlan ? .white : CivicaColors.textPrimary.opacity(0.75))
+                .foregroundColor(canMakePlan ? .white : CivicaColors.ink.opacity(0.75))
                 .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous)
-                        .fill(canMakePlan ? CivicaColors.ctaBlue : CivicaColors.infoSurfaceBlue)
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                        .fill(canMakePlan ? CivicaColors.brickPrimary : CivicaColors.tealSurface)
                 )
             }
         }
         .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(CivicaColors.surfacePrimary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.xl, style: .continuous)
-                .stroke(CivicaColors.borderSubtle, lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.hairline, lineWidth: 1)
         )
         .civicaShadow(.hairline, opacity: 0.06)
     }

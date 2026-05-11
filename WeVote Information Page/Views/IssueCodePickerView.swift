@@ -14,15 +14,15 @@ struct IssueCodePickerView: View {
                     } label: {
                         Text(issue.displayName)
                             .font(CivicaTypography.captionStrong)
-                            .foregroundColor(isSelected ? .white : CivicaColors.textPrimary)
+                            .foregroundColor(isSelected ? .white : CivicaColors.ink)
                             .lineLimit(1)
                             .padding(.horizontal, CivicaSpacing.md)
                             .padding(.vertical, CivicaSpacing.sm)
-                            .background(isSelected ? CivicaColors.ctaBlue : CivicaColors.surfacePrimary)
+                            .background(isSelected ? CivicaColors.brickPrimary : CivicaColors.surfacePrimary)
                             .clipShape(Capsule())
                             .overlay(
                                 Capsule()
-                                    .stroke(isSelected ? CivicaColors.ctaBlue : CivicaColors.borderSubtle, lineWidth: 1)
+                                    .stroke(isSelected ? CivicaColors.brickPrimary : CivicaColors.hairline, lineWidth: 1)
                             )
                     }
                     .buttonStyle(.plain)
@@ -64,13 +64,13 @@ private struct IssueCodePickerPreviewWrapper: View {
                 )
             )
             .font(CivicaTypography.subhead)
-            .foregroundColor(CivicaColors.textPrimary)
+            .foregroundColor(CivicaColors.ink)
             .padding(CivicaSpacing.sm)
-            .background(CivicaColors.infoSurfaceBlue)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+            .background(CivicaColors.tealSurface)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         }
         .padding()
-        .background(CivicaColors.brandSoftBlue.opacity(0.25))
+        .background(CivicaColors.tealSurface.opacity(0.25))
     }
 }
 

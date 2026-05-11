@@ -66,7 +66,7 @@ struct DirectionalRevealDemoView: View {
                                 .frame(width: 56, height: 56)
                                 .background(
                                     Circle()
-                                        .fill(CivicaColors.textPrimary.opacity(0.32))
+                                        .fill(CivicaColors.ink.opacity(0.32))
                                 )
                         }
                         .buttonStyle(.plain)

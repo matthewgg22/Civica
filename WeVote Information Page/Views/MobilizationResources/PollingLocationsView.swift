@@ -133,7 +133,7 @@ struct PollingLocationsView: View {
                 endPoint: .trailing
             )
         )
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .shadow(color: .blue.opacity(0.18), radius: 6, x: 0, y: 3)
         .padding(.horizontal)
     }
@@ -147,7 +147,7 @@ struct PollingLocationsView: View {
                 )
             )
             .font(CivicaTypography.subheadBold)
-            .foregroundColor(CivicaColors.textPrimary)
+            .foregroundColor(CivicaColors.ink)
 
             Text(
                 l(
@@ -156,16 +156,16 @@ struct PollingLocationsView: View {
                 )
             )
             .font(CivicaTypography.footnote)
-            .foregroundColor(CivicaColors.textSecondary)
+            .foregroundColor(CivicaColors.graphite)
             .fixedSize(horizontal: false, vertical: true)
         }
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(CivicaColors.infoSurfaceBlue)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous))
+        .background(CivicaColors.tealSurface)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                .stroke(CivicaColors.ctaBlue.opacity(0.16), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.brickPrimary.opacity(0.16), lineWidth: 1)
         )
         .padding(.horizontal)
     }
@@ -192,7 +192,7 @@ struct PollingLocationsView: View {
             region = context.region
         }
         .frame(height: 250)
-        .cornerRadius(CivicaRadius.lg)
+        .cornerRadius(CivicaRadius.card)
         .padding(.horizontal)
     }
     
@@ -218,7 +218,7 @@ struct PollingLocationsView: View {
 
                 Text(place.address)
                     .font(CivicaTypography.caption)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
                     .lineLimit(1)
 
                 HStack(spacing: CivicaSpacing.sm) {
@@ -227,12 +227,12 @@ struct PollingLocationsView: View {
                         systemImage: "location"
                     )
                     .font(CivicaTypography.caption)
-                    .foregroundColor(CivicaColors.textSecondary)
+                    .foregroundColor(CivicaColors.graphite)
 
                     if place.hours != "--" {
                         Label(place.hours, systemImage: "clock")
                             .font(CivicaTypography.caption)
-                            .foregroundColor(CivicaColors.textSecondary)
+                            .foregroundColor(CivicaColors.graphite)
                     }
                 }
             }
@@ -246,26 +246,26 @@ struct PollingLocationsView: View {
             } label: {
                 Image(systemName: "arrow.triangle.turn.up.right.diamond.fill")
                     .font(.title3)
-                    .foregroundColor(CivicaColors.ctaBlue)
+                    .foregroundColor(CivicaColors.brickPrimary)
             }
             .buttonStyle(.plain)
         }
         .padding(CivicaSpacing.md)
         .contentShape(Rectangle())
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(
                     selectedPlace?.id == place.id
-                    ? CivicaColors.ctaBlue.opacity(0.14)
-                    : CivicaColors.infoSurfaceBlue
+                    ? CivicaColors.brickPrimary.opacity(0.14)
+                    : CivicaColors.tealSurface
                 )
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(
                     selectedPlace?.id == place.id
-                    ? CivicaColors.ctaBlue.opacity(0.45)
-                    : CivicaColors.textPrimary.opacity(0.05),
+                    ? CivicaColors.brickPrimary.opacity(0.45)
+                    : CivicaColors.ink.opacity(0.05),
                     lineWidth: 1
                 )
         )
@@ -520,7 +520,7 @@ private struct PollingLocationPinView: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(isSelected ? Color(red: 0.87, green: 0.35, blue: 0.27) : CivicaColors.ctaBlue)
+                .fill(isSelected ? Color(red: 0.87, green: 0.35, blue: 0.27) : CivicaColors.brickPrimary)
                 .frame(width: 24, height: 24)
             Image(systemName: "mappin")
                 .font(CivicaTypography.captionBold)

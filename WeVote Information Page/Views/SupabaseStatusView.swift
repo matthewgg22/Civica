@@ -32,11 +32,11 @@ struct SupabaseStatusView: View {
             if let error = authStore.lastError, !error.isEmpty {
                 Text(error)
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundColor(CivicaColors.ctaRed)
+                    .foregroundColor(CivicaColors.destructive)
                     .padding(CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.statusErrorSurface)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.md, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             }
 
             HStack(spacing: CivicaSpacing.sm) {
@@ -81,12 +81,12 @@ struct SupabaseStatusView: View {
         }
         .padding(CivicaSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(CivicaColors.secondaryButtonFill)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.lg, style: .continuous)
-                .stroke(CivicaColors.ctaBlue.opacity(0.18), lineWidth: 1)
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 1)
         )
         .task {
             guard shouldAutoRefresh else { return }
@@ -115,7 +115,7 @@ struct SupabaseStatusView: View {
         if authStore.isSignedIn {
             return StatusIndicator(
                 iconName: "checkmark.circle.fill",
-                tint: CivicaColors.successGreen,
+                tint: CivicaColors.accentTeal,
                 surface: CivicaColors.statusSuccessSurface
             )
         }
@@ -137,13 +137,13 @@ struct SupabaseStatusView: View {
         if healthStatus.isHealthy {
             return StatusIndicator(
                 iconName: "checkmark.seal.fill",
-                tint: CivicaColors.successGreen,
+                tint: CivicaColors.accentTeal,
                 surface: CivicaColors.statusSuccessSurface
             )
         }
         return StatusIndicator(
             iconName: "exclamationmark.triangle.fill",
-            tint: CivicaColors.ctaRed,
+            tint: CivicaColors.destructive,
             surface: CivicaColors.statusErrorSurface
         )
     }
@@ -166,7 +166,7 @@ struct SupabaseStatusView: View {
                 }
                 Text(value)
                     .font(CivicaTypography.subhead)
-                    .foregroundStyle(CivicaColors.textSecondary)
+                    .foregroundStyle(CivicaColors.graphite)
                     .multilineTextAlignment(.trailing)
                     .lineLimit(2)
             }
