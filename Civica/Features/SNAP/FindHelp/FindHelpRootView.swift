@@ -26,6 +26,12 @@ struct FindHelpRootView: View {
     /// after they've made the call.
     @State private var preferZipFallback: Bool = false
 
+    /// One-time first-launch onboarding card visibility. Persisted
+    /// per-install via AppStorage so the card never resurfaces after
+    /// the user dismisses it.
+    @AppStorage("find_help.has_seen_onboarding")
+    private var hasSeenOnboarding: Bool = false
+
     /// Current search radius in kilometers. Defaults to ~5 miles per
     /// HANDOFF board B3; the empty-state CTA bumps to ~25 miles.
     @State private var currentRadiusKm: Double = 8.0
@@ -56,6 +62,10 @@ struct FindHelpRootView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            layerToggle
+                .padding(.horizontal, CivicaSpacing.lg)
+                .padding(.top, CivicaSpacing.md)
+
             FindHelpFilterBar(filter: $store.filter) {
                 FindHelpAnalytics.trackFilterChanged(
                     serviceType: store.filter.serviceType?.rawValue,
@@ -64,7 +74,7 @@ struct FindHelpRootView: View {
                 store.updateFilter(store.filter)
             }
             .padding(.horizontal, CivicaSpacing.lg)
-            .padding(.top, CivicaSpacing.md)
+            .padding(.top, CivicaSpacing.sm)
 
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -72,6 +82,7 @@ struct FindHelpRootView: View {
             FindHelpDisclosureFooter()
         }
         .background(CivicaColors.surfaceSecondary.ignoresSafeArea())
+        .overlay { onboardingOverlay }
         .navigationTitle("find_help.entry_card.title")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(CivicaColors.surfaceSecondary, for: .navigationBar)
@@ -141,7 +152,15 @@ struct FindHelpRootView: View {
         if store.isLoading && store.locations.isEmpty {
             loadingView
         } else if let error = store.error, store.locations.isEmpty {
-            errorView(error.errorDescription ?? "Could not load results.")
+            // Transport errors (DNS, no connection, etc.) get the
+            // rich fallback view with retry + zip-code escape +
+            // always-visible human path. Other errors fall through
+            // to the plain message view.
+            if case .network = error {
+                transportErrorView
+            } else {
+                errorView(error.errorDescription ?? "Could not load results.")
+            }
         } else if store.filteredLocations.isEmpty {
             emptyView
         } else {
@@ -165,6 +184,73 @@ struct FindHelpRootView: View {
                 viewModeToggle
                     .padding(.bottom, CivicaSpacing.md)
             }
+        }
+    }
+
+    /// One-time first-launch onboarding card. Centered above a dimmed
+    /// black backdrop; the only dismissal path is the "Got it" CTA so
+    /// the user reads the thesis line ("SNAP works at more places than
+    /// you think") before the map becomes interactive. Once dismissed,
+    /// the @AppStorage flag flips and the overlay is gone for good.
+    @ViewBuilder
+    private var onboardingOverlay: some View {
+        if !hasSeenOnboarding {
+            ZStack {
+                Color.black.opacity(0.35)
+                    .ignoresSafeArea()
+                FindHelpOnboardingCard(
+                    language: language,
+                    onDismiss: {
+                        withAnimation(.easeOut(duration: 0.2)) {
+                            hasSeenOnboarding = true
+                        }
+                        FindHelpAnalytics.trackOnboardingDismissed()
+                    }
+                )
+            }
+            .transition(.opacity)
+        }
+    }
+
+    /// Three-way pill at the top of the screen that selects which
+    /// slice of the SNAP ecosystem renders: where to get help, where
+    /// to spend benefits, or both together. Modeled on viewModeToggle
+    /// so the two pills read as a matched pair when stacked.
+    private var layerToggle: some View {
+        HStack(spacing: 0) {
+            ForEach(FindHelpLayerSelection.allCases) { layer in
+                Button {
+                    store.layerSelection = layer
+                    FindHelpAnalytics.trackLayerChanged(layer.rawValue)
+                } label: {
+                    Text(layerLabel(for: layer))
+                        .font(CivicaTypography.footnoteStrong)
+                        .padding(.horizontal, CivicaSpacing.md)
+                        .padding(.vertical, CivicaSpacing.sm)
+                        .foregroundStyle(
+                            layer == store.layerSelection
+                                ? CivicaColors.onPrimaryText
+                                : CivicaColors.brickPrimary
+                        )
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            layer == store.layerSelection
+                                ? CivicaColors.brickPrimary
+                                : Color.clear
+                        )
+                }
+            }
+        }
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(Capsule())
+        .overlay(Capsule().stroke(CivicaColors.brickPrimary.opacity(0.4), lineWidth: 1))
+    }
+
+    private func layerLabel(for layer: FindHelpLayerSelection) -> String {
+        switch layer {
+        case .findHelp: return FindHelpStrings.layerFindHelp.value(in: language)
+        case .spend:    return FindHelpStrings.layerSpend.value(in: language)
+        case .both:     return FindHelpStrings.layerBoth.value(in: language)
         }
     }
 
@@ -409,5 +495,77 @@ struct FindHelpRootView: View {
         }
         .padding(CivicaSpacing.lg)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    /// Rich fallback for transport-layer failures (DNS, no
+    /// connection). Mirrors the empty-state skeleton — title, body,
+    /// primary retry, zip-fallback escape hatch, always-visible
+    /// human-path row — so the user always has a next step.
+    private var transportErrorView: some View {
+        VStack(spacing: CivicaSpacing.lg) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                Image(systemName: "wifi.slash")
+                    .font(.system(size: 28))
+                    .foregroundStyle(CivicaColors.graphite)
+                    .accessibilityHidden(true)
+                Text(FindHelpStrings.transportErrorTitle.value(in: language))
+                    .font(CivicaTypography.cardTitle)
+                    .foregroundStyle(CivicaColors.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(FindHelpStrings.transportErrorBody.value(in: language))
+                    .font(CivicaTypography.body)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Button(action: retryLastSearch) {
+                    Text(FindHelpStrings.transportErrorRetryCTA.value(in: language))
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundStyle(CivicaColors.onPrimaryText)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .background(
+                            RoundedRectangle(cornerRadius: CivicaRadius.control)
+                                .fill(CivicaColors.brickPrimary)
+                        )
+                }
+                .padding(.top, CivicaSpacing.sm)
+
+                Button {
+                    preferZipFallback = true
+                } label: {
+                    Text(FindHelpStrings.permissionZipCTA.value(in: language))
+                        .font(CivicaTypography.footnoteStrong)
+                        .foregroundStyle(CivicaColors.brickPrimary)
+                        .underline()
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.top, CivicaSpacing.xs)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+
+            humanPathRow
+        }
+        .padding(CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+    }
+
+    /// Re-issue the most recent search. Falls back to whatever
+    /// location the store last had if the user moved less than the
+    /// triggerSearchIfNeeded threshold (which would otherwise no-op).
+    private func retryLastSearch() {
+        let location = lastSearchedLocation ?? store.userLocation
+        guard let location else { return }
+        store.searchNearby(
+            lat: location.coordinate.latitude,
+            lng: location.coordinate.longitude,
+            radiusKm: currentRadiusKm
+        )
     }
 }

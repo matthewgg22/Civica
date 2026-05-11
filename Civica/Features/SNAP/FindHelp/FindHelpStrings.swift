@@ -121,4 +121,97 @@ enum FindHelpStrings {
     static func emptyTitleFormatted(miles: Int, language: CivicaLanguage) -> String {
         emptyTitle.value(in: language).replacingOccurrences(of: "%@", with: "\(miles)")
     }
+
+    // MARK: - Transport error state
+    //
+    // Shown when the directory request fails at the transport layer
+    // (DNS failure, no connection, etc.). Same skeleton as the empty
+    // state: title, body, primary retry, zip-fallback escape hatch,
+    // always-visible human path. Never leave the user on a raw
+    // "hostname could not be found" message with no next step.
+
+    static let transportErrorTitle = CivicaText(
+        "We can't reach the directory right now.",
+        es: "Ahora mismo no podemos consultar el directorio."
+    )
+    static let transportErrorBody = CivicaText(
+        "Check your connection and try again, or use a zip code instead. The phone line below works without internet.",
+        es: "Revisa tu conexión e inténtalo de nuevo, o usa un código postal. La línea telefónica funciona sin internet."
+    )
+    static let transportErrorRetryCTA = CivicaText(
+        "Try again",
+        es: "Reintentar"
+    )
+
+    // MARK: - Eligibility chips (board C, retailer detail polish)
+    //
+    // Strip of small pills shown on retailer detail + peek sheets
+    // that names what the user can actually pay with here. EBT is
+    // implied for every retailer row but stated explicitly because
+    // unfamiliarity with the term is the #1 reason people who are
+    // SNAP-eligible don't realize a store accepts their benefits.
+
+    static let chipEbt = CivicaText(
+        "EBT accepted",
+        es: "Acepta EBT"
+    )
+    static let chipWic = CivicaText(
+        "WIC accepted",
+        es: "Acepta WIC"
+    )
+    /// HIP matches every $1 spent in SNAP on MA-grown fruits and
+    /// vegetables, up to a monthly household cap. Worth ~$40-$80/mo
+    /// for many households. MA-specific today.
+    static let chipHip = CivicaText(
+        "HIP matched",
+        es: "Bonificación HIP"
+    )
+
+    // MARK: - Retailer pill labels (peek sheet)
+    //
+    // The peek sheet's service-type pill needs retailer labels too;
+    // without these every retailer row falls back to the default
+    // serviceTypes.first which is .snapApplicationHelp and renders
+    // a misleading "SNAP HELP" badge.
+
+    static let pillSupermarket = CivicaText(
+        "GROCERY",
+        es: "MERCADO"
+    )
+    static let pillSmallGrocer = CivicaText(
+        "LOCAL GROCER",
+        es: "TIENDA LOCAL"
+    )
+    static let pillFarmersMarket = CivicaText(
+        "FARMERS MARKET",
+        es: "MERCADO AGRÍCOLA"
+    )
+    static let pillCoOp = CivicaText(
+        "CO-OP",
+        es: "COOPERATIVA"
+    )
+    static let pillRestaurantRMP = CivicaText(
+        "MEALS PROGRAM",
+        es: "COMIDAS RMP"
+    )
+
+    // MARK: - Layer toggle (top of map screen)
+    //
+    // Three-way pill above the filter bar that selects which slice
+    // of the SNAP ecosystem renders. Default state is "Both" so the
+    // full ecosystem is the first impression; the user can narrow
+    // to either side when they have a specific intent.
+
+    static let layerFindHelp = CivicaText(
+        "Find help",
+        es: "Buscar ayuda"
+    )
+    static let layerSpend = CivicaText(
+        "Spend EBT",
+        es: "Gastar EBT"
+    )
+    static let layerBoth = CivicaText(
+        "Both",
+        es: "Ambos"
+    )
 }

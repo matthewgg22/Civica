@@ -168,7 +168,13 @@ struct SNAPApplicationFlowOrchestratorView: View {
     }
 
     var body: some View {
+        // Hide the system back chevron — each sub-flow installs its
+        // own navigationBarLeading button that routes through the
+        // orchestrator's intra-flow steps (and dismisses the whole
+        // flow at the first step). Rendering both produced the
+        // stacked `< Civica <` chevron pair on every question screen.
         currentDestination
+            .navigationBarBackButtonHidden(true)
     }
 
     @ViewBuilder

@@ -339,7 +339,10 @@ enum SNAPIncomeStrings {
         "An estimate is fine. SNAP looks at gross income — what you make before taxes and deductions.",
         es: "Una estimación está bien. SNAP mira los ingresos brutos — lo que ganas antes de impuestos y deducciones."
     )
-    static let grossPlaceholder = CivicaText("0", es: "0")
+    /// Word placeholder ("Amount" / "Cantidad") rather than "0" so the
+    /// empty state is unambiguous — see CivicaQuestionStrings for the
+    /// shared rationale.
+    static let grossPlaceholder = CivicaQuestionStrings.amountPlaceholder
     static let grossSuffix = CivicaText(
         "Total monthly, before taxes",
         es: "Total mensual, antes de impuestos"

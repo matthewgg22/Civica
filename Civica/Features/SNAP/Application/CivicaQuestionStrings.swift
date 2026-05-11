@@ -17,6 +17,15 @@ enum CivicaQuestionStrings {
     static let yesLabel = CivicaText("Yes", es: "Sí")
     static let noLabel = CivicaText("No", es: "No")
 
+    /// Placeholder for dollar-amount inputs. A word rather than a
+    /// digit so users can tell the field is empty — the previous "0"
+    /// placeholder rendered as "$ 0" and looked like a pre-entered
+    /// value, hiding the fact that the field still needed input
+    /// (especially since "0" is also a valid answer for an unhoused
+    /// applicant's rent, a non-disabled household's medical costs,
+    /// etc.).
+    static let amountPlaceholder = CivicaText("Amount", es: "Cantidad")
+
     /// "3 of 8" / "3 de 8". The Spanish form mirrors the canvas mockup
     /// (lowercase "de"). Caller passes the active language explicitly
     /// — same pattern as SNAPDecisionMathStrings interpolated helpers.
