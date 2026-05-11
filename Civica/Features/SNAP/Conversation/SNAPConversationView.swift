@@ -131,6 +131,25 @@ struct SNAPConversationView: View {
                     .font(CivicaTypography.body)
                     .foregroundColor(CivicaColors.graphite)
             }
+
+            // "See the math →" — opens the HANDOFF board 23 decision-math
+            // view. Visible whenever the rules engine returned a full
+            // benefit calculation (i.e. eligible or ineligible-by-math
+            // outcomes; not insufficient-information cases).
+            if result.benefitCalculation != nil {
+                NavigationLink {
+                    SNAPDecisionMathView(result: result)
+                } label: {
+                    HStack(spacing: CivicaSpacing.xs) {
+                        Text("See the math")
+                            .font(CivicaTypography.subheadStrong)
+                        Image(systemName: "arrow.right")
+                    }
+                    .foregroundColor(CivicaColors.brickPrimary)
+                    .padding(.top, CivicaSpacing.xs)
+                }
+                .accessibilityHint("Shows every deduction line that produced this benefit estimate.")
+            }
         }
         .padding(CivicaSpacing.lg)
         .frame(maxWidth: .infinity, alignment: .leading)

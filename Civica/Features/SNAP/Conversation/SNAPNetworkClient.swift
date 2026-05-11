@@ -453,6 +453,19 @@ final class MockSNAPNetworkClient: SNAPNetworkClient, @unchecked Sendable {
                         canBePostponedForExpedited: false
                     )
                 ],
+                benefitCalculation: SNAPBenefitCalculationDetail(
+                    grossMonthlyIncome: Decimal(1800),
+                    earnedIncomeDeduction: Decimal(360),
+                    standardDeduction: Decimal(204),
+                    dependentCareDeduction: Decimal(0),
+                    medicalDeduction: Decimal(0),
+                    childSupportDeduction: Decimal(0),
+                    excessShelterDeduction: Decimal(712),
+                    netMonthlyIncome: Decimal(524),
+                    thirtyPercentOfNet: Decimal(157),
+                    maxAllotmentForHouseholdSize: Decimal(292),
+                    monthlyBenefit: Decimal(135)
+                ),
                 ineligibilityReason: nil,
                 effectiveDate: "2025-05-10",
                 rulesVersion: "federal-2025-05-10/MA-2025-05-10"

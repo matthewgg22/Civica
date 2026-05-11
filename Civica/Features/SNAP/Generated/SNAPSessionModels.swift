@@ -75,6 +75,41 @@ struct SNAPRequiredVerification: Codable, Sendable, Hashable {
     }
 }
 
+/// Audit trail for the benefit amount calculation. Every deduction that
+/// fed into the final number is itemized here. Mirrors the backend
+/// BenefitCalculationDetail Pydantic model in
+/// backend/civic_api/snap/rules/interfaces.py.
+///
+/// The "decision math exposed" view (HANDOFF board 23) renders one
+/// row per line item in this struct, in this order.
+struct SNAPBenefitCalculationDetail: Codable, Sendable, Equatable {
+    let grossMonthlyIncome: Decimal
+    let earnedIncomeDeduction: Decimal
+    let standardDeduction: Decimal
+    let dependentCareDeduction: Decimal
+    let medicalDeduction: Decimal
+    let childSupportDeduction: Decimal
+    let excessShelterDeduction: Decimal
+    let netMonthlyIncome: Decimal
+    let thirtyPercentOfNet: Decimal
+    let maxAllotmentForHouseholdSize: Decimal
+    let monthlyBenefit: Decimal
+
+    enum CodingKeys: String, CodingKey {
+        case grossMonthlyIncome = "gross_monthly_income"
+        case earnedIncomeDeduction = "earned_income_deduction"
+        case standardDeduction = "standard_deduction"
+        case dependentCareDeduction = "dependent_care_deduction"
+        case medicalDeduction = "medical_deduction"
+        case childSupportDeduction = "child_support_deduction"
+        case excessShelterDeduction = "excess_shelter_deduction"
+        case netMonthlyIncome = "net_monthly_income"
+        case thirtyPercentOfNet = "thirty_percent_of_net"
+        case maxAllotmentForHouseholdSize = "max_allotment_for_household_size"
+        case monthlyBenefit = "monthly_benefit"
+    }
+}
+
 struct SNAPEligibilityResult: Codable, Sendable, Equatable {
     let status: SNAPEligibilityStatus
     /// Decimal arrives over the wire as a JSON string; iOS decodes to Decimal.
@@ -82,6 +117,7 @@ struct SNAPEligibilityResult: Codable, Sendable, Equatable {
     let expeditedEligible: Bool
     let contributingFactors: [String]
     let requiredVerifications: [SNAPRequiredVerification]
+    let benefitCalculation: SNAPBenefitCalculationDetail?
     let ineligibilityReason: String?
     let effectiveDate: String  // ISO date "YYYY-MM-DD"
     let rulesVersion: String
@@ -92,6 +128,7 @@ struct SNAPEligibilityResult: Codable, Sendable, Equatable {
         case expeditedEligible = "expedited_eligible"
         case contributingFactors = "contributing_factors"
         case requiredVerifications = "required_verifications"
+        case benefitCalculation = "benefit_calculation"
         case ineligibilityReason = "ineligibility_reason"
         case effectiveDate = "effective_date"
         case rulesVersion = "rules_version"
