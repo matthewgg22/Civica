@@ -121,6 +121,7 @@ struct HeuristicExpeditedClassifier: ExpeditedClassifier {
            (resources as NSDecimalNumber).doubleValue < 250 {
             z += 1.2
         }
+        if draft.expenses.utilityShutoffNotice == .yes { z += 1.0 }
         if draft.income.recentJobLoss30d == .yes { z += 0.7 }
 
         // (rent + utilities) / max(gross, 1) > 0.7
