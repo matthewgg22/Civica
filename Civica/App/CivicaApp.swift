@@ -12,7 +12,7 @@ struct CivicaApp: App {
     init() {
         // Ensure Hanken Grotesk + Atkinson Hyperlegible are registered before
         // any view tries to render text. Same pattern as the existing app.
-        CivicaFontRegistration.registerFonts()
+        CivicaFonts.register()
     }
 
     var body: some Scene {

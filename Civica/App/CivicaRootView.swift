@@ -128,7 +128,13 @@ struct CivicaRootView: View {
                 }
             )
         } else {
-            SNAPEntryView(viewModel: snapViewModel)
+            // SNAPEntryView owns its own SNAPApplicationViewModel
+            // internally — no parameter needed here. The legacy
+            // viewModel @StateObject on this root view stays around
+            // for now because other surfaces (entry's prefill,
+            // location pipeline) read it via @EnvironmentObject in
+            // the legacy code paths. Migrate that out in a follow-up.
+            SNAPEntryView()
         }
     }
 }

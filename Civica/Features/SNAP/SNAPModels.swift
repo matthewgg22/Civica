@@ -95,7 +95,13 @@ struct SNAPEligibilityDraft {
     }
 }
 
-struct SNAPApplicationDraft {
+/// Legacy intake draft model. Preserved while the surfaces that
+/// reference it (SNAPApplicationViewModel, SNAPPrivacyNoticeView,
+/// SNAPReviewView, SNAPConfirmationView, SNAPApplicationGeneratorView,
+/// SNAPDebugChecklistView) are migrated off it. The new orchestrator
+/// path uses `SNAPApplicationDraft` (without the Legacy prefix) which
+/// lives in SNAPReviewDraftFlow.swift.
+struct SNAPLegacyApplicationDraft {
     // EXPERIMENTAL SILOED MODULE:
     // SNAP draft answers must remain session-only and in-memory.
     // Do not persist this model to UserDefaults, Keychain, Supabase, Firebase, or any backend

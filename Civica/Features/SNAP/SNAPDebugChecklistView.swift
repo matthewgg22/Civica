@@ -14,7 +14,7 @@ struct SNAPDebugChecklistView: View {
     }
 
     private var hasSSNFieldInDraft: Bool {
-        let draftMirror = Mirror(reflecting: SNAPApplicationDraft())
+        let draftMirror = Mirror(reflecting: SNAPLegacyApplicationDraft())
         return draftMirror.children.contains { child in
             let label = (child.label ?? "").lowercased()
             return label.contains("ssn") || label.contains("socialsecurity")
@@ -36,7 +36,7 @@ struct SNAPDebugChecklistView: View {
             ChecklistItem(
                 title: "No SSN field",
                 passed: !hasSSNFieldInDraft,
-                detail: hasSSNFieldInDraft ? "Potential SSN-like field found in draft model." : "No SSN-like field found in SNAPApplicationDraft."
+                detail: hasSSNFieldInDraft ? "Potential SSN-like field found in draft model." : "No SSN-like field found in SNAPLegacyApplicationDraft."
             ),
             ChecklistItem(
                 title: "No document upload",

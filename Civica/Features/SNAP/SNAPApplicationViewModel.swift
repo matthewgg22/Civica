@@ -32,7 +32,7 @@ final class SNAPApplicationViewModel: ObservableObject {
     // Do not read from or write to voter registration, representative lookup, party preference,
     // election location, or shared civic profile stores from this view model.
     @Published var currentStep: SNAPRoute = .entry
-    @Published var application = SNAPApplicationDraft()
+    @Published var application = SNAPLegacyApplicationDraft()
     @Published var draftStep: SNAPDraftStep = .whereApplyingFrom
     @Published var eligibility = SNAPEligibilityDraft()
     @Published private(set) var geofencedStateCode: String?
@@ -615,7 +615,7 @@ final class SNAPApplicationViewModel: ObservableObject {
         currentStep = .entry
         draftStep = .whereApplyingFrom
         eligibility = SNAPEligibilityDraft()
-        application = SNAPApplicationDraft()
+        application = SNAPLegacyApplicationDraft()
         if let geofencedStateCode {
             application.state = geofencedStateCode
         }
