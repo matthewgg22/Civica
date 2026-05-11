@@ -19,6 +19,11 @@ struct CivicaRootView: View {
     @StateObject private var snapViewModel = SNAPApplicationViewModel()
     @StateObject private var statusStore = SNAPApplicationStatusStore()
 
+    /// External link target presented via CivicaSafariSheet. Set from
+    /// the various "Open DTA Connect" / "Start an appeal" handlers
+    /// so all three status surfaces share one sheet presentation.
+    @State private var externalLink: URL?
+
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
     }
@@ -30,6 +35,9 @@ struct CivicaRootView: View {
                     rootSurface
                 }
                 .tint(CivicaColors.brickPrimary)
+                .sheet(item: $externalLink) { url in
+                    CivicaSafariSheet(url: url)
+                }
             } else {
                 OnboardingFlowView { chosenLanguage in
                     languageRaw = chosenLanguage.rawValue
@@ -58,10 +66,11 @@ struct CivicaRootView: View {
                 language: language,
                 denialReason: nil,
                 onAppeal: {
-                    // Fair-hearing flow lands in a later commit. For
-                    // now it's a no-op; the next step is a guided
-                    // appeal-letter generator + deep-link into the
-                    // state's fair-hearing portal.
+                    // Lands the user on MA DTA's fair-hearing
+                    // request page. Guided appeal-letter generator
+                    // is a follow-up; the external link is the
+                    // honest path today.
+                    externalLink = CivicaExternalLinks.dtaFairHearing
                 },
                 onStartOver: {
                     statusStore.reset()
@@ -83,8 +92,7 @@ struct CivicaRootView: View {
                     statusStore.reset()
                 },
                 onOpenDTAConnect: {
-                    // External DTA Connect link — hand off in a later
-                    // commit (Universal Link or in-app SafariView).
+                    externalLink = CivicaExternalLinks.dtaConnect
                 }
             )
         } else if statusStore.status.isPostSubmission {
@@ -92,9 +100,12 @@ struct CivicaRootView: View {
                 statusStore: statusStore,
                 language: language,
                 onAction: {
-                    // Hook the action banner taps into the appropriate
-                    // sub-flow in a later commit (document upload,
-                    // interview prep, etc.). For now it's a no-op.
+                    // Document upload / interview prep / recert all
+                    // live behind the state portal. Until a dedicated
+                    // in-app document-capture flow ships, the action
+                    // banner deep-links to DTA Connect where the
+                    // upload actually happens.
+                    externalLink = CivicaExternalLinks.dtaConnect
                 }
             )
         } else if statusStore.status.isActiveCase {
