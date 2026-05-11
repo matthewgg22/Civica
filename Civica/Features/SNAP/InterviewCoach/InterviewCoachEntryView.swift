@@ -64,6 +64,11 @@ struct InterviewCoachEntryView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle(InterviewCoachStrings.navInterviewCoach.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            InterviewCoachAnalytics.track(.entryViewed, parameters: [
+                "language": InterviewCoachAnalytics.languageCode(language)
+            ])
+        }
     }
 
     private func affordanceRow(title: String, subtitle: String, systemImage: String, enabled: Bool) -> some View {

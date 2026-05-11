@@ -58,6 +58,13 @@ struct ReviewSummaryView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle(InterviewCoachStrings.navFeedback.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            InterviewCoachAnalytics.track(.feedbackViewed, parameters: [
+                "axis_completeness":     InterviewCoachAnalytics.bucket(score.completeness.score),
+                "axis_accuracy_risk":    InterviewCoachAnalytics.bucket(score.accuracyRisk.score),
+                "axis_missing_context":  InterviewCoachAnalytics.bucket(score.missingContext.score)
+            ])
+        }
     }
 
     private enum AxisInterpretation { case higherIsBetter, lowerIsBetter }

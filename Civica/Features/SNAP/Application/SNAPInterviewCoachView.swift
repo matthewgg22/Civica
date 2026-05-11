@@ -126,6 +126,18 @@ struct SNAPInterviewCoachView: View {
         NavigationLink {
             InterviewCoachEntryView()
         } label: {
+            rehearsalCardLabel
+        }
+        .simultaneousGesture(TapGesture().onEnded {
+            InterviewCoachAnalytics.track(.crossLinkTapped)
+        })
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(SNAPInterviewStrings.rehearseHeading.value(in: language)). \(SNAPInterviewStrings.rehearseBody.value(in: language)). \(SNAPInterviewStrings.rehearseAction.value(in: language)).")
+    }
+
+    private var rehearsalCardLabel: some View {
+        Group {
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 Image(systemName: "bubble.left.and.bubble.right.fill")
                     .font(.title3)
@@ -164,9 +176,6 @@ struct SNAPInterviewCoachView: View {
                     .strokeBorder(CivicaColors.brickPrimary.opacity(0.25), lineWidth: 1)
             )
         }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(SNAPInterviewStrings.rehearseHeading.value(in: language)). \(SNAPInterviewStrings.rehearseBody.value(in: language)). \(SNAPInterviewStrings.rehearseAction.value(in: language)).")
     }
 
     // MARK: - Phase 2: questions

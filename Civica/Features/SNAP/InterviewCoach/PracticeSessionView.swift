@@ -81,6 +81,29 @@ struct PracticeSessionView: View {
         .navigationTitle(InterviewCoachStrings.navPracticeSession.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
         .task { await viewModel.startIfNeeded() }
+        .onAppear {
+            InterviewCoachAnalytics.track(.sessionStarted, parameters: [
+                "state_code": viewModel.context.stateCode,
+                "scenario":   viewModel.context.scenario.rawValue,
+                "archetype":  viewModel.context.archetype.rawValue,
+                "persona":    viewModel.context.persona.rawValue,
+                "language":   InterviewCoachAnalytics.languageCode(language)
+            ])
+        }
+        .onChange(of: viewModel.status) { _, newStatus in
+            switch newStatus {
+            case .complete:
+                InterviewCoachAnalytics.track(.sessionCompleted, parameters: [
+                    "turn_count": String(viewModel.transcript.count)
+                ])
+            case .failed:
+                InterviewCoachAnalytics.track(.sessionFailed, parameters: [
+                    "turn_count": String(viewModel.transcript.count)
+                ])
+            default:
+                break
+            }
+        }
         .navigationDestination(isPresented: $showScoreSheet) {
             if let score = viewModel.score {
                 ReviewSummaryView(score: score)
@@ -144,6 +167,9 @@ struct PracticeSessionView: View {
 
             Button {
                 inputFocused = false
+                InterviewCoachAnalytics.track(.sessionTurnSent, parameters: [
+                    "turn_count": String(viewModel.transcript.count + 1)
+                ])
                 Task { await viewModel.submitUserResponse() }
             } label: {
                 Image(systemName: "arrow.up.circle.fill")
@@ -176,6 +202,7 @@ struct PracticeSessionView: View {
 
             if viewModel.score == nil {
                 Button {
+                    InterviewCoachAnalytics.track(.feedbackRequested)
                     Task {
                         await viewModel.requestScore()
                         if viewModel.score != nil { showScoreSheet = true }
@@ -221,6 +248,7 @@ struct PracticeSessionView: View {
 
     private var retryButton: some View {
         Button {
+            InterviewCoachAnalytics.track(.retryTapped)
             Task { await viewModel.retry() }
         } label: {
             Label(InterviewCoachStrings.tryAgain.value(in: language),

@@ -82,6 +82,13 @@ struct QuestionDetailView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle(InterviewCoachStrings.navPracticeQuestion.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            InterviewCoachAnalytics.track(.questionDetailViewed, parameters: [
+                "state_code": question.stateCode,
+                "category": question.category.rawValue,
+                "scenario": question.scenario.rawValue
+            ])
+        }
     }
 
     private var chipRow: some View {

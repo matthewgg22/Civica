@@ -46,6 +46,12 @@ struct QuestionBrowserView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle(InterviewCoachStrings.navPracticeQuestions.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            InterviewCoachAnalytics.track(.browserViewed, parameters: [
+                "state_code": selectedStateCode,
+                "language": InterviewCoachAnalytics.languageCode(language)
+            ])
+        }
     }
 
     private var englishOnlyNotice: some View {
