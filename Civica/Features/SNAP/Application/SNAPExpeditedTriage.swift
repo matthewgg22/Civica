@@ -123,6 +123,11 @@ struct HeuristicExpeditedClassifier: ExpeditedClassifier {
         }
         if draft.expenses.utilityShutoffNotice == .yes { z += 1.0 }
         if draft.income.recentJobLoss30d == .yes { z += 0.7 }
+        // Migrant/seasonal farmworker is a hard-rule trigger when paired
+        // with destitute resources; this soft weight covers the case
+        // where the household qualifies as farmworker but resources
+        // don't meet the hard threshold.
+        if draft.household.migrantSeasonalFarmworker == .yes { z += 0.4 }
 
         // (rent + utilities) / max(gross, 1) > 0.7
         if (rent + utilities) / max(gross, 1) > 0.7 { z += 0.6 }
@@ -172,14 +177,18 @@ private func firedHardRules(in draft: SNAPApplicationDraft) -> [ExpeditedHardRul
         hits.append(.lowIncomeLowResources)
     }
 
+    // Rule (i)(ii): migrant or seasonal farmworker with destitute
+    // resources. v1 approximates "destitute" as the same < $100 floor
+    // used in rule (i)(i); revisit when intake captures resource
+    // accessibility (whether resources are physically reachable).
+    if draft.household.migrantSeasonalFarmworker == .yes && liquidResources < 100 {
+        hits.append(.migrantSeasonalDestitute)
+    }
+
     // Rule (i)(iii): housing + utilities exceed gross + resources.
     if (rent + utilities) > (gross + liquidResources) {
         hits.append(.housingExceedsResources)
     }
-
-    // Rule (i)(ii) (migrant/seasonal destitute) requires the
-    // migrantSeasonalFarmworker field introduced with the household
-    // expansion — wired in that commit.
 
     return hits
 }
