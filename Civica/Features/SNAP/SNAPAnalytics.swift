@@ -30,6 +30,12 @@ enum SNAPAnalytics {
         static let conversationVerdictReached = "snap_conversation_verdict_reached"
         static let conversationClarificationRequested = "snap_conversation_clarification_requested"
         static let conversationError = "snap_conversation_error"
+        // Interview Navigator funnel. Counts only — never includes
+        // the actual date, phone number, or consent timestamp.
+        static let interviewDateSet = "snap_interview_date_set"
+        static let interviewPrepViewed = "snap_interview_prep_viewed"
+        static let tcpaConsentGranted = "snap_tcpa_consent_granted"
+        static let interview24hNotificationScheduled = "snap_interview_24h_notification_scheduled"
     }
 
     /// Track a single conversation turn. `topic` is the QuestionTopic the
@@ -80,6 +86,24 @@ enum SNAPAnalytics {
 
     static func trackAbandoned(lastStep: SNAPDraftStep) {
         send(Event.abandoned, stepName: lastStep.analyticsName, stepIndex: lastStep.rawValue + 1)
+    }
+
+    // MARK: - Interview Navigator funnel
+
+    static func trackInterviewDateSet() {
+        send(Event.interviewDateSet, stepName: nil, stepIndex: nil)
+    }
+
+    static func trackInterviewPrepViewed() {
+        send(Event.interviewPrepViewed, stepName: nil, stepIndex: nil)
+    }
+
+    static func trackTCPAConsentGranted() {
+        send(Event.tcpaConsentGranted, stepName: nil, stepIndex: nil)
+    }
+
+    static func trackInterview24hNotificationScheduled() {
+        send(Event.interview24hNotificationScheduled, stepName: nil, stepIndex: nil)
     }
 
     static func makeParameters(
