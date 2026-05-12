@@ -58,6 +58,14 @@ struct CivicaRootView: View {
                 }
             }
         }
+        // Government benefits enrollment carries a stronger trust signal
+        // in light mode — pure-white/cream backgrounds with high-contrast
+        // ink match the visual language of mass.gov, DTA Connect, and
+        // other official benefits portals. Dark mode reads more like
+        // consumer fintech, which SNAP applicants are conditioned to be
+        // wary of after years of scammy "free SNAP" sites. VoteNow lives
+        // in its own target and follows system appearance independently.
+        .preferredColorScheme(.light)
     }
 
     /// Status-aware routing (HANDOFF boards 11, 12, 23-denial, 24,
