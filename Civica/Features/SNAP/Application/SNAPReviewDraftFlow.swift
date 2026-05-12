@@ -159,25 +159,40 @@ struct SNAPReviewDraftFlowView: View {
         )
     }
 
+    // Pills only fire on incomplete sections — the rows the user
+    // still has work on. Complete sections collapse to a quiet teal
+    // checkmark so the eye naturally lands on amber/muted pills
+    // instead of scanning a wall of "COMPLETE" chips on a finished
+    // draft. Accessibility label is preserved on the icon so
+    // VoiceOver still reads "Complete" for done sections.
+    @ViewBuilder
     private func statusBadge(_ status: SectionStatus) -> some View {
-        let (label, fill, ink) = statusBadgeStyle(status)
-        return Text(label)
-            .font(CivicaTypography.captionStrong)
-            .foregroundStyle(ink)
-            .textCase(.uppercase)
-            .kerning(1.0)
-            .padding(.horizontal, CivicaSpacing.sm)
-            .padding(.vertical, 2)
-            .background(fill)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.pill))
-    }
-
-    private func statusBadgeStyle(_ status: SectionStatus) -> (String, Color, Color) {
         switch status {
         case .complete:
-            return (SNAPStatusHomeStrings.statusComplete.value(in: language),
-                    CivicaColors.accentTeal.opacity(0.16),
-                    CivicaColors.accentTeal)
+            Image(systemName: "checkmark.circle.fill")
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(CivicaColors.accentTeal)
+                .imageScale(.medium)
+                .accessibilityLabel(SNAPStatusHomeStrings.statusComplete.value(in: language))
+        case .inProgress, .notStarted:
+            let (label, fill, ink) = pillStyle(status)
+            Text(label)
+                .font(CivicaTypography.captionStrong)
+                .foregroundStyle(ink)
+                .textCase(.uppercase)
+                .kerning(1.0)
+                .padding(.horizontal, CivicaSpacing.sm)
+                .padding(.vertical, 2)
+                .background(fill)
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.pill))
+        }
+    }
+
+    private func pillStyle(_ status: SectionStatus) -> (String, Color, Color) {
+        switch status {
+        case .complete:
+            // Unreachable — complete renders as an icon, not a pill.
+            return ("", .clear, .clear)
         case .inProgress:
             return (SNAPStatusHomeStrings.statusInProgress.value(in: language),
                     CivicaColors.warningAmber.opacity(0.16),
