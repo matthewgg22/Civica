@@ -21,6 +21,11 @@ final class SNAPApplicationStatusStore: ObservableObject {
     /// see "your previous result was..." instead of being restarted
     /// from zero. Persisted alongside status + milestones.
     @Published private(set) var eligibilityResult: SNAPEligibilityResult?
+    /// User-entered date+time of the scheduled DTA interview. Captured
+    /// on the waiting room when status is .interviewScheduled. Drives
+    /// the cost-of-delay countdown card and the 24h-before local
+    /// notification. Nil until the user enters it; nil after reset.
+    @Published private(set) var interviewScheduledFor: Date?
 
     // Keys used for UserDefaults persistence. Defined here rather than
     // @AppStorage so the wrapping ObservableObject can re-emit on
@@ -28,6 +33,7 @@ final class SNAPApplicationStatusStore: ObservableObject {
     private let statusKey = "co.civica.applicationStatus"
     private let milestonesKey = "co.civica.applicationMilestones"
     private let eligibilityResultKey = "co.civica.eligibilityResult"
+    private let interviewDateKey = "co.civica.interviewScheduledFor"
 
     init() {
         let defaults = UserDefaults.standard
@@ -53,6 +59,8 @@ final class SNAPApplicationStatusStore: ObservableObject {
         } else {
             self.eligibilityResult = nil
         }
+
+        self.interviewScheduledFor = defaults.object(forKey: interviewDateKey) as? Date
     }
 
     /// Advance to a new status; records the timestamp as a milestone.
@@ -75,12 +83,22 @@ final class SNAPApplicationStatusStore: ObservableObject {
         persist()
     }
 
+    /// Set or clear the user-entered interview date. Persisted on every
+    /// call so the waiting room reflects the change immediately and
+    /// the 24h-before notification can be (re)scheduled by the prep
+    /// view's task.
+    func setInterviewDate(_ date: Date?) {
+        interviewScheduledFor = date
+        persist()
+    }
+
     /// Reset the application back to not-started. Used by "start over"
     /// flows and after the user explicitly deletes their application.
     func reset() {
         status = .notStarted
         milestones.removeAll()
         eligibilityResult = nil
+        interviewScheduledFor = nil
         persist()
     }
 
@@ -106,6 +124,12 @@ final class SNAPApplicationStatusStore: ObservableObject {
             defaults.set(resultData, forKey: eligibilityResultKey)
         } else {
             defaults.removeObject(forKey: eligibilityResultKey)
+        }
+
+        if let interviewDate = interviewScheduledFor {
+            defaults.set(interviewDate, forKey: interviewDateKey)
+        } else {
+            defaults.removeObject(forKey: interviewDateKey)
         }
     }
 }
