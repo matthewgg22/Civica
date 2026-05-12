@@ -1,11 +1,25 @@
 import Foundation
 import OSLog
 
+/// How much locational precision leaves the device on a Find Help
+/// search. `.coarse` is the only mode wired today: lat/lng are
+/// rounded at the egress boundary so the server never sees Apple's
+/// "Precise Location" threshold (3+ decimals, ~110 m). `.precise`
+/// is reserved for a future explicit opt-in path ("Use precise
+/// location for closest-distance sorting") — adding the case here
+/// keeps the boundary stable so the opt-in can land later without
+/// changing every call site.
+enum FindHelpLocationPrecision {
+    case coarse
+    case precise
+}
+
 protocol FindHelpServiceProtocol {
     func searchNearby(
         lat: Double,
         lng: Double,
         radiusKm: Double,
+        precision: FindHelpLocationPrecision,
         serviceType: FindHelpServiceType?,
         languageCode: String?,
         maxResults: Int
@@ -52,13 +66,21 @@ struct FindHelpService: FindHelpServiceProtocol {
         lat: Double,
         lng: Double,
         radiusKm: Double = 25,
+        precision: FindHelpLocationPrecision = .coarse,
         serviceType: FindHelpServiceType? = nil,
         languageCode: String? = nil,
         maxResults: Int = 25
     ) async throws -> [FindHelpLocation] {
+        // Coarsen at the egress boundary. Apple's App Privacy guidance
+        // treats lat/lng at 3 or more decimals as Precise Location;
+        // rounding to 2 decimals yields ~1.1 km resolution, which is
+        // well inside the Coarse Location category and is fine-grained
+        // enough for a 5+ mile "what's near me" radius search.
+        let (outLat, outLng) = Self.coordinatesForEgress(lat: lat, lng: lng, precision: precision)
+
         var body: [String: Any] = [
-            "lat": lat,
-            "lng": lng,
+            "lat": outLat,
+            "lng": outLng,
             "radius_km": radiusKm,
             "max_results": maxResults
         ]
@@ -66,6 +88,26 @@ struct FindHelpService: FindHelpServiceProtocol {
         if let languageCode { body["language_code"] = languageCode }
 
         return try await callRPC(name: "find_help_locations_nearby", body: body)
+    }
+
+    /// Round lat/lng to 2 decimals for `.coarse` egress. Exposed
+    /// internally for unit tests that prove the default path doesn't
+    /// transmit raw 6-decimal coordinates.
+    static func coordinatesForEgress(
+        lat: Double,
+        lng: Double,
+        precision: FindHelpLocationPrecision
+    ) -> (lat: Double, lng: Double) {
+        switch precision {
+        case .precise:
+            return (lat, lng)
+        case .coarse:
+            let factor = 100.0  // 2 decimals
+            return (
+                (lat * factor).rounded() / factor,
+                (lng * factor).rounded() / factor
+            )
+        }
     }
 
     func loadSources() async throws -> [FindHelpSourceAttribution] {

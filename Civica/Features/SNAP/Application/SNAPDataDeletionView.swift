@@ -199,7 +199,7 @@ enum SNAPDataDeletionStrings {
                 ),
                 Step(
                     title: "Civica's servers",
-                    body: "Civica doesn't have a backend yet — your data hasn't left this device. When that changes, the deletion will reach our servers and backups too."
+                    body: "Deleting here clears your local SNAP draft, captured documents, status, and preferences from this device. If you used optional network features — finding nearby help or Interview Coach — deletion of any server logs or backups follows Civica's retention process. Any application you already submitted stays with the state agency."
                 ),
                 Step(
                     title: "Reapplying later",
@@ -218,7 +218,7 @@ enum SNAPDataDeletionStrings {
                 ),
                 Step(
                     title: "Los servidores de Civica",
-                    body: "Civica todavía no tiene un servidor — tus datos no han salido de este dispositivo. Cuando eso cambie, la eliminación también alcanzará nuestros servidores y respaldos."
+                    body: "Eliminar aquí borra de este dispositivo el borrador local de SNAP, los documentos capturados, el estado y las preferencias. Si usaste funciones opcionales de red — buscar ayuda cercana o el Coach de entrevistas — la eliminación de cualquier registro o copia de seguridad del servidor sigue el proceso de retención de Civica. Cualquier solicitud que ya enviaste permanece con la agencia estatal."
                 ),
                 Step(
                     title: "Volver a solicitar más tarde",

@@ -147,6 +147,18 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
         return false
     }
 
+    /// MA-only beta gate predicate. Returns true when the saved draft
+    /// has a non-MA stateCode AND the user isn't actively editing the
+    /// whereApplying section (the edit case lets them switch back to
+    /// MA without bouncing off the gate first). Exposed on the view
+    /// model so compliance tests can assert routing without spinning
+    /// up SwiftUI.
+    var shouldShowUnsupportedStateGate: Bool {
+        if case .editing(.whereApplying) = mode { return false }
+        guard let code = draft.whereApplying.stateCode else { return false }
+        return code.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() != "MA"
+    }
+
     private func nextSection(after section: SNAPApplicationSection) -> SNAPApplicationSection? {
         guard let i = Self.sequence.firstIndex(of: section), i + 1 < Self.sequence.count else {
             return nil
@@ -211,20 +223,33 @@ struct SNAPApplicationFlowOrchestratorView: View {
 
     @ViewBuilder
     private var currentDestination: some View {
-        switch viewModel.mode {
-        case .sequential(let section), .editing(let section):
-            flow(for: section)
-        case .review:
-            SNAPReviewDraftFlowView(
-                draft: viewModel.draft,
+        // MA-only beta gate — enforced at the orchestrator level so it's
+        // deep-link safe. Predicate lives on the view model so it's
+        // testable from compliance tests.
+        if viewModel.shouldShowUnsupportedStateGate {
+            SNAPUnsupportedStateView(
+                stateCode: viewModel.draft.whereApplying.stateCode ?? "",
                 language: language,
-                onEdit: viewModel.startEditing,
-                onGeneratePacket: { onGeneratePacket(viewModel.draft) },
-                onStartOver: { viewModel.resetDraft() },
+                onChangeState: { viewModel.startEditing(.whereApplying) },
                 onExit: onDismiss
             )
+        } else {
+            switch viewModel.mode {
+            case .sequential(let section), .editing(let section):
+                flow(for: section)
+            case .review:
+                SNAPReviewDraftFlowView(
+                    draft: viewModel.draft,
+                    language: language,
+                    onEdit: viewModel.startEditing,
+                    onGeneratePacket: { onGeneratePacket(viewModel.draft) },
+                    onStartOver: { viewModel.resetDraft() },
+                    onExit: onDismiss
+                )
+            }
         }
     }
+
 
     // MARK: - Section dispatcher
     //

@@ -31,11 +31,17 @@ final class InterviewCoachAPIClient {
         }
     }
 
+    // Legacy UserDefaults key that previously held a stable cross-launch ID.
+    // Retained as a constant so CivicaUserData's launch-time cleanup can find it
+    // and delete it on existing installs. Do not write to this key from new code.
+    static let legacyAnonymousIDKey = "co.civica.interview_coach.anonymous_id.v1"
+
     private let baseURL: URL
     private let anonKey: String
     private let session: URLSession
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
+    private let requestID: String
     private let logger = Logger(subsystem: "Civica", category: "InterviewCoachAPIClient")
     private let requestTimeout: TimeInterval = 65
 
@@ -47,6 +53,7 @@ final class InterviewCoachAPIClient {
         self.baseURL = baseURL
         self.anonKey = anonKey
         self.session = session
+        self.requestID = UUID().uuidString
 
         let encoder = JSONEncoder()
         encoder.keyEncodingStrategy = .convertToSnakeCase
@@ -98,23 +105,15 @@ final class InterviewCoachAPIClient {
 
     // Supabase Edge Functions accept the project anon key as both the
     // `apikey` header and a Bearer token. No per-user JWT here -- the
-    // Civica core flow is on-device and Coach is opt-in / SNAP_DEV-only.
-    // X-Anonymous-ID keeps cross-session correlation in the absence of
-    // sign-in.
+    // Civica core flow is on-device and Coach is opt-in.
+    // X-Anonymous-ID is a per-client UUID generated at init. It does NOT
+    // persist across launches or across practice sessions -- a new
+    // InterviewCoachAPIClient (typically one per PracticeSessionViewModel)
+    // gets a fresh ID, so the backend cannot link two sessions from the
+    // same device through this header alone.
     private func attachAuthorization(to request: inout URLRequest) {
-        request.setValue(Self.stableAnonymousRequestID(), forHTTPHeaderField: "X-Anonymous-ID")
+        request.setValue(requestID, forHTTPHeaderField: "X-Anonymous-ID")
         request.setValue(anonKey, forHTTPHeaderField: "apikey")
         request.setValue("Bearer \(anonKey)", forHTTPHeaderField: "Authorization")
-    }
-
-    private static func stableAnonymousRequestID() -> String {
-        let key = "co.civica.interview_coach.anonymous_id.v1"
-        let defaults = UserDefaults.standard
-        if let existing = defaults.string(forKey: key), !existing.isEmpty {
-            return existing
-        }
-        let fresh = UUID().uuidString
-        defaults.set(fresh, forKey: key)
-        return fresh
     }
 }
