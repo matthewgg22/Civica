@@ -277,6 +277,77 @@ struct SNAPComplianceCopyTests {
         #expect(body.contains("vary"))
         #expect(body.contains("wic"))
     }
+
+    // MARK: - OBBBA Q3 central compliance-copy registry
+
+    /// Scans every Swift file under Civica/Features/SNAP/ (except
+    /// the registry itself, which lists the banned phrases as data)
+    /// for any occurrence of a banned phrase from the registry.
+    /// Catches regressions even in files this test file hasn't
+    /// hardcoded an assertion for. Per OBBBA Q3 (Revision 2):
+    /// the registry is the single source of truth.
+    @Test func noSNAPSwiftFileContainsRegistryBannedPhrase() throws {
+        let testFileURL = URL(fileURLWithPath: #file)
+        let repoRoot = testFileURL
+            .deletingLastPathComponent() // Civica Tests/
+            .deletingLastPathComponent() // repo root
+        let snapDir = repoRoot.appendingPathComponent("Civica/Features/SNAP")
+
+        let fm = FileManager.default
+        let excludedFile = "SNAPComplianceCopyRegistry.swift"
+        var files: [URL] = []
+        if let enumerator = fm.enumerator(at: snapDir,
+                                          includingPropertiesForKeys: [.isRegularFileKey]) {
+            for case let url as URL in enumerator where url.pathExtension == "swift"
+                && url.lastPathComponent != excludedFile {
+                files.append(url)
+            }
+        }
+        #expect(!files.isEmpty, "Test setup: expected to find Swift files under Civica/Features/SNAP")
+
+        for file in files {
+            let content = try String(contentsOf: file, encoding: .utf8).lowercased()
+            for rule in SNAPComplianceCopyRegistry.bannedPhrases {
+                #expect(!content.contains(rule.phrase.lowercased()),
+                        "\(file.lastPathComponent) contains banned phrase '\(rule.phrase)' (rule '\(rule.id)', audit \(rule.auditReference))")
+            }
+        }
+    }
+
+    /// Every registry row must carry the metadata a reviewer needs
+    /// to act on it. Catches half-filled rows in PRs that add new
+    /// pending revisions without the rationale or audit reference.
+    @Test func registryRowsCarryRequiredMetadata() {
+        for rule in SNAPComplianceCopyRegistry.bannedPhrases {
+            #expect(!rule.id.isEmpty)
+            #expect(!rule.phrase.isEmpty)
+            #expect(!rule.auditReference.isEmpty)
+            #expect(!rule.rationale.isEmpty,
+                    "Banned phrase '\(rule.id)' has empty rationale")
+        }
+        for row in SNAPComplianceCopyRegistry.pendingCopyRevisions {
+            #expect(!row.id.isEmpty)
+            #expect(!row.surfaceFile.isEmpty)
+            #expect(!row.stringID.isEmpty)
+            #expect(!row.currentEnglish.isEmpty)
+            #expect(!row.auditReference.isEmpty)
+            #expect(!row.rationale.isEmpty,
+                    "Pending revision '\(row.id)' has empty rationale")
+        }
+    }
+
+    /// When a copy revision flips to `.approved`, both English AND
+    /// Spanish replacements must be present. Prevents an English-
+    /// only signoff from shipping with a stale Spanish string.
+    @Test func approvedRevisionsHaveCompleteBilingualPair() {
+        for row in SNAPComplianceCopyRegistry.pendingCopyRevisions
+            where row.status == .approved {
+            #expect(row.approvedEnglish != nil && !(row.approvedEnglish ?? "").isEmpty,
+                    "Approved revision '\(row.id)' missing approvedEnglish")
+            #expect(row.approvedSpanish != nil && !(row.approvedSpanish ?? "").isEmpty,
+                    "Approved revision '\(row.id)' missing approvedSpanish (bilingual parity required)")
+        }
+    }
 }
 
 // MARK: - Test-only helpers
