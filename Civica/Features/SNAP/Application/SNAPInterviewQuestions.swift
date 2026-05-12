@@ -171,6 +171,23 @@ enum SNAPInterviewStrings {
         es: "• Identificación con foto (licencia, ID estatal o pasaporte)\n• Un talón de pago reciente o prueba de ingresos\n• Recibo de renta del mes pasado o contrato\n• Un bolígrafo — te darán un número de confirmación al final"
     )
 
+    // Pre-call rehearsal cross-link to the AI Interview Coach. The live
+    // coach is the day-of companion; rehearsal is practice beforehand.
+    // Surfaced from prep phase only — once the user is on the call,
+    // rehearsing is no longer the action they need.
+    static let rehearseHeading = CivicaText(
+        "Want a dry run?",
+        es: "¿Quieres practicar antes?"
+    )
+    static let rehearseBody = CivicaText(
+        "Practice answering caseworker-style questions with a simulated interviewer before the real call.",
+        es: "Practica responder a preguntas estilo trabajador social con un entrevistador simulado antes de la llamada real."
+    )
+    static let rehearseAction = CivicaText(
+        "Start a practice session",
+        es: "Iniciar sesión de práctica"
+    )
+
     static let prepPrimary = CivicaText(
         "See what they'll ask",
         es: "Ver qué te preguntarán"
