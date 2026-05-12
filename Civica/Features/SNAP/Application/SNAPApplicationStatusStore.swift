@@ -28,10 +28,11 @@ final class SNAPApplicationStatusStore: ObservableObject {
     //
     // Note: the eligibility-result payload moved to Keychain (per
     // OBBBA audit Q11). The legacy UserDefaults key is read once
-    // during init for migration, then permanently deleted. The key
-    // itself is also listed in CivicaUserData.legacyUserDefaultsKeys
-    // so purgeLegacyKeys at app launch cleans it up on installs that
-    // never instantiate the store.
+    // during init for migration, then permanently deleted. App
+    // launch instantiates this store once via
+    // CivicaUserData.runLaunchTimeMigrations, so the migration runs
+    // even on installs that never visit a SNAP screen during the
+    // first launch after upgrade.
     private let statusKey = "co.civica.applicationStatus"
     private let milestonesKey = "co.civica.applicationMilestones"
     static let legacyEligibilityResultUserDefaultsKey = "co.civica.eligibilityResult"

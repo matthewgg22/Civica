@@ -14,10 +14,12 @@ struct CivicaApp: App {
         // any view tries to render text. Same pattern as the existing app.
         CivicaFonts.register()
 
-        // Remove retired UserDefaults keys (e.g. the pre-rotation
-        // Interview Coach stable anonymous ID). Idempotent, cheap.
+        // Run launch-time data hygiene in order: drop retired
+        // UserDefaults keys, migrate the eligibility result into
+        // Keychain (Q11), and invalidate any Keychain verdict tied
+        // to an out-of-scope state code (Q7). Idempotent, cheap.
         MainActor.assumeIsolated {
-            CivicaUserData.purgeLegacyKeys()
+            CivicaUserData.runLaunchTimeMigrations()
         }
     }
 
