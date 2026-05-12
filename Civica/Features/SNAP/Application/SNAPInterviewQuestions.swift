@@ -140,37 +140,6 @@ enum SNAPInterviewStrings {
 
     // MARK: Prep
 
-    static let prepEyebrow = CivicaText(
-        "Interview prep",
-        es: "Preparación para la entrevista"
-    )
-    static let prepTitle = CivicaText(
-        "The DTA will call you. Here's everything you need.",
-        es: "El DTA te llamará. Esto es todo lo que necesitas."
-    )
-    static let prepBody = CivicaText(
-        "Most SNAP interviews are 15–20 minutes by phone. One quick conversation, then it's done. Most people pass on the first try — preparing helps.",
-        es: "La mayoría de las entrevistas de SNAP son de 15–20 minutos por teléfono. Una conversación rápida y se acabó. La mayoría pasa al primer intento — prepararte ayuda."
-    )
-
-    static let pickUpHeading = CivicaText(
-        "Pick up the phone if",
-        es: "Contesta el teléfono si"
-    )
-    static let pickUpBody = CivicaText(
-        "The caller ID says \"Massachusetts DTA\" or a 617/508/413/978 area code. They will never text you a verification code. They will never ask for money or banking info.",
-        es: "El identificador de llamadas dice \"Massachusetts DTA\" o un código de área 617/508/413/978. Nunca te enviarán un código de verificación. Nunca pedirán dinero ni información bancaria."
-    )
-
-    static let haveNearbyHeading = CivicaText(
-        "Have these nearby",
-        es: "Ten esto cerca"
-    )
-    static let haveNearbyBody = CivicaText(
-        "• Photo ID (driver's license, state ID, or passport)\n• A recent paystub or proof of income\n• Last month's rent receipt or lease\n• A pen — they'll give you a confirmation number at the end",
-        es: "• Identificación con foto (licencia, ID estatal o pasaporte)\n• Un talón de pago reciente o prueba de ingresos\n• Recibo de renta del mes pasado o contrato\n• Un bolígrafo — te darán un número de confirmación al final"
-    )
-
     // Pre-call rehearsal cross-link to the AI Interview Coach. The live
     // coach is the day-of companion; rehearsal is practice beforehand.
     // Surfaced from prep phase only — once the user is on the call,

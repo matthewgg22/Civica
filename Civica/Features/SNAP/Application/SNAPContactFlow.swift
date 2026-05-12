@@ -16,6 +16,13 @@ struct SNAPContactAnswers: Equatable, Codable {
     var email: String?
     var phone: String?
     var preferredMethod: PreferredContactMethod?
+    /// Timestamp the user granted TCPA consent for phone calls and SMS
+    /// from Civica. Nil means consent has not been given (or has been
+    /// revoked). Never auto-populated — only set when the user
+    /// explicitly toggles the consent checkbox on the phone step.
+    /// Required upstream for Twilio outreach + the interview concierge
+    /// CSV export (which filters on consent != nil).
+    var tcpaConsentAt: Date?
 
     var hasAnyContact: Bool {
         let trimmedEmail = (email ?? "").trimmingCharacters(in: .whitespaces)
@@ -222,8 +229,46 @@ struct SNAPContactFlowView: View {
             onSecondary: skipOrComplete,
             language: language
         ) {
-            phoneField
+            VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+                phoneField
+                if !viewModel.phoneField.trimmingCharacters(in: .whitespaces).isEmpty {
+                    tcpaConsentRow
+                }
+            }
         }
+    }
+
+    private var tcpaConsentBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.answers.tcpaConsentAt != nil },
+            set: { granted in
+                viewModel.answers.tcpaConsentAt = granted ? Date() : nil
+                if granted {
+                    SNAPAnalytics.trackTCPAConsentGranted()
+                }
+            }
+        )
+    }
+
+    private var tcpaConsentRow: some View {
+        HStack(alignment: .top, spacing: CivicaSpacing.md) {
+            Toggle("", isOn: tcpaConsentBinding)
+                .labelsHidden()
+                .tint(CivicaColors.brickPrimary)
+                .accessibilityLabel(SNAPContactStrings.tcpaConsentBody.value(in: language))
+            Text(SNAPContactStrings.tcpaConsentBody.value(in: language))
+                .font(CivicaTypography.footnote)
+                .foregroundStyle(CivicaColors.graphite)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.control)
+                .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+        )
     }
 
     private var phoneField: some View {
@@ -351,6 +396,14 @@ enum SNAPContactStrings {
     static let preferredHelper = CivicaText(
         "Pick whichever feels easiest. You can change this later.",
         es: "Elige la que te resulte más fácil. Puedes cambiarlo después."
+    )
+
+    // TCPA consent copy. PENDING LEGAL REVIEW before any outbound
+    // call or SMS infrastructure ships against this consent record —
+    // a one-pager TCPA review by counsel is the gating step.
+    static let tcpaConsentBody = CivicaText(
+        "I agree to receive phone calls and text messages from Civica about my benefits application, including automated reminders. Standard message and data rates may apply. I can opt out at any time.",
+        es: "Acepto recibir llamadas telefónicas y mensajes de texto de Civica sobre mi solicitud de beneficios, incluyendo recordatorios automáticos. Pueden aplicar tarifas estándar de mensajes y datos. Puedo cancelar en cualquier momento."
     )
 
     static func methodLabel(for method: PreferredContactMethod, language: CivicaLanguage) -> String {
