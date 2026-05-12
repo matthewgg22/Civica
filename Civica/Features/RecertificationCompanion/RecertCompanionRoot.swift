@@ -45,6 +45,7 @@ struct RecertCompanionRoot: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 header
+                RecertNotificationPermissionView()
                 recertDateCard
 
                 // Phantom Recert entry tile — wired in Step 5.
@@ -60,7 +61,6 @@ struct RecertCompanionRoot: View {
                     )
                 }
 
-                // Reminders permission card — wired in Step 4.
                 // Appeal CTA — wired in Step 6.
 
                 Spacer(minLength: CivicaSpacing.xl)
@@ -76,7 +76,29 @@ struct RecertCompanionRoot: View {
         }
         .onAppear {
             RecertCompanionAnalytics.trackHomeViewed()
+            Task { await reconcileReminders() }
         }
+    }
+
+    /// Build a fresh forecast and reconcile the system's pending
+    /// reminder requests against it. Idempotent — safe to call from
+    /// every onAppear.
+    private func reconcileReminders() async {
+        guard let recert = effectiveRecertDate else { return }
+        let vault = Dictionary(uniqueKeysWithValues:
+            SNAPDocumentVaultReader.allCaptured().map { ($0.type, $0.capturedAt) }
+        )
+        let forecast = DocumentExpirationPredictor.forecast(.init(
+            today: Date(),
+            nextRecertDate: recert,
+            vault: vault,
+            stateCode: stateCode
+        ))
+        let planned = DocumentReminderScheduler.plan(
+            forecast: forecast,
+            language: language
+        )
+        await RecertNotificationService.shared.reconcile(planned: planned)
     }
 
     // MARK: - Pieces
