@@ -59,7 +59,8 @@ struct SNAPCoveragePolicyTests {
     // MARK: - Launch-time invalidation
 
     @MainActor
-    @Test func launchTimePurgeRemovesVerdictWhenStateIsOutOfScope() {
+    @Test(.enabled(if: keychainAvailableForTests))
+    func launchTimePurgeRemovesVerdictWhenStateIsOutOfScope() {
         // Arrange: persisted CA draft + Keychain verdict from a
         // prior session (simulates the user who picked CA, ran the
         // screener via an older build, then upgraded to a version
@@ -91,7 +92,8 @@ struct SNAPCoveragePolicyTests {
     }
 
     @MainActor
-    @Test func launchTimePurgePreservesVerdictWhenStateIsInScope() {
+    @Test(.enabled(if: keychainAvailableForTests))
+    func launchTimePurgePreservesVerdictWhenStateIsInScope() {
         let draftStore = SNAPApplicationDraftStore()
         var state = SNAPApplicationDraftStore.PersistedState(
             draft: SNAPApplicationDraft(),
@@ -116,7 +118,8 @@ struct SNAPCoveragePolicyTests {
     }
 
     @MainActor
-    @Test func launchTimePurgePreservesVerdictWhenStateIsNil() {
+    @Test(.enabled(if: keychainAvailableForTests))
+    func launchTimePurgePreservesVerdictWhenStateIsNil() {
         // Pre-question users — no recorded state yet — must not lose
         // a verdict on app launch. (In practice this branch is rare
         // since a verdict only persists after the screener completes,

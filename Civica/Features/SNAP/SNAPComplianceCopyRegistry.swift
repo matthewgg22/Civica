@@ -39,30 +39,20 @@ enum SNAPComplianceCopyRegistry {
 
     /// Authoritative list. Tests iterate this; production code
     /// doesn't read it directly.
+    ///
+    /// Scope rule: a phrase lands here only when it has zero
+    /// legitimate use anywhere in the SNAP feature tree -- doc
+    /// comments, technical strings, cost annotations, and
+    /// localized help text all count as "anywhere." Narrower
+    /// per-surface rules (e.g. "WIC teaser must not foreground
+    /// a dollar amount") live in dedicated tests rather than
+    /// here, since they only forbid the phrase in a single file.
     static let bannedPhrases: [BannedPhrase] = [
         BannedPhrase(
             id: "submit_to_dta",
             phrase: "Submit to DTA Connect",
             auditReference: "Q14",
             rationale: "Implies a Civica->DTA write integration that does not exist without written MA DTA authorization. Use 'Open MA DTA Connect to submit' until authorization is confirmed and an integration ships."
-        ),
-        BannedPhrase(
-            id: "wic_dollar_amount_mo",
-            phrase: "$48/mo",
-            auditReference: "Q2",
-            rationale: "Dollar-amount inducement on WIC cross-program teaser violates 7 CFR 277.4(b)(5)(i) (SNAP recruitment) and 7 CFR 246.4 / 246.26 (WIC outreach + confidentiality). Use factual program description."
-        ),
-        BannedPhrase(
-            id: "wic_dollar_amount_es",
-            phrase: "$48/mes",
-            auditReference: "Q2",
-            rationale: "Spanish-parity match for wic_dollar_amount_mo."
-        ),
-        BannedPhrase(
-            id: "wic_approx_dollar",
-            phrase: "~$",
-            auditReference: "Q2",
-            rationale: "Approximate-dollar inducement framing (`~$X/mo`) anywhere in WIC or cross-program teasers; 7 CFR 277.4(b)(5)(i) + 246.4/246.26."
         )
     ]
 

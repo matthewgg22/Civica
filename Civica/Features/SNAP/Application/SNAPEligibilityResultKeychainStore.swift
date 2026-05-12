@@ -14,6 +14,14 @@ import Security
 // a new device via backup. Synchronizable=false keeps it off
 // iCloud Keychain entirely.
 //
+// kSecUseDataProtectionKeychain = true on every query: forces the
+// data-protection keychain (the one that actually exists on iOS).
+// Without this, SecItemAdd silently fails on unsigned simulator
+// test bundles (CODE_SIGNING_ALLOWED=NO) because the default
+// keychain selection falls back to the macOS file keychain, which
+// the simulator doesn't expose. Setting this explicitly makes the
+// behavior identical on device and simulator.
+//
 // Per OBBBA audit Q11 (Revision 2 disposition: Keychain selected
 // over NSFileProtectionComplete because the payload is small JSON
 // and per-item attribute control matters more than file-level
@@ -40,6 +48,7 @@ enum SNAPEligibilityResultKeychainStore {
             kSecAttrService as String: service,
             kSecAttrAccount as String: account,
             kSecAttrSynchronizable as String: false,
+            kSecUseDataProtectionKeychain as String: true,
             kSecReturnData as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
@@ -63,6 +72,7 @@ enum SNAPEligibilityResultKeychainStore {
             kSecAttrAccount as String: account,
             kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
             kSecAttrSynchronizable as String: false,
+            kSecUseDataProtectionKeychain as String: true,
             kSecValueData as String: data
         ]
         SecItemAdd(attributes as CFDictionary, nil)
@@ -74,7 +84,8 @@ enum SNAPEligibilityResultKeychainStore {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: account,
-            kSecAttrSynchronizable as String: false
+            kSecAttrSynchronizable as String: false,
+            kSecUseDataProtectionKeychain as String: true
         ]
         SecItemDelete(query as CFDictionary)
     }

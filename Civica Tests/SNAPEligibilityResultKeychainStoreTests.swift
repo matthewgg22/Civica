@@ -11,7 +11,43 @@ import Testing
 //
 // Each test wipes the Keychain entry before and after itself so test
 // order doesn't matter and reruns are clean.
+//
+// CI gating: GitHub Actions runs xcodebuild with CODE_SIGNING_ALLOWED=NO.
+// On unsigned simulator bundles, SecItemAdd returns errSecMissingEntitle
+// ment (-34018) because the binary has no embedded entitlements section.
+// `keychainAvailableForTests` probes Keychain once at suite load; when
+// false (CI), the suite is disabled and the tests run only in Xcode
+// locally (signed dev cert). Production Keychain works on signed
+// builds (TestFlight / release / dev) -- the gap is unit-test
+// reach, not security posture.
 
+/// Runtime probe — true when the current environment can write/read
+/// the data-protection keychain. Computed once on first reference.
+let keychainAvailableForTests: Bool = {
+    let probeService = "co.civica.SNAP.keychainProbe"
+    let probeAccount = "probe"
+    let delete: [String: Any] = [
+        kSecClass as String: kSecClassGenericPassword,
+        kSecAttrService as String: probeService,
+        kSecAttrAccount as String: probeAccount,
+        kSecUseDataProtectionKeychain as String: true
+    ]
+    SecItemDelete(delete as CFDictionary)
+    let add: [String: Any] = [
+        kSecClass as String: kSecClassGenericPassword,
+        kSecAttrService as String: probeService,
+        kSecAttrAccount as String: probeAccount,
+        kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+        kSecAttrSynchronizable as String: false,
+        kSecUseDataProtectionKeychain as String: true,
+        kSecValueData as String: Data([0])
+    ]
+    let status = SecItemAdd(add as CFDictionary, nil)
+    SecItemDelete(delete as CFDictionary)
+    return status == errSecSuccess
+}()
+
+@Suite(.enabled(if: keychainAvailableForTests))
 struct SNAPEligibilityResultKeychainStoreTests {
 
     // MARK: - Round-trip
@@ -56,6 +92,7 @@ struct SNAPEligibilityResultKeychainStoreTests {
             kSecAttrService as String: SNAPEligibilityResultKeychainStore.service,
             kSecAttrAccount as String: SNAPEligibilityResultKeychainStore.account,
             kSecAttrSynchronizable as String: false,
+            kSecUseDataProtectionKeychain as String: true,
             kSecReturnAttributes as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne
         ]

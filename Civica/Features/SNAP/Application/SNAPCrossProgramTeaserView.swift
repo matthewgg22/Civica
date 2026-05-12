@@ -12,9 +12,11 @@ import SwiftUI
 //
 // Brand-voice rule from the board: "The biggest unrealized product
 // unlock — using what we already know to apply for the next
-// program." The teaser names what we know about the user (you
-// have a kid in your household) and what that opens up ($48/mo of
-// food vouchers for kids under 5). No marketing chrome.
+// program." The teaser names what we know about the user (the
+// household has a child under 5) and points to WIC as an
+// informational next step. No dollar-amount inducement (see OBBBA
+// audit Q2 / 7 CFR 277.4(b)(5)(i) + 246.4/246.26); benefits vary
+// by category and state, and the body copy says so.
 
 struct SNAPCrossProgramTeaserView: View {
     let draft: SNAPApplicationDraft?
