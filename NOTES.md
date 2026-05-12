@@ -167,6 +167,7 @@ the test files exist on disk but don't run as part of CI.
 - [ ] **Debug menu entry** to flip `RecertCompanionFeatureFlag.isEnabled` on a per-device basis for QA without a new build. Add to whatever debug surface SNAP/Civica already exposes (or create one in this module).
 - [ ] **Reminder snooze** — first version of `InAppReminderPromptView` is upload-or-dismiss. A "remind me in 3 days" affordance is worth considering for the second iteration once we see actual prompt-dismissal data.
 - [ ] **Phantom Recert resumability** — currently the phantom draft persists, so a user can resume mid-phantom. We have not yet decided how long to retain an abandoned phantom draft. Suggested: clear on real recert submission, and clear on app launch if `phantomLastTouched > 30 days ago`.
+- [ ] **`trackReminderOpened` analytics event** — needs a global `UNUserNotificationCenter` delegate at the app entry point (`CivicaApp`) to fire the event when the user taps a recert reminder. The userInfo on every planned notification already carries `module: "recert_companion"` and `documentType`, so the delegate only needs to filter and dispatch. Deferred from Step 8 to avoid touching the app entry point in this PR.
 
 ---
 
