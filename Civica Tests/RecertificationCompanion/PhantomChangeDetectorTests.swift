@@ -1,11 +1,11 @@
-import XCTest
+import Foundation
+import Testing
 @testable import Civica
 
-// Unit tests for PhantomChangeDetector. Section-level diff between
-// the user's live draft and their phantom draft. Pure functions, no
-// I/O.
+// Section-level diff between live and phantom drafts. Pure
+// functions, no I/O.
 
-final class PhantomChangeDetectorTests: XCTestCase {
+struct PhantomChangeDetectorTests {
 
     private func liveDraft() -> SNAPApplicationDraft {
         var draft = SNAPApplicationDraft()
@@ -14,49 +14,39 @@ final class PhantomChangeDetectorTests: XCTestCase {
         return draft
     }
 
-    // MARK: - No changes → no diff
-
-    func test_identicalDrafts_returnNoChanges() {
+    @Test func identicalDrafts_returnNoChanges() {
         let live = liveDraft()
         let phantom = live
-        XCTAssertEqual(PhantomChangeDetector.diff(live: live, phantom: phantom), [])
+        #expect(PhantomChangeDetector.diff(live: live, phantom: phantom) == [])
     }
 
-    // MARK: - Modified
-
-    func test_incomeChange_returnsModified() {
+    @Test func incomeChange_returnsModified() {
         var phantom = liveDraft()
         phantom.income.grossMonthlyIncome = 2400
 
         let changes = PhantomChangeDetector.diff(live: liveDraft(), phantom: phantom)
-        XCTAssertEqual(changes, [PhantomChange(section: .income, kind: .modified)])
+        #expect(changes == [PhantomChange(section: .income, kind: .modified)])
     }
 
-    // MARK: - Filled
-
-    func test_newlyFilledExpenses_returnsFilled() {
+    @Test func newlyFilledExpenses_returnsFilled() {
         let live = liveDraft()
         var phantom = live
         phantom.expenses.monthlyRentOrHousing = 1200
 
         let changes = PhantomChangeDetector.diff(live: live, phantom: phantom)
-        XCTAssertEqual(changes, [PhantomChange(section: .expenses, kind: .filled)])
+        #expect(changes == [PhantomChange(section: .expenses, kind: .filled)])
     }
 
-    // MARK: - Cleared
-
-    func test_clearedIncome_returnsCleared() {
+    @Test func clearedIncome_returnsCleared() {
         let live = liveDraft()
         var phantom = live
         phantom.income = SNAPIncomeAnswers()
 
         let changes = PhantomChangeDetector.diff(live: live, phantom: phantom)
-        XCTAssertEqual(changes, [PhantomChange(section: .income, kind: .cleared)])
+        #expect(changes == [PhantomChange(section: .income, kind: .cleared)])
     }
 
-    // MARK: - Sort order matches enum cases
-
-    func test_multipleChanges_returnedInSectionEnumOrder() {
+    @Test func multipleChanges_returnedInSectionEnumOrder() {
         let live = liveDraft()
         var phantom = live
         phantom.contact.email = "user@example.com"
@@ -65,8 +55,7 @@ final class PhantomChangeDetectorTests: XCTestCase {
 
         let changes = PhantomChangeDetector.diff(live: live, phantom: phantom)
         let sections = changes.map(\.section)
-        // contact, income, expenses → must be in that enum order
         let expected: [SNAPApplicationSection] = [.contact, .income, .expenses]
-        XCTAssertEqual(sections, expected)
+        #expect(sections == expected)
     }
 }

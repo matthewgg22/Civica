@@ -1,30 +1,29 @@
-import XCTest
+import Foundation
+import Testing
 @testable import Civica
 
-// Unit tests for DocumentReminderScheduler. The system layer
-// (RecertNotificationService) talks to UNUserNotificationCenter and
-// is not tested here; tests verify the pure planning function.
+// The system layer (RecertNotificationService) talks to
+// UNUserNotificationCenter and isn't covered here; tests verify the
+// pure planning function only.
 
-final class DocumentReminderSchedulerTests: XCTestCase {
+struct DocumentReminderSchedulerTests {
 
     private let calendar = Calendar(identifier: .gregorian)
 
-    private let now: Date = {
+    private var now: Date {
         var components = DateComponents()
         components.year = 2026
         components.month = 5
         components.day = 11
         components.timeZone = TimeZone(identifier: "UTC")
         return Calendar(identifier: .gregorian).date(from: components)!
-    }()
+    }
 
     private func days(_ n: Int, from date: Date) -> Date {
         calendar.date(byAdding: .day, value: n, to: date)!
     }
 
-    // MARK: - Identifier shape
-
-    func test_identifier_isPrefixedAndComposesActionFields() {
+    @Test func identifier_isPrefixedAndComposesActionFields() {
         let action = DocumentExpirationAction(
             document: .proofOfIncome,
             action: .replace,
@@ -33,15 +32,13 @@ final class DocumentReminderSchedulerTests: XCTestCase {
         )
 
         let id = DocumentReminderScheduler.identifier(for: action)
-        XCTAssertTrue(id.hasPrefix(DocumentReminderScheduler.identifierPrefix))
-        XCTAssertTrue(id.contains("proof_of_income"))
-        XCTAssertTrue(id.contains("replace"))
-        XCTAssertTrue(id.contains("staleAtRecert"))
+        #expect(id.hasPrefix(DocumentReminderScheduler.identifierPrefix))
+        #expect(id.contains("proof_of_income"))
+        #expect(id.contains("replace"))
+        #expect(id.contains("staleAtRecert"))
     }
 
-    // MARK: - Planning produces one notification per action
-
-    func test_plan_producesOnePlannedNotificationPerAction() {
+    @Test func plan_producesOnePlannedNotificationPerAction() {
         let actions: [DocumentExpirationAction] = [
             DocumentExpirationAction(
                 document: .proofOfIncome,
@@ -66,13 +63,11 @@ final class DocumentReminderSchedulerTests: XCTestCase {
 
         let planned = DocumentReminderScheduler.plan(forecast: forecast, language: .english)
 
-        XCTAssertEqual(planned.count, 2)
-        XCTAssertEqual(Set(planned.map(\.documentTypeRaw)), ["proof_of_income", "utility_bill"])
+        #expect(planned.count == 2)
+        #expect(Set(planned.map(\.documentTypeRaw)) == ["proof_of_income", "utility_bill"])
     }
 
-    // MARK: - Idempotency
-
-    func test_plan_isIdempotent_acrossRuns() {
+    @Test func plan_isIdempotent_acrossRuns() {
         let actions: [DocumentExpirationAction] = [
             DocumentExpirationAction(
                 document: .proofOfIncome,
@@ -92,12 +87,10 @@ final class DocumentReminderSchedulerTests: XCTestCase {
         let first = DocumentReminderScheduler.plan(forecast: forecast, language: .english)
         let second = DocumentReminderScheduler.plan(forecast: forecast, language: .english)
 
-        XCTAssertEqual(first, second)
+        #expect(first == second)
     }
 
-    // MARK: - Fire time is 9am local
-
-    func test_fireDate_isNineAMLocal_onDueByDate() {
+    @Test func fireDate_isNineAMLocal_onDueByDate() {
         let dueBy = days(7, from: now)
         let action = DocumentExpirationAction(
             document: .proofOfIncome,
@@ -120,13 +113,11 @@ final class DocumentReminderSchedulerTests: XCTestCase {
         )
 
         let components = calendar.dateComponents([.hour, .minute], from: planned[0].fireDate)
-        XCTAssertEqual(components.hour, 9)
-        XCTAssertEqual(components.minute, 0)
+        #expect(components.hour == 9)
+        #expect(components.minute == 0)
     }
 
-    // MARK: - Empty forecast
-
-    func test_plan_emptyForecast_returnsEmptyArray() {
+    @Test func plan_emptyForecast_returnsEmptyArray() {
         let forecast = DocumentExpirationForecast(
             upcomingActions: [],
             nextRecertDate: days(60, from: now),
@@ -135,15 +126,10 @@ final class DocumentReminderSchedulerTests: XCTestCase {
             stateCode: "MA"
         )
 
-        XCTAssertEqual(
-            DocumentReminderScheduler.plan(forecast: forecast, language: .english),
-            []
-        )
+        #expect(DocumentReminderScheduler.plan(forecast: forecast, language: .english) == [])
     }
 
-    // MARK: - Localization
-
-    func test_plan_pickingSpanish_returnsSpanishCopy() {
+    @Test func plan_pickingSpanish_returnsSpanishCopy() {
         let action = DocumentExpirationAction(
             document: .proofOfIncome,
             action: .replace,
@@ -161,11 +147,8 @@ final class DocumentReminderSchedulerTests: XCTestCase {
         let englishPlanned = DocumentReminderScheduler.plan(forecast: forecast, language: .english)
         let spanishPlanned = DocumentReminderScheduler.plan(forecast: forecast, language: .spanish)
 
-        XCTAssertNotEqual(englishPlanned[0].title, spanishPlanned[0].title)
-        XCTAssertNotEqual(englishPlanned[0].body, spanishPlanned[0].body)
-        XCTAssertTrue(
-            spanishPlanned[0].body.contains("recertificación"),
-            "Spanish body should contain Spanish 'recertificación'"
-        )
+        #expect(englishPlanned[0].title != spanishPlanned[0].title)
+        #expect(englishPlanned[0].body != spanishPlanned[0].body)
+        #expect(spanishPlanned[0].body.contains("recertificación"))
     }
 }

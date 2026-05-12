@@ -28,7 +28,7 @@ It targets a 25–35% relative reduction in recert failure rate at pilot.
 | Analytics | Per-feature `…Analytics` enum mirroring `SNAPAnalytics`. Firebase under `#if canImport(FirebaseAnalytics)`. Allowlisted param keys only. |
 | OCR | Vision `VNRecognizeTextRequest` → Foundation Models `LanguageModelSession` with `@Generable` structs (iOS 26+ with Apple Intelligence). Falls back to nothing — caller must check `SNAPOnDeviceExtractor.isAvailable`. |
 | Notifications | Nothing existed before this module. Interview Coach has a static timeline; there was no `UNUserNotificationCenter` use anywhere in the codebase. We built `RecertNotificationService` from scratch. |
-| Tests | None for the Civica target before this module. Only VoteNow had XCTest tests at `WeVote Information PageTests/`. This module ships test source files under `CivicaTests/` (see "Test target wiring" below). |
+| Tests | Swift Testing (`@Test func ... { #expect(...) }`), not XCTest. Civica's existing tests live at `Civica Tests/` (with a space) and are auto-included via the project's `PBXFileSystemSynchronizedRootGroup`. Recert tests land under `Civica Tests/RecertificationCompanion/` and run with `⌘U` on the `Civica` scheme — no manual project wiring. |
 | Feature flags | Compile-time `#if SNAP_DEV` (the only existing pattern). For this module we added a runtime `AppStorage`-backed flag to support progressive rollout — see "Feature flag" below. |
 
 ---
@@ -55,7 +55,7 @@ It targets a 25–35% relative reduction in recert failure rate at pilot.
 2. **Phantom Recert composition**: Extended the existing `SNAPApplicationFlowOrchestratorViewModel` with a new `.phantom(section:)` `Mode` case. Draft storage is dual-keyed:
    - `co.civica.applicationDraft.live` — the real, submission-bound draft (unchanged behavior)
    - `co.civica.applicationDraft.phantom` — the shadow draft for the dry run
-3. **Test target**: A new `CivicaTests` test target was added. The source files live under `CivicaTests/RecertificationCompanion/`. **The Xcode project file (`Civica.xcodeproj/project.pbxproj`) needs the new target added via the Xcode UI** — see "Test target wiring" below.
+3. **Tests**: Recert tests land in the existing `Civica Tests/` synchronized folder (the Civica target's auto-included test home). No new target is required; the `CivicaTests` target already exists and is wired to `Civica Tests/` via `PBXFileSystemSynchronizedRootGroup`. Tests use Swift Testing, matching the rest of the file.
 
 ### Decided unilaterally
 4. **Module location**: `Civica/Features/RecertificationCompanion/`. Matches sibling features (`Civica/Features/SNAP/`).
@@ -126,28 +126,19 @@ Shared additions outside the module:
 - `Civica/App/CivicaSNAPFlowView.swift` (modified — added `phantomMode: Bool = false` init param)
 - `Civica/App/CivicaEntryView.swift` (modified — added Recert Companion tile under the feature flag)
 - `Civica/App/CivicaRootView.swift` (modified — routes `.recertDue` to companion when flag is on)
-- `CivicaTests/RecertificationCompanion/...` (new test files)
+- `Civica Tests/RecertificationCompanion/...` (new test files — auto-included by the synchronized test folder)
 
 ---
 
-## Test target wiring (one-time Xcode-side step)
+## Project file model (zero manual wiring)
 
-The plan called for a `CivicaTests` test target. The test **source** files
-ship in this commit at `CivicaTests/RecertificationCompanion/`. Hand-editing
-`Civica.xcodeproj/project.pbxproj` to add a new target is brittle (it
-corrupts the project file in subtle ways that don't surface until a future
-Xcode version refuses to open it). Instead, the one-time wiring step is:
-
-1. Open `Civica.xcodeproj` in Xcode.
-2. **File → New → Target… → iOS → Unit Testing Bundle**.
-3. Name: `CivicaTests`. Target to be tested: `Civica`. Language: Swift.
-4. Drag the existing `CivicaTests/` folder into the new target (uncheck
-   "Copy items if needed" — the files are already in place).
-5. Verify by running `⌘U` on the `Civica` scheme.
-
-This is a sub-five-minute click-through and the source files were authored
-to compile under the standard XCTest defaults. Until that step is taken,
-the test files exist on disk but don't run as part of CI.
+`Civica.xcodeproj` uses Xcode 16 `PBXFileSystemSynchronizedRootGroup`
+for both the app target (`Civica/`) and the test target (`Civica
+Tests/`). Anything dropped into those folders on disk is auto-
+included in its target — no drag-and-drop, no pbxproj edits, no
+"Add Files to..." step. This module's new Swift sources, JSON
+fixtures, and tests all land under those roots, which is why the
+build does not require a separate wiring pass.
 
 ---
 

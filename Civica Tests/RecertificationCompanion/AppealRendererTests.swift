@@ -1,30 +1,26 @@
-import XCTest
+import Foundation
+import Testing
 @testable import Civica
 
-// Unit tests for AppealRenderer. Verifies:
+// Verifies:
 //   - Reason-specific paragraphs are correctly selected
 //   - Slot substitution is correct
 //   - Missing-slot reporting is correct
 //   - Statutory citations from the template come through unchanged
-//
-// Loads the bundled MA + CA templates via the bundle loader's
-// decode seam (no Bundle.main dependency, so these tests run as
-// pure unit tests).
+// Cross-state × cross-language × all-reasons matrix.
 
-final class AppealRendererTests: XCTestCase {
+struct AppealRendererTests {
 
     private func template(state: String, language: String) -> AppealTemplate {
-        let url = Bundle(for: type(of: self))
-            .url(forResource: "\(state).\(language)", withExtension: "json", subdirectory: "AppealTemplates")
-            ?? Bundle.main.url(forResource: "\(state).\(language)", withExtension: "json", subdirectory: "AppealTemplates")
-        guard let url, let data = try? Data(contentsOf: url) else {
-            // Test target has no bundled templates yet (test target
-            // is wired by the Xcode UI step in NOTES.md). Fall back
-            // to a synthetic template that exercises the renderer's
-            // structure without state-specific copy.
-            return syntheticTemplate(state: state, language: language)
+        let bundle = Bundle.main
+        let resource = "\(state).\(language)"
+        let url = bundle.url(forResource: resource, withExtension: "json", subdirectory: "AppealTemplates")
+            ?? bundle.url(forResource: resource, withExtension: "json")
+        if let url, let data = try? Data(contentsOf: url),
+           let decoded = try? AppealTemplateLoader.decode(data) {
+            return decoded
         }
-        return (try? AppealTemplateLoader.decode(data)) ?? syntheticTemplate(state: state, language: language)
+        return syntheticTemplate(state: state, language: language)
     }
 
     private func syntheticTemplate(state: String, language: String) -> AppealTemplate {
@@ -52,61 +48,50 @@ final class AppealRendererTests: XCTestCase {
         )
     }
 
-    // MARK: - Reason selection
-
-    func test_reasonSelection_missedInterview_pullsMissedInterviewParagraph() {
+    @Test func reasonSelection_missedInterview_pullsMissedInterviewParagraph() {
         let tpl = template(state: "MA", language: "en")
         let para = AppealRenderer.reasonParagraph(template: tpl, reason: .missedInterview)
-        XCTAssertEqual(para, tpl.paragraphs.missedInterview)
+        #expect(para == tpl.paragraphs.missedInterview)
     }
 
-    func test_reasonSelection_missingDocuments_pullsMissingDocumentsParagraph() {
+    @Test func reasonSelection_missingDocuments_pullsMissingDocumentsParagraph() {
         let tpl = template(state: "MA", language: "en")
         let para = AppealRenderer.reasonParagraph(template: tpl, reason: .missingDocuments)
-        XCTAssertEqual(para, tpl.paragraphs.missingDocuments)
+        #expect(para == tpl.paragraphs.missingDocuments)
     }
 
-    // MARK: - Statutory citation pass-through
-
-    func test_statutoryCitations_appearInTemplate_andSurviveRender() {
+    @Test func statutoryCitations_appearInTemplate_andSurviveRender() {
         let tpl = template(state: "MA", language: "en")
         let doc = AppealRenderer.render(template: tpl, denialReason: .missingDocuments, slots: [
             "claimantName": "Jane Doe",
             "caseNumber": "12345"
         ])
-        XCTAssertTrue(
-            doc.body.contains("7 CFR 273.2") || doc.body.contains(tpl.statutoryCitations.federal),
-            "Rendered body must contain the federal citation from the template"
-        )
+        #expect(doc.body.contains("7 CFR 273.2") || doc.body.contains(tpl.statutoryCitations.federal))
     }
 
-    // MARK: - Slot substitution
-
-    func test_renderedBody_substitutesProvidedSlots() {
+    @Test func renderedBody_substitutesProvidedSlots() {
         let tpl = template(state: "MA", language: "en")
         let doc = AppealRenderer.render(template: tpl, denialReason: .missedInterview, slots: [
             "claimantName": "Jane Doe",
             "caseNumber": "ABC-999"
         ])
-        XCTAssertTrue(doc.body.contains("Jane Doe"))
-        XCTAssertTrue(doc.body.contains("ABC-999"))
-        XCTAssertFalse(doc.body.contains("{{claimantName}}"))
-        XCTAssertFalse(doc.body.contains("{{caseNumber}}"))
+        #expect(doc.body.contains("Jane Doe"))
+        #expect(doc.body.contains("ABC-999"))
+        #expect(!doc.body.contains("{{claimantName}}"))
+        #expect(!doc.body.contains("{{caseNumber}}"))
     }
 
-    func test_missingSlots_areReported_andRemainAsMarkers() {
+    @Test func missingSlots_areReported_andRemainAsMarkers() {
         let tpl = template(state: "MA", language: "en")
         let doc = AppealRenderer.render(template: tpl, denialReason: .missedInterview, slots: [
             "claimantName": "Jane Doe"
         ])
-        XCTAssertFalse(doc.allSlotsResolved)
-        XCTAssertTrue(doc.body.contains("{{caseNumber}}"))
-        XCTAssertTrue(doc.missingSlots.contains("caseNumber"))
+        #expect(!doc.allSlotsResolved)
+        #expect(doc.body.contains("{{caseNumber}}"))
+        #expect(doc.missingSlots.contains("caseNumber"))
     }
 
-    // MARK: - Cross-state × language matrix
-
-    func test_render_acrossMatrix_producesNonEmptyBody() {
+    @Test func render_acrossMatrix_producesNonEmptyBody() {
         for state in ["MA", "CA"] {
             for language in ["en", "es"] {
                 for reason in DenialReason.allCases {
@@ -124,14 +109,8 @@ final class AppealRendererTests: XCTestCase {
                             "claimantEmail": "test@example.com"
                         ]
                     )
-                    XCTAssertFalse(
-                        doc.body.isEmpty,
-                        "\(state) × \(language) × \(reason) produced empty body"
-                    )
-                    XCTAssertTrue(
-                        doc.allSlotsResolved,
-                        "\(state) × \(language) × \(reason) left slots unresolved: \(doc.missingSlots)"
-                    )
+                    #expect(!doc.body.isEmpty)
+                    #expect(doc.allSlotsResolved)
                 }
             }
         }

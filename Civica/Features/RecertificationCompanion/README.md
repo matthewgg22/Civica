@@ -117,7 +117,7 @@ Before flipping `RecertCompanionFeatureFlag.isEnabled` for end users, complete:
 - [ ] OCR accuracy testing of `DenialLetterParser` on ≥20 real denial letters per state
 - [ ] Confirm recert-date default (approval + 12mo) is correct for the target population — flag SAR-7 and 24-month simplified-reporting users as out of scope until policy confirms
 - [ ] Smoke-test reminder scheduling on a real device (simulator notification delivery is not authoritative)
-- [ ] Run the unit test suite once the `CivicaTests` target is wired in Xcode (see top-level NOTES.md)
+- [ ] Run the unit test suite (`⌘U` on the `Civica` scheme — tests live at `Civica Tests/RecertificationCompanion/` and use Swift Testing)
 
 ## What lives outside this module
 
