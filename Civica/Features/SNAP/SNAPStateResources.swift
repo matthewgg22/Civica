@@ -21,6 +21,12 @@ import Foundation
 // Directory of Resources (a public federal source). Layer 1's
 // agency-name list still carries its own verification TODO below.
 enum SNAPStateResources {
+    /// USDA's directory of state SNAP agencies. Used as the universal
+    /// fallback CTA when the user selects a state Civica's screener
+    /// isn't tuned for yet — the FNS directory always points to the
+    /// state's current apply path.
+    /// Reference: docs/SNAP-source-citation-signoff.md (Agency list row).
+    static let usdaStateDirectoryURL = "https://www.fns.usda.gov/snap/state-directory"
 
     /// Convenience accessor for MA-only callers. Kept for backward
     /// compatibility; new call sites should go through `resource(for:)`.
@@ -224,7 +230,7 @@ enum SNAPStateResources {
     // Source: /Users/matthewgreer-gentis/Downloads/snap_state_agencies.xlsx
     // Sheet: "SNAP Agencies" (Jurisdiction + State SNAP Agency columns).
     // Static reference data only; no network fetch at runtime.
-    // TODO(legal/source-verification): Confirm this list against approved policy/legal source before production release.
+    // TODO(legal/source-verification): Row 12 in docs/SNAP-source-citation-signoff.md. Confirm this list against the USDA State Directory and state agency pages before production release.
     private static let snapAgencyByStateCode: [String: String] = [
         "AL": "Alabama Department of Human Resources",
         "AK": "Alaska Department of Health",

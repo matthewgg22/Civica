@@ -13,6 +13,12 @@ struct CivicaApp: App {
         // Ensure Hanken Grotesk + Atkinson Hyperlegible are registered before
         // any view tries to render text. Same pattern as the existing app.
         CivicaFonts.register()
+
+        // Remove retired UserDefaults keys (e.g. the pre-rotation
+        // Interview Coach stable anonymous ID). Idempotent, cheap.
+        MainActor.assumeIsolated {
+            CivicaUserData.purgeLegacyKeys()
+        }
     }
 
     var body: some Scene {

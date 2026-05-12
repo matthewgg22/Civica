@@ -141,6 +141,7 @@ private final class StubService: FindHelpServiceProtocol, @unchecked Sendable {
     private(set) var callCount = 0
     private(set) var lastServiceType: FindHelpServiceType?
     private(set) var lastLanguageCode: String?
+    private(set) var lastPrecision: FindHelpLocationPrecision?
 
     init(results: [FindHelpLocation] = [], error: FindHelpError? = nil) {
         self.results = results
@@ -151,6 +152,7 @@ private final class StubService: FindHelpServiceProtocol, @unchecked Sendable {
         lat: Double,
         lng: Double,
         radiusKm: Double,
+        precision: FindHelpLocationPrecision,
         serviceType: FindHelpServiceType?,
         languageCode: String?,
         maxResults: Int
@@ -158,6 +160,7 @@ private final class StubService: FindHelpServiceProtocol, @unchecked Sendable {
         callCount += 1
         lastServiceType = serviceType
         lastLanguageCode = languageCode
+        lastPrecision = precision
         if let error { throw error }
         return results
     }

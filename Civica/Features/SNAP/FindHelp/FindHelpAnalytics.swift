@@ -35,4 +35,17 @@ enum FindHelpAnalytics {
     static func trackOnboardingDismissed() {
         logger.info("find_help.onboarding_dismissed")
     }
+
+    /// Records which location-precision mode left the device on the
+    /// most recent search. Coordinates themselves are never logged —
+    /// only the bucket. Used to verify the coarse default and to
+    /// measure adoption when the precise opt-in path lands.
+    static func trackSearchPrecisionUsed(_ precision: FindHelpLocationPrecision) {
+        let bucket: String
+        switch precision {
+        case .coarse: bucket = "coarse"
+        case .precise: bucket = "precise"
+        }
+        logger.info("find_help.search_precision precision=\(bucket, privacy: .public)")
+    }
 }

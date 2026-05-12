@@ -169,13 +169,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Civica is not affiliated with the U.S. Department of Agriculture or any state SNAP agency. Locations are sourced from authoritative public directories and may be out of date. Call ahead before visiting to confirm hours and services. To apply for SNAP through official channels, contact your state SNAP agency or call 1-800-221-5689."
+            "value" : "Civica is not affiliated with the U.S. Department of Agriculture or any state SNAP agency. To find nearby help, Civica sends an approximate location or the ZIP code you enter to our directory service. We do not send your application answers with this search. Locations are sourced from authoritative public directories and may be out of date — call ahead before visiting to confirm hours and services. To apply for SNAP through official channels, contact your state SNAP agency or call 1-800-221-5689."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Civica no está afiliada al Departamento de Agricultura de EE. UU. ni a ninguna agencia estatal de SNAP. Las ubicaciones provienen de directorios públicos autorizados y pueden estar desactualizadas. Llame antes de visitar para confirmar horarios y servicios. Para solicitar SNAP a través de canales oficiales, comuníquese con la agencia SNAP de su estado o llame al 1-800-221-5689."
+            "value" : "Civica no está afiliada al Departamento de Agricultura de EE. UU. ni a ninguna agencia estatal de SNAP. Para encontrar ayuda cercana, Civica envía una ubicación aproximada o el código postal que ingresas a nuestro servicio de directorio. No enviamos las respuestas de tu solicitud con esta búsqueda. Las ubicaciones provienen de directorios públicos autorizados y pueden estar desactualizadas — llama antes de visitar para confirmar horarios y servicios. Para solicitar SNAP a través de canales oficiales, comunícate con la agencia SNAP de tu estado o llama al 1-800-221-5689."
           }
         }
       }

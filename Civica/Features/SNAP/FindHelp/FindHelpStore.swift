@@ -70,7 +70,13 @@ final class FindHelpStore: ObservableObject {
             .filter(filter.matches)
     }
 
-    func searchNearby(lat: Double, lng: Double, radiusKm: Double = 25, maxResults: Int = 50) {
+    func searchNearby(
+        lat: Double,
+        lng: Double,
+        radiusKm: Double = 25,
+        precision: FindHelpLocationPrecision = .coarse,
+        maxResults: Int = 50
+    ) {
         pendingSearch?.cancel()
         isLoading = true
         error = nil
@@ -78,12 +84,15 @@ final class FindHelpStore: ObservableObject {
         let serviceType = filter.serviceType
         let languageCode = filter.languageCode
 
+        FindHelpAnalytics.trackSearchPrecisionUsed(precision)
+
         pendingSearch = Task { [service] in
             do {
                 let results = try await service.searchNearby(
                     lat: lat,
                     lng: lng,
                     radiusKm: radiusKm,
+                    precision: precision,
                     serviceType: serviceType,
                     languageCode: languageCode,
                     maxResults: maxResults
