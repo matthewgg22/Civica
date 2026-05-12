@@ -42,8 +42,8 @@ enum SNAPStatusHomeStrings {
         es: "Genera tu paquete de solicitud"
     )
     static let actionSubmitToState = CivicaText(
-        "Submit to DTA Connect",
-        es: "Envía a DTA Connect"
+        "Open MA DTA Connect to submit",
+        es: "Abrir MA DTA Connect para enviar"
     )
     static let actionUploadRequested = CivicaText(
         "Upload requested documents",
@@ -73,8 +73,8 @@ enum SNAPStatusHomeStrings {
         es: "Paquete de solicitud generado"
     )
     static let stepSubmit = CivicaText(
-        "Submit to DTA Connect",
-        es: "Envíalo a DTA Connect"
+        "Open MA DTA Connect to submit",
+        es: "Abrir MA DTA Connect para enviar"
     )
     static let stepStateAcknowledged = CivicaText(
         "State received your application",
