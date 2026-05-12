@@ -67,6 +67,8 @@
 			membershipExceptions = (
 				Info.plist,
 				SETUP.md,
+				Features/SNAP/Rules/README.md,
+				Features/RecertificationCompanion/README.md,
 			);
 			target = CCAA000000000000000000A1 /* Civica */;
 		};
