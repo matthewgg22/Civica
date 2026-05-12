@@ -183,18 +183,42 @@ struct SNAPComplianceCopyTests {
         // against an accidental TODO rewrite that drops the
         // reference — the document is the engineering deliverable
         // legal/policy needs to sign before production.
-        //
-        // Verifying the markdown file itself is filesystem-introspective
-        // and fragile in a test bundle; we instead assert that the
-        // SNAPStateResources source file mentions the path so that
-        // a TODO cleanup pass can't silently orphan the doc.
         let referencePath = "docs/SNAP-source-citation-signoff.md"
-        // The constant lives in code-reviewable Swift, so the existence
-        // of the documented USDA fallback URL is the proxy invariant:
-        // anyone touching SNAPStateResources sees the doc reference
-        // adjacent to the constant.
         #expect(SNAPStateResources.usdaStateDirectoryURL.hasPrefix("https://"))
         #expect(referencePath.contains("SNAP-source-citation-signoff"))
+    }
+
+    /// Asserts the source-citation signoff doc exists on disk and
+    /// retains the semantic anchors the doc is built around. The
+    /// `proxy` test above guards code-side references; this test
+    /// guards the doc itself. Per OBBBA Q13 (Revision 2), prefer
+    /// semantic anchors over brittle line numbers.
+    @Test func sourceCitationSignoffDocumentExistsWithSemanticAnchors() throws {
+        // #file resolves to the absolute path of this test file at
+        // compile time. Walk two levels up to the repo root, then
+        // anchor the signoff doc relative to that.
+        let testFileURL = URL(fileURLWithPath: #file)
+        let repoRoot = testFileURL
+            .deletingLastPathComponent() // Civica Tests/
+            .deletingLastPathComponent() // repo root
+        let signoff = repoRoot.appendingPathComponent("docs/SNAP-source-citation-signoff.md")
+
+        let content = try String(contentsOf: signoff, encoding: .utf8)
+
+        let requiredAnchors = [
+            "source-citation",          // table family
+            "Reviewer",                  // reviewer column
+            "Signoff date",              // signoff column
+            "Effective date",            // policy-effective column
+            "Last checked",              // engineering-side hygiene column
+            "Renewal cadence",           // annual / COLA cadence column
+            "USDA FNS",                  // primary federal source authority
+            "DTA Helpful Charts"         // MA-specific source authority
+        ]
+        for anchor in requiredAnchors {
+            #expect(content.contains(anchor),
+                    "Source-citation signoff doc is missing required anchor: \(anchor)")
+        }
     }
 
     // MARK: - OBBBA Q14 DTA-Connect copy posture
