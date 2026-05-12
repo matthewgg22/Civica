@@ -137,6 +137,28 @@ struct MAStateRules: SNAPStateRuleEngine {
         let snapshot = activeBBCESnapshot(asOf: asOf)
         return "MA-bbce-200pct-\(snapshot.versionSuffix)"
     }
+
+    // MARK: - Snapshot freshness (OBBBA audit Q12)
+
+    /// MA freshness = federal freshness ∩ MA's own BBCE + SUA
+    /// snapshot windows. The earliest expiry wins.
+    func snapshotStatus(asOf: Date) -> RuleSnapshotStatus {
+        let federalStatus = federal.snapshotStatus(asOf: asOf)
+        let federalExpiry: Date
+        switch federalStatus {
+        case .current(let exp), .expired(let exp): federalExpiry = exp
+        }
+
+        let maExpiries: [Date] = [
+            Self.bbce200Snapshots.last!.expiresOn,
+            Self.suaSnapshots.last!.expiresOn,
+            federalExpiry
+        ]
+        let earliestExpiry = maExpiries.min() ?? .distantPast
+        return asOf <= earliestExpiry
+            ? .current(latestExpiry: earliestExpiry)
+            : .expired(latestExpiry: earliestExpiry)
+    }
 }
 
 // MARK: - MA BBCE 200% FPL snapshots

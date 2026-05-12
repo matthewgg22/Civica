@@ -138,6 +138,23 @@ struct MAStateRulesTests {
         #expect(rules.rulesVersion(asOf: fy27Date) == "MA-bbce-200pct-FY26")
     }
 
+    // MARK: - Snapshot freshness (OBBBA audit Q12)
+
+    @Test func snapshotStatusIsCurrentInsideFY26() {
+        let status = rules.snapshotStatus(asOf: fy26Date)
+        let fy26End = Self.iso("2026-09-30")
+        #expect(status == .current(latestExpiry: fy26End))
+    }
+
+    /// MA freshness intersects federal + MA's BBCE + SUA windows.
+    /// Past the earliest expiry (FY26 end-of-window), status flips.
+    @Test func snapshotStatusIsExpiredAfterFY26End() {
+        let fy26End = Self.iso("2026-09-30")
+        let justAfter = fy26End.addingTimeInterval(1)
+        let status = rules.snapshotStatus(asOf: justAfter)
+        #expect(status == .expired(latestExpiry: fy26End))
+    }
+
     // MARK: - Helpers
 
     private static func iso(_ string: String) -> Date {

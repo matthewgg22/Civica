@@ -113,6 +113,35 @@ protocol SNAPStateRuleEngine {
     /// Stamped into SNAPEligibilityResult.rulesVersion for the
     /// audit footer.
     func rulesVersion(asOf: Date) -> String
+
+    /// Whether every policy snapshot the engine consults is still
+    /// inside its effective window on `asOf`. Callers that produce
+    /// dollar-amount estimates should refuse to render precise
+    /// values when the result is `.expired` and instead route the
+    /// user to official state resources — the rules engine itself
+    /// continues to render a fallback verdict, but the verdict is
+    /// no longer trustworthy. See OBBBA audit Q12 (Revision 2).
+    func snapshotStatus(asOf: Date) -> RuleSnapshotStatus
+}
+
+// MARK: - Rule-snapshot freshness
+
+/// Whether the rules engine's policy snapshots are still inside
+/// their effective windows on a given date. `latestExpiry` is the
+/// earliest snapshot expiry across the tables the engine consults
+/// (max allotment, FPL, standard deduction, shelter cap, asset
+/// limits, minimum benefit, plus state-specific tables) — the
+/// date the answer next changes.
+enum RuleSnapshotStatus: Equatable {
+    /// `asOf` is inside every relevant snapshot's effective window.
+    case current(latestExpiry: Date)
+
+    /// `asOf` is past at least one relevant snapshot's effective
+    /// end date. The engine continues to render a fallback verdict
+    /// using the most recent snapshot, but the verdict is stale —
+    /// the caller is responsible for suppressing precise dollar
+    /// estimates and surfacing a stale-rules notice.
+    case expired(latestExpiry: Date)
 }
 
 // MARK: - Standard Utility Allowance tier
