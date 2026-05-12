@@ -29,6 +29,12 @@ import SwiftUI
 
 struct SNAPInterviewCoachView: View {
     let language: CivicaLanguage
+    /// Caller-supplied interview date. When present and ≥24h out, the
+    /// prep view schedules a one-shot local notification 24h before
+    /// the date so the user is nudged back into Civica the day before
+    /// their call. Nil disables the notification (Step 2 of the
+    /// Interview Navigator plan sources this from the status store).
+    var interviewDate: Date? = nil
     let onDismiss: () -> Void
 
     @State private var phase: Phase = .prep
@@ -83,42 +89,110 @@ struct SNAPInterviewCoachView: View {
 
     private var prepContent: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
-            Text(SNAPInterviewStrings.prepEyebrow.value(in: language))
+            Text(SNAPInterviewPrepStrings.eyebrow.value(in: language))
                 .font(CivicaTypography.captionStrong)
                 .foregroundStyle(CivicaColors.brickPrimary)
                 .textCase(.uppercase)
                 .kerning(1.2)
-            Text(SNAPInterviewStrings.prepTitle.value(in: language))
+            Text(SNAPInterviewPrepStrings.title.value(in: language))
                 .font(CivicaTypography.pageTitle)
                 .foregroundStyle(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader)
-            Text(SNAPInterviewStrings.prepBody.value(in: language))
+            Text(SNAPInterviewPrepStrings.subtitle.value(in: language))
                 .font(CivicaTypography.body)
                 .foregroundStyle(CivicaColors.graphite)
                 .fixedSize(horizontal: false, vertical: true)
 
-            // "Pick up the phone if" — trust rules
-            calloutCard(
-                heading: SNAPInterviewStrings.pickUpHeading.value(in: language),
-                body: SNAPInterviewStrings.pickUpBody.value(in: language),
-                borderAccent: CivicaColors.brickPrimary
-            )
+            VStack(spacing: CivicaSpacing.sm) {
+                ForEach(SNAPInterviewPrepTopics.list(language: language)) { topic in
+                    prepTopicCard(topic)
+                }
+            }
 
-            // "Have these nearby"
-            calloutCard(
-                heading: SNAPInterviewStrings.haveNearbyHeading.value(in: language),
-                body: SNAPInterviewStrings.haveNearbyBody.value(in: language),
-                borderAccent: CivicaColors.hairline
-            )
-
-            // Cross-link to the AI rehearsal flow. Only in SNAP_DEV builds
-            // while the backend Edge Functions and multi-state question
-            // banks ship; gates the same way the entry tile in
-            // CivicaEntryView does.
+            // Cross-link to the AI rehearsal flow. Gated the same way
+            // the entry tile in CivicaEntryView gates — when the flag
+            // is on, users can practice with simulated questions
+            // before the real call.
             if InterviewCoachFeatureFlag.isEnabled {
                 rehearsalCard
             }
+        }
+        .task(id: interviewDate) {
+            SNAPAnalytics.trackInterviewPrepViewed()
+            await scheduleTwentyFourHourReminderIfNeeded()
+        }
+    }
+
+    private func prepTopicCard(_ topic: SNAPInterviewPrepTopics.Topic) -> some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            Text(topic.title)
+                .font(CivicaTypography.sectionHeader)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                ForEach(Array(topic.prompts.enumerated()), id: \.offset) { _, prompt in
+                    HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
+                        Text("•")
+                            .font(CivicaTypography.body)
+                            .foregroundStyle(CivicaColors.brickPrimary)
+                        Text(prompt)
+                            .font(CivicaTypography.body)
+                            .foregroundStyle(CivicaColors.ink)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+            }
+
+            if let permission = topic.permission {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                    Text(SNAPInterviewPrepStrings.permissionLabel.value(in: language))
+                        .font(CivicaTypography.captionStrong)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .textCase(.uppercase)
+                        .kerning(1.0)
+                    Text(permission)
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.top, CivicaSpacing.xs)
+            }
+        }
+        .padding(CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+        )
+    }
+
+    private func scheduleTwentyFourHourReminderIfNeeded() async {
+        guard let interviewDate else {
+            CivicaLocalNotificationScheduler.cancel(
+                identifier: SNAPInterviewNotification.twentyFourHourReminderID
+            )
+            return
+        }
+        let reminderDate = interviewDate.addingTimeInterval(-24 * 60 * 60)
+        guard reminderDate > Date() else { return }
+
+        let status = await CivicaLocalNotificationScheduler.authorizationStatus()
+        if status == .notDetermined {
+            _ = await CivicaLocalNotificationScheduler.requestAuthorization()
+        }
+        let scheduled = await CivicaLocalNotificationScheduler.schedule(
+            identifier: SNAPInterviewNotification.twentyFourHourReminderID,
+            fireAt: reminderDate,
+            title: SNAPInterviewNotification.twentyFourHourTitle,
+            body: SNAPInterviewNotification.twentyFourHourBody,
+            language: language
+        )
+        if scheduled {
+            SNAPAnalytics.trackInterview24hNotificationScheduled()
         }
     }
 
@@ -137,45 +211,43 @@ struct SNAPInterviewCoachView: View {
     }
 
     private var rehearsalCardLabel: some View {
-        Group {
-            HStack(alignment: .top, spacing: CivicaSpacing.md) {
-                Image(systemName: "bubble.left.and.bubble.right.fill")
-                    .font(.title3)
-                    .foregroundStyle(CivicaColors.brickPrimary)
-                    .frame(width: 32, alignment: .center)
-                    .accessibilityHidden(true)
+        HStack(alignment: .top, spacing: CivicaSpacing.md) {
+            Image(systemName: "bubble.left.and.bubble.right.fill")
+                .font(.title3)
+                .foregroundStyle(CivicaColors.brickPrimary)
+                .frame(width: 32, alignment: .center)
+                .accessibilityHidden(true)
 
-                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-                    Text(SNAPInterviewStrings.rehearseHeading.value(in: language))
-                        .font(CivicaTypography.captionStrong)
-                        .foregroundStyle(CivicaColors.graphite)
-                        .textCase(.uppercase)
-                        .kerning(1.0)
-                    Text(SNAPInterviewStrings.rehearseBody.value(in: language))
-                        .font(CivicaTypography.body)
-                        .foregroundStyle(CivicaColors.ink)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Text(SNAPInterviewStrings.rehearseAction.value(in: language))
-                        .font(CivicaTypography.subheadStrong)
-                        .foregroundStyle(CivicaColors.brickPrimary)
-                        .padding(.top, CivicaSpacing.xs)
-                }
-
-                Spacer(minLength: 0)
-
-                Image(systemName: "chevron.right")
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Text(SNAPInterviewStrings.rehearseHeading.value(in: language))
+                    .font(CivicaTypography.captionStrong)
                     .foregroundStyle(CivicaColors.graphite)
-                    .accessibilityHidden(true)
+                    .textCase(.uppercase)
+                    .kerning(1.0)
+                Text(SNAPInterviewStrings.rehearseBody.value(in: language))
+                    .font(CivicaTypography.body)
+                    .foregroundStyle(CivicaColors.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(SNAPInterviewStrings.rehearseAction.value(in: language))
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .padding(.top, CivicaSpacing.xs)
             }
-            .padding(CivicaSpacing.lg)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(CivicaColors.surfacePrimary)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
-            .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.card)
-                    .strokeBorder(CivicaColors.brickPrimary.opacity(0.25), lineWidth: 1)
-            )
+
+            Spacer(minLength: 0)
+
+            Image(systemName: "chevron.right")
+                .foregroundStyle(CivicaColors.graphite)
+                .accessibilityHidden(true)
         }
+        .padding(CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .strokeBorder(CivicaColors.brickPrimary.opacity(0.25), lineWidth: 1)
+        )
     }
 
     // MARK: - Phase 2: questions

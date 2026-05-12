@@ -1,0 +1,71 @@
+{
+  "source": "USDA SNAP State Directory of Resources",
+  "source_url": "https://www.fns.usda.gov/snap/state-directory",
+  "snapshot_date": "2026-05-10",
+  "notes": "One state-level row per state. Coordinates are the state capital so the entry shows on the map as a baseline 'where to apply in your state' marker.",
+  "entries": [
+    {
+      "state": "MA",
+      "agency_name": "Massachusetts Department of Transitional Assistance",
+      "hotline": "+1-877-382-2363",
+      "website": "https://dtaconnect.eohhs.mass.gov",
+      "capital_lat": 42.3601,
+      "capital_lng": -71.0589,
+      "capital_city": "Boston"
+    },
+    {
+      "state": "CA",
+      "agency_name": "California CalFresh (Department of Social Services)",
+      "hotline": "+1-877-847-3663",
+      "website": "https://www.cdss.ca.gov/calfresh",
+      "capital_lat": 38.5816,
+      "capital_lng": -121.4944,
+      "capital_city": "Sacramento"
+    },
+    {
+      "state": "NY",
+      "agency_name": "New York State SNAP (OTDA)",
+      "hotline": "+1-800-342-3009",
+      "website": "https://otda.ny.gov/programs/snap/",
+      "capital_lat": 42.6526,
+      "capital_lng": -73.7562,
+      "capital_city": "Albany"
+    },
+    {
+      "state": "TX",
+      "agency_name": "Texas SNAP (Your Texas Benefits)",
+      "hotline": "+1-877-541-7905",
+      "website": "https://yourtexasbenefits.hhs.texas.gov",
+      "capital_lat": 30.2672,
+      "capital_lng": -97.7431,
+      "capital_city": "Austin"
+    },
+    {
+      "state": "FL",
+      "agency_name": "Florida SNAP (Department of Children and Families)",
+      "hotline": "+1-866-762-2237",
+      "website": "https://www.myflfamilies.com/services/public-assistance/food-assistance",
+      "capital_lat": 30.4383,
+      "capital_lng": -84.2807,
+      "capital_city": "Tallahassee"
+    },
+    {
+      "state": "PA",
+      "agency_name": "Pennsylvania SNAP (Department of Human Services)",
+      "hotline": "+1-800-692-7462",
+      "website": "https://www.dhs.pa.gov/Services/Assistance/Pages/SNAP.aspx",
+      "capital_lat": 40.2732,
+      "capital_lng": -76.8867,
+      "capital_city": "Harrisburg"
+    },
+    {
+      "state": "IL",
+      "agency_name": "Illinois SNAP (Department of Human Services)",
+      "hotline": "+1-800-843-6154",
+      "website": "https://www.dhs.state.il.us/page.aspx?item=30357",
+      "capital_lat": 39.7817,
+      "capital_lng": -89.6501,
+      "capital_city": "Springfield"
+    }
+  ]
+}

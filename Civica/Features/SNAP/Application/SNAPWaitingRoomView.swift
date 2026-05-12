@@ -31,6 +31,15 @@ struct SNAPWaitingRoomView: View {
     /// the timeline without the teaser, which is the correct fallback.
     @State private var persistedDraft: SNAPApplicationDraft?
 
+    /// Cached estimator result loaded from SNAPEstimatorResultStore on
+    /// appear. Feeds the cost-of-delay countdown card; nil hides it.
+    @State private var estimatorResult: SNAPEstimatorResultRecord?
+
+    /// Hidden admin sheet — long-press the version footer to surface
+    /// the PIN-gated upcoming-interview CSV export. Used by the
+    /// Civica operator (founder) for manual concierge calls.
+    @State private var showsAdminExport: Bool = false
+
     /// External link target (DTA Connect, MA WIC page) presented via
     /// CivicaSafariSheet. The waiting room owns this rather than
     /// pushing it to the root so the submission-timeline footer cards
@@ -41,6 +50,7 @@ struct SNAPWaitingRoomView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 header
+                interviewNavigatorSection
                 if currentStatusHasAction {
                     actionBanner
                 }
@@ -66,6 +76,7 @@ struct SNAPWaitingRoomView: View {
                 timeline
                 expeditedNoticeIfApplicable
                 findHelpLinks
+                versionFooter
             }
             .padding(CivicaSpacing.xl)
         }
@@ -74,10 +85,32 @@ struct SNAPWaitingRoomView: View {
         .navigationBarTitleDisplayMode(.inline)
         .task {
             persistedDraft = SNAPApplicationDraftStore().load()?.draft
+            estimatorResult = SNAPEstimatorResultStore().load()
         }
         .sheet(item: $externalLink) { url in
             CivicaSafariSheet(url: url)
         }
+        .sheet(isPresented: $showsAdminExport) {
+            AdminInterviewExportView(language: language) {
+                showsAdminExport = false
+            }
+        }
+    }
+
+    /// Tiny "Civica · v1" footer. The long-press gesture opens the
+    /// founder-only admin export sheet; the gesture is intentionally
+    /// undocumented and not exposed in any visible affordance.
+    private var versionFooter: some View {
+        Text("Civica · v1")
+            .font(CivicaTypography.caption)
+            .foregroundStyle(CivicaColors.muted)
+            .frame(maxWidth: .infinity)
+            .padding(.top, CivicaSpacing.lg)
+            .contentShape(Rectangle())
+            .onLongPressGesture(minimumDuration: 2.0) {
+                showsAdminExport = true
+            }
+            .accessibilityHidden(true)
     }
 
     /// Render the dedicated "your application is in" timeline only on
@@ -117,6 +150,26 @@ struct SNAPWaitingRoomView: View {
     }
 
     @ViewBuilder
+    private var interviewNavigatorSection: some View {
+        if statusStore.status == .interviewScheduled {
+            if let interviewDate = statusStore.interviewScheduledFor {
+                if let estimatorResult {
+                    InterviewCountdownCard(
+                        interviewDate: interviewDate,
+                        monthlyBenefit: estimatorResult.monthlyBenefit,
+                        language: language
+                    )
+                }
+            } else {
+                InterviewDateCaptureCard(language: language) { newDate in
+                    statusStore.setInterviewDate(newDate)
+                    SNAPAnalytics.trackInterviewDateSet()
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
     private var actionBanner: some View {
         // Interview-scheduled status pushes the in-app coach instead
         // of opening the DTA Connect portal — coaching the user
@@ -124,7 +177,11 @@ struct SNAPWaitingRoomView: View {
         // thing Civica can do post-submission.
         if statusStore.status == .interviewScheduled {
             NavigationLink {
-                SNAPInterviewCoachView(language: language, onDismiss: {})
+                SNAPInterviewCoachView(
+                    language: language,
+                    interviewDate: statusStore.interviewScheduledFor,
+                    onDismiss: {}
+                )
             } label: {
                 actionBannerLabel
             }

@@ -307,7 +307,16 @@ struct SNAPBenefitEstimatorView: View {
     // MARK: - CTAs
 
     private var applyCTA: some View {
-        CivicaPrimaryButton(SNAPBenefitEstimatorStrings.applyCTA.value(in: language), action: onApply)
+        CivicaPrimaryButton(SNAPBenefitEstimatorStrings.applyCTA.value(in: language)) {
+            persistEligibleResultIfNeeded()
+            onApply()
+        }
+    }
+
+    private func persistEligibleResultIfNeeded() {
+        if case .eligible(let monthlyBenefit, _, _) = outcome {
+            SNAPEstimatorResultStore().save(monthlyBenefit: monthlyBenefit)
+        }
     }
 
     private var seeTheMathButton: some View {
