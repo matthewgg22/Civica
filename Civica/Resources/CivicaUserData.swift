@@ -48,6 +48,23 @@ enum CivicaUserData {
         "co.civica.recertInProgress"
     ]
 
+    // Keys retired by a prior code change. New code does not read or
+    // write them, but existing installs may still have stale values
+    // hanging around. `purgeLegacyKeys` deletes them on launch.
+    private static let legacyUserDefaultsKeys: [String] = [
+        InterviewCoachAPIClient.legacyAnonymousIDKey
+    ]
+
+    /// One-shot launch cleanup for UserDefaults keys we no longer use.
+    /// Idempotent: removes legacy keys if present, no-ops otherwise.
+    /// Call once at app start (CivicaApp.init).
+    static func purgeLegacyKeys() {
+        let defaults = UserDefaults.standard
+        for key in legacyUserDefaultsKeys {
+            defaults.removeObject(forKey: key)
+        }
+    }
+
     /// Read-only snapshot of what's currently stored. Used to render
     /// the inventory cards on the privacy screen.
     static func currentInventory() -> Inventory {
@@ -94,10 +111,12 @@ enum CivicaUserData {
     /// hasCompletedOnboarding so the next launch starts at the
     /// language picker. Idempotent — safe to call repeatedly.
     ///
-    /// What this does NOT do (because Civica doesn't have a backend
-    /// yet): notify a server, revoke an OAuth token, send a deletion
-    /// confirmation email. When the backend lands, those side effects
-    /// hook in here.
+    /// Scope: local UserDefaults keys, captured document files, draft
+    /// store, status store. This does NOT reach any server-side state
+    /// from optional network features (FindHelp search history,
+    /// Interview Coach session logs) — those follow Civica's
+    /// server-side retention process, not this routine. Any application
+    /// already submitted to a state agency stays with that agency.
     static func deleteEverything() {
         let defaults = UserDefaults.standard
 
@@ -119,6 +138,12 @@ enum CivicaUserData {
         //    owned by a store (language, hasCompletedOnboarding,
         //    recertInProgress).
         for key in userDefaultsKeys {
+            defaults.removeObject(forKey: key)
+        }
+
+        // 5. Sweep retired keys too, so a deletion on an older install
+        //    doesn't leave the pre-rotation Interview Coach ID behind.
+        for key in legacyUserDefaultsKeys {
             defaults.removeObject(forKey: key)
         }
         defaults.synchronize()
