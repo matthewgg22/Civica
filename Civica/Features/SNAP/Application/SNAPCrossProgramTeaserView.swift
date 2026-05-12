@@ -54,15 +54,9 @@ struct SNAPCrossProgramTeaserView: View {
                     .foregroundStyle(CivicaColors.accentTeal)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-                    HStack(alignment: .firstTextBaseline) {
-                        Text(SNAPCrossProgramTeaserStrings.wicTitle.value(in: language))
-                            .font(CivicaTypography.subheadStrong)
-                            .foregroundStyle(CivicaColors.ink)
-                        Spacer(minLength: CivicaSpacing.sm)
-                        Text(SNAPCrossProgramTeaserStrings.wicEstimate.value(in: language))
-                            .font(CivicaTypography.footnoteStrong.monospacedDigit())
-                            .foregroundStyle(CivicaColors.accentTeal)
-                    }
+                    Text(SNAPCrossProgramTeaserStrings.wicTitle.value(in: language))
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundStyle(CivicaColors.ink)
                     Text(SNAPCrossProgramTeaserStrings.wicBody.value(in: language))
                         .font(CivicaTypography.body)
                         .foregroundStyle(CivicaColors.ink)
@@ -102,16 +96,12 @@ enum SNAPCrossProgramTeaserStrings {
         es: "También podrías calificar para"
     )
     static let wicTitle = CivicaText(
-        "WIC — for kids under 5",
-        es: "WIC — para niños menores de 5"
-    )
-    static let wicEstimate = CivicaText(
-        "+ ~$48/mo",
-        es: "+ ~$48/mes"
+        "WIC — for pregnant or postpartum people and children under 5",
+        es: "WIC — para personas embarazadas o posparto y niños menores de 5"
     )
     static let wicBody = CivicaText(
-        "Vouchers for formula, milk, eggs, cereal, and fruits / vegetables. Use at most grocery stores in Massachusetts.",
-        es: "Vales para fórmula, leche, huevos, cereal y frutas / verduras. Úsalos en la mayoría de tiendas en Massachusetts."
+        "WIC may provide healthy foods, nutrition education, breastfeeding support, and referrals. Benefits vary. Check with your local WIC agency.",
+        es: "WIC puede ofrecer alimentos saludables, educación sobre nutrición, apoyo para la lactancia y referencias. Los beneficios varían. Consulta con tu agencia local de WIC."
     )
     static let wicSeparateBenefit = CivicaText(
         "WIC and SNAP are separate — getting WIC does not change your SNAP.",
