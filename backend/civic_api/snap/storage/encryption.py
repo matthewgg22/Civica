@@ -15,8 +15,8 @@ Key management:
     via a secrets-management bridge. The wrapper accepts a key directly
     so we don't couple this module to a particular KMS vendor.
   - For local development, set SNAP_FERNET_KEY in your .env (a 32-byte
-    url-safe base64 string; generate one with
-    `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`).
+    url-safe base64 string). Generate one with
+    `scripts/generate-fernet-key.sh` and paste the output as the value.
   - Never commit a real key. `.env` is already gitignored at the repo root.
 
 Key rotation: Fernet supports MultiFernet for graceful rotation. Phase G
