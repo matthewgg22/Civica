@@ -1,5 +1,11 @@
 import Foundation
 
+// ZIP-prefix → US state code lookup. Copied from the VoteNow target
+// (WeVote Information Page/Models/RepsProviders.swift) so the Civica
+// target can resolve states without depending on VoteNow types.
+// When CivicaDesignSystem gains a shared "Location" namespace, promote
+// this into the package and have both apps consume it from there.
+
 struct USZipStateResolver {
     private let ranges: [(ClosedRange<Int>, String)] = [
         (5...5, "NY"),
@@ -57,21 +63,18 @@ struct USZipStateResolver {
         (969...969, "GU"),
         (970...979, "OR"),
         (980...994, "WA"),
-        (995...999, "AK")
+        (995...999, "AK"),
     ]
 
     func stateCode(for zip: String) -> String? {
         let normalized = normalizeZIP(zip)
-        guard normalized.count == 5 else {
-            return nil
-        }
+        guard normalized.count == 5 else { return nil }
 
         if normalized.hasPrefix("008") { return "VI" }
         if normalized == "96799" { return "AS" }
         if normalized == "96950" || normalized == "96951" || normalized == "96952" { return "MP" }
 
         guard let prefix = Int(normalized.prefix(3)) else { return nil }
-
         for (range, stateCode) in ranges where range.contains(prefix) {
             return stateCode
         }

@@ -245,6 +245,63 @@ struct FederalDefaultRulesTests {
         #expect(rules.suaValue(tier: .none, asOf: fy26Date) == nil)
     }
 
+    // MARK: - ABAWD waiver lookup (federal has no list loaded)
+
+    @Test func abawdWaiverLookupReturnsNilUntilDataLoaded() {
+        #expect(rules.abawdWaiverActive(fipsCode: "25025", asOf: fy26Date) == nil)
+        #expect(rules.abawdWaiverActive(fipsCode: "06037", asOf: fy26Date) == nil)
+    }
+
+    // MARK: - Categorical eligibility (7 CFR 273.2(j))
+
+    @Test func categoricalUnknownWhenNoFlagsAnswered() {
+        let draft = SNAPApplicationDraft()
+        #expect(rules.categoricalEligibility(for: draft, asOf: fy26Date) == .unknown)
+    }
+
+    @Test func categoricalTANFRecipientPath() {
+        var draft = SNAPApplicationDraft()
+        draft.household.receivesTANF = true
+        #expect(
+            rules.categoricalEligibility(for: draft, asOf: fy26Date)
+                == .categoricallyEligible(via: .tanf)
+        )
+    }
+
+    @Test func categoricalSSIRecipientPath() {
+        var draft = SNAPApplicationDraft()
+        draft.household.receivesSSI = true
+        // No TANF / GA -- but at least one flag answered, so not .unknown
+        draft.household.receivesTANF = false
+        draft.household.receivesGeneralAssistance = false
+        #expect(
+            rules.categoricalEligibility(for: draft, asOf: fy26Date)
+                == .categoricallyEligible(via: .ssi)
+        )
+    }
+
+    @Test func categoricalGeneralAssistancePath() {
+        var draft = SNAPApplicationDraft()
+        draft.household.receivesGeneralAssistance = true
+        draft.household.receivesTANF = false
+        draft.household.receivesSSI = false
+        #expect(
+            rules.categoricalEligibility(for: draft, asOf: fy26Date)
+                == .categoricallyEligible(via: .generalAssistance)
+        )
+    }
+
+    @Test func categoricalNotEligibleWhenAllFlagsExplicitlyFalse() {
+        var draft = SNAPApplicationDraft()
+        draft.household.receivesTANF = false
+        draft.household.receivesSSI = false
+        draft.household.receivesGeneralAssistance = false
+        #expect(
+            rules.categoricalEligibility(for: draft, asOf: fy26Date)
+                == .notCategoricallyEligible
+        )
+    }
+
     // MARK: - Rules-version stamp
 
     @Test func rulesVersionStampForFY26() {

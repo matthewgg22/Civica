@@ -29,6 +29,9 @@ struct CivicaEntryView: View {
                 estimatorTile
                 snapTile
                 findHelpTile
+                if InterviewCoachFeatureFlag.isEnabled {
+                    interviewCoachTile
+                }
                 if RecertCompanionFeatureFlag.isEnabled {
                     recertCompanionTile
                 }
@@ -156,6 +159,27 @@ struct CivicaEntryView: View {
         .buttonStyle(.plain)
     }
 
+    // MARK: - Interview Coach tile (SNAP_DEV-gated)
+
+    // AI-rehearsal surface for the DTA phone interview. Distinct from
+    // SNAPInterviewCoachView (the day-of-call live coach that surfaces
+    // from the waiting room); this one is pre-call practice with a
+    // simulated caseworker. Gated to dev builds while the backend
+    // Edge Functions ship.
+    private var interviewCoachTile: some View {
+        NavigationLink {
+            InterviewCoachEntryView()
+        } label: {
+            tileCard(
+                icon: "bubble.left.and.bubble.right.fill",
+                iconAccent: CivicaColors.brickPrimary,
+                title: CivicaEntryStrings.interviewCoachTitle.value(in: language),
+                subtitle: CivicaEntryStrings.interviewCoachSubtitle.value(in: language)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
     private func tileCard(icon: String, iconAccent: Color, title: String, subtitle: String) -> some View {
         HStack(spacing: CivicaSpacing.md) {
             Image(systemName: icon)
@@ -223,6 +247,14 @@ enum CivicaEntryStrings {
     static let findHelpSubtitle = CivicaText(
         "Food banks, pantries, and SNAP navigators within walking distance.",
         es: "Bancos de alimentos, despensas y asesores de SNAP a distancia caminable."
+    )
+    static let interviewCoachTitle = CivicaText(
+        "Practice your DTA interview",
+        es: "Practica tu entrevista con DTA"
+    )
+    static let interviewCoachSubtitle = CivicaText(
+        "Rehearse with a simulated caseworker before the real call.",
+        es: "Ensaya con un trabajador social simulado antes de la llamada real."
     )
     static let privacyLink = CivicaText(
         "Your data + privacy",

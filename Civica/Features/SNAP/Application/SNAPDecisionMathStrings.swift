@@ -97,6 +97,14 @@ enum SNAPDecisionMathStrings {
         "Rules version",
         es: "Versión de reglas"
     )
+    static let rulesVersionHintReveal = CivicaText(
+        "Double-tap to show the technical version code.",
+        es: "Toca dos veces para ver el código técnico de la versión."
+    )
+    static let rulesVersionHintHumanize = CivicaText(
+        "Double-tap to show the human-readable label.",
+        es: "Toca dos veces para ver la etiqueta legible."
+    )
     static let effectiveAsOf = CivicaText(
         "Effective as of",
         es: "Efectivo a partir de"

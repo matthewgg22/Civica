@@ -1,0 +1,83 @@
+[
+  {
+    "id": "ma-initial-household-1",
+    "state_code": "MA",
+    "scenario": "initial",
+    "category": "household",
+    "archetype_tags": [],
+    "prompt": "Who lives with you and shares food costs?",
+    "guidance": "A SNAP household is everyone who buys and prepares food together — not necessarily everyone on the lease. Roommates who shop and cook separately are different households even if you share a kitchen. State your numbers clearly: how many people, and which of them share food with you."
+  },
+  {
+    "id": "ma-initial-income-1",
+    "state_code": "MA",
+    "scenario": "initial",
+    "category": "income",
+    "archetype_tags": [],
+    "prompt": "What is your monthly gross income, before taxes and deductions?",
+    "guidance": "Give gross (pre-tax) earnings from all sources for everyone in your SNAP household. If your income varies week to week, say so and offer a recent four-week average. Do not estimate downward to qualify — DTA verifies with pay stubs."
+  },
+  {
+    "id": "ma-initial-income-gig",
+    "state_code": "MA",
+    "scenario": "initial",
+    "category": "income",
+    "archetype_tags": ["gig_worker"],
+    "prompt": "How much do you earn from gig or self-employment work?",
+    "guidance": "Report your gross self-employment income, then mention that allowable business expenses reduce the net amount used for SNAP. If you drive for a platform, mileage and fees count as expenses. Offer to provide a recent earnings summary screenshot."
+  },
+  {
+    "id": "ma-initial-expenses-1",
+    "state_code": "MA",
+    "scenario": "initial",
+    "category": "expenses",
+    "archetype_tags": [],
+    "prompt": "What do you pay for rent, utilities, and other housing costs each month?",
+    "guidance": "Include rent or mortgage, plus separate amounts for heat, electricity, gas, water, trash, and any phone or internet bills paid by your household. MA grants a heat-and-utility standard deduction if you pay any heat or cooling bill — mention this if applicable."
+  },
+  {
+    "id": "ma-initial-work-student",
+    "state_code": "MA",
+    "scenario": "initial",
+    "category": "work_requirements",
+    "archetype_tags": ["student"],
+    "prompt": "Are you enrolled at least half-time in a college or university?",
+    "guidance": "Half-time students 18-49 are ineligible unless they meet a specific exemption: working 20+ hours per week, caring for a child under 6, in a state-approved employment-and-training program, or receiving certain disability benefits. State which exemption applies to you, with specifics."
+  },
+  {
+    "id": "ma-initial-immigration-mixed",
+    "state_code": "MA",
+    "scenario": "initial",
+    "category": "immigration",
+    "archetype_tags": ["mixed_status"],
+    "prompt": "Are all members of your household US citizens or qualified non-citizens?",
+    "guidance": "Only state the status of people who are applying for SNAP. Members who are not applying do not need to disclose status. Children born in the US are citizens regardless of parent status. If anyone is unsure, request to speak with a SNAP outreach worker before answering."
+  },
+  {
+    "id": "ma-initial-identity-1",
+    "state_code": "MA",
+    "scenario": "initial",
+    "category": "identity",
+    "archetype_tags": [],
+    "prompt": "Can you verify your identity? What documents do you have?",
+    "guidance": "Acceptable identity proof in MA includes a state ID, driver license, passport, work or school ID, voter card, or two of: birth certificate, social security card, hospital records. If you cannot produce ID at the interview, MA must accept a sworn statement plus a collateral contact — ask about this option."
+  },
+  {
+    "id": "ma-expedited-income-1",
+    "state_code": "MA",
+    "scenario": "expedited",
+    "category": "income",
+    "archetype_tags": [],
+    "prompt": "What is your current cash on hand plus this month's expected income?",
+    "guidance": "Expedited (seven-day) SNAP requires household resources under $100 plus gross income under $150 for the month, OR rent and utilities greater than combined income and resources. Be precise about your cash, bank balances, and what you expect to earn this month."
+  },
+  {
+    "id": "ma-recert-household-change",
+    "state_code": "MA",
+    "scenario": "change_reporting",
+    "category": "household",
+    "archetype_tags": [],
+    "prompt": "Has anyone moved in or out of your household since your last application?",
+    "guidance": "Report every change in who shares food costs, not just lease changes. Moving in: someone joined and you buy and prepare food together. Moving out: someone left who used to share food costs. Even temporary changes (a sibling staying for a month) should be mentioned if they affect food sharing."
+  }
+]

@@ -28,6 +28,10 @@
 	<string>Civica accesses your photo library when you want to attach an existing photo of a document to your SNAP application.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Civica uses your location to show nearby SNAP offices and food assistance locations on the map.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Civica uses the microphone so you can speak your answers to SNAP application questions. Audio is processed on your device and is not stored or sent anywhere.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Civica uses on-device speech recognition to transcribe what you say into your SNAP application. Your voice does not leave the device.</string>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>
