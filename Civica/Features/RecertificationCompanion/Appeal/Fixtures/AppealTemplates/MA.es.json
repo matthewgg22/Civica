@@ -1,0 +1,30 @@
+{
+  "stateCode": "MA",
+  "language": "es",
+  "agencyName": "Departamento de Asistencia Transicional de Massachusetts",
+  "agencyAddressBlock": "Massachusetts Department of Transitional Assistance\nDivision of Hearings\nP.O. Box 4017\nTaunton, MA 02780",
+  "statutoryCitations": {
+    "federal": "7 CFR 273.2(d)",
+    "state": "106 CMR 343"
+  },
+  "paragraphs": {
+    "header": "Asunto: Solicitud de audiencia justa — Caso de SNAP #{{caseNumber}}\nFecha de la notificación de denegación: {{denialDate}}\nSolicitante: {{claimantName}}\nFecha de esta solicitud: {{todayDate}}",
+    "opening": "Estimado/a Director/a de Audiencias:\n\nEscribo bajo 106 CMR 343 para solicitar una audiencia justa sobre la denegación de mi recertificación de SNAP, que recibí el {{denialDate}}. Considero que la denegación fue indebida por motivos de procedimiento por las razones expuestas a continuación, y pido que mis beneficios se restablezcan mientras se decide la audiencia, conforme a 106 CMR 343.310.",
+    "missedInterview": "La denegación cita mi falta de comparecencia a la entrevista de elegibilidad programada. Respetuosamente difiero de que esa sea una base válida para denegar la recertificación bajo las regulaciones federales. 7 CFR 273.2(e)(3) exige que el Departamento programe otra entrevista a solicitud mía y prohíbe la denegación por falta de comparecencia sin antes dar al hogar la oportunidad de ser entrevistado. Estoy dispuesto/a y disponible para completar una entrevista a la conveniencia del Departamento.",
+    "missingDocuments": "La denegación cita mi falta de entrega de una o más verificaciones solicitadas. Respetuosamente pido al Departamento que distinga entre la falta de un hogar de proveer verificación y la negativa a cooperar, conforme exige 7 CFR 273.2(d)(1). La sola falta — incluyendo demoras causadas por problemas de correo, horarios de trabajo o plazos de emisión de documentos por parte de terceros — no es una base válida para una denegación por procedimiento sin darme antes la oportunidad de explicar y aportar la verificación.",
+    "noResponse": "La denegación cita mi falta de respuesta a una solicitud del Departamento. Respetuosamente pido al Departamento que verifique que la solicitud se envió conforme a 7 CFR 273.13 (requisitos de notificación), incluyendo una dirección postal actual y precisa en archivo. Si la solicitud del Departamento no llegó a mí, no he incumplido el deber de cooperar en el sentido de 7 CFR 273.2(d).",
+    "otherProcedural": "Considero que la denegación fue indebida por motivos de procedimiento. Solicito una audiencia justa para que la base de la denegación pueda revisarse frente a las protecciones de procedimiento de 7 CFR 273.2 y 106 CMR 343.",
+    "failureVsRefusalArgument": "La regulación federal 7 CFR 273.2(d) distingue explícitamente entre la falta de cooperación de un hogar — que por sí sola no es motivo de denegación — y la negativa a cooperar, que exige un acto afirmativo que demuestre que el hogar no tomará los pasos que puede tomar para completar el proceso de solicitud. Yo no me he negado a cooperar con el Departamento. Estoy listo/a para completar cualquier paso que el Departamento requiera para continuar mis beneficios.",
+    "closing": "Pido que el Departamento revise esta denegación frente a las normas de 7 CFR 273.2 y 106 CMR 343 y que mis beneficios de SNAP se restablezcan mientras se decide la audiencia, conforme a 106 CMR 343.310. Pueden contactarme al {{claimantPhone}} o {{claimantEmail}}.",
+    "signatureBlock": "Atentamente,\n\n{{claimantName}}\n{{claimantAddress}}\n{{claimantPhone}}\n{{claimantEmail}}"
+  },
+  "requiredSlots": [
+    "caseNumber",
+    "denialDate",
+    "claimantName",
+    "todayDate",
+    "claimantAddress",
+    "claimantPhone",
+    "claimantEmail"
+  ]
+}

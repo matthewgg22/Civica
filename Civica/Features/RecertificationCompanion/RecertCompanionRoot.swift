@@ -23,6 +23,7 @@ struct RecertCompanionRoot: View {
 
     @State private var isEditingDate = false
     @State private var presentingPhantom = false
+    @State private var presentingAppeal = false
 
     /// Phantom Recert is offered when the next recert is within 60
     /// days. Outside that window the user gets the calendar but no
@@ -72,7 +73,9 @@ struct RecertCompanionRoot: View {
                     )
                 }
 
-                // Appeal CTA — wired in Step 6.
+                if statusStore.status == .decisionDenied {
+                    appealEntryTile
+                }
 
                 Spacer(minLength: CivicaSpacing.xl)
             }
@@ -94,10 +97,52 @@ struct RecertCompanionRoot: View {
                 )
             }
         }
+        .navigationDestination(isPresented: $presentingAppeal) {
+            AppealEntryView(stateCode: stateCode)
+        }
         .onAppear {
             RecertCompanionAnalytics.trackHomeViewed()
             Task { await reconcileReminders() }
         }
+    }
+
+    private var appealEntryTile: some View {
+        Button(action: { presentingAppeal = true }) {
+            HStack(spacing: CivicaSpacing.md) {
+                Image(systemName: "scale.3d")
+                    .font(.system(size: 28))
+                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .frame(width: 48, height: 48)
+                    .background(
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                            .fill(CivicaColors.brickPrimary.opacity(0.12))
+                    )
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                    Text(RecertCompanionStrings.appealEntryTitle.value(in: language))
+                        .font(CivicaTypography.sectionHeader)
+                        .foregroundStyle(CivicaColors.ink)
+                    Text(RecertCompanionStrings.appealEntrySubtitle.value(in: language))
+                        .font(CivicaTypography.footnoteStrong)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: CivicaSpacing.sm)
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(CivicaColors.graphite)
+                    .accessibilityHidden(true)
+            }
+            .padding(CivicaSpacing.md)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     private var shouldOfferPhantom: Bool {
