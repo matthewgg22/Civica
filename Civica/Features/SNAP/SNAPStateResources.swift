@@ -8,14 +8,21 @@ import Foundation
 // /Users/matthewgreer-gentis/Downloads/SNAP_Application_Timeline_50_States_App_Memo.xlsx
 // (State Timelines + Process Timeline sheets).
 enum SNAPStateResources {
+    /// USDA's directory of state SNAP agencies. Used as the universal
+    /// fallback CTA when the user selects a state Civica's screener
+    /// isn't tuned for yet — the FNS directory always points to the
+    /// state's current apply path.
+    /// Reference: docs/SNAP-source-citation-signoff.md (Agency list row).
+    static let usdaStateDirectoryURL = "https://www.fns.usda.gov/snap/state-directory"
+
     static let massachusetts = SNAPStateResource(
         stateCode: "MA",
         displayName: "Massachusetts",
         agencyName: "Department of Transitional Assistance",
         officialApplicationLabel: "DTA Connect",
-        // TODO(legal/source-verification): Confirm final public application URL with approved policy/compliance source.
+        // TODO(legal/source-verification): Row 1 in docs/SNAP-source-citation-signoff.md. Confirm final public Apply URL with approved policy/compliance source.
         officialApplicationURL: "https://dtaconnect.eohhs.mass.gov/",
-        // TODO(legal/source-verification): Replace with confirmed public helpline label/number from approved source.
+        // TODO(legal/source-verification): Row 2 in docs/SNAP-source-citation-signoff.md. Replace with confirmed public helpline label/number from approved source.
         phoneHelpLabel: "DTA Assistance Line (placeholder)",
         notes: "Massachusetts residents generally apply through DTA Connect or official DTA channels."
     )
@@ -164,7 +171,7 @@ enum SNAPStateResources {
     // Source: /Users/matthewgreer-gentis/Downloads/snap_state_agencies.xlsx
     // Sheet: "SNAP Agencies" (Jurisdiction + State SNAP Agency columns).
     // Static reference data only; no network fetch at runtime.
-    // TODO(legal/source-verification): Confirm this list against approved policy/legal source before production release.
+    // TODO(legal/source-verification): Row 12 in docs/SNAP-source-citation-signoff.md. Confirm this list against the USDA State Directory and state agency pages before production release.
     private static let snapAgencyByStateCode: [String: String] = [
         "AL": "Alabama Department of Human Resources",
         "AK": "Alaska Department of Health",
