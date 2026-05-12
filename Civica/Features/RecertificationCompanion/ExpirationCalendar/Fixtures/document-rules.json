@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "notes": "Document maxAgeDaysAtRecert is the upper bound on document age the state will accept at the recertification interview. Values come from state-published recertification checklists (MA: DTA Operations Memos, CA: ACL/CalFresh county handbooks). Add a new state by appending an entry keyed by USPS two-letter code; missing keys fall through to an empty action list (no false advice).",
+  "states": {
+    "MA": {
+      "documents": {
+        "proof_of_income": { "maxAgeDaysAtRecert": 30, "frequency": "biweekly" },
+        "utility_bill": { "maxAgeDaysAtRecert": 90 },
+        "rent_or_housing_cost_proof": { "maxAgeDaysAtRecert": 365 },
+        "proof_of_address": { "maxAgeDaysAtRecert": 90 },
+        "photo_id": { "maxAgeDaysAtRecert": 1825 },
+        "student_status_documents": { "maxAgeDaysAtRecert": 180 },
+        "work_status_or_exemptions": { "maxAgeDaysAtRecert": 90 },
+        "childcare_cost_proof": { "maxAgeDaysAtRecert": 60 },
+        "immigration_documents_if_relevant": { "maxAgeDaysAtRecert": 1825 }
+      }
+    },
+    "CA": {
+      "documents": {
+        "proof_of_income": { "maxAgeDaysAtRecert": 30, "frequency": "biweekly" },
+        "utility_bill": { "maxAgeDaysAtRecert": 60 },
+        "rent_or_housing_cost_proof": { "maxAgeDaysAtRecert": 365 },
+        "proof_of_address": { "maxAgeDaysAtRecert": 60 },
+        "photo_id": { "maxAgeDaysAtRecert": 1825 },
+        "student_status_documents": { "maxAgeDaysAtRecert": 180 },
+        "work_status_or_exemptions": { "maxAgeDaysAtRecert": 60 },
+        "childcare_cost_proof": { "maxAgeDaysAtRecert": 60 },
+        "immigration_documents_if_relevant": { "maxAgeDaysAtRecert": 1825 }
+      }
+    }
+  }
+}
