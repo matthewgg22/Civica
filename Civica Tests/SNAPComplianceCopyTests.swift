@@ -196,6 +196,63 @@ struct SNAPComplianceCopyTests {
         #expect(SNAPStateResources.usdaStateDirectoryURL.hasPrefix("https://"))
         #expect(referencePath.contains("SNAP-source-citation-signoff"))
     }
+
+    // MARK: - OBBBA Q14 DTA-Connect copy posture
+
+    // Until a written authorization with MA DTA exists, Civica is a
+    // public link-out tool, not a submission integration. Strings that
+    // imply a Civica->DTA write integration ("Submit to DTA Connect")
+    // are banned; the approved replacement is "Open MA DTA Connect to
+    // submit" (English) / "Abrir MA DTA Connect para enviar" (Spanish).
+
+    @Test func statusHomeActionSubmitUsesLinkOutPhrasing() {
+        let en = SNAPStatusHomeStrings.actionSubmitToState.value(in: .english)
+        let es = SNAPStatusHomeStrings.actionSubmitToState.value(in: .spanish)
+        #expect(en == "Open MA DTA Connect to submit")
+        #expect(es == "Abrir MA DTA Connect para enviar")
+        #expect(!en.lowercased().contains("submit to dta"))
+        #expect(!es.lowercased().contains("envía a dta"))
+    }
+
+    @Test func statusHomeStepSubmitUsesLinkOutPhrasing() {
+        let en = SNAPStatusHomeStrings.stepSubmit.value(in: .english)
+        let es = SNAPStatusHomeStrings.stepSubmit.value(in: .spanish)
+        #expect(en == "Open MA DTA Connect to submit")
+        #expect(es == "Abrir MA DTA Connect para enviar")
+        #expect(!en.lowercased().contains("submit to dta"))
+        #expect(!es.lowercased().contains("envía"))
+    }
+
+    // MARK: - OBBBA Q2 WIC teaser must not use dollar inducement
+
+    // 7 CFR 277.4(b)(5)(i) (SNAP feature surface) plus 7 CFR 246.4 /
+    // 246.26 (WIC outreach + confidentiality) both disfavor a dollar
+    // amount as the value-prop. The "+ ~$48/mo" framing is banned;
+    // copy must lead with eligibility/program description.
+
+    @Test func wicTeaserDoesNotForegrooundDollarAmount() {
+        let teaser = [
+            SNAPCrossProgramTeaserStrings.heading,
+            SNAPCrossProgramTeaserStrings.wicTitle,
+            SNAPCrossProgramTeaserStrings.wicBody,
+            SNAPCrossProgramTeaserStrings.wicSeparateBenefit
+        ]
+        let combined = teaser
+            .flatMap { [$0.value(in: .english), $0.value(in: .spanish)] }
+            .joined(separator: "\n")
+        for banned in ["$48", "~$", "/mo", "/mes"] {
+            #expect(!combined.contains(banned),
+                    "WIC teaser must not contain banned dollar-inducement substring: \(banned)")
+        }
+    }
+
+    @Test func wicTeaserBodyIsInformational() {
+        let body = SNAPCrossProgramTeaserStrings.wicBody.value(in: .english).lowercased()
+        // The replacement copy must communicate that benefits vary --
+        // a guard against future regressions that strip the "vary" qualifier.
+        #expect(body.contains("vary"))
+        #expect(body.contains("wic"))
+    }
 }
 
 // MARK: - Test-only helpers
