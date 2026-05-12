@@ -26,16 +26,36 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Select Xcode
-        # Pin to the Xcode version local development uses (Xcode 26.4,
-        # required for iOS 26 FoundationModels / @Generable used by the
-        # Voice extraction layer). Bump together with the project's
-        # IPHONEOS_DEPLOYMENT_TARGET / GENERATE_INFOPLIST_FILE etc.
-        run: sudo xcode-select -s /Applications/Xcode_26.4.app
+        # Need Xcode 26.x for iOS 26 FoundationModels / @Generable
+        # used by the Voice extraction layer. setup-xcode picks the
+        # highest available Xcode 26.x on the runner (which floats
+        # patch-by-patch as GitHub updates macos-15 images), instead
+        # of pinning a specific patch that may not yet be installed.
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '~26.0'
 
-      - name: Show toolchain
+      - name: Show toolchain (pre-install)
         run: |
           xcodebuild -version
-          xcrun simctl list runtimes available | head -20
+          echo "--- iOS simulator runtimes (pre-install) ---"
+          xcrun simctl list runtimes | grep iOS || true
+
+      - name: Install iOS simulator runtime
+        # GitHub macos-15 images ship Xcode bundles without their
+        # paired iOS simulator runtimes to save image size, so
+        # `xcodebuild test` fails with "iOS XX.X is not installed."
+        # Downloading the runtime that pairs with the selected
+        # Xcode (here: Xcode 26.x -> iOS 26 SDK) takes a few minutes
+        # but is the only reliable path until GitHub re-ships runtimes.
+        run: sudo xcodebuild -downloadPlatform iOS
+
+      - name: Show toolchain (post-install)
+        run: |
+          echo "--- iOS simulator runtimes (post-install) ---"
+          xcrun simctl list runtimes | grep iOS || true
+          echo "--- iPhone simulator devices ---"
+          xcrun simctl list devices available | grep -E 'iPhone' || true
 
       - name: Build Civica scheme
         run: |
