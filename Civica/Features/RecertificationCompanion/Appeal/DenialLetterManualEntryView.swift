@@ -111,12 +111,37 @@ struct DenialLetterManualEntryView: View {
             Text(DenialLetterManualEntryStrings.reasonLabel.value(in: language))
                 .font(CivicaTypography.footnoteStrong)
                 .foregroundStyle(CivicaColors.graphite)
-            Picker("", selection: $reason) {
+            // Four labels can't fit a segmented picker on iPhone
+            // width without truncation, so we render a vertical list
+            // of radio rows — every option's full label is visible
+            // and tappable without a hidden affordance.
+            VStack(spacing: CivicaSpacing.xs) {
                 ForEach(DenialReason.allCases, id: \.self) { value in
-                    Text(reasonLabel(for: value).value(in: language)).tag(value)
+                    Button(action: { reason = value }) {
+                        HStack(spacing: CivicaSpacing.sm) {
+                            Image(systemName: reason == value ? "largecircle.fill.circle" : "circle")
+                                .foregroundStyle(reason == value ? CivicaColors.brickPrimary : CivicaColors.graphite)
+                            Text(reasonLabel(for: value).value(in: language))
+                                .font(CivicaTypography.body)
+                                .foregroundStyle(CivicaColors.ink)
+                                .fixedSize(horizontal: false, vertical: true)
+                            Spacer()
+                        }
+                        .padding(CivicaSpacing.md)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(CivicaColors.surfacePrimary)
+                        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                                .strokeBorder(
+                                    reason == value ? CivicaColors.brickPrimary : CivicaColors.hairline,
+                                    lineWidth: reason == value ? 2 : 1
+                                )
+                        )
+                    }
+                    .buttonStyle(.plain)
                 }
             }
-            .pickerStyle(.segmented)
         }
     }
 
