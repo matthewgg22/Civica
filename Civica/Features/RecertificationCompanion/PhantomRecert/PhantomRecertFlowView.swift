@@ -63,7 +63,19 @@ struct PhantomRecertFlowView: View {
                     presentingSummary = true
                     RecertCompanionAnalytics.trackPhantomCompleted()
                 },
-                onDismiss: { dismiss() }
+                onDismiss: {
+                    // Fires when the user backs out from the first
+                    // section (or otherwise reaches the orchestrator's
+                    // top-level dismiss path) WITHOUT having reached
+                    // the summary. Treat as abandon.
+                    if !presentingSummary {
+                        RecertCompanionAnalytics.trackPhantomAbandoned(
+                            lastStepName: phantomLastStepName,
+                            stepIndex: phantomLastStepIndex
+                        )
+                    }
+                    dismiss()
+                }
             )
         }
         .navigationTitle(PhantomRecertFlowStrings.title.value(in: language))
@@ -99,6 +111,26 @@ struct PhantomRecertFlowView: View {
                     }
                 )
             }
+        }
+    }
+
+    /// Last section the user was on, derived from the orchestrator's
+    /// mode. Used in the abandonment analytics event.
+    private var phantomLastStepName: String {
+        switch orchestrator.mode {
+        case .phantom(let section), .sequential(let section), .editing(let section):
+            return section.rawValue
+        case .review:
+            return "review"
+        }
+    }
+
+    private var phantomLastStepIndex: Int {
+        switch orchestrator.mode {
+        case .phantom(let section), .sequential(let section), .editing(let section):
+            return (SNAPApplicationSection.allCases.firstIndex(of: section) ?? -1) + 1
+        case .review:
+            return SNAPApplicationSection.allCases.count + 1
         }
     }
 
