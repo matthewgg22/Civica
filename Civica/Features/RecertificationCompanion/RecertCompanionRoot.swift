@@ -22,6 +22,13 @@ struct RecertCompanionRoot: View {
     let stateCode: String
 
     @State private var isEditingDate = false
+    @State private var presentingPhantom = false
+
+    /// Phantom Recert is offered when the next recert is within 60
+    /// days. Outside that window the user gets the calendar but no
+    /// "start dry run" CTA — staying that long ahead of the actual
+    /// recert flow is noise.
+    static let phantomEligibleWindowDays = 60
 
     init(stateCode: String = "MA") {
         self.stateCode = stateCode
@@ -48,7 +55,11 @@ struct RecertCompanionRoot: View {
                 RecertNotificationPermissionView()
                 recertDateCard
 
-                // Phantom Recert entry tile — wired in Step 5.
+                if shouldOfferPhantom {
+                    PhantomRecertEntryView(onStart: {
+                        presentingPhantom = true
+                    })
+                }
 
                 if let recert = effectiveRecertDate {
                     ExpirationCalendarView(
@@ -74,10 +85,25 @@ struct RecertCompanionRoot: View {
         .sheet(isPresented: $isEditingDate) {
             RecertScheduleEditView(store: scheduleStore, approvedAt: approvedAt)
         }
+        .navigationDestination(isPresented: $presentingPhantom) {
+            if let recert = effectiveRecertDate {
+                PhantomRecertFlowView(
+                    language: language,
+                    stateCode: stateCode,
+                    nextRecertDate: recert
+                )
+            }
+        }
         .onAppear {
             RecertCompanionAnalytics.trackHomeViewed()
             Task { await reconcileReminders() }
         }
+    }
+
+    private var shouldOfferPhantom: Bool {
+        guard let recert = effectiveRecertDate else { return false }
+        let daysUntil = Calendar.current.dateComponents([.day], from: Date(), to: recert).day ?? Int.max
+        return daysUntil >= 0 && daysUntil <= Self.phantomEligibleWindowDays
     }
 
     /// Build a fresh forecast and reconcile the system's pending
