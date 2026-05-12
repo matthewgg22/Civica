@@ -24,6 +24,7 @@ struct RecertCompanionRoot: View {
     @State private var isEditingDate = false
     @State private var presentingPhantom = false
     @State private var presentingAppeal = false
+    @State private var capturingDocument: SNAPDocumentType?
 
     /// Phantom Recert is offered when the next recert is within 60
     /// days. Outside that window the user gets the calendar but no
@@ -66,9 +67,8 @@ struct RecertCompanionRoot: View {
                     ExpirationCalendarView(
                         stateCode: stateCode,
                         nextRecertDate: recert,
-                        onCaptureDocument: { _ in
-                            // Wired in Step 7 to push the existing
-                            // document camera flow for the tapped type.
+                        onCaptureDocument: { type in
+                            capturingDocument = type
                         }
                     )
                 }
@@ -87,6 +87,18 @@ struct RecertCompanionRoot: View {
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $isEditingDate) {
             RecertScheduleEditView(store: scheduleStore, approvedAt: approvedAt)
+        }
+        .sheet(item: $capturingDocument) { type in
+            SNAPDocumentCameraView(
+                onCaptured: { image, _ in
+                    SNAPCapturedDocumentStore.save(image, as: type)
+                    capturingDocument = nil
+                    Task { await reconcileReminders() }
+                },
+                onCancel: {
+                    capturingDocument = nil
+                }
+            )
         }
         .navigationDestination(isPresented: $presentingPhantom) {
             if let recert = effectiveRecertDate {
