@@ -152,11 +152,3 @@ func normalizedUSStateCode(from raw: String?) -> String? {
 
     return nil
 }
-
-extension Notification.Name {
-    // Posted from SNAPEligibilityIntroView when the user taps "Edit
-    // location." The VoteNow target listens for this and opens its
-    // MyInfo panel; in the Civica app no listener exists yet, so the
-    // post is a no-op until a Civica-side address editor is wired in.
-    static let openMyInfoPanel = Notification.Name("openMyInfoPanel")
-}

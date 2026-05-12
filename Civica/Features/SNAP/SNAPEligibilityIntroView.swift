@@ -122,21 +122,6 @@ struct SNAPEligibilityIntroView: View {
                         .buttonStyle(CivicaPrimaryCTAButtonStyle())
                         Spacer(minLength: 0)
                     }
-
-                    Button {
-                        NotificationCenter.default.post(
-                            name: .openMyInfoPanel,
-                            object: nil,
-                            userInfo: ["section": "language"]
-                        )
-                    } label: {
-                        Text("Need language assistance?")
-                            .font(CivicaTypography.subheadStrong)
-                            .foregroundStyle(CivicaColors.brickPrimary)
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .padding(.vertical, CivicaSpacing.sm)
-                    }
-                    .buttonStyle(.plain)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(CivicaSpacing.lg)
