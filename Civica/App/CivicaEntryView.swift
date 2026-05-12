@@ -45,9 +45,16 @@ struct CivicaEntryView: View {
 
     // MARK: - Estimator tile
 
+    /// The standalone estimator currently renders federal-default
+    /// math (with placeholder SUA + FY26-stamped FY25 values) which
+    /// is materially wrong outside Massachusetts. Per OBBBA audit
+    /// Q7 (Revision 2): route any user with a recorded non-MA state
+    /// to the unsupported-state view instead of the estimator. Users
+    /// with no recorded state still reach the estimator — matching
+    /// the orchestrator's nil-state-is-pre-question pattern.
     private var estimatorTile: some View {
         NavigationLink {
-            SNAPEstimatorFlowView(language: language)
+            estimatorDestination
         } label: {
             tileCard(
                 icon: "dollarsign.circle.fill",
@@ -57,6 +64,21 @@ struct CivicaEntryView: View {
             )
         }
         .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private var estimatorDestination: some View {
+        let persistedState = SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
+        if SNAPCoveragePolicy.shouldShowUnsupportedStateGate(for: persistedState) {
+            SNAPUnsupportedStateView(
+                stateCode: persistedState ?? "",
+                language: language,
+                onChangeState: {},
+                onExit: {}
+            )
+        } else {
+            SNAPEstimatorFlowView(language: language)
+        }
     }
 
     /// Quiet footer link to the data + privacy surface. Lives at the

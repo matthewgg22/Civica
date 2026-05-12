@@ -193,6 +193,28 @@ struct FederalDefaultRules: SNAPStateRuleEngine {
     func rulesVersion(asOf _: Date) -> String {
         "federal-default-FY26"
     }
+
+    // MARK: - Snapshot freshness (OBBBA audit Q12)
+
+    /// The earliest expiry across the tables this engine consults
+    /// is the date the rules data next becomes stale. When asOf
+    /// passes that point we silently fall back to the most-recent
+    /// snapshot inside each selector below — but report .expired
+    /// here so callers can refuse to render precise dollar amounts.
+    func snapshotStatus(asOf: Date) -> RuleSnapshotStatus {
+        let expiries: [Date] = [
+            Self.monthlyFplSnapshots.last!.expiresOn,
+            Self.standardDeductionSnapshots.last!.expiresOn,
+            Self.shelterCapSnapshots.last!.expiresOn,
+            Self.maxAllotmentSnapshots.last!.expiresOn,
+            Self.minimumBenefitSnapshots.last!.expiresOn,
+            Self.assetLimitSnapshots.last!.expiresOn
+        ]
+        let earliestExpiry = expiries.min() ?? .distantPast
+        return asOf <= earliestExpiry
+            ? .current(latestExpiry: earliestExpiry)
+            : .expired(latestExpiry: earliestExpiry)
+    }
 }
 
 // MARK: - Private threshold tables

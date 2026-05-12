@@ -183,18 +183,170 @@ struct SNAPComplianceCopyTests {
         // against an accidental TODO rewrite that drops the
         // reference — the document is the engineering deliverable
         // legal/policy needs to sign before production.
-        //
-        // Verifying the markdown file itself is filesystem-introspective
-        // and fragile in a test bundle; we instead assert that the
-        // SNAPStateResources source file mentions the path so that
-        // a TODO cleanup pass can't silently orphan the doc.
         let referencePath = "docs/SNAP-source-citation-signoff.md"
-        // The constant lives in code-reviewable Swift, so the existence
-        // of the documented USDA fallback URL is the proxy invariant:
-        // anyone touching SNAPStateResources sees the doc reference
-        // adjacent to the constant.
         #expect(SNAPStateResources.usdaStateDirectoryURL.hasPrefix("https://"))
         #expect(referencePath.contains("SNAP-source-citation-signoff"))
+    }
+
+    /// Asserts the source-citation signoff doc exists on disk and
+    /// retains the semantic anchors the doc is built around. The
+    /// `proxy` test above guards code-side references; this test
+    /// guards the doc itself. Per OBBBA Q13 (Revision 2), prefer
+    /// semantic anchors over brittle line numbers.
+    @Test func sourceCitationSignoffDocumentExistsWithSemanticAnchors() throws {
+        // #file resolves to the absolute path of this test file at
+        // compile time. Walk two levels up to the repo root, then
+        // anchor the signoff doc relative to that.
+        let testFileURL = URL(fileURLWithPath: #file)
+        let repoRoot = testFileURL
+            .deletingLastPathComponent() // Civica Tests/
+            .deletingLastPathComponent() // repo root
+        let signoff = repoRoot.appendingPathComponent("docs/SNAP-source-citation-signoff.md")
+
+        let content = try String(contentsOf: signoff, encoding: .utf8)
+
+        let requiredAnchors = [
+            "source-citation",          // table family
+            "Reviewer",                  // reviewer column
+            "Signoff date",              // signoff column
+            "Effective date",            // policy-effective column
+            "Last checked",              // engineering-side hygiene column
+            "Renewal cadence",           // annual / COLA cadence column
+            "USDA FNS",                  // primary federal source authority
+            "DTA Helpful Charts"         // MA-specific source authority
+        ]
+        for anchor in requiredAnchors {
+            #expect(content.contains(anchor),
+                    "Source-citation signoff doc is missing required anchor: \(anchor)")
+        }
+    }
+
+    // MARK: - OBBBA Q14 DTA-Connect copy posture
+
+    // Until a written authorization with MA DTA exists, Civica is a
+    // public link-out tool, not a submission integration. Strings that
+    // imply a Civica->DTA write integration ("Submit to DTA Connect")
+    // are banned; the approved replacement is "Open MA DTA Connect to
+    // submit" (English) / "Abrir MA DTA Connect para enviar" (Spanish).
+
+    @Test func statusHomeActionSubmitUsesLinkOutPhrasing() {
+        let en = SNAPStatusHomeStrings.actionSubmitToState.value(in: .english)
+        let es = SNAPStatusHomeStrings.actionSubmitToState.value(in: .spanish)
+        #expect(en == "Open MA DTA Connect to submit")
+        #expect(es == "Abrir MA DTA Connect para enviar")
+        #expect(!en.lowercased().contains("submit to dta"))
+        #expect(!es.lowercased().contains("envía a dta"))
+    }
+
+    @Test func statusHomeStepSubmitUsesLinkOutPhrasing() {
+        let en = SNAPStatusHomeStrings.stepSubmit.value(in: .english)
+        let es = SNAPStatusHomeStrings.stepSubmit.value(in: .spanish)
+        #expect(en == "Open MA DTA Connect to submit")
+        #expect(es == "Abrir MA DTA Connect para enviar")
+        #expect(!en.lowercased().contains("submit to dta"))
+        #expect(!es.lowercased().contains("envía"))
+    }
+
+    // MARK: - OBBBA Q2 WIC teaser must not use dollar inducement
+
+    // 7 CFR 277.4(b)(5)(i) (SNAP feature surface) plus 7 CFR 246.4 /
+    // 246.26 (WIC outreach + confidentiality) both disfavor a dollar
+    // amount as the value-prop. The "+ ~$48/mo" framing is banned;
+    // copy must lead with eligibility/program description.
+
+    @Test func wicTeaserDoesNotForegrooundDollarAmount() {
+        let teaser = [
+            SNAPCrossProgramTeaserStrings.heading,
+            SNAPCrossProgramTeaserStrings.wicTitle,
+            SNAPCrossProgramTeaserStrings.wicBody,
+            SNAPCrossProgramTeaserStrings.wicSeparateBenefit
+        ]
+        let combined = teaser
+            .flatMap { [$0.value(in: .english), $0.value(in: .spanish)] }
+            .joined(separator: "\n")
+        for banned in ["$48", "~$", "/mo", "/mes"] {
+            #expect(!combined.contains(banned),
+                    "WIC teaser must not contain banned dollar-inducement substring: \(banned)")
+        }
+    }
+
+    @Test func wicTeaserBodyIsInformational() {
+        let body = SNAPCrossProgramTeaserStrings.wicBody.value(in: .english).lowercased()
+        // The replacement copy must communicate that benefits vary --
+        // a guard against future regressions that strip the "vary" qualifier.
+        #expect(body.contains("vary"))
+        #expect(body.contains("wic"))
+    }
+
+    // MARK: - OBBBA Q3 central compliance-copy registry
+
+    /// Scans every Swift file under Civica/Features/SNAP/ (except
+    /// the registry itself, which lists the banned phrases as data)
+    /// for any occurrence of a banned phrase from the registry.
+    /// Catches regressions even in files this test file hasn't
+    /// hardcoded an assertion for. Per OBBBA Q3 (Revision 2):
+    /// the registry is the single source of truth.
+    @Test func noSNAPSwiftFileContainsRegistryBannedPhrase() throws {
+        let testFileURL = URL(fileURLWithPath: #file)
+        let repoRoot = testFileURL
+            .deletingLastPathComponent() // Civica Tests/
+            .deletingLastPathComponent() // repo root
+        let snapDir = repoRoot.appendingPathComponent("Civica/Features/SNAP")
+
+        let fm = FileManager.default
+        let excludedFile = "SNAPComplianceCopyRegistry.swift"
+        var files: [URL] = []
+        if let enumerator = fm.enumerator(at: snapDir,
+                                          includingPropertiesForKeys: [.isRegularFileKey]) {
+            for case let url as URL in enumerator where url.pathExtension == "swift"
+                && url.lastPathComponent != excludedFile {
+                files.append(url)
+            }
+        }
+        #expect(!files.isEmpty, "Test setup: expected to find Swift files under Civica/Features/SNAP")
+
+        for file in files {
+            let content = try String(contentsOf: file, encoding: .utf8).lowercased()
+            for rule in SNAPComplianceCopyRegistry.bannedPhrases {
+                #expect(!content.contains(rule.phrase.lowercased()),
+                        "\(file.lastPathComponent) contains banned phrase '\(rule.phrase)' (rule '\(rule.id)', audit \(rule.auditReference))")
+            }
+        }
+    }
+
+    /// Every registry row must carry the metadata a reviewer needs
+    /// to act on it. Catches half-filled rows in PRs that add new
+    /// pending revisions without the rationale or audit reference.
+    @Test func registryRowsCarryRequiredMetadata() {
+        for rule in SNAPComplianceCopyRegistry.bannedPhrases {
+            #expect(!rule.id.isEmpty)
+            #expect(!rule.phrase.isEmpty)
+            #expect(!rule.auditReference.isEmpty)
+            #expect(!rule.rationale.isEmpty,
+                    "Banned phrase '\(rule.id)' has empty rationale")
+        }
+        for row in SNAPComplianceCopyRegistry.pendingCopyRevisions {
+            #expect(!row.id.isEmpty)
+            #expect(!row.surfaceFile.isEmpty)
+            #expect(!row.stringID.isEmpty)
+            #expect(!row.currentEnglish.isEmpty)
+            #expect(!row.auditReference.isEmpty)
+            #expect(!row.rationale.isEmpty,
+                    "Pending revision '\(row.id)' has empty rationale")
+        }
+    }
+
+    /// When a copy revision flips to `.approved`, both English AND
+    /// Spanish replacements must be present. Prevents an English-
+    /// only signoff from shipping with a stale Spanish string.
+    @Test func approvedRevisionsHaveCompleteBilingualPair() {
+        for row in SNAPComplianceCopyRegistry.pendingCopyRevisions
+            where row.status == .approved {
+            #expect(row.approvedEnglish != nil && !(row.approvedEnglish ?? "").isEmpty,
+                    "Approved revision '\(row.id)' missing approvedEnglish")
+            #expect(row.approvedSpanish != nil && !(row.approvedSpanish ?? "").isEmpty,
+                    "Approved revision '\(row.id)' missing approvedSpanish (bilingual parity required)")
+        }
     }
 }
 

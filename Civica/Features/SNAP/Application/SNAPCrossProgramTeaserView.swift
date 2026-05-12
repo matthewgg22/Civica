@@ -12,9 +12,11 @@ import SwiftUI
 //
 // Brand-voice rule from the board: "The biggest unrealized product
 // unlock — using what we already know to apply for the next
-// program." The teaser names what we know about the user (you
-// have a kid in your household) and what that opens up ($48/mo of
-// food vouchers for kids under 5). No marketing chrome.
+// program." The teaser names what we know about the user (the
+// household has a child under 5) and points to WIC as an
+// informational next step. No dollar-amount inducement (see OBBBA
+// audit Q2 / 7 CFR 277.4(b)(5)(i) + 246.4/246.26); benefits vary
+// by category and state, and the body copy says so.
 
 struct SNAPCrossProgramTeaserView: View {
     let draft: SNAPApplicationDraft?
@@ -54,15 +56,9 @@ struct SNAPCrossProgramTeaserView: View {
                     .foregroundStyle(CivicaColors.accentTeal)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-                    HStack(alignment: .firstTextBaseline) {
-                        Text(SNAPCrossProgramTeaserStrings.wicTitle.value(in: language))
-                            .font(CivicaTypography.subheadStrong)
-                            .foregroundStyle(CivicaColors.ink)
-                        Spacer(minLength: CivicaSpacing.sm)
-                        Text(SNAPCrossProgramTeaserStrings.wicEstimate.value(in: language))
-                            .font(CivicaTypography.footnoteStrong.monospacedDigit())
-                            .foregroundStyle(CivicaColors.accentTeal)
-                    }
+                    Text(SNAPCrossProgramTeaserStrings.wicTitle.value(in: language))
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundStyle(CivicaColors.ink)
                     Text(SNAPCrossProgramTeaserStrings.wicBody.value(in: language))
                         .font(CivicaTypography.body)
                         .foregroundStyle(CivicaColors.ink)
@@ -102,16 +98,12 @@ enum SNAPCrossProgramTeaserStrings {
         es: "También podrías calificar para"
     )
     static let wicTitle = CivicaText(
-        "WIC — for kids under 5",
-        es: "WIC — para niños menores de 5"
-    )
-    static let wicEstimate = CivicaText(
-        "+ ~$48/mo",
-        es: "+ ~$48/mes"
+        "WIC — for pregnant or postpartum people and children under 5",
+        es: "WIC — para personas embarazadas o posparto y niños menores de 5"
     )
     static let wicBody = CivicaText(
-        "Vouchers for formula, milk, eggs, cereal, and fruits / vegetables. Use at most grocery stores in Massachusetts.",
-        es: "Vales para fórmula, leche, huevos, cereal y frutas / verduras. Úsalos en la mayoría de tiendas en Massachusetts."
+        "WIC may provide healthy foods, nutrition education, breastfeeding support, and referrals. Benefits vary. Check with your local WIC agency.",
+        es: "WIC puede ofrecer alimentos saludables, educación sobre nutrición, apoyo para la lactancia y referencias. Los beneficios varían. Consulta con tu agencia local de WIC."
     )
     static let wicSeparateBenefit = CivicaText(
         "WIC and SNAP are separate — getting WIC does not change your SNAP.",

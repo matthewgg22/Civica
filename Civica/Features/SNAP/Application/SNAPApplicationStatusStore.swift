@@ -30,9 +30,17 @@ final class SNAPApplicationStatusStore: ObservableObject {
     // Keys used for UserDefaults persistence. Defined here rather than
     // @AppStorage so the wrapping ObservableObject can re-emit on
     // change without each SwiftUI view re-reading defaults directly.
+    //
+    // Note: the eligibility-result payload moved to Keychain (per
+    // OBBBA audit Q11). The legacy UserDefaults key is read once
+    // during init for migration, then permanently deleted. App
+    // launch instantiates this store once via
+    // CivicaUserData.runLaunchTimeMigrations, so the migration runs
+    // even on installs that never visit a SNAP screen during the
+    // first launch after upgrade.
     private let statusKey = "co.civica.applicationStatus"
     private let milestonesKey = "co.civica.applicationMilestones"
-    private let eligibilityResultKey = "co.civica.eligibilityResult"
+    static let legacyEligibilityResultUserDefaultsKey = "co.civica.eligibilityResult"
     private let interviewDateKey = "co.civica.interviewScheduledFor"
 
     init() {
@@ -53,9 +61,20 @@ final class SNAPApplicationStatusStore: ObservableObject {
             self.milestones = [:]
         }
 
-        if let resultData = defaults.data(forKey: eligibilityResultKey),
-           let result = try? JSONDecoder().decode(SNAPEligibilityResult.self, from: resultData) {
-            self.eligibilityResult = result
+        // Eligibility result: Keychain is the new home. If a legacy
+        // UserDefaults value exists, migrate it into Keychain and
+        // remove the plist entry so subsequent launches read only
+        // from Keychain. New installs skip the migration branch.
+        if let keychainResult = SNAPEligibilityResultKeychainStore.load() {
+            self.eligibilityResult = keychainResult
+            // Belt-and-suspenders: if a stale plist value lingered
+            // through a partial migration, clear it now.
+            defaults.removeObject(forKey: Self.legacyEligibilityResultUserDefaultsKey)
+        } else if let legacyData = defaults.data(forKey: Self.legacyEligibilityResultUserDefaultsKey),
+                  let migrated = try? JSONDecoder().decode(SNAPEligibilityResult.self, from: legacyData) {
+            SNAPEligibilityResultKeychainStore.save(migrated)
+            defaults.removeObject(forKey: Self.legacyEligibilityResultUserDefaultsKey)
+            self.eligibilityResult = migrated
         } else {
             self.eligibilityResult = nil
         }
@@ -119,11 +138,12 @@ final class SNAPApplicationStatusStore: ObservableObject {
             defaults.set(data, forKey: milestonesKey)
         }
 
-        if let result = eligibilityResult,
-           let resultData = try? JSONEncoder().encode(result) {
-            defaults.set(resultData, forKey: eligibilityResultKey)
+        // Eligibility result persists to Keychain, never UserDefaults.
+        // See OBBBA audit Q11 and SNAPEligibilityResultKeychainStore.
+        if let result = eligibilityResult {
+            SNAPEligibilityResultKeychainStore.save(result)
         } else {
-            defaults.removeObject(forKey: eligibilityResultKey)
+            SNAPEligibilityResultKeychainStore.delete()
         }
 
         if let interviewDate = interviewScheduledFor {

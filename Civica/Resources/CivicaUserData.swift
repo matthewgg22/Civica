@@ -43,7 +43,6 @@ enum CivicaUserData {
         "co.civica.language",
         "co.civica.applicationStatus",
         "co.civica.applicationMilestones",
-        "co.civica.eligibilityResult",
         "co.civica.applicationDraft",
         "co.civica.recertInProgress"
     ]
@@ -51,17 +50,58 @@ enum CivicaUserData {
     // Keys retired by a prior code change. New code does not read or
     // write them, but existing installs may still have stale values
     // hanging around. `purgeLegacyKeys` deletes them on launch.
+    //
+    // Note: co.civica.eligibilityResult is NOT in this list even
+    // though it moved out of UserDefaults in the Q11 Keychain
+    // migration. The plist payload is still a valid input to the
+    // migration -- it must be read by SNAPApplicationStatusStore.init
+    // before it can be cleared. runLaunchTimeMigrations() below
+    // sequences the migration ahead of any purge so a verdict from a
+    // pre-Q11 install isn't silently lost.
     private static let legacyUserDefaultsKeys: [String] = [
         InterviewCoachAPIClient.legacyAnonymousIDKey
     ]
 
     /// One-shot launch cleanup for UserDefaults keys we no longer use.
     /// Idempotent: removes legacy keys if present, no-ops otherwise.
-    /// Call once at app start (CivicaApp.init).
+    /// Call once at app start via runLaunchTimeMigrations.
     static func purgeLegacyKeys() {
         let defaults = UserDefaults.standard
         for key in legacyUserDefaultsKeys {
             defaults.removeObject(forKey: key)
+        }
+    }
+
+    /// Runs every launch-time data hygiene routine, in the right
+    /// order. Call this from CivicaApp.init exactly once per launch.
+    ///
+    /// Order:
+    ///   1. purgeLegacyKeys — drops UserDefaults keys we no longer
+    ///      use (e.g. the pre-rotation Interview Coach anon ID).
+    ///   2. Instantiating SNAPApplicationStatusStore runs the
+    ///      one-shot UserDefaults -> Keychain migration for the
+    ///      eligibility result. The instance is discarded; the side
+    ///      effect (migration writes) survives.
+    ///   3. purgeOutOfScopeEligibilityData — if the recorded draft
+    ///      state is non-MA, drop the Keychain verdict so a
+    ///      stale-state user doesn't carry a federal-default
+    ///      estimate they should never have seen. See OBBBA audit
+    ///      Q7 (Revision 2).
+    static func runLaunchTimeMigrations() {
+        purgeLegacyKeys()
+        _ = SNAPApplicationStatusStore()  // triggers migration via init
+        purgeOutOfScopeEligibilityData()
+    }
+
+    /// If the user's persisted draft has an out-of-scope state code
+    /// (per SNAPCoveragePolicy), delete the Keychain eligibility
+    /// verdict. The draft itself is preserved -- the unsupported-
+    /// state view exposes a "Change my state" CTA that depends on
+    /// the draft surviving.
+    static func purgeOutOfScopeEligibilityData() {
+        let draftState = SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
+        if SNAPCoveragePolicy.shouldShowUnsupportedStateGate(for: draftState) {
+            SNAPEligibilityResultKeychainStore.delete()
         }
     }
 
@@ -129,8 +169,16 @@ enum CivicaUserData {
 
         // 3. Status store — reset to .notStarted, clear milestones +
         //    eligibilityResult. Uses the store's own reset routine so
-        //    persistence stays consistent.
+        //    persistence stays consistent. reset() routes eligibility
+        //    deletion through SNAPEligibilityResultKeychainStore.
         SNAPApplicationStatusStore().reset()
+
+        // 3b. Belt-and-suspenders Keychain wipe. The status store's
+        //     reset() already removes the Keychain entry, but if a
+        //     prior session crashed mid-write or persistence drifted,
+        //     this guarantees no eligibility result lingers in
+        //     Keychain after deleteEverything.
+        SNAPEligibilityResultKeychainStore.delete()
 
         // 4. Direct UserDefaults wipe of every key Civica owns. The
         //    store resets above already touch most of these; the

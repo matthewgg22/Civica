@@ -6,40 +6,36 @@ import Foundation
 // authoritative dollar-amount math is meant to come from the
 // backend rules engine that isn't wired in yet.
 //
-// Formula (FY2026 federal SNAP, effective Oct 1, 2025 – Sep 30, 2026):
+// Formula (federal SNAP 7 CFR 273 deduction stack, applied with
+// whichever PolicySnapshot the rules engine selects for asOf):
 //   netBefore     = gross − earnedIncomeDeduction − standardDeduction
 //   shelterCost   = rent + (paysUtilitiesSeparately ? SUA : 0)
-//   excessShelter = max(0, shelterCost − netBefore / 2), capped at $744
-//                   unless elderlyOrDisabled (then uncapped)
+//   excessShelter = max(0, shelterCost − netBefore / 2), capped at the
+//                   federal shelter-cap unless elderlyOrDisabled (no cap).
 //   netIncome     = max(0, netBefore − excessShelter)
 //   benefit       = round(maxAllotment − netIncome × 0.30), floored at 0
-//   Min benefit   = $24 for 1–2 person households if the formula gives less.
-//   Gross test    = skipped if elderlyOrDisabled; otherwise gross > 130%
-//                   FPL → ineligible.
-//   Net test      = netIncome > 100% FPL → ineligible.
+//   Min benefit   = federal minimum for 1–2 person households if the
+//                   formula gives less.
+//   Gross test    = skipped if elderlyOrDisabled; otherwise gross >
+//                   federal gross-income limit → ineligible.
+//   Net test      = netIncome > federal net-income limit → ineligible.
+//
+// Per OBBBA audit Worktree B: this calculator no longer carries
+// independent federal constants. Every threshold (max allotment,
+// FPL limits, standard deduction, shelter cap, SUA, minimum
+// benefit, earned-income deduction rate) comes from
+// SNAPBenefitEstimatorCalculator.rules. Number corrections happen
+// in one place (FederalDefaultRules / MAStateRules) and propagate
+// here automatically.
+//
+// Today the rules engine is FederalDefaultRules — SUA returns nil
+// from the federal default, so paysUtilitiesSeparately collapses
+// to zero deduction. Threading MA-specific rules in (so MA users
+// get the MA SUA chart and BBCE gross test) is a follow-up that
+// also requires expanding the 5-question form.
 //
 // All money math runs in Decimal (matches CivicaMoney + the existing
-// SNAPBenefitCalculationDetail model). This calculator is pure: no
-// Date, no Locale, no I/O. Effective date + rules version are stamped
-// by the caller when synthesizing a SNAPEligibilityResult.
-//
-// TODO(SNAP-est-1): State-specific SUA lookup. $500 is the federal
-//   placeholder; real values vary $200–$1000+ by state (MA Heating
-//   SUA FY26 = $924). Plumb a per-state value in from
-//   SNAPStateResources.swift before shipping outside MA.
-// TODO(SNAP-est-2): BBCE gross-income test bypass. Most states use
-//   Broad-Based Categorical Eligibility to lift the gross-income limit
-//   to 165–200% FPL (MA = 200%). For BBCE states the gross test should
-//   skip; reuse SNAPLocalEligibilityEvaluator's 200% FPL table.
-// TODO(SNAP-est-3): Medical & dependent-care deduction inputs.
-//   Elderly/disabled medical >$35/mo and dependent-care costs both
-//   materially change the estimate. Surface behind a "More questions"
-//   disclosure once usage shows demand.
-//
-// Numbers verified May 2026 against the USDA FY26 COLA memo
-// (effective Oct 1, 2025) and the 2025 HHS poverty guidelines that
-// SNAP FY26 uses for its income tests. Re-verify each October when
-// the next COLA memo lands.
+// SNAPBenefitCalculationDetail model).
 
 struct SNAPBenefitEstimatorInputs: Equatable {
     var householdSize: Int
@@ -76,67 +72,70 @@ enum SNAPBenefitEstimatorOutcome: Equatable {
 
 enum SNAPBenefitEstimatorCalculator {
 
-    static let rulesVersion = "local-estimator-FY26"
     static let effectiveDate = "2025-10-01"
 
     static let householdSizeRange: ClosedRange<Int> = 1...8
     static let incomeSliderRange: ClosedRange<Decimal> = 0...5_000
     static let rentSliderRange: ClosedRange<Decimal> = 0...3_000
 
-    // FY2026 federal max monthly allotment, 48 contiguous + DC. Index 0 unused.
-    private static let maxAllotmentByHouseholdSize: [Decimal] = [
-        0, 298, 546, 785, 994, 1_183, 1_421, 1_571, 1_789
-    ]
+    // OBBBA audit Worktree B: the estimator no longer carries its
+    // own federal constants. Every threshold (max allotment, FPL
+    // limits, standard deduction, shelter cap, minimum benefit,
+    // earned-income deduction rate) comes from the rules engine
+    // selected below. This is the "single source of truth" the
+    // audit requires; today the engine is federal-default, and the
+    // SNAPCoveragePolicy MA-only gate routes non-MA users away
+    // from this entry. A future commit can thread MA-specific
+    // rules in for in-scope users to pick up the MA SUA chart.
+    static let rules: SNAPStateRuleEngine = FederalDefaultRules()
 
-    // Additional $ per person beyond size 8 (USDA FY26 COLA memo).
-    private static let perAdditionalPersonAboveEight: Decimal = 218
+    /// Stamped on the estimator outcome's audit footer. Threads the
+    /// active rules-engine version so the estimator's provenance
+    /// chain reaches back to the same PolicySnapshot rows used by
+    /// the application flow.
+    static var rulesVersion: String {
+        "local-estimator-via-" + rules.rulesVersion(asOf: Date())
+    }
 
-    // Standard deduction by HH size: 1–3 share, 4 unique, 5 unique, 6+ share.
-    // Values from USDA FY26 COLA memo (effective Oct 1, 2025).
-    private static let standardDeductionByHouseholdSize: [Decimal] = [
-        0, 209, 209, 209, 223, 261, 299, 299, 299
-    ]
-
-    // 130% FPL gross-income test (skipped if elderly/disabled in HH).
-    private static let grossIncomeLimit130Fpl: [Decimal] = [
-        0, 1_696, 2_292, 2_888, 3_484, 4_080, 4_677, 5_273, 5_869
-    ]
-
-    // 100% FPL net-income test.
-    private static let netIncomeLimit100Fpl: [Decimal] = [
-        0, 1_305, 1_763, 2_222, 2_680, 3_138, 3_597, 4_055, 4_514
-    ]
-
-    private static let earnedIncomeDeductionRate: Decimal = 0.20
     private static let netIncomeShareForBenefit: Decimal = 0.30
     private static let halfNetMultiplier: Decimal = 0.5
-    private static let excessShelterCap: Decimal = 744
-    private static let standardUtilityAllowance: Decimal = 500
-    private static let minBenefitForSmallHouseholds: Decimal = 24
-    private static let minBenefitHouseholdSizeCutoff: Int = 2
 
     static func calculate(_ inputs: SNAPBenefitEstimatorInputs) -> SNAPBenefitEstimatorOutcome {
+        let today = Date()
         let hh = max(householdSizeRange.lowerBound, min(inputs.householdSize, householdSizeRange.upperBound))
         let gross = max(0, inputs.grossMonthlyIncome)
         let rent = max(0, inputs.monthlyRent)
         let eld = inputs.elderlyOrDisabled
 
-        let earnedIncomeDeduction = eld ? 0 : (gross * earnedIncomeDeductionRate).roundedWhole(.bankers)
-        let standardDeduction = standardDeductionByHouseholdSize[hh]
+        let earnedIncomeRate = rules.earnedIncomeDeductionRate(asOf: today)
+        let earnedIncomeDeduction = eld ? 0 : (gross * earnedIncomeRate).roundedWhole(.bankers)
+        let standardDeduction = rules.standardDeduction(householdSize: hh, asOf: today)
         let netBefore = max(0, gross - earnedIncomeDeduction - standardDeduction)
 
-        let shelterCost = rent + (inputs.paysUtilitiesSeparately ? standardUtilityAllowance : 0)
+        // SUA substitution: ask the rules engine for the
+        // heating/cooling tier. When the engine has no SUA chart
+        // (federal default), utility deduction collapses to zero --
+        // the user's "I pay utilities separately" answer cannot be
+        // turned into a deduction without either an SUA value or
+        // an actual-cost question (which the 5-question form does
+        // not collect).
+        let sua: Decimal = inputs.paysUtilitiesSeparately
+            ? (rules.suaValue(tier: .heatingCooling, asOf: today) ?? 0)
+            : 0
+        let shelterCost = rent + sua
         let halfNetBefore = (netBefore * halfNetMultiplier).roundedWhole(.bankers)
         let rawExcessShelter = max(0, shelterCost - halfNetBefore)
-        let excessShelter = eld ? rawExcessShelter : min(rawExcessShelter, excessShelterCap)
+        let shelterCap = rules.shelterDeductionCap(isElderlyOrDisabled: eld, asOf: today)
+        let excessShelter = shelterCap.map { min(rawExcessShelter, $0) } ?? rawExcessShelter
 
         let netIncome = max(0, netBefore - excessShelter)
         let thirtyPercentOfNet = (netIncome * netIncomeShareForBenefit).roundedWhole(.bankers)
-        let maxAllotment = maxAllotmentFor(householdSize: hh)
+        let maxAllotment = rules.maxAllotment(householdSize: hh, asOf: today)
         var monthlyBenefit = max(0, maxAllotment - thirtyPercentOfNet).roundedWhole(.bankers)
 
-        if hh <= minBenefitHouseholdSizeCutoff && monthlyBenefit > 0 && monthlyBenefit < minBenefitForSmallHouseholds {
-            monthlyBenefit = minBenefitForSmallHouseholds
+        let minBenefit = rules.minimumBenefit(asOf: today)
+        if hh <= 2 && monthlyBenefit > 0 && monthlyBenefit < minBenefit {
+            monthlyBenefit = minBenefit
         }
 
         let detail = SNAPBenefitCalculationDetail(
@@ -153,10 +152,10 @@ enum SNAPBenefitEstimatorCalculator {
             monthlyBenefit: monthlyBenefit
         )
 
-        if !eld && gross > grossIncomeLimit130Fpl[hh] {
+        if !eld && gross > rules.grossIncomeLimit(householdSize: hh, asOf: today) {
             return .ineligible(reason: .grossIncomeOverLimit, detail: detail)
         }
-        if netIncome > netIncomeLimit100Fpl[hh] {
+        if netIncome > rules.netIncomeLimit(householdSize: hh, asOf: today) {
             return .ineligible(reason: .netIncomeOverLimit, detail: detail)
         }
         if monthlyBenefit <= 0 {
@@ -168,11 +167,6 @@ enum SNAPBenefitEstimatorCalculator {
             annualEquivalent: monthlyBenefit * 12,
             detail: detail
         )
-    }
-
-    private static func maxAllotmentFor(householdSize hh: Int) -> Decimal {
-        if hh <= 8 { return maxAllotmentByHouseholdSize[hh] }
-        return maxAllotmentByHouseholdSize[8] + (Decimal(hh - 8) * perAdditionalPersonAboveEight)
     }
 }
 

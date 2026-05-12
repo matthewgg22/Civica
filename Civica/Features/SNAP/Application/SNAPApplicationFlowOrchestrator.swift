@@ -152,11 +152,15 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
     /// whereApplying section (the edit case lets them switch back to
     /// MA without bouncing off the gate first). Exposed on the view
     /// model so compliance tests can assert routing without spinning
-    /// up SwiftUI.
+    /// up SwiftUI. Delegates the in/out-of-scope decision to
+    /// SNAPCoveragePolicy so the same rule applies at every entry
+    /// point (orchestrator, standalone estimator, launch-time
+    /// invalidation).
     var shouldShowUnsupportedStateGate: Bool {
         if case .editing(.whereApplying) = mode { return false }
-        guard let code = draft.whereApplying.stateCode else { return false }
-        return code.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() != "MA"
+        return SNAPCoveragePolicy.shouldShowUnsupportedStateGate(
+            for: draft.whereApplying.stateCode
+        )
     }
 
     private func nextSection(after section: SNAPApplicationSection) -> SNAPApplicationSection? {

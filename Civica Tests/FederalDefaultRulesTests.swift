@@ -308,6 +308,41 @@ struct FederalDefaultRulesTests {
         #expect(rules.rulesVersion(asOf: fy26Date) == "federal-default-FY26")
     }
 
+    // MARK: - Snapshot freshness (OBBBA audit Q12)
+
+    /// A date squarely inside FY26 must report current with the
+    /// earliest snapshot expiry pointing at the end of FY26.
+    @Test func snapshotStatusIsCurrentInsideFY26() {
+        let status = rules.snapshotStatus(asOf: fy26Date)
+        let fy26End = Self.iso("2026-09-30")
+        #expect(status == .current(latestExpiry: fy26End))
+    }
+
+    /// One second past the FY26 end-of-window flips status to expired.
+    /// Once a FY27 snapshot row lands, this test's expectation moves
+    /// to one second past the new latest expiry.
+    @Test func snapshotStatusIsExpiredJustAfterFY26End() {
+        let fy26End = Self.iso("2026-09-30")
+        let justAfter = fy26End.addingTimeInterval(1)
+        let status = rules.snapshotStatus(asOf: justAfter)
+        #expect(status == .expired(latestExpiry: fy26End))
+    }
+
+    /// Fail-loud CI tripwire. The repo's "current" date (per the
+    /// auto-memory currentDate context) must not be past the latest
+    /// snapshot expiry. When this test fails, the engine is silently
+    /// using stale data — engineering must add a FY+1 PolicySnapshot
+    /// row before the calculator may ship dollar amounts again.
+    @Test func snapshotStatusReportsCurrentForToday() {
+        let status = rules.snapshotStatus(asOf: Date())
+        switch status {
+        case .current:
+            break
+        case .expired(let latestExpiry):
+            Issue.record("Rules engine is past its latest snapshot expiry (\(latestExpiry)). Add a new PolicySnapshot row before shipping dollar-amount estimates.")
+        }
+    }
+
     // MARK: - Helpers
 
     private static func iso(_ string: String) -> Date {
