@@ -356,12 +356,12 @@ enum SNAPDataPrivacyStrings {
         es: "Quién lo ha visto"
     )
     static let nothingSharedTitle = CivicaText(
-        "Nothing has left this device",
-        es: "Nada ha salido de este dispositivo"
+        "Your draft is local",
+        es: "Tu borrador está en este dispositivo"
     )
     static let nothingSharedBody = CivicaText(
-        "Your answers, documents, and status all live on this phone only. Civica hasn't shared anything with anyone yet.",
-        es: "Tus respuestas, documentos y estado solo viven en este teléfono. Civica aún no ha compartido nada con nadie."
+        "Your SNAP draft and captured documents are saved on this device unless you choose to submit them to an official agency. Optional tools, such as finding nearby help or Interview Coach, may send only the information needed for that tool — never your full application draft.",
+        es: "El borrador de tu solicitud de SNAP y los documentos capturados se guardan en este dispositivo a menos que decidas enviarlos a una agencia oficial. Las herramientas opcionales, como buscar ayuda cercana o el Coach de entrevistas, pueden enviar solo la información necesaria para esa herramienta — nunca tu borrador completo."
     )
     static let sharedWithStateTitle = CivicaText(
         "Massachusetts DTA has your application",

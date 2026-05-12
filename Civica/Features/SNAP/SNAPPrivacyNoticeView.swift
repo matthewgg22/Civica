@@ -2,6 +2,24 @@ import CivicaDesignSystem
 import SwiftUI
 
 // EXPERIMENTAL SILOED MODULE: privacy notice gate shown before prototype intake.
+//
+// Section copy lives in `SNAPPrivacyNoticeStrings` rather than inline
+// so the compliance regression tests can assert exact substrings
+// (e.g. "saved on this device" must remain present, "session only"
+// must remain absent) without scraping SwiftUI view bodies.
+enum SNAPPrivacyNoticeStrings {
+    static let beforeYouStart = "Before You Start"
+    static let whatThisToolDoesTitle = "What this tool does"
+    static let whatThisToolDoesBody = "This tool helps you prepare for SNAP. It does not submit an official application and does not decide eligibility."
+    static let whatNotToEnterTitle = "What not to enter"
+    static let whatNotToEnterBody = "Do not type or paste Social Security numbers, bank account numbers, or immigration document numbers anywhere in this app. The document scanner is fine for paystubs and IDs you'd bring to the agency — captured images are kept on this device until you delete them."
+    static let howAnswersHandledTitle = "How your answers are handled"
+    static let howAnswersHandledBody = "Your application answers are saved on this device so you can leave and come back. They are not submitted to the government by Civica. You can delete them at any time from the data privacy screen."
+    static let officialSubmissionTitle = "Official submission"
+    static let officialSubmissionBody = "To get benefits, you must submit through your official state SNAP process."
+    static let eligibilityFootnote = "This screen does not determine eligibility or approval."
+}
+
 struct SNAPPrivacyNoticeView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
@@ -12,31 +30,31 @@ struct SNAPPrivacyNoticeView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
-                Text("Before You Start")
+                Text(SNAPPrivacyNoticeStrings.beforeYouStart)
                     .font(CivicaTypography.cardSubtitle)
                     .foregroundStyle(CivicaColors.ink)
 
                 privacySection(
-                    title: "What this tool does",
-                    body: "This tool helps you prepare for SNAP. It does not submit an official application and does not decide eligibility."
+                    title: SNAPPrivacyNoticeStrings.whatThisToolDoesTitle,
+                    body: SNAPPrivacyNoticeStrings.whatThisToolDoesBody
                 )
 
                 privacySection(
-                    title: "What not to enter",
-                    body: "Do not enter Social Security numbers, bank account numbers, immigration document numbers, or upload documents here."
+                    title: SNAPPrivacyNoticeStrings.whatNotToEnterTitle,
+                    body: SNAPPrivacyNoticeStrings.whatNotToEnterBody
                 )
 
                 privacySection(
-                    title: "How your answers are handled",
-                    body: "During this draft, answers stay in this app session and are not submitted to the government."
+                    title: SNAPPrivacyNoticeStrings.howAnswersHandledTitle,
+                    body: SNAPPrivacyNoticeStrings.howAnswersHandledBody
                 )
 
                 privacySection(
-                    title: "Official submission",
-                    body: "To get benefits, you must submit through your official state SNAP process."
+                    title: SNAPPrivacyNoticeStrings.officialSubmissionTitle,
+                    body: SNAPPrivacyNoticeStrings.officialSubmissionBody
                 )
 
-                Text("This screen does not determine eligibility or approval.")
+                Text(SNAPPrivacyNoticeStrings.eligibilityFootnote)
                     .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.graphite)
 
