@@ -36,6 +36,10 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
     /// section. UI surfaces (decision math, waiting room) read this
     /// to decide whether to show the expedited banner.
     @Published var triageResult: ExpeditedTriageResult?
+    /// Per-field confidence scores written by the voice-intake layer.
+    /// In-memory only; consumed by `.snapVoiceFieldHighlight(_:)` to
+    /// paint the amber "needs review" border. Cleared on resetDraft.
+    @Published var voiceConfidence: [SNAPFieldKey: Double] = [:]
 
     private let store: SNAPApplicationDraftStore
     private let classifier: any ExpeditedClassifier
@@ -129,6 +133,7 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
     /// images on disk — "start over" should leave no trace.
     func resetDraft() {
         draft = SNAPApplicationDraft()
+        voiceConfidence.removeAll()
         mode = .sequential(currentSection: .whereApplying)
         store.clear()
         SNAPCapturedDocumentStore.clearAll()
@@ -233,85 +238,121 @@ struct SNAPApplicationFlowOrchestratorView: View {
     private func flow(for section: SNAPApplicationSection) -> some View {
         switch section {
         case .whereApplying:
-            SNAPWhereApplyingFlowView(
-                viewModel: SNAPWhereApplyingFlowViewModel(answers: viewModel.draft.whereApplying),
-                language: language,
-                onComplete: { answers in
-                    viewModel.draft.whereApplying = answers
-                    viewModel.finishSection(.whereApplying)
-                },
-                onExit: handleExit
-            )
+            voiceWrap(.whereApplyingFrom) {
+                SNAPWhereApplyingFlowView(
+                    viewModel: SNAPWhereApplyingFlowViewModel(answers: viewModel.draft.whereApplying),
+                    language: language,
+                    onComplete: { answers in
+                        viewModel.draft.whereApplying = answers
+                        viewModel.finishSection(.whereApplying)
+                    },
+                    onExit: handleExit
+                )
+            }
         case .applicantAge:
-            SNAPApplicantAgeFlowView(
-                viewModel: SNAPApplicantAgeFlowViewModel(answers: viewModel.draft.applicantAge),
-                language: language,
-                onComplete: { answers in
-                    viewModel.draft.applicantAge = answers
-                    viewModel.finishSection(.applicantAge)
-                },
-                onExit: handleExit
-            )
+            voiceWrap(.applicantAge) {
+                SNAPApplicantAgeFlowView(
+                    viewModel: SNAPApplicantAgeFlowViewModel(answers: viewModel.draft.applicantAge),
+                    language: language,
+                    onComplete: { answers in
+                        viewModel.draft.applicantAge = answers
+                        viewModel.finishSection(.applicantAge)
+                    },
+                    onExit: handleExit
+                )
+            }
         case .household:
-            SNAPHouseholdQuestionFlowView(
-                viewModel: SNAPHouseholdQuestionFlowViewModel(answers: viewModel.draft.household),
-                language: language,
-                onComplete: { answers in
-                    viewModel.draft.household = answers
-                    viewModel.finishSection(.household)
-                },
-                onExit: handleExit
-            )
+            voiceWrap(.householdBasics) {
+                SNAPHouseholdQuestionFlowView(
+                    viewModel: SNAPHouseholdQuestionFlowViewModel(answers: viewModel.draft.household),
+                    language: language,
+                    onComplete: { answers in
+                        viewModel.draft.household = answers
+                        viewModel.finishSection(.household)
+                    },
+                    onExit: handleExit
+                )
+            }
         case .contact:
-            SNAPContactFlowView(
-                viewModel: SNAPContactFlowViewModel(answers: viewModel.draft.contact),
-                language: language,
-                onComplete: { answers in
-                    viewModel.draft.contact = answers
-                    viewModel.finishSection(.contact)
-                },
-                onExit: handleExit
-            )
+            voiceWrap(.addressContact) {
+                SNAPContactFlowView(
+                    viewModel: SNAPContactFlowViewModel(answers: viewModel.draft.contact),
+                    language: language,
+                    onComplete: { answers in
+                        viewModel.draft.contact = answers
+                        viewModel.finishSection(.contact)
+                    },
+                    onExit: handleExit
+                )
+            }
         case .income:
-            SNAPIncomeFlowView(
-                viewModel: SNAPIncomeFlowViewModel(answers: viewModel.draft.income),
-                language: language,
-                onComplete: { answers in
-                    viewModel.draft.income = answers
-                    viewModel.finishSection(.income)
-                },
-                onExit: handleExit
-            )
+            voiceWrap(.income) {
+                SNAPIncomeFlowView(
+                    viewModel: SNAPIncomeFlowViewModel(answers: viewModel.draft.income),
+                    language: language,
+                    onComplete: { answers in
+                        viewModel.draft.income = answers
+                        viewModel.finishSection(.income)
+                    },
+                    onExit: handleExit
+                )
+            }
         case .studentStatus:
-            SNAPStudentStatusFlowView(
-                viewModel: SNAPStudentStatusFlowViewModel(answers: viewModel.draft.studentStatus),
-                language: language,
-                onComplete: { answers in
-                    viewModel.draft.studentStatus = answers
-                    viewModel.finishSection(.studentStatus)
-                },
-                onExit: handleExit
-            )
+            voiceWrap(.studentStatus) {
+                SNAPStudentStatusFlowView(
+                    viewModel: SNAPStudentStatusFlowViewModel(answers: viewModel.draft.studentStatus),
+                    language: language,
+                    onComplete: { answers in
+                        viewModel.draft.studentStatus = answers
+                        viewModel.finishSection(.studentStatus)
+                    },
+                    onExit: handleExit
+                )
+            }
         case .expenses:
-            SNAPExpensesFlowView(
-                viewModel: SNAPExpensesFlowViewModel(answers: viewModel.draft.expenses),
-                language: language,
-                onComplete: { answers in
-                    viewModel.draft.expenses = answers
-                    viewModel.finishSection(.expenses)
-                },
-                onExit: handleExit
-            )
+            voiceWrap(.expenses) {
+                SNAPExpensesFlowView(
+                    viewModel: SNAPExpensesFlowViewModel(answers: viewModel.draft.expenses),
+                    language: language,
+                    onComplete: { answers in
+                        viewModel.draft.expenses = answers
+                        viewModel.finishSection(.expenses)
+                    },
+                    onExit: handleExit
+                )
+            }
         case .documentsChecklist:
-            SNAPDocumentsChecklistFlowView(
-                viewModel: SNAPDocumentsChecklistFlowViewModel(answers: viewModel.draft.documentsChecklist),
-                language: language,
-                onComplete: { answers in
-                    viewModel.draft.documentsChecklist = answers
-                    viewModel.finishSection(.documentsChecklist)
-                },
-                onExit: handleExit
+            voiceWrap(.documentsChecklist) {
+                SNAPDocumentsChecklistFlowView(
+                    viewModel: SNAPDocumentsChecklistFlowViewModel(answers: viewModel.draft.documentsChecklist),
+                    language: language,
+                    onComplete: { answers in
+                        viewModel.draft.documentsChecklist = answers
+                        viewModel.finishSection(.documentsChecklist)
+                    },
+                    onExit: handleExit
+                )
+            }
+        }
+    }
+
+    /// Wraps a per-section flow view with the voice-intake affordance
+    /// (mic button + transcript chip) on iOS 26+. On older OS versions
+    /// the wrap is a no-op and the typed flow is unchanged.
+    @ViewBuilder
+    private func voiceWrap<Content: View>(
+        _ step: SNAPDraftStep,
+        @ViewBuilder content: @escaping () -> Content
+    ) -> some View {
+        if #available(iOS 26.0, *) {
+            SNAPVoiceSection(
+                step: step,
+                draft: $viewModel.draft,
+                confidence: $viewModel.voiceConfidence,
+                content: content
             )
+        } else {
+            content()
         }
     }
 
