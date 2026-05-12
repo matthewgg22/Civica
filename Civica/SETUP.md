@@ -91,8 +91,9 @@ Then **Signing & Capabilities** tab:
 
 1. **Automatically manage signing** → ON
 2. **Team** → same as VoteNow
-3. Click **+ Capability** → add **App Groups** → check `group.co.civica.benefits` (you'll need to enable this group on the developer portal too, but Xcode will prompt)
-4. **Code Signing Entitlements** → drag in or set: `Civica/Civica.entitlements`
+3. **Code Signing Entitlements** → drag in or set: `Civica/Civica.entitlements`
+
+The Civica target has no special capabilities (no App Groups, no CloudKit, no Push). If a future extension (widget, watch app, keyboard) is added, SNAP application drafts, captured documents, income, household, eligibility, and Interview Coach data must not be stored in app-group containers or otherwise made readable to extensions.
 
 Then **Build Settings** tab → search `Info.plist`:
 
