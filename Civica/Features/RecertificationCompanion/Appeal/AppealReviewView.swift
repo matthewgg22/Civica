@@ -76,7 +76,7 @@ struct AppealReviewView: View {
         }
         .sheet(isPresented: $presentingExport) {
             AppealExportSheetView(
-                body: editedBody,
+                appealText: editedBody,
                 stateCode: template.stateCode,
                 language: language
             )

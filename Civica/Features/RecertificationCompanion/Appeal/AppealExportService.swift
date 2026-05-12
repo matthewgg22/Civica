@@ -98,13 +98,13 @@ enum AppealExportService {
 struct AppealExportSheetView: View {
     @Environment(\.dismiss) private var dismiss
 
-    let body: String
+    let appealText: String
     let stateCode: String
     let language: CivicaLanguage
 
     @State private var pdfURL: URL?
 
-    var view: some View {
+    var body: some View {
         NavigationStack {
             VStack(spacing: CivicaSpacing.lg) {
                 Text(AppealExportStrings.title.value(in: language))
@@ -151,14 +151,10 @@ struct AppealExportSheetView: View {
                 }
             }
             .onAppear {
-                pdfURL = AppealExportService.writePDF(body: body, stateCode: stateCode)
+                pdfURL = AppealExportService.writePDF(body: appealText, stateCode: stateCode)
                 RecertCompanionAnalytics.trackAppealExported(stateCode: stateCode)
             }
         }
-    }
-
-    var body: some View {
-        view
     }
 
     private func exportCTA(icon: String, title: String) -> some View {
@@ -183,7 +179,7 @@ struct AppealExportSheetView: View {
     }
 
     private func copy() {
-        UIPasteboard.general.string = body
+        UIPasteboard.general.string = appealText
     }
 }
 
