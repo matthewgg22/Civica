@@ -20,7 +20,11 @@ on:
 jobs:
   build-and-test:
     runs-on: macos-15
-    timeout-minutes: 30
+    # 30m was the previous ceiling; on cold-runner days with a fresh
+    # sim runtime download (~3m) + clean build + test, total can edge
+    # past 25m. The USDA state directory PR hit the ceiling at 31m
+    # while still in the test step. Buffer to 45m to absorb variance.
+    timeout-minutes: 45
 
     steps:
       - uses: actions/checkout@v4
@@ -69,13 +73,19 @@ jobs:
 
       - name: Run CivicaTests
         run: |
-          # Booted simulator UDID from the runtime list; falls back
-          # to a destination-name spec if not pinned.
+          # OS=latest lets xcodebuild pick the newest installed iOS
+          # runtime (the one we just downloaded), instead of trying to
+          # match against any older runtime the runner image might
+          # also have cached -- which can wedge sim boot.
+          # -quiet trims xcbeautify-style line noise; -resultBundlePath
+          # gives the upload-artifact step a deterministic source.
           xcodebuild \
             -project Civica.xcodeproj \
             -scheme Civica \
             -configuration Debug \
-            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
+            -resultBundlePath /tmp/civica-test-result.xcresult \
+            -quiet \
             CODE_SIGNING_ALLOWED=NO \
             test
 
@@ -84,5 +94,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: civica-xcresult-${{ github.sha }}
-          path: ~/Library/Developer/Xcode/DerivedData/Civica-*/Logs/Test/*.xcresult
+          path: /tmp/civica-test-result.xcresult
           retention-days: 7
