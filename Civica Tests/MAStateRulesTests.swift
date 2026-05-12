@@ -88,6 +88,44 @@ struct MAStateRulesTests {
         #expect(rules.earnedIncomeDeductionRate(asOf: fy26Date) == Decimal(string: "0.20"))
     }
 
+    // MARK: - ABAWD waiver (MA list not loaded yet)
+
+    @Test func maABAWDWaiverLookupReturnsNilUntilDataLoaded() {
+        #expect(rules.abawdWaiverActive(fipsCode: "25025", asOf: fy26Date) == nil)
+    }
+
+    // MARK: - Categorical eligibility (MA adds BBCE as fallback)
+
+    @Test func maTANFRecipientPathInherited() {
+        var draft = SNAPApplicationDraft()
+        draft.household.receivesTANF = true
+        #expect(
+            rules.categoricalEligibility(for: draft, asOf: fy26Date)
+                == .categoricallyEligible(via: .tanf)
+        )
+    }
+
+    @Test func maEmptyDraftFallsBackToBBCE() {
+        // MA's BBCE applies to every screener session that completes
+        // the DTA SNAP brochure trigger (per existing product design).
+        let draft = SNAPApplicationDraft()
+        #expect(
+            rules.categoricalEligibility(for: draft, asOf: fy26Date)
+                == .categoricallyEligible(via: .bbce(stateCode: "MA"))
+        )
+    }
+
+    @Test func maExplicitFalseCashFlagsStillBBCE() {
+        var draft = SNAPApplicationDraft()
+        draft.household.receivesTANF = false
+        draft.household.receivesSSI = false
+        draft.household.receivesGeneralAssistance = false
+        #expect(
+            rules.categoricalEligibility(for: draft, asOf: fy26Date)
+                == .categoricallyEligible(via: .bbce(stateCode: "MA"))
+        )
+    }
+
     // MARK: - Rules-version stamp
 
     @Test func rulesVersionStampForFY26() {

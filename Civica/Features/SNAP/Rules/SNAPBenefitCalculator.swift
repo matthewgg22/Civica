@@ -177,9 +177,11 @@ enum SNAPBenefitCalculator {
     private struct Inputs {
         let householdSize: Int
         let gross: Decimal
-        /// TODO: split earned vs unearned when the flow adds the
-        /// "from a job" question. Today we assume 100% earned to
-        /// maximize the earned-income deduction.
+        /// Earned income (wages + self-employment net). Resolved
+        /// in order: explicit `monthlyEarnedAmount` field, then
+        /// the `anyoneEarning` / `hasUnearnedIncome` signals, then
+        /// a permissive fallback to 100% earned. Future flow work
+        /// adds a dedicated screen to capture the exact split.
         let earnedIncome: Decimal
         let hasElderlyOrDisabled: Bool
         let rentOrMortgage: Decimal
@@ -198,7 +200,7 @@ enum SNAPBenefitCalculator {
             self.householdSize = Self.parseHouseholdSize(draft.household.householdSize)
             let gross = draft.income.grossMonthlyIncome ?? 0
             self.gross = gross
-            self.earnedIncome = gross
+            self.earnedIncome = Self.resolveEarnedIncome(income: draft.income, gross: gross)
             self.hasElderlyOrDisabled = draft.household.hasElderlyOrDisabled == true
             self.rentOrMortgage = draft.expenses.monthlyRentOrHousing ?? 0
             self.propertyTaxes = 0
@@ -208,6 +210,29 @@ enum SNAPBenefitCalculator {
             self.dependentCare = draft.expenses.monthlyChildcare ?? 0
             self.medical = draft.expenses.monthlyMedical ?? 0
             self.childSupportPaid = 0
+        }
+
+        /// Resolves the earned-income portion of gross from the
+        /// draft. Order of precedence:
+        ///   1. Explicit dollar amount in `monthlyEarnedAmount`
+        ///      (clamped to [0, gross]).
+        ///   2. anyoneEarning == .no → $0 earned (all unearned).
+        ///   3. anyoneEarning == .yes AND hasUnearnedIncome == .no
+        ///      → 100% earned.
+        ///   4. Mixed earned + unearned with no split → 100% earned
+        ///      (permissive, maximizes the 20% deduction).
+        ///   5. Everything else (nil answers) → 100% earned.
+        private static func resolveEarnedIncome(
+            income: SNAPIncomeAnswers,
+            gross: Decimal
+        ) -> Decimal {
+            if let explicit = income.monthlyEarnedAmount {
+                return min(max(0, explicit), gross)
+            }
+            if income.anyoneEarning == .no {
+                return 0
+            }
+            return gross
         }
 
         private static func parseHouseholdSize(_ raw: String?) -> Int {

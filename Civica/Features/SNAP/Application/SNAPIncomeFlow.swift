@@ -34,6 +34,14 @@ struct SNAPIncomeAnswers: Equatable, Codable {
     /// Whether anyone in the household lost a job in the last 30 days
     /// — a strong soft signal for expedited need.
     var recentJobLoss30d: Tri?
+    /// Optional explicit dollar amount of monthly earned income
+    /// (wages + self-employment net). Federally the 20% earned-
+    /// income deduction only applies to this portion of gross.
+    /// The current flow does not yet ask for the split -- when
+    /// nil, SNAPBenefitCalculator derives an estimate from
+    /// `anyoneEarning` + `hasUnearnedIncome`. A dedicated screen
+    /// asking the exact split lands as separate work.
+    var monthlyEarnedAmount: Decimal?
 }
 
 @MainActor
