@@ -43,7 +43,6 @@ enum CivicaUserData {
         "co.civica.language",
         "co.civica.applicationStatus",
         "co.civica.applicationMilestones",
-        "co.civica.eligibilityResult",
         "co.civica.applicationDraft",
         "co.civica.recertInProgress"
     ]
@@ -51,8 +50,14 @@ enum CivicaUserData {
     // Keys retired by a prior code change. New code does not read or
     // write them, but existing installs may still have stale values
     // hanging around. `purgeLegacyKeys` deletes them on launch.
+    //
+    // co.civica.eligibilityResult moved to Keychain in the OBBBA Q11
+    // remediation; SNAPApplicationStatusStore.init() runs the per-
+    // install migration the first time it loads, and this purge sweep
+    // covers installs that never instantiate the store.
     private static let legacyUserDefaultsKeys: [String] = [
-        InterviewCoachAPIClient.legacyAnonymousIDKey
+        InterviewCoachAPIClient.legacyAnonymousIDKey,
+        SNAPApplicationStatusStore.legacyEligibilityResultUserDefaultsKey
     ]
 
     /// One-shot launch cleanup for UserDefaults keys we no longer use.
@@ -129,8 +134,16 @@ enum CivicaUserData {
 
         // 3. Status store — reset to .notStarted, clear milestones +
         //    eligibilityResult. Uses the store's own reset routine so
-        //    persistence stays consistent.
+        //    persistence stays consistent. reset() routes eligibility
+        //    deletion through SNAPEligibilityResultKeychainStore.
         SNAPApplicationStatusStore().reset()
+
+        // 3b. Belt-and-suspenders Keychain wipe. The status store's
+        //     reset() already removes the Keychain entry, but if a
+        //     prior session crashed mid-write or persistence drifted,
+        //     this guarantees no eligibility result lingers in
+        //     Keychain after deleteEverything.
+        SNAPEligibilityResultKeychainStore.delete()
 
         // 4. Direct UserDefaults wipe of every key Civica owns. The
         //    store resets above already touch most of these; the
