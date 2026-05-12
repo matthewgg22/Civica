@@ -74,6 +74,65 @@ enum FindHelpStrings {
         es: "Informar de un error"
     )
 
+    // MARK: - Detail sheet body labels
+    //
+    // Info-block titles above each piece of place data on the detail
+    // sheet. These were inline English literals; routing through
+    // CivicaText keeps them in step with the in-app language picker
+    // so a Spanish-locale user doesn't get an English "Address" label
+    // above a Spanish-language street name.
+
+    static let detailLabelAddress = CivicaText(
+        "Address",
+        es: "Dirección"
+    )
+    static let detailLabelPhone = CivicaText(
+        "Phone",
+        es: "Teléfono"
+    )
+    static let detailLabelHours = CivicaText(
+        "Hours",
+        es: "Horario"
+    )
+    static let detailLabelLanguagesServed = CivicaText(
+        "Languages served",
+        es: "Idiomas ofrecidos"
+    )
+    static let detailLabelNotes = CivicaText(
+        "Notes",
+        es: "Notas"
+    )
+    static let detailLastUpdatedPrefix = CivicaText(
+        "Last updated:",
+        es: "Última actualización:"
+    )
+    static let detailDoneButton = CivicaText(
+        "Done",
+        es: "Listo"
+    )
+
+    // Localized weekday names for the hours block. Keyed by the
+    // hoursJson short-form keys (mon, tue, ...) the backend uses.
+    static func weekdayLabel(for key: String, language: CivicaLanguage) -> String? {
+        switch (key, language) {
+        case ("mon", .english): return "Monday"
+        case ("mon", .spanish): return "Lunes"
+        case ("tue", .english): return "Tuesday"
+        case ("tue", .spanish): return "Martes"
+        case ("wed", .english): return "Wednesday"
+        case ("wed", .spanish): return "Miércoles"
+        case ("thu", .english): return "Thursday"
+        case ("thu", .spanish): return "Jueves"
+        case ("fri", .english): return "Friday"
+        case ("fri", .spanish): return "Viernes"
+        case ("sat", .english): return "Saturday"
+        case ("sat", .spanish): return "Sábado"
+        case ("sun", .english): return "Sunday"
+        case ("sun", .spanish): return "Domingo"
+        default: return nil
+        }
+    }
+
     // MARK: - Loading state (board B4)
     //
     // HANDOFF: "Loading names the work — 'reading the county
