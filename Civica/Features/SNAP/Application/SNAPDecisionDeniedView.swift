@@ -52,7 +52,10 @@ struct SNAPDecisionDeniedView: View {
                 .accessibilityAddTraits(.isHeader)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text(SNAPStatusHomeStrings.deniedBody.value(in: language))
+            Text(SNAPStatusHomeStrings.deniedBody(
+                stateCode: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode,
+                language: language
+            ))
                 .font(CivicaTypography.body)
                 .foregroundStyle(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
@@ -65,7 +68,10 @@ struct SNAPDecisionDeniedView: View {
                 .font(CivicaTypography.sectionHeader)
                 .foregroundStyle(CivicaColors.ink)
 
-            Text(denialReason ?? SNAPStatusHomeStrings.deniedReasonMissing.value(in: language))
+            Text(denialReason ?? SNAPStatusHomeStrings.deniedReasonMissing(
+                stateCode: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode,
+                language: language
+            ))
                 .font(CivicaTypography.body)
                 .foregroundStyle(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)

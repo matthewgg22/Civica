@@ -148,15 +148,16 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
         return false
     }
 
-    /// MA-only beta gate predicate. Returns true when the saved draft
-    /// has a non-MA stateCode AND the user isn't actively editing the
-    /// whereApplying section (the edit case lets them switch back to
-    /// MA without bouncing off the gate first). Exposed on the view
-    /// model so compliance tests can assert routing without spinning
-    /// up SwiftUI. Delegates the in/out-of-scope decision to
-    /// SNAPCoveragePolicy so the same rule applies at every entry
-    /// point (orchestrator, standalone estimator, launch-time
-    /// invalidation).
+    /// Supported-state beta gate predicate. Returns true when the
+    /// saved draft has a stateCode outside SNAPCoveragePolicy.
+    /// supportedStateCodes AND the user isn't actively editing the
+    /// whereApplying section (the edit case lets them switch back
+    /// to a supported state without bouncing off the gate first).
+    /// Exposed on the view model so compliance tests can assert
+    /// routing without spinning up SwiftUI. Delegates the in/out-of-
+    /// scope decision to SNAPCoveragePolicy so the same rule applies
+    /// at every entry point (orchestrator, standalone estimator,
+    /// launch-time invalidation).
     var shouldShowUnsupportedStateGate: Bool {
         if case .editing(.whereApplying) = mode { return false }
         return SNAPCoveragePolicy.shouldShowUnsupportedStateGate(
@@ -233,9 +234,10 @@ struct SNAPApplicationFlowOrchestratorView: View {
 
     @ViewBuilder
     private var currentDestination: some View {
-        // MA-only beta gate — enforced at the orchestrator level so it's
-        // deep-link safe. Predicate lives on the view model so it's
-        // testable from compliance tests.
+        // Supported-state beta gate (CA + MA today via
+        // SNAPCoveragePolicy.supportedStateCodes) — enforced at the
+        // orchestrator level so it's deep-link safe. Predicate lives
+        // on the view model so it's testable from compliance tests.
         if viewModel.shouldShowUnsupportedStateGate {
             SNAPUnsupportedStateView(
                 stateCode: viewModel.draft.whereApplying.stateCode ?? "",

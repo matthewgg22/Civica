@@ -59,15 +59,16 @@ struct SNAPWaitingRoomView: View {
                         submittedAt: statusStore.timestamp(for: .submittedToState) ?? Date(),
                         language: language,
                         showsWICTeaser: persistedDraft?.household.hasMinorInHousehold == true,
+                        stateCode: persistedDraft?.whereApplying.stateCode,
                         onOpenWICTeaser: {
-                            externalLink = CivicaExternalLinks.maWICInfo
+                            externalLink = CivicaExternalLinks.wicInfoPage(for: persistedDraft?.whereApplying.stateCode)
                         },
                         onContactSupport: {
                             // v1: no in-app support inbox yet. Route
                             // to DTA Connect; v2 wires this to a
                             // Civica-side SMS thread per the brand
                             // voice doc's "real person responds" promise.
-                            externalLink = CivicaExternalLinks.dtaConnect
+                            externalLink = CivicaExternalLinks.applyPortal(for: persistedDraft?.whereApplying.stateCode)
                         }
                     )
                 } else {
@@ -134,7 +135,10 @@ struct SNAPWaitingRoomView: View {
 
     private var whatsHappeningSection: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-            Text(SNAPStatusHomeStrings.waitingBody.value(in: language))
+            Text(SNAPStatusHomeStrings.waitingBody(
+                stateCode: persistedDraft?.whereApplying.stateCode,
+                language: language
+            ))
                 .font(CivicaTypography.body)
                 .foregroundStyle(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
@@ -228,7 +232,8 @@ struct SNAPWaitingRoomView: View {
                 steps: SNAPStatusTimelineBuilder.steps(
                     for: statusStore.status,
                     milestones: statusStore.milestones,
-                    language: language
+                    language: language,
+                    stateCode: persistedDraft?.whereApplying.stateCode
                 )
             )
         }

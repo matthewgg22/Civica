@@ -51,6 +51,43 @@ enum SNAPApplicationSection: String, CaseIterable, Identifiable, Codable {
         default: return true
         }
     }
+
+    /// 1-based position of this section in the canonical application
+    /// order. Drives the "Section 3 of 8" label on the per-question
+    /// overall-progress bar. Stable across the app — adding a new
+    /// section means adding it to `allCases` in the right order;
+    /// reordering is intentional behavior.
+    var oneBasedIndex: Int {
+        (Self.allCases.firstIndex(of: self) ?? 0) + 1
+    }
+
+    /// Total number of sections in the canonical application order.
+    /// Exposed so per-question screens don't each have to hardcode "8".
+    static let count: Int = Self.allCases.count
+
+    /// Short localized title for the section, used by the
+    /// per-question progress bar's "Section 3 of 8 · Income" label.
+    /// Kept concise (one or two words) so the chip stays scannable.
+    func title(in language: CivicaLanguage) -> String {
+        switch (self, language) {
+        case (.whereApplying, .english):       return "Where you're applying"
+        case (.whereApplying, .spanish):       return "Dónde solicitas"
+        case (.applicantAge, .english):        return "About you"
+        case (.applicantAge, .spanish):        return "Sobre ti"
+        case (.household, .english):           return "Your household"
+        case (.household, .spanish):           return "Tu hogar"
+        case (.contact, .english):             return "Staying in touch"
+        case (.contact, .spanish):             return "Mantenerse en contacto"
+        case (.income, .english):              return "Income"
+        case (.income, .spanish):              return "Ingresos"
+        case (.studentStatus, .english):       return "Student status"
+        case (.studentStatus, .spanish):       return "Estatus estudiantil"
+        case (.expenses, .english):            return "Expenses"
+        case (.expenses, .spanish):            return "Gastos"
+        case (.documentsChecklist, .english):  return "Documents"
+        case (.documentsChecklist, .spanish):  return "Documentos"
+        }
+    }
 }
 
 struct SNAPReviewDraftFlowView: View {

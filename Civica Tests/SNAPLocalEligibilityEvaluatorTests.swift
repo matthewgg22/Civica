@@ -56,6 +56,38 @@ struct SNAPLocalEligibilityEvaluatorTests {
         #expect(result.ineligibilityReason?.contains("Massachusetts") == true)
     }
 
+    // MARK: - CA eligible path (launch-state parallel to MA)
+
+    @Test func caHouseholdUnderBBCEThresholdIsEligible() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.stateCode = "CA"
+        draft.household.householdSize = "2 people"
+        draft.income.grossMonthlyIncome = 1_500
+        draft.studentStatus.enrolledInHigherEd = false
+
+        let result = SNAPLocalEligibilityEvaluator.evaluate(draft, today: fy26Date)
+
+        #expect(result.status == .eligible)
+        #expect(result.rulesVersion == "CA-bbce-200pct-FY26")
+        #expect(result.ineligibilityReason == nil)
+        #expect(result.contributingFactors.contains("ca_bbce_200pct_applied"))
+        #expect(result.contributingFactors.contains("gross_under_200_fpl"))
+    }
+
+    @Test func caHouseholdOneOverThresholdIsIneligible() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.stateCode = "CA"
+        draft.household.householdSize = "2 people"
+        draft.income.grossMonthlyIncome = 3_409
+        draft.studentStatus.enrolledInHigherEd = false
+
+        let result = SNAPLocalEligibilityEvaluator.evaluate(draft, today: fy26Date)
+
+        #expect(result.status == .ineligible)
+        #expect(result.contributingFactors.contains("gross_over_200_fpl"))
+        #expect(result.ineligibilityReason?.contains("California") == true)
+    }
+
     // MARK: - MA elderly/disabled bypass
 
     @Test func maHouseholdWithElderlyOrDisabledIsEligibleEvenAboveThreshold() {
@@ -147,16 +179,18 @@ struct SNAPLocalEligibilityEvaluatorTests {
         #expect(result.expeditedEligible == false)
     }
 
-    // MARK: - Federal-default dispatch for non-MA states
+    // MARK: - Federal-default dispatch for non-tuned states
 
-    @Test func californiaUsesFederalBaselineThresholds() {
-        // CA at $1700/mo size-2: MA gate (3408) would pass, but
-        // federal 130% FPL size-2 gate (2214) also passes -- so this
-        // is eligible. Pick a value that distinguishes the two gates.
+    @Test func newYorkUsesFederalBaselineThresholds() {
+        // NY at $2500/mo size-2: federal 130% FPL size-2 gate is
+        // ~$2,214, so $2,500 lands ineligible under the federal
+        // baseline. Use this to confirm a non-tuned state routes
+        // through FederalDefaultRules. (Pre-2026-05-13 launch swap
+        // CA filled this role; now CA is in-scope so we use NY.)
         var draft = SNAPApplicationDraft()
-        draft.whereApplying.stateCode = "CA"
+        draft.whereApplying.stateCode = "NY"
         draft.household.householdSize = "2 people"
-        draft.income.grossMonthlyIncome = 2_500 // over federal 2214, under MA 3408
+        draft.income.grossMonthlyIncome = 2_500
         draft.studentStatus.enrolledInHigherEd = false
 
         let result = SNAPLocalEligibilityEvaluator.evaluate(draft, today: fy26Date)

@@ -392,7 +392,13 @@ struct SNAPIncomeFlowView: View {
     private func progress(for step: SNAPIncomeFlowViewModel.Step)
         -> CivicaQuestionScreenProgress
     {
-        .init(current: step.oneBasedIndex, total: SNAPIncomeFlowViewModel.Step.total)
+        .init(
+            current: step.oneBasedIndex,
+            total: SNAPIncomeFlowViewModel.Step.total,
+            sectionIndex: SNAPApplicationSection.income.oneBasedIndex,
+            sectionCount: SNAPApplicationSection.count,
+            sectionTitle: SNAPApplicationSection.income.title(in: language)
+        )
     }
 
     private func advanceOrComplete() {

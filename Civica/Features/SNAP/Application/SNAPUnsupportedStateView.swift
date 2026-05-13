@@ -2,15 +2,16 @@ import CivicaDesignSystem
 import SwiftUI
 
 // Gate shown when the user selects an application state Civica's
-// SNAP screener isn't tuned for yet. The MA-only beta posture means
-// any state other than MA (including the "Another US state" bucket
-// from SNAPWhereApplyingFlow) routes here instead of continuing
-// into the eligibility/calculator flow.
+// SNAP screener isn't tuned for yet. The supported-state list is
+// owned by SNAPCoveragePolicy.supportedStateCodes ({"CA", "MA"} as
+// of the 2026-05-13 launch); any code outside that set (including
+// the "Another US state" bucket from SNAPWhereApplyingFlow) routes
+// here instead of continuing into the eligibility/calculator flow.
 //
 // Enforced at the orchestrator level (see SNAPApplicationFlowOrchestratorView)
 // so deep links into later sections can't bypass it: the orchestrator
 // reads the saved draft's whereApplying.stateCode on every render and
-// switches to this view when the code is set and non-MA.
+// switches to this view when the code is set and out-of-scope.
 
 struct SNAPUnsupportedStateView: View {
     @Environment(\.openURL) private var openURL

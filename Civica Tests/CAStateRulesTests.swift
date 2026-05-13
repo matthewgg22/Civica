@@ -2,23 +2,23 @@ import Foundation
 import Testing
 @testable import Civica
 
-// Locks in MA's BBCE 200% FPL table and the rules-version stamp
+// Locks in CA's BBCE 200% FPL table and the rules-version stamp
 // bit-for-bit. If any of these expectations fail, somebody changed
-// the MA threshold table or rules-version stamp -- update the
+// the CA threshold table or rules-version stamp -- update the
 // numbers below intentionally rather than papering over the
 // regression.
 
-struct MAStateRulesTests {
+struct CAStateRulesTests {
 
-    private let rules = MAStateRules()
+    private let rules = CAStateRules()
     private let fy26Date = Self.iso("2026-03-15")
     private let fy27Date = Self.iso("2027-03-15")
 
     // MARK: - Identity
 
     @Test func stateCodeAndDisplayName() {
-        #expect(rules.stateCode == "MA")
-        #expect(rules.displayName == "Massachusetts")
+        #expect(rules.stateCode == "CA")
+        #expect(rules.displayName == "California")
     }
 
     // MARK: - Gross income (BBCE 200% FPL)
@@ -52,21 +52,12 @@ struct MAStateRulesTests {
         )
     }
 
-    // MARK: - MA SUA chart
+    // MARK: - CA SUA (not yet loaded — return nil)
 
-    @Test func suaHeatingCoolingTier() {
-        #expect(rules.suaValue(tier: .heatingCooling, asOf: fy26Date) == 799)
-    }
-
-    @Test func suaNonHeatingTier() {
-        #expect(rules.suaValue(tier: .nonHeating, asOf: fy26Date) == 507)
-    }
-
-    @Test func suaPhoneOnlyTier() {
-        #expect(rules.suaValue(tier: .phoneOnly, asOf: fy26Date) == 63)
-    }
-
-    @Test func suaNoneTierReturnsNil() {
+    @Test func suaValuesAreNilUntilCDSSChartLoaded() {
+        #expect(rules.suaValue(tier: .heatingCooling, asOf: fy26Date) == nil)
+        #expect(rules.suaValue(tier: .nonHeating, asOf: fy26Date) == nil)
+        #expect(rules.suaValue(tier: .phoneOnly, asOf: fy26Date) == nil)
         #expect(rules.suaValue(tier: .none, asOf: fy26Date) == nil)
     }
 
@@ -88,15 +79,16 @@ struct MAStateRulesTests {
         #expect(rules.earnedIncomeDeductionRate(asOf: fy26Date) == Decimal(string: "0.20"))
     }
 
-    // MARK: - ABAWD waiver (MA list not loaded yet)
+    // MARK: - ABAWD waiver (CA list not loaded yet)
 
-    @Test func maABAWDWaiverLookupReturnsNilUntilDataLoaded() {
-        #expect(rules.abawdWaiverActive(fipsCode: "25025", asOf: fy26Date) == nil)
+    @Test func caABAWDWaiverLookupReturnsNilUntilDataLoaded() {
+        // 06037 = Los Angeles County FIPS.
+        #expect(rules.abawdWaiverActive(fipsCode: "06037", asOf: fy26Date) == nil)
     }
 
-    // MARK: - Categorical eligibility (MA adds BBCE as fallback)
+    // MARK: - Categorical eligibility (CA adds BBCE as fallback)
 
-    @Test func maTANFRecipientPathInherited() {
+    @Test func caTANFRecipientPathInherited() {
         var draft = SNAPApplicationDraft()
         draft.household.receivesTANF = true
         #expect(
@@ -105,51 +97,92 @@ struct MAStateRulesTests {
         )
     }
 
-    @Test func maEmptyDraftFallsBackToBBCE() {
-        // MA's BBCE applies to every screener session that completes
-        // the DTA SNAP brochure trigger (per existing product design).
+    @Test func caEmptyDraftFallsBackToBBCE() {
+        // CA's BBCE applies to every screener session that completes
+        // the CalFresh brochure trigger (parallels MA's posture).
         let draft = SNAPApplicationDraft()
         #expect(
             rules.categoricalEligibility(for: draft, asOf: fy26Date)
-                == .categoricallyEligible(via: .bbce(stateCode: "MA"))
+                == .categoricallyEligible(via: .bbce(stateCode: "CA"))
         )
     }
 
-    @Test func maExplicitFalseCashFlagsStillBBCE() {
+    @Test func caExplicitFalseCashFlagsStillBBCE() {
         var draft = SNAPApplicationDraft()
         draft.household.receivesTANF = false
         draft.household.receivesSSI = false
         draft.household.receivesGeneralAssistance = false
         #expect(
             rules.categoricalEligibility(for: draft, asOf: fy26Date)
-                == .categoricallyEligible(via: .bbce(stateCode: "MA"))
+                == .categoricallyEligible(via: .bbce(stateCode: "CA"))
         )
     }
 
-    // MARK: - Restaurant Meals Program (MA does not operate)
+    // MARK: - Restaurant Meals Program (CA operates it)
 
-    @Test func maRMPAlwaysNotOperated() {
-        // Even with qualifying household status, MA does not run
-        // RMP — the EBT card can't be used for hot prepared meals.
+    @Test func rmpUnhousedQualifies() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.housingStatus = .unhoused
+        let outcome = rules.restaurantMealsProgramEligibility(for: draft, asOf: fy26Date)
+        guard case .eligible(let reasons) = outcome else {
+            Issue.record("Expected .eligible; got \(outcome)")
+            return
+        }
+        #expect(reasons.contains(.unhoused))
+    }
+
+    @Test func rmpElderlyOrDisabledQualifies() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.housingStatus = .stableHome
+        draft.household.hasElderlyOrDisabled = true
+        let outcome = rules.restaurantMealsProgramEligibility(for: draft, asOf: fy26Date)
+        guard case .eligible(let reasons) = outcome else {
+            Issue.record("Expected .eligible; got \(outcome)")
+            return
+        }
+        #expect(reasons.contains(.disabled))
+    }
+
+    @Test func rmpBothCriteriaIncludesBothReasons() {
         var draft = SNAPApplicationDraft()
         draft.whereApplying.housingStatus = .unhoused
         draft.household.hasElderlyOrDisabled = true
+        let outcome = rules.restaurantMealsProgramEligibility(for: draft, asOf: fy26Date)
+        guard case .eligible(let reasons) = outcome else {
+            Issue.record("Expected .eligible; got \(outcome)")
+            return
+        }
+        #expect(Set(reasons) == Set([.disabled, .unhoused]))
+    }
+
+    @Test func rmpExplicitNegativesReturnsNotEligible() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.housingStatus = .stableHome
+        draft.household.hasElderlyOrDisabled = false
         #expect(
             rules.restaurantMealsProgramEligibility(for: draft, asOf: fy26Date)
-                == .notOperated
+                == .notEligible
+        )
+    }
+
+    @Test func rmpUnknownWhenScreenerIncomplete() {
+        let draft = SNAPApplicationDraft()
+        #expect(
+            rules.restaurantMealsProgramEligibility(for: draft, asOf: fy26Date)
+                == .unknown
         )
     }
 
     // MARK: - Rules-version stamp
 
     @Test func rulesVersionStampForFY26() {
-        #expect(rules.rulesVersion(asOf: fy26Date) == "MA-bbce-200pct-FY26")
+        #expect(rules.rulesVersion(asOf: fy26Date) == "CA-bbce-200pct-FY26")
     }
 
     @Test func rulesVersionFallsBackToLatestOutsideWindow() {
         // FY27 isn't loaded yet -- the implementation falls back to
         // the latest known snapshot rather than crashing.
-        #expect(rules.rulesVersion(asOf: fy27Date) == "MA-bbce-200pct-FY26")
+        #expect(rules.rulesVersion(asOf: fy27Date) == "CA-bbce-200pct-FY26")
     }
 
     // MARK: - Snapshot freshness (OBBBA audit Q12)
@@ -160,8 +193,8 @@ struct MAStateRulesTests {
         #expect(status == .current(latestExpiry: fy26End))
     }
 
-    /// MA freshness intersects federal + MA's BBCE + SUA windows.
-    /// Past the earliest expiry (FY26 end-of-window), status flips.
+    /// CA freshness intersects federal + CA's BBCE window. Past the
+    /// earliest expiry (FY26 end-of-window), status flips.
     @Test func snapshotStatusIsExpiredAfterFY26End() {
         let fy26End = Self.iso("2026-09-30")
         let justAfter = fy26End.addingTimeInterval(1)

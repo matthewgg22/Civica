@@ -15,17 +15,21 @@ import SwiftUI
 //
 //   .prep      — Day-before heads-up: when, who'll call, what to
 //                have nearby, who to trust.
-//   .questions — Canonical 12 MA SNAP interview questions with
+//   .questions — Canonical 12 SNAP interview questions with
 //                "you can say:" prompts the user can read out loud.
+//                Originally sourced from MA DTA's question script;
+//                the 12 questions map cleanly to CalFresh county
+//                phone-interview scripts as well (the federal
+//                questionnaire is the substrate).
 //   .live      — During-the-call coach: scroll-through, tap to
 //                advance, current question + next question visible.
 //   .wrapup    — Post-call triage: four reflection options that
 //                route to different follow-ups.
 //
 // Reached from the waiting room's action banner when the user's
-// status is .interviewScheduled. Civica doesn't yet ingest DTA's
-// interview-notice (date / time / county number) — placeholders
-// stay generic-but-honest until that backend path lands.
+// status is .interviewScheduled. Civica doesn't yet ingest the
+// state agency's interview-notice (date / time / county number) —
+// placeholders stay generic-but-honest until that backend path lands.
 
 struct SNAPInterviewCoachView: View {
     let language: CivicaLanguage

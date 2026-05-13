@@ -39,6 +39,12 @@ struct SNAPDecisionApprovedView: View {
                 header
                 monthlyAwardCard
                 recertReminderCard
+                if let restaurantMealsCallout {
+                    restaurantMealsCallout
+                }
+                if let produceMatchCallout {
+                    produceMatchCallout
+                }
                 if showsWICTeaser {
                     wicCard
                 }
@@ -49,6 +55,107 @@ struct SNAPDecisionApprovedView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // MARK: - Restaurant Meals Program callout (CA only today)
+
+    /// Renders an informational card when the active state operates
+    /// the Restaurant Meals Program and the household qualifies
+    /// (elderly, disabled, or unhoused). Suppressed entirely
+    /// otherwise — no card for non-RMP states, no card when the
+    /// screener hasn't collected enough info, no card when the
+    /// household doesn't qualify.
+    @ViewBuilder
+    private var restaurantMealsCallout: (some View)? {
+        if let draft,
+           case .eligible(let reasons) = SNAPRulesRegistry
+            .rules(for: draft.whereApplying.stateCode)
+            .restaurantMealsProgramEligibility(for: draft, asOf: Date()) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Text(language == .english ? "Restaurant Meals Program" : "Programa de Comidas en Restaurantes")
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                Text(restaurantMealsBody(reasons: reasons, language: language))
+                    .font(CivicaTypography.body)
+                    .foregroundStyle(CivicaColors.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            // Info-only callout — soft sky-blue tint so it reads as
+            // "FYI" rather than "tap here." Brick is reserved for
+            // action affordances elsewhere on the screen.
+            .background(CivicaColors.supportPageBackground.opacity(0.55))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        }
+    }
+
+    private func restaurantMealsBody(
+        reasons: [RestaurantMealsEligibility.Reason],
+        language: CivicaLanguage
+    ) -> String {
+        let reasonPhrase = restaurantMealsReasonPhrase(reasons: reasons, language: language)
+        switch language {
+        case .english:
+            return "Because \(reasonPhrase), your EBT card can also be used at participating restaurants for hot prepared meals. Look for the Restaurant Meals Program decal at the door — the FindHelp map will list participating spots when it's tuned for your county."
+        case .spanish:
+            return "Porque \(reasonPhrase), tu tarjeta EBT también puede usarse en restaurantes participantes para comidas calientes preparadas. Busca la calcomanía del Programa de Comidas en Restaurantes en la puerta — el mapa de Buscar Ayuda mostrará los lugares participantes cuando esté ajustado para tu condado."
+        }
+    }
+
+    private func restaurantMealsReasonPhrase(
+        reasons: [RestaurantMealsEligibility.Reason],
+        language: CivicaLanguage
+    ) -> String {
+        if reasons.contains(.unhoused) {
+            return language == .english
+                ? "your household reports unhoused status"
+                : "tu hogar reporta estar sin vivienda"
+        }
+        if reasons.contains(.disabled) {
+            return language == .english
+                ? "someone in your household is elderly or disabled"
+                : "alguien en tu hogar es de edad avanzada o tiene una discapacidad"
+        }
+        return language == .english
+            ? "your household qualifies"
+            : "tu hogar califica"
+    }
+
+    // MARK: - Produce-match callout (CA: Market Match; MA: HIP)
+
+    /// Renders a calm informational card when the active state
+    /// operates a SNAP-EBT produce-doubling program — CalFresh's
+    /// Market Match, DTA's HIP, etc. Suppressed entirely when the
+    /// state has none Civica is tuned for, so non-tuned states
+    /// don't see a stub.
+    @ViewBuilder
+    private var produceMatchCallout: (some View)? {
+        if let description = SNAPAgencyDirectory.produceMatchDescription(
+            for: draft?.whereApplying.stateCode,
+            language: language
+        ),
+           let program = SNAPAgencyDirectory.produceMatchProgram(
+            for: draft?.whereApplying.stateCode
+           ) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Text(program.name)
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                Text(description)
+                    .font(CivicaTypography.body)
+                    .foregroundStyle(CivicaColors.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            // Sibling info-only callout. Same soft-blue tint as the
+            // Restaurant Meals card so the pair reads as a coherent
+            // "extras you should know about" group without either one
+            // claiming the brand brick / teal.
+            .background(CivicaColors.supportPageBackground.opacity(0.55))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        }
     }
 
     // MARK: - Header
@@ -98,7 +205,10 @@ struct SNAPDecisionApprovedView: View {
                 )
                 .foregroundStyle(CivicaColors.ink)
             } else {
-                Text(SNAPDecisionApprovedStrings.amountFallback.value(in: language))
+                Text(SNAPDecisionApprovedStrings.amountFallback(
+                    stateCode: draft?.whereApplying.stateCode,
+                    language: language
+                ))
                     .font(CivicaTypography.subheadStrong)
                     .foregroundStyle(CivicaColors.ink)
                     .fixedSize(horizontal: false, vertical: true)
@@ -268,10 +378,18 @@ enum SNAPDecisionApprovedStrings {
         "Monthly award",
         es: "Beneficio mensual"
     )
-    static let amountFallback = CivicaText(
-        "Massachusetts DTA's official letter has your monthly amount. Open DTA Connect to see it.",
-        es: "La carta oficial del DTA de Massachusetts tiene tu cantidad mensual. Abre DTA Connect para verla."
-    )
+    static func amountFallback(stateCode: String?, language: CivicaLanguage) -> String {
+        let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
+        let portal = SNAPAgencyDirectory.portalName(for: stateCode)
+        let portalEN = portal.isEmpty ? "your state portal" : portal
+        let portalES = portal.isEmpty ? "el portal estatal" : portal
+        switch language {
+        case .english:
+            return "\(agency)'s official letter has your monthly amount. Open \(portalEN) to see it."
+        case .spanish:
+            return "La carta oficial de \(agency) tiene tu cantidad mensual. Abre \(portalES) para verla."
+        }
+    }
     /// {mailed} / {earliest} / {latest} substituted with localized date
     /// strings. Window assumes EBT card is mailed the day after the
     /// decision and arrives 3–7 business days later (MA standard).

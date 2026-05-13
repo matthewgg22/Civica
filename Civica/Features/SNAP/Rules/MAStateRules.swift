@@ -140,6 +140,16 @@ struct MAStateRules: SNAPStateRuleEngine {
 
     // MARK: - Snapshot freshness (OBBBA audit Q12)
 
+    /// Massachusetts does not operate a Restaurant Meals Program;
+    /// the EBT card cannot be used for hot prepared meals in MA
+    /// regardless of household status.
+    func restaurantMealsProgramEligibility(
+        for _: SNAPApplicationDraft,
+        asOf _: Date
+    ) -> RestaurantMealsEligibility {
+        .notOperated
+    }
+
     /// MA freshness = federal freshness ∩ MA's own BBCE + SUA
     /// snapshot windows. The earliest expiry wins.
     func snapshotStatus(asOf: Date) -> RuleSnapshotStatus {

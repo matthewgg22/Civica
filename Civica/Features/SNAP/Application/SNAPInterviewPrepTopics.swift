@@ -26,10 +26,40 @@ enum SNAPInterviewPrepTopics {
         let permission: String?
     }
 
-    static func list(language: CivicaLanguage) -> [Topic] {
+    static func list(language: CivicaLanguage, stateCode: String? = nil) -> [Topic] {
+        let topics: [Topic]
         switch language {
-        case .english: return englishTopics
-        case .spanish: return spanishTopics
+        case .english: topics = englishTopics
+        case .spanish: topics = spanishTopics
+        }
+        // Patch the day-of-call topic's permission line with the
+        // active state's caller-ID text so the prep doesn't mention
+        // "Massachusetts DTA" to a CalFresh user.
+        return topics.map { topic in
+            guard topic.id == "day-of-call" else { return topic }
+            return Topic(
+                id: topic.id,
+                title: topic.title,
+                prompts: topic.prompts,
+                permission: dayOfCallPermission(stateCode: stateCode, language: language)
+            )
+        }
+    }
+
+    private static func dayOfCallPermission(stateCode: String?, language: CivicaLanguage) -> String {
+        let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
+        let codes = SNAPAgencyDirectory.caseworkerAreaCodes(for: stateCode)
+            .map { $0.replacingOccurrences(of: "(", with: "")
+                     .replacingOccurrences(of: ")", with: "") }
+            .joined(separator: " / ")
+        let codePhrase = codes.isEmpty ? "" : (language == .english
+            ? " or a \(codes) area code"
+            : " o un código \(codes)")
+        switch language {
+        case .english:
+            return "Caller ID will say \"\(agency)\"\(codePhrase). They will never text you a code or ask for money."
+        case .spanish:
+            return "El identificador de llamadas dirá \"\(agency)\"\(codePhrase). Nunca te enviarán un código de verificación ni pedirán dinero."
         }
     }
 

@@ -46,32 +46,77 @@ struct CivicaSafariSheet: UIViewControllerRepresentable {
 }
 
 /// Stable identifier for external links Civica deep-links into. Keeps
-/// URLs out of view code so the same DTA Connect link can be reached
+/// URLs out of view code so the same apply-portal link can be reached
 /// from the recert / waiting-room / walkthrough surfaces and updated
 /// in one place if the state agency moves things.
+///
+/// State-keyed lookups route through `applyPortal(for:)` etc.; the
+/// legacy MA-only constants are retained for surfaces that haven't
+/// yet been threaded with a state code and still default to MA.
 enum CivicaExternalLinks {
 
-    /// Massachusetts DTA Connect — the state's official SNAP /
-    /// CalFresh portal for submitting applications, uploading
-    /// requested documents, and managing existing cases.
+    /// California BenefitsCal — CalFresh's statewide apply portal.
+    static let benefitsCal: URL = URL(string: "https://benefitscal.com/")!
+
+    /// CDSS State Hearings Division request page — where a denied
+    /// CalFresh applicant can request a state hearing within 90 days.
+    static let cdssFairHearing: URL = URL(
+        string: "https://www.cdss.ca.gov/inforesources/state-hearings/request-a-state-hearing"
+    )!
+
+    /// California WIC info page. Used by the cross-program teaser
+    /// when the household has minors.
+    static let caWICInfo: URL = URL(
+        string: "https://www.cdph.ca.gov/Programs/CFH/DWICSN/Pages/Program-Landing1.aspx"
+    )!
+
+    /// Massachusetts DTA Connect — MA's official SNAP portal.
+    /// **State-keyed callers should prefer `applyPortal(for:)`.**
+    /// This constant remains because it's the MA branch of that
+    /// lookup; direct references should go through the state-keyed
+    /// helper so they automatically pick up new states.
     static let dtaConnect: URL = URL(string: "https://dtaconnect.eohhs.mass.gov/")!
 
-    /// MA DTA fair-hearing request page — where a denied applicant
-    /// can request a hearing within 90 days of the decision notice.
-    /// Used by the appeal CTA on the denial surface.
+    /// MA DTA fair-hearing request page.
+    /// **State-keyed callers should prefer `fairHearingPage(for:)`.**
     static let dtaFairHearing: URL = URL(
         string: "https://www.mass.gov/info-details/how-to-request-a-fair-hearing"
     )!
 
-    /// Massachusetts WIC Nutrition Program info page. Used by the
-    /// cross-program teaser on the verdict view when the household
-    /// has minors (WIC serves kids under 5 + pregnant / postpartum
-    /// mothers). Civica doesn't apply for WIC yet — the user follows
-    /// the link to learn about it and start the WIC application
-    /// at the state's page.
+    /// Massachusetts WIC Nutrition Program info page.
+    /// **State-keyed callers should prefer `wicInfoPage(for:)`.**
     static let maWICInfo: URL = URL(
         string: "https://www.mass.gov/wic-nutrition-program"
     )!
+
+    /// State-keyed apply-portal lookup. Falls back to the launch
+    /// state's portal when the state code is unknown.
+    static func applyPortal(for stateCode: String?) -> URL {
+        switch (stateCode ?? SNAPAgencyDirectory.launchStateCode).uppercased() {
+        case "CA": return benefitsCal
+        case "MA": return dtaConnect
+        default:   return benefitsCal
+        }
+    }
+
+    /// State-keyed fair-hearing-request page lookup. Falls back to
+    /// the launch state's portal.
+    static func fairHearingPage(for stateCode: String?) -> URL {
+        switch (stateCode ?? SNAPAgencyDirectory.launchStateCode).uppercased() {
+        case "CA": return cdssFairHearing
+        case "MA": return dtaFairHearing
+        default:   return cdssFairHearing
+        }
+    }
+
+    /// State-keyed WIC info page lookup.
+    static func wicInfoPage(for stateCode: String?) -> URL {
+        switch (stateCode ?? SNAPAgencyDirectory.launchStateCode).uppercased() {
+        case "CA": return caWICInfo
+        case "MA": return maWICInfo
+        default:   return caWICInfo
+        }
+    }
 }
 
 // MARK: - URL identity for .sheet(item:)

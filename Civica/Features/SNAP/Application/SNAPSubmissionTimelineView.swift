@@ -22,10 +22,36 @@ struct SNAPSubmissionTimelineView: View {
     /// gating the "while you wait" cross-program teaser. False hides
     /// the WIC card and the layout collapses to one footer card.
     let showsWICTeaser: Bool
+    /// USPS state code for the user's active draft. Drives the
+    /// agency name and the caseworker area-codes mentioned in the
+    /// timeline copy. Nil falls back to the launch state.
+    let stateCode: String?
     let onOpenWICTeaser: () -> Void
     let onContactSupport: () -> Void
 
-    private static let supportPhone = "(617) 555-0142"
+    init(
+        submittedAt: Date,
+        language: CivicaLanguage,
+        showsWICTeaser: Bool,
+        stateCode: String? = nil,
+        onOpenWICTeaser: @escaping () -> Void,
+        onContactSupport: @escaping () -> Void
+    ) {
+        self.submittedAt = submittedAt
+        self.language = language
+        self.showsWICTeaser = showsWICTeaser
+        self.stateCode = stateCode
+        self.onOpenWICTeaser = onOpenWICTeaser
+        self.onContactSupport = onContactSupport
+    }
+
+    private var supportPhone: String {
+        // First area code of the state plus a Civica-owned vanity
+        // pattern so the displayed number renders correctly per region.
+        let codes = SNAPAgencyDirectory.caseworkerAreaCodes(for: stateCode)
+        let prefix = codes.first ?? "(800)"
+        return "\(prefix) 555-0142"
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
@@ -56,7 +82,7 @@ struct SNAPSubmissionTimelineView: View {
                 .font(CivicaTypography.sectionHeader)
                 .foregroundStyle(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
-            Text(SNAPSubmissionTimelineStrings.subhead.value(in: language))
+            Text(SNAPSubmissionTimelineStrings.subhead(stateCode: stateCode, language: language))
                 .font(CivicaTypography.body)
                 .foregroundStyle(CivicaColors.graphite)
                 .fixedSize(horizontal: false, vertical: true)
@@ -90,7 +116,10 @@ struct SNAPSubmissionTimelineView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(station.when)
                     .font(CivicaTypography.captionStrong.monospacedDigit())
-                    .foregroundStyle(station.state == .done ? CivicaColors.brickPrimary : CivicaColors.graphite)
+                    // Done stations -> teal (positive past milestone),
+                    // matching the dot. Upcoming + now lean graphite
+                    // so the gold "now" dot stays the eye anchor.
+                    .foregroundStyle(station.state == .done ? CivicaColors.accentTeal : CivicaColors.graphite)
                     .textCase(.uppercase)
                     .kerning(1.2)
                 Text(station.title)
@@ -110,13 +139,15 @@ struct SNAPSubmissionTimelineView: View {
     @ViewBuilder
     private func stationDot(state: Station.State) -> some View {
         switch state {
+        // Done = positive past milestone -> teal
         case .done:
             Circle()
-                .fill(CivicaColors.brickPrimary)
+                .fill(CivicaColors.accentTeal)
                 .frame(width: 14, height: 14)
+        // Now = "you are here right now" -> gold focus
         case .now:
             Circle()
-                .fill(CivicaColors.ink)
+                .fill(CivicaColors.timelineFocusGold)
                 .frame(width: 14, height: 14)
         case .upcoming:
             Circle()
@@ -208,21 +239,21 @@ struct SNAPSubmissionTimelineView: View {
                 id: "submitted",
                 when: "\(today) · \(formatter.string(from: submittedAt))",
                 title: SNAPSubmissionTimelineStrings.stationSubmittedTitle.value(in: language),
-                body: SNAPSubmissionTimelineStrings.stationSubmittedBody.value(in: language),
+                body: SNAPSubmissionTimelineStrings.stationSubmittedBody(stateCode: stateCode, language: language),
                 state: .done
             ),
             Station(
                 id: "agency_review",
                 when: withinSeven,
                 title: SNAPSubmissionTimelineStrings.stationReviewTitle.value(in: language),
-                body: SNAPSubmissionTimelineStrings.stationReviewBody.value(in: language),
+                body: SNAPSubmissionTimelineStrings.stationReviewBody(stateCode: stateCode, language: language),
                 state: .now
             ),
             Station(
                 id: "decision_letter",
                 when: withinThirty,
                 title: SNAPSubmissionTimelineStrings.stationDecisionTitle.value(in: language),
-                body: SNAPSubmissionTimelineStrings.stationDecisionBody.value(in: language),
+                body: SNAPSubmissionTimelineStrings.stationDecisionBody(stateCode: stateCode, language: language),
                 state: .upcoming
             ),
             Station(
@@ -237,7 +268,7 @@ struct SNAPSubmissionTimelineView: View {
 
     private var somethingWrongBody: String {
         let template = SNAPSubmissionTimelineStrings.somethingWrongBody.value(in: language)
-        return template.replacingOccurrences(of: "%@", with: Self.supportPhone)
+        return template.replacingOccurrences(of: "%@", with: supportPhone)
     }
 
     fileprivate struct Station {
@@ -262,10 +293,15 @@ enum SNAPSubmissionTimelineStrings {
         "Your SNAP application is in. Here's what we expect to happen, by when.",
         es: "Tu solicitud de SNAP fue enviada. Esto es lo que esperamos que pase, y cuándo."
     )
-    static let subhead = CivicaText(
-        "Massachusetts DTA owns the next steps. We'll text you the moment anything changes.",
-        es: "El DTA de Massachusetts maneja los próximos pasos. Te enviaremos un mensaje cuando algo cambie."
-    )
+    static func subhead(stateCode: String?, language: CivicaLanguage) -> String {
+        let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
+        switch language {
+        case .english:
+            return "\(agency) owns the next steps. We'll text you the moment anything changes."
+        case .spanish:
+            return "\(agency) maneja los próximos pasos. Te enviaremos un mensaje cuando algo cambie."
+        }
+    }
 
     // MARK: - Station window labels
 
@@ -292,26 +328,54 @@ enum SNAPSubmissionTimelineStrings {
         "Submitted",
         es: "Enviada"
     )
-    static let stationSubmittedBody = CivicaText(
-        "Sent to Massachusetts DTA through dtaconnect.eohhs.mass.gov. You should also see it listed under \"My Applications\" in your DTA Connect account.",
-        es: "Enviada al DTA de Massachusetts a través de dtaconnect.eohhs.mass.gov. También debes verla en \"Mis Solicitudes\" de tu cuenta de DTA Connect."
-    )
+    static func stationSubmittedBody(stateCode: String?, language: CivicaLanguage) -> String {
+        let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
+        let portal = SNAPAgencyDirectory.portalName(for: stateCode)
+        let portalURL = SNAPAgencyDirectory.portalShortURL(for: stateCode)
+        let portalRef = portal.isEmpty ? "the state portal" : "\(portal) (\(portalURL))"
+        let portalRefES = portal.isEmpty ? "el portal estatal" : "\(portal) (\(portalURL))"
+        switch language {
+        case .english:
+            return "Sent to \(agency) through \(portalRef). You should also see it listed under \"My Applications\" in your \(portal.isEmpty ? "portal" : portal) account."
+        case .spanish:
+            return "Enviada a \(agency) a través de \(portalRefES). También debes verla en \"Mis Solicitudes\" de tu cuenta de \(portal.isEmpty ? "portal" : portal)."
+        }
+    }
     static let stationReviewTitle = CivicaText(
         "Agency review",
         es: "Revisión de la agencia"
     )
-    static let stationReviewBody = CivicaText(
-        "A DTA caseworker reads your application and may call to confirm details. Their numbers usually start with (617) or (508) — we'll never ask you for payment.",
-        es: "Un asesor del DTA lee tu solicitud y puede llamarte para confirmar detalles. Sus números empiezan con (617) o (508) — nunca te pediremos pago."
-    )
+    static func stationReviewBody(stateCode: String?, language: CivicaLanguage) -> String {
+        let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
+        let codes = SNAPAgencyDirectory.caseworkerAreaCodesInline(for: stateCode, language: language)
+        let codesPhrase: String
+        if !codes.isEmpty {
+            codesPhrase = language == .english
+                ? " Their numbers usually start with \(codes)."
+                : " Sus números empiezan con \(codes)."
+        } else {
+            codesPhrase = ""
+        }
+        switch language {
+        case .english:
+            return "A \(agency) caseworker reads your application and may call to confirm details.\(codesPhrase) We'll never ask you for payment."
+        case .spanish:
+            return "Un asesor de \(agency) lee tu solicitud y puede llamarte para confirmar detalles.\(codesPhrase) Nunca te pediremos pago."
+        }
+    }
     static let stationDecisionTitle = CivicaText(
         "Decision letter",
         es: "Carta de decisión"
     )
-    static let stationDecisionBody = CivicaText(
-        "DTA sends a letter by mail and we'll text you. If approved, an EBT card is mailed within 5 business days.",
-        es: "El DTA envía una carta por correo y te enviaremos un mensaje. Si te aprueban, la tarjeta EBT llega por correo dentro de 5 días hábiles."
-    )
+    static func stationDecisionBody(stateCode: String?, language: CivicaLanguage) -> String {
+        let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
+        switch language {
+        case .english:
+            return "\(agency) sends a letter by mail and we'll text you. If approved, an EBT card is mailed within 5 business days."
+        case .spanish:
+            return "\(agency) envía una carta por correo y te enviaremos un mensaje. Si te aprueban, la tarjeta EBT llega por correo dentro de 5 días hábiles."
+        }
+    }
     static let stationDepositTitle = CivicaText(
         "First deposit",
         es: "Primer depósito"

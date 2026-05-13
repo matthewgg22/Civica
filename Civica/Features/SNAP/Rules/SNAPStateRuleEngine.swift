@@ -122,6 +122,62 @@ protocol SNAPStateRuleEngine {
     /// continues to render a fallback verdict, but the verdict is
     /// no longer trustworthy. See OBBBA audit Q12 (Revision 2).
     func snapshotStatus(asOf: Date) -> RuleSnapshotStatus
+
+    /// Whether the household qualifies for the state's Restaurant
+    /// Meals Program (RMP), which lets elderly, disabled, or
+    /// unhoused SNAP recipients use their EBT card at participating
+    /// restaurants for hot prepared meals (7 CFR 273.10(g) / state
+    /// option). Most states do not operate RMP; conformers in those
+    /// states return `.notOperated`. CA (CalFresh RMP), AZ, RI, IL
+    /// and a handful of others operate it in specific counties.
+    /// Returning `.unknown` lets the caller suppress the callout
+    /// when draft fields haven't been collected yet.
+    func restaurantMealsProgramEligibility(
+        for draft: SNAPApplicationDraft,
+        asOf: Date
+    ) -> RestaurantMealsEligibility
+}
+
+// MARK: - Restaurant Meals Program
+
+/// Outcome of the state's Restaurant Meals Program (RMP) eligibility
+/// check. RMP is a state option under 7 CFR 273.10(g) that lets
+/// elderly, disabled, or unhoused SNAP recipients use EBT at
+/// participating restaurants for hot prepared meals (otherwise
+/// disallowed by SNAP). The household-level qualifying criteria
+/// are federal; whether the state operates the program is the
+/// gating variable.
+enum RestaurantMealsEligibility: Equatable {
+    /// The state does not operate an RMP. Most states are here.
+    case notOperated
+
+    /// The state operates an RMP, the draft has enough information
+    /// to evaluate, and no household member qualifies (none are
+    /// elderly, disabled, or unhoused).
+    case notEligible
+
+    /// The state operates an RMP and at least one household member
+    /// qualifies. `reasons` enumerates which federal criteria are
+    /// met so the surface copy can name them ("Because someone in
+    /// your household is 60+ …"). Order is stable across calls.
+    case eligible(reasons: [Reason])
+
+    /// The state operates an RMP but the draft has not collected
+    /// enough information to evaluate. Caller suppresses the
+    /// callout rather than guessing.
+    case unknown
+
+    enum Reason: String, Equatable {
+        /// Household member age 60+ (federal RMP elderly trigger).
+        case elderly
+        /// Household member receiving SSI, SSDI, or otherwise
+        /// disability-status — the screener collects this as a
+        /// combined elderly-or-disabled flag, so a positive flag
+        /// without explicit elderly affirmation routes here.
+        case disabled
+        /// Household reports unhoused / homeless status.
+        case unhoused
+    }
 }
 
 // MARK: - Rule-snapshot freshness

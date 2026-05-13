@@ -7,12 +7,16 @@ import Foundation
 //
 // Per OBBBA audit Q7 (Revision 2): "Implement a central
 // SNAPCoveragePolicy or equivalent and call it at every SNAP entry
-// point. For non-MA users, show an unsupported-state view with
-// official resources rather than running the estimator." The new
-// MA-only orchestrator gate already exists; this policy is what the
-// gate (and the standalone estimator entry, and the launch-time
+// point. For out-of-scope users, show an unsupported-state view
+// with official resources rather than running the estimator." The
+// orchestrator gate already exists; this policy is what the gate
+// (and the standalone estimator entry, and the launch-time
 // invalidation routine in CivicaUserData) all consult together so
 // the scope rule lives in one place.
+//
+// 2026-05-13: California is the launch state. MA is retained as a
+// peer because the original screener was authored for MA and
+// existing draft users may still resolve to it.
 
 enum SNAPCoveragePolicy {
 
@@ -20,7 +24,7 @@ enum SNAPCoveragePolicy {
     /// Expanding scope is one PR that adds a state to this set, adds
     /// a SNAPStateRuleEngine conformer, and signs the relevant rows
     /// of docs/SNAP-source-citation-signoff.md.
-    static let supportedStateCodes: Set<String> = ["MA"]
+    static let supportedStateCodes: Set<String> = ["CA", "MA"]
 
     /// Whether the user's selected state is one the screener can
     /// serve today. Returns false for nil — callers that want

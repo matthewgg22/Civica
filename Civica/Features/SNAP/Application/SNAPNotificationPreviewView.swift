@@ -15,6 +15,14 @@ import SwiftUI
 struct SNAPNotificationPreviewView: View {
     let language: CivicaLanguage
 
+    /// USPS state code used to substitute the `{agency}` / `{agencyFull}`
+    /// / `{portal}` tokens in each template's body. Resolves from the
+    /// persisted draft at view-construction time; nil falls back to the
+    /// launch state via SNAPAgencyDirectory.
+    private var previewStateCode: String? {
+        SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
@@ -96,11 +104,11 @@ struct SNAPNotificationPreviewView: View {
                     .foregroundStyle(CivicaColors.graphite)
                     .textCase(.uppercase)
                     .kerning(0.6)
-                Text(template.subject.value(in: language))
+                Text(CivicaNotificationTemplates.render(template.subject, stateCode: previewStateCode, language: language))
                     .font(CivicaTypography.subheadStrong)
                     .foregroundStyle(CivicaColors.ink)
                     .fixedSize(horizontal: false, vertical: true)
-                Text(template.preheader.value(in: language))
+                Text(CivicaNotificationTemplates.render(template.preheader, stateCode: previewStateCode, language: language))
                     .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.graphite)
                     .fixedSize(horizontal: false, vertical: true)
@@ -114,7 +122,7 @@ struct SNAPNotificationPreviewView: View {
             // Body stanzas
             VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                 ForEach(Array(template.body.enumerated()), id: \.offset) { _, stanza in
-                    Text(stanza.value(in: language))
+                    Text(CivicaNotificationTemplates.render(stanza, stateCode: previewStateCode, language: language))
                         .font(CivicaTypography.body)
                         .foregroundStyle(CivicaColors.ink)
                         .fixedSize(horizontal: false, vertical: true)
@@ -168,7 +176,7 @@ struct SNAPNotificationPreviewView: View {
 
     private func smsCard(_ template: CivicaNotificationTemplate) -> some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-            Text(template.subject.value(in: language))
+            Text(CivicaNotificationTemplates.render(template.subject, stateCode: previewStateCode, language: language))
                 .font(CivicaTypography.captionStrong)
                 .foregroundStyle(CivicaColors.graphite)
                 .textCase(.uppercase)
@@ -179,7 +187,7 @@ struct SNAPNotificationPreviewView: View {
                     .font(CivicaTypography.caption.monospacedDigit())
                     .foregroundStyle(CivicaColors.graphite)
                 ForEach(Array(template.body.enumerated()), id: \.offset) { _, stanza in
-                    smsBubble(stanza.value(in: language))
+                    smsBubble(CivicaNotificationTemplates.render(stanza, stateCode: previewStateCode, language: language))
                 }
                 if let buttonLabel = template.buttonLabel,
                    let url = template.buttonURLHint {

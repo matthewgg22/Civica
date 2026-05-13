@@ -45,4 +45,46 @@ enum CivicaQuestionStrings {
         case .spanish: return "Pregunta \(current) de \(total)"
         }
     }
+
+    /// Section label for the overall progress bar — "Section 3 of 8 ·
+    /// Income" / "Sección 3 de 8 · Ingresos". Omits the title separator
+    /// when no title is supplied.
+    static func sectionLabel(index: Int, count: Int, title: String?, language: CivicaLanguage) -> String {
+        let prefix: String
+        switch language {
+        case .english: prefix = "Section \(index) of \(count)"
+        case .spanish: prefix = "Sección \(index) de \(count)"
+        }
+        if let title, !title.isEmpty {
+            return "\(prefix) · \(title)"
+        }
+        return prefix
+    }
+
+    /// Percent label for the overall progress bar — "42%". Same in
+    /// both languages; rounded to the nearest whole percent so the
+    /// number doesn't jitter every keystroke.
+    static func percentLabel(fraction: Double, language _: CivicaLanguage) -> String {
+        let pct = Int((fraction * 100).rounded())
+        return "\(pct)%"
+    }
+
+    /// Verbose accessibility label for the overall progress bar.
+    /// Reads as "Application progress: about 42 percent. Section 3
+    /// of 8." so VoiceOver users get a complete picture instead of
+    /// just hearing the percentage.
+    static func overallProgressAccessibilityLabel(
+        fraction: Double,
+        sectionIndex: Int,
+        sectionCount: Int,
+        language: CivicaLanguage
+    ) -> String {
+        let pct = Int((fraction * 100).rounded())
+        switch language {
+        case .english:
+            return "Application progress: about \(pct) percent. Section \(sectionIndex) of \(sectionCount)."
+        case .spanish:
+            return "Progreso de la solicitud: aproximadamente \(pct) por ciento. Sección \(sectionIndex) de \(sectionCount)."
+        }
+    }
 }

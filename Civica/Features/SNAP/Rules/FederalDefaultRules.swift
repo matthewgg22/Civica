@@ -215,6 +215,17 @@ struct FederalDefaultRules: SNAPStateRuleEngine {
             ? .current(latestExpiry: earliestExpiry)
             : .expired(latestExpiry: earliestExpiry)
     }
+
+    /// Federal default: RMP is a state option; without a state-
+    /// specific override the program is treated as not operated.
+    /// State conformers that participate (CA, AZ, RI, IL, …)
+    /// override this to evaluate the federal household criteria.
+    func restaurantMealsProgramEligibility(
+        for _: SNAPApplicationDraft,
+        asOf _: Date
+    ) -> RestaurantMealsEligibility {
+        .notOperated
+    }
 }
 
 // MARK: - Private threshold tables

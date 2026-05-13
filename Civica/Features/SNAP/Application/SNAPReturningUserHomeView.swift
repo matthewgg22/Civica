@@ -145,7 +145,8 @@ struct SNAPReturningUserHomeView: View {
         CivicaStatusTimeline(steps: SNAPStatusTimelineBuilder.steps(
             for: statusStore.status,
             milestones: statusStore.milestones,
-            language: language
+            language: language,
+            stateCode: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
         ))
     }
 
@@ -191,7 +192,10 @@ struct SNAPReturningUserHomeView: View {
         case .screenerComplete:
             return SNAPStatusHomeStrings.actionGeneratePacket.value(in: language)
         case .packetGenerated:
-            return SNAPStatusHomeStrings.actionSubmitToState.value(in: language)
+            return SNAPStatusHomeStrings.actionSubmitToState(
+                stateCode: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode,
+                language: language
+            )
         case .submittedToState, .interviewScheduled, .interviewCompleted:
             return SNAPStatusHomeStrings.waitingTitle.value(in: language)
         case .documentsRequested:

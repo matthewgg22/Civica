@@ -131,6 +131,13 @@ struct SNAPDocumentsChecklistFlowView: View {
 
     var body: some View {
         CivicaQuestionScreen(
+            progress: .init(
+                current: 1,
+                total: 1,
+                sectionIndex: SNAPApplicationSection.documentsChecklist.oneBasedIndex,
+                sectionCount: SNAPApplicationSection.count,
+                sectionTitle: SNAPApplicationSection.documentsChecklist.title(in: language)
+            ),
             title: SNAPDocumentsChecklistStrings.title.value(in: language),
             helper: SNAPDocumentsChecklistStrings.helper.value(in: language),
             primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),

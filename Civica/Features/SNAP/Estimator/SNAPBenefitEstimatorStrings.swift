@@ -9,13 +9,16 @@ enum SNAPBenefitEstimatorStrings {
     // MARK: - Header
 
     static let pageTitle = CivicaText(
-        "Estimate your SNAP benefit",
-        es: "Estima tu beneficio de SNAP"
+        "Estimate SNAP Benefit",
+        es: "Estima beneficio de SNAP"
     )
-    static let pageSubtitle = CivicaText(
-        "Five quick questions. The result updates as you change your answers.",
-        es: "Cinco preguntas rápidas. El resultado se actualiza al cambiar tus respuestas."
-    )
+    /// Retained as an empty string-ish constant for backward
+    /// compatibility — surfaces that referenced it now suppress the
+    /// subtitle entirely. Kept as an explicit empty CivicaText
+    /// rather than deleted so callers in other modules (Spanish
+    /// strings catalog, marketing screenshots) don't break on a
+    /// missing symbol.
+    static let pageSubtitle = CivicaText("", es: "")
 
     // MARK: - Questions
 
@@ -36,9 +39,14 @@ enum SNAPBenefitEstimatorStrings {
         es: "Agregar una persona al hogar"
     )
 
+    /// Pairs with `utilitiesQuestion` in a 2-column row. Trimmed to
+    /// a 4-word question so the chip fits the half-width column on
+    /// a single line at the design-system page-title scale; the
+    /// longer-form helper has been dropped from the 2-col layout
+    /// since the question itself is unambiguous.
     static let elderlyOrDisabledQuestion = CivicaText(
-        "Anyone 60 or older, or with a disability?",
-        es: "¿Alguien de 60 años o más, o con una discapacidad?"
+        "Anyone 60+ or disabled?",
+        es: "¿Alguien con 60+ o discapacidad?"
     )
     static let elderlyOrDisabledHelper = CivicaText(
         "Unlocks extra SNAP deductions, including uncapped shelter costs.",
@@ -63,9 +71,12 @@ enum SNAPBenefitEstimatorStrings {
         es: "Usa lo que realmente pagas cada mes — tu parte si lo compartes."
     )
 
+    /// Pairs with `elderlyOrDisabledQuestion` in a 2-column row.
+    /// Question shortened from the prior multi-line version so the
+    /// 2-col card stays compact.
     static let utilitiesQuestion = CivicaText(
-        "Do you pay utilities separately from rent?",
-        es: "¿Pagas servicios públicos aparte de la renta?"
+        "Pay utilities separately?",
+        es: "¿Pagas servicios aparte?"
     )
     static let utilitiesHelper = CivicaText(
         "Heat, electricity, water, gas — even just one counts.",
@@ -91,14 +102,25 @@ enum SNAPBenefitEstimatorStrings {
         "a year",
         es: "al año"
     )
-    static let resultContextEligible = CivicaText(
-        "This is an estimate — Massachusetts DTA reviews your full application and confirms the amount.",
-        es: "Esto es una estimación — el DTA de Massachusetts revisa tu solicitud completa y confirma el monto."
-    )
-    static let resultContextMinBenefit = CivicaText(
-        "Under federal law, most 1–2 person households receive at least $24/month if approved. DTA confirms your exact amount.",
-        es: "Bajo la ley federal, la mayoría de los hogares de 1 a 2 personas reciben al menos $24/mes si son aprobados. El DTA confirma tu monto exacto."
-    )
+    static func resultContextEligible(stateCode: String?, language: CivicaLanguage) -> String {
+        let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
+        switch language {
+        case .english:
+            return "This is an estimate — \(agency) reviews your full application and confirms the amount."
+        case .spanish:
+            return "Esto es una estimación — \(agency) revisa tu solicitud completa y confirma el monto."
+        }
+    }
+
+    static func resultContextMinBenefit(stateCode: String?, language: CivicaLanguage) -> String {
+        let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
+        switch language {
+        case .english:
+            return "Under federal law, most 1–2 person households receive at least $24/month if approved. \(agency) confirms your exact amount."
+        case .spanish:
+            return "Bajo la ley federal, la mayoría de los hogares de 1 a 2 personas reciben al menos $24/mes si son aprobados. \(agency) confirma tu monto exacto."
+        }
+    }
 
     static let ineligibleHeadline = CivicaText(
         "Above the estimated SNAP limit",

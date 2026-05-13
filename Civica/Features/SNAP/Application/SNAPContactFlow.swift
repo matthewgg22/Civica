@@ -338,7 +338,13 @@ struct SNAPContactFlowView: View {
     private func progress(for step: SNAPContactFlowViewModel.Step)
         -> CivicaQuestionScreenProgress
     {
-        .init(current: step.oneBasedIndex, total: SNAPContactFlowViewModel.Step.total)
+        .init(
+            current: step.oneBasedIndex,
+            total: SNAPContactFlowViewModel.Step.total,
+            sectionIndex: SNAPApplicationSection.contact.oneBasedIndex,
+            sectionCount: SNAPApplicationSection.count,
+            sectionTitle: SNAPApplicationSection.contact.title(in: language)
+        )
     }
 
     private func completeOrAdvance() {

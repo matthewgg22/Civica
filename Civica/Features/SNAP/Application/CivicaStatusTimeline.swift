@@ -119,8 +119,15 @@ struct CivicaStatusTimeline: View {
 
     private func markerFill(for step: Step) -> Color {
         switch step.state {
-        case .complete: return accent
-        case .current:  return accent
+        // Completed milestones land on teal — positive-outcome cue
+        // per HANDOFF, instead of repeating the brand brick that
+        // dominates every CTA on the same screens.
+        case .complete: return CivicaColors.accentTeal
+        // Current step uses the dedicated timelineFocusGold token
+        // ("this is where you are right now") so the eye reads it
+        // as a distinct "you are here" rather than a duplicate of
+        // either completed (teal) or the screen's primary CTA (brick).
+        case .current:  return CivicaColors.timelineFocusGold
         case .future:   return CivicaColors.surfacePrimary
         case .blocked:  return CivicaColors.warningAmber
         }
@@ -151,7 +158,9 @@ struct CivicaStatusTimeline: View {
 
     private func connectorColor(for step: Step) -> Color {
         switch step.state {
-        case .complete: return accent
+        // Match the completed-marker tint so the connector line
+        // visually "carries" completion forward.
+        case .complete: return CivicaColors.accentTeal
         case .current:  return CivicaColors.hairline
         case .future:   return CivicaColors.hairline
         case .blocked:  return CivicaColors.warningAmber.opacity(0.4)

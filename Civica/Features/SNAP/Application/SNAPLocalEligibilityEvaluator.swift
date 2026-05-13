@@ -192,18 +192,29 @@ enum SNAPLocalEligibilityEvaluator {
     }
 
     /// MA preserves the pre-refactor "ma_bbce_200pct_applied" tag
-    /// bit-for-bit so existing audit trails stay consistent.
-    /// Other states emit a parallel federal-default tag.
+    /// bit-for-bit so existing audit trails stay consistent. CA
+    /// uses the parallel "ca_bbce_200pct_applied" tag (also 200% FPL).
+    /// Other states emit a federal-default tag.
     private static func initialFactor(for rules: SNAPStateRuleEngine) -> String {
-        rules.stateCode == "MA" ? "ma_bbce_200pct_applied" : "federal_default_applied"
+        switch rules.stateCode {
+        case "MA": return "ma_bbce_200pct_applied"
+        case "CA": return "ca_bbce_200pct_applied"
+        default:   return "federal_default_applied"
+        }
     }
 
     private static func grossUnderFactor(for rules: SNAPStateRuleEngine) -> String {
-        rules.stateCode == "MA" ? "gross_under_200_fpl" : "gross_under_federal_limit"
+        switch rules.stateCode {
+        case "MA", "CA": return "gross_under_200_fpl"
+        default:         return "gross_under_federal_limit"
+        }
     }
 
     private static func grossOverFactor(for rules: SNAPStateRuleEngine) -> String {
-        rules.stateCode == "MA" ? "gross_over_200_fpl" : "gross_over_federal_limit"
+        switch rules.stateCode {
+        case "MA", "CA": return "gross_over_200_fpl"
+        default:         return "gross_over_federal_limit"
+        }
     }
 
     private static func result(
@@ -238,8 +249,9 @@ enum SNAPLocalEligibilityEvaluator {
         working at least 20 hours a week, federal or state work-study, or caring for a child.
         """
 
-    /// MA-specific wording is preserved for "Massachusetts's $X
-    /// limit"; non-MA states get the parallel federal phrasing.
+    /// State-specific wording is preserved for "Massachusetts's $X
+    /// limit" / "California's $X limit"; non-tuned states get the
+    /// parallel federal phrasing.
     private static func ineligibilityReasonIncome(
         gross: Decimal,
         threshold: Decimal,
@@ -248,7 +260,12 @@ enum SNAPLocalEligibilityEvaluator {
     ) -> String {
         let grossStr = NSDecimalNumber(decimal: gross).stringValue
         let thresholdStr = NSDecimalNumber(decimal: threshold).stringValue
-        let scope = rules.stateCode == "MA" ? "Massachusetts's" : "the federal"
+        let scope: String
+        switch rules.stateCode {
+        case "MA": scope = "Massachusetts's"
+        case "CA": scope = "California's"
+        default:   scope = "the federal"
+        }
         return """
             Based on your monthly income of $\(grossStr) and a household of \(householdSize), \
             you appear to be over \(scope) $\(thresholdStr)/month limit. \
@@ -257,11 +274,14 @@ enum SNAPLocalEligibilityEvaluator {
     }
 
     /// Stock list of verifications a SNAP applicant typically
-    /// needs at the time of submission. Sourced from MA DTA's
-    /// application checklist; close enough to a federal floor
-    /// for non-MA states until per-state lists are wired in.
-    /// The backend rules engine returns a more precise list per
-    /// household.
+    /// needs at the time of submission. Originally sourced from
+    /// MA DTA's application checklist; close enough to a federal
+    /// floor for all states (photo ID, proof of income, housing
+    /// cost, utility cost, SSN/non-citizen status) until per-state
+    /// lists are wired in. CalFresh's checklist is broadly similar
+    /// (per CDSS All-County Letters); county welfare departments
+    /// may request additional items at intake. The backend rules
+    /// engine returns a more precise list per household.
     private static let defaultRequiredVerifications: [SNAPRequiredVerification] = [
         .init(
             code: "photo_id",

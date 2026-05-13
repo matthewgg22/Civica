@@ -48,7 +48,7 @@ struct SNAPCrossProgramTeaserView: View {
 
     private var wicCard: some View {
         Button {
-            externalLink = CivicaExternalLinks.maWICInfo
+            externalLink = CivicaExternalLinks.wicInfoPage(for: draft?.whereApplying.stateCode)
         } label: {
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 Image(systemName: "leaf.circle.fill")

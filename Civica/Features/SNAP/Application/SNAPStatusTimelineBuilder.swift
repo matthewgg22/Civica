@@ -17,7 +17,8 @@ enum SNAPStatusTimelineBuilder {
     static func steps(
         for status: SNAPApplicationStatus,
         milestones: [SNAPApplicationStatus: Date],
-        language: CivicaLanguage
+        language: CivicaLanguage,
+        stateCode: String? = nil
     ) -> [CivicaStatusTimeline.Step] {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -44,7 +45,7 @@ enum SNAPStatusTimelineBuilder {
             ),
             .init(
                 id: "submit",
-                title: SNAPStatusHomeStrings.stepSubmit.value(in: language),
+                title: SNAPStatusHomeStrings.stepSubmit(stateCode: stateCode, language: language),
                 detail: submitDetail(for: status, language: language),
                 state: submitState(for: status),
                 timestamp: stamp(for: .submittedToState)

@@ -1,17 +1,23 @@
 import PDFKit
 import UIKit
 
-// Generates a Massachusetts SNAP fair-hearing appeal letter as a
-// printable PDF the user can save, sign by hand, and mail to DTA.
-// Federal SNAP guarantees the right to a fair hearing within 90
-// days of the denial notice (7 CFR 273.15) — this template names
-// that right explicitly so DTA Hearings can route the request.
+// Generates a state-appropriate SNAP fair-hearing appeal letter as
+// a printable PDF the user can save, sign by hand, and mail to
+// their state hearing office. Federal SNAP guarantees the right
+// to a fair hearing within 90 days of the denial notice
+// (7 CFR 273.15) — this template names that right explicitly so
+// the receiving hearing office can route the request.
 //
 // Unlike the application-summary packet, this letter is NOT
 // driven by the SNAPApplicationDraft. We don't collect the user's
-// legal name, mailing address, or DTA case number in the
-// orchestrator — they're filled in by hand on the printed letter
-// before mailing. Field placeholders (underscores) leave room.
+// legal name, mailing address, or case number in the orchestrator
+// — they're filled in by hand on the printed letter before
+// mailing. Field placeholders (underscores) leave room.
+//
+// State is supplied at render time so the recipient block, footer,
+// and salutation match the user's active state. Defaults to the
+// launch state (see SNAPAgencyDirectory.launchStateCode) when the
+// caller has no state in scope.
 
 enum SNAPAppealLetterPDFRenderer {
 
@@ -21,11 +27,14 @@ enum SNAPAppealLetterPDFRenderer {
 
     /// Render the appeal letter PDF in the active language. Caller
     /// owns the returned URL (writes to FileManager.temporaryDirectory;
-    /// system reaps on its own schedule).
+    /// system reaps on its own schedule). `stateCode` is a 2-letter
+    /// USPS code (CA, MA, …); nil falls back to the launch state.
     static func render(
         language: CivicaLanguage = .english,
+        stateCode: String? = nil,
         today: Date = Date()
     ) throws -> URL {
+        let effectiveState = stateCode ?? SNAPAgencyDirectory.launchStateCode
         let pageRect = CGRect(x: 0, y: 0, width: 612, height: 792)
         let renderer = UIGraphicsPDFRenderer(bounds: pageRect, format: pdfFormat(language: language))
 
@@ -54,7 +63,7 @@ enum SNAPAppealLetterPDFRenderer {
 
                 // Recipient address block (left)
                 y = drawLeftBlock(
-                    lines: strings.recipientLines(language: language),
+                    lines: strings.recipientLines(language: language, stateCode: effectiveState),
                     pageRect: pageRect,
                     yStart: y,
                     font: .systemFont(ofSize: 11, weight: .regular)
@@ -72,7 +81,7 @@ enum SNAPAppealLetterPDFRenderer {
 
                 // Salutation
                 y = drawLeftBlock(
-                    lines: [strings.salutation.value(in: language)],
+                    lines: [strings.salutation(language: language, stateCode: effectiveState)],
                     pageRect: pageRect,
                     yStart: y,
                     font: .systemFont(ofSize: 11, weight: .regular)
@@ -141,7 +150,7 @@ enum SNAPAppealLetterPDFRenderer {
                 // Footer disclosure
                 let footerY = pageRect.height - 60
                 drawWrappedText(
-                    strings.footerDisclosure(language: language, today: dateFormatter.string(from: today)),
+                    strings.footerDisclosure(language: language, stateCode: effectiveState, today: dateFormatter.string(from: today)),
                     pageRect: pageRect,
                     yStart: footerY,
                     font: .systemFont(ofSize: 8, weight: .regular),
@@ -256,33 +265,33 @@ enum SNAPAppealLetterStrings {
         es: "Plantilla de solicitud de audiencia justa de SNAP generada por Civica"
     )
 
-    static func recipientLines(language: CivicaLanguage) -> [String] {
-        switch language {
-        case .english:
-            return [
-                "Massachusetts Department of Transitional Assistance",
-                "Hearing Office",
-                "600 Washington Street",
-                "Boston, MA 02111"
-            ]
-        case .spanish:
-            return [
-                "Departamento de Asistencia Transicional de Massachusetts",
-                "Oficina de Audiencias",
-                "600 Washington Street",
-                "Boston, MA 02111"
-            ]
-        }
+    static func recipientLines(language: CivicaLanguage, stateCode: String) -> [String] {
+        SNAPAgencyDirectory.hearingOfficeLines(for: stateCode, language: language)
     }
 
     static let subjectLine = CivicaText(
         "Re: Request for Fair Hearing — SNAP Application Denial",
         es: "Asunto: Solicitud de audiencia justa — Denegación de solicitud de SNAP"
     )
-    static let salutation = CivicaText(
-        "Dear DTA Hearing Office,",
-        es: "Estimada Oficina de Audiencias del DTA,"
-    )
+
+    static func salutation(language: CivicaLanguage, stateCode: String) -> String {
+        let officeName: String
+        switch stateCode.uppercased() {
+        case "CA":
+            officeName = language == .english
+                ? "Dear State Hearings Division,"
+                : "Estimada División de Audiencias del Estado,"
+        case "MA":
+            officeName = language == .english
+                ? "Dear DTA Hearing Office,"
+                : "Estimada Oficina de Audiencias del DTA,"
+        default:
+            officeName = language == .english
+                ? "Dear State SNAP Hearing Office,"
+                : "Estimada Oficina Estatal de Audiencias de SNAP,"
+        }
+        return officeName
+    }
 
     static func bodyParagraphs(language: CivicaLanguage) -> [String] {
         switch language {
@@ -350,12 +359,22 @@ enum SNAPAppealLetterStrings {
     static let signatureLabel = CivicaText("Signature", es: "Firma")
     static let dateLabel = CivicaText("Date", es: "Fecha")
 
-    static func footerDisclosure(language: CivicaLanguage, today: String) -> String {
+    static func footerDisclosure(language: CivicaLanguage, stateCode: String, today: String) -> String {
+        let portal = SNAPAgencyDirectory.portalName(for: stateCode)
+        let portalURL = SNAPAgencyDirectory.portalShortURL(for: stateCode)
+        let portalSuffix: String
+        if !portal.isEmpty {
+            portalSuffix = language == .english
+                ? ", or submit through \(portal) (\(portalURL))"
+                : ", o envíalo a través de \(portal) (\(portalURL))"
+        } else {
+            portalSuffix = ""
+        }
         switch language {
         case .english:
-            return "Prepared with Civica on \(today). This is a personal reference document — sign and date by hand before mailing to the DTA Hearing Office above, or submit through DTA Connect (dtaconnect.eohhs.mass.gov)."
+            return "Prepared with Civica on \(today). This is a personal reference document — sign and date by hand before mailing to the hearing office above\(portalSuffix)."
         case .spanish:
-            return "Preparado con Civica el \(today). Este es un documento personal de referencia — firma y fecha a mano antes de enviar por correo a la Oficina de Audiencias del DTA arriba, o envíalo a través de DTA Connect (dtaconnect.eohhs.mass.gov)."
+            return "Preparado con Civica el \(today). Este es un documento personal de referencia — firma y fecha a mano antes de enviar por correo a la oficina de audiencias arriba\(portalSuffix)."
         }
     }
 }

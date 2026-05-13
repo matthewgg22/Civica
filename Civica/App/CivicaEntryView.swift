@@ -47,11 +47,11 @@ struct CivicaEntryView: View {
 
     /// The standalone estimator currently renders federal-default
     /// math (with placeholder SUA + FY26-stamped FY25 values) which
-    /// is materially wrong outside Massachusetts. Per OBBBA audit
-    /// Q7 (Revision 2): route any user with a recorded non-MA state
-    /// to the unsupported-state view instead of the estimator. Users
-    /// with no recorded state still reach the estimator — matching
-    /// the orchestrator's nil-state-is-pre-question pattern.
+    /// is materially wrong outside supported states. Per OBBBA audit
+    /// Q7 (Revision 2): route any user with a recorded out-of-scope
+    /// state to the unsupported-state view instead of the estimator.
+    /// Users with no recorded state still reach the estimator —
+    /// matching the orchestrator's nil-state-is-pre-question pattern.
     private var estimatorTile: some View {
         NavigationLink {
             estimatorDestination
@@ -240,8 +240,8 @@ enum CivicaEntryStrings {
         es: "Solicitar SNAP"
     )
     static let snapSubtitle = CivicaText(
-        "Massachusetts food assistance — typically about 15 minutes.",
-        es: "Asistencia alimentaria en Massachusetts — usualmente unos 15 minutos."
+        "CalFresh / SNAP food assistance — typically about 15 minutes.",
+        es: "Asistencia alimentaria de CalFresh / SNAP — usualmente unos 15 minutos."
     )
     static let findHelpTitle = CivicaText(
         "Find help near you",

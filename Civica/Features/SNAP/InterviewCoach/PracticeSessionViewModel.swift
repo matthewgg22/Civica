@@ -31,6 +31,16 @@ final class PracticeSessionViewModel: ObservableObject {
             archetype: .gigWorker,
             persona: .friendlyRushed
         )
+
+        /// CA is the launch state — practice mode defaults here.
+        /// MA is still selectable from the scenario picker.
+        static let defaultCA = SessionContext(
+            stateCode: "CA",
+            stateName: "California",
+            scenario: .initial,
+            archetype: .gigWorker,
+            persona: .friendlyRushed
+        )
     }
 
     // Tracks what call last hit the network so retry() knows which one to
@@ -50,7 +60,7 @@ final class PracticeSessionViewModel: ObservableObject {
     private let client: InterviewCoachAPIClient
     private var lastAttempt: LastAttempt = .turn
 
-    init(context: SessionContext = .defaultMA,
+    init(context: SessionContext = .defaultCA,
          client: InterviewCoachAPIClient = InterviewCoachAPIClient()) {
         self.sessionID = UUID().uuidString
         self.context = context

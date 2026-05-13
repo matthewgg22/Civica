@@ -108,7 +108,8 @@ struct SNAPDataPrivacyView: View {
                     label: SNAPDataPrivacyStrings.rowStatus.value(in: language),
                     detail: SNAPDataPrivacyStrings.statusLabel(
                         status: inventory.status,
-                        language: language
+                        language: language,
+                        stateCode: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
                     )
                 )
             }
@@ -151,10 +152,16 @@ struct SNAPDataPrivacyView: View {
 
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 if inventory.hasBeenSubmittedToState {
-                    Text(SNAPDataPrivacyStrings.sharedWithStateTitle.value(in: language))
+                    Text(SNAPDataPrivacyStrings.sharedWithStateTitle(
+                        stateCode: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode,
+                        language: language
+                    ))
                         .font(CivicaTypography.subheadStrong)
                         .foregroundStyle(CivicaColors.ink)
-                    Text(SNAPDataPrivacyStrings.sharedWithStateBody.value(in: language))
+                    Text(SNAPDataPrivacyStrings.sharedWithStateBody(
+                        stateCode: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode,
+                        language: language
+                    ))
                         .font(CivicaTypography.footnote)
                         .foregroundStyle(CivicaColors.graphite)
                         .fixedSize(horizontal: false, vertical: true)
@@ -323,7 +330,8 @@ enum SNAPDataPrivacyStrings {
         }
     }
 
-    static func statusLabel(status: SNAPApplicationStatus, language: CivicaLanguage) -> String {
+    static func statusLabel(status: SNAPApplicationStatus, language: CivicaLanguage, stateCode: String? = nil) -> String {
+        let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
         switch (status, language) {
         case (.notStarted, .english):              return "Not started"
         case (.notStarted, .spanish):              return "No iniciado"
@@ -333,10 +341,10 @@ enum SNAPDataPrivacyStrings {
         case (.screenerComplete, .spanish):        return "Evaluación completada"
         case (.packetGenerated, .english):         return "Packet generated"
         case (.packetGenerated, .spanish):         return "Paquete generado"
-        case (.submittedToState, .english):        return "Submitted to DTA"
-        case (.submittedToState, .spanish):        return "Enviado al DTA"
-        case (.documentsRequested, .english):      return "Documents requested by DTA"
-        case (.documentsRequested, .spanish):      return "Documentos solicitados por el DTA"
+        case (.submittedToState, .english):        return "Submitted to \(agency)"
+        case (.submittedToState, .spanish):        return "Enviado a \(agency)"
+        case (.documentsRequested, .english):      return "Documents requested by \(agency)"
+        case (.documentsRequested, .spanish):      return "Documentos solicitados por \(agency)"
         case (.interviewScheduled, .english):      return "Interview scheduled"
         case (.interviewScheduled, .spanish):      return "Entrevista programada"
         case (.interviewCompleted, .english):      return "Interview completed"
@@ -363,14 +371,25 @@ enum SNAPDataPrivacyStrings {
         "Your SNAP draft and captured documents are saved on this device unless you choose to submit them to an official agency. Optional tools, such as finding nearby help or Interview Coach, may send only the information needed for that tool — never your full application draft.",
         es: "El borrador de tu solicitud de SNAP y los documentos capturados se guardan en este dispositivo a menos que decidas enviarlos a una agencia oficial. Las herramientas opcionales, como buscar ayuda cercana o el Coach de entrevistas, pueden enviar solo la información necesaria para esa herramienta — nunca tu borrador completo."
     )
-    static let sharedWithStateTitle = CivicaText(
-        "Massachusetts DTA has your application",
-        es: "El DTA de Massachusetts tiene tu solicitud"
-    )
-    static let sharedWithStateBody = CivicaText(
-        "Once an application is submitted to DTA Connect, it becomes the state's record. Civica can't pull that back — only DTA can change or close it.",
-        es: "Una vez que la solicitud se envía a DTA Connect, se convierte en el registro del estado. Civica no puede recuperarla — solo el DTA puede cambiarla o cerrarla."
-    )
+    static func sharedWithStateTitle(stateCode: String?, language: CivicaLanguage) -> String {
+        let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
+        switch language {
+        case .english: return "\(agency) has your application"
+        case .spanish: return "\(agency) tiene tu solicitud"
+        }
+    }
+
+    static func sharedWithStateBody(stateCode: String?, language: CivicaLanguage) -> String {
+        let portal = SNAPAgencyDirectory.portalName(for: stateCode)
+        let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
+        let portalRef = portal.isEmpty ? (language == .english ? "the state portal" : "el portal estatal") : portal
+        switch language {
+        case .english:
+            return "Once an application is submitted to \(portalRef), it becomes the state's record. Civica can't pull that back — only \(agency) can change or close it."
+        case .spanish:
+            return "Una vez que la solicitud se envía a \(portalRef), se convierte en el registro del estado. Civica no puede recuperarla — solo \(agency) puede cambiarla o cerrarla."
+        }
+    }
 
     // Action rows
     static let notificationsYoullReceive = CivicaText(

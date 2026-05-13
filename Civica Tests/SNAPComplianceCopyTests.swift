@@ -99,19 +99,28 @@ struct SNAPComplianceCopyTests {
         #expect(lng == -71.106410)
     }
 
-    // MARK: - A3 MA-only beta gate
+    // MARK: - A3 Supported-state beta gate (CA + MA)
 
     @MainActor
-    @Test func nonMAStateCodeTriggersUnsupportedGate() {
+    @Test func caStateCodeDoesNotTriggerUnsupportedGate() {
+        // CA is the launch state.
         let vm = SNAPApplicationFlowOrchestratorViewModel()
         vm.draft.whereApplying.stateCode = "CA"
-        #expect(vm.shouldShowUnsupportedStateGate == true)
+        #expect(vm.shouldShowUnsupportedStateGate == false)
     }
 
     @MainActor
     @Test func maStateCodeDoesNotTriggerUnsupportedGate() {
+        // MA is retained as a supported peer.
         let vm = SNAPApplicationFlowOrchestratorViewModel()
         vm.draft.whereApplying.stateCode = "MA"
+        #expect(vm.shouldShowUnsupportedStateGate == false)
+    }
+
+    @MainActor
+    @Test func lowercaseCaStillTreatedAsCA() {
+        let vm = SNAPApplicationFlowOrchestratorViewModel()
+        vm.draft.whereApplying.stateCode = "ca"
         #expect(vm.shouldShowUnsupportedStateGate == false)
     }
 
@@ -120,6 +129,13 @@ struct SNAPComplianceCopyTests {
         let vm = SNAPApplicationFlowOrchestratorViewModel()
         vm.draft.whereApplying.stateCode = "ma"
         #expect(vm.shouldShowUnsupportedStateGate == false)
+    }
+
+    @MainActor
+    @Test func nonTunedStateTriggersUnsupportedGate() {
+        let vm = SNAPApplicationFlowOrchestratorViewModel()
+        vm.draft.whereApplying.stateCode = "NY"
+        #expect(vm.shouldShowUnsupportedStateGate == true)
     }
 
     @MainActor
@@ -132,7 +148,8 @@ struct SNAPComplianceCopyTests {
     @MainActor
     @Test func editingWhereApplyingSuppressesGate() {
         // While the user is actively re-editing the state question,
-        // the gate stays out of the way so they can switch to MA.
+        // the gate stays out of the way so they can switch to a
+        // supported state.
         let vm = SNAPApplicationFlowOrchestratorViewModel()
         vm.draft.whereApplying.stateCode = "NY"
         vm.startEditing(.whereApplying)
@@ -221,30 +238,44 @@ struct SNAPComplianceCopyTests {
         }
     }
 
-    // MARK: - OBBBA Q14 DTA-Connect copy posture
+    // MARK: - OBBBA Q14 portal-link copy posture
 
-    // Until a written authorization with MA DTA exists, Civica is a
-    // public link-out tool, not a submission integration. Strings that
-    // imply a Civica->DTA write integration ("Submit to DTA Connect")
-    // are banned; the approved replacement is "Open MA DTA Connect to
-    // submit" (English) / "Abrir MA DTA Connect para enviar" (Spanish).
+    // Until a written authorization with the user's state agency
+    // exists, Civica is a public link-out tool, not a submission
+    // integration. Strings that imply a Civica->portal write
+    // integration ("Submit to DTA Connect" / "Submit to BenefitsCal")
+    // are banned; the approved replacement is "Open <portal> to
+    // submit" (English) / "Abrir <portal> para enviar" (Spanish).
 
-    @Test func statusHomeActionSubmitUsesLinkOutPhrasing() {
-        let en = SNAPStatusHomeStrings.actionSubmitToState.value(in: .english)
-        let es = SNAPStatusHomeStrings.actionSubmitToState.value(in: .spanish)
-        #expect(en == "Open MA DTA Connect to submit")
-        #expect(es == "Abrir MA DTA Connect para enviar")
+    @Test func statusHomeActionSubmitCAUsesLinkOutPhrasing() {
+        let en = SNAPStatusHomeStrings.actionSubmitToState(stateCode: "CA", language: .english)
+        let es = SNAPStatusHomeStrings.actionSubmitToState(stateCode: "CA", language: .spanish)
+        #expect(en == "Open BenefitsCal to submit")
+        #expect(es == "Abrir BenefitsCal para enviar")
+        #expect(!en.lowercased().contains("submit to benefitscal"))
+        #expect(!es.lowercased().contains("envía a benefitscal"))
+    }
+
+    @Test func statusHomeActionSubmitMAUsesLinkOutPhrasing() {
+        let en = SNAPStatusHomeStrings.actionSubmitToState(stateCode: "MA", language: .english)
+        let es = SNAPStatusHomeStrings.actionSubmitToState(stateCode: "MA", language: .spanish)
+        #expect(en == "Open DTA Connect to submit")
+        #expect(es == "Abrir DTA Connect para enviar")
         #expect(!en.lowercased().contains("submit to dta"))
         #expect(!es.lowercased().contains("envía a dta"))
     }
 
-    @Test func statusHomeStepSubmitUsesLinkOutPhrasing() {
-        let en = SNAPStatusHomeStrings.stepSubmit.value(in: .english)
-        let es = SNAPStatusHomeStrings.stepSubmit.value(in: .spanish)
-        #expect(en == "Open MA DTA Connect to submit")
-        #expect(es == "Abrir MA DTA Connect para enviar")
-        #expect(!en.lowercased().contains("submit to dta"))
-        #expect(!es.lowercased().contains("envía"))
+    @Test func statusHomeStepSubmitMirrorsActionForBothStates() {
+        for state in ["CA", "MA"] {
+            #expect(
+                SNAPStatusHomeStrings.stepSubmit(stateCode: state, language: .english)
+                    == SNAPStatusHomeStrings.actionSubmitToState(stateCode: state, language: .english)
+            )
+            #expect(
+                SNAPStatusHomeStrings.stepSubmit(stateCode: state, language: .spanish)
+                    == SNAPStatusHomeStrings.actionSubmitToState(stateCode: state, language: .spanish)
+            )
+        }
     }
 
     // MARK: - OBBBA Q2 WIC teaser must not use dollar inducement
@@ -312,6 +343,29 @@ struct SNAPComplianceCopyTests {
                         "\(file.lastPathComponent) contains banned phrase '\(rule.phrase)' (rule '\(rule.id)', audit \(rule.auditReference))")
             }
         }
+    }
+
+    /// Both CA and MA portal-write bans must be present in the
+    /// registry. The CA row landed alongside the launch-state
+    /// switch (2026-05-13) and must stay paired with MA's row so
+    /// the scanner catches a CA-portal regression the same way it
+    /// catches an MA-portal regression.
+    @Test func registryContainsBothPortalSubmitBans() {
+        let ids = Set(SNAPComplianceCopyRegistry.bannedPhrases.map { $0.id })
+        #expect(ids.contains("submit_to_dta"),
+                "Banned-phrase row submit_to_dta is missing — Q14 MA posture regressed.")
+        #expect(ids.contains("submit_to_benefitscal"),
+                "Banned-phrase row submit_to_benefitscal is missing — Q14 CA launch parallel regressed.")
+    }
+
+    /// Pin the exact phrase strings the scanner enforces so a
+    /// "tidy" edit that drops the brand name from a banned phrase
+    /// (e.g. "Submit to BenefitsCal" -> "Submit to the portal")
+    /// doesn't accidentally weaken the rule.
+    @Test func bannedPortalSubmitPhrasesAreBrandedAsScanned() {
+        let phrases = SNAPComplianceCopyRegistry.bannedPhrases.map(\.phrase)
+        #expect(phrases.contains("Submit to DTA Connect"))
+        #expect(phrases.contains("Submit to BenefitsCal"))
     }
 
     /// Every registry row must carry the metadata a reviewer needs

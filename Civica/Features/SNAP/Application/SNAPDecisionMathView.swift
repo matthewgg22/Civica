@@ -118,7 +118,9 @@ struct SNAPDecisionMathView: View {
                     denominator: language == .english ? "mo" : "mes",
                     font: CivicaTypography.pageTitle
                 )
-                .foregroundStyle(CivicaColors.brickPrimary)
+                // Positive-outcome money lives in teal across the app
+                // (matches the estimator's eligible result card).
+                .foregroundStyle(CivicaColors.accentTeal)
             } else if let reason = result.ineligibilityReason {
                 Text(reason)
                     .font(CivicaTypography.body)
@@ -248,11 +250,14 @@ struct SNAPDecisionMathView: View {
                     denominator: language == .english ? "mo" : "mes",
                     font: CivicaTypography.cardTitle
                 )
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.accentTeal)
             }
         }
         .padding(CivicaSpacing.lg)
-        .background(CivicaColors.brickSurface)
+        // Match the estimator's eligible card — tealSurface tints
+        // the positive-outcome summary; brickSurface is reserved
+        // for warm decorative tints that aren't outcome cards.
+        .background(CivicaColors.tealSurface)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
         .accessibilityElement(children: .contain)
         .accessibilityLabel(finalBenefitAccessibilityLabel(calc))

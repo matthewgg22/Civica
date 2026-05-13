@@ -28,9 +28,18 @@ struct SNAPRulesRegistryTests {
         #expect(rules.stateCode == "FEDERAL_DEFAULT")
     }
 
-    @Test func nonTunedStateFallsBackToFederalDefault() {
-        // Until CAStateRules lands, California gets the federal baseline.
+    @Test func uppercaseCARoutesToCAStateRules() {
         let rules = SNAPRulesRegistry.rules(for: "CA")
+        #expect(rules.stateCode == "CA")
+    }
+
+    @Test func lowercaseCARoutesToCAStateRules() {
+        let rules = SNAPRulesRegistry.rules(for: "ca")
+        #expect(rules.stateCode == "CA")
+    }
+
+    @Test func nonTunedStateFallsBackToFederalDefault() {
+        let rules = SNAPRulesRegistry.rules(for: "NY")
         #expect(rules.stateCode == "FEDERAL_DEFAULT")
     }
 

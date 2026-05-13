@@ -83,10 +83,13 @@ enum SNAPBenefitEstimatorCalculator {
     // limits, standard deduction, shelter cap, minimum benefit,
     // earned-income deduction rate) comes from the rules engine
     // selected below. This is the "single source of truth" the
-    // audit requires; today the engine is federal-default, and the
-    // SNAPCoveragePolicy MA-only gate routes non-MA users away
-    // from this entry. A future commit can thread MA-specific
-    // rules in for in-scope users to pick up the MA SUA chart.
+    // audit requires. Today the estimator entry runs through
+    // FederalDefaultRules regardless of the user's state because
+    // the estimator is top-of-funnel and the state isn't known
+    // yet. SNAPCoveragePolicy (states {"CA", "MA"} today) gates
+    // the deeper application flow once the state is captured. A
+    // follow-up commit can thread state-specific rules into the
+    // estimator once the state question moves earlier in the funnel.
     static let rules: SNAPStateRuleEngine = FederalDefaultRules()
 
     /// Stamped on the estimator outcome's audit footer. Threads the

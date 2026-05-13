@@ -33,6 +33,7 @@ from .llm.client import LLMClient
 from .pipeline.orchestrator import SnapPipelineOrchestrator
 from .pipeline.schemas import TurnResult
 from .rules.federal import FederalSNAPRules
+from .rules.states.california import CaliforniaSNAPRules
 from .rules.states.massachusetts import MassachusettsSNAPRules
 
 logger = logging.getLogger(__name__)
@@ -314,11 +315,14 @@ def build_snap_router(
         eligibility = None
         if partial.is_finalizable():
             household = partial.to_household()
-            rules_class = (
-                MassachusettsSNAPRules
-                if (partial.state or "").upper() == "MA"
-                else FederalSNAPRules
-            )
+            rules_class: type
+            normalized_state = (partial.state or "").upper()
+            if normalized_state == "CA":
+                rules_class = CaliforniaSNAPRules
+            elif normalized_state == "MA":
+                rules_class = MassachusettsSNAPRules
+            else:
+                rules_class = FederalSNAPRules
             rules = rules_class(effective_date=orchestrator.effective_date)
             eligibility = rules.determine_eligibility(household)
 

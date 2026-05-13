@@ -48,8 +48,12 @@ struct SNAPPrivacyBoundaryTests {
 
         viewModel.application.householdSize = 3
         viewModel.application.applicantAge = 28
-        viewModel.application.state = "MA"
-        viewModel.application.zipCode = "02111"
+        // CA is the launch state; reset behavior is state-agnostic
+        // but the fixture follows the launch state by default. MA
+        // reset coverage lives in MAStateRulesTests and the
+        // SNAPLocalEligibilityEvaluatorTests MA case.
+        viewModel.application.state = "CA"
+        viewModel.application.zipCode = "94102"
         viewModel.application.housingStatus = .stableHome
         viewModel.application.studentStatus = .currentlyStudent
         viewModel.application.isCurrentlyEnrolledInHigherEducation = true

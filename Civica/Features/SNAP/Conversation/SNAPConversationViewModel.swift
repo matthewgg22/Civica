@@ -63,7 +63,7 @@ final class SNAPConversationViewModel: ObservableObject {
 
     private let client: SNAPNetworkClient
     private let language: String
-    private let stateCode: String
+    let stateCode: String
 
     init(
         client: SNAPNetworkClient,
