@@ -291,12 +291,19 @@ struct SNAPBenefitEstimatorView: View {
                 .kerning(1.2)
 
             HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.md) {
+                // Monetary focal point is a *positive outcome* — per
+                // the HANDOFF palette spec, accentTeal is reserved
+                // for "deltas, success, on-target SLA." A SNAP
+                // benefit estimate qualifies as a success signal,
+                // so the dollar amount lands in teal instead of
+                // brick. Brick stays exclusively on tap-able
+                // action affordances (the Apply CTA below).
                 CivicaMoney(
                     amount: monthly,
                     denominator: language == .english ? "mo" : "mes",
                     font: CivicaTypography.pageTitle
                 )
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.accentTeal)
 
                 Spacer(minLength: 0)
 
@@ -315,7 +322,10 @@ struct SNAPBenefitEstimatorView: View {
         }
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(CivicaColors.brickSurface)
+        // tealSurface (cool pastel wash) instead of brickSurface so
+        // the result card reads as "positive outcome" rather than
+        // sharing the warm brand hue with every CTA on the screen.
+        .background(CivicaColors.tealSurface)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
     }
 
@@ -463,6 +473,12 @@ struct SNAPBenefitEstimatorView: View {
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
     }
 
+    /// Utility +/- controls — demoted from brick to graphite so the
+    /// Apply CTA below is the only brick action on the screen. The
+    /// stepper is a utility control, not a primary action; tinting
+    /// it brick competed with the CTA for the user's eye. The faint
+    /// surface fill is now a hairline-tinted neutral so the affordance
+    /// reads as "tap-able utility" without claiming brand color.
     private func stepperButton(
         systemName: String,
         a11yLabel: String,
@@ -472,11 +488,11 @@ struct SNAPBenefitEstimatorView: View {
         Button(action: action) {
             Image(systemName: systemName)
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(enabled ? CivicaColors.brickPrimary : CivicaColors.brickPrimaryDisabled)
+                .foregroundStyle(enabled ? CivicaColors.graphite : CivicaColors.muted)
                 .frame(width: 44, height: 44)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.control)
-                        .fill(CivicaColors.brickPrimary.opacity(enabled ? 0.12 : 0.06))
+                        .fill(CivicaColors.ink.opacity(enabled ? 0.06 : 0.03))
                 )
         }
         .disabled(!enabled)

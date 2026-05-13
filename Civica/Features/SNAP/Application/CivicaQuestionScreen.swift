@@ -164,7 +164,13 @@ struct CivicaQuestionScreen<Affordance: View>: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 ProgressView(value: fraction)
                     .progressViewStyle(.linear)
-                    .tint(CivicaColors.brickPrimary)
+                    // Teal — per HANDOFF, accentTeal is the
+                    // "positive momentum / on-target" cue. The
+                    // overall-progress bar fills as the user makes
+                    // forward progress through the application,
+                    // which is exactly that signal. Frees brick to
+                    // mean "tap this" rather than "fill this."
+                    .tint(CivicaColors.accentTeal)
                     .accessibilityLabel(
                         CivicaQuestionStrings.overallProgressAccessibilityLabel(
                             fraction: fraction,

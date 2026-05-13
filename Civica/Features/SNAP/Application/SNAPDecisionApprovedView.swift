@@ -82,7 +82,10 @@ struct SNAPDecisionApprovedView: View {
             }
             .padding(CivicaSpacing.lg)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(CivicaColors.brickPrimary.opacity(0.08))
+            // Info-only callout — soft sky-blue tint so it reads as
+            // "FYI" rather than "tap here." Brick is reserved for
+            // action affordances elsewhere on the screen.
+            .background(CivicaColors.supportPageBackground.opacity(0.55))
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
         }
     }
@@ -146,7 +149,11 @@ struct SNAPDecisionApprovedView: View {
             }
             .padding(CivicaSpacing.lg)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(CivicaColors.accentTeal.opacity(0.10))
+            // Sibling info-only callout. Same soft-blue tint as the
+            // Restaurant Meals card so the pair reads as a coherent
+            // "extras you should know about" group without either one
+            // claiming the brand brick / teal.
+            .background(CivicaColors.supportPageBackground.opacity(0.55))
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
         }
     }

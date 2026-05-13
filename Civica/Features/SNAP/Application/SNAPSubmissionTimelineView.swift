@@ -116,7 +116,10 @@ struct SNAPSubmissionTimelineView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(station.when)
                     .font(CivicaTypography.captionStrong.monospacedDigit())
-                    .foregroundStyle(station.state == .done ? CivicaColors.brickPrimary : CivicaColors.graphite)
+                    // Done stations -> teal (positive past milestone),
+                    // matching the dot. Upcoming + now lean graphite
+                    // so the gold "now" dot stays the eye anchor.
+                    .foregroundStyle(station.state == .done ? CivicaColors.accentTeal : CivicaColors.graphite)
                     .textCase(.uppercase)
                     .kerning(1.2)
                 Text(station.title)
@@ -136,13 +139,15 @@ struct SNAPSubmissionTimelineView: View {
     @ViewBuilder
     private func stationDot(state: Station.State) -> some View {
         switch state {
+        // Done = positive past milestone -> teal
         case .done:
             Circle()
-                .fill(CivicaColors.brickPrimary)
+                .fill(CivicaColors.accentTeal)
                 .frame(width: 14, height: 14)
+        // Now = "you are here right now" -> gold focus
         case .now:
             Circle()
-                .fill(CivicaColors.ink)
+                .fill(CivicaColors.timelineFocusGold)
                 .frame(width: 14, height: 14)
         case .upcoming:
             Circle()
