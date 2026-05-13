@@ -267,15 +267,18 @@ struct SNAPIncomeFlowView: View {
             .navigationBarTitleDisplayMode(.inline)
     }
 
-    @ViewBuilder
-    private var currentScreen: some View {
+    private var currentScreen: AnyView {
+        // Explicit AnyView dispatch (rather than @ViewBuilder + switch)
+        // sidesteps a Swift 6.2 frontend crash on x86_64 CI builds where
+        // the type-checker for result-builder bodies recurses into
+        // grossMonthlyIncomeScreen's branched content and crashes.
         switch viewModel.step {
-        case .earningPresence:   earningPresenceScreen
-        case .grossMonthlyIncome: grossMonthlyIncomeScreen
-        case .incomeVariability: incomeVariabilityScreen
-        case .unearnedIncome:    unearnedIncomeScreen
-        case .liquidResources:   liquidResourcesScreen
-        case .recentJobLoss:     recentJobLossScreen
+        case .earningPresence:    return AnyView(earningPresenceScreen)
+        case .grossMonthlyIncome: return AnyView(grossMonthlyIncomeContent)
+        case .incomeVariability:  return AnyView(incomeVariabilityScreen)
+        case .unearnedIncome:     return AnyView(unearnedIncomeScreen)
+        case .liquidResources:    return AnyView(liquidResourcesScreen)
+        case .recentJobLoss:      return AnyView(recentJobLossScreen)
         }
     }
 
@@ -295,26 +298,27 @@ struct SNAPIncomeFlowView: View {
 
     // MARK: - Screen 2: gross monthly income
 
-    @ViewBuilder
-    private var grossMonthlyIncomeScreen: some View {
-        // Use viewModel.activeSuggestion (a plain optional) rather than
-        // pattern-matching on GrossIncomeEntryMode directly inside
-        // @ViewBuilder — the `if case let` form crashes the Swift
-        // compiler on x86_64 in CI (swift-frontend crash, Xcode 26).
+    /// Builds screen 2 with explicit AnyView returns. Using an explicit
+    /// return form (vs @ViewBuilder + if/else) sidesteps a Swift 6.2
+    /// swift-frontend crash on x86_64 in Xcode 26 CI builds.
+    private var grossMonthlyIncomeContent: AnyView {
         if let derivation = viewModel.activeSuggestion {
-            paystubSuggestionScreen(derivation: derivation)
-        } else {
-            CivicaQuestionScreen(
-                progress: progress(for: .grossMonthlyIncome),
-                title: SNAPIncomeStrings.grossTitle.value(in: language),
-                helper: SNAPIncomeStrings.grossHelper.value(in: language),
-                primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
-                primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
-                onPrimary: advanceOrComplete,
-                language: language
-            ) {
-                grossIncomeAffordance
-            }
+            return AnyView(paystubSuggestionScreen(derivation: derivation))
+        }
+        return AnyView(manualGrossIncomeScreen)
+    }
+
+    private var manualGrossIncomeScreen: some View {
+        CivicaQuestionScreen(
+            progress: progress(for: .grossMonthlyIncome),
+            title: SNAPIncomeStrings.grossTitle.value(in: language),
+            helper: SNAPIncomeStrings.grossHelper.value(in: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            grossIncomeAffordance
         }
     }
 
