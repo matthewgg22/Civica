@@ -71,14 +71,20 @@ enum CivicaExternalLinks {
     )!
 
     /// Massachusetts DTA Connect — MA's official SNAP portal.
+    /// **State-keyed callers should prefer `applyPortal(for:)`.**
+    /// This constant remains because it's the MA branch of that
+    /// lookup; direct references should go through the state-keyed
+    /// helper so they automatically pick up new states.
     static let dtaConnect: URL = URL(string: "https://dtaconnect.eohhs.mass.gov/")!
 
     /// MA DTA fair-hearing request page.
+    /// **State-keyed callers should prefer `fairHearingPage(for:)`.**
     static let dtaFairHearing: URL = URL(
         string: "https://www.mass.gov/info-details/how-to-request-a-fair-hearing"
     )!
 
     /// Massachusetts WIC Nutrition Program info page.
+    /// **State-keyed callers should prefer `wicInfoPage(for:)`.**
     static let maWICInfo: URL = URL(
         string: "https://www.mass.gov/wic-nutrition-program"
     )!

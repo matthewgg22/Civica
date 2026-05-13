@@ -25,6 +25,7 @@ from uuid import uuid4
 from ..llm.client import LLMClient
 from ..rules.federal import FederalSNAPRules
 from ..rules.interfaces import EligibilityResult
+from ..rules.states.california import CaliforniaSNAPRules
 from ..rules.states.massachusetts import MassachusettsSNAPRules
 from .ask_selector import pick_next_topic
 from .interpreter import run_interpreter
@@ -45,6 +46,7 @@ from .state_merge import apply_interpreter_output
 # Rules-class registry. Adding a state means adding one entry here and
 # building the corresponding rules subclass.
 _RULES_BY_STATE: dict[str, type] = {
+    "CA": CaliforniaSNAPRules,
     "MA": MassachusettsSNAPRules,
 }
 

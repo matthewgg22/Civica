@@ -20,6 +20,15 @@ struct SNAPWhereApplyingAnswers: Equatable, Codable {
     /// the user selected a state Civica doesn't tune for yet.
     var stateCode: String?
     var housingStatus: HousingStatus?
+    /// County name within the active state, when known. CalFresh
+    /// is county-administered: the right hotline, the right office,
+    /// and the right Restaurant Meals Program participation all
+    /// depend on county. Derived by zip-code lookup
+    /// (`CACountyResolver.county(forZIP:)` etc.) at the point the
+    /// user enters a ZIP, then persisted here so downstream surfaces
+    /// don't re-resolve. Free-form string so future states can use
+    /// their own naming (e.g. "Suffolk", "Los Angeles", "San Mateo").
+    var county: String?
 
     var isComplete: Bool { stateCode != nil && housingStatus != nil }
 }

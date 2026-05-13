@@ -105,7 +105,12 @@ enum CivicaNotificationTemplates {
     /// substituted server-side and remain in the rendered output
     /// here as bracketed placeholders the preview surface treats
     /// as visible "(your deadline here)" copy.
-    static func render(_ text: CivicaText, stateCode: String?, language: CivicaLanguage) -> String {
+    static func render(
+        _ text: CivicaText,
+        stateCode: String?,
+        county: String? = nil,
+        language: CivicaLanguage
+    ) -> String {
         let raw = text.value(in: language)
         let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
         let agencyShort = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
@@ -114,11 +119,20 @@ enum CivicaNotificationTemplates {
             ? (language == .english ? "your state portal" : "el portal estatal")
             : portal
         let hotline = SNAPAgencyDirectory.helplineNumber(for: stateCode)
+        // {county} resolves to the supplied county name when present;
+        // otherwise to a soft fallback so the sentence still reads
+        // naturally. Surfaces that have access to the persisted draft
+        // should look up county via CACountyResolver first.
+        let countyLabel: String = {
+            if let county, !county.isEmpty { return county }
+            return language == .english ? "your county" : "tu condado"
+        }()
         return raw
             .replacingOccurrences(of: "{agencyFull}", with: agency)
             .replacingOccurrences(of: "{agency}", with: agencyShort)
             .replacingOccurrences(of: "{portal}", with: portalLabel)
             .replacingOccurrences(of: "{hotline}", with: hotline)
+            .replacingOccurrences(of: "{county}", with: countyLabel)
     }
 
     // MARK: - Application submitted
