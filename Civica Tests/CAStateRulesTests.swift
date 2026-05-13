@@ -118,6 +118,61 @@ struct CAStateRulesTests {
         )
     }
 
+    // MARK: - Restaurant Meals Program (CA operates it)
+
+    @Test func rmpUnhousedQualifies() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.housingStatus = .unhoused
+        let outcome = rules.restaurantMealsProgramEligibility(for: draft, asOf: fy26Date)
+        guard case .eligible(let reasons) = outcome else {
+            Issue.record("Expected .eligible; got \(outcome)")
+            return
+        }
+        #expect(reasons.contains(.unhoused))
+    }
+
+    @Test func rmpElderlyOrDisabledQualifies() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.housingStatus = .stableHome
+        draft.household.hasElderlyOrDisabled = true
+        let outcome = rules.restaurantMealsProgramEligibility(for: draft, asOf: fy26Date)
+        guard case .eligible(let reasons) = outcome else {
+            Issue.record("Expected .eligible; got \(outcome)")
+            return
+        }
+        #expect(reasons.contains(.disabled))
+    }
+
+    @Test func rmpBothCriteriaIncludesBothReasons() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.housingStatus = .unhoused
+        draft.household.hasElderlyOrDisabled = true
+        let outcome = rules.restaurantMealsProgramEligibility(for: draft, asOf: fy26Date)
+        guard case .eligible(let reasons) = outcome else {
+            Issue.record("Expected .eligible; got \(outcome)")
+            return
+        }
+        #expect(Set(reasons) == Set([.disabled, .unhoused]))
+    }
+
+    @Test func rmpExplicitNegativesReturnsNotEligible() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.housingStatus = .stableHome
+        draft.household.hasElderlyOrDisabled = false
+        #expect(
+            rules.restaurantMealsProgramEligibility(for: draft, asOf: fy26Date)
+                == .notEligible
+        )
+    }
+
+    @Test func rmpUnknownWhenScreenerIncomplete() {
+        let draft = SNAPApplicationDraft()
+        #expect(
+            rules.restaurantMealsProgramEligibility(for: draft, asOf: fy26Date)
+                == .unknown
+        )
+    }
+
     // MARK: - Rules-version stamp
 
     @Test func rulesVersionStampForFY26() {

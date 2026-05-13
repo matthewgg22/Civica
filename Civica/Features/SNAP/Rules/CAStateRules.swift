@@ -127,6 +127,45 @@ struct CAStateRules: SNAPStateRuleEngine {
         }
     }
 
+    /// CalFresh operates the Restaurant Meals Program in a growing
+    /// number of counties (LA, San Diego, Riverside, San Mateo,
+    /// Santa Clara, San Francisco, Orange, Sacramento, …). The
+    /// household-level qualifying criteria are federal: elderly
+    /// (60+), disabled, or unhoused. This conformer evaluates the
+    /// federal criteria; whether the user's specific county
+    /// participates is a separate lookup that ships with the
+    /// FindHelp RMP-retailer surface, not here.
+    ///
+    /// The screener captures `hasElderlyOrDisabled` as a combined
+    /// flag and does not yet distinguish elderly from disabled — a
+    /// positive combined flag routes through the .disabled reason
+    /// for now; a future screener question can split these.
+    func restaurantMealsProgramEligibility(
+        for draft: SNAPApplicationDraft,
+        asOf _: Date
+    ) -> RestaurantMealsEligibility {
+        var reasons: [RestaurantMealsEligibility.Reason] = []
+        let elderlyOrDisabled = draft.household.hasElderlyOrDisabled
+        let housing = draft.whereApplying.housingStatus
+
+        if elderlyOrDisabled == true {
+            reasons.append(.disabled)
+        }
+        if housing == .unhoused {
+            reasons.append(.unhoused)
+        }
+
+        if !reasons.isEmpty {
+            return .eligible(reasons: reasons)
+        }
+        // Both criteria explicitly negative → not eligible.
+        if elderlyOrDisabled == false && housing != nil {
+            return .notEligible
+        }
+        // Otherwise the screener hasn't collected enough to evaluate.
+        return .unknown
+    }
+
     // MARK: - Version stamp
 
     func rulesVersion(asOf: Date) -> String {

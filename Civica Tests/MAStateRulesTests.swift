@@ -126,6 +126,20 @@ struct MAStateRulesTests {
         )
     }
 
+    // MARK: - Restaurant Meals Program (MA does not operate)
+
+    @Test func maRMPAlwaysNotOperated() {
+        // Even with qualifying household status, MA does not run
+        // RMP — the EBT card can't be used for hot prepared meals.
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.housingStatus = .unhoused
+        draft.household.hasElderlyOrDisabled = true
+        #expect(
+            rules.restaurantMealsProgramEligibility(for: draft, asOf: fy26Date)
+                == .notOperated
+        )
+    }
+
     // MARK: - Rules-version stamp
 
     @Test func rulesVersionStampForFY26() {

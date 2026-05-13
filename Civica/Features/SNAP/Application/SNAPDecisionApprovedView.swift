@@ -39,6 +39,9 @@ struct SNAPDecisionApprovedView: View {
                 header
                 monthlyAwardCard
                 recertReminderCard
+                if let restaurantMealsCallout {
+                    restaurantMealsCallout
+                }
                 if let produceMatchCallout {
                     produceMatchCallout
                 }
@@ -52,6 +55,68 @@ struct SNAPDecisionApprovedView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // MARK: - Restaurant Meals Program callout (CA only today)
+
+    /// Renders an informational card when the active state operates
+    /// the Restaurant Meals Program and the household qualifies
+    /// (elderly, disabled, or unhoused). Suppressed entirely
+    /// otherwise — no card for non-RMP states, no card when the
+    /// screener hasn't collected enough info, no card when the
+    /// household doesn't qualify.
+    @ViewBuilder
+    private var restaurantMealsCallout: (some View)? {
+        if let draft,
+           case .eligible(let reasons) = SNAPRulesRegistry
+            .rules(for: draft.whereApplying.stateCode)
+            .restaurantMealsProgramEligibility(for: draft, asOf: Date()) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Text(language == .english ? "Restaurant Meals Program" : "Programa de Comidas en Restaurantes")
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                Text(restaurantMealsBody(reasons: reasons, language: language))
+                    .font(CivicaTypography.body)
+                    .foregroundStyle(CivicaColors.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.brickPrimary.opacity(0.08))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        }
+    }
+
+    private func restaurantMealsBody(
+        reasons: [RestaurantMealsEligibility.Reason],
+        language: CivicaLanguage
+    ) -> String {
+        let reasonPhrase = restaurantMealsReasonPhrase(reasons: reasons, language: language)
+        switch language {
+        case .english:
+            return "Because \(reasonPhrase), your EBT card can also be used at participating restaurants for hot prepared meals. Look for the Restaurant Meals Program decal at the door — the FindHelp map will list participating spots when it's tuned for your county."
+        case .spanish:
+            return "Porque \(reasonPhrase), tu tarjeta EBT también puede usarse en restaurantes participantes para comidas calientes preparadas. Busca la calcomanía del Programa de Comidas en Restaurantes en la puerta — el mapa de Buscar Ayuda mostrará los lugares participantes cuando esté ajustado para tu condado."
+        }
+    }
+
+    private func restaurantMealsReasonPhrase(
+        reasons: [RestaurantMealsEligibility.Reason],
+        language: CivicaLanguage
+    ) -> String {
+        if reasons.contains(.unhoused) {
+            return language == .english
+                ? "your household reports unhoused status"
+                : "tu hogar reporta estar sin vivienda"
+        }
+        if reasons.contains(.disabled) {
+            return language == .english
+                ? "someone in your household is elderly or disabled"
+                : "alguien en tu hogar es de edad avanzada o tiene una discapacidad"
+        }
+        return language == .english
+            ? "your household qualifies"
+            : "tu hogar califica"
     }
 
     // MARK: - Produce-match callout (CA: Market Match; MA: HIP)
