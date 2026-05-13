@@ -40,6 +40,12 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
     /// In-memory only; consumed by `.snapVoiceFieldHighlight(_:)` to
     /// paint the amber "needs review" border. Cleared on resetDraft.
     @Published var voiceConfidence: [SNAPFieldKey: Double] = [:]
+    /// Most recent paystub the user confirmed in the documents
+    /// checklist flow. Transient, in-memory only — never persisted to
+    /// the draft, the store, or the document image cache. The income
+    /// flow reads this when initializing screen 2 ("gross monthly
+    /// income") to offer a prefilled "From your paystub" affordance.
+    @Published var confirmedPaystub: SNAPPaystub?
 
     private let store: SNAPApplicationDraftStore
     private let classifier: any ExpeditedClassifier
@@ -328,7 +334,10 @@ struct SNAPApplicationFlowOrchestratorView: View {
         case .income:
             voiceWrap(.income) {
                 SNAPIncomeFlowView(
-                    viewModel: SNAPIncomeFlowViewModel(answers: viewModel.draft.income),
+                    viewModel: SNAPIncomeFlowViewModel(
+                        answers: viewModel.draft.income,
+                        paystubPrefill: viewModel.confirmedPaystub
+                    ),
                     language: language,
                     onComplete: { answers in
                         viewModel.draft.income = answers
@@ -374,7 +383,10 @@ struct SNAPApplicationFlowOrchestratorView: View {
                         viewModel.draft.documentsChecklist = answers
                         viewModel.finishSection(.documentsChecklist)
                     },
-                    onExit: handleExit
+                    onExit: handleExit,
+                    onPaystubConfirmed: { paystub in
+                        viewModel.confirmedPaystub = paystub
+                    }
                 )
             }
         }

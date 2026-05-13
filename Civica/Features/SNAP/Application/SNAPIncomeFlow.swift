@@ -58,12 +58,33 @@ final class SNAPIncomeFlowViewModel: ObservableObject {
         static let total = Self.allCases.count
     }
 
+    enum GrossIncomeEntryMode: Equatable {
+        /// Pure typed entry. The only mode when no paystub is on hand.
+        case manual
+        /// Showing a "From your paystub: $X biweekly ≈ $Y/month" card with
+        /// a Use this / Enter a different amount choice.
+        case paystubSuggestion(SNAPPaystubDerivation)
+    }
+
     @Published var step: Step = .earningPresence
     @Published var grossIncomeField: String
     @Published var liquidResourcesField: String
     @Published var answers: SNAPIncomeAnswers
+    /// Derivation from a paystub confirmed earlier in the documents
+    /// checklist. Nil when no paystub is available or the derivation
+    /// returned nil (missing gross or unresolvable frequency). The
+    /// paystub object itself is never stored on the view-model — only
+    /// the scalar Decimal derivation.
+    @Published private(set) var grossIncomeEntryMode: GrossIncomeEntryMode = .manual
+    /// Holds the paystub derivation when the user opts to "Enter a
+    /// different amount" — the typed input pre-populates with the
+    /// derived value so they can nudge it instead of retyping.
+    private var pendingDerivation: SNAPPaystubDerivation?
 
-    init(answers: SNAPIncomeAnswers = .init()) {
+    init(
+        answers: SNAPIncomeAnswers = .init(),
+        paystubPrefill: SNAPPaystub? = nil
+    ) {
         self.answers = answers
         // Seed the gross-income text field from the stored Decimal so
         // resume / edit shows the prior amount.
@@ -77,6 +98,45 @@ final class SNAPIncomeFlowViewModel: ObservableObject {
         } else {
             self.liquidResourcesField = ""
         }
+        // Surface the paystub-suggestion card only when the user hasn't
+        // already entered a gross-monthly amount. Once they've typed
+        // something, respect that — resumed drafts shouldn't be
+        // ambushed by a suggestion overriding their prior answer.
+        if let paystub = paystubPrefill,
+           answers.grossMonthlyIncome == nil,
+           let derivation = SNAPPaystubIncomeDerivation.derive(from: paystub),
+           derivation.confidence != .low {
+            self.pendingDerivation = derivation
+            self.grossIncomeEntryMode = .paystubSuggestion(derivation)
+        }
+    }
+
+    /// Apply the paystub-derived monthly amount and advance.
+    func applyPaystubSuggestion() {
+        guard case let .paystubSuggestion(derivation) = grossIncomeEntryMode else { return }
+        answers.grossMonthlyIncome = derivation.monthlyEarnedIncome
+        answers.monthlyEarnedAmount = derivation.monthlyEarnedIncome
+        // Earned-income presence is implied by the existence of a
+        // confirmed paystub. Only flip when the user actually accepts
+        // the suggestion — not on init — so a "wrong household member"
+        // edge case doesn't silently overwrite their explicit "no".
+        if answers.anyoneEarning == nil {
+            answers.anyoneEarning = .yes
+        }
+        grossIncomeField = NSDecimalNumber(decimal: derivation.monthlyEarnedIncome).stringValue
+        grossIncomeEntryMode = .manual
+        if let next = nextStep(after: .grossMonthlyIncome) {
+            step = next
+        }
+    }
+
+    /// Drop the suggestion and reveal the typed input, pre-populated
+    /// with the derived value as a starting point.
+    func switchToManualEntry() {
+        if let derivation = pendingDerivation {
+            grossIncomeField = NSDecimalNumber(decimal: derivation.monthlyEarnedIncome).stringValue
+        }
+        grossIncomeEntryMode = .manual
     }
 
     /// Skip earned-income subquestions when the user says no one
@@ -225,18 +285,75 @@ struct SNAPIncomeFlowView: View {
 
     // MARK: - Screen 2: gross monthly income
 
+    @ViewBuilder
     private var grossMonthlyIncomeScreen: some View {
+        if case let .paystubSuggestion(derivation) = viewModel.grossIncomeEntryMode {
+            paystubSuggestionScreen(derivation: derivation)
+        } else {
+            CivicaQuestionScreen(
+                progress: progress(for: .grossMonthlyIncome),
+                title: SNAPIncomeStrings.grossTitle.value(in: language),
+                helper: SNAPIncomeStrings.grossHelper.value(in: language),
+                primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+                primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
+                onPrimary: advanceOrComplete,
+                language: language
+            ) {
+                grossIncomeAffordance
+            }
+        }
+    }
+
+    private func paystubSuggestionScreen(derivation: SNAPPaystubDerivation) -> some View {
         CivicaQuestionScreen(
             progress: progress(for: .grossMonthlyIncome),
-            title: SNAPIncomeStrings.grossTitle.value(in: language),
-            helper: SNAPIncomeStrings.grossHelper.value(in: language),
-            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
-            primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
-            onPrimary: advanceOrComplete,
+            title: SNAPIncomeStrings.paystubSuggestionTitle.value(in: language),
+            helper: SNAPIncomeStrings.paystubSuggestionHelper.value(in: language),
+            primaryActionTitle: SNAPIncomeStrings.paystubUseThis.value(in: language),
+            primaryActionEnabled: true,
+            onPrimary: { viewModel.applyPaystubSuggestion() },
             language: language
         ) {
-            grossIncomeAffordance
+            paystubSuggestionCard(derivation: derivation)
         }
+    }
+
+    private func paystubSuggestionCard(derivation: SNAPPaystubDerivation) -> some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Text(SNAPIncomeStrings.paystubReadLabel.value(in: language))
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+                Text(SNAPIncomeStrings.paystubReadLine(derivation: derivation, language: language))
+                    .font(CivicaTypography.body)
+                    .foregroundStyle(CivicaColors.ink)
+            }
+            Divider()
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Text(SNAPIncomeStrings.paystubMonthlyLabel.value(in: language))
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+                Text(SNAPIncomeStrings.paystubMonthlyLine(derivation: derivation, language: language))
+                    .font(.system(size: 32, weight: .semibold, design: .monospaced))
+                    .foregroundStyle(CivicaColors.ink)
+            }
+            Button {
+                viewModel.switchToManualEntry()
+            } label: {
+                Text(SNAPIncomeStrings.paystubEnterDifferent.value(in: language))
+                    .font(CivicaTypography.footnote.weight(.semibold))
+                    .foregroundStyle(CivicaColors.brickPrimary)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.control)
+                .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+        )
     }
 
     private var grossIncomeAffordance: some View {
@@ -499,6 +616,80 @@ enum SNAPIncomeStrings {
         "Cash + checking + savings",
         es: "Efectivo + cheques + ahorros"
     )
+
+    // Screen 2 — paystub-derived prefill variant. Shown only when the
+    // user confirmed a paystub in the documents-checklist flow and
+    // hasn't already entered a gross-monthly amount.
+    static let paystubSuggestionTitle = CivicaText(
+        "We found this on your paystub.",
+        es: "Encontramos esto en tu recibo de pago."
+    )
+    static let paystubSuggestionHelper = CivicaText(
+        "Tap Use this if it looks right. SNAP looks at gross income — what you make before taxes and deductions.",
+        es: "Toca Usar esto si se ve bien. SNAP mira los ingresos brutos — lo que ganas antes de impuestos y deducciones."
+    )
+    static let paystubReadLabel = CivicaText("From your paystub", es: "De tu recibo")
+    static let paystubMonthlyLabel = CivicaText(
+        "Estimated gross monthly",
+        es: "Estimación mensual bruta"
+    )
+    static let paystubUseThis = CivicaText("Use this", es: "Usar esto")
+    static let paystubEnterDifferent = CivicaText(
+        "Enter a different amount",
+        es: "Ingresar una cantidad diferente"
+    )
+
+    /// "$1,800 every 2 weeks" — combines the per-period gross with a
+    /// human-readable frequency label.
+    static func paystubReadLine(
+        derivation: SNAPPaystubDerivation,
+        language: CivicaLanguage
+    ) -> String {
+        let amount = formatCurrency(derivation.perPeriodGross)
+        let freq = frequencyShortLabel(derivation.frequency, language: language)
+        return "\(amount) \(freq)"
+    }
+
+    /// "≈ $3,900/month" — what the income flow is about to record.
+    static func paystubMonthlyLine(
+        derivation: SNAPPaystubDerivation,
+        language: CivicaLanguage
+    ) -> String {
+        let amount = formatCurrency(derivation.monthlyEarnedIncome)
+        switch language {
+        case .english: return "≈ \(amount)/month"
+        case .spanish: return "≈ \(amount)/mes"
+        }
+    }
+
+    private static func frequencyShortLabel(
+        _ frequency: SNAPPaystubFrequency,
+        language: CivicaLanguage
+    ) -> String {
+        switch (frequency, language) {
+        case (.weekly, .english):       return "every week"
+        case (.weekly, .spanish):       return "cada semana"
+        case (.biweekly, .english):     return "every 2 weeks"
+        case (.biweekly, .spanish):     return "cada 2 semanas"
+        case (.semimonthly, .english):  return "twice a month"
+        case (.semimonthly, .spanish):  return "dos veces al mes"
+        case (.monthly, .english):      return "every month"
+        case (.monthly, .spanish):      return "cada mes"
+        }
+    }
+
+    private static let currencyFormatter: NumberFormatter = {
+        let f = NumberFormatter()
+        f.numberStyle = .currency
+        f.locale = Locale(identifier: "en_US")
+        f.maximumFractionDigits = 0
+        return f
+    }()
+
+    private static func formatCurrency(_ amount: Decimal) -> String {
+        let rounded = NSDecimalNumber(decimal: amount)
+        return currencyFormatter.string(from: rounded) ?? "$\(rounded.intValue)"
+    }
 
     // Screen 6 — recent job loss (last 30 days). Soft signal for the
     // expedited classifier; not a regulatory input on its own.
