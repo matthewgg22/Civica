@@ -39,6 +39,9 @@ struct SNAPDecisionApprovedView: View {
                 header
                 monthlyAwardCard
                 recertReminderCard
+                if let produceMatchCallout {
+                    produceMatchCallout
+                }
                 if showsWICTeaser {
                     wicCard
                 }
@@ -49,6 +52,38 @@ struct SNAPDecisionApprovedView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // MARK: - Produce-match callout (CA: Market Match; MA: HIP)
+
+    /// Renders a calm informational card when the active state
+    /// operates a SNAP-EBT produce-doubling program — CalFresh's
+    /// Market Match, DTA's HIP, etc. Suppressed entirely when the
+    /// state has none Civica is tuned for, so non-tuned states
+    /// don't see a stub.
+    @ViewBuilder
+    private var produceMatchCallout: (some View)? {
+        if let description = SNAPAgencyDirectory.produceMatchDescription(
+            for: draft?.whereApplying.stateCode,
+            language: language
+        ),
+           let program = SNAPAgencyDirectory.produceMatchProgram(
+            for: draft?.whereApplying.stateCode
+           ) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Text(program.name)
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                Text(description)
+                    .font(CivicaTypography.body)
+                    .foregroundStyle(CivicaColors.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.accentTeal.opacity(0.10))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        }
     }
 
     // MARK: - Header

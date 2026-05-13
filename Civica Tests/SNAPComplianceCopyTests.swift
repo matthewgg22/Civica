@@ -345,6 +345,29 @@ struct SNAPComplianceCopyTests {
         }
     }
 
+    /// Both CA and MA portal-write bans must be present in the
+    /// registry. The CA row landed alongside the launch-state
+    /// switch (2026-05-13) and must stay paired with MA's row so
+    /// the scanner catches a CA-portal regression the same way it
+    /// catches an MA-portal regression.
+    @Test func registryContainsBothPortalSubmitBans() {
+        let ids = Set(SNAPComplianceCopyRegistry.bannedPhrases.map { $0.id })
+        #expect(ids.contains("submit_to_dta"),
+                "Banned-phrase row submit_to_dta is missing — Q14 MA posture regressed.")
+        #expect(ids.contains("submit_to_benefitscal"),
+                "Banned-phrase row submit_to_benefitscal is missing — Q14 CA launch parallel regressed.")
+    }
+
+    /// Pin the exact phrase strings the scanner enforces so a
+    /// "tidy" edit that drops the brand name from a banned phrase
+    /// (e.g. "Submit to BenefitsCal" -> "Submit to the portal")
+    /// doesn't accidentally weaken the rule.
+    @Test func bannedPortalSubmitPhrasesAreBrandedAsScanned() {
+        let phrases = SNAPComplianceCopyRegistry.bannedPhrases.map(\.phrase)
+        #expect(phrases.contains("Submit to DTA Connect"))
+        #expect(phrases.contains("Submit to BenefitsCal"))
+    }
+
     /// Every registry row must carry the metadata a reviewer needs
     /// to act on it. Catches half-filled rows in PRs that add new
     /// pending revisions without the rationale or audit reference.

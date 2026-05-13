@@ -141,6 +141,77 @@ enum SNAPAgencyDirectory {
         }
     }
 
+    /// Statewide CalFresh / DTA / SNAP helpline number for the
+    /// state, formatted for inline rendering (e.g. "1-877-847-3663").
+    /// Falls back to USDA's national SNAP Hunger Hotline when the
+    /// state isn't tuned. Sourced from the same FNS State Directory
+    /// snapshot the `usda_snap_state_directory.json` fixture uses.
+    static func helplineNumber(for stateCode: String?) -> String {
+        switch normalized(stateCode) {
+        case "CA": return "1-877-847-3663"
+        case "MA": return "1-877-382-2363"
+        default:   return "1-866-3-HUNGRY (1-866-348-6479)"
+        }
+    }
+
+    /// Whether the state operates a SNAP-EBT produce-doubling
+    /// program at participating farmers markets and small grocers.
+    /// CA has Market Match (CA Department of Food and Agriculture
+    /// + Ecology Center). MA has HIP (Healthy Incentives Program,
+    /// DTA + state legislature). Both effectively double SNAP-EBT
+    /// spending on fresh produce up to a monthly cap; the program
+    /// name differs and copy should reflect that.
+    struct ProduceMatchProgram: Equatable {
+        /// Short brand name surfaced inline — "Market Match",
+        /// "HIP". Localizable display names live in
+        /// `produceMatchDisplayName(for:language:)`.
+        let name: String
+        /// One-line description for callouts on the verdict /
+        /// FindHelp surfaces. English-only; the Spanish parallel
+        /// goes through `produceMatchDescription(for:language:)`.
+        let englishTagline: String
+    }
+
+    /// State's produce-match program metadata, or nil when the
+    /// state does not operate one Civica is tuned for. CA + MA
+    /// have meaningful programs today; others fall through.
+    static func produceMatchProgram(for stateCode: String?) -> ProduceMatchProgram? {
+        switch normalized(stateCode) {
+        case "CA":
+            return ProduceMatchProgram(
+                name: "Market Match",
+                englishTagline: "Doubles your CalFresh dollars on fresh fruits and vegetables at participating farmers markets — up to a monthly match cap that varies by market."
+            )
+        case "MA":
+            return ProduceMatchProgram(
+                name: "HIP",
+                englishTagline: "Massachusetts's Healthy Incentives Program adds money back to your EBT card for every dollar you spend on fresh fruits and vegetables at participating HIP retailers — up to a household monthly cap."
+            )
+        default:
+            return nil
+        }
+    }
+
+    /// Localized one-line description for the state's produce-match
+    /// program. Falls back to nil when the state does not operate
+    /// one — caller should suppress the callout entirely in that
+    /// case rather than rendering a stub sentence.
+    static func produceMatchDescription(for stateCode: String?, language: CivicaLanguage) -> String? {
+        guard let program = produceMatchProgram(for: stateCode) else { return nil }
+        switch (normalized(stateCode), language) {
+        case ("CA", .english):
+            return "\(program.name): \(program.englishTagline)"
+        case ("CA", .spanish):
+            return "Market Match: Duplica tus dólares de CalFresh en frutas y verduras frescas en los mercados de agricultores participantes — hasta un tope mensual que varía por mercado."
+        case ("MA", .english):
+            return "\(program.name): \(program.englishTagline)"
+        case ("MA", .spanish):
+            return "HIP (Programa de Incentivos Saludables) de Massachusetts agrega dinero a tu tarjeta EBT por cada dólar gastado en frutas y verduras frescas en minoristas HIP participantes — hasta un tope mensual del hogar."
+        default:
+            return nil
+        }
+    }
+
     /// Caseworker phone-number area-code prefixes the user is most
     /// likely to see on incoming calls. Rendered into "Their numbers
     /// usually start with (213) or (415)" copy in the submission

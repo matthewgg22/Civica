@@ -113,10 +113,12 @@ enum CivicaNotificationTemplates {
         let portalLabel = portal.isEmpty
             ? (language == .english ? "your state portal" : "el portal estatal")
             : portal
+        let hotline = SNAPAgencyDirectory.helplineNumber(for: stateCode)
         return raw
             .replacingOccurrences(of: "{agencyFull}", with: agency)
             .replacingOccurrences(of: "{agency}", with: agencyShort)
             .replacingOccurrences(of: "{portal}", with: portalLabel)
+            .replacingOccurrences(of: "{hotline}", with: hotline)
     }
 
     // MARK: - Application submitted
@@ -258,8 +260,8 @@ enum CivicaNotificationTemplates {
                 es: "Pre-llenamos todo desde la última vez. Mayormente estás confirmando \"sí, sigue siendo correcto\" o diciéndonos qué cambió."
             ),
             CivicaText(
-                "We'll remind you again 14 days before, and again 1 day before. If you miss the deadline, your benefits may pause — contact {agencyFull} directly to request reinstatement.",
-                es: "Te recordaremos otra vez 14 días antes, y otra vez 1 día antes. Si pierdes la fecha límite, tus beneficios pueden pausarse — comunícate directamente con {agencyFull} para solicitar la reactivación."
+                "We'll remind you again 14 days before, and again 1 day before. If you miss the deadline, your benefits may pause — contact {agencyFull} at {hotline} to request reinstatement.",
+                es: "Te recordaremos otra vez 14 días antes, y otra vez 1 día antes. Si pierdes la fecha límite, tus beneficios pueden pausarse — comunícate con {agencyFull} al {hotline} para solicitar la reactivación."
             ),
         ],
         buttonLabel: CivicaText("Start recertification", es: "Comenzar recertificación"),
