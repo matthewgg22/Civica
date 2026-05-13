@@ -1,6 +1,7 @@
 import CivicaDesignSystem
 import SwiftUI
 import UIKit
+import VisionKit
 
 // Migrates the legacy "documentsChecklistStep". Unlike the other
 // migrated steps, this isn't really a question — it's a single
@@ -99,6 +100,8 @@ struct SNAPDocumentsChecklistFlowView: View {
     /// Which document type the camera sheet is currently capturing
     /// for. Nil when the sheet is dismissed. Drives .sheet(item:).
     @State private var documentBeingCaptured: SNAPDocumentType?
+
+    @State private var showScannerUnavailableAlert = false
 
     /// Pending retry state when an on-device quality check fails.
     /// Drives presentation of SNAPDocumentRetryView (HANDOFF
@@ -219,6 +222,14 @@ struct SNAPDocumentsChecklistFlowView: View {
                 )
             }
         }
+        .alert(
+            SNAPDocumentsChecklistStrings.scannerUnavailableTitle.value(in: language),
+            isPresented: $showScannerUnavailableAlert
+        ) {
+            Button(CivicaQuestionStrings.closeLabel.value(in: language), role: .cancel) {}
+        } message: {
+            Text(SNAPDocumentsChecklistStrings.scannerUnavailableBody.value(in: language))
+        }
     }
 
     private func checklistRow(for document: SNAPDocumentType) -> some View {
@@ -277,6 +288,10 @@ struct SNAPDocumentsChecklistFlowView: View {
 
     private func cameraButton(for document: SNAPDocumentType, hasCapture: Bool) -> some View {
         Button {
+            guard VNDocumentCameraViewController.isSupported else {
+                showScannerUnavailableAlert = true
+                return
+            }
             documentBeingCaptured = document
         } label: {
             HStack(spacing: CivicaSpacing.sm) {
@@ -310,6 +325,15 @@ enum SNAPDocumentsChecklistStrings {
     static let helper = CivicaText(
         "Mark anything you already have, or tap \"Take a photo\" to scan a document with your camera. Civica keeps the photo on this device only — nothing uploaded.",
         es: "Marca lo que ya tengas, o toca \"Tomar una foto\" para escanear un documento con tu cámara. Civica guarda la foto solo en este dispositivo — nada se sube."
+    )
+
+    static let scannerUnavailableTitle = CivicaText(
+        "Camera scanning not available",
+        es: "Escaneo con cámara no disponible"
+    )
+    static let scannerUnavailableBody = CivicaText(
+        "Document scanning isn't supported on this device. You can still mark which documents you have and bring them to your appointment.",
+        es: "El escaneo de documentos no es compatible con este dispositivo. Puedes marcar qué documentos tienes y llevarlos a tu cita."
     )
 
     static let takePhoto = CivicaText(

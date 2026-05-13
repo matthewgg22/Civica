@@ -181,6 +181,11 @@ enum FindHelpStrings {
         emptyTitle.value(in: language).replacingOccurrences(of: "%@", with: "\(miles)")
     }
 
+    static let zipResultsNotice = CivicaText(
+        "Showing limited results by ZIP code. Hours and availability can change — call ahead to confirm.",
+        es: "Mostrando resultados limitados por código postal. Los horarios y la disponibilidad pueden cambiar — llama antes de ir."
+    )
+
     // MARK: - Transport error state
     //
     // Shown when the directory request fails at the transport layer

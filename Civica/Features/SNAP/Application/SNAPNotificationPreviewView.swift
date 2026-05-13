@@ -19,6 +19,7 @@ struct SNAPNotificationPreviewView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 header
+                previewOnlyBanner
                 emailsSection
                 smsSection
                 rulesFooter
@@ -47,6 +48,24 @@ struct SNAPNotificationPreviewView: View {
                 .foregroundStyle(CivicaColors.graphite)
                 .fixedSize(horizontal: false, vertical: true)
         }
+    }
+
+    // MARK: - Preview-only banner
+
+    private var previewOnlyBanner: some View {
+        HStack(alignment: .top, spacing: CivicaSpacing.sm) {
+            Image(systemName: "clock.fill")
+                .foregroundStyle(CivicaColors.warningAmber)
+                .accessibilityHidden(true)
+            Text(SNAPNotificationPreviewStrings.previewOnlyNotice.value(in: language))
+                .font(CivicaTypography.footnoteStrong)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.statusWarningSurface)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
     }
 
     // MARK: - Email section
@@ -255,6 +274,11 @@ enum SNAPNotificationPreviewStrings {
     static let subtitle = CivicaText(
         "Every email and text Civica will send you, in the actual voice we'll use. No marketing, no surprises.",
         es: "Cada correo y mensaje que Civica te enviará, en la voz exacta que usaremos. Sin marketing, sin sorpresas."
+    )
+
+    static let previewOnlyNotice = CivicaText(
+        "These are examples only. Notifications will be sent once Civica's messaging system is live.",
+        es: "Estos son solo ejemplos. Las notificaciones se enviarán una vez que el sistema de mensajería de Civica esté activo."
     )
 
     static let emailHeading = CivicaText(

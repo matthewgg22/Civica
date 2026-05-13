@@ -150,6 +150,12 @@ struct SNAPConversationView: View {
                 }
                 .accessibilityHint("Shows every deduction line that produced this benefit estimate.")
             }
+
+            Text("This is an estimate. Massachusetts DTA reviews your full application and makes the final eligibility determination.")
+                .font(CivicaTypography.caption)
+                .foregroundColor(CivicaColors.graphite)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, CivicaSpacing.xs)
         }
         .padding(CivicaSpacing.lg)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -165,9 +171,9 @@ struct SNAPConversationView: View {
         switch result.status {
         case .eligible:
             if let benefit = result.monthlyBenefit {
-                return "Likely eligible — about $\(benefit.formattedAsWholeDollars())/month"
+                return "You may be eligible — about $\(benefit.formattedAsWholeDollars())/month"
             }
-            return "Likely eligible"
+            return "You may be eligible"
         case .ineligible:
             return "Doesn't appear to qualify right now"
         case .eligibleWithConditions:

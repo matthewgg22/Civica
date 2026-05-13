@@ -21,7 +21,7 @@ final class SNAPApplicationViewModel: ObservableObject {
             case .unclear:
                 return "Expedited screening unclear"
             case .lessLikely:
-                return "Less likely based on these answers"
+                return "Standard 30-day processing timeline applies"
             }
         }
     }

@@ -474,7 +474,7 @@ final class MockSNAPNetworkClient: SNAPNetworkClient, @unchecked Sendable {
                 sessionId: sessionId,
                 turnIndex: turnIndex,
                 assistantQuestion:
-                    "Based on what you've shared, you appear likely eligible for about $135/month. I'll list the documents you'll need to submit.",
+                    "Based on what you've shared, you may be eligible for about $135/month — Massachusetts DTA will confirm the exact amount. I'll list the documents you'll need to submit.",
                 helperText: nil,
                 expectedInputType: .freeText,
                 choiceOptions: nil,

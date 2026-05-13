@@ -255,6 +255,20 @@ struct FindHelpRootView: View {
             }
 
             if !store.filteredLocations.isEmpty {
+                HStack(alignment: .top, spacing: CivicaSpacing.sm) {
+                    Image(systemName: "exclamationmark.circle.fill")
+                        .foregroundStyle(CivicaColors.warningAmber)
+                        .accessibilityHidden(true)
+                    Text(FindHelpStrings.zipResultsNotice.value(in: language))
+                        .font(CivicaTypography.footnoteStrong)
+                        .foregroundStyle(CivicaColors.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(CivicaSpacing.md)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(CivicaColors.statusWarningSurface)
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+
                 FindHelpListView(
                     locations: store.filteredLocations,
                     onSelect: { store.selectLocation($0) }
