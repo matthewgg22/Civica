@@ -16,8 +16,17 @@
       "longitude": -71.0641,
       "phone": "1-877-382-2363",
       "website_url": "https://www.mass.gov/locations/dta-boston",
-      "languages_json": ["en", "es", "ht", "vi", "zh-Hans", "pt"],
-      "service_types": ["snap_application_help"],
+      "languages_json": [
+        "en",
+        "es",
+        "ht",
+        "vi",
+        "zh-Hans",
+        "pt"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
       "notes": "Walk-in office for SNAP applications and recertification. (Seed data — confirm hours before visiting.)",
       "hours_json": {
         "mon": "8:45 AM – 5:00 PM",
@@ -26,7 +35,8 @@
         "thu": "8:45 AM – 5:00 PM",
         "fri": "8:45 AM – 5:00 PM"
       },
-      "civica_last_synced_at": "2026-05-10T12:00:00Z"
+      "civica_last_synced_at": "2026-05-10T12:00:00Z",
+      "record_kind": "help_directory"
     },
     {
       "id": "5eed0000-1000-4000-8000-000000000002",
@@ -41,8 +51,15 @@
       "longitude": -71.0838,
       "phone": "1-877-382-2363",
       "website_url": "https://www.mass.gov/locations/dta-roxbury",
-      "languages_json": ["en", "es", "ht", "pt"],
-      "service_types": ["snap_application_help"],
+      "languages_json": [
+        "en",
+        "es",
+        "ht",
+        "pt"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
       "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
       "hours_json": {
         "mon": "8:45 AM – 5:00 PM",
@@ -51,7 +68,8 @@
         "thu": "8:45 AM – 5:00 PM",
         "fri": "8:45 AM – 5:00 PM"
       },
-      "civica_last_synced_at": "2026-05-10T12:00:00Z"
+      "civica_last_synced_at": "2026-05-10T12:00:00Z",
+      "record_kind": "help_directory"
     },
     {
       "id": "5eed0000-1000-4000-8000-000000000003",
@@ -66,8 +84,15 @@
       "longitude": -71.0512,
       "phone": "1-877-382-2363",
       "website_url": "https://www.mass.gov/locations/dta-dorchester",
-      "languages_json": ["en", "es", "ht", "vi"],
-      "service_types": ["snap_application_help"],
+      "languages_json": [
+        "en",
+        "es",
+        "ht",
+        "vi"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
       "notes": "Walk-in DTA office serving Dorchester, Mattapan, and South Boston. (Seed data — confirm hours before visiting.)",
       "hours_json": {
         "mon": "8:45 AM – 5:00 PM",
@@ -76,7 +101,8 @@
         "thu": "8:45 AM – 5:00 PM",
         "fri": "8:45 AM – 5:00 PM"
       },
-      "civica_last_synced_at": "2026-05-10T12:00:00Z"
+      "civica_last_synced_at": "2026-05-10T12:00:00Z",
+      "record_kind": "help_directory"
     },
     {
       "id": "5eed0000-1000-4000-8000-000000000004",
@@ -87,12 +113,19 @@
       "city": "Cambridge",
       "state": "MA",
       "zip": "02139",
-      "latitude": 42.3680,
+      "latitude": 42.368,
       "longitude": -71.1052,
       "phone": "1-877-382-2363",
       "website_url": "https://www.mass.gov/locations/dta-cambridge",
-      "languages_json": ["en", "es", "pt", "zh-Hans"],
-      "service_types": ["snap_application_help"],
+      "languages_json": [
+        "en",
+        "es",
+        "pt",
+        "zh-Hans"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
       "notes": "Walk-in DTA office serving Cambridge and Somerville. (Seed data — confirm hours before visiting.)",
       "hours_json": {
         "mon": "8:45 AM – 5:00 PM",
@@ -101,7 +134,8 @@
         "thu": "8:45 AM – 5:00 PM",
         "fri": "8:45 AM – 5:00 PM"
       },
-      "civica_last_synced_at": "2026-05-10T12:00:00Z"
+      "civica_last_synced_at": "2026-05-10T12:00:00Z",
+      "record_kind": "help_directory"
     },
     {
       "id": "5eed0000-1000-4000-8000-000000000005",
@@ -116,8 +150,15 @@
       "longitude": -71.7886,
       "phone": "1-877-382-2363",
       "website_url": "https://www.mass.gov/locations/dta-worcester",
-      "languages_json": ["en", "es", "pt", "vi"],
-      "service_types": ["snap_application_help"],
+      "languages_json": [
+        "en",
+        "es",
+        "pt",
+        "vi"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
       "notes": "Walk-in DTA office. (Seed data — confirm hours before visiting.)",
       "hours_json": {
         "mon": "8:45 AM – 5:00 PM",
@@ -126,7 +167,8 @@
         "thu": "8:45 AM – 5:00 PM",
         "fri": "8:45 AM – 5:00 PM"
       },
-      "civica_last_synced_at": "2026-05-10T12:00:00Z"
+      "civica_last_synced_at": "2026-05-10T12:00:00Z",
+      "record_kind": "help_directory"
     },
     {
       "id": "5eed0000-1000-4000-8000-000000000006",
@@ -139,10 +181,16 @@
       "zip": "02118",
       "latitude": 42.3373,
       "longitude": -71.0664,
-      "languages_json": ["en", "es"],
-      "service_types": ["food_assistance"],
+      "languages_json": [
+        "en",
+        "es"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
       "notes": "Greater Boston Food Bank warehouse and partner-agency distribution center. (Seed data — confirm public hours and eligibility before visiting.)",
-      "civica_last_synced_at": "2026-05-10T12:00:00Z"
+      "civica_last_synced_at": "2026-05-10T12:00:00Z",
+      "record_kind": "help_directory"
     },
     {
       "id": "5eed0000-1000-4000-8000-000000000007",
@@ -155,14 +203,21 @@
       "zip": "02125",
       "latitude": 42.3084,
       "longitude": -71.0648,
-      "languages_json": ["en", "es", "ht"],
-      "service_types": ["food_assistance"],
+      "languages_json": [
+        "en",
+        "es",
+        "ht"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
       "notes": "Weekly groceries for Dorchester residents. (Seed data — confirm hours and eligibility.)",
       "hours_json": {
         "tue": "10:00 AM – 1:00 PM",
         "thu": "4:00 PM – 6:00 PM"
       },
-      "civica_last_synced_at": "2026-05-10T12:00:00Z"
+      "civica_last_synced_at": "2026-05-10T12:00:00Z",
+      "record_kind": "help_directory"
     },
     {
       "id": "5eed0000-1000-4000-8000-000000000008",
@@ -175,14 +230,21 @@
       "zip": "02128",
       "latitude": 42.3705,
       "longitude": -71.0354,
-      "languages_json": ["en", "es", "pt"],
-      "service_types": ["food_assistance"],
+      "languages_json": [
+        "en",
+        "es",
+        "pt"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
       "notes": "Bilingual food pantry serving East Boston. (Seed data — confirm hours.)",
       "hours_json": {
         "wed": "9:00 AM – 12:00 PM",
         "sat": "9:00 AM – 12:00 PM"
       },
-      "civica_last_synced_at": "2026-05-10T12:00:00Z"
+      "civica_last_synced_at": "2026-05-10T12:00:00Z",
+      "record_kind": "help_directory"
     },
     {
       "id": "5eed0000-1000-4000-8000-000000000009",
@@ -195,13 +257,19 @@
       "zip": "02136",
       "latitude": 42.2557,
       "longitude": -71.1247,
-      "languages_json": ["en", "es"],
-      "service_types": ["food_assistance"],
+      "languages_json": [
+        "en",
+        "es"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
       "notes": "Walk-in groceries. (Seed data — confirm hours.)",
       "hours_json": {
         "fri": "10:00 AM – 1:00 PM"
       },
-      "civica_last_synced_at": "2026-05-10T12:00:00Z"
+      "civica_last_synced_at": "2026-05-10T12:00:00Z",
+      "record_kind": "help_directory"
     },
     {
       "id": "5eed0000-1000-4000-8000-000000000010",
@@ -214,14 +282,22 @@
       "zip": "02144",
       "latitude": 42.3998,
       "longitude": -71.1232,
-      "languages_json": ["en", "es", "pt", "ht"],
-      "service_types": ["food_assistance"],
+      "languages_json": [
+        "en",
+        "es",
+        "pt",
+        "ht"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
       "notes": "Somerville Homeless Coalition program. (Seed data — confirm hours and intake process.)",
       "hours_json": {
         "tue": "10:00 AM – 1:00 PM",
         "thu": "10:00 AM – 1:00 PM"
       },
-      "civica_last_synced_at": "2026-05-10T12:00:00Z"
+      "civica_last_synced_at": "2026-05-10T12:00:00Z",
+      "record_kind": "help_directory"
     },
     {
       "id": "5eed0000-1000-4000-8000-000000000011",
@@ -234,13 +310,20 @@
       "zip": "02139",
       "latitude": 42.3719,
       "longitude": -71.1097,
-      "languages_json": ["en", "es", "ht"],
-      "service_types": ["food_assistance"],
+      "languages_json": [
+        "en",
+        "es",
+        "ht"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
       "notes": "Weekly community pantry. (Seed data — confirm hours.)",
       "hours_json": {
         "wed": "4:00 PM – 6:30 PM"
       },
-      "civica_last_synced_at": "2026-05-10T12:00:00Z"
+      "civica_last_synced_at": "2026-05-10T12:00:00Z",
+      "record_kind": "help_directory"
     },
     {
       "id": "5eed0000-1000-4000-8000-000000000012",
@@ -253,13 +336,21 @@
       "zip": "02445",
       "latitude": 42.3318,
       "longitude": -71.1212,
-      "languages_json": ["en", "es", "ru", "zh-Hans"],
-      "service_types": ["food_assistance"],
+      "languages_json": [
+        "en",
+        "es",
+        "ru",
+        "zh-Hans"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
       "notes": "Open to anyone in need; no documentation required. (Seed data — confirm hours.)",
       "hours_json": {
         "thu": "5:30 PM – 7:00 PM"
       },
-      "civica_last_synced_at": "2026-05-10T12:00:00Z"
+      "civica_last_synced_at": "2026-05-10T12:00:00Z",
+      "record_kind": "help_directory"
     },
     {
       "id": "5eed0000-1000-4000-8000-000000000013",
@@ -272,15 +363,23 @@
       "zip": "02169",
       "latitude": 42.2529,
       "longitude": -71.0023,
-      "languages_json": ["en", "es", "vi", "zh-Hans"],
-      "service_types": ["food_assistance"],
+      "languages_json": [
+        "en",
+        "es",
+        "vi",
+        "zh-Hans"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
       "notes": "Choice-model pantry serving the South Shore. (Seed data — confirm hours and intake.)",
       "hours_json": {
         "mon": "9:30 AM – 1:00 PM",
         "wed": "9:30 AM – 1:00 PM",
         "fri": "9:30 AM – 1:00 PM"
       },
-      "civica_last_synced_at": "2026-05-10T12:00:00Z"
+      "civica_last_synced_at": "2026-05-10T12:00:00Z",
+      "record_kind": "help_directory"
     },
     {
       "id": "5eed0000-1000-4000-8000-000000000014",
@@ -291,12 +390,18 @@
       "city": "Roxbury",
       "state": "MA",
       "zip": "02121",
-      "latitude": 42.3170,
+      "latitude": 42.317,
       "longitude": -71.0857,
       "phone": "617-442-5900",
       "website_url": "https://bostonabcd.org",
-      "languages_json": ["en", "es", "ht"],
-      "service_types": ["both"],
+      "languages_json": [
+        "en",
+        "es",
+        "ht"
+      ],
+      "service_types": [
+        "both"
+      ],
       "notes": "SNAP application help, fuel assistance, and emergency food. Walk-in and by appointment. (Seed data — call to confirm services.)",
       "hours_json": {
         "mon": "9:00 AM – 5:00 PM",
@@ -305,7 +410,8 @@
         "thu": "9:00 AM – 5:00 PM",
         "fri": "9:00 AM – 5:00 PM"
       },
-      "civica_last_synced_at": "2026-05-10T12:00:00Z"
+      "civica_last_synced_at": "2026-05-10T12:00:00Z",
+      "record_kind": "help_directory"
     },
     {
       "id": "5eed0000-1000-4000-8000-000000000015",
@@ -317,13 +423,21 @@
       "state": "MA",
       "zip": "02127",
       "latitude": 42.3402,
-      "longitude": -71.0530,
+      "longitude": -71.053,
       "phone": "617-464-8500",
       "website_url": "https://www.ccab.org",
-      "languages_json": ["en", "es", "ht", "pt"],
-      "service_types": ["both"],
+      "languages_json": [
+        "en",
+        "es",
+        "ht",
+        "pt"
+      ],
+      "service_types": [
+        "both"
+      ],
       "notes": "SNAP outreach, application assistance, and emergency food. (Seed data — call to confirm services.)",
-      "civica_last_synced_at": "2026-05-10T12:00:00Z"
+      "civica_last_synced_at": "2026-05-10T12:00:00Z",
+      "record_kind": "help_directory"
     },
     {
       "id": "5eed0000-1000-4000-8000-000000000016",
@@ -338,10 +452,17 @@
       "longitude": -72.5898,
       "phone": "1-800-645-8333",
       "website_url": "https://www.projectbread.org",
-      "languages_json": ["en", "es", "pt"],
-      "service_types": ["both"],
+      "languages_json": [
+        "en",
+        "es",
+        "pt"
+      ],
+      "service_types": [
+        "both"
+      ],
       "notes": "Statewide SNAP application hotline with a Western MA outreach desk. (Seed data — call to confirm.)",
-      "civica_last_synced_at": "2026-05-10T12:00:00Z"
+      "civica_last_synced_at": "2026-05-10T12:00:00Z",
+      "record_kind": "help_directory"
     },
     {
       "id": "5eed0000-1000-4000-8000-000000000017",
@@ -357,7 +478,10 @@
       "zip": "02127",
       "latitude": 42.3354,
       "longitude": -71.0349,
-      "languages_json": ["en", "es"],
+      "languages_json": [
+        "en",
+        "es"
+      ],
       "service_types": [],
       "notes": "Full-service supermarket; SNAP-eligible groceries. (Seed data — confirm hours.)",
       "civica_last_synced_at": "2026-05-10T12:00:00Z"
@@ -376,7 +500,10 @@
       "zip": "02199",
       "latitude": 42.3479,
       "longitude": -71.0826,
-      "languages_json": ["en", "es"],
+      "languages_json": [
+        "en",
+        "es"
+      ],
       "service_types": [],
       "notes": "Full-service supermarket; SNAP-eligible groceries. (Seed data — confirm hours.)",
       "civica_last_synced_at": "2026-05-10T12:00:00Z"
@@ -394,8 +521,13 @@
       "state": "MA",
       "zip": "02119",
       "latitude": 42.3334,
-      "longitude": -71.0810,
-      "languages_json": ["en", "es", "ht", "pt"],
+      "longitude": -71.081,
+      "languages_json": [
+        "en",
+        "es",
+        "ht",
+        "pt"
+      ],
       "service_types": [],
       "notes": "Independent supermarket with deep Caribbean / Latin / African grocery selection. SNAP-eligible. (Seed data — confirm hours.)",
       "civica_last_synced_at": "2026-05-10T12:00:00Z"
@@ -414,7 +546,12 @@
       "zip": "02111",
       "latitude": 42.3508,
       "longitude": -71.0613,
-      "languages_json": ["en", "zh-Hans", "zh-Hant", "vi"],
+      "languages_json": [
+        "en",
+        "zh-Hans",
+        "zh-Hant",
+        "vi"
+      ],
       "service_types": [],
       "notes": "East Asian grocery in Chinatown; SNAP-eligible. Strong fresh produce and protein selection. (Seed data — confirm hours.)",
       "civica_last_synced_at": "2026-05-10T12:00:00Z"
@@ -433,8 +570,12 @@
       "state": "MA",
       "zip": "02124",
       "latitude": 42.2862,
-      "longitude": -71.0710,
-      "languages_json": ["en", "es", "ht"],
+      "longitude": -71.071,
+      "languages_json": [
+        "en",
+        "es",
+        "ht"
+      ],
       "service_types": [],
       "notes": "Nonprofit grocery; SNAP-eligible. Affordable prepared meals and groceries with a focus on dignity. (Seed data — confirm hours.)",
       "civica_last_synced_at": "2026-05-10T12:00:00Z"
@@ -454,7 +595,10 @@
       "zip": "02118",
       "latitude": 42.3433,
       "longitude": -71.0673,
-      "languages_json": ["en", "es"],
+      "languages_json": [
+        "en",
+        "es"
+      ],
       "service_types": [],
       "notes": "South End farmers market; accepts SNAP and HIP (Healthy Incentives Program) matching for fruits and vegetables. Open Sundays May–October. (Seed data — confirm season and hours.)",
       "hours_json": {
@@ -477,7 +621,11 @@
       "zip": "02108",
       "latitude": 42.3617,
       "longitude": -71.0577,
-      "languages_json": ["en", "es", "zh-Hans"],
+      "languages_json": [
+        "en",
+        "es",
+        "zh-Hans"
+      ],
       "service_types": [],
       "notes": "Year-round indoor market featuring local MA farmers and producers; accepts SNAP and HIP at participating vendors. (Seed data — confirm hours.)",
       "hours_json": {
@@ -506,10 +654,1060 @@
       "zip": "01060",
       "latitude": 42.3471,
       "longitude": -72.6342,
-      "languages_json": ["en", "es"],
+      "languages_json": [
+        "en",
+        "es"
+      ],
       "service_types": [],
       "notes": "Member-owned community co-op grocery in Western MA; SNAP-eligible. Strong local-farm sourcing. (Seed data — confirm hours.)",
       "civica_last_synced_at": "2026-05-10T12:00:00Z"
+    },
+    {
+      "id": "44a32c8c-7b4d-55ff-b235-276242bbe88e",
+      "external_id": "seed-dta-springfield",
+      "source": "state_ma_dta",
+      "name": "DTA — Springfield Transitional Assistance Office",
+      "address_line_1": "1441 Main Street",
+      "city": "Springfield",
+      "state": "MA",
+      "zip": "01103",
+      "latitude": 42.1015,
+      "longitude": -72.5903,
+      "languages_json": [
+        "en",
+        "es",
+        "ht",
+        "vi",
+        "zh-Hans",
+        "pt"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "6f528fe9-e49c-52b2-a297-e312b6c29a80",
+      "external_id": "seed-dta-lowell",
+      "source": "state_ma_dta",
+      "name": "DTA — Lowell Transitional Assistance Office",
+      "address_line_1": "204 Middle Street",
+      "city": "Lowell",
+      "state": "MA",
+      "zip": "01852",
+      "latitude": 42.6368,
+      "longitude": -71.3158,
+      "languages_json": [
+        "en",
+        "es",
+        "ht",
+        "vi",
+        "zh-Hans",
+        "pt"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "1fe0796f-5fb6-59fe-b34f-77368449ef84",
+      "external_id": "seed-dta-brockton",
+      "source": "state_ma_dta",
+      "name": "DTA — Brockton Transitional Assistance Office",
+      "address_line_1": "2 Mechanic Street",
+      "city": "Brockton",
+      "state": "MA",
+      "zip": "02301",
+      "latitude": 42.0834,
+      "longitude": -71.0186,
+      "languages_json": [
+        "en",
+        "es",
+        "ht",
+        "vi",
+        "zh-Hans",
+        "pt"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "b8695c68-b00a-5602-8e41-1dd7170e34f8",
+      "external_id": "seed-dta-lynn",
+      "source": "state_ma_dta",
+      "name": "DTA — Lynn Transitional Assistance Office",
+      "address_line_1": "400 Washington Street",
+      "city": "Lynn",
+      "state": "MA",
+      "zip": "01901",
+      "latitude": 42.4671,
+      "longitude": -70.9488,
+      "languages_json": [
+        "en",
+        "es",
+        "ht",
+        "pt"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "771ef1be-ee3d-5604-97d3-432e2472bd1e",
+      "external_id": "seed-dta-new-bedford",
+      "source": "state_ma_dta",
+      "name": "DTA — New Bedford Transitional Assistance Office",
+      "address_line_1": "500 Tarkiln Hill Road",
+      "city": "New Bedford",
+      "state": "MA",
+      "zip": "02745",
+      "latitude": 41.6626,
+      "longitude": -70.9641,
+      "languages_json": [
+        "en",
+        "es",
+        "pt"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "3747c0e9-36d0-5a99-905c-c0ebdc90952b",
+      "external_id": "seed-dta-fall-river",
+      "source": "state_ma_dta",
+      "name": "DTA — Fall River Transitional Assistance Office",
+      "address_line_1": "60 Summer Street",
+      "city": "Fall River",
+      "state": "MA",
+      "zip": "02721",
+      "latitude": 41.7023,
+      "longitude": -71.1551,
+      "languages_json": [
+        "en",
+        "es",
+        "pt"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "20816724-54e0-5f5d-91d7-03b98a749eb5",
+      "external_id": "seed-dta-quincy",
+      "source": "state_ma_dta",
+      "name": "DTA — Quincy Transitional Assistance Office",
+      "address_line_1": "71 Coddington Street",
+      "city": "Quincy",
+      "state": "MA",
+      "zip": "02169",
+      "latitude": 42.2528,
+      "longitude": -71.0018,
+      "languages_json": [
+        "en",
+        "es",
+        "zh-Hans",
+        "vi"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "5b42f5d3-1f05-5824-a08f-e38ddecd3d02",
+      "external_id": "seed-dta-framingham",
+      "source": "state_ma_dta",
+      "name": "DTA — Framingham Transitional Assistance Office",
+      "address_line_1": "83 Leland Street",
+      "city": "Framingham",
+      "state": "MA",
+      "zip": "01702",
+      "latitude": 42.2789,
+      "longitude": -71.4206,
+      "languages_json": [
+        "en",
+        "es",
+        "pt"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "99588830-0329-571c-87e8-12948ad55c04",
+      "external_id": "seed-dta-lawrence",
+      "source": "state_ma_dta",
+      "name": "DTA — Lawrence Transitional Assistance Office",
+      "address_line_1": "198 Common Street",
+      "city": "Lawrence",
+      "state": "MA",
+      "zip": "01840",
+      "latitude": 42.7076,
+      "longitude": -71.1625,
+      "languages_json": [
+        "en",
+        "es"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "d28e45ba-ba0e-593c-999a-7b4180ab8c0e",
+      "external_id": "seed-dta-haverhill",
+      "source": "state_ma_dta",
+      "name": "DTA — Haverhill Transitional Assistance Office",
+      "address_line_1": "35 Winter Street",
+      "city": "Haverhill",
+      "state": "MA",
+      "zip": "01830",
+      "latitude": 42.7758,
+      "longitude": -71.0766,
+      "languages_json": [
+        "en",
+        "es"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "6d96fffe-d189-521e-aa3a-5efac7a10c18",
+      "external_id": "seed-dta-taunton",
+      "source": "state_ma_dta",
+      "name": "DTA — Taunton Transitional Assistance Office",
+      "address_line_1": "72 Oak Street",
+      "city": "Taunton",
+      "state": "MA",
+      "zip": "02780",
+      "latitude": 41.8997,
+      "longitude": -71.0933,
+      "languages_json": [
+        "en",
+        "es",
+        "pt"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "ead73e9f-a462-5f03-a91a-1fda6603d5df",
+      "external_id": "seed-dta-pittsfield",
+      "source": "state_ma_dta",
+      "name": "DTA — Pittsfield Transitional Assistance Office",
+      "address_line_1": "15 Cheshire Road",
+      "city": "Pittsfield",
+      "state": "MA",
+      "zip": "01201",
+      "latitude": 42.4552,
+      "longitude": -73.2504,
+      "languages_json": [
+        "en",
+        "es"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "621c8cc9-9f5f-5c67-be16-73ae91daed25",
+      "external_id": "seed-dta-fitchburg",
+      "source": "state_ma_dta",
+      "name": "DTA — Fitchburg Transitional Assistance Office",
+      "address_line_1": "730 Main Street",
+      "city": "Fitchburg",
+      "state": "MA",
+      "zip": "01420",
+      "latitude": 42.5812,
+      "longitude": -71.8075,
+      "languages_json": [
+        "en",
+        "es"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "06f314de-2652-5c67-9580-145ed60a7eb7",
+      "external_id": "seed-dta-holyoke",
+      "source": "state_ma_dta",
+      "name": "DTA — Holyoke Transitional Assistance Office",
+      "address_line_1": "300 Sargeant Street",
+      "city": "Holyoke",
+      "state": "MA",
+      "zip": "01040",
+      "latitude": 42.2034,
+      "longitude": -72.6218,
+      "languages_json": [
+        "en",
+        "es"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "0e2c1f17-0a73-5589-9f42-c0fb4bf9bdfc",
+      "external_id": "seed-dta-hyannis",
+      "source": "state_ma_dta",
+      "name": "DTA — Hyannis Transitional Assistance Office",
+      "address_line_1": "372 North Street",
+      "city": "Hyannis",
+      "state": "MA",
+      "zip": "02601",
+      "latitude": 41.6627,
+      "longitude": -70.3064,
+      "languages_json": [
+        "en",
+        "es",
+        "pt"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "1d4af8ca-c984-59c5-8061-8aa27face320",
+      "external_id": "seed-dta-chelsea",
+      "source": "state_ma_dta",
+      "name": "DTA — Chelsea Transitional Assistance Office",
+      "address_line_1": "1040 Winnett Square",
+      "city": "Chelsea",
+      "state": "MA",
+      "zip": "02150",
+      "latitude": 42.3936,
+      "longitude": -71.0328,
+      "languages_json": [
+        "en",
+        "es",
+        "ht",
+        "vi",
+        "zh-Hans",
+        "pt"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "1759a143-6e68-54ac-86bf-1b6657f8ecbd",
+      "external_id": "seed-dta-malden",
+      "source": "state_ma_dta",
+      "name": "DTA — Malden Transitional Assistance Office",
+      "address_line_1": "200 Pleasant Street",
+      "city": "Malden",
+      "state": "MA",
+      "zip": "02148",
+      "latitude": 42.4268,
+      "longitude": -71.0651,
+      "languages_json": [
+        "en",
+        "es",
+        "zh-Hans",
+        "vi"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "bd689578-ba3f-51cd-8458-613fabf68789",
+      "external_id": "seed-dta-attleboro",
+      "source": "state_ma_dta",
+      "name": "DTA — Attleboro Transitional Assistance Office",
+      "address_line_1": "88 Washington Street",
+      "city": "Attleboro",
+      "state": "MA",
+      "zip": "02703",
+      "latitude": 41.9455,
+      "longitude": -71.2868,
+      "languages_json": [
+        "en",
+        "es",
+        "pt"
+      ],
+      "service_types": [
+        "snap_application_help"
+      ],
+      "notes": "Walk-in DTA office. SNAP applications, recertification, EBT card replacement. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:45 AM – 5:00 PM",
+        "tue": "8:45 AM – 5:00 PM",
+        "wed": "8:45 AM – 5:00 PM",
+        "thu": "8:45 AM – 5:00 PM",
+        "fri": "8:45 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "cbfe54a1-8fc4-57ac-8f43-0528a84e9783",
+      "external_id": "seed-fb-greater-boston",
+      "source": "feeding_america",
+      "name": "Greater Boston Food Bank",
+      "address_line_1": "70 South Bay Avenue",
+      "city": "Boston",
+      "state": "MA",
+      "zip": "02118",
+      "latitude": 42.3268,
+      "longitude": -71.0643,
+      "languages_json": [
+        "en",
+        "es"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
+      "notes": "Regional food bank distributing to 600+ partner agencies across Eastern MA. Call or check website for direct-distribution events. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "7:00 AM – 5:00 PM",
+        "tue": "7:00 AM – 5:00 PM",
+        "wed": "7:00 AM – 5:00 PM",
+        "thu": "7:00 AM – 5:00 PM",
+        "fri": "7:00 AM – 5:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "0e95d841-656d-503e-9a28-3faafd22a885",
+      "external_id": "seed-fb-worcester",
+      "source": "feeding_america",
+      "name": "Worcester County Food Bank",
+      "address_line_1": "474 Boston Turnpike",
+      "city": "Shrewsbury",
+      "state": "MA",
+      "zip": "01545",
+      "latitude": 42.298,
+      "longitude": -71.7255,
+      "languages_json": [
+        "en",
+        "es"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
+      "notes": "Serves 100,000+ people annually across Worcester County. Distributes to 200+ pantry partners. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:00 AM – 4:00 PM",
+        "tue": "8:00 AM – 4:00 PM",
+        "wed": "8:00 AM – 4:00 PM",
+        "thu": "8:00 AM – 4:00 PM",
+        "fri": "8:00 AM – 4:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "9b930363-a3ea-5913-9cb9-7dd98eb6bb9a",
+      "external_id": "seed-fb-merrimack",
+      "source": "feeding_america",
+      "name": "Merrimack Valley Food Bank",
+      "address_line_1": "370 Parker Street",
+      "city": "Haverhill",
+      "state": "MA",
+      "zip": "01832",
+      "latitude": 42.7739,
+      "longitude": -71.0662,
+      "languages_json": [
+        "en",
+        "es"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
+      "notes": "Serves the Merrimack Valley and North Shore regions. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:00 AM – 4:00 PM",
+        "tue": "8:00 AM – 4:00 PM",
+        "wed": "8:00 AM – 4:00 PM",
+        "thu": "8:00 AM – 4:00 PM",
+        "fri": "8:00 AM – 4:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "5745ba89-ab6d-5d0e-a492-c62803ba7ff6",
+      "external_id": "seed-fb-western-ma",
+      "source": "feeding_america",
+      "name": "Food Bank of Western Massachusetts",
+      "address_line_1": "97 North Hatfield Road",
+      "city": "Hatfield",
+      "state": "MA",
+      "zip": "01038",
+      "latitude": 42.3773,
+      "longitude": -72.5994,
+      "languages_json": [
+        "en",
+        "es"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
+      "notes": "Serves Hampden, Hampshire, Franklin, and Berkshire counties. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:00 AM – 4:00 PM",
+        "tue": "8:00 AM – 4:00 PM",
+        "wed": "8:00 AM – 4:00 PM",
+        "thu": "8:00 AM – 4:00 PM",
+        "fri": "8:00 AM – 4:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "84c916be-22f6-500d-a52b-a671e269e69e",
+      "external_id": "seed-fb-se-ma",
+      "source": "feeding_america",
+      "name": "South Eastern Massachusetts Food Bank",
+      "address_line_1": "186 Midway Street",
+      "city": "Brockton",
+      "state": "MA",
+      "zip": "02302",
+      "latitude": 42.0973,
+      "longitude": -71.0481,
+      "languages_json": [
+        "en",
+        "es",
+        "pt"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
+      "notes": "Serves Plymouth and Bristol counties. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:00 AM – 4:00 PM",
+        "tue": "8:00 AM – 4:00 PM",
+        "wed": "8:00 AM – 4:00 PM",
+        "thu": "8:00 AM – 4:00 PM",
+        "fri": "8:00 AM – 4:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "d5c75266-3192-5318-9513-6f3ba8a7eb7e",
+      "external_id": "seed-pantry-rosies-place",
+      "source": "ma_pantries",
+      "name": "Rosie's Place",
+      "address_line_1": "889 Harrison Avenue",
+      "city": "Boston",
+      "state": "MA",
+      "zip": "02118",
+      "latitude": 42.3348,
+      "longitude": -71.0748,
+      "languages_json": [
+        "en",
+        "es",
+        "ht"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
+      "notes": "Free meals and food pantry for women and families in need. No appointment required. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:30 AM – 7:00 PM",
+        "tue": "8:30 AM – 7:00 PM",
+        "wed": "8:30 AM – 7:00 PM",
+        "thu": "8:30 AM – 7:00 PM",
+        "fri": "8:30 AM – 5:00 PM",
+        "sat": "9:00 AM – 1:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "c43e7763-7d7f-508e-a84f-e1f41b5fbccb",
+      "external_id": "seed-pantry-haley-house",
+      "source": "ma_pantries",
+      "name": "Haley House Community Meals",
+      "address_line_1": "23 Dartmouth Street",
+      "city": "Boston",
+      "state": "MA",
+      "zip": "02116",
+      "latitude": 42.3449,
+      "longitude": -71.0771,
+      "languages_json": [
+        "en",
+        "es"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
+      "notes": "Free community lunch and food resources in South End Boston. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "12:00 PM – 1:00 PM",
+        "tue": "12:00 PM – 1:00 PM",
+        "wed": "12:00 PM – 1:00 PM",
+        "thu": "12:00 PM – 1:00 PM",
+        "fri": "12:00 PM – 1:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "e3de47aa-a7bb-52ff-836a-c405cd2d4c56",
+      "external_id": "seed-pantry-cambridge",
+      "source": "ma_pantries",
+      "name": "Cambridge Community Food Pantry",
+      "address_line_1": "5 Callender Street",
+      "city": "Cambridge",
+      "state": "MA",
+      "zip": "02139",
+      "latitude": 42.3693,
+      "longitude": -71.1088,
+      "languages_json": [
+        "en",
+        "es",
+        "ht"
+      ],
+      "service_types": [
+        "food_assistance",
+        "snap_application_help"
+      ],
+      "notes": "Free groceries for Cambridge residents. SNAP application assistance available. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "tue": "10:00 AM – 12:00 PM",
+        "thu": "4:00 PM – 6:00 PM",
+        "sat": "10:00 AM – 12:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "1821e825-0670-5be8-ae1d-628ab28d1d17",
+      "external_id": "seed-pantry-somerville",
+      "source": "ma_pantries",
+      "name": "Somerville-Cambridge Elder Services Food Pantry",
+      "address_line_1": "61 Medford Street",
+      "city": "Somerville",
+      "state": "MA",
+      "zip": "02143",
+      "latitude": 42.3864,
+      "longitude": -71.1004,
+      "languages_json": [
+        "en",
+        "es",
+        "ht",
+        "pt"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
+      "notes": "Food pantry primarily serving elders and low-income households in Somerville and Cambridge. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "9:00 AM – 11:30 AM",
+        "wed": "9:00 AM – 11:30 AM",
+        "fri": "9:00 AM – 11:30 AM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "15671b29-08e8-5e4c-a4fa-37bb08835e50",
+      "external_id": "seed-pantry-arlington",
+      "source": "ma_pantries",
+      "name": "Arlington EATS Food Pantry",
+      "address_line_1": "10 Medford Street",
+      "city": "Arlington",
+      "state": "MA",
+      "zip": "02474",
+      "latitude": 42.4145,
+      "longitude": -71.1541,
+      "languages_json": [
+        "en",
+        "es"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
+      "notes": "Free groceries for Arlington residents and surrounding communities. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "10:00 AM – 1:00 PM",
+        "wed": "4:00 PM – 7:00 PM",
+        "sat": "10:00 AM – 1:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "1be90859-ef4d-5c8f-a2ff-7817d2720688",
+      "external_id": "seed-pantry-medford",
+      "source": "ma_pantries",
+      "name": "Medford Community Mediation Food Pantry",
+      "address_line_1": "5 High Street",
+      "city": "Medford",
+      "state": "MA",
+      "zip": "02155",
+      "latitude": 42.4184,
+      "longitude": -71.1064,
+      "languages_json": [
+        "en",
+        "es"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
+      "notes": "Free food for Medford area residents. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "tue": "9:00 AM – 12:00 PM",
+        "thu": "4:00 PM – 6:30 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "16fb3418-f8e1-54de-a5a8-e36c41f25162",
+      "external_id": "seed-pantry-waltham",
+      "source": "ma_pantries",
+      "name": "Waltham Food Pantry",
+      "address_line_1": "535 Moody Street",
+      "city": "Waltham",
+      "state": "MA",
+      "zip": "02453",
+      "latitude": 42.3768,
+      "longitude": -71.2376,
+      "languages_json": [
+        "en",
+        "es",
+        "pt"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
+      "notes": "Free groceries for Waltham area residents. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "10:00 AM – 12:00 PM",
+        "wed": "3:00 PM – 5:00 PM",
+        "fri": "10:00 AM – 12:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "57d2250c-16f3-536a-b575-b352be79eea7",
+      "external_id": "seed-pantry-newton",
+      "source": "ma_pantries",
+      "name": "Newton Food Pantry",
+      "address_line_1": "275 Elliot Street",
+      "city": "Newton",
+      "state": "MA",
+      "zip": "02464",
+      "latitude": 42.337,
+      "longitude": -71.2,
+      "languages_json": [
+        "en",
+        "es",
+        "zh-Hans"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
+      "notes": "Free groceries for Newton residents. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "tue": "10:00 AM – 1:00 PM",
+        "thu": "4:00 PM – 7:00 PM",
+        "sat": "9:00 AM – 12:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "5bbadd6a-8c83-55ce-b728-3e0915856017",
+      "external_id": "seed-pantry-malden",
+      "source": "ma_pantries",
+      "name": "Malden Community Food Pantry",
+      "address_line_1": "220 Pleasant Street",
+      "city": "Malden",
+      "state": "MA",
+      "zip": "02148",
+      "latitude": 42.4251,
+      "longitude": -71.0662,
+      "languages_json": [
+        "en",
+        "es",
+        "zh-Hans",
+        "vi"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
+      "notes": "Free groceries for Malden and surrounding area. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "tue": "10:00 AM – 1:00 PM",
+        "thu": "4:00 PM – 6:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "3623925c-304f-5125-abc1-e02e0f0be496",
+      "external_id": "seed-pantry-everett",
+      "source": "ma_pantries",
+      "name": "Everett Community Food Pantry",
+      "address_line_1": "82 Elm Street",
+      "city": "Everett",
+      "state": "MA",
+      "zip": "02149",
+      "latitude": 42.4085,
+      "longitude": -71.0577,
+      "languages_json": [
+        "en",
+        "es",
+        "ht",
+        "pt"
+      ],
+      "service_types": [
+        "food_assistance"
+      ],
+      "notes": "Free groceries for Everett residents. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "wed": "10:00 AM – 1:00 PM",
+        "sat": "9:00 AM – 11:30 AM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "99515afc-8fa8-5956-b8c3-3cd0c73024f0",
+      "external_id": "seed-pantry-quincy-cap",
+      "source": "ma_pantries",
+      "name": "Quincy Community Action Programs",
+      "address_line_1": "1509 Hancock Street",
+      "city": "Quincy",
+      "state": "MA",
+      "zip": "02169",
+      "latitude": 42.2475,
+      "longitude": -71.0017,
+      "languages_json": [
+        "en",
+        "es",
+        "zh-Hans",
+        "vi"
+      ],
+      "service_types": [
+        "food_assistance",
+        "snap_application_help"
+      ],
+      "notes": "Food pantry and SNAP application assistance. Serves the South Shore. (Seed data — confirm hours before visiting.)",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "9:00 AM – 4:00 PM",
+        "tue": "9:00 AM – 4:00 PM",
+        "wed": "9:00 AM – 4:00 PM",
+        "thu": "9:00 AM – 4:00 PM",
+        "fri": "9:00 AM – 4:00 PM"
+      },
+      "record_kind": "help_directory"
+    },
+    {
+      "id": "86e1d8a7-8a3d-5f54-83ff-2077873ac9a7",
+      "external_id": "seed-snap-project-bread",
+      "source": "ma_pantries",
+      "name": "Project Bread FoodSource Hotline",
+      "address_line_1": "145 Border Street",
+      "city": "Boston",
+      "state": "MA",
+      "zip": "02128",
+      "latitude": 42.3672,
+      "longitude": -71.0203,
+      "languages_json": [
+        "en",
+        "es",
+        "ht",
+        "pt",
+        "zh-Hans",
+        "vi"
+      ],
+      "service_types": [
+        "food_assistance",
+        "snap_application_help"
+      ],
+      "notes": "Statewide food assistance hotline. Call for referrals to local food resources and SNAP enrollment help. Free interpreter services available.",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z",
+      "hours_json": {
+        "mon": "8:00 AM – 7:00 PM",
+        "tue": "8:00 AM – 7:00 PM",
+        "wed": "8:00 AM – 7:00 PM",
+        "thu": "8:00 AM – 7:00 PM",
+        "fri": "8:00 AM – 7:00 PM",
+        "sat": "10:00 AM – 2:00 PM"
+      },
+      "phone": "1-800-645-8333",
+      "record_kind": "help_directory"
     }
   ]
 }

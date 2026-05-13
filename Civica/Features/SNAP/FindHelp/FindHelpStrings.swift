@@ -44,19 +44,10 @@ enum FindHelpStrings {
         "What we don't do",
         es: "Qué no hacemos"
     )
-    /// Permission-comparison copy ("what we don't do"). Names the
-    /// active state's SNAP agency so the comparison feels grounded
-    /// rather than abstract. Defaults to the launch state's agency
-    /// when the caller hasn't threaded a state code through yet.
-    static func permissionDontBody(stateCode: String? = nil, language: CivicaLanguage) -> String {
-        let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
-        switch language {
-        case .english:
-            return "Track you over time. Share your location with \(agency). Use it for ads."
-        case .spanish:
-            return "Rastrearte con el tiempo. Compartir tu ubicación con \(agency). Usarla para anuncios."
-        }
-    }
+    static let permissionDontBody = CivicaText(
+        "Track you over time. Share your location with Massachusetts DTA. Use it for ads.",
+        es: "Rastrearte con el tiempo. Compartir tu ubicación con el DTA de Massachusetts. Usarla para anuncios."
+    )
 
     static let permissionWithoutSharing = CivicaText(
         "You can use the map without sharing — type a zip code instead.",
@@ -190,11 +181,6 @@ enum FindHelpStrings {
         emptyTitle.value(in: language).replacingOccurrences(of: "%@", with: "\(miles)")
     }
 
-    static let zipResultsNotice = CivicaText(
-        "Showing limited results by ZIP code. Hours and availability can change — call ahead to confirm.",
-        es: "Mostrando resultados limitados por código postal. Los horarios y la disponibilidad pueden cambiar — llama antes de ir."
-    )
-
     // MARK: - Transport error state
     //
     // Shown when the directory request fails at the transport layer
@@ -286,5 +272,20 @@ enum FindHelpStrings {
     static let layerBoth = CivicaText(
         "Both",
         es: "Ambos"
+    )
+
+    // MARK: - Layer subtitles (one-line description below the toggle)
+
+    static let layerFindHelpSubtitle = CivicaText(
+        "SNAP offices, food pantries & application help",
+        es: "Oficinas SNAP, despensas y ayuda para solicitar"
+    )
+    static let layerSpendSubtitle = CivicaText(
+        "Stores & markets that accept your EBT card",
+        es: "Tiendas y mercados que aceptan tu tarjeta EBT"
+    )
+    static let layerBothSubtitle = CivicaText(
+        "Apply for benefits and find places to use them",
+        es: "Solicita beneficios y encuentra dónde usarlos"
     )
 }

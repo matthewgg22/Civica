@@ -14,6 +14,7 @@ struct PracticeSessionView: View {
 
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
@@ -52,9 +53,16 @@ struct PracticeSessionView: View {
                             .padding(.leading, CivicaSpacing.sm)
                         }
 
+                        if viewModel.isOfflineMode {
+                            offlineModeNotice
+                        }
+
                         if case .failed(let message) = viewModel.status {
                             errorBanner(message)
                             retryButton
+                            if !viewModel.isOfflineMode {
+                                offlineButton
+                            }
                         }
 
                         if viewModel.status == .complete {
@@ -66,7 +74,7 @@ struct PracticeSessionView: View {
                 }
                 .onChange(of: viewModel.transcript.count) { _, newCount in
                     if newCount > 0 {
-                        withAnimation(.easeOut(duration: 0.2)) {
+                        withAnimation(reduceMotion ? nil : .easeOut(duration: 0.2)) {
                             proxy.scrollTo(newCount - 1, anchor: .bottom)
                         }
                     }
@@ -262,6 +270,28 @@ struct PracticeSessionView: View {
         .buttonStyle(.plain)
         .frame(maxWidth: .infinity)
         .padding(.top, CivicaSpacing.xs)
+    }
+
+    private var offlineButton: some View {
+        Button {
+            Task { await viewModel.switchToOffline() }
+        } label: {
+            Text(InterviewCoachStrings.practiceOffline.value(in: language))
+                .font(CivicaTypography.subhead)
+                .foregroundStyle(CivicaColors.brickPrimary)
+                .frame(maxWidth: .infinity)
+                .padding(.top, CivicaSpacing.xs)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var offlineModeNotice: some View {
+        Text(InterviewCoachStrings.offlineModeNotice.value(in: language))
+            .font(CivicaTypography.caption)
+            .foregroundStyle(CivicaColors.graphite)
+            .padding(.horizontal, CivicaSpacing.sm)
+            .padding(.vertical, CivicaSpacing.xs)
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 

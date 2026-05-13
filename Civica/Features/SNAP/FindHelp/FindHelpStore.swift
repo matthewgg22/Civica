@@ -27,6 +27,16 @@ enum FindHelpLayerSelection: String, CaseIterable, Identifiable {
 
 @MainActor
 final class FindHelpStore: ObservableObject {
+    /// Default search radius — ~15 miles. Wide enough to fill the map
+    /// with nearby results on first load without feeling overwhelming.
+    static let defaultRadiusKm: Double = 25.0
+    /// Empty-state "look farther" radius — ~50 miles.
+    static let expandedRadiusKm: Double = 80.0
+    /// Minimum movement before `requestSearch` reissues a query at the
+    /// new coordinate. Stops a noisy CoreLocation stream from spamming
+    /// the RPC while the user is stationary.
+    static let researchThresholdMeters: CLLocationDistance = 250
+
     @Published private(set) var locations: [FindHelpLocation] = []
     @Published private(set) var sources: [FindHelpSourceAttribution] = []
     @Published var userLocation: CLLocation?
@@ -34,6 +44,12 @@ final class FindHelpStore: ObservableObject {
     @Published var filter: FindHelpFilterState = .none
     @Published private(set) var isLoading: Bool = false
     @Published var error: FindHelpError?
+    /// Current search radius. Starts at `defaultRadiusKm`; the empty-
+    /// state CTA bumps it to `expandedRadiusKm`. Exposed so view code
+    /// can format it back into miles for user-facing copy.
+    @Published private(set) var currentRadiusKm: Double = FindHelpStore.defaultRadiusKm
+
+    private var lastSearchedLocation: CLLocation?
 
     /// True iff the most recent successful `searchNearby` call returned
     /// bundled MA seed data because the live Supabase RPC was
@@ -49,7 +65,7 @@ final class FindHelpStore: ObservableObject {
     /// retailers together so the "full ecosystem" pitch lands.
     @Published var layerSelection: FindHelpLayerSelection = .both
 
-    private let fixtures: FindHelpFixtureLoader
+    private let fixtures: FindHelpFallbackProviding
 
     private let service: FindHelpServiceProtocol
     private static let logger = Logger(subsystem: "Civica", category: "FindHelpStore")
@@ -58,7 +74,7 @@ final class FindHelpStore: ObservableObject {
 
     init(
         service: FindHelpServiceProtocol = FindHelpService(),
-        fixtures: FindHelpFixtureLoader = .shared
+        fixtures: FindHelpFallbackProviding = FindHelpFixtureLoader.shared
     ) {
         self.service = service
         self.fixtures = fixtures
@@ -98,8 +114,27 @@ final class FindHelpStore: ObservableObject {
                     maxResults: maxResults
                 )
                 if Task.isCancelled { return }
-                self.locations = results
-                self.isUsingFallbackData = false
+                if results.isEmpty {
+                    // Empty live response (e.g. demo build where the
+                    // active region has no rows in Supabase yet) falls
+                    // through to the bundled fixture so the map is
+                    // populated. The fixture loader applies the same
+                    // region bbox gate, so this can't surface stale
+                    // out-of-region data.
+                    let fallback = self.fixtures.fallbackResults(
+                        lat: lat,
+                        lng: lng,
+                        radiusKm: radiusKm,
+                        serviceType: serviceType,
+                        languageCode: languageCode,
+                        maxResults: maxResults
+                    )
+                    self.locations = fallback
+                    self.isUsingFallbackData = !fallback.isEmpty
+                } else {
+                    self.locations = results
+                    self.isUsingFallbackData = false
+                }
                 self.isLoading = false
             } catch let error as FindHelpError {
                 if Task.isCancelled { return }
@@ -183,6 +218,59 @@ final class FindHelpStore: ObservableObject {
     func updateFilter(_ filter: FindHelpFilterState) {
         self.filter = filter
         guard let userLocation else { return }
-        searchNearby(lat: userLocation.coordinate.latitude, lng: userLocation.coordinate.longitude)
+        searchNearby(
+            lat: userLocation.coordinate.latitude,
+            lng: userLocation.coordinate.longitude,
+            radiusKm: currentRadiusKm
+        )
+    }
+
+    // MARK: - Location-driven search
+
+    /// Reissue a nearby search at the supplied coordinate if the user
+    /// has moved at least `researchThresholdMeters` since the last
+    /// query. Called from the CoreLocation stream and the zip-fallback
+    /// path so both paths share the same dedupe behavior.
+    func requestSearch(
+        for location: CLLocation,
+        precision: FindHelpLocationPrecision = .coarse
+    ) {
+        if let last = lastSearchedLocation,
+           last.distance(from: location) < Self.researchThresholdMeters {
+            return
+        }
+        lastSearchedLocation = location
+        searchNearby(
+            lat: location.coordinate.latitude,
+            lng: location.coordinate.longitude,
+            radiusKm: currentRadiusKm,
+            precision: precision
+        )
+    }
+
+    /// Empty-state CTA: bump from the default ~5-mile radius to the
+    /// expanded ~25-mile radius and re-search at the user's location.
+    func expandRadiusAndResearch() {
+        currentRadiusKm = Self.expandedRadiusKm
+        guard let userLocation else { return }
+        lastSearchedLocation = userLocation
+        searchNearby(
+            lat: userLocation.coordinate.latitude,
+            lng: userLocation.coordinate.longitude,
+            radiusKm: currentRadiusKm
+        )
+    }
+
+    /// Re-issue the most recent search. Falls back to whatever
+    /// location is currently in `userLocation` if no prior search
+    /// has run yet.
+    func retryLastSearch() {
+        let location = lastSearchedLocation ?? userLocation
+        guard let location else { return }
+        searchNearby(
+            lat: location.coordinate.latitude,
+            lng: location.coordinate.longitude,
+            radiusKm: currentRadiusKm
+        )
     }
 }

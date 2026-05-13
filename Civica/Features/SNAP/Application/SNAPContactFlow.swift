@@ -160,7 +160,9 @@ struct SNAPContactFlowView: View {
                         Image(systemName: viewModel.isAtFirstStep ? "xmark" : "chevron.left")
                             .foregroundStyle(CivicaColors.ink)
                     }
-                    .accessibilityLabel(CivicaQuestionStrings.backLabel.value(in: language))
+                    .accessibilityLabel(viewModel.isAtFirstStep
+                        ? CivicaQuestionStrings.closeLabel.value(in: language)
+                        : CivicaQuestionStrings.backLabel.value(in: language))
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -338,13 +340,7 @@ struct SNAPContactFlowView: View {
     private func progress(for step: SNAPContactFlowViewModel.Step)
         -> CivicaQuestionScreenProgress
     {
-        .init(
-            current: step.oneBasedIndex,
-            total: SNAPContactFlowViewModel.Step.total,
-            sectionIndex: SNAPApplicationSection.contact.oneBasedIndex,
-            sectionCount: SNAPApplicationSection.count,
-            sectionTitle: SNAPApplicationSection.contact.title(in: language)
-        )
+        .init(current: step.oneBasedIndex, total: SNAPContactFlowViewModel.Step.total)
     }
 
     private func completeOrAdvance() {
@@ -374,7 +370,7 @@ enum SNAPContactStrings {
         es: "¿Cuál es el mejor correo para contactarte?"
     )
     static let emailHelper = CivicaText(
-        "Optional. Civica only uses this to follow up about your application — we don't share it unless you choose to submit or share your packet.",
+        "Optional. Civica only uses this to follow up about your application — we don't share it unless you choose to submit, send, or share your packet.",
         es: "Opcional. Civica solo lo usa para hacer seguimiento a tu solicitud — no lo compartimos a menos que elijas enviar o compartir tu paquete."
     )
     static let emailPlaceholder = CivicaText(

@@ -20,18 +20,31 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>FindHelpDemoRegion</key>
+	<string>massachusetts</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Civica uses the camera to scan paystubs and identity documents you upload to support your SNAP application.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Civica accesses your photo library when you want to attach an existing photo of a document to your SNAP application.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Civica uses your location to show nearby SNAP offices and food assistance locations on the map.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Civica uses the microphone so you can speak your answers to SNAP application questions. Audio is processed on your device and is not stored or sent anywhere.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Civica accesses your photo library when you want to attach an existing photo of a document to your SNAP application.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Civica uses on-device speech recognition to transcribe what you say into your SNAP application. Your voice does not leave the device.</string>
+	<key>SUPABASE_ANON_KEY</key>
+	<string>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpncXBoZ2NxZnhzZ3Zpb2ZzY2NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExODMxOTgsImV4cCI6MjA4Njc1OTE5OH0.2LpJDGHl6kYYgOFcMlUxvHc1P8j9z9hSZt7yZZyPfXM</string>
+	<key>SUPABASE_URL</key>
+	<string>https://zgqphgcqfxsgviofsccs.supabase.co</string>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+	</dict>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>
@@ -40,11 +53,6 @@
 		<string>LaunchLogo</string>
 		<key>UIImageRespectsSafeAreaInsets</key>
 		<true/>
-	</dict>
-	<key>UIApplicationSceneManifest</key>
-	<dict>
-		<key>UIApplicationSupportsMultipleScenes</key>
-		<false/>
 	</dict>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
@@ -61,9 +69,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
-	<key>FindHelpDemoRegion</key>
-	<string>california</string>
 </dict>
 </plist>

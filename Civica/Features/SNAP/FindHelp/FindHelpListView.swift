@@ -3,6 +3,7 @@ import SwiftUI
 
 struct FindHelpListView: View {
     let locations: [FindHelpLocation]
+    var selectedLocationId: String? = nil
     let onSelect: (FindHelpLocation) -> Void
 
     var body: some View {
@@ -10,10 +11,16 @@ struct FindHelpListView: View {
             Button {
                 onSelect(location)
             } label: {
-                FindHelpListRow(location: location)
+                FindHelpListRow(
+                    location: location,
+                    isSelected: location.id == selectedLocationId
+                )
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .listRowBackground(CivicaColors.surfaceSecondary)
+            .listRowSeparator(.hidden)
+            .listRowInsets(EdgeInsets(top: CivicaSpacing.xs, leading: CivicaSpacing.lg, bottom: CivicaSpacing.xs, trailing: CivicaSpacing.lg))
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
@@ -23,6 +30,7 @@ struct FindHelpListView: View {
 
 private struct FindHelpListRow: View {
     let location: FindHelpLocation
+    var isSelected: Bool = false
 
     var body: some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
@@ -50,7 +58,7 @@ private struct FindHelpListRow: View {
                     }
                     Spacer()
                     Image(systemName: "chevron.right")
-                        .foregroundStyle(CivicaColors.graphite)
+                        .foregroundStyle(isSelected ? CivicaColors.brickPrimary : CivicaColors.graphite)
                 }
             }
         }
@@ -58,12 +66,18 @@ private struct FindHelpListRow: View {
         .padding(.horizontal, CivicaSpacing.md)
         .background(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                .fill(CivicaColors.surfacePrimary)
+                .fill(isSelected
+                    ? CivicaColors.brickPrimary.opacity(0.06)
+                    : CivicaColors.surfacePrimary)
         )
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                .stroke(CivicaColors.hairline, lineWidth: 1)
+                .stroke(
+                    isSelected ? CivicaColors.brickPrimary : CivicaColors.hairline,
+                    lineWidth: isSelected ? 1.5 : 1
+                )
         )
+        .animation(.easeInOut(duration: 0.15), value: isSelected)
     }
 
     private func formattedAddress() -> String? {

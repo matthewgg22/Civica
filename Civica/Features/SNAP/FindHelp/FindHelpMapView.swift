@@ -4,9 +4,21 @@ import MapKit
 import SwiftUI
 
 struct FindHelpMapView: UIViewRepresentable {
+    /// Initial latitudinal/longitudinal span used to center on the
+    /// user's location on first mount. 0.3° ≈ a 20-mile diameter at MA
+    /// latitudes — wide enough to show several pins for orientation,
+    /// tight enough that the user immediately sees their neighborhood.
+    private static let initialSpanDegrees: CLLocationDegrees = 0.3
+
     let locations: [FindHelpLocation]
     let userLocation: CLLocation?
+    /// ID of the currently selected location, or nil. Drives the
+    /// scale-up / halo treatment on the corresponding pin.
+    var selectedLocationId: String? = nil
     let onSelect: (FindHelpLocation) -> Void
+    /// Called after a user-initiated pan/zoom completes. Passes the new
+    /// map center so the caller can offer "Search this area".
+    var onRegionChanged: ((CLLocationCoordinate2D) -> Void)? = nil
 
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
@@ -25,15 +37,32 @@ struct FindHelpMapView: UIViewRepresentable {
 
     func updateUIView(_ mapView: MKMapView, context: Context) {
         syncAnnotations(on: mapView)
+        syncSelection(on: mapView)
         if !context.coordinator.didCenterInitially, let userLocation {
+            // Suppress the programmatic setRegion from firing onRegionChanged.
+            context.coordinator.suppressNextRegionChange = true
             mapView.setRegion(
                 MKCoordinateRegion(
                     center: userLocation.coordinate,
-                    span: MKCoordinateSpan(latitudeDelta: 0.3, longitudeDelta: 0.3)
+                    span: MKCoordinateSpan(
+                        latitudeDelta: Self.initialSpanDegrees,
+                        longitudeDelta: Self.initialSpanDegrees
+                    )
                 ),
                 animated: false
             )
             context.coordinator.didCenterInitially = true
+        }
+    }
+
+    /// Walk every visible annotation view and apply the selected /
+    /// deselected visual state. Called on every `updateUIView` pass so
+    /// the halo appears immediately when `selectedLocationId` changes.
+    private func syncSelection(on mapView: MKMapView) {
+        let pins = mapView.annotations.compactMap { $0 as? FindHelpAnnotation }
+        for pin in pins {
+            guard let view = mapView.view(for: pin) as? FindHelpAnnotationView else { continue }
+            view.applySelectionState(pin.location.id == selectedLocationId, animated: true)
         }
     }
 
@@ -54,15 +83,23 @@ struct FindHelpMapView: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(onSelect: onSelect)
+        Coordinator(onSelect: onSelect, onRegionChanged: onRegionChanged)
     }
 
     final class Coordinator: NSObject, MKMapViewDelegate {
         let onSelect: (FindHelpLocation) -> Void
+        let onRegionChanged: ((CLLocationCoordinate2D) -> Void)?
         var didCenterInitially: Bool = false
+        /// Set to true before a programmatic setRegion call so the
+        /// resulting regionDidChange event doesn't surface as a user pan.
+        var suppressNextRegionChange: Bool = false
 
-        init(onSelect: @escaping (FindHelpLocation) -> Void) {
+        init(
+            onSelect: @escaping (FindHelpLocation) -> Void,
+            onRegionChanged: ((CLLocationCoordinate2D) -> Void)?
+        ) {
             self.onSelect = onSelect
+            self.onRegionChanged = onRegionChanged
         }
 
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
@@ -75,7 +112,7 @@ struct FindHelpMapView: UIViewRepresentable {
                 // Homogeneous clusters take their category color; mixed
                 // clusters fall back to graphite so the user can read
                 // them as "various nearby" without misleading hue.
-                view?.markerTintColor = FindHelpAnnotationView.dominantColor(
+                view?.markerTintColor = FindHelpPinPalette.dominantColor(
                     in: cluster.memberAnnotations
                 )
                 return view
@@ -87,6 +124,38 @@ struct FindHelpMapView: UIViewRepresentable {
             ) as? FindHelpAnnotationView
             view?.configure(with: pin.location)
             return view
+        }
+
+        func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+            if suppressNextRegionChange {
+                suppressNextRegionChange = false
+                return
+            }
+            guard didCenterInitially else { return }
+            onRegionChanged?(mapView.region.center)
+        }
+
+        /// Spring-pop each new pin in as it's added to the map. The
+        /// view is collapsed to a point and invisible on entry, then
+        /// springs to full size — staggered by index so a batch of new
+        /// results fans in rather than all appearing simultaneously.
+        func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
+            let pins = views.filter { !($0.annotation is MKUserLocation) }
+            for (index, view) in pins.enumerated() {
+                view.alpha = 0
+                view.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+                let delay = Double(index) * 0.025
+                UIView.animate(
+                    withDuration: 0.38,
+                    delay: delay,
+                    usingSpringWithDamping: 0.58,
+                    initialSpringVelocity: 0.4,
+                    options: .allowUserInteraction
+                ) {
+                    view.alpha = 1
+                    view.transform = .identity
+                }
+            }
         }
 
         func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
@@ -114,43 +183,17 @@ final class FindHelpAnnotation: NSObject, MKAnnotation {
     }
 }
 
-// HANDOFF map · A board spec — custom teardrop pin with a category
-// glyph inside the upper bulb. Subclasses MKAnnotationView directly
-// (not MKMarkerAnnotationView) so we control the shape and inner
-// glyph rather than recoloring Apple's default marker.
-//
-// Pin colors by (record_kind, service_type / retailer_category):
-//   • Help directory + SNAP application help → Brick #9C3A24
-//   • Help directory + Food assistance       → Teal  #2A6F66
-//   • Help directory + Both                  → Graphite #3A342E
-//   • EBT retailer  + Supermarket            → Teal-deep #1F4F4A
-//   • EBT retailer  + Small grocer           → Amber #B5762A
-//   • EBT retailer  + Farmers market         → Green #3B6B33
-//   • EBT retailer  + Co-op                  → Indigo #3D4E6E
-//   • EBT retailer  + Restaurant RMP         → Brick #9C3A24
-//
-// Pin glyphs by the same axis use SF Symbols rendered in paper-
-// cream (#F5F2EC) inside the bulb. The glyph anchors the user's
-// read of "what kind of place is this" before the color hits.
-//
-// Path mirrors the SVG from the canvas: a 28×35 teardrop with the
-// bulb centered at (14, 14) and the point at (14, 35). The view's
-// centerOffset anchors the tip on the underlying coordinate.
-
+/// Custom teardrop pin with a category glyph inside the upper bulb.
+/// Subclasses `MKAnnotationView` directly (not `MKMarkerAnnotationView`)
+/// so we control the shape and inner glyph rather than recoloring
+/// Apple's default marker. Color + glyph + cached image rendering all
+/// live in `FindHelpPinPalette` — this view is just the consumer.
+///
+/// Path mirrors the SVG from the canvas: a 28×35 teardrop with the
+/// bulb centered at (14, 14) and the point at (14, 35). The view's
+/// centerOffset anchors the tip on the underlying coordinate.
 final class FindHelpAnnotationView: MKAnnotationView {
     static let reuseID = "FindHelpAnnotationView"
-
-    private static let teardropSize = CGSize(width: 28, height: 35)
-    private static let paperDotSize: CGFloat = 9
-    private static let paperColor = UIColor(red: 0xF5/255, green: 0xF2/255, blue: 0xEC/255, alpha: 1)
-    private static let graphiteColor = UIColor(red: 0x3A/255, green: 0x34/255, blue: 0x2E/255, alpha: 1)
-    /// Lighter graphite used only for MIXED-category cluster pins on
-    /// the map. The single-pin graphiteColor above is too dark to
-    /// read against dark-mode map tiles when applied to MKMarker
-    /// AnnotationView's rounded-rect marker; this lifts the cluster
-    /// off the tile without changing the teardrop fill semantics for
-    /// individual help-directory "both" pins.
-    private static let mixedClusterColor = UIColor(red: 0x6E/255, green: 0x66/255, blue: 0x5E/255, alpha: 1)
 
     override var annotation: MKAnnotation? {
         didSet {
@@ -161,153 +204,57 @@ final class FindHelpAnnotationView: MKAnnotationView {
     }
 
     func configure(with location: FindHelpLocation) {
-        clusteringIdentifier = "findHelpCluster"
+        // Clustering disabled — a "50" badge on a single dot hides
+        // all the pins and feels broken. Individual pins at all zoom
+        // levels let users orient themselves immediately.
+        clusteringIdentifier = nil
         canShowCallout = false
-        let color = Self.pinColor(for: location)
-        let glyph = Self.glyphSymbolName(for: location)
-        image = Self.teardropImage(fillColor: color, glyphName: glyph)
+        image = FindHelpPinPalette.teardropImage(for: location)
         // Anchor the tip of the teardrop on the coordinate rather
         // than the bulb center — that's where map pins are expected
         // to "point at" the place they represent.
-        centerOffset = CGPoint(x: 0, y: -Self.teardropSize.height / 2)
+        centerOffset = CGPoint(x: 0, y: -FindHelpPinPalette.teardropSize.height / 2)
+        // White halo layer — opacity driven by applySelectionState.
+        layer.shadowColor = UIColor.white.cgColor
+        layer.shadowOffset = .zero
+        layer.shadowRadius = 6
+        layer.shadowOpacity = 0
+        // Reset to deselected so recycled views don't carry stale state.
+        applySelectionState(false, animated: false)
     }
 
-    // MARK: - Category routing
+    /// Animate the pin into its selected or deselected visual state.
+    /// Selected: scales up 1.3× and lights a white halo shadow behind
+    /// the teardrop so it clearly lifts off the map surface. The pin
+    /// also rises in z-order so it renders above neighbouring pins.
+    func applySelectionState(_ selected: Bool, animated: Bool) {
+        let targetScale: CGFloat = selected ? 1.32 : 1.0
+        let targetShadowOpacity: Float = selected ? 0.9 : 0
+        layer.zPosition = selected ? 10 : 0
 
-    /// Pin color for a single location. Lookups split first on
-    /// `resolvedRecordKind`, then on the relevant inner axis
-    /// (service type for help directory, retailer category for
-    /// retailers).
-    static func pinColor(for location: FindHelpLocation) -> UIColor {
-        switch location.resolvedRecordKind {
-        case .helpDirectory:
-            switch location.primaryServiceType {
-            case .snapApplicationHelp:
-                return UIColor(red: 0x9C/255, green: 0x3A/255, blue: 0x24/255, alpha: 1)
-            case .foodAssistance:
-                return UIColor(red: 0x2A/255, green: 0x6F/255, blue: 0x66/255, alpha: 1)
-            case .both:
-                return graphiteColor
+        if animated {
+            UIView.animate(
+                withDuration: 0.22,
+                delay: 0,
+                usingSpringWithDamping: 0.52,
+                initialSpringVelocity: 0.3,
+                options: .allowUserInteraction
+            ) {
+                self.transform = CGAffineTransform(scaleX: targetScale, y: targetScale)
             }
-        case .ebtRetailer:
-            switch location.retailerCategory ?? .supermarket {
-            case .supermarket:
-                return UIColor(red: 0x1F/255, green: 0x4F/255, blue: 0x4A/255, alpha: 1)
-            case .smallGrocer:
-                return UIColor(red: 0xB5/255, green: 0x76/255, blue: 0x2A/255, alpha: 1)
-            case .farmersMarket:
-                return UIColor(red: 0x3B/255, green: 0x6B/255, blue: 0x33/255, alpha: 1)
-            case .coOp:
-                return UIColor(red: 0x3D/255, green: 0x4E/255, blue: 0x6E/255, alpha: 1)
-            case .restaurantRMP:
-                return UIColor(red: 0x9C/255, green: 0x3A/255, blue: 0x24/255, alpha: 1)
-            }
-        }
-    }
-
-    /// SF Symbol name for a location's pin glyph. Rendered in paper-
-    /// cream inside the bulb. Fallbacks to a paper dot if the symbol
-    /// fails to load (e.g., older iOS without the named symbol).
-    static func glyphSymbolName(for location: FindHelpLocation) -> String {
-        switch location.resolvedRecordKind {
-        case .helpDirectory:
-            switch location.primaryServiceType {
-            case .snapApplicationHelp: return "doc.text.fill"
-            case .foodAssistance:      return "takeoutbag.and.cup.and.straw.fill"
-            case .both:                return "square.stack.fill"
-            }
-        case .ebtRetailer:
-            switch location.retailerCategory ?? .supermarket {
-            case .supermarket:    return "cart.fill"
-            case .smallGrocer:    return "basket.fill"
-            case .farmersMarket:  return "leaf.fill"
-            case .coOp:           return "building.2.fill"
-            case .restaurantRMP:  return "fork.knife"
-            }
-        }
-    }
-
-    /// Cluster color picker: when every member shares one category
-    /// the cluster takes that color; otherwise graphite signals
-    /// "multiple kinds nearby" without misleading hue.
-    static func dominantColor(in annotations: [MKAnnotation]) -> UIColor {
-        let locations = annotations.compactMap { ($0 as? FindHelpAnnotation)?.location }
-        guard let first = locations.first else { return mixedClusterColor }
-        let firstKey = categoryKey(for: first)
-        let allSame = locations.allSatisfy { categoryKey(for: $0) == firstKey }
-        return allSame ? pinColor(for: first) : mixedClusterColor
-    }
-
-    private static func categoryKey(for location: FindHelpLocation) -> String {
-        let kind = location.resolvedRecordKind.rawValue
-        let inner = location.retailerCategory?.rawValue
-            ?? location.primaryServiceType.rawValue
-        return "\(kind):\(inner)"
-    }
-
-    // MARK: - Drawing
-
-    private static func teardropImage(fillColor: UIColor, glyphName: String) -> UIImage {
-        let size = teardropSize
-        let renderer = UIGraphicsImageRenderer(size: size)
-        return renderer.image { _ in
-            // Teardrop path — bulb top, point bottom. Bezier control
-            // points map to the SVG curve commands in the canvas spec.
-            let path = UIBezierPath()
-            path.move(to: CGPoint(x: 14, y: 0))
-            path.addCurve(
-                to: CGPoint(x: 0, y: 14),
-                controlPoint1: CGPoint(x: 6, y: 0),
-                controlPoint2: CGPoint(x: 0, y: 6)
-            )
-            path.addCurve(
-                to: CGPoint(x: 14, y: 35),
-                controlPoint1: CGPoint(x: 0, y: 22),
-                controlPoint2: CGPoint(x: 14, y: 35)
-            )
-            path.addCurve(
-                to: CGPoint(x: 28, y: 14),
-                controlPoint1: CGPoint(x: 14, y: 35),
-                controlPoint2: CGPoint(x: 28, y: 22)
-            )
-            path.addCurve(
-                to: CGPoint(x: 14, y: 0),
-                controlPoint1: CGPoint(x: 28, y: 6),
-                controlPoint2: CGPoint(x: 22, y: 0)
-            )
-            path.close()
-            fillColor.setFill()
-            path.fill()
-
-            // Category glyph inside the bulb. 10pt semibold reads
-            // legibly at the teardrop's small render size; centered
-            // horizontally and vertically at y=15 to match where the
-            // legacy paper-dot's visual center sat.
-            let symbolConfig = UIImage.SymbolConfiguration(pointSize: 10, weight: .semibold)
-            if let symbol = UIImage(systemName: glyphName, withConfiguration: symbolConfig)?
-                .withTintColor(paperColor, renderingMode: .alwaysOriginal) {
-                let symbolSize = symbol.size
-                let symbolRect = CGRect(
-                    x: (size.width - symbolSize.width) / 2,
-                    y: 15 - symbolSize.height / 2,
-                    width: symbolSize.width,
-                    height: symbolSize.height
-                )
-                symbol.draw(in: symbolRect)
-            } else {
-                // Legacy fallback: plain paper dot. Reached only if
-                // the SF Symbol lookup fails (which it shouldn't on
-                // any iOS the Civica target deploys to).
-                let dotSize = paperDotSize
-                let dotRect = CGRect(
-                    x: (size.width - dotSize) / 2,
-                    y: 11,
-                    width: dotSize,
-                    height: dotSize
-                )
-                paperColor.setFill()
-                UIBezierPath(ovalIn: dotRect).fill()
-            }
+            // CABasicAnimation for the shadow since UIView.animate
+            // doesn't drive layer.shadowOpacity on its own.
+            let anim = CABasicAnimation(keyPath: "shadowOpacity")
+            anim.fromValue = layer.shadowOpacity
+            anim.toValue = targetShadowOpacity
+            anim.duration = 0.18
+            anim.fillMode = .forwards
+            anim.isRemovedOnCompletion = false
+            layer.add(anim, forKey: "shadowOpacity")
+            layer.shadowOpacity = targetShadowOpacity
+        } else {
+            transform = CGAffineTransform(scaleX: targetScale, y: targetScale)
+            layer.shadowOpacity = targetShadowOpacity
         }
     }
 }

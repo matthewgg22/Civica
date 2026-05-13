@@ -10,6 +10,7 @@ struct SNAPConversationView: View {
     @State private var pendingFreeText: String = ""
     @State private var pendingNumeric: String = ""
     @FocusState private var isInputFocused: Bool
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(spacing: 0) {
@@ -48,7 +49,7 @@ struct SNAPConversationView: View {
             }
             .onChange(of: viewModel.transcript.count) { _ in
                 if let last = viewModel.transcript.last {
-                    withAnimation { proxy.scrollTo(last.id, anchor: .bottom) }
+                    withAnimation(reduceMotion ? nil : .default) { proxy.scrollTo(last.id, anchor: .bottom) }
                 }
             }
         }

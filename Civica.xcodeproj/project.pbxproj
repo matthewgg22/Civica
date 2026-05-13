@@ -65,10 +65,9 @@
 		CCAA000000000000000000B2 /* Exceptions for "Civica" folder in "Civica" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Features/SNAP/Rules/README.md,
 				Info.plist,
 				SETUP.md,
-				Features/SNAP/Rules/README.md,
-				Features/RecertificationCompanion/README.md,
 			);
 			target = CCAA000000000000000000A1 /* Civica */;
 		};

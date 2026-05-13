@@ -1,4 +1,5 @@
 import CivicaDesignSystem
+import MapKit
 import SwiftUI
 
 // HANDOFF map board A2 — "Pin tapped · peek."
@@ -32,21 +33,43 @@ struct FindHelpPeekSheet: View {
                     .foregroundStyle(CivicaColors.graphite)
             }
             chipStrip
-            Button(action: onViewDetails) {
-                Text(FindHelpPeekStrings.viewDetails.value(in: language))
+            HStack(spacing: CivicaSpacing.sm) {
+                // Primary: open Apple Maps for directions
+                Button(action: openInMaps) {
+                    Label(
+                        language == .spanish ? "Cómo llegar" : "Get directions",
+                        systemImage: "arrow.triangle.turn.up.right.circle.fill"
+                    )
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundStyle(CivicaColors.onPrimaryText)
+                    .foregroundStyle(.white)
                     .frame(maxWidth: .infinity, minHeight: 48)
                     .background(
                         RoundedRectangle(cornerRadius: CivicaRadius.control)
-                            .fill(CivicaColors.brickPrimary)
+                            .fill(CivicaColors.accentTeal)
                     )
+                }
+
+                // Secondary: full detail sheet
+                Button(action: onViewDetails) {
+                    Text(language == .spanish ? "Más info" : "More info")
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundStyle(CivicaColors.ink)
+                        .frame(minWidth: 90, minHeight: 48)
+                        .background(
+                            RoundedRectangle(cornerRadius: CivicaRadius.control)
+                                .fill(CivicaColors.surfaceSecondary)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: CivicaRadius.control)
+                                .stroke(CivicaColors.hairline, lineWidth: 1)
+                        )
+                }
             }
             .padding(.top, CivicaSpacing.sm)
         }
         .padding(CivicaSpacing.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .presentationDetents([.height(260)])
+        .presentationDetents([.height(290)])
         .presentationDragIndicator(.visible)
         .presentationCornerRadius(CivicaRadius.card)
     }
@@ -66,11 +89,19 @@ struct FindHelpPeekSheet: View {
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.pill))
     }
 
+    private func openInMaps() {
+        guard let lat = location.latitude, let lng = location.longitude else { return }
+        let placemark = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lng))
+        let mapItem = MKMapItem(placemark: placemark)
+        mapItem.name = location.name
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
+    }
+
     /// Bridges the pin renderer's UIColor palette into SwiftUI so the
     /// peek pill matches the corresponding map pin exactly. Avoids a
     /// second source of truth for category colors.
     private var pillColor: Color {
-        Color(uiColor: FindHelpAnnotationView.pinColor(for: location))
+        Color(uiColor: FindHelpPinPalette.color(for: location))
     }
 
     private var pillLabel: String {

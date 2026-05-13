@@ -113,8 +113,8 @@ enum InterviewCoachStrings {
     // MARK: Practice session
 
     static let caseworkerTyping = CivicaText(
-        "Caseworker is typing…",
-        es: "El trabajador social está escribiendo…"
+        "DTA SNAP worker is typing…",
+        es: "El trabajador de SNAP del DTA está escribiendo…"
     )
     static let scoringSession = CivicaText(
         "Scoring your session…",
@@ -140,6 +140,14 @@ enum InterviewCoachStrings {
         "Try again",
         es: "Intentar de nuevo"
     )
+    static let practiceOffline = CivicaText(
+        "Practice offline instead",
+        es: "Practicar sin conexión"
+    )
+    static let offlineModeNotice = CivicaText(
+        "Offline mode — using bundled questions. Feedback scores are not AI-generated.",
+        es: "Modo sin conexión — usando preguntas incluidas. Las puntuaciones no son generadas por IA."
+    )
 
     // MARK: Review summary
 
@@ -160,12 +168,12 @@ enum InterviewCoachStrings {
         es: "¿Respondiste lo que te preguntaron?"
     )
     static let axisAccuracyRisk = CivicaText(
-        "Accuracy risk",
-        es: "Riesgo de precisión"
+        "Could be misread",
+        es: "Podría malinterpretarse"
     )
     static let axisAccuracyRiskHint = CivicaText(
-        "How likely are your answers to be misread as fraud or contradiction?",
-        es: "¿Qué tan probable es que tus respuestas se interpreten como fraude o contradicción?"
+        "Could a caseworker misread this answer?",
+        es: "¿Podría un trabajador social malinterpretar esta respuesta?"
     )
     static let axisMissingContext = CivicaText(
         "Missing context",

@@ -7,11 +7,12 @@ import SwiftUI
 
 struct FindHelpDisclosureFooter: View {
     @State private var isExpanded: Bool = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Button {
-                withAnimation(.easeInOut(duration: 0.2)) { isExpanded.toggle() }
+                withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) { isExpanded.toggle() }
             } label: {
                 HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                     Image(systemName: "info.circle.fill")

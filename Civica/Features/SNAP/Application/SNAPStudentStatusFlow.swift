@@ -118,7 +118,9 @@ struct SNAPStudentStatusFlowView: View {
                         Image(systemName: viewModel.isAtFirstStep ? "xmark" : "chevron.left")
                             .foregroundStyle(CivicaColors.ink)
                     }
-                    .accessibilityLabel(CivicaQuestionStrings.backLabel.value(in: language))
+                    .accessibilityLabel(viewModel.isAtFirstStep
+                        ? CivicaQuestionStrings.closeLabel.value(in: language)
+                        : CivicaQuestionStrings.backLabel.value(in: language))
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
