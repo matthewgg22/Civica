@@ -137,6 +137,7 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
         mode = .sequential(currentSection: .whereApplying)
         store.clear()
         SNAPCapturedDocumentStore.clearAll()
+        SNAPCapturedDocumentStore.clearPacketPDFs()
         triageResult = nil
     }
 
@@ -174,6 +175,8 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
         guard let i = Self.sequence.firstIndex(of: section), i > 0 else { return nil }
         return Self.sequence[i - 1]
     }
+
+    func autosave() { persist() }
 
     private func persist() {
         let persistedMode: SNAPApplicationDraftStore.PersistedMode
@@ -223,6 +226,9 @@ struct SNAPApplicationFlowOrchestratorView: View {
         // stacked `< Civica <` chevron pair on every question screen.
         currentDestination
             .navigationBarBackButtonHidden(true)
+            .onChange(of: viewModel.draft) { _, _ in
+                viewModel.autosave()
+            }
     }
 
     @ViewBuilder

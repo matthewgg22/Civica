@@ -368,8 +368,8 @@ enum SNAPContactStrings {
         es: "¿Cuál es el mejor correo para contactarte?"
     )
     static let emailHelper = CivicaText(
-        "Optional. Civica only uses this to follow up about your application — we never share it.",
-        es: "Opcional. Civica solo lo usa para hacer seguimiento a tu solicitud — nunca lo compartimos."
+        "Optional. Civica only uses this to follow up about your application — we don't share it unless you choose to submit or share your packet.",
+        es: "Opcional. Civica solo lo usa para hacer seguimiento a tu solicitud — no lo compartimos a menos que elijas enviar o compartir tu paquete."
     )
     static let emailPlaceholder = CivicaText(
         "you@example.com",

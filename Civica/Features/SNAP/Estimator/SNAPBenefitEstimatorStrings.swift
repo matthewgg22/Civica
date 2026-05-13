@@ -92,17 +92,17 @@ enum SNAPBenefitEstimatorStrings {
         es: "al año"
     )
     static let resultContextEligible = CivicaText(
-        "Most people who match this estimate qualify. Your state confirms the final amount.",
-        es: "La mayoría de quienes coinciden con esta estimación califican. Tu estado confirma el monto final."
+        "This is an estimate — Massachusetts DTA reviews your full application and confirms the amount.",
+        es: "Esto es una estimación — el DTA de Massachusetts revisa tu solicitud completa y confirma el monto."
     )
     static let resultContextMinBenefit = CivicaText(
-        "Small households are guaranteed a $24 minimum monthly benefit.",
-        es: "Los hogares pequeños tienen garantizado un beneficio mensual mínimo de $24."
+        "Under federal law, most 1–2 person households receive at least $24/month if approved. DTA confirms your exact amount.",
+        es: "Bajo la ley federal, la mayoría de los hogares de 1 a 2 personas reciben al menos $24/mes si son aprobados. El DTA confirma tu monto exacto."
     )
 
     static let ineligibleHeadline = CivicaText(
-        "Likely not eligible",
-        es: "Probablemente no elegible"
+        "Above the estimated SNAP limit",
+        es: "Por encima del límite estimado de SNAP"
     )
     static let ineligibleContextGrossOver = CivicaText(
         "Your income looks higher than the federal SNAP cutoff for your household size.",

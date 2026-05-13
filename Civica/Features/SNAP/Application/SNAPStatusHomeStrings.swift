@@ -146,8 +146,8 @@ enum SNAPStatusHomeStrings {
         es: "Solicitar una audiencia justa"
     )
     static let deniedAppealBody = CivicaText(
-        "Federal law gives you 90 days from the denial notice to ask the state to review the decision. You can win — many denials are reversed.",
-        es: "La ley federal te da 90 días desde la carta de denegación para pedir al estado que revise la decisión. Puedes ganar — muchas denegaciones se revierten."
+        "Federal law gives you 90 days from the denial notice to request a fair hearing. Submit your appeal by the deadline on your denial letter — outcomes depend on the reason for denial.",
+        es: "La ley federal te da 90 días desde la carta de denegación para solicitar una audiencia justa. Presenta tu apelación antes de la fecha límite indicada en tu carta — el resultado depende del motivo de la denegación."
     )
 
     static let deniedReviewTitle = CivicaText(

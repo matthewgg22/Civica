@@ -24,8 +24,8 @@ enum InterviewCoachStrings {
         es: "Practica tu entrevista de SNAP"
     )
     static let entryBody = CivicaText(
-        "Rehearse the questions caseworkers actually ask. Pick your state, choose a scenario, and run through the kinds of prompts that decide how quickly your benefits get approved.",
-        es: "Practica las preguntas que realmente hacen los trabajadores sociales. Elige tu estado, elige un escenario, y pasa por las preguntas que deciden qué tan rápido se aprueban tus beneficios."
+        "Rehearse the questions caseworkers actually ask. Pick your state, choose a scenario, and practice communicating your situation clearly. Preparation doesn't affect eligibility — but it can reduce the stress of the interview.",
+        es: "Practica las preguntas que realmente hacen los trabajadores sociales. Elige tu estado, elige un escenario, y practica comunicar tu situación con claridad. La preparación no afecta la elegibilidad — pero puede reducir el estrés de la entrevista."
     )
     static let browseTitle = CivicaText(
         "Browse practice questions",

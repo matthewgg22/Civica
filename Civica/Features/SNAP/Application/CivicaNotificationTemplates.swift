@@ -234,8 +234,8 @@ enum CivicaNotificationTemplates {
                 es: "Pre-llenamos todo desde la última vez. Mayormente estás confirmando \"sí, sigue siendo correcto\" o diciéndonos qué cambió."
             ),
             CivicaText(
-                "We'll remind you again 14 days before, and again 1 day before. If you miss it, your benefits pause — we'll text you a way back the same day.",
-                es: "Te recordaremos otra vez 14 días antes, y otra vez 1 día antes. Si lo olvidas, tus beneficios se pausan — te enviaremos un mensaje con una forma de regresar el mismo día."
+                "We'll remind you again 14 days before, and again 1 day before. If you miss the deadline, your benefits may pause — contact Massachusetts DTA directly at (877) 382-2363 to request reinstatement.",
+                es: "Te recordaremos otra vez 14 días antes, y otra vez 1 día antes. Si pierdes la fecha límite, tus beneficios pueden pausarse — comunícate directamente con el DTA de Massachusetts al (877) 382-2363 para solicitar la reactivación."
             ),
         ],
         buttonLabel: CivicaText("Start recertification", es: "Comenzar recertificación"),

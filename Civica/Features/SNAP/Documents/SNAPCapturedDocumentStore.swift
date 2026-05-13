@@ -77,4 +77,17 @@ enum SNAPCapturedDocumentStore {
             try? FileManager.default.removeItem(at: url)
         }
     }
+
+    /// Delete any packet PDFs left in the system temp directory from
+    /// prior "Generate packet" runs. These are not cleaned up by the OS
+    /// until a reboot; call on reset so a fresh start leaves no trace.
+    static func clearPacketPDFs() {
+        let tmp = FileManager.default.temporaryDirectory
+        guard let contents = try? FileManager.default.contentsOfDirectory(
+            at: tmp, includingPropertiesForKeys: nil
+        ) else { return }
+        for url in contents where url.lastPathComponent.hasPrefix("civica-snap-summary-") {
+            try? FileManager.default.removeItem(at: url)
+        }
+    }
 }
