@@ -9,13 +9,16 @@ enum SNAPBenefitEstimatorStrings {
     // MARK: - Header
 
     static let pageTitle = CivicaText(
-        "Estimate your benefit",
-        es: "Estima tu beneficio"
+        "Estimate SNAP Benefit",
+        es: "Estima beneficio de SNAP"
     )
-    static let pageSubtitle = CivicaText(
-        "Updates as you answer.",
-        es: "Se actualiza al responder."
-    )
+    /// Retained as an empty string-ish constant for backward
+    /// compatibility — surfaces that referenced it now suppress the
+    /// subtitle entirely. Kept as an explicit empty CivicaText
+    /// rather than deleted so callers in other modules (Spanish
+    /// strings catalog, marketing screenshots) don't break on a
+    /// missing symbol.
+    static let pageSubtitle = CivicaText("", es: "")
 
     // MARK: - Questions
 
