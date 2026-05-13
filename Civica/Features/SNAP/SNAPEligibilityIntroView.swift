@@ -204,13 +204,14 @@ struct SNAPEligibilityIntroView: View {
     }
 
     /// Pick the best USPS state code for the conversation pipeline.
-    /// Prefer the user's typed/geofenced state, then default to MA.
+    /// Prefer the user's typed/geofenced state, then default to CA
+    /// (the launch state).
     private func resolvedStateCodeForConversation() -> String {
         let typed = (viewModel.application.state ?? "").trimmingCharacters(in: .whitespaces)
         if !typed.isEmpty {
             return typed.uppercased()
         }
-        return "MA"
+        return "CA"
     }
 
     private func statusDateText(from date: Date) -> String {
