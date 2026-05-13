@@ -88,6 +88,20 @@ struct CivicaQuestionScreen<Affordance: View>: View {
     let language: CivicaLanguage
     let affordance: () -> Affordance
 
+    /// Drives the overall-progress bar fill + the percent counter.
+    /// Initialized to the "previous step's" fraction (one notional
+    /// step behind the target) so when the screen appears it has
+    /// somewhere to animate FROM. .onAppear bumps it to the target
+    /// inside withAnimation; SwiftUI handles the interpolation.
+    ///
+    /// Each question screen is a new view instance (navigation push
+    /// or switch-builder branch swap), so an .animation(value:)
+    /// modifier on the bar by itself would never fire — there's no
+    /// "previous render" to animate from. This @State + .onAppear
+    /// pattern is what gives the bar continuous-feeling fill across
+    /// screen pushes.
+    @State private var displayedFraction: Double = 0
+
     init(
         progress: Progress? = nil,
         title: String,
@@ -143,6 +157,37 @@ struct CivicaQuestionScreen<Affordance: View>: View {
             actionFooter
         }
         .background(CivicaColors.paper.ignoresSafeArea())
+        .onAppear {
+            // Initialize the bar at "one step ago" then spring up to
+            // the target fraction. The 0.05s delay lets the screen
+            // settle into its layout pass before the animation kicks
+            // in — otherwise the spring sometimes fires during the
+            // initial render and the user misses the motion.
+            let target = progress?.overallFraction ?? 0
+            displayedFraction = previousStepFraction(target: target)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                withAnimation(.spring(response: 0.7, dampingFraction: 0.82)) {
+                    displayedFraction = target
+                }
+            }
+        }
+    }
+
+    /// Returns a fraction one notional question-step behind the
+    /// target — that is, the bar position the user was at on the
+    /// previous screen. Used as the starting value for the
+    /// fill-on-appear animation. Falls back to `target` itself
+    /// when section metadata isn't supplied (no animation possible).
+    private func previousStepFraction(target: Double) -> Double {
+        guard target > 0,
+              let p = progress,
+              let sectionCount = p.sectionCount,
+              sectionCount > 0,
+              p.total > 0
+        else { return target }
+        let perSection = 1.0 / Double(sectionCount)
+        let perStep = perSection / Double(p.total)
+        return max(0, target - perStep)
     }
 
     /// Thin overall-progress bar pinned to the top of the screen. Only
@@ -160,20 +205,19 @@ struct CivicaQuestionScreen<Affordance: View>: View {
     /// substitution.
     @ViewBuilder
     private func overallProgressBar(_ p: Progress) -> some View {
-        if let fraction = p.overallFraction {
+        if p.overallFraction != nil {
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-                ProgressView(value: fraction)
+                // Bound to `displayedFraction` (not the raw target)
+                // so the on-appear spring drives the fill from the
+                // previous-step value up to the current target.
+                // Spring is gentle (response 0.7, damping 0.82) so
+                // the user sees the bar moving rather than snapping.
+                ProgressView(value: displayedFraction)
                     .progressViewStyle(.linear)
-                    // Teal — per HANDOFF, accentTeal is the
-                    // "positive momentum / on-target" cue. The
-                    // overall-progress bar fills as the user makes
-                    // forward progress through the application,
-                    // which is exactly that signal. Frees brick to
-                    // mean "tap this" rather than "fill this."
                     .tint(CivicaColors.accentTeal)
                     .accessibilityLabel(
                         CivicaQuestionStrings.overallProgressAccessibilityLabel(
-                            fraction: fraction,
+                            fraction: p.overallFraction ?? 0,
                             sectionIndex: p.sectionIndex ?? 0,
                             sectionCount: p.sectionCount ?? 0,
                             language: language
@@ -181,6 +225,11 @@ struct CivicaQuestionScreen<Affordance: View>: View {
                     )
                 if let sectionIndex = p.sectionIndex, let sectionCount = p.sectionCount {
                     HStack(spacing: CivicaSpacing.xs) {
+                        // Section label crossfades across section
+                        // boundaries (id changes on sectionIndex /
+                        // title). Within a section the id stays
+                        // constant so the label is rock-steady
+                        // while the bar fills.
                         Text(CivicaQuestionStrings.sectionLabel(
                             index: sectionIndex,
                             count: sectionCount,
@@ -191,11 +240,16 @@ struct CivicaQuestionScreen<Affordance: View>: View {
                             .foregroundStyle(CivicaColors.graphite)
                             .textCase(.uppercase)
                             .kerning(1.0)
-                            .contentTransition(.opacity)
                             .id("section-label-\(sectionIndex)-\(p.sectionTitle ?? "")")
+                            .transition(.opacity.combined(with: .move(edge: .leading)))
                         Spacer(minLength: 0)
+                        // Percent counts up alongside the bar fill.
+                        // `.contentTransition(.numericText())` gives
+                        // each integer tick a rolling-digit crossfade
+                        // as the spring drives the displayed fraction
+                        // upward.
                         Text(CivicaQuestionStrings.percentLabel(
-                            fraction: fraction,
+                            fraction: displayedFraction,
                             language: language
                         ))
                             .font(CivicaTypography.captionStrong.monospacedDigit())
@@ -208,16 +262,22 @@ struct CivicaQuestionScreen<Affordance: View>: View {
             .padding(.top, CivicaSpacing.md)
             .padding(.bottom, CivicaSpacing.sm)
             .background(CivicaColors.paper)
-            .animation(.spring(response: 0.55, dampingFraction: 0.85), value: fraction)
         }
     }
 
     private func progressChip(_ p: Progress) -> some View {
+        // The in-section "3 OF 4" chip rolls its digit via numeric-
+        // text content transition when the same screen re-renders
+        // with a new step (within-section progression). Across
+        // screen pushes the chip is a new view and the transition
+        // doesn't apply — the bar fill handles continuity then.
         Text(CivicaQuestionStrings.progressLabel(current: p.current, total: p.total, language: language))
             .font(CivicaTypography.captionStrong)
             .foregroundStyle(CivicaColors.graphite)
             .textCase(.uppercase)
             .kerning(1.2)
+            .contentTransition(.numericText())
+            .animation(.easeOut(duration: 0.35), value: p.current)
             .accessibilityLabel(CivicaQuestionStrings.progressAccessibilityLabel(current: p.current, total: p.total, language: language))
     }
 
