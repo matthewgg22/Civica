@@ -113,10 +113,10 @@ struct CivicaRootView: View {
                 language: language,
                 draft: SNAPApplicationDraftStore().load()?.draft,
                 onOpenDTAConnect: {
-                    externalLink = CivicaExternalLinks.applyPortal(for: SNAPApplicationDraftStore().load()?.draft.state)
+                    externalLink = CivicaExternalLinks.applyPortal(for: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode)
                 },
                 onOpenWICTeaser: {
-                    externalLink = CivicaExternalLinks.wicInfoPage(for: SNAPApplicationDraftStore().load()?.draft.state)
+                    externalLink = CivicaExternalLinks.wicInfoPage(for: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode)
                 },
                 onStartOver: {
                     statusStore.reset()
@@ -138,7 +138,7 @@ struct CivicaRootView: View {
                     isRecertInProgress = true
                 },
                 onOpenDTAConnect: {
-                    externalLink = CivicaExternalLinks.applyPortal(for: SNAPApplicationDraftStore().load()?.draft.state)
+                    externalLink = CivicaExternalLinks.applyPortal(for: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode)
                 }
             )
         } else if statusStore.status.isPostSubmission {
@@ -152,7 +152,7 @@ struct CivicaRootView: View {
                     // banner deep-links to the state apply portal
                     // (BenefitsCal / DTA Connect / …) where the upload
                     // actually happens.
-                    externalLink = CivicaExternalLinks.applyPortal(for: SNAPApplicationDraftStore().load()?.draft.state)
+                    externalLink = CivicaExternalLinks.applyPortal(for: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode)
                 }
             )
         } else if statusStore.status.isActiveCase {

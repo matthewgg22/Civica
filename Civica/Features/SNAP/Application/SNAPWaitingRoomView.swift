@@ -59,16 +59,16 @@ struct SNAPWaitingRoomView: View {
                         submittedAt: statusStore.timestamp(for: .submittedToState) ?? Date(),
                         language: language,
                         showsWICTeaser: persistedDraft?.household.hasMinorInHousehold == true,
-                        stateCode: persistedDraft?.state,
+                        stateCode: persistedDraft?.whereApplying.stateCode,
                         onOpenWICTeaser: {
-                            externalLink = CivicaExternalLinks.wicInfoPage(for: persistedDraft?.state)
+                            externalLink = CivicaExternalLinks.wicInfoPage(for: persistedDraft?.whereApplying.stateCode)
                         },
                         onContactSupport: {
                             // v1: no in-app support inbox yet. Route
                             // to DTA Connect; v2 wires this to a
                             // Civica-side SMS thread per the brand
                             // voice doc's "real person responds" promise.
-                            externalLink = CivicaExternalLinks.applyPortal(for: persistedDraft?.state)
+                            externalLink = CivicaExternalLinks.applyPortal(for: persistedDraft?.whereApplying.stateCode)
                         }
                     )
                 } else {
