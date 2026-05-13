@@ -151,7 +151,10 @@ struct SNAPConversationView: View {
                 .accessibilityHint("Shows every deduction line that produced this benefit estimate.")
             }
 
-            Text("This is an estimate. Massachusetts DTA reviews your full application and makes the final eligibility determination.")
+            Text({
+                let agency = SNAPAgencyDirectory.agencyFullName(for: viewModel.stateCode, language: .english)
+                return "This is an estimate. \(agency) reviews your full application and makes the final eligibility determination."
+            }())
                 .font(CivicaTypography.caption)
                 .foregroundColor(CivicaColors.graphite)
                 .fixedSize(horizontal: false, vertical: true)

@@ -98,7 +98,10 @@ struct SNAPDecisionApprovedView: View {
                 )
                 .foregroundStyle(CivicaColors.ink)
             } else {
-                Text(SNAPDecisionApprovedStrings.amountFallback.value(in: language))
+                Text(SNAPDecisionApprovedStrings.amountFallback(
+                    stateCode: draft?.whereApplying.stateCode,
+                    language: language
+                ))
                     .font(CivicaTypography.subheadStrong)
                     .foregroundStyle(CivicaColors.ink)
                     .fixedSize(horizontal: false, vertical: true)
@@ -268,10 +271,18 @@ enum SNAPDecisionApprovedStrings {
         "Monthly award",
         es: "Beneficio mensual"
     )
-    static let amountFallback = CivicaText(
-        "Massachusetts DTA's official letter has your monthly amount. Open DTA Connect to see it.",
-        es: "La carta oficial del DTA de Massachusetts tiene tu cantidad mensual. Abre DTA Connect para verla."
-    )
+    static func amountFallback(stateCode: String?, language: CivicaLanguage) -> String {
+        let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
+        let portal = SNAPAgencyDirectory.portalName(for: stateCode)
+        let portalEN = portal.isEmpty ? "your state portal" : portal
+        let portalES = portal.isEmpty ? "el portal estatal" : portal
+        switch language {
+        case .english:
+            return "\(agency)'s official letter has your monthly amount. Open \(portalEN) to see it."
+        case .spanish:
+            return "La carta oficial de \(agency) tiene tu cantidad mensual. Abre \(portalES) para verla."
+        }
+    }
     /// {mailed} / {earliest} / {latest} substituted with localized date
     /// strings. Window assumes EBT card is mailed the day after the
     /// decision and arrives 3–7 business days later (MA standard).

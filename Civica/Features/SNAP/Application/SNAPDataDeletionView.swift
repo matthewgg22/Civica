@@ -185,7 +185,11 @@ enum SNAPDataDeletionStrings {
         es: "Mantener mi cuenta"
     )
 
-    static func steps(language: CivicaLanguage) -> [Step] {
+    static func steps(language: CivicaLanguage, stateCode: String? = nil) -> [Step] {
+        let portal = SNAPAgencyDirectory.portalName(for: stateCode)
+        let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
+        let portalEN = portal.isEmpty ? "your state portal" : portal
+        let portalES = portal.isEmpty ? "el portal estatal" : portal
         switch language {
         case .english:
             return [
@@ -195,7 +199,7 @@ enum SNAPDataDeletionStrings {
                 ),
                 Step(
                     title: "Already with the state",
-                    body: "If you submitted to DTA Connect, that submission stays with the state. Civica can't pull it back — only Massachusetts DTA can change or close it. Your benefits won't change just because you delete here."
+                    body: "If you submitted to \(portalEN), that submission stays with the state. Civica can't pull it back — only \(agency) can change or close it. Your benefits won't change just because you delete here."
                 ),
                 Step(
                     title: "Civica's servers",
@@ -214,7 +218,7 @@ enum SNAPDataDeletionStrings {
                 ),
                 Step(
                     title: "Lo que ya está con el estado",
-                    body: "Si enviaste tu solicitud a DTA Connect, esa solicitud queda con el estado. Civica no puede recuperarla — solo el DTA de Massachusetts puede cambiarla o cerrarla. Tus beneficios no cambian por eliminar aquí."
+                    body: "Si enviaste tu solicitud a \(portalES), esa solicitud queda con el estado. Civica no puede recuperarla — solo \(agency) puede cambiarla o cerrarla. Tus beneficios no cambian por eliminar aquí."
                 ),
                 Step(
                     title: "Los servidores de Civica",

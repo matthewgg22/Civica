@@ -21,7 +21,9 @@ struct SNAPApplicationGeneratorView: View {
             header
             statusCard
             actionRow
-            SNAPApplicationWalkthroughView()
+            SNAPApplicationWalkthroughView(
+                stateCode: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
+            )
         }
         .padding(CivicaSpacing.lg)
         .background(CivicaColors.paper)
