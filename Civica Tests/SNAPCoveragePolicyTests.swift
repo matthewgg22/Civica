@@ -23,8 +23,18 @@ struct SNAPCoveragePolicyTests {
         #expect(SNAPCoveragePolicy.isStateInScope("  MA  "))
     }
 
-    @Test func californiaIsOutOfScope() {
-        #expect(!SNAPCoveragePolicy.isStateInScope("CA"))
+    @Test func californiaIsInScope() {
+        // 2026-05-13: CA is the launch state; both CA and MA are
+        // supported peers in SNAPCoveragePolicy.supportedStateCodes.
+        #expect(SNAPCoveragePolicy.isStateInScope("CA"))
+    }
+
+    @Test func lowercaseCAIsInScope() {
+        #expect(SNAPCoveragePolicy.isStateInScope("ca"))
+    }
+
+    @Test func newYorkIsOutOfScope() {
+        #expect(!SNAPCoveragePolicy.isStateInScope("NY"))
     }
 
     @Test func otherBucketIsOutOfScope() {
@@ -48,11 +58,13 @@ struct SNAPCoveragePolicyTests {
     @Test func gateStaysOutOfWayForInScopeState() {
         #expect(!SNAPCoveragePolicy.shouldShowUnsupportedStateGate(for: "MA"))
         #expect(!SNAPCoveragePolicy.shouldShowUnsupportedStateGate(for: "ma"))
+        #expect(!SNAPCoveragePolicy.shouldShowUnsupportedStateGate(for: "CA"))
+        #expect(!SNAPCoveragePolicy.shouldShowUnsupportedStateGate(for: "ca"))
     }
 
     @Test func gateFiresForOutOfScopeState() {
-        #expect(SNAPCoveragePolicy.shouldShowUnsupportedStateGate(for: "CA"))
         #expect(SNAPCoveragePolicy.shouldShowUnsupportedStateGate(for: "NY"))
+        #expect(SNAPCoveragePolicy.shouldShowUnsupportedStateGate(for: "TX"))
         #expect(SNAPCoveragePolicy.shouldShowUnsupportedStateGate(for: "OTHER"))
     }
 
@@ -61,17 +73,18 @@ struct SNAPCoveragePolicyTests {
     @MainActor
     @Test(.enabled(if: keychainAvailableForTests))
     func launchTimePurgeRemovesVerdictWhenStateIsOutOfScope() {
-        // Arrange: persisted CA draft + Keychain verdict from a
-        // prior session (simulates the user who picked CA, ran the
-        // screener via an older build, then upgraded to a version
-        // with the MA-only gate).
+        // Arrange: persisted NY (out-of-scope) draft + Keychain
+        // verdict from a prior session (simulates the user who
+        // picked an unsupported state, ran the screener via an
+        // older build, then upgraded to a version with the
+        // current supported-state gate).
         let draftStore = SNAPApplicationDraftStore()
         var state = SNAPApplicationDraftStore.PersistedState(
             draft: SNAPApplicationDraft(),
             mode: .sequential,
             sequentialSection: .whereApplying
         )
-        state.draft.whereApplying.stateCode = "CA"
+        state.draft.whereApplying.stateCode = "NY"
         draftStore.save(state)
 
         SNAPEligibilityResultKeychainStore.save(Self.makeSampleResult())
@@ -88,7 +101,7 @@ struct SNAPCoveragePolicyTests {
         // Assert: verdict gone; draft preserved (user can still
         // change state via the unsupported-state view's CTA).
         #expect(SNAPEligibilityResultKeychainStore.load() == nil)
-        #expect(draftStore.load()?.draft.whereApplying.stateCode == "CA")
+        #expect(draftStore.load()?.draft.whereApplying.stateCode == "NY")
     }
 
     @MainActor

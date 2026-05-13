@@ -81,7 +81,15 @@ enum CACountyResolver {
         "922": "Riverside",
         "923": "San Bernardino",
         "924": "San Bernardino",
-        "925": "San Bernardino",
+        // 925XX spans Riverside and San Bernardino counties. The
+        // 92501-92509 Riverside-city cluster (the most populous
+        // 925 ZIPs) routes via the override map below; the
+        // remaining 925 high-desert / mountain-pass ZIPs that fall
+        // through here are San Bernardino. Setting the prefix to
+        // San Bernardino would mis-route the populous Riverside
+        // case by default; setting it to Riverside is the safer
+        // dominant-population pick.
+        "925": "Riverside",
 
         // Los Angeles County (large; covers most 900–913)
         "900": "Los Angeles",
@@ -117,8 +125,13 @@ enum CACountyResolver {
         "938": "Fresno",
         "939": "Monterey",
 
-        // Bay Area — San Francisco
-        "940": "San Francisco",
+        // Bay Area — Peninsula + San Francisco
+        // 940XX is dominated by San Mateo County (Daly City, S SF,
+        // Pacifica, Redwood City, San Bruno, San Carlos, Burlingame,
+        // Menlo Park…) with several Santa Clara enclaves (Los Altos,
+        // Mountain View, Sunnyvale, parts of Palo Alto) handled via
+        // overrides. 941XX is San Francisco proper.
+        "940": "San Mateo",
         "941": "San Francisco",
 
         // Peninsula
@@ -161,6 +174,16 @@ enum CACountyResolver {
         // the 961 prefix matching the table; included for completeness.
         "96150": "El Dorado",
         // 93920 (Big Sur) is Monterey, not the Kern majority of 939.
-        "93920": "Monterey"
+        "93920": "Monterey",
+
+        // Santa Clara enclaves inside the 940XX San Mateo cluster.
+        // Los Altos (94022-94024), Mountain View (94035, 94039-94043),
+        // and Sunnyvale (94085-94089) are all Santa Clara County.
+        "94022": "Santa Clara", "94023": "Santa Clara", "94024": "Santa Clara",
+        "94035": "Santa Clara",
+        "94039": "Santa Clara", "94040": "Santa Clara", "94041": "Santa Clara",
+        "94042": "Santa Clara", "94043": "Santa Clara",
+        "94085": "Santa Clara", "94086": "Santa Clara", "94087": "Santa Clara",
+        "94088": "Santa Clara", "94089": "Santa Clara"
     ]
 }
