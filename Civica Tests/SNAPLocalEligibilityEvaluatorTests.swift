@@ -56,6 +56,38 @@ struct SNAPLocalEligibilityEvaluatorTests {
         #expect(result.ineligibilityReason?.contains("Massachusetts") == true)
     }
 
+    // MARK: - CA eligible path (launch-state parallel to MA)
+
+    @Test func caHouseholdUnderBBCEThresholdIsEligible() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.stateCode = "CA"
+        draft.household.householdSize = "2 people"
+        draft.income.grossMonthlyIncome = 1_500
+        draft.studentStatus.enrolledInHigherEd = false
+
+        let result = SNAPLocalEligibilityEvaluator.evaluate(draft, today: fy26Date)
+
+        #expect(result.status == .eligible)
+        #expect(result.rulesVersion == "CA-bbce-200pct-FY26")
+        #expect(result.ineligibilityReason == nil)
+        #expect(result.contributingFactors.contains("ca_bbce_200pct_applied"))
+        #expect(result.contributingFactors.contains("gross_under_200_fpl"))
+    }
+
+    @Test func caHouseholdOneOverThresholdIsIneligible() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.stateCode = "CA"
+        draft.household.householdSize = "2 people"
+        draft.income.grossMonthlyIncome = 3_409
+        draft.studentStatus.enrolledInHigherEd = false
+
+        let result = SNAPLocalEligibilityEvaluator.evaluate(draft, today: fy26Date)
+
+        #expect(result.status == .ineligible)
+        #expect(result.contributingFactors.contains("gross_over_200_fpl"))
+        #expect(result.ineligibilityReason?.contains("California") == true)
+    }
+
     // MARK: - MA elderly/disabled bypass
 
     @Test func maHouseholdWithElderlyOrDisabledIsEligibleEvenAboveThreshold() {

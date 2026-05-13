@@ -99,19 +99,28 @@ struct SNAPComplianceCopyTests {
         #expect(lng == -71.106410)
     }
 
-    // MARK: - A3 MA-only beta gate
+    // MARK: - A3 Supported-state beta gate (CA + MA)
 
     @MainActor
-    @Test func nonMAStateCodeTriggersUnsupportedGate() {
+    @Test func caStateCodeDoesNotTriggerUnsupportedGate() {
+        // CA is the launch state.
         let vm = SNAPApplicationFlowOrchestratorViewModel()
         vm.draft.whereApplying.stateCode = "CA"
-        #expect(vm.shouldShowUnsupportedStateGate == true)
+        #expect(vm.shouldShowUnsupportedStateGate == false)
     }
 
     @MainActor
     @Test func maStateCodeDoesNotTriggerUnsupportedGate() {
+        // MA is retained as a supported peer.
         let vm = SNAPApplicationFlowOrchestratorViewModel()
         vm.draft.whereApplying.stateCode = "MA"
+        #expect(vm.shouldShowUnsupportedStateGate == false)
+    }
+
+    @MainActor
+    @Test func lowercaseCaStillTreatedAsCA() {
+        let vm = SNAPApplicationFlowOrchestratorViewModel()
+        vm.draft.whereApplying.stateCode = "ca"
         #expect(vm.shouldShowUnsupportedStateGate == false)
     }
 
@@ -120,6 +129,13 @@ struct SNAPComplianceCopyTests {
         let vm = SNAPApplicationFlowOrchestratorViewModel()
         vm.draft.whereApplying.stateCode = "ma"
         #expect(vm.shouldShowUnsupportedStateGate == false)
+    }
+
+    @MainActor
+    @Test func nonTunedStateTriggersUnsupportedGate() {
+        let vm = SNAPApplicationFlowOrchestratorViewModel()
+        vm.draft.whereApplying.stateCode = "NY"
+        #expect(vm.shouldShowUnsupportedStateGate == true)
     }
 
     @MainActor
@@ -132,7 +148,8 @@ struct SNAPComplianceCopyTests {
     @MainActor
     @Test func editingWhereApplyingSuppressesGate() {
         // While the user is actively re-editing the state question,
-        // the gate stays out of the way so they can switch to MA.
+        // the gate stays out of the way so they can switch to a
+        // supported state.
         let vm = SNAPApplicationFlowOrchestratorViewModel()
         vm.draft.whereApplying.stateCode = "NY"
         vm.startEditing(.whereApplying)

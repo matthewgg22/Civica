@@ -1,7 +1,15 @@
 import Foundation
 
 // Central staging area for OBBBA-audit compliance copy. Two things
-// live here:
+// live here.
+//
+// Launch-state note (2026-05-13): California is the launch state.
+// Banned-phrase rules and pending-revision rationales originally
+// authored against MA DTA apply equally to CA's CDSS / BenefitsCal
+// equivalents — the registry must hold the CA bar before any
+// CA-portal-naming string ships in user-visible copy. Counsel
+// sign-off for the 9 pending revisions below is expected to cover
+// both states in one batch rather than landing en/CA-en first.
 //
 //   1. `bannedPhrases` — substrings that must not appear anywhere
 //      in SNAP user-facing strings. Authoritative list with audit
@@ -53,6 +61,12 @@ enum SNAPComplianceCopyRegistry {
             phrase: "Submit to DTA Connect",
             auditReference: "Q14",
             rationale: "Implies a Civica->DTA write integration that does not exist without written MA DTA authorization. Use 'Open MA DTA Connect to submit' until authorization is confirmed and an integration ships."
+        ),
+        BannedPhrase(
+            id: "submit_to_benefitscal",
+            phrase: "Submit to BenefitsCal",
+            auditReference: "Q14 (CA launch parallel)",
+            rationale: "Implies a Civica->BenefitsCal/CDSS write integration that does not exist without written authorization from CDSS or the user's county welfare department. Use 'Open BenefitsCal to submit' until authorization is confirmed and an integration ships. Parallels the MA DTA Connect ban; CA is the launch state so the bar applies before user-visible surfaces ship."
         )
     ]
 
@@ -151,7 +165,7 @@ enum SNAPComplianceCopyRegistry {
             approvedEnglish: nil,
             approvedSpanish: nil,
             auditReference: "Q3 / Q2.3",
-            rationale: "Generic 'Apply for SNAP' CTA without official-link attribution; should route via 'Open MA DTA Connect application' or similar neutral path.",
+            rationale: "Generic 'Apply for SNAP' CTA without official-link attribution; should route via the state apply portal (e.g. 'Open BenefitsCal application' for CA, 'Open MA DTA Connect application' for MA) or similar neutral path. CA-portal naming requires the same counsel sign-off MA's did.",
             status: .pendingSignoff
         ),
         PendingCopyRevision(
