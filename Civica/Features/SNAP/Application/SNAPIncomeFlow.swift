@@ -219,6 +219,16 @@ final class SNAPIncomeFlowViewModel: ObservableObject {
 
     var isAtFirstStep: Bool { step == .earningPresence }
     var isAtLastStep: Bool { step == .recentJobLoss }
+
+    /// Unwraps the active paystub suggestion if one is showing.
+    /// Used by the view to avoid `if case let` inside @ViewBuilder,
+    /// which crashes the Swift compiler on x86_64 CI builds.
+    var activeSuggestion: SNAPPaystubDerivation? {
+        if case let .paystubSuggestion(derivation) = grossIncomeEntryMode {
+            return derivation
+        }
+        return nil
+    }
 }
 
 struct SNAPIncomeFlowView: View {
@@ -287,7 +297,11 @@ struct SNAPIncomeFlowView: View {
 
     @ViewBuilder
     private var grossMonthlyIncomeScreen: some View {
-        if case let .paystubSuggestion(derivation) = viewModel.grossIncomeEntryMode {
+        // Use viewModel.activeSuggestion (a plain optional) rather than
+        // pattern-matching on GrossIncomeEntryMode directly inside
+        // @ViewBuilder — the `if case let` form crashes the Swift
+        // compiler on x86_64 in CI (swift-frontend crash, Xcode 26).
+        if let derivation = viewModel.activeSuggestion {
             paystubSuggestionScreen(derivation: derivation)
         } else {
             CivicaQuestionScreen(
