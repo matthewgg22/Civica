@@ -91,14 +91,25 @@ enum SNAPBenefitEstimatorStrings {
         "a year",
         es: "al año"
     )
-    static let resultContextEligible = CivicaText(
-        "This is an estimate — Massachusetts DTA reviews your full application and confirms the amount.",
-        es: "Esto es una estimación — el DTA de Massachusetts revisa tu solicitud completa y confirma el monto."
-    )
-    static let resultContextMinBenefit = CivicaText(
-        "Under federal law, most 1–2 person households receive at least $24/month if approved. DTA confirms your exact amount.",
-        es: "Bajo la ley federal, la mayoría de los hogares de 1 a 2 personas reciben al menos $24/mes si son aprobados. El DTA confirma tu monto exacto."
-    )
+    static func resultContextEligible(stateCode: String?, language: CivicaLanguage) -> String {
+        let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
+        switch language {
+        case .english:
+            return "This is an estimate — \(agency) reviews your full application and confirms the amount."
+        case .spanish:
+            return "Esto es una estimación — \(agency) revisa tu solicitud completa y confirma el monto."
+        }
+    }
+
+    static func resultContextMinBenefit(stateCode: String?, language: CivicaLanguage) -> String {
+        let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
+        switch language {
+        case .english:
+            return "Under federal law, most 1–2 person households receive at least $24/month if approved. \(agency) confirms your exact amount."
+        case .spanish:
+            return "Bajo la ley federal, la mayoría de los hogares de 1 a 2 personas reciben al menos $24/mes si son aprobados. \(agency) confirma tu monto exacto."
+        }
+    }
 
     static let ineligibleHeadline = CivicaText(
         "Above the estimated SNAP limit",

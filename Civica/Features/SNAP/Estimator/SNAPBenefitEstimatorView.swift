@@ -258,10 +258,11 @@ struct SNAPBenefitEstimatorView: View {
     }
 
     private func eligibleContextLine(monthly: Decimal) -> String {
+        let state = SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
         if inputs.householdSize <= 2 && monthly == 24 {
-            return SNAPBenefitEstimatorStrings.resultContextMinBenefit.value(in: language)
+            return SNAPBenefitEstimatorStrings.resultContextMinBenefit(stateCode: state, language: language)
         }
-        return SNAPBenefitEstimatorStrings.resultContextEligible.value(in: language)
+        return SNAPBenefitEstimatorStrings.resultContextEligible(stateCode: state, language: language)
     }
 
     private func ineligibleResultCard(reason: SNAPBenefitEstimatorIneligibilityReason) -> some View {

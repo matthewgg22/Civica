@@ -53,7 +53,10 @@ struct SNAPRecertificationView: View {
                 .foregroundStyle(CivicaColors.ink)
                 .accessibilityAddTraits(.isHeader)
                 .fixedSize(horizontal: false, vertical: true)
-            Text(SNAPStatusHomeStrings.recertBody.value(in: language))
+            Text(SNAPStatusHomeStrings.recertBody(
+                stateCode: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode,
+                language: language
+            ))
                 .font(CivicaTypography.body)
                 .foregroundStyle(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
@@ -197,7 +200,10 @@ struct SNAPRecertificationView: View {
                 action: onStartRecert
             )
             CivicaSecondaryButton(
-                title: SNAPStatusHomeStrings.recertSecondaryOpenDTA.value(in: language),
+                title: SNAPStatusHomeStrings.recertSecondaryOpenPortal(
+                    stateCode: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode,
+                    language: language
+                ),
                 action: onOpenDTAConnect
             )
         }

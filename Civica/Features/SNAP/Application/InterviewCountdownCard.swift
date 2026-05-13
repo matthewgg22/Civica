@@ -110,7 +110,10 @@ struct InterviewDateCaptureCard: View {
                 .foregroundStyle(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text(InterviewCountdownStrings.dateCaptureBody.value(in: language))
+            Text(InterviewCountdownStrings.dateCaptureBody(
+                stateCode: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode,
+                language: language
+            ))
                 .font(CivicaTypography.footnote)
                 .foregroundStyle(CivicaColors.graphite)
                 .fixedSize(horizontal: false, vertical: true)
@@ -163,10 +166,19 @@ enum InterviewCountdownStrings {
         es: "¿Cuándo es tu entrevista?"
     )
 
-    static let dateCaptureBody = CivicaText(
-        "Enter the date and time from your DTA confirmation letter. We'll remind you the day before.",
-        es: "Ingresa la fecha y hora de tu carta de confirmación del DTA. Te recordaremos el día anterior."
-    )
+    /// "Enter the date and time from your <agency> confirmation letter."
+    /// State-conditioned via SNAPAgencyDirectory so the active state's
+    /// agency name shows in the interview-prep flow. Defaults to launch
+    /// state when no draft state is in scope yet.
+    static func dateCaptureBody(stateCode: String?, language: CivicaLanguage) -> String {
+        let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
+        switch language {
+        case .english:
+            return "Enter the date and time from your \(agency) confirmation letter. We'll remind you the day before."
+        case .spanish:
+            return "Ingresa la fecha y hora de tu carta de confirmación de \(agency). Te recordaremos el día anterior."
+        }
+    }
 
     static let dateCaptureSave = CivicaText(
         "Save interview date",

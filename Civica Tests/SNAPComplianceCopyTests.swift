@@ -238,30 +238,44 @@ struct SNAPComplianceCopyTests {
         }
     }
 
-    // MARK: - OBBBA Q14 DTA-Connect copy posture
+    // MARK: - OBBBA Q14 portal-link copy posture
 
-    // Until a written authorization with MA DTA exists, Civica is a
-    // public link-out tool, not a submission integration. Strings that
-    // imply a Civica->DTA write integration ("Submit to DTA Connect")
-    // are banned; the approved replacement is "Open MA DTA Connect to
-    // submit" (English) / "Abrir MA DTA Connect para enviar" (Spanish).
+    // Until a written authorization with the user's state agency
+    // exists, Civica is a public link-out tool, not a submission
+    // integration. Strings that imply a Civica->portal write
+    // integration ("Submit to DTA Connect" / "Submit to BenefitsCal")
+    // are banned; the approved replacement is "Open <portal> to
+    // submit" (English) / "Abrir <portal> para enviar" (Spanish).
 
-    @Test func statusHomeActionSubmitUsesLinkOutPhrasing() {
-        let en = SNAPStatusHomeStrings.actionSubmitToState.value(in: .english)
-        let es = SNAPStatusHomeStrings.actionSubmitToState.value(in: .spanish)
-        #expect(en == "Open MA DTA Connect to submit")
-        #expect(es == "Abrir MA DTA Connect para enviar")
+    @Test func statusHomeActionSubmitCAUsesLinkOutPhrasing() {
+        let en = SNAPStatusHomeStrings.actionSubmitToState(stateCode: "CA", language: .english)
+        let es = SNAPStatusHomeStrings.actionSubmitToState(stateCode: "CA", language: .spanish)
+        #expect(en == "Open BenefitsCal to submit")
+        #expect(es == "Abrir BenefitsCal para enviar")
+        #expect(!en.lowercased().contains("submit to benefitscal"))
+        #expect(!es.lowercased().contains("envía a benefitscal"))
+    }
+
+    @Test func statusHomeActionSubmitMAUsesLinkOutPhrasing() {
+        let en = SNAPStatusHomeStrings.actionSubmitToState(stateCode: "MA", language: .english)
+        let es = SNAPStatusHomeStrings.actionSubmitToState(stateCode: "MA", language: .spanish)
+        #expect(en == "Open DTA Connect to submit")
+        #expect(es == "Abrir DTA Connect para enviar")
         #expect(!en.lowercased().contains("submit to dta"))
         #expect(!es.lowercased().contains("envía a dta"))
     }
 
-    @Test func statusHomeStepSubmitUsesLinkOutPhrasing() {
-        let en = SNAPStatusHomeStrings.stepSubmit.value(in: .english)
-        let es = SNAPStatusHomeStrings.stepSubmit.value(in: .spanish)
-        #expect(en == "Open MA DTA Connect to submit")
-        #expect(es == "Abrir MA DTA Connect para enviar")
-        #expect(!en.lowercased().contains("submit to dta"))
-        #expect(!es.lowercased().contains("envía"))
+    @Test func statusHomeStepSubmitMirrorsActionForBothStates() {
+        for state in ["CA", "MA"] {
+            #expect(
+                SNAPStatusHomeStrings.stepSubmit(stateCode: state, language: .english)
+                    == SNAPStatusHomeStrings.actionSubmitToState(stateCode: state, language: .english)
+            )
+            #expect(
+                SNAPStatusHomeStrings.stepSubmit(stateCode: state, language: .spanish)
+                    == SNAPStatusHomeStrings.actionSubmitToState(stateCode: state, language: .spanish)
+            )
+        }
     }
 
     // MARK: - OBBBA Q2 WIC teaser must not use dollar inducement

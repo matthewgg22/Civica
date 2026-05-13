@@ -31,20 +31,33 @@ enum SNAPStatusHomeStrings {
         "What's happening now",
         es: "Qué está pasando ahora"
     )
-    static let waitingBody = CivicaText(
-        "Your application is with Massachusetts DTA. Most decisions take 7–30 days. We'll let you know when something changes.",
-        es: "Tu solicitud está con el DTA de Massachusetts. La mayoría de las decisiones tardan de 7 a 30 días. Te avisaremos cuando algo cambie."
-    )
+    static func waitingBody(stateCode: String?, language: CivicaLanguage) -> String {
+        let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
+        switch language {
+        case .english:
+            return "Your application is with \(agency). Most decisions take 7–30 days. We'll let you know when something changes."
+        case .spanish:
+            return "Tu solicitud está con \(agency). La mayoría de las decisiones tardan de 7 a 30 días. Te avisaremos cuando algo cambie."
+        }
+    }
     // MARK: - Action chips / next step prompts
 
     static let actionGeneratePacket = CivicaText(
         "Generate your application packet",
         es: "Genera tu paquete de solicitud"
     )
-    static let actionSubmitToState = CivicaText(
-        "Open MA DTA Connect to submit",
-        es: "Abrir MA DTA Connect para enviar"
-    )
+    /// Link-out CTA: "Open <portal> to submit". Per OBBBA Q14, the
+    /// "Submit to <portal>" framing is banned (implies a Civica->state
+    /// write integration without written authorization); the
+    /// "Open <portal> to submit" framing is the approved fallback.
+    static func actionSubmitToState(stateCode: String?, language: CivicaLanguage) -> String {
+        let portal = SNAPAgencyDirectory.portalName(for: stateCode)
+        let portalLabel = portal.isEmpty ? "your state portal" : portal
+        switch language {
+        case .english: return "Open \(portalLabel) to submit"
+        case .spanish: return "Abrir \(portalLabel) para enviar"
+        }
+    }
     static let actionUploadRequested = CivicaText(
         "Upload requested documents",
         es: "Sube los documentos solicitados"
@@ -72,10 +85,10 @@ enum SNAPStatusHomeStrings {
         "Application packet generated",
         es: "Paquete de solicitud generado"
     )
-    static let stepSubmit = CivicaText(
-        "Open MA DTA Connect to submit",
-        es: "Abrir MA DTA Connect para enviar"
-    )
+    /// Timeline-step label that mirrors `actionSubmitToState`.
+    static func stepSubmit(stateCode: String?, language: CivicaLanguage) -> String {
+        actionSubmitToState(stateCode: stateCode, language: language)
+    }
     static let stepStateAcknowledged = CivicaText(
         "State received your application",
         es: "El estado recibió tu solicitud"
@@ -122,18 +135,29 @@ enum SNAPStatusHomeStrings {
         "Your SNAP application was denied",
         es: "Tu solicitud de SNAP fue denegada"
     )
-    static let deniedBody = CivicaText(
-        "Massachusetts DTA decided you don't qualify right now. You have options — denials are not the end of the road.",
-        es: "El DTA de Massachusetts decidió que no calificas en este momento. Tienes opciones — una denegación no es el final del camino."
-    )
+    static func deniedBody(stateCode: String?, language: CivicaLanguage) -> String {
+        let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
+        switch language {
+        case .english:
+            return "\(agency) decided you don't qualify right now. You have options — denials are not the end of the road."
+        case .spanish:
+            return "\(agency) decidió que no calificas en este momento. Tienes opciones — una denegación no es el final del camino."
+        }
+    }
     static let deniedReasonHeading = CivicaText(
         "What the state told us",
         es: "Lo que nos dijo el estado"
     )
-    static let deniedReasonMissing = CivicaText(
-        "The state hasn't shared a specific reason with Civica yet. Check your DTA Connect inbox or the denial notice you received in the mail.",
-        es: "El estado todavía no ha compartido una razón específica con Civica. Revisa tu bandeja de DTA Connect o la carta de denegación que recibiste por correo."
-    )
+    static func deniedReasonMissing(stateCode: String?, language: CivicaLanguage) -> String {
+        let portal = SNAPAgencyDirectory.portalName(for: stateCode)
+        let portalRef = portal.isEmpty ? "your state portal" : portal
+        switch language {
+        case .english:
+            return "The state hasn't shared a specific reason with Civica yet. Check your \(portalRef) inbox or the denial notice you received in the mail."
+        case .spanish:
+            return "El estado todavía no ha compartido una razón específica con Civica. Revisa tu bandeja de \(portalRef) o la carta de denegación que recibiste por correo."
+        }
+    }
 
     static let deniedNextStepsHeading = CivicaText(
         "What you can do next",
@@ -197,10 +221,20 @@ enum SNAPStatusHomeStrings {
         "Time to recertify your SNAP",
         es: "Es hora de recertificar tu SNAP"
     )
-    static let recertBody = CivicaText(
-        "Recertification is how Massachusetts checks that you still qualify. It's basically reapplying — most of the questions will look familiar.",
-        es: "La recertificación es cómo Massachusetts verifica que aún calificas. Básicamente es volver a solicitar — la mayoría de las preguntas te resultarán familiares."
-    )
+    static func recertBody(stateCode: String?, language: CivicaLanguage) -> String {
+        let stateName: String
+        switch (stateCode ?? SNAPAgencyDirectory.launchStateCode).uppercased() {
+        case "CA": stateName = language == .english ? "California" : "California"
+        case "MA": stateName = language == .english ? "Massachusetts" : "Massachusetts"
+        default:   stateName = language == .english ? "your state" : "tu estado"
+        }
+        switch language {
+        case .english:
+            return "Recertification is how \(stateName) checks that you still qualify. It's basically reapplying — most of the questions will look familiar."
+        case .spanish:
+            return "La recertificación es cómo \(stateName) verifica que aún calificas. Básicamente es volver a solicitar — la mayoría de las preguntas te resultarán familiares."
+        }
+    }
 
     /// "Due May 28, 2026" / "Vence el 28 de mayo de 2026". Localized
     /// medium-date formatting via DateFormatter on the caller side;
@@ -250,10 +284,17 @@ enum SNAPStatusHomeStrings {
         "Start your recertification",
         es: "Comienza tu recertificación"
     )
-    static let recertSecondaryOpenDTA = CivicaText(
-        "Open DTA Connect",
-        es: "Abrir DTA Connect"
-    )
+    /// "Open <portal>" — was `recertSecondaryOpenDTA` pre-CA-launch;
+    /// now state-aware so recert callouts route to the active state's
+    /// apply portal. Symbol name kept for caller-search continuity.
+    static func recertSecondaryOpenPortal(stateCode: String?, language: CivicaLanguage) -> String {
+        let portal = SNAPAgencyDirectory.portalName(for: stateCode)
+        let portalLabel = portal.isEmpty ? "your state portal" : portal
+        switch language {
+        case .english: return "Open \(portalLabel)"
+        case .spanish: return "Abrir \(portalLabel)"
+        }
+    }
 
     // MARK: - FindHelp integration callouts
     //

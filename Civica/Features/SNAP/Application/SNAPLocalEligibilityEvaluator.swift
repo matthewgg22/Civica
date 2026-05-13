@@ -274,11 +274,14 @@ enum SNAPLocalEligibilityEvaluator {
     }
 
     /// Stock list of verifications a SNAP applicant typically
-    /// needs at the time of submission. Sourced from MA DTA's
-    /// application checklist; close enough to a federal floor
-    /// for non-MA states until per-state lists are wired in.
-    /// The backend rules engine returns a more precise list per
-    /// household.
+    /// needs at the time of submission. Originally sourced from
+    /// MA DTA's application checklist; close enough to a federal
+    /// floor for all states (photo ID, proof of income, housing
+    /// cost, utility cost, SSN/non-citizen status) until per-state
+    /// lists are wired in. CalFresh's checklist is broadly similar
+    /// (per CDSS All-County Letters); county welfare departments
+    /// may request additional items at intake. The backend rules
+    /// engine returns a more precise list per household.
     private static let defaultRequiredVerifications: [SNAPRequiredVerification] = [
         .init(
             code: "photo_id",

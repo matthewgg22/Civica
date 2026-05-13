@@ -135,7 +135,10 @@ struct SNAPWaitingRoomView: View {
 
     private var whatsHappeningSection: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-            Text(SNAPStatusHomeStrings.waitingBody.value(in: language))
+            Text(SNAPStatusHomeStrings.waitingBody(
+                stateCode: persistedDraft?.whereApplying.stateCode,
+                language: language
+            ))
                 .font(CivicaTypography.body)
                 .foregroundStyle(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
@@ -229,7 +232,8 @@ struct SNAPWaitingRoomView: View {
                 steps: SNAPStatusTimelineBuilder.steps(
                     for: statusStore.status,
                     milestones: statusStore.milestones,
-                    language: language
+                    language: language,
+                    stateCode: persistedDraft?.whereApplying.stateCode
                 )
             )
         }
