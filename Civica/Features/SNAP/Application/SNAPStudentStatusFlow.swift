@@ -206,7 +206,13 @@ struct SNAPStudentStatusFlowView: View {
         value: Binding<Bool?>
     ) -> some View {
         CivicaQuestionScreen(
-            progress: .init(current: step.oneBasedIndex, total: viewModel.visibleTotal),
+            progress: .init(
+                current: step.oneBasedIndex,
+                total: viewModel.visibleTotal,
+                sectionIndex: SNAPApplicationSection.studentStatus.oneBasedIndex,
+                sectionCount: SNAPApplicationSection.count,
+                sectionTitle: SNAPApplicationSection.studentStatus.title(in: language)
+            ),
             title: title,
             helper: helper,
             primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),

@@ -242,7 +242,10 @@ struct SNAPHouseholdQuestionFlowView: View {
     {
         .init(
             current: step.oneBasedIndex,
-            total: SNAPHouseholdQuestionFlowViewModel.Step.total
+            total: SNAPHouseholdQuestionFlowViewModel.Step.total,
+            sectionIndex: SNAPApplicationSection.household.oneBasedIndex,
+            sectionCount: SNAPApplicationSection.count,
+            sectionTitle: SNAPApplicationSection.household.title(in: language)
         )
     }
 

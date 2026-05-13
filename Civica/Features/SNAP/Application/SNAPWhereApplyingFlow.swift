@@ -177,7 +177,13 @@ struct SNAPWhereApplyingFlowView: View {
     private func progress(for step: SNAPWhereApplyingFlowViewModel.Step)
         -> CivicaQuestionScreenProgress
     {
-        .init(current: step.oneBasedIndex, total: SNAPWhereApplyingFlowViewModel.Step.total)
+        .init(
+            current: step.oneBasedIndex,
+            total: SNAPWhereApplyingFlowViewModel.Step.total,
+            sectionIndex: SNAPApplicationSection.whereApplying.oneBasedIndex,
+            sectionCount: SNAPApplicationSection.count,
+            sectionTitle: SNAPApplicationSection.whereApplying.title(in: language)
+        )
     }
 
     private func advanceOrComplete() {

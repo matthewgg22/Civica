@@ -26,9 +26,52 @@ import SwiftUI
 /// `CivicaQuestionScreen<CivicaQuestionChoices>.Progress` are
 /// distinct types in Swift's type system, and helper functions
 /// that return one can't be passed to the other.
+///
+/// `current` / `total` track position within the active section
+/// (e.g. "2 of 4" inside Income). The optional `sectionIndex` /
+/// `sectionCount` / `sectionTitle` add section-level context so
+/// the screen can render an overall progress bar across the whole
+/// application instead of leaving the user wondering "is this the
+/// last 4-of-4 or is there more after?". Callers that don't supply
+/// section info get the legacy chip-only behavior.
 struct CivicaQuestionScreenProgress: Equatable {
     let current: Int
     let total: Int
+    let sectionIndex: Int?
+    let sectionCount: Int?
+    let sectionTitle: String?
+
+    init(
+        current: Int,
+        total: Int,
+        sectionIndex: Int? = nil,
+        sectionCount: Int? = nil,
+        sectionTitle: String? = nil
+    ) {
+        self.current = current
+        self.total = total
+        self.sectionIndex = sectionIndex
+        self.sectionCount = sectionCount
+        self.sectionTitle = sectionTitle
+    }
+
+    /// Overall completion across the full application as a fraction
+    /// in 0...1. Returns nil when section metadata isn't supplied
+    /// so callers can suppress the bar entirely. Each section is
+    /// weighted equally; within the current section the fraction
+    /// reflects `(current - 1) / total` (i.e. the bar advances when
+    /// the user answers, not when they land on the question).
+    var overallFraction: Double? {
+        guard let sectionIndex, let sectionCount, sectionCount > 0 else {
+            return nil
+        }
+        let perSection = 1.0 / Double(sectionCount)
+        let completedSections = Double(sectionIndex - 1) * perSection
+        let intoCurrent = total > 0
+            ? perSection * (Double(max(0, current - 1)) / Double(total))
+            : 0
+        return min(1.0, max(0.0, completedSections + intoCurrent))
+    }
 }
 
 struct CivicaQuestionScreen<Affordance: View>: View {
@@ -71,6 +114,9 @@ struct CivicaQuestionScreen<Affordance: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
+            if let progress, progress.overallFraction != nil {
+                overallProgressBar(progress)
+            }
             ScrollView {
                 VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                     if let progress {
@@ -97,6 +143,54 @@ struct CivicaQuestionScreen<Affordance: View>: View {
             actionFooter
         }
         .background(CivicaColors.paper.ignoresSafeArea())
+    }
+
+    /// Thin overall-progress bar pinned to the top of the screen. Only
+    /// renders when section metadata is supplied; otherwise the layout
+    /// reverts to the legacy chip-only behavior so standalone /
+    /// preview callers don't pick up an inaccurate "0% complete" bar.
+    @ViewBuilder
+    private func overallProgressBar(_ p: Progress) -> some View {
+        if let fraction = p.overallFraction {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                ProgressView(value: fraction)
+                    .progressViewStyle(.linear)
+                    .tint(CivicaColors.brickPrimary)
+                    .accessibilityLabel(
+                        CivicaQuestionStrings.overallProgressAccessibilityLabel(
+                            fraction: fraction,
+                            sectionIndex: p.sectionIndex ?? 0,
+                            sectionCount: p.sectionCount ?? 0,
+                            language: language
+                        )
+                    )
+                if let sectionIndex = p.sectionIndex, let sectionCount = p.sectionCount {
+                    HStack(spacing: CivicaSpacing.xs) {
+                        Text(CivicaQuestionStrings.sectionLabel(
+                            index: sectionIndex,
+                            count: sectionCount,
+                            title: p.sectionTitle,
+                            language: language
+                        ))
+                            .font(CivicaTypography.captionStrong)
+                            .foregroundStyle(CivicaColors.graphite)
+                            .textCase(.uppercase)
+                            .kerning(1.0)
+                        Spacer(minLength: 0)
+                        Text(CivicaQuestionStrings.percentLabel(
+                            fraction: fraction,
+                            language: language
+                        ))
+                            .font(CivicaTypography.captionStrong.monospacedDigit())
+                            .foregroundStyle(CivicaColors.graphite)
+                    }
+                }
+            }
+            .padding(.horizontal, CivicaSpacing.xl)
+            .padding(.top, CivicaSpacing.md)
+            .padding(.bottom, CivicaSpacing.sm)
+            .background(CivicaColors.paper)
+        }
     }
 
     private func progressChip(_ p: Progress) -> some View {
