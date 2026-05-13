@@ -113,10 +113,10 @@ struct CivicaRootView: View {
                 language: language,
                 draft: SNAPApplicationDraftStore().load()?.draft,
                 onOpenDTAConnect: {
-                    externalLink = CivicaExternalLinks.dtaConnect
+                    externalLink = CivicaExternalLinks.applyPortal(for: SNAPApplicationDraftStore().load()?.draft.state)
                 },
                 onOpenWICTeaser: {
-                    externalLink = CivicaExternalLinks.maWICInfo
+                    externalLink = CivicaExternalLinks.wicInfoPage(for: SNAPApplicationDraftStore().load()?.draft.state)
                 },
                 onStartOver: {
                     statusStore.reset()
@@ -138,7 +138,7 @@ struct CivicaRootView: View {
                     isRecertInProgress = true
                 },
                 onOpenDTAConnect: {
-                    externalLink = CivicaExternalLinks.dtaConnect
+                    externalLink = CivicaExternalLinks.applyPortal(for: SNAPApplicationDraftStore().load()?.draft.state)
                 }
             )
         } else if statusStore.status.isPostSubmission {
@@ -149,9 +149,10 @@ struct CivicaRootView: View {
                     // Document upload / interview prep / recert all
                     // live behind the state portal. Until a dedicated
                     // in-app document-capture flow ships, the action
-                    // banner deep-links to DTA Connect where the
-                    // upload actually happens.
-                    externalLink = CivicaExternalLinks.dtaConnect
+                    // banner deep-links to the state apply portal
+                    // (BenefitsCal / DTA Connect / …) where the upload
+                    // actually happens.
+                    externalLink = CivicaExternalLinks.applyPortal(for: SNAPApplicationDraftStore().load()?.draft.state)
                 }
             )
         } else if statusStore.status.isActiveCase {

@@ -37,7 +37,7 @@ struct SNAPEligibilityIntroView: View {
                         .foregroundStyle(Color.black)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    Text("If DTA approves your application...")
+                    Text(SNAPIntroCopy.approvalHeading(stateCode: viewModel.application.state, language: language))
                         .font(CivicaTypography.subheadStrong)
                         .foregroundStyle(Color.black)
 
@@ -254,6 +254,16 @@ private struct SNAPIntroHeader: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.top, CivicaSpacing.xs)
+    }
+}
+
+private enum SNAPIntroCopy {
+    static func approvalHeading(stateCode: String?, language: CivicaLanguage) -> String {
+        let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
+        switch language {
+        case .english: return "If \(agency) approves your application..."
+        case .spanish: return "Si \(agency) aprueba tu solicitud..."
+        }
     }
 }
 

@@ -14,6 +14,10 @@ import UIKit
 
 struct SNAPAppealLetterView: View {
     let language: CivicaLanguage
+    /// USPS state code for the user's active application. Drives
+    /// the recipient block, salutation, and external fair-hearing
+    /// link. Nil falls back to the launch state.
+    let stateCode: String?
     /// Optional hook for callers that want to react before the appeal
     /// letter view pops itself off the navigation stack — e.g.
     /// recording telemetry that the user finished the letter flow.
@@ -21,11 +25,17 @@ struct SNAPAppealLetterView: View {
     /// so an empty-closure caller still gets a working "Done for now."
     let onClose: () -> Void
 
+    init(language: CivicaLanguage, stateCode: String? = nil, onClose: @escaping () -> Void) {
+        self.language = language
+        self.stateCode = stateCode
+        self.onClose = onClose
+    }
+
     @Environment(\.dismiss) private var dismiss
 
     @State private var phase: Phase = .idle
     @State private var isShareSheetPresented = false
-    @State private var openingDTAConnect: Bool = false
+    @State private var openingFairHearingPage: Bool = false
 
     enum Phase {
         case idle
@@ -61,8 +71,8 @@ struct SNAPAppealLetterView: View {
                 ShareSheet(items: [url])
             }
         }
-        .sheet(isPresented: $openingDTAConnect) {
-            CivicaSafariSheet(url: CivicaExternalLinks.dtaFairHearing)
+        .sheet(isPresented: $openingFairHearingPage) {
+            CivicaSafariSheet(url: CivicaExternalLinks.fairHearingPage(for: stateCode))
         }
     }
 
@@ -85,7 +95,7 @@ struct SNAPAppealLetterView: View {
     }
 
     private var body_: some View {
-        Text(SNAPAppealLetterScreenStrings.body.value(in: language))
+        Text(SNAPAppealLetterScreenStrings.bodyText(language: language, stateCode: stateCode))
             .font(CivicaTypography.body)
             .foregroundStyle(CivicaColors.graphite)
             .fixedSize(horizontal: false, vertical: true)
@@ -155,7 +165,7 @@ struct SNAPAppealLetterView: View {
             Text(SNAPAppealLetterScreenStrings.nextStepsHeading.value(in: language))
                 .font(CivicaTypography.sectionHeader)
                 .foregroundStyle(CivicaColors.ink)
-            Text(SNAPAppealLetterScreenStrings.nextStepsBody.value(in: language))
+            Text(SNAPAppealLetterScreenStrings.nextStepsBodyText(language: language, stateCode: stateCode))
                 .font(CivicaTypography.body)
                 .foregroundStyle(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
@@ -169,13 +179,13 @@ struct SNAPAppealLetterView: View {
                 )
 
             Button {
-                openingDTAConnect = true
+                openingFairHearingPage = true
             } label: {
                 HStack(spacing: CivicaSpacing.sm) {
                     Image(systemName: "safari")
                         .foregroundStyle(CivicaColors.brickPrimary)
                         .accessibilityHidden(true)
-                    Text(SNAPAppealLetterScreenStrings.openOnlinePortal.value(in: language))
+                    Text(SNAPAppealLetterScreenStrings.openOnlinePortalText(language: language, stateCode: stateCode))
                         .font(CivicaTypography.subheadStrong)
                         .foregroundStyle(CivicaColors.brickPrimary)
                         .underline()
@@ -218,7 +228,7 @@ struct SNAPAppealLetterView: View {
     private func generate() async {
         phase = .generating
         do {
-            let url = try SNAPAppealLetterPDFRenderer.render(language: language)
+            let url = try SNAPAppealLetterPDFRenderer.render(language: language, stateCode: stateCode)
             phase = .ready(url)
         } catch {
             phase = .error(SNAPAppealLetterScreenStrings.errorGeneric.value(in: language))
@@ -250,10 +260,29 @@ enum SNAPAppealLetterScreenStrings {
         "Your fair-hearing request is ready to print",
         es: "Tu solicitud de audiencia justa está lista para imprimir"
     )
-    static let body = CivicaText(
-        "We prepared a letter requesting a fair hearing under federal SNAP rules (7 CFR 273.15). Sign and date it, fill in your information, and mail or hand-deliver it to the DTA Hearing Office.",
-        es: "Preparamos una carta que solicita una audiencia justa bajo las reglas federales de SNAP (7 CFR 273.15). Fírmala y féchala, completa tu información, y envíala por correo o entrégala en persona a la Oficina de Audiencias del DTA."
-    )
+    static func bodyText(language: CivicaLanguage, stateCode: String?) -> String {
+        let office: String
+        switch (stateCode ?? SNAPAgencyDirectory.launchStateCode).uppercased() {
+        case "CA":
+            office = language == .english
+                ? "the State Hearings Division"
+                : "la División de Audiencias del Estado"
+        case "MA":
+            office = language == .english
+                ? "the DTA Hearing Office"
+                : "la Oficina de Audiencias del DTA"
+        default:
+            office = language == .english
+                ? "your state SNAP hearing office"
+                : "tu oficina estatal de audiencias de SNAP"
+        }
+        switch language {
+        case .english:
+            return "We prepared a letter requesting a fair hearing under federal SNAP rules (7 CFR 273.15). Sign and date it, fill in your information, and mail or hand-deliver it to \(office)."
+        case .spanish:
+            return "Preparamos una carta que solicita una audiencia justa bajo las reglas federales de SNAP (7 CFR 273.15). Fírmala y féchala, completa tu información, y envíala por correo o entrégala en persona a \(office)."
+        }
+    }
 
     static let generating = CivicaText(
         "Drafting your letter…",
@@ -276,14 +305,42 @@ enum SNAPAppealLetterScreenStrings {
         "What to do next",
         es: "Qué hacer ahora"
     )
-    static let nextStepsBody = CivicaText(
-        "Save the PDF, print it, sign it, fill in your name and address by hand, then mail or hand-deliver to the DTA Hearing Office at 600 Washington Street, Boston, MA 02111. You can also submit a hearing request through DTA Connect.",
-        es: "Guarda el PDF, imprímelo, fírmalo, completa tu nombre y dirección a mano, y luego envíalo por correo o entrégalo en persona en la Oficina de Audiencias del DTA en 600 Washington Street, Boston, MA 02111. También puedes solicitar una audiencia a través de DTA Connect."
-    )
-    static let openOnlinePortal = CivicaText(
-        "Open the DTA fair-hearing page online",
-        es: "Abrir la página de audiencia justa del DTA en línea"
-    )
+    static func nextStepsBodyText(language: CivicaLanguage, stateCode: String?) -> String {
+        let address = SNAPAgencyDirectory.hearingOfficeInlineAddress(for: stateCode, language: language)
+        let portal = SNAPAgencyDirectory.portalName(for: stateCode)
+        let portalSentence: String
+        if !portal.isEmpty {
+            portalSentence = language == .english
+                ? " You can also submit a hearing request through \(portal)."
+                : " También puedes solicitar una audiencia a través de \(portal)."
+        } else {
+            portalSentence = ""
+        }
+        switch language {
+        case .english:
+            return "Save the PDF, print it, sign it, fill in your name and address by hand, then mail or hand-deliver to \(address).\(portalSentence)"
+        case .spanish:
+            return "Guarda el PDF, imprímelo, fírmalo, completa tu nombre y dirección a mano, y luego envíalo por correo o entrégalo en persona en \(address).\(portalSentence)"
+        }
+    }
+
+    static func openOnlinePortalText(language: CivicaLanguage, stateCode: String?) -> String {
+        let stateLabel: String
+        switch (stateCode ?? SNAPAgencyDirectory.launchStateCode).uppercased() {
+        case "CA":
+            stateLabel = language == .english ? "CDSS" : "del CDSS"
+        case "MA":
+            stateLabel = language == .english ? "DTA" : "del DTA"
+        default:
+            stateLabel = language == .english ? "state SNAP" : "estatal de SNAP"
+        }
+        switch language {
+        case .english:
+            return "Open the \(stateLabel) fair-hearing page online"
+        case .spanish:
+            return "Abrir la página de audiencia justa \(stateLabel) en línea"
+        }
+    }
 
     static let share = CivicaText(
         "Save or share my letter",

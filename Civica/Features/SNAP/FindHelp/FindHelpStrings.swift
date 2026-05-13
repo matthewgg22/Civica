@@ -44,10 +44,19 @@ enum FindHelpStrings {
         "What we don't do",
         es: "Qué no hacemos"
     )
-    static let permissionDontBody = CivicaText(
-        "Track you over time. Share your location with Massachusetts DTA. Use it for ads.",
-        es: "Rastrearte con el tiempo. Compartir tu ubicación con el DTA de Massachusetts. Usarla para anuncios."
-    )
+    /// Permission-comparison copy ("what we don't do"). Names the
+    /// active state's SNAP agency so the comparison feels grounded
+    /// rather than abstract. Defaults to the launch state's agency
+    /// when the caller hasn't threaded a state code through yet.
+    static func permissionDontBody(stateCode: String? = nil, language: CivicaLanguage) -> String {
+        let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
+        switch language {
+        case .english:
+            return "Track you over time. Share your location with \(agency). Use it for ads."
+        case .spanish:
+            return "Rastrearte con el tiempo. Compartir tu ubicación con \(agency). Usarla para anuncios."
+        }
+    }
 
     static let permissionWithoutSharing = CivicaText(
         "You can use the map without sharing — type a zip code instead.",
