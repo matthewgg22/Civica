@@ -1,11 +1,15 @@
 import Foundation
 import OSLog
 
-/// Loads the bundled MA seed directory and exposes a search API that
-/// mirrors what the live Supabase RPC returns. Used by FindHelpStore
-/// as a soft fallback when the network call fails so the demo map
+/// Loads the bundled per-state seed directory matching
+/// `FindHelpRegion.current` and exposes a search API that mirrors
+/// what the live Supabase RPC returns. Used by FindHelpStore as a
+/// soft fallback when the network call fails so the demo map
 /// always has pins instead of an empty-state or hostname-not-found
 /// screen. When the live RPC is healthy these fixtures are unused.
+/// For `.nationwide` and `.bbox` regions, all known seed files are
+/// concatenated and the per-location bbox filter handles geographic
+/// scoping at query time.
 struct FindHelpFixtureLoader {
     static let shared = FindHelpFixtureLoader(bundle: .main)
 
@@ -47,11 +51,30 @@ struct FindHelpFixtureLoader {
         return Array(withDistance.sorted { ($0.distanceKm ?? .infinity) < ($1.distanceKm ?? .infinity) }.prefix(maxResults))
     }
 
-    /// All bundled locations, unfiltered. Empty array on decode
+    /// All bundled locations matching the active `FindHelpRegion`,
+    /// unfiltered by service type or language. Empty array on decode
     /// failure (logged). Exposed for tests / introspection.
     func loadAll() -> [FindHelpLocation] {
-        guard let url = bundle.url(forResource: "ma_seed_locations", withExtension: "json") else {
-            Self.logger.error("FindHelp fixtures missing from bundle")
+        loadAll(for: FindHelpRegion.current)
+    }
+
+    /// All bundled locations matching a specific region. Concrete
+    /// regions load their state seed; `.nationwide` and `.bbox`
+    /// concatenate every known seed.
+    func loadAll(for region: FindHelpRegion) -> [FindHelpLocation] {
+        let resourceNames: [String]
+        switch region {
+        case .california:    resourceNames = ["ca_seed_locations"]
+        case .massachusetts: resourceNames = ["ma_seed_locations"]
+        case .nationwide, .bbox:
+            resourceNames = ["ca_seed_locations", "ma_seed_locations"]
+        }
+        return resourceNames.flatMap(loadSeedFile)
+    }
+
+    private func loadSeedFile(_ resourceName: String) -> [FindHelpLocation] {
+        guard let url = bundle.url(forResource: resourceName, withExtension: "json") else {
+            Self.logger.error("FindHelp fixture \(resourceName, privacy: .public).json missing from bundle")
             return []
         }
         do {
@@ -59,7 +82,7 @@ struct FindHelpFixtureLoader {
             let envelope = try Self.decoder.decode(Envelope.self, from: data)
             return envelope.locations
         } catch {
-            Self.logger.error("FindHelp fixtures decode failed: \(error.localizedDescription, privacy: .public)")
+            Self.logger.error("FindHelp fixture \(resourceName, privacy: .public).json decode failed: \(error.localizedDescription, privacy: .public)")
             return []
         }
     }
