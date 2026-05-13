@@ -32,6 +32,11 @@ enum SNAPStateResources {
     /// compatibility; new call sites should go through `resource(for:)`.
     static var massachusetts: SNAPStateResource? { resource(for: "MA") }
 
+    /// Convenience accessor for CA-only callers. CA is the launch
+    /// state; prefer `resource(for:)` in new code so the surface
+    /// stays state-agnostic.
+    static var california: SNAPStateResource? { resource(for: "CA") }
+
     /// Returns the application-resource bundle for a state, drawing
     /// agency name, official URL, and hotline from the bundled USDA
     /// SNAP State Directory snapshot. Returns nil when the state is
@@ -63,34 +68,38 @@ enum SNAPStateResources {
         stateTimelineByCode[normalizedCode]?.displayName ?? normalizedCode
     }
 
-    /// Editorial label for the apply-online CTA. MA uses the
-    /// MA-specific portal name ("DTA Connect"); other states get a
-    /// generic label because we don't have brand-equivalent portals
-    /// vetted yet.
+    /// Editorial label for the apply-online CTA. MA and CA use their
+    /// state-specific portal names ("DTA Connect", "BenefitsCal");
+    /// other states get a generic label because we don't have
+    /// brand-equivalent portals vetted yet.
     private static func applicationLabel(for normalizedCode: String) -> String {
         switch normalizedCode {
         case "MA": return "DTA Connect"
+        case "CA": return "BenefitsCal"
         default: return "Apply online"
         }
     }
 
-    /// Phone-help label includes the formatted hotline number. MA gets
-    /// the well-known "DTA Assistance Line" naming; other states use a
-    /// generic prefix.
+    /// Phone-help label includes the formatted hotline number. MA and
+    /// CA get state-specific naming ("DTA Assistance Line",
+    /// "CalFresh Info Line"); other states use a generic prefix.
     private static func phoneLabel(for normalizedCode: String, formattedHotline: String) -> String {
         switch normalizedCode {
         case "MA": return "DTA Assistance Line · \(formattedHotline)"
+        case "CA": return "CalFresh Info Line · \(formattedHotline)"
         default:   return "State SNAP helpline · \(formattedHotline)"
         }
     }
 
-    /// One-line editorial note about how to apply. MA has a tested
-    /// copy; other states use a generic note pointing at the agency
-    /// and helpline below.
+    /// One-line editorial note about how to apply. MA and CA have
+    /// state-tested copy; other states use a generic note pointing
+    /// at the agency and helpline below.
     private static func applicationNotes(for normalizedCode: String) -> String {
         switch normalizedCode {
         case "MA":
             return "Massachusetts residents generally apply through DTA Connect or official DTA channels."
+        case "CA":
+            return "California residents generally apply for CalFresh through BenefitsCal or their county welfare department."
         default:
             return "Apply online through the state portal above or call the SNAP helpline. The agency below administers SNAP for your state."
         }

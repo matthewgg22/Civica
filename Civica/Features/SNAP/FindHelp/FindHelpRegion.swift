@@ -2,17 +2,17 @@ import Foundation
 
 /// Geographic scope for FindHelp data ingestion and filtering.
 ///
-/// The Civica demo ships MA-curated seed data and (will, once the
-/// backend ingest lands) query the live Supabase RPC with a tight
-/// Massachusetts bounding box on the USDA SNAP Retailer Locator
-/// ArcGIS feature service. Flipping `FindHelpRegion.current` to
-/// `.nationwide` lets the fixture loader stop pre-filtering and
-/// instructs the future backend fetcher to drop its bbox clause.
+/// The Civica demo ships CA-curated seed data (with MA seed retained
+/// as the secondary region) and queries the live Supabase RPC with a
+/// state bounding box on the USDA SNAP Retailer Locator ArcGIS
+/// feature service. Flipping `FindHelpRegion.current` to `.nationwide`
+/// lets the fixture loader stop pre-filtering and instructs the
+/// future backend fetcher to drop its bbox clause.
 ///
-/// **How to flip to nationwide for a demo or A/B:**
+/// **How to flip the active demo region:**
 ///
 /// 1. Edit `Civica/Info.plist` and change the `FindHelpDemoRegion`
-///    string from `"massachusetts"` to `"nationwide"`.
+///    string — `"california"`, `"massachusetts"`, or `"nationwide"`.
 /// 2. Rebuild the Civica scheme. No Swift edits required — the
 ///    enum reads the plist key on first access and the fixture
 ///    loader / future backend fetcher both consume `current`.
@@ -20,12 +20,13 @@ import Foundation
 ///    the static value in code with `.bbox(...)` rather than
 ///    threading a new plist string.
 ///
-/// The MA bounding box is intentionally a slightly-padded rectangle
-/// rather than a precise state polygon — pre-filtering fixtures is
+/// State bounding boxes are intentionally slightly-padded rectangles
+/// rather than precise state polygons — pre-filtering fixtures is
 /// the only consumer today, and a few cross-border false positives
-/// (e.g. a market in southern NH) are harmless. Tighten if the
-/// backend fetcher needs cleaner ArcGIS query bounds.
+/// are harmless. Tighten if the backend fetcher needs cleaner
+/// ArcGIS query bounds.
 enum FindHelpRegion: Equatable {
+    case california
     case massachusetts
     case nationwide
     case bbox(minLat: Double, minLng: Double, maxLat: Double, maxLng: Double)
@@ -37,23 +38,28 @@ enum FindHelpRegion: Equatable {
 
     private static func resolveFromInfoPlist() -> FindHelpRegion {
         guard let raw = Bundle.main.object(forInfoDictionaryKey: "FindHelpDemoRegion") as? String else {
-            return .massachusetts
+            return .california
         }
         switch raw.lowercased() {
+        case "california", "ca":
+            return .california
         case "massachusetts", "ma":
             return .massachusetts
         case "nationwide", "us":
             return .nationwide
         default:
-            return .massachusetts
+            return .california
         }
     }
 
     /// Bounding box this region covers, or nil for `.nationwide`
-    /// (no geographic filter). The MA box covers from the southern
-    /// Cape up to the NH border, west across the Berkshires.
+    /// (no geographic filter). CA covers from the Mexico border at
+    /// San Diego up to the Oregon line. MA covers the southern Cape
+    /// up to the NH border, west across the Berkshires.
     var boundingBox: (minLat: Double, minLng: Double, maxLat: Double, maxLng: Double)? {
         switch self {
+        case .california:
+            return (minLat: 32.50, minLng: -124.45, maxLat: 42.05, maxLng: -114.10)
         case .massachusetts:
             return (minLat: 41.20, minLng: -73.60, maxLat: 42.95, maxLng: -69.85)
         case .nationwide:
@@ -77,6 +83,7 @@ enum FindHelpRegion: Equatable {
     /// gains a region indicator.
     var displayName: String {
         switch self {
+        case .california:    return "California"
         case .massachusetts: return "Massachusetts"
         case .nationwide:    return "Nationwide"
         case .bbox:          return "Custom region"
