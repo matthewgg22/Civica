@@ -149,6 +149,15 @@ struct CivicaQuestionScreen<Affordance: View>: View {
     /// renders when section metadata is supplied; otherwise the layout
     /// reverts to the legacy chip-only behavior so standalone /
     /// preview callers don't pick up an inaccurate "0% complete" bar.
+    ///
+    /// Animation policy: the bar fill, the percent count, and the
+    /// section label all animate with a single shared spring keyed on
+    /// `overallFraction`. The spring is gentle (response 0.55, damping
+    /// 0.85) so the bar feels like it's flowing forward rather than
+    /// snapping — important per the brand voice doc's "calm landing,
+    /// not a celebration" rule. NumericTextContentTransition turns
+    /// the percent number into a rolling counter instead of a hard
+    /// substitution.
     @ViewBuilder
     private func overallProgressBar(_ p: Progress) -> some View {
         if let fraction = p.overallFraction {
@@ -176,6 +185,8 @@ struct CivicaQuestionScreen<Affordance: View>: View {
                             .foregroundStyle(CivicaColors.graphite)
                             .textCase(.uppercase)
                             .kerning(1.0)
+                            .contentTransition(.opacity)
+                            .id("section-label-\(sectionIndex)-\(p.sectionTitle ?? "")")
                         Spacer(minLength: 0)
                         Text(CivicaQuestionStrings.percentLabel(
                             fraction: fraction,
@@ -183,6 +194,7 @@ struct CivicaQuestionScreen<Affordance: View>: View {
                         ))
                             .font(CivicaTypography.captionStrong.monospacedDigit())
                             .foregroundStyle(CivicaColors.graphite)
+                            .contentTransition(.numericText())
                     }
                 }
             }
@@ -190,6 +202,7 @@ struct CivicaQuestionScreen<Affordance: View>: View {
             .padding(.top, CivicaSpacing.md)
             .padding(.bottom, CivicaSpacing.sm)
             .background(CivicaColors.paper)
+            .animation(.spring(response: 0.55, dampingFraction: 0.85), value: fraction)
         }
     }
 
