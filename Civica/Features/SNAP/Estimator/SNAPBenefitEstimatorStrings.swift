@@ -9,12 +9,12 @@ enum SNAPBenefitEstimatorStrings {
     // MARK: - Header
 
     static let pageTitle = CivicaText(
-        "Estimate your SNAP benefit",
-        es: "Estima tu beneficio de SNAP"
+        "Estimate your benefit",
+        es: "Estima tu beneficio"
     )
     static let pageSubtitle = CivicaText(
-        "Five quick questions. The result updates as you change your answers.",
-        es: "Cinco preguntas rápidas. El resultado se actualiza al cambiar tus respuestas."
+        "Updates as you answer.",
+        es: "Se actualiza al responder."
     )
 
     // MARK: - Questions

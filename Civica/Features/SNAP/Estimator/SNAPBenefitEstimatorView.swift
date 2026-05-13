@@ -52,19 +52,24 @@ struct SNAPBenefitEstimatorView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
-                header
-                inputsSection
-                resultCard
-                applyCTA
-                if case .eligible = outcome {
-                    seeTheMathButton
+        VStack(alignment: .leading, spacing: 0) {
+            // Inputs scroll above the pinned result card. On phones
+            // tall enough to fit the full estimator the scroll never
+            // engages; on shorter phones (iPhone 13 mini, SE) the
+            // user can scroll the question list while still seeing
+            // their live estimate in the footer.
+            ScrollView {
+                VStack(alignment: .leading, spacing: CivicaSpacing.md) {
+                    header
+                    inputsSection
                 }
-                disclaimerFooter
+                .padding(.horizontal, CivicaSpacing.xl)
+                .padding(.top, CivicaSpacing.lg)
+                .padding(.bottom, CivicaSpacing.md)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(CivicaSpacing.xl)
-            .frame(maxWidth: .infinity, alignment: .leading)
+
+            stickyResultFooter
         }
         .background(CivicaColors.paper.ignoresSafeArea())
         .toolbar {
@@ -107,12 +112,20 @@ struct SNAPBenefitEstimatorView: View {
     // MARK: - Inputs
 
     private var inputsSection: some View {
-        VStack(spacing: CivicaSpacing.md) {
+        VStack(spacing: CivicaSpacing.sm) {
             householdSizeCard
-            elderlyOrDisabledCard
             incomeCard
             rentCard
-            utilitiesCard
+            // Both elderly/disabled and utilities are short yes/no
+            // questions with single-tap affordances. Pairing them in
+            // a 2-column row reclaims ~80pt of vertical space without
+            // crowding either question. Each card stays full-width
+            // inside its column so the typography still has room to
+            // breathe.
+            HStack(alignment: .top, spacing: CivicaSpacing.sm) {
+                elderlyOrDisabledCard
+                utilitiesCard
+            }
         }
     }
 
@@ -204,6 +217,37 @@ struct SNAPBenefitEstimatorView: View {
             helper: SNAPBenefitEstimatorStrings.utilitiesHelper.value(in: language)
         ) {
             yesNoToggle(isOn: $inputs.paysUtilitiesSeparately)
+        }
+    }
+
+    // MARK: - Sticky result footer
+
+    /// Pins the live result card + Apply CTA + math link + disclaimer
+    /// to the bottom of the screen as a single composed footer. The
+    /// inputs scroll above this; the user always sees their current
+    /// estimate without scrolling, which is the estimator's whole
+    /// value-prop (real-time feedback while they fiddle with inputs).
+    /// A hairline divider sits above the footer so the boundary
+    /// reads visually even on tall phones where the inputs don't
+    /// actually need to scroll.
+    private var stickyResultFooter: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            resultCard
+            applyCTA
+            if case .eligible = outcome {
+                seeTheMathButton
+            }
+            disclaimerFooter
+        }
+        .padding(.horizontal, CivicaSpacing.xl)
+        .padding(.top, CivicaSpacing.md)
+        .padding(.bottom, CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.paper)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(CivicaColors.hairline)
+                .frame(height: 1)
         }
     }
 
@@ -365,7 +409,7 @@ struct SNAPBenefitEstimatorView: View {
         helper: String,
         @ViewBuilder content: () -> Content
     ) -> some View {
-        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(question)
                 .font(CivicaTypography.sectionHeader)
                 .foregroundStyle(CivicaColors.ink)
@@ -377,7 +421,7 @@ struct SNAPBenefitEstimatorView: View {
             content()
                 .padding(.top, CivicaSpacing.xs)
         }
-        .padding(CivicaSpacing.lg)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.surfacePrimary)
         .overlay(
