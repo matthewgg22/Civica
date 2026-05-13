@@ -15,6 +15,8 @@ struct SNAPApplicationWalkthroughView: View {
     /// SNAPAgencyDirectory.
     let stateCode: String?
 
+    @Environment(\.openURL) private var openURL
+
     init(stateCode: String? = nil) {
         self.stateCode = stateCode
     }
@@ -47,7 +49,7 @@ struct SNAPApplicationWalkthroughView: View {
                 title: "Open \(portalName)",
                 detail: "Go to \(portalShortURL) on your phone or computer.",
                 action: {
-                    Task { @MainActor in await UIApplication.shared.open(portalURL) }
+                    openURL(portalURL)
                 },
                 actionLabel: "Open \(portalName)"
             )

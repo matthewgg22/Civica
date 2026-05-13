@@ -36,11 +36,12 @@ struct FindHelpFixtureLoader {
     ) -> [FindHelpLocation] {
         let all = loadAll()
         let region = FindHelpRegion.current
-        let withDistance: [FindHelpLocation] = all.compactMap { location in
+
+        // First pass: pins within the active region's bbox AND
+        // within the requested radius of the user. This is the
+        // intended behavior — matches what the live RPC would do.
+        let strict: [FindHelpLocation] = all.compactMap { location in
             guard let locLat = location.latitude, let locLng = location.longitude else { return nil }
-            // Region gate: when the demo is scoped to a state, any
-            // fixture rows added outside that bbox are skipped. The
-            // .nationwide case returns true and is a no-op.
             guard region.contains(lat: locLat, lng: locLng) else { return nil }
             let distance = haversineKm(lat1: lat, lng1: lng, lat2: locLat, lng2: locLng)
             guard distance <= radiusKm else { return nil }
@@ -48,7 +49,27 @@ struct FindHelpFixtureLoader {
             if let languageCode, !(location.languagesJson ?? []).contains(languageCode) { return nil }
             return location.copyingDistance(distance)
         }
-        return Array(withDistance.sorted { ($0.distanceKm ?? .infinity) < ($1.distanceKm ?? .infinity) }.prefix(maxResults))
+        if !strict.isEmpty {
+            return Array(strict.sorted { ($0.distanceKm ?? .infinity) < ($1.distanceKm ?? .infinity) }.prefix(maxResults))
+        }
+
+        // Second pass: the strict filter returned nothing — usually
+        // because the user is physically far from every bundled
+        // seed (e.g. someone in a non-CA state offline-testing the
+        // CA launch build). Rather than surface a transport error
+        // with no useful next step, return all bundled in-region
+        // pins sorted by distance with no radius cap. The list
+        // view's "X mi away" labels still tell the user these are
+        // far — but at least the directory has content.
+        let regional: [FindHelpLocation] = all.compactMap { location in
+            guard let locLat = location.latitude, let locLng = location.longitude else { return nil }
+            guard region.contains(lat: locLat, lng: locLng) else { return nil }
+            if let serviceType, !matches(location, serviceType: serviceType) { return nil }
+            if let languageCode, !(location.languagesJson ?? []).contains(languageCode) { return nil }
+            let distance = haversineKm(lat1: lat, lng1: lng, lat2: locLat, lng2: locLng)
+            return location.copyingDistance(distance)
+        }
+        return Array(regional.sorted { ($0.distanceKm ?? .infinity) < ($1.distanceKm ?? .infinity) }.prefix(maxResults))
     }
 
     /// All bundled locations matching the active `FindHelpRegion`,
