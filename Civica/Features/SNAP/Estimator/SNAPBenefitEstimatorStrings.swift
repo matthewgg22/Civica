@@ -36,9 +36,14 @@ enum SNAPBenefitEstimatorStrings {
         es: "Agregar una persona al hogar"
     )
 
+    /// Pairs with `utilitiesQuestion` in a 2-column row. Trimmed to
+    /// a 4-word question so the chip fits the half-width column on
+    /// a single line at the design-system page-title scale; the
+    /// longer-form helper has been dropped from the 2-col layout
+    /// since the question itself is unambiguous.
     static let elderlyOrDisabledQuestion = CivicaText(
-        "Anyone 60 or older, or with a disability?",
-        es: "¿Alguien de 60 años o más, o con una discapacidad?"
+        "Anyone 60+ or disabled?",
+        es: "¿Alguien con 60+ o discapacidad?"
     )
     static let elderlyOrDisabledHelper = CivicaText(
         "Unlocks extra SNAP deductions, including uncapped shelter costs.",
@@ -63,9 +68,12 @@ enum SNAPBenefitEstimatorStrings {
         es: "Usa lo que realmente pagas cada mes — tu parte si lo compartes."
     )
 
+    /// Pairs with `elderlyOrDisabledQuestion` in a 2-column row.
+    /// Question shortened from the prior multi-line version so the
+    /// 2-col card stays compact.
     static let utilitiesQuestion = CivicaText(
-        "Do you pay utilities separately from rent?",
-        es: "¿Pagas servicios públicos aparte de la renta?"
+        "Pay utilities separately?",
+        es: "¿Pagas servicios aparte?"
     )
     static let utilitiesHelper = CivicaText(
         "Heat, electricity, water, gas — even just one counts.",

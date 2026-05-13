@@ -53,15 +53,19 @@ struct SNAPBenefitEstimatorView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Inputs scroll above the pinned result card. On phones
-            // tall enough to fit the full estimator the scroll never
-            // engages; on shorter phones (iPhone 13 mini, SE) the
-            // user can scroll the question list while still seeing
-            // their live estimate in the footer.
+            // Inputs (+ the math link + disclaimer footnote) scroll
+            // above the pinned result card. Only the live estimate
+            // and the Apply CTA stay always-visible at the bottom —
+            // everything else lives in the scroll area so the
+            // sticky footer doesn't dominate the screen.
             ScrollView {
                 VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                     header
                     inputsSection
+                    if case .eligible = outcome {
+                        seeTheMathButton
+                    }
+                    disclaimerFooter
                 }
                 .padding(.horizontal, CivicaSpacing.xl)
                 .padding(.top, CivicaSpacing.lg)
@@ -175,9 +179,11 @@ struct SNAPBenefitEstimatorView: View {
     }
 
     private var elderlyOrDisabledCard: some View {
+        // Lives in the 2-column row; the longer-form helper is
+        // dropped here to keep the card compact. The question
+        // alone is unambiguous at the shortened length.
         inputCard(
-            question: SNAPBenefitEstimatorStrings.elderlyOrDisabledQuestion.value(in: language),
-            helper: SNAPBenefitEstimatorStrings.elderlyOrDisabledHelper.value(in: language)
+            question: SNAPBenefitEstimatorStrings.elderlyOrDisabledQuestion.value(in: language)
         ) {
             yesNoToggle(isOn: $inputs.elderlyOrDisabled)
         }
@@ -212,9 +218,11 @@ struct SNAPBenefitEstimatorView: View {
     }
 
     private var utilitiesCard: some View {
+        // Lives in the 2-column row alongside elderlyOrDisabledCard.
+        // Same compact treatment — helper dropped, short question
+        // only.
         inputCard(
-            question: SNAPBenefitEstimatorStrings.utilitiesQuestion.value(in: language),
-            helper: SNAPBenefitEstimatorStrings.utilitiesHelper.value(in: language)
+            question: SNAPBenefitEstimatorStrings.utilitiesQuestion.value(in: language)
         ) {
             yesNoToggle(isOn: $inputs.paysUtilitiesSeparately)
         }
@@ -222,26 +230,21 @@ struct SNAPBenefitEstimatorView: View {
 
     // MARK: - Sticky result footer
 
-    /// Pins the live result card + Apply CTA + math link + disclaimer
-    /// to the bottom of the screen as a single composed footer. The
-    /// inputs scroll above this; the user always sees their current
-    /// estimate without scrolling, which is the estimator's whole
-    /// value-prop (real-time feedback while they fiddle with inputs).
-    /// A hairline divider sits above the footer so the boundary
-    /// reads visually even on tall phones where the inputs don't
-    /// actually need to scroll.
+    /// Pins ONLY the live result card and the Apply CTA to the
+    /// bottom of the screen. The math link + disclaimer footnote
+    /// live in the scroll area above so the sticky footer stays
+    /// roughly one-third of the screen instead of half. The
+    /// estimator's value-prop is real-time recalculation as the
+    /// user fiddles — keeping just the result + primary action
+    /// in view is enough to deliver that.
     private var stickyResultFooter: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             resultCard
             applyCTA
-            if case .eligible = outcome {
-                seeTheMathButton
-            }
-            disclaimerFooter
         }
         .padding(.horizontal, CivicaSpacing.xl)
-        .padding(.top, CivicaSpacing.md)
-        .padding(.bottom, CivicaSpacing.lg)
+        .padding(.top, CivicaSpacing.sm)
+        .padding(.bottom, CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.paper)
         .overlay(alignment: .top) {
@@ -264,7 +267,13 @@ struct SNAPBenefitEstimatorView: View {
     }
 
     private func eligibleResultCard(monthly: Decimal, annual: Decimal) -> some View {
-        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+        // Compact result card: eyebrow + monthly + annual only. The
+        // 3-line "this is an estimate — CalFresh confirms..." context
+        // paragraph that used to sit here is now the disclaimer
+        // footnote in the scroll area above, so we don't pay for it
+        // twice. Keeps the sticky footer roughly one-third of the
+        // screen instead of half.
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(SNAPBenefitEstimatorStrings.resultEyebrow.value(in: language))
                 .font(CivicaTypography.captionStrong)
                 .foregroundStyle(CivicaColors.graphite)
@@ -288,29 +297,20 @@ struct SNAPBenefitEstimatorView: View {
                     .font(CivicaTypography.subhead)
                     .foregroundStyle(CivicaColors.graphite)
             }
-
-            Text(eligibleContextLine(monthly: monthly))
-                .font(CivicaTypography.footnote)
-                .foregroundStyle(CivicaColors.ink)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, CivicaSpacing.xs)
         }
-        .padding(CivicaSpacing.lg)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.brickSurface)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
     }
 
-    private func eligibleContextLine(monthly: Decimal) -> String {
-        let state = SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
-        if inputs.householdSize <= 2 && monthly == 24 {
-            return SNAPBenefitEstimatorStrings.resultContextMinBenefit(stateCode: state, language: language)
-        }
-        return SNAPBenefitEstimatorStrings.resultContextEligible(stateCode: state, language: language)
-    }
-
     private func ineligibleResultCard(reason: SNAPBenefitEstimatorIneligibilityReason) -> some View {
-        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+        // Compact mirror of the eligible card. Headline + one-line
+        // context. The BBCE soft note (worth-applying-anyway encouragement)
+        // moves to the scroll area above so it doesn't double the
+        // height of the sticky footer when the user's inputs land
+        // them in the ineligible band.
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(SNAPBenefitEstimatorStrings.resultEyebrow.value(in: language))
                 .font(CivicaTypography.captionStrong)
                 .foregroundStyle(CivicaColors.graphite)
@@ -325,14 +325,8 @@ struct SNAPBenefitEstimatorView: View {
                 .font(CivicaTypography.footnote)
                 .foregroundStyle(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
-
-            Text(SNAPBenefitEstimatorStrings.bbceSoftNote.value(in: language))
-                .font(CivicaTypography.footnote)
-                .foregroundStyle(CivicaColors.graphite)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, CivicaSpacing.xs)
         }
-        .padding(CivicaSpacing.lg)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.brickSurface)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
@@ -404,9 +398,13 @@ struct SNAPBenefitEstimatorView: View {
 
     // MARK: - Building blocks
 
+    /// `helper` is optional. The two yes/no cards in the merged
+    /// 2-column row drop their helpers to keep each side compact;
+    /// the slider / stepper cards keep theirs since the input
+    /// expression itself doesn't telegraph the answer's meaning.
     private func inputCard<Content: View>(
         question: String,
-        helper: String,
+        helper: String? = nil,
         @ViewBuilder content: () -> Content
     ) -> some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
@@ -414,10 +412,12 @@ struct SNAPBenefitEstimatorView: View {
                 .font(CivicaTypography.sectionHeader)
                 .foregroundStyle(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
-            Text(helper)
-                .font(CivicaTypography.footnote)
-                .foregroundStyle(CivicaColors.graphite)
-                .fixedSize(horizontal: false, vertical: true)
+            if let helper, !helper.isEmpty {
+                Text(helper)
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             content()
                 .padding(.top, CivicaSpacing.xs)
         }
