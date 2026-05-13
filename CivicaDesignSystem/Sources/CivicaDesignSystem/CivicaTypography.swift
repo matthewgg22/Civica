@@ -14,8 +14,14 @@ public enum CivicaTypography {
     private static let medium   = "HankenGrotesk-Medium"
     private static let semibold = "HankenGrotesk-SemiBold"
 
-    /// 34/41 — page header (PageHeader title, overlay titles).
-    public static let pageTitle           = Font.custom(semibold, size: 34, relativeTo: .largeTitle)
+    /// 28/34 — page header (PageHeader title, overlay titles).
+    /// Reduced from 34pt to 28pt 2026-05-13 per launch-test UX
+    /// feedback: 34pt headers consumed too much vertical real estate
+    /// on the estimator entry, survey question screens, and the
+    /// per-page titles inside the application flow. 28pt keeps the
+    /// title clearly the largest element on the page without pushing
+    /// the affordance below the fold on smaller iPhones.
+    public static let pageTitle           = Font.custom(semibold, size: 28, relativeTo: .largeTitle)
     /// 22/28 — card hero ("Make a Plan to Vote", "Next election").
     public static let cardHero            = Font.custom(semibold, size: 22, relativeTo: .title2)
     /// 20/25 — small card title / subsection header.
