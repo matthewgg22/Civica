@@ -2,40 +2,47 @@ import CivicaDesignSystem
 import SwiftUI
 
 // The linked-state dashboard for the Check EBT Balance feature: the
-// hero balance card, the next-deposit row, the recent-activity list,
+// hero balance card (with a locked banner when card-lock is on), the
+// next-deposit row, the recent-activity list, a card-security row,
 // and the always-visible demo disclosure. Shown by EBTBalanceRootView
 // once the store's linkState is .linked.
 //
-// Phase 1 introduced the hero card; Phase 2 extracted it into its own
-// view; Phase 3 adds the recent-activity list and pull-to-refresh.
+// Phase 1 introduced the hero card; Phase 2 extracted it; Phase 3
+// added recent activity + pull-to-refresh; Phase 4 added the locked
+// banner and the card-security row.
 
 struct EBTBalanceDashboardView: View {
-    let account: EBTAccount
+    @ObservedObject var store: EBTBalanceStore
     let language: CivicaLanguage
-    let onRefresh: () async -> Void
-    let onUnlink: () -> Void
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
-                heroCard
-                if !account.transactions.isEmpty {
-                    recentActivitySection
+            if let account = store.account {
+                VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+                    heroCard(account)
+                    if !account.transactions.isEmpty {
+                        recentActivitySection(account.transactions)
+                    }
+                    cardSecurityRow
+                    demoDisclosure
+                    unlinkLink
                 }
-                demoDisclosure
-                unlinkLink
+                .padding(CivicaSpacing.xl)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(CivicaSpacing.xl)
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(CivicaColors.paper.ignoresSafeArea())
-        .refreshable { await onRefresh() }
+        .refreshable { await store.refresh() }
     }
 
     // MARK: - Hero balance card
 
-    private var heroCard: some View {
+    private func heroCard(_ account: EBTAccount) -> some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
+            if store.isCardLocked {
+                lockedBanner
+            }
+
             Text(EBTBalanceStrings.balanceEyebrow.value(in: language))
                 .font(CivicaTypography.captionStrong)
                 .foregroundStyle(CivicaColors.graphite)
@@ -50,7 +57,7 @@ struct EBTBalanceDashboardView: View {
                     .foregroundStyle(CivicaColors.graphite)
             }
 
-            Text(lastUpdatedLine)
+            Text(lastUpdatedLine(account))
                 .font(CivicaTypography.footnote)
                 .foregroundStyle(CivicaColors.graphite)
 
@@ -69,6 +76,25 @@ struct EBTBalanceDashboardView: View {
             RoundedRectangle(cornerRadius: CivicaRadius.card)
                 .strokeBorder(CivicaColors.hairline, lineWidth: 1)
         )
+        .animation(.easeInOut(duration: 0.25), value: store.isCardLocked)
+    }
+
+    private var lockedBanner: some View {
+        HStack(spacing: CivicaSpacing.sm) {
+            Image(systemName: "lock.fill")
+                .foregroundStyle(CivicaColors.brickPrimary)
+                .accessibilityHidden(true)
+            Text(EBTBalanceStrings.lockedBannerText.value(in: language))
+                .font(CivicaTypography.footnoteStrong)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+        }
+        .padding(CivicaSpacing.sm)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.brickPrimary.opacity(0.12))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+        .accessibilityElement(children: .combine)
     }
 
     private func nextDepositRow(_ deposit: EBTDeposit) -> some View {
@@ -90,7 +116,7 @@ struct EBTBalanceDashboardView: View {
 
     // MARK: - Recent activity
 
-    private var recentActivitySection: some View {
+    private func recentActivitySection(_ transactions: [EBTTransaction]) -> some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(EBTBalanceStrings.recentActivityEyebrow.value(in: language))
                 .font(CivicaTypography.captionStrong)
@@ -100,9 +126,9 @@ struct EBTBalanceDashboardView: View {
                 .padding(.horizontal, CivicaSpacing.xs)
 
             VStack(spacing: 0) {
-                ForEach(Array(account.transactions.enumerated()), id: \.element.id) { index, transaction in
+                ForEach(Array(transactions.enumerated()), id: \.element.id) { index, transaction in
                     transactionRow(transaction)
-                    if index < account.transactions.count - 1 {
+                    if index < transactions.count - 1 {
                         Divider().overlay(CivicaColors.hairline)
                     }
                 }
@@ -150,6 +176,44 @@ struct EBTBalanceDashboardView: View {
         }
     }
 
+    // MARK: - Card security row
+
+    private var cardSecurityRow: some View {
+        NavigationLink {
+            EBTCardLockView(store: store, language: language)
+        } label: {
+            HStack(spacing: CivicaSpacing.md) {
+                Image(systemName: store.isCardLocked ? "lock.fill" : "lock.open")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(store.isCardLocked ? CivicaColors.brickPrimary : CivicaColors.graphite)
+                    .frame(width: 28, alignment: .leading)
+                    .accessibilityHidden(true)
+                Text(EBTBalanceStrings.securityRowTitle.value(in: language))
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                Spacer(minLength: CivicaSpacing.sm)
+                Text(store.isCardLocked
+                     ? EBTBalanceStrings.securityStatusLocked.value(in: language)
+                     : EBTBalanceStrings.securityStatusUnlocked.value(in: language))
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundStyle(store.isCardLocked ? CivicaColors.brickPrimary : CivicaColors.graphite)
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(CivicaColors.graphite)
+                    .accessibilityHidden(true)
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+    }
+
     // MARK: - Demo disclosure + unlink
 
     private var demoDisclosure: some View {
@@ -165,7 +229,7 @@ struct EBTBalanceDashboardView: View {
     }
 
     private var unlinkLink: some View {
-        Button(action: onUnlink) {
+        Button(action: { store.unlink() }) {
             Text(EBTBalanceStrings.unlinkLink.value(in: language))
                 .font(CivicaTypography.footnote)
                 .foregroundStyle(CivicaColors.graphite)
@@ -176,7 +240,7 @@ struct EBTBalanceDashboardView: View {
 
     // MARK: - Formatting
 
-    private var lastUpdatedLine: String {
+    private func lastUpdatedLine(_ account: EBTAccount) -> String {
         let formatter = RelativeDateTimeFormatter()
         formatter.locale = Locale(identifier: language == .spanish ? "es" : "en")
         formatter.unitsStyle = .full

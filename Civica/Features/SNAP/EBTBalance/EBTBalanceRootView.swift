@@ -28,13 +28,8 @@ struct EBTBalanceRootView: View {
 
     var body: some View {
         Group {
-            if let account = store.account {
-                EBTBalanceDashboardView(
-                    account: account,
-                    language: language,
-                    onRefresh: { await store.refresh() },
-                    onUnlink: { store.unlink() }
-                )
+            if store.account != nil {
+                EBTBalanceDashboardView(store: store, language: language)
             } else {
                 EBTLinkCardView(store: store, language: language)
             }

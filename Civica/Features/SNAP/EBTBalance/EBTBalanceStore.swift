@@ -17,6 +17,9 @@ final class EBTBalanceStore: ObservableObject {
     }
 
     private let linkedKey = "co.civica.ebt.isLinked"
+    private let cardLockedKey = "co.civica.ebt.cardLocked"
+    private let blockOutOfStateKey = "co.civica.ebt.blockOutOfState"
+    private let blockOnlineKey = "co.civica.ebt.blockOnline"
 
     @Published private(set) var linkState: LinkState
     /// The linked account, or nil when no card is connected. Held as
@@ -24,10 +27,20 @@ final class EBTBalanceStore: ObservableObject {
     /// re-renders with the new "last updated" time.
     @Published private(set) var account: EBTAccount?
 
+    /// Card-lock security state. When locked, a real EBT card cannot
+    /// be used until unlocked — here it just drives the locked banner
+    /// + status copy. All three flags are persisted.
+    @Published private(set) var isCardLocked: Bool
+    @Published private(set) var blockOutOfState: Bool
+    @Published private(set) var blockOnline: Bool
+
     init() {
         let linked = UserDefaults.standard.bool(forKey: linkedKey)
         linkState = linked ? .linked : .unlinked
         account = linked ? EBTBalanceFixtures.demoAccount() : nil
+        isCardLocked = UserDefaults.standard.bool(forKey: cardLockedKey)
+        blockOutOfState = UserDefaults.standard.bool(forKey: blockOutOfStateKey)
+        blockOnline = UserDefaults.standard.bool(forKey: blockOnlineKey)
     }
 
     /// Simulate connecting an EBT card. Real linking would hand the
@@ -52,10 +65,31 @@ final class EBTBalanceStore: ObservableObject {
     }
 
     /// Reset to the unlinked state so the connect flow can be demoed
-    /// again.
+    /// again. Card-lock flags reset too — they belong to the linked
+    /// card.
     func unlink() {
         UserDefaults.standard.set(false, forKey: linkedKey)
         account = nil
         linkState = .unlinked
+        setCardLocked(false)
+        setBlockOutOfState(false)
+        setBlockOnline(false)
+    }
+
+    // MARK: - Card-lock security
+
+    func setCardLocked(_ locked: Bool) {
+        isCardLocked = locked
+        UserDefaults.standard.set(locked, forKey: cardLockedKey)
+    }
+
+    func setBlockOutOfState(_ blocked: Bool) {
+        blockOutOfState = blocked
+        UserDefaults.standard.set(blocked, forKey: blockOutOfStateKey)
+    }
+
+    func setBlockOnline(_ blocked: Bool) {
+        blockOnline = blocked
+        UserDefaults.standard.set(blocked, forKey: blockOnlineKey)
     }
 }

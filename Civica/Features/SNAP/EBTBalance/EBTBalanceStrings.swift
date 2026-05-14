@@ -102,6 +102,68 @@ enum EBTBalanceStrings {
         es: "Depósito"
     )
 
+    // MARK: - Card security
+
+    static let securityRowTitle = CivicaText(
+        "Card security",
+        es: "Seguridad de la tarjeta"
+    )
+    static let securityStatusLocked = CivicaText(
+        "Locked",
+        es: "Bloqueada"
+    )
+    static let securityStatusUnlocked = CivicaText(
+        "Unlocked",
+        es: "Desbloqueada"
+    )
+    /// Banner shown on the hero card while the card is locked.
+    static let lockedBannerText = CivicaText(
+        "Card locked — unlock it before you shop.",
+        es: "Tarjeta bloqueada — desbloquéala antes de comprar."
+    )
+
+    // Card-lock detail screen
+    static let lockScreenTitle = CivicaText(
+        "Card security",
+        es: "Seguridad de la tarjeta"
+    )
+    static let lockToggleTitle = CivicaText(
+        "Lock my card",
+        es: "Bloquear mi tarjeta"
+    )
+    static let lockToggleHelp = CivicaText(
+        "Keep your card locked when you're not shopping, then unlock it right before you check out. A locked card can't be used — this is the strongest protection against EBT theft.",
+        es: "Mantén tu tarjeta bloqueada cuando no estés comprando, y desbloquéala justo antes de pagar. Una tarjeta bloqueada no se puede usar — es la mejor protección contra el robo de EBT."
+    )
+    static let lockStatusOnLine = CivicaText(
+        "Your card is locked. No purchases will go through.",
+        es: "Tu tarjeta está bloqueada. No se procesarán compras."
+    )
+    static let lockStatusOffLine = CivicaText(
+        "Your card is unlocked and ready to use.",
+        es: "Tu tarjeta está desbloqueada y lista para usar."
+    )
+    static let lockExtrasEyebrow = CivicaText(
+        "Extra protection",
+        es: "Protección adicional"
+    )
+    static let blockOutOfStateTitle = CivicaText(
+        "Block out-of-state purchases",
+        es: "Bloquear compras fuera del estado"
+    )
+    static let blockOutOfStateHelp = CivicaText(
+        "Only allow purchases in California.",
+        es: "Permitir compras solo en California."
+    )
+    static let blockOnlineTitle = CivicaText(
+        "Block online purchases",
+        es: "Bloquear compras en línea"
+    )
+    static let blockOnlineHelp = CivicaText(
+        "Only allow purchases in person at a store.",
+        es: "Permitir compras solo en persona en una tienda."
+    )
+
     // MARK: - Unlink (demo reset)
 
     static let unlinkLink = CivicaText(
