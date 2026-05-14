@@ -164,6 +164,101 @@ enum EBTBalanceStrings {
         es: "Permitir compras solo en persona en una tienda."
     )
 
+    // MARK: - Transaction categories
+
+    static func categoryLabel(_ category: EBTTransactionCategory, language: CivicaLanguage) -> String {
+        switch (category, language) {
+        case (.groceries, .english):     return "Groceries"
+        case (.groceries, .spanish):     return "Supermercado"
+        case (.restaurant, .english):    return "Restaurant"
+        case (.restaurant, .spanish):    return "Restaurante"
+        case (.farmersMarket, .english): return "Farmers market"
+        case (.farmersMarket, .spanish): return "Mercado de agricultores"
+        case (.other, .english):         return "Other"
+        case (.other, .spanish):         return "Otro"
+        case (.deposit, .english):       return "Deposit"
+        case (.deposit, .spanish):       return "Depósito"
+        }
+    }
+
+    // MARK: - Spending insights
+
+    static let insightsEyebrow = CivicaText(
+        "This month",
+        es: "Este mes"
+    )
+    static let insightsSpentLabel = CivicaText(
+        "Spent so far",
+        es: "Gastado hasta ahora"
+    )
+    /// "At this pace, your balance lasts until May 24." The view
+    /// interpolates the formatted date.
+    static func insightsRunwayLine(date: String, language: CivicaLanguage) -> String {
+        language == .english
+            ? "At this pace, your balance lasts until \(date)."
+            : "A este ritmo, tu saldo dura hasta el \(date)."
+    }
+
+    // MARK: - Low-balance banner
+
+    static let lowBalanceBanner = CivicaText(
+        "Low balance — check your next deposit date below.",
+        es: "Saldo bajo — revisa la fecha de tu próximo depósito abajo."
+    )
+
+    // MARK: - Transaction detail sheet
+
+    static let detailSheetTitle = CivicaText(
+        "Transaction",
+        es: "Transacción"
+    )
+    static let detailCategoryLabel = CivicaText(
+        "Category",
+        es: "Categoría"
+    )
+    static let detailDateLabel = CivicaText(
+        "Date",
+        es: "Fecha"
+    )
+    static let detailAmountLabel = CivicaText(
+        "Amount",
+        es: "Monto"
+    )
+    static let detailBalanceAfterLabel = CivicaText(
+        "Balance after",
+        es: "Saldo después"
+    )
+    static let detailDoneButton = CivicaText(
+        "Done",
+        es: "Listo"
+    )
+
+    // MARK: - Deposit schedule card
+
+    static let depositScheduleEyebrow = CivicaText(
+        "Deposit schedule",
+        es: "Calendario de depósitos"
+    )
+    /// "CalFresh loads your card on the 5th of every month. California
+    /// staggers the day by case number." The view interpolates the
+    /// ordinal day.
+    static func depositScheduleBody(dayOrdinal: String, language: CivicaLanguage) -> String {
+        language == .english
+            ? "CalFresh loads your card on the \(dayOrdinal) of every month. California staggers the day by case number."
+            : "CalFresh carga tu tarjeta el \(dayOrdinal) de cada mes. California escalona el día según el número de caso."
+    }
+
+    // MARK: - Perks + news sections
+
+    static let perksEyebrow = CivicaText(
+        "Free & discounted with EBT",
+        es: "Gratis y con descuento con EBT"
+    )
+    static let newsEyebrow = CivicaText(
+        "Benefit updates",
+        es: "Novedades de beneficios"
+    )
+
     // MARK: - Unlink (demo reset)
 
     static let unlinkLink = CivicaText(

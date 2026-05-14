@@ -1,29 +1,42 @@
 import CivicaDesignSystem
 import SwiftUI
 
-// The linked-state dashboard for the Check EBT Balance feature: the
-// hero balance card (with a locked banner when card-lock is on), the
-// next-deposit row, the recent-activity list, a card-security row,
-// and the always-visible demo disclosure. Shown by EBTBalanceRootView
-// once the store's linkState is .linked.
+// The linked-state dashboard for the Check EBT Balance feature — now a
+// Propel-style feed: hero balance card (with locked + low-balance
+// banners), spending-insights card, recent-activity list (tappable
+// rows → detail sheet), deposit-schedule card, card-security row, and
+// "free & discounted with EBT" + benefit-updates content sections.
 //
-// Phase 1 introduced the hero card; Phase 2 extracted it; Phase 3
-// added recent activity + pull-to-refresh; Phase 4 added the locked
-// banner and the card-security row.
+// Phases: 1 hero card · 2 extracted view · 3 activity + refresh ·
+// 4 card-lock · Tier 1/2 hyper-realism pass (this).
 
 struct EBTBalanceDashboardView: View {
     @ObservedObject var store: EBTBalanceStore
     let language: CivicaLanguage
 
+    /// The transaction whose detail sheet is open, paired with the
+    /// running balance after it posted.
+    private struct TransactionDetail: Identifiable {
+        let id: UUID
+        let transaction: EBTTransaction
+        let balanceAfter: Decimal
+    }
+    @State private var openDetail: TransactionDetail?
+
     var body: some View {
         ScrollView {
             if let account = store.account {
+                let insights = EBTBalanceInsights(account: account)
                 VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
-                    heroCard(account)
+                    heroCard(account, insights: insights)
+                    spendingInsightsCard(account, insights: insights)
                     if !account.transactions.isEmpty {
-                        recentActivitySection(account.transactions)
+                        recentActivitySection(account, insights: insights)
                     }
+                    depositScheduleCard(account)
                     cardSecurityRow
+                    perksSection
+                    newsSection
                     demoDisclosure
                     unlinkLink
                 }
@@ -33,14 +46,25 @@ struct EBTBalanceDashboardView: View {
         }
         .background(CivicaColors.paper.ignoresSafeArea())
         .refreshable { await store.refresh() }
+        .sheet(item: $openDetail) { detail in
+            EBTTransactionDetailSheet(
+                transaction: detail.transaction,
+                balanceAfter: detail.balanceAfter,
+                language: language,
+                onDone: { openDetail = nil }
+            )
+        }
     }
 
     // MARK: - Hero balance card
 
-    private func heroCard(_ account: EBTAccount) -> some View {
+    private func heroCard(_ account: EBTAccount, insights: EBTBalanceInsights) -> some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             if store.isCardLocked {
-                lockedBanner
+                banner(icon: "lock.fill", text: EBTBalanceStrings.lockedBannerText.value(in: language))
+            }
+            if insights.isLowBalance {
+                banner(icon: "exclamationmark.circle.fill", text: EBTBalanceStrings.lowBalanceBanner.value(in: language))
             }
 
             Text(EBTBalanceStrings.balanceEyebrow.value(in: language))
@@ -79,12 +103,12 @@ struct EBTBalanceDashboardView: View {
         .animation(.easeInOut(duration: 0.25), value: store.isCardLocked)
     }
 
-    private var lockedBanner: some View {
+    private func banner(icon: String, text: String) -> some View {
         HStack(spacing: CivicaSpacing.sm) {
-            Image(systemName: "lock.fill")
+            Image(systemName: icon)
                 .foregroundStyle(CivicaColors.brickPrimary)
                 .accessibilityHidden(true)
-            Text(EBTBalanceStrings.lockedBannerText.value(in: language))
+            Text(text)
                 .font(CivicaTypography.footnoteStrong)
                 .foregroundStyle(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
@@ -114,9 +138,51 @@ struct EBTBalanceDashboardView: View {
         }
     }
 
+    // MARK: - Spending insights
+
+    @ViewBuilder
+    private func spendingInsightsCard(_ account: EBTAccount, insights: EBTBalanceInsights) -> some View {
+        if insights.spentThisMonth > 0 {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                Text(EBTBalanceStrings.insightsEyebrow.value(in: language))
+                    .font(CivicaTypography.captionStrong)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .textCase(.uppercase)
+                    .kerning(1.2)
+
+                HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
+                    Text(EBTBalanceStrings.insightsSpentLabel.value(in: language))
+                        .font(CivicaTypography.subhead)
+                        .foregroundStyle(CivicaColors.ink)
+                    Spacer(minLength: CivicaSpacing.sm)
+                    CivicaMoney(amount: insights.spentThisMonth, font: CivicaTypography.subheadStrong)
+                        .foregroundStyle(CivicaColors.ink)
+                }
+
+                if let runOut = insights.projectedRunOutDate {
+                    Text(EBTBalanceStrings.insightsRunwayLine(
+                        date: mediumDate(runOut),
+                        language: language
+                    ))
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+        }
+    }
+
     // MARK: - Recent activity
 
-    private func recentActivitySection(_ transactions: [EBTTransaction]) -> some View {
+    private func recentActivitySection(_ account: EBTAccount, insights: EBTBalanceInsights) -> some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(EBTBalanceStrings.recentActivityEyebrow.value(in: language))
                 .font(CivicaTypography.captionStrong)
@@ -126,9 +192,18 @@ struct EBTBalanceDashboardView: View {
                 .padding(.horizontal, CivicaSpacing.xs)
 
             VStack(spacing: 0) {
-                ForEach(Array(transactions.enumerated()), id: \.element.id) { index, transaction in
-                    transactionRow(transaction)
-                    if index < transactions.count - 1 {
+                ForEach(Array(account.transactions.enumerated()), id: \.element.id) { index, transaction in
+                    Button {
+                        openDetail = TransactionDetail(
+                            id: transaction.id,
+                            transaction: transaction,
+                            balanceAfter: insights.runningBalanceAfter(index: index)
+                        )
+                    } label: {
+                        transactionRow(transaction)
+                    }
+                    .buttonStyle(.plain)
+                    if index < account.transactions.count - 1 {
                         Divider().overlay(CivicaColors.hairline)
                     }
                 }
@@ -143,7 +218,15 @@ struct EBTBalanceDashboardView: View {
     }
 
     private func transactionRow(_ transaction: EBTTransaction) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.md) {
+        HStack(spacing: CivicaSpacing.md) {
+            Image(systemName: transaction.category.iconName)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(transaction.isDeposit ? CivicaColors.accentTeal : CivicaColors.brickPrimary)
+                .frame(width: 36, height: 36)
+                .background(
+                    Circle().fill((transaction.isDeposit ? CivicaColors.accentTeal : CivicaColors.brickPrimary).opacity(0.12))
+                )
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text(transaction.merchant)
                     .font(CivicaTypography.subhead)
@@ -155,8 +238,13 @@ struct EBTBalanceDashboardView: View {
             }
             Spacer(minLength: CivicaSpacing.sm)
             transactionAmount(transaction)
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(CivicaColors.graphite)
+                .accessibilityHidden(true)
         }
         .padding(CivicaSpacing.lg)
+        .contentShape(Rectangle())
         .accessibilityElement(children: .combine)
     }
 
@@ -174,6 +262,41 @@ struct EBTBalanceDashboardView: View {
             CivicaMoney(amount: transaction.amount, font: CivicaTypography.subheadStrong)
                 .foregroundStyle(CivicaColors.ink)
         }
+    }
+
+    // MARK: - Deposit schedule card
+
+    private func depositScheduleCard(_ account: EBTAccount) -> some View {
+        HStack(alignment: .top, spacing: CivicaSpacing.md) {
+            Image(systemName: "calendar")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(CivicaColors.accentTeal)
+                .frame(width: 28, alignment: .leading)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Text(EBTBalanceStrings.depositScheduleEyebrow.value(in: language))
+                    .font(CivicaTypography.captionStrong)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .textCase(.uppercase)
+                    .kerning(1.2)
+                Text(EBTBalanceStrings.depositScheduleBody(
+                    dayOrdinal: ordinalDay(account.depositDayOfMonth),
+                    language: language
+                ))
+                .font(CivicaTypography.footnoteStrong)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+        )
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Card security row
@@ -211,6 +334,75 @@ struct EBTBalanceDashboardView: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+    }
+
+    // MARK: - Perks + news sections
+
+    private var perksSection: some View {
+        contentSection(
+            eyebrow: EBTBalanceStrings.perksEyebrow.value(in: language),
+            rows: EBTBalanceFixtures.perks.map { perk in
+                contentRow(icon: perk.iconName, title: perk.title.value(in: language), detail: perk.detail.value(in: language))
+            }
+        )
+    }
+
+    private var newsSection: some View {
+        contentSection(
+            eyebrow: EBTBalanceStrings.newsEyebrow.value(in: language),
+            rows: EBTBalanceFixtures.news.map { item in
+                contentRow(icon: item.iconName, title: item.title.value(in: language), detail: item.detail.value(in: language))
+            }
+        )
+    }
+
+    private func contentSection(eyebrow: String, rows: [some View]) -> some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            Text(eyebrow)
+                .font(CivicaTypography.captionStrong)
+                .foregroundStyle(CivicaColors.graphite)
+                .textCase(.uppercase)
+                .kerning(1.2)
+                .padding(.horizontal, CivicaSpacing.xs)
+
+            VStack(spacing: 0) {
+                ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
+                    row
+                    if index < rows.count - 1 {
+                        Divider().overlay(CivicaColors.hairline)
+                    }
+                }
+            }
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+        }
+    }
+
+    private func contentRow(icon: String, title: String, detail: String) -> some View {
+        HStack(alignment: .top, spacing: CivicaSpacing.md) {
+            Image(systemName: icon)
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(CivicaColors.accentTeal)
+                .frame(width: 28, height: 28, alignment: .center)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Text(title)
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(detail)
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
     }
 
@@ -268,5 +460,19 @@ struct EBTBalanceDashboardView: View {
         formatter.locale = Locale(identifier: language == .spanish ? "es" : "en")
         formatter.setLocalizedDateFormatFromTemplate("MMMd")
         return formatter.string(from: date)
+    }
+
+    private func mediumDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: language == .spanish ? "es" : "en")
+        formatter.setLocalizedDateFormatFromTemplate("MMMd")
+        return formatter.string(from: date)
+    }
+
+    private func ordinalDay(_ day: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .ordinal
+        formatter.locale = Locale(identifier: language == .spanish ? "es" : "en")
+        return formatter.string(from: NSNumber(value: day)) ?? "\(day)"
     }
 }
