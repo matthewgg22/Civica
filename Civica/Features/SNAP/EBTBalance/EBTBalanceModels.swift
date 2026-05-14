@@ -20,10 +20,23 @@ struct EBTAccount: Equatable {
     let lastUpdated: Date
     /// The next scheduled deposit, when known.
     let nextDeposit: EBTDeposit?
+    /// Recent purchases and deposits, newest first.
+    let transactions: [EBTTransaction]
 }
 
 /// A scheduled benefit deposit.
 struct EBTDeposit: Equatable {
     let amount: Decimal
     let expectedDate: Date
+}
+
+/// A single posted transaction — a purchase or a deposit. `amount` is
+/// signed: negative for purchases, positive for deposits.
+struct EBTTransaction: Equatable, Identifiable {
+    let id: UUID
+    let merchant: String
+    let amount: Decimal
+    let date: Date
+
+    var isDeposit: Bool { amount > 0 }
 }

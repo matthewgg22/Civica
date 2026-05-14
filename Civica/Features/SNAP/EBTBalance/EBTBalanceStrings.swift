@@ -91,6 +91,17 @@ enum EBTBalanceStrings {
         es: "Conectando con EBT de California…"
     )
 
+    // MARK: - Recent activity
+
+    static let recentActivityEyebrow = CivicaText(
+        "Recent activity",
+        es: "Actividad reciente"
+    )
+    static let depositRowLabel = CivicaText(
+        "Deposit",
+        es: "Depósito"
+    )
+
     // MARK: - Unlink (demo reset)
 
     static let unlinkLink = CivicaText(

@@ -32,6 +32,7 @@ struct EBTBalanceRootView: View {
                 EBTBalanceDashboardView(
                     account: account,
                     language: language,
+                    onRefresh: { await store.refresh() },
                     onUnlink: { store.unlink() }
                 )
             } else {
