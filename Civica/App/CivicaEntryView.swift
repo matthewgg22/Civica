@@ -69,6 +69,7 @@ struct CivicaEntryView: View {
         } label: {
             tileCard(
                 imageName: "HomeIconEstimator",
+                iconAccent: CivicaColors.accentTeal,
                 title: SNAPBenefitEstimatorStrings.entryCardTitle.value(in: language),
                 subtitle: SNAPBenefitEstimatorStrings.entryCardSubtitle.value(in: language)
             )
@@ -148,6 +149,7 @@ struct CivicaEntryView: View {
         } label: {
             tileCard(
                 imageName: "HomeIconSnapApply",
+                iconAccent: CivicaColors.brickPrimary,
                 title: CivicaEntryStrings.snapTitle.value(in: language),
                 subtitle: CivicaEntryStrings.snapSubtitle.value(in: language)
             )
@@ -166,6 +168,7 @@ struct CivicaEntryView: View {
         } label: {
             tileCard(
                 imageName: "HomeIconEBTBalance",
+                iconAccent: CivicaColors.accentTeal,
                 title: CivicaEntryStrings.ebtBalanceTitle.value(in: language),
                 subtitle: CivicaEntryStrings.ebtBalanceSubtitle.value(in: language)
             )
@@ -181,6 +184,7 @@ struct CivicaEntryView: View {
         } label: {
             tileCard(
                 imageName: "HomeIconFindHelp",
+                iconAccent: CivicaColors.accentTeal,
                 title: CivicaEntryStrings.findHelpTitle.value(in: language),
                 subtitle: CivicaEntryStrings.findHelpSubtitle.value(in: language)
             )
@@ -201,6 +205,7 @@ struct CivicaEntryView: View {
         } label: {
             tileCard(
                 imageName: "HomeIconInterviewCoach",
+                iconAccent: CivicaColors.brickPrimary,
                 title: CivicaEntryStrings.interviewCoachTitle.value(in: language),
                 subtitle: CivicaEntryStrings.interviewCoachSubtitle.value(in: language)
             )
@@ -208,11 +213,17 @@ struct CivicaEntryView: View {
         .buttonStyle(.plain)
     }
 
-    private func tileCard(imageName: String, title: String, subtitle: String) -> some View {
+    private func tileCard(imageName: String, iconAccent: Color, title: String, subtitle: String) -> some View {
         tileCardLayout(title: title, subtitle: subtitle) {
             Image(imageName)
                 .resizable()
-                .frame(width: 56, height: 56)
+                .scaledToFit()
+                .padding(10)
+                .frame(width: 48, height: 48)
+                .background(
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                        .fill(iconAccent.opacity(0.12))
+                )
                 .accessibilityHidden(true)
         }
     }
