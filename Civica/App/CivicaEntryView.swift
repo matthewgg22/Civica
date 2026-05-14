@@ -26,9 +26,10 @@ struct CivicaEntryView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 header
-                snapPrimaryButton
                 VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                    snapTile
                     estimatorTile
+                    ebtBalanceTile
                     findHelpTile
                     if InterviewCoachFeatureFlag.isEnabled {
                         interviewCoachTile
@@ -41,16 +42,8 @@ struct CivicaEntryView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(CivicaColors.paper.ignoresSafeArea())
+        .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text(CivicaEntryStrings.eyebrow.value(in: language))
-                    .font(CivicaTypography.captionStrong)
-                    .foregroundStyle(CivicaColors.graphite)
-                    .textCase(.uppercase)
-                    .kerning(1.2)
-            }
-        }
     }
 
     // MARK: - Estimator tile
@@ -67,8 +60,8 @@ struct CivicaEntryView: View {
             estimatorDestination
         } label: {
             tileCard(
-                icon: "dollarsign.circle.fill",
-                iconAccent: CivicaColors.brickPrimary,
+                imageName: "HomeIconEstimator",
+                iconAccent: CivicaColors.accentTeal,
                 title: SNAPBenefitEstimatorStrings.entryCardTitle.value(in: language),
                 subtitle: SNAPBenefitEstimatorStrings.entryCardSubtitle.value(in: language)
             )
@@ -123,6 +116,11 @@ struct CivicaEntryView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+            Text(CivicaEntryStrings.eyebrow.value(in: language))
+                .font(CivicaTypography.captionStrong)
+                .foregroundStyle(CivicaColors.graphite)
+                .textCase(.uppercase)
+                .kerning(1.2)
             Text(CivicaEntryStrings.title.value(in: language))
                 .font(CivicaTypography.pageTitle)
                 .foregroundStyle(CivicaColors.ink)
@@ -135,23 +133,44 @@ struct CivicaEntryView: View {
         }
     }
 
-    // MARK: - SNAP primary button
+    // MARK: - SNAP tile
 
-    private var snapPrimaryButton: some View {
+    // The home-screen entry points are visually consistent tiles.
+    // "Apply for SNAP" stays first (it's the primary action) but
+    // renders as a tileCard like the others — NOT a capsule pill.
+    // This has regressed repeatedly via unrelated feature commits;
+    // keep it a tile.
+    private var snapTile: some View {
         NavigationLink {
             CivicaSNAPFlowView(language: language)
         } label: {
-            Text(CivicaEntryStrings.snapTitle.value(in: language))
-                .font(CivicaTypography.subheadStrong)
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, CivicaSpacing.sm)
-                .background(Capsule().fill(CivicaColors.brickPrimary))
+            tileCard(
+                imageName: "HomeIconSnapApply",
+                iconAccent: CivicaColors.brickPrimary,
+                title: CivicaEntryStrings.snapTitle.value(in: language),
+                subtitle: CivicaEntryStrings.snapSubtitle.value(in: language)
+            )
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(
-            "\(CivicaEntryStrings.snapTitle.value(in: language)). \(CivicaEntryStrings.snapSubtitle.value(in: language))"
-        )
+    }
+
+    // MARK: - EBT balance tile
+
+    // Propel-style balance dashboard. Demo scope: California only,
+    // fixture-backed — no real state EBT integration. See
+    // EBTBalanceRootView for the phased build-out.
+    private var ebtBalanceTile: some View {
+        NavigationLink {
+            EBTBalanceRootView()
+        } label: {
+            tileCard(
+                imageName: "HomeIconEBTBalance",
+                iconAccent: CivicaColors.accentTeal,
+                title: CivicaEntryStrings.ebtBalanceTitle.value(in: language),
+                subtitle: CivicaEntryStrings.ebtBalanceSubtitle.value(in: language)
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Find help tile
@@ -161,7 +180,7 @@ struct CivicaEntryView: View {
             FindHelpRootView()
         } label: {
             tileCard(
-                icon: "map.fill",
+                imageName: "HomeIconFindHelp",
                 iconAccent: CivicaColors.accentTeal,
                 title: CivicaEntryStrings.findHelpTitle.value(in: language),
                 subtitle: CivicaEntryStrings.findHelpSubtitle.value(in: language)
@@ -182,7 +201,7 @@ struct CivicaEntryView: View {
             InterviewCoachEntryView()
         } label: {
             tileCard(
-                icon: "bubble.left.and.bubble.right.fill",
+                imageName: "HomeIconInterviewCoach",
                 iconAccent: CivicaColors.brickPrimary,
                 title: CivicaEntryStrings.interviewCoachTitle.value(in: language),
                 subtitle: CivicaEntryStrings.interviewCoachSubtitle.value(in: language)
@@ -191,8 +210,23 @@ struct CivicaEntryView: View {
         .buttonStyle(.plain)
     }
 
+    private func tileCard(imageName: String, iconAccent: Color, title: String, subtitle: String) -> some View {
+        tileCardLayout(title: title, subtitle: subtitle) {
+            Image(imageName)
+                .resizable()
+                .scaledToFit()
+                .padding(7)
+                .frame(width: 48, height: 48)
+                .background(
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                        .fill(iconAccent.opacity(0.12))
+                )
+                .accessibilityHidden(true)
+        }
+    }
+
     private func tileCard(icon: String, iconAccent: Color, title: String, subtitle: String) -> some View {
-        HStack(spacing: CivicaSpacing.md) {
+        tileCardLayout(title: title, subtitle: subtitle) {
             Image(systemName: icon)
                 .font(.system(size: 28))
                 .foregroundStyle(iconAccent)
@@ -202,6 +236,12 @@ struct CivicaEntryView: View {
                         .fill(iconAccent.opacity(0.12))
                 )
                 .accessibilityHidden(true)
+        }
+    }
+
+    private func tileCardLayout<Icon: View>(title: String, subtitle: String, @ViewBuilder icon: () -> Icon) -> some View {
+        HStack(spacing: CivicaSpacing.md) {
+            icon()
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(title)
                     .font(CivicaTypography.sectionHeader)
@@ -250,6 +290,14 @@ enum CivicaEntryStrings {
     static let snapSubtitle = CivicaText(
         "CalFresh / SNAP food assistance — typically about 15 minutes.",
         es: "Asistencia alimentaria de CalFresh / SNAP — usualmente unos 15 minutos."
+    )
+    static let ebtBalanceTitle = CivicaText(
+        "Check EBT balance",
+        es: "Consultar saldo de EBT"
+    )
+    static let ebtBalanceSubtitle = CivicaText(
+        "See your CalFresh balance, recent activity, and next deposit.",
+        es: "Consulta tu saldo de CalFresh, actividad reciente y próximo depósito."
     )
     static let findHelpTitle = CivicaText(
         "Find help near you",

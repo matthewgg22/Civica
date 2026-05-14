@@ -41,19 +41,15 @@ struct SNAPBenefitEstimatorInputs: Equatable {
     var householdSize: Int
     var elderlyOrDisabled: Bool
     var grossMonthlyIncome: Decimal
-    /// Whether any income in the household comes from wages or self-employment.
-    /// When false, the earned-income deduction (20%) is not applied.
-    var hasEmploymentIncome: Bool
     var monthlyRent: Decimal
-    var suaTier: SUATier
+    var paysUtilitiesSeparately: Bool
 
     static let `default` = SNAPBenefitEstimatorInputs(
         householdSize: 2,
         elderlyOrDisabled: false,
         grossMonthlyIncome: 1_800,
-        hasEmploymentIncome: true,
         monthlyRent: 1_400,
-        suaTier: .heatingCooling
+        paysUtilitiesSeparately: true
     )
 }
 
@@ -87,11 +83,14 @@ enum SNAPBenefitEstimatorCalculator {
     // limits, standard deduction, shelter cap, minimum benefit,
     // earned-income deduction rate) comes from the rules engine
     // selected below. This is the "single source of truth" the
-    // audit requires; today the engine is federal-default, and the
-    // SNAPCoveragePolicy MA-only gate routes non-MA users away
-    // from this entry. A future commit can thread MA-specific
-    // rules in for in-scope users to pick up the MA SUA chart.
-    static let rules: SNAPStateRuleEngine = MAStateRules()
+    // audit requires. Today the estimator entry runs through
+    // FederalDefaultRules regardless of the user's state because
+    // the estimator is top-of-funnel and the state isn't known
+    // yet. SNAPCoveragePolicy (states {"CA", "MA"} today) gates
+    // the deeper application flow once the state is captured. A
+    // follow-up commit can thread state-specific rules into the
+    // estimator once the state question moves earlier in the funnel.
+    static let rules: SNAPStateRuleEngine = FederalDefaultRules()
 
     /// Stamped on the estimator outcome's audit footer. Threads the
     /// active rules-engine version so the estimator's provenance
@@ -112,14 +111,20 @@ enum SNAPBenefitEstimatorCalculator {
         let eld = inputs.elderlyOrDisabled
 
         let earnedIncomeRate = rules.earnedIncomeDeductionRate(asOf: today)
-        let earnedForDeduction: Decimal = (!eld && inputs.hasEmploymentIncome) ? gross : 0
-        let earnedIncomeDeduction = (earnedForDeduction * earnedIncomeRate).roundedWhole(.bankers)
+        let earnedIncomeDeduction = eld ? 0 : (gross * earnedIncomeRate).roundedWhole(.bankers)
         let standardDeduction = rules.standardDeduction(householdSize: hh, asOf: today)
         let netBefore = max(0, gross - earnedIncomeDeduction - standardDeduction)
 
-        let sua: Decimal = inputs.suaTier == .none
-            ? 0
-            : (rules.suaValue(tier: inputs.suaTier, asOf: today) ?? 0)
+        // SUA substitution: ask the rules engine for the
+        // heating/cooling tier. When the engine has no SUA chart
+        // (federal default), utility deduction collapses to zero --
+        // the user's "I pay utilities separately" answer cannot be
+        // turned into a deduction without either an SUA value or
+        // an actual-cost question (which the 5-question form does
+        // not collect).
+        let sua: Decimal = inputs.paysUtilitiesSeparately
+            ? (rules.suaValue(tier: .heatingCooling, asOf: today) ?? 0)
+            : 0
         let shelterCost = rent + sua
         let halfNetBefore = (netBefore * halfNetMultiplier).roundedWhole(.bankers)
         let rawExcessShelter = max(0, shelterCost - halfNetBefore)

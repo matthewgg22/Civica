@@ -72,7 +72,7 @@ struct FindHelpLocation: Codable, Identifiable, Equatable {
     let notes: String?
     let sourceLastUpdatedAt: Date?
     let civicaLastSyncedAt: Date?
-    let distanceKm: Double?
+    var distanceKm: Double?
     /// Nullable so live RPC payloads predating the discriminator
     /// decode unchanged. Use `resolvedRecordKind` everywhere a
     /// concrete value is needed.

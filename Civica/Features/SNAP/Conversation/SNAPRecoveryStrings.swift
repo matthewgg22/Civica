@@ -50,12 +50,12 @@ enum SNAPRecoveryStrings {
         es: "¿Cuál es tu dirección de correo electrónico?"
     )
     static let contactHelperPhone = CivicaText(
-        "Standard text rates may apply. We only use this to send the verification code — we don't share it.",
-        es: "Pueden aplicar tarifas estándar de mensajes. Solo lo usamos para enviar el código de verificación — no lo compartimos."
+        "Standard text rates may apply. We never share your number.",
+        es: "Pueden aplicar tarifas estándar de mensajes. Nunca compartimos tu número."
     )
     static let contactHelperEmail = CivicaText(
-        "We'll only use this to send the code — we don't share it.",
-        es: "Solo lo usaremos para enviar el código — no lo compartimos."
+        "We'll only use this to send the code. We never share your email.",
+        es: "Solo lo usaremos para enviar el código. Nunca compartimos tu correo."
     )
     static let contactPlaceholderPhone = CivicaText(
         "Phone number",

@@ -14,7 +14,7 @@ struct FindHelpMapView: UIViewRepresentable {
     let userLocation: CLLocation?
     /// ID of the currently selected location, or nil. Drives the
     /// scale-up / halo treatment on the corresponding pin.
-    var selectedLocationId: String? = nil
+    var selectedLocationId: UUID? = nil
     let onSelect: (FindHelpLocation) -> Void
     /// Called after a user-initiated pan/zoom completes. Passes the new
     /// map center so the caller can offer "Search this area".

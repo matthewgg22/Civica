@@ -1,8 +1,6 @@
 import CivicaDesignSystem
 import SwiftUI
 
-private let dtaConnectURL = URL(string: "https://dtaconnect.eohhs.mass.gov")!
-
 // HANDOFF board 12: returning user home.
 //
 // What the user sees when they reopen Civica with an in-progress
@@ -21,9 +19,6 @@ struct SNAPReturningUserHomeView: View {
     let onResume: () -> Void
     let onStartOver: () -> Void
 
-    @Environment(\.openURL) private var openURL
-    @State private var showSubmitConfirmation = false
-
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
@@ -41,18 +36,6 @@ struct SNAPReturningUserHomeView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
-        .confirmationDialog(
-            SNAPReturningHomeStrings.confirmSubmitTitle.value(in: language),
-            isPresented: $showSubmitConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button(SNAPReturningHomeStrings.confirmSubmitButton.value(in: language)) {
-                statusStore.advance(to: .submittedToState)
-            }
-            Button(SNAPReturningHomeStrings.confirmSubmitCancel.value(in: language), role: .cancel) {}
-        } message: {
-            Text(SNAPReturningHomeStrings.confirmSubmitBody.value(in: language))
-        }
     }
 
     /// "Your previous result" card — only renders when the orchestrator
@@ -167,41 +150,8 @@ struct SNAPReturningUserHomeView: View {
         ))
     }
 
-    @ViewBuilder
     private var primaryActionRow: some View {
-        if statusStore.status == .packetGenerated {
-            packetGeneratedActions
-        } else {
-            CivicaPrimaryButton(primaryActionTitle, action: onResume)
-        }
-    }
-
-    @ViewBuilder
-    private var packetGeneratedActions: some View {
-        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-            if let opened = statusStore.dtaConnectOpenedAt {
-                Text(SNAPReturningHomeStrings.dtaOpenedNote.value(in: language) + " " + opened.formatted(.dateTime.month(.wide).day()))
-                    .font(CivicaTypography.footnote)
-                    .foregroundStyle(CivicaColors.graphite)
-                    .fixedSize(horizontal: false, vertical: true)
-                CivicaPrimaryButton(SNAPReturningHomeStrings.actionMarkSubmitted.value(in: language)) {
-                    showSubmitConfirmation = true
-                }
-                Button(SNAPReturningHomeStrings.actionReviewPacket.value(in: language), action: onResume)
-                    .font(CivicaTypography.subhead)
-                    .foregroundStyle(CivicaColors.brickPrimary)
-                    .frame(maxWidth: .infinity)
-            } else {
-                CivicaPrimaryButton(SNAPReturningHomeStrings.actionOpenDTAConnect.value(in: language)) {
-                    openURL(dtaConnectURL)
-                    statusStore.recordDTAConnectOpened()
-                }
-                Button(SNAPReturningHomeStrings.actionReviewPacket.value(in: language), action: onResume)
-                    .font(CivicaTypography.subhead)
-                    .foregroundStyle(CivicaColors.brickPrimary)
-                    .frame(maxWidth: .infinity)
-            }
-        }
+        CivicaPrimaryButton(primaryActionTitle, action: onResume)
     }
 
     private var startOverLink: some View {
@@ -220,12 +170,8 @@ struct SNAPReturningUserHomeView: View {
         switch statusStore.status {
         case .screenerInProgress, .notStarted:
             return SNAPStatusHomeStrings.statusInProgress.value(in: language)
-        case .screenerComplete, .documentsRequested:
+        case .screenerComplete, .packetGenerated, .documentsRequested:
             return SNAPStatusHomeStrings.statusActionNeeded.value(in: language)
-        case .packetGenerated:
-            return statusStore.dtaConnectOpenedAt != nil
-                ? SNAPReturningHomeStrings.dtaOpenedBannerTitle.value(in: language)
-                : SNAPStatusHomeStrings.statusActionNeeded.value(in: language)
         case .submittedToState, .interviewScheduled, .interviewCompleted:
             return SNAPStatusHomeStrings.statusWaiting.value(in: language)
         case .decisionApproved, .decisionDenied:
@@ -292,8 +238,8 @@ enum SNAPReturningHomeStrings {
         es: "Tu resultado anterior"
     )
     static let verdictCardEligible = CivicaText(
-        "You may be eligible. See the math.",
-        es: "Es posible que seas elegible. Ver el cálculo."
+        "You looked likely eligible. See the math.",
+        es: "Parecías probablemente elegible. Ver el cálculo."
     )
     static let verdictCardIneligible = CivicaText(
         "Last time you appeared not to qualify. See why.",
@@ -302,45 +248,6 @@ enum SNAPReturningHomeStrings {
     static let verdictCardNeedMore = CivicaText(
         "We needed more info last time. See what's missing.",
         es: "Necesitábamos más información la última vez. Ver qué falta."
-    )
-
-    // MARK: - Packet → submission bridge
-
-    static let actionOpenDTAConnect = CivicaText(
-        "Open DTA Connect to submit",
-        es: "Abrir DTA Connect para enviar"
-    )
-    static let actionReviewPacket = CivicaText(
-        "Review my packet first",
-        es: "Revisar mi paquete primero"
-    )
-    static let dtaOpenedBannerTitle = CivicaText(
-        "DTA Connect opened",
-        es: "DTA Connect abierto"
-    )
-    static let dtaOpenedNote = CivicaText(
-        "You opened DTA Connect on",
-        es: "Abriste DTA Connect el"
-    )
-    static let actionMarkSubmitted = CivicaText(
-        "I submitted — mark as done",
-        es: "Envié — marcar como listo"
-    )
-    static let confirmSubmitTitle = CivicaText(
-        "Mark as submitted?",
-        es: "¿Marcar como enviado?"
-    )
-    static let confirmSubmitBody = CivicaText(
-        "You're telling Civica you completed your submission on DTA Connect. Civica doesn't receive or verify submissions directly — this just moves your status forward.",
-        es: "Le estás diciendo a Civica que completaste tu envío en DTA Connect. Civica no recibe ni verifica envíos directamente — esto solo avanza tu estado."
-    )
-    static let confirmSubmitButton = CivicaText(
-        "Yes, I submitted",
-        es: "Sí, lo envié"
-    )
-    static let confirmSubmitCancel = CivicaText(
-        "Not yet",
-        es: "Todavía no"
     )
 }
 

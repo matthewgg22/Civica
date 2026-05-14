@@ -31,6 +31,16 @@ final class PracticeSessionViewModel: ObservableObject {
             archetype: .gigWorker,
             persona: .friendlyRushed
         )
+
+        /// CA is the launch state — practice mode defaults here.
+        /// MA is still selectable from the scenario picker.
+        static let defaultCA = SessionContext(
+            stateCode: "CA",
+            stateName: "California",
+            scenario: .initial,
+            archetype: .gigWorker,
+            persona: .friendlyRushed
+        )
     }
 
     // Tracks what call last hit the network so retry() knows which one to
@@ -43,16 +53,15 @@ final class PracticeSessionViewModel: ObservableObject {
     @Published private(set) var transcript: [InterviewTurnDTO] = []
     @Published private(set) var status: SessionStatus = .idle
     @Published private(set) var score: InterviewScoreResponseDTO?
-    @Published private(set) var isOfflineMode: Bool = false
     @Published var draftResponse: String = ""
 
     let sessionID: String
     let context: SessionContext
-    private var client: any InterviewCoachProviding
+    private let client: InterviewCoachAPIClient
     private var lastAttempt: LastAttempt = .turn
 
-    init(context: SessionContext = .defaultMA,
-         client: any InterviewCoachProviding = InterviewCoachAPIClient()) {
+    init(context: SessionContext = .defaultCA,
+         client: InterviewCoachAPIClient = InterviewCoachAPIClient()) {
         self.sessionID = UUID().uuidString
         self.context = context
         self.client = client
@@ -82,17 +91,6 @@ final class PracticeSessionViewModel: ObservableObject {
         }
     }
 
-    func switchToOffline() async {
-        guard !isOfflineMode else { return }
-        isOfflineMode = true
-        client = OfflineInterviewCoachClient()
-        transcript = []
-        score = nil
-        draftResponse = ""
-        status = .idle
-        await startIfNeeded()
-    }
-
     func requestScore() async {
         guard score == nil else { return }
         guard !transcript.isEmpty else { return }
@@ -117,7 +115,7 @@ final class PracticeSessionViewModel: ObservableObject {
             score = response
             status = .complete
         } catch {
-            status = .failed(friendlyErrorMessage(error))
+            status = .failed("Scoring failed: \(error.localizedDescription)")
             if case .failed = previous { /* keep the new failure */ } else {
                 // Leave .failed so the UI can surface a retry affordance.
             }
@@ -148,15 +146,7 @@ final class PracticeSessionViewModel: ObservableObject {
                 status = .awaitingUser
             }
         } catch {
-            status = .failed(friendlyErrorMessage(error))
+            status = .failed("Caseworker turn failed: \(error.localizedDescription)")
         }
-    }
-
-    private func friendlyErrorMessage(_ error: Error) -> String {
-        if let apiError = error as? InterviewCoachAPIClient.CoachAPIError,
-           case .http(let status, _) = apiError, status == 404 {
-            return "Practice sessions are coming soon. The Interview Coach backend is not yet live — check back for an update."
-        }
-        return error.localizedDescription
     }
 }

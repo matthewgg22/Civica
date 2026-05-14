@@ -227,7 +227,7 @@ final class MockSNAPNetworkClient: SNAPNetworkClient, @unchecked Sendable {
     typealias Responder = (_ turnIndex: Int, _ userText: String) -> SNAPTurnResult
 
     private let responder: Responder
-    private var sessionTurnCount: [String: Int] = [:]
+    private nonisolated(unsafe) var sessionTurnCount: [String: Int] = [:]
     private let lock = NSLock()
 
     init(responder: @escaping Responder = MockSNAPNetworkClient.defaultResponder) {
@@ -253,15 +253,16 @@ final class MockSNAPNetworkClient: SNAPNetworkClient, @unchecked Sendable {
             costTelemetry: [],
             confidence: 1.0
         )
-        lock.lock(); sessionTurnCount[sessionId] = 1; lock.unlock()
+        lock.withLock { sessionTurnCount[sessionId] = 1 }
         return SNAPStartSessionResponse(sessionId: sessionId, openingTurn: opening)
     }
 
     func sendTurn(sessionId: String, userText: String) async throws -> SNAPTurnResult {
-        lock.lock()
-        let turnIndex = sessionTurnCount[sessionId] ?? 0
-        sessionTurnCount[sessionId] = turnIndex + 1
-        lock.unlock()
+        let turnIndex = lock.withLock {
+            let i = sessionTurnCount[sessionId] ?? 0
+            sessionTurnCount[sessionId] = i + 1
+            return i
+        }
         return responder(turnIndex, userText)
     }
 
