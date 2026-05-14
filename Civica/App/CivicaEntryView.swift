@@ -68,8 +68,7 @@ struct CivicaEntryView: View {
             estimatorDestination
         } label: {
             tileCard(
-                icon: "dollarsign.circle.fill",
-                iconAccent: CivicaColors.brickPrimary,
+                imageName: "HomeIconEstimator",
                 title: SNAPBenefitEstimatorStrings.entryCardTitle.value(in: language),
                 subtitle: SNAPBenefitEstimatorStrings.entryCardSubtitle.value(in: language)
             )
@@ -148,8 +147,7 @@ struct CivicaEntryView: View {
             CivicaSNAPFlowView(language: language)
         } label: {
             tileCard(
-                icon: "leaf.fill",
-                iconAccent: CivicaColors.brickPrimary,
+                imageName: "HomeIconSnapApply",
                 title: CivicaEntryStrings.snapTitle.value(in: language),
                 subtitle: CivicaEntryStrings.snapSubtitle.value(in: language)
             )
@@ -167,8 +165,7 @@ struct CivicaEntryView: View {
             EBTBalanceRootView()
         } label: {
             tileCard(
-                icon: "creditcard.fill",
-                iconAccent: CivicaColors.accentTeal,
+                imageName: "HomeIconEBTBalance",
                 title: CivicaEntryStrings.ebtBalanceTitle.value(in: language),
                 subtitle: CivicaEntryStrings.ebtBalanceSubtitle.value(in: language)
             )
@@ -183,8 +180,7 @@ struct CivicaEntryView: View {
             FindHelpRootView()
         } label: {
             tileCard(
-                icon: "map.fill",
-                iconAccent: CivicaColors.accentTeal,
+                imageName: "HomeIconFindHelp",
                 title: CivicaEntryStrings.findHelpTitle.value(in: language),
                 subtitle: CivicaEntryStrings.findHelpSubtitle.value(in: language)
             )
@@ -204,8 +200,7 @@ struct CivicaEntryView: View {
             InterviewCoachEntryView()
         } label: {
             tileCard(
-                icon: "bubble.left.and.bubble.right.fill",
-                iconAccent: CivicaColors.brickPrimary,
+                imageName: "HomeIconInterviewCoach",
                 title: CivicaEntryStrings.interviewCoachTitle.value(in: language),
                 subtitle: CivicaEntryStrings.interviewCoachSubtitle.value(in: language)
             )
@@ -213,8 +208,17 @@ struct CivicaEntryView: View {
         .buttonStyle(.plain)
     }
 
+    private func tileCard(imageName: String, title: String, subtitle: String) -> some View {
+        tileCardLayout(title: title, subtitle: subtitle) {
+            Image(imageName)
+                .resizable()
+                .frame(width: 56, height: 56)
+                .accessibilityHidden(true)
+        }
+    }
+
     private func tileCard(icon: String, iconAccent: Color, title: String, subtitle: String) -> some View {
-        HStack(spacing: CivicaSpacing.md) {
+        tileCardLayout(title: title, subtitle: subtitle) {
             Image(systemName: icon)
                 .font(.system(size: 28))
                 .foregroundStyle(iconAccent)
@@ -224,6 +228,12 @@ struct CivicaEntryView: View {
                         .fill(iconAccent.opacity(0.12))
                 )
                 .accessibilityHidden(true)
+        }
+    }
+
+    private func tileCardLayout<Icon: View>(title: String, subtitle: String, @ViewBuilder icon: () -> Icon) -> some View {
+        HStack(spacing: CivicaSpacing.md) {
+            icon()
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(title)
                     .font(CivicaTypography.sectionHeader)
