@@ -48,6 +48,56 @@ enum EBTBalanceStrings {
         }
     }
 
+    // MARK: - Connect-card flow (unlinked state)
+
+    static let linkEyebrow = CivicaText(
+        "Connect your card",
+        es: "Conecta tu tarjeta"
+    )
+    static let linkTitle = CivicaText(
+        "See your CalFresh balance in one place.",
+        es: "Consulta tu saldo de CalFresh en un solo lugar."
+    )
+    static let linkBody = CivicaText(
+        "Link your EBT card and Civica will show your balance, recent activity, and next deposit — like connecting a bank account to a budgeting app.",
+        es: "Conecta tu tarjeta EBT y Civica mostrará tu saldo, actividad reciente y próximo depósito — como conectar una cuenta bancaria a una app de presupuesto."
+    )
+    static let linkSecurityEyebrow = CivicaText(
+        "What Civica never stores",
+        es: "Lo que Civica nunca guarda"
+    )
+    static let linkSecurityBody = CivicaText(
+        "Your PIN, your full card number, or your Social Security number. You can unlink your card anytime.",
+        es: "Tu PIN, el número completo de tu tarjeta, ni tu número de Seguro Social. Puedes desconectar tu tarjeta cuando quieras."
+    )
+    static let linkCardFieldLabel = CivicaText(
+        "EBT card number",
+        es: "Número de tarjeta EBT"
+    )
+    static let linkStateLabel = CivicaText(
+        "State",
+        es: "Estado"
+    )
+    static let linkStateValue = CivicaText(
+        "California",
+        es: "California"
+    )
+    static let linkCTA = CivicaText(
+        "Link my card",
+        es: "Conectar mi tarjeta"
+    )
+    static let linkingProgress = CivicaText(
+        "Connecting to California EBT…",
+        es: "Conectando con EBT de California…"
+    )
+
+    // MARK: - Unlink (demo reset)
+
+    static let unlinkLink = CivicaText(
+        "Unlink this card",
+        es: "Desconectar esta tarjeta"
+    )
+
     // MARK: - Demo disclosure
 
     static let demoDisclosure = CivicaText(
