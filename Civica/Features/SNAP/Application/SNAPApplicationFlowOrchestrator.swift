@@ -44,11 +44,8 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
     private let store: SNAPApplicationDraftStore
     private let classifier: any ExpeditedClassifier
 
-    /// Sequential order for the pre-packet intake flow. Documents are
-    /// intentionally excluded — they're available from the review screen
-    /// as an optional step but no longer gate packet creation.
+    /// Sequential order — must match SNAPApplicationSection.allCases.
     private static let sequence: [SNAPApplicationSection] = SNAPApplicationSection.allCases
-        .filter { $0 != .documentsChecklist }
 
     init(
         store: SNAPApplicationDraftStore = SNAPApplicationDraftStore(),
@@ -352,11 +349,7 @@ struct SNAPApplicationFlowOrchestratorView: View {
         case .expenses:
             voiceWrap(.expenses) {
                 SNAPExpensesFlowView(
-                    viewModel: SNAPExpensesFlowViewModel(
-                        answers: viewModel.draft.expenses,
-                        hasMinorInHousehold: viewModel.draft.household.hasMinorInHousehold ?? true,
-                        hasElderlyOrDisabled: viewModel.draft.household.hasElderlyOrDisabled ?? true
-                    ),
+                    viewModel: SNAPExpensesFlowViewModel(answers: viewModel.draft.expenses),
                     language: language,
                     onComplete: { answers in
                         viewModel.draft.expenses = answers

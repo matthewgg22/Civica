@@ -75,12 +75,12 @@ enum SNAPDecisionMathStrings {
     // MARK: - Verdict headlines
 
     static let headlineEligible = CivicaText(
-        "You may be eligible",
-        es: "Es posible que seas elegible"
+        "Likely eligible",
+        es: "Probablemente elegible"
     )
     static let headlineIneligible = CivicaText(
-        "Above the estimated SNAP limit",
-        es: "Por encima del límite estimado de SNAP"
+        "Likely not eligible",
+        es: "Probablemente no elegible"
     )
     static let headlineInsufficient = CivicaText(
         "Need more information",
@@ -115,10 +115,6 @@ enum SNAPDecisionMathStrings {
     static let continueToPacket = CivicaText(
         "Get my application packet",
         es: "Obtener mi paquete de solicitud"
-    )
-    static let skipToPacket = CivicaText(
-        "Skip",
-        es: "Omitir"
     )
     static let backToSummary = CivicaText(
         "Back to summary",

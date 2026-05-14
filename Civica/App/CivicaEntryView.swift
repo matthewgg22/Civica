@@ -26,13 +26,11 @@ struct CivicaEntryView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 header
-                snapPrimaryButton
-                VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-                    estimatorTile
-                    findHelpTile
-                    if InterviewCoachFeatureFlag.isEnabled {
-                        interviewCoachTile
-                    }
+                estimatorTile
+                snapTile
+                findHelpTile
+                if InterviewCoachFeatureFlag.isEnabled {
+                    interviewCoachTile
                 }
                 Spacer(minLength: CivicaSpacing.xl)
                 privacyFooterLink
@@ -41,16 +39,8 @@ struct CivicaEntryView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(CivicaColors.paper.ignoresSafeArea())
+        .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text(CivicaEntryStrings.eyebrow.value(in: language))
-                    .font(CivicaTypography.captionStrong)
-                    .foregroundStyle(CivicaColors.graphite)
-                    .textCase(.uppercase)
-                    .kerning(1.2)
-            }
-        }
     }
 
     // MARK: - Estimator tile
@@ -123,6 +113,11 @@ struct CivicaEntryView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+            Text(CivicaEntryStrings.eyebrow.value(in: language))
+                .font(CivicaTypography.captionStrong)
+                .foregroundStyle(CivicaColors.graphite)
+                .textCase(.uppercase)
+                .kerning(1.2)
             Text(CivicaEntryStrings.title.value(in: language))
                 .font(CivicaTypography.pageTitle)
                 .foregroundStyle(CivicaColors.ink)
@@ -135,23 +130,20 @@ struct CivicaEntryView: View {
         }
     }
 
-    // MARK: - SNAP primary button
+    // MARK: - SNAP tile
 
-    private var snapPrimaryButton: some View {
+    private var snapTile: some View {
         NavigationLink {
             CivicaSNAPFlowView(language: language)
         } label: {
-            Text(CivicaEntryStrings.snapTitle.value(in: language))
-                .font(CivicaTypography.subheadStrong)
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, CivicaSpacing.sm)
-                .background(Capsule().fill(CivicaColors.brickPrimary))
+            tileCard(
+                icon: "leaf.fill",
+                iconAccent: CivicaColors.brickPrimary,
+                title: CivicaEntryStrings.snapTitle.value(in: language),
+                subtitle: CivicaEntryStrings.snapSubtitle.value(in: language)
+            )
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(
-            "\(CivicaEntryStrings.snapTitle.value(in: language)). \(CivicaEntryStrings.snapSubtitle.value(in: language))"
-        )
     }
 
     // MARK: - Find help tile

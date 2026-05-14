@@ -31,6 +31,9 @@ struct SNAPExpensesAnswers: Equatable, Codable {
 final class SNAPExpensesFlowViewModel: ObservableObject {
     enum Step: Int, CaseIterable {
         case rent, utilities, utilityShutoff, childcare, medical
+
+        var oneBasedIndex: Int { rawValue + 1 }
+        static let total = Self.allCases.count
     }
 
     @Published var step: Step = .rent
@@ -40,23 +43,8 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
     @Published var medicalField: String
     @Published var answers: SNAPExpensesAnswers
 
-    /// Effective steps to show, based on household composition.
-    /// Childcare skipped when no minors; medical skipped when no
-    /// elderly/disabled members (rules engine won't apply the deduction
-    /// anyway, so asking just adds friction).
-    let effectiveSteps: [Step]
-
-    init(
-        answers: SNAPExpensesAnswers = .init(),
-        hasMinorInHousehold: Bool = true,
-        hasElderlyOrDisabled: Bool = true
-    ) {
+    init(answers: SNAPExpensesAnswers = .init()) {
         self.answers = answers
-        var steps: [Step] = [.rent, .utilities, .utilityShutoff]
-        if hasMinorInHousehold { steps.append(.childcare) }
-        if hasElderlyOrDisabled { steps.append(.medical) }
-        self.effectiveSteps = steps
-
         func render(_ value: Decimal?) -> String {
             guard let value else { return "" }
             return NSDecimalNumber(decimal: value).stringValue
@@ -88,19 +76,19 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
 
     func advance() {
         recordCurrentField()
-        if let i = effectiveSteps.firstIndex(of: step), i + 1 < effectiveSteps.count {
-            step = effectiveSteps[i + 1]
+        if let next = Step(rawValue: step.rawValue + 1) {
+            step = next
         }
     }
 
     func goBack() {
-        if let i = effectiveSteps.firstIndex(of: step), i > 0 {
-            step = effectiveSteps[i - 1]
+        if let prev = Step(rawValue: step.rawValue - 1) {
+            step = prev
         }
     }
 
-    var isAtFirstStep: Bool { step == effectiveSteps.first }
-    var isAtLastStep: Bool { step == effectiveSteps.last }
+    var isAtFirstStep: Bool { step == .rent }
+    var isAtLastStep: Bool { step == .medical }
 
     // Empty / non-numeric input is intentionally "no answer" rather
     // than $0 — that distinction lets the rules engine flag missing
@@ -142,9 +130,7 @@ struct SNAPExpensesFlowView: View {
                         Image(systemName: viewModel.isAtFirstStep ? "xmark" : "chevron.left")
                             .foregroundStyle(CivicaColors.ink)
                     }
-                    .accessibilityLabel(viewModel.isAtFirstStep
-                        ? CivicaQuestionStrings.closeLabel.value(in: language)
-                        : CivicaQuestionStrings.backLabel.value(in: language))
+                    .accessibilityLabel(CivicaQuestionStrings.backLabel.value(in: language))
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -207,19 +193,17 @@ struct SNAPExpensesFlowView: View {
         ) {
             moneyAffordance(
                 binding: binding,
-                suffix: SNAPExpensesStrings.suffix(for: step, language: language),
-                fieldLabel: SNAPExpensesStrings.fieldAccessibilityLabel(for: step, language: language)
+                suffix: SNAPExpensesStrings.suffix(for: step, language: language)
             )
         }
     }
 
-    private func moneyAffordance(binding: Binding<String>, suffix: String, fieldLabel: String) -> some View {
+    private func moneyAffordance(binding: Binding<String>, suffix: String) -> some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             HStack(spacing: CivicaSpacing.sm) {
                 Text("$")
                     .font(.system(size: 32, weight: .semibold))
                     .foregroundStyle(CivicaColors.graphite)
-                    .accessibilityHidden(true)
                 TextField(
                     CivicaQuestionStrings.amountPlaceholder.value(in: language),
                     text: binding
@@ -227,7 +211,6 @@ struct SNAPExpensesFlowView: View {
                 .font(.system(size: 32, weight: .semibold, design: .monospaced))
                 .foregroundStyle(CivicaColors.ink)
                 .keyboardType(.decimalPad)
-                .accessibilityLabel(fieldLabel)
             }
             .padding(.horizontal, CivicaSpacing.lg)
             .padding(.vertical, CivicaSpacing.md)
@@ -249,9 +232,13 @@ struct SNAPExpensesFlowView: View {
     private func progress(for step: SNAPExpensesFlowViewModel.Step)
         -> CivicaQuestionScreenProgress
     {
-        let steps = viewModel.effectiveSteps
-        let current = (steps.firstIndex(of: step) ?? 0) + 1
-        return .init(current: current, total: steps.count)
+        .init(
+            current: step.oneBasedIndex,
+            total: SNAPExpensesFlowViewModel.Step.total,
+            sectionIndex: SNAPApplicationSection.expenses.oneBasedIndex,
+            sectionCount: SNAPApplicationSection.count,
+            sectionTitle: SNAPApplicationSection.expenses.title(in: language)
+        )
     }
 
     private func advanceOrComplete() {
@@ -322,20 +309,6 @@ enum SNAPExpensesStrings {
         switch language {
         case .english: return "Per month"
         case .spanish: return "Por mes"
-        }
-    }
-
-    static func fieldAccessibilityLabel(for step: SNAPExpensesFlowViewModel.Step, language: CivicaLanguage) -> String {
-        switch (step, language) {
-        case (.rent, .english):      return "Monthly rent or housing payment, in dollars"
-        case (.rent, .spanish):      return "Pago mensual de renta o vivienda, en dólares"
-        case (.utilities, .english): return "Monthly utilities, in dollars"
-        case (.utilities, .spanish): return "Servicios mensuales, en dólares"
-        case (.childcare, .english): return "Monthly childcare costs, in dollars"
-        case (.childcare, .spanish): return "Costos mensuales de cuidado infantil, en dólares"
-        case (.medical, .english):   return "Monthly out-of-pocket medical costs, in dollars"
-        case (.medical, .spanish):   return "Gastos médicos mensuales de bolsillo, en dólares"
-        case (.utilityShutoff, _):   return ""
         }
     }
 

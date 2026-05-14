@@ -3,7 +3,7 @@ import SwiftUI
 
 struct FindHelpListView: View {
     let locations: [FindHelpLocation]
-    var selectedLocationId: String? = nil
+    var selectedLocationId: UUID? = nil
     let onSelect: (FindHelpLocation) -> Void
 
     var body: some View {
