@@ -1,6 +1,5 @@
 import CoreImage
 import UIKit
-import Vision
 
 // EXPERIMENTAL SILOED MODULE: on-device document quality gate.
 //
@@ -59,18 +58,23 @@ struct SNAPDocumentQualityResult: Sendable, Equatable {
 }
 
 enum SNAPDocumentQualityChecker {
-    private static let blurThreshold: Double = 5.0     // empirical
+    // Threshold tuned for images coming out of VNDocumentCameraViewController,
+    // which are already perspective-corrected crops. ID cards and paystubs
+    // both have fine print; the prior value of 5.0 was too strict.
+    private static let blurThreshold: Double = 1.5
     private static let darkThreshold: Double = 0.10
     private static let brightThreshold: Double = 0.95
 
-    /// Runs three independent checks. Returns a result describing every
-    /// failure (so multi-rejection photos can show the most-actionable
-    /// guidance).
+    /// Checks blur and luminance only. Boundary detection is intentionally
+    /// omitted: images arrive from VNDocumentCameraViewController, which
+    /// already found the document boundary and cropped to it. Running
+    /// VNDetectDocumentSegmentationRequest on the cropped output always
+    /// fails — the document fills the frame with no external reference.
     static func check(_ image: UIImage) async -> SNAPDocumentQualityResult {
         guard let cgImage = image.cgImage else {
             return SNAPDocumentQualityResult(
                 passed: false,
-                rejections: [.boundaryNotDetected],
+                rejections: [.tooBlurry],
                 blurScore: nil,
                 luminance: nil
             )
@@ -78,18 +82,11 @@ enum SNAPDocumentQualityChecker {
 
         var rejections: [SNAPDocumentQualityRejection] = []
 
-        // 1. Document boundary.
-        if !(await detectDocumentBoundary(cgImage)) {
-            rejections.append(.boundaryNotDetected)
-        }
-
-        // 2. Blur (variance of Laplacian via CIFilter approximation).
         let blur = approximateBlurScore(cgImage)
         if blur < blurThreshold {
             rejections.append(.tooBlurry)
         }
 
-        // 3. Luminance.
         let lum = averageLuminance(cgImage)
         if lum < darkThreshold {
             rejections.append(.tooDark)
@@ -106,21 +103,6 @@ enum SNAPDocumentQualityChecker {
     }
 
     // MARK: - Individual checks
-
-    private static func detectDocumentBoundary(_ cgImage: CGImage) async -> Bool {
-        await withCheckedContinuation { continuation in
-            let request = VNDetectDocumentSegmentationRequest { request, _ in
-                let observations = request.results as? [VNRectangleObservation] ?? []
-                continuation.resume(returning: !observations.isEmpty)
-            }
-            let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
-            do {
-                try handler.perform([request])
-            } catch {
-                continuation.resume(returning: false)
-            }
-        }
-    }
 
     /// Approximate blur score using a mean-then-variance pass over a
     /// downsampled grayscale rendering. Faster than running a full

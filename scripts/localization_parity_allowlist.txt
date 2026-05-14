@@ -1,0 +1,37 @@
+# Civica Spanish-parity allowlist.
+#
+# One literal per line. Strings here are intentionally raw — either they
+# render the same in both languages (brand chips), they're debug/admin-only
+# surfaces invisible to end users, or they're bilingual welcome screens
+# that intentionally render both languages side-by-side.
+#
+# Adding a string here is a deliberate exception. Default to wrapping
+# in CivicaText(en, es:) instead.
+
+# Brand identifiers — render identically in both locales.
+Civica
+SNAP
+Civica · v1
+Civica · Admin
+Civica · hello@civica.us
+
+# Bilingual onboarding language picker — both languages render
+# simultaneously by design (LanguagePickerScreen.swift).
+Welcome to Civica
+Bienvenido a Civica
+Pick a language to continue.
+Elige un idioma para continuar.
+
+# Debug-only QA checklist (not visible in production builds).
+SNAP QA Checklist
+SNAP QA
+Developer-only build verification. Not visible in production.
+Passed \(passedCount) of \(items.count)
+
+# Admin-only concierge tool (TCPA gated, not user-facing).
+Enter operator PIN
+PIN
+Close
+This surface is for the Civica founder + concierge team. It exports the upcoming-interview list for manual outreach.
+Upcoming interview (next 72 hours)
+No row to export. The current device either hasn't granted TCPA consent, has no scheduled interview date, or the interview is more than 72 hours away.

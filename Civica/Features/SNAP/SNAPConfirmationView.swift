@@ -7,20 +7,27 @@ struct SNAPConfirmationView: View {
     @ObservedObject var viewModel: SNAPApplicationViewModel
     let onClose: () -> Void
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+
+    private var language: CivicaLanguage {
+        CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
-                Text("Your SNAP draft is ready")
+                Text(SNAPConfirmationStrings.title.value(in: language))
                     .font(CivicaTypography.cardSubtitle)
                     .foregroundStyle(CivicaColors.ink)
 
-                Text("You can use this information to complete your official application through your state’s benefits website.")
+                Text(SNAPConfirmationStrings.subtitle.value(in: language))
                     .font(.body)
                     .foregroundStyle(CivicaColors.graphite)
                     .fixedSize(horizontal: false, vertical: true)
 
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-                    Text("State selected")
+                    Text(SNAPConfirmationStrings.stateSelectedLabel.value(in: language))
                         .font(CivicaTypography.subheadStrong)
                         .foregroundStyle(CivicaColors.ink)
                     Text(selectedStateLabel)
@@ -37,7 +44,7 @@ struct SNAPConfirmationView: View {
                         .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
 
-                Button("Open official state SNAP website") {
+                Button(SNAPConfirmationStrings.openOfficialSite.value(in: language)) {
                     guard let officialURL else { return }
                     openURL(officialURL)
                 }
@@ -45,17 +52,17 @@ struct SNAPConfirmationView: View {
                 .disabled(officialURL == nil)
 
                 if officialURL == nil {
-                    Text("Official state link coming soon.")
+                    Text(SNAPConfirmationStrings.officialLinkComingSoon.value(in: language))
                         .font(CivicaTypography.footnote)
                         .foregroundStyle(CivicaColors.graphite)
                 }
 
-                Button("Review my draft again") {
+                Button(SNAPConfirmationStrings.reviewDraftAgain.value(in: language)) {
                     viewModel.currentStep = .review
                 }
                 .buttonStyle(CivicaSecondaryCTAButtonStyle())
 
-                Text("This assistant does not submit your application.")
+                Text(SNAPConfirmationStrings.doesNotSubmit.value(in: language))
                     .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.warningAmber)
             }
@@ -76,7 +83,9 @@ struct SNAPConfirmationView: View {
         let code = (viewModel.application.state ?? "")
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .uppercased()
-        guard !code.isEmpty else { return "Not provided" }
+        guard !code.isEmpty else {
+            return SNAPConfirmationStrings.notProvided.value(in: language)
+        }
         if let resource = SNAPStateResources.resource(for: code) {
             return "\(resource.displayName) (\(resource.stateCode))"
         }

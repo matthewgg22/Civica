@@ -16,13 +16,24 @@ struct SNAPApplicationGeneratorView: View {
     @StateObject var viewModel: SNAPApplicationGeneratorViewModel
     @State private var isShareSheetPresented = false
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+
+    private var language: CivicaLanguage {
+        CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
+
+    private var stateCode: String? {
+        SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
             header
             statusCard
             actionRow
             SNAPApplicationWalkthroughView(
-                stateCode: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
+                stateCode: stateCode
             )
         }
         .padding(CivicaSpacing.lg)
@@ -41,10 +52,10 @@ struct SNAPApplicationGeneratorView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-            Text("Your application packet")
+            Text(SNAPApplicationGeneratorStrings.title.value(in: language))
                 .font(CivicaTypography.cardTitle)
                 .foregroundColor(CivicaColors.ink)
-            Text("Save or share the summary, then finish the official application in DTA Connect.")
+            Text(SNAPApplicationGeneratorStrings.subtitle(stateCode: stateCode, language: language))
                 .font(CivicaTypography.subhead)
                 .foregroundColor(CivicaColors.graphite)
         }
@@ -56,7 +67,7 @@ struct SNAPApplicationGeneratorView: View {
         case .idle, .generating:
             HStack(spacing: CivicaSpacing.sm) {
                 ProgressView()
-                Text("Putting your packet together…")
+                Text(SNAPApplicationGeneratorStrings.generating.value(in: language))
                     .font(CivicaTypography.subhead)
                     .foregroundColor(CivicaColors.graphite)
             }
@@ -68,7 +79,7 @@ struct SNAPApplicationGeneratorView: View {
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: "doc.text.fill")
                     .foregroundColor(CivicaColors.accentTeal)
-                Text("Your packet is ready.")
+                Text(SNAPApplicationGeneratorStrings.ready.value(in: language))
                     .font(CivicaTypography.subheadStrong)
                     .foregroundColor(CivicaColors.ink)
             }
@@ -98,7 +109,7 @@ struct SNAPApplicationGeneratorView: View {
             Button {
                 isShareSheetPresented = true
             } label: {
-                Label("Save or share packet", systemImage: "square.and.arrow.up")
+                Label(SNAPApplicationGeneratorStrings.saveOrShare.value(in: language), systemImage: "square.and.arrow.up")
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, CivicaSpacing.sm)
                     .background(CivicaColors.brickPrimary)
@@ -109,7 +120,7 @@ struct SNAPApplicationGeneratorView: View {
             Button {
                 Task { await viewModel.generate() }
             } label: {
-                Text("Try again")
+                Text(SNAPApplicationGeneratorStrings.tryAgain.value(in: language))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, CivicaSpacing.sm)
                     .background(CivicaColors.secondaryButtonFill)

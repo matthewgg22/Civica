@@ -31,20 +31,25 @@ struct SNAPDocumentRetryView: View {
     let onUseDifferentDocument: () -> Void
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
-                eyebrowAndTitle
-                imagePreview
-                reasonBanner
-                tipsCard
-            }
-            .padding(CivicaSpacing.xl)
-            .padding(.bottom, 120) // breathing room above the pinned CTAs
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
+            eyebrowAndTitle
+
+            imagePreview
+
+            reasonBanner
+
+            tipsCard
+
+            Spacer(minLength: 0)
         }
+        .padding(.horizontal, CivicaSpacing.xl)
+        .padding(.top, CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(CivicaColors.paper.ignoresSafeArea())
         .safeAreaInset(edge: .bottom) {
             actionStack
-                .padding(CivicaSpacing.xl)
+                .padding(.horizontal, CivicaSpacing.xl)
+                .padding(.vertical, CivicaSpacing.md)
                 .background(CivicaColors.paper.ignoresSafeArea(edges: .bottom))
         }
         .navigationTitle("")
@@ -68,60 +73,50 @@ struct SNAPDocumentRetryView: View {
     }
 
     private var imagePreview: some View {
-        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-            Text(SNAPDocumentRetryStrings.whatWeGotLabel.value(in: language))
+        ZStack(alignment: .topLeading) {
+            Image(uiImage: capturedImage)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(maxWidth: .infinity)
+                .frame(height: 120)
+                .clipped()
+            Rectangle()
+                .fill(.black.opacity(0.18))
+            Text(SNAPDocumentRetryStrings.previewBadge.value(in: language))
                 .font(CivicaTypography.captionStrong)
-                .foregroundStyle(CivicaColors.graphite)
+                .foregroundStyle(CivicaColors.paper)
                 .textCase(.uppercase)
-                .kerning(1.2)
-            ZStack(alignment: .topLeading) {
-                Image(uiImage: capturedImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 220)
-                    .clipped()
-                // Dim overlay echoes the canvas board's "blurry preview"
-                // treatment -- the image is the failed evidence, not a
-                // hero.
-                Rectangle()
-                    .fill(.black.opacity(0.18))
-                Text(SNAPDocumentRetryStrings.previewBadge.value(in: language))
-                    .font(CivicaTypography.captionStrong)
-                    .foregroundStyle(CivicaColors.paper)
-                    .textCase(.uppercase)
-                    .kerning(1.5)
-                    .padding(.horizontal, CivicaSpacing.md)
-                    .padding(.vertical, CivicaSpacing.xs)
-                    .background(.black.opacity(0.45))
-                    .clipShape(Capsule())
-                    .padding(CivicaSpacing.md)
-            }
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
-            .accessibilityLabel(SNAPDocumentRetryStrings.previewAccessibility.value(in: language))
+                .kerning(1.5)
+                .padding(.horizontal, CivicaSpacing.sm)
+                .padding(.vertical, 3)
+                .background(.black.opacity(0.45))
+                .clipShape(Capsule())
+                .padding(CivicaSpacing.sm)
         }
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .accessibilityLabel(SNAPDocumentRetryStrings.previewAccessibility.value(in: language))
     }
 
     private var reasonBanner: some View {
-        HStack(alignment: .top, spacing: CivicaSpacing.md) {
+        HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Rectangle()
                 .fill(CivicaColors.brickPrimary)
                 .frame(width: 4)
                 .clipShape(RoundedRectangle(cornerRadius: 2))
                 .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(headlineReason)
                     .font(CivicaTypography.subheadStrong)
                     .foregroundStyle(CivicaColors.ink)
                     .fixedSize(horizontal: false, vertical: true)
                 Text(detailedReason)
-                    .font(CivicaTypography.body)
+                    .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.ink)
                     .fixedSize(horizontal: false, vertical: true)
             }
             Spacer(minLength: 0)
         }
-        .padding(CivicaSpacing.lg)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.surfacePrimary)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
@@ -134,28 +129,28 @@ struct SNAPDocumentRetryView: View {
     }
 
     private var tipsCard: some View {
-        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(SNAPDocumentRetryStrings.tipsLabel.value(in: language))
                 .font(CivicaTypography.captionStrong)
                 .foregroundStyle(CivicaColors.graphite)
                 .textCase(.uppercase)
                 .kerning(1.2)
-            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            VStack(alignment: .leading, spacing: 4) {
                 ForEach(SNAPDocumentRetryStrings.tips(language: language), id: \.self) { tip in
-                    HStack(alignment: .top, spacing: CivicaSpacing.sm) {
+                    HStack(alignment: .top, spacing: CivicaSpacing.xs) {
                         Text("·")
-                            .font(CivicaTypography.body)
+                            .font(CivicaTypography.footnote)
                             .foregroundStyle(CivicaColors.graphite)
                             .accessibilityHidden(true)
                         Text(tip)
-                            .font(CivicaTypography.body)
+                            .font(CivicaTypography.footnote)
                             .foregroundStyle(CivicaColors.ink)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
             }
         }
-        .padding(CivicaSpacing.lg)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.surfacePrimary)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
@@ -166,13 +161,13 @@ struct SNAPDocumentRetryView: View {
     }
 
     private var actionStack: some View {
-        VStack(spacing: CivicaSpacing.sm) {
+        VStack(spacing: CivicaSpacing.xs) {
             Button(action: onRetake) {
                 Text(SNAPDocumentRetryStrings.retakeCTA.value(in: language))
                     .font(CivicaTypography.subheadStrong)
                     .foregroundStyle(CivicaColors.paper)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, CivicaSpacing.md)
+                    .padding(.vertical, CivicaSpacing.sm)
                     .background(CivicaColors.brickPrimary)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
             }
@@ -183,7 +178,7 @@ struct SNAPDocumentRetryView: View {
                     .font(CivicaTypography.subheadStrong)
                     .foregroundStyle(CivicaColors.ink)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, CivicaSpacing.md)
+                    .padding(.vertical, CivicaSpacing.sm)
                     .background(CivicaColors.surfacePrimary)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
                     .overlay(

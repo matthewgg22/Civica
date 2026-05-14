@@ -91,10 +91,17 @@ struct SNAPWhereApplyingFlowView: View {
 
     var body: some View {
         currentScreen
+            .id(viewModel.step)
+            .transition(.opacity.animation(.easeInOut(duration: 0.18)))
+            .animation(.easeInOut(duration: 0.18), value: viewModel.step)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
-                        viewModel.isAtFirstStep ? onExit() : viewModel.goBack()
+                        if viewModel.isAtFirstStep {
+                            onExit()
+                        } else {
+                            withAnimation(.easeInOut(duration: 0.18)) { viewModel.goBack() }
+                        }
                     } label: {
                         Image(systemName: viewModel.isAtFirstStep ? "xmark" : "chevron.left")
                             .foregroundStyle(CivicaColors.ink)
@@ -177,10 +184,12 @@ struct SNAPWhereApplyingFlowView: View {
     }
 
     private func advanceOrComplete() {
-        if viewModel.isAtLastStep {
-            onComplete(viewModel.answers)
-        } else {
-            viewModel.advance()
+        withAnimation(.easeInOut(duration: 0.18)) {
+            if viewModel.isAtLastStep {
+                onComplete(viewModel.answers)
+            } else {
+                viewModel.advance()
+            }
         }
     }
 }

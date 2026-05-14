@@ -7,6 +7,13 @@ struct SNAPReviewView: View {
     @ObservedObject var viewModel: SNAPApplicationViewModel
     let onShowNextSteps: (() -> Void)?
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+
+    private var language: CivicaLanguage {
+        CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
+
     init(
         viewModel: SNAPApplicationViewModel,
         onShowNextSteps: (() -> Void)? = nil
@@ -18,11 +25,11 @@ struct SNAPReviewView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.md) {
-                Text("Review your SNAP draft")
+                Text(SNAPReviewStrings.title.value(in: language))
                     .font(CivicaTypography.cardSubtitle)
                     .foregroundStyle(CivicaColors.ink)
 
-                Text("Review this before using it to complete your official state application.")
+                Text(SNAPReviewStrings.reviewBeforeSubmitting.value(in: language))
                     .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.warningAmber)
 
@@ -32,66 +39,72 @@ struct SNAPReviewView: View {
                     .fixedSize(horizontal: false, vertical: true)
 
                 SNAPReviewSectionCard(
-                    title: "Household",
+                    title: SNAPReviewStrings.householdSection.value(in: language),
+                    editLabel: SNAPReviewStrings.edit.value(in: language),
                     rows: [
-                        ("Household size", displayOptionalInt(viewModel.application.householdSize)),
-                        ("Applicant age", displayOptionalInt(viewModel.application.applicantAge)),
-                        ("Housing status", viewModel.application.housingStatus?.label ?? "Not provided")
+                        (SNAPReviewStrings.householdSize.value(in: language), displayOptionalInt(viewModel.application.householdSize)),
+                        (SNAPReviewStrings.applicantAge.value(in: language), displayOptionalInt(viewModel.application.applicantAge)),
+                        (SNAPReviewStrings.housingStatus.value(in: language), viewModel.application.housingStatus?.label ?? SNAPReviewStrings.notProvided.value(in: language))
                     ],
                     onEdit: { goToDraftStep(.householdBasics) }
                 )
 
                 SNAPReviewSectionCard(
-                    title: "Location",
+                    title: SNAPReviewStrings.locationSection.value(in: language),
+                    editLabel: SNAPReviewStrings.edit.value(in: language),
                     rows: [
-                        ("State", displayOptionalString(viewModel.application.state)),
-                        ("ZIP code", displayOptionalString(viewModel.application.zipCode))
+                        (SNAPReviewStrings.stateLabel.value(in: language), displayOptionalString(viewModel.application.state)),
+                        (SNAPReviewStrings.zipCode.value(in: language), displayOptionalString(viewModel.application.zipCode))
                     ],
                     onEdit: { goToDraftStep(.whereApplyingFrom) }
                 )
 
                 SNAPReviewSectionCard(
-                    title: "Student status",
+                    title: SNAPReviewStrings.studentSection.value(in: language),
+                    editLabel: SNAPReviewStrings.edit.value(in: language),
                     rows: [
-                        ("In higher education", yesNoUnknown(viewModel.application.isCurrentlyEnrolledInHigherEducation)),
-                        ("Enrolled half-time", studentFollowUpValue(viewModel.application.isEnrolledAtLeastHalfTime)),
-                        ("Works 20+ hours/week", studentFollowUpValue(viewModel.application.worksAtLeastTwentyHoursPerWeek)),
-                        ("Participates in work-study", studentFollowUpValue(viewModel.application.participatesInWorkStudy)),
-                        ("Responsible for dependent child", studentFollowUpValue(viewModel.application.isResponsibleForDependentChild))
+                        (SNAPReviewStrings.inHigherEducation.value(in: language), yesNoUnknown(viewModel.application.isCurrentlyEnrolledInHigherEducation)),
+                        (SNAPReviewStrings.halfTimeEnrolled.value(in: language), studentFollowUpValue(viewModel.application.isEnrolledAtLeastHalfTime)),
+                        (SNAPReviewStrings.works20Hours.value(in: language), studentFollowUpValue(viewModel.application.worksAtLeastTwentyHoursPerWeek)),
+                        (SNAPReviewStrings.workStudy.value(in: language), studentFollowUpValue(viewModel.application.participatesInWorkStudy)),
+                        (SNAPReviewStrings.dependentChild.value(in: language), studentFollowUpValue(viewModel.application.isResponsibleForDependentChild))
                     ],
                     onEdit: { goToDraftStep(.studentStatus) }
                 )
 
                 SNAPReviewSectionCard(
-                    title: "Income",
+                    title: SNAPReviewStrings.incomeSection.value(in: language),
+                    editLabel: SNAPReviewStrings.edit.value(in: language),
                     rows: [
-                        ("Employment status", viewModel.application.employmentStatus?.label ?? "Not provided"),
-                        ("Monthly income estimate", displayString(viewModel.application.monthlyIncomeEstimate)),
-                        ("Income changes month to month", yesNoUnknown(viewModel.application.incomeChangesMonthToMonth))
+                        (SNAPReviewStrings.employmentStatus.value(in: language), viewModel.application.employmentStatus?.label ?? SNAPReviewStrings.notProvided.value(in: language)),
+                        (SNAPReviewStrings.monthlyIncome.value(in: language), displayString(viewModel.application.monthlyIncomeEstimate)),
+                        (SNAPReviewStrings.incomeChanges.value(in: language), yesNoUnknown(viewModel.application.incomeChangesMonthToMonth))
                     ],
                     onEdit: { goToDraftStep(.income) }
                 )
 
                 SNAPReviewSectionCard(
-                    title: "Expenses",
+                    title: SNAPReviewStrings.expensesSection.value(in: language),
+                    editLabel: SNAPReviewStrings.edit.value(in: language),
                     rows: [
-                        ("Rent or housing", displayString(viewModel.application.rentOrHousingCost)),
-                        ("Utilities", displayString(viewModel.application.utilitiesCost)),
-                        ("Childcare (optional)", displayString(viewModel.application.childcareCostEstimate)),
-                        ("Medical (optional estimate)", displayString(viewModel.application.medicalExpensesEstimate))
+                        (SNAPReviewStrings.rentOrHousing.value(in: language), displayString(viewModel.application.rentOrHousingCost)),
+                        (SNAPReviewStrings.utilities.value(in: language), displayString(viewModel.application.utilitiesCost)),
+                        (SNAPReviewStrings.childcareOptional.value(in: language), displayString(viewModel.application.childcareCostEstimate)),
+                        (SNAPReviewStrings.medicalOptional.value(in: language), displayString(viewModel.application.medicalExpensesEstimate))
                     ],
                     onEdit: { goToDraftStep(.expenses) }
                 )
 
                 SNAPReviewSectionCard(
-                    title: "Documents checklist",
+                    title: SNAPReviewStrings.documentsSection.value(in: language),
+                    editLabel: SNAPReviewStrings.edit.value(in: language),
                     rows: [
-                        ("Items checked", documentsValue(viewModel.application.documentsAvailable))
+                        (SNAPReviewStrings.itemsChecked.value(in: language), documentsValue(viewModel.application.documentsAvailable))
                     ],
                     onEdit: { goToDraftStep(.documentsChecklist) }
                 )
 
-                Button("Show next steps") {
+                Button(SNAPReviewStrings.showNextSteps.value(in: language)) {
                     if let onShowNextSteps {
                         onShowNextSteps()
                     } else {
@@ -114,40 +127,43 @@ struct SNAPReviewView: View {
     }
 
     private func yesNoUnknown(_ value: Bool?) -> String {
-        guard let value else { return "Not provided" }
-        return value ? "Yes" : "No"
+        guard let value else { return SNAPReviewStrings.notProvided.value(in: language) }
+        return value
+            ? SNAPReviewStrings.yes.value(in: language)
+            : SNAPReviewStrings.no.value(in: language)
     }
 
     private func studentFollowUpValue(_ value: Bool?) -> String {
         guard viewModel.application.isCurrentlyEnrolledInHigherEducation == true else {
-            return "Not applicable"
+            return SNAPReviewStrings.notApplicable.value(in: language)
         }
         return yesNoUnknown(value)
     }
 
     private func displayOptionalString(_ value: String?) -> String {
         let trimmed = (value ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? "Not provided" : trimmed
+        return trimmed.isEmpty ? SNAPReviewStrings.notProvided.value(in: language) : trimmed
     }
 
     private func displayOptionalInt(_ value: Int?) -> String {
-        guard let value else { return "Not provided" }
+        guard let value else { return SNAPReviewStrings.notProvided.value(in: language) }
         return "\(value)"
     }
 
     private func displayString(_ value: String) -> String {
         let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? "Not provided" : trimmed
+        return trimmed.isEmpty ? SNAPReviewStrings.notProvided.value(in: language) : trimmed
     }
 
     private func documentsValue(_ docs: [SNAPDocumentType]) -> String {
-        guard !docs.isEmpty else { return "Nothing checked yet" }
+        guard !docs.isEmpty else { return SNAPReviewStrings.nothingChecked.value(in: language) }
         return docs.map(\.label).joined(separator: ", ")
     }
 }
 
 private struct SNAPReviewSectionCard: View {
     let title: String
+    let editLabel: String
     let rows: [(label: String, value: String)]
     let onEdit: () -> Void
 
@@ -158,7 +174,7 @@ private struct SNAPReviewSectionCard: View {
                     .font(CivicaTypography.sectionHeader)
                     .foregroundStyle(CivicaColors.ink)
                 Spacer()
-                Button("Edit") {
+                Button(editLabel) {
                     onEdit()
                 }
                 .font(CivicaTypography.subheadStrong)

@@ -18,7 +18,7 @@ import SwiftUI
 struct SNAPHouseholdAnswers: Equatable, Codable {
     var householdSize: String?              // choice from buckets
     var hasMinorInHousehold: Bool?
-    var hasElderlyOrDisabled: Bool?
+    var hasElderlyOrDisabled: Bool? = false
     /// Migrant or seasonal farmworker status. With low liquid resources,
     /// satisfies 7 CFR 273.2(i)(1)(ii) (migrant/seasonal destitute) and
     /// the household qualifies for expedited service regardless of
@@ -108,6 +108,9 @@ struct SNAPHouseholdQuestionFlowView: View {
 
     var body: some View {
         currentScreen
+            .id(viewModel.step)
+            .transition(.opacity.animation(.easeInOut(duration: 0.18)))
+            .animation(.easeInOut(duration: 0.18), value: viewModel.step)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     if viewModel.isAtFirstStep {
@@ -117,7 +120,9 @@ struct SNAPHouseholdQuestionFlowView: View {
                         }
                         .accessibilityLabel(CivicaQuestionStrings.backLabel.value(in: language))
                     } else {
-                        Button(action: viewModel.goBack) {
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.18)) { viewModel.goBack() }
+                        } label: {
                             Image(systemName: "chevron.left")
                                 .foregroundStyle(CivicaColors.ink)
                         }
@@ -250,10 +255,12 @@ struct SNAPHouseholdQuestionFlowView: View {
     }
 
     private func advanceOrComplete() {
-        if viewModel.isAtLastStep {
-            onComplete(viewModel.answers)
-        } else {
-            viewModel.advance()
+        withAnimation(.easeInOut(duration: 0.18)) {
+            if viewModel.isAtLastStep {
+                onComplete(viewModel.answers)
+            } else {
+                viewModel.advance()
+            }
         }
     }
 }

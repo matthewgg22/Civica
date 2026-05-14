@@ -110,10 +110,17 @@ struct SNAPStudentStatusFlowView: View {
 
     var body: some View {
         currentScreen
+            .id(viewModel.step)
+            .transition(.opacity.animation(.easeInOut(duration: 0.18)))
+            .animation(.easeInOut(duration: 0.18), value: viewModel.step)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
-                        viewModel.isAtFirstStep ? onExit() : viewModel.goBack()
+                        if viewModel.isAtFirstStep {
+                            onExit()
+                        } else {
+                            withAnimation(.easeInOut(duration: 0.18)) { viewModel.goBack() }
+                        }
                     } label: {
                         Image(systemName: viewModel.isAtFirstStep ? "xmark" : "chevron.left")
                             .foregroundStyle(CivicaColors.ink)
@@ -231,12 +238,14 @@ struct SNAPStudentStatusFlowView: View {
     }
 
     private func advanceOrComplete() {
-        if viewModel.isAtFunctionalLastStep {
-            onComplete(viewModel.answers)
-        } else {
-            viewModel.advance()
-            if viewModel.isComplete {
+        withAnimation(.easeInOut(duration: 0.18)) {
+            if viewModel.isAtFunctionalLastStep {
                 onComplete(viewModel.answers)
+            } else {
+                viewModel.advance()
+                if viewModel.isComplete {
+                    onComplete(viewModel.answers)
+                }
             }
         }
     }

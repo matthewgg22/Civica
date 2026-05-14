@@ -17,6 +17,13 @@ struct SNAPDocumentConfirmationView: View {
     let onConfirm: () -> Void
     let onCorrect: () -> Void
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+
+    private var language: CivicaLanguage {
+        CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
@@ -38,10 +45,10 @@ struct SNAPDocumentConfirmationView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-            Text("Does this look right?")
+            Text(SNAPDocumentConfirmationStrings.title.value(in: language))
                 .font(CivicaTypography.cardTitle)
                 .foregroundColor(CivicaColors.ink)
-            Text("We read these from your photo. Tap 'Fix something' if anything is off.")
+            Text(SNAPDocumentConfirmationStrings.subtitle.value(in: language))
                 .font(CivicaTypography.subhead)
                 .foregroundColor(CivicaColors.graphite)
         }
@@ -79,7 +86,7 @@ struct SNAPDocumentConfirmationView: View {
             Text("We saw a \(extraction.classification.documentType.rawValue.replacingOccurrences(of: "_", with: " "))")
                 .font(CivicaTypography.subheadStrong)
                 .foregroundColor(CivicaColors.ink)
-            Text("Thanks — we'll keep it on file. We'll only read paystubs in detail for now.")
+            Text(SNAPDocumentConfirmationStrings.stoppedReading.value(in: language))
                 .font(CivicaTypography.subhead)
                 .foregroundColor(CivicaColors.graphite)
         }
@@ -90,7 +97,7 @@ struct SNAPDocumentConfirmationView: View {
 
     private func deductionsList(_ deductions: [SNAPPaystubDeduction]) -> some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-            Text("Deductions")
+            Text(SNAPDocumentConfirmationStrings.deductionsHeading.value(in: language))
                 .font(CivicaTypography.subheadStrong)
                 .foregroundColor(CivicaColors.ink)
             ForEach(deductions, id: \.labelAsPrinted) { d in
@@ -110,7 +117,7 @@ struct SNAPDocumentConfirmationView: View {
 
     private var validationFlagsSection: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-            Text("A few things to double-check:")
+            Text(SNAPDocumentConfirmationStrings.doubleCheckHeading.value(in: language))
                 .font(CivicaTypography.subheadStrong)
                 .foregroundColor(CivicaColors.ink)
             ForEach(extraction.validationFlags) { flag in
@@ -131,7 +138,7 @@ struct SNAPDocumentConfirmationView: View {
     private var actionRow: some View {
         HStack(spacing: CivicaSpacing.md) {
             Button(action: onCorrect) {
-                Text("Fix something")
+                Text(SNAPDocumentConfirmationStrings.fixSomething.value(in: language))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, CivicaSpacing.sm)
                     .background(CivicaColors.secondaryButtonFill)
@@ -143,7 +150,7 @@ struct SNAPDocumentConfirmationView: View {
                     .foregroundColor(CivicaColors.ink)
             }
             Button(action: onConfirm) {
-                Text("Looks right")
+                Text(SNAPDocumentConfirmationStrings.looksRight.value(in: language))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, CivicaSpacing.sm)
                     .background(CivicaColors.brickPrimary)

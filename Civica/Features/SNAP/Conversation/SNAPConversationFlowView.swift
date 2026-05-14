@@ -39,14 +39,18 @@ struct SNAPConversationFlowView: View {
         )
     }
 
+    private var resolvedLanguage: CivicaLanguage {
+        CivicaLanguage(rawValue: language) ?? .english
+    }
+
     var body: some View {
         SNAPConversationView(viewModel: viewModel)
-            .navigationTitle("SNAP Eligibility Screener")
+            .navigationTitle(SNAPConversationViewStrings.screenerTitle.value(in: resolvedLanguage))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 if let onClose = onClose {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button("Close") { onClose() }
+                        Button(SNAPConversationViewStrings.close.value(in: resolvedLanguage)) { onClose() }
                     }
                 }
             }
