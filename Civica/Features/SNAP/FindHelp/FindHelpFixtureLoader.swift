@@ -74,6 +74,7 @@ struct FindHelpFixtureLoader: FindHelpFallbackProviding {
     /// Missing files are tolerated so a partial bundle still boots.
     func loadAll() -> [FindHelpLocation] {
         let resources = Self.fixtureResources(for: FindHelpRegion.current)
+        let decoder = Self.makeDecoder()
         var combined: [FindHelpLocation] = []
         for resource in resources {
             guard let url = bundle.url(forResource: resource, withExtension: "json") else {
@@ -82,13 +83,28 @@ struct FindHelpFixtureLoader: FindHelpFallbackProviding {
             }
             do {
                 let data = try Data(contentsOf: url)
-                let envelope = try FindHelpDecoder.shared.decode(Envelope.self, from: data)
+                let envelope = try decoder.decode(Envelope.self, from: data)
                 combined.append(contentsOf: envelope.locations)
             } catch {
                 Self.logger.error("FindHelp fixture \(resource, privacy: .public) decode failed: \(error.localizedDescription, privacy: .public)")
             }
         }
         return combined
+    }
+
+    private static func makeDecoder() -> JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            let str = try container.decode(String.self)
+            let iso = ISO8601DateFormatter()
+            iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            if let date = iso.date(from: str) { return date }
+            iso.formatOptions = [.withInternetDateTime]
+            if let date = iso.date(from: str) { return date }
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Cannot parse date: \(str)")
+        }
+        return decoder
     }
 
     private static func fixtureResources(for region: FindHelpRegion) -> [String] {

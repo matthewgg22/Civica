@@ -23,9 +23,17 @@ struct SNAPUnsupportedStateView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
-                Text(SNAPUnsupportedStateStrings.title.value(in: language))
-                    .font(CivicaTypography.cardTitle)
-                    .foregroundStyle(CivicaColors.ink)
+                VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                    Text(SNAPUnsupportedStateStrings.eyebrow.value(in: language))
+                        .font(CivicaTypography.captionStrong)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .textCase(.uppercase)
+                        .kerning(1.2)
+                    Text(titleText)
+                        .font(CivicaTypography.pageTitle)
+                        .foregroundStyle(CivicaColors.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
 
                 Text(SNAPUnsupportedStateStrings.body.value(in: language))
                     .font(CivicaTypography.body)
@@ -37,32 +45,43 @@ struct SNAPUnsupportedStateView: View {
                 }
 
                 VStack(spacing: CivicaSpacing.sm) {
-                    Button {
-                        if let url = URL(string: SNAPStateResources.usdaStateDirectoryURL) {
-                            openURL(url)
-                        }
-                    } label: {
-                        Text(SNAPUnsupportedStateStrings.openDirectoryCTA.value(in: language))
-                    }
-                    .buttonStyle(CivicaPrimaryCTAButtonStyle())
-
                     Button(action: onChangeState) {
                         Text(SNAPUnsupportedStateStrings.changeStateCTA.value(in: language))
                     }
-                    .buttonStyle(CivicaSecondaryCTAButtonStyle())
+                    .buttonStyle(CivicaPrimaryCTAButtonStyle())
 
-                    Button(action: onExit) {
-                        Text(SNAPUnsupportedStateStrings.backToHomeCTA.value(in: language))
-                            .font(CivicaTypography.footnoteStrong)
-                            .foregroundStyle(CivicaColors.brickPrimary)
+                    HStack(spacing: CivicaSpacing.lg) {
+                        Button {
+                            if let url = URL(string: SNAPStateResources.usdaStateDirectoryURL) {
+                                openURL(url)
+                            }
+                        } label: {
+                            Text(SNAPUnsupportedStateStrings.openDirectoryCTA.value(in: language))
+                                .font(CivicaTypography.footnoteStrong)
+                                .foregroundStyle(CivicaColors.brickPrimary)
+                        }
+                        .buttonStyle(.plain)
+
+                        Button(action: onExit) {
+                            Text(SNAPUnsupportedStateStrings.backToHomeCTA.value(in: language))
+                                .font(CivicaTypography.footnoteStrong)
+                                .foregroundStyle(CivicaColors.graphite)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity)
                 }
                 .padding(.top, CivicaSpacing.xs)
             }
             .padding(CivicaSpacing.lg)
         }
-        .background(CivicaColors.tealSurface.ignoresSafeArea())
+        .background(CivicaColors.paper.ignoresSafeArea())
+    }
+
+    private var titleText: String {
+        let stateName = SNAPStateResources.administeringStateName(for: stateCode)
+            ?? stateCode
+        return SNAPUnsupportedStateStrings.title(stateName: stateName, language: language)
     }
 
     private var agencyLine: String? {
@@ -96,29 +115,37 @@ struct SNAPUnsupportedStateView: View {
 }
 
 enum SNAPUnsupportedStateStrings {
-    static let title = CivicaText(
-        "Civica's SNAP screener is currently available for Massachusetts",
-        es: "El asistente de SNAP de Civica está disponible actualmente solo para Massachusetts"
+    static let eyebrow = CivicaText(
+        "Not yet available",
+        es: "Aún no disponible"
     )
+
+    static func title(stateName: String, language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return "Civica doesn't cover \(stateName) yet."
+        case .spanish: return "Civica aún no cubre \(stateName)."
+        }
+    }
+
     static let body = CivicaText(
-        "For other states, use the official state SNAP application directory. Each state's agency runs its own application process and decides eligibility.",
-        es: "Para otros estados, usa el directorio oficial de solicitud de SNAP del estado. La agencia de cada estado tiene su propio proceso de solicitud y decide la elegibilidad."
+        "Your state runs its own SNAP application process. Use the USDA directory to find your state's official application site.",
+        es: "Tu estado tiene su propio proceso de solicitud de SNAP. Usa el directorio de USDA para encontrar el sitio oficial de solicitud de tu estado."
     )
     static let agencyHeader = CivicaText(
         "Your state's SNAP agency",
         es: "Agencia de SNAP de tu estado"
     )
     static let openDirectoryCTA = CivicaText(
-        "Open the USDA state directory",
-        es: "Abrir el directorio estatal de USDA"
+        "USDA state directory ↗",
+        es: "Directorio estatal de USDA ↗"
     )
     static let changeStateCTA = CivicaText(
         "Change my state",
         es: "Cambiar mi estado"
     )
     static let backToHomeCTA = CivicaText(
-        "Back to Civica home",
-        es: "Volver al inicio de Civica"
+        "Back to home",
+        es: "Volver al inicio"
     )
 }
 

@@ -92,11 +92,33 @@ enum CivicaNotificationTemplates {
         case .applicationSubmittedSMS:   return applicationSubmittedSMS
         case .documentRequestedSMS:      return documentRequestedSMS
         case .approvedEmail:             return approvedEmail
-        case .approvedSMS:               return approvedSMS
+        case .approvedSMS:              return approvedSMS
         case .recertHeadsUpEmail:        return recertHeadsUpEmail
         case .recertHeadsUpSMS:          return recertHeadsUpSMS
         case .recertOneDayBeforeSMS:     return recertOneDayBeforeSMS
         }
+    }
+
+    /// Render a CivicaText by resolving its language then substituting
+    /// server-side {placeholder} tokens with human-readable preview
+    /// values. Used by the notification preview screen so the user
+    /// sees realistic copy rather than raw token names.
+    static func render(_ text: CivicaText, stateCode: String?, language: CivicaLanguage) -> String {
+        var s = text.value(in: language)
+        let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
+        let agencyFull = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
+        let portal = SNAPAgencyDirectory.portalName(for: stateCode)
+        s = s.replacingOccurrences(of: "{agency}", with: agency)
+        s = s.replacingOccurrences(of: "{agencyFull}", with: agencyFull)
+        s = s.replacingOccurrences(of: "{portal}", with: portal)
+        s = s.replacingOccurrences(of: "{recertDate}", with: "Dec 31, 2026")
+        s = s.replacingOccurrences(of: "{ebtArrivalWindow}", with: "7–10 business days")
+        s = s.replacingOccurrences(of: "{deadline}", with: "Friday")
+        s = s.replacingOccurrences(of: "{monthlyBenefit}", with: "250")
+        s = s.replacingOccurrences(of: "{annualBenefit}", with: "3,000")
+        s = s.replacingOccurrences(of: "{householdSize}", with: "2")
+        s = s.replacingOccurrences(of: "{session}", with: "…")
+        return s
     }
 
     // MARK: - Application submitted
@@ -104,8 +126,8 @@ enum CivicaNotificationTemplates {
     private static let applicationSubmittedEmail = CivicaNotificationTemplate(
         kind: .applicationSubmittedEmail,
         subject: CivicaText(
-            "Application sent. DTA has 30 days to decide.",
-            es: "Solicitud enviada. El DTA tiene 30 días para decidir."
+            "Application sent. {agency} has 30 days to decide.",
+            es: "Solicitud enviada. {agency} tiene 30 días para decidir."
         ),
         preheader: CivicaText(
             "What happens next, in plain English.",
@@ -113,12 +135,12 @@ enum CivicaNotificationTemplates {
         ),
         body: [
             CivicaText(
-                "Your SNAP application is with Massachusetts DTA.",
-                es: "Tu solicitud de SNAP está con el DTA de Massachusetts."
+                "Your SNAP application is with {agency}.",
+                es: "Tu solicitud de SNAP está con {agency}."
             ),
             CivicaText(
-                "What's next:\n  • DTA may text or call to verify something. We'll forward it to you.\n  • DTA has 30 days to decide. If you qualified for expedited service, it may be as soon as 7 days.\n  • If approved, your EBT card arrives 7–10 days after that.",
-                es: "Lo que sigue:\n  • El DTA puede llamar o enviar mensajes para verificar algo. Te lo reenviaremos.\n  • El DTA tiene 30 días para decidir. Si calificaste para servicio expedito, puede ser en 7 días.\n  • Si te aprueban, tu tarjeta EBT llega 7–10 días después."
+                "What's next:\n  • {agency} may text or call to verify something. We'll forward it to you.\n  • {agency} has 30 days to decide. If you qualified for expedited service, it may be as soon as 7 days.\n  • If approved, your EBT card arrives 7–10 days after that.",
+                es: "Lo que sigue:\n  • {agency} puede llamar o enviar mensajes para verificar algo. Te lo reenviaremos.\n  • {agency} tiene 30 días para decidir. Si calificaste para servicio expedito, puede ser en 7 días.\n  • Si te aprueban, tu tarjeta EBT llega 7–10 días después."
             ),
             CivicaText(
                 "You don't need to do anything right now. We'll text and email when there's news.",
@@ -138,8 +160,8 @@ enum CivicaNotificationTemplates {
         ),
         body: [
             CivicaText(
-                "Your SNAP application is with Massachusetts DTA. DTA has 30 days to decide — if you qualified for expedited service, it may be as soon as 7 days. We'll text you when there's news.",
-                es: "Tu solicitud de SNAP está con el DTA de Massachusetts. El DTA tiene 30 días para decidir — si calificaste para servicio expedito, puede ser en 7 días. Te enviaremos un mensaje cuando haya noticias."
+                "Your SNAP application is with {agency}. {agency} has 30 days to decide — if you qualified for expedited service, it may be as soon as 7 days. We'll text you when there's news.",
+                es: "Tu solicitud de SNAP está con {agency}. {agency} tiene 30 días para decidir — si calificaste para servicio expedito, puede ser en 7 días. Te enviaremos un mensaje cuando haya noticias."
             ),
         ],
         buttonLabel: CivicaText("See your status", es: "Ver tu estado"),
@@ -183,8 +205,8 @@ enum CivicaNotificationTemplates {
                 es: "Estás aprobado para ${monthlyBenefit}/mes. Hogar de {householdSize} persona(s), {annualBenefit}/año en total."
             ),
             CivicaText(
-                "EBT card expected {ebtArrivalWindow}. Plain white envelope from MA EBT. Set the PIN by phone before you use it.",
-                es: "Tarjeta EBT esperada para {ebtArrivalWindow}. Sobre blanco de MA EBT. Configura el PIN por teléfono antes de usarla."
+                "EBT card expected {ebtArrivalWindow}. Plain white envelope from the state EBT office. Set the PIN by phone before you use it.",
+                es: "Tarjeta EBT esperada para {ebtArrivalWindow}. Sobre blanco de la oficina estatal de EBT. Configura el PIN por teléfono antes de usarla."
             ),
             CivicaText(
                 "Recert is {recertDate}. We'll text you 60 and 14 days ahead.",
@@ -226,8 +248,8 @@ enum CivicaNotificationTemplates {
         ),
         body: [
             CivicaText(
-                "Your SNAP has to be renewed by {recertDate} to keep going. DTA calls this recertification.",
-                es: "Tu SNAP tiene que renovarse antes del {recertDate} para continuar. El DTA llama a esto recertificación."
+                "Your SNAP has to be renewed by {recertDate} to keep going. {agency} calls this recertification.",
+                es: "Tu SNAP tiene que renovarse antes del {recertDate} para continuar. {agency} llama a esto recertificación."
             ),
             CivicaText(
                 "What's on the form:\n  • Anyone new in your household?\n  • Income changes?\n  • Rent or address changes?\n  • One recent pay stub.",

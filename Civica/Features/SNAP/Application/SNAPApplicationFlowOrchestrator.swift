@@ -24,6 +24,7 @@ import SwiftUI
 @MainActor
 final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
     enum Mode {
+        case idScanOffer
         case sequential(currentSection: SNAPApplicationSection)
         case review
         case editing(section: SNAPApplicationSection)
@@ -70,18 +71,23 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
             }
         } else {
             self.draft = SNAPApplicationDraft()
-            self.mode = .sequential(currentSection: .whereApplying)
+            self.mode = .idScanOffer
         }
         // Seed the triage result from any restored draft so the banner
         // is correct on launch without waiting for a step transition.
         recomputeTriage()
     }
 
+    func finishIDScanOffer() {
+        mode = .sequential(currentSection: .whereApplying)
+        persist()
+    }
+
     func finishSection(_ section: SNAPApplicationSection) {
         switch mode {
         case .editing:
             mode = .review
-        case .sequential, .review:
+        case .sequential, .review, .idScanOffer:
             if let next = nextSection(after: section) {
                 mode = .sequential(currentSection: next)
             } else {
@@ -121,10 +127,11 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
             if let prev = previousSection(before: current) {
                 mode = .sequential(currentSection: prev)
             } else {
-                // Already at first section — defer to caller for the
-                // top-level dismiss.
+                // At first section — go back to ID scan offer so the
+                // back button from whereApplying returns there.
+                mode = .idScanOffer
             }
-        case .review:
+        case .review, .idScanOffer:
             break
         }
         persist()
@@ -137,7 +144,7 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
     func resetDraft() {
         draft = SNAPApplicationDraft()
         voiceConfidence.removeAll()
-        mode = .sequential(currentSection: .whereApplying)
+        mode = .idScanOffer
         store.clear()
         SNAPCapturedDocumentStore.clearAll()
         SNAPCapturedDocumentStore.clearPacketPDFs()
@@ -145,6 +152,7 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
     }
 
     var isAtFirstSectionInSequence: Bool {
+        if case .idScanOffer = mode { return true }
         if case .sequential(let current) = mode, current == .whereApplying {
             return true
         }
@@ -186,6 +194,11 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
         let persistedMode: SNAPApplicationDraftStore.PersistedMode
         var sequentialSection: SNAPApplicationSection?
         switch mode {
+        case .idScanOffer:
+            // Persist as sequential at the first section so a kill-and-
+            // resume returns to whereApplying (the ID offer is ephemeral).
+            persistedMode = .sequential
+            sequentialSection = .whereApplying
         case .sequential(let current):
             persistedMode = .sequential
             sequentialSection = current
@@ -250,6 +263,23 @@ struct SNAPApplicationFlowOrchestratorView: View {
             )
         } else {
             switch viewModel.mode {
+            case .idScanOffer:
+                SNAPIDScanOfferView(
+                    language: language,
+                    onScanComplete: { image, dateOfBirth in
+                        if let dob = dateOfBirth {
+                            viewModel.draft.applicantAge.dateOfBirth = dob
+                        }
+                        if let image {
+                            viewModel.draft.documentsChecklist.capturedDocuments.insert(.photoID)
+                            viewModel.draft.documentsChecklist.documentsAvailable.insert(.photoID)
+                            SNAPCapturedDocumentStore.save(image, as: .photoID)
+                        }
+                        viewModel.finishIDScanOffer()
+                    },
+                    onSkip: { viewModel.finishIDScanOffer() },
+                    onExit: onDismiss
+                )
             case .sequential(let section), .editing(let section):
                 flow(for: section)
             case .review:
@@ -368,7 +398,10 @@ struct SNAPApplicationFlowOrchestratorView: View {
         case .documentsChecklist:
             voiceWrap(.documentsChecklist) {
                 SNAPDocumentsChecklistFlowView(
-                    viewModel: SNAPDocumentsChecklistFlowViewModel(answers: viewModel.draft.documentsChecklist),
+                    viewModel: SNAPDocumentsChecklistFlowViewModel(
+                        answers: viewModel.draft.documentsChecklist,
+                        draft: viewModel.draft
+                    ),
                     language: language,
                     onComplete: { answers in
                         viewModel.draft.documentsChecklist = answers
@@ -406,6 +439,10 @@ struct SNAPApplicationFlowOrchestratorView: View {
     private func handleExit() {
         if case .editing = viewModel.mode {
             viewModel.exitCurrentSection()
+            return
+        }
+        if case .idScanOffer = viewModel.mode {
+            onDismiss()
             return
         }
         if viewModel.isAtFirstSectionInSequence {

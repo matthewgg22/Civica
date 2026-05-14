@@ -18,6 +18,8 @@ struct CivicaEntryView: View {
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
 
+    @State private var persistedStateCode: String? = SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
+
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
     }
@@ -41,16 +43,8 @@ struct CivicaEntryView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(CivicaColors.paper.ignoresSafeArea())
+        .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text(CivicaEntryStrings.eyebrow.value(in: language))
-                    .font(CivicaTypography.captionStrong)
-                    .foregroundStyle(CivicaColors.graphite)
-                    .textCase(.uppercase)
-                    .kerning(1.2)
-            }
-        }
     }
 
     // MARK: - Estimator tile
@@ -138,20 +132,40 @@ struct CivicaEntryView: View {
     // MARK: - SNAP primary button
 
     private var snapPrimaryButton: some View {
-        NavigationLink {
-            CivicaSNAPFlowView(language: language)
-        } label: {
-            Text(CivicaEntryStrings.snapTitle.value(in: language))
-                .font(CivicaTypography.subheadStrong)
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, CivicaSpacing.sm)
-                .background(Capsule().fill(CivicaColors.brickPrimary))
+        VStack(spacing: CivicaSpacing.xs) {
+            NavigationLink {
+                CivicaSNAPFlowView(language: language)
+            } label: {
+                Text(CivicaEntryStrings.snapTitle.value(in: language))
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, CivicaSpacing.sm)
+                    .background(Capsule().fill(CivicaColors.brickPrimary))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(
+                "\(CivicaEntryStrings.snapTitle.value(in: language)). \(CivicaEntryStrings.snapSubtitle.value(in: language))"
+            )
+
+            if let agency = persistedAgencyLine {
+                Text(agency)
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .accessibilityHidden(true)
+            }
         }
-        .buttonStyle(.plain)
-        .accessibilityLabel(
-            "\(CivicaEntryStrings.snapTitle.value(in: language)). \(CivicaEntryStrings.snapSubtitle.value(in: language))"
-        )
+        .onAppear {
+            persistedStateCode = SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
+        }
+    }
+
+    private var persistedAgencyLine: String? {
+        guard let code = persistedStateCode, !code.isEmpty else { return nil }
+        let agency = SNAPAgencyDirectory.agencyFullName(for: code, language: language)
+        guard !agency.hasPrefix("your state") else { return nil }
+        return agency
     }
 
     // MARK: - Find help tile
@@ -231,10 +245,6 @@ struct CivicaEntryView: View {
 }
 
 enum CivicaEntryStrings {
-    static let eyebrow = CivicaText(
-        "Civica",
-        es: "Civica"
-    )
     static let title = CivicaText(
         "Apply for help with food.",
         es: "Solicita ayuda con la comida."
@@ -248,8 +258,8 @@ enum CivicaEntryStrings {
         es: "Solicitar SNAP"
     )
     static let snapSubtitle = CivicaText(
-        "CalFresh / SNAP food assistance — typically about 15 minutes.",
-        es: "Asistencia alimentaria de CalFresh / SNAP — usualmente unos 15 minutos."
+        "SNAP food assistance — typically about 15 minutes.",
+        es: "Asistencia alimentaria de SNAP — usualmente unos 15 minutos."
     )
     static let findHelpTitle = CivicaText(
         "Find help near you",

@@ -165,7 +165,7 @@ struct FindHelpRootView: View {
                             HStack(spacing: 6) {
                                 Image(systemName: "arrow.clockwise")
                                     .font(.system(size: 13, weight: .semibold))
-                                Text("Search this area")
+                                Text(SNAPGenericStrings.searchThisArea.value(in: language))
                                     .font(CivicaTypography.footnoteStrong)
                             }
                             .foregroundStyle(CivicaColors.ink)

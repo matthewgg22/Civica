@@ -32,14 +32,20 @@ final class SNAPDocumentsChecklistFlowViewModel: ObservableObject {
     @Published var answers: SNAPDocumentsChecklistAnswers
     @Published var pendingExtraction: PendingExtraction?
 
+    /// The document types that are relevant given the user's answers.
+    /// Computed once at init from the draft so the list is stable
+    /// while the user is on this screen.
+    let relevantDocuments: [SNAPDocumentType]
+
     struct PendingExtraction: Identifiable {
         let id = UUID()
         let documentType: SNAPDocumentType
         let result: SNAPExtractionResult
     }
 
-    init(answers: SNAPDocumentsChecklistAnswers = .init()) {
+    init(answers: SNAPDocumentsChecklistAnswers = .init(), draft: SNAPApplicationDraft = .init()) {
         self.answers = answers
+        self.relevantDocuments = SNAPDocumentType.relevant(for: draft)
     }
 
     func toggle(_ document: SNAPDocumentType) {
@@ -146,7 +152,7 @@ struct SNAPDocumentsChecklistFlowView: View {
             language: language
         ) {
             VStack(spacing: CivicaSpacing.sm) {
-                ForEach(SNAPDocumentType.allCases) { document in
+                ForEach(viewModel.relevantDocuments) { document in
                     checklistRow(for: document)
                 }
             }
@@ -161,7 +167,7 @@ struct SNAPDocumentsChecklistFlowView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(item: $documentBeingCaptured) { document in
+        .fullScreenCover(item: $documentBeingCaptured) { document in
             SNAPDocumentCameraView(
                 onCaptured: { image, quality in
                     viewModel.recordCapture(image, for: document)
