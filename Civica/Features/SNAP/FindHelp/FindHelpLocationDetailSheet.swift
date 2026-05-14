@@ -123,13 +123,13 @@ struct FindHelpLocationDetailSheet: View {
     @ViewBuilder
     private var categoryBadge: some View {
         if location.resolvedRecordKind == .ebtRetailer {
-            Image(systemName: FindHelpAnnotationView.glyphSymbolName(for: location))
+            Image(systemName: FindHelpPinPalette.glyphSymbolName(for: location))
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(CivicaColors.onPrimaryText)
                 .frame(width: 28, height: 28)
                 .background(
                     Circle().fill(
-                        Color(uiColor: FindHelpAnnotationView.pinColor(for: location))
+                        Color(uiColor: FindHelpPinPalette.color(for: location))
                     )
                 )
         } else {

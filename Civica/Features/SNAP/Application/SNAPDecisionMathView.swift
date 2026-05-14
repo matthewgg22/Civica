@@ -101,17 +101,6 @@ struct SNAPDecisionMathView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle(SNAPDecisionMathStrings.pageTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            if let onContinue {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(SNAPDecisionMathStrings.skipToPacket.value(in: language)) {
-                        onContinue()
-                    }
-                    .font(CivicaTypography.subhead)
-                    .foregroundStyle(CivicaColors.brickPrimary)
-                }
-            }
-        }
     }
 
     // MARK: - Sections

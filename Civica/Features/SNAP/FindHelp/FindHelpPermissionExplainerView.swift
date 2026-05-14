@@ -85,7 +85,7 @@ struct FindHelpPermissionExplainerView: View {
     private var whatWeDontDoCard: some View {
         explainerCard(
             eyebrow: FindHelpStrings.permissionDontEyebrow.value(in: language),
-            body: FindHelpStrings.permissionDontBody(language: language),
+            body: FindHelpStrings.permissionDontBody.value(in: language),
             accent: CivicaColors.ink
         )
     }
