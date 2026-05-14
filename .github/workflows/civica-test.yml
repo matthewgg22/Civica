@@ -71,12 +71,34 @@ jobs:
             -quiet \
             build
 
+      - name: Pre-boot test simulator
+        # A freshly-downloaded iOS runtime needs an explicit boot+wait
+        # before xcodebuild test can use it. Without this, xcodebuild
+        # spends ~215s waiting for the sim to respond then exits 65.
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c "
+          import json, sys
+          d = json.load(sys.stdin)
+          for runtime, devices in d['devices'].items():
+              if 'iOS' not in runtime:
+                  continue
+              for dev in devices:
+                  if dev['name'] == 'iPhone 16' and dev.get('isAvailable', False):
+                      print(dev['udid'])
+                      sys.exit(0)
+          sys.exit(1)
+          ")
+          echo "Pre-booting simulator $UDID"
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl bootstatus "$UDID" -b
+          echo "Simulator ready."
+
       - name: Run CivicaTests
         run: |
           # OS=latest lets xcodebuild pick the newest installed iOS
-          # runtime (the one we just downloaded), instead of trying to
-          # match against any older runtime the runner image might
-          # also have cached -- which can wedge sim boot.
+          # runtime (the one we just downloaded). Simulator is already
+          # booted by the pre-boot step so xcodebuild can install and
+          # launch the test bundle immediately.
           # -quiet trims xcbeautify-style line noise; -resultBundlePath
           # gives the upload-artifact step a deterministic source.
           xcodebuild \
