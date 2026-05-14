@@ -16,9 +16,9 @@ import SwiftUI
 // and the router cuts over in one switch commit.
 
 struct SNAPWhereApplyingAnswers: Equatable, Codable {
-    /// Two-letter US state code. Pre-filled to "MA" for the MA-first
-    /// beta — state selection screen removed per PM simplicity review.
-    var stateCode: String? = "MA"
+    /// Two-letter US state code ("MA", "NY", etc.) or "OTHER" when
+    /// the user selected a state Civica doesn't tune for yet.
+    var stateCode: String?
     var housingStatus: HousingStatus?
     /// County name within the active state, when known. CalFresh
     /// is county-administered: the right hotline, the right office,
@@ -36,13 +36,13 @@ struct SNAPWhereApplyingAnswers: Equatable, Codable {
 @MainActor
 final class SNAPWhereApplyingFlowViewModel: ObservableObject {
     enum Step: Int, CaseIterable {
-        case housing
+        case state, housing
 
         var oneBasedIndex: Int { rawValue + 1 }
         static let total = Self.allCases.count
     }
 
-    @Published var step: Step = .housing
+    @Published var step: Step = .state
     @Published var answers: SNAPWhereApplyingAnswers
 
     init(answers: SNAPWhereApplyingAnswers = .init()) {
@@ -63,11 +63,12 @@ final class SNAPWhereApplyingFlowViewModel: ObservableObject {
 
     var canAdvanceFromCurrentStep: Bool {
         switch step {
+        case .state:   return answers.stateCode != nil
         case .housing: return answers.housingStatus != nil
         }
     }
 
-    var isAtFirstStep: Bool { step == .housing }
+    var isAtFirstStep: Bool { step == .state }
     var isAtLastStep: Bool { step == .housing }
 }
 
@@ -99,9 +100,7 @@ struct SNAPWhereApplyingFlowView: View {
                         Image(systemName: viewModel.isAtFirstStep ? "xmark" : "chevron.left")
                             .foregroundStyle(CivicaColors.ink)
                     }
-                    .accessibilityLabel(viewModel.isAtFirstStep
-                        ? CivicaQuestionStrings.closeLabel.value(in: language)
-                        : CivicaQuestionStrings.backLabel.value(in: language))
+                    .accessibilityLabel(CivicaQuestionStrings.backLabel.value(in: language))
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -110,11 +109,39 @@ struct SNAPWhereApplyingFlowView: View {
     @ViewBuilder
     private var currentScreen: some View {
         switch viewModel.step {
+        case .state: stateScreen
         case .housing: housingScreen
         }
     }
 
-    // MARK: - Screen: housing status
+    // MARK: - Screen 1: state
+
+    private var stateScreen: some View {
+        let options = SNAPWhereApplyingStrings.stateOptionsOrdered(language: language)
+        return CivicaQuestionScreen(
+            progress: progress(for: .state),
+            title: SNAPWhereApplyingStrings.stateTitle.value(in: language),
+            helper: SNAPWhereApplyingStrings.stateHelper.value(in: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            CivicaQuestionChoices(
+                options: options.map(\.label),
+                selection: Binding(
+                    get: {
+                        options.first(where: { $0.code == viewModel.answers.stateCode })?.label
+                    },
+                    set: { label in
+                        viewModel.answers.stateCode = options.first(where: { $0.label == label })?.code
+                    }
+                )
+            )
+        }
+    }
+
+    // MARK: - Screen 2: housing status
 
     private var housingScreen: some View {
         let options = HousingStatus.allCases
@@ -127,38 +154,21 @@ struct SNAPWhereApplyingFlowView: View {
             onPrimary: advanceOrComplete,
             language: language
         ) {
-            VStack(alignment: .leading, spacing: CivicaSpacing.md) {
-                CivicaQuestionChoices(
-                    options: options.map { SNAPWhereApplyingStrings.housingLabel(for: $0, language: language) },
-                    selection: Binding(
-                        get: {
-                            viewModel.answers.housingStatus.map {
-                                SNAPWhereApplyingStrings.housingLabel(for: $0, language: language)
-                            }
-                        },
-                        set: { label in
-                            viewModel.answers.housingStatus = options.first { option in
-                                SNAPWhereApplyingStrings.housingLabel(for: option, language: language) == label
-                            }
+            CivicaQuestionChoices(
+                options: options.map { SNAPWhereApplyingStrings.housingLabel(for: $0, language: language) },
+                selection: Binding(
+                    get: {
+                        viewModel.answers.housingStatus.map {
+                            SNAPWhereApplyingStrings.housingLabel(for: $0, language: language)
                         }
-                    )
-                )
-                if viewModel.answers.housingStatus == .unhoused {
-                    HStack(alignment: .top, spacing: CivicaSpacing.sm) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(CivicaColors.accentTeal)
-                            .accessibilityHidden(true)
-                        Text(SNAPWhereApplyingStrings.unhousedNotice.value(in: language))
-                            .font(CivicaTypography.footnoteStrong)
-                            .foregroundStyle(CivicaColors.ink)
-                            .fixedSize(horizontal: false, vertical: true)
+                    },
+                    set: { label in
+                        viewModel.answers.housingStatus = options.first { option in
+                            SNAPWhereApplyingStrings.housingLabel(for: option, language: language) == label
+                        }
                     }
-                    .padding(CivicaSpacing.md)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(CivicaColors.tealSurface)
-                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
-                }
-            }
+                )
+            )
         }
     }
 
@@ -232,11 +242,6 @@ enum SNAPWhereApplyingStrings {
     static let housingHelper = CivicaText(
         "This shapes which SNAP deductions can apply. It doesn't disqualify anyone.",
         es: "Esto afecta qué deducciones de SNAP pueden aplicarse. No descalifica a nadie."
-    )
-
-    static let unhousedNotice = CivicaText(
-        "You can still apply for SNAP without a fixed address. SNAP doesn't require a permanent home — a shelter, food pantry, or caseworker can serve as your mailing address.",
-        es: "Puedes solicitar SNAP aunque no tengas una dirección fija. SNAP no requiere un hogar permanente — un refugio, despensa o trabajador social puede servir como dirección postal."
     )
 
     static func housingLabel(for status: HousingStatus, language: CivicaLanguage) -> String {

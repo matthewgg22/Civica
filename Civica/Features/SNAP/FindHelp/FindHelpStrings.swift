@@ -63,33 +63,6 @@ enum FindHelpStrings {
         es: "Usar un código postal"
     )
 
-    // MARK: - Zip-code fallback path
-
-    static let zipFallbackEyebrow = CivicaText(
-        "No location sharing",
-        es: "Sin compartir ubicación"
-    )
-    static let zipFallbackPrompt = CivicaText(
-        "Enter a zip code and we'll show help near it.",
-        es: "Ingresa un código postal y te mostraremos ayuda cerca de él."
-    )
-    static let zipFallbackFieldLabel = CivicaText(
-        "Zip code",
-        es: "Código postal"
-    )
-    static let zipFallbackSearchCTA = CivicaText(
-        "Search this zip code",
-        es: "Buscar este código postal"
-    )
-    static let zipFallbackInvalid = CivicaText(
-        "Enter a 5-digit zip code.",
-        es: "Ingresa un código postal de 5 dígitos."
-    )
-    static let zipFallbackNotFound = CivicaText(
-        "We couldn't find that zip code. Check it and try again.",
-        es: "No pudimos encontrar ese código postal. Revísalo e inténtalo de nuevo."
-    )
-
     // MARK: - Detail sheet polish (board C)
 
     static let detailEyebrow = CivicaText(

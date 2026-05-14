@@ -26,16 +26,22 @@ final class SNAPApplicationStatusStore: ObservableObject {
     /// the cost-of-delay countdown card and the 24h-before local
     /// notification. Nil until the user enters it; nil after reset.
     @Published private(set) var interviewScheduledFor: Date?
-    /// When the user first tapped "Open DTA Connect" from the packet screen.
-    /// Nil until that action fires. Drives the intermediate banner between
-    /// packet-ready and user-confirmed-submission states.
-    @Published private(set) var dtaConnectOpenedAt: Date?
 
+    // Keys used for UserDefaults persistence. Defined here rather than
+    // @AppStorage so the wrapping ObservableObject can re-emit on
+    // change without each SwiftUI view re-reading defaults directly.
+    //
+    // Note: the eligibility-result payload moved to Keychain (per
+    // OBBBA audit Q11). The legacy UserDefaults key is read once
+    // during init for migration, then permanently deleted. App
+    // launch instantiates this store once via
+    // CivicaUserData.runLaunchTimeMigrations, so the migration runs
+    // even on installs that never visit a SNAP screen during the
+    // first launch after upgrade.
     private let statusKey = "co.civica.applicationStatus"
     private let milestonesKey = "co.civica.applicationMilestones"
     static let legacyEligibilityResultUserDefaultsKey = "co.civica.eligibilityResult"
     private let interviewDateKey = "co.civica.interviewScheduledFor"
-    private let dtaConnectOpenedKey = "co.civica.dtaConnectOpenedAt"
 
     init() {
         let defaults = UserDefaults.standard
@@ -74,7 +80,6 @@ final class SNAPApplicationStatusStore: ObservableObject {
         }
 
         self.interviewScheduledFor = defaults.object(forKey: interviewDateKey) as? Date
-        self.dtaConnectOpenedAt = defaults.object(forKey: dtaConnectOpenedKey) as? Date
     }
 
     /// Advance to a new status; records the timestamp as a milestone.
@@ -106,14 +111,6 @@ final class SNAPApplicationStatusStore: ObservableObject {
         persist()
     }
 
-    /// Record the first time the user opens DTA Connect from the packet screen.
-    /// Safe to call multiple times — only the first call records a timestamp.
-    func recordDTAConnectOpened(on date: Date = Date()) {
-        guard dtaConnectOpenedAt == nil else { return }
-        dtaConnectOpenedAt = date
-        persist()
-    }
-
     /// Reset the application back to not-started. Used by "start over"
     /// flows and after the user explicitly deletes their application.
     func reset() {
@@ -121,7 +118,6 @@ final class SNAPApplicationStatusStore: ObservableObject {
         milestones.removeAll()
         eligibilityResult = nil
         interviewScheduledFor = nil
-        dtaConnectOpenedAt = nil
         persist()
     }
 
@@ -154,12 +150,6 @@ final class SNAPApplicationStatusStore: ObservableObject {
             defaults.set(interviewDate, forKey: interviewDateKey)
         } else {
             defaults.removeObject(forKey: interviewDateKey)
-        }
-
-        if let opened = dtaConnectOpenedAt {
-            defaults.set(opened, forKey: dtaConnectOpenedKey)
-        } else {
-            defaults.removeObject(forKey: dtaConnectOpenedKey)
         }
     }
 }

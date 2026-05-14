@@ -42,16 +42,8 @@ struct CivicaEntryView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(CivicaColors.paper.ignoresSafeArea())
+        .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text(CivicaEntryStrings.eyebrow.value(in: language))
-                    .font(CivicaTypography.captionStrong)
-                    .foregroundStyle(CivicaColors.graphite)
-                    .textCase(.uppercase)
-                    .kerning(1.2)
-            }
-        }
     }
 
     // MARK: - Estimator tile
@@ -124,6 +116,11 @@ struct CivicaEntryView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+            Text(CivicaEntryStrings.eyebrow.value(in: language))
+                .font(CivicaTypography.captionStrong)
+                .foregroundStyle(CivicaColors.graphite)
+                .textCase(.uppercase)
+                .kerning(1.2)
             Text(CivicaEntryStrings.title.value(in: language))
                 .font(CivicaTypography.pageTitle)
                 .foregroundStyle(CivicaColors.ink)
