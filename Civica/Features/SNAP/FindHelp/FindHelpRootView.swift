@@ -19,8 +19,9 @@ struct FindHelpRootView: View {
     /// after they've made the call.
     @State private var preferZipFallback: Bool = false
     /// Shown after a user-initiated map pan. Tapping re-searches at
-    /// the new map center instead of the device location.
-    @State private var showSearchThisArea: Bool = false
+    /// the new map center instead of the device location. Visibility is
+    /// derived from `searchAreaCenter != nil`; arming is gated against
+    /// no-op re-arms on continued panning.
     @State private var searchAreaCenter: CLLocationCoordinate2D?
 
     /// One-time first-launch onboarding card visibility. Persisted
@@ -143,18 +144,21 @@ struct FindHelpRootView: View {
                     selectedLocationId: store.selectedLocation?.id,
                     onSelect: { store.selectLocation($0) },
                     onRegionChanged: { center in
-                        searchAreaCenter = center
+                        guard searchAreaCenter == nil else {
+                            searchAreaCenter = center
+                            return
+                        }
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                            showSearchThisArea = true
+                            searchAreaCenter = center
                         }
                     }
                 )
                 .ignoresSafeArea(edges: .all)
                 .overlay(alignment: .top) {
-                    if showSearchThisArea, let center = searchAreaCenter {
+                    if let center = searchAreaCenter {
                         Button {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                showSearchThisArea = false
+                                searchAreaCenter = nil
                             }
                             store.searchNearby(
                                 lat: center.latitude,

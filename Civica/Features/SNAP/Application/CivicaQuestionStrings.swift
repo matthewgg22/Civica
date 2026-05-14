@@ -13,7 +13,6 @@ enum CivicaQuestionStrings {
     static let continueLabel = CivicaText("Continue", es: "Continuar")
     static let closeLabel = CivicaText("Close", es: "Cerrar")
     static let backLabel = CivicaText("Back", es: "Atrás")
-    static let closeLabel = CivicaText("Close", es: "Cerrar")
     static let skipLabel = CivicaText("Skip for now", es: "Omitir por ahora")
     static let notSureLabel = CivicaText("I'm not sure", es: "No estoy seguro")
     static let yesLabel = CivicaText("Yes", es: "Sí")

@@ -141,10 +141,12 @@ struct FindHelpMapView: UIViewRepresentable {
         /// results fans in rather than all appearing simultaneously.
         func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
             let pins = views.filter { !($0.annotation is MKUserLocation) }
+            // Cap the per-pin delay so dense regions (CA can drop hundreds
+            // of pins at once) don't trickle in for tens of seconds.
             for (index, view) in pins.enumerated() {
                 view.alpha = 0
                 view.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
-                let delay = Double(index) * 0.025
+                let delay = Double(min(index, 12)) * 0.025
                 UIView.animate(
                     withDuration: 0.38,
                     delay: delay,
