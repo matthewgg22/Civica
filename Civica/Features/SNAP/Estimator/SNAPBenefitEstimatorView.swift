@@ -14,8 +14,9 @@ struct SNAPBenefitEstimatorView: View {
         var householdSize: Int = 2
         var elderlyOrDisabled: Bool = false
         var grossMonthlyIncome: Decimal = 1_800
+        var hasEmploymentIncome: Bool = true
         var monthlyRent: Decimal = 1_400
-        var paysUtilitiesSeparately: Bool = true
+        var suaTier: SUATier = .heatingCooling
     }
 
     let onApply: () -> Void
@@ -38,8 +39,9 @@ struct SNAPBenefitEstimatorView: View {
             householdSize: seed.householdSize,
             elderlyOrDisabled: seed.elderlyOrDisabled,
             grossMonthlyIncome: seed.grossMonthlyIncome,
+            hasEmploymentIncome: seed.hasEmploymentIncome,
             monthlyRent: seed.monthlyRent,
-            paysUtilitiesSeparately: seed.paysUtilitiesSeparately
+            suaTier: seed.suaTier
         ))
     }
 
@@ -510,8 +512,9 @@ struct SNAPBenefitEstimatorView_Previews: PreviewProvider {
                         householdSize: 2,
                         elderlyOrDisabled: false,
                         grossMonthlyIncome: 4_800,
+                        hasEmploymentIncome: true,
                         monthlyRent: 1_200,
-                        paysUtilitiesSeparately: true
+                        suaTier: .heatingCooling
                     )
                 )
             }

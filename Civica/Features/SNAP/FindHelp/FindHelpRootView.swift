@@ -85,14 +85,14 @@ struct FindHelpRootView: View {
             if store.isLoading || !store.locations.isEmpty {
                 authorizedContent
             } else {
-                FindHelpZipFallbackView(store: store, messageKey: "find_help.zip_fallback.prompt")
+                FindHelpZipFallbackView(store: store, language: language)
             }
         } else {
             switch locationManager.authorizationStatus {
             case .authorizedWhenInUse, .authorizedAlways:
                 authorizedContent
             case .denied, .restricted:
-                FindHelpZipFallbackView(store: store, messageKey: "find_help.zip_fallback.prompt")
+                FindHelpZipFallbackView(store: store, language: language)
             case .notDetermined:
                 // HANDOFF map · B1 — the Civica explainer runs before
                 // the iOS dialog, not as a wait-spinner after it.
@@ -102,7 +102,7 @@ struct FindHelpRootView: View {
                     onUseZipInstead: { preferZipFallback = true }
                 )
             @unknown default:
-                FindHelpZipFallbackView(store: store, messageKey: "find_help.zip_fallback.prompt")
+                FindHelpZipFallbackView(store: store, language: language)
             }
         }
     }

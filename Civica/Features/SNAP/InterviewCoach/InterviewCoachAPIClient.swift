@@ -16,7 +16,14 @@ import os
 // project, calls will fail with 404 -- PracticeSessionViewModel surfaces
 // that as `.failed`, so the UI is exercisable in SNAP_DEV builds
 // without a working backend.
-final class InterviewCoachAPIClient {
+// Abstraction PracticeSessionViewModel depends on so tests (and
+// SNAP_DEV builds without a live backend) can inject a stub.
+protocol InterviewCoachProviding {
+    func postTurn(_ payload: InterviewTurnRequestDTO) async throws -> InterviewTurnResponseDTO
+    func postScore(_ payload: InterviewScoreRequestDTO) async throws -> InterviewScoreResponseDTO
+}
+
+final class InterviewCoachAPIClient: InterviewCoachProviding {
     enum CoachAPIError: Error, LocalizedError {
         case missingBaseURL(String)
         case http(status: Int, body: String)

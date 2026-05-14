@@ -99,6 +99,26 @@ enum CivicaNotificationTemplates {
         }
     }
 
+    /// Resolve a template string for display. The canonical templates
+    /// were authored with Massachusetts DTA references (the prior
+    /// launch state); this swaps those for the active state's agency
+    /// copy via SNAPAgencyDirectory so the preview surface reads
+    /// correctly for CalFresh users. Server-substituted `{token}`
+    /// placeholders are left intact — they're filled at send time.
+    static func render(
+        _ text: CivicaText,
+        stateCode: String?,
+        language: CivicaLanguage
+    ) -> String {
+        var rendered = text.value(in: language)
+        let agencyFull = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
+        let agencyShort = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
+        rendered = rendered.replacingOccurrences(of: "DTA de Massachusetts", with: agencyFull)
+        rendered = rendered.replacingOccurrences(of: "Massachusetts DTA", with: agencyFull)
+        rendered = rendered.replacingOccurrences(of: "MA EBT", with: "\(agencyShort) EBT")
+        return rendered
+    }
+
     // MARK: - Application submitted
 
     private static let applicationSubmittedEmail = CivicaNotificationTemplate(
