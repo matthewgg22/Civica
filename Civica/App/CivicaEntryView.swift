@@ -218,7 +218,7 @@ struct CivicaEntryView: View {
             Image(imageName)
                 .resizable()
                 .scaledToFit()
-                .padding(10)
+                .padding(7)
                 .frame(width: 48, height: 48)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
