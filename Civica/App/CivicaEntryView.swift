@@ -29,6 +29,7 @@ struct CivicaEntryView: View {
                 snapPrimaryButton
                 VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                     estimatorTile
+                    ebtBalanceTile
                     findHelpTile
                     if InterviewCoachFeatureFlag.isEnabled {
                         interviewCoachTile
@@ -154,6 +155,25 @@ struct CivicaEntryView: View {
         )
     }
 
+    // MARK: - EBT balance tile
+
+    // Propel-style balance dashboard. Demo scope: California only,
+    // fixture-backed — no real state EBT integration. See
+    // EBTBalanceRootView for the phased build-out.
+    private var ebtBalanceTile: some View {
+        NavigationLink {
+            EBTBalanceRootView()
+        } label: {
+            tileCard(
+                icon: "creditcard.fill",
+                iconAccent: CivicaColors.accentTeal,
+                title: CivicaEntryStrings.ebtBalanceTitle.value(in: language),
+                subtitle: CivicaEntryStrings.ebtBalanceSubtitle.value(in: language)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
     // MARK: - Find help tile
 
     private var findHelpTile: some View {
@@ -250,6 +270,14 @@ enum CivicaEntryStrings {
     static let snapSubtitle = CivicaText(
         "CalFresh / SNAP food assistance — typically about 15 minutes.",
         es: "Asistencia alimentaria de CalFresh / SNAP — usualmente unos 15 minutos."
+    )
+    static let ebtBalanceTitle = CivicaText(
+        "Check EBT balance",
+        es: "Consultar saldo de EBT"
+    )
+    static let ebtBalanceSubtitle = CivicaText(
+        "See your CalFresh balance, recent activity, and next deposit.",
+        es: "Consulta tu saldo de CalFresh, actividad reciente y próximo depósito."
     )
     static let findHelpTitle = CivicaText(
         "Find help near you",
