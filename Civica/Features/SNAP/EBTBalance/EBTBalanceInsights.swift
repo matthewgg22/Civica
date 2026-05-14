@@ -53,6 +53,15 @@ struct EBTBalanceInsights {
         return calendar.date(byAdding: .day, value: daysLeft, to: Date())
     }
 
+    /// Date the current balance would be expunged if the card goes
+    /// completely unused. Federal SNAP rule: an EBT account with no
+    /// activity for 274 days is aged off. Counted from the most recent
+    /// transaction (or last sync if there's no history).
+    var benefitsGoodThrough: Date {
+        let lastActivity = account.transactions.map(\.date).max() ?? account.lastUpdated
+        return Calendar.current.date(byAdding: .day, value: 274, to: lastActivity) ?? lastActivity
+    }
+
     /// The balance immediately after the transaction at `index` posted
     /// (transactions are newest-first, so this subtracts every newer
     /// transaction from the current balance).

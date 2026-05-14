@@ -63,15 +63,7 @@ struct EBTTransactionDetailSheet: View {
 
     private var header: some View {
         HStack(spacing: CivicaSpacing.md) {
-            Image(systemName: transaction.category.iconName)
-                .font(.system(size: 22, weight: .semibold))
-                .foregroundStyle(transaction.isDeposit ? CivicaColors.accentTeal : CivicaColors.brickPrimary)
-                .frame(width: 48, height: 48)
-                .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                        .fill((transaction.isDeposit ? CivicaColors.accentTeal : CivicaColors.brickPrimary).opacity(0.12))
-                )
-                .accessibilityHidden(true)
+            avatar
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(EBTBalanceStrings.detailSheetTitle.value(in: language))
                     .font(CivicaTypography.captionStrong)
@@ -84,6 +76,27 @@ struct EBTTransactionDetailSheet: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
+    }
+
+    // Merchant-monogram avatar, matching the activity-row treatment;
+    // deposits get a distinct down-arrow.
+    private var avatar: some View {
+        let tint = transaction.isDeposit ? CivicaColors.accentTeal : CivicaColors.brickPrimary
+        return ZStack {
+            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                .fill(tint.opacity(0.12))
+            if transaction.isDeposit {
+                Image(systemName: "arrow.down")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(tint)
+            } else {
+                Text(transaction.monogram)
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(tint)
+            }
+        }
+        .frame(width: 48, height: 48)
+        .accessibilityHidden(true)
     }
 
     private var categoryValue: some View {

@@ -65,6 +65,19 @@ struct EBTTransaction: Equatable, Identifiable {
     let category: EBTTransactionCategory
 
     var isDeposit: Bool { amount > 0 }
+
+    /// 1–2 character merchant monogram for the activity-row avatar.
+    /// Real banking apps fall back to this when they don't have a
+    /// brand logo — it reads far more like a real statement than a
+    /// repeated generic glyph. "Walmart Supercenter" → "WS",
+    /// "7-Eleven" → "7", "Target" → "T".
+    var monogram: String {
+        let words = merchant
+            .split(whereSeparator: { !$0.isLetter && !$0.isNumber })
+            .prefix(2)
+        let initials = words.compactMap { $0.first }.map(String.init)
+        return initials.joined().uppercased()
+    }
 }
 
 /// A "free or discounted with EBT" perk surfaced on the dashboard.

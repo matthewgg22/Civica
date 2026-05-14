@@ -270,24 +270,43 @@ enum EBTBalanceStrings {
         es: "Desconectar esta tarjeta"
     )
 
-    // MARK: - Demo controls
+    // MARK: - Demo controls (toolbar menu)
 
-    static let demoControlsEyebrow = CivicaText(
-        "Demo controls",
-        es: "Controles de demostración"
-    )
-    static let demoControlsHelp = CivicaText(
-        "These stand in for real-world card activity — tap to see the balance and history update live.",
-        es: "Estos simulan la actividad real de la tarjeta — toca para ver el saldo y el historial actualizarse en vivo."
+    static let demoMenuLabel = CivicaText(
+        "Demo",
+        es: "Demo"
     )
     static let simulatePurchaseButton = CivicaText(
         "Simulate a purchase",
         es: "Simular una compra"
     )
     static let simulateDepositButton = CivicaText(
-        "Simulate a deposit",
-        es: "Simular un depósito"
+        "Simulate this month's deposit",
+        es: "Simular el depósito de este mes"
     )
+    /// Transient "what changed" banner shown on the hero card right
+    /// after a simulated deposit lands. The view interpolates the
+    /// formatted amount.
+    static func depositLandedBanner(amount: String, language: CivicaLanguage) -> String {
+        language == .english
+            ? "Your \(amount) CalFresh deposit landed."
+            : "Tu depósito de CalFresh de \(amount) llegó."
+    }
+
+    // MARK: - Benefits expiration note
+
+    static let expirationEyebrow = CivicaText(
+        "Use it or lose it",
+        es: "Úsalo o piérdelo"
+    )
+    /// "CalFresh removes benefits left unused for 9 months. Keep using
+    /// your card — your balance is good through <date>." The view
+    /// interpolates the formatted month/year.
+    static func expirationBody(goodThrough: String, language: CivicaLanguage) -> String {
+        language == .english
+            ? "CalFresh removes benefits left completely unused for 9 months. Keep using your card — your balance is good through \(goodThrough)."
+            : "CalFresh elimina los beneficios que no se usan durante 9 meses. Sigue usando tu tarjeta — tu saldo es válido hasta \(goodThrough)."
+    }
 
     // MARK: - Demo disclosure
 
