@@ -26,8 +26,8 @@ struct CivicaEntryView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 header
-                snapPrimaryButton
                 VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                    snapTile
                     estimatorTile
                     ebtBalanceTile
                     findHelpTile
@@ -136,23 +136,25 @@ struct CivicaEntryView: View {
         }
     }
 
-    // MARK: - SNAP primary button
+    // MARK: - SNAP tile
 
-    private var snapPrimaryButton: some View {
+    // The home-screen entry points are visually consistent tiles.
+    // "Apply for SNAP" stays first (it's the primary action) but
+    // renders as a tileCard like the others — NOT a capsule pill.
+    // This has regressed repeatedly via unrelated feature commits;
+    // keep it a tile.
+    private var snapTile: some View {
         NavigationLink {
             CivicaSNAPFlowView(language: language)
         } label: {
-            Text(CivicaEntryStrings.snapTitle.value(in: language))
-                .font(CivicaTypography.subheadStrong)
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, CivicaSpacing.sm)
-                .background(Capsule().fill(CivicaColors.brickPrimary))
+            tileCard(
+                icon: "leaf.fill",
+                iconAccent: CivicaColors.brickPrimary,
+                title: CivicaEntryStrings.snapTitle.value(in: language),
+                subtitle: CivicaEntryStrings.snapSubtitle.value(in: language)
+            )
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(
-            "\(CivicaEntryStrings.snapTitle.value(in: language)). \(CivicaEntryStrings.snapSubtitle.value(in: language))"
-        )
     }
 
     // MARK: - EBT balance tile

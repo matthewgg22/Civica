@@ -14,9 +14,8 @@ struct SNAPBenefitEstimatorView: View {
         var householdSize: Int = 2
         var elderlyOrDisabled: Bool = false
         var grossMonthlyIncome: Decimal = 1_800
-        var hasEmploymentIncome: Bool = true
         var monthlyRent: Decimal = 1_400
-        var suaTier: SUATier = .heatingCooling
+        var paysUtilitiesSeparately: Bool = true
     }
 
     let onApply: () -> Void
@@ -39,9 +38,8 @@ struct SNAPBenefitEstimatorView: View {
             householdSize: seed.householdSize,
             elderlyOrDisabled: seed.elderlyOrDisabled,
             grossMonthlyIncome: seed.grossMonthlyIncome,
-            hasEmploymentIncome: seed.hasEmploymentIncome,
             monthlyRent: seed.monthlyRent,
-            suaTier: seed.suaTier
+            paysUtilitiesSeparately: seed.paysUtilitiesSeparately
         ))
     }
 
@@ -54,19 +52,41 @@ struct SNAPBenefitEstimatorView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
-                header
-                inputsSection
-                resultCard
-                applyCTA
-                if case .eligible = outcome {
-                    seeTheMathButton
+        VStack(alignment: .leading, spacing: 0) {
+            // Inputs (+ the math link + disclaimer footnote) scroll
+            // above the pinned result card. Only the live estimate
+            // and the Apply CTA stay always-visible at the bottom —
+            // everything else lives in the scroll area so the
+            // sticky footer doesn't dominate the screen.
+            ScrollView {
+                VStack(alignment: .leading, spacing: CivicaSpacing.md) {
+                    header
+                    inputsSection
+                    // When eligible: combined "See how we calculated
+                    // this · Civica's estimate, state decides." line
+                    // (one tappable row, opens math sheet). When
+                    // ineligible: math sheet doesn't apply, so fall
+                    // back to the plain disclaimer + BBCE soft note.
+                    if case .eligible = outcome {
+                        seeTheMathButton
+                    } else {
+                        Text(SNAPBenefitEstimatorStrings.disclaimerFooter.value(in: language))
+                            .font(CivicaTypography.footnote)
+                            .foregroundStyle(CivicaColors.graphite)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Text(SNAPBenefitEstimatorStrings.bbceSoftNote.value(in: language))
+                            .font(CivicaTypography.footnote)
+                            .foregroundStyle(CivicaColors.graphite)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
-                disclaimerFooter
+                .padding(.horizontal, CivicaSpacing.xl)
+                .padding(.top, CivicaSpacing.lg)
+                .padding(.bottom, CivicaSpacing.md)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(CivicaSpacing.xl)
-            .frame(maxWidth: .infinity, alignment: .leading)
+
+            stickyResultFooter
         }
         .background(CivicaColors.paper.ignoresSafeArea())
         .toolbar {
@@ -94,28 +114,32 @@ struct SNAPBenefitEstimatorView: View {
     // MARK: - Header
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-            Text(SNAPBenefitEstimatorStrings.pageTitle.value(in: language))
-                .font(CivicaTypography.pageTitle)
-                .foregroundStyle(CivicaColors.ink)
-                .accessibilityAddTraits(.isHeader)
-            Text(SNAPBenefitEstimatorStrings.pageSubtitle.value(in: language))
-                .font(CivicaTypography.subhead)
-                .foregroundStyle(CivicaColors.graphite)
-                .fixedSize(horizontal: false, vertical: true)
-        }
+        // Subtitle dropped per UX feedback — the live-update behavior
+        // is now self-evident with the sticky result footer visible
+        // at all times. Title only.
+        Text(SNAPBenefitEstimatorStrings.pageTitle.value(in: language))
+            .font(CivicaTypography.pageTitle)
+            .foregroundStyle(CivicaColors.ink)
+            .accessibilityAddTraits(.isHeader)
     }
 
     // MARK: - Inputs
 
     private var inputsSection: some View {
-        VStack(spacing: CivicaSpacing.md) {
+        VStack(spacing: CivicaSpacing.sm) {
             householdSizeCard
-            elderlyOrDisabledCard
             incomeCard
-            employmentIncomeCard
             rentCard
-            suaTierCard
+            // Both elderly/disabled and utilities are short yes/no
+            // questions with single-tap affordances. Pairing them in
+            // a 2-column row reclaims ~80pt of vertical space without
+            // crowding either question. Each card stays full-width
+            // inside its column so the typography still has room to
+            // breathe.
+            HStack(alignment: .top, spacing: CivicaSpacing.sm) {
+                elderlyOrDisabledCard
+                utilitiesCard
+            }
         }
     }
 
@@ -165,9 +189,11 @@ struct SNAPBenefitEstimatorView: View {
     }
 
     private var elderlyOrDisabledCard: some View {
+        // Lives in the 2-column row; the longer-form helper is
+        // dropped here to keep the card compact. The question
+        // alone is unambiguous at the shortened length.
         inputCard(
-            question: SNAPBenefitEstimatorStrings.elderlyOrDisabledQuestion.value(in: language),
-            helper: SNAPBenefitEstimatorStrings.elderlyOrDisabledHelper.value(in: language)
+            question: SNAPBenefitEstimatorStrings.elderlyOrDisabledQuestion.value(in: language)
         ) {
             yesNoToggle(isOn: $inputs.elderlyOrDisabled)
         }
@@ -182,8 +208,7 @@ struct SNAPBenefitEstimatorView: View {
                 value: $inputs.grossMonthlyIncome,
                 range: SNAPBenefitEstimatorCalculator.incomeSliderRange,
                 step: 50,
-                denominator: language == .english ? "mo" : "mes",
-                a11yLabel: language == .english ? "Monthly gross income, in dollars" : "Ingreso bruto mensual, en dólares"
+                denominator: language == .english ? "mo" : "mes"
             )
         }
     }
@@ -197,34 +222,45 @@ struct SNAPBenefitEstimatorView: View {
                 value: $inputs.monthlyRent,
                 range: SNAPBenefitEstimatorCalculator.rentSliderRange,
                 step: 50,
-                denominator: language == .english ? "mo" : "mes",
-                a11yLabel: language == .english ? "Monthly rent or housing payment, in dollars" : "Pago mensual de renta o vivienda, en dólares"
+                denominator: language == .english ? "mo" : "mes"
             )
         }
     }
 
-    private var employmentIncomeCard: some View {
+    private var utilitiesCard: some View {
+        // Lives in the 2-column row alongside elderlyOrDisabledCard.
+        // Same compact treatment — helper dropped, short question
+        // only.
         inputCard(
-            question: SNAPBenefitEstimatorStrings.employmentIncomeQuestion.value(in: language),
-            helper: SNAPBenefitEstimatorStrings.employmentIncomeHelper.value(in: language)
+            question: SNAPBenefitEstimatorStrings.utilitiesQuestion.value(in: language)
         ) {
-            yesNoToggle(isOn: $inputs.hasEmploymentIncome)
+            yesNoToggle(isOn: $inputs.paysUtilitiesSeparately)
         }
     }
 
-    private var suaTierCard: some View {
-        inputCard(
-            question: SNAPBenefitEstimatorStrings.utilitiesQuestion.value(in: language),
-            helper: SNAPBenefitEstimatorStrings.utilitiesHelper.value(in: language)
-        ) {
-            Picker("", selection: $inputs.suaTier) {
-                Text(SNAPBenefitEstimatorStrings.suaTierHeat.value(in: language)).tag(SUATier.heatingCooling)
-                Text(SNAPBenefitEstimatorStrings.suaTierOther.value(in: language)).tag(SUATier.nonHeating)
-                Text(SNAPBenefitEstimatorStrings.suaTierPhone.value(in: language)).tag(SUATier.phoneOnly)
-                Text(SNAPBenefitEstimatorStrings.suaTierNone.value(in: language)).tag(SUATier.none)
-            }
-            .pickerStyle(.segmented)
-            .labelsHidden()
+    // MARK: - Sticky result footer
+
+    /// Pins ONLY the live result card and the Apply CTA to the
+    /// bottom of the screen. The math link + disclaimer footnote
+    /// live in the scroll area above so the sticky footer stays
+    /// roughly one-third of the screen instead of half. The
+    /// estimator's value-prop is real-time recalculation as the
+    /// user fiddles — keeping just the result + primary action
+    /// in view is enough to deliver that.
+    private var stickyResultFooter: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            resultCard
+            applyCTA
+        }
+        .padding(.horizontal, CivicaSpacing.xl)
+        .padding(.top, CivicaSpacing.sm)
+        .padding(.bottom, CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.paper)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(CivicaColors.hairline)
+                .frame(height: 1)
         }
     }
 
@@ -241,63 +277,65 @@ struct SNAPBenefitEstimatorView: View {
     }
 
     private func eligibleResultCard(monthly: Decimal, annual: Decimal) -> some View {
-        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+        // Compact result card: eyebrow + monthly-and-annual on a
+        // single line. The monthly amount is the focal point
+        // (pageTitle weight + brick primary tint); the annual
+        // rollup trails right-aligned in subhead graphite so it
+        // reads as a quieter "by the way, that's $X a year" without
+        // claiming a whole row to itself.
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(SNAPBenefitEstimatorStrings.resultEyebrow.value(in: language))
                 .font(CivicaTypography.captionStrong)
                 .foregroundStyle(CivicaColors.graphite)
                 .textCase(.uppercase)
                 .kerning(1.2)
 
-            CivicaMoney(
-                amount: monthly,
-                denominator: language == .english ? "mo" : "mes",
-                font: CivicaTypography.pageTitle
-            )
-            .foregroundStyle(CivicaColors.brickPrimary)
+            HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.md) {
+                // Monetary focal point is a *positive outcome* — per
+                // the HANDOFF palette spec, accentTeal is reserved
+                // for "deltas, success, on-target SLA." A SNAP
+                // benefit estimate qualifies as a success signal,
+                // so the dollar amount lands in teal instead of
+                // brick. Brick stays exclusively on tap-able
+                // action affordances (the Apply CTA below).
+                CivicaMoney(
+                    amount: monthly,
+                    denominator: language == .english ? "mo" : "mes",
+                    font: CivicaTypography.pageTitle
+                )
+                .foregroundStyle(CivicaColors.accentTeal)
 
-            HStack(spacing: CivicaSpacing.xs) {
-                Text(SNAPBenefitEstimatorStrings.resultAnnualLabel.value(in: language))
-                    .font(CivicaTypography.subhead)
-                    .foregroundStyle(CivicaColors.graphite)
-                CivicaMoney(amount: annual, font: CivicaTypography.subheadStrong)
-                    .foregroundStyle(CivicaColors.graphite)
-                Text(SNAPBenefitEstimatorStrings.resultAnnualSuffix.value(in: language))
-                    .font(CivicaTypography.subhead)
-                    .foregroundStyle(CivicaColors.graphite)
+                Spacer(minLength: 0)
+
+                HStack(spacing: 2) {
+                    Text(SNAPBenefitEstimatorStrings.resultAnnualLabel.value(in: language))
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.graphite)
+                    CivicaMoney(amount: annual, font: CivicaTypography.footnoteStrong)
+                        .foregroundStyle(CivicaColors.graphite)
+                    Text("/" + (language == .english ? "yr" : "año"))
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.graphite)
+                }
+                .fixedSize()
             }
-
-            Text(eligibleContextLine(monthly: monthly))
-                .font(CivicaTypography.footnote)
-                .foregroundStyle(CivicaColors.ink)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, CivicaSpacing.xs)
-
-            Text(SNAPBenefitEstimatorStrings.resultSoftAssumptionNote.value(in: language))
-                .font(CivicaTypography.footnote)
-                .foregroundStyle(CivicaColors.graphite)
-                .fixedSize(horizontal: false, vertical: true)
-
-            Text(SNAPBenefitEstimatorStrings.resultAbawdNote.value(in: language))
-                .font(CivicaTypography.footnote)
-                .foregroundStyle(CivicaColors.graphite)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, CivicaSpacing.xs)
         }
-        .padding(CivicaSpacing.lg)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(CivicaColors.brickSurface)
+        // tealSurface (cool pastel wash) instead of brickSurface so
+        // the result card reads as "positive outcome" rather than
+        // sharing the warm brand hue with every CTA on the screen.
+        .background(CivicaColors.tealSurface)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
     }
 
-    private func eligibleContextLine(monthly: Decimal) -> String {
-        if inputs.householdSize <= 2 && monthly == 24 {
-            return SNAPBenefitEstimatorStrings.resultContextMinBenefit.value(in: language)
-        }
-        return SNAPBenefitEstimatorStrings.resultContextEligible.value(in: language)
-    }
-
     private func ineligibleResultCard(reason: SNAPBenefitEstimatorIneligibilityReason) -> some View {
-        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+        // Compact mirror of the eligible card. Headline + one-line
+        // context. The BBCE soft note (worth-applying-anyway encouragement)
+        // moves to the scroll area above so it doesn't double the
+        // height of the sticky footer when the user's inputs land
+        // them in the ineligible band.
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(SNAPBenefitEstimatorStrings.resultEyebrow.value(in: language))
                 .font(CivicaTypography.captionStrong)
                 .foregroundStyle(CivicaColors.graphite)
@@ -312,14 +350,8 @@ struct SNAPBenefitEstimatorView: View {
                 .font(CivicaTypography.footnote)
                 .foregroundStyle(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
-
-            Text(SNAPBenefitEstimatorStrings.bbceSoftNote.value(in: language))
-                .font(CivicaTypography.footnote)
-                .foregroundStyle(CivicaColors.graphite)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, CivicaSpacing.xs)
         }
-        .padding(CivicaSpacing.lg)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.brickSurface)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
@@ -351,23 +383,40 @@ struct SNAPBenefitEstimatorView: View {
         }
     }
 
+    /// Combined math link + disclaimer on a single line per UX
+    /// feedback. The math link reads as the tappable foreground;
+    /// the disclaimer trails after a middot in graphite footnote
+    /// type. Tapping anywhere on the row opens the math sheet —
+    /// the disclaimer half is informational only but sharing the
+    /// hit target avoids a second tap target competing for thumb.
     private var seeTheMathButton: some View {
         Button {
             showsMath = true
         } label: {
-            Text(SNAPBenefitEstimatorStrings.seeTheMathLink.value(in: language))
-                .font(CivicaTypography.subheadStrong)
-                .foregroundStyle(CivicaColors.brickPrimary)
-                .frame(maxWidth: .infinity, minHeight: 44)
+            (
+                Text(SNAPBenefitEstimatorStrings.seeTheMathLink.value(in: language))
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundColor(CivicaColors.brickPrimary)
+                + Text("  ·  ")
+                    .font(CivicaTypography.footnote)
+                    .foregroundColor(CivicaColors.graphite)
+                + Text(SNAPBenefitEstimatorStrings.disclaimerFooter.value(in: language))
+                    .font(CivicaTypography.footnote)
+                    .foregroundColor(CivicaColors.graphite)
+            )
+            .multilineTextAlignment(.leading)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("\(SNAPBenefitEstimatorStrings.seeTheMathLink.value(in: language)). \(SNAPBenefitEstimatorStrings.disclaimerFooter.value(in: language))")
     }
 
+    /// Disclaimer is now merged into seeTheMathButton. Kept as an
+    /// empty stub so any external caller that expected this symbol
+    /// still compiles; the body returns an empty view.
     private var disclaimerFooter: some View {
-        Text(SNAPBenefitEstimatorStrings.disclaimerFooter.value(in: language))
-            .font(CivicaTypography.footnote)
-            .foregroundStyle(CivicaColors.graphite)
-            .fixedSize(horizontal: false, vertical: true)
+        EmptyView()
     }
 
     // MARK: - Synthesized result for the math-expansion sheet
@@ -391,24 +440,30 @@ struct SNAPBenefitEstimatorView: View {
 
     // MARK: - Building blocks
 
+    /// `helper` is optional. The two yes/no cards in the merged
+    /// 2-column row drop their helpers to keep each side compact;
+    /// the slider / stepper cards keep theirs since the input
+    /// expression itself doesn't telegraph the answer's meaning.
     private func inputCard<Content: View>(
         question: String,
-        helper: String,
+        helper: String? = nil,
         @ViewBuilder content: () -> Content
     ) -> some View {
-        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(question)
                 .font(CivicaTypography.sectionHeader)
                 .foregroundStyle(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
-            Text(helper)
-                .font(CivicaTypography.footnote)
-                .foregroundStyle(CivicaColors.graphite)
-                .fixedSize(horizontal: false, vertical: true)
+            if let helper, !helper.isEmpty {
+                Text(helper)
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             content()
                 .padding(.top, CivicaSpacing.xs)
         }
-        .padding(CivicaSpacing.lg)
+        .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.surfacePrimary)
         .overlay(
@@ -418,6 +473,12 @@ struct SNAPBenefitEstimatorView: View {
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
     }
 
+    /// Utility +/- controls — demoted from brick to graphite so the
+    /// Apply CTA below is the only brick action on the screen. The
+    /// stepper is a utility control, not a primary action; tinting
+    /// it brick competed with the CTA for the user's eye. The faint
+    /// surface fill is now a hairline-tinted neutral so the affordance
+    /// reads as "tap-able utility" without claiming brand color.
     private func stepperButton(
         systemName: String,
         a11yLabel: String,
@@ -427,11 +488,11 @@ struct SNAPBenefitEstimatorView: View {
         Button(action: action) {
             Image(systemName: systemName)
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(enabled ? CivicaColors.brickPrimary : CivicaColors.brickPrimaryDisabled)
+                .foregroundStyle(enabled ? CivicaColors.graphite : CivicaColors.muted)
                 .frame(width: 44, height: 44)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.control)
-                        .fill(CivicaColors.brickPrimary.opacity(enabled ? 0.12 : 0.06))
+                        .fill(CivicaColors.ink.opacity(enabled ? 0.06 : 0.03))
                 )
         }
         .disabled(!enabled)
@@ -457,8 +518,7 @@ struct SNAPBenefitEstimatorView: View {
         value: Binding<Decimal>,
         range: ClosedRange<Decimal>,
         step: Double,
-        denominator: String,
-        a11yLabel: String
+        denominator: String
     ) -> some View {
         let doubleBinding = Binding<Double>(
             get: { NSDecimalNumber(decimal: value.wrappedValue).doubleValue },
@@ -474,12 +534,9 @@ struct SNAPBenefitEstimatorView: View {
                 font: CivicaTypography.cardTitle
             )
             .foregroundStyle(CivicaColors.ink)
-            .accessibilityHidden(true)
 
             Slider(value: doubleBinding, in: lower...upper, step: step)
                 .tint(CivicaColors.brickPrimary)
-                .accessibilityLabel(a11yLabel)
-                .accessibilityValue("$\(Int(NSDecimalNumber(decimal: value.wrappedValue).doubleValue)) per \(denominator)")
 
             HStack {
                 CivicaMoney(amount: range.lowerBound, font: CivicaTypography.caption)
@@ -512,9 +569,8 @@ struct SNAPBenefitEstimatorView_Previews: PreviewProvider {
                         householdSize: 2,
                         elderlyOrDisabled: false,
                         grossMonthlyIncome: 4_800,
-                        hasEmploymentIncome: true,
                         monthlyRent: 1_200,
-                        suaTier: .heatingCooling
+                        paysUtilitiesSeparately: true
                     )
                 )
             }
