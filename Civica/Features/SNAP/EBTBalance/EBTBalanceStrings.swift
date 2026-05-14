@@ -28,6 +28,10 @@ enum EBTBalanceStrings {
         "Last updated",
         es: "Última actualización"
     )
+    static let lastUpdatedJustNow = CivicaText(
+        "Last updated just now",
+        es: "Actualizado hace un momento"
+    )
 
     // MARK: - Next deposit
 
@@ -264,6 +268,25 @@ enum EBTBalanceStrings {
     static let unlinkLink = CivicaText(
         "Unlink this card",
         es: "Desconectar esta tarjeta"
+    )
+
+    // MARK: - Demo controls
+
+    static let demoControlsEyebrow = CivicaText(
+        "Demo controls",
+        es: "Controles de demostración"
+    )
+    static let demoControlsHelp = CivicaText(
+        "These stand in for real-world card activity — tap to see the balance and history update live.",
+        es: "Estos simulan la actividad real de la tarjeta — toca para ver el saldo y el historial actualizarse en vivo."
+    )
+    static let simulatePurchaseButton = CivicaText(
+        "Simulate a purchase",
+        es: "Simular una compra"
+    )
+    static let simulateDepositButton = CivicaText(
+        "Simulate a deposit",
+        es: "Simular un depósito"
     )
 
     // MARK: - Demo disclosure

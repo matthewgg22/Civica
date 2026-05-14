@@ -58,6 +58,43 @@ enum EBTBalanceFixtures {
         }
     }
 
+    // MARK: - Demo simulation
+
+    /// A fresh purchase for the spend-simulation demo control: a random
+    /// merchant + plausible amount, dated now. Negative amount.
+    static func randomDemoPurchase() -> EBTTransaction {
+        let options: [(String, ClosedRange<Double>, EBTTransactionCategory)] = [
+            ("Walmart Supercenter", 12...45, .groceries),
+            ("Trader Joe's", 18...58, .groceries),
+            ("Northgate Market", 9...38, .groceries),
+            ("Farmers Market — Alameda", 6...22, .farmersMarket),
+            ("Food 4 Less", 14...50, .groceries),
+            ("7-Eleven", 3...14, .other),
+        ]
+        let pick = options.randomElement() ?? options[0]
+        let raw = Double.random(in: pick.1)
+        let rounded = (raw * 100).rounded() / 100
+        return EBTTransaction(
+            id: UUID(),
+            merchant: pick.0,
+            amount: Decimal(-rounded),
+            date: Date(),
+            category: pick.2
+        )
+    }
+
+    /// A fresh CalFresh deposit for the deposit-simulation demo
+    /// control, dated now. Positive amount.
+    static func demoDepositTransaction(amount: Decimal) -> EBTTransaction {
+        EBTTransaction(
+            id: UUID(),
+            merchant: "CalFresh deposit",
+            amount: amount,
+            date: Date(),
+            category: .deposit
+        )
+    }
+
     // MARK: - "Free & discounted with EBT" perks (Tier 2)
 
     /// Real California / federal programs open to EBT cardholders.

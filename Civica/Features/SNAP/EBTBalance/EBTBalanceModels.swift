@@ -10,21 +10,22 @@ import Foundation
 /// A linked EBT account's current state. CalFresh (food) is always
 /// present; cash aid is optional since not every household receives it.
 struct EBTAccount: Equatable {
-    /// CalFresh / SNAP food benefit balance.
-    let foodBalance: Decimal
+    /// CalFresh / SNAP food benefit balance. Mutable so the demo's
+    /// spend/deposit simulation can move it.
+    var foodBalance: Decimal
     /// Cash aid balance, when the household receives it. nil = food-only.
     let cashBalance: Decimal?
     /// When the balance was last read from the state EBT system. Drives
     /// the "Last updated …" trust line — a stale balance is worse than
     /// no balance, so this is always shown.
-    let lastUpdated: Date
+    var lastUpdated: Date
     /// The next scheduled deposit, when known.
     let nextDeposit: EBTDeposit?
     /// Day of the month CalFresh loads the card. California staggers
     /// this by case number; the demo account uses a fixed day.
     let depositDayOfMonth: Int
     /// Recent purchases and deposits, newest first.
-    let transactions: [EBTTransaction]
+    var transactions: [EBTTransaction]
 }
 
 /// A scheduled benefit deposit.

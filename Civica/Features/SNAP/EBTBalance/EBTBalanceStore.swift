@@ -56,12 +56,41 @@ final class EBTBalanceStore: ObservableObject {
     }
 
     /// Pull-to-refresh. Real refresh would re-query the state EBT
-    /// system; here it waits briefly and re-stamps the demo account so
-    /// the "last updated" line reads fresh.
+    /// system; here it waits briefly and re-stamps "last updated" so
+    /// the trust line reads fresh. Balance + transactions are left
+    /// intact so any simulated activity survives a refresh.
     func refresh() async {
-        guard linkState == .linked else { return }
+        guard linkState == .linked, var current = account else { return }
         try? await Task.sleep(nanoseconds: 700_000_000)
-        account = EBTBalanceFixtures.demoAccount(updatedSecondsAgo: 3)
+        current.lastUpdated = Date()
+        account = current
+    }
+
+    // MARK: - Demo simulation
+
+    /// Demo control: post a simulated purchase — prepend a new
+    /// transaction, drop the balance, re-stamp "last updated". Stands
+    /// in for real-world card activity so the dashboard can be shown
+    /// reacting live.
+    func simulatePurchase() {
+        guard var current = account else { return }
+        let purchase = EBTBalanceFixtures.randomDemoPurchase()
+        current.transactions.insert(purchase, at: 0)
+        current.foodBalance = max(0, current.foodBalance + purchase.amount)
+        current.lastUpdated = Date()
+        account = current
+    }
+
+    /// Demo control: post a simulated CalFresh deposit — prepend a
+    /// deposit transaction and raise the balance.
+    func simulateDeposit() {
+        guard var current = account else { return }
+        let amount = current.nextDeposit?.amount ?? 200
+        let deposit = EBTBalanceFixtures.demoDepositTransaction(amount: amount)
+        current.transactions.insert(deposit, at: 0)
+        current.foodBalance += amount
+        current.lastUpdated = Date()
+        account = current
     }
 
     /// Reset to the unlinked state so the connect flow can be demoed
