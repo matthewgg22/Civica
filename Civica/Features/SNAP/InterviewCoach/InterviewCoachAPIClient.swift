@@ -16,6 +16,7 @@ import os
 // project, calls will fail with 404 -- PracticeSessionViewModel surfaces
 // that as `.failed`, so the UI is exercisable in SNAP_DEV builds
 // without a working backend.
+
 final class InterviewCoachAPIClient {
     enum CoachAPIError: Error, LocalizedError {
         case missingBaseURL(String)

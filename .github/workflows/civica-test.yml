@@ -29,6 +29,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Spanish-parity gate
+        # Cheap pre-flight: catches raw Text("...") in Civica views that
+        # bypass the CivicaText(en, es:) wrapper and would ship as
+        # English-only. See scripts/check_localization_parity.py for the
+        # rules and the allowlist for intentional exceptions.
+        run: python3 scripts/check_localization_parity.py
+
       - name: Select Xcode
         # Need Xcode 26.x for iOS 26 FoundationModels / @Generable
         # used by the Voice extraction layer. setup-xcode picks the

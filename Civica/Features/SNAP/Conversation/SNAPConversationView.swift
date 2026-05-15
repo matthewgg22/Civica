@@ -12,6 +12,13 @@ struct SNAPConversationView: View {
     @FocusState private var isInputFocused: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+
+    private var language: CivicaLanguage {
+        CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             transcriptScroll
@@ -91,7 +98,7 @@ struct SNAPConversationView: View {
     private var thinkingIndicator: some View {
         HStack(spacing: CivicaSpacing.sm) {
             ProgressView()
-            Text("Thinking…")
+            Text(SNAPConversationViewStrings.thinking.value(in: language))
                 .font(CivicaTypography.footnote)
                 .foregroundColor(CivicaColors.graphite)
         }
@@ -109,7 +116,7 @@ struct SNAPConversationView: View {
                     .foregroundColor(CivicaColors.ink)
             }
             if !result.requiredVerifications.isEmpty {
-                Text("You'll need:")
+                Text(SNAPConversationViewStrings.youllNeed.value(in: language))
                     .font(CivicaTypography.subheadStrong)
                     .foregroundColor(CivicaColors.ink)
                 ForEach(result.requiredVerifications, id: \.code) { v in
@@ -142,7 +149,7 @@ struct SNAPConversationView: View {
                     SNAPDecisionMathView(result: result)
                 } label: {
                     HStack(spacing: CivicaSpacing.xs) {
-                        Text("See the math")
+                        Text(SNAPConversationViewStrings.seeTheMath.value(in: language))
                             .font(CivicaTypography.subheadStrong)
                         Image(systemName: "arrow.right")
                     }
@@ -207,7 +214,7 @@ struct SNAPConversationView: View {
         if case .terminal = viewModel.phase {
             EmptyView()
         } else if case .error = viewModel.phase {
-            Button("Retry") {
+            Button(SNAPConversationViewStrings.retry.value(in: language)) {
                 Task {
                     if viewModel.sessionId == nil {
                         await viewModel.start()

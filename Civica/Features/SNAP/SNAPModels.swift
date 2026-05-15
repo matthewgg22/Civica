@@ -410,15 +410,96 @@ enum SNAPDocumentType: String, CaseIterable, Identifiable, Codable {
 
     var label: String {
         switch self {
-        case .photoID: return "Identity"
-        case .proofOfAddress: return "Residency"
-        case .proofOfIncome: return "Income"
-        case .rentOrHousingCostProof: return "Shelter / Housing Costs"
-        case .utilityBill: return "Utility Costs"
-        case .studentStatusDocuments: return "Student Status"
-        case .workStatusOrExemptions: return "Work Status / Exemptions"
-        case .childcareCostProof: return "Childcare cost proof"
-        case .immigrationDocumentsIfRelevant: return "Immigration-related documents, only if the official application asks"
+        case .photoID: return "Photo ID"
+        case .proofOfAddress: return "Proof of address"
+        case .proofOfIncome: return "Proof of income"
+        case .rentOrHousingCostProof: return "Rent or housing costs"
+        case .utilityBill: return "Utility bill"
+        case .studentStatusDocuments: return "Student enrollment letter"
+        case .workStatusOrExemptions: return "Work status or exemption"
+        case .childcareCostProof: return "Childcare cost receipt"
+        case .immigrationDocumentsIfRelevant: return "Immigration documents (if asked)"
         }
+    }
+
+    var detail: String {
+        switch self {
+        case .photoID: return "Driver's license, state ID, or passport"
+        case .proofOfAddress: return "Utility bill, lease, or mail with your address"
+        case .proofOfIncome: return "Recent pay stubs or benefit letters"
+        case .rentOrHousingCostProof: return "Lease agreement or landlord statement"
+        case .utilityBill: return "Current electric, gas, or heat bill"
+        case .studentStatusDocuments: return "Enrollment letter or student ID"
+        case .workStatusOrExemptions: return "Work schedule or exemption documentation"
+        case .childcareCostProof: return "Receipts or provider statement"
+        case .immigrationDocumentsIfRelevant: return "Only if the official application asks"
+        }
+    }
+
+    /// Returns only the document types that are relevant given the
+    /// user's answers. Always includes identity and address since
+    /// every SNAP application needs them. Conditional types appear
+    /// only when the answers indicate they apply.
+    static func relevant(for draft: SNAPApplicationDraft) -> [SNAPDocumentType] {
+        var types: [SNAPDocumentType] = [.photoID, .proofOfAddress]
+
+        // Income proof — omit only when user explicitly said no earned
+        // income AND no unearned income. Nil (unanswered) keeps it shown.
+        let explicitlyNoIncome = draft.income.anyoneEarning == .no
+            && draft.income.hasUnearnedIncome == .no
+        if !explicitlyNoIncome {
+            types.append(.proofOfIncome)
+        }
+
+        // Rent/housing proof — omit when explicitly $0 or when the
+        // applicant is unhoused (they receive a homeless shelter deduction
+        // automatically; no landlord statement is expected or useful).
+        let isUnhoused = draft.whereApplying.housingStatus == .unhoused
+        if !isUnhoused && draft.expenses.monthlyRentOrHousing != Decimal(0) {
+            types.append(.rentOrHousingCostProof)
+        }
+
+        // Utility bill — only when user said yes to paying separately.
+        if draft.expenses.paysUtilitiesSeparately == true {
+            types.append(.utilityBill)
+        }
+
+        // Student enrollment letter — only if enrolled in higher ed.
+        if draft.studentStatus.enrolledInHigherEd == true {
+            types.append(.studentStatusDocuments)
+        }
+
+        // Work status / exemptions — needed for enrolled students to prove
+        // their exemption from the student work requirement. The one case
+        // we can drop it: if the student already said they work 20+ hours
+        // per week AND are NOT in work-study, their pay stubs (captured
+        // under proofOfIncome) already document their work status. A
+        // separate letter is only needed for work-study enrollment or
+        // when a dependent-child exemption must be formally attested.
+        let studentNeedsWorkDoc: Bool
+        if draft.studentStatus.enrolledInHigherEd == true {
+            let provenByPayStubs = draft.studentStatus.works20PlusHours == true
+                && draft.studentStatus.inWorkStudy != true
+            studentNeedsWorkDoc = !provenByPayStubs
+        } else {
+            studentNeedsWorkDoc = false
+        }
+        if studentNeedsWorkDoc {
+            types.append(.workStatusOrExemptions)
+        }
+
+        // Childcare receipts — only when minors are in the household AND
+        // the user actually claimed childcare as an expense. Having kids
+        // at home doesn't create a document requirement unless the cost
+        // was entered in the expenses section.
+        let claimsChildcare = (draft.expenses.monthlyChildcare ?? 0) > 0
+        if draft.household.hasMinorInHousehold == true && claimsChildcare {
+            types.append(.childcareCostProof)
+        }
+
+        // Immigration — always shown; label already scopes it to "if asked".
+        types.append(.immigrationDocumentsIfRelevant)
+
+        return types
     }
 }

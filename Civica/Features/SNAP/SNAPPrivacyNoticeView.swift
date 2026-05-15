@@ -27,6 +27,13 @@ struct SNAPPrivacyNoticeView: View {
     @State private var continueToEligibility = false
     @State private var hasTrackedPrivacyView = false
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+
+    private var language: CivicaLanguage {
+        CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
@@ -59,14 +66,14 @@ struct SNAPPrivacyNoticeView: View {
                     .foregroundStyle(CivicaColors.graphite)
 
                 VStack(spacing: CivicaSpacing.sm) {
-                    Button("Continue to SNAP prep") {
+                    Button(SNAPPrivacyNoticeNavStrings.continueToPrep.value(in: language)) {
                         viewModel.acceptedPrivacyNotice = true
                         continueToEligibility = true
                     }
                     .buttonStyle(CivicaPrimaryCTAButtonStyle())
 
                     if let officialURL {
-                        Button("Go to official application") {
+                        Button(SNAPPrivacyNoticeNavStrings.goToOfficial.value(in: language)) {
                             openURL(officialURL)
                         }
                         .font(CivicaTypography.subheadStrong)
@@ -74,7 +81,7 @@ struct SNAPPrivacyNoticeView: View {
                         .buttonStyle(.plain)
                     }
 
-                    Button("Go back") {
+                    Button(SNAPPrivacyNoticeNavStrings.goBack.value(in: language)) {
                         dismiss()
                     }
                     .buttonStyle(CivicaSecondaryCTAButtonStyle())
@@ -86,7 +93,7 @@ struct SNAPPrivacyNoticeView: View {
         .background(CivicaColors.tealSurface.ignoresSafeArea())
         .navigationDestination(isPresented: $continueToEligibility) {
             SNAPEligibilityIntroView(viewModel: viewModel)
-                .navigationTitle("Check what you may need")
+                .navigationTitle(SNAPPrivacyNoticeNavStrings.checkWhatYouNeed.value(in: language))
                 .navigationBarTitleDisplayMode(.inline)
         }
         .onAppear {

@@ -17,13 +17,21 @@ struct SNAPApplicationWalkthroughView: View {
 
     @Environment(\.openURL) private var openURL
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+
+    private var language: CivicaLanguage {
+        CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
+
     init(stateCode: String? = nil) {
         self.stateCode = stateCode
     }
 
     private var portalName: String {
         let name = SNAPAgencyDirectory.portalName(for: stateCode)
-        return name.isEmpty ? "your state portal" : name
+        if !name.isEmpty { return name }
+        return language == .spanish ? "el portal estatal" : "your state portal"
     }
 
     private var portalURL: URL {
@@ -35,37 +43,37 @@ struct SNAPApplicationWalkthroughView: View {
     }
 
     private var agencyShort: String {
-        SNAPAgencyDirectory.agencyShortName(for: stateCode, language: .english)
+        SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
-            Text("Submit to \(SNAPAgencyDirectory.agencyFullName(for: stateCode, language: .english))")
+            Text(SNAPApplicationWalkthroughStrings.submitTo(stateCode: stateCode, language: language))
                 .font(CivicaTypography.cardTitle)
                 .foregroundColor(CivicaColors.ink)
 
             step(
                 number: 1,
-                title: "Open \(portalName)",
-                detail: "Go to \(portalShortURL) on your phone or computer.",
+                title: SNAPApplicationWalkthroughStrings.openPortalTitle(portal: portalName, language: language),
+                detail: SNAPApplicationWalkthroughStrings.openPortalDetail(shortURL: portalShortURL, language: language),
                 action: {
                     openURL(portalURL)
                 },
-                actionLabel: "Open \(portalName)"
+                actionLabel: SNAPApplicationWalkthroughStrings.openPortalTitle(portal: portalName, language: language)
             )
 
             step(
                 number: 2,
-                title: "Apply for SNAP",
-                detail: "Tap Apply for SNAP and create or sign into your \(portalName) account.",
+                title: SNAPApplicationWalkthroughStrings.applyForSNAP.value(in: language),
+                detail: SNAPApplicationWalkthroughStrings.applyForSNAPDetail(portal: portalName, language: language),
                 action: nil,
                 actionLabel: nil
             )
 
             step(
                 number: 3,
-                title: "Use your packet as a reference",
-                detail: "Answer the official application's questions using the summary you just saved. Upload the documents listed on the last page when \(agencyShort) asks for them.",
+                title: SNAPApplicationWalkthroughStrings.useYourPacket.value(in: language),
+                detail: SNAPApplicationWalkthroughStrings.useYourPacketDetail(agencyShort: agencyShort, language: language),
                 action: nil,
                 actionLabel: nil
             )
@@ -110,7 +118,7 @@ struct SNAPApplicationWalkthroughView: View {
     }
 
     private var footnote: some View {
-        Text("Need help? Most \(agencyShort) offices have community navigators who can walk you through the application in person.")
+        Text(SNAPApplicationWalkthroughStrings.footnote(agencyShort: agencyShort, language: language))
             .font(CivicaTypography.caption)
             .foregroundColor(CivicaColors.graphite)
             .padding(.top, CivicaSpacing.xs)

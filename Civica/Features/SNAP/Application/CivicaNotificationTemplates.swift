@@ -91,7 +91,7 @@ enum CivicaNotificationTemplates {
         case .applicationSubmittedSMS:   return applicationSubmittedSMS
         case .documentRequestedSMS:      return documentRequestedSMS
         case .approvedEmail:             return approvedEmail
-        case .approvedSMS:               return approvedSMS
+        case .approvedSMS:              return approvedSMS
         case .recertHeadsUpEmail:        return recertHeadsUpEmail
         case .recertHeadsUpSMS:          return recertHeadsUpSMS
         case .recertOneDayBeforeSMS:     return recertOneDayBeforeSMS
@@ -219,8 +219,8 @@ enum CivicaNotificationTemplates {
                 es: "Estás aprobado para ${monthlyBenefit}/mes. Hogar de {householdSize} persona(s), {annualBenefit}/año en total."
             ),
             CivicaText(
-                "EBT card expected {ebtArrivalWindow}. Plain white envelope from MA EBT. Set the PIN by phone before you use it.",
-                es: "Tarjeta EBT esperada para {ebtArrivalWindow}. Sobre blanco de MA EBT. Configura el PIN por teléfono antes de usarla."
+                "EBT card expected {ebtArrivalWindow}. Plain white envelope from the state EBT office. Set the PIN by phone before you use it.",
+                es: "Tarjeta EBT esperada para {ebtArrivalWindow}. Sobre blanco de la oficina estatal de EBT. Configura el PIN por teléfono antes de usarla."
             ),
             CivicaText(
                 "Recert is {recertDate}. We'll text you 60 and 14 days ahead.",

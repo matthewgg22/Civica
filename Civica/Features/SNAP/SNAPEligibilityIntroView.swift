@@ -30,9 +30,9 @@ struct SNAPEligibilityIntroView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                     VStack(alignment: .leading, spacing: CivicaSpacing.md) {
-                        SNAPIntroHeader(title: "What is SNAP?")
+                        SNAPIntroHeader(title: SNAPEligibilityIntroStrings.whatIsSNAP.value(in: language))
 
-                    Text("The Supplemental Nutrition Assistance Program (commonly referred to as SNAP) is a U.S. government program that helps low-income individuals and families buy food.")
+                    Text(SNAPEligibilityIntroStrings.snapDescription.value(in: language))
                         .font(CivicaTypography.bodyStrong)
                         .foregroundStyle(Color.black)
                         .fixedSize(horizontal: false, vertical: true)
@@ -44,19 +44,19 @@ struct SNAPEligibilityIntroView: View {
                     VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                         SNAPDescriptionRow(
                             iconName: "creditcard",
-                            text: "Monthly benefits are loaded onto an Electronic Benefits Transfer (EBT) card."
+                            text: SNAPEligibilityIntroStrings.ebtRow.value(in: language)
                         )
                         SNAPDescriptionRow(
                             iconName: "cart",
-                            text: "The card works like a debit card at grocery stores and some farmers markets."
+                            text: SNAPEligibilityIntroStrings.cartRow.value(in: language)
                         )
                         SNAPDescriptionRow(
                             iconName: "carrot",
-                            text: "SNAP can buy eligible food items to fruits, vegetables, meat, dairy, bread, and more."
+                            text: SNAPEligibilityIntroStrings.foodRow.value(in: language)
                         )
                         SNAPDescriptionRow(
                             iconName: "xmark.circle",
-                            text: "SNAP cannot be used for alcohol, tobacco, or hot prepared meals."
+                            text: SNAPEligibilityIntroStrings.restrictionsRow.value(in: language)
                         )
                     }
                     .padding(.top, CivicaSpacing.xs)
@@ -69,21 +69,21 @@ struct SNAPEligibilityIntroView: View {
                         continueToGuidedDraft = true
                     } label: {
                         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-                            Text("SNAP prep status")
+                            Text(SNAPEligibilityIntroStrings.prepStatusTitle.value(in: language))
                                 .font(CivicaTypography.sectionHeader)
                                 .foregroundStyle(CivicaColors.ink)
 
                             HStack(spacing: CivicaSpacing.sm) {
-                                Text("Status:")
+                                Text(SNAPEligibilityIntroStrings.statusLabel.value(in: language))
                                     .font(CivicaTypography.subheadStrong)
                                     .foregroundStyle(CivicaColors.graphite)
-                                Text("Prep checklist completed")
+                                Text(SNAPEligibilityIntroStrings.prepCompleted.value(in: language))
                                     .font(CivicaTypography.subheadBold)
                                     .foregroundStyle(CivicaColors.accentTeal)
                             }
 
                             HStack(spacing: CivicaSpacing.sm) {
-                                Text("Date:")
+                                Text(SNAPEligibilityIntroStrings.dateLabel.value(in: language))
                                     .font(CivicaTypography.subheadStrong)
                                     .foregroundStyle(CivicaColors.graphite)
                                 Text(statusDateText(from: submittedAt))
@@ -91,7 +91,7 @@ struct SNAPEligibilityIntroView: View {
                                     .foregroundStyle(CivicaColors.ink)
                             }
 
-                            Text("Open next steps")
+                            Text(SNAPEligibilityIntroStrings.openNextSteps.value(in: language))
                                 .font(CivicaTypography.subheadStrong)
                                 .foregroundStyle(CivicaColors.brickPrimary)
                         }
@@ -116,7 +116,7 @@ struct SNAPEligibilityIntroView: View {
 
                     HStack {
                         Spacer(minLength: 0)
-                        Button("Prepare my SNAP application") {
+                        Button(SNAPEligibilityIntroStrings.prepareApplication.value(in: language)) {
                             continueToGuidedDraft = true
                         }
                         .buttonStyle(CivicaPrimaryCTAButtonStyle())
@@ -172,7 +172,7 @@ struct SNAPEligibilityIntroView: View {
                 },
                 onDismiss: { dismiss() }
             )
-            .navigationTitle("SNAP Eligibility Questionnaire")
+            .navigationTitle(SNAPEligibilityIntroStrings.questionnaireTitle.value(in: language))
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(isPresented: $presentingVerdict) {
                 if let verdict = orchestratorVerdict {
