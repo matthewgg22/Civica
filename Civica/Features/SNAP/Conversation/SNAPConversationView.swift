@@ -54,7 +54,7 @@ struct SNAPConversationView: View {
                 .padding(.horizontal, CivicaSpacing.lg)
                 .padding(.vertical, CivicaSpacing.lg)
             }
-            .onChange(of: viewModel.transcript.count) { _ in
+            .onChange(of: viewModel.transcript.count) {
                 if let last = viewModel.transcript.last {
                     withAnimation(reduceMotion ? nil : .default) { proxy.scrollTo(last.id, anchor: .bottom) }
                 }

@@ -17,12 +17,7 @@ import os
 // that as `.failed`, so the UI is exercisable in SNAP_DEV builds
 // without a working backend.
 
-protocol InterviewCoachProviding: AnyObject {
-    func postTurn(_ payload: InterviewTurnRequestDTO) async throws -> InterviewTurnResponseDTO
-    func postScore(_ payload: InterviewScoreRequestDTO) async throws -> InterviewScoreResponseDTO
-}
-
-final class InterviewCoachAPIClient: InterviewCoachProviding {
+final class InterviewCoachAPIClient {
     enum CoachAPIError: Error, LocalizedError {
         case missingBaseURL(String)
         case http(status: Int, body: String)

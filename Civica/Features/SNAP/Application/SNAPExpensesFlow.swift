@@ -36,6 +36,9 @@ struct SNAPExpensesAnswers: Equatable, Codable {
 final class SNAPExpensesFlowViewModel: ObservableObject {
     enum Step: Int, CaseIterable {
         case rent, paysUtilitiesSeparately, utilities, utilityShutoff, childcare, medical
+
+        var oneBasedIndex: Int { rawValue + 1 }
+        static let total = Self.allCases.count
     }
 
     @Published var step: Step = .rent
@@ -117,13 +120,13 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
     }
 
     func goBack() {
-        if let i = effectiveSteps.firstIndex(of: step), i > 0 {
-            step = effectiveSteps[i - 1]
+        if let prev = Step(rawValue: step.rawValue - 1) {
+            step = prev
         }
     }
 
-    var isAtFirstStep: Bool { step == effectiveSteps.first }
-    var isAtLastStep: Bool { step == effectiveSteps.last }
+    var isAtFirstStep: Bool { step == .rent }
+    var isAtLastStep: Bool { step == .medical }
 
     // Empty / non-numeric input is intentionally "no answer" rather
     // than $0 — that distinction lets the rules engine flag missing
@@ -172,9 +175,7 @@ struct SNAPExpensesFlowView: View {
                         Image(systemName: viewModel.isAtFirstStep ? "xmark" : "chevron.left")
                             .foregroundStyle(CivicaColors.ink)
                     }
-                    .accessibilityLabel(viewModel.isAtFirstStep
-                        ? CivicaQuestionStrings.closeLabel.value(in: language)
-                        : CivicaQuestionStrings.backLabel.value(in: language))
+                    .accessibilityLabel(CivicaQuestionStrings.backLabel.value(in: language))
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -256,19 +257,17 @@ struct SNAPExpensesFlowView: View {
         ) {
             moneyAffordance(
                 binding: binding,
-                suffix: SNAPExpensesStrings.suffix(for: step, language: language),
-                fieldLabel: SNAPExpensesStrings.fieldAccessibilityLabel(for: step, language: language)
+                suffix: SNAPExpensesStrings.suffix(for: step, language: language)
             )
         }
     }
 
-    private func moneyAffordance(binding: Binding<String>, suffix: String, fieldLabel: String) -> some View {
+    private func moneyAffordance(binding: Binding<String>, suffix: String) -> some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             HStack(spacing: CivicaSpacing.sm) {
                 Text("$")
                     .font(.system(size: 32, weight: .semibold))
                     .foregroundStyle(CivicaColors.graphite)
-                    .accessibilityHidden(true)
                 TextField(
                     CivicaQuestionStrings.amountPlaceholder.value(in: language),
                     text: binding
@@ -276,7 +275,6 @@ struct SNAPExpensesFlowView: View {
                 .font(.system(size: 32, weight: .semibold, design: .monospaced))
                 .foregroundStyle(CivicaColors.ink)
                 .keyboardType(.decimalPad)
-                .accessibilityLabel(fieldLabel)
             }
             .padding(.horizontal, CivicaSpacing.lg)
             .padding(.vertical, CivicaSpacing.md)
@@ -298,9 +296,13 @@ struct SNAPExpensesFlowView: View {
     private func progress(for step: SNAPExpensesFlowViewModel.Step)
         -> CivicaQuestionScreenProgress
     {
-        let steps = viewModel.effectiveSteps
-        let current = (steps.firstIndex(of: step) ?? 0) + 1
-        return .init(current: current, total: steps.count)
+        .init(
+            current: step.oneBasedIndex,
+            total: SNAPExpensesFlowViewModel.Step.total,
+            sectionIndex: SNAPApplicationSection.expenses.oneBasedIndex,
+            sectionCount: SNAPApplicationSection.count,
+            sectionTitle: SNAPApplicationSection.expenses.title(in: language)
+        )
     }
 
     private func advanceOrComplete() {
