@@ -96,6 +96,12 @@ struct SNAPDocumentsChecklistFlowView: View {
     let language: CivicaLanguage
     let onComplete: (SNAPDocumentsChecklistAnswers) -> Void
     let onExit: () -> Void
+    /// Fired when the user confirms an extracted paystub. The orchestrator
+    /// captures the SNAPPaystub so the income flow can prefill the
+    /// "gross monthly income" screen. The paystub object itself is not
+    /// added to the persisted draft — it lives on the orchestrator
+    /// viewmodel only, mirroring the existing "no PII at rest" posture.
+    let onPaystubConfirmed: (SNAPPaystub) -> Void
 
     /// Which document type the camera sheet is currently capturing
     /// for. Nil when the sheet is dismissed. Drives .sheet(item:).
@@ -121,12 +127,14 @@ struct SNAPDocumentsChecklistFlowView: View {
         viewModel: SNAPDocumentsChecklistFlowViewModel,
         language: CivicaLanguage = .english,
         onComplete: @escaping (SNAPDocumentsChecklistAnswers) -> Void,
-        onExit: @escaping () -> Void
+        onExit: @escaping () -> Void,
+        onPaystubConfirmed: @escaping (SNAPPaystub) -> Void = { _ in }
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.language = language
         self.onComplete = onComplete
         self.onExit = onExit
+        self.onPaystubConfirmed = onPaystubConfirmed
     }
 
     var body: some View {
@@ -191,7 +199,12 @@ struct SNAPDocumentsChecklistFlowView: View {
             NavigationStack {
                 SNAPDocumentConfirmationView(
                     extraction: pending.result,
-                    onConfirm: { viewModel.dismissPendingExtraction() },
+                    onConfirm: {
+                        if let paystub = pending.result.extractedPaystub {
+                            onPaystubConfirmed(paystub)
+                        }
+                        viewModel.dismissPendingExtraction()
+                    },
                     onCorrect: { viewModel.dismissPendingExtraction() }
                 )
             }
