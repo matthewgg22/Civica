@@ -1,0 +1,65 @@
+@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&display=swap");
+@import "tailwindcss";
+
+@theme {
+  /* Civica brand */
+  --color-brick: #9C3A24;
+  --color-brick-soft: #C84637;
+  --color-teal: #2A6F66;
+  --color-amber: #9A5A14;
+  --color-indigo: #4F46A5;
+  --color-error: #C84637;
+
+  /* Surfaces */
+  --color-paper: #F5F2EC;
+  --color-surface: #FFFFFF;
+  --color-ink: #1A1714;
+  --color-graphite: #5A544D;
+  --color-muted: #6B655C;
+  --color-hairline: rgba(0, 0, 0, 0.12);
+
+  /* Typography */
+  --font-sans: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+
+  /* Radius — Civica tight 3-4px corners */
+  --radius-control: 3px;
+  --radius-card: 4px;
+}
+
+html, body {
+  background-color: #F5F2EC;
+  color: #1A1714;
+  font-family: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #5A544D;
+}
+
+/* Used for major section headings (e.g. "Application Answers", "Packet Details").
+   Larger and inkier than .eyebrow so caseworkers can scan section boundaries. */
+.section-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #1A1714;
+}
+
+/* Used for subtle descriptive text under a section title. Italic + muted so
+   it visually recedes vs. the title. */
+.section-sub {
+  font-size: 12px;
+  font-style: italic;
+  color: #6B655C;
+}

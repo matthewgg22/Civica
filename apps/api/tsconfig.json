@@ -2,7 +2,11 @@
   "extends": "@civica/config/tsconfig.node.json",
   "compilerOptions": {
     "outDir": "dist",
-    "noEmit": true
+    "noEmit": true,
+    "types": ["@cloudflare/workers-types", "node"],
+    "paths": {
+      "@civica/db-types": ["../../packages/db-types/snap_enrollment.ts"]
+    }
   },
   "include": ["src", "test"]
 }

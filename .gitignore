@@ -48,3 +48,14 @@ next-env.d.ts
 .env.development
 .env.production
 .env.staging
+
+# Cloudflare Wrangler
+.dev.vars
+.wrangler/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
