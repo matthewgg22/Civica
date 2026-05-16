@@ -35,6 +35,7 @@ services:
       PORT: 3000
       LOG_LEVEL: info
       DATABASE_URL: postgres://civica:civica@postgres:5432/civica_dev
+      SUPABASE_JWT_SECRET: ${SUPABASE_JWT_SECRET:-}
       # ENGINE_BASE_URL: http://host.docker.internal:8000   # FastAPI on host
       # ENGINE_BASE_URL: http://api-engine:8000             # once engine is containerized (Phase 17)
     ports:

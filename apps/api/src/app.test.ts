@@ -13,11 +13,14 @@ describe('app skeleton', () => {
     expect(typeof body.timestamp).toBe('string');
   });
 
-  it('mounts route groups (unknown subpaths return 404, not 500)', async () => {
+  it('public routes return non-500 responses without a token', async () => {
     const app = buildApp();
-    for (const path of ['/me/unknown', '/navigator/unknown', '/webhooks/unknown']) {
-      const res = await app.request(path);
-      expect(res.status).toBe(404);
-    }
+    // /healthz is public — should be 200
+    expect((await app.request('/healthz')).status).toBe(200);
+    // /webhooks has no auth yet — unknown subpath returns 404
+    expect((await app.request('/webhooks/unknown')).status).toBe(404);
+    // /me and /navigator require auth — 401 without a token, never 500
+    expect((await app.request('/me/unknown')).status).toBe(401);
+    expect((await app.request('/navigator/unknown')).status).toBe(401);
   });
 });

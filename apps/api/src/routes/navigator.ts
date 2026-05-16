@@ -1,6 +1,9 @@
 import { Hono } from 'hono';
+import { requireStaffJwt } from '../auth/staff.js';
+import type { StaffEnv } from '../auth/types.js';
 
-export const navigatorRoutes = new Hono();
+export const navigatorRoutes = new Hono<StaffEnv>();
 
-// Mounted at /navigator. Endpoints land in Phase 14.
-// Phase 6 adds staff JWT middleware that rejects applicant tokens.
+navigatorRoutes.use('*', requireStaffJwt);
+
+// Endpoints land in Phase 14.
