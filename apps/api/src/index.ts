@@ -1,3 +1,4 @@
+import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -67,6 +68,12 @@ app.onError((err, c) => {
 app.notFound((c) => c.json({ code: "not_found", message: "Route not found" }, 404));
 
 const port = Number(process.env["PORT"] ?? 3001);
-console.warn(`Civica API listening on :${port}`);
+
+// Node.js server (tsx dev + node dist/). CF Workers uses the fetch export below.
+if (process.env["CF_PAGES"] !== "1") {
+  serve({ fetch: app.fetch, port }, () => {
+    console.warn(`Civica API listening on :${port}`);
+  });
+}
 
 export default { port, fetch: app.fetch };

@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@civica/types": "workspace:*",
+    "@hono/node-server": "^2.0.2",
     "@hono/zod-validator": "^0.4.3",
     "@supabase/supabase-js": "^2.49.0",
     "hono": "^4.7.0",
