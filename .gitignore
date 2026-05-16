@@ -32,3 +32,8 @@ node_modules/
 pnpm-debug.log*
 .pnpm-store/
 *.tsbuildinfo
+
+# Local env files (.env.example is committed; anything else is secrets)
+.env
+.env.local
+.env.*.local
