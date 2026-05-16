@@ -24,10 +24,10 @@
 |--------|--------|------|------|---------------|-------|
 | ✅ | GET | `/` | none | `root_status` | Implemented |
 | ✅ | GET | `/healthz` | none | `healthz` | Implemented |
-| 🔧 | GET | `/api/v1/civic/examples` | optional | `get_examples` | Needs rep-loading pipeline (Phase 2c) |
-| 🔧 | POST | `/api/v1/civic/assistant/resolve` | required | `post_assistant_resolve` | OpenAI Assistants + rep pipeline (Phase 2c) |
-| 🔧 | POST | `/api/issue-classify` | required | `post_issue_classify` | OpenAI classify (Phase 2c) |
-| 🔧 | POST | `/api/issue-brief` | required | `post_issue_brief` | OpenAI brief generation (Phase 2c) |
+| ✅ | GET | `/api/v1/civic/examples` | optional | `get_examples` | Queries civic_example_templates — ported |
+| ✅ | POST | `/api/v1/civic/assistant/resolve` | required | `post_assistant_resolve` | OpenAI chat completions — ported |
+| ✅ | POST | `/api/issue-classify` | required | `post_issue_classify` | Token-overlap classify on issue_core — ported |
+| ✅ | POST | `/api/issue-brief` | required | `post_issue_brief` | Classify + OpenAI brief + Supabase write — ported |
 | ✅ | POST | `/api/v1/civic/calls/log` | required | `post_calls_log` | Supabase write — ported |
 | ✅ | POST | `/api/v1/civic/calls/launch` | required | `post_calls_launch` | Supabase write — ported |
 | ✅ | POST | `/api/v1/civic/calls/confirm` | required | `post_calls_confirm` | Supabase write + eligibility — ported |

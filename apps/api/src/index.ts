@@ -11,6 +11,8 @@ import { historyRouter } from "./routes/civic/history.js";
 import { callScoreRouter } from "./routes/civic/call-score.js";
 import { leaderboardRouter } from "./routes/civic/leaderboard.js";
 import { callsRouter } from "./routes/civic/calls.js";
+import { examplesRouter } from "./routes/civic/examples.js";
+import { aiRouter } from "./routes/civic/ai.js";
 import { openstatesRouter } from "./routes/openstates/index.js";
 import { snapLegacyRouter } from "./routes/snap/legacy.js";
 import { packetsRouter as snapPacketsRouter } from "./routes/snap/packets.js";
@@ -35,6 +37,8 @@ app.route("/", historyRouter);
 app.route("/", callScoreRouter);
 app.route("/", leaderboardRouter);
 app.route("/", callsRouter);
+app.route("/", examplesRouter);
+app.route("/", aiRouter);
 app.route("/", openstatesRouter);
 // Stub router (501 for unported civic routes)
 app.route("/", civicRouter);
