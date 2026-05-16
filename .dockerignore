@@ -1,0 +1,41 @@
+# Version control
+.git/
+.github/
+
+# iOS / Xcode
+Civica/
+VoteNow/
+Civica.xcodeproj/
+CivicaDesignSystem/
+*.xcworkspace/
+
+# Apps not in this image
+apps/dashboard/
+web/
+
+# Node artifacts (re-installed inside image)
+node_modules/
+.pnpm-store/
+.turbo/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Supabase local dev
+supabase/.branches/
+supabase/.temp/
+
+# Env files
+.env
+.env.*
+.dev.vars
+.wrangler/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+*.log

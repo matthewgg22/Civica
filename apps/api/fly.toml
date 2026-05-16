@@ -1,0 +1,52 @@
+# Civica Hono API — Fly.io configuration
+# First-time setup:
+#   fly apps create civica-api --org <your-org>
+#   fly secrets set \
+#     SUPABASE_URL=... \
+#     SUPABASE_ANON_KEY=... \
+#     SUPABASE_SERVICE_ROLE_KEY=... \
+#     SNAP_FERNET_KEY=... \
+#     OPENAI_API_KEY=... \
+#     OCR_WEBHOOK_SECRET=... \
+#     VOTENOW_SAFETY_SALT=...
+#
+# Deploy manually: fly deploy --config apps/api/fly.toml --dockerfile apps/api/Dockerfile
+# CI deploys automatically on push to codex/rebuild-feb18 via .github/workflows/api-ci.yml
+
+app            = "civica-api"
+primary_region = "iad"   # US East — co-located with Supabase default region
+
+[build]
+  dockerfile = "apps/api/Dockerfile"
+  # Build context is the repo root (needed for packages/ and pnpm-workspace.yaml).
+  # Run `fly deploy` from the repo root, not from apps/api/.
+
+[env]
+  PORT         = "3001"
+  NODE_ENV     = "production"
+
+# All secrets (SUPABASE_*, OPENAI_API_KEY, etc.) are set via `fly secrets set`
+# and injected at runtime — never committed here.
+
+[http_service]
+  internal_port        = 3001
+  force_https          = true
+  auto_stop_machines   = "stop"
+  auto_start_machines  = true
+  min_machines_running = 1
+
+  [http_service.concurrency]
+    type       = "requests"
+    hard_limit = 200
+    soft_limit = 150
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval     = "30s"
+    method       = "GET"
+    path         = "/healthz"
+    timeout      = "5s"
+
+[[vm]]
+  size   = "shared-cpu-1x"
+  memory = "512mb"

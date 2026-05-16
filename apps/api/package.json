@@ -8,7 +8,7 @@
     "dev:wrangler": "wrangler dev",
     "build": "tsc",
     "deploy": "wrangler deploy",
-    "start": "node dist/index.js",
+    "start": "tsx src/index.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/ test/",
     "test": "vitest run",
@@ -21,6 +21,7 @@
     "@supabase/supabase-js": "^2.49.0",
     "hono": "^4.7.0",
     "openai": "^4.87.0",
+    "tsx": "^4.19.1",
     "zod": "^3.24.0"
   },
   "devDependencies": {
@@ -28,7 +29,6 @@
     "@civica/fixtures": "workspace:*",
     "@cloudflare/workers-types": "^4.20250516.0",
     "@types/node": "^22.0.0",
-    "tsx": "^4.19.1",
     "typescript": "^5.8.0",
     "vitest": "^2.1.4",
     "wrangler": "^4.0.0"
