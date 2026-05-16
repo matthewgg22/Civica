@@ -1,0 +1,49 @@
+import type { Context, Next } from "hono";
+import { HTTPException } from "hono/http-exception";
+import { makeAnonClient } from "../lib/supabase.js";
+import type { Env, Actor } from "../types.js";
+
+declare module "hono" {
+  interface ContextVariableMap {
+    actor: Actor;
+    jwt: string;
+  }
+}
+
+export async function authMiddleware(c: Context<{ Bindings: Env }>, next: Next) {
+  const authHeader = c.req.header("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    throw new HTTPException(401, { message: "Missing Bearer token" });
+  }
+  const jwt = authHeader.slice(7);
+
+  const supabase = makeAnonClient(c.env, jwt);
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) {
+    throw new HTTPException(401, { message: "Invalid or expired token" });
+  }
+
+  // Look up staff_users row to determine actor kind + org
+  const { data: staff } = await supabase
+    .schema("snap_enrollment")
+    .from("staff_users")
+    .select("staff_id, org_id, role_id, staff_roles(role_kind)")
+    .eq("auth_uid", user.id)
+    .is("deleted_at", null)
+    .single();
+
+  if (staff) {
+    const roleKind = (staff.staff_roles as { role_kind: string } | null)?.role_kind ?? "navigator";
+    c.set("actor", {
+      kind: roleKind as Actor["kind"],
+      id: staff.staff_id,
+      orgId: staff.org_id,
+    });
+  } else {
+    // Applicant — no staff row
+    c.set("actor", { kind: "applicant", id: user.id });
+  }
+
+  c.set("jwt", jwt);
+  await next();
+}

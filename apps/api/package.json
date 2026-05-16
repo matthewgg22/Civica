@@ -1,0 +1,23 @@
+{
+  "name": "@civica/enrollment-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "build": "tsc --noEmit",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.4.3",
+    "@supabase/supabase-js": "^2.49.0",
+    "hono": "^4.7.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250516.0",
+    "typescript": "^5.8.0",
+    "wrangler": "^4.0.0"
+  }
+}
