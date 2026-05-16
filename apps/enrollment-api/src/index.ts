@@ -8,6 +8,11 @@ import documentsRouter from "./routes/documents.js";
 import answersRouter from "./routes/answers.js";
 import notesRouter from "./routes/notes.js";
 import consentsRouter from "./routes/consents.js";
+import fieldsRouter from "./routes/fields.js";
+import documentItemsRouter from "./routes/document-items.js";
+import meRouter from "./routes/me.js";
+import mePacketsRouter from "./routes/me-packets.js";
+import meInboxRouter from "./routes/me-inbox.js";
 import type { Env } from "./types.js";
 
 const app = new Hono<{ Bindings: Env }>();
@@ -25,7 +30,14 @@ api.route("/packets", packetsRouter);
 api.route("/", documentsRouter);   // /packets/:id/documents, /documents/:id
 api.route("/", answersRouter);     // /packets/:id/answers, /answers/:id/review
 api.route("/", notesRouter);       // /packets/:id/notes, /notes/:id
-api.route("/", consentsRouter);    // /applicants/:id/consents, /consents
+api.route("/", consentsRouter);          // /applicants/:id/consents, /consents
+api.route("/", fieldsRouter);            // /packets/:id/fields, /fields/:id/review
+api.route("/", documentItemsRouter);     // /packets/:id/document-items, /document-items/:id/*
+
+// Applicant self-service routes
+api.route("/me", meRouter);                    // GET/PATCH /me
+api.route("/me/packets", mePacketsRouter);     // /me/packets/*
+api.route("/me/inbox", meInboxRouter);         // /me/inbox/*
 
 app.route("/v1/enrollment", api);
 
