@@ -6,8 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 SUPABASE_URL = ""        # set in Cloudflare dashboard / .dev.vars
 
-# Local dev: create apps/api/.dev.vars with:
+# Local dev: create apps/enrollment-api/.dev.vars with:
 #   SUPABASE_URL=https://zgqphgcqfxsgviofsccs.supabase.co
 #   SUPABASE_SERVICE_ROLE_KEY=...
 #   SUPABASE_ANON_KEY=...
-#   SNAP_FERNET_KEY=...
