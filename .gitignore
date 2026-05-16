@@ -23,3 +23,25 @@ __pycache__/
 # Swift package build output
 **/.*build/
 CivicaDesignSystem/.build/
+
+# Wrangler local secrets
+.dev.vars
+.env.local
+
+# Node / Next.js / TypeScript build outputs
+node_modules/
+.next/
+.turbo/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# Cloudflare Wrangler local state
+.wrangler/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*

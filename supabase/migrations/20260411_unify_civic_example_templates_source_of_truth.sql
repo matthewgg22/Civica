@@ -51,6 +51,14 @@ set slug = coalesce(
 )
 where slug is null or trim(slug) = '';
 
+-- Helper: ALTER COLUMN TYPE USING cannot contain subqueries, so wrap the
+-- jsonb→text[] conversion in a function the USING clause can call directly.
+create or replace function public._jsonb_arr_to_text_arr(v jsonb)
+returns text[]
+language sql immutable as $$
+  select coalesce(array(select jsonb_array_elements_text(v)), '{}'::text[])
+$$;
+
 -- Convert legacy jsonb array columns to text[] when needed.
 do $$
 begin
@@ -60,13 +68,9 @@ begin
       and column_name = 'target_chambers' and udt_name = 'jsonb'
   ) then
     execute $q$
-      alter table public.civic_example_templates
-      alter column target_chambers type text[]
-      using coalesce(
-        (select array_agg(elem.value)
-         from jsonb_array_elements_text(coalesce(target_chambers, '[]'::jsonb)) as elem(value)),
-        '{}'::text[]
-      )
+      alter table public.civic_example_templates alter column target_chambers drop default;
+      alter table public.civic_example_templates alter column target_chambers type text[] using public._jsonb_arr_to_text_arr(target_chambers);
+      alter table public.civic_example_templates alter column target_chambers set default '{}'::text[];
     $q$;
   end if;
 
@@ -76,13 +80,9 @@ begin
       and column_name = 'template_asks' and udt_name = 'jsonb'
   ) then
     execute $q$
-      alter table public.civic_example_templates
-      alter column template_asks type text[]
-      using coalesce(
-        (select array_agg(elem.value)
-         from jsonb_array_elements_text(coalesce(template_asks, '[]'::jsonb)) as elem(value)),
-        '{}'::text[]
-      )
+      alter table public.civic_example_templates alter column template_asks drop default;
+      alter table public.civic_example_templates alter column template_asks type text[] using public._jsonb_arr_to_text_arr(template_asks);
+      alter table public.civic_example_templates alter column template_asks set default '{}'::text[];
     $q$;
   end if;
 
@@ -92,13 +92,9 @@ begin
       and column_name = 'related_bills' and udt_name = 'jsonb'
   ) then
     execute $q$
-      alter table public.civic_example_templates
-      alter column related_bills type text[]
-      using coalesce(
-        (select array_agg(elem.value)
-         from jsonb_array_elements_text(coalesce(related_bills, '[]'::jsonb)) as elem(value)),
-        '{}'::text[]
-      )
+      alter table public.civic_example_templates alter column related_bills drop default;
+      alter table public.civic_example_templates alter column related_bills type text[] using public._jsonb_arr_to_text_arr(related_bills);
+      alter table public.civic_example_templates alter column related_bills set default '{}'::text[];
     $q$;
   end if;
 
@@ -108,17 +104,37 @@ begin
       and column_name = 'tags' and udt_name = 'jsonb'
   ) then
     execute $q$
-      alter table public.civic_example_templates
-      alter column tags type text[]
-      using coalesce(
-        (select array_agg(elem.value)
-         from jsonb_array_elements_text(coalesce(tags, '[]'::jsonb)) as elem(value)),
-        '{}'::text[]
-      )
+      alter table public.civic_example_templates alter column tags drop default;
+      alter table public.civic_example_templates alter column tags type text[] using public._jsonb_arr_to_text_arr(tags);
+      alter table public.civic_example_templates alter column tags set default '{}'::text[];
     $q$;
   end if;
 end
 $$;
+
+drop function if exists public._jsonb_arr_to_text_arr(jsonb);
+
+-- Fill nulls before enforcing NOT NULL constraints.
+update public.civic_example_templates
+set
+  status = case
+    when coalesce(is_active, true) = false then 'draft'
+    when ends_at is not null and ends_at < now() then 'archived'
+    when starts_at is not null and starts_at > now() then 'draft'
+    else 'published'
+  end,
+  presentation = coalesce(presentation, '{}'::jsonb),
+  created_at = coalesce(created_at, now()),
+  updated_at = coalesce(updated_at, now()),
+  target_chambers = coalesce(target_chambers, '{}'::text[]),
+  template_asks = coalesce(template_asks, '{}'::text[]),
+  related_bills = coalesce(related_bills, '{}'::text[]),
+  tags = coalesce(tags, '{}'::text[]),
+  display_order = coalesce(display_order, 0);
+
+update public.civic_example_templates
+set status = lower(status)
+where status <> lower(status);
 
 alter table public.civic_example_templates
   alter column title set not null,
@@ -146,27 +162,6 @@ alter table public.civic_example_templates
   alter column updated_at set default now(),
   alter column updated_at set not null,
   alter column primary_ask drop not null;
-
-update public.civic_example_templates
-set
-  status = case
-    when coalesce(is_active, true) = false then 'draft'
-    when ends_at is not null and ends_at < now() then 'archived'
-    when starts_at is not null and starts_at > now() then 'draft'
-    else 'published'
-  end,
-  presentation = coalesce(presentation, '{}'::jsonb),
-  created_at = coalesce(created_at, now()),
-  updated_at = coalesce(updated_at, now()),
-  target_chambers = coalesce(target_chambers, '{}'::text[]),
-  template_asks = coalesce(template_asks, '{}'::text[]),
-  related_bills = coalesce(related_bills, '{}'::text[]),
-  tags = coalesce(tags, '{}'::text[]),
-  display_order = coalesce(display_order, 0);
-
-update public.civic_example_templates
-set status = lower(status)
-where status <> lower(status);
 
 alter table public.civic_example_templates
   drop constraint if exists civic_example_templates_primary_ask_check,
