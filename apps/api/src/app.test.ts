@@ -13,6 +13,26 @@ describe('app skeleton', () => {
     expect(typeof body.timestamp).toBe('string');
   });
 
+  it('GET /openapi.json returns a valid OpenAPI 3.1.0 document', async () => {
+    const app = buildApp();
+    const res = await app.request('/openapi.json');
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { openapi: string; info: { title: string }; paths: Record<string, unknown> };
+    expect(body.openapi).toBe('3.1.0');
+    expect(body.info.title).toBe('Civica SNAP API');
+    expect(Object.keys(body.paths).length).toBeGreaterThanOrEqual(18);
+  });
+
+  it('GET /docs returns HTML with Scalar loader', async () => {
+    const app = buildApp();
+    const res = await app.request('/docs');
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Content-Type')).toMatch(/text\/html/);
+    const html = await res.text();
+    expect(html).toContain('api-reference');
+    expect(html).toContain('/openapi.json');
+  });
+
   it('public routes return non-500 responses without a token', async () => {
     const app = buildApp();
     // /healthz is public — should be 200
