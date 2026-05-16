@@ -24,21 +24,21 @@
 |--------|--------|------|------|---------------|-------|
 | ✅ | GET | `/` | none | `root_status` | Implemented |
 | ✅ | GET | `/healthz` | none | `healthz` | Implemented |
-| 🔧 | GET | `/api/v1/civic/examples` | optional | `get_examples` | Returns OA example scripts |
-| 🔧 | POST | `/api/v1/civic/assistant/resolve` | required | `post_assistant_resolve` | OpenAI Assistants API; heavy — port last |
-| 🔧 | POST | `/api/issue-classify` | required | `post_issue_classify` | OpenAI classify call |
-| 🔧 | POST | `/api/issue-brief` | required | `post_issue_brief` | OpenAI brief generation; long (~2-3s) |
-| 🔧 | POST | `/api/v1/civic/calls/log` | required | `post_calls_log` | Supabase write |
-| 🔧 | POST | `/api/v1/civic/calls/launch` | required | `post_calls_launch` | Twilio or similar |
-| 🔧 | POST | `/api/v1/civic/calls/confirm` | required | `post_calls_confirm` | Supabase write |
-| 🔧 | GET | `/api/v1/civic/history` | required | `get_history` | Supabase read |
-| 🔧 | GET | `/api/v1/civic/call-score/summary` | required | `get_call_score_summary` | Supabase read |
-| 🔧 | GET | `/api/v1/civic/call-score/breakdown` | required | `get_call_score_breakdown` | Supabase read |
-| 🔧 | GET | `/api/v1/civic/call-score/history` | required | `get_call_score_history` | Query: `limit` (default 20) |
-| 🔧 | POST | `/api/v1/civic/call-score/recompute` | required | `post_call_score_recompute` | Heavy recompute |
-| 🔧 | GET | `/api/v1/civic/leaderboard` | required | `get_leaderboard` | Query: `period_type`, `period_start`, `limit` |
-| 🔧 | GET | `/api/v1/civic/leaderboard/me` | required | `get_leaderboard_me` | Query: `period_type`, `period_start` |
-| 🔧 | GET | `/api/v1/openstates/people.geo` | optional | `get_openstates_people_geo` | Proxies OpenStates API; query: `lat`, `lng`, `include` |
+| 🔧 | GET | `/api/v1/civic/examples` | optional | `get_examples` | Needs rep-loading pipeline (Phase 2c) |
+| 🔧 | POST | `/api/v1/civic/assistant/resolve` | required | `post_assistant_resolve` | OpenAI Assistants + rep pipeline (Phase 2c) |
+| 🔧 | POST | `/api/issue-classify` | required | `post_issue_classify` | OpenAI classify (Phase 2c) |
+| 🔧 | POST | `/api/issue-brief` | required | `post_issue_brief` | OpenAI brief generation (Phase 2c) |
+| ✅ | POST | `/api/v1/civic/calls/log` | required | `post_calls_log` | Supabase write — ported |
+| ✅ | POST | `/api/v1/civic/calls/launch` | required | `post_calls_launch` | Supabase write — ported |
+| ✅ | POST | `/api/v1/civic/calls/confirm` | required | `post_calls_confirm` | Supabase write + eligibility — ported |
+| ✅ | GET | `/api/v1/civic/history` | required | `get_history` | Supabase read — ported |
+| ✅ | GET | `/api/v1/civic/call-score/summary` | required | `get_call_score_summary` | Supabase read — ported |
+| ✅ | GET | `/api/v1/civic/call-score/breakdown` | required | `get_call_score_breakdown` | Supabase read — ported |
+| ✅ | GET | `/api/v1/civic/call-score/history` | required | `get_call_score_history` | Supabase read — ported |
+| ✅ | POST | `/api/v1/civic/call-score/recompute` | required | `post_call_score_recompute` | Algorithm ported from Python |
+| ✅ | GET | `/api/v1/civic/leaderboard` | required | `get_leaderboard` | Supabase read — ported |
+| ✅ | GET | `/api/v1/civic/leaderboard/me` | required | `get_leaderboard_me` | Supabase read — ported |
+| ✅ | GET | `/api/v1/openstates/people.geo` | optional | `get_openstates_people_geo` | Fetch proxy — ported |
 
 ---
 
