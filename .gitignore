@@ -24,6 +24,9 @@ __pycache__/
 **/.*build/
 CivicaDesignSystem/.build/
 
+# Prisma generated client (re-created by `pnpm db:generate`)
+packages/db/src/generated/
+
 # Node / pnpm / Turborepo
 node_modules/
 .pnpm-store/

@@ -1,0 +1,30 @@
+{
+  "name": "@civica/db",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Prisma client, schema, migrations, and seed for the Civica platform.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts"
+  },
+  "scripts": {
+    "typecheck": "prisma generate && tsc --noEmit",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx src/seed.ts",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@civica/types": "workspace:*",
+    "@prisma/client": "^5.21.1"
+  },
+  "devDependencies": {
+    "@civica/config": "workspace:*",
+    "@types/node": "^22.0.0",
+    "prisma": "^5.21.1",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  }
+}

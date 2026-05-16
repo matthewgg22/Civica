@@ -1,0 +1,20 @@
+{
+  "name": "@civica/fixtures",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Deterministic test fixtures shared across api, web-b2c, and dashboard tests.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@civica/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@civica/config": "workspace:*",
+    "typescript": "^5.6.3"
+  }
+}
