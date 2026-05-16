@@ -19,7 +19,8 @@ export type AuditAction =
   | 'MISSING_ITEM_REQUESTED'
   | 'MISSING_ITEM_RESOLVED'
   | 'EXTRACTION_FIELD_REVIEWED'
-  | 'HANDOFF_EXPORTED';
+  | 'HANDOFF_EXPORTED'
+  | 'OCR_RESULT_RECEIVED';
 
 export interface AuditActor {
   kind: AuditActorKind;
