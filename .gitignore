@@ -23,3 +23,25 @@ __pycache__/
 # Swift package build output
 **/.*build/
 CivicaDesignSystem/.build/
+
+# Node / pnpm / Turborepo
+node_modules/
+.pnpm-store/
+.turbo/
+dist/
+build-web/
+coverage/
+*.tsbuildinfo
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+
+# Env files (committed examples should be named .env.example)
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.staging
