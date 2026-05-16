@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { prisma } from "@civica/db";
+import { supabaseAdmin } from "../../lib/supabase.js";
 import { OcrWebhookPayloadSchema } from "@civica/types";
 import { timingSafeEqual } from "node:crypto";
 
@@ -20,47 +20,68 @@ ocrWebhookRouter.post("/api/v1/webhooks/ocr", async (c) => {
   const body = OcrWebhookPayloadSchema.parse(await c.req.json());
 
   if (!body.success || !body.fields?.length) {
-    await prisma.ocrJob.updateMany({
-      where: { document_id: body.document_id },
-      data: { status: "failed", last_error: body.error ?? "unknown", updated_at: new Date() },
-    });
-    await prisma.document.update({
-      where: { id: body.document_id },
-      data: { status: "failed", updated_at: new Date() },
-    });
+    await supabaseAdmin
+      .schema("snap_enrollment")
+      .from("uploaded_documents")
+      .update({ processing_status: "failed" })
+      .eq("document_id", body.document_id);
     return c.json({ ok: true });
   }
 
-  type BboxLike = { left?: unknown; top?: unknown; width?: unknown; height?: unknown; page?: unknown };
+  type RawField = { name?: unknown; value?: unknown; confidence?: unknown; bbox?: unknown; provider?: unknown };
+  const fields = body.fields as RawField[];
+  const avgConfidence = fields.reduce((sum, f) => sum + (Number(f.confidence) || 0), 0) / fields.length;
+  const provider = String(fields[0]?.provider ?? "unknown");
 
-  await prisma.$transaction([
-    prisma.extractionField.createMany({
-      data: body.fields.map((f) => {
-        const bbox = f.bbox as BboxLike | undefined;
-        return {
-          document_id: body.document_id,
-          name: f.name,
-          value: f.value,
-          confidence: f.confidence,
-          bbox_left: bbox ? Number(bbox.left) : null,
-          bbox_top: bbox ? Number(bbox.top) : null,
-          bbox_width: bbox ? Number(bbox.width) : null,
-          bbox_height: bbox ? Number(bbox.height) : null,
-          bbox_page: bbox ? Number(bbox.page) : null,
-          provider: f.provider,
-        };
-      }),
-      skipDuplicates: true,
-    }),
-    prisma.document.update({
-      where: { id: body.document_id },
-      data: { status: "extracted", updated_at: new Date() },
-    }),
-    prisma.ocrJob.updateMany({
-      where: { document_id: body.document_id, status: "running" },
-      data: { status: "done", updated_at: new Date() },
-    }),
-  ]);
+  // Create the extraction record
+  const { data: extraction, error: extractionError } = await supabaseAdmin
+    .schema("snap_enrollment")
+    .from("document_extractions")
+    .insert({
+      document_id: body.document_id,
+      extractor_model: provider,
+      extractor_version: "1.0",
+      overall_confidence: Math.round(avgConfidence * 10000) / 10000,
+      extraction_flags: {},
+    })
+    .select("extraction_id")
+    .single();
+
+  if (extractionError) {
+    console.error("ocr webhook: extraction insert failed", extractionError);
+    return c.json({ code: "internal_error", message: "Failed to save extraction" }, 500);
+  }
+
+  // Look up the packet_id for this document
+  const { data: doc } = await supabaseAdmin
+    .schema("snap_enrollment")
+    .from("uploaded_documents")
+    .select("packet_id")
+    .eq("document_id", body.document_id)
+    .single();
+
+  if (doc?.packet_id) {
+    await supabaseAdmin
+      .schema("snap_enrollment")
+      .from("extraction_fields")
+      .insert(
+        fields.map((f) => ({
+          extraction_id: extraction.extraction_id,
+          packet_id: doc.packet_id,
+          field_key: String(f.name ?? ""),
+          field_label: String(f.name ?? ""),
+          original_ocr_value: f.value != null ? String(f.value) : null,
+          confidence: Number(f.confidence) || 0,
+          needs_review: (Number(f.confidence) || 0) < 0.8,
+        })),
+      );
+  }
+
+  await supabaseAdmin
+    .schema("snap_enrollment")
+    .from("uploaded_documents")
+    .update({ processing_status: "complete" })
+    .eq("document_id", body.document_id);
 
   return c.json({ ok: true });
 });

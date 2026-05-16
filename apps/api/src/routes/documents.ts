@@ -51,7 +51,14 @@ app.post("/documents", zValidator("json", createDocumentSchema), async (c) => {
   const { data, error } = await db
     .schema("snap_enrollment")
     .from("uploaded_documents")
-    .insert(body)
+    .insert({
+      packet_id: body.packet_id,
+      applicant_id: body.applicant_id,
+      storage_path: body.storage_path,
+      on_device_quality_passed: body.on_device_quality_passed,
+      original_filename: body.original_filename ?? null,
+      ...(body.document_kind !== undefined && { document_kind: body.document_kind }),
+    })
     .select()
     .single();
 
@@ -65,7 +72,12 @@ app.patch("/documents/:documentId", zValidator("json", updateDocumentSchema), as
   const { data, error } = await db
     .schema("snap_enrollment")
     .from("uploaded_documents")
-    .update(body)
+    .update({
+      ...(body.document_kind !== undefined && { document_kind: body.document_kind }),
+      ...(body.processing_status !== undefined && { processing_status: body.processing_status }),
+      rejected_reason: body.rejected_reason ?? null,
+      classification_confidence: body.classification_confidence ?? null,
+    })
     .eq("document_id", c.req.param("documentId"))
     .select()
     .single();

@@ -82,7 +82,14 @@ app.post("/", zValidator("json", createPacketSchema), async (c) => {
   const { data, error } = await db
     .schema("snap_enrollment")
     .from("snap_packets")
-    .insert({ ...body, status: "Draft" })
+    .insert({
+      applicant_id: body.applicant_id,
+      state_code: body.state_code,
+      status: "Draft",
+      org_id: body.org_id ?? null,
+      county: body.county ?? null,
+      county_fips: body.county_fips ?? null,
+    })
     .select()
     .single();
 
@@ -98,18 +105,21 @@ app.patch("/:packetId", zValidator("json", updatePacketSchema), async (c) => {
   if (body.status) {
     const reason = c.req.header("X-Transition-Reason");
     if (reason) {
-      await db.rpc("set_config", {
-        setting_name: "snap_enrollment.transition_reason",
-        new_value: reason,
-        is_local: true,
-      } as never);
+      type SetConfigArgs = { setting_name: string; new_value: string; is_local: boolean };
+      const rpc = db.rpc.bind(db) as unknown as (fn: string, args: SetConfigArgs) => Promise<unknown>;
+      await rpc("set_config", { setting_name: "snap_enrollment.transition_reason", new_value: reason, is_local: true });
     }
   }
 
+  const updateFields = {
+    ...(body.status !== undefined && { status: body.status }),
+    notes_for_applicant: body.notes_for_applicant ?? null,
+    org_id: body.org_id ?? null,
+  };
   const { data, error } = await db
     .schema("snap_enrollment")
     .from("snap_packets")
-    .update(body)
+    .update(updateFields)
     .eq("packet_id", c.req.param("packetId"))
     .select()
     .single();

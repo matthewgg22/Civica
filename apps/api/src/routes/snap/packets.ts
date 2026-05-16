@@ -1,42 +1,66 @@
-// Net-new: SNAP readiness packet CRUD (no Flask equivalent).
+// Net-new: SNAP readiness packet CRUD for iOS applicants (no Flask equivalent).
+// Uses snap_enrollment schema via service-role client; RLS-equivalent scoping
+// is enforced by filtering on applicant auth_uid.
 import { Hono } from "hono";
 import { requireAuth } from "../../middleware/auth.js";
-import { prisma } from "@civica/db";
-import { CreatePacketInputSchema, UploadDocumentInputSchema } from "@civica/types";
+import { supabaseAdmin } from "../../lib/supabase.js";
 
 type AuthEnv = { Variables: { userId: string } };
 export const packetsRouter = new Hono<AuthEnv>();
 
-// List packets for the authenticated user
+// List packets for the authenticated applicant
 packetsRouter.get("/api/v1/snap/packets", requireAuth, async (c) => {
   const userId = c.get("userId");
-  const packets = await prisma.packet.findMany({
-    where: { user_id: userId },
-    include: { documents: true },
-    orderBy: { created_at: "desc" },
-  });
-  return c.json({ data: packets });
-});
 
-// Create a new packet
-packetsRouter.post("/api/v1/snap/packets", requireAuth, async (c) => {
-  const userId = c.get("userId");
-  const body = CreatePacketInputSchema.parse(await c.req.json());
-  const packet = await prisma.packet.create({
-    data: { user_id: userId, state: body.state, status: "draft" },
-  });
-  return c.json(packet, 201);
+  const { data: applicant } = await supabaseAdmin
+    .schema("snap_enrollment")
+    .from("applicants")
+    .select("applicant_id")
+    .eq("auth_uid", userId)
+    .single();
+
+  if (!applicant) return c.json({ data: [] });
+
+  const { data, error } = await supabaseAdmin
+    .schema("snap_enrollment")
+    .from("snap_packets")
+    .select("*, uploaded_documents(document_id, document_kind, processing_status)")
+    .eq("applicant_id", applicant.applicant_id)
+    .is("deleted_at", null)
+    .order("updated_at", { ascending: false });
+
+  if (error) {
+    console.error("snap/packets list failed", error);
+    return c.json({ code: "internal_error", message: "Failed to fetch packets" }, 500);
+  }
+  return c.json({ data });
 });
 
 // Get a single packet
 packetsRouter.get("/api/v1/snap/packets/:id", requireAuth, async (c) => {
   const userId = c.get("userId");
-  const packet = await prisma.packet.findFirst({
-    where: { id: c.req.param("id"), user_id: userId },
-    include: { documents: { include: { extraction_fields: true } } },
-  });
-  if (!packet) return c.json({ code: "not_found", message: "Packet not found" }, 404);
-  return c.json(packet);
+
+  const { data: applicant } = await supabaseAdmin
+    .schema("snap_enrollment")
+    .from("applicants")
+    .select("applicant_id")
+    .eq("auth_uid", userId)
+    .single();
+
+  if (!applicant) return c.json({ code: "not_found", message: "Packet not found" }, 404);
+
+  const { data, error } = await supabaseAdmin
+    .schema("snap_enrollment")
+    .from("snap_packets")
+    .select("*, uploaded_documents(*, document_extractions(*, extraction_fields(*)))")
+    .eq("packet_id", c.req.param("id"))
+    .eq("applicant_id", applicant.applicant_id)
+    .is("deleted_at", null)
+    .single();
+
+  if (error?.code === "PGRST116") return c.json({ code: "not_found", message: "Packet not found" }, 404);
+  if (error) return c.json({ code: "internal_error", message: "Failed to fetch packet" }, 500);
+  return c.json(data);
 });
 
 // Request a signed upload URL for a document
@@ -44,29 +68,48 @@ packetsRouter.post("/api/v1/snap/packets/:id/documents/upload-url", requireAuth,
   const userId = c.get("userId");
   const packetId = c.req.param("id");
 
-  const packet = await prisma.packet.findFirst({ where: { id: packetId, user_id: userId } });
+  const { data: applicant } = await supabaseAdmin
+    .schema("snap_enrollment")
+    .from("applicants")
+    .select("applicant_id")
+    .eq("auth_uid", userId)
+    .single();
+
+  if (!applicant) return c.json({ code: "not_found", message: "Packet not found" }, 404);
+
+  const { data: packet } = await supabaseAdmin
+    .schema("snap_enrollment")
+    .from("snap_packets")
+    .select("packet_id")
+    .eq("packet_id", packetId)
+    .eq("applicant_id", applicant.applicant_id)
+    .is("deleted_at", null)
+    .single();
+
   if (!packet) return c.json({ code: "not_found", message: "Packet not found" }, 404);
 
-  const body = UploadDocumentInputSchema.omit({ packet_id: true }).parse(await c.req.json());
-  const storagePath = `documents/${crypto.randomUUID()}/${body.file_name}`;
+  const body = await c.req.json<{ file_name?: string }>();
+  const fileName = body.file_name ?? `upload-${Date.now()}`;
+  const storagePath = `documents/${packetId}/${crypto.randomUUID()}/${fileName}`;
 
-  const document = await prisma.document.create({
-    data: {
+  const { data: doc, error: docError } = await supabaseAdmin
+    .schema("snap_enrollment")
+    .from("uploaded_documents")
+    .insert({
       packet_id: packetId,
-      type: body.type,
-      status: "pending",
+      applicant_id: applicant.applicant_id,
       storage_path: storagePath,
-      file_name: body.file_name,
-      file_size_bytes: body.file_size_bytes,
-      mime_type: body.mime_type,
-    },
-  });
+      original_filename: fileName,
+      on_device_quality_passed: false,
+    })
+    .select("document_id")
+    .single();
 
-  // Signed URL is generated by Supabase Storage — the client uploads directly.
-  // The API returns the path; the frontend calls Supabase SDK createSignedUploadUrl.
+  if (docError) {
+    console.error("upload-url insert failed", docError);
+    return c.json({ code: "internal_error", message: "Failed to create document record" }, 500);
+  }
+
   const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
-  return c.json(
-    { document_id: document.id, storage_path: storagePath, expires_at: expiresAt },
-    201,
-  );
+  return c.json({ document_id: doc.document_id, storage_path: storagePath, expires_at: expiresAt }, 201);
 });
