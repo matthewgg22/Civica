@@ -1,0 +1,7 @@
+{
+  "name": "@civica/api-types",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Shared TypeScript types and OpenAPI spec for the SNAP API. Consumed by apps/api and (later) by iOS / web / dashboard codegen.",
+  "type": "module"
+}

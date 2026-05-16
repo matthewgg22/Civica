@@ -26,22 +26,28 @@ CivicaDesignSystem/.build/
 
 # Wrangler local secrets
 .dev.vars
-.env.local
 
-# Node / Next.js / TypeScript build outputs
+# Node / pnpm workspaces (apps/, packages/)
 node_modules/
+**/node_modules/
 .next/
-.turbo/
-dist/
+**/dist/
+**/.turbo/
 *.tsbuildinfo
 next-env.d.ts
+pnpm-debug.log*
+.pnpm-store/
 
 # Cloudflare Wrangler local state
 .wrangler/
 
+# Local env files (.env.example is committed; anything else is secrets)
+.env
+.env.local
+.env.*.local
+
 # Logs
 *.log
 npm-debug.log*
-pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*

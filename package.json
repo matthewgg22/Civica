@@ -1,0 +1,10 @@
+{
+  "name": "civica-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Civica monorepo root. iOS app lives at repo root (Civica.xcodeproj). Node/TS workspaces declared in pnpm-workspace.yaml. Python FastAPI engine remains under backend/.",
+  "packageManager": "pnpm@9.12.0",
+  "engines": {
+    "node": ">=20.11.0"
+  }
+}

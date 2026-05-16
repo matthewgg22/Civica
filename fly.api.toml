@@ -1,0 +1,44 @@
+# Fly.io config for the Hono gateway (apps/api/).
+#
+# Deploy from the REPO ROOT — Fly uses the cwd as the Docker build context:
+#   fly deploy --config fly.api.toml
+#
+# First deploy: fly launch --no-deploy --config fly.api.toml
+# Set secrets:  fly secrets set --config fly.api.toml \
+#                 DATABASE_URL="..." \
+#                 SUPABASE_JWT_SECRET="..." \
+#                 SUPABASE_URL="..." \
+#                 SUPABASE_ANON_KEY="..." \
+#                 INTERNAL_HMAC_SECRET="..." \
+#                 ENGINE_BASE_URL="http://civica-snap-engine.internal:8080" \
+#                 OCR_WEBHOOK_HMAC_SECRET="..."  # optional
+
+app = "civica-snap-api"
+primary_region = "iad"
+
+[build]
+  dockerfile = "apps/api/Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "3000"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    grace_period = "5s"
+    interval = "30s"
+    method = "GET"
+    path = "/healthz"
+    timeout = "5s"
+    headers = {}
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1

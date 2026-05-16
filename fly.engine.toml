@@ -1,0 +1,47 @@
+# Fly.io config for the FastAPI SNAP engine (backend/).
+#
+# Deploy from the REPO ROOT:
+#   fly deploy --config fly.engine.toml
+#
+# The engine is NOT public-facing. It only accepts requests from the Hono
+# gateway over Fly's internal WireGuard network (*.fly.internal).
+# If you need to prevent any public ingress, remove the [http_service] block
+# and use a private_network service instead.
+#
+# Set secrets:  fly secrets set --config fly.engine.toml \
+#                 DATABASE_URL="..." \
+#                 INTERNAL_HMAC_SECRET="..."  # same value as the API \
+#                 SNAP_FERNET_KEY="..."       # base64-encoded 32-byte key \
+#                 SUPABASE_URL="..." \
+#                 SUPABASE_SERVICE_ROLE_KEY="..." \
+#                 ANTHROPIC_API_KEY="..."
+
+app = "civica-snap-engine"
+primary_region = "iad"
+
+[build]
+  dockerfile = "backend/Dockerfile"
+
+[env]
+  PYTHONUNBUFFERED = "1"
+  WEB_CONCURRENCY = "2"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    path = "/snap/healthz"
+    timeout = "5s"
+    headers = {}
+
+[[vm]]
+  memory = "1gb"
+  cpu_kind = "shared"
+  cpus = 1
