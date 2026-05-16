@@ -1,6 +1,6 @@
 .PHONY: ingest ingest-absentee l10n-sync-appshell l10n-sync-myinfo l10n-sync-all l10n-sync-dry-run \
 	api-install api-dev api-test api-typecheck api-build \
-	compose-up compose-down compose-postgres db-reset
+	compose-up compose-down compose-postgres db-reset db-migrate db-gen-types
 
 ingest:
 	python3 scripts/ingest_votenow_metrics.py --input data/source/votenow_voter_participation_metrics_catalog_v3.xlsx --out data/derived
@@ -55,3 +55,9 @@ compose-down:
 db-reset:
 	docker compose down -v postgres
 	docker compose up -d postgres
+
+db-migrate:
+	./scripts/apply-snap-migrations.sh
+
+db-gen-types:
+	./scripts/gen-db-types.sh
