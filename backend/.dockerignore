@@ -1,0 +1,31 @@
+# Python
+__pycache__
+**/__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info
+dist/
+build/
+.eggs/
+.pytest_cache
+.mypy_cache
+.ruff_cache
+
+# Test artifacts
+tests/
+*_test.py
+test_*.py
+htmlcov/
+.coverage
+
+# Secrets and local env
+.env
+.env.*
+!.env.example
+
+# Git and tooling
+.git
+.github
+*.md

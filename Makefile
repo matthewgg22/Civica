@@ -1,6 +1,7 @@
 .PHONY: ingest ingest-absentee l10n-sync-appshell l10n-sync-myinfo l10n-sync-all l10n-sync-dry-run \
-	api-install api-dev api-test api-typecheck api-build \
-	compose-up compose-down compose-postgres db-reset db-migrate db-gen-types
+	api-install api-dev api-test api-typecheck api-build api-openapi \
+	compose-up compose-down compose-postgres db-reset db-migrate db-gen-types \
+	fly-deploy-api fly-deploy-engine fly-logs-api fly-logs-engine
 
 ingest:
 	python3 scripts/ingest_votenow_metrics.py --input data/source/votenow_voter_participation_metrics_catalog_v3.xlsx --out data/derived
@@ -61,3 +62,22 @@ db-migrate:
 
 db-gen-types:
 	./scripts/gen-db-types.sh
+
+api-openapi:
+	pnpm --filter @civica/api build:openapi
+
+# ======================================================================
+# Fly.io deploy (run from repo root — build context is the monorepo)
+# ======================================================================
+
+fly-deploy-api:
+	fly deploy --config fly.api.toml
+
+fly-deploy-engine:
+	fly deploy --config fly.engine.toml
+
+fly-logs-api:
+	fly logs --config fly.api.toml
+
+fly-logs-engine:
+	fly logs --config fly.engine.toml
