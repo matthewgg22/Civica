@@ -16,17 +16,20 @@ export async function withActorContext(c: Context<{ Bindings: Env }>) {
   const db = makeServiceClient(c.env);
 
   // Postgres transaction-local variables consumed by audit_row_change()
-  await db.rpc("set_config", {
+  // DB types don't include set_config; cast to bypass — it's a standard Postgres built-in
+  type RpcFn = typeof db.rpc;
+  const rpc = db.rpc.bind(db) as (...args: Parameters<RpcFn>) => ReturnType<RpcFn>;
+  await rpc("set_config" as never, {
     setting_name: "snap_enrollment.actor_kind",
     new_value: actor.kind,
     is_local: true,
   } as never);
-  await db.rpc("set_config", {
+  await rpc("set_config" as never, {
     setting_name: "snap_enrollment.actor_id",
     new_value: actor.id,
     is_local: true,
   } as never);
-  await db.rpc("set_config", {
+  await rpc("set_config" as never, {
     setting_name: "snap_enrollment.request_id",
     new_value: requestId,
     is_local: true,

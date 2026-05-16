@@ -50,6 +50,8 @@ app.put("/packets/:packetId/answers/:questionKey", zValidator("json", upsertAnsw
       ...body,
       packet_id: packetId,
       question_key: c.req.param("questionKey"),
+      applicant_answer: body.applicant_answer ?? null,
+      original_ocr_value: body.original_ocr_value ?? null,
     }, { onConflict: "packet_id,question_key" })
     .select()
     .single();

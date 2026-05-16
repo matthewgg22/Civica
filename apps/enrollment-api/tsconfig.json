@@ -8,6 +8,7 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
+    "skipLibCheck": true,
     "paths": {
       "@civica/db-types": ["../../packages/db-types/snap_enrollment.ts"]
     }

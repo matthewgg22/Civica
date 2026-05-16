@@ -82,7 +82,13 @@ app.post("/", zValidator("json", createPacketSchema), async (c) => {
   const { data, error } = await db
     .schema("snap_enrollment")
     .from("snap_packets")
-    .insert({ ...body, status: "Draft" })
+    .insert({
+      ...body,
+      status: "Draft" as const,
+      org_id: body.org_id ?? null,
+      county: body.county ?? null,
+      county_fips: body.county_fips ?? null,
+    })
     .select()
     .single();
 
@@ -98,7 +104,7 @@ app.patch("/:packetId", zValidator("json", updatePacketSchema), async (c) => {
   if (body.status) {
     const reason = c.req.header("X-Transition-Reason");
     if (reason) {
-      await db.rpc("set_config", {
+      await (db.rpc as (fn: never, args: never) => unknown)("set_config" as never, {
         setting_name: "snap_enrollment.transition_reason",
         new_value: reason,
         is_local: true,
@@ -109,7 +115,11 @@ app.patch("/:packetId", zValidator("json", updatePacketSchema), async (c) => {
   const { data, error } = await db
     .schema("snap_enrollment")
     .from("snap_packets")
-    .update(body)
+    .update({
+      ...(body.status !== undefined && { status: body.status }),
+      ...(body.notes_for_applicant !== undefined && { notes_for_applicant: body.notes_for_applicant }),
+      ...(body.org_id !== undefined && { org_id: body.org_id }),
+    })
     .eq("packet_id", c.req.param("packetId"))
     .select()
     .single();
