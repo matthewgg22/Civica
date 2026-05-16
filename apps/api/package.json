@@ -1,0 +1,31 @@
+{
+  "name": "@civica/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/ test/",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@civica/db": "workspace:*",
+    "@civica/types": "workspace:*",
+    "@hono/zod-openapi": "^0.18.0",
+    "@supabase/supabase-js": "^2.46.1",
+    "hono": "^4.6.12",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@civica/config": "workspace:*",
+    "@civica/fixtures": "workspace:*",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
+  }
+}
