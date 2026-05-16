@@ -40,6 +40,48 @@ export class EngineClient {
     return this.request<T>('PATCH', path, body, actor, requestId);
   }
 
+  // Forwards a multipart/form-data body. Signs with empty body string (no deterministic serialization).
+  async postMultipart<T = unknown>(path: string, formData: FormData, actor: string, requestId?: string): Promise<EngineResponse<T>> {
+    const timestamp = Math.floor(Date.now() / 1000).toString();
+    const reqId = requestId ?? randomUUID();
+    const signature = this.sign(timestamp, 'POST', path, '');
+
+    const res = await this._fetch(`${this.baseUrl}${path}`, {
+      method: 'POST',
+      headers: {
+        'X-Internal-Actor': actor,
+        'X-Internal-Request-Id': reqId,
+        'X-Internal-Timestamp': timestamp,
+        'X-Internal-Signature': signature,
+        // Content-Type intentionally omitted — fetch sets multipart boundary automatically
+      },
+      body: formData,
+    });
+
+    const data = (await res.json()) as T;
+    return { ok: res.ok, status: res.status, data };
+  }
+
+  // Returns the raw fetch Response for non-JSON responses (e.g. PDF binary).
+  async fetchRaw(method: string, path: string, body: unknown, actor: string, requestId?: string): Promise<Response> {
+    const timestamp = Math.floor(Date.now() / 1000).toString();
+    const reqId = requestId ?? randomUUID();
+    const bodyStr = body != null ? JSON.stringify(body) : '';
+    const signature = this.sign(timestamp, method, path, bodyStr);
+
+    return this._fetch(`${this.baseUrl}${path}`, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Internal-Actor': actor,
+        'X-Internal-Request-Id': reqId,
+        'X-Internal-Timestamp': timestamp,
+        'X-Internal-Signature': signature,
+      },
+      ...(body != null ? { body: bodyStr } : {}),
+    });
+  }
+
   // Signs: "<timestamp>.<METHOD>.<path>.<body>"
   // FastAPI verifies this before processing any internal request.
   sign(timestamp: string, method: string, path: string, body: string): string {
