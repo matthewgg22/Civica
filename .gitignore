@@ -24,16 +24,30 @@ __pycache__/
 **/.*build/
 CivicaDesignSystem/.build/
 
+# Wrangler local secrets
+.dev.vars
+
 # Node / pnpm workspaces (apps/, packages/)
 node_modules/
 **/node_modules/
+.next/
 **/dist/
 **/.turbo/
+*.tsbuildinfo
+next-env.d.ts
 pnpm-debug.log*
 .pnpm-store/
-*.tsbuildinfo
+
+# Cloudflare Wrangler local state
+.wrangler/
 
 # Local env files (.env.example is committed; anything else is secrets)
 .env
 .env.local
 .env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

@@ -1,0 +1,298 @@
+{
+  "openapi": "3.1.0",
+  "info": { "title": "Civica SNAP API", "version": "0.1.0" },
+  "paths": {
+    "/me": {
+      "get": {
+        "operationId": "getMe",
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserProfile" } } } }
+        }
+      },
+      "patch": {
+        "operationId": "patchMe",
+        "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserProfileUpdate" } } } },
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserProfile" } } } }
+        }
+      }
+    },
+    "/me/packets": {
+      "get": {
+        "operationId": "listPackets",
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Packet" } } } } }
+        }
+      },
+      "post": {
+        "operationId": "createPacket",
+        "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreatePacketRequest" } } } },
+        "responses": {
+          "201": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Packet" } } } }
+        }
+      }
+    },
+    "/me/packets/{packetId}": {
+      "get": {
+        "operationId": "getPacket",
+        "parameters": [{ "name": "packetId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Packet" } } } }
+        }
+      }
+    },
+    "/me/packets/{packetId}/history": {
+      "get": {
+        "operationId": "getPacketHistory",
+        "parameters": [{ "name": "packetId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/PacketHistoryEntry" } } } } }
+        }
+      }
+    },
+    "/me/packets/{packetId}/questions": {
+      "get": {
+        "operationId": "getQuestions",
+        "parameters": [{ "name": "packetId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/QuestionSection" } } } } }
+        }
+      }
+    },
+    "/me/packets/{packetId}/answers": {
+      "get": {
+        "operationId": "getAnswers",
+        "parameters": [{ "name": "packetId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Answer" } } } } }
+        }
+      },
+      "post": {
+        "operationId": "saveAnswer",
+        "parameters": [{ "name": "packetId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AnswerPayload" } } } },
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Answer" } } } }
+        }
+      }
+    },
+    "/me/packets/{packetId}/documents": {
+      "get": {
+        "operationId": "listDocuments",
+        "parameters": [{ "name": "packetId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/DocumentItem" } } } } }
+        }
+      }
+    },
+    "/me/packets/{packetId}/documents/{documentId}/upload": {
+      "post": {
+        "operationId": "uploadDocument",
+        "parameters": [
+          { "name": "packetId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "documentId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": { "content": { "multipart/form-data": { "schema": { "type": "object", "properties": { "file": { "type": "string", "format": "binary" } } } } } },
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DocumentItem" } } } }
+        }
+      }
+    },
+    "/me/packets/{packetId}/submit": {
+      "post": {
+        "operationId": "submitPacket",
+        "parameters": [{ "name": "packetId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Packet" } } } }
+        }
+      }
+    },
+    "/me/packets/{packetId}/consent": {
+      "post": {
+        "operationId": "grantConsent",
+        "parameters": [{ "name": "packetId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ConsentPayload" } } } },
+        "responses": { "200": { "description": "OK" } }
+      },
+      "delete": {
+        "operationId": "withdrawConsent",
+        "parameters": [{ "name": "packetId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "204": { "description": "No Content" } }
+      }
+    },
+    "/me/inbox": {
+      "get": {
+        "operationId": "listInboxItems",
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/InboxItem" } } } } }
+        }
+      }
+    },
+    "/me/inbox/{requestId}/upload": {
+      "post": {
+        "operationId": "uploadInboxResponse",
+        "parameters": [{ "name": "requestId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": { "content": { "multipart/form-data": { "schema": { "type": "object", "properties": { "file": { "type": "string", "format": "binary" } } } } } },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/me/inbox/{requestId}/resolve": {
+      "post": {
+        "operationId": "resolveInboxItem",
+        "parameters": [{ "name": "requestId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "OK" } }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "QuestionType": {
+        "type": "string",
+        "enum": ["text", "number", "currency", "date", "single", "multi", "address"]
+      },
+      "QuestionOption": {
+        "type": "object",
+        "properties": {
+          "value": { "type": "string" },
+          "label": { "type": "string" }
+        },
+        "required": ["value", "label"]
+      },
+      "Question": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "section_key": { "type": "string" },
+          "type": { "$ref": "#/components/schemas/QuestionType" },
+          "label": { "type": "string" },
+          "hint": { "type": "string" },
+          "required": { "type": "boolean" },
+          "distress_prompt": { "type": "boolean" },
+          "options": { "type": "array", "items": { "$ref": "#/components/schemas/QuestionOption" } },
+          "order": { "type": "integer" }
+        },
+        "required": ["id", "section_key", "type", "label", "required", "order"]
+      },
+      "QuestionSection": {
+        "type": "object",
+        "properties": {
+          "key": { "type": "string" },
+          "label": { "type": "string" },
+          "questions": { "type": "array", "items": { "$ref": "#/components/schemas/Question" } }
+        },
+        "required": ["key", "label", "questions"]
+      },
+      "UserProfile": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "email": { "type": "string" },
+          "phone": { "type": "string" },
+          "state_code": { "type": "string", "enum": ["CA", "MA"] },
+          "language": { "type": "string", "enum": ["en", "es"] },
+          "created_at": { "type": "string", "format": "date-time" }
+        },
+        "required": ["id"]
+      },
+      "UserProfileUpdate": {
+        "type": "object",
+        "properties": {
+          "state_code": { "type": "string", "enum": ["CA", "MA"] },
+          "language": { "type": "string", "enum": ["en", "es"] }
+        }
+      },
+      "PacketStatus": {
+        "type": "string",
+        "enum": [
+          "Draft",
+          "Submitted for Review",
+          "Needs Documents",
+          "Needs Applicant Clarification",
+          "In Navigator Review",
+          "Ready for Handoff",
+          "Handed Off",
+          "Closed"
+        ]
+      },
+      "Packet": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "status": { "$ref": "#/components/schemas/PacketStatus" },
+          "state_code": { "type": "string", "enum": ["CA", "MA"] },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        },
+        "required": ["id", "status"]
+      },
+      "CreatePacketRequest": {
+        "type": "object",
+        "properties": {
+          "state_code": { "type": "string", "enum": ["CA", "MA"] }
+        },
+        "required": ["state_code"]
+      },
+      "AnswerPayload": {
+        "type": "object",
+        "properties": {
+          "question_id": { "type": "string" },
+          "value": {}
+        },
+        "required": ["question_id", "value"]
+      },
+      "Answer": {
+        "type": "object",
+        "properties": {
+          "question_id": { "type": "string" },
+          "value": {},
+          "saved_at": { "type": "string", "format": "date-time" }
+        },
+        "required": ["question_id", "value"]
+      },
+      "DocumentStatus": {
+        "type": "string",
+        "enum": ["Not Started", "Uploaded", "Needs Review", "Accepted for Packet", "Insufficient", "Missing", "Optional", "N/A"]
+      },
+      "DocumentItem": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "status": { "$ref": "#/components/schemas/DocumentStatus" },
+          "required": { "type": "boolean" },
+          "uploaded_at": { "type": "string", "format": "date-time" }
+        },
+        "required": ["id", "name", "status", "required"]
+      },
+      "ConsentPayload": {
+        "type": "object",
+        "properties": {
+          "signature": { "type": "string" },
+          "consented_at": { "type": "string", "format": "date-time" }
+        },
+        "required": ["signature", "consented_at"]
+      },
+      "PacketHistoryEntry": {
+        "type": "object",
+        "properties": {
+          "status": { "$ref": "#/components/schemas/PacketStatus" },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "note": { "type": "string" }
+        },
+        "required": ["status", "timestamp"]
+      },
+      "InboxItem": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "packet_id": { "type": "string" },
+          "prompt": { "type": "string" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "resolved": { "type": "boolean" }
+        },
+        "required": ["id", "packet_id", "prompt", "resolved"]
+      }
+    }
+  }
+}
