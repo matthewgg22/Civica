@@ -1,0 +1,7 @@
+{
+  "name": "@civica/api",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Hono API gateway for SNAP. Owns auth, audit, rate limiting, OpenAPI, navigator endpoints. Proxies applicant flows to the FastAPI engine in backend/.",
+  "type": "module"
+}
