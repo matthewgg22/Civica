@@ -147,6 +147,21 @@ test.describe("Act 1 — Applicant submission", () => {
     applicantId = (await resolveApplicantId(ctx.applicant.authUserId)) ?? "";
     expect(applicantId).toBeTruthy();
 
+    // Assign the test org so the staff RLS policy (is_navigator_in_org) can
+    // see this packet. Applicant-created packets have org_id = NULL; in
+    // production an admin assigns an org before navigator review begins.
+    const adminClient = createClient(
+      process.env["E2E_SUPABASE_URL"]!,
+      process.env["E2E_SUPABASE_SERVICE_ROLE_KEY"]!,
+      { auth: { autoRefreshToken: false, persistSession: false } },
+    );
+    const { error: orgErr } = await adminClient
+      .schema("snap_enrollment")
+      .from("snap_packets")
+      .update({ org_id: ctx.staff.orgId })
+      .eq("packet_id", packetId);
+    if (orgErr) throw new Error(`Failed to assign org to packet: ${orgErr.message}`);
+
     console.log(`  packet_id=${packetId}  applicant_id=${applicantId}`);
   });
 
