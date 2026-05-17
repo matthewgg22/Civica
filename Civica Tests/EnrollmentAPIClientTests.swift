@@ -109,6 +109,10 @@ private func makeClient() -> HTTPEnrollmentAPIClient {
 
 // MARK: - Tests
 
+// .serialized prevents concurrent test execution, which would cause
+// EnrollmentStubProtocol.handlers (nonisolated(unsafe) static) to be
+// cleared by one test's init() while another test is mid-flight.
+@Suite(.serialized)
 struct EnrollmentAPIClientTests {
 
     init() {
@@ -203,3 +207,4 @@ struct EnrollmentAPIClientTests {
         }
     }
 }
+

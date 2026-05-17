@@ -141,6 +141,10 @@ struct CivicaEnrollmentAuthPhoneTests {
 
 // MARK: - OTP state machine tests
 
+// .serialized prevents concurrent test execution, which would cause
+// AuthStubProtocol.handlers (nonisolated(unsafe) static) to be
+// cleared by one test's init() while another test is mid-flight.
+@Suite(.serialized)
 @MainActor
 struct CivicaEnrollmentAuthOTPTests {
 
@@ -322,3 +326,4 @@ struct CivicaEnrollmentAuthKeychainTests {
                 "Legacy UserDefaults user_id must be deleted after migration")
     }
 }
+
