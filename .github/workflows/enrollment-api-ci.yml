@@ -2,7 +2,7 @@ name: Enrollment API CI
 
 on:
   push:
-    branches: [main, "claude/*", "codex/*"]
+    branches: [main, codex/rebuild-feb18, "claude/*", "codex/*"]
     paths:
       - "apps/enrollment-api/**"
       - ".github/workflows/enrollment-api-ci.yml"
@@ -32,6 +32,15 @@ jobs:
 
       - name: Typecheck
         run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+        env:
+          # Placeholder credentials — all Supabase calls are mocked in tests.
+          SUPABASE_URL: https://placeholder.supabase.co
+          SUPABASE_ANON_KEY: placeholder-anon-key
+          SUPABASE_SERVICE_ROLE_KEY: placeholder-service-role-key
+          SNAP_FERNET_KEY: placeholder-fernet-key-32bytes!!
 
       - name: Wrangler dry-run build
         run: npx wrangler deploy --dry-run --outdir dist
