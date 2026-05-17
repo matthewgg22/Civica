@@ -5,7 +5,10 @@
   "description": "Canonical SNAP enrollment enums shared across enrollment-api, dashboard, and iOS.",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
