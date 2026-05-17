@@ -1,0 +1,87 @@
+name: Lighthouse CI (web)
+
+# K M5 closeout: enforce mobile Lighthouse perf >= 90 on public/landing pages.
+# Question-flow Lighthouse stays manual (requires authenticated session).
+#
+# Runs on PRs that touch web/ and on the codex/rebuild-feb18 push.
+# Builds the Next.js app, serves it locally, runs mobile Lighthouse, fails
+# the job if any audited URL drops below the configured floors.
+
+on:
+  pull_request:
+    branches:
+      - main
+      - codex/rebuild-feb18
+    paths:
+      - "web/**"
+      - ".github/workflows/lighthouse-ci.yml"
+  push:
+    branches:
+      - codex/rebuild-feb18
+    paths:
+      - "web/**"
+  workflow_dispatch:
+
+jobs:
+  lighthouse:
+    name: Lighthouse mobile (public pages)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      # Placeholder env so `next build` doesn't error on missing Supabase config.
+      # Lighthouse never logs in, so live Supabase isn't needed.
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+      NEXT_PUBLIC_API_BASE_URL: https://civica-enrollment-api.civica-api.workers.dev
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install web dependencies
+        working-directory: web
+        run: npm install --no-audit --no-fund
+
+      - name: Build web (production)
+        working-directory: web
+        run: npm run build
+
+      - name: Start web server (background)
+        working-directory: web
+        run: |
+          npm start &
+          echo "WEB_PID=$!" >> "$GITHUB_ENV"
+
+      - name: Wait for server
+        run: |
+          for i in {1..30}; do
+            if curl -fs http://localhost:3000/en > /dev/null; then
+              echo "Server ready after ${i}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Server failed to start within 30s"
+          exit 1
+
+      - name: Run Lighthouse mobile
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            http://localhost:3000/en
+            http://localhost:3000/en/sign-in
+            http://localhost:3000/en/app/resources
+          configPath: ./web/lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Stop web server
+        if: always()
+        run: kill "$WEB_PID" || true

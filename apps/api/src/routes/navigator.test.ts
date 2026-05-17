@@ -2,10 +2,14 @@ import { SignJWT } from 'jose';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../lib/supabase.js');
+vi.mock('../auth/staffLookup.js', () => ({
+  resolveStaffId: vi.fn(),
+}));
 
 import { buildApp } from '../app.js';
 import { _resetSecretCache } from '../auth/verify.js';
 import { supabaseAdmin } from '../lib/supabase.js';
+import { resolveStaffId } from '../auth/staffLookup.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mockAdmin = supabaseAdmin as any;
@@ -80,6 +84,9 @@ beforeEach(() => {
 
   // Default: rpc (set_config) always succeeds
   mockAdmin.rpc = vi.fn().mockResolvedValue({ data: null, error: null });
+
+  // Default: staff lookup returns a valid staff_id (resets after each test)
+  vi.mocked(resolveStaffId).mockResolvedValue('staff-row-1');
 });
 
 afterEach(() => {
