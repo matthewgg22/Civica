@@ -23,17 +23,20 @@ interface Props {
 
 const EXPORT_FORMATS = [
   { value: "json_api" as const, label: "JSON (structured)", impl: true },
-  { value: "csv_summary" as const, label: "CSV summary", impl: false },
+  { value: "csv_summary" as const, label: "CSV summary", impl: true },
+  { value: "pdf_packet" as const, label: "PDF packet", impl: true },
   { value: "xml_ecs" as const, label: "SNAP ECS XML", impl: false },
-  { value: "pdf_packet" as const, label: "PDF packet", impl: false },
-];
+] as const;
 
 const ALLOWED_STATUSES = new Set(["Ready for Handoff", "Handed Off"]);
+
+// Formats that produce downloadable storage artifacts
+const DOWNLOADABLE_FORMATS = new Set(["json_api", "csv_summary", "pdf_packet"]);
 
 export default function HandoffPanel({ packetId, packetStatus, blockerCount }: Props) {
   const router = useRouter();
   const [history, setHistory] = useState<ExportRow[] | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<string | null>(null); // tracks which format is in flight
   const [error, setError] = useState<string | null>(null);
   const [agencyRef, setAgencyRef] = useState("");
   const [statusAllowed, setStatusAllowed] = useState(ALLOWED_STATUSES.has(packetStatus));
@@ -47,7 +50,9 @@ export default function HandoffPanel({ packetId, packetStatus, blockerCount }: P
     (async () => {
       try {
         const supabase = createClient();
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
         if (!session) return;
         const rows = await api.handoff.list(session.access_token, packetId);
         if (!cancelled) setHistory(rows as ExportRow[]);
@@ -55,20 +60,32 @@ export default function HandoffPanel({ packetId, packetStatus, blockerCount }: P
         if (!cancelled) setHistory([]);
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [packetId]);
 
-  async function exportPacket(format: "json_api") {
-    setLoading(true);
+  async function exportPacket(format: "json_api" | "csv_summary" | "pdf_packet") {
+    setLoading(format);
     setError(null);
     try {
       const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) throw new Error("Not authenticated");
-      await api.handoff.create(session.access_token, packetId, {
-        format,
-        agency_reference: agencyRef || undefined,
-      });
+
+      if (format === "pdf_packet") {
+        await api.handoffPdf.create(session.access_token, packetId, {
+          agency_reference: agencyRef || undefined,
+        });
+      } else {
+        await api.handoff.create(session.access_token, packetId, {
+          format,
+          agency_reference: agencyRef || undefined,
+        });
+      }
+
       setAgencyRef("");
       const rows = await api.handoff.list(session.access_token, packetId);
       setHistory(rows as ExportRow[]);
@@ -76,16 +93,22 @@ export default function HandoffPanel({ packetId, packetStatus, blockerCount }: P
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to export");
     } finally {
-      setLoading(false);
+      setLoading(null);
     }
   }
 
   async function downloadExport(exportId: string) {
     try {
       const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) throw new Error("Not authenticated");
-      const { url } = await api.handoff.download(session.access_token, packetId, exportId) as { url: string };
+      const { url } = (await api.handoff.download(
+        session.access_token,
+        packetId,
+        exportId,
+      )) as { url: string };
       window.open(url, "_blank", "noopener");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Download failed");
@@ -96,14 +119,14 @@ export default function HandoffPanel({ packetId, packetStatus, blockerCount }: P
   const disabledReason = !statusAllowed
     ? `Packet must be in "Ready for Handoff" status (current: ${packetStatus})`
     : blockerCount > 0
-    ? "Resolve all readiness blockers above before exporting"
-    : "";
+      ? "Resolve all readiness blockers above before exporting"
+      : "";
 
   return (
     <div className="space-y-4">
       <p className="text-[12px] text-graphite italic leading-snug">
-        Civica does not determine SNAP eligibility or approve benefits. This export
-        organizes the packet for review through official SNAP channels.
+        Civica does not determine SNAP eligibility or approve benefits. This export organizes the
+        packet for review through official SNAP channels.
       </p>
 
       <div className="space-y-2">
@@ -121,26 +144,30 @@ export default function HandoffPanel({ packetId, packetStatus, blockerCount }: P
         </label>
 
         <div className="flex flex-wrap gap-2">
+          {EXPORT_FORMATS.filter((f) => f.impl).map((f) => {
+            const isActive = loading === f.value;
+            return (
+              <button
+                key={f.value}
+                type="button"
+                onClick={() => exportPacket(f.value as "json_api" | "csv_summary" | "pdf_packet")}
+                disabled={!canExport || loading !== null}
+                title={disabledReason || undefined}
+                className="px-4 py-2 text-[13px] font-semibold rounded-[3px] bg-teal text-white hover:bg-teal/90 disabled:bg-graphite/20 disabled:text-graphite disabled:cursor-not-allowed transition-colors"
+              >
+                {isActive ? "Exporting…" : `Export packet (${formatLabel(f.value)})`}
+              </button>
+            );
+          })}
+          {/* xml_ecs stays disabled — state-agency ECS schema is its own project */}
           <button
             type="button"
-            onClick={() => exportPacket("json_api")}
-            disabled={!canExport || loading}
-            title={disabledReason || undefined}
-            className="px-4 py-2 text-[13px] font-semibold rounded-[3px] bg-teal text-white hover:bg-teal/90 disabled:bg-graphite/20 disabled:text-graphite disabled:cursor-not-allowed transition-colors"
+            disabled
+            title="SNAP ECS XML — coming in a future release"
+            className="px-4 py-2 text-[13px] font-semibold rounded-[3px] bg-graphite/10 text-muted cursor-not-allowed"
           >
-            {loading ? "Exporting…" : "Export packet (JSON)"}
+            SNAP ECS XML · soon
           </button>
-          {EXPORT_FORMATS.filter((f) => !f.impl).map((f) => (
-            <button
-              key={f.value}
-              type="button"
-              disabled
-              title="Coming soon"
-              className="px-4 py-2 text-[13px] font-semibold rounded-[3px] bg-graphite/10 text-muted cursor-not-allowed"
-            >
-              {f.label} · soon
-            </button>
-          ))}
         </div>
 
         {!canExport && disabledReason && (
@@ -163,13 +190,16 @@ export default function HandoffPanel({ packetId, packetStatus, blockerCount }: P
               <li key={row.export_id} className="py-3 flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-[14px] font-medium text-ink">
-                    {row.format}
+                    {formatLabel(row.format)}
                     {row.agency_reference && (
-                      <span className="ml-2 font-mono text-[12px] text-graphite">· {row.agency_reference}</span>
+                      <span className="ml-2 font-mono text-[12px] text-graphite">
+                        · {row.agency_reference}
+                      </span>
                     )}
                   </p>
                   <p className="text-[12px] text-muted">
-                    {formatDateTime(row.exported_at)} · <span className="font-mono">{shortId(row.export_id)}</span>
+                    {formatDateTime(row.exported_at)} ·{" "}
+                    <span className="font-mono">{shortId(row.export_id)}</span>
                     {row.checksum_sha256 && (
                       <span className="ml-2 font-mono" title={row.checksum_sha256}>
                         sha256:{row.checksum_sha256.slice(0, 8)}…
@@ -177,7 +207,7 @@ export default function HandoffPanel({ packetId, packetStatus, blockerCount }: P
                     )}
                   </p>
                 </div>
-                {row.format === "json_api" && (
+                {DOWNLOADABLE_FORMATS.has(row.format) && (
                   <button
                     type="button"
                     onClick={() => downloadExport(row.export_id)}
@@ -193,4 +223,19 @@ export default function HandoffPanel({ packetId, packetStatus, blockerCount }: P
       </div>
     </div>
   );
+}
+
+function formatLabel(format: string): string {
+  switch (format) {
+    case "json_api":
+      return "JSON";
+    case "csv_summary":
+      return "CSV";
+    case "pdf_packet":
+      return "PDF";
+    case "xml_ecs":
+      return "ECS XML";
+    default:
+      return format;
+  }
 }

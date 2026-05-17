@@ -15,7 +15,8 @@
     // own source. Remove once supabase-js ships Workers-compatible types.
     "skipLibCheck": true,
     "paths": {
-      "@civica/db-types": ["../../packages/db-types/snap_enrollment.ts"]
+      "@civica/db-types": ["../../packages/db-types/snap_enrollment.ts"],
+      "@civica/snap-handoff": ["../../packages/snap-handoff/src/index.ts"]
     }
   },
   "include": ["src/**/*.ts"],

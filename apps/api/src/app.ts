@@ -21,6 +21,7 @@ import { openstatesRouter } from './routes/openstates/index.js';
 import { civicRouter } from './routes/civic/index.js';
 import { snapLegacyRouter } from './routes/snap/legacy.js';
 import { packetsRouter as snapPacketsRouter } from './routes/snap/packets.js';
+import { handoffRouter as snapHandoffRouter } from './routes/snap/handoff.js';
 import { ocrWebhookRouter } from './routes/webhooks/ocr.js';
 import { shareRouter } from './routes/share/index.js';
 
@@ -53,6 +54,7 @@ export function buildApp() {
   app.route('/', openstatesRouter);
   app.route('/', snapLegacyRouter);
   app.route('/', snapPacketsRouter);
+  app.route('/', snapHandoffRouter);
   app.route('/', ocrWebhookRouter);
   app.route('/', shareRouter);
   // Stub router (501 for not-yet-ported civic routes)

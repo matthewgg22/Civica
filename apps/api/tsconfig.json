@@ -12,17 +12,18 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
-    "rootDir": "src",
     "declaration": false,
     "declarationMap": false,
     "sourceMap": false,
     "incremental": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "jsx": "react-jsx",
     "paths": {
-      "@civica/db-types": ["../../packages/db-types/snap_enrollment.ts"]
+      "@civica/db-types": ["../../packages/db-types/snap_enrollment.ts"],
+      "@civica/snap-handoff": ["../../packages/snap-handoff/src/index.ts"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["dist", "node_modules"]
 }
