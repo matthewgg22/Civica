@@ -1,10 +1,72 @@
 import Foundation
 import OSLog
+import Security
 
 // Phone OTP authentication against Supabase Auth REST API.
 // Uses URLSession directly (matching the FindHelpService pattern); the Supabase
-// Swift SDK is linked to the VoteNow target only. Session is persisted in
-// UserDefaults — Keychain upgrade path is tracked separately.
+// Swift SDK is linked to the VoteNow target only.
+//
+// Session is persisted in Keychain (kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+// Synchronizable=false). On first launch after upgrade from a UserDefaults-based
+// build, the old values are migrated and deleted atomically in restoreSession().
+
+// MARK: - Keychain helper (private to this file)
+
+private enum EnrollmentAuthKeychain {
+    static let service = "co.civica.enrollment.auth"
+    static let account = "session"
+
+    struct Session: Codable {
+        let accessToken: String
+        let refreshToken: String
+        let userId: String
+        let expiresAt: Double
+    }
+
+    static func load() -> Session? {
+        let query: [String: Any] = [
+            kSecClass as String:                     kSecClassGenericPassword,
+            kSecAttrService as String:               service,
+            kSecAttrAccount as String:               account,
+            kSecAttrSynchronizable as String:        false,
+            kSecUseDataProtectionKeychain as String: true,
+            kSecReturnData as String:                true,
+            kSecMatchLimit as String:                kSecMatchLimitOne
+        ]
+        var item: CFTypeRef?
+        guard SecItemCopyMatching(query as CFDictionary, &item) == errSecSuccess,
+              let data = item as? Data else { return nil }
+        return try? JSONDecoder().decode(Session.self, from: data)
+    }
+
+    static func save(_ session: Session) {
+        guard let data = try? JSONEncoder().encode(session) else { return }
+        delete()
+        let attributes: [String: Any] = [
+            kSecClass as String:                     kSecClassGenericPassword,
+            kSecAttrService as String:               service,
+            kSecAttrAccount as String:               account,
+            kSecAttrAccessible as String:            kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+            kSecAttrSynchronizable as String:        false,
+            kSecUseDataProtectionKeychain as String: true,
+            kSecValueData as String:                 data
+        ]
+        SecItemAdd(attributes as CFDictionary, nil)
+    }
+
+    static func delete() {
+        let query: [String: Any] = [
+            kSecClass as String:                     kSecClassGenericPassword,
+            kSecAttrService as String:               service,
+            kSecAttrAccount as String:               account,
+            kSecAttrSynchronizable as String:        false,
+            kSecUseDataProtectionKeychain as String: true
+        ]
+        SecItemDelete(query as CFDictionary)
+    }
+}
+
+// MARK: - Auth class
 
 @MainActor
 final class CivicaEnrollmentAuth: ObservableObject {
@@ -48,12 +110,12 @@ final class CivicaEnrollmentAuth: ObservableObject {
     private let session: URLSession
     private static let logger = Logger(subsystem: "Civica", category: "EnrollmentAuth")
 
-    // UserDefaults keys for persisted session.
-    private enum StorageKey {
-        static let accessToken = "enrollment.auth.access_token"
+    // Legacy UserDefaults keys kept only for the one-shot migration read.
+    private enum LegacyStorageKey {
+        static let accessToken  = "enrollment.auth.access_token"
         static let refreshToken = "enrollment.auth.refresh_token"
-        static let userId = "enrollment.auth.user_id"
-        static let expiresAt = "enrollment.auth.expires_at"
+        static let userId       = "enrollment.auth.user_id"
+        static let expiresAt    = "enrollment.auth.expires_at"
     }
 
     init(
@@ -110,23 +172,17 @@ final class CivicaEnrollmentAuth: ObservableObject {
 
     /// Returns the access token for the current session. Refreshes automatically if expired.
     nonisolated func currentAccessToken() async -> String? {
-        let defaults = UserDefaults.standard
-        guard let token = defaults.string(forKey: StorageKey.accessToken),
-              let userId = defaults.string(forKey: StorageKey.userId),
-              !token.isEmpty, !userId.isEmpty
+        guard let stored = EnrollmentAuthKeychain.load(),
+              !stored.accessToken.isEmpty,
+              !stored.userId.isEmpty
         else { return nil }
 
-        let expiresAt = defaults.double(forKey: StorageKey.expiresAt)
-        if expiresAt > 0, Date().timeIntervalSince1970 < expiresAt - 60 {
-            return token
+        if stored.expiresAt > 0, Date().timeIntervalSince1970 < stored.expiresAt - 60 {
+            return stored.accessToken
         }
 
-        // Attempt silent refresh.
-        guard let refreshToken = defaults.string(forKey: StorageKey.refreshToken),
-              !refreshToken.isEmpty
-        else { return nil }
-
-        return await refreshAccessToken(refreshToken: refreshToken)
+        guard !stored.refreshToken.isEmpty else { return nil }
+        return await refreshAccessToken(refreshToken: stored.refreshToken)
     }
 
     // MARK: - REST helpers
@@ -179,15 +235,18 @@ final class CivicaEnrollmentAuth: ObservableObject {
         req.httpBody = body
         guard let (data, response) = try? await session.data(for: req),
               (response as? HTTPURLResponse)?.statusCode == 200,
-              let refreshed = try? JSONDecoder().decode(RefreshResponse.self, from: data)
+              let refreshed = try? JSONDecoder().decode(RefreshResponse.self, from: data),
+              let existing = EnrollmentAuthKeychain.load()
         else { return nil }
 
         let expiresAt = Date().timeIntervalSince1970 + Double(refreshed.expires_in)
-        await MainActor.run {
-            UserDefaults.standard.set(refreshed.access_token, forKey: StorageKey.accessToken)
-            UserDefaults.standard.set(refreshed.refresh_token, forKey: StorageKey.refreshToken)
-            UserDefaults.standard.set(expiresAt, forKey: StorageKey.expiresAt)
-        }
+        let updated = EnrollmentAuthKeychain.Session(
+            accessToken: refreshed.access_token,
+            refreshToken: refreshed.refresh_token,
+            userId: existing.userId,
+            expiresAt: expiresAt
+        )
+        EnrollmentAuthKeychain.save(updated)
         return refreshed.access_token
     }
 
@@ -199,32 +258,58 @@ final class CivicaEnrollmentAuth: ObservableObject {
         }
     }
 
-    // MARK: - Session persistence (UserDefaults)
+    // MARK: - Session persistence (Keychain)
 
     private func persistSession(_ r: OTPVerifyResponse) {
         let expiresAt = Date().timeIntervalSince1970 + Double(r.expires_in)
-        UserDefaults.standard.set(r.access_token, forKey: StorageKey.accessToken)
-        UserDefaults.standard.set(r.refresh_token, forKey: StorageKey.refreshToken)
-        UserDefaults.standard.set(r.user.id, forKey: StorageKey.userId)
-        UserDefaults.standard.set(expiresAt, forKey: StorageKey.expiresAt)
+        EnrollmentAuthKeychain.save(EnrollmentAuthKeychain.Session(
+            accessToken: r.access_token,
+            refreshToken: r.refresh_token,
+            userId: r.user.id,
+            expiresAt: expiresAt
+        ))
     }
 
     private func clearPersistedSession() {
-        let keys = [StorageKey.accessToken, StorageKey.refreshToken, StorageKey.userId, StorageKey.expiresAt]
+        EnrollmentAuthKeychain.delete()
+        // Belt-and-suspenders: wipe any residual legacy UserDefaults entries.
+        let keys = [LegacyStorageKey.accessToken, LegacyStorageKey.refreshToken,
+                    LegacyStorageKey.userId, LegacyStorageKey.expiresAt]
         keys.forEach { UserDefaults.standard.removeObject(forKey: $0) }
     }
 
     private func restoreSession() async {
+        // 1. Try Keychain first (normal path after first Keychain write).
+        if let stored = EnrollmentAuthKeychain.load(),
+           !stored.userId.isEmpty, !stored.accessToken.isEmpty {
+            state = .authenticated(userId: stored.userId)
+            return
+        }
+
+        // 2. One-shot migration: read legacy UserDefaults, write to Keychain, delete.
         let defaults = UserDefaults.standard
-        guard let userId = defaults.string(forKey: StorageKey.userId), !userId.isEmpty,
-              defaults.string(forKey: StorageKey.accessToken) != nil
+        guard let userId = defaults.string(forKey: LegacyStorageKey.userId), !userId.isEmpty,
+              let accessToken = defaults.string(forKey: LegacyStorageKey.accessToken), !accessToken.isEmpty
         else { return }
+
+        let migrated = EnrollmentAuthKeychain.Session(
+            accessToken: accessToken,
+            refreshToken: defaults.string(forKey: LegacyStorageKey.refreshToken) ?? "",
+            userId: userId,
+            expiresAt: defaults.double(forKey: LegacyStorageKey.expiresAt)
+        )
+        EnrollmentAuthKeychain.save(migrated)
+        [LegacyStorageKey.accessToken, LegacyStorageKey.refreshToken,
+         LegacyStorageKey.userId, LegacyStorageKey.expiresAt]
+            .forEach { defaults.removeObject(forKey: $0) }
+
+        Self.logger.info("Migrated enrollment session from UserDefaults to Keychain")
         state = .authenticated(userId: userId)
     }
 
     // MARK: - Phone normalization
 
-    private func normalizePhone(_ raw: String) -> String {
+    func normalizePhone(_ raw: String) -> String {
         let digits = raw.filter(\.isNumber)
         if raw.hasPrefix("+") { return "+" + digits }
         if digits.count == 10 { return "+1\(digits)" }
