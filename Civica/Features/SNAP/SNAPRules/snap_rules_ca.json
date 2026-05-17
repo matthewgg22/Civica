@@ -1,0 +1,82 @@
+{
+  "state_code": "CA",
+  "version": "1.0.0-stub",
+  "as_of_date": "2026-05-17",
+  "_comment": "STUB — awaiting packages/snap-rules/data/ca.json from H-web silo. Build phase copies canonical file here; delete this comment once synced.",
+  "document_requirements": [
+    {
+      "category": "identity",
+      "label_en": "Photo ID",
+      "label_es": "Identificación con foto",
+      "helper_en": "Driver's license, state ID, passport, or other government-issued photo ID.",
+      "helper_es": "Licencia de conducir, identificación estatal, pasaporte u otra identificación con foto emitida por el gobierno.",
+      "required_when": { "always": true },
+      "is_required": true
+    },
+    {
+      "category": "residence",
+      "label_en": "Proof of address",
+      "label_es": "Comprobante de domicilio",
+      "helper_en": "Recent utility bill, lease agreement, or official mail showing your current address.",
+      "helper_es": "Factura de servicios reciente, contrato de arrendamiento o correo oficial con su dirección actual.",
+      "required_when": { "always": true },
+      "is_required": true
+    },
+    {
+      "category": "income",
+      "label_en": "Proof of income",
+      "label_es": "Comprobante de ingresos",
+      "helper_en": "Recent pay stubs, employer letter, benefit award letter, or most recent tax return.",
+      "helper_es": "Talones de pago recientes, carta del empleador, carta de beneficios o declaración de impuestos más reciente.",
+      "required_when": { "always": true },
+      "is_required": true
+    },
+    {
+      "category": "shelter",
+      "label_en": "Proof of shelter costs",
+      "label_es": "Comprobante de gastos de vivienda",
+      "helper_en": "Lease or mortgage statement showing your monthly rent or mortgage payment.",
+      "helper_es": "Contrato de arrendamiento o estado de cuenta hipotecario que muestre su pago mensual de renta o hipoteca.",
+      "required_when": { "field": "expenses.monthlyRentOrHousing", "gt": 0 },
+      "is_required": false
+    },
+    {
+      "category": "student",
+      "label_en": "Student enrollment verification",
+      "label_es": "Verificación de matrícula estudiantil",
+      "helper_en": "Official enrollment letter or transcript from your college or university showing current enrollment.",
+      "helper_es": "Carta oficial de matrícula o expediente académico de su universidad que muestre la inscripción actual.",
+      "required_when": { "field": "studentStatus.enrolledInHigherEd", "eq": true },
+      "is_required": false
+    },
+    {
+      "category": "medical",
+      "label_en": "Medical expense documentation",
+      "label_es": "Documentación de gastos médicos",
+      "helper_en": "Receipts, bills, or insurance statements showing monthly out-of-pocket medical costs.",
+      "helper_es": "Recibos, facturas o estados de cuenta del seguro que muestren gastos médicos mensuales de su bolsillo.",
+      "required_when": {
+        "and": [
+          { "field": "household.hasElderlyOrDisabled", "eq": true },
+          { "field": "expenses.monthlyMedical", "gt": 0 }
+        ]
+      },
+      "is_required": false
+    }
+  ],
+  "flags": [
+    {
+      "key": "expedited_eligible",
+      "trigger_when": {
+        "or": [
+          { "field": "income.grossMonthlyIncome", "lt": 150 },
+          { "field": "household.hasElderlyOrDisabled", "eq": true }
+        ]
+      },
+      "label_en": "You may qualify for expedited processing",
+      "label_es": "Puede calificar para procesamiento acelerado",
+      "context_en": "CalFresh applications are sometimes processed within 3 days for households in urgent need. Ask the county office about expedited service when you apply.",
+      "context_es": "Las solicitudes de CalFresh a veces se procesan en 3 días para hogares con necesidad urgente. Pregunte en la oficina del condado sobre el servicio acelerado cuando solicite."
+    }
+  ]
+}
