@@ -1,13 +1,14 @@
 import { SignJWT } from 'jose';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../db/client.js');
-vi.mock('../audit/withAudit.js');
+vi.mock('../lib/supabase.js');
 
 import { buildApp } from '../app.js';
 import { _resetSecretCache } from '../auth/verify.js';
-import { withAudit } from '../audit/withAudit.js';
-import { getDb } from '../db/client.js';
+import { supabaseAdmin } from '../lib/supabase.js';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockAdmin = supabaseAdmin as any;
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -26,67 +27,59 @@ function auth(token: string) {
   return { Authorization: `Bearer ${token}` };
 }
 
-function json(body: unknown) {
-  return { 'Content-Type': 'application/json', ...({} as Record<string, string>) };
-}
-
 /**
- * Minimal chainable query builder mock. Each call to executeTakeFirst /
- * execute returns the next item from the provided queues in call order.
- * withAudit is mocked separately to call fn(db) directly, so the mutation
- * queries inside it also draw from these queues.
+ * Builds a Supabase-shaped chainable query mock.
+ * Each resolved call pops the next item from `results`.
+ * null → { data: null, error: { code: 'PGRST116' } } (simulate not-found).
+ * undefined → { data: [], error: null } (simulate empty array).
  */
-function makeDb(opts: {
-  takeFirsts?: (Record<string, unknown> | null | undefined)[];
-  executes?: unknown[][];
-} = {}) {
-  let tfIdx = 0;
-  let execIdx = 0;
-  const takeFirsts = opts.takeFirsts ?? [];
-  const executes = opts.executes ?? [];
+function makeSupabase(results: (Record<string, unknown> | null | Record<string, unknown>[] | undefined)[]) {
+  let idx = 0;
+
+  const resolve = () => {
+    const val = results[idx++];
+    if (val === null) return Promise.resolve({ data: null, error: { code: 'PGRST116', message: 'Not found' } });
+    if (val === undefined) return Promise.resolve({ data: [], error: null });
+    if (Array.isArray(val)) return Promise.resolve({ data: val, error: null });
+    return Promise.resolve({ data: val, error: null });
+  };
 
   const chain: Record<string, unknown> = {};
   const noop = () => chain;
-
   Object.assign(chain, {
-    selectFrom: noop,
-    leftJoin: noop,
+    from: noop,
+    schema: () => chain,
     select: noop,
-    $if: (_: boolean, fn: (c: unknown) => unknown) => (_ ? fn(chain) : chain),
-    where: noop,
-    onRef: noop,
-    on: noop,
-    orderBy: noop,
+    insert: noop,
+    update: noop,
+    upsert: noop,
+    delete: noop,
+    eq: noop,
+    neq: noop,
+    is: noop,
+    gt: noop,
+    gte: noop,
+    lt: noop,
+    lte: noop,
+    in: noop,
+    order: noop,
     limit: noop,
-    offset: noop,
-    updateTable: noop,
-    insertInto: noop,
-    values: noop,
-    set: noop,
-    returning: noop,
-    execute: () => Promise.resolve(executes[execIdx++] ?? []),
-    executeTakeFirst: () => Promise.resolve(takeFirsts[tfIdx++] ?? null),
-    executeTakeFirstOrThrow: () => {
-      const val = takeFirsts[tfIdx++];
-      if (val == null) throw Object.assign(new Error('no result'), { code: 'NO_RESULT' });
-      return Promise.resolve(val);
-    },
-    transaction: () => ({
-      execute: (fn: (t: unknown) => Promise<unknown>) => fn(chain),
-    }),
+    range: noop,
+    single: resolve,
+    // Awaiting the chain directly (without .single()) also pops from the queue.
+    then: (fn: (v: unknown) => unknown, onRej?: (e: unknown) => unknown) =>
+      resolve().then(fn, onRej),
   });
 
-  return chain as unknown as ReturnType<typeof getDb>;
+  return chain as unknown as typeof supabaseAdmin;
 }
 
 beforeEach(() => {
   vi.stubEnv('SUPABASE_JWT_SECRET', TEST_SECRET);
   _resetSecretCache();
 
-  // withAudit: call fn with db (the mock chain) directly, skip the real transaction/audit
-  vi.mocked(withAudit).mockImplementation(async (db, _actor, _action, _sid, fn) => {
-    return fn(db as never);
-  });
+  // Default: rpc (set_config) always succeeds
+  mockAdmin.rpc = vi.fn().mockResolvedValue({ data: null, error: null });
 });
 
 afterEach(() => {
@@ -99,9 +92,9 @@ afterEach(() => {
 
 describe('GET /navigator/sessions', () => {
   it('returns sessions list', async () => {
-    vi.mocked(getDb).mockReturnValue(
-      makeDb({ executes: [[{ session_id: 'sess-1', navigator_status: 'in_review' }]] }),
-    );
+    const mockSb = makeSupabase([[{ packet_id: 'pkt-1', status: 'In Navigator Review', state_code: 'CA', created_at: new Date().toISOString(), updated_at: new Date().toISOString(), packet_assignments: [] }]]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
     const res = await buildApp().request('/navigator/sessions', { headers: auth(token) });
     expect(res.status).toBe(200);
@@ -109,12 +102,12 @@ describe('GET /navigator/sessions', () => {
     expect(body.sessions).toHaveLength(1);
   });
 
-  it('accepts navigator_status filter without error', async () => {
-    vi.mocked(getDb).mockReturnValue(makeDb({ executes: [[]] }));
+  it('accepts status filter without error', async () => {
+    const mockSb = makeSupabase([[]]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions?navigator_status=awaiting_navigator', {
-      headers: auth(token),
-    });
+    const res = await buildApp().request('/navigator/sessions?status=In+Navigator+Review', { headers: auth(token) });
     expect(res.status).toBe(200);
   });
 });
@@ -123,7 +116,9 @@ describe('GET /navigator/sessions', () => {
 
 describe('GET /navigator/sessions/:id', () => {
   it('returns 404 when session not found', async () => {
-    vi.mocked(getDb).mockReturnValue(makeDb({ takeFirsts: [null] }));
+    const mockSb = makeSupabase([null]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
     const res = await buildApp().request('/navigator/sessions/missing', { headers: auth(token) });
     expect(res.status).toBe(404);
@@ -132,24 +127,16 @@ describe('GET /navigator/sessions/:id', () => {
   });
 
   it('returns session detail with related data', async () => {
-    vi.mocked(getDb).mockReturnValue(
-      makeDb({
-        takeFirsts: [
-          { session_id: 'sess-1', navigator_status: 'in_review' }, // session
-          { assignment_id: 'asgn-1', navigator_id: 'nav-1' },      // assignment
-        ],
-        executes: [
-          [{ note_id: 'note-1', body: 'hello' }], // notes
-          [],                                       // missing items
-        ],
-      }),
-    );
+    const packet = { packet_id: 'pkt-1', status: 'In Navigator Review', state_code: 'CA', created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
+    // First single() = packet; then three parallel queries each return arrays via `then`
+    const mockSb = makeSupabase([packet, [{ assignment_id: 'asgn-1', staff_id: 'nav-1', is_current: true }], [], []]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions/sess-1', { headers: auth(token) });
+    const res = await buildApp().request('/navigator/sessions/pkt-1', { headers: auth(token) });
     expect(res.status).toBe(200);
-    const body = await res.json() as { session: { session_id: string }; assignment: { assignment_id: string } };
-    expect(body.session.session_id).toBe('sess-1');
-    expect(body.assignment?.assignment_id).toBe('asgn-1');
+    const body = await res.json() as { session: { session_id: string }; assignment: { assignment_id: string } | null };
+    expect(body.session.session_id).toBe('pkt-1');
   });
 });
 
@@ -157,9 +144,8 @@ describe('GET /navigator/sessions/:id', () => {
 
 describe('PATCH /navigator/sessions/:id/status', () => {
   it('returns 400 when `to` field is missing', async () => {
-    vi.mocked(getDb).mockReturnValue(makeDb());
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions/sess-1/status', {
+    const res = await buildApp().request('/navigator/sessions/pkt-1/status', {
       method: 'PATCH',
       headers: { ...auth(token), 'Content-Type': 'application/json' },
       body: JSON.stringify({}),
@@ -171,73 +157,60 @@ describe('PATCH /navigator/sessions/:id/status', () => {
   });
 
   it('returns 404 when session not found', async () => {
-    vi.mocked(getDb).mockReturnValue(makeDb({ takeFirsts: [null] }));
+    const mockSb = makeSupabase([null]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
     const res = await buildApp().request('/navigator/sessions/missing/status', {
       method: 'PATCH',
       headers: { ...auth(token), 'Content-Type': 'application/json' },
-      body: JSON.stringify({ to: 'in_review' }),
+      body: JSON.stringify({ to: 'In Navigator Review' }),
     });
     expect(res.status).toBe(404);
   });
 
-  it('returns 422 with not_assigned when moving to in_review without assignment', async () => {
-    vi.mocked(getDb).mockReturnValue(
-      makeDb({
-        takeFirsts: [
-          { session_id: 'sess-1', navigator_status: 'awaiting_navigator' }, // session
-          null, // no active assignment
-          null, // no unresolved missing items
-        ],
-      }),
-    );
+  it('returns 422 with not_assigned when moving to In Navigator Review without assignment', async () => {
+    const packet = { packet_id: 'pkt-1', status: 'Submitted for Review' };
+    const mockSb = makeSupabase([packet, [], []]); // packet, no assignment, no unresolved items
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions/sess-1/status', {
+    const res = await buildApp().request('/navigator/sessions/pkt-1/status', {
       method: 'PATCH',
       headers: { ...auth(token), 'Content-Type': 'application/json' },
-      body: JSON.stringify({ to: 'in_review' }),
+      body: JSON.stringify({ to: 'In Navigator Review' }),
     });
     expect(res.status).toBe(422);
     const body = await res.json() as { error: string };
     expect(body.error).toBe('not_assigned');
   });
 
-  it('returns 422 with missing_required_docs when unresolved items block ready_for_handoff', async () => {
-    vi.mocked(getDb).mockReturnValue(
-      makeDb({
-        takeFirsts: [
-          { session_id: 'sess-1', navigator_status: 'in_review' },
-          { assignment_id: 'asgn-1' }, // has assignment
-          { request_id: 'req-1' },     // has unresolved item
-        ],
-      }),
-    );
+  it('returns 422 with missing_required_docs when unresolved items block Ready for Handoff', async () => {
+    const packet = { packet_id: 'pkt-1', status: 'In Navigator Review' };
+    const mockSb = makeSupabase([packet, [{ assignment_id: 'asgn-1' }], [{ request_id: 'req-1' }]]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions/sess-1/status', {
+    const res = await buildApp().request('/navigator/sessions/pkt-1/status', {
       method: 'PATCH',
       headers: { ...auth(token), 'Content-Type': 'application/json' },
-      body: JSON.stringify({ to: 'ready_for_handoff' }),
+      body: JSON.stringify({ to: 'Ready for Handoff' }),
     });
     expect(res.status).toBe(422);
     const body = await res.json() as { error: string };
     expect(body.error).toBe('missing_required_docs');
   });
 
-  it('returns 422 with terminal_state when session is handed_off', async () => {
-    vi.mocked(getDb).mockReturnValue(
-      makeDb({
-        takeFirsts: [
-          { session_id: 'sess-1', navigator_status: 'handed_off' },
-          null,
-          null,
-        ],
-      }),
-    );
+  it('returns 422 with terminal_state when packet is Handed Off', async () => {
+    const packet = { packet_id: 'pkt-1', status: 'Handed Off' };
+    const mockSb = makeSupabase([packet, [], []]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions/sess-1/status', {
+    const res = await buildApp().request('/navigator/sessions/pkt-1/status', {
       method: 'PATCH',
       headers: { ...auth(token), 'Content-Type': 'application/json' },
-      body: JSON.stringify({ to: 'in_review' }),
+      body: JSON.stringify({ to: 'In Navigator Review' }),
     });
     expect(res.status).toBe(422);
     const body = await res.json() as { error: string };
@@ -245,25 +218,20 @@ describe('PATCH /navigator/sessions/:id/status', () => {
   });
 
   it('transitions and returns updated status when guard passes', async () => {
-    vi.mocked(getDb).mockReturnValue(
-      makeDb({
-        takeFirsts: [
-          { session_id: 'sess-1', navigator_status: 'awaiting_navigator' },
-          { assignment_id: 'asgn-1' }, // has assignment
-          null,                         // no unresolved items
-        ],
-        executes: [[], []], // update + history insert inside withAudit fn
-      }),
-    );
+    const packet = { packet_id: 'pkt-1', status: 'Submitted for Review' };
+    // packet, assignment (has), no unresolved, update result
+    const mockSb = makeSupabase([packet, [{ assignment_id: 'asgn-1' }], [], { packet_id: 'pkt-1', status: 'In Navigator Review' }]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions/sess-1/status', {
+    const res = await buildApp().request('/navigator/sessions/pkt-1/status', {
       method: 'PATCH',
       headers: { ...auth(token), 'Content-Type': 'application/json' },
-      body: JSON.stringify({ to: 'in_review' }),
+      body: JSON.stringify({ to: 'In Navigator Review' }),
     });
     expect(res.status).toBe(200);
-    const body = await res.json() as { navigator_status: string };
-    expect(body.navigator_status).toBe('in_review');
+    const body = await res.json() as { status: string };
+    expect(body.status).toBe('In Navigator Review');
   });
 });
 
@@ -271,9 +239,8 @@ describe('PATCH /navigator/sessions/:id/status', () => {
 
 describe('POST /navigator/sessions/:id/assign', () => {
   it('returns 400 when navigator_id is missing', async () => {
-    vi.mocked(getDb).mockReturnValue(makeDb());
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions/sess-1/assign', {
+    const res = await buildApp().request('/navigator/sessions/pkt-1/assign', {
       method: 'POST',
       headers: { ...auth(token), 'Content-Type': 'application/json' },
       body: JSON.stringify({}),
@@ -284,7 +251,9 @@ describe('POST /navigator/sessions/:id/assign', () => {
   });
 
   it('returns 404 when session not found', async () => {
-    vi.mocked(getDb).mockReturnValue(makeDb({ takeFirsts: [null] }));
+    const mockSb = makeSupabase([null]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
     const res = await buildApp().request('/navigator/sessions/missing/assign', {
       method: 'POST',
@@ -295,17 +264,16 @@ describe('POST /navigator/sessions/:id/assign', () => {
   });
 
   it('returns 201 with assignment on success', async () => {
-    vi.mocked(getDb).mockReturnValue(
-      makeDb({
-        takeFirsts: [
-          { session_id: 'sess-1' },
-          { assignment_id: 'asgn-new', navigator_id: 'nav-1', assigned_at: new Date().toISOString() },
-        ],
-        executes: [[]], // unassign existing
-      }),
-    );
+    const at = new Date().toISOString();
+    const mockSb = makeSupabase([
+      { packet_id: 'pkt-1' },                                                   // packet lookup
+      { data: null, error: null } as unknown as Record<string, unknown>,          // unassign (no-op)
+      { assignment_id: 'asgn-new', staff_id: 'nav-1', assigned_at: at },          // new assignment
+    ]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions/sess-1/assign', {
+    const res = await buildApp().request('/navigator/sessions/pkt-1/assign', {
       method: 'POST',
       headers: { ...auth(token), 'Content-Type': 'application/json' },
       body: JSON.stringify({ navigator_id: 'nav-1' }),
@@ -320,9 +288,8 @@ describe('POST /navigator/sessions/:id/assign', () => {
 
 describe('POST /navigator/sessions/:id/notes', () => {
   it('returns 400 when body is empty', async () => {
-    vi.mocked(getDb).mockReturnValue(makeDb());
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions/sess-1/notes', {
+    const res = await buildApp().request('/navigator/sessions/pkt-1/notes', {
       method: 'POST',
       headers: { ...auth(token), 'Content-Type': 'application/json' },
       body: JSON.stringify({ body: '   ' }),
@@ -331,16 +298,15 @@ describe('POST /navigator/sessions/:id/notes', () => {
   });
 
   it('returns 201 with note on success', async () => {
-    vi.mocked(getDb).mockReturnValue(
-      makeDb({
-        takeFirsts: [
-          { session_id: 'sess-1' },
-          { note_id: 'note-1', body: 'Great progress', author_id: 'staff-sub-1' },
-        ],
-      }),
-    );
+    const at = new Date().toISOString();
+    const mockSb = makeSupabase([
+      { packet_id: 'pkt-1' },
+      { note_id: 'note-1', author_staff_id: 'staff-sub-1', body_ciphertext: 'Great progress', created_at: at },
+    ]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions/sess-1/notes', {
+    const res = await buildApp().request('/navigator/sessions/pkt-1/notes', {
       method: 'POST',
       headers: { ...auth(token), 'Content-Type': 'application/json' },
       body: JSON.stringify({ body: 'Great progress' }),
@@ -355,9 +321,8 @@ describe('POST /navigator/sessions/:id/notes', () => {
 
 describe('POST /navigator/sessions/:id/missing-items', () => {
   it('returns 400 when item_type is missing', async () => {
-    vi.mocked(getDb).mockReturnValue(makeDb());
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions/sess-1/missing-items', {
+    const res = await buildApp().request('/navigator/sessions/pkt-1/missing-items', {
       method: 'POST',
       headers: { ...auth(token), 'Content-Type': 'application/json' },
       body: JSON.stringify({}),
@@ -368,16 +333,15 @@ describe('POST /navigator/sessions/:id/missing-items', () => {
   });
 
   it('returns 201 on success', async () => {
-    vi.mocked(getDb).mockReturnValue(
-      makeDb({
-        takeFirsts: [
-          { session_id: 'sess-1' },
-          { request_id: 'req-1', item_type: 'paystub' },
-        ],
-      }),
-    );
+    const at = new Date().toISOString();
+    const mockSb = makeSupabase([
+      { packet_id: 'pkt-1' },
+      { request_id: 'req-1', message_ciphertext: 'paystub: Most recent', status: 'pending', sent_at: at },
+    ]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions/sess-1/missing-items', {
+    const res = await buildApp().request('/navigator/sessions/pkt-1/missing-items', {
       method: 'POST',
       headers: { ...auth(token), 'Content-Type': 'application/json' },
       body: JSON.stringify({ item_type: 'paystub', item_description: 'Most recent' }),
@@ -390,9 +354,11 @@ describe('POST /navigator/sessions/:id/missing-items', () => {
 
 describe('PATCH /navigator/sessions/:id/missing-items/:itemId', () => {
   it('returns 404 when item not found', async () => {
-    vi.mocked(getDb).mockReturnValue(makeDb({ takeFirsts: [null] }));
+    const mockSb = makeSupabase([null]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions/sess-1/missing-items/bad-id', {
+    const res = await buildApp().request('/navigator/sessions/pkt-1/missing-items/bad-id', {
       method: 'PATCH',
       headers: { ...auth(token), 'Content-Type': 'application/json' },
       body: JSON.stringify({}),
@@ -403,13 +369,13 @@ describe('PATCH /navigator/sessions/:id/missing-items/:itemId', () => {
   });
 
   it('returns 409 when item already resolved', async () => {
-    vi.mocked(getDb).mockReturnValue(
-      makeDb({
-        takeFirsts: [{ request_id: 'req-1', session_id: 'sess-1', resolved_at: new Date().toISOString() }],
-      }),
-    );
+    const mockSb = makeSupabase([
+      { request_id: 'req-1', packet_id: 'pkt-1', status: 'resolved' },
+    ]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions/sess-1/missing-items/req-1', {
+    const res = await buildApp().request('/navigator/sessions/pkt-1/missing-items/req-1', {
       method: 'PATCH',
       headers: { ...auth(token), 'Content-Type': 'application/json' },
       body: JSON.stringify({ resolution_note: 'done' }),
@@ -420,16 +386,15 @@ describe('PATCH /navigator/sessions/:id/missing-items/:itemId', () => {
   });
 
   it('returns 200 with resolved item on success', async () => {
-    vi.mocked(getDb).mockReturnValue(
-      makeDb({
-        takeFirsts: [
-          { request_id: 'req-1', session_id: 'sess-1', resolved_at: null },
-          { request_id: 'req-1', item_type: 'paystub', resolved_at: new Date().toISOString() },
-        ],
-      }),
-    );
+    const at = new Date().toISOString();
+    const mockSb = makeSupabase([
+      { request_id: 'req-1', packet_id: 'pkt-1', status: 'pending' },
+      { request_id: 'req-1', status: 'resolved', resolved_at: at, resolved_by_staff_id: 'staff-sub-1' },
+    ]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions/sess-1/missing-items/req-1', {
+    const res = await buildApp().request('/navigator/sessions/pkt-1/missing-items/req-1', {
       method: 'PATCH',
       headers: { ...auth(token), 'Content-Type': 'application/json' },
       body: JSON.stringify({ resolution_note: 'uploaded by applicant' }),
@@ -442,7 +407,9 @@ describe('PATCH /navigator/sessions/:id/missing-items/:itemId', () => {
 
 describe('GET /navigator/sessions/:id/audit-log', () => {
   it('returns 404 when session not found', async () => {
-    vi.mocked(getDb).mockReturnValue(makeDb({ takeFirsts: [null] }));
+    const mockSb = makeSupabase([null]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
     const res = await buildApp().request('/navigator/sessions/missing/audit-log', {
       headers: auth(token),
@@ -451,14 +418,14 @@ describe('GET /navigator/sessions/:id/audit-log', () => {
   });
 
   it('returns entries with pagination metadata', async () => {
-    vi.mocked(getDb).mockReturnValue(
-      makeDb({
-        takeFirsts: [{ session_id: 'sess-1' }],
-        executes: [[{ audit_id: 'a-1', action: 'STATUS_TRANSITIONED' }]],
-      }),
-    );
+    const mockSb = makeSupabase([
+      { packet_id: 'pkt-1' },
+      [{ audit_id: 'a-1', table_name: 'snap_packets', operation: 'UPDATE' }],
+    ]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions/sess-1/audit-log?limit=10&offset=0', {
+    const res = await buildApp().request('/navigator/sessions/pkt-1/audit-log?limit=10&offset=0', {
       headers: auth(token),
     });
     expect(res.status).toBe(200);
@@ -469,14 +436,11 @@ describe('GET /navigator/sessions/:id/audit-log', () => {
   });
 
   it('caps limit at 200', async () => {
-    vi.mocked(getDb).mockReturnValue(
-      makeDb({
-        takeFirsts: [{ session_id: 'sess-1' }],
-        executes: [[]],
-      }),
-    );
+    const mockSb = makeSupabase([{ packet_id: 'pkt-1' }, []]);
+    mockAdmin.schema = vi.fn().mockReturnValue(mockSb);
+
     const token = await staffToken();
-    const res = await buildApp().request('/navigator/sessions/sess-1/audit-log?limit=9999', {
+    const res = await buildApp().request('/navigator/sessions/pkt-1/audit-log?limit=9999', {
       headers: auth(token),
     });
     expect(res.status).toBe(200);
