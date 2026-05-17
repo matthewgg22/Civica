@@ -17,6 +17,7 @@ struct CivicaRootView: View {
     private var languageRaw: String = CivicaLanguage.english.rawValue
 
     @StateObject private var statusStore = SNAPApplicationStatusStore()
+    @StateObject private var enrollmentAuth = CivicaEnrollmentAuth()
 
     /// External link target presented via CivicaSafariSheet. Set from
     /// the various "Open DTA Connect" / "Start an appeal" handlers
@@ -46,6 +47,7 @@ struct CivicaRootView: View {
                 // advances status; CivicaRootView's rootSurface
                 // re-routes on the change.
                 .environmentObject(statusStore)
+                .environmentObject(enrollmentAuth)
                 .sheet(item: $externalLink) { url in
                     CivicaSafariSheet(url: url)
                 }
