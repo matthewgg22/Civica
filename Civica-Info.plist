@@ -32,5 +32,7 @@
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Civica uses the camera only when you choose to capture and attach a photo in the app.</string>
+	<key>SNAP_ENROLLMENT_API_URL</key>
+	<string>https://civica-enrollment-api.civica-api.workers.dev</string>
 </dict>
 </plist>

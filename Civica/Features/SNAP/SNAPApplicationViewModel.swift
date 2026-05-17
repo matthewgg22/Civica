@@ -2,6 +2,14 @@ import Foundation
 
 @MainActor
 final class SNAPApplicationViewModel: ObservableObject {
+
+    enum SubmitState: Equatable {
+        case idle
+        case submitting
+        case success(packetId: String)
+        case failure(message: String)
+    }
+
     enum DraftStepCompletionState {
         case complete
         case missingRequired
@@ -43,10 +51,15 @@ final class SNAPApplicationViewModel: ObservableObject {
     @Published private(set) var hasViewedNextSteps = false
     @Published private(set) var hasAttemptedDraftContinue = false
     @Published private(set) var draftContinueAttemptToken = 0
+    @Published private(set) var submitState: SubmitState = .idle
+    /// Persisted packet ID after a successful server-side submission.
+    @Published private(set) var enrollmentPacketId: String?
 
     private let zipStateResolver = USZipStateResolver()
     private var hasTrackedReviewViewed = false
     private var hasTrackedAbandoned = false
+    /// Nil in previews / offline mode — falls back to in-memory confirmation.
+    var enrollmentAPIClient: (any EnrollmentAPIClient)?
 
     var hasStateZIPMismatch: Bool {
         guard let mismatchStateCode else { return false }
@@ -605,10 +618,41 @@ final class SNAPApplicationViewModel: ObservableObject {
         currentStep = previous
     }
 
+    func submitPacket() {
+        guard submitState == .idle else { return }
+        Task { await _submitPacket() }
+    }
+
+    private func _submitPacket() async {
+        submitState = .submitting
+
+        guard let client = enrollmentAPIClient else {
+            // Offline / preview fallback — behave like the old mock path.
+            submittedAt = Date()
+            currentStep = .confirmation
+            submitState = .idle
+            return
+        }
+
+        let stateCode = trimmed(application.state).uppercased()
+        let resolvedState = stateCode.isEmpty ? "CA" : stateCode
+
+        do {
+            let packet = try await client.createPacket(stateCode: resolvedState)
+            let submitted = try await client.submitPacket(packetId: packet.id)
+            enrollmentPacketId = submitted.id
+            submittedAt = submitted.submittedAt ?? Date()
+            currentStep = .confirmation
+            submitState = .success(packetId: submitted.id)
+            SNAPAnalytics.trackSubmitted()
+        } catch {
+            submitState = .failure(message: error.localizedDescription)
+        }
+    }
+
+    /// Kept for backward compatibility with existing call sites that used submitMockPacket.
     func submitMockPacket() {
-        // EXPERIMENTAL SILOED MODULE: mock submit only; no backend persistence.
-        submittedAt = Date()
-        currentStep = .confirmation
+        submitPacket()
     }
 
     func resetDraft() {
@@ -627,6 +671,8 @@ final class SNAPApplicationViewModel: ObservableObject {
         draftContinueAttemptToken = 0
         hasTrackedReviewViewed = false
         hasTrackedAbandoned = false
+        submitState = .idle
+        enrollmentPacketId = nil
     }
 
     // Kept for compatibility with existing SNAP views.

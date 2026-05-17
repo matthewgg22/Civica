@@ -50,12 +50,12 @@ enum SNAPNetworkError: Error {
 struct HTTPSNAPNetworkClient: SNAPNetworkClient {
     let baseURL: URL
     let session: URLSession
-    let authTokenProvider: @Sendable () -> String?
+    let authTokenProvider: @Sendable () async -> String?
 
     init(
         baseURL: URL,
         session: URLSession = .shared,
-        authTokenProvider: @escaping @Sendable () -> String? = { nil }
+        authTokenProvider: @escaping @Sendable () async -> String? = { nil }
     ) {
         self.baseURL = baseURL
         self.session = session
@@ -96,7 +96,7 @@ struct HTTPSNAPNetworkClient: SNAPNetworkClient {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        if let token = authTokenProvider() {
+        if let token = await authTokenProvider() {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         request.httpBody = makeMultipartBody(
@@ -140,7 +140,7 @@ struct HTTPSNAPNetworkClient: SNAPNetworkClient {
         }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        if let token = authTokenProvider() {
+        if let token = await authTokenProvider() {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         let (data, response) = try await session.data(for: request)
@@ -175,7 +175,7 @@ struct HTTPSNAPNetworkClient: SNAPNetworkClient {
         }
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        if let token = authTokenProvider() {
+        if let token = await authTokenProvider() {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         let (data, response) = try await session.data(for: request)
@@ -199,7 +199,7 @@ struct HTTPSNAPNetworkClient: SNAPNetworkClient {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        if let token = authTokenProvider() {
+        if let token = await authTokenProvider() {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         request.httpBody = try JSONEncoder().encode(body)

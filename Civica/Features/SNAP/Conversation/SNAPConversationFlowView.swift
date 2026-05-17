@@ -65,16 +65,17 @@ struct SNAPConversationFlowView: View {
     ///   2. SNAPConversationBackendURL Info.plist key (manual override)
     ///   3. MockSNAPNetworkClient (default for all other builds)
     ///
-    /// Note: HTTPSNAPNetworkClient sends requests to /me/* endpoints on
-    /// the Hono gateway. Supply an authTokenProvider when Supabase user
-    /// sessions are available; the gateway will return 401 without a
-    /// valid JWT. TODO: wire auth when Supabase sign-in is integrated.
-    static func defaultClient() -> SNAPNetworkClient {
+    /// Pass `auth` to attach the applicant's Supabase JWT to every request.
+    /// Without it, the gateway returns 401 on authenticated endpoints.
+    static func defaultClient(auth: CivicaEnrollmentAuth? = nil) -> SNAPNetworkClient {
         let env = ProcessInfo.processInfo.environment
         let urlString = env["SNAP_GATEWAY_URL"]
             ?? (Bundle.main.object(forInfoDictionaryKey: "SNAPConversationBackendURL") as? String)
         if let urlString, let url = URL(string: urlString) {
-            return HTTPSNAPNetworkClient(baseURL: url)
+            return HTTPSNAPNetworkClient(
+                baseURL: url,
+                authTokenProvider: { [weak auth] in await auth?.currentAccessToken() }
+            )
         }
         return MockSNAPNetworkClient()
     }
