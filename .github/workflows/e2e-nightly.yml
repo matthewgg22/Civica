@@ -1,0 +1,65 @@
+name: E2E nightly (critical path)
+
+# Runs nightly against staging + on manual trigger.
+# Does NOT run on every PR — too slow and requires live staging services.
+
+on:
+  schedule:
+    - cron: "0 4 * * *" # 04:00 UTC daily
+  workflow_dispatch:
+    inputs:
+      enrollment_api_url:
+        description: "Override E2E_ENROLLMENT_API_URL (leave blank for secret default)"
+        required: false
+      api_url:
+        description: "Override E2E_API_URL for PDF handoff sub-test (optional)"
+        required: false
+
+jobs:
+  critical-path:
+    name: Critical path E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      E2E_SUPABASE_URL: ${{ secrets.E2E_SUPABASE_URL }}
+      E2E_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.E2E_SUPABASE_SERVICE_ROLE_KEY }}
+      E2E_SUPABASE_ANON_KEY: ${{ secrets.E2E_SUPABASE_ANON_KEY }}
+      E2E_ENROLLMENT_API_URL: ${{ inputs.enrollment_api_url || secrets.E2E_ENROLLMENT_API_URL }}
+      # E2E_API_URL is optional — PDF handoff test is skipped when absent
+      E2E_API_URL: ${{ inputs.api_url || secrets.E2E_API_URL }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install root dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install e2e dependencies
+        working-directory: e2e
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright (no browsers needed — API tests only)
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium
+        # chromium is included to satisfy playwright's internal checks even
+        # though critical-path.spec.ts makes no browser calls.
+
+      - name: Run critical-path spec
+        working-directory: e2e
+        run: npx playwright test critical-path.spec.ts --reporter=github,list
+
+      - name: Upload Playwright trace on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-trace-${{ github.run_id }}
+          path: e2e/test-results/
+          retention-days: 7
