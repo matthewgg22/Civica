@@ -101,6 +101,7 @@ private func verifyOTPSuccessJSON(userId: String = "user-abc") -> Data {
 
 // MARK: - Phone normalization tests (no network, no Keychain)
 
+@MainActor
 struct CivicaEnrollmentAuthPhoneTests {
 
     private func makeAuth() -> CivicaEnrollmentAuth {
@@ -187,14 +188,16 @@ struct CivicaEnrollmentAuthOTPTests {
         AuthStubProtocol.handlers.append { _ in (Data(), 200) }
         // 422 Unprocessable Entity → server rejects the OTP code.
         AuthStubProtocol.handlers.append { _ in
-            ("""{"message":"Token has expired or is invalid"}""".data(using: .utf8)!, 422)
+            ("{\"message\":\"Token has expired or is invalid\"}".data(using: .utf8)!, 422)
         }
 
         let auth = makeAuth()
         await auth.requestOTP(phone: "5551234567")
         await auth.verifyOTP(code: "000000")
 
-        #expect(auth.lastError == .invalidOTP)
+        if case .invalidOTP = auth.lastError { } else {
+            Issue.record("Expected lastError == .invalidOTP, got \(String(describing: auth.lastError))")
+        }
         if case .awaitingOTP = auth.state { } else {
             Issue.record("State should remain awaitingOTP after a bad code, got \(auth.state)")
         }
