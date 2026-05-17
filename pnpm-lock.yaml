@@ -191,6 +191,9 @@ importers:
 
   apps/enrollment-api:
     dependencies:
+      '@civica/snap-rules':
+        specifier: workspace:*
+        version: link:../../packages/snap-rules
       '@hono/zod-validator':
         specifier: ^0.4.3
         version: 0.4.3(hono@4.12.19)(zod@3.25.76)

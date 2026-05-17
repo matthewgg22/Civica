@@ -5,36 +5,39 @@ on:
     branches: [main, codex/rebuild-feb18, "claude/*", "codex/*"]
     paths:
       - "apps/enrollment-api/**"
+      - "packages/snap-rules/**"
       - ".github/workflows/enrollment-api-ci.yml"
   pull_request:
     paths:
       - "apps/enrollment-api/**"
+      - "packages/snap-rules/**"
       - ".github/workflows/enrollment-api-ci.yml"
 
 jobs:
   ci:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/enrollment-api
 
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        # version is read from packageManager field in package.json
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: apps/enrollment-api/package-lock.json
+          node-version: '22'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Typecheck
-        run: npm run typecheck
+        working-directory: apps/enrollment-api
+        run: pnpm typecheck
 
       - name: Unit tests
-        run: npm test
+        working-directory: apps/enrollment-api
+        run: pnpm test
         env:
           # Placeholder credentials — all Supabase calls are mocked in tests.
           SUPABASE_URL: https://placeholder.supabase.co
@@ -43,6 +46,7 @@ jobs:
           SNAP_FERNET_KEY: placeholder-fernet-key-32bytes!!
 
       - name: Wrangler dry-run build
+        working-directory: apps/enrollment-api
         run: npx wrangler deploy --dry-run --outdir dist
         env:
           CLOUDFLARE_API_TOKEN: placeholder
@@ -53,23 +57,23 @@ jobs:
     needs: ci
     # Only deploy on direct pushes to the trunk — not on PRs or feature branches
     if: github.ref == 'refs/heads/codex/rebuild-feb18' && github.event_name == 'push'
-    defaults:
-      run:
-        working-directory: apps/enrollment-api
 
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        # version is read from packageManager field in package.json
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: apps/enrollment-api/package-lock.json
+          node-version: '22'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Deploy to Cloudflare Workers
+        working-directory: apps/enrollment-api
         run: npx wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
