@@ -147,12 +147,11 @@ jobs:
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
       - name: Deploy API to Fly.io
-        # Build context is repo root (Dockerfile needs packages/ + pnpm-workspace.yaml).
-        # --remote-only builds the image on Fly's infrastructure (no local Docker needed).
+        # fly.toml [build].dockerfile = "Dockerfile" resolves relative to apps/api/,
+        # so this correctly picks up apps/api/Dockerfile with the repo root as build context.
         run: |
           flyctl deploy \
             --config apps/api/fly.toml \
-            --dockerfile apps/api/Dockerfile \
             --remote-only \
             --wait-timeout 120
         env:
