@@ -91,7 +91,7 @@ struct EBTTransactionDetailSheet: View {
                     .foregroundStyle(tint)
             } else {
                 Text(transaction.monogram)
-                    .font(.system(size: 18, weight: .bold))
+                    .font(CivicaTypography.bodyStrong)
                     .foregroundStyle(tint)
             }
         }

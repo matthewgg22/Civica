@@ -301,7 +301,7 @@ struct EBTBalanceDashboardView: View {
                     .foregroundStyle(tint)
             } else {
                 Text(transaction.monogram)
-                    .font(.system(size: 13, weight: .bold))
+                    .font(CivicaTypography.footnoteStrong)
                     .foregroundStyle(tint)
             }
         }

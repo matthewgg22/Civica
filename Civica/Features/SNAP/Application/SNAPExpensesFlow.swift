@@ -266,13 +266,13 @@ struct SNAPExpensesFlowView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             HStack(spacing: CivicaSpacing.sm) {
                 Text("$")
-                    .font(.system(size: 32, weight: .semibold))
+                    .font(CivicaTypography.currencyHero)
                     .foregroundStyle(CivicaColors.graphite)
                 TextField(
                     CivicaQuestionStrings.amountPlaceholder.value(in: language),
                     text: binding
                 )
-                .font(.system(size: 32, weight: .semibold, design: .monospaced))
+                .font(CivicaTypography.currencyHero)
                 .foregroundStyle(CivicaColors.ink)
                 .keyboardType(.decimalPad)
             }
