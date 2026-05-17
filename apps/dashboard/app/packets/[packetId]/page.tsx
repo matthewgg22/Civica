@@ -2,7 +2,10 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createServerClientFromCookies } from "../../../lib/supabase";
-import StatusTransition from "../../../components/StatusTransition";
+import StatusTransition, { type Blocker } from "../../../components/StatusTransition";
+import ConsentCapture from "../../../components/ConsentCapture";
+import ExtractionFieldList from "../../../components/ExtractionFieldList";
+import DocumentChecklist from "../../../components/DocumentChecklist";
 import AnswerReviewList from "../../../components/AnswerReviewList";
 import NotesList from "../../../components/NotesList";
 import StatusPill from "../../../components/StatusPill";
@@ -32,12 +35,14 @@ export default async function PacketDetailPage({ params }: { params: Promise<{ p
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
 
-  const [packetResult, answersResult, docsResult, notesResult, historyResult] = await Promise.all([
+  const [packetResult, answersResult, docsResult, notesResult, historyResult, fieldsResult, docItemsResult] = await Promise.all([
     supabase.schema("snap_enrollment").from("snap_packets").select(`*, applicants(*)`).eq("packet_id", packetId).is("deleted_at", null).single(),
     supabase.schema("snap_enrollment").from("packet_answers").select("*").eq("packet_id", packetId).order("question_key"),
     supabase.schema("snap_enrollment").from("uploaded_documents").select("*").eq("packet_id", packetId).is("deleted_at", null).order("uploaded_at", { ascending: false }),
     supabase.schema("snap_enrollment").from("navigator_notes").select("*").eq("packet_id", packetId).is("deleted_at", null).order("created_at", { ascending: false }),
     supabase.schema("snap_enrollment").from("packet_status_history").select("*").eq("packet_id", packetId).order("occurred_at", { ascending: false }),
+    supabase.schema("snap_enrollment").from("extraction_fields").select("*").eq("packet_id", packetId).order("needs_review", { ascending: false }).order("field_key"),
+    supabase.schema("snap_enrollment").from("required_document_items").select("*").eq("packet_id", packetId).order("created_at"),
   ]);
 
   if (!packetResult.data) notFound();
@@ -47,7 +52,32 @@ export default async function PacketDetailPage({ params }: { params: Promise<{ p
   const docs = docsResult.data ?? [];
   const notes = notesResult.data ?? [];
   const history = historyResult.data ?? [];
+  const fields = fieldsResult.data ?? [];
+  const docItems = docItemsResult.data ?? [];
   const nextStatuses = NEXT_STATUSES[packet.status] ?? [];
+
+  // Pre-flight blockers for "Ready for Handoff"
+  const [unresolvedDocsResult, unreviewedFieldsResult, consentResult] = await Promise.all([
+    supabase.schema("snap_enrollment").from("required_document_items")
+      .select("item_id").eq("packet_id", packetId).eq("is_required", true)
+      .is("resolved_at", null).is("waived_at", null),
+    supabase.schema("snap_enrollment").from("extraction_fields")
+      .select("field_id").eq("packet_id", packetId).eq("needs_review", true).is("reviewed_at", null),
+    supabase.schema("snap_enrollment").from("user_consents")
+      .select("consent_id, consented_at").eq("applicant_id", packet.applicant_id)
+      .eq("consent_kind", "privacy_notice").is("revoked_at", null).limit(1),
+  ]);
+
+  const hasConsent = (consentResult.data?.length ?? 0) > 0;
+  const consentedAt = hasConsent ? (consentResult.data![0] as { consented_at: string }).consented_at : null;
+
+  const blockers: Blocker[] = [];
+  if ((unresolvedDocsResult.data?.length ?? 0) > 0)
+    blockers.push({ kind: "unresolved_docs", label: "Required documents not yet resolved", count: unresolvedDocsResult.data!.length });
+  if ((unreviewedFieldsResult.data?.length ?? 0) > 0)
+    blockers.push({ kind: "unreviewed_fields", label: "Extraction fields flagged for review", count: unreviewedFieldsResult.data!.length });
+  if (!hasConsent)
+    blockers.push({ kind: "missing_consent", label: "Privacy notice consent not on file" });
 
   const applicantName = applicant ? firstNameLastInitial(decryptDemoName(applicant.full_name_ciphertext)) : "Unknown applicant";
   const language = applicant ? (LANG_LABELS[applicant.preferred_language] ?? applicant.preferred_language) : null;
@@ -107,10 +137,22 @@ export default async function PacketDetailPage({ params }: { params: Promise<{ p
           <RecertBanner status={packet.status} handedOffAt={packet.handed_off_at} />
         )}
 
+        {/* Consent capture */}
+        <Section
+          title="Privacy Notice Consent"
+          subtitle="Required before handoff. Record how the applicant acknowledged the privacy notice."
+        >
+          <ConsentCapture
+            applicantId={packet.applicant_id}
+            hasConsent={hasConsent}
+            consentedAt={consentedAt}
+          />
+        </Section>
+
         {/* Status transition */}
         {nextStatuses.length > 0 && (
           <Section title="Advance Status" subtitle="Move this packet to its next stage. All transitions are logged in the audit trail.">
-            <StatusTransition packetId={packetId} nextStatuses={nextStatuses} />
+            <StatusTransition packetId={packetId} nextStatuses={nextStatuses} blockers={blockers} />
           </Section>
         )}
 
@@ -137,6 +179,25 @@ export default async function PacketDetailPage({ params }: { params: Promise<{ p
             <AnswerReviewList answers={answers} />
           )}
         </Section>
+
+        {/* Required document checklist */}
+        <Section
+          title="Required Documents"
+          count={docItems.length}
+          subtitle="Documents needed before handoff. Mark each resolved once received, or waive with a reason."
+        >
+          <DocumentChecklist packetId={packetId} items={docItems} uploadedDocs={docs} />
+        </Section>
+
+        {/* Extraction field review */}
+        {fields.length > 0 && (
+          <Section
+            title="Extracted Fields"
+            subtitle="Values extracted by OCR from uploaded documents. Fields below 85% confidence require review."
+          >
+            <ExtractionFieldList fields={fields} />
+          </Section>
+        )}
 
         {/* Documents */}
         <Section title="Uploaded Documents" count={docs.length} subtitle="Files submitted by the applicant.">

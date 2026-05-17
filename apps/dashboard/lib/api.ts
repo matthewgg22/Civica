@@ -43,4 +43,27 @@ export const api = {
     create: (jwt: string, packetId: string, body: unknown) =>
       apiFetch(`/packets/${packetId}/notes`, jwt, { method: "POST", body: JSON.stringify(body) }),
   },
+  fields: {
+    list: (jwt: string, packetId: string) => apiFetch(`/packets/${packetId}/fields`, jwt),
+    review: (jwt: string, fieldId: string, body: { navigator_confirmed_value: string; review_note?: string }) =>
+      apiFetch(`/fields/${fieldId}/review`, jwt, { method: "PATCH", body: JSON.stringify(body) }),
+  },
+  documentItems: {
+    list: (jwt: string, packetId: string) => apiFetch(`/packets/${packetId}/document-items`, jwt),
+    resolve: (jwt: string, itemId: string, body: { resolved_document_id?: string }) =>
+      apiFetch(`/document-items/${itemId}/resolve`, jwt, { method: "PATCH", body: JSON.stringify(body) }),
+    waive: (jwt: string, itemId: string, body: { waive_reason: string }) =>
+      apiFetch(`/document-items/${itemId}/waive`, jwt, { method: "PATCH", body: JSON.stringify(body) }),
+  },
+  consents: {
+    list: (jwt: string, applicantId: string) =>
+      apiFetch(`/applicants/${applicantId}/consents`, jwt),
+    record: (jwt: string, body: {
+      applicant_id: string;
+      consent_kind: string;
+      policy_version: string;
+      consent_method: string;
+      ip_address?: string;
+    }) => apiFetch("/consents", jwt, { method: "POST", body: JSON.stringify(body) }),
+  },
 };
