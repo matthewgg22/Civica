@@ -1,0 +1,61 @@
+{
+  "$schema": "../schema/rules.schema.json",
+  "state_code": "CA",
+  "version": 1,
+  "as_of_date": "2026-05-01",
+  "document_requirements": [
+    {
+      "category": "photo_id",
+      "label": "Photo ID",
+      "helper_text_en": "Driver's license, state ID card, passport, military ID, or tribal ID. CalFresh accepts any government-issued photo ID.",
+      "helper_text_es": "Licencia de conducir, tarjeta de identificación estatal, pasaporte, identificación militar o tribal. CalFresh acepta cualquier identificación con foto emitida por el gobierno.",
+      "required_when": { "household_size_gte": 1 },
+      "is_required": true
+    },
+    {
+      "category": "paystub",
+      "label": "Recent pay stub",
+      "helper_text_en": "Your most recent pay stub or an employer letter showing your current wages and hours.",
+      "helper_text_es": "Su talón de pago más reciente o una carta del empleador que muestre su salario y horas actuales.",
+      "required_when": { "has_earned_income": true },
+      "is_required": true
+    },
+    {
+      "category": "bank_statement",
+      "label": "Bank or financial account statement",
+      "helper_text_en": "Most recent statement for checking, savings, or other accounts showing current balances.",
+      "helper_text_es": "Estado de cuenta más reciente de cuentas corrientes, de ahorros u otras, que muestre los saldos actuales.",
+      "required_when": { "has_unearned_income": true },
+      "is_required": true,
+      "review_note": "TODO: confirm with counsel — CA BBCE households may not need asset verification; applicability depends on BBCE vs. standard track."
+    },
+    {
+      "category": "benefit_letter",
+      "label": "Benefit award letter",
+      "helper_text_en": "Official award letter from Social Security, SSI, unemployment, or other benefit programs showing your monthly payment amount.",
+      "helper_text_es": "Carta oficial de adjudicación del Seguro Social, SSI, desempleo u otros programas de beneficios que muestre el monto de su pago mensual.",
+      "required_when": { "has_unearned_income": true },
+      "is_required": true,
+      "review_note": "TODO: confirm with counsel — verify whether benefit_letter and bank_statement are both required, or one-or-the-other, for unearned income."
+    },
+    {
+      "category": "lease",
+      "label": "Proof of address",
+      "helper_text_en": "Lease or rental agreement, mortgage statement, or a letter from your landlord confirming your current address.",
+      "helper_text_es": "Contrato de arrendamiento, estado de cuenta hipotecario, o carta de su arrendador que confirme su dirección actual.",
+      "required_when": { "claims_shelter_deduction": true },
+      "is_required": true,
+      "review_note": "TODO: confirm with counsel — CA may accept a utility bill or a signed statement in lieu of a lease for homeless households; also confirm whether proof of address is required for non-shelter-claiming households."
+    },
+    {
+      "category": "utility_bill",
+      "label": "Utility bill",
+      "helper_text_en": "Recent gas, electric, heating oil, or water bill. Used to verify your utility costs for the shelter deduction.",
+      "helper_text_es": "Factura reciente de gas, electricidad, combustible para calefacción o agua. Se usa para verificar sus costos de servicios públicos para la deducción de vivienda.",
+      "required_when": { "claims_utility_deduction": true },
+      "is_required": true
+    }
+  ],
+  "shelter_rules": [],
+  "income_thresholds": []
+}

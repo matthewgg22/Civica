@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://civica.app/snap-rules/schema/rules.schema.json",
+  "title": "SNAP Rules File",
+  "description": "Per-state SNAP document requirements, shelter rules, and income thresholds consumed by the TS loader and iOS Codable decoder.",
+  "type": "object",
+  "required": ["state_code", "version", "as_of_date", "document_requirements", "shelter_rules", "income_thresholds"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "state_code": {
+      "type": "string",
+      "enum": ["CA", "MA"],
+      "description": "Two-letter USPS state code."
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "File format version. Loader rejects any version it does not understand."
+    },
+    "as_of_date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "YYYY-MM-DD date this snapshot was prepared."
+    },
+    "document_requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/DocumentRequirement" }
+    },
+    "shelter_rules": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/ShelterRule" }
+    },
+    "income_thresholds": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/IncomeThreshold" }
+    }
+  },
+  "definitions": {
+    "RequiredWhen": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["always"],
+          "additionalProperties": false,
+          "properties": { "always": { "type": "boolean", "const": true } }
+        },
+        {
+          "type": "object",
+          "required": ["household_size_gte"],
+          "additionalProperties": false,
+          "properties": { "household_size_gte": { "type": "integer", "minimum": 1 } }
+        },
+        {
+          "type": "object",
+          "required": ["has_earned_income"],
+          "additionalProperties": false,
+          "properties": { "has_earned_income": { "type": "boolean", "const": true } }
+        },
+        {
+          "type": "object",
+          "required": ["has_unearned_income"],
+          "additionalProperties": false,
+          "properties": { "has_unearned_income": { "type": "boolean", "const": true } }
+        },
+        {
+          "type": "object",
+          "required": ["claims_shelter_deduction"],
+          "additionalProperties": false,
+          "properties": { "claims_shelter_deduction": { "type": "boolean", "const": true } }
+        },
+        {
+          "type": "object",
+          "required": ["claims_utility_deduction"],
+          "additionalProperties": false,
+          "properties": { "claims_utility_deduction": { "type": "boolean", "const": true } }
+        }
+      ]
+    },
+    "DocumentRequirement": {
+      "type": "object",
+      "required": ["category", "label", "helper_text_en", "helper_text_es", "required_when", "is_required"],
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "type": "string",
+          "enum": ["photo_id", "paystub", "lease", "utility_bill", "bank_statement", "tax_return", "benefit_letter", "other"],
+          "description": "Matches document_kind in the required_document_items DB table."
+        },
+        "label": { "type": "string", "minLength": 1 },
+        "helper_text_en": { "type": "string", "minLength": 1 },
+        "helper_text_es": { "type": "string", "minLength": 1 },
+        "required_when": { "$ref": "#/definitions/RequiredWhen" },
+        "is_required": { "type": "boolean" },
+        "review_note": {
+          "type": "string",
+          "description": "Free-text note for items needing counsel review before shipping."
+        }
+      }
+    },
+    "ShelterRule": {
+      "type": "object",
+      "required": ["rule_type", "label_en", "label_es"],
+      "additionalProperties": true,
+      "properties": {
+        "rule_type": { "type": "string" },
+        "label_en": { "type": "string", "minLength": 1 },
+        "label_es": { "type": "string", "minLength": 1 }
+      }
+    },
+    "IncomeThreshold": {
+      "type": "object",
+      "required": ["threshold_type", "household_size", "monthly_amount_usd"],
+      "additionalProperties": true,
+      "properties": {
+        "threshold_type": { "type": "string" },
+        "household_size": { "type": "integer", "minimum": 1 },
+        "monthly_amount_usd": { "type": "number", "minimum": 0 }
+      }
+    }
+  }
+}

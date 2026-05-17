@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../lib/supabase";
 import { api } from "../lib/api";
+import { DOCUMENT_KIND_LABELS } from "@civica/snap-rules";
 
 interface DocItem {
   item_id: string;
@@ -27,17 +28,6 @@ interface Props {
   items: DocItem[];
   uploadedDocs: UploadedDoc[];
 }
-
-const KIND_LABELS: Record<string, string> = {
-  paystub: "Pay stub",
-  photo_id: "Photo ID",
-  lease: "Lease",
-  utility_bill: "Utility bill",
-  bank_statement: "Bank statement",
-  tax_return: "Tax return",
-  benefit_letter: "Benefit letter",
-  other: "Other document",
-};
 
 export default function DocumentChecklist({ packetId: _packetId, items, uploadedDocs }: Props) {
   const router = useRouter();
@@ -143,7 +133,7 @@ export default function DocumentChecklist({ packetId: _packetId, items, uploaded
             <div key={item.item_id} className={`py-3 flex items-start justify-between gap-3 ${idx > 0 || pending.length > 0 ? "border-t border-hairline" : ""}`}>
               <div>
                 <p className="text-[14px] font-medium text-ink">{item.label}</p>
-                <p className="text-[12px] text-muted">{KIND_LABELS[item.document_kind] ?? item.document_kind}</p>
+                <p className="text-[12px] text-muted">{DOCUMENT_KIND_LABELS[item.document_kind] ?? item.document_kind}</p>
               </div>
               {item.resolved_at ? (
                 <span className="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-teal/10 text-teal">✓ resolved</span>
@@ -190,7 +180,7 @@ function ItemRow({ item, isFirst, uploadedDocs, resolving, waiving, waiveReason,
       <div className="flex items-start justify-between gap-3 mb-2">
         <div>
           <p className="text-[14px] font-medium text-ink">{item.label}</p>
-          <p className="text-[12px] text-muted">{KIND_LABELS[item.document_kind] ?? item.document_kind}</p>
+          <p className="text-[12px] text-muted">{DOCUMENT_KIND_LABELS[item.document_kind] ?? item.document_kind}</p>
         </div>
         {!isResolving && !isWaiving && (
           <div className="flex gap-2 shrink-0">
