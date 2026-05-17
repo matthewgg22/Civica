@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { makeAnonClient, makeServiceClient } from "../lib/supabase.js";
+import { makeAnonClient } from "../lib/supabase.js";
+import { withActorContext } from "../middleware/actorContext.js";
 import { getOrCreateApplicant } from "../lib/applicant.js";
 import type { Env } from "../types.js";
 
@@ -91,8 +92,8 @@ app.post("/:requestId/resolve", async (c) => {
 
   if (!packet) throw new HTTPException(403, { message: "Request belongs to a different applicant" });
 
-  const serviceDb = makeServiceClient(c.env);
-  const { error } = await serviceDb
+  const db = await withActorContext(c);
+  const { error } = await db
     .schema("snap_enrollment")
     .from("missing_item_requests")
     .update({ status: "uploaded", updated_at: new Date().toISOString() })
