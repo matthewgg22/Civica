@@ -5,15 +5,15 @@ import { HTTPException } from "hono/http-exception";
 import { makeAnonClient } from "../lib/supabase.js";
 import { withActorContext } from "../middleware/actorContext.js";
 import type { Env } from "../types.js";
-import {
-  buildHandoffPayload,
-  collectBlockers,
-  sha256Hex,
-  STORAGE_BUCKET,
-} from "@civica/snap-handoff";
-import type { HandoffPayload } from "@civica/snap-handoff";
 
 const app = new Hono<{ Bindings: Env }>();
+
+// Bucket convention: artifacts live under handoffs/{packet_id}/{export_id}.{ext}
+const STORAGE_BUCKET = "handoffs";
+
+const HANDOFF_DISCLAIMER =
+  "This handoff packet was prepared by Civica to help organize information for official SNAP review. " +
+  "Civica does not determine SNAP eligibility, approve benefits, or replace an official SNAP application.";
 
 const createHandoffSchema = z.object({
   format: z.enum(["json_api", "csv_summary", "xml_ecs", "pdf_packet"]).default("json_api"),
@@ -71,7 +71,8 @@ app.post("/packets/:packetId/handoff", zValidator("json", createHandoffSchema), 
   }
   if (body.format === "pdf_packet") {
     throw new HTTPException(422, {
-      message: "PDF generation is handled by the dedicated /api/v1/snap/handoff/:packet_id/pdf endpoint",
+      message:
+        "PDF generation is handled by the dedicated /api/v1/snap/handoff/:packet_id/pdf endpoint",
     });
   }
   if (body.format === "xml_ecs") {
@@ -212,8 +213,198 @@ app.get("/packets/:packetId/handoff/:exportId/download", async (c) => {
 export default app;
 
 // ---------------------------------------------------------------------------
+// Helpers (inlined — wrangler bundles from source; cross-app workspace imports
+// cannot resolve in the enrollment-api npm CI environment)
+// ---------------------------------------------------------------------------
+
+interface Blocker {
+  kind: "unresolved_docs" | "unreviewed_fields" | "missing_consent";
+  label: string;
+  count?: number;
+}
+
+async function collectBlockers(
+  db: ReturnType<typeof makeAnonClient>,
+  packetId: string,
+  applicantId: string,
+): Promise<Blocker[]> {
+  const blockers: Blocker[] = [];
+  const [docs, fields, consent] = await Promise.all([
+    db
+      .schema("snap_enrollment")
+      .from("required_document_items")
+      .select("item_id", { count: "exact", head: true })
+      .eq("packet_id", packetId)
+      .eq("is_required", true)
+      .is("resolved_at", null)
+      .is("waived_at", null),
+    db
+      .schema("snap_enrollment")
+      .from("extraction_fields")
+      .select("field_id", { count: "exact", head: true })
+      .eq("packet_id", packetId)
+      .eq("needs_review", true)
+      .is("reviewed_at", null),
+    db
+      .schema("snap_enrollment")
+      .from("user_consents")
+      .select("consent_id")
+      .eq("applicant_id", applicantId)
+      .eq("consent_kind", "privacy_notice")
+      .is("revoked_at", null)
+      .limit(1),
+  ]);
+  if ((docs.count ?? 0) > 0) {
+    blockers.push({
+      kind: "unresolved_docs",
+      label: "Required documents not yet resolved",
+      count: docs.count ?? 0,
+    });
+  }
+  if ((fields.count ?? 0) > 0) {
+    blockers.push({
+      kind: "unreviewed_fields",
+      label: "Extraction fields flagged for review",
+      count: fields.count ?? 0,
+    });
+  }
+  if ((consent.data?.length ?? 0) === 0) {
+    blockers.push({ kind: "missing_consent", label: "Privacy notice consent not on file" });
+  }
+  return blockers;
+}
+
+async function buildHandoffPayload(db: ReturnType<typeof makeAnonClient>, packetId: string) {
+  // Phase 1: load packet to get applicant_id for scoped consent query
+  const { data: packetRaw, error: packetErr } = await db
+    .schema("snap_enrollment")
+    .from("snap_packets")
+    .select("*, applicants(applicant_id, state_code, preferred_language, created_at)")
+    .eq("packet_id", packetId)
+    .is("deleted_at", null)
+    .single();
+
+  if (packetErr || !packetRaw) {
+    throw new HTTPException(404, { message: "Packet not found while building handoff payload" });
+  }
+
+  type ApplicantRow = {
+    applicant_id: string;
+    state_code: string;
+    preferred_language: string;
+    created_at: string;
+  };
+  const applicantRel = packetRaw.applicants as unknown as ApplicantRow | ApplicantRow[] | null;
+  const applicant = Array.isArray(applicantRel) ? (applicantRel[0] ?? null) : applicantRel;
+  const applicantId = applicant?.applicant_id ?? "";
+
+  // Phase 2: parallel fetch; user_consents explicitly scoped by applicant_id
+  const [answersRes, docsRes, docItemsRes, fieldsRes, notesRes, consentRes, historyRes] =
+    await Promise.all([
+      db
+        .schema("snap_enrollment")
+        .from("packet_answers")
+        .select(
+          "question_key, applicant_answer, navigator_confirmed_value, answer_source, created_at",
+        )
+        .eq("packet_id", packetId)
+        .order("question_key"),
+      db
+        .schema("snap_enrollment")
+        .from("uploaded_documents")
+        .select("document_id, document_kind, original_filename, uploaded_at, processing_status")
+        .eq("packet_id", packetId)
+        .is("deleted_at", null)
+        .order("uploaded_at"),
+      db
+        .schema("snap_enrollment")
+        .from("required_document_items")
+        .select(
+          "item_id, document_kind, label, is_required, resolved_at, waived_at, waive_reason, resolved_document_id",
+        )
+        .eq("packet_id", packetId)
+        .order("created_at"),
+      db
+        .schema("snap_enrollment")
+        .from("extraction_fields")
+        .select(
+          "field_id, field_key, extraction_id, applicant_answer, original_ocr_value, navigator_confirmed_value, confidence, needs_review, reviewed_at",
+        )
+        .eq("packet_id", packetId)
+        .order("field_key"),
+      db
+        .schema("snap_enrollment")
+        .from("navigator_notes")
+        .select("note_id, is_internal, created_at, author_staff_id")
+        .eq("packet_id", packetId)
+        .is("deleted_at", null)
+        .order("created_at"),
+      applicantId
+        ? db
+            .schema("snap_enrollment")
+            .from("user_consents")
+            .select("consent_id, consent_kind, consented_at, policy_version, consent_method")
+            .eq("applicant_id", applicantId)
+            .order("consented_at", { ascending: false })
+        : Promise.resolve({ data: [] as never[], error: null }),
+      db
+        .schema("snap_enrollment")
+        .from("packet_status_history")
+        .select("from_status, to_status, occurred_at, reason, changed_by_staff_id")
+        .eq("packet_id", packetId)
+        .order("occurred_at"),
+    ]);
+
+  return {
+    disclaimer: HANDOFF_DISCLAIMER,
+    schema_version: 1,
+    generated_at: new Date().toISOString(),
+    packet: {
+      packet_id: packetRaw.packet_id,
+      status: packetRaw.status,
+      state_code: packetRaw.state_code,
+      county: packetRaw.county,
+      created_at: packetRaw.created_at,
+      submitted_at: packetRaw.submitted_at,
+      handed_off_at: packetRaw.handed_off_at,
+    },
+    applicant: applicant
+      ? {
+          applicant_id: applicant.applicant_id,
+          state_code: applicant.state_code,
+          preferred_language: applicant.preferred_language,
+        }
+      : null,
+    answers: answersRes.data ?? [],
+    documents: {
+      uploaded: docsRes.data ?? [],
+      checklist: docItemsRes.data ?? [],
+    },
+    extractions: fieldsRes.data ?? [],
+    notes_meta: (notesRes.data ?? [])
+      .filter((n) => !n.is_internal)
+      .map((n) => ({
+        note_id: n.note_id,
+        created_at: n.created_at,
+        author_staff_id: n.author_staff_id,
+      })),
+    consent: (consentRes.data ?? [])[0] ?? null,
+    status_history: historyRes.data ?? [],
+  };
+}
+
+async function sha256Hex(bytes: Uint8Array): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", bytes.buffer as ArrayBuffer);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+// ---------------------------------------------------------------------------
 // CSV renderer
 // ---------------------------------------------------------------------------
+
+type HandoffPayload = Awaited<ReturnType<typeof buildHandoffPayload>>;
 
 function buildHandoffCsv(payload: HandoffPayload, exportedAt: string): string {
   const missingItemCount = payload.documents.checklist.filter(
@@ -243,12 +434,12 @@ function buildHandoffCsv(payload: HandoffPayload, exportedAt: string): string {
   lines.push("");
 
   // Section 2 — per-answer rows
-  lines.push("question_key,applicant_value,navigator_confirmed_value");
+  lines.push("question_key,applicant_answer,navigator_confirmed_value");
   for (const answer of payload.answers) {
     lines.push(
       [
         csvCell(answer.question_key),
-        csvCell(answer.applicant_value ?? ""),
+        csvCell(answer.applicant_answer ?? ""),
         csvCell(answer.navigator_confirmed_value ?? ""),
       ].join(","),
     );

@@ -16,19 +16,18 @@ export const STORAGE_BUCKET = "handoffs";
 
 export interface HandoffAnswer {
   question_key: string;
-  applicant_value: string | null;
+  applicant_answer: string | null;
   navigator_confirmed_value: string | null;
-  source: string | null;
-  answered_at: string | null;
+  answer_source: string | null;
+  created_at: string | null;
 }
 
 export interface HandoffDocument {
   document_id: string;
   document_kind: string | null;
-  original_filename: string;
+  original_filename: string | null;
   uploaded_at: string;
-  processing_status: string | null;
-  byte_size: number | null;
+  processing_status: string;
 }
 
 export interface HandoffChecklist {
@@ -45,11 +44,11 @@ export interface HandoffChecklist {
 export interface HandoffExtraction {
   field_id: string;
   field_key: string;
-  document_id: string | null;
+  extraction_id: string;
   applicant_answer: string | null;
   original_ocr_value: string | null;
   navigator_confirmed_value: string | null;
-  confidence: number | null;
+  confidence: number;
   needs_review: boolean;
   reviewed_at: string | null;
 }
@@ -201,16 +200,14 @@ export async function buildHandoffPayload(
         .schema("snap_enrollment")
         .from("packet_answers")
         .select(
-          "question_key, applicant_value, navigator_confirmed_value, source, answered_at",
+          "question_key, applicant_answer, navigator_confirmed_value, answer_source, created_at",
         )
         .eq("packet_id", packetId)
         .order("question_key"),
       db
         .schema("snap_enrollment")
         .from("uploaded_documents")
-        .select(
-          "document_id, document_kind, original_filename, uploaded_at, processing_status, byte_size",
-        )
+        .select("document_id, document_kind, original_filename, uploaded_at, processing_status")
         .eq("packet_id", packetId)
         .is("deleted_at", null)
         .order("uploaded_at"),
@@ -226,7 +223,7 @@ export async function buildHandoffPayload(
         .schema("snap_enrollment")
         .from("extraction_fields")
         .select(
-          "field_id, field_key, document_id, applicant_answer, original_ocr_value, navigator_confirmed_value, confidence, needs_review, reviewed_at",
+          "field_id, field_key, extraction_id, applicant_answer, original_ocr_value, navigator_confirmed_value, confidence, needs_review, reviewed_at",
         )
         .eq("packet_id", packetId)
         .order("field_key"),

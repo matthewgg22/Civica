@@ -266,7 +266,7 @@ function HandoffPdf({
             {answers.map((a) => (
               <View key={a.question_key} style={S.tableRow} wrap={false}>
                 <Text style={S.col1}>{a.question_key}</Text>
-                <Text style={S.col2}>{a.applicant_value ?? "—"}</Text>
+                <Text style={S.col2}>{a.applicant_answer ?? "—"}</Text>
                 <Text style={S.col3}>{a.navigator_confirmed_value ?? "—"}</Text>
               </View>
             ))}
