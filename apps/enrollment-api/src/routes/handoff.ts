@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
-import { makeAnonClient } from "../lib/supabase.js";
+import { makeAnonClient, makeServiceClient } from "../lib/supabase.js";
 import { withActorContext } from "../middleware/actorContext.js";
 import type { Env } from "../types.js";
 
@@ -203,7 +203,10 @@ app.get("/packets/:packetId/handoff/:exportId/download", async (c) => {
           ? "xml"
           : "pdf";
   const path = `${packetId}/${exportId}.${ext}`;
-  const { data: signed, error: signErr } = await db.storage
+  // Use service role for signed URL generation — storage RLS would otherwise
+  // require explicit per-user bucket policies. Access is already enforced above
+  // via the handoff_exports DB query (staff JWT must own the export record).
+  const { data: signed, error: signErr } = await makeServiceClient(c.env).storage
     .from(STORAGE_BUCKET)
     .createSignedUrl(path, 60 * 10); // 10-minute window
   if (signErr) throw new HTTPException(404, { message: `No artifact stored: ${signErr.message}` });
