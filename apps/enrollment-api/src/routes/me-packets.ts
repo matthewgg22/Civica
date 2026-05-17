@@ -229,7 +229,7 @@ app.post(
           packet_id: c.req.param("packetId"),
           question_key: body.question_id,
           question_label: questionLabel,
-          answer_source: "applicant",
+          answer_source: "applicant_input",
           applicant_answer: serializedValue,
           original_ocr_value: null,
         },
