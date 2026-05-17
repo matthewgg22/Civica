@@ -92,8 +92,8 @@ app.post("/:requestId/resolve", async (c) => {
 
   if (!packet) throw new HTTPException(403, { message: "Request belongs to a different applicant" });
 
-  const db = await withActorContext(c);
-  const { error } = await db
+  const auditDb = await withActorContext(c);
+  const { error } = await auditDb
     .schema("snap_enrollment")
     .from("missing_item_requests")
     .update({ status: "uploaded", updated_at: new Date().toISOString() })
