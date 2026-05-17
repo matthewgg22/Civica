@@ -307,7 +307,7 @@ struct SNAPRecoveryView: View {
             SNAPRecoveryStrings.codePlaceholder.value(in: language),
             text: $viewModel.codeValue
         )
-        .font(.system(size: 32, weight: .semibold, design: .monospaced))
+        .font(CivicaTypography.currencyHero)
         .foregroundStyle(CivicaColors.ink)
         .keyboardType(.numberPad)
         .textContentType(.oneTimeCode)

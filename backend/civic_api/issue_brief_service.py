@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import hashlib
 import json
 import logging
@@ -358,7 +359,8 @@ class IssueBriefService:
         self.repository = repository
         self.max_fact_age_days = max(1, max_fact_age_days)
         self.openai_briefer = OpenAIIssueBriefer.from_env()
-        self._seed_defaults_if_needed()
+        # Seeding is deferred to first _load_issue_core() call. Constructing
+        # the service no longer performs network I/O.
 
     def classify(self, request: IssueClassifyRequest) -> IssueClassifyResponse:
         policy_flags, refusal_reason = _evaluate_policy(
@@ -1417,6 +1419,7 @@ def _evidence_packet_row(item: NormalizedEvidence) -> dict[str, Any]:
     }
 
 
+@functools.lru_cache(maxsize=32)
 def _read_prompt(filename: str, fallback: str) -> str:
     path = _PROMPTS_DIR / filename
     try:

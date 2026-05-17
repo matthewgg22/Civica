@@ -359,7 +359,7 @@ struct SNAPIncomeFlowView: View {
                     .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.graphite)
                 Text(SNAPIncomeStrings.paystubMonthlyLine(derivation: derivation, language: language))
-                    .font(.system(size: 32, weight: .semibold, design: .monospaced))
+                    .font(CivicaTypography.currencyHero)
                     .foregroundStyle(CivicaColors.ink)
             }
             Button {
@@ -385,13 +385,13 @@ struct SNAPIncomeFlowView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             HStack(spacing: CivicaSpacing.sm) {
                 Text("$")
-                    .font(.system(size: 32, weight: .semibold))
+                    .font(CivicaTypography.currencyHero)
                     .foregroundStyle(CivicaColors.graphite)
                 TextField(
                     SNAPIncomeStrings.grossPlaceholder.value(in: language),
                     text: $viewModel.grossIncomeField
                 )
-                .font(.system(size: 32, weight: .semibold, design: .monospaced))
+                .font(CivicaTypography.currencyHero)
                 .foregroundStyle(CivicaColors.ink)
                 .keyboardType(.decimalPad)
             }
@@ -458,13 +458,13 @@ struct SNAPIncomeFlowView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             HStack(spacing: CivicaSpacing.sm) {
                 Text("$")
-                    .font(.system(size: 32, weight: .semibold))
+                    .font(CivicaTypography.currencyHero)
                     .foregroundStyle(CivicaColors.graphite)
                 TextField(
                     SNAPIncomeStrings.liquidResourcesPlaceholder.value(in: language),
                     text: $viewModel.liquidResourcesField
                 )
-                .font(.system(size: 32, weight: .semibold, design: .monospaced))
+                .font(CivicaTypography.currencyHero)
                 .foregroundStyle(CivicaColors.ink)
                 .keyboardType(.decimalPad)
             }

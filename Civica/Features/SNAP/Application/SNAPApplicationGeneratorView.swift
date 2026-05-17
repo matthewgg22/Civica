@@ -79,6 +79,7 @@ struct SNAPApplicationGeneratorView: View {
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: "doc.text.fill")
                     .foregroundColor(CivicaColors.accentTeal)
+                    .accessibilityHidden(true)
                 Text(SNAPApplicationGeneratorStrings.ready.value(in: language))
                     .font(CivicaTypography.subheadStrong)
                     .foregroundColor(CivicaColors.ink)
@@ -91,6 +92,7 @@ struct SNAPApplicationGeneratorView: View {
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundColor(CivicaColors.warningAmber)
+                    .accessibilityHidden(true)
                 Text(message)
                     .font(CivicaTypography.subhead)
                     .foregroundColor(CivicaColors.ink)

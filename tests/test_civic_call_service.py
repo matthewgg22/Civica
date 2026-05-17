@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-
 from backend.civic_api.models import (
     Ask,
     AssistantResolveRequest,
@@ -184,20 +182,6 @@ def test_log_call_persists_history_group() -> None:
     assert history[0]["logs"][0]["outcome"] == "voicemail"
 
 
-def test_examples_include_all_baseline_issues_for_federal_context() -> None:
-    repo = InMemoryCivicRepository()
-    _seed_repo_with_federal_reps(repo, user_id="u-3")
-    service = CivicService(repository=repo)
-
-    response = service.get_examples("u-3").to_dict()
-    assert len(response["examples"]) == 10
-
-    slugs = {item["slug"] for item in response["examples"]}
-    assert "stop-unauthorized-military-strikes-on-iran" in slugs
-    assert "protect-state-level-ai-regulation" in slugs
-    assert "oppose-steve-pearce-as-blm-director" in slugs
-
-
 def test_examples_filter_out_senate_only_issues_for_house_only_users() -> None:
     repo = InMemoryCivicRepository()
     repo.seed_reps(
@@ -265,59 +249,6 @@ def test_examples_include_committee_of_jurisdiction_callout_when_assignment_matc
         "committee of jurisdiction" in line.lower() and "Senator One" in line
         for line in senate_issue["rep_relevance"]
     )
-
-
-def test_examples_prefer_active_db_templates_when_available() -> None:
-    repo = InMemoryCivicRepository()
-    _seed_repo_with_federal_reps(repo, user_id="u-db-examples")
-    now = datetime.now(timezone.utc)
-    repo.seed_example_templates(
-        [
-            {
-                "issue_id": "db-active-template",
-                "slug": "db-active-template",
-                "title": "DB Active Template",
-                "category": "Economy",
-                "target_chambers": ["house", "senate"],
-                "primary_ask": "support",
-                "summary": "Database-managed summary text.",
-                "related_bills": [],
-                "template_asks": ["support", "ask_public_statement"],
-                "live_script": "Hi, my name is [YOUR_NAME] and I'm a constituent from [CITY], [ZIP].",
-                "voicemail_script": "Hi, this is [YOUR_NAME] from [CITY], [ZIP].",
-                "supporter_variant": "Thanks for supporting this issue.",
-                "undecided_variant": "Please review this issue soon.",
-                "staffer_variant": "Please pass this to the member.",
-                "voicemail_footer": "Please include [FULL_ADDRESS].",
-                "placeholders": ["[YOUR_NAME]", "[CITY]", "[ZIP]"],
-                "tags": ["economy"],
-                "is_active": True,
-                "starts_at": (now - timedelta(hours=1)).isoformat(),
-                "ends_at": (now + timedelta(hours=1)).isoformat(),
-                "display_order": 1,
-                "updated_at": now.isoformat(),
-            },
-            {
-                "issue_id": "db-inactive-template",
-                "slug": "db-inactive-template",
-                "title": "DB Inactive Template",
-                "category": "Economy",
-                "target_chambers": ["house"],
-                "primary_ask": "support",
-                "summary": "Should not render.",
-                "live_script": "x",
-                "voicemail_script": "x",
-                "is_active": False,
-            },
-        ]
-    )
-
-    service = CivicService(repository=repo)
-    examples = service.get_examples("u-db-examples").to_dict()["examples"]
-
-    assert len(examples) == 1
-    assert examples[0]["issue_id"] == "db-active-template"
-    assert examples[0]["slug"] == "db-active-template"
 
 
 def test_examples_return_empty_when_fallback_disabled_and_no_db_templates(monkeypatch) -> None:

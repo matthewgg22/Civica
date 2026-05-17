@@ -17,6 +17,7 @@ struct FindHelpDisclosureFooter: View {
                 HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                     Image(systemName: "info.circle.fill")
                         .foregroundStyle(CivicaColors.brickPrimary)
+                        .accessibilityHidden(true)
                     Text("find_help.disclosure.short")
                         .font(CivicaTypography.footnoteStrong)
                         .foregroundStyle(CivicaColors.graphite)
@@ -25,6 +26,7 @@ struct FindHelpDisclosureFooter: View {
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(CivicaColors.graphite)
+                        .accessibilityHidden(true)
                 }
                 .padding(.horizontal, CivicaSpacing.md)
                 .padding(.vertical, CivicaSpacing.sm)

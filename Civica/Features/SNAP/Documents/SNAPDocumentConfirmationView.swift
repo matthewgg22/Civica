@@ -56,24 +56,24 @@ struct SNAPDocumentConfirmationView: View {
 
     private func paystubFields(_ paystub: SNAPPaystub) -> some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
-            field("Employer", paystub.employerName)
-            field("Pay period", "\(paystub.payPeriodStart) — \(paystub.payPeriodEnd)")
+            field(SNAPDocumentConfirmationStrings.employerLabel.value(in: language), paystub.employerName)
+            field(SNAPDocumentConfirmationStrings.payPeriodLabel.value(in: language), "\(paystub.payPeriodStart) — \(paystub.payPeriodEnd)")
             if let payDate = paystub.payDate {
-                field("Pay date", payDate)
+                field(SNAPDocumentConfirmationStrings.payDateLabel.value(in: language), payDate)
             }
-            field("Gross pay (this period)", "$\(paystub.grossPayPeriod)")
-            field("Net pay (this period)", "$\(paystub.netPayPeriod)")
+            field(SNAPDocumentConfirmationStrings.grossPayLabel.value(in: language), "$\(paystub.grossPayPeriod)")
+            field(SNAPDocumentConfirmationStrings.netPayLabel.value(in: language), "$\(paystub.netPayPeriod)")
             if let hours = paystub.hoursWorkedInPeriod {
-                field("Hours worked", "\(hours)")
+                field(SNAPDocumentConfirmationStrings.hoursWorkedLabel.value(in: language), "\(hours)")
             }
             if let rate = paystub.hourlyRate {
-                field("Hourly rate", "$\(rate)/hr")
+                field(SNAPDocumentConfirmationStrings.hourlyRateLabel.value(in: language), "$\(rate)\(SNAPDocumentConfirmationStrings.hourlyRateSuffix.value(in: language))")
             }
             if !paystub.deductions.isEmpty {
                 deductionsList(paystub.deductions)
             }
             if let ytd = paystub.grossPayYTD {
-                field("Gross year-to-date", "$\(ytd)")
+                field(SNAPDocumentConfirmationStrings.grossYearToDateLabel.value(in: language), "$\(ytd)")
             }
         }
         .padding(CivicaSpacing.lg)
@@ -83,7 +83,10 @@ struct SNAPDocumentConfirmationView: View {
 
     private var nonPaystubFallback: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-            Text("We saw a \(extraction.classification.documentType.rawValue.replacingOccurrences(of: "_", with: " "))")
+            Text(SNAPDocumentConfirmationStrings.documentTypeAcknowledgement(
+                rawType: extraction.classification.documentType.rawValue,
+                language: language
+            ))
                 .font(CivicaTypography.subheadStrong)
                 .foregroundColor(CivicaColors.ink)
             Text(SNAPDocumentConfirmationStrings.stoppedReading.value(in: language))
@@ -124,6 +127,7 @@ struct SNAPDocumentConfirmationView: View {
                 HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                     Image(systemName: severityIcon(flag.severity))
                         .foregroundColor(severityColor(flag.severity))
+                        .accessibilityHidden(true)
                     Text(flag.messageEn)
                         .font(CivicaTypography.footnote)
                         .foregroundColor(CivicaColors.ink)

@@ -14,6 +14,11 @@ public enum CivicaTypography {
     private static let medium   = "HankenGrotesk-Medium"
     private static let semibold = "HankenGrotesk-SemiBold"
 
+    /// 32/40 monospaced — hero currency display for income/expenses entry
+    /// screens. Monospaced (tabular) so digit columns stay aligned as the
+    /// user types. Reuse across SNAPIncomeFlow, SNAPExpensesFlow, and
+    /// SNAPRecoveryView; do not pair with body copy.
+    public static let currencyHero        = Font.custom(semibold, size: 32, relativeTo: .largeTitle).monospacedDigit()
     /// 28/34 — page header (PageHeader title, overlay titles).
     /// Reduced from 34pt to 28pt 2026-05-13 per launch-test UX
     /// feedback: 34pt headers consumed too much vertical real estate

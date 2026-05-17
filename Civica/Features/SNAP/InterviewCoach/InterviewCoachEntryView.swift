@@ -77,6 +77,7 @@ struct InterviewCoachEntryView: View {
                 .font(.title2)
                 .foregroundStyle(CivicaColors.brickPrimary)
                 .frame(width: 36, alignment: .center)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(title)
@@ -94,6 +95,7 @@ struct InterviewCoachEntryView: View {
                 Image(systemName: "chevron.right")
                     .font(.subheadline)
                     .foregroundStyle(CivicaColors.graphite)
+                    .accessibilityHidden(true)
             }
         }
         .padding(CivicaSpacing.md)
