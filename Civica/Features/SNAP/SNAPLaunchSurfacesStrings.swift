@@ -293,6 +293,49 @@ enum SNAPDocumentConfirmationStrings {
         "Looks right",
         es: "Se ve bien"
     )
+    static let employerLabel = CivicaText(
+        "Employer",
+        es: "Empleador"
+    )
+    static let payPeriodLabel = CivicaText(
+        "Pay period",
+        es: "Período de pago"
+    )
+    static let payDateLabel = CivicaText(
+        "Pay date",
+        es: "Fecha de pago"
+    )
+    static let grossPayLabel = CivicaText(
+        "Gross pay (this period)",
+        es: "Pago bruto (este período)"
+    )
+    static let netPayLabel = CivicaText(
+        "Net pay (this period)",
+        es: "Pago neto (este período)"
+    )
+    static let hoursWorkedLabel = CivicaText(
+        "Hours worked",
+        es: "Horas trabajadas"
+    )
+    static let hourlyRateLabel = CivicaText(
+        "Hourly rate",
+        es: "Tarifa por hora"
+    )
+    static let hourlyRateSuffix = CivicaText(
+        "/hr",
+        es: "/hora"
+    )
+    static let grossYearToDateLabel = CivicaText(
+        "Gross year-to-date",
+        es: "Bruto en lo que va del año"
+    )
+    static func documentTypeAcknowledgement(rawType: String, language: CivicaLanguage) -> String {
+        let prettyType = rawType.replacingOccurrences(of: "_", with: " ")
+        switch language {
+        case .english: return "We saw a \(prettyType)"
+        case .spanish: return "Vimos un \(prettyType)"
+        }
+    }
 }
 
 enum SNAPConversationViewStrings {
