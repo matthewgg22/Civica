@@ -1,0 +1,90 @@
+name: Post-deploy smoke tests
+
+# Triggered automatically after the enrollment-api or api-ci deploy jobs succeed,
+# OR manually (e.g. after an emergency hotfix).
+#
+# Required secrets:
+#   ENROLLMENT_API_PROD_URL  — e.g. https://civica-enrollment-api.workers.dev
+#   API_PROD_URL             — e.g. https://civica-api.fly.dev
+
+on:
+  workflow_run:
+    workflows:
+      - "Enrollment API CI"
+      - "API typecheck + contract tests"
+    types: [completed]
+    branches: [codex/rebuild-feb18]
+  workflow_dispatch:
+
+jobs:
+  smoke-enrollment-api:
+    name: Smoke — enrollment-api
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.name == 'Enrollment API CI')
+
+    steps:
+      - name: Health check
+        run: |
+          STATUS=$(curl -sf -o /dev/null -w "%{http_code}" \
+            "${{ secrets.ENROLLMENT_API_PROD_URL }}/health")
+          echo "GET /health → $STATUS"
+          [ "$STATUS" = "200" ] || (echo "FAIL: expected 200, got $STATUS" && exit 1)
+
+      - name: /health body check
+        run: |
+          BODY=$(curl -sf "${{ secrets.ENROLLMENT_API_PROD_URL }}/health")
+          echo "Body: $BODY"
+          echo "$BODY" | grep -q '"ok":true' || \
+            (echo "FAIL: response body missing ok:true" && exit 1)
+
+      - name: Unauthenticated /v1/enrollment/packets → 401
+        run: |
+          STATUS=$(curl -sf -o /dev/null -w "%{http_code}" \
+            "${{ secrets.ENROLLMENT_API_PROD_URL }}/v1/enrollment/packets")
+          echo "GET /v1/enrollment/packets (no token) → $STATUS"
+          [ "$STATUS" = "401" ] || (echo "FAIL: expected 401, got $STATUS" && exit 1)
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::enrollment-api smoke tests FAILED after deploy."
+          echo "Check ${{ secrets.ENROLLMENT_API_PROD_URL }}/health for details."
+
+  smoke-api:
+    name: Smoke — apps/api (Fly.io)
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.name == 'API typecheck + contract tests')
+
+    steps:
+      - name: Health check /healthz
+        run: |
+          STATUS=$(curl -sf -o /dev/null -w "%{http_code}" \
+            "${{ secrets.API_PROD_URL }}/healthz")
+          echo "GET /healthz → $STATUS"
+          [ "$STATUS" = "200" ] || (echo "FAIL: expected 200, got $STATUS" && exit 1)
+
+      - name: Root ping /
+        run: |
+          BODY=$(curl -sf "${{ secrets.API_PROD_URL }}/")
+          echo "Body: $BODY"
+          echo "$BODY" | grep -q '"ok":true' || \
+            (echo "FAIL: root ping missing ok:true" && exit 1)
+
+      - name: Unauthenticated protected route → 401
+        run: |
+          STATUS=$(curl -sf -o /dev/null -w "%{http_code}" \
+            "${{ secrets.API_PROD_URL }}/navigator/sessions")
+          echo "GET /navigator/sessions (no token) → $STATUS"
+          [ "$STATUS" = "401" ] || (echo "FAIL: expected 401, got $STATUS" && exit 1)
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::apps/api smoke tests FAILED after deploy."
+          echo "Check ${{ secrets.API_PROD_URL }}/healthz for details."

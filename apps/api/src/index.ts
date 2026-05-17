@@ -1,6 +1,9 @@
+import { initSentry } from './lib/sentry.js';
 import { serve } from '@hono/node-server';
 import { buildApp } from './app.js';
 import { logger } from './lib/logger.js';
+
+initSentry();
 
 const port = Number(process.env['PORT'] ?? 3001);
 const app = buildApp();

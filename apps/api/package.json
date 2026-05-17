@@ -20,6 +20,7 @@
     "@civica/snap-handoff": "workspace:*",
     "@civica/types": "workspace:*",
     "@hono/node-server": "^1.13.7",
+    "@sentry/node": "^9.0.0",
     "@react-pdf/renderer": "^4.3.0",
     "react": "^19.2.4",
     "@hono/zod-openapi": "^0.18.3",

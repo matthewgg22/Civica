@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@hono/zod-validator": "^0.4.3",
+    "@sentry/cloudflare": "^9.0.0",
     "@supabase/supabase-js": "^2.49.0",
     "hono": "^4.7.0",
     "zod": "^3.24.0"

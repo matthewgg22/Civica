@@ -1,0 +1,54 @@
+-- =============================================================================
+-- COMPLIANCE NOTICE — DO NOT DELETE OR TRUNCATE audit_log_events
+-- =============================================================================
+--
+-- snap_enrollment.audit_log_events is the authoritative compliance record for
+-- all mutable-row changes in the SNAP enrollment schema.  It is protected by
+-- the snap_audit_log_block_mutation trigger (migration 04) which raises an
+-- exception on any UPDATE or DELETE.
+--
+-- Retention requirement: 7 years from event creation (see docs/snap/retention_policy.md).
+-- Deletion is only permissible via the formal data-purge procedure described
+-- in docs/snap/retention_policy.md, which requires written legal authorization.
+--
+-- =============================================================================
+-- DAILY LOGICAL BACKUP
+-- =============================================================================
+--
+-- The recommended approach is a pg_dump → Supabase Storage pipeline:
+--
+--   1. Create a Supabase Storage bucket named "audit-backups" (private, no
+--      public URL) using the Supabase dashboard or management API.
+--
+--   2. Schedule a daily job (GitHub Actions cron, Railway, or a Supabase Edge
+--      Function on a cron schedule) that:
+--        a. Runs:
+--             pg_dump "$DATABASE_URL" \
+--               --schema=snap_enrollment \
+--               --table=snap_enrollment.audit_log_events \
+--               --format=custom \
+--               --no-privileges \
+--               --file="/tmp/audit_$(date +%Y%m%d).dump"
+--        b. Uploads the dump to Supabase Storage:
+--             supabase storage cp /tmp/audit_$(date +%Y%m%d).dump \
+--               ss://audit-backups/daily/audit_$(date +%Y%m%d).dump
+--        c. Verifies the upload succeeded (non-zero size).
+--        d. Deletes local temp file.
+--
+--   3. Verify nightly via a GitHub Actions smoke check that the latest backup
+--      object exists and is non-empty.
+--
+-- IMPORTANT: The backup user must have SELECT on audit_log_events but NOT
+-- INSERT/UPDATE/DELETE.  Grant it as read-only via:
+--
+--   GRANT SELECT ON snap_enrollment.audit_log_events TO backup_user;
+--
+-- NOTE: This backup job has NOT yet been configured.
+-- TODO (tracking issue): Set up the audit-log daily backup pipeline.
+--       See docs/snap/deploy.md §"Audit log backup" for setup instructions.
+--
+-- =============================================================================
+
+-- Add a table comment so pg_dump output self-documents retention requirements.
+COMMENT ON TABLE snap_enrollment.audit_log_events IS
+  'Compliance audit log — append-only, 7-year retention. Do not delete rows. See docs/snap/retention_policy.md.';

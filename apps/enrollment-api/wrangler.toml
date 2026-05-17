@@ -5,8 +5,12 @@ compatibility_flags = ["nodejs_compat"]
 
 [vars]
 SUPABASE_URL = "https://zgqphgcqfxsgviofsccs.supabase.co"
+# SENTRY_DSN is intentionally absent from [vars] — set it as a secret:
+#   wrangler secret put SENTRY_DSN
+# This prevents the DSN from being committed to source control.
 
 # Local dev: create apps/enrollment-api/.dev.vars with:
 #   SUPABASE_URL=https://zgqphgcqfxsgviofsccs.supabase.co
 #   SUPABASE_SERVICE_ROLE_KEY=...
 #   SUPABASE_ANON_KEY=...
+#   SENTRY_DSN=https://xxx@oXXXXX.ingest.sentry.io/YYYY
