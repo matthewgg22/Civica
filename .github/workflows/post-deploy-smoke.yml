@@ -42,7 +42,7 @@ jobs:
 
       - name: Unauthenticated /v1/enrollment/packets → 401
         run: |
-          STATUS=$(curl -sf -o /dev/null -w "%{http_code}" \
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
             "${{ secrets.ENROLLMENT_API_PROD_URL }}/v1/enrollment/packets")
           echo "GET /v1/enrollment/packets (no token) → $STATUS"
           [ "$STATUS" = "401" ] || (echo "FAIL: expected 401, got $STATUS" && exit 1)
@@ -78,7 +78,7 @@ jobs:
 
       - name: Unauthenticated protected route → 401
         run: |
-          STATUS=$(curl -sf -o /dev/null -w "%{http_code}" \
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
             "${{ secrets.API_PROD_URL }}/navigator/sessions")
           echo "GET /navigator/sessions (no token) → $STATUS"
           [ "$STATUS" = "401" ] || (echo "FAIL: expected 401, got $STATUS" && exit 1)
