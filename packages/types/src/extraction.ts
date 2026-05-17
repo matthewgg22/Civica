@@ -1,5 +1,7 @@
 import { z } from "zod";
-import { OcrProviderSchema } from "./enums.js";
+
+export const OcrProviderSchema = z.enum(["on_device", "textract", "document_ai"]);
+export type OcrProvider = z.infer<typeof OcrProviderSchema>;
 
 export const BboxSchema = z.object({
   left: z.number().min(0).max(1),

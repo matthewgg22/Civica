@@ -1,6 +1,43 @@
 import { z } from "zod";
-import { PacketStatusSchema, DocumentTypeSchema, DocumentStatusSchema, SupportedStateSchema } from "./enums.js";
 import { ExtractionFieldSchema } from "./extraction.js";
+
+// These enums mirror the DB values for fixtures / API validation.
+// Canonical source of truth for the 8-state workflow lives in
+// packages/snap-enums (to be created) and supabase migrations.
+export const DocumentTypeSchema = z.enum([
+  "photo_id",
+  "paystub",
+  "utility_bill",
+  "bank_statement",
+  "tax_return",
+  "social_security_card",
+  "birth_certificate",
+  "lease_agreement",
+  "other",
+]);
+export type DocumentType = z.infer<typeof DocumentTypeSchema>;
+
+export const DocumentStatusSchema = z.enum([
+  "pending",
+  "uploading",
+  "processing",
+  "extracted",
+  "failed",
+  "rejected",
+]);
+export type DocumentStatus = z.infer<typeof DocumentStatusSchema>;
+
+export const SupportedStateSchema = z.enum(["CA", "MA"]);
+export type SupportedState = z.infer<typeof SupportedStateSchema>;
+
+export const PacketStatusSchema = z.enum([
+  "draft",
+  "in_progress",
+  "ready_for_review",
+  "submitted",
+  "archived",
+]);
+export type PacketStatus = z.infer<typeof PacketStatusSchema>;
 
 export const DocumentSchema = z.object({
   id: z.string().uuid(),

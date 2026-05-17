@@ -1,7 +1,15 @@
 import { Hono } from "hono";
+import { z } from "zod";
 import { supabaseAdmin } from "../../lib/supabase.js";
-import { OcrWebhookPayloadSchema } from "@civica/types";
 import { timingSafeEqual } from "node:crypto";
+
+const OcrWebhookPayloadSchema = z.object({
+  job_id: z.string().uuid(),
+  document_id: z.string().uuid(),
+  success: z.boolean(),
+  fields: z.array(z.any()).optional(),
+  error: z.string().optional(),
+});
 
 export const ocrWebhookRouter = new Hono();
 

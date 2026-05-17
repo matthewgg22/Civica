@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { UserRoleSchema, SupportedStateSchema } from "./enums.js";
+import { SupportedStateSchema } from "./packet.js";
+
+export const UserRoleSchema = z.enum(["applicant", "navigator", "admin"]);
+export type UserRole = z.infer<typeof UserRoleSchema>;
 
 export const UserSchema = z.object({
   id: z.string().uuid(),
