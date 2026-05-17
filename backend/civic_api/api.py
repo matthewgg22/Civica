@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import json
 import logging
 import math
@@ -157,6 +158,7 @@ def _log_payload_metadata(payload: Any) -> dict[str, Any]:
     return metadata
 
 
+@functools.lru_cache(maxsize=1)
 def _is_production_env() -> bool:
     for key in ("VOTENOW_ENV", "APP_ENV", "ENV"):
         value = os.environ.get(key, "").strip().lower()
@@ -165,6 +167,7 @@ def _is_production_env() -> bool:
     return False
 
 
+@functools.lru_cache(maxsize=1)
 def _configured_repository_backend() -> str:
     configured = os.environ.get("VOTENOW_CIVIC_REPOSITORY", "").strip().lower()
     if configured:
@@ -208,10 +211,43 @@ logger.info(
     bool(os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "").strip()),
 )
 
-service = CivicService(repository=_build_repository())
-issue_brief_service = IssueBriefService(repository=service.repository)
-script_package_service = ScriptPackageService(civic_service=service, issue_brief_service=issue_brief_service)
-mapc_pipeline_v3_service = MAPCPipelineV3Service()
+class _LazySingleton:
+    """Defers construction until first attribute access.
+
+    Why: importing this module previously constructed a Supabase repo,
+    ran issue-catalog seeding (up to ~50 network upserts), and built
+    every downstream service before a single request was handled — which
+    blocked process startup and made `import api` expensive in tests.
+    """
+
+    __slots__ = ("_factory", "_instance")
+
+    def __init__(self, factory: Callable[[], Any]) -> None:
+        self._factory = factory
+        self._instance: Any = None
+
+    def _resolve(self) -> Any:
+        if self._instance is None:
+            self._instance = self._factory()
+        return self._instance
+
+    def __getattr__(self, name: str) -> Any:
+        if name in ("_factory", "_instance"):
+            raise AttributeError(name)
+        return getattr(self._resolve(), name)
+
+
+service = _LazySingleton(lambda: CivicService(repository=_build_repository()))
+issue_brief_service = _LazySingleton(
+    lambda: IssueBriefService(repository=service._resolve().repository)
+)
+script_package_service = _LazySingleton(
+    lambda: ScriptPackageService(
+        civic_service=service._resolve(),
+        issue_brief_service=issue_brief_service._resolve(),
+    )
+)
+mapc_pipeline_v3_service = _LazySingleton(lambda: MAPCPipelineV3Service())
 
 
 def _required_string(payload: dict[str, Any], key: str) -> str:
@@ -755,42 +791,42 @@ def get_mapc_v3_health(_: str) -> dict[str, Any]:
     return mapc_pipeline_v3_service.health_snapshot()
 
 
-_SHARE_CARD_DEFAULTS: dict[str, dict[str, str]] = {
-    "election": {
-        "title": "Don’t Miss Your Next Election",
-        "subtitle": "Check deadlines, voting options, and what is on your ballot.",
-        "cta": "View Election Details",
-        "badge": "Upcoming Election",
-        "target": "election",
-    },
-    "registration": {
-        "title": "Check Your Registration",
-        "subtitle": "Register, update your address, or check your voter status in one place.",
-        "cta": "Check Registration",
-        "badge": "Registration Reminder",
-        "target": "registration",
-    },
-    "mapv": {
-        "title": "Make Your Plan to Vote",
-        "subtitle": "Pick your voting method, review deadlines, and get ready now.",
-        "cta": "Start Your Plan",
-        "badge": "Plan Ahead",
-        "target": "mapv",
-    },
-    "civic": {
-        "title": "Take Civic Action in Minutes",
-        "subtitle": "Civica gives you a script, contacts, and call steps so you can act now.",
-        "cta": "Take Action",
-        "badge": "Script Ready",
-        "target": "civic",
-    },
-}
+
+try:
+    from fastapi import FastAPI, HTTPException, Request
+    from fastapi.responses import HTMLResponse, Response
+except Exception:  # pragma: no cover
+    FastAPI = None
+    HTTPException = Exception
+    Request = Any
+    HTMLResponse = None
+    Response = None
 
 
-def _clamp_text(value: str | None, fallback: str, max_len: int) -> str:
-    cleaned = (value or "").strip()
-    if not cleaned:
-        cleaned = fallback
+def _extract_bearer_token(authorization_header: str | None) -> str:
+    header = (authorization_header or "").strip()
+    if not header.lower().startswith("bearer "):
+        raise HTTPException(status_code=401, detail="Missing bearer token.")
+    token = header[7:].strip()
+    if not token:
+        raise HTTPException(status_code=401, detail="Missing bearer token.")
+    return token
+
+
+def _resolve_authenticated_user_id(access_token: str) -> str:
+    supabase_url = os.environ.get("SUPABASE_URL", "").rstrip("/")
+    supabase_anon_key = os.environ.get("SUPABASE_ANON_KEY", "").strip()
+    supabase_service_role_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+    auth_apikey = supabase_anon_key or supabase_service_role_key
+    if not supabase_url or not auth_apikey:
+        raise HTTPException(
+            status_code=500,
+            detail="Supabase auth verification is not configured (requires SUPABASE_URL plus SUPABASE_ANON_KEY or SUPABASE_SERVICE_ROLE_KEY).",
+        )
+
+    cached_user_id = _auth_cache_get(access_token)
+    if cached_user_id:
+        return cached_user_id
 
     request = urllib.request.Request(
         f"{supabase_url}/auth/v1/user",
@@ -1155,39 +1191,3 @@ if FastAPI is not None:
 
         return _run_endpoint(handler, bad_request_exceptions=bad_request)
 
-    @app.get("/share/preview/{card_type}.svg")
-    def share_preview_svg(
-        card_type: str,
-        title: str | None = None,
-        subtitle: str | None = None,
-        badge: str | None = None,
-        cta: str | None = None,
-    ) -> Response:
-        resolved = _resolve_card_type(card_type)
-        defaults = _SHARE_CARD_DEFAULTS[resolved]
-        svg = _build_share_svg(
-            card_type=resolved,
-            title=_clamp_text(title, defaults["title"], 120),
-            subtitle=_clamp_text(subtitle, defaults["subtitle"], 220),
-            badge=_clamp_text(badge, defaults["badge"], 64),
-            cta=_clamp_text(cta, defaults["cta"], 80),
-        )
-        return Response(content=svg, media_type="image/svg+xml")
-
-    @app.get("/share/{card_type}", response_class=HTMLResponse)
-    def share_landing_page(
-        card_type: str,
-        target: str | None = None,
-        title: str | None = None,
-        subtitle: str | None = None,
-        cta: str | None = None,
-        badge: str | None = None,
-        campaign: str | None = None,
-        eid: str | None = None,
-        type: str | None = None,
-        day: str | None = None,
-        state: str | None = None,
-        state_name: str | None = None,
-        election: str | None = None,
-        method: str | None = None,
-        issue: str | None = None,
