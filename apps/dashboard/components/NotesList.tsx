@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "../lib/supabase";
 import { api } from "../lib/api";
+import { decryptDemoName } from "../lib/format";
 
 interface Note {
   note_id: string;
@@ -79,7 +80,7 @@ export default function NotesList({ packetId, initialNotes }: { packetId: string
                   <span className="text-[10px] bg-amber/15 text-amber px-2 py-0.5 rounded-full font-semibold uppercase tracking-wider">internal</span>
                 )}
               </div>
-              <p className="text-ink">{note.body_ciphertext}</p>
+              <p className="text-ink">{decryptDemoName(note.body_ciphertext)}</p>
             </div>
           ))}
         </div>

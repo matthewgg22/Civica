@@ -4,7 +4,7 @@ compatibility_date = "2025-05-01"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
-SUPABASE_URL = ""        # set in Cloudflare dashboard / .dev.vars
+SUPABASE_URL = "https://zgqphgcqfxsgviofsccs.supabase.co"
 
 # Local dev: create apps/enrollment-api/.dev.vars with:
 #   SUPABASE_URL=https://zgqphgcqfxsgviofsccs.supabase.co
