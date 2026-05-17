@@ -22,6 +22,7 @@ type Props = {
 
 export function DocumentUploader({ packetId, documentId, onSuccess, compact = false }: Props) {
   const t = useTranslations("documents");
+  const tc = useTranslations("common");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const dropZoneRef = useRef<HTMLDivElement>(null);
@@ -222,7 +223,7 @@ export function DocumentUploader({ packetId, documentId, onSuccess, compact = fa
       {/* Upload progress */}
       {state.phase === "processing" && (
         <p className="text-sm text-slate-500" aria-live="polite">
-          Processing…
+          {tc("processing")}
         </p>
       )}
       {state.phase === "uploading" && (
@@ -252,7 +253,7 @@ export function DocumentUploader({ packetId, documentId, onSuccess, compact = fa
             size="sm"
             onClick={() => setState({ phase: "idle" })}
           >
-            Try again
+            {tc("tryAgain")}
           </Button>
         </div>
       )}

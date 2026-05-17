@@ -9,7 +9,9 @@
     "error": "Algo salió mal. Por favor, inténtalo de nuevo.",
     "savedOffline": "Guardado sin conexión — se sincronizará al reconectarse",
     "signOut": "Cerrar sesión",
-    "loadError": "No se pudo cargar tu solicitud. Por favor, inténtalo de nuevo."
+    "loadError": "No se pudo cargar tu solicitud. Por favor, inténtalo de nuevo.",
+    "tryAgain": "Intentar de nuevo",
+    "processing": "Procesando…"
   },
   "auth": {
     "signIn": "Iniciar sesión",
@@ -65,13 +67,16 @@
     "filePicker": "Elegir archivo",
     "uploadProgress": "Subiendo… {percent}%",
     "uploadSuccess": "Subido",
-    "uploadError": "Error al subir — por favor inténtalo de nuevo"
+    "uploadError": "Error al subir — por favor inténtalo de nuevo",
+    "progressLabel": "{uploaded} de {total} documentos requeridos subidos"
   },
   "inbox": {
     "title": "Solicitudes de tu navegador",
     "empty": "No hay solicitudes pendientes",
     "uploadResponse": "Sube tu respuesta",
-    "markResolved": "Marcar como resuelto"
+    "markResolved": "Marcar como resuelto",
+    "openSection": "Abiertos ({count})",
+    "resolvedSection": "Resueltos ({count})"
   },
   "packet": {
     "title": "Estado de la solicitud",
@@ -95,6 +100,17 @@
     "statusDescClosed": "Esta solicitud ha sido cerrada.",
     "lastUpdated": "Última actualización {date}",
     "historyHeading": "Historial"
+  },
+  "resources": {
+    "title": "Recursos locales",
+    "intro": "Si tú o tu hogar están experimentando una crisis alimentaria o de vivienda, las siguientes organizaciones pueden ayudar de inmediato.",
+    "call211Title": "Llama o escribe al 2-1-1",
+    "call211Body": "Referencias gratuitas y confidenciales a programas locales de alimentos, vivienda y asistencia financiera. Disponible las 24 horas, en inglés y español.",
+    "snapHotlineTitle": "Información sobre SNAP",
+    "snapHotlineBody": "Para preguntas sobre los beneficios de SNAP, llama a la oficina de SNAP de tu estado. California: 1-877-847-3663. Massachusetts: 1-877-382-2363.",
+    "foodBankTitle": "Encuentra un banco de alimentos",
+    "foodBankBody": "El localizador de bancos de alimentos de Feeding America te ayuda a encontrar alimentos gratuitos cerca de ti en feedingamerica.org/find-your-local-foodbank.",
+    "backToApp": "Volver a tu solicitud"
   },
   "consent": {
     "title": "Revisar y enviar",

@@ -135,6 +135,7 @@ type InboxUploaderProps = {
 
 function InboxUploader({ requestId, onSuccess }: InboxUploaderProps) {
   const t = useTranslations("documents");
+  const tc = useTranslations("common");
   const [uploadState, setUploadState] = useState<
     "idle" | "uploading" | "done" | "error"
   >("idle");
@@ -199,7 +200,7 @@ function InboxUploader({ requestId, onSuccess }: InboxUploaderProps) {
       <div role="alert" className="space-y-2">
         <p className="text-sm text-red-600">{errorMsg}</p>
         <Button variant="outline" size="sm" onClick={() => setUploadState("idle")}>
-          Try again
+          {tc("tryAgain")}
         </Button>
       </div>
     );

@@ -3,9 +3,13 @@ import type { components } from "@/lib/api/types";
 
 type HistoryEntry = components["schemas"]["PacketHistoryEntry"];
 
-type Props = { entries: HistoryEntry[] };
+type Props = {
+  entries: HistoryEntry[];
+  /** Translated labels keyed by PacketStatus, for localised status display. */
+  statusLabels?: Partial<Record<PacketStatus, string>>;
+};
 
-export function PacketTimeline({ entries }: Props) {
+export function PacketTimeline({ entries, statusLabels }: Props) {
   if (entries.length === 0) return null;
 
   // Most recent first
@@ -27,7 +31,10 @@ export function PacketTimeline({ entries }: Props) {
           />
 
           <div className="space-y-1">
-            <StatusPill status={entry.status as PacketStatus} />
+            <StatusPill
+              status={entry.status as PacketStatus}
+              label={statusLabels?.[entry.status as PacketStatus]}
+            />
             <p className="text-xs text-slate-500">
               {new Date(entry.timestamp).toLocaleString()}
             </p>

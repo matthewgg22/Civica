@@ -58,6 +58,19 @@ export default async function PacketPage({ params }: Props) {
 
   const t = await getTranslations({ locale, namespace: "packet" });
 
+  // Build a map of all status → translated label so StatusPill and
+  // PacketTimeline can render locale-correct strings instead of raw API values.
+  const statusLabels: Record<PacketStatus, string> = {
+    Draft: t("statusDraft"),
+    "Submitted for Review": t("statusSubmitted"),
+    "Needs Documents": t("statusNeedsDocuments"),
+    "Needs Applicant Clarification": t("statusNeedsClarification"),
+    "In Navigator Review": t("statusInReview"),
+    "Ready for Handoff": t("statusReadyForHandoff"),
+    "Handed Off": t("statusHandedOff"),
+    Closed: t("statusClosed"),
+  };
+
   return (
     <div className="space-y-8 pb-24">
       {/* Current status */}
@@ -67,7 +80,7 @@ export default async function PacketPage({ params }: Props) {
         </h1>
 
         <div className="rounded-xl border border-slate-200 bg-white p-6 space-y-4">
-          <StatusPill status={status} size="lg" />
+          <StatusPill status={status} label={statusLabels[status]} size="lg" />
 
           <p className="text-sm text-slate-500">
             {t(`statusDesc${statusLabelKey(status)}` as Parameters<typeof t>[0])}
@@ -79,7 +92,7 @@ export default async function PacketPage({ params }: Props) {
             </p>
           )}
 
-          {status === "Submitted for Review" && (
+          {CONSENT_WITHDRAWABLE_STATUSES.has(status) && (
             <WithdrawConsentButton packetId={packet.id} />
           )}
         </div>
@@ -94,12 +107,20 @@ export default async function PacketPage({ params }: Props) {
           <h2 id="timeline-heading" className="mb-4 text-lg font-semibold">
             {t("historyHeading")}
           </h2>
-          <PacketTimeline entries={displayHistory} />
+          <PacketTimeline entries={displayHistory} statusLabels={statusLabels} />
         </section>
       )}
     </div>
   );
 }
+
+// Consent can be withdrawn any time before the packet is handed off.
+const CONSENT_WITHDRAWABLE_STATUSES = new Set<PacketStatus>([
+  "Submitted for Review",
+  "Needs Documents",
+  "Needs Applicant Clarification",
+  "In Navigator Review",
+]);
 
 // Maps PacketStatus to the i18n key suffix used in packet.* namespace
 function statusLabelKey(status: PacketStatus): string {

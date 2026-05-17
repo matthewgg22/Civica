@@ -45,10 +45,43 @@ struct EnrollmentPacket: Codable, Identifiable, Equatable {
 
 // MARK: - Document
 
-enum EnrollmentDocumentKind: String, Codable {
+enum EnrollmentDocumentKind: String, Codable, CaseIterable {
     case paystub, photoId = "photo_id", lease, utilityBill = "utility_bill"
     case bankStatement = "bank_statement", taxReturn = "tax_return"
     case benefitLetter = "benefit_letter", other
+
+    /// UI display order — most-requested categories first.
+    static let orderedCases: [EnrollmentDocumentKind] = [
+        .photoId, .paystub, .utilityBill, .lease,
+        .bankStatement, .taxReturn, .benefitLetter, .other
+    ]
+
+    func displayLabel(in language: CivicaLanguage) -> String {
+        switch language {
+        case .spanish:
+            switch self {
+            case .photoId:       return "Identificación con foto"
+            case .paystub:       return "Talón de pago"
+            case .utilityBill:   return "Factura de servicios"
+            case .lease:         return "Contrato de arrendamiento"
+            case .bankStatement: return "Estado de cuenta bancario"
+            case .taxReturn:     return "Declaración de impuestos"
+            case .benefitLetter: return "Carta de beneficios"
+            case .other:         return "Otro"
+            }
+        default:
+            switch self {
+            case .photoId:       return "Photo ID"
+            case .paystub:       return "Pay stub"
+            case .utilityBill:   return "Utility bill"
+            case .lease:         return "Lease"
+            case .bankStatement: return "Bank statement"
+            case .taxReturn:     return "Tax return"
+            case .benefitLetter: return "Benefit letter"
+            case .other:         return "Other"
+            }
+        }
+    }
 }
 
 enum EnrollmentDocumentProcessingStatus: String, Codable {

@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@civica/types": "workspace:*"
+    "@civica/snap-enums": "workspace:*"
   },
   "devDependencies": {
     "@civica/config": "workspace:*",

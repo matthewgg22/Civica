@@ -39,7 +39,7 @@ export function DocumentChecklist({ packetId, initialItems }: Props) {
       <ProgressBar
         completed={uploaded.length}
         total={required.length}
-        label={`${uploaded.length} of ${required.length} required documents uploaded`}
+        label={t("progressLabel", { uploaded: uploaded.length, total: required.length })}
       />
 
       {items.length === 0 ? (

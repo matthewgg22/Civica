@@ -3,9 +3,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { QuestionField, type FieldValue } from "@/components/snap/QuestionField";
-import { DistressConfirmModal } from "@/components/snap/DistressConfirmModal";
 import { ProgressBar } from "@/components/snap/ProgressBar";
+
+const DistressConfirmModal = dynamic(
+  () => import("@/components/snap/DistressConfirmModal").then((m) => m.DistressConfirmModal),
+  { ssr: false }
+);
 import { saveAnswer } from "@/lib/api/actions";
 import { enqueue } from "@/lib/storage/draftQueue";
 import { useOfflineQueue } from "@/hooks/useOfflineQueue";

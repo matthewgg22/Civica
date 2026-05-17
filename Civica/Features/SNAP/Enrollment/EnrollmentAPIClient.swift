@@ -13,8 +13,15 @@ protocol EnrollmentAPIClient: Sendable {
     /// Consent is recorded first; if it fails, submit is not called.
     func submitPacket(packetId: String) async throws -> EnrollmentPacket
 
-    /// Upload image data to Supabase Storage and register the document record.
-    /// Returns the created document; caller can use `document.storagePath` for receipts.
+    /// Withdraw (close) a packet on behalf of the applicant.
+    /// Sends PATCH with X-Transition-Reason header so the navigator audit log captures context.
+    func withdrawPacket(packetId: String, reason: String) async throws -> EnrollmentPacket
+
+    /// Fetch all packets the authenticated applicant has ever created.
+    func fetchMyPackets() async throws -> [EnrollmentPacket]
+
+    /// Upload a document file to the enrollment gateway via multipart/form-data.
+    /// The gateway stores the file to Supabase Storage and registers the document record.
     func uploadDocument(
         packetId: String,
         imageData: Data,
@@ -22,6 +29,9 @@ protocol EnrollmentAPIClient: Sendable {
         documentKind: EnrollmentDocumentKind?,
         onDeviceQualityPassed: Bool
     ) async throws -> EnrollmentDocument
+
+    /// Fetch all documents uploaded to a specific packet.
+    func fetchDocuments(packetId: String) async throws -> [EnrollmentDocument]
 
     /// Fetch pending missing-item requests from the navigator for the applicant's packets.
     func fetchInbox() async throws -> [EnrollmentInboxItem]
@@ -90,6 +100,27 @@ struct HTTPEnrollmentAPIClient: EnrollmentAPIClient {
         return try await postEmpty(path: "/me/packets/\(packetId)/submit")
     }
 
+    func withdrawPacket(packetId: String, reason: String) async throws -> EnrollmentPacket {
+        guard let token = await tokenProvider() else { throw EnrollmentAPIError.unauthenticated }
+        guard let url = URL(string: "/me/packets/\(packetId)", relativeTo: baseURL) else {
+            throw EnrollmentAPIError.invalidURL
+        }
+        struct Body: Encodable { let status: String }
+        var req = URLRequest(url: url)
+        req.httpMethod = "PATCH"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        req.setValue(reason, forHTTPHeaderField: "X-Transition-Reason")
+        req.httpBody = try JSONEncoder().encode(Body(status: EnrollmentPacketStatus.closed.rawValue))
+        let (data, response) = try await session.data(for: req)
+        try validate(response)
+        return try decode(data)
+    }
+
+    func fetchMyPackets() async throws -> [EnrollmentPacket] {
+        try await getJSON(path: "/me/packets")
+    }
+
     func uploadDocument(
         packetId: String,
         imageData: Data,
@@ -98,33 +129,30 @@ struct HTTPEnrollmentAPIClient: EnrollmentAPIClient {
         onDeviceQualityPassed: Bool
     ) async throws -> EnrollmentDocument {
         guard let token = await tokenProvider() else { throw EnrollmentAPIError.unauthenticated }
-
-        // 1. Upload raw bytes to Supabase Storage ("handoffs" bucket).
-        let filename = "\(packetId)/\(UUID().uuidString).jpg"
-        let storagePath = try await uploadToStorage(
-            bucket: "handoffs",
-            path: filename,
-            data: imageData,
-            contentType: mediaType,
-            token: token
-        )
-
-        // 2. Register the document record in the enrollment API.
-        struct Body: Encodable {
-            let packet_id: String
-            let applicant_id: String?   // resolved server-side when nil
-            let storage_path: String
-            let document_kind: String?
-            let on_device_quality_passed: Bool
+        guard let url = URL(string: "/me/packets/\(packetId)/documents", relativeTo: baseURL) else {
+            throw EnrollmentAPIError.invalidURL
         }
-        let body = Body(
-            packet_id: packetId,
-            applicant_id: nil,
-            storage_path: storagePath,
-            document_kind: documentKind?.rawValue,
-            on_device_quality_passed: onDeviceQualityPassed
+
+        let boundary = "Boundary-\(UUID().uuidString)"
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        req.httpBody = buildMultipartBody(
+            boundary: boundary,
+            imageData: imageData,
+            mediaType: mediaType,
+            documentKind: documentKind,
+            onDeviceQualityPassed: onDeviceQualityPassed
         )
-        return try await post(path: "/documents", body: body)
+
+        let (data, response) = try await session.data(for: req)
+        try validate(response)
+        return try decode(data)
+    }
+
+    func fetchDocuments(packetId: String) async throws -> [EnrollmentDocument] {
+        try await getJSON(path: "/me/packets/\(packetId)/documents")
     }
 
     func fetchInbox() async throws -> [EnrollmentInboxItem] {
@@ -132,6 +160,48 @@ struct HTTPEnrollmentAPIClient: EnrollmentAPIClient {
     }
 
     // MARK: - Private helpers
+
+    private func buildMultipartBody(
+        boundary: String,
+        imageData: Data,
+        mediaType: String,
+        documentKind: EnrollmentDocumentKind?,
+        onDeviceQualityPassed: Bool
+    ) -> Data {
+        var body = Data()
+        let ext = fileExtension(for: mediaType)
+
+        body.appendASCII("--\(boundary)\r\n")
+        body.appendASCII("Content-Disposition: form-data; name=\"file\"; filename=\"document.\(ext)\"\r\n")
+        body.appendASCII("Content-Type: \(mediaType)\r\n\r\n")
+        body.append(imageData)
+        body.appendASCII("\r\n")
+
+        if let kind = documentKind {
+            body.appendASCII("--\(boundary)\r\n")
+            body.appendASCII("Content-Disposition: form-data; name=\"document_kind\"\r\n\r\n")
+            body.appendASCII(kind.rawValue)
+            body.appendASCII("\r\n")
+        }
+
+        body.appendASCII("--\(boundary)\r\n")
+        body.appendASCII("Content-Disposition: form-data; name=\"on_device_quality_passed\"\r\n\r\n")
+        body.appendASCII(onDeviceQualityPassed ? "true" : "false")
+        body.appendASCII("\r\n")
+        body.appendASCII("--\(boundary)--\r\n")
+
+        return body
+    }
+
+    private func fileExtension(for mediaType: String) -> String {
+        switch mediaType {
+        case "image/jpeg": return "jpg"
+        case "image/png":  return "png"
+        case "image/heic": return "heic"
+        case "application/pdf": return "pdf"
+        default: return "bin"
+        }
+    }
 
     private func recordConsent(packetId: String) async throws {
         struct Body: Encodable {
@@ -145,31 +215,6 @@ struct HTTPEnrollmentAPIClient: EnrollmentAPIClient {
             consented_at: iso.string(from: Date())
         )
         let _: EmptyResponse = try await post(path: "/me/packets/\(packetId)/consent", body: body)
-    }
-
-    private func uploadToStorage(
-        bucket: String,
-        path: String,
-        data: Data,
-        contentType: String,
-        token: String
-    ) async throws -> String {
-        guard let url = URL(string: "/storage/v1/object/\(bucket)/\(path)", relativeTo: supabaseURL) else {
-            throw EnrollmentAPIError.invalidURL
-        }
-        var req = URLRequest(url: url)
-        req.httpMethod = "POST"
-        req.setValue(contentType, forHTTPHeaderField: "Content-Type")
-        req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        req.setValue(supabaseAnonKey, forHTTPHeaderField: "apikey")
-        req.httpBody = data
-
-        let (_, response) = try await session.data(for: req)
-        if let http = response as? HTTPURLResponse, !(200..<300).contains(http.statusCode) {
-            throw EnrollmentAPIError.unexpectedStatus(http.statusCode, body: "storage upload")
-        }
-        // Return the logical path (bucket/filename) stored in uploaded_documents.storage_path.
-        return "\(bucket)/\(path)"
     }
 
     private func getJSON<R: Decodable>(path: String) async throws -> R {
@@ -226,6 +271,12 @@ struct HTTPEnrollmentAPIClient: EnrollmentAPIClient {
 
 // Sentinel used when a POST returns 204 No Content.
 private struct EmptyResponse: Decodable {}
+
+private extension Data {
+    mutating func appendASCII(_ string: String) {
+        if let d = string.data(using: .utf8) { append(d) }
+    }
+}
 
 // MARK: - Mock for previews, tests, offline mode
 
@@ -294,6 +345,34 @@ final class MockEnrollmentAPIClient: EnrollmentAPIClient, @unchecked Sendable {
         )
         uploadedDocuments.append(doc)
         return doc
+    }
+
+    func withdrawPacket(packetId: String, reason: String) async throws -> EnrollmentPacket {
+        if shouldFailNext { shouldFailNext = false; throw EnrollmentAPIError.unexpectedStatus(409, body: "mock conflict") }
+        guard let existing = createdPackets.first(where: { $0.id == packetId }) else {
+            throw EnrollmentAPIError.unexpectedStatus(404, body: "packet not found")
+        }
+        let closed = EnrollmentPacket(
+            id: existing.id,
+            status: .closed,
+            stateCode: existing.stateCode,
+            createdAt: existing.createdAt,
+            updatedAt: Date(),
+            submittedAt: existing.submittedAt,
+            notesForApplicant: nil
+        )
+        if let idx = createdPackets.firstIndex(where: { $0.id == packetId }) {
+            createdPackets[idx] = closed
+        }
+        return closed
+    }
+
+    func fetchMyPackets() async throws -> [EnrollmentPacket] {
+        createdPackets
+    }
+
+    func fetchDocuments(packetId: String) async throws -> [EnrollmentDocument] {
+        uploadedDocuments.filter { $0.packetId == packetId }
     }
 
     func fetchInbox() async throws -> [EnrollmentInboxItem] {
