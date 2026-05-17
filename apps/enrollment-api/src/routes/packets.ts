@@ -34,6 +34,8 @@ const updatePacketSchema = z.object({
   status: PacketStatusSchema.optional(),
   notes_for_applicant: z.string().max(2000).optional(),
   org_id: z.string().uuid().optional(),
+  // OBBBA §10102(a) distress-review gate: navigator's decision on expedited routing
+  is_expedited: z.boolean().optional(),
 });
 
 // List packets — scoped by RLS to caller's org or own packets
@@ -153,6 +155,7 @@ app.patch("/:packetId", zValidator("json", updatePacketSchema), async (c) => {
       ...(body.status !== undefined && { status: body.status }),
       ...(body.notes_for_applicant !== undefined && { notes_for_applicant: body.notes_for_applicant }),
       ...(body.org_id !== undefined && { org_id: body.org_id }),
+      ...(body.is_expedited !== undefined && { is_expedited: body.is_expedited }),
     })
     .eq("packet_id", c.req.param("packetId"))
     .select()

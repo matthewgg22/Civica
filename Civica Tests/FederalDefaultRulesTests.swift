@@ -95,8 +95,19 @@ struct FederalDefaultRulesTests {
         #expect(rules.abawdStatus(for: draft, asOf: fy26Date) == .subjectActive)
     }
 
-    @Test func abawdOver54IsNotSubject() {
+    // OBBBA §10102(a): 55–64 now subject (prior exemption removed July 4 2025)
+    @Test func abawd55IsSubject() {
         let draft = Self.draft(age: 55)
+        #expect(rules.abawdStatus(for: draft, asOf: fy26Date) == .subjectActive)
+    }
+
+    @Test func abawd64IsSubject() {
+        let draft = Self.draft(age: 64)
+        #expect(rules.abawdStatus(for: draft, asOf: fy26Date) == .subjectActive)
+    }
+
+    @Test func abawdOver64IsNotSubject() {
+        let draft = Self.draft(age: 65)
         #expect(rules.abawdStatus(for: draft, asOf: fy26Date) == .notSubject)
     }
 

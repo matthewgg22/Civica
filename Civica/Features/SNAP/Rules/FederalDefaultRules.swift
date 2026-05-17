@@ -100,10 +100,9 @@ struct FederalDefaultRules: SNAPStateRuleEngine {
         if elderlyOrDisabled || hasMinor { return .notSubject }
 
         guard let age else { return .unknown }
-        // FY26 ABAWD age band per FY2024 Farm Bill expansion: 18-54
-        // before phase-down; tightened to 18-52 in subsequent rule.
-        // Using the conservative current floor.
-        if age < 18 || age > 54 { return .notSubject }
+        // OBBBA §10102(a) (eff. July 4 2025): raised ABAWD ceiling from 54 to 64.
+        // Individuals 18–64 are now subject; the prior 55–64 exemption was removed.
+        if age < 18 || age > 64 { return .notSubject }
 
         return .subjectActive
     }

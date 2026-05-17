@@ -12,8 +12,12 @@ import StatusPill from "../../../components/StatusPill";
 import LifecycleStrip from "../../../components/LifecycleStrip";
 import HandoffPanel from "../../../components/HandoffPanel";
 import MissingItemRequestPanel from "../../../components/MissingItemRequestPanel";
+import ExpeditedReviewGate from "./ExpeditedReviewGate";
 import { formatDateTime, decryptDemoName, firstNameLastInitial, shortId } from "../../../lib/format";
 import { PACKET_STATUS_TRANSITIONS } from "@civica/snap-enums";
+
+// Statuses where the expedited-review gate is relevant
+const EXPEDITED_GATE_STATUSES = new Set(["Submitted for Review", "In Navigator Review"]);
 
 const LANG_LABELS: Record<string, string> = {
   en: "English",
@@ -47,6 +51,19 @@ export default async function PacketDetailPage({ params }: { params: Promise<{ p
   const fields = fieldsResult.data ?? [];
   const docItems = docItemsResult.data ?? [];
   const nextStatuses = PACKET_STATUS_TRANSITIONS[packet.status as keyof typeof PACKET_STATUS_TRANSITIONS] ?? [];
+
+  // Expedited review gate (OBBBA §10102(a)): show when employment_status = "unemployed"
+  // AND monthly gross income is very low or unanswered AND navigator hasn't acted yet.
+  const employmentAnswer = answers.find((a) => a.question_key === "employment_status");
+  const incomeAnswer = answers.find((a) => a.question_key === "monthly_gross_income");
+  const grossIncome = incomeAnswer ? parseFloat(incomeAnswer.applicant_answer ?? "NaN") : NaN;
+  const looksExpedited =
+    employmentAnswer?.applicant_answer === "unemployed" &&
+    (isNaN(grossIncome) || grossIncome < 150);
+  const showExpeditedGate =
+    looksExpedited &&
+    (packet as { is_expedited?: boolean | null }).is_expedited === null &&
+    EXPEDITED_GATE_STATUSES.has(packet.status);
 
   // Pre-flight blockers for "Ready for Handoff"
   const [unresolvedDocsResult, unreviewedFieldsResult, consentResult] = await Promise.all([
@@ -147,6 +164,9 @@ export default async function PacketDetailPage({ params }: { params: Promise<{ p
             consentedAt={consentedAt}
           />
         </Section>
+
+        {/* Expedited review gate — OBBBA §10102(a) compliance */}
+        {showExpeditedGate && <ExpeditedReviewGate packetId={packetId} />}
 
         {/* Status transition */}
         {nextStatuses.length > 0 && (

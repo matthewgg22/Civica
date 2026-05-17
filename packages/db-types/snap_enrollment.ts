@@ -685,6 +685,7 @@ export type Database = {
           created_at: string
           deleted_at: string | null
           handed_off_at: string | null
+          is_expedited: boolean | null
           notes_for_applicant: string | null
           org_id: string | null
           packet_id: string
@@ -701,6 +702,7 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           handed_off_at?: string | null
+          is_expedited?: boolean | null
           notes_for_applicant?: string | null
           org_id?: string | null
           packet_id?: string
@@ -717,6 +719,7 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           handed_off_at?: string | null
+          is_expedited?: boolean | null
           notes_for_applicant?: string | null
           org_id?: string | null
           packet_id?: string
