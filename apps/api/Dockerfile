@@ -7,7 +7,6 @@ RUN corepack enable && corepack prepare pnpm@9.12.0 --activate
 # ── Workspace manifests (layer-cached until deps change) ─────────────────────
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/config/package.json       ./packages/config/
-COPY packages/types/package.json        ./packages/types/
 COPY packages/snap-enums/package.json   ./packages/snap-enums/
 COPY packages/snap-handoff/package.json ./packages/snap-handoff/
 COPY apps/api/package.json              ./apps/api/
@@ -19,11 +18,14 @@ RUN pnpm install --frozen-lockfile --prod
 # Workspace packages consumed as TypeScript source (no build step needed;
 # tsx resolves them through pnpm's node_modules symlinks at runtime)
 COPY packages/config/       ./packages/config/
-COPY packages/types/        ./packages/types/
 COPY packages/db-types/     ./packages/db-types/
 COPY packages/snap-enums/   ./packages/snap-enums/
 COPY packages/snap-handoff/ ./packages/snap-handoff/
 COPY apps/api/src/          ./apps/api/src/
+# tsconfig is required at runtime — tsx reads `jsx` and `paths` from it.
+# Without it, JSX falls back to the classic transform and "React is not
+# defined" blows up handoff.tsx.
+COPY apps/api/tsconfig.json ./apps/api/
 
 # ── Runtime ───────────────────────────────────────────────────────────────────
 ENV NODE_ENV=production

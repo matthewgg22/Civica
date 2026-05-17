@@ -1,5 +1,6 @@
 // PDF handoff export for navigator staff.
 // Runs on Fly Node (not CF Workers) because @react-pdf/renderer requires Node.js.
+import * as React from "react";
 import { Hono } from "hono";
 import { Document, Page, Text, View, StyleSheet, renderToBuffer } from "@react-pdf/renderer";
 import { requireAuth } from "../../middleware/auth.js";
