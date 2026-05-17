@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@civica/snap-calculator": "workspace:*",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.105.4",
     "d3-geo": "^3.1.1",
