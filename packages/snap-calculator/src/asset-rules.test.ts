@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { STATE_ASSET_RULES, SHELTER_CITATIONS, INCOME_CITATIONS } from "./asset-rules.js";
+import { STATE_ASSET_RULES, SHELTER_CITATIONS, INCOME_CITATIONS } from "./asset-rules";
 
 describe("STATE_ASSET_RULES — CA", () => {
   const r = STATE_ASSET_RULES.CA;

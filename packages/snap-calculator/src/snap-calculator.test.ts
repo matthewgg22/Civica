@@ -5,8 +5,8 @@ import {
   netIncomeLimitMonthly,
   bbceIncomeLimitMonthly,
   isCaBbceEligible,
-} from "./index.js";
-import type { SnapCalculatorInput } from "./index.js";
+} from "./index";
+import type { SnapCalculatorInput } from "./index";
 
 // ---------- FPL helpers ----------
 

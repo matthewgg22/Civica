@@ -10,6 +10,8 @@ import notesRouter from "./routes/notes.js";
 import consentsRouter from "./routes/consents.js";
 import fieldsRouter from "./routes/fields.js";
 import documentItemsRouter from "./routes/document-items.js";
+import handoffRouter from "./routes/handoff.js";
+import missingItemsRouter from "./routes/missing-items.js";
 import meRouter from "./routes/me.js";
 import mePacketsRouter from "./routes/me-packets.js";
 import meInboxRouter from "./routes/me-inbox.js";
@@ -33,6 +35,8 @@ api.route("/", notesRouter);       // /packets/:id/notes, /notes/:id
 api.route("/", consentsRouter);          // /applicants/:id/consents, /consents
 api.route("/", fieldsRouter);            // /packets/:id/fields, /fields/:id/review
 api.route("/", documentItemsRouter);     // /packets/:id/document-items, /document-items/:id/*
+api.route("/", handoffRouter);           // /packets/:id/handoff*
+api.route("/", missingItemsRouter);      // /packets/:id/missing-items, /missing-items/:id/cancel
 
 // Applicant self-service routes
 api.route("/me", meRouter);                    // GET/PATCH /me

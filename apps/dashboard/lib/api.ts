@@ -66,4 +66,28 @@ export const api = {
       ip_address?: string;
     }) => apiFetch("/consents", jwt, { method: "POST", body: JSON.stringify(body) }),
   },
+  handoff: {
+    preview: (jwt: string, packetId: string) =>
+      apiFetch(`/packets/${packetId}/handoff/preview`, jwt),
+    list: (jwt: string, packetId: string) =>
+      apiFetch(`/packets/${packetId}/handoff`, jwt),
+    create: (jwt: string, packetId: string, body: { format?: "json_api" | "csv_summary" | "xml_ecs" | "pdf_packet"; agency_reference?: string }) =>
+      apiFetch(`/packets/${packetId}/handoff`, jwt, {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    download: (jwt: string, packetId: string, exportId: string) =>
+      apiFetch(`/packets/${packetId}/handoff/${exportId}/download`, jwt),
+  },
+  missingItems: {
+    list: (jwt: string, packetId: string) =>
+      apiFetch(`/packets/${packetId}/missing-items`, jwt),
+    create: (jwt: string, packetId: string, body: { required_item_id?: string; message_ciphertext?: string; bump_packet_status?: boolean }) =>
+      apiFetch(`/packets/${packetId}/missing-items`, jwt, {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    cancel: (jwt: string, requestId: string) =>
+      apiFetch(`/missing-items/${requestId}/cancel`, jwt, { method: "POST" }),
+  },
 };
