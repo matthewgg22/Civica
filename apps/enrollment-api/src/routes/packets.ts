@@ -4,6 +4,7 @@ import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
 import { makeAnonClient } from "../lib/supabase.js";
 import { withActorContext } from "../middleware/actorContext.js";
+import { PacketStatusSchema } from "@civica/snap-enums";
 import type { Env } from "../types.js";
 
 const app = new Hono<{ Bindings: Env }>();
@@ -17,16 +18,7 @@ const createPacketSchema = z.object({
 });
 
 const updatePacketSchema = z.object({
-  status: z.enum([
-    "Draft",
-    "Submitted for Review",
-    "Needs Documents",
-    "Needs Applicant Clarification",
-    "In Navigator Review",
-    "Ready for Handoff",
-    "Handed Off",
-    "Closed",
-  ]).optional(),
+  status: PacketStatusSchema.optional(),
   notes_for_applicant: z.string().max(2000).optional(),
   org_id: z.string().uuid().optional(),
 });

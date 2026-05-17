@@ -87,6 +87,9 @@ importers:
       '@civica/snap-calculator':
         specifier: workspace:*
         version: link:../../packages/snap-calculator
+      '@civica/snap-enums':
+        specifier: workspace:*
+        version: link:../../packages/snap-enums
       '@supabase/ssr':
         specifier: ^0.10.3
         version: 0.10.3(@supabase/supabase-js@2.105.4)
@@ -145,6 +148,9 @@ importers:
 
   apps/enrollment-api:
     dependencies:
+      '@civica/snap-enums':
+        specifier: workspace:*
+        version: link:../../packages/snap-enums
       '@hono/zod-validator':
         specifier: ^0.4.3
         version: 0.4.3(hono@4.12.19)(zod@3.25.76)
@@ -271,6 +277,19 @@ importers:
       vitest:
         specifier: ^2.1.9
         version: 2.1.9(@types/node@22.19.19)(lightningcss@1.32.0)
+
+  packages/snap-enums:
+    dependencies:
+      zod:
+        specifier: ^3.24.0
+        version: 3.25.76
+    devDependencies:
+      '@civica/config':
+        specifier: workspace:*
+        version: link:../config
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
 
   packages/types:
     dependencies:
