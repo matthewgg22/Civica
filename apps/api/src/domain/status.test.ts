@@ -18,38 +18,58 @@ const bothMissing: TransitionContext = { hasAssignment: true, hasConsent: false,
 // ── Allowed transitions ───────────────────────────────────────────────────
 
 describe('allowed transitions', () => {
-  it('null → awaiting_navigator (session enters queue)', () => {
-    expect(canTransition(null, 'awaiting_navigator', ok)).toEqual({ ok: true });
+  it('null → Submitted for Review (packet enters queue)', () => {
+    expect(canTransition(null, 'Submitted for Review', ok)).toEqual({ ok: true });
   });
 
-  it('awaiting_navigator → in_review (navigator picks up, assigned)', () => {
-    expect(canTransition('awaiting_navigator', 'in_review', ok)).toEqual({ ok: true });
+  it('Submitted for Review → In Navigator Review (navigator picks up, assigned)', () => {
+    expect(canTransition('Submitted for Review', 'In Navigator Review', ok)).toEqual({ ok: true });
   });
 
-  it('in_review → awaiting_navigator (navigator releases back to queue)', () => {
-    expect(canTransition('in_review', 'awaiting_navigator', ok)).toEqual({ ok: true });
+  it('Submitted for Review → Needs Documents', () => {
+    expect(canTransition('Submitted for Review', 'Needs Documents', ok)).toEqual({ ok: true });
   });
 
-  it('in_review → ready_for_handoff (consent + docs complete)', () => {
-    expect(canTransition('in_review', 'ready_for_handoff', ok)).toEqual({ ok: true });
+  it('Submitted for Review → Needs Applicant Clarification', () => {
+    expect(canTransition('Submitted for Review', 'Needs Applicant Clarification', ok)).toEqual({ ok: true });
   });
 
-  it('ready_for_handoff → in_review (navigator pulls back for more work)', () => {
-    expect(canTransition('ready_for_handoff', 'in_review', ok)).toEqual({ ok: true });
+  it('In Navigator Review → Ready for Handoff (consent + docs complete)', () => {
+    expect(canTransition('In Navigator Review', 'Ready for Handoff', ok)).toEqual({ ok: true });
   });
 
-  it('ready_for_handoff → handed_off (export complete)', () => {
-    expect(canTransition('ready_for_handoff', 'handed_off', ok)).toEqual({ ok: true });
+  it('In Navigator Review → Needs Documents', () => {
+    expect(canTransition('In Navigator Review', 'Needs Documents', ok)).toEqual({ ok: true });
+  });
+
+  it('In Navigator Review → Needs Applicant Clarification', () => {
+    expect(canTransition('In Navigator Review', 'Needs Applicant Clarification', ok)).toEqual({ ok: true });
+  });
+
+  it('Needs Documents → In Navigator Review', () => {
+    expect(canTransition('Needs Documents', 'In Navigator Review', ok)).toEqual({ ok: true });
+  });
+
+  it('Ready for Handoff → Handed Off (export complete)', () => {
+    expect(canTransition('Ready for Handoff', 'Handed Off', ok)).toEqual({ ok: true });
+  });
+
+  it('Handed Off → Closed', () => {
+    expect(canTransition('Handed Off', 'Closed', ok)).toEqual({ ok: true });
   });
 });
 
 // ── Terminal state ────────────────────────────────────────────────────────
 
-describe('terminal_state — handed_off blocks all further transitions', () => {
-  const targets = ['awaiting_navigator', 'in_review', 'ready_for_handoff', 'handed_off'] as const;
+describe('terminal_state — Handed Off and Closed block all further transitions', () => {
+  const targets = ['Submitted for Review', 'In Navigator Review', 'Ready for Handoff', 'Handed Off'] as const;
   for (const to of targets) {
-    it(`handed_off → ${to}`, () => {
-      const result = canTransition('handed_off', to, ok);
+    it(`Handed Off → ${to}`, () => {
+      const result = canTransition('Handed Off', to, ok);
+      expect(result).toMatchObject({ ok: false, error: 'terminal_state' });
+    });
+    it(`Closed → ${to}`, () => {
+      const result = canTransition('Closed', to, ok);
       expect(result).toMatchObject({ ok: false, error: 'terminal_state' });
     });
   }
@@ -58,77 +78,81 @@ describe('terminal_state — handed_off blocks all further transitions', () => {
 // ── Invalid transitions (matrix violations) ───────────────────────────────
 
 describe('invalid_transition — matrix violations', () => {
-  it('null → in_review (must go through awaiting_navigator first)', () => {
-    expect(canTransition(null, 'in_review', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
+  it('null → In Navigator Review (must go through Submitted for Review first)', () => {
+    expect(canTransition(null, 'In Navigator Review', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
   });
 
-  it('null → ready_for_handoff (skip)', () => {
-    expect(canTransition(null, 'ready_for_handoff', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
+  it('null → Ready for Handoff (skip)', () => {
+    expect(canTransition(null, 'Ready for Handoff', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
   });
 
-  it('null → handed_off (skip)', () => {
-    expect(canTransition(null, 'handed_off', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
+  it('null → Handed Off (skip)', () => {
+    expect(canTransition(null, 'Handed Off', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
   });
 
-  it('awaiting_navigator → ready_for_handoff (skip in_review)', () => {
-    expect(canTransition('awaiting_navigator', 'ready_for_handoff', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
+  it('Submitted for Review → Ready for Handoff (skip In Navigator Review)', () => {
+    expect(canTransition('Submitted for Review', 'Ready for Handoff', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
   });
 
-  it('awaiting_navigator → handed_off (skip two steps)', () => {
-    expect(canTransition('awaiting_navigator', 'handed_off', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
+  it('Submitted for Review → Handed Off (skip two steps)', () => {
+    expect(canTransition('Submitted for Review', 'Handed Off', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
   });
 
-  it('in_review → handed_off (skip ready_for_handoff)', () => {
-    expect(canTransition('in_review', 'handed_off', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
+  it('In Navigator Review → Handed Off (skip Ready for Handoff)', () => {
+    expect(canTransition('In Navigator Review', 'Handed Off', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
   });
 
-  it('in_review → in_review (no-op is not a valid transition)', () => {
-    expect(canTransition('in_review', 'in_review', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
+  it('In Navigator Review → In Navigator Review (no-op is not a valid transition)', () => {
+    expect(canTransition('In Navigator Review', 'In Navigator Review', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
   });
 
-  it('awaiting_navigator → awaiting_navigator (no-op)', () => {
-    expect(canTransition('awaiting_navigator', 'awaiting_navigator', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
+  it('Submitted for Review → Submitted for Review (no-op)', () => {
+    expect(canTransition('Submitted for Review', 'Submitted for Review', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
   });
 
-  it('ready_for_handoff → awaiting_navigator (backwards skip)', () => {
-    expect(canTransition('ready_for_handoff', 'awaiting_navigator', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
+  it('Ready for Handoff → Submitted for Review (backwards)', () => {
+    expect(canTransition('Ready for Handoff', 'Submitted for Review', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
+  });
+
+  it('Ready for Handoff → In Navigator Review (backwards)', () => {
+    expect(canTransition('Ready for Handoff', 'In Navigator Review', ok)).toMatchObject({ ok: false, error: 'invalid_transition' });
   });
 });
 
 // ── Context gates ─────────────────────────────────────────────────────────
 
-describe('not_assigned — awaiting_navigator → in_review', () => {
+describe('not_assigned — Submitted for Review → In Navigator Review', () => {
   it('blocked when no active assignment', () => {
-    const result = canTransition('awaiting_navigator', 'in_review', noAssignment);
+    const result = canTransition('Submitted for Review', 'In Navigator Review', noAssignment);
     expect(result).toMatchObject({ ok: false, error: 'not_assigned' });
   });
 
   it('allowed once assigned', () => {
-    expect(canTransition('awaiting_navigator', 'in_review', ok)).toEqual({ ok: true });
+    expect(canTransition('Submitted for Review', 'In Navigator Review', ok)).toEqual({ ok: true });
   });
 });
 
-describe('missing_consent — in_review → ready_for_handoff', () => {
+describe('missing_consent — In Navigator Review → Ready for Handoff', () => {
   it('blocked when consent absent', () => {
-    const result = canTransition('in_review', 'ready_for_handoff', noConsent);
+    const result = canTransition('In Navigator Review', 'Ready for Handoff', noConsent);
     expect(result).toMatchObject({ ok: false, error: 'missing_consent' });
   });
 
   it('missing_consent takes priority over missing_required_docs', () => {
     // Both gates fail — consent is checked first (legal requirement).
-    const result = canTransition('in_review', 'ready_for_handoff', bothMissing);
+    const result = canTransition('In Navigator Review', 'Ready for Handoff', bothMissing);
     expect(result).toMatchObject({ ok: false, error: 'missing_consent' });
   });
 });
 
-describe('missing_required_docs — in_review → ready_for_handoff', () => {
+describe('missing_required_docs — In Navigator Review → Ready for Handoff', () => {
   it('blocked when unresolved missing item requests exist', () => {
-    const result = canTransition('in_review', 'ready_for_handoff', unresolvedItems);
+    const result = canTransition('In Navigator Review', 'Ready for Handoff', unresolvedItems);
     expect(result).toMatchObject({ ok: false, error: 'missing_required_docs' });
   });
 
   it('allowed once all items resolved', () => {
-    expect(canTransition('in_review', 'ready_for_handoff', ok)).toEqual({ ok: true });
+    expect(canTransition('In Navigator Review', 'Ready for Handoff', ok)).toEqual({ ok: true });
   });
 });
 
@@ -136,7 +160,7 @@ describe('missing_required_docs — in_review → ready_for_handoff', () => {
 
 describe('error shape', () => {
   it('blocked result carries ok:false, error code, and a non-empty message', () => {
-    const result = canTransition('awaiting_navigator', 'in_review', noAssignment);
+    const result = canTransition('Submitted for Review', 'In Navigator Review', noAssignment);
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.error).toBe('not_assigned');

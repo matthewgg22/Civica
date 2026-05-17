@@ -1,45 +1,63 @@
 import { Hono } from 'hono';
 import { requireStaffJwt } from '../auth/staff.js';
 import type { StaffEnv } from '../auth/types.js';
-import { withAudit } from '../audit/withAudit.js';
-import { getDb } from '../db/client.js';
-import type { NavigatorStatus } from '../db/schema.js';
 import { canTransition } from '../domain/status.js';
 import { navigatorRateLimit } from '../lib/rateLimit.js';
+import { supabaseAdmin } from '../lib/supabase.js';
+import type { PacketStatus } from '../domain/packetStatus.js';
 
 export const navigatorRoutes = new Hono<StaffEnv>();
 
 navigatorRoutes.use('*', requireStaffJwt);
-navigatorRoutes.use('*', navigatorRateLimit); // per-IP, runs after auth
+navigatorRoutes.use('*', navigatorRateLimit);
+
+const se = () => supabaseAdmin.schema('snap_enrollment');
+
+type SetConfigArgs = { setting_name: string; new_value: string; is_local: boolean };
+const rpc = supabaseAdmin.rpc.bind(supabaseAdmin) as unknown as (fn: string, args: SetConfigArgs) => Promise<unknown>;
+
+async function setActorCtx(staffId: string, requestId: string, reason?: string) {
+  await rpc('set_config', { setting_name: 'snap_enrollment.actor_kind', new_value: 'navigator', is_local: true });
+  await rpc('set_config', { setting_name: 'snap_enrollment.actor_id', new_value: staffId, is_local: true });
+  await rpc('set_config', { setting_name: 'snap_enrollment.request_id', new_value: requestId, is_local: true });
+  if (reason) {
+    await rpc('set_config', { setting_name: 'snap_enrollment.transition_reason', new_value: reason, is_local: true });
+  }
+}
 
 // ── GET /navigator/sessions ───────────────────────────────────────────────
 
 navigatorRoutes.get('/sessions', async (c) => {
-  const { navigator_status, state, assigned_to } = c.req.query();
+  const { status: statusFilter, state, assigned_to } = c.req.query();
 
-  const sessions = await getDb()
-    .selectFrom('snap_sessions as s')
-    .leftJoin('snap_session_assignments as a', (join) =>
-      join.onRef('a.session_id', '=', 's.session_id').on('a.unassigned_at', 'is', null),
-    )
-    .select([
-      's.session_id',
-      's.status',
-      's.navigator_status',
-      's.state',
-      's.language',
-      's.created_at',
-      's.updated_at',
-      'a.navigator_id',
-    ])
-    .$if(!!navigator_status, (qb) =>
-      qb.where('s.navigator_status', '=', navigator_status as NavigatorStatus),
-    )
-    .$if(!!state, (qb) => qb.where('s.state', '=', state!.toUpperCase()))
-    .$if(!!assigned_to, (qb) => qb.where('a.navigator_id', '=', assigned_to!))
-    .orderBy('s.created_at', 'desc')
-    .limit(100)
-    .execute();
+  let query = se()
+    .from('snap_packets')
+    .select('packet_id, status, state_code, created_at, updated_at, packet_assignments(staff_id, is_current)')
+    .is('deleted_at', null)
+    .order('created_at', { ascending: false })
+    .limit(100);
+
+  if (statusFilter) query = query.eq('status', statusFilter);
+  if (state) query = query.eq('state_code', state.toUpperCase());
+
+  const { data, error } = await query;
+  if (error) {
+    console.error('navigator/sessions list failed', error);
+    return c.json({ error: 'internal_error' }, 500);
+  }
+
+  const sessions = (data ?? [])
+    .filter((p) => !assigned_to || (p.packet_assignments as any[]).some((a) => a.is_current && a.staff_id === assigned_to))
+    .map((p) => ({
+      session_id: p.packet_id,
+      packet_id: p.packet_id,
+      status: p.status,
+      navigator_status: p.status,
+      state: p.state_code,
+      created_at: p.created_at,
+      updated_at: p.updated_at,
+      navigator_id: (p.packet_assignments as any[]).find((a) => a.is_current)?.staff_id ?? null,
+    }));
 
   return c.json({ sessions });
 });
@@ -48,51 +66,65 @@ navigatorRoutes.get('/sessions', async (c) => {
 
 navigatorRoutes.get('/sessions/:id', async (c) => {
   const id = c.req.param('id');
-  const db = getDb();
 
-  const session = await db
-    .selectFrom('snap_sessions')
-    .select(['session_id', 'status', 'navigator_status', 'state', 'language', 'created_at', 'updated_at'])
-    .where('session_id', '=', id)
-    .executeTakeFirst();
+  const { data: packet, error: pErr } = await se()
+    .from('snap_packets')
+    .select('packet_id, status, state_code, created_at, updated_at')
+    .eq('packet_id', id)
+    .is('deleted_at', null)
+    .single();
 
-  if (!session) return c.json({ error: 'session_not_found' }, 404);
+  if (pErr?.code === 'PGRST116') return c.json({ error: 'session_not_found' }, 404);
+  if (pErr) return c.json({ error: 'internal_error' }, 500);
 
-  const [assignment, notes, missingItems] = await Promise.all([
-    db
-      .selectFrom('snap_session_assignments')
-      .select(['assignment_id', 'navigator_id', 'assigned_at', 'assigned_by'])
-      .where('session_id', '=', id)
-      .where('unassigned_at', 'is', null)
-      .executeTakeFirst(),
-    db
-      .selectFrom('snap_navigator_notes')
-      .select(['note_id', 'author_id', 'body', 'created_at'])
-      .where('session_id', '=', id)
-      .orderBy('created_at', 'asc')
-      .execute(),
-    db
-      .selectFrom('snap_missing_item_requests')
-      .select([
-        'request_id',
-        'item_type',
-        'item_description',
-        'requested_by',
-        'requested_at',
-        'resolved_at',
-        'resolved_by',
-        'resolution_note',
-      ])
-      .where('session_id', '=', id)
-      .orderBy('requested_at', 'asc')
-      .execute(),
+  const [{ data: assignments }, { data: rawNotes }, { data: rawItems }] = await Promise.all([
+    se()
+      .from('packet_assignments')
+      .select('assignment_id, staff_id, assigned_at, assigned_by_staff_id, is_current')
+      .eq('packet_id', id)
+      .eq('is_current', true),
+    se()
+      .from('navigator_notes')
+      .select('note_id, author_staff_id, body_ciphertext, created_at')
+      .eq('packet_id', id)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: true }),
+    se()
+      .from('missing_item_requests')
+      .select('request_id, message_ciphertext, status, sent_at, resolved_at, resolved_by_staff_id')
+      .eq('packet_id', id)
+      .order('sent_at', { ascending: true }),
   ]);
 
+  const notes = (rawNotes ?? []).map((n) => ({
+    note_id: n.note_id,
+    author_id: n.author_staff_id,
+    body: n.body_ciphertext,
+    created_at: n.created_at,
+  }));
+
+  const missing_items = (rawItems ?? []).map((r) => ({
+    request_id: r.request_id,
+    item_description: r.message_ciphertext,
+    status: r.status,
+    requested_at: r.sent_at,
+    resolved_at: r.resolved_at ?? null,
+    resolved_by: r.resolved_by_staff_id ?? null,
+  }));
+
   return c.json({
-    session,
-    assignment: assignment ?? null,
+    session: {
+      session_id: packet!.packet_id,
+      packet_id: packet!.packet_id,
+      navigator_status: packet!.status,
+      status: packet!.status,
+      state: packet!.state_code,
+      created_at: packet!.created_at,
+      updated_at: packet!.updated_at,
+    },
+    assignment: (assignments ?? [])[0] ?? null,
     notes,
-    missing_items: missingItems,
+    missing_items,
   });
 });
 
@@ -100,78 +132,53 @@ navigatorRoutes.get('/sessions/:id', async (c) => {
 
 navigatorRoutes.patch('/sessions/:id/status', async (c) => {
   const id = c.req.param('id');
-  const body = await c.req.json<{ to?: NavigatorStatus; reason?: string }>();
+  const body = await c.req.json<{ to?: PacketStatus; reason?: string }>();
 
   if (!body.to) return c.json({ error: 'missing_field', field: 'to' }, 400);
 
-  const db = getDb();
+  const { data: packet, error: pErr } = await se()
+    .from('snap_packets')
+    .select('packet_id, status')
+    .eq('packet_id', id)
+    .is('deleted_at', null)
+    .single();
 
-  const session = await db
-    .selectFrom('snap_sessions')
-    .select(['session_id', 'navigator_status'])
-    .where('session_id', '=', id)
-    .executeTakeFirst();
+  if (pErr?.code === 'PGRST116') return c.json({ error: 'session_not_found' }, 404);
+  if (pErr) return c.json({ error: 'internal_error' }, 500);
 
-  if (!session) return c.json({ error: 'session_not_found' }, 404);
-
-  const [activeAssignment, unresolvedItem] = await Promise.all([
-    db
-      .selectFrom('snap_session_assignments')
-      .select('assignment_id')
-      .where('session_id', '=', id)
-      .where('unassigned_at', 'is', null)
-      .executeTakeFirst(),
-    db
-      .selectFrom('snap_missing_item_requests')
-      .select('request_id')
-      .where('session_id', '=', id)
-      .where('resolved_at', 'is', null)
-      .executeTakeFirst(),
+  const [{ data: activeAssignment }, { data: unresolvedItem }] = await Promise.all([
+    se().from('packet_assignments').select('assignment_id').eq('packet_id', id).eq('is_current', true).limit(1),
+    se().from('missing_item_requests').select('request_id').eq('packet_id', id).eq('status', 'pending').limit(1),
   ]);
 
-  const guard = canTransition(session.navigator_status, body.to, {
-    hasAssignment: !!activeAssignment,
-    hasConsent: true, // TODO: enforce when applicant consent table is added
-    hasUnresolvedMissingItems: !!unresolvedItem,
+  const guard = canTransition(packet!.status as PacketStatus, body.to, {
+    hasAssignment: (activeAssignment ?? []).length > 0,
+    hasConsent: true, // TODO: enforce when consent table is wired
+    hasUnresolvedMissingItems: (unresolvedItem ?? []).length > 0,
   });
 
   if (!guard.ok) {
     return c.json({ error: guard.error, message: guard.message }, 422);
   }
 
-  const actor = { kind: 'authenticated_user' as const, id: c.var.staff.sub };
-  const to = body.to;
+  const staffId = c.var.staff.sub;
+  const requestId = c.req.header('x-request-id') ?? crypto.randomUUID();
+  await setActorCtx(staffId, requestId, body.reason ?? `status → ${body.to}`);
 
-  await withAudit(
-    db,
-    actor,
-    'STATUS_TRANSITIONED',
-    id,
-    async (trx) => {
-      await trx
-        .updateTable('snap_sessions')
-        .set({ navigator_status: to })
-        .where('session_id', '=', id)
-        .execute();
-      await trx
-        .insertInto('snap_session_status_history')
-        .values({
-          session_id: id,
-          from_status: session.navigator_status,
-          to_status: to,
-          changed_by: c.var.staff.sub,
-          reason: body.reason ?? null,
-        })
-        .execute();
-    },
-    {
-      reason: body.reason ?? `status → ${to}`,
-      requestId: c.req.header('x-request-id') ?? undefined,
-      columnOrResource: 'snap_sessions.navigator_status',
-    },
-  );
+  // Guard trigger (20260521) validates the transition, writes packet_status_history, and
+  // stamps submitted_at / handed_off_at. If the DB rejects the transition it throws P0001.
+  const { error: updateErr } = await se()
+    .from('snap_packets')
+    .update({ status: body.to })
+    .eq('packet_id', id);
 
-  return c.json({ session_id: id, navigator_status: to });
+  if (updateErr?.code === 'P0001') return c.json({ error: 'invalid_transition', message: updateErr.message }, 422);
+  if (updateErr) {
+    console.error('status transition failed', updateErr);
+    return c.json({ error: 'internal_error' }, 500);
+  }
+
+  return c.json({ session_id: id, packet_id: id, navigator_status: body.to, status: body.to });
 });
 
 // ── POST /navigator/sessions/:id/assign ──────────────────────────────────
@@ -182,50 +189,49 @@ navigatorRoutes.post('/sessions/:id/assign', async (c) => {
 
   if (!body.navigator_id) return c.json({ error: 'missing_field', field: 'navigator_id' }, 400);
 
-  const db = getDb();
+  const { data: packet, error: pErr } = await se()
+    .from('snap_packets')
+    .select('packet_id')
+    .eq('packet_id', id)
+    .is('deleted_at', null)
+    .single();
 
-  const session = await db
-    .selectFrom('snap_sessions')
-    .select('session_id')
-    .where('session_id', '=', id)
-    .executeTakeFirst();
+  if (pErr?.code === 'PGRST116') return c.json({ error: 'session_not_found' }, 404);
+  if (pErr) return c.json({ error: 'internal_error' }, 500);
 
-  if (!session) return c.json({ error: 'session_not_found' }, 404);
+  const staffId = c.var.staff.sub;
+  const requestId = c.req.header('x-request-id') ?? crypto.randomUUID();
+  await setActorCtx(staffId, requestId);
 
-  // Retire any existing active assignment before inserting the new one.
-  await db
-    .updateTable('snap_session_assignments')
-    .set({ unassigned_at: new Date() })
-    .where('session_id', '=', id)
-    .where('unassigned_at', 'is', null)
-    .execute();
+  // Retire any active assignment before inserting the new one.
+  await se()
+    .from('packet_assignments')
+    .update({ is_current: false, unassigned_at: new Date().toISOString() })
+    .eq('packet_id', id)
+    .eq('is_current', true);
 
-  const actor = { kind: 'authenticated_user' as const, id: c.var.staff.sub };
-  const navigatorId = body.navigator_id;
+  const { data: assignment, error: aErr } = await se()
+    .from('packet_assignments')
+    .insert({
+      packet_id: id,
+      staff_id: body.navigator_id,
+      assigned_by_staff_id: staffId,
+    })
+    .select('assignment_id, staff_id, assigned_at')
+    .single();
 
-  const assignment = await withAudit(
-    db,
-    actor,
-    'SESSION_ASSIGNED',
-    id,
-    (trx) =>
-      trx
-        .insertInto('snap_session_assignments')
-        .values({
-          session_id: id,
-          navigator_id: navigatorId,
-          assigned_by: c.var.staff.sub,
-        })
-        .returning(['assignment_id', 'navigator_id', 'assigned_at'])
-        .executeTakeFirstOrThrow(),
-    {
-      reason: `assigned to ${navigatorId}`,
-      requestId: c.req.header('x-request-id') ?? undefined,
-      columnOrResource: 'snap_session_assignments',
+  if (aErr) {
+    console.error('assign failed', aErr);
+    return c.json({ error: 'internal_error' }, 500);
+  }
+
+  return c.json({
+    assignment: {
+      assignment_id: assignment!.assignment_id,
+      navigator_id: assignment!.staff_id,
+      assigned_at: assignment!.assigned_at,
     },
-  );
-
-  return c.json({ assignment }, 201);
+  }, 201);
 });
 
 // ── POST /navigator/sessions/:id/notes ───────────────────────────────────
@@ -237,39 +243,47 @@ navigatorRoutes.post('/sessions/:id/notes', async (c) => {
   const noteText = body.body?.trim();
   if (!noteText) return c.json({ error: 'missing_field', field: 'body' }, 400);
 
-  const db = getDb();
+  const { data: packet, error: pErr } = await se()
+    .from('snap_packets')
+    .select('packet_id')
+    .eq('packet_id', id)
+    .is('deleted_at', null)
+    .single();
 
-  const session = await db
-    .selectFrom('snap_sessions')
-    .select('session_id')
-    .where('session_id', '=', id)
-    .executeTakeFirst();
+  if (pErr?.code === 'PGRST116') return c.json({ error: 'session_not_found' }, 404);
+  if (pErr) return c.json({ error: 'internal_error' }, 500);
 
-  if (!session) return c.json({ error: 'session_not_found' }, 404);
+  const staffId = c.var.staff.sub;
+  const requestId = c.req.header('x-request-id') ?? crypto.randomUUID();
+  await setActorCtx(staffId, requestId);
 
-  const actor = { kind: 'authenticated_user' as const, id: c.var.staff.sub };
+  const { data: note, error: nErr } = await se()
+    .from('navigator_notes')
+    .insert({
+      packet_id: id,
+      author_staff_id: staffId,
+      body_ciphertext: noteText, // TODO: Fernet-encrypt before storing
+    })
+    .select('note_id, author_staff_id, body_ciphertext, created_at')
+    .single();
 
-  const note = await withAudit(
-    db,
-    actor,
-    'NOTE_ADDED',
-    id,
-    (trx) =>
-      trx
-        .insertInto('snap_navigator_notes')
-        .values({ session_id: id, author_id: c.var.staff.sub, body: noteText })
-        .returning(['note_id', 'author_id', 'body', 'created_at'])
-        .executeTakeFirstOrThrow(),
-    {
-      requestId: c.req.header('x-request-id') ?? undefined,
-      columnOrResource: 'snap_navigator_notes',
+  if (nErr) {
+    console.error('note insert failed', nErr);
+    return c.json({ error: 'internal_error' }, 500);
+  }
+
+  return c.json({
+    note: {
+      note_id: note!.note_id,
+      author_id: note!.author_staff_id,
+      body: note!.body_ciphertext,
+      created_at: note!.created_at,
     },
-  );
-
-  return c.json({ note }, 201);
+  }, 201);
 });
 
 // ── POST /navigator/sessions/:id/missing-items ────────────────────────────
+// item_type and item_description are concatenated into message_ciphertext.
 
 navigatorRoutes.post('/sessions/:id/missing-items', async (c) => {
   const id = c.req.param('id');
@@ -278,41 +292,48 @@ navigatorRoutes.post('/sessions/:id/missing-items', async (c) => {
   const itemType = body.item_type?.trim();
   if (!itemType) return c.json({ error: 'missing_field', field: 'item_type' }, 400);
 
-  const db = getDb();
+  const { data: packet, error: pErr } = await se()
+    .from('snap_packets')
+    .select('packet_id')
+    .eq('packet_id', id)
+    .is('deleted_at', null)
+    .single();
 
-  const session = await db
-    .selectFrom('snap_sessions')
-    .select('session_id')
-    .where('session_id', '=', id)
-    .executeTakeFirst();
+  if (pErr?.code === 'PGRST116') return c.json({ error: 'session_not_found' }, 404);
+  if (pErr) return c.json({ error: 'internal_error' }, 500);
 
-  if (!session) return c.json({ error: 'session_not_found' }, 404);
+  const staffId = c.var.staff.sub;
+  const requestId = c.req.header('x-request-id') ?? crypto.randomUUID();
+  await setActorCtx(staffId, requestId);
 
-  const actor = { kind: 'authenticated_user' as const, id: c.var.staff.sub };
+  const messageText = body.item_description?.trim()
+    ? `${itemType}: ${body.item_description.trim()}`
+    : itemType;
 
-  const item = await withAudit(
-    db,
-    actor,
-    'MISSING_ITEM_REQUESTED',
-    id,
-    (trx) =>
-      trx
-        .insertInto('snap_missing_item_requests')
-        .values({
-          session_id: id,
-          requested_by: c.var.staff.sub,
-          item_type: itemType,
-          item_description: body.item_description?.trim() ?? null,
-        })
-        .returning(['request_id', 'item_type', 'item_description', 'requested_at'])
-        .executeTakeFirstOrThrow(),
-    {
-      requestId: c.req.header('x-request-id') ?? undefined,
-      columnOrResource: 'snap_missing_item_requests',
+  const { data: item, error: iErr } = await se()
+    .from('missing_item_requests')
+    .insert({
+      packet_id: id,
+      requested_by_staff_id: staffId,
+      message_ciphertext: messageText, // TODO: Fernet-encrypt before storing
+    })
+    .select('request_id, message_ciphertext, status, sent_at')
+    .single();
+
+  if (iErr) {
+    console.error('missing-item insert failed', iErr);
+    return c.json({ error: 'internal_error' }, 500);
+  }
+
+  return c.json({
+    item: {
+      request_id: item!.request_id,
+      item_type: itemType,
+      item_description: body.item_description?.trim() ?? null,
+      requested_at: item!.sent_at,
+      status: item!.status,
     },
-  );
-
-  return c.json({ item }, 201);
+  }, 201);
 });
 
 // ── PATCH /navigator/sessions/:id/missing-items/:itemId ──────────────────
@@ -322,43 +343,46 @@ navigatorRoutes.patch('/sessions/:id/missing-items/:itemId', async (c) => {
   const itemId = c.req.param('itemId');
   const body = await c.req.json<{ resolution_note?: string }>();
 
-  const db = getDb();
+  const { data: existing, error: eErr } = await se()
+    .from('missing_item_requests')
+    .select('request_id, packet_id, status')
+    .eq('request_id', itemId)
+    .eq('packet_id', id)
+    .single();
 
-  const existing = await db
-    .selectFrom('snap_missing_item_requests')
-    .select(['request_id', 'session_id', 'resolved_at'])
-    .where('request_id', '=', itemId)
-    .where('session_id', '=', id)
-    .executeTakeFirst();
+  if (eErr?.code === 'PGRST116') return c.json({ error: 'missing_item_not_found' }, 404);
+  if (eErr) return c.json({ error: 'internal_error' }, 500);
+  if (existing!.status !== 'pending') return c.json({ error: 'already_resolved' }, 409);
 
-  if (!existing) return c.json({ error: 'missing_item_not_found' }, 404);
-  if (existing.resolved_at !== null) return c.json({ error: 'already_resolved' }, 409);
+  const staffId = c.var.staff.sub;
+  const requestId = c.req.header('x-request-id') ?? crypto.randomUUID();
+  await setActorCtx(staffId, requestId);
 
-  const actor = { kind: 'authenticated_user' as const, id: c.var.staff.sub };
+  const { data: item, error: uErr } = await se()
+    .from('missing_item_requests')
+    .update({
+      status: 'resolved' as const,
+      resolved_at: new Date().toISOString(),
+      resolved_by_staff_id: staffId,
+    })
+    .eq('request_id', itemId)
+    .select('request_id, status, resolved_at, resolved_by_staff_id')
+    .single();
 
-  const item = await withAudit(
-    db,
-    actor,
-    'MISSING_ITEM_RESOLVED',
-    id,
-    (trx) =>
-      trx
-        .updateTable('snap_missing_item_requests')
-        .set({
-          resolved_at: new Date(),
-          resolved_by: c.var.staff.sub,
-          resolution_note: body.resolution_note?.trim() ?? null,
-        })
-        .where('request_id', '=', itemId)
-        .returning(['request_id', 'item_type', 'resolved_at', 'resolved_by', 'resolution_note'])
-        .executeTakeFirstOrThrow(),
-    {
-      requestId: c.req.header('x-request-id') ?? undefined,
-      columnOrResource: `snap_missing_item_requests/${itemId}`,
+  if (uErr) {
+    console.error('missing-item resolve failed', uErr);
+    return c.json({ error: 'internal_error' }, 500);
+  }
+
+  return c.json({
+    item: {
+      request_id: item!.request_id,
+      status: item!.status,
+      resolved_at: item!.resolved_at,
+      resolved_by: item!.resolved_by_staff_id,
+      resolution_note: body.resolution_note?.trim() ?? null,
     },
-  );
-
-  return c.json({ item });
+  });
 });
 
 // ── GET /navigator/sessions/:id/audit-log ────────────────────────────────
@@ -368,33 +392,27 @@ navigatorRoutes.get('/sessions/:id/audit-log', async (c) => {
   const limit = Math.min(Number(c.req.query('limit') ?? '50'), 200);
   const offset = Number(c.req.query('offset') ?? '0');
 
-  const db = getDb();
+  const { data: packet, error: pErr } = await se()
+    .from('snap_packets')
+    .select('packet_id')
+    .eq('packet_id', id)
+    .is('deleted_at', null)
+    .single();
 
-  const session = await db
-    .selectFrom('snap_sessions')
-    .select('session_id')
-    .where('session_id', '=', id)
-    .executeTakeFirst();
+  if (pErr?.code === 'PGRST116') return c.json({ error: 'session_not_found' }, 404);
+  if (pErr) return c.json({ error: 'internal_error' }, 500);
 
-  if (!session) return c.json({ error: 'session_not_found' }, 404);
+  const { data: entries, error: aErr } = await se()
+    .from('audit_log_events')
+    .select('audit_id, table_name, operation, actor_kind, actor_id, request_id, occurred_at, changed_columns, old_values, new_values')
+    .eq('packet_id', id)
+    .order('occurred_at', { ascending: true })
+    .range(offset, offset + limit - 1);
 
-  const entries = await db
-    .selectFrom('snap_audit_log')
-    .select([
-      'audit_id',
-      'action',
-      'actor_kind',
-      'actor_id',
-      'reason',
-      'request_id',
-      'column_or_resource',
-      'occurred_at',
-    ])
-    .where('session_id', '=', id)
-    .orderBy('occurred_at', 'asc')
-    .limit(limit)
-    .offset(offset)
-    .execute();
+  if (aErr) {
+    console.error('audit-log query failed', aErr);
+    return c.json({ error: 'internal_error' }, 500);
+  }
 
-  return c.json({ session_id: id, entries, limit, offset });
+  return c.json({ session_id: id, packet_id: id, entries: entries ?? [], limit, offset });
 });

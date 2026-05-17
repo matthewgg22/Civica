@@ -1,55 +1,52 @@
-import type { NavigatorStatus } from '../db/schema.js';
+import { PACKET_STATUS_TRANSITIONS } from './packetStatus.js';
+import type { PacketStatus } from './packetStatus.js';
+
+export type { PacketStatus };
 
 export type TransitionError =
-  | 'invalid_transition'  // not in the allowed matrix (includes same-state no-ops)
-  | 'terminal_state'      // from === 'handed_off'
-  | 'not_assigned'        // awaiting_navigator → in_review requires active assignment
-  | 'missing_consent'     // in_review → ready_for_handoff requires applicant consent
-  | 'missing_required_docs'; // in_review → ready_for_handoff requires no unresolved missing items
+  | 'invalid_transition'
+  | 'terminal_state'
+  | 'not_assigned'
+  | 'missing_consent'
+  | 'missing_required_docs';
 
 export type TransitionResult =
   | { ok: true }
   | { ok: false; error: TransitionError; message: string };
 
 export interface TransitionContext {
-  /** snap_session_assignments has an active (unassigned_at IS NULL) row. */
+  /** packet_assignments has an active (is_current = true) row. */
   hasAssignment: boolean;
   /** Applicant has accepted the current consent version. */
   hasConsent: boolean;
-  /** snap_missing_item_requests has rows with resolved_at IS NULL. */
+  /** missing_item_requests has rows with status = 'pending'. */
   hasUnresolvedMissingItems: boolean;
 }
 
-// Allowed target statuses per source. null = session not yet in navigator queue.
-const ALLOWED: Record<string, NavigatorStatus[]> = {
-  null: ['awaiting_navigator'],
-  awaiting_navigator: ['in_review'],
-  in_review: ['awaiting_navigator', 'ready_for_handoff'],
-  ready_for_handoff: ['in_review', 'handed_off'],
-  handed_off: [],
-};
-
-/**
- * Pure status-transition guard. Returns { ok: true } or a structured error.
- * No DB access — callers are responsible for querying context fields.
- *
- * Used by PATCH /navigator/sessions/:id/status (Phase 14).
- */
 export function canTransition(
-  from: NavigatorStatus | null,
-  to: NavigatorStatus,
+  from: PacketStatus | null,
+  to: PacketStatus,
   ctx: TransitionContext,
 ): TransitionResult {
-  if (from === 'handed_off') {
+  if (from === 'Closed') {
     return {
       ok: false,
       error: 'terminal_state',
-      message: 'Session has been handed off and cannot be transitioned further.',
+      message: `Packet is Closed and cannot be transitioned further.`,
     };
   }
 
-  const allowed = ALLOWED[from ?? 'null'] ?? [];
-  if (!allowed.includes(to)) {
+  // Handed Off is semi-terminal: only Closed is permitted (caught by matrix below if wrong).
+  if (from === 'Handed Off' && to !== 'Closed') {
+    return {
+      ok: false,
+      error: 'terminal_state',
+      message: `Packet is Handed Off and cannot be transitioned to ${to}.`,
+    };
+  }
+
+  const allowed = from ? PACKET_STATUS_TRANSITIONS[from] : (['Submitted for Review'] as const);
+  if (!(allowed as readonly string[]).includes(to)) {
     return {
       ok: false,
       error: 'invalid_transition',
@@ -57,30 +54,29 @@ export function canTransition(
     };
   }
 
-  if (from === 'awaiting_navigator' && to === 'in_review') {
+  if (to === 'In Navigator Review' && from === 'Submitted for Review') {
     if (!ctx.hasAssignment) {
       return {
         ok: false,
         error: 'not_assigned',
-        message: 'Session must be assigned to a navigator before review can begin.',
+        message: 'Packet must be assigned to a navigator before review can begin.',
       };
     }
   }
 
-  if (from === 'in_review' && to === 'ready_for_handoff') {
-    // Consent checked before missing docs: legal requirement takes precedence.
+  if (to === 'Ready for Handoff') {
     if (!ctx.hasConsent) {
       return {
         ok: false,
         error: 'missing_consent',
-        message: 'Applicant consent is required before the session can be marked ready for handoff.',
+        message: 'Applicant consent is required before the packet can be marked ready for handoff.',
       };
     }
     if (ctx.hasUnresolvedMissingItems) {
       return {
         ok: false,
         error: 'missing_required_docs',
-        message: 'All missing item requests must be resolved before the session can be marked ready for handoff.',
+        message: 'All missing item requests must be resolved before the packet can be marked ready for handoff.',
       };
     }
   }
