@@ -11,7 +11,7 @@ vi.mock('../middleware/actorContext.js', () => ({
 import { makeAnonClient } from '../lib/supabase.js';
 import { withActorContext } from '../middleware/actorContext.js';
 import missingItemsRouter from './missing-items.js';
-import fullApp from '../index.js';
+import { app as fullApp } from '../index.js';
 import { TEST_ENV, NAVIGATOR, APPLICANT, makeDbClient, buildTestApp, JSON_HEADERS } from '../test/helpers.js';
 
 const PACKET_ID = 'p0000000-0000-0000-0000-000000000001';

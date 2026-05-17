@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { logger } from "hono/logger";
 import { HTTPException } from "hono/http-exception";
 import { authMiddleware } from "./middleware/auth.js";
 import packetsRouter from "./routes/packets.js";
@@ -15,11 +14,14 @@ import missingItemsRouter from "./routes/missing-items.js";
 import meRouter from "./routes/me.js";
 import mePacketsRouter from "./routes/me-packets.js";
 import meInboxRouter from "./routes/me-inbox.js";
-import type { Env } from "./types.js";
+import { requestLogger } from "./lib/logger.js";
+import { scrubEvent } from "./lib/sentry.js";
+import { withSentry } from "@sentry/cloudflare";
+import type { Env, Variables } from "./types.js";
 
-const app = new Hono<{ Bindings: Env }>();
+const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 
-app.use("*", logger());
+app.use("*", requestLogger);
 app.use("*", cors({ origin: "*", allowMethods: ["GET", "POST", "PATCH", "PUT", "DELETE"] }));
 
 app.get("/health", (c) => c.json({ ok: true, service: "civica-enrollment-api" }));
@@ -49,8 +51,27 @@ app.onError((err, c) => {
   if (err instanceof HTTPException) {
     return c.json({ error: err.message }, err.status);
   }
-  console.error(err);
+  const log = c.get("log");
+  if (log) {
+    log.error("unhandled error", { message: err.message, name: err.name });
+  } else {
+    console.error(err);
+  }
   return c.json({ error: "Internal server error" }, 500);
 });
 
-export default app;
+// Named export for unit tests — raw Hono app without the Sentry wrapper
+export { app };
+
+export default withSentry(
+  (env: Env) => ({
+    dsn: env.SENTRY_DSN,
+    tracesSampleRate: 0.05,
+    beforeSend: scrubEvent,
+  }),
+  {
+    async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+      return app.fetch(request, env, ctx);
+    },
+  } satisfies ExportedHandler<Env>,
+);
