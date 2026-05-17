@@ -15,7 +15,7 @@ function redactObject(obj: unknown, depth = 0): unknown {
   return out;
 }
 
-function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent | null {
+export function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent | null {
   // Strip request body, cookies, and most headers — keep only content-type
   if (event.request) {
     const { data: _d, cookies: _c, ...rest } = event.request;

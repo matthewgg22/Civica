@@ -1,4 +1,4 @@
-import type { Packet, Document } from "@civica/types";
+import type { Packet, Document } from "./schemas.js";
 import { FIXTURE_APPLICANT, FIXTURE_NAVIGATOR } from "./users.js";
 
 export const FIXTURE_DOCUMENT_PAYSTUB: Document = {
@@ -65,7 +65,7 @@ export const FIXTURE_PACKET_IN_PROGRESS: Packet = {
   id: "00000000-0000-0000-0000-000000000001",
   user_id: FIXTURE_APPLICANT.id,
   state: "CA",
-  status: "in_progress",
+  status: "In Navigator Review",
   readiness_score: 60,
   navigator_id: FIXTURE_NAVIGATOR.id,
   submitted_at: null,
@@ -78,7 +78,7 @@ export const FIXTURE_PACKET_READY: Packet = {
   id: "00000000-0000-0000-0000-000000000002",
   user_id: FIXTURE_APPLICANT.id,
   state: "CA",
-  status: "ready_for_review",
+  status: "Ready for Handoff",
   readiness_score: 95,
   navigator_id: FIXTURE_NAVIGATOR.id,
   submitted_at: null,
@@ -91,7 +91,7 @@ export const FIXTURE_PACKET_SUBMITTED: Packet = {
   id: "00000000-0000-0000-0000-000000000003",
   user_id: FIXTURE_APPLICANT.id,
   state: "MA",
-  status: "submitted",
+  status: "Handed Off",
   readiness_score: 100,
   navigator_id: null,
   submitted_at: "2026-01-12T09:00:00.000Z",
@@ -104,7 +104,7 @@ export const FIXTURE_PACKET_DRAFT: Packet = {
   id: "00000000-0000-0000-0000-000000000004",
   user_id: FIXTURE_APPLICANT.id,
   state: "CA",
-  status: "draft",
+  status: "Draft",
   readiness_score: null,
   navigator_id: null,
   submitted_at: null,

@@ -17,7 +17,6 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
-    "@civica/types": "workspace:*",
     "@prisma/client": "^5.21.1"
   },
   "devDependencies": {

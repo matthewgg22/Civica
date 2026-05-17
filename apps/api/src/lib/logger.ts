@@ -9,6 +9,10 @@ export const REDACT_PATHS: string[] = [
   'req.headers.cookie',
   // Applicant PII — direct and one-level nested
   'applicant_name',       '*.applicant_name',
+  'applicant_id',         '*.applicant_id',
+  'email',                '*.email',
+  'phone',                '*.phone',
+  'phone_number',         '*.phone_number',
   'dob',                  '*.dob',
   'ssn',                  '*.ssn',
   'ssn_last4',            '*.ssn_last4',

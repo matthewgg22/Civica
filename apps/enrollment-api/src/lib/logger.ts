@@ -8,6 +8,7 @@ export const PII_KEYS = new Set([
   "applicant_name", "full_name", "first_name", "last_name", "name",
   "email", "phone", "phone_number",
   // Identity
+  "applicant_id",
   "dob", "ssn", "ssn_last4",
   // DB columns marked COMMENT 'PII' in supabase migrations
   "body_ciphertext",
