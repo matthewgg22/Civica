@@ -1,7 +1,13 @@
 import { SignJWT } from 'jose';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+vi.mock('./staffLookup.js', () => ({
+  resolveStaffId: vi.fn().mockResolvedValue('staff-row-1'),
+}));
+
 import { buildApp } from '../app.js';
 import { _resetSecretCache } from './verify.js';
+import { resolveStaffId } from './staffLookup.js';
 
 const TEST_SECRET = 'test-secret-that-is-at-least-32-bytes!!';
 
@@ -25,6 +31,8 @@ function staffToken(sub = 'staff-1', role: string = 'navigator') {
 beforeEach(() => {
   vi.stubEnv('SUPABASE_JWT_SECRET', TEST_SECRET);
   _resetSecretCache();
+  // Re-set in case prior test ran vi.resetAllMocks()
+  vi.mocked(resolveStaffId).mockResolvedValue('staff-row-1');
 });
 
 afterEach(() => {

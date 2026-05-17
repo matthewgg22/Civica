@@ -161,7 +161,7 @@ navigatorRoutes.patch('/sessions/:id/status', async (c) => {
     return c.json({ error: guard.error, message: guard.message }, 422);
   }
 
-  const staffId = c.var.staff.sub;
+  const staffId = c.var.staff.staffId;
   const requestId = c.req.header('x-request-id') ?? crypto.randomUUID();
   await setActorCtx(staffId, requestId, body.reason ?? `status → ${body.to}`);
 
@@ -199,7 +199,7 @@ navigatorRoutes.post('/sessions/:id/assign', async (c) => {
   if (pErr?.code === 'PGRST116') return c.json({ error: 'session_not_found' }, 404);
   if (pErr) return c.json({ error: 'internal_error' }, 500);
 
-  const staffId = c.var.staff.sub;
+  const staffId = c.var.staff.staffId;
   const requestId = c.req.header('x-request-id') ?? crypto.randomUUID();
   await setActorCtx(staffId, requestId);
 
@@ -253,7 +253,7 @@ navigatorRoutes.post('/sessions/:id/notes', async (c) => {
   if (pErr?.code === 'PGRST116') return c.json({ error: 'session_not_found' }, 404);
   if (pErr) return c.json({ error: 'internal_error' }, 500);
 
-  const staffId = c.var.staff.sub;
+  const staffId = c.var.staff.staffId;
   const requestId = c.req.header('x-request-id') ?? crypto.randomUUID();
   await setActorCtx(staffId, requestId);
 
@@ -302,7 +302,7 @@ navigatorRoutes.post('/sessions/:id/missing-items', async (c) => {
   if (pErr?.code === 'PGRST116') return c.json({ error: 'session_not_found' }, 404);
   if (pErr) return c.json({ error: 'internal_error' }, 500);
 
-  const staffId = c.var.staff.sub;
+  const staffId = c.var.staff.staffId;
   const requestId = c.req.header('x-request-id') ?? crypto.randomUUID();
   await setActorCtx(staffId, requestId);
 
@@ -354,7 +354,7 @@ navigatorRoutes.patch('/sessions/:id/missing-items/:itemId', async (c) => {
   if (eErr) return c.json({ error: 'internal_error' }, 500);
   if (existing!.status !== 'pending') return c.json({ error: 'already_resolved' }, 409);
 
-  const staffId = c.var.staff.sub;
+  const staffId = c.var.staff.staffId;
   const requestId = c.req.header('x-request-id') ?? crypto.randomUUID();
   await setActorCtx(staffId, requestId);
 
