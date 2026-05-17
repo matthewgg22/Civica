@@ -36,7 +36,7 @@ export function InboxList({ initialItems }: Props) {
       {open.length > 0 && (
         <section aria-labelledby="inbox-open-heading">
           <h2 id="inbox-open-heading" className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
-            Open ({open.length})
+            {t("openSection", { count: open.length })}
           </h2>
           <ul className="space-y-3">
             {open.map((item) => (
@@ -49,7 +49,7 @@ export function InboxList({ initialItems }: Props) {
       {resolved.length > 0 && (
         <section aria-labelledby="inbox-resolved-heading">
           <h2 id="inbox-resolved-heading" className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
-            Resolved ({resolved.length})
+            {t("resolvedSection", { count: resolved.length })}
           </h2>
           <ul className="space-y-3">
             {resolved.map((item) => (

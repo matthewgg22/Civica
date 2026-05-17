@@ -63,12 +63,15 @@ const STATUS_CONFIG: Record<
 
 type Props = {
   status: PacketStatus;
+  /** Translated display label. Falls back to the raw status string (English). */
+  label?: string;
   size?: "sm" | "lg";
   className?: string;
 };
 
-export function StatusPill({ status, size = "sm", className }: Props) {
+export function StatusPill({ status, label, size = "sm", className }: Props) {
   const cfg = STATUS_CONFIG[status];
+  const displayLabel = label ?? status;
   return (
     <span
       className={cn(
@@ -79,10 +82,10 @@ export function StatusPill({ status, size = "sm", className }: Props) {
         cfg.border,
         className
       )}
-      aria-label={`Status: ${status}`}
+      aria-label={`Status: ${displayLabel}`}
     >
       <span aria-hidden="true">{cfg.icon}</span>
-      {status}
+      {displayLabel}
     </span>
   );
 }

@@ -9,7 +9,9 @@
     "error": "Something went wrong. Please try again.",
     "savedOffline": "Saved offline — will sync when reconnected",
     "signOut": "Sign out",
-    "loadError": "Unable to load your application. Please try again."
+    "loadError": "Unable to load your application. Please try again.",
+    "tryAgain": "Try again",
+    "processing": "Processing…"
   },
   "auth": {
     "signIn": "Sign in",
@@ -65,13 +67,16 @@
     "filePicker": "Choose file",
     "uploadProgress": "Uploading… {percent}%",
     "uploadSuccess": "Uploaded",
-    "uploadError": "Upload failed — please try again"
+    "uploadError": "Upload failed — please try again",
+    "progressLabel": "{uploaded} of {total} required documents uploaded"
   },
   "inbox": {
     "title": "Requests from your navigator",
     "empty": "No open requests",
     "uploadResponse": "Upload your response",
-    "markResolved": "Mark as resolved"
+    "markResolved": "Mark as resolved",
+    "openSection": "Open ({count})",
+    "resolvedSection": "Resolved ({count})"
   },
   "packet": {
     "title": "Application status",
@@ -95,6 +100,17 @@
     "statusDescClosed": "This application has been closed.",
     "lastUpdated": "Last updated {date}",
     "historyHeading": "History"
+  },
+  "resources": {
+    "title": "Local Resources",
+    "intro": "If you or your household are experiencing a food or housing crisis, the following organizations may be able to help immediately.",
+    "call211Title": "Call or Text 2-1-1",
+    "call211Body": "Free, confidential referrals to local food, housing, and financial assistance programs. Available 24/7 in English and Spanish.",
+    "snapHotlineTitle": "SNAP Information",
+    "snapHotlineBody": "For questions about SNAP benefits, call your state's SNAP office. California: 1-877-847-3663. Massachusetts: 1-877-382-2363.",
+    "foodBankTitle": "Find a Food Bank",
+    "foodBankBody": "Feeding America's food bank locator can help you find free food near you at feedingamerica.org/find-your-local-foodbank.",
+    "backToApp": "Return to your application"
   },
   "consent": {
     "title": "Review and submit",

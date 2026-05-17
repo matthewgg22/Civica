@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useCallback, useState } from "react";
-import { dequeueAll, hasQueued } from "@/lib/storage/draftQueue";
+import { enqueue, dequeueAll, hasQueued } from "@/lib/storage/draftQueue";
 import { saveAnswer } from "@/lib/api/actions";
 
 export function useOfflineQueue() {
@@ -25,10 +25,11 @@ export function useOfflineQueue() {
       try {
         await saveAnswer(item.packetId, item.questionId, item.value);
       } catch {
-        // Re-enqueue on failure — just drop for now; user will retry
+        // Put the item back so the next online event retries it.
+        enqueue({ packetId: item.packetId, questionId: item.questionId, value: item.value });
       }
     }
-    setHasPending(false);
+    setHasPending(hasQueued());
   }, []);
 
   useEffect(() => {
