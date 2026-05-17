@@ -28,6 +28,14 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
         case sequential(currentSection: SNAPApplicationSection)
         case review
         case editing(section: SNAPApplicationSection)
+        /// Recertification Companion's shadow run. Walks the user
+        /// through every section without ever advancing the
+        /// application status or producing a packet. Terminal state
+        /// is `.review` (same as sequential), but downstream consumers
+        /// branch on `isPhantom` to swap the review-screen primary
+        /// CTA from "Generate my application packet" to "Finish the
+        /// dry run."
+        case phantom(currentSection: SNAPApplicationSection)
     }
 
     @Published var draft: SNAPApplicationDraft
@@ -48,6 +56,12 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
     /// income") to offer a prefilled "From your paystub" affordance.
     @Published var confirmedPaystub: SNAPPaystub?
 
+    /// True when this orchestrator was constructed for the Recert
+    /// Companion's phantom run. Used by downstream views to swap
+    /// CTAs and skip status-mutating side effects. Set at init
+    /// time — there's no live-to-phantom transition mid-flow.
+    let isPhantomMode: Bool
+
     private let store: SNAPApplicationDraftStore
     private let classifier: any ExpeditedClassifier
 
@@ -56,10 +70,13 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
 
     init(
         store: SNAPApplicationDraftStore = SNAPApplicationDraftStore(),
-        classifier: any ExpeditedClassifier = HeuristicExpeditedClassifier()
+        classifier: any ExpeditedClassifier = HeuristicExpeditedClassifier(),
+        isPhantomMode: Bool = false,
+        seedDraft: SNAPApplicationDraft? = nil
     ) {
         self.store = store
         self.classifier = classifier
+        self.isPhantomMode = isPhantomMode
         // Restore prior draft + resume target if one exists. Editing
         // mode at-kill-time falls back to review on resume — less
         // surprising than re-mounting a half-edited sub-flow.
@@ -68,10 +85,22 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
             switch saved.mode {
             case .sequential:
                 let section = saved.sequentialSection ?? .whereApplying
-                self.mode = .sequential(currentSection: section)
+                self.mode = isPhantomMode
+                    ? .phantom(currentSection: section)
+                    : .sequential(currentSection: section)
             case .review:
                 self.mode = .review
+            case .phantom:
+                let section = saved.sequentialSection ?? .whereApplying
+                self.mode = .phantom(currentSection: section)
             }
+        } else if isPhantomMode, let seedDraft {
+            // Phantom-mode seeding: clone the user's existing live
+            // answers so the dry run pre-populates everything. The
+            // user only has to touch fields that have changed since
+            // last recert.
+            self.draft = seedDraft
+            self.mode = .phantom(currentSection: .whereApplying)
         } else {
             self.draft = SNAPApplicationDraft()
             self.mode = .idScanOffer
@@ -94,6 +123,17 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
             if let next = nextSection(after: section) {
                 mode = .sequential(currentSection: next)
             } else {
+                mode = .review
+            }
+        case .phantom:
+            if let next = nextSection(after: section) {
+                mode = .phantom(currentSection: next)
+            } else {
+                // Terminal state of a phantom run is also .review —
+                // the SNAPReviewDraftFlowView is reused; the host
+                // surface (PhantomRecertFlowView) routes the
+                // "primary CTA" to the phantom summary instead of
+                // packet generation by reading `isPhantomMode`.
                 mode = .review
             }
         }
@@ -120,8 +160,8 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
     }
 
     /// Called when a sub-flow's back-arrow exits without completing.
-    /// In sequential mode it backs up to the previous section; in
-    /// edit mode it returns to the review screen.
+    /// In sequential / phantom mode it backs up to the previous
+    /// section; in edit mode it returns to the review screen.
     func exitCurrentSection() {
         switch mode {
         case .editing:
@@ -133,6 +173,10 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
                 // At first section — go back to ID scan offer so the
                 // back button from whereApplying returns there.
                 mode = .idScanOffer
+            }
+        case .phantom(let current):
+            if let prev = previousSection(before: current) {
+                mode = .phantom(currentSection: prev)
             }
         case .review, .idScanOffer:
             break
@@ -156,9 +200,8 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
 
     var isAtFirstSectionInSequence: Bool {
         if case .idScanOffer = mode { return true }
-        if case .sequential(let current) = mode, current == .whereApplying {
-            return true
-        }
+        if case .sequential(let current) = mode, current == .whereApplying { return true }
+        if case .phantom(let current) = mode, current == .whereApplying { return true }
         return false
     }
 
@@ -205,7 +248,13 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
         case .sequential(let current):
             persistedMode = .sequential
             sequentialSection = current
+        case .phantom(let current):
+            persistedMode = .phantom
+            sequentialSection = current
         case .review:
+            // Phantom + review collapses to .review; the host
+            // surface knows it's phantom because isPhantomMode is
+            // set, so we don't need a separate phantom-review case.
             persistedMode = .review
         case .editing:
             // Editing is transient — persist as review so resume
@@ -283,7 +332,7 @@ struct SNAPApplicationFlowOrchestratorView: View {
                     onSkip: { viewModel.finishIDScanOffer() },
                     onExit: onDismiss
                 )
-            case .sequential(let section), .editing(let section):
+            case .sequential(let section), .editing(let section), .phantom(let section):
                 flow(for: section)
             case .review:
                 SNAPReviewDraftFlowView(

@@ -17,6 +17,12 @@ import Foundation
 //   • The transient .editing mode is intentionally NOT persisted —
 //     a user who killed mid-edit returns to .review rather than
 //     to the half-edited sub-flow. Less surprising on resume.
+//
+// Multi-draft support: the Recertification Companion's Phantom
+// Recert needs a second draft slot for the shadow run that lives
+// alongside the live submission-bound draft. We support that by
+// keying the UserDefaults slot at init time. Existing call sites
+// keep their default-key behavior unchanged.
 
 // Intentionally NOT @MainActor. The store reads/writes JSON to
 // UserDefaults — neither operation requires main-actor isolation.
@@ -27,20 +33,36 @@ final class SNAPApplicationDraftStore {
     enum PersistedMode: String, Codable {
         case sequential
         case review
+        /// Recertification Companion's shadow run. Behaves like
+        /// .sequential for restore purposes; orchestrators
+        /// constructed in phantom mode use this so the persisted
+        /// state round-trips cleanly to phantom on relaunch.
+        case phantom
     }
 
     struct PersistedState: Codable, Equatable {
         var draft: SNAPApplicationDraft
         var mode: PersistedMode
-        /// Only meaningful when mode == .sequential; nil otherwise.
+        /// Only meaningful when mode == .sequential or .phantom; nil otherwise.
         var sequentialSection: SNAPApplicationSection?
     }
 
-    private let defaults: UserDefaults
-    private let storageKey = "co.civica.applicationDraft"
+    /// Default storage key for the live, submission-bound draft.
+    /// Stable string preserves backward compatibility with existing
+    /// persisted state for users upgrading to a build with the
+    /// keyed API.
+    static let liveDraftKey = "co.civica.applicationDraft"
 
-    init(defaults: UserDefaults = .standard) {
+    /// Phantom Recert's shadow-draft slot. Distinct from the live
+    /// key so the two drafts don't trample each other.
+    static let phantomDraftKey = "co.civica.applicationDraft.phantom"
+
+    private let defaults: UserDefaults
+    private let storageKey: String
+
+    init(defaults: UserDefaults = .standard, storageKey: String = SNAPApplicationDraftStore.liveDraftKey) {
         self.defaults = defaults
+        self.storageKey = storageKey
     }
 
     func load() -> PersistedState? {

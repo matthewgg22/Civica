@@ -35,6 +35,9 @@ struct CivicaEntryView: View {
                         interviewCoachTile
                     }
                 }
+                if RecertCompanionFeatureFlag.isEnabled {
+                    recertCompanionTile
+                }
                 Spacer(minLength: CivicaSpacing.xl)
                 privacyFooterLink
             }
@@ -44,6 +47,22 @@ struct CivicaEntryView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // MARK: - Recert Companion tile (feature-flagged)
+
+    private var recertCompanionTile: some View {
+        NavigationLink {
+            RecertCompanionRoot()
+        } label: {
+            tileCard(
+                icon: "arrow.triangle.2.circlepath",
+                iconAccent: CivicaColors.brickPrimary,
+                title: CivicaEntryStrings.recertCompanionTitle.value(in: language),
+                subtitle: CivicaEntryStrings.recertCompanionSubtitle.value(in: language)
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Estimator tile
@@ -318,6 +337,14 @@ enum CivicaEntryStrings {
     static let privacyLink = CivicaText(
         "Your data + privacy",
         es: "Tus datos y privacidad"
+    )
+    static let recertCompanionTitle = CivicaText(
+        "Recertification Companion",
+        es: "Acompañante de recertificación"
+    )
+    static let recertCompanionSubtitle = CivicaText(
+        "Preview your recertification, track document deadlines, and draft a procedural appeal if you're denied.",
+        es: "Previsualiza tu recertificación, sigue las fechas de tus documentos y redacta una apelación si te niegan."
     )
 }
 

@@ -89,22 +89,30 @@ struct CivicaRootView: View {
             // SNAPApplicationDraftStore from the previous cycle).
             CivicaSNAPFlowView(language: language, recertMode: true)
         } else if statusStore.status == .decisionDenied {
-            SNAPDecisionDeniedView(
-                statusStore: statusStore,
-                language: language,
-                denialReason: nil,
-                onAppeal: {
-                    // Mission 13: navigation to SNAPAppealLetterView
-                    // is handled by the NavigationLink inside the
-                    // denied view itself. The letter view exposes
-                    // the MA DTA fair-hearing online portal as a
-                    // secondary action so we don't double-present.
-                    // Hook left as a passthrough for telemetry.
-                },
-                onStartOver: {
-                    statusStore.reset()
-                }
-            )
+            if RecertCompanionFeatureFlag.isEnabled {
+                // Companion path: dashboard with the AI-drafted
+                // procedural appeal flow as the primary action.
+                // Falls back to the legacy denial view when the
+                // flag is off so we can compare behavior in pilot.
+                RecertCompanionRoot()
+            } else {
+                SNAPDecisionDeniedView(
+                    statusStore: statusStore,
+                    language: language,
+                    denialReason: nil,
+                    onAppeal: {
+                        // Mission 13: navigation to SNAPAppealLetterView
+                        // is handled by the NavigationLink inside the
+                        // denied view itself. The letter view exposes
+                        // the MA DTA fair-hearing online portal as a
+                        // secondary action so we don't double-present.
+                        // Hook left as a passthrough for telemetry.
+                    },
+                    onStartOver: {
+                        statusStore.reset()
+                    }
+                )
+            }
         } else if statusStore.status == .decisionApproved {
             // MobilePendingBoard panel 3: a calm approved landing,
             // not a celebration. Recert reminder gets set forward
@@ -125,24 +133,34 @@ struct CivicaRootView: View {
                 }
             )
         } else if statusStore.status == .recertDue {
-            SNAPRecertificationView(
-                statusStore: statusStore,
-                language: language,
-                deadline: statusStore.timestamp(for: .recertDue),
-                onStartRecert: {
-                    // Mission 12: flip into recert mode. Status stays
-                    // at .recertDue; the isRecertInProgress flag at
-                    // the root sends rootSurface to the orchestrator
-                    // with the recert banner. Critically: the draft
-                    // is NOT cleared, so prior answers come back
-                    // pre-populated and the user only changes what
-                    // changed.
-                    isRecertInProgress = true
-                },
-                onOpenDTAConnect: {
-                    externalLink = CivicaExternalLinks.applyPortal(for: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode)
-                }
-            )
+            if RecertCompanionFeatureFlag.isEnabled {
+                // Companion path: full dashboard with Phantom Recert,
+                // Expiration Calendar, and Just-in-Time Reminders.
+                // The "Start the real recert" CTA inside the phantom
+                // flow still flips isRecertInProgress on the way out
+                // — same hand-off back to CivicaSNAPFlowView as the
+                // legacy path used.
+                RecertCompanionRoot()
+            } else {
+                SNAPRecertificationView(
+                    statusStore: statusStore,
+                    language: language,
+                    deadline: statusStore.timestamp(for: .recertDue),
+                    onStartRecert: {
+                        // Mission 12: flip into recert mode. Status stays
+                        // at .recertDue; the isRecertInProgress flag at
+                        // the root sends rootSurface to the orchestrator
+                        // with the recert banner. Critically: the draft
+                        // is NOT cleared, so prior answers come back
+                        // pre-populated and the user only changes what
+                        // changed.
+                        isRecertInProgress = true
+                    },
+                    onOpenDTAConnect: {
+                        externalLink = CivicaExternalLinks.applyPortal(for: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode)
+                    }
+                )
+            }
         } else if statusStore.status.isPostSubmission {
             SNAPWaitingRoomView(
                 statusStore: statusStore,

@@ -1,0 +1,30 @@
+{
+  "stateCode": "MA",
+  "language": "en",
+  "agencyName": "Massachusetts Department of Transitional Assistance",
+  "agencyAddressBlock": "Massachusetts Department of Transitional Assistance\nDivision of Hearings\nP.O. Box 4017\nTaunton, MA 02780",
+  "statutoryCitations": {
+    "federal": "7 CFR 273.2(d)",
+    "state": "106 CMR 343"
+  },
+  "paragraphs": {
+    "header": "Re: Fair Hearing Request — SNAP Case #{{caseNumber}}\nDate of denial notice: {{denialDate}}\nClaimant: {{claimantName}}\nDate of this request: {{todayDate}}",
+    "opening": "Dear Director of Hearings,\n\nI am writing under 106 CMR 343 to request a fair hearing on the denial of my SNAP recertification, which I received on {{denialDate}}. I believe the denial was procedurally improper for the reasons set out below and ask that my benefits be reinstated pending the hearing under 106 CMR 343.310.",
+    "missedInterview": "The denial cites my failure to appear at the scheduled eligibility interview. I respectfully disagree that this is a valid basis for denial of recertification under federal regulations. 7 CFR 273.2(e)(3) requires the Department to schedule another interview on my request and prohibits denial for failure to appear without first allowing the household an opportunity to be interviewed. I am willing and available to complete an interview at the Department's convenience.",
+    "missingDocuments": "The denial cites my failure to provide one or more requested verifications. I respectfully ask the Department to distinguish between a household's failure to provide verification and refusal to cooperate, as required by 7 CFR 273.2(d)(1). Failure alone — including delays caused by mail issues, work hours, or third-party document-issuance timelines — is not a valid basis for procedural denial without first giving me an opportunity to explain and to produce the verification.",
+    "noResponse": "The denial cites my failure to respond to a Department request. I respectfully ask the Department to verify that the request was issued in accordance with 7 CFR 273.13 (notice requirements), including a current and accurate mailing address on file. If the Department's request did not reach me, I have not failed to cooperate within the meaning of 7 CFR 273.2(d).",
+    "otherProcedural": "I believe the denial was procedurally improper. I am requesting a fair hearing so that the basis for the denial can be reviewed against the procedural protections of 7 CFR 273.2 and 106 CMR 343.",
+    "failureVsRefusalArgument": "Federal regulation 7 CFR 273.2(d) explicitly distinguishes a household's failure to cooperate — which alone is not grounds for denial — from refusal to cooperate, which requires an affirmative act demonstrating the household will not take steps it can take to complete the application process. I have not refused to cooperate with the Department. I am ready to complete any step the Department requires to continue my benefits.",
+    "closing": "I ask that the Department review this denial against the standards of 7 CFR 273.2 and 106 CMR 343 and that my SNAP benefits be reinstated pending the hearing under 106 CMR 343.310. I can be reached at {{claimantPhone}} or {{claimantEmail}}.",
+    "signatureBlock": "Sincerely,\n\n{{claimantName}}\n{{claimantAddress}}\n{{claimantPhone}}\n{{claimantEmail}}"
+  },
+  "requiredSlots": [
+    "caseNumber",
+    "denialDate",
+    "claimantName",
+    "todayDate",
+    "claimantAddress",
+    "claimantPhone",
+    "claimantEmail"
+  ]
+}
