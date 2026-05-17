@@ -216,6 +216,7 @@ struct QuestionBrowserView: View {
             Image(systemName: "chevron.right")
                 .font(.subheadline)
                 .foregroundStyle(CivicaColors.graphite)
+                .accessibilityHidden(true)
         }
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -234,6 +235,7 @@ struct QuestionBrowserView: View {
             Image(systemName: "doc.text.magnifyingglass")
                 .font(.title)
                 .foregroundStyle(CivicaColors.graphite)
+                .accessibilityHidden(true)
             Text(InterviewCoachStrings.emptyResults.value(in: language))
                 .font(CivicaTypography.footnoteStrong)
                 .foregroundStyle(CivicaColors.graphite)

@@ -61,10 +61,12 @@ struct FindHelpFilterBar: View {
         } label: {
             HStack(spacing: CivicaSpacing.xs) {
                 Image(systemName: "globe")
+                    .accessibilityHidden(true)
                 Text(currentLanguageLabel(from: options))
                     .font(CivicaTypography.footnoteStrong)
                 Image(systemName: "chevron.down")
                     .font(.system(size: 11, weight: .semibold))
+                    .accessibilityHidden(true)
             }
             .foregroundStyle(CivicaColors.brickPrimary)
             .padding(.horizontal, CivicaSpacing.md)

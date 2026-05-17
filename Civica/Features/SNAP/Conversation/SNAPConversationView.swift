@@ -111,6 +111,7 @@ struct SNAPConversationView: View {
             HStack {
                 Image(systemName: result.status == .eligible ? "checkmark.seal.fill" : "info.circle.fill")
                     .foregroundColor(result.status == .eligible ? CivicaColors.accentTeal : CivicaColors.warningAmber)
+                    .accessibilityHidden(true)
                 Text(verdictHeadline(result))
                     .font(CivicaTypography.cardTitle)
                     .foregroundColor(CivicaColors.ink)
@@ -123,6 +124,7 @@ struct SNAPConversationView: View {
                     HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                         Image(systemName: "doc.text")
                             .foregroundColor(CivicaColors.graphite)
+                            .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(v.labelEn)
                                 .font(CivicaTypography.subhead)
@@ -152,6 +154,7 @@ struct SNAPConversationView: View {
                         Text(SNAPConversationViewStrings.seeTheMath.value(in: language))
                             .font(CivicaTypography.subheadStrong)
                         Image(systemName: "arrow.right")
+                            .accessibilityHidden(true)
                     }
                     .foregroundColor(CivicaColors.brickPrimary)
                     .padding(.top, CivicaSpacing.xs)
@@ -198,6 +201,7 @@ struct SNAPConversationView: View {
         HStack(spacing: CivicaSpacing.sm) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .foregroundColor(CivicaColors.warningAmber)
+                .accessibilityHidden(true)
             Text(message)
                 .font(CivicaTypography.subhead)
                 .foregroundColor(CivicaColors.ink)

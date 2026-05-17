@@ -6,6 +6,7 @@ import SwiftUI
 // Manually-typed fields never carry a confidence entry, so they never light up.
 struct SNAPVoiceFieldHighlight: ViewModifier {
     let confidence: Double?
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     func body(content: Content) -> some View {
         content
@@ -29,7 +30,7 @@ struct SNAPVoiceFieldHighlight: ViewModifier {
                         .allowsHitTesting(false)
                 }
             }
-            .animation(CivicaAnimation.standard, value: needsReview)
+            .animation(reduceMotion ? nil : CivicaAnimation.standard, value: needsReview)
     }
 
     private var needsReview: Bool {

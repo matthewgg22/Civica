@@ -132,6 +132,7 @@ struct FindHelpLocationDetailSheet: View {
                         Color(uiColor: FindHelpPinPalette.color(for: location))
                     )
                 )
+                .accessibilityHidden(true)
         } else {
             ServiceTypeBadge(serviceType: location.primaryServiceType)
         }

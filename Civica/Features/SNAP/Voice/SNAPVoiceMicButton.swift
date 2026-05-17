@@ -11,6 +11,7 @@ struct SNAPVoiceMicButton: View {
     let step: SNAPDraftStep
 
     @State private var isPulsing: Bool = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         Button(action: handleTap) {
@@ -22,11 +23,13 @@ struct SNAPVoiceMicButton: View {
                         Circle()
                             .stroke(borderColor, lineWidth: 1.5)
                     )
-                    .scaleEffect(isPulsing && isListening ? 1.12 : 1.0)
+                    .scaleEffect(isPulsing && isListening && !reduceMotion ? 1.12 : 1.0)
                     .animation(
-                        isListening
-                            ? .easeInOut(duration: 0.9).repeatForever(autoreverses: true)
-                            : CivicaAnimation.standard,
+                        reduceMotion
+                            ? nil
+                            : (isListening
+                                ? .easeInOut(duration: 0.9).repeatForever(autoreverses: true)
+                                : CivicaAnimation.standard),
                         value: isPulsing
                     )
 

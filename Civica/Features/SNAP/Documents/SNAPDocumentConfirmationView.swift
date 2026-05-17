@@ -124,6 +124,7 @@ struct SNAPDocumentConfirmationView: View {
                 HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                     Image(systemName: severityIcon(flag.severity))
                         .foregroundColor(severityColor(flag.severity))
+                        .accessibilityHidden(true)
                     Text(flag.messageEn)
                         .font(CivicaTypography.footnote)
                         .foregroundColor(CivicaColors.ink)

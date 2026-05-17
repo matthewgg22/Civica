@@ -59,6 +59,7 @@ private struct FindHelpListRow: View {
                     Spacer()
                     Image(systemName: "chevron.right")
                         .foregroundStyle(isSelected ? CivicaColors.brickPrimary : CivicaColors.graphite)
+                        .accessibilityHidden(true)
                 }
             }
         }
@@ -106,6 +107,7 @@ struct ServiceTypeBadge: View {
             .foregroundStyle(CivicaColors.onPrimaryText)
             .frame(width: 28, height: 28)
             .background(Circle().fill(backgroundColor))
+            .accessibilityHidden(true)
     }
 
     private var iconName: String {

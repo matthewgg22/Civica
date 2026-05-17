@@ -179,6 +179,7 @@ struct PracticeSessionView: View {
             }
             .disabled(!canSend)
             .buttonStyle(.plain)
+            .accessibilityLabel("Send response")
         }
         .padding(.horizontal, CivicaSpacing.md)
         .padding(.vertical, CivicaSpacing.sm)

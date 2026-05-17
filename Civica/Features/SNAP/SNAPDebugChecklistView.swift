@@ -111,6 +111,7 @@ struct SNAPDebugChecklistView: View {
                                 .foregroundStyle(item.passed ? CivicaColors.accentTeal : CivicaColors.warningAmber)
                                 .font(CivicaTypography.subhead)
                                 .padding(.top, CivicaSpacing.xs)
+                                .accessibilityHidden(true)
                             Text(item.title)
                                 .font(CivicaTypography.subheadStrong)
                                 .foregroundStyle(CivicaColors.ink)

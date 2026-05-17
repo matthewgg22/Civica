@@ -8,6 +8,7 @@ import SwiftUI
 @available(iOS 26.0, *)
 struct SNAPVoiceTranscriptOverlay: View {
     @ObservedObject var service: SNAPVoiceIntakeService
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         if shouldShow {
@@ -39,7 +40,7 @@ struct SNAPVoiceTranscriptOverlay: View {
             .shadow(color: CivicaColors.shadowSoft, radius: 6, x: 0, y: 2)
             .frame(maxWidth: .infinity, alignment: .leading)
             .transition(.move(edge: .bottom).combined(with: .opacity))
-            .animation(CivicaAnimation.standard, value: service.partialTranscript)
+            .animation(reduceMotion ? nil : CivicaAnimation.standard, value: service.partialTranscript)
         }
     }
 
