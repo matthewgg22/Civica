@@ -5,6 +5,7 @@ import { HTTPException } from "hono/http-exception";
 import { makeAnonClient } from "../lib/supabase.js";
 import { withActorContext } from "../middleware/actorContext.js";
 import type { Env } from "../types.js";
+import { seedDocumentItems } from "../lib/snapChecklist.js";
 
 // Canonical source: packages/snap-enums/src/packetStatus.ts
 // Inlined here because enrollment-api CI uses standalone npm (not pnpm workspace).
@@ -99,6 +100,27 @@ app.post("/", zValidator("json", createPacketSchema), async (c) => {
     .single();
 
   if (error) throw new HTTPException(500, { message: error.message });
+
+  // Seed required document items from the rules engine. Uses empty answers so
+  // only always-required items are created at packet creation; items are
+  // re-evaluated (and additional rows inserted) when the applicant submits answers.
+  const seedItems = seedDocumentItems(body.state_code, 1, {});
+  if (seedItems.length > 0) {
+    const { error: itemsError } = await db
+      .schema("snap_enrollment")
+      .from("required_document_items")
+      .insert(
+        seedItems.map((item) => ({
+          packet_id: data.packet_id,
+          state_code: body.state_code,
+          document_kind: item.document_kind as "paystub" | "photo_id" | "lease" | "utility_bill" | "bank_statement" | "tax_return" | "benefit_letter" | "other",
+          label: item.label_en,
+          is_required: item.is_required,
+        })),
+      );
+    if (itemsError) throw new HTTPException(500, { message: itemsError.message });
+  }
+
   return c.json(data, 201);
 });
 

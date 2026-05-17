@@ -14,6 +14,7 @@
     // correct tool here — it silences only dependency .d.ts files, not our
     // own source. Remove once supabase-js ships Workers-compatible types.
     "skipLibCheck": true,
+    "resolveJsonModule": true,
     "paths": {
       "@civica/db-types": ["../../packages/db-types/snap_enrollment.ts"]
     }

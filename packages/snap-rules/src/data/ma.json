@@ -1,0 +1,118 @@
+{
+  "$schema": "../../schema/rules.schema.json",
+  "state_code": "MA",
+  "version": 1,
+  "as_of_date": "2026-05-01",
+  "document_requirements": [
+    {
+      "category": "proof_of_identity",
+      "document_kind": "photo_id",
+      "label_en": "Proof of identity",
+      "label_es": "Comprobante de identidad",
+      "helper_en": "Driver’s license, state ID, passport, or birth certificate.",
+      "helper_es": "Licencia de conducir, identificación estatal, pasaporte, o acta de nacimiento.",
+      "required_when": { "always": true },
+      "is_required": true
+    },
+    {
+      "category": "proof_of_residency",
+      "document_kind": "lease",
+      "label_en": "Proof of residency",
+      "label_es": "Comprobante de residencia",
+      "helper_en": "Current lease, mortgage statement, utility bill, or a signed letter from your landlord or shelter.",
+      "helper_es": "Contrato de arrendamiento vigente, estado de cuenta hipotecario, recibo de servicio público, o carta firmada de su arrendador o refugio.",
+      "required_when": { "always": true },
+      "is_required": true,
+      "alt_kinds": ["utility_bill", "other"]
+    },
+    {
+      "category": "proof_of_earned_income",
+      "document_kind": "paystub",
+      "label_en": "Proof of earned income — most recent pay stubs",
+      "label_es": "Comprobante de ingresos — talones de pago más recientes",
+      "helper_en": "Last 4 weeks of pay stubs, or a letter from your employer with your wage rate and hours.",
+      "helper_es": "Talones de pago de las últimas 4 semanas, o carta de su empleador con su salario y horas trabajadas.",
+      "required_when": { "answer_key": "income.has_earned_income", "truthy": true },
+      "is_required": true,
+      "counsel_note": "TODO: confirm pay stub period and employer letter requirements per 106 CMR 363.110"
+    },
+    {
+      "category": "proof_of_self_employment_income",
+      "document_kind": "tax_return",
+      "label_en": "Proof of self-employment income",
+      "label_es": "Comprobante de ingresos por trabajo independiente",
+      "helper_en": "Most recent federal tax return (Schedule C) or a business income and expense ledger.",
+      "helper_es": "Declaración de impuestos federal más reciente (Anexo C) o un registro de ingresos y gastos del negocio.",
+      "required_when": { "answer_key": "income.self_employed", "truthy": true },
+      "is_required": true,
+      "counsel_note": "TODO: confirm acceptable self-employment documentation per 106 CMR 363.110 and MA DTA policy"
+    },
+    {
+      "category": "proof_of_unearned_income",
+      "document_kind": "benefit_letter",
+      "label_en": "Proof of unearned income",
+      "label_es": "Comprobante de ingresos no laborales",
+      "helper_en": "Current award letter or benefit statement for SSI, SSDI, pension, unemployment, or other unearned income.",
+      "helper_es": "Carta de adjudicación vigente o estado de cuenta de beneficios para SSI, SSDI, pensión, desempleo u otros ingresos no laborales.",
+      "required_when": { "answer_key": "income.has_unearned_income", "truthy": true },
+      "is_required": true
+    },
+    {
+      "category": "proof_of_assets",
+      "document_kind": "bank_statement",
+      "label_en": "Proof of liquid assets",
+      "label_es": "Comprobante de activos líquidos",
+      "helper_en": "Most recent bank statement for all checking and savings accounts.",
+      "helper_es": "Estado de cuenta bancario más reciente de todas las cuentas corrientes y de ahorro.",
+      "required_when": { "answer_key": "assets.has_liquid_assets", "truthy": true },
+      "is_required": true,
+      "counsel_note": "TODO: confirm MA asset test thresholds ($2,750 standard / $4,250 elderly-disabled) per 106 CMR 361.510 and whether bank statements are required only above threshold or for all applicants."
+    },
+    {
+      "category": "proof_of_medical_expenses",
+      "document_kind": "other",
+      "label_en": "Proof of medical expenses (elderly / disabled deduction)",
+      "label_es": "Comprobante de gastos médicos (deducción para adultos mayores / personas con discapacidad)",
+      "helper_en": "Receipts, statements, or prescription records for out-of-pocket medical costs not covered by insurance.",
+      "helper_es": "Recibos, estados de cuenta o registros de recetas médicas por gastos médicos de bolsillo no cubiertos por seguro.",
+      "required_when": { "answer_key": "household.has_elderly_disabled", "truthy": true },
+      "is_required": false,
+      "counsel_note": "TODO: confirm allowable medical expense types for MA SNAP elderly/disabled deduction per 106 CMR 364.400"
+    }
+  ],
+  "flags": [
+    {
+      "key": "student_status",
+      "trigger_when": { "answer_key": "work_student.status", "contains": "school" },
+      "label_en": "Student status reported",
+      "label_es": "Estatus de estudiante reportado",
+      "context_en": "This applicant reported being a student. Confirm whether the student work-rule exemption applies (7 CFR 273.5). Additional documentation may be required.",
+      "context_es": "Este solicitante reportó ser estudiante. Confirme si aplica la exención de la regla de trabajo para estudiantes (7 CFR 273.5). Es posible que se requiera documentación adicional."
+    },
+    {
+      "key": "shelter_housing",
+      "trigger_when": { "answer_key": "housing.type", "equals": "shelter" },
+      "label_en": "Applicant in shelter housing",
+      "label_es": "Solicitante en vivienda de refugio",
+      "context_en": "This applicant lives in a shelter. A signed letter from the shelter may be accepted in lieu of a lease or utility bill for proof of residency.",
+      "context_es": "Este solicitante vive en un refugio. Una carta firmada del refugio puede aceptarse en lugar de un contrato de arrendamiento o recibo de servicio público como comprobante de residencia."
+    },
+    {
+      "key": "elderly_disabled",
+      "trigger_when": { "answer_key": "household.has_elderly_disabled", "truthy": true },
+      "label_en": "Elderly or disabled household member",
+      "label_es": "Miembro del hogar mayor o con discapacidad",
+      "context_en": "At least one household member is 60+ or receives disability benefits. The shelter cost cap is waived and medical expense deductions may apply.",
+      "context_es": "Al menos un miembro del hogar tiene 60 años o más, o recibe beneficios por discapacidad. El límite de costo de vivienda se elimina y pueden aplicar deducciones por gastos médicos."
+    },
+    {
+      "key": "self_employment",
+      "trigger_when": { "answer_key": "income.self_employed", "truthy": true },
+      "label_en": "Self-employment income reported",
+      "label_es": "Ingresos por trabajo independiente reportados",
+      "context_en": "This applicant reported self-employment income. Net income calculation uses the 40% cost-of-doing-business deduction unless actual expenses are documented.",
+      "context_es": "Este solicitante reportó ingresos por trabajo independiente. El cálculo del ingreso neto utiliza la deducción del 40% por costos operativos, a menos que se documenten los gastos reales.",
+      "counsel_note": "TODO: confirm MA DTA policy on self-employment net income calculation vs federal 40% deduction"
+    }
+  ]
+}

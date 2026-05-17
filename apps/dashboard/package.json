@@ -13,6 +13,7 @@
   "dependencies": {
     "@civica/snap-calculator": "workspace:*",
     "@civica/snap-enums": "workspace:*",
+    "@civica/snap-rules": "workspace:*",
     "@sentry/nextjs": "^9.0.0",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.105.4",

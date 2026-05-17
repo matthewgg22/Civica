@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../lib/supabase";
 import { api } from "../lib/api";
+import { loadRules } from "@civica/snap-rules";
 
 interface DocItem {
   item_id: string;
@@ -24,24 +25,23 @@ interface UploadedDoc {
 
 interface Props {
   packetId: string;
+  stateCode: "CA" | "MA";
   items: DocItem[];
   uploadedDocs: UploadedDoc[];
 }
 
-const KIND_LABELS: Record<string, string> = {
-  paystub: "Pay stub",
-  photo_id: "Photo ID",
-  lease: "Lease",
-  utility_bill: "Utility bill",
-  bank_statement: "Bank statement",
-  tax_return: "Tax return",
-  benefit_letter: "Benefit letter",
-  other: "Other document",
-};
-
-export default function DocumentChecklist({ packetId: _packetId, items, uploadedDocs }: Props) {
+export default function DocumentChecklist({ packetId: _packetId, stateCode, items, uploadedDocs }: Props) {
   const router = useRouter();
   const [waiving, setWaiving] = useState<string | null>(null);
+
+  const kindLabels = useMemo<Record<string, string>>(() => {
+    try {
+      const rules = loadRules(stateCode);
+      return Object.fromEntries(rules.document_requirements.map((r) => [r.document_kind, r.label_en]));
+    } catch {
+      return {};
+    }
+  }, [stateCode]);
   const [waiveReason, setWaiveReason] = useState("");
   const [resolving, setResolving] = useState<string | null>(null);
   const [selectedDocId, setSelectedDocId] = useState<Record<string, string>>({});
@@ -113,6 +113,7 @@ export default function DocumentChecklist({ packetId: _packetId, items, uploaded
               key={item.item_id}
               item={item}
               isFirst={idx === 0}
+              kindLabel={kindLabels[item.document_kind] ?? item.document_kind}
               uploadedDocs={uploadedDocs}
               resolving={resolving}
               waiving={waiving}
@@ -143,7 +144,7 @@ export default function DocumentChecklist({ packetId: _packetId, items, uploaded
             <div key={item.item_id} className={`py-3 flex items-start justify-between gap-3 ${idx > 0 || pending.length > 0 ? "border-t border-hairline" : ""}`}>
               <div>
                 <p className="text-[14px] font-medium text-ink">{item.label}</p>
-                <p className="text-[12px] text-muted">{KIND_LABELS[item.document_kind] ?? item.document_kind}</p>
+                <p className="text-[12px] text-muted">{kindLabels[item.document_kind] ?? item.document_kind}</p>
               </div>
               {item.resolved_at ? (
                 <span className="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-teal/10 text-teal">✓ resolved</span>
@@ -163,6 +164,7 @@ export default function DocumentChecklist({ packetId: _packetId, items, uploaded
 interface ItemRowProps {
   item: DocItem;
   isFirst: boolean;
+  kindLabel: string;
   uploadedDocs: UploadedDoc[];
   resolving: string | null;
   waiving: string | null;
@@ -179,7 +181,7 @@ interface ItemRowProps {
   onCancel: () => void;
 }
 
-function ItemRow({ item, isFirst, uploadedDocs, resolving, waiving, waiveReason, selectedDocId, loading, error, onStartResolve, onStartWaive, onSelectDoc, onWaiveReasonChange, onResolve, onWaive, onCancel }: ItemRowProps) {
+function ItemRow({ item, isFirst, kindLabel, uploadedDocs, resolving, waiving, waiveReason, selectedDocId, loading, error, onStartResolve, onStartWaive, onSelectDoc, onWaiveReasonChange, onResolve, onWaive, onCancel }: ItemRowProps) {
   const matchingDocs = uploadedDocs.filter((d) => d.document_kind === item.document_kind);
   const isResolving = resolving === item.item_id;
   const isWaiving = waiving === item.item_id;
@@ -190,7 +192,7 @@ function ItemRow({ item, isFirst, uploadedDocs, resolving, waiving, waiveReason,
       <div className="flex items-start justify-between gap-3 mb-2">
         <div>
           <p className="text-[14px] font-medium text-ink">{item.label}</p>
-          <p className="text-[12px] text-muted">{KIND_LABELS[item.document_kind] ?? item.document_kind}</p>
+          <p className="text-[12px] text-muted">{kindLabel}</p>
         </div>
         {!isResolving && !isWaiving && (
           <div className="flex gap-2 shrink-0">
