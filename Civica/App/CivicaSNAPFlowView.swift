@@ -24,8 +24,12 @@ struct CivicaSNAPFlowView: View {
     @State private var verdict: SNAPEligibilityResult?
     @State private var presentingVerdict: Bool = false
     @State private var presentingPacket: Bool = false
+    /// Draft held while the user completes phone sign-in before packet generation.
+    @State private var pendingDraft: SNAPApplicationDraft?
+    @State private var showingSignIn: Bool = false
 
     @EnvironmentObject private var statusStore: SNAPApplicationStatusStore
+    @EnvironmentObject private var enrollmentAuth: CivicaEnrollmentAuth
 
     /// True when the user is here as part of a recertification rather
     /// than a first-time application. Drives the inline banner that
@@ -52,24 +56,32 @@ struct CivicaSNAPFlowView: View {
                 viewModel: SNAPApplicationFlowOrchestratorViewModel(),
                 language: language,
                 onGeneratePacket: { draft in
-                    let result = SNAPLocalEligibilityEvaluator.evaluate(draft)
-                    statusStore.recordEligibilityResult(result)
-                    // Recert completion: clear the in-progress flag so
-                    // the root re-routes through normal status handling
-                    // (the verdict + packet chain advances status to
-                    // .packetGenerated).
-                    if recertMode {
-                        isRecertInProgress = false
+                    if enrollmentAuth.state.isAuthenticated {
+                        runGeneratePacket(draft)
+                    } else {
+                        pendingDraft = draft
+                        showingSignIn = true
                     }
-                    generatedDraft = draft
-                    verdict = result
-                    presentingVerdict = true
                 },
                 onDismiss: { dismiss() }
             )
         }
         .navigationTitle("SNAP")
         .navigationBarTitleDisplayMode(.inline)
+        // When auth succeeds (e.g. inside the sign-in sheet), handle the pending draft.
+        .onChange(of: enrollmentAuth.state) { _, newState in
+            if newState.isAuthenticated, let draft = pendingDraft {
+                pendingDraft = nil
+                showingSignIn = false
+                runGeneratePacket(draft)
+            }
+        }
+        .sheet(isPresented: $showingSignIn, onDismiss: {
+            // User cancelled sign-in — discard the pending draft.
+            pendingDraft = nil
+        }) {
+            SNAPPhoneSignInView(auth: enrollmentAuth, language: language)
+        }
         .navigationDestination(isPresented: $presentingVerdict) {
             if let verdict {
                 SNAPDecisionMathView(
@@ -97,6 +109,32 @@ struct CivicaSNAPFlowView: View {
                         )
                     }
                 }
+            }
+        }
+    }
+
+    // MARK: - Packet generation
+
+    private func runGeneratePacket(_ draft: SNAPApplicationDraft) {
+        let result = SNAPLocalEligibilityEvaluator.evaluate(draft)
+        statusStore.recordEligibilityResult(result)
+        if recertMode { isRecertInProgress = false }
+        generatedDraft = draft
+        verdict = result
+        presentingVerdict = true
+
+        // Submit to the enrollment API in the background.
+        // This is best-effort — a failure must never block the local UX.
+        let client = enrollmentAuth.makeEnrollmentAPIClient()
+        let stateCode = draft.whereApplying.stateCode?.uppercased() ?? "CA"
+        Task {
+            do {
+                let packet = try await client.createPacket(stateCode: stateCode)
+                _ = try await client.submitPacket(packetId: packet.id)
+                SNAPAnalytics.trackSubmitted()
+            } catch {
+                // Intentional no-op: enrollment API is additive persistence.
+                // The applicant's local flow continues unaffected.
             }
         }
     }

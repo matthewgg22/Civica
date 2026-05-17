@@ -36,6 +36,8 @@ enum SNAPAnalytics {
         static let interviewPrepViewed = "snap_interview_prep_viewed"
         static let tcpaConsentGranted = "snap_tcpa_consent_granted"
         static let interview24hNotificationScheduled = "snap_interview_24h_notification_scheduled"
+        // Enrollment API persistence events — no PII, no eligibility result.
+        static let packetSubmitted = "snap_packet_submitted"
     }
 
     /// Track a single conversation turn. `topic` is the QuestionTopic the
@@ -96,6 +98,10 @@ enum SNAPAnalytics {
 
     static func trackInterviewPrepViewed() {
         send(Event.interviewPrepViewed, stepName: nil, stepIndex: nil)
+    }
+
+    static func trackSubmitted() {
+        send(Event.packetSubmitted, stepName: nil, stepIndex: nil)
     }
 
     static func trackTCPAConsentGranted() {

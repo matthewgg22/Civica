@@ -51,6 +51,7 @@ struct SNAPWaitingRoomView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 header
                 interviewNavigatorSection
+                SNAPEnrollmentInboxSection(language: language).fetchOnAppear()
                 if currentStatusHasAction {
                     actionBanner
                 }
