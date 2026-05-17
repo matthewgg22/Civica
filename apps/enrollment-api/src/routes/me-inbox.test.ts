@@ -18,7 +18,7 @@ import meInboxRouter from './me-inbox.js';
 import fullApp from '../index.js';
 import { TEST_ENV, NAVIGATOR, APPLICANT, makeDbClient, makeQueryBuilder, buildTestApp } from '../test/helpers.js';
 
-const MOCK_APPLICANT = { applicant_id: 'app-001', state_code: 'CA', preferred_language: 'en' };
+const MOCK_APPLICANT = { applicant_id: 'app-001', state_code: 'CA' as const, preferred_language: 'en' };
 
 afterEach(() => vi.resetAllMocks());
 
@@ -99,9 +99,10 @@ describe('GET /me/inbox', () => {
     expect(res.status).toBe(200);
     const body = await res.json() as Array<{ id: string; prompt: string; resolved: boolean }>;
     expect(body).toHaveLength(1);
-    expect(body[0].id).toBe('req-1');
-    expect(body[0].prompt).toBe('Proof of income');
-    expect(body[0].resolved).toBe(false);
+    const item = body[0]!;
+    expect(item.id).toBe('req-1');
+    expect(item.prompt).toBe('Proof of income');
+    expect(item.resolved).toBe(false);
   });
 });
 
