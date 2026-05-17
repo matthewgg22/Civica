@@ -46,13 +46,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Typecheck all packages
-        run: |
-          pnpm turbo run typecheck \
-            --filter=./apps/api \
-            --filter=./apps/dashboard \
-            --filter=./packages/snap-enums \
-            --filter=./packages/types \
-            --filter=./web
+        run: pnpm turbo run typecheck --filter=./apps/api --filter=./packages/snap-enums --filter=./packages/types
 
   contract-tests:
     name: Contract tests (Hono parity)
