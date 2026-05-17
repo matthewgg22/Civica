@@ -16,7 +16,8 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "paths": {
-      "@civica/db-types": ["../../packages/db-types/snap_enrollment.ts"]
+      "@civica/db-types": ["../../packages/db-types/snap_enrollment.ts"],
+      "@civica/snap-enums": ["../../packages/snap-enums/src/index.ts"]
     }
   },
   "include": ["src/**/*.ts"],
