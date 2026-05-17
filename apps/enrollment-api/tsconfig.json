@@ -8,6 +8,11 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
+    // @supabase/auth-js ships DOM + WebAuthn types that conflict with
+    // @cloudflare/workers-types. Adding lib:DOM causes widespread interface
+    // merge conflicts; stub declarations also conflict. skipLibCheck is the
+    // correct tool here — it silences only dependency .d.ts files, not our
+    // own source. Remove once supabase-js ships Workers-compatible types.
     "skipLibCheck": true,
     "paths": {
       "@civica/db-types": ["../../packages/db-types/snap_enrollment.ts"]

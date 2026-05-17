@@ -1,4 +1,3 @@
-export * from "./enums.js";
 export * from "./extraction.js";
 export * from "./user.js";
 export * from "./packet.js";

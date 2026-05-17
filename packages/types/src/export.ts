@@ -1,5 +1,7 @@
 import { z } from "zod";
-import { ExportFormatSchema } from "./enums.js";
+
+export const ExportFormatSchema = z.enum(["pdf", "json"]);
+export type ExportFormat = z.infer<typeof ExportFormatSchema>;
 
 export const EXPORT_DISCLAIMER =
   "This document is provided for informational purposes only to help you prepare for a SNAP application. It does not constitute a determination of program eligibility or benefits. Only the administering agency can make eligibility determinations.";

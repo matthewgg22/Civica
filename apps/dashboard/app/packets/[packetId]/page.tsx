@@ -13,17 +13,7 @@ import LifecycleStrip from "../../../components/LifecycleStrip";
 import HandoffPanel from "../../../components/HandoffPanel";
 import MissingItemRequestPanel from "../../../components/MissingItemRequestPanel";
 import { formatDateTime, decryptDemoName, firstNameLastInitial, shortId } from "../../../lib/format";
-
-const NEXT_STATUSES: Record<string, string[]> = {
-  "Draft": ["Submitted for Review"],
-  "Submitted for Review": ["In Navigator Review", "Needs Documents", "Needs Applicant Clarification"],
-  "Needs Documents": ["In Navigator Review", "Needs Applicant Clarification"],
-  "Needs Applicant Clarification": ["In Navigator Review", "Needs Documents"],
-  "In Navigator Review": ["Ready for Handoff", "Needs Documents", "Needs Applicant Clarification"],
-  "Ready for Handoff": ["Handed Off"],
-  "Handed Off": ["Closed"],
-  "Closed": [],
-};
+import { PACKET_STATUS_TRANSITIONS } from "@civica/snap-enums";
 
 const LANG_LABELS: Record<string, string> = {
   en: "English",
@@ -56,7 +46,7 @@ export default async function PacketDetailPage({ params }: { params: Promise<{ p
   const history = historyResult.data ?? [];
   const fields = fieldsResult.data ?? [];
   const docItems = docItemsResult.data ?? [];
-  const nextStatuses = NEXT_STATUSES[packet.status] ?? [];
+  const nextStatuses = PACKET_STATUS_TRANSITIONS[packet.status as keyof typeof PACKET_STATUS_TRANSITIONS] ?? [];
 
   // Pre-flight blockers for "Ready for Handoff"
   const [unresolvedDocsResult, unreviewedFieldsResult, consentResult] = await Promise.all([
