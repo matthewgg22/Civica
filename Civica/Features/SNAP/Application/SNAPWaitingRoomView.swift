@@ -24,6 +24,8 @@ struct SNAPWaitingRoomView: View {
     let language: CivicaLanguage
     let onAction: () -> Void
 
+    @EnvironmentObject private var enrollmentAuth: CivicaEnrollmentAuth
+
     /// Draft loaded from SNAPApplicationDraftStore on appear. Drives the
     /// WIC teaser gate inside SNAPSubmissionTimelineView (children
     /// under 5 → teaser shows). Optional because users who completed
@@ -40,6 +42,11 @@ struct SNAPWaitingRoomView: View {
     /// Civica operator (founder) for manual concierge calls.
     @State private var showsAdminExport: Bool = false
 
+    /// Document upload sheet — presented when the navigator has requested docs.
+    @State private var showsDocumentUpload: Bool = false
+    /// Bumped after a successful upload so the inbox section re-fetches.
+    @State private var inboxRefreshID: UUID = UUID()
+
     /// External link target (DTA Connect, MA WIC page) presented via
     /// CivicaSafariSheet. The waiting room owns this rather than
     /// pushing it to the root so the submission-timeline footer cards
@@ -51,7 +58,7 @@ struct SNAPWaitingRoomView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 header
                 interviewNavigatorSection
-                SNAPEnrollmentInboxSection(language: language).fetchOnAppear()
+                SNAPEnrollmentInboxSection(language: language, refreshID: inboxRefreshID).fetchOnAppear()
                 if currentStatusHasAction {
                     actionBanner
                 }
@@ -96,6 +103,12 @@ struct SNAPWaitingRoomView: View {
             AdminInterviewExportView(language: language) {
                 showsAdminExport = false
             }
+        }
+        .sheet(isPresented: $showsDocumentUpload) {
+            SNAPDocumentUploadView(language: language) {
+                inboxRefreshID = UUID()
+            }
+            .environmentObject(enrollmentAuth)
         }
     }
 
@@ -191,6 +204,10 @@ struct SNAPWaitingRoomView: View {
                 actionBannerLabel
             }
             .buttonStyle(.plain)
+        } else if statusStore.status == .documentsRequested {
+            Button { showsDocumentUpload = true } label: {
+                actionBannerLabel
+            }
         } else {
             Button(action: onAction) {
                 actionBannerLabel

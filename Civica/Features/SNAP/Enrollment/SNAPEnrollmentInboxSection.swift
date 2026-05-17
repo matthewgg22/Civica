@@ -11,6 +11,9 @@ import SwiftUI
 
 struct SNAPEnrollmentInboxSection: View {
     let language: CivicaLanguage
+    /// Changing this value re-triggers the inbox fetch. Pass a new UUID after a
+    /// document upload so resolved items disappear without requiring a full view reload.
+    var refreshID: AnyHashable = 0
 
     @EnvironmentObject private var enrollmentAuth: CivicaEnrollmentAuth
 
@@ -120,9 +123,9 @@ struct SNAPEnrollmentInboxSection: View {
 // MARK: - View + task wiring
 
 extension SNAPEnrollmentInboxSection {
-    /// Convenience modifier that fires the fetch on appear.
+    /// Fires the fetch on appear and whenever `refreshID` changes.
     func fetchOnAppear() -> some View {
-        self.task { await fetchIfAuthenticated() }
+        self.task(id: refreshID) { await fetchIfAuthenticated() }
     }
 }
 
