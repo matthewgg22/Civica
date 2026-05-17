@@ -5,11 +5,10 @@ import { HTTPException } from "hono/http-exception";
 import { makeAnonClient } from "../lib/supabase.js";
 import { withActorContext } from "../middleware/actorContext.js";
 import type { Env } from "../types.js";
-import { seedDocumentItems } from "../lib/snapChecklist.js";
+import { evaluateChecklist } from "@civica/snap-rules";
 
 // Canonical source: packages/snap-enums/src/packetStatus.ts
-// Inlined here because enrollment-api CI uses standalone npm (not pnpm workspace).
-// Migrate this import once enrollment-api-ci.yml switches to pnpm.
+// Inlined here to avoid adding a workspace dep for a single enum.
 const PacketStatusSchema = z.enum([
   "Draft",
   "Submitted for Review",
@@ -104,15 +103,19 @@ app.post("/", zValidator("json", createPacketSchema), async (c) => {
   // Seed required document items from the rules engine. Uses empty answers so
   // only always-required items are created at packet creation; items are
   // re-evaluated (and additional rows inserted) when the applicant submits answers.
-  const seedItems = seedDocumentItems(body.state_code, 1, {});
-  if (seedItems.length > 0) {
+  // Seed required document items from the rules engine. Uses empty answers so
+  // only always-required items are created at packet creation; items are
+  // re-evaluated (and additional rows inserted) when the applicant submits answers.
+  const checklist = evaluateChecklist({ state_code: body.state_code, household_size: 1, answers: {} });
+  if (checklist.required_items.length > 0) {
     const { error: itemsError } = await db
       .schema("snap_enrollment")
       .from("required_document_items")
       .insert(
-        seedItems.map((item) => ({
+        checklist.required_items.map((item) => ({
           packet_id: data.packet_id,
           state_code: body.state_code,
+          // Cast is safe: snap-rules Zod schema constrains document_kind to the DB enum values.
           document_kind: item.document_kind as "paystub" | "photo_id" | "lease" | "utility_bill" | "bank_statement" | "tax_return" | "benefit_letter" | "other",
           label: item.label_en,
           is_required: item.is_required,
