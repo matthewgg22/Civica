@@ -1,5 +1,5 @@
-import { PACKET_STATUS_TRANSITIONS } from '@civica/snap-enums';
-import type { PacketStatus } from '@civica/snap-enums';
+import { PACKET_STATUS_TRANSITIONS } from './packetStatus.js';
+import type { PacketStatus } from './packetStatus.js';
 
 export type { PacketStatus };
 
