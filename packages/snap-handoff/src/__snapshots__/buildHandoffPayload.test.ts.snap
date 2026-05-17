@@ -1,0 +1,98 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`buildHandoffPayload > snapshots the full payload shape so future drift fails the build 1`] = `
+{
+  "answers": [
+    {
+      "answer_source": "applicant",
+      "applicant_answer": "4",
+      "created_at": "2026-05-01T12:00:00.000Z",
+      "navigator_confirmed_value": "4",
+      "question_key": "household_size",
+    },
+  ],
+  "applicant": {
+    "applicant_id": "bbbbbbbb-0000-0000-0000-000000000002",
+    "preferred_language": "en",
+    "state_code": "CA",
+  },
+  "consent": {
+    "consent_id": "consent-00000001",
+    "consent_kind": "privacy_notice",
+    "consent_method": "electronic",
+    "consented_at": "2026-05-01T10:00:00.000Z",
+    "policy_version": "1.0",
+  },
+  "disclaimer": "This handoff packet was prepared by Civica to help organize information for official SNAP review. Civica does not determine SNAP eligibility, approve benefits, or replace an official SNAP application.",
+  "documents": {
+    "checklist": [
+      {
+        "document_kind": "proof_of_identity",
+        "is_required": true,
+        "item_id": "item-00000001",
+        "label": "Photo ID",
+        "resolved_at": "2026-05-01T14:00:00.000Z",
+        "resolved_document_id": "doc-00000001",
+        "waive_reason": null,
+        "waived_at": null,
+      },
+    ],
+    "uploaded": [
+      {
+        "document_id": "doc-00000001",
+        "document_kind": "proof_of_identity",
+        "original_filename": "id.pdf",
+        "processing_status": "complete",
+        "uploaded_at": "2026-05-01T13:00:00.000Z",
+      },
+    ],
+  },
+  "extractions": [
+    {
+      "applicant_answer": "2500",
+      "confidence": 0.98,
+      "extraction_id": "ext-00000001",
+      "field_id": "field-00000001",
+      "field_key": "income_monthly",
+      "navigator_confirmed_value": "2500",
+      "needs_review": false,
+      "original_ocr_value": "2500",
+      "reviewed_at": "2026-05-01T15:00:00.000Z",
+    },
+  ],
+  "generated_at": "2026-05-17T00:00:00.000Z",
+  "notes_meta": [
+    {
+      "author_staff_id": "staff-00000001",
+      "created_at": "2026-05-01T16:00:00.000Z",
+      "note_id": "note-00000001",
+    },
+  ],
+  "packet": {
+    "county": "Alameda",
+    "created_at": "2026-05-01T00:00:00.000Z",
+    "handed_off_at": null,
+    "packet_id": "aaaaaaaa-0000-0000-0000-000000000001",
+    "state_code": "CA",
+    "status": "Ready for Handoff",
+    "submitted_at": "2026-05-02T00:00:00.000Z",
+  },
+  "schema_version": 1,
+  "status_history": [
+    {
+      "changed_by_staff_id": null,
+      "from_status": null,
+      "occurred_at": "2026-05-01T00:00:00.000Z",
+      "reason": null,
+      "to_status": "Draft",
+    },
+    {
+      "changed_by_staff_id": null,
+      "from_status": "Draft",
+      "occurred_at": "2026-05-02T00:00:00.000Z",
+      "reason": "Applicant submitted",
+      "to_status": "Submitted for Review",
+    },
+  ],
+}
+`;

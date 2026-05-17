@@ -5,36 +5,37 @@ on:
     branches: [main, codex/rebuild-feb18, "claude/*", "codex/*"]
     paths:
       - "apps/enrollment-api/**"
+      - "packages/snap-enums/**"
       - ".github/workflows/enrollment-api-ci.yml"
   pull_request:
     paths:
       - "apps/enrollment-api/**"
+      - "packages/snap-enums/**"
       - ".github/workflows/enrollment-api-ci.yml"
 
 jobs:
   ci:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/enrollment-api
 
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        # version is read from packageManager field in root package.json
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: apps/enrollment-api/package-lock.json
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Typecheck
-        run: npm run typecheck
+        run: pnpm --filter @civica/enrollment-api run typecheck
 
       - name: Unit tests
-        run: npm test
+        run: pnpm --filter @civica/enrollment-api run test
         env:
           # Placeholder credentials — all Supabase calls are mocked in tests.
           SUPABASE_URL: https://placeholder.supabase.co
@@ -43,7 +44,7 @@ jobs:
           SNAP_FERNET_KEY: placeholder-fernet-key-32bytes!!
 
       - name: Wrangler dry-run build
-        run: npx wrangler deploy --dry-run --outdir dist
+        run: pnpm --filter @civica/enrollment-api exec wrangler deploy --dry-run --outdir dist
         env:
           CLOUDFLARE_API_TOKEN: placeholder
 
@@ -53,24 +54,22 @@ jobs:
     needs: ci
     # Only deploy on direct pushes to the trunk — not on PRs or feature branches
     if: github.ref == 'refs/heads/codex/rebuild-feb18' && github.event_name == 'push'
-    defaults:
-      run:
-        working-directory: apps/enrollment-api
 
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: apps/enrollment-api/package-lock.json
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Deploy to Cloudflare Workers
-        run: npx wrangler deploy
+        run: pnpm --filter @civica/enrollment-api exec wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

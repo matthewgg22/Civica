@@ -132,11 +132,32 @@ jobs:
         run: pnpm lint --max-warnings 0
         continue-on-error: true
 
+  package-tests:
+    name: Tests (snap-enums + snap-handoff)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run shared package tests
+        run: pnpm --filter @civica/snap-enums --filter @civica/snap-handoff run test
+
   deploy:
     name: Deploy to Fly.io
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: [typecheck, contract-tests]
+    needs: [typecheck, contract-tests, package-tests]
     # Only deploy on direct pushes to the trunk — not on PRs
     if: github.ref == 'refs/heads/codex/rebuild-feb18' && github.event_name == 'push'
 
