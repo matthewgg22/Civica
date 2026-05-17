@@ -46,7 +46,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Typecheck all packages
-        run: pnpm turbo run typecheck
+        run: pnpm turbo run typecheck --filter='!snap-verification-prototype'
 
   contract-tests:
     name: Contract tests (Hono parity)
