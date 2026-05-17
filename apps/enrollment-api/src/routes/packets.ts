@@ -4,8 +4,21 @@ import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
 import { makeAnonClient } from "../lib/supabase.js";
 import { withActorContext } from "../middleware/actorContext.js";
-import { PacketStatusSchema } from "@civica/snap-enums";
 import type { Env } from "../types.js";
+
+// Canonical source: packages/snap-enums/src/packetStatus.ts
+// Inlined here because enrollment-api CI uses standalone npm (not pnpm workspace).
+// Migrate this import once enrollment-api-ci.yml switches to pnpm.
+const PacketStatusSchema = z.enum([
+  "Draft",
+  "Submitted for Review",
+  "Needs Documents",
+  "Needs Applicant Clarification",
+  "In Navigator Review",
+  "Ready for Handoff",
+  "Handed Off",
+  "Closed",
+]);
 
 const app = new Hono<{ Bindings: Env }>();
 
