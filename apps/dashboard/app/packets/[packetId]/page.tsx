@@ -10,6 +10,8 @@ import AnswerReviewList from "../../../components/AnswerReviewList";
 import NotesList from "../../../components/NotesList";
 import StatusPill from "../../../components/StatusPill";
 import LifecycleStrip from "../../../components/LifecycleStrip";
+import HandoffPanel from "../../../components/HandoffPanel";
+import MissingItemRequestPanel from "../../../components/MissingItemRequestPanel";
 import { formatDateTime, decryptDemoName, firstNameLastInitial, shortId } from "../../../lib/format";
 
 const NEXT_STATUSES: Record<string, string[]> = {
@@ -89,6 +91,13 @@ export default async function PacketDetailPage({ params }: { params: Promise<{ p
           <Link href="/packets" className="text-[13px] font-semibold text-brick hover:underline">← Queue</Link>
           <span className="text-hairline">·</span>
           <span className="text-[12px] font-mono tabular-nums text-muted">{shortId(packetId)}</span>
+          <span className="text-hairline">·</span>
+          <Link
+            href={`/packets/${packetId}/audit`}
+            className="text-[12px] uppercase tracking-wider font-semibold text-muted hover:text-graphite"
+          >
+            Audit log →
+          </Link>
         </div>
       </header>
 
@@ -189,6 +198,25 @@ export default async function PacketDetailPage({ params }: { params: Promise<{ p
           <DocumentChecklist packetId={packetId} items={docItems} uploadedDocs={docs} />
         </Section>
 
+        {/* Missing-item requests (navigator-side creator + history) */}
+        <Section
+          title="Missing-Item Requests"
+          subtitle="Send a structured request to the applicant for a missing or unclear document."
+        >
+          <MissingItemRequestPanel
+            packetId={packetId}
+            unresolvedItems={(docItems as Array<{ item_id: string; label: string; document_kind: string; resolved_at: string | null; waived_at: string | null }>)
+              .filter((it) => !it.resolved_at && !it.waived_at)
+              .map((it) => ({
+                item_id: it.item_id,
+                label: it.label,
+                document_kind: it.document_kind,
+                resolved_at: it.resolved_at,
+                waived_at: it.waived_at,
+              }))}
+          />
+        </Section>
+
         {/* Extraction field review */}
         {fields.length > 0 && (
           <Section
@@ -230,6 +258,18 @@ export default async function PacketDetailPage({ params }: { params: Promise<{ p
         {/* Notes */}
         <Section title="Navigator Notes" count={notes.length} subtitle="Internal notes for your team. Mark internal-only to hide from the applicant.">
           <NotesList packetId={packetId} initialNotes={notes} />
+        </Section>
+
+        {/* Handoff export */}
+        <Section
+          title="Handoff &amp; Export"
+          subtitle="Generate a structured packet for the official SNAP application channel. Civica does not determine eligibility."
+        >
+          <HandoffPanel
+            packetId={packetId}
+            packetStatus={packet.status}
+            blockerCount={blockers.length}
+          />
         </Section>
 
         {/* Unified activity timeline — status changes + uploads + notes, sorted by time desc */}
