@@ -64,21 +64,21 @@ struct HTTPSNAPNetworkClient: SNAPNetworkClient {
 
     func startSession(state: String, language: String) async throws -> SNAPStartSessionResponse {
         try await post(
-            path: "/snap/sessions",
+            path: "/me/sessions",
             body: SNAPStartSessionRequest(state: state, language: language)
         )
     }
 
     func sendTurn(sessionId: String, userText: String) async throws -> SNAPTurnResult {
         try await post(
-            path: "/snap/sessions/\(sessionId)/turns",
+            path: "/me/sessions/\(sessionId)/turns",
             body: SNAPSendTurnRequest(userText: userText)
         )
     }
 
     func recoverSession(token: String) async throws -> SNAPStartSessionResponse {
         try await post(
-            path: "/snap/sessions/recover",
+            path: "/me/sessions/recover",
             body: SNAPRecoverSessionRequest(token: token)
         )
     }
@@ -89,7 +89,7 @@ struct HTTPSNAPNetworkClient: SNAPNetworkClient {
         mediaType: String,
         onDeviceQualityPassed: Bool
     ) async throws -> SNAPDocumentUploadResponse {
-        guard let url = URL(string: "/snap/sessions/\(sessionId)/documents", relativeTo: baseURL) else {
+        guard let url = URL(string: "/me/sessions/\(sessionId)/documents", relativeTo: baseURL) else {
             throw SNAPNetworkError.invalidURL
         }
         let boundary = "civica.snap.\(UUID().uuidString)"
@@ -118,7 +118,7 @@ struct HTTPSNAPNetworkClient: SNAPNetworkClient {
     }
 
     func getDocumentStatus(documentId: String) async throws -> SNAPDocumentStatusResponse {
-        try await getJSON(path: "/snap/documents/\(documentId)")
+        try await getJSON(path: "/me/documents/\(documentId)")
     }
 
     func confirmDocument(
@@ -129,13 +129,13 @@ struct HTTPSNAPNetworkClient: SNAPNetworkClient {
             let corrections: [String: String]?
         }
         return try await post(
-            path: "/snap/documents/\(documentId)/confirm",
+            path: "/me/documents/\(documentId)/confirm",
             body: Body(corrections: corrections)
         )
     }
 
     func generateApplicationPDF(sessionId: String) async throws -> Data {
-        guard let url = URL(string: "/snap/sessions/\(sessionId)/application/pdf", relativeTo: baseURL) else {
+        guard let url = URL(string: "/me/sessions/\(sessionId)/application/pdf", relativeTo: baseURL) else {
             throw SNAPNetworkError.invalidURL
         }
         var request = URLRequest(url: url)

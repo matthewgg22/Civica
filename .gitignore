@@ -24,24 +24,29 @@ __pycache__/
 **/.*build/
 CivicaDesignSystem/.build/
 
-# Prisma generated client (re-created by `pnpm db:generate`)
-packages/db/src/generated/
-
 # Node / pnpm / Turborepo
 node_modules/
+**/node_modules/
 .pnpm-store/
 .turbo/
+**/.turbo/
 dist/
+**/dist/
 build-web/
 coverage/
-*.tsbuildinfo
-
-# Next.js
 .next/
 out/
 next-env.d.ts
+*.tsbuildinfo
 
-# Env files (committed examples should be named .env.example)
+# Prisma generated client (re-created by `pnpm db:generate`)
+packages/db/src/generated/
+
+# Cloudflare Wrangler
+.dev.vars
+.wrangler/
+
+# Env files (committed examples named .env.example)
 .env
 .env.local
 .env.*.local
@@ -49,13 +54,9 @@ next-env.d.ts
 .env.production
 .env.staging
 
-# Cloudflare Wrangler
-.dev.vars
-.wrangler/
-
 # Logs
 *.log
 npm-debug.log*
-pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*

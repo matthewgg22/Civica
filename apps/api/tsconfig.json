@@ -1,12 +1,28 @@
 {
   "extends": "@civica/config/tsconfig.node.json",
   "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
-    "noEmit": true,
-    "types": ["@cloudflare/workers-types", "node"],
+    "rootDir": "src",
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "incremental": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
     "paths": {
       "@civica/db-types": ["../../packages/db-types/snap_enrollment.ts"]
     }
   },
-  "include": ["src", "test"]
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules"]
 }

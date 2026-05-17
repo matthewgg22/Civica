@@ -1,0 +1,22 @@
+# Dev-only image for apps/api. Production image lands in Phase 17.
+# Run from repo root: docker build -f apps/api/Dockerfile.dev .
+FROM node:20-alpine
+
+RUN corepack enable && corepack prepare pnpm@9.12.0 --activate
+
+WORKDIR /workspace
+
+# Cache the install layer on package manifests only.
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+COPY apps/api/package.json ./apps/api/
+COPY packages/api-types/package.json ./packages/api-types/
+
+RUN pnpm install --frozen-lockfile
+
+# Source is bind-mounted at runtime by docker-compose; node_modules stays
+# inside the container (anonymous volumes in compose preserve it).
+WORKDIR /workspace/apps/api
+
+EXPOSE 3000
+
+CMD ["pnpm", "dev"]

@@ -85,7 +85,7 @@ app.post("/", zValidator("json", createPacketSchema), async (c) => {
     .insert({
       applicant_id: body.applicant_id,
       state_code: body.state_code,
-      status: "Draft",
+      status: "Draft" as const,
       org_id: body.org_id ?? null,
       county: body.county ?? null,
       county_fips: body.county_fips ?? null,
@@ -119,7 +119,11 @@ app.patch("/:packetId", zValidator("json", updatePacketSchema), async (c) => {
   const { data, error } = await db
     .schema("snap_enrollment")
     .from("snap_packets")
-    .update(updateFields)
+    .update({
+      ...(body.status !== undefined && { status: body.status }),
+      ...(body.notes_for_applicant !== undefined && { notes_for_applicant: body.notes_for_applicant }),
+      ...(body.org_id !== undefined && { org_id: body.org_id }),
+    })
     .eq("packet_id", c.req.param("packetId"))
     .select()
     .single();

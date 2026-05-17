@@ -1,0 +1,1783 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Civica SNAP API",
+    "version": "1.0.0",
+    "description": "REST gateway for the Civica SNAP enrollment-readiness system. Applicant flows proxy to the FastAPI engine with HMAC-signed internal requests. Navigator dashboard endpoints are Hono-direct with transactional audit logging.",
+    "contact": {
+      "name": "Civica Engineering"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local development"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT (Supabase)",
+        "description": "Supabase-issued JWT. Applicant endpoints: anon/user JWT. Staff endpoints: JWT with app_metadata.role claim."
+      }
+    },
+    "schemas": {
+      "SessionCreated": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "opening_turn": {
+            "$ref": "#/components/schemas/TurnResult"
+          }
+        },
+        "required": [
+          "session_id",
+          "opening_turn"
+        ]
+      },
+      "TurnResult": {
+        "type": "object",
+        "properties": {
+          "turn_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "turn_index": {
+            "type": "integer"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "assistant",
+              "system"
+            ]
+          },
+          "content": {
+            "type": "string"
+          },
+          "pipeline_stage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "turn_id",
+          "turn_index",
+          "role",
+          "content",
+          "pipeline_stage"
+        ]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "CreateSessionBody": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 2,
+            "description": "Two-letter US state code, e.g. CA"
+          },
+          "language": {
+            "type": "string",
+            "default": "en",
+            "description": "BCP-47 language tag, e.g. en or es"
+          }
+        },
+        "required": [
+          "state"
+        ]
+      },
+      "RecoverSessionBody": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
+      "SendTurnBody": {
+        "type": "object",
+        "properties": {
+          "user_text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          }
+        },
+        "required": [
+          "user_text"
+        ]
+      },
+      "Transcript": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "turns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "turn_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "turn_index": {
+                  "type": "integer"
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "assistant",
+                    "system"
+                  ]
+                },
+                "content": {
+                  "type": "string"
+                },
+                "pipeline_stage": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "turn_id",
+                "turn_index",
+                "role",
+                "content",
+                "pipeline_stage",
+                "created_at"
+              ]
+            }
+          }
+        },
+        "required": [
+          "session_id",
+          "turns"
+        ]
+      },
+      "DocumentUploadResponse": {
+        "type": "object",
+        "properties": {
+          "document_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "processing_status": {
+            "type": "string",
+            "enum": [
+              "processing",
+              "awaiting_confirmation",
+              "rejected"
+            ]
+          }
+        },
+        "required": [
+          "document_id",
+          "processing_status"
+        ]
+      },
+      "DocumentStatus": {
+        "type": "object",
+        "properties": {
+          "document_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "session_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "document_type": {
+            "type": "string",
+            "enum": [
+              "unknown",
+              "paystub",
+              "photo_id",
+              "lease",
+              "utility_bill",
+              "other"
+            ]
+          },
+          "on_device_quality_passed": {
+            "type": "boolean"
+          },
+          "user_confirmed": {
+            "type": "boolean"
+          },
+          "extraction": {
+            "nullable": true
+          }
+        },
+        "required": [
+          "document_id",
+          "session_id",
+          "document_type",
+          "on_device_quality_passed",
+          "user_confirmed"
+        ]
+      },
+      "DocumentConfirmBody": {
+        "type": "object",
+        "properties": {
+          "corrections": {
+            "nullable": true
+          }
+        }
+      },
+      "SessionsList": {
+        "type": "object",
+        "properties": {
+          "sessions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NavigatorSessionSummary"
+            }
+          }
+        },
+        "required": [
+          "sessions"
+        ]
+      },
+      "NavigatorSessionSummary": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "abandoned",
+              "completed"
+            ]
+          },
+          "navigator_status": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "awaiting_navigator",
+              "in_review",
+              "ready_for_handoff",
+              "handed_off",
+              null
+            ]
+          },
+          "state": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "navigator_id": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "session_id",
+          "status",
+          "navigator_status",
+          "state",
+          "language",
+          "created_at",
+          "updated_at",
+          "navigator_id"
+        ]
+      },
+      "Assignment": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "assignment_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "navigator_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assigned_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "assignment_id",
+          "navigator_id",
+          "assigned_at"
+        ]
+      },
+      "Note": {
+        "type": "object",
+        "properties": {
+          "note_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "author_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "body": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "note_id",
+          "author_id",
+          "body",
+          "created_at"
+        ]
+      },
+      "MissingItem": {
+        "type": "object",
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "item_type": {
+            "type": "string"
+          },
+          "item_description": {
+            "type": "string",
+            "nullable": true
+          },
+          "requested_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resolved_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "resolved_by": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "resolution_note": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "request_id",
+          "item_type",
+          "item_description",
+          "requested_at",
+          "resolved_at",
+          "resolved_by",
+          "resolution_note"
+        ]
+      },
+      "StatusTransitionResponse": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "navigator_status": {
+            "type": "string",
+            "enum": [
+              "awaiting_navigator",
+              "in_review",
+              "ready_for_handoff",
+              "handed_off"
+            ]
+          }
+        },
+        "required": [
+          "session_id",
+          "navigator_status"
+        ]
+      },
+      "TransitionError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "enum": [
+              "not_assigned",
+              "missing_consent",
+              "missing_required_docs",
+              "terminal_state",
+              "invalid_transition"
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error",
+          "message"
+        ]
+      },
+      "StatusTransitionBody": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "enum": [
+              "awaiting_navigator",
+              "in_review",
+              "ready_for_handoff",
+              "handed_off"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "to"
+        ]
+      },
+      "AssignBody": {
+        "type": "object",
+        "properties": {
+          "navigator_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "navigator_id"
+        ]
+      },
+      "NoteBody": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          }
+        },
+        "required": [
+          "body"
+        ]
+      },
+      "MissingItemBody": {
+        "type": "object",
+        "properties": {
+          "item_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "item_description": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "item_type"
+        ]
+      },
+      "ResolveMissingItemBody": {
+        "type": "object",
+        "properties": {
+          "resolution_note": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        }
+      },
+      "AuditLog": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "audit_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "action": {
+                  "type": "string"
+                },
+                "actor_kind": {
+                  "type": "string"
+                },
+                "actor_id": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "request_id": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "column_or_resource": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "occurred_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "audit_id",
+                "action",
+                "actor_kind",
+                "actor_id",
+                "reason",
+                "request_id",
+                "column_or_resource",
+                "occurred_at"
+              ]
+            }
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "session_id",
+          "entries",
+          "limit",
+          "offset"
+        ]
+      },
+      "OcrWebhookResponse": {
+        "type": "object",
+        "properties": {
+          "document_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "processing_status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "awaiting_confirmation",
+                  "rejected",
+                  "already_processed"
+                ]
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "already_processed"
+                ]
+              }
+            ]
+          }
+        },
+        "required": [
+          "document_id",
+          "processing_status"
+        ]
+      },
+      "OcrWebhookBody": {
+        "type": "object",
+        "properties": {
+          "document_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "failure"
+            ]
+          },
+          "document_type": {
+            "type": "string",
+            "enum": [
+              "unknown",
+              "paystub",
+              "photo_id",
+              "lease",
+              "utility_bill",
+              "other"
+            ]
+          },
+          "classification_confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "extraction_confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "extracted_data": {
+            "nullable": true
+          },
+          "error_code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id",
+          "status"
+        ]
+      }
+    },
+    "parameters": {}
+  },
+  "paths": {
+    "/healthz": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Liveness check",
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    },
+                    "service": {
+                      "type": "string"
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "service",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/sessions": {
+      "post": {
+        "tags": [
+          "Applicant"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Start a SNAP eligibility session",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSessionBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionCreated"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/sessions/recover": {
+      "post": {
+        "tags": [
+          "Applicant"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Resume a session via magic-link token (stub — 501 until email flow is built)",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoverSessionBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "501": {
+            "description": "Not yet implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/sessions/{id}/turns": {
+      "post": {
+        "tags": [
+          "Applicant"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Send a conversation turn",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendTurnBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Turn processed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "turn_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "role": {
+                      "type": "string"
+                    },
+                    "content": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "turn_id",
+                    "role",
+                    "content"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/sessions/{id}/transcript": {
+      "get": {
+        "tags": [
+          "Applicant"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List all conversation turns for a session",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transcript",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transcript"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/sessions/{id}/documents": {
+      "post": {
+        "tags": [
+          "Applicant"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Upload a document for OCR processing (multipart/form-data)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "nullable": true,
+                    "description": "The document image (JPEG, PNG, PDF)"
+                  },
+                  "on_device_quality_passed": {
+                    "type": "boolean",
+                    "default": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Upload initiated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentUploadResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/documents/{docId}": {
+      "get": {
+        "tags": [
+          "Applicant"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Poll document processing status",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "docId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentStatus"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Document not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/documents/{docId}/confirm": {
+      "post": {
+        "tags": [
+          "Applicant"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Confirm extracted document data (optionally with corrections)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "docId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentConfirmBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Confirmed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentStatus"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Document not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/sessions/{id}/application/pdf": {
+      "post": {
+        "tags": [
+          "Applicant"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Generate a SNAP application PDF summary",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application PDF",
+            "headers": {
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string",
+                  "description": "attachment; filename=\"civica-snap-summary-<id>.pdf\""
+                },
+                "required": true,
+                "description": "attachment; filename=\"civica-snap-summary-<id>.pdf\""
+              },
+              "X-SNAP-Rendering-Path": {
+                "schema": {
+                  "type": "string",
+                  "description": "html_weasyprint | latex | fallback_text"
+                },
+                "required": false,
+                "description": "html_weasyprint | latex | fallback_text"
+              }
+            },
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "nullable": true,
+                  "description": "PDF binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/navigator/sessions": {
+      "get": {
+        "tags": [
+          "Navigator"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List sessions with optional filters",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "awaiting_navigator",
+                "in_review",
+                "ready_for_handoff",
+                "handed_off"
+              ]
+            },
+            "required": false,
+            "name": "navigator_status",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 2
+            },
+            "required": false,
+            "name": "state",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "name": "assigned_to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sessions list (max 100)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionsList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/navigator/sessions/{id}": {
+      "get": {
+        "tags": [
+          "Navigator"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Session detail with assignment, notes, and missing items",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "session": {
+                      "nullable": true
+                    },
+                    "assignment": {
+                      "$ref": "#/components/schemas/Assignment"
+                    },
+                    "notes": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Note"
+                      }
+                    },
+                    "missing_items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/MissingItem"
+                      }
+                    }
+                  },
+                  "required": [
+                    "assignment",
+                    "notes",
+                    "missing_items"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/navigator/sessions/{id}/status": {
+      "patch": {
+        "tags": [
+          "Navigator"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Transition navigator workflow status",
+        "description": "Enforces the transition matrix. Returns 422 with a structured error code when the transition is blocked.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatusTransitionBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transitioned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusTransitionResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Transition blocked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransitionError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/navigator/sessions/{id}/assign": {
+      "post": {
+        "tags": [
+          "Navigator"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Assign session to a navigator (replaces current assignment)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Assigned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "assignment": {
+                      "$ref": "#/components/schemas/Assignment"
+                    }
+                  },
+                  "required": [
+                    "assignment"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/navigator/sessions/{id}/notes": {
+      "post": {
+        "tags": [
+          "Navigator"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Add an immutable note to a session",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NoteBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Note added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "note": {
+                      "$ref": "#/components/schemas/Note"
+                    }
+                  },
+                  "required": [
+                    "note"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/navigator/sessions/{id}/missing-items": {
+      "post": {
+        "tags": [
+          "Navigator"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Request a missing document or piece of information",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MissingItemBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Requested",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "item": {
+                      "$ref": "#/components/schemas/MissingItem"
+                    }
+                  },
+                  "required": [
+                    "item"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/navigator/sessions/{id}/missing-items/{itemId}": {
+      "patch": {
+        "tags": [
+          "Navigator"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Resolve a missing item request",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "itemId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolveMissingItemBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resolved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "item": {
+                      "$ref": "#/components/schemas/MissingItem"
+                    }
+                  },
+                  "required": [
+                    "item"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Already resolved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/navigator/sessions/{id}/audit-log": {
+      "get": {
+        "tags": [
+          "Navigator"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Paginated audit log for a session",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "nullable": true,
+              "minimum": 0,
+              "default": 0
+            },
+            "required": false,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Audit entries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditLog"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webhooks/ocr": {
+      "post": {
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "OCR result callback from Textract / Document AI",
+        "description": "Body must be signed with HMAC-SHA256; send signature as `X-Webhook-Signature: sha256=<hex>`.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "sha256=<hex-digest>"
+            },
+            "required": true,
+            "description": "sha256=<hex-digest>",
+            "name": "x-webhook-signature",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OcrWebhookBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Processed (idempotent)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OcrWebhookResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid signature",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Document not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Webhook secret not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

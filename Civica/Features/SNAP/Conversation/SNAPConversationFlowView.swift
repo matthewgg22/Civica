@@ -57,11 +57,23 @@ struct SNAPConversationFlowView: View {
     }
 
     /// Default network client. Mock when no backend URL is configured;
-    /// real HTTP client when SNAPConversationBackendURL is set in
-    /// Info.plist or as a launch argument.
+    /// real HTTP client when a gateway URL is available.
+    ///
+    /// URL resolution order:
+    ///   1. SNAP_GATEWAY_URL process environment variable (set by the
+    ///      "Civica Staging" Xcode scheme for gateway integration testing)
+    ///   2. SNAPConversationBackendURL Info.plist key (manual override)
+    ///   3. MockSNAPNetworkClient (default for all other builds)
+    ///
+    /// Note: HTTPSNAPNetworkClient sends requests to /me/* endpoints on
+    /// the Hono gateway. Supply an authTokenProvider when Supabase user
+    /// sessions are available; the gateway will return 401 without a
+    /// valid JWT. TODO: wire auth when Supabase sign-in is integrated.
     static func defaultClient() -> SNAPNetworkClient {
-        if let urlString = Bundle.main.object(forInfoDictionaryKey: "SNAPConversationBackendURL") as? String,
-           let url = URL(string: urlString) {
+        let env = ProcessInfo.processInfo.environment
+        let urlString = env["SNAP_GATEWAY_URL"]
+            ?? (Bundle.main.object(forInfoDictionaryKey: "SNAPConversationBackendURL") as? String)
+        if let urlString, let url = URL(string: urlString) {
             return HTTPSNAPNetworkClient(baseURL: url)
         }
         return MockSNAPNetworkClient()
