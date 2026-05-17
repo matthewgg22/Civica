@@ -1,4 +1,4 @@
-import type { StateCode } from "./types.js";
+import type { StateCode } from "./types";
 
 export interface StateAssetRule {
   state: StateCode;

@@ -9,11 +9,11 @@
 //   5. Net income test — 100% FPL
 //   6. Benefit = max(max_allotment − 30% × net, min_allotment)
 
-export type { StateCode, SuaTier, Confidence, VerificationFlow, SnapCalculatorInput, SnapDeductionBreakdown } from "./types.js";
-export { STATE_SUA_RULES, determineSuaTier } from "./sua-rules.js";
-export { STATE_ASSET_RULES, SHELTER_CITATIONS, INCOME_CITATIONS } from "./asset-rules.js";
+export type { StateCode, SuaTier, Confidence, VerificationFlow, SnapCalculatorInput, SnapDeductionBreakdown } from "./types";
+export { STATE_SUA_RULES, determineSuaTier } from "./sua-rules";
+export { STATE_ASSET_RULES, SHELTER_CITATIONS, INCOME_CITATIONS } from "./asset-rules";
 
-import type { StateCode, SnapCalculatorInput, SnapDeductionBreakdown } from "./types.js";
+import type { StateCode, SnapCalculatorInput, SnapDeductionBreakdown } from "./types";
 
 const MAX_ALLOTMENT: Record<number, number> = {
   1: 292, 2: 536, 3: 768, 4: 975, 5: 1158, 6: 1390, 7: 1536, 8: 1756,

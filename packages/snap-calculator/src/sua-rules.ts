@@ -1,4 +1,4 @@
-import type { StateCode, SuaTier, UtilityIntake } from "./types.js";
+import type { StateCode, SuaTier, UtilityIntake } from "./types";
 
 export interface StateSuaRule {
   state: StateCode;

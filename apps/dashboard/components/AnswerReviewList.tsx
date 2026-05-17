@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "../lib/supabase";
 import { api } from "../lib/api";
+import { decryptDemoName } from "../lib/format";
 
 interface Answer {
   answer_id: string;
@@ -48,7 +49,7 @@ export default function AnswerReviewList({ answers }: { answers: Answer[] }) {
           <div className="grid grid-cols-3 gap-4 text-[15px] mb-3">
             <div>
               <p className="eyebrow mb-1">Applicant</p>
-              <p className="text-ink">{a.applicant_answer ?? "—"}</p>
+              <p className="text-ink">{a.applicant_answer ? decryptDemoName(a.applicant_answer) : "—"}</p>
             </div>
             <div>
               <p className="eyebrow mb-1">OCR</p>
