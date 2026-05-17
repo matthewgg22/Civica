@@ -26,6 +26,11 @@ struct CivicaApp: App {
     var body: some Scene {
         WindowGroup {
             CivicaRootView()
+                .task {
+                    // Pre-warm large FindHelp fixtures from Supabase Storage.
+                    // No-op if already cached; runs once per install in the background.
+                    await FindHelpFixtureDownloader.shared.prefetchIfNeeded()
+                }
         }
     }
 }
