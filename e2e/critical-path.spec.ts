@@ -16,7 +16,7 @@
  * ── Pre-conditions ───────────────────────────────────────────────────────────
  * • E2E_SUPABASE_URL, E2E_SUPABASE_SERVICE_ROLE_KEY, E2E_SUPABASE_ANON_KEY
  * • E2E_ENROLLMENT_API_URL pointing to the deployed enrollment-api
- * • (optional) E2E_API_URL for the PDF handoff sub-test
+ * • E2E_API_URL pointing to the deployed apps/api (navigator assign + PDF handoff)
  *
  * Missing vars cause the suite to skip cleanly.
  */
@@ -34,6 +34,7 @@ import {
   getPacket,
   listPacketsAsStaff,
   patchPacketStatus,
+  assignSession,
   createHandoffExport,
   getHandoffDownload,
   listHandoffExports,
@@ -47,6 +48,7 @@ const REQUIRED_VARS = [
   "E2E_SUPABASE_SERVICE_ROLE_KEY",
   "E2E_SUPABASE_ANON_KEY",
   "E2E_ENROLLMENT_API_URL",
+  "E2E_API_URL",
 ] as const;
 
 function missingVars(): string[] {
@@ -86,30 +88,6 @@ function skipIfNotConfigured() {
   if (missingVars().length > 0) {
     test.skip(true, `Missing env vars: ${missingVars().join(", ")}`);
   }
-}
-
-/**
- * Inserts a packet_assignments row directly via service role.
- * Bypasses apps/api navigator.ts POST /sessions/:id/assign because that
- * handler writes c.var.staff.sub (auth UID) into assigned_by_staff_id, which
- * is a FK to staff_users(staff_id) — a different UUID. The DB rejects it.
- * TODO: fix navigator.ts to look up staff_id from staff_users table.
- */
-async function assignPacketToNavigator(packetId: string, staffId: string): Promise<void> {
-  const url = process.env["E2E_SUPABASE_URL"]!;
-  const key = process.env["E2E_SUPABASE_SERVICE_ROLE_KEY"]!;
-  const admin = createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
-  const se = () => admin.schema("snap_enrollment");
-
-  const { error } = await se()
-    .from("packet_assignments")
-    .insert({
-      packet_id: packetId,
-      staff_id: staffId,
-      // assigned_by_staff_id omitted — nullable FK; see TODO above
-    });
-
-  if (error) throw new Error(`packet_assignments insert failed: ${error.message}`);
 }
 
 /**
@@ -208,11 +186,12 @@ test.describe("Act 2 — Navigator review", () => {
     skipIfNotConfigured();
     expect(packetId).toBeTruthy();
 
-    // Insert assignment directly (bypasses navigator.ts FK bug — see helper comment)
-    await assignPacketToNavigator(packetId, ctx.staff.staffId);
+    // POST /navigator/sessions/:id/assign — requireStaffJwt now resolves
+    // staff_id from staff_users, so assigned_by_staff_id FK is valid (PR #101).
+    const { assignment } = await assignSession(ctx.staff.jwt, packetId, ctx.staff.staffId);
+    expect(assignment.assignment_id).toBeTruthy();
+    expect(assignment.navigator_id).toBe(ctx.staff.staffId);
 
-    // Transition via enrollment-api PATCH /packets/:id (uses withActorContext
-    // which correctly sets actor_id = staff_users.staff_id for the DB trigger)
     const updated = await patchPacketStatus(ctx.staff.jwt, packetId, "In Navigator Review");
     expect(updated.status).toBe("In Navigator Review");
   });

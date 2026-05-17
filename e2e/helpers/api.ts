@@ -201,9 +201,22 @@ export async function createPdfHandoff(jwt: string, packetId: string, agency_ref
   };
 }
 
-// ── Enrollment-API: packet assignments (service-level) ────────────────────────
-// navigator.ts in apps/api has a bug where it writes c.var.staff.sub (auth UID)
-// into assigned_by_staff_id, which is a FK to staff_users(staff_id) — not the
-// same UUID. We bypass that endpoint and insert the assignment directly via the
-// Supabase admin client in the spec setup, which ensures the correct staff_id.
-// See: apps/api/src/routes/navigator.ts POST /sessions/:id/assign
+// ── Apps-API: navigator session assignment ────────────────────────────────────
+
+export async function assignSession(
+  jwt: string,
+  sessionId: string,
+  navigatorId: string,
+) {
+  const res = await assertOk(
+    await fetch(apiUrl(`/navigator/sessions/${sessionId}/assign`), {
+      method: "POST",
+      headers: authHeaders(jwt),
+      body: JSON.stringify({ navigator_id: navigatorId }),
+    }),
+    `POST /navigator/sessions/${sessionId}/assign`,
+  );
+  return (await res.json()) as {
+    assignment: { assignment_id: string; navigator_id: string; assigned_at: string };
+  };
+}
