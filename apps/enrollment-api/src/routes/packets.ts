@@ -5,10 +5,11 @@ import { HTTPException } from "hono/http-exception";
 import { makeAnonClient } from "../lib/supabase.js";
 import { withActorContext } from "../middleware/actorContext.js";
 import type { Env } from "../types.js";
+import { evaluateChecklist } from "@civica/snap-rules";
+import type { ChecklistAnswers } from "@civica/snap-rules";
 
-// Canonical source: packages/snap-enums/src/packetStatus.ts
-// Inlined here because enrollment-api CI uses standalone npm (not pnpm workspace).
-// Migrate this import once enrollment-api-ci.yml switches to pnpm.
+// Canonical source: packages/snap-enums/src/packetStatus.ts — inlined to avoid
+// a circular dependency between the enrollment-api bundle and snap-enums build.
 const PacketStatusSchema = z.enum([
   "Draft",
   "Submitted for Review",
@@ -136,8 +137,89 @@ app.patch("/:packetId", zValidator("json", updatePacketSchema), async (c) => {
   if (error?.code === "P0001") throw new HTTPException(422, { message: error.message });
   if (error?.code === "PGRST116") throw new HTTPException(404, { message: "Packet not found" });
   if (error) throw new HTTPException(500, { message: error.message });
+
+  // Auto-seed required document items when a packet enters "Needs Documents".
+  // Idempotent: skipped when items already exist (manual seed or re-transition).
+  if (body.status === "Needs Documents" && data) {
+    const packetId = c.req.param("packetId");
+
+    const { count } = await db
+      .schema("snap_enrollment")
+      .from("required_document_items")
+      .select("item_id", { count: "exact", head: true })
+      .eq("packet_id", packetId);
+
+    if ((count ?? 0) === 0) {
+      const { data: answerRows } = await db
+        .schema("snap_enrollment")
+        .from("packet_answers")
+        .select("question_key, applicant_answer")
+        .eq("packet_id", packetId);
+
+      const answers = packetAnswersToChecklistAnswers(answerRows ?? []);
+      const { items } = evaluateChecklist({ state: data.state_code, answers });
+
+      if (items.length > 0) {
+        await db
+          .schema("snap_enrollment")
+          .from("required_document_items")
+          .insert(
+            items.map((item) => ({
+              packet_id: packetId,
+              state_code: data.state_code,
+              document_kind: item.category,
+              label: item.label,
+              is_required: true as const,
+            }))
+          );
+      }
+    }
+  }
+
   return c.json(data);
 });
+
+// Maps packet_answers rows (question_key + applicant_answer string pairs) to the
+// typed ChecklistAnswers the rules engine understands. Question keys are defined
+// in src/lib/questions.ts; income_sources answers are stored as a JSON array string.
+function packetAnswersToChecklistAnswers(
+  rows: Array<{ question_key: string; applicant_answer: string | null }>
+): ChecklistAnswers {
+  const m = new Map(rows.map((r) => [r.question_key, r.applicant_answer ?? ""]));
+  const EARNED = new Set(["employed_full_time", "employed_part_time", "self_employed"]);
+  const UNEARNED = new Set(["social_security", "ssi", "unemployment", "child_support", "pension", "rental_income"]);
+
+  const answers: ChecklistAnswers = {};
+
+  const sizeRaw = m.get("household_size");
+  if (sizeRaw) {
+    const n = parseInt(sizeRaw, 10);
+    if (!isNaN(n) && n > 0) answers.household_size = n;
+  }
+
+  const employment = m.get("employment_status");
+  if (employment) answers.has_earned_income = EARNED.has(employment);
+
+  const sourcesRaw = m.get("income_sources");
+  if (sourcesRaw) {
+    let sources: string[] = [];
+    try {
+      const parsed: unknown = JSON.parse(sourcesRaw);
+      if (Array.isArray(parsed)) sources = parsed as string[];
+    } catch {
+      sources = sourcesRaw.split(",").map((s) => s.trim()).filter(Boolean);
+    }
+    answers.has_unearned_income = sources.some((s) => UNEARNED.has(s));
+  }
+
+  const rent = m.get("monthly_rent_or_mortgage");
+  if (rent) answers.claims_shelter_deduction = parseFloat(rent) > 0;
+
+  const utils = m.get("monthly_utilities");
+  if (utils) answers.claims_utility_deduction = parseFloat(utils) > 0;
+
+  return answers;
+}
 
 // Status history
 app.get("/:packetId/history", async (c) => {

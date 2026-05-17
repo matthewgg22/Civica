@@ -40,13 +40,17 @@ export function loadRules(stateCode: string): RulesFile {
 
 export const SUPPORTED_STATES = Object.keys(RAW_FILES) as string[];
 
-// Canonical human-readable labels for document_kind values. Derived from
-// ca.json so the dashboard, API, and iOS all share one source of truth.
-// Falls back to prettified category string for any future categories not
-// yet in the rules files.
+// Canonical human-readable labels for document_kind values. Merged from all
+// supported states (first occurrence wins) so that categories present only in
+// one state are still covered. Falls back to the raw category string.
 export const DOCUMENT_KIND_LABELS: Record<string, string> = (() => {
-  const ca = loadRules("CA");
-  return Object.fromEntries(ca.document_requirements.map((r) => [r.category, r.label]));
+  const labels: Record<string, string> = {};
+  for (const sc of SUPPORTED_STATES) {
+    for (const req of loadRules(sc).document_requirements) {
+      if (!(req.category in labels)) labels[req.category] = req.label;
+    }
+  }
+  return labels;
 })();
 
 // ---------------------------------------------------------------------------
