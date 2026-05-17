@@ -8,6 +8,8 @@ RUN corepack enable && corepack prepare pnpm@9.12.0 --activate
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/config/package.json       ./packages/config/
 COPY packages/types/package.json        ./packages/types/
+COPY packages/snap-enums/package.json   ./packages/snap-enums/
+COPY packages/snap-handoff/package.json ./packages/snap-handoff/
 COPY apps/api/package.json              ./apps/api/
 
 # Install only production deps (tsx is in dependencies, not devDependencies)
@@ -19,6 +21,8 @@ RUN pnpm install --frozen-lockfile --prod
 COPY packages/config/       ./packages/config/
 COPY packages/types/        ./packages/types/
 COPY packages/db-types/     ./packages/db-types/
+COPY packages/snap-enums/   ./packages/snap-enums/
+COPY packages/snap-handoff/ ./packages/snap-handoff/
 COPY apps/api/src/          ./apps/api/src/
 
 # ── Runtime ───────────────────────────────────────────────────────────────────
