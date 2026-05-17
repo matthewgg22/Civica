@@ -21,6 +21,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@civica/snap-enums':
+        specifier: workspace:*
+        version: link:../../packages/snap-enums
       '@civica/types':
         specifier: workspace:*
         version: link:../../packages/types

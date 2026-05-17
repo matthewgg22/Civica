@@ -4,7 +4,7 @@ import type { StaffEnv } from '../auth/types.js';
 import { canTransition } from '../domain/status.js';
 import { navigatorRateLimit } from '../lib/rateLimit.js';
 import { supabaseAdmin } from '../lib/supabase.js';
-import type { PacketStatus } from '../domain/packetStatus.js';
+import type { PacketStatus } from '@civica/snap-enums';
 
 export const navigatorRoutes = new Hono<StaffEnv>();
 
