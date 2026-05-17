@@ -1,6 +1,7 @@
 "use server";
 
 import { createSupabaseServerClient } from "./supabase-server";
+import { env } from "@/lib/env";
 
 export type AuthActionResult =
   | { success: true; message: string }
@@ -11,7 +12,7 @@ export async function sendMagicLink(
   locale: string
 ): Promise<AuthActionResult> {
   const supabase = await createSupabaseServerClient();
-  const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/${locale}/auth/callback?next=/${locale}/app/packet`;
+  const redirectTo = `${env.NEXT_PUBLIC_SITE_URL}/${locale}/auth/callback?next=/${locale}/app/packet`;
 
   const { error } = await supabase.auth.signInWithOtp({
     email,

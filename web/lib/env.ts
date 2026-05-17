@@ -4,6 +4,9 @@ const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
   NEXT_PUBLIC_API_BASE_URL: z.string().url(),
+  // Required for magic-link auth redirects. Without this the callback URL has
+  // no host and Supabase silently sends a broken redirect link.
+  NEXT_PUBLIC_SITE_URL: z.string().url(),
 });
 
 function validateEnv() {
@@ -11,6 +14,7 @@ function validateEnv() {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   });
 
   if (!result.success) {
