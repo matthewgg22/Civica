@@ -1,31 +1,10 @@
 import { z } from "zod";
 import { ExtractionFieldSchema } from "./extraction.js";
-
-// These enums mirror the DB values for fixtures / API validation.
-// Canonical source of truth for the 8-state workflow lives in
-// packages/snap-enums (to be created) and supabase migrations.
-export const DocumentTypeSchema = z.enum([
-  "photo_id",
-  "paystub",
-  "utility_bill",
-  "bank_statement",
-  "tax_return",
-  "social_security_card",
-  "birth_certificate",
-  "lease_agreement",
-  "other",
-]);
-export type DocumentType = z.infer<typeof DocumentTypeSchema>;
-
-export const DocumentStatusSchema = z.enum([
-  "pending",
-  "uploading",
-  "processing",
-  "extracted",
-  "failed",
-  "rejected",
-]);
-export type DocumentStatus = z.infer<typeof DocumentStatusSchema>;
+// Canonical enum definitions live in snap-enums; imported for local schema use
+// and re-exported for backwards compat with packages/fixtures and packages/ui.
+import { DocumentTypeSchema, DocumentStatusSchema } from "@civica/snap-enums";
+export { DocumentTypeSchema, DocumentStatusSchema } from "@civica/snap-enums";
+export type { DocumentType, DocumentStatus } from "@civica/snap-enums";
 
 export const SupportedStateSchema = z.enum(["CA", "MA"]);
 export type SupportedState = z.infer<typeof SupportedStateSchema>;

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cn } from "../lib/utils.js";
-import type { PacketStatus, DocumentStatus } from "@civica/types";
+import type { PacketStatus } from "@civica/types";
+import type { DocumentStatus } from "@civica/snap-enums";
 
 type Status = PacketStatus | DocumentStatus;
 

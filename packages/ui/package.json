@@ -17,6 +17,7 @@
     "react-dom": "^18 || ^19"
   },
   "dependencies": {
+    "@civica/snap-enums": "workspace:*",
     "@civica/types": "workspace:*",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-label": "^2.1.0",

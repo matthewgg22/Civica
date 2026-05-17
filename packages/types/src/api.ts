@@ -16,15 +16,6 @@ export function paginatedResponse<T extends z.ZodTypeAny>(itemSchema: T) {
   });
 }
 
-export const OcrWebhookPayloadSchema = z.object({
-  job_id: z.string().uuid(),
-  document_id: z.string().uuid(),
-  success: z.boolean(),
-  fields: z.array(z.any()).optional(),
-  error: z.string().optional(),
-});
-export type OcrWebhookPayload = z.infer<typeof OcrWebhookPayloadSchema>;
-
 export const SignedUploadUrlResponseSchema = z.object({
   upload_url: z.string().url(),
   storage_path: z.string(),

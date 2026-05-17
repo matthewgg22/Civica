@@ -355,6 +355,9 @@ importers:
 
   packages/types:
     dependencies:
+      '@civica/snap-enums':
+        specifier: workspace:*
+        version: link:../snap-enums
       zod:
         specifier: ^3.23.8
         version: 3.25.76
@@ -368,6 +371,9 @@ importers:
 
   packages/ui:
     dependencies:
+      '@civica/snap-enums':
+        specifier: workspace:*
+        version: link:../snap-enums
       '@civica/types':
         specifier: workspace:*
         version: link:../types

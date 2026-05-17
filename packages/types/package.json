@@ -12,6 +12,7 @@
     "lint": "eslint src/"
   },
   "dependencies": {
+    "@civica/snap-enums": "workspace:*",
     "zod": "^3.23.8"
   },
   "devDependencies": {
