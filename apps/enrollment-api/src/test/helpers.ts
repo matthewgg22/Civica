@@ -7,6 +7,7 @@ export const TEST_ENV: Env = {
   SUPABASE_SERVICE_ROLE_KEY: 'placeholder-service-role-key',
   SUPABASE_ANON_KEY: 'placeholder-anon-key',
   SNAP_FERNET_KEY: 'placeholder-fernet-key-32bytes!!',
+  SENTRY_DSN: '', // empty string → Sentry.init() silently skips in tests
 };
 
 export const NAVIGATOR: Actor = { kind: 'navigator', id: 'nav-001', orgId: 'org-001' };

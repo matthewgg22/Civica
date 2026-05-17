@@ -1,7 +1,6 @@
-import type { Event } from "@sentry/cloudflare";
+import type { ErrorEvent } from "@sentry/cloudflare";
 import { PII_KEYS } from "./logger.js";
 
-// Hash applicant_id for correlation without exposing the raw UUID.
 async function hashId(id: string): Promise<string> {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(id));
   return Array.from(new Uint8Array(buf))
@@ -20,37 +19,36 @@ function redactObject(obj: unknown, depth = 0): unknown {
   return out;
 }
 
-export async function scrubEvent(event: Event): Promise<Event | null> {
-  // Strip request body and sensitive headers entirely
+export async function scrubEvent(event: ErrorEvent): Promise<ErrorEvent | null> {
+  // Strip request body, cookies, and most headers — keep only content-type
   if (event.request) {
+    const { data: _d, cookies: _c, ...rest } = event.request;
     event.request = {
-      ...event.request,
-      data: undefined,
-      cookies: undefined,
-      headers: {
-        "content-type": event.request.headers?.["content-type"] ?? "",
-      },
+      ...rest,
+      headers: { "content-type": event.request.headers?.["content-type"] ?? "" },
     };
   }
 
-  // Strip user PII; preserve hashed id for incident correlation
+  // Preserve a hashed user id for incident correlation; strip all other user fields
   if (event.user) {
     const rawId = event.user.id;
-    event.user = {
-      id: rawId ? await hashId(rawId) : undefined,
-    };
+    event.user = rawId !== undefined
+      ? { id: await hashId(String(rawId)) }
+      : {};
   }
 
-  // Redact extra / contexts
   if (event.extra) event.extra = redactObject(event.extra) as typeof event.extra;
   if (event.contexts) event.contexts = redactObject(event.contexts) as typeof event.contexts;
 
-  // Redact breadcrumb data (SDK v8+ uses Breadcrumb[] directly)
+  // Redact breadcrumb data — avoid setting data to undefined (exactOptionalPropertyTypes)
   if (Array.isArray(event.breadcrumbs)) {
-    event.breadcrumbs = event.breadcrumbs.map((b) => ({
-      ...b,
-      data: b.data ? (redactObject(b.data) as typeof b.data) : undefined,
-    }));
+    event.breadcrumbs = event.breadcrumbs.map((b): typeof b => {
+      const { data: origData, ...rest } = b;
+      if (origData !== undefined) {
+        return { ...rest, data: redactObject(origData) as typeof origData };
+      }
+      return rest as typeof b;
+    });
   }
 
   return event;

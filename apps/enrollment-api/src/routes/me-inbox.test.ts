@@ -15,7 +15,7 @@ import { makeAnonClient } from '../lib/supabase.js';
 import { withActorContext } from '../middleware/actorContext.js';
 import { getOrCreateApplicant } from '../lib/applicant.js';
 import meInboxRouter from './me-inbox.js';
-import fullApp from '../index.js';
+import { app as fullApp } from '../index.js';
 import { TEST_ENV, NAVIGATOR, APPLICANT, makeDbClient, makeQueryBuilder, buildTestApp } from '../test/helpers.js';
 
 const MOCK_APPLICANT = { applicant_id: 'app-001', state_code: 'CA' as const, preferred_language: 'en' };

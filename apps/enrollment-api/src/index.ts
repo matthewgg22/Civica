@@ -60,6 +60,9 @@ app.onError((err, c) => {
   return c.json({ error: "Internal server error" }, 500);
 });
 
+// Named export for unit tests — raw Hono app without the Sentry wrapper
+export { app };
+
 export default withSentry(
   (env: Env) => ({
     dsn: env.SENTRY_DSN,
