@@ -1,0 +1,126 @@
+{
+  "version": 1,
+  "scope": "ca",
+  "locations": [
+    {
+      "id": "a71e86bd-c429-41f1-9c16-d9728430c3ee",
+      "external_id": "usda-ca-1586049",
+      "source": "usda_retailer",
+      "record_kind": "ebt_retailer",
+      "retailer_category": "supermarket",
+      "name": "Marukai Little Tokyo",
+      "address_line_1": "123 Onizuka St, Ste 105",
+      "city": "Los Angeles",
+      "state": "CA",
+      "zip": "90012",
+      "latitude": 34.05035,
+      "longitude": -118.242,
+      "languages_json": [
+        "en"
+      ],
+      "service_types": [],
+      "notes": "USDA SNAP-authorized retailer (Super Store).",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z"
+    },
+    {
+      "id": "0cf30f36-e090-4690-b64f-146effb4d235",
+      "external_id": "usda-ca-1260924",
+      "source": "usda_retailer",
+      "record_kind": "ebt_retailer",
+      "retailer_category": "small_grocer",
+      "name": "Nicks Food 1659",
+      "address_line_1": "1659 Market St",
+      "city": "San Francisco",
+      "state": "CA",
+      "zip": "94103",
+      "latitude": 37.77308,
+      "longitude": -122.4213,
+      "languages_json": [
+        "en"
+      ],
+      "service_types": [],
+      "notes": "USDA SNAP-authorized retailer (Convenience Store).",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z"
+    },
+    {
+      "id": "d9b1b991-009a-481c-b28f-904740a1ee62",
+      "external_id": "usda-ca-1073900",
+      "source": "usda_retailer",
+      "record_kind": "ebt_retailer",
+      "retailer_category": "small_grocer",
+      "name": "7-Eleven Store 35481A",
+      "address_line_1": "1341 J St",
+      "city": "Sacramento",
+      "state": "CA",
+      "zip": "95814",
+      "latitude": 38.57904,
+      "longitude": -121.488,
+      "languages_json": [
+        "en"
+      ],
+      "service_types": [],
+      "notes": "USDA SNAP-authorized retailer (Convenience Store).",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z"
+    },
+    {
+      "id": "54bb42f4-6059-4c6f-930f-55a19a70d83f",
+      "external_id": "usda-ca-1664706",
+      "source": "usda_retailer",
+      "record_kind": "ebt_retailer",
+      "retailer_category": "small_grocer",
+      "name": "City College Bookstore",
+      "address_line_1": "1313 Park Blvd, Bldg D104",
+      "city": "San Diego",
+      "state": "CA",
+      "zip": "92101",
+      "latitude": 32.71917,
+      "longitude": -117.1515,
+      "languages_json": [
+        "en"
+      ],
+      "service_types": [],
+      "notes": "USDA SNAP-authorized retailer (Convenience Store).",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z"
+    },
+    {
+      "id": "4f9446aa-84a3-4a57-81de-d444bcf4d694",
+      "external_id": "usda-ca-1314854",
+      "source": "usda_retailer",
+      "record_kind": "ebt_retailer",
+      "retailer_category": "farmers_market",
+      "name": "The Market On Kern",
+      "address_line_1": "2325 Kern St",
+      "city": "Fresno",
+      "state": "CA",
+      "zip": "93721",
+      "latitude": 36.73532,
+      "longitude": -119.7857,
+      "languages_json": [
+        "en"
+      ],
+      "service_types": [],
+      "notes": "USDA SNAP-authorized retailer (Farmers' Market).",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z"
+    },
+    {
+      "id": "0d372095-295a-4d35-b6d7-d8889d9be367",
+      "external_id": "usda-ca-1396018",
+      "source": "usda_retailer",
+      "record_kind": "ebt_retailer",
+      "retailer_category": "small_grocer",
+      "name": "Foodmart",
+      "address_line_1": "713 N El Dorado St",
+      "city": "Stockton",
+      "state": "CA",
+      "zip": "95202",
+      "latitude": 37.95983,
+      "longitude": -121.2918,
+      "languages_json": [
+        "en"
+      ],
+      "service_types": [],
+      "notes": "USDA SNAP-authorized retailer (Convenience Store).",
+      "civica_last_synced_at": "2026-05-13T12:00:00Z"
+    }
+  ]
+}
