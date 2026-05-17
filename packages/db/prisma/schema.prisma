@@ -1,0 +1,217 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum PacketStatus {
+  draft
+  in_progress
+  ready_for_review
+  submitted
+  archived
+}
+
+enum DocumentType {
+  photo_id
+  paystub
+  utility_bill
+  bank_statement
+  tax_return
+  social_security_card
+  birth_certificate
+  lease_agreement
+  other
+}
+
+enum DocumentStatus {
+  pending
+  uploading
+  processing
+  extracted
+  failed
+  rejected
+}
+
+enum OcrProvider {
+  on_device
+  textract
+  document_ai
+}
+
+enum UserRole {
+  applicant
+  navigator
+  admin
+}
+
+enum ExportFormat {
+  pdf
+  json
+}
+
+enum SupportedState {
+  CA
+  MA
+}
+
+// ─── Users ─────────────────────────────────────────────────────────────────
+
+model User {
+  id         String         @id @default(uuid())
+  email      String         @unique
+  role       UserRole       @default(applicant)
+  state      SupportedState
+  created_at DateTime       @default(now())
+  updated_at DateTime       @updatedAt
+
+  packets    Packet[]
+  navigator  Navigator?
+  audit_log  AuditLog[]
+
+  @@map("users")
+}
+
+model Navigator {
+  id           String           @id @default(uuid())
+  user_id      String           @unique
+  organization String
+  states       SupportedState[]
+  created_at   DateTime         @default(now())
+
+  user    User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  packets Packet[]
+
+  @@map("navigators")
+}
+
+// ─── Packets ───────────────────────────────────────────────────────────────
+
+model Packet {
+  id               String         @id @default(uuid())
+  user_id          String
+  state            SupportedState
+  status           PacketStatus   @default(draft)
+  readiness_score  Int?
+  navigator_id     String?
+  submitted_at     DateTime?
+  created_at       DateTime       @default(now())
+  updated_at       DateTime       @updatedAt
+
+  user      User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  navigator Navigator? @relation(fields: [navigator_id], references: [id])
+  documents Document[]
+  exports   Export[]
+  audit_log AuditLog[]
+
+  @@index([user_id])
+  @@index([navigator_id])
+  @@index([status])
+  @@map("packets")
+}
+
+// ─── Documents ─────────────────────────────────────────────────────────────
+
+model Document {
+  id                String         @id @default(uuid())
+  packet_id         String
+  type              DocumentType
+  status            DocumentStatus @default(pending)
+  storage_path      String
+  file_name         String
+  file_size_bytes   Int
+  mime_type         String
+  created_at        DateTime       @default(now())
+  updated_at        DateTime       @updatedAt
+
+  packet           Packet           @relation(fields: [packet_id], references: [id], onDelete: Cascade)
+  extraction_fields ExtractionField[]
+  ocr_jobs         OcrJob[]
+
+  @@index([packet_id])
+  @@index([status])
+  @@map("documents")
+}
+
+// ─── OCR ───────────────────────────────────────────────────────────────────
+
+model OcrJob {
+  id             String      @id @default(uuid())
+  document_id    String
+  provider       OcrProvider
+  status         String      @default("pending") // pending | running | done | failed
+  attempts       Int         @default(0)
+  last_error     String?
+  processing_ms  Int?
+  created_at     DateTime    @default(now())
+  updated_at     DateTime    @updatedAt
+
+  document Document @relation(fields: [document_id], references: [id], onDelete: Cascade)
+
+  @@index([document_id])
+  @@index([status])
+  @@map("ocr_jobs")
+}
+
+model ExtractionField {
+  id          String      @id @default(uuid())
+  document_id String
+  name        String
+  value       String
+  confidence  Float
+  bbox_left   Float?
+  bbox_top    Float?
+  bbox_width  Float?
+  bbox_height Float?
+  bbox_page   Int?
+  provider    OcrProvider
+  created_at  DateTime    @default(now())
+
+  document Document @relation(fields: [document_id], references: [id], onDelete: Cascade)
+
+  @@index([document_id])
+  @@map("extraction_fields")
+}
+
+// ─── Exports ───────────────────────────────────────────────────────────────
+
+model Export {
+  id           String       @id @default(uuid())
+  packet_id    String
+  format       ExportFormat
+  storage_path String
+  disclaimer   String
+  expires_at   DateTime
+  created_at   DateTime     @default(now())
+
+  packet Packet @relation(fields: [packet_id], references: [id], onDelete: Cascade)
+
+  @@index([packet_id])
+  @@map("exports")
+}
+
+// ─── Audit Log ─────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  user_id    String?
+  packet_id  String?
+  action     String
+  payload    Json?
+  created_at DateTime @default(now())
+
+  user   User?   @relation(fields: [user_id], references: [id])
+  packet Packet? @relation(fields: [packet_id], references: [id])
+
+  @@index([user_id])
+  @@index([packet_id])
+  @@index([created_at])
+  @@map("audit_log")
+}

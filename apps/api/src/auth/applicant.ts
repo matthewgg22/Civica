@@ -25,8 +25,8 @@ export const requireApplicantJwt: MiddlewareHandler<ApplicantEnv> = async (c, ne
 
   c.set('applicant', {
     sub: payload.sub ?? '',
-    email: typeof payload['email'] === 'string' ? payload['email'] : undefined,
     isAnonymous: typeof payload['email'] !== 'string',
+    ...(typeof payload['email'] === 'string' && { email: payload['email'] }),
   });
 
   await next();

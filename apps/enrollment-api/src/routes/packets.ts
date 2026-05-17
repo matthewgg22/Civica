@@ -83,7 +83,8 @@ app.post("/", zValidator("json", createPacketSchema), async (c) => {
     .schema("snap_enrollment")
     .from("snap_packets")
     .insert({
-      ...body,
+      applicant_id: body.applicant_id,
+      state_code: body.state_code,
       status: "Draft" as const,
       org_id: body.org_id ?? null,
       county: body.county ?? null,
@@ -104,14 +105,17 @@ app.patch("/:packetId", zValidator("json", updatePacketSchema), async (c) => {
   if (body.status) {
     const reason = c.req.header("X-Transition-Reason");
     if (reason) {
-      await (db.rpc as (fn: never, args: never) => unknown)("set_config" as never, {
-        setting_name: "snap_enrollment.transition_reason",
-        new_value: reason,
-        is_local: true,
-      } as never);
+      type SetConfigArgs = { setting_name: string; new_value: string; is_local: boolean };
+      const rpc = db.rpc.bind(db) as unknown as (fn: string, args: SetConfigArgs) => Promise<unknown>;
+      await rpc("set_config", { setting_name: "snap_enrollment.transition_reason", new_value: reason, is_local: true });
     }
   }
 
+  const updateFields = {
+    ...(body.status !== undefined && { status: body.status }),
+    notes_for_applicant: body.notes_for_applicant ?? null,
+    org_id: body.org_id ?? null,
+  };
   const { data, error } = await db
     .schema("snap_enrollment")
     .from("snap_packets")

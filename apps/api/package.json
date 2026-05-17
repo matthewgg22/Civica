@@ -1,37 +1,43 @@
 {
   "name": "@civica/api",
-  "private": true,
   "version": "0.0.0",
-  "description": "Hono API gateway for SNAP. Owns auth, audit, rate limiting, OpenAPI, navigator endpoints. Proxies applicant flows to the FastAPI engine in backend/.",
+  "private": true,
+  "description": "Hono API gateway. Civic routes (Flask→Hono), SNAP navigator/applicant routes, audit, rate limiting, OpenAPI.",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "tsx src/index.ts",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint src/ test/",
     "test": "vitest run",
-    "db:gen-types": "kysely-codegen --url=$DATABASE_URL --out-file=src/db/schema.ts",
-    "db:migrate": "../../scripts/apply-snap-migrations.sh",
+    "test:watch": "vitest",
     "build:openapi": "tsx src/openapi/write.ts"
   },
   "dependencies": {
+    "@civica/types": "workspace:*",
     "@hono/node-server": "^1.13.7",
-    "@hono/zod-openapi": "^1.4.0",
-    "hono": "^4.6.10",
+    "@hono/zod-openapi": "^0.18.3",
+    "@hono/zod-validator": "^0.4.3",
+    "@supabase/supabase-js": "^2.49.0",
+    "hono": "^4.7.0",
     "jose": "^6.2.3",
     "kysely": "^0.27.4",
+    "openai": "^4.87.0",
     "pg": "^8.13.0",
     "pino": "^9.5.0",
-    "zod": "^4.4.3"
+    "tsx": "^4.19.2",
+    "zod": "^3.24.0"
   },
   "devDependencies": {
-    "@types/node": "^20.17.6",
+    "@civica/config": "workspace:*",
+    "@civica/fixtures": "workspace:*",
+    "@types/node": "^22.0.0",
     "@types/pg": "^8.11.10",
     "kysely-codegen": "^0.17.0",
     "pino-pretty": "^11.3.0",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.2",
+    "typescript": "^5.8.0",
     "vitest": "^2.1.5"
   }
 }

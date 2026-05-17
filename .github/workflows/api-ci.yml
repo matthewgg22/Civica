@@ -1,0 +1,155 @@
+name: API typecheck + contract tests
+
+# Runs on every PR against codex/rebuild-feb18 that touches Node.js source.
+# Covers: pnpm packages typecheck, Hono server startup, auth-rejection matrix,
+# public route shape checks. Does NOT need a live Supabase or OpenAI key.
+
+on:
+  pull_request:
+    branches:
+      - codex/rebuild-feb18
+    paths:
+      - 'apps/api/**'
+      - 'apps/dashboard/**'
+      - 'web/**'
+      - 'packages/**'
+      - 'pnpm-workspace.yaml'
+      - 'turbo.json'
+      - 'package.json'
+      - '.github/workflows/api-ci.yml'
+  push:
+    branches:
+      - codex/rebuild-feb18
+    paths:
+      - 'apps/api/**'
+      - 'packages/**'
+  workflow_dispatch:
+
+jobs:
+  typecheck:
+    name: Typecheck (all packages)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        # version is read from packageManager field in package.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck all packages
+        run: pnpm turbo run typecheck
+
+  contract-tests:
+    name: Contract tests (Hono parity)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: typecheck
+
+    env:
+      # Placeholder credentials — the server starts but DB calls return errors.
+      # Auth-rejection tests (no token → 401) don't hit the DB and always pass.
+      # Examples route gracefully returns [] on DB error.
+      SUPABASE_URL: https://placeholder.supabase.co
+      SUPABASE_ANON_KEY: placeholder-anon-key
+      SUPABASE_SERVICE_ROLE_KEY: placeholder-service-role-key
+      SNAP_FERNET_KEY: placeholder-fernet-key-32-bytes-padded
+      PORT: 3001
+      NODE_ENV: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        # version is read from packageManager field in package.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Start Hono API server (background)
+        working-directory: apps/api
+        run: |
+          pnpm tsx src/index.ts &
+          echo "API_PID=$!" >> "$GITHUB_ENV"
+
+      - name: Wait for server to be ready
+        run: |
+          for i in $(seq 1 20); do
+            if curl -sf http://localhost:3001/healthz > /dev/null 2>&1; then
+              echo "Server ready after $i attempts"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Server did not start in time" && exit 1
+
+      - name: Run contract tests
+        working-directory: apps/api
+        env:
+          HONO_BASE_URL: http://localhost:3001
+        run: pnpm test
+
+      - name: Stop server
+        if: always()
+        run: kill "$API_PID" 2>/dev/null || true
+
+  lint:
+    name: Lint (API)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        # version is read from packageManager field in package.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint API
+        working-directory: apps/api
+        run: pnpm lint --max-warnings 0
+        continue-on-error: true
+
+  deploy:
+    name: Deploy to Fly.io
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [typecheck, contract-tests]
+    # Only deploy on direct pushes to the trunk — not on PRs
+    if: github.ref == 'refs/heads/codex/rebuild-feb18' && github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy API to Fly.io
+        # fly.toml [build].dockerfile = "Dockerfile" resolves relative to apps/api/,
+        # so this correctly picks up apps/api/Dockerfile with the repo root as build context.
+        run: |
+          flyctl deploy \
+            --config apps/api/fly.toml \
+            --remote-only \
+            --wait-timeout 120
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

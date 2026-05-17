@@ -28,7 +28,7 @@ export interface AuditActor {
 }
 
 export interface WithAuditOptions {
-  reason?: string;
-  requestId?: string;
-  columnOrResource?: string;
+  reason?: string | undefined;
+  requestId?: string | undefined;
+  columnOrResource?: string | undefined;
 }

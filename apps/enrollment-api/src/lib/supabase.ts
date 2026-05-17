@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@civica/db-types";
 import type { Env } from "../types.js";
 
+// CF Workers: all config comes from c.env bindings (no process.env).
 export function makeServiceClient(env: Env) {
   return createClient<Database>(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
     auth: { persistSession: false },

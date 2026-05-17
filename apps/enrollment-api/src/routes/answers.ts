@@ -47,9 +47,10 @@ app.put("/packets/:packetId/answers/:questionKey", zValidator("json", upsertAnsw
     .schema("snap_enrollment")
     .from("packet_answers")
     .upsert({
-      ...body,
       packet_id: packetId,
       question_key: c.req.param("questionKey"),
+      question_label: body.question_label,
+      answer_source: body.answer_source,
       applicant_answer: body.applicant_answer ?? null,
       original_ocr_value: body.original_ocr_value ?? null,
     }, { onConflict: "packet_id,question_key" })

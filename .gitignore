@@ -24,30 +24,39 @@ __pycache__/
 **/.*build/
 CivicaDesignSystem/.build/
 
-# Wrangler local secrets
-.dev.vars
-
-# Node / pnpm workspaces (apps/, packages/)
+# Node / pnpm / Turborepo
 node_modules/
 **/node_modules/
-.next/
-**/dist/
-**/.turbo/
-*.tsbuildinfo
-next-env.d.ts
-pnpm-debug.log*
 .pnpm-store/
+.turbo/
+**/.turbo/
+dist/
+**/dist/
+build-web/
+coverage/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
 
-# Cloudflare Wrangler local state
+# Prisma generated client (re-created by `pnpm db:generate`)
+packages/db/src/generated/
+
+# Cloudflare Wrangler
+.dev.vars
 .wrangler/
 
-# Local env files (.env.example is committed; anything else is secrets)
+# Env files (committed examples named .env.example)
 .env
 .env.local
 .env.*.local
+.env.development
+.env.production
+.env.staging
 
 # Logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*

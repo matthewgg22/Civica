@@ -23,7 +23,6 @@ export async function authMiddleware(c: Context<{ Bindings: Env }>, next: Next) 
     throw new HTTPException(401, { message: "Invalid or expired token" });
   }
 
-  // Look up staff_users row to determine actor kind + org
   const { data: staff } = await supabase
     .schema("snap_enrollment")
     .from("staff_users")
@@ -40,7 +39,6 @@ export async function authMiddleware(c: Context<{ Bindings: Env }>, next: Next) 
       orgId: staff.org_id,
     });
   } else {
-    // Applicant — no staff row
     c.set("actor", { kind: "applicant", id: user.id });
   }
 

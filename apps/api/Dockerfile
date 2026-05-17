@@ -1,50 +1,32 @@
-# Production image for apps/api (Hono gateway).
-# Build context must be the REPO ROOT so workspace packages are available:
-#   docker build -f apps/api/Dockerfile .
-#
-# Two-stage build: compile TypeScript in `builder`, then copy only the
-# compiled output + production node_modules into a lean `runner`.
+FROM node:22-alpine
+WORKDIR /app
 
-# ── Stage 1: builder ──────────────────────────────────────────────────────
-FROM node:20-alpine AS builder
-
+# Enable corepack for pnpm
 RUN corepack enable && corepack prepare pnpm@9.12.0 --activate
 
-WORKDIR /workspace
+# ── Workspace manifests (layer-cached until deps change) ─────────────────────
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY packages/config/package.json       ./packages/config/
+COPY packages/types/package.json        ./packages/types/
+COPY apps/api/package.json              ./apps/api/
 
-# Install ALL deps (including devDeps needed for tsc).
-COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
-COPY apps/api/package.json ./apps/api/
-COPY packages/api-types/package.json ./packages/api-types/
-RUN pnpm install --frozen-lockfile
-
-# Compile TypeScript.
-COPY apps/api/src ./apps/api/src
-COPY apps/api/tsconfig.json ./apps/api/
-RUN pnpm --filter @civica/api build
-
-# ── Stage 2: runner ───────────────────────────────────────────────────────
-FROM node:20-alpine AS runner
-
-RUN corepack enable && corepack prepare pnpm@9.12.0 --activate \
-  && addgroup -g 1001 -S civica \
-  && adduser -u 1001 -S civica -G civica
-
-WORKDIR /workspace
-
-# Install ONLY production deps.
-COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
-COPY apps/api/package.json ./apps/api/
-COPY packages/api-types/package.json ./packages/api-types/
+# Install only production deps (tsx is in dependencies, not devDependencies)
 RUN pnpm install --frozen-lockfile --prod
 
-# Copy compiled output from builder.
-COPY --from=builder /workspace/apps/api/dist ./apps/api/dist
+# ── Source files ──────────────────────────────────────────────────────────────
+# Workspace packages consumed as TypeScript source (no build step needed;
+# tsx resolves them through pnpm's node_modules symlinks at runtime)
+COPY packages/config/       ./packages/config/
+COPY packages/types/        ./packages/types/
+COPY packages/db-types/     ./packages/db-types/
+COPY apps/api/src/          ./apps/api/src/
 
-USER civica
-WORKDIR /workspace/apps/api
-
-EXPOSE 3000
+# ── Runtime ───────────────────────────────────────────────────────────────────
 ENV NODE_ENV=production
+ENV PORT=3001
 
-CMD ["node", "dist/index.js"]
+WORKDIR /app/apps/api
+EXPOSE 3001
+
+# tsx runs TypeScript directly — no compile step, workspace .ts imports work
+CMD ["pnpm", "start"]

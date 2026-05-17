@@ -2,9 +2,11 @@ import { serve } from '@hono/node-server';
 import { buildApp } from './app.js';
 import { logger } from './lib/logger.js';
 
-const port = Number(process.env.PORT ?? 3000);
+const port = Number(process.env['PORT'] ?? 3001);
 const app = buildApp();
 
 serve({ fetch: app.fetch, port }, (info) => {
-  logger.info({ port: info.port }, '@civica/api listening');
+  logger.info({ port: info.port }, 'Civica API listening');
 });
+
+export default { port, fetch: app.fetch };
