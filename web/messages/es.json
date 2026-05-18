@@ -127,6 +127,57 @@
     "privacy": "Privacidad",
     "doNotSell": "No Vendas Ni Compartas Mi Información Personal"
   },
+  "landing": {
+    "hero": {
+      "headline": "Solicita CalFresh en 10 minutos — guiado, seguro y accesible.",
+      "subheadline": "Civica te guía paso a paso por la solicitud de SNAP. Estima tus beneficios, sube documentos desde tu teléfono y envíalos — todo en lenguaje sencillo.",
+      "ctaPrimary": "Ver si califico",
+      "ctaSecondary": "Ya tengo una cuenta",
+      "wordmarkAlt": "Civica"
+    },
+    "valueProps": {
+      "eyebrow": "Por qué Civica",
+      "heading": "Diseñado pensando en cómo se siente realmente solicitar ayuda.",
+      "card1": {
+        "title": "Estima primero",
+        "body": "Usa nuestra calculadora para ver aproximadamente para qué calificarías — antes de compartir cualquier dato personal."
+      },
+      "card2": {
+        "title": "Escanea con tu teléfono",
+        "body": "Toma una foto de tu recibo de pago o identificación. Nosotros extraemos la información por ti para que no tengas que escribirla."
+      },
+      "card3": {
+        "title": "Apoyo real de un asesor",
+        "body": "Si te quedas atascado, una persona real revisa tu solicitud antes de enviarla. Sin bots, sin callejones sin salida."
+      }
+    },
+    "howItWorks": {
+      "eyebrow": "Cómo funciona",
+      "heading": "Cuatro pasos desde el inicio hasta el envío.",
+      "step1": {
+        "title": "Cuéntanos sobre tu hogar",
+        "body": "Preguntas rápidas sobre quién vive contigo, tus ingresos y tus gastos."
+      },
+      "step2": {
+        "title": "Sube documentos",
+        "body": "Toma fotos de recibos de pago, identificaciones y comprobantes de renta directamente desde tu teléfono."
+      },
+      "step3": {
+        "title": "Revisa con un asesor",
+        "body": "Un asesor capacitado revisa tu paquete para verificar que esté completo y marca lo que falte."
+      },
+      "step4": {
+        "title": "Envía a tu condado",
+        "body": "Entregamos tu paquete a la oficina de SNAP de tu condado y te mantenemos informado de los próximos pasos."
+      }
+    },
+    "trust": {
+      "rulesEngine": "Reglas verificadas por el USDA",
+      "stateCdss": "Diseñado para California (CDSS)",
+      "ccpa": "Cumple con la CCPA",
+      "wcag": "Accesible WCAG 2.1 AA"
+    }
+  },
   "privacy": {
     "title": "Política de Privacidad",
     "effectiveDate": "Vigente desde el 18 de mayo de 2026.",
