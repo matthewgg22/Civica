@@ -63,3 +63,48 @@ jobs:
           name: playwright-trace-${{ github.run_id }}
           path: e2e/test-results/
           retention-days: 7
+
+  document-upload:
+    name: Document upload E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: critical-path
+
+    env:
+      E2E_SUPABASE_URL: ${{ secrets.E2E_SUPABASE_URL }}
+      E2E_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.E2E_SUPABASE_SERVICE_ROLE_KEY }}
+      E2E_SUPABASE_ANON_KEY: ${{ secrets.E2E_SUPABASE_ANON_KEY }}
+      E2E_ENROLLMENT_API_URL: ${{ inputs.enrollment_api_url || secrets.E2E_ENROLLMENT_API_URL }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install root dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install e2e dependencies
+        working-directory: e2e
+        run: npm install
+
+      - name: Install Playwright (no browsers needed — API tests only)
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium
+
+      - name: Run document-upload spec
+        working-directory: e2e
+        run: npx playwright test document-upload.spec.ts --reporter=github,list
+
+      - name: Upload Playwright trace on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-trace-document-upload-${{ github.run_id }}
+          path: e2e/test-results/
+          retention-days: 7

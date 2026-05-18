@@ -123,6 +123,11 @@ public = false
 file_size_limit = "10MiB"
 allowed_mime_types = ["application/json", "text/csv", "application/xml", "application/pdf"]
 
+[storage.buckets.documents]
+public = false
+file_size_limit = "20MiB"
+allowed_mime_types = ["image/jpeg", "image/png", "image/webp", "application/pdf"]
+
 # Allow connections via S3 compatible clients
 [storage.s3_protocol]
 enabled = true
