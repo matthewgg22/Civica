@@ -81,7 +81,8 @@ struct CAStateRulesTests {
     }
 
     @Test func minimumBenefitDelegatesToFederal() {
-        #expect(rules.minimumBenefit(asOf: fy26Date) == 23)
+        // FY26 federal minimum benefit per FNS COLA memo.
+        #expect(rules.minimumBenefit(asOf: fy26Date) == 24)
     }
 
     @Test func earnedIncomeDeductionRateIsTwentyPercent() {

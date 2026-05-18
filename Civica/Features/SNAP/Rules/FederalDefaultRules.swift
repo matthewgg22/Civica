@@ -11,18 +11,19 @@ import Foundation
 // lands, the federal default is honest about what we can compute
 // without state-specific data.
 //
-// Source notes for the threshold tables:
-//   * Monthly FPL base ($1,255 for 1 person, +$448.33/mo per
-//     additional) tracks the Swift FY26 table established in the
-//     pre-refactor SNAPLocalEligibilityEvaluator. The backend
-//     poverty_guidelines.py file holds the FY25 table (same base
-//     for FY25 fiscal year). When FY27 numbers publish, add a new
-//     PolicySnapshot below — do not edit the FY26 row in place.
-//   * Standard deduction and excess-shelter cap mirror the
-//     federal FY25 values (7 CFR 273.9(d)(1)) since the FNS COLA
-//     memo for FY26 has not been merged into the Swift side yet.
-//   * Stamp is "federal-default-FY26" to match the
-//     existing rules-version convention used by MA today.
+// Source notes for the threshold tables (FY26 verified 2026-05-18 against
+// USDA FNS FY26 COLA Memo and Allotments PDF; see civica_snap_signoff.xlsx):
+//   * Gross income limits use the FY26 130% FPL exact table from the FNS
+//     COLA memo (Page 3) — NOT derived from a monthly FPL formula.
+//     Deriving introduces ±$1 rounding drift relative to the official
+//     numbers. Same for net income limits (100% FPL, same memo).
+//   * Standard deduction and max allotments seeded from the FY26 COLA
+//     memo. Excess-shelter cap is $744; cap does not apply when the
+//     household has an elderly or disabled member.
+//   * Minimum benefit (1-2 person) = $24 per FY26 memo.
+//   * Asset limits unchanged for FY26 per explicit memo statement.
+//   * When FY27 numbers publish, add a new PolicySnapshot below — do
+//     not edit the FY26 row in place.
 
 struct FederalDefaultRules: SNAPStateRuleEngine {
     let stateCode: String = "FEDERAL_DEFAULT"
@@ -31,13 +32,13 @@ struct FederalDefaultRules: SNAPStateRuleEngine {
     // MARK: - Income limits
 
     func grossIncomeLimit(householdSize: Int, asOf: Date) -> Decimal {
-        let monthlyFpl = monthlyFPL(householdSize: householdSize, asOf: asOf)
-        return roundedDown(monthlyFpl * Self.grossIncomeRatio)
+        let snapshot = activeGrossIncomeSnapshot(asOf: asOf)
+        return lookup(snapshot.value, householdSize: householdSize)
     }
 
     func netIncomeLimit(householdSize: Int, asOf: Date) -> Decimal {
-        let monthlyFpl = monthlyFPL(householdSize: householdSize, asOf: asOf)
-        return roundedDown(monthlyFpl * Self.netIncomeRatio)
+        let snapshot = activeNetIncomeSnapshot(asOf: asOf)
+        return lookup(snapshot.value, householdSize: householdSize)
     }
 
     // MARK: - Deductions
@@ -205,7 +206,8 @@ struct FederalDefaultRules: SNAPStateRuleEngine {
     /// here so callers can refuse to render precise dollar amounts.
     func snapshotStatus(asOf: Date) -> RuleSnapshotStatus {
         let expiries: [Date] = [
-            Self.monthlyFplSnapshots.last!.expiresOn,
+            Self.grossIncomeSnapshots.last!.expiresOn,
+            Self.netIncomeSnapshots.last!.expiresOn,
             Self.standardDeductionSnapshots.last!.expiresOn,
             Self.shelterCapSnapshots.last!.expiresOn,
             Self.maxAllotmentSnapshots.last!.expiresOn,
@@ -234,59 +236,13 @@ struct FederalDefaultRules: SNAPStateRuleEngine {
 
 private extension FederalDefaultRules {
 
-    static let grossIncomeRatio: Decimal = Decimal(string: "1.30") ?? 1
-    static let netIncomeRatio: Decimal = 1
     static let earnedIncomeDeductionRate: Decimal = Decimal(string: "0.20") ?? 0.20
 
-    /// FY26 monthly FPL base — 1-person $1,255/mo, +$448.33/mo
-    /// per additional person. Matches the values already used by
-    /// the pre-refactor MA evaluator (MA's 200% line equals this
-    /// base × 2).
-    static let monthlyFplSnapshots: [PolicySnapshot<MonthlyFPLBase>] = [
-        .iso(
-            from: "2025-10-01",
-            to: "2026-09-30",
-            versionSuffix: "FY26",
-            value: MonthlyFPLBase(
-                firstPerson: Decimal(string: "1255")!,
-                eachAdditionalPerson: Decimal(string: "448.33")!
-            )
-        )
-    ]
-
-    /// FY25-seeded federal standard deduction table by household
-    /// size. 1-3 share the same value; 4 and 5 step; 6+ caps at
-    /// the size-6 entry.
-    static let standardDeductionSnapshots: [PolicySnapshot<[Int: Decimal]>] = [
-        .iso(
-            from: "2025-10-01",
-            to: "2026-09-30",
-            versionSuffix: "FY26",
-            value: [
-                1: 204,
-                2: 204,
-                3: 204,
-                4: 217,
-                5: 254,
-                6: 291
-            ]
-        )
-    ]
-
-    /// FY25-seeded federal max excess-shelter deduction cap for
-    /// households without an elderly or disabled member.
-    static let shelterCapSnapshots: [PolicySnapshot<Decimal>] = [
-        .iso(
-            from: "2025-10-01",
-            to: "2026-09-30",
-            versionSuffix: "FY26",
-            value: 712
-        )
-    ]
-
-    struct MonthlyFPLBase {
-        let firstPerson: Decimal
-        let eachAdditionalPerson: Decimal
+    struct IncomeTable {
+        /// HH 1-8 explicit monthly thresholds.
+        let bySize: [Int: Decimal]
+        /// Added to the size-8 value for each member beyond 8.
+        let eachAdditional: Decimal
     }
 
     struct MaxAllotmentTable {
@@ -299,8 +255,89 @@ private extension FederalDefaultRules {
         let elderlyOrDisabled: Decimal
     }
 
-    /// FY26 SNAP max allotments seeded from backend
-    /// poverty_guidelines.py FY25 table (FNS COLA memo).
+    /// FY26 gross-income limits (130% FPL exact table).
+    /// USDA FNS FY26 COLA memo Page 3 (48 states + DC). Do NOT derive
+    /// from a monthly FPL formula — drift of ±$1 vs. the memo table
+    /// is the documented hazard the exact lookup avoids.
+    static let grossIncomeSnapshots: [PolicySnapshot<IncomeTable>] = [
+        .iso(
+            from: "2025-10-01",
+            to: "2026-09-30",
+            versionSuffix: "FY26",
+            value: IncomeTable(
+                bySize: [
+                    1: 1_696,
+                    2: 2_292,
+                    3: 2_888,
+                    4: 3_483,
+                    5: 4_079,
+                    6: 4_675,
+                    7: 5_271,
+                    8: 5_867
+                ],
+                eachAdditional: 596
+            )
+        )
+    ]
+
+    /// FY26 net-income limits (100% FPL exact table).
+    /// USDA FNS FY26 COLA memo Page 3 (48 states + DC).
+    static let netIncomeSnapshots: [PolicySnapshot<IncomeTable>] = [
+        .iso(
+            from: "2025-10-01",
+            to: "2026-09-30",
+            versionSuffix: "FY26",
+            value: IncomeTable(
+                bySize: [
+                    1: 1_305,
+                    2: 1_763,
+                    3: 2_221,
+                    4: 2_680,
+                    5: 3_138,
+                    6: 3_596,
+                    7: 4_055,
+                    8: 4_513
+                ],
+                eachAdditional: 459
+            )
+        )
+    ]
+
+    /// FY26 federal standard deduction table by household size
+    /// (USDA FNS FY26 COLA memo Page 6). HH 1-3 share $209; HH 4
+    /// steps to $223; HH 5 to $261; HH 6+ caps at $299.
+    static let standardDeductionSnapshots: [PolicySnapshot<[Int: Decimal]>] = [
+        .iso(
+            from: "2025-10-01",
+            to: "2026-09-30",
+            versionSuffix: "FY26",
+            value: [
+                1: 209,
+                2: 209,
+                3: 209,
+                4: 223,
+                5: 261,
+                6: 299
+            ]
+        )
+    ]
+
+    /// FY26 federal max excess-shelter deduction cap for households
+    /// WITHOUT an elderly or disabled member (USDA FNS FY26 COLA
+    /// memo Table 3). Cap does not apply when an elderly or
+    /// disabled member is present; shelterDeductionCap returns nil
+    /// in that case so the calculator deducts the full excess.
+    static let shelterCapSnapshots: [PolicySnapshot<Decimal>] = [
+        .iso(
+            from: "2025-10-01",
+            to: "2026-09-30",
+            versionSuffix: "FY26",
+            value: 744
+        )
+    ]
+
+    /// FY26 SNAP max allotments (USDA FNS FY26 COLA memo Table 1,
+    /// 48 states + DC). HH 1-8 explicit; 9+ uses +$218/add.
     static let maxAllotmentSnapshots: [PolicySnapshot<MaxAllotmentTable>] = [
         .iso(
             from: "2025-10-01",
@@ -308,16 +345,16 @@ private extension FederalDefaultRules {
             versionSuffix: "FY26",
             value: MaxAllotmentTable(
                 bySize: [
-                    1: 292,
-                    2: 536,
-                    3: 768,
-                    4: 975,
-                    5: 1_158,
-                    6: 1_390,
-                    7: 1_536,
-                    8: 1_756
+                    1: 298,
+                    2: 546,
+                    3: 785,
+                    4: 994,
+                    5: 1_183,
+                    6: 1_421,
+                    7: 1_571,
+                    8: 1_789
                 ],
-                eachAdditional: 220
+                eachAdditional: 218
             )
         )
     ]
@@ -328,11 +365,15 @@ private extension FederalDefaultRules {
             from: "2025-10-01",
             to: "2026-09-30",
             versionSuffix: "FY26",
-            value: 23
+            value: 24
         )
     ]
 
-    /// FY26 federal asset/resource limits.
+    /// FY26 federal asset/resource limits — UNCHANGED per FY26 COLA
+    /// memo: "The asset limit for households will remain unchanged
+    /// at $3,000. The asset limit for households where at least one
+    /// person is age 60 or older, or is disabled, will also remain
+    /// unchanged at $4,500."
     static let assetLimitSnapshots: [PolicySnapshot<AssetLimits>] = [
         .iso(
             from: "2025-10-01",
@@ -360,19 +401,14 @@ private extension FederalDefaultRules {
             ?? Self.assetLimitSnapshots.last!
     }
 
-    func monthlyFPL(householdSize: Int, asOf: Date) -> Decimal {
-        let snapshot = activeFPLSnapshot(asOf: asOf)
-        let size = max(1, householdSize)
-        return snapshot.value.firstPerson
-            + snapshot.value.eachAdditionalPerson * Decimal(size - 1)
+    func activeGrossIncomeSnapshot(asOf: Date) -> PolicySnapshot<IncomeTable> {
+        Self.grossIncomeSnapshots.first(where: { $0.contains(asOf) })
+            ?? Self.grossIncomeSnapshots.last!
     }
 
-    /// Picks the policy snapshot active on `asOf`; falls back to
-    /// the most recent snapshot when `asOf` is outside any window
-    /// (verdict still renders, version stamp signals staleness).
-    func activeFPLSnapshot(asOf: Date) -> PolicySnapshot<MonthlyFPLBase> {
-        Self.monthlyFplSnapshots.first(where: { $0.contains(asOf) })
-            ?? Self.monthlyFplSnapshots.last!
+    func activeNetIncomeSnapshot(asOf: Date) -> PolicySnapshot<IncomeTable> {
+        Self.netIncomeSnapshots.first(where: { $0.contains(asOf) })
+            ?? Self.netIncomeSnapshots.last!
     }
 
     func activeStandardDeductionSnapshot(asOf: Date) -> PolicySnapshot<[Int: Decimal]> {
@@ -385,18 +421,26 @@ private extension FederalDefaultRules {
             ?? Self.shelterCapSnapshots.last!
     }
 
+    /// Looks up an IncomeTable for a given household size, using the
+    /// per-additional increment for HH 9+. Falls back to size-1
+    /// floor for non-positive inputs.
+    func lookup(_ table: IncomeTable, householdSize: Int) -> Decimal {
+        let size = max(1, householdSize)
+        if let exact = table.bySize[size] {
+            return exact
+        }
+        let largest = table.bySize.keys.max() ?? 1
+        if size > largest, let base = table.bySize[largest] {
+            return base + table.eachAdditional * Decimal(size - largest)
+        }
+        return table.bySize[1] ?? 0
+    }
+
     func clampedDeductionBucket(_ size: Int) -> Int {
         if size <= 3 { return 1 }
         if size == 4 { return 4 }
         if size == 5 { return 5 }
         return 6
-    }
-
-    func roundedDown(_ value: Decimal) -> Decimal {
-        var input = value
-        var output = Decimal()
-        NSDecimalRound(&output, &input, 0, .down)
-        return output
     }
 
     func applicantAge(_ answers: SNAPApplicantAgeAnswers, asOf: Date) -> Int? {
