@@ -181,6 +181,19 @@ enum SNAPBenefitEstimatorStrings {
         es: "Las reglas de SNAP de Civica fueron actualizadas para el año fiscal actual y pueden no reflejar nuevos cambios federales o estatales. Usa la estimación como una guía aproximada y confirma con tu agencia estatal."
     )
 
+    // MARK: - Source-citation footer (signoff defensibility)
+
+    /// One-line provenance shown under the dollar amount on every
+    /// estimator result card. Establishes the data vintage so that
+    /// if a user appeals a state agency's determination, the
+    /// screenshot shows the FY and source the app used. Keep this
+    /// string in sync with the active rules engine's effective
+    /// snapshot (currently FY26, USDA FNS COLA effective Oct 1 2025).
+    static let citationFooter = CivicaText(
+        "FY26 figures · USDA FNS COLA effective Oct 1, 2025",
+        es: "Cifras de FY26 · COLA de USDA FNS vigente desde el 1 de octubre de 2025"
+    )
+
     // MARK: - Footer & a11y
 
     static let disclaimerFooter = CivicaText(

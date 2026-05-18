@@ -357,6 +357,14 @@ struct SNAPBenefitEstimatorView: View {
                 }
                 .fixedSize()
             }
+
+            // Source-citation footer — defensibility surface. If a user
+            // appeals a state determination and screenshots the app, the
+            // FY + COLA source is visible without opening the math sheet.
+            Text(SNAPBenefitEstimatorStrings.citationFooter.value(in: language))
+                .font(CivicaTypography.caption)
+                .foregroundStyle(CivicaColors.graphite)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -387,6 +395,12 @@ struct SNAPBenefitEstimatorView: View {
             Text(ineligibleContextLine(reason: reason))
                 .font(CivicaTypography.footnote)
                 .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+
+            // Source-citation footer (matches the eligible card).
+            Text(SNAPBenefitEstimatorStrings.citationFooter.value(in: language))
+                .font(CivicaTypography.caption)
+                .foregroundStyle(CivicaColors.graphite)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(CivicaSpacing.md)
