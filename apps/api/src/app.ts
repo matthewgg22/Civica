@@ -24,7 +24,6 @@ import { packetsRouter as snapPacketsRouter } from './routes/snap/packets.js';
 import { handoffRouter as snapHandoffRouter } from './routes/snap/handoff.js';
 import { ocrWebhookRouter } from './routes/webhooks/ocr.js';
 import { shareRouter } from './routes/share/index.js';
-import { debugRouter } from './routes/debug.js';
 
 // Lazily built once at first request so env vars are available at call time.
 let _spec: ReturnType<typeof buildOpenAPIDocument> | null = null;
@@ -60,9 +59,6 @@ export function buildApp() {
   app.route('/', shareRouter);
   // Stub router (501 for not-yet-ported civic routes)
   app.route('/', civicRouter);
-
-  // Temporary Sentry verification route — guarded by SENTRY_CHECK_ENABLED, removed before merge
-  if (process.env['SENTRY_CHECK_ENABLED']) app.route('/', debugRouter);
 
   // ── OpenAPI spec + Scalar docs ──────────────────────────────────────────
   app.get('/openapi.json', (c) => c.json(getSpec()));

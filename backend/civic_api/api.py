@@ -1028,12 +1028,6 @@ if FastAPI is not None:
     def healthz() -> dict[str, bool]:
         return {"ok": True}
 
-    # TEMPORARY — remove before merging. Enable with SENTRY_CHECK_ENABLED=1 fly secret.
-    if os.environ.get("SENTRY_CHECK_ENABLED"):
-        @app.get("/debug/sentry-check")
-        def sentry_check() -> None:
-            raise RuntimeError("Sentry check: intentional test error from civica-snap-engine")
-
     @app.get("/api/v1/civic/examples")
     def civic_examples(request: Request) -> dict[str, Any]:
         return _run_endpoint(lambda: get_examples(resolve_authenticated_or_anonymous_user_id(request)))
