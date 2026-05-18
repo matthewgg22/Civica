@@ -1,0 +1,27 @@
+{
+  "flow": "assets",
+  "state": "CA",
+  "inputs": {
+    "applicant_name": "Naomi Park",
+    "state_code": "CA",
+    "assets": [
+      {
+        "type": "bank_account",
+        "description": "Wells Fargo checking",
+        "stated_value": 320,
+        "exempt": false,
+        "countable_value": 320,
+        "verification_method": "plaid_balance"
+      },
+      {
+        "type": "other_liquid",
+        "description": "Family jewelry (estimated)",
+        "stated_value": 800,
+        "exempt": false,
+        "countable_value": 800,
+        "verification_method": "self_declared"
+      }
+    ],
+    "elderly_or_disabled": false
+  }
+}

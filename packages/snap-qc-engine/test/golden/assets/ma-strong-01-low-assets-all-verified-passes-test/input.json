@@ -1,0 +1,19 @@
+{
+  "flow": "assets",
+  "state": "MA",
+  "inputs": {
+    "applicant_name": "Patricia Walsh",
+    "state_code": "MA",
+    "assets": [
+      {
+        "type": "bank_account",
+        "description": "Bank of America checking",
+        "stated_value": 410,
+        "exempt": false,
+        "countable_value": 410,
+        "verification_method": "plaid_balance"
+      }
+    ],
+    "elderly_or_disabled": false
+  }
+}

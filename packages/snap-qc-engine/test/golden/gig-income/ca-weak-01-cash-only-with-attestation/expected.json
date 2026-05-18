@@ -1,0 +1,76 @@
+{
+  "flow": "gig-income",
+  "state": "CA",
+  "defensibility_score": "weak",
+  "defensibility_factors": [
+    {
+      "name": "cash_self_declared",
+      "weight": "neutral",
+      "detail": "Cash income attested under penalty of perjury"
+    }
+  ],
+  "evidence_package": {
+    "flow": "gig-income",
+    "applicant_name": "Lupita Vargas",
+    "state_code": "CA",
+    "income_sources": [
+      {
+        "type": "cash",
+        "source_name": "House cleaning (self)",
+        "monthly_average": 600,
+        "verification_method": "self_declared",
+        "confidence": "self_declared"
+      }
+    ],
+    "total_monthly_verified": 0,
+    "total_monthly_bank_corroborated": 0,
+    "total_monthly_self_declared_cash": 600,
+    "total_monthly_declared": 600,
+    "reconciliation_gap": 0,
+    "reconciliation_flag": false,
+    "cash_attestation_signed": true,
+    "cash_log": [
+      {
+        "week_of": "2026-04-06",
+        "amount": 150
+      },
+      {
+        "week_of": "2026-04-13",
+        "amount": 140
+      },
+      {
+        "week_of": "2026-04-20",
+        "amount": 160
+      },
+      {
+        "week_of": "2026-04-27",
+        "amount": 150
+      }
+    ],
+    "snap_gross_income_limit_1person": 1632,
+    "snap_bbce_applies": true,
+    "regulatory_citations": [
+      "7 CFR 273.10(c) — calculation of household income",
+      "7 CFR 273.2(f)(1)(ii) — verification of earned income",
+      "CA CDSS MPP 63-503.211 — self-employment income"
+    ],
+    "generated_at": "2026-05-18T00:00:00.000Z"
+  },
+  "citations": [
+    {
+      "authority": "7 CFR Part 273",
+      "reference": "7 CFR 273.10(c) — calculation of household income"
+    },
+    {
+      "authority": "7 CFR Part 273",
+      "reference": "7 CFR 273.2(f)(1)(ii) — verification of earned income"
+    },
+    {
+      "authority": "CA CDSS",
+      "reference": "CA CDSS MPP 63-503.211 — self-employment income"
+    }
+  ],
+  "warnings": [],
+  "computed_at": "2026-05-18T00:00:00.000Z",
+  "engine_version": "0.1.0"
+}

@@ -1,0 +1,25 @@
+{
+  "flow": "shared-lease",
+  "state": "CA",
+  "inputs": {
+    "applicant_name": "Marcus Webb",
+    "state_code": "CA",
+    "intake": {
+      "lease_in_applicant_name": false,
+      "leaseholder_name": "Cousin",
+      "stated_monthly_rent": 600,
+      "payment_method": "venmo_zelle",
+      "address": "back unit behind 922 Grant, SF"
+    },
+    "document_type": "none",
+    "bank_evidence": {
+      "match_found": false,
+      "matched_amount": 0,
+      "frequency": "none",
+      "confidence": "none",
+      "months_confirmed": 0,
+      "matched_transactions": []
+    },
+    "address_valid": false
+  }
+}

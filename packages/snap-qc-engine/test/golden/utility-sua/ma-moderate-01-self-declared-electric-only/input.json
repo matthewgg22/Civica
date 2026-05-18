@@ -1,0 +1,22 @@
+{
+  "flow": "utility-sua",
+  "state": "MA",
+  "inputs": {
+    "applicant_name": "James O'Neill",
+    "service_address": "88 Pleasant St, Worcester, MA 01609",
+    "intake": {
+      "state_code": "MA",
+      "landlord_pays_any": false,
+      "utilities_paid_by_applicant": {
+        "heat_gas": false,
+        "electricity": true,
+        "cooling": false,
+        "water": false,
+        "phone_internet": false,
+        "none": false
+      }
+    },
+    "accounts": [],
+    "name_match": false
+  }
+}

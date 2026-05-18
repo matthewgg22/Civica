@@ -1,0 +1,75 @@
+{
+  "flow": "shared-lease",
+  "state": "MA",
+  "defensibility_score": "moderate",
+  "defensibility_factors": [
+    {
+      "name": "no_lease_document",
+      "weight": "negative",
+      "detail": "No sublease or landlord letter on file"
+    },
+    {
+      "name": "bank_payment_pattern_high",
+      "weight": "positive",
+      "detail": "3 matching monthly transfers to leaseholder"
+    }
+  ],
+  "evidence_package": {
+    "flow": "shared-lease",
+    "applicant_name": "Kofi Mensah",
+    "state_code": "MA",
+    "lease_in_applicant_name": false,
+    "leaseholder_name": "Ama Mensah",
+    "stated_monthly_rent": 750,
+    "document_type": "none",
+    "document_uploaded": false,
+    "bank_payment_evidence": {
+      "match_found": true,
+      "matched_amount": 750,
+      "frequency": "monthly",
+      "confidence": "high",
+      "months_confirmed": 3,
+      "matched_transactions": [
+        {
+          "date": "2026-03-01",
+          "amount": 750,
+          "description": "Zelle Ama M",
+          "counterparty": "Ama Mensah"
+        },
+        {
+          "date": "2026-04-01",
+          "amount": 750,
+          "description": "Zelle Ama M",
+          "counterparty": "Ama Mensah"
+        },
+        {
+          "date": "2026-05-01",
+          "amount": 750,
+          "description": "Zelle Ama M",
+          "counterparty": "Ama Mensah"
+        }
+      ]
+    },
+    "address_valid": true,
+    "address_normalized": "180 BLUE HILL AVE, DORCHESTER, MA 02121-3210",
+    "qc_defensibility_score": "moderate",
+    "regulatory_citations": [
+      "7 CFR 273.2(f)(1)(vi) — verification of shelter expenses",
+      "106 CMR 364.400 — MA shelter deduction"
+    ],
+    "generated_at": "2026-05-18T00:00:00.000Z"
+  },
+  "citations": [
+    {
+      "authority": "7 CFR Part 273",
+      "reference": "7 CFR 273.2(f)(1)(vi) — verification of shelter expenses"
+    },
+    {
+      "authority": "MA DTA",
+      "reference": "106 CMR 364.400 — MA shelter deduction"
+    }
+  ],
+  "warnings": [],
+  "computed_at": "2026-05-18T00:00:00.000Z",
+  "engine_version": "0.1.0"
+}

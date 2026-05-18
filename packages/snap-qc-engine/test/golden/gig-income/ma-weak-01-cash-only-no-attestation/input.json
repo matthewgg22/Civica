@@ -1,0 +1,18 @@
+{
+  "flow": "gig-income",
+  "state": "MA",
+  "inputs": {
+    "applicant_name": "Renee Boucher",
+    "state_code": "MA",
+    "sources": [
+      {
+        "type": "cash",
+        "source_name": "Babysitting",
+        "monthly_average": 800,
+        "verification_method": "self_declared",
+        "confidence": "self_declared"
+      }
+    ],
+    "cash_attestation_signed": false
+  }
+}

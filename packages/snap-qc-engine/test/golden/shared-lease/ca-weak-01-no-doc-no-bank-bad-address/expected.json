@@ -1,0 +1,66 @@
+{
+  "flow": "shared-lease",
+  "state": "CA",
+  "defensibility_score": "weak",
+  "defensibility_factors": [
+    {
+      "name": "no_lease_document",
+      "weight": "negative",
+      "detail": "No sublease or landlord letter on file"
+    },
+    {
+      "name": "no_bank_evidence",
+      "weight": "negative",
+      "detail": "No matching rent transactions"
+    },
+    {
+      "name": "address_invalid",
+      "weight": "negative",
+      "detail": "USPS could not validate the service address"
+    }
+  ],
+  "evidence_package": {
+    "flow": "shared-lease",
+    "applicant_name": "Marcus Webb",
+    "state_code": "CA",
+    "lease_in_applicant_name": false,
+    "leaseholder_name": "Cousin",
+    "stated_monthly_rent": 600,
+    "document_type": "none",
+    "document_uploaded": false,
+    "bank_payment_evidence": {
+      "match_found": false,
+      "matched_amount": 0,
+      "frequency": "none",
+      "confidence": "none",
+      "months_confirmed": 0,
+      "matched_transactions": []
+    },
+    "address_valid": false,
+    "qc_defensibility_score": "weak",
+    "regulatory_citations": [
+      "7 CFR 273.2(f)(1)(vi) — verification of shelter expenses",
+      "CA CDSS MPP 63-503.312 — shelter deduction documentation"
+    ],
+    "generated_at": "2026-05-18T00:00:00.000Z"
+  },
+  "citations": [
+    {
+      "authority": "7 CFR Part 273",
+      "reference": "7 CFR 273.2(f)(1)(vi) — verification of shelter expenses"
+    },
+    {
+      "authority": "CA CDSS",
+      "reference": "CA CDSS MPP 63-503.312 — shelter deduction documentation"
+    }
+  ],
+  "warnings": [
+    {
+      "code": "shared_lease.address_invalid",
+      "severity": "warning",
+      "message": "Service address failed USPS validation"
+    }
+  ],
+  "computed_at": "2026-05-18T00:00:00.000Z",
+  "engine_version": "0.1.0"
+}

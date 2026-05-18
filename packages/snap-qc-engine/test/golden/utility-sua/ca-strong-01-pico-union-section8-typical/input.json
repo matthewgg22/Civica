@@ -1,0 +1,31 @@
+{
+  "flow": "utility-sua",
+  "state": "CA",
+  "inputs": {
+    "applicant_name": "Maria Hernandez",
+    "service_address": "1421 W Pico Blvd, Los Angeles, CA 90015",
+    "intake": {
+      "state_code": "CA",
+      "landlord_pays_any": false,
+      "utilities_paid_by_applicant": {
+        "heat_gas": true,
+        "electricity": true,
+        "cooling": false,
+        "water": false,
+        "phone_internet": false,
+        "none": false
+      }
+    },
+    "accounts": [
+      {
+        "utility": "PG&E",
+        "account_holder_name": "Maria Hernandez",
+        "service_address": "1421 W Pico Blvd, Los Angeles, CA 90015",
+        "account_status": "active",
+        "utility_type": "gas",
+        "source": "utilityapi_sandbox"
+      }
+    ],
+    "name_match": true
+  }
+}

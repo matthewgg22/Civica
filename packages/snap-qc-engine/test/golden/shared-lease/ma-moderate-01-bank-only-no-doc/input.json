@@ -1,0 +1,45 @@
+{
+  "flow": "shared-lease",
+  "state": "MA",
+  "inputs": {
+    "applicant_name": "Kofi Mensah",
+    "state_code": "MA",
+    "intake": {
+      "lease_in_applicant_name": false,
+      "leaseholder_name": "Ama Mensah",
+      "stated_monthly_rent": 750,
+      "payment_method": "venmo_zelle",
+      "address": "180 Blue Hill Ave, Dorchester, MA 02121"
+    },
+    "document_type": "none",
+    "bank_evidence": {
+      "match_found": true,
+      "matched_amount": 750,
+      "frequency": "monthly",
+      "confidence": "high",
+      "months_confirmed": 3,
+      "matched_transactions": [
+        {
+          "date": "2026-03-01",
+          "amount": 750,
+          "description": "Zelle Ama M",
+          "counterparty": "Ama Mensah"
+        },
+        {
+          "date": "2026-04-01",
+          "amount": 750,
+          "description": "Zelle Ama M",
+          "counterparty": "Ama Mensah"
+        },
+        {
+          "date": "2026-05-01",
+          "amount": 750,
+          "description": "Zelle Ama M",
+          "counterparty": "Ama Mensah"
+        }
+      ]
+    },
+    "address_valid": true,
+    "address_normalized": "180 BLUE HILL AVE, DORCHESTER, MA 02121-3210"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "flow": "shared-lease",
+  "state": "MA",
+  "defensibility_score": "weak",
+  "defensibility_factors": [
+    {
+      "name": "no_lease_document",
+      "weight": "negative",
+      "detail": "No sublease or landlord letter on file"
+    },
+    {
+      "name": "no_bank_evidence",
+      "weight": "negative",
+      "detail": "No matching rent transactions"
+    }
+  ],
+  "evidence_package": {
+    "flow": "shared-lease",
+    "applicant_name": "Ngozi Eze",
+    "state_code": "MA",
+    "lease_in_applicant_name": false,
+    "leaseholder_name": "Auntie",
+    "stated_monthly_rent": 500,
+    "document_type": "none",
+    "document_uploaded": false,
+    "bank_payment_evidence": {
+      "match_found": false,
+      "matched_amount": 0,
+      "frequency": "none",
+      "confidence": "none",
+      "months_confirmed": 0,
+      "matched_transactions": []
+    },
+    "address_valid": true,
+    "address_normalized": "14 PARK ST, LYNN, MA 01902-3140",
+    "qc_defensibility_score": "weak",
+    "regulatory_citations": [
+      "7 CFR 273.2(f)(1)(vi) — verification of shelter expenses",
+      "106 CMR 364.400 — MA shelter deduction"
+    ],
+    "generated_at": "2026-05-18T00:00:00.000Z"
+  },
+  "citations": [
+    {
+      "authority": "7 CFR Part 273",
+      "reference": "7 CFR 273.2(f)(1)(vi) — verification of shelter expenses"
+    },
+    {
+      "authority": "MA DTA",
+      "reference": "106 CMR 364.400 — MA shelter deduction"
+    }
+  ],
+  "warnings": [],
+  "computed_at": "2026-05-18T00:00:00.000Z",
+  "engine_version": "0.1.0"
+}

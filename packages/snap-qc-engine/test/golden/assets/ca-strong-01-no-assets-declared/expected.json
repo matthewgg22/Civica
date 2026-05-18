@@ -1,0 +1,40 @@
+{
+  "flow": "assets",
+  "state": "CA",
+  "defensibility_score": "strong",
+  "defensibility_factors": [
+    {
+      "name": "no_assets_declared",
+      "weight": "neutral",
+      "detail": "Applicant declared no assets"
+    }
+  ],
+  "evidence_package": {
+    "flow": "assets",
+    "applicant_name": "Quinn Alvarez",
+    "state_code": "CA",
+    "assets": [],
+    "total_countable_assets": 0,
+    "asset_limit_usd": 0,
+    "asset_test_applies": false,
+    "asset_test_result": "not_applicable",
+    "regulatory_citations": [
+      "CA SB 1090 (2019) — eliminated general resource test effective Jan 2020",
+      "7 CFR 273.8 (federal baseline, superseded in CA)"
+    ],
+    "generated_at": "2026-05-18T00:00:00.000Z"
+  },
+  "citations": [
+    {
+      "authority": "CA CDSS",
+      "reference": "CA SB 1090 (2019) — eliminated general resource test effective Jan 2020"
+    },
+    {
+      "authority": "7 CFR Part 273",
+      "reference": "7 CFR 273.8 (federal baseline, superseded in CA)"
+    }
+  ],
+  "warnings": [],
+  "computed_at": "2026-05-18T00:00:00.000Z",
+  "engine_version": "0.1.0"
+}

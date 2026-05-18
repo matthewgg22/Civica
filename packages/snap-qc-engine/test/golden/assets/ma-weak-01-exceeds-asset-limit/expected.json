@@ -1,0 +1,68 @@
+{
+  "flow": "assets",
+  "state": "MA",
+  "defensibility_score": "weak",
+  "defensibility_factors": [
+    {
+      "name": "all_assets_verified",
+      "weight": "positive",
+      "detail": "Every declared asset has Plaid or document verification"
+    },
+    {
+      "name": "asset_test_exceeded",
+      "weight": "negative",
+      "detail": "Countable $4200 exceeds limit $2750"
+    }
+  ],
+  "evidence_package": {
+    "flow": "assets",
+    "applicant_name": "Sarah Whitfield",
+    "state_code": "MA",
+    "assets": [
+      {
+        "type": "bank_account",
+        "description": "Eastern Bank checking",
+        "stated_value": 2800,
+        "exempt": false,
+        "countable_value": 2800,
+        "verification_method": "plaid_balance"
+      },
+      {
+        "type": "bank_account",
+        "description": "Eastern Bank savings",
+        "stated_value": 1400,
+        "exempt": false,
+        "countable_value": 1400,
+        "verification_method": "plaid_balance"
+      }
+    ],
+    "total_countable_assets": 4200,
+    "asset_limit_usd": 2750,
+    "asset_test_applies": true,
+    "asset_test_result": "fail",
+    "regulatory_citations": [
+      "106 CMR 365.180 — Massachusetts resource limits",
+      "7 CFR 273.8 — Federal resource test"
+    ],
+    "generated_at": "2026-05-18T00:00:00.000Z"
+  },
+  "citations": [
+    {
+      "authority": "MA DTA",
+      "reference": "106 CMR 365.180 — Massachusetts resource limits"
+    },
+    {
+      "authority": "7 CFR Part 273",
+      "reference": "7 CFR 273.8 — Federal resource test"
+    }
+  ],
+  "warnings": [
+    {
+      "code": "assets.over_limit",
+      "severity": "critical",
+      "message": "Countable assets exceed state limit"
+    }
+  ],
+  "computed_at": "2026-05-18T00:00:00.000Z",
+  "engine_version": "0.1.0"
+}

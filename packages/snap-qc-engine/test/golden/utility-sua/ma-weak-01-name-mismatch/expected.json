@@ -1,0 +1,62 @@
+{
+  "flow": "utility-sua",
+  "state": "MA",
+  "defensibility_score": "weak",
+  "defensibility_factors": [
+    {
+      "name": "utility_account_name_mismatch",
+      "weight": "negative",
+      "detail": "Account holder differs from applicant; attestation required"
+    }
+  ],
+  "evidence_package": {
+    "flow": "utility",
+    "applicant_name": "Priya Shah",
+    "service_address": "150 Hyde Park Ave, Jamaica Plain, MA 02130",
+    "state_code": "MA",
+    "tier": "full",
+    "tier_amount_usd": 745,
+    "rule_citation": "MA DTA Field Operations Memo 2024 / 106 CMR 364.400",
+    "basis": "conflicting",
+    "utility_accounts_found": [
+      {
+        "utility": "Eversource",
+        "account_holder_name": "Daniel Kim",
+        "service_address": "150 Hyde Park Ave, Jamaica Plain, MA 02130",
+        "account_status": "active",
+        "utility_type": "gas",
+        "source": "utilityapi_sandbox"
+      }
+    ],
+    "name_match": false,
+    "intake_responses": {
+      "state_code": "MA",
+      "landlord_pays_any": false,
+      "utilities_paid_by_applicant": {
+        "heat_gas": true,
+        "electricity": false,
+        "cooling": false,
+        "water": false,
+        "phone_internet": false,
+        "none": false
+      }
+    },
+    "generated_at": "2026-05-18T00:00:00.000Z",
+    "attestation_required": true
+  },
+  "citations": [
+    {
+      "authority": "MA DTA",
+      "reference": "MA DTA Field Operations Memo 2024 / 106 CMR 364.400"
+    }
+  ],
+  "warnings": [
+    {
+      "code": "utility.account_holder_mismatch",
+      "severity": "warning",
+      "message": "Applicant declares paying utilities but account is held by someone else"
+    }
+  ],
+  "computed_at": "2026-05-18T00:00:00.000Z",
+  "engine_version": "0.1.0"
+}
