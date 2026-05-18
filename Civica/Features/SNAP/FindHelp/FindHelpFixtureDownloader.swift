@@ -32,6 +32,19 @@ actor FindHelpFixtureDownloader {
     /// Files too large to bundle — downloaded once and cached.
     private static let remoteFixtures = ["ca_retailers"]
 
+    /// Dedicated session with explicit timeouts. URLSession.shared has
+    /// no per-resource ceiling, which means a stalled cellular fetch
+    /// could leave the background prefetch task hanging until the OS
+    /// kills it. 30s per request and 120s for the whole transfer is
+    /// generous for the 14 MB fixture without being unbounded.
+    private static let downloadSession: URLSession = {
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 30
+        config.timeoutIntervalForResource = 120
+        config.waitsForConnectivity = true
+        return URLSession(configuration: config)
+    }()
+
     /// Downloads any missing remote fixtures in the background.
     /// Safe to call at every launch; skips files that are already cached.
     func prefetchIfNeeded() async {
@@ -62,7 +75,7 @@ actor FindHelpFixtureDownloader {
                 at: Self.cacheDirectory,
                 withIntermediateDirectories: true
             )
-            let (data, response) = try await URLSession.shared.data(from: url)
+            let (data, response) = try await Self.downloadSession.data(from: url)
             guard let http = response as? HTTPURLResponse else {
                 Self.logger.error("FindHelp fixture download: unexpected response type for \(fixture, privacy: .public)")
                 return
