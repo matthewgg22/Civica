@@ -59,3 +59,11 @@ struct InterviewScoreResponseDTO: Codable {
     let missingContext: InterviewScoreAxisDTO
     let perTurnNotes: [InterviewPerTurnNoteDTO]
 }
+
+// Events emitted by InterviewCoachAPIClient.streamTurn(_:).
+// .delta arrives once per streamed token; .completed fires once when the
+// edge function closes the SSE stream.
+enum CoachTurnEvent {
+    case delta(String)
+    case completed(caseworkerText: String, endOfInterview: Bool)
+}

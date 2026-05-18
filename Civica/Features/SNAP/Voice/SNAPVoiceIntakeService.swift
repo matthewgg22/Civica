@@ -243,7 +243,10 @@ final class SNAPVoiceIntakeService: ObservableObject {
         guard let step = currentStep, let stepSession, let distressSession else { return }
 
         let stepPrompt = SNAPVoicePrompts.stepPrompt(for: step, transcript: transcript)
-        let distressPrompt = SNAPVoicePrompts.distressPrompt(transcript: transcript)
+        // Scrub PII from the transcript before distress detection — the
+        // distress model only needs emotional language, never identifiers.
+        let scrubbedTranscript = SNAPVoicePIIScrubber.scrubForDistress(transcript)
+        let distressPrompt = SNAPVoicePrompts.distressPrompt(transcript: scrubbedTranscript)
 
         do {
             async let patch = extract(step: step, prompt: stepPrompt, session: stepSession)
@@ -251,7 +254,10 @@ final class SNAPVoiceIntakeService: ObservableObject {
             let (patchResult, distressResult) = try await (patch, distress)
             updatesContinuation.yield(.extracted(patchResult, distressResult))
         } catch {
-            let mapped = SNAPVoiceIntakeError.extractionFailed(underlying: error.localizedDescription)
+            // Scrub the error description before surfacing it — some error
+            // types may echo back fragments of the request or model output.
+            let safeDescription = SNAPVoicePIIScrubber.scrubForDistress(error.localizedDescription)
+            let mapped = SNAPVoiceIntakeError.extractionFailed(underlying: safeDescription)
             updatesContinuation.yield(.failed(mapped))
         }
     }

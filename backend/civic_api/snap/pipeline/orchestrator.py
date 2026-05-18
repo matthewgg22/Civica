@@ -214,6 +214,7 @@ class SnapPipelineOrchestrator:
             choice_options=script_output.choice_options,
             next_topic=ask_decision.next_topic,
             is_terminal=False,
+            needs_user_confirmation=interpreter_output.confidence < 0.6,
             confidence=interpreter_output.confidence,
             cost_telemetry=cost_log,
         )

@@ -68,6 +68,7 @@ def run_classifier(
         system=CLASSIFIER_PROMPT,
         messages=messages,
         language=language,
+        max_tokens=256,
     )
     classification = _ensure_band_consistency(classification)
     return classification, telemetry

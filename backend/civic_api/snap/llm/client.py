@@ -61,6 +61,8 @@ class LLMCallTelemetry:
     provider_used: str
     input_tokens: int = 0
     output_tokens: int = 0
+    cache_creation_input_tokens: int = 0
+    cache_read_input_tokens: int = 0
     latency_ms: int = 0
     retries: int = 0
     fell_back_from_anthropic: bool = False
@@ -97,13 +99,18 @@ class LLMClient:
         system: str,
         messages: list[dict[str, Any]],
         language: str = "en",
+        max_tokens: int = 1024,
     ) -> tuple[T, LLMCallTelemetry]:
         """Run the LLM with structured output. Returns the parsed Pydantic
         instance plus per-call telemetry.
 
         The `language` parameter is appended to the system prompt as a
         directive ("Respond only in <language>."). Every stage of the
-        pipeline threads it through unmodified."""
+        pipeline threads it through unmodified.
+
+        Set `max_tokens` to the tightest ceiling that fits the expected
+        output schema — this is the biggest single lever for cost and
+        latency. Defaults to 1024; callers should override downward."""
         system_localized = (
             f"{system}\n\nRespond ONLY in {language}. All user-facing text must be in {language}."
         )
@@ -116,6 +123,7 @@ class LLMClient:
                     schema=schema,
                     system=system_localized,
                     messages=messages,
+                    max_tokens=max_tokens,
                 )
             except Exception as exc:  # noqa: BLE001 — fallback intent
                 anthropic_error = exc
@@ -138,6 +146,7 @@ class LLMClient:
             schema=schema,
             system=system_localized,
             messages=messages,
+            max_tokens=max_tokens,
         )
         telemetry.fell_back_from_anthropic = True
         return result, telemetry
@@ -151,11 +160,17 @@ class LLMClient:
         schema: type[T],
         system: str,
         messages: list[dict[str, Any]],
+        max_tokens: int = 1024,
     ) -> tuple[T, LLMCallTelemetry]:
         if self._anthropic is None:
             import anthropic  # type: ignore[import-not-found]
 
             self._anthropic = anthropic.Anthropic(api_key=self._anthropic_api_key, timeout=self._timeout_seconds)
+
+        # Cache the static system prompt so repeated turns in the same
+        # conversation pay 10% of input price instead of full price for
+        # the prompt tokens.
+        cached_system = [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}]
 
         retries = 0
         last_validation_error: ValidationError | None = None
@@ -163,8 +178,8 @@ class LLMClient:
             t0 = time.monotonic()
             response = self._anthropic.messages.create(
                 model=model,
-                max_tokens=2048,
-                system=system,
+                max_tokens=max_tokens,
+                system=cached_system,
                 messages=messages,
                 tools=[
                     {
@@ -194,14 +209,18 @@ class LLMClient:
 
             input_tokens = getattr(response.usage, "input_tokens", 0)
             output_tokens = getattr(response.usage, "output_tokens", 0)
+            cache_creation = getattr(response.usage, "cache_creation_input_tokens", 0) or 0
+            cache_read = getattr(response.usage, "cache_read_input_tokens", 0) or 0
             telemetry = LLMCallTelemetry(
                 model_used=model,
                 provider_used="anthropic",
                 input_tokens=input_tokens,
                 output_tokens=output_tokens,
+                cache_creation_input_tokens=cache_creation,
+                cache_read_input_tokens=cache_read,
                 latency_ms=latency_ms,
                 retries=retries,
-                cost_usd=_compute_cost(model, input_tokens, output_tokens),
+                cost_usd=_compute_cost(model, input_tokens, output_tokens, cache_creation, cache_read),
             )
             return parsed, telemetry
 
@@ -217,6 +236,7 @@ class LLMClient:
         schema: type[T],
         system: str,
         messages: list[dict[str, Any]],
+        max_tokens: int = 1024,
     ) -> tuple[T, LLMCallTelemetry]:
         if self._openai is None:
             import openai  # type: ignore[import-not-found]
@@ -229,6 +249,7 @@ class LLMClient:
             t0 = time.monotonic()
             response = self._openai.chat.completions.create(
                 model=model,
+                max_tokens=max_tokens,
                 messages=[{"role": "system", "content": system}, *messages],
                 response_format={"type": "json_schema", "json_schema": {
                     "name": schema.__name__,
@@ -266,12 +287,22 @@ class LLMClient:
         )
 
 
-def _compute_cost(model: str, input_tokens: int, output_tokens: int) -> Decimal:
+def _compute_cost(
+    model: str,
+    input_tokens: int,
+    output_tokens: int,
+    cache_creation_tokens: int = 0,
+    cache_read_tokens: int = 0,
+) -> Decimal:
     pricing = _PRICING.get(model)
     if pricing is None:
         return Decimal("0")
     in_rate, out_rate = pricing
+    # Cache reads are billed at 10% of the regular input rate.
+    # Cache creation is billed at the regular input rate.
     return (
         Decimal(input_tokens) * in_rate / Decimal(1_000_000)
         + Decimal(output_tokens) * out_rate / Decimal(1_000_000)
+        + Decimal(cache_creation_tokens) * in_rate / Decimal(1_000_000)
+        + Decimal(cache_read_tokens) * in_rate / Decimal(10_000_000)
     )

@@ -389,6 +389,7 @@ final class MockSNAPNetworkClient: SNAPNetworkClient, @unchecked Sendable {
                 isTerminal: false,
                 needsClarification: false,
                 clarificationText: nil,
+                needsUserConfirmation: false,
                 costTelemetry: [],
                 confidence: 0.97
             )
@@ -405,6 +406,7 @@ final class MockSNAPNetworkClient: SNAPNetworkClient, @unchecked Sendable {
                 isTerminal: false,
                 needsClarification: false,
                 clarificationText: nil,
+                needsUserConfirmation: false,
                 costTelemetry: [],
                 confidence: 0.98
             )
@@ -421,6 +423,7 @@ final class MockSNAPNetworkClient: SNAPNetworkClient, @unchecked Sendable {
                 isTerminal: false,
                 needsClarification: false,
                 clarificationText: nil,
+                needsUserConfirmation: false,
                 costTelemetry: [],
                 confidence: 0.96
             )
@@ -484,6 +487,7 @@ final class MockSNAPNetworkClient: SNAPNetworkClient, @unchecked Sendable {
                 isTerminal: true,
                 needsClarification: false,
                 clarificationText: nil,
+                needsUserConfirmation: false,
                 costTelemetry: [],
                 confidence: 0.96
             )

@@ -102,36 +102,52 @@ Deno.serve(async (req: Request) => {
   }
 
   const anthropic = new Anthropic({ apiKey });
+  const enc = new TextEncoder();
 
-  let completion;
-  try {
-    completion = await anthropic.messages.create({
-      model: MODEL,
-      max_tokens: 400,
-      temperature: 0.6,
-      system: systemPrompt,
-      messages,
-    });
-  } catch (err) {
-    return json({ error: `Claude request failed: ${(err as Error).message}` }, 502);
-  }
+  const body = new ReadableStream({
+    async start(controller) {
+      let accumulated = "";
+      try {
+        const stream = anthropic.messages.stream({
+          model: MODEL,
+          max_tokens: 400,
+          temperature: 0.6,
+          system: [{ type: "text", text: systemPrompt, cache_control: { type: "ephemeral" } }],
+          messages,
+        });
 
-  const text = completion.content
-    .map((block) => (block.type === "text" ? block.text : ""))
-    .join("")
-    .trim();
+        for await (const event of stream) {
+          if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
+            const delta = event.delta.text;
+            accumulated += delta;
+            controller.enqueue(enc.encode(`data: ${JSON.stringify({ delta })}\n\n`));
+          }
+        }
 
-  if (!text) return json({ error: "Claude returned an empty response" }, 502);
+        const endOfInterview = accumulated.includes(END_INTERVIEW_TOKEN);
+        const caseworkerText = accumulated.replaceAll(END_INTERVIEW_TOKEN, "").trim();
+        controller.enqueue(
+          enc.encode(
+            `data: ${JSON.stringify({ done: true, session_id: sessionID, caseworker_text: caseworkerText, end_of_interview: endOfInterview })}\n\n`
+          )
+        );
+      } catch (err) {
+        controller.enqueue(
+          enc.encode(`data: ${JSON.stringify({ error: (err as Error).message })}\n\n`)
+        );
+      } finally {
+        controller.close();
+      }
+    },
+  });
 
-  const endOfInterview = text.includes(END_INTERVIEW_TOKEN);
-  const caseworkerText = endOfInterview
-    ? text.replaceAll(END_INTERVIEW_TOKEN, "").trim()
-    : text;
-
-  return json({
-    session_id: sessionID,
-    caseworker_text: caseworkerText,
-    end_of_interview: endOfInterview,
+  return new Response(body, {
+    headers: {
+      ...corsHeaders,
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      "Connection": "keep-alive",
+    },
   });
 });
 

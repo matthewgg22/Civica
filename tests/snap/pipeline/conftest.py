@@ -65,6 +65,7 @@ class ScriptedLLMClient(LLMClient):
         system: str,
         messages: list[dict[str, Any]],
         language: str = "en",
+        **_kwargs: Any,
     ):
         if not self._script:
             raise AssertionError(

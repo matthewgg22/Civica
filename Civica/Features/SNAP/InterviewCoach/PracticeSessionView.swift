@@ -33,16 +33,34 @@ struct PracticeSessionView: View {
                         }
 
                         if case .awaitingCaseworker = viewModel.status {
-                            HStack(spacing: CivicaSpacing.xs) {
-                                ProgressView().controlSize(.small)
-                                Text(InterviewCoachStrings.caseworkerTyping.value(in: language))
-                                    .font(CivicaTypography.captionStrong)
-                                    .foregroundStyle(CivicaColors.graphite)
-                                Spacer(minLength: CivicaSpacing.sm)
-                                CivicaAIBadge()
+                            if viewModel.streamingCaseworkerText.isEmpty {
+                                HStack(spacing: CivicaSpacing.xs) {
+                                    ProgressView().controlSize(.small)
+                                    Text(InterviewCoachStrings.caseworkerTyping.value(in: language))
+                                        .font(CivicaTypography.captionStrong)
+                                        .foregroundStyle(CivicaColors.graphite)
+                                    Spacer(minLength: CivicaSpacing.sm)
+                                    CivicaAIBadge()
+                                }
+                                .padding(.leading, CivicaSpacing.sm)
+                                .padding(.trailing, CivicaSpacing.sm)
+                            } else {
+                                HStack {
+                                    Text(viewModel.streamingCaseworkerText)
+                                        .font(CivicaTypography.body)
+                                        .foregroundStyle(CivicaColors.ink)
+                                        .padding(CivicaSpacing.sm)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                                                .fill(CivicaColors.surfacePrimary)
+                                        )
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                                                .stroke(CivicaColors.hairline, lineWidth: 1)
+                                        )
+                                    Spacer(minLength: 32)
+                                }
                             }
-                            .padding(.leading, CivicaSpacing.sm)
-                            .padding(.trailing, CivicaSpacing.sm)
                         }
 
                         if case .scoring = viewModel.status {

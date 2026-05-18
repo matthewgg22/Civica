@@ -29,6 +29,7 @@ enum SNAPAnalytics {
         static let conversationTurnSent = "snap_conversation_turn_sent"
         static let conversationVerdictReached = "snap_conversation_verdict_reached"
         static let conversationClarificationRequested = "snap_conversation_clarification_requested"
+        static let conversationConfirmationRequested = "snap_conversation_confirmation_requested"
         static let conversationError = "snap_conversation_error"
         // Interview Navigator funnel. Counts only — never includes
         // the actual date, phone number, or consent timestamp.
@@ -56,6 +57,10 @@ enum SNAPAnalytics {
 
     static func trackConversationClarificationRequested() {
         send(Event.conversationClarificationRequested, stepName: nil, stepIndex: nil)
+    }
+
+    static func trackConversationConfirmationRequested() {
+        send(Event.conversationConfirmationRequested, stepName: nil, stepIndex: nil)
     }
 
     static func trackConversationError() {
