@@ -11,7 +11,10 @@
 
 export type { StateCode, SuaTier, Confidence, VerificationFlow, SnapCalculatorInput, SnapDeductionBreakdown } from "./types";
 export { STATE_SUA_RULES, determineSuaTier } from "./sua-rules";
+export type { StateSuaRule } from "./sua-rules";
 export { STATE_ASSET_RULES, SHELTER_CITATIONS, INCOME_CITATIONS } from "./asset-rules";
+export type { StateAssetRule } from "./asset-rules";
+export type { UtilityIntake } from "./types";
 
 import type { StateCode, SnapCalculatorInput, SnapDeductionBreakdown } from "./types";
 

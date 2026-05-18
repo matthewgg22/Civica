@@ -228,6 +228,12 @@ importers:
 
   apps/snap-verification-prototype:
     dependencies:
+      '@civica/snap-calculator':
+        specifier: workspace:*
+        version: link:../../packages/snap-calculator
+      '@civica/snap-qc-engine':
+        specifier: workspace:*
+        version: link:../../packages/snap-qc-engine
       '@react-pdf/renderer':
         specifier: ^3.4.4
         version: 3.4.5(react@18.3.1)
@@ -357,6 +363,22 @@ importers:
         version: link:../config
       typescript:
         specifier: ^5.8.0
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.9
+        version: 2.1.9(@types/node@22.19.19)(jsdom@26.1.0)(lightningcss@1.32.0)(terser@5.47.1)
+
+  packages/snap-qc-engine:
+    dependencies:
+      '@civica/snap-calculator':
+        specifier: workspace:*
+        version: link:../snap-calculator
+      zod:
+        specifier: ^3.24.0
+        version: 3.25.76
+    devDependencies:
+      typescript:
+        specifier: ^5.5.3
         version: 5.9.3
       vitest:
         specifier: ^2.1.9
