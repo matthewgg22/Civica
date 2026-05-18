@@ -276,21 +276,27 @@ export default async function LandingPage({ params }: PageProps) {
         <div className="mx-auto w-full max-w-5xl px-4 py-8">
           <ul className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-graphite">
             <li>
-              <Link
-                href={`/${locale}/privacy`}
+              {/* External: USDA FNS SNAP eligibility rules */}
+              <a
+                href="https://www.fns.usda.gov/snap/eligibility"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="underline decoration-hairline underline-offset-2 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brick focus-visible:ring-offset-2"
               >
                 {t("trust.rulesEngine")}
-              </Link>
+              </a>
             </li>
             <li aria-hidden="true">·</li>
             <li>
-              <Link
-                href={`/${locale}/app/onboarding`}
+              {/* External: CDSS CalFresh program page */}
+              <a
+                href="https://www.cdss.ca.gov/food-and-nutrition/calfresh"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="underline decoration-hairline underline-offset-2 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brick focus-visible:ring-offset-2"
               >
                 {t("trust.stateCdss")}
-              </Link>
+              </a>
             </li>
             <li aria-hidden="true">·</li>
             <li>
@@ -303,12 +309,8 @@ export default async function LandingPage({ params }: PageProps) {
             </li>
             <li aria-hidden="true">·</li>
             <li>
-              <Link
-                href={`/${locale}/privacy`}
-                className="underline decoration-hairline underline-offset-2 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brick focus-visible:ring-offset-2"
-              >
-                {t("trust.wcag")}
-              </Link>
+              {/* No linkable internal page for WCAG statement yet */}
+              <span>{t("trust.wcag")}</span>
             </li>
           </ul>
         </div>
