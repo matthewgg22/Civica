@@ -112,14 +112,18 @@ enum SNAPComplianceCopyRegistry {
     /// rows are `.pendingSignoff` and `approvedEnglish`/`approvedSpanish`
     /// are nil. When a row is signed, the PR that fills the approved
     /// strings also flips status to `.approved`.
+    // Draft replacements sourced from civica_compliance_outreach.xlsx (2026-05-18).
+    // All rows remain .pendingSignoff — production views return nil until counsel
+    // fills column F of the spreadsheet and the PR flips status to .approved.
+    // When counsel signs a row, the only change needed is: status: .approved.
     static let pendingCopyRevisions: [PendingCopyRevision] = [
         PendingCopyRevision(
             id: "approval_email_subject",
             surfaceFile: "CivicaNotificationTemplates.swift",
             stringID: "approvedEmail.subject",
             currentEnglish: "Approved. ${monthlyBenefit}/mo, starting this month.",
-            approvedEnglish: nil,
-            approvedSpanish: nil,
+            approvedEnglish: "Your SNAP application: eligibility determination complete",
+            approvedSpanish: "Su solicitud de SNAP: determinación de elegibilidad completada",
             auditReference: "Q3",
             rationale: "Dollar-amount-first subject reads as incentive; reframe as factual state-agency status update.",
             status: .pendingSignoff
@@ -129,8 +133,8 @@ enum SNAPComplianceCopyRegistry {
             surfaceFile: "SNAPDecisionApprovedView.swift",
             stringID: "SNAPDecisionApprovedStrings.headline",
             currentEnglish: "You're approved.",
-            approvedEnglish: nil,
-            approvedSpanish: nil,
+            approvedEnglish: "You have been determined eligible for SNAP benefits.",
+            approvedSpanish: "Se ha determinado que usted es elegible para recibir beneficios de SNAP.",
             auditReference: "Q3 (boundary)",
             rationale: "Attributes the state agency's determination to Civica. Replace with state-attributed phrasing.",
             status: .pendingSignoff
@@ -140,8 +144,8 @@ enum SNAPComplianceCopyRegistry {
             surfaceFile: "SNAPExpeditedBanner.swift",
             stringID: "almostHeadline",
             currentEnglish: "Almost — one more answer could speed this up",
-            approvedEnglish: nil,
-            approvedSpanish: nil,
+            approvedEnglish: "You may qualify for expedited SNAP benefits — answer one more question to check.",
+            approvedSpanish: "Es posible que califique para beneficios expeditados de SNAP. Responda una pregunta más para verificar.",
             auditReference: "Q3 / Q2.4",
             rationale: "Gamification of a regulatory eligibility category. Reframe to attribute expedited criteria to 7 CFR 273.2(i).",
             status: .pendingSignoff
@@ -151,8 +155,9 @@ enum SNAPComplianceCopyRegistry {
             surfaceFile: "SNAPBenefitEstimatorStrings.swift",
             stringID: "entryCardSubtitle",
             currentEnglish: "Five questions. See your monthly dollar amount before you apply.",
-            approvedEnglish: nil,
-            approvedSpanish: nil,
+            // [Agency] is substituted at runtime: CalFresh (CA) or DTA (MA).
+            approvedEnglish: "Answer a few questions to estimate your potential SNAP eligibility. Results are estimates only — actual eligibility is determined by [Agency].",
+            approvedSpanish: "Responda algunas preguntas para estimar su posible elegibilidad para SNAP. Los resultados son estimaciones únicamente; la elegibilidad real es determinada por [Agencia].",
             auditReference: "Q3 / Q2.3",
             rationale: "Pairs ease cue with incentive cue connected to applying. Reframe as a screening estimate.",
             status: .pendingSignoff
@@ -162,8 +167,10 @@ enum SNAPComplianceCopyRegistry {
             surfaceFile: "SNAPBenefitEstimatorStrings.swift",
             stringID: "applyCTA",
             currentEnglish: "Apply for SNAP",
-            approvedEnglish: nil,
-            approvedSpanish: nil,
+            // State-parameterized: CA → "Apply on BenefitsCal", MA → "Apply on DTA Connect".
+            // Call site must select the correct value via SNAPAgencyDirectory.state.
+            approvedEnglish: "Apply on BenefitsCal",
+            approvedSpanish: "Solicitar en BenefitsCal",
             auditReference: "Q3 / Q2.3",
             rationale: "Generic 'Apply for SNAP' CTA without official-link attribution; should route via the state apply portal (e.g. 'Open BenefitsCal application' for CA, 'Open MA DTA Connect application' for MA) or similar neutral path. CA-portal naming requires the same counsel sign-off MA's did.",
             status: .pendingSignoff
@@ -173,8 +180,8 @@ enum SNAPComplianceCopyRegistry {
             surfaceFile: "CivicaNotificationTemplates.swift",
             stringID: "documentRequestedSMS.body",
             currentEnglish: "DTA needs one more thing: a recent paystub. Send a photo here or upload in the app. By {deadline} keeps your application moving.",
-            approvedEnglish: nil,
-            approvedSpanish: nil,
+            approvedEnglish: "Your SNAP application requires additional documentation. Please submit a recent paystub by {deadline}. You can reply to this message with a photo or upload it in the app.",
+            approvedSpanish: "Su solicitud de SNAP requiere documentación adicional. Envíe un talón de pago reciente antes del {deadline}. Puede responder a este mensaje con una foto o cargarlo en la aplicación.",
             auditReference: "Q3",
             rationale: "'Keeps your application moving' is loss-aversion framing. Reframe as factual deadline.",
             status: .pendingSignoff
@@ -184,8 +191,9 @@ enum SNAPComplianceCopyRegistry {
             surfaceFile: "CivicaNotificationTemplates.swift",
             stringID: "recertOneDayBeforeSMS.body",
             currentEnglish: "Tomorrow is your recert deadline ({recertDate}). 4 minutes if you start now. If you miss it, benefits pause until you submit — text RECERT for a fast link any time.",
-            approvedEnglish: nil,
-            approvedSpanish: nil,
+            // [Portal] is substituted at runtime: BenefitsCal (CA) or DTA Connect (MA).
+            approvedEnglish: "Your SNAP recertification is due {recertDate}. To recertify, visit [Portal] or text RECERT for a link.",
+            approvedSpanish: "Su recertificación de SNAP vence el {recertDate}. Para recertificar, visite [Portal] o escriba RECERT para recibir un enlace.",
             auditReference: "Q3",
             rationale: "Urgency + ease + loss-aversion stacked. Reframe as factual deadline with consequence stated neutrally.",
             status: .pendingSignoff
@@ -195,8 +203,8 @@ enum SNAPComplianceCopyRegistry {
             surfaceFile: "CivicaNotificationTemplates.swift",
             stringID: "recertHeadsUpEmail.subject",
             currentEnglish: "Recertify in 60 days. Usually 4 minutes.",
-            approvedEnglish: nil,
-            approvedSpanish: nil,
+            approvedEnglish: "SNAP recertification required — deadline in 60 days",
+            approvedSpanish: "Recertificación de SNAP requerida — fecha límite en 60 días",
             auditReference: "Q3",
             rationale: "Ease framing tied to recertification. Reframe to factual deadline only.",
             status: .pendingSignoff
@@ -206,8 +214,10 @@ enum SNAPComplianceCopyRegistry {
             surfaceFile: "CivicaNotificationTemplates.swift",
             stringID: "approvedEmail.buttonLabel",
             currentEnglish: "Set the EBT PIN",
-            approvedEnglish: nil,
-            approvedSpanish: nil,
+            // State-parameterized: CA → ebt.ca.gov, MA → ebtedge.com.
+            // Call site must select the correct value via SNAPAgencyDirectory.state.
+            approvedEnglish: "Set your EBT PIN at ebt.ca.gov",
+            approvedSpanish: "Establezca su PIN de EBT en ebt.ca.gov",
             auditReference: "Q3",
             rationale: "Implies Civica performs the PIN action. Reframe as 'Learn how to set your EBT card PIN' linking to official EBT/DTA instructions.",
             status: .pendingSignoff
