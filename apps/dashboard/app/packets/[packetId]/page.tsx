@@ -13,6 +13,7 @@ import LifecycleStrip from "../../../components/LifecycleStrip";
 import HandoffPanel from "../../../components/HandoffPanel";
 import MissingItemRequestPanel from "../../../components/MissingItemRequestPanel";
 import ExpeditedReviewGate from "./ExpeditedReviewGate";
+import ComplianceNarrative from "../../../components/ComplianceNarrative";
 import { formatDateTime, decryptDemoName, firstNameLastInitial, shortId } from "../../../lib/format";
 import { PACKET_STATUS_TRANSITIONS } from "@civica/snap-enums";
 
@@ -26,8 +27,16 @@ const LANG_LABELS: Record<string, string> = {
   vi: "Vietnamese",
 };
 
-export default async function PacketDetailPage({ params }: { params: Promise<{ packetId: string }> }) {
+export default async function PacketDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ packetId: string }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { packetId } = await params;
+  const resolvedSearchParams = (await searchParams) ?? {};
+  const devtoolsEnabled = resolvedSearchParams.devtools === "1";
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
 
@@ -286,6 +295,12 @@ export default async function PacketDetailPage({ params }: { params: Promise<{ p
         <Section title="Activity Timeline" subtitle="Everything that's happened on this packet, in order.">
           <UnifiedTimeline history={history} docs={docs} notes={notes} />
         </Section>
+
+        {devtoolsEnabled ? (
+          <Section title="Compliance Narrative (devtools)" subtitle="Proof-of-life: rendered from @civica/snap-compliance-copy.">
+            <ComplianceNarrative />
+          </Section>
+        ) : null}
       </main>
     </div>
   );
