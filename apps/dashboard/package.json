@@ -11,6 +11,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@civica/analytics-engine": "workspace:*",
+    "@civica/cfr-273": "workspace:*",
     "@civica/snap-calculator": "workspace:*",
     "@civica/snap-enums": "workspace:*",
     "@civica/snap-rules": "workspace:*",
