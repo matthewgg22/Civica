@@ -1,5 +1,17 @@
 # civicaSNAP incident response runbook
 
+## Contacts
+
+| Role | Name | Handle |
+|------|------|--------|
+| Launch lead | Matthew Greer-Gentis | @matthewgg22 |
+| Backend on-call | Matthew Greer-Gentis | @matthewgg22 |
+| Counsel | TBD | — |
+| Sentry alert recipient | matthewgreergentis@gmail.com | — |
+
+---
+
+
 Read this when something has gone wrong. Each section is self-contained. Do not skip the "first 10 minutes" section — even if the incident looks routine.
 
 ---

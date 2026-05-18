@@ -197,6 +197,12 @@ Fly ships stdout to its log infrastructure. If you need to forward to an externa
 Datadog, Papertrail), configure a drain in the Fly dashboard:
 **App → Monitoring → Log Drains → Add Drain**.
 
+### Supabase backups
+
+> **Pre-launch gate**: project is on the Free plan as of 2026-05-18. Scheduled backups and PITR are not enabled.
+> Upgrade to Supabase Pro before launch to get 7-day scheduled backups and PITR.
+> Once upgraded, verify via Settings → Backups and record the earliest recovery point here.
+
 ### High error rate
 
 1. Open the Sentry project → Issues → sort by Last Seen.
