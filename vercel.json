@@ -1,10 +1,11 @@
 {
+  "framework": "nextjs",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm turbo run build --filter=dashboard",
+  "outputDirectory": "apps/dashboard/.next",
   "github": {
     "enabled": true,
     "autoJobCancelation": true,
-    "silent": true,
-    "deploymentEnabled": {
-      "codex/rebuild-feb18": true
-    }
+    "silent": true
   }
 }
