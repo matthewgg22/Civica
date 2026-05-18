@@ -146,18 +146,34 @@ Code: [`apps/dashboard/app/packets/[packetId]/ExpeditedReviewGate.tsx`](apps/das
 
 ### Q5-D — LLM data retention policy — Track 2 ⏳ Policy drafted, pending counsel approval
 
-Interim default: 90-day TTL + RBAC. Standalone artifact: `civica_llm_retention_policy.md` (to be committed).
+Full policy document: [`docs/snap/llm-retention-policy.md`](docs/snap/llm-retention-policy.md) (CIVICA-POL-001 v0.1).
 
-| Policy element | Default value | Status |
+> ⚠️ **Conflict with `docs/snap/retention_policy.md`:** The existing DB retention policy stores document image blobs for 7 years. The LLM policy specifies 0 days for document image content — must never be stored. Counsel must harmonize before either policy is finalized.
+
+**Retention table:**
+
+| Data category | Primary TTL | Backup TTL | Status |
+|---|---|---|---|
+| LLM input/output logs (structured, de-identified) | 90 days from last user interaction | 30 days after primary expiry | ⏳ Counsel: approve / specify different TTL |
+| **Raw voice transcripts** | **0 days — must not be stored** | N/A | ⏳ Counsel: approve |
+| **Document image content** | **0 days — must not be stored** | N/A | ⏳ Counsel: resolve conflict with `retention_policy.md` |
+| Eligibility estimates (structured JSON) | 90 days | 30 days | ⏳ Counsel: approve |
+| Enrollment routing decisions | 90 days | 30 days | ⏳ Counsel: approve |
+
+**Other policy elements:**
+
+| Element | Value | Status |
 |---|---|---|
-| Primary retention TTL | 90 days from last user interaction | ⏳ Counsel: approve / specify different TTL |
-| Backup / DR retention | 30 days after primary expiry (max 120 days total) | ⏳ Counsel: approve / redline |
 | User-requested deletion SLA | 45 days (CCPA minimum — cannot extend) | ⏳ Counsel: approve |
+| Right to Know SLA | 45 days | ⏳ Counsel: approve |
 | RBAC | Admin: read-only audit. User: own data only. No engineer direct-DB access to raw PII. | ⏳ Counsel: approve / add named roles. Engineering: implement RLS on Supabase tables. |
-| LLM provider ZDR | Required for all third-party LLM API calls processing PII | ⚠️ **Engineering: verify ZDR is active before beta.** |
-| PII in Sentry | All PII scrubbed by `beforeSend` before leaving device | ⏳ Counsel: approve. Linked to Q9 — critical path. |
-| Audit logging | All access to retention data: timestamp + actor ID | ⏳ Counsel: approve / specify log destination. Proposed: Supabase audit table. |
-| Annual policy review | Tied to FY COLA review cycle (August) | ⏳ Counsel: approve. Q18 workflow can trigger reminder. |
+| LLM provider ZDR | Required for all third-party LLM API calls processing PII | ⚠️ **Engineering: verify ZDR is active before beta.** OpenAI: platform.openai.com → Settings → Data Usage & Privacy. |
+| Sentry `beforeSend` | All PII scrubbed before leaving device/service | ⏳ Counsel: approve. Fields: `name, ssn, ssn_last4, dob, income, gross_income, net_income, address, street, zip, voice_transcript, document_text, case_id` |
+| Sentry `beforeBreadcrumb` | **Separate hook — must be configured independently** to prevent transcript fragments in breadcrumbs | ⚠️ **Engineering: confirm `beforeBreadcrumb` is configured on `civica-snap-engine`.** |
+| Audit logging | Timestamp + actor ID + table + query type; destination: Supabase audit table | ⏳ Counsel: approve |
+| Incident response | Assess scope: 24h. Notify counsel: 24h. CCPA user notification: **72h** from discovery. | ⏳ Counsel: confirm timelines. Runbook: [`docs/snap/incident_response.md`](docs/snap/incident_response.md). |
+| DPAs | Supabase, Cloudflare, Fly.io, OpenAI, Sentry — **all pending** | ⚠️ All 5 must be signed before PII enters production. |
+| Annual policy review | Aug 15 trigger (Q18 workflow); owner = see Q18 | ⏳ Counsel: approve. |
 
 ---
 
