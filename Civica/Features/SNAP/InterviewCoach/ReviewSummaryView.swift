@@ -20,9 +20,15 @@ struct ReviewSummaryView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
-                Text(InterviewCoachStrings.sessionFeedbackTitle.value(in: language))
-                    .font(CivicaTypography.pageTitle)
-                    .foregroundStyle(CivicaColors.ink)
+                HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
+                    Text(InterviewCoachStrings.sessionFeedbackTitle.value(in: language))
+                        .font(CivicaTypography.pageTitle)
+                        .foregroundStyle(CivicaColors.ink)
+
+                    Spacer(minLength: CivicaSpacing.sm)
+
+                    CivicaAIBadge()
+                }
 
                 Text(InterviewCoachStrings.sessionFeedbackIntro.value(in: language))
                     .font(CivicaTypography.footnoteStrong)
