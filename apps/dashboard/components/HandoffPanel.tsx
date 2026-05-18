@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createClient } from "../lib/supabase";
 import { api } from "../lib/api";
 import { formatDateTime, shortId } from "../lib/format";
@@ -89,9 +90,16 @@ export default function HandoffPanel({ packetId, packetStatus, blockerCount }: P
       setAgencyRef("");
       const rows = await api.handoff.list(session.access_token, packetId);
       setHistory(rows as ExportRow[]);
+      if (format === "pdf_packet") {
+        toast.success("PDF ready — download below");
+      } else {
+        toast.success(`Export ready (${formatLabel(format)}) — download below`);
+      }
       router.refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to export");
+      const msg = e instanceof Error ? e.message : "Failed to export";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(null);
     }

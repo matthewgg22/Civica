@@ -11,7 +11,8 @@
     "signOut": "Sign out",
     "loadError": "Unable to load your application. Please try again.",
     "tryAgain": "Try again",
-    "processing": "Processing…"
+    "processing": "Processing…",
+    "toastSignedOut": "Signed out"
   },
   "auth": {
     "signIn": "Sign in",
@@ -68,7 +69,9 @@
     "uploadProgress": "Uploading… {percent}%",
     "uploadSuccess": "Uploaded",
     "uploadError": "Upload failed — please try again",
-    "progressLabel": "{uploaded} of {total} required documents uploaded"
+    "progressLabel": "{uploaded} of {total} required documents uploaded",
+    "toastUploadSuccess": "Document uploaded",
+    "toastUploadError": "Upload failed — please try again"
   },
   "inbox": {
     "title": "Requests from your navigator",
@@ -121,7 +124,8 @@
     "withdraw": "Withdraw consent",
     "withdrawConfirm": "Are you sure you want to withdraw? Your packet will return to Draft status.",
     "blockerQuestions": "{answered} of {total} required questions answered — complete all questions before submitting.",
-    "blockerDocuments": "{uploaded} of {total} required documents uploaded — upload all required documents before submitting."
+    "blockerDocuments": "{uploaded} of {total} required documents uploaded — upload all required documents before submitting.",
+    "toastSubmitSuccess": "Application submitted! A navigator will review it."
   },
   "footer": {
     "privacy": "Privacy",

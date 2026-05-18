@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -40,6 +41,7 @@ export function ConsentForm({ packetId, locale, readiness }: Props) {
         setError(result.error);
         return;
       }
+      toast.success(t("toastSubmitSuccess"));
       router.push(`/${locale}/app/packet`);
     });
   }

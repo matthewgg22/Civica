@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { Toaster } from "sonner";
 import { routing } from "@/lib/i18n/routing";
 import { DevA11yAudit } from "@/components/DevA11yAudit";
 import { Footer } from "@/components/layout/Footer";
@@ -87,6 +88,17 @@ export default async function LocaleLayout({
             doNotSellLabel={tFooter("doNotSell")}
           />
           <DevA11yAudit />
+          <Toaster
+            theme="light"
+            richColors
+            position="bottom-center"
+            toastOptions={{
+              classNames: {
+                success: "!bg-teal/10 !border-teal/30 !text-teal",
+                error: "!bg-brick/10 !border-brick/30 !text-brick",
+              },
+            }}
+          />
         </NextIntlClientProvider>
       </body>
     </html>

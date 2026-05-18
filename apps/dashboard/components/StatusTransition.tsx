@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createClient } from "../lib/supabase";
 import { api } from "../lib/api";
 
@@ -33,9 +34,12 @@ export default function StatusTransition({ packetId, nextStatuses, blockers = []
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("Not authenticated");
       await api.packets.update(session.access_token, packetId, { status }, reason || undefined);
+      toast.success(`Packet advanced to ${status}`);
       router.refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to update status");
+      const msg = e instanceof Error ? e.message : "Failed to update status";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(null);
     }

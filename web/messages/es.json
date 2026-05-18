@@ -11,7 +11,8 @@
     "signOut": "Cerrar sesión",
     "loadError": "No se pudo cargar tu solicitud. Por favor, inténtalo de nuevo.",
     "tryAgain": "Intentar de nuevo",
-    "processing": "Procesando…"
+    "processing": "Procesando…",
+    "toastSignedOut": "Sesión cerrada"
   },
   "auth": {
     "signIn": "Iniciar sesión",
@@ -68,7 +69,9 @@
     "uploadProgress": "Subiendo… {percent}%",
     "uploadSuccess": "Subido",
     "uploadError": "Error al subir — por favor inténtalo de nuevo",
-    "progressLabel": "{uploaded} de {total} documentos requeridos subidos"
+    "progressLabel": "{uploaded} de {total} documentos requeridos subidos",
+    "toastUploadSuccess": "Documento subido",
+    "toastUploadError": "Error al subir — por favor inténtalo de nuevo"
   },
   "inbox": {
     "title": "Solicitudes de tu navegador",
@@ -121,7 +124,8 @@
     "withdraw": "Retirar consentimiento",
     "withdrawConfirm": "¿Estás seguro de que deseas retirar? Tu paquete volverá al estado de borrador.",
     "blockerQuestions": "{answered} de {total} preguntas requeridas respondidas — completa todas las preguntas antes de enviar.",
-    "blockerDocuments": "{uploaded} de {total} documentos requeridos cargados — sube todos los documentos requeridos antes de enviar."
+    "blockerDocuments": "{uploaded} de {total} documentos requeridos cargados — sube todos los documentos requeridos antes de enviar.",
+    "toastSubmitSuccess": "¡Solicitud enviada! Un navegador la revisará."
   },
   "footer": {
     "privacy": "Privacidad",
