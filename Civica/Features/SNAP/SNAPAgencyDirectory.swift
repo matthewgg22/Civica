@@ -64,18 +64,22 @@ enum SNAPAgencyDirectory {
     static func hearingOfficeLines(for stateCode: String?, language: CivicaLanguage) -> [String] {
         switch normalized(stateCode) {
         case "CA":
+            // PO Box mailing address per CDSS State Hearings Division
+            // contact page — required for appeal-letter delivery.
+            // The 744 P Street physical location is not the contact
+            // address for hearings correspondence.
             return language == .english
                 ? [
                     "California Department of Social Services",
                     "State Hearings Division",
-                    "744 P Street, MS 19-37",
-                    "Sacramento, CA 95814"
+                    "PO Box 944243, MS 21-37",
+                    "Sacramento, CA 94244-2430"
                 ]
                 : [
                     "Departamento de Servicios Sociales de California",
                     "División de Audiencias del Estado",
-                    "744 P Street, MS 19-37",
-                    "Sacramento, CA 95814"
+                    "PO Box 944243, MS 21-37",
+                    "Sacramento, CA 94244-2430"
                 ]
         case "MA":
             return language == .english
@@ -99,15 +103,15 @@ enum SNAPAgencyDirectory {
     }
 
     /// Hearing-office address rendered as a single inline phrase
-    /// ("the State Hearings Division at 744 P Street, MS 19-37,
-    /// Sacramento, CA 95814"). Used in body paragraphs where a
+    /// ("the State Hearings Division at PO Box 944243, MS 21-37,
+    /// Sacramento, CA 94244-2430"). Used in body paragraphs where a
     /// multi-line address would break the sentence.
     static func hearingOfficeInlineAddress(for stateCode: String?, language: CivicaLanguage) -> String {
         switch normalized(stateCode) {
         case "CA":
             return language == .english
-                ? "the State Hearings Division at 744 P Street, MS 19-37, Sacramento, CA 95814"
-                : "la División de Audiencias del Estado en 744 P Street, MS 19-37, Sacramento, CA 95814"
+                ? "the State Hearings Division at PO Box 944243, MS 21-37, Sacramento, CA 94244-2430"
+                : "la División de Audiencias del Estado en PO Box 944243, MS 21-37, Sacramento, CA 94244-2430"
         case "MA":
             return language == .english
                 ? "the DTA Hearing Office at 600 Washington Street, Boston, MA 02111"

@@ -76,8 +76,8 @@ struct SNAPAgencyDirectoryTests {
         let lines = SNAPAgencyDirectory.hearingOfficeLines(for: "CA", language: .english)
         #expect(lines.contains("California Department of Social Services"))
         #expect(lines.contains("State Hearings Division"))
-        #expect(lines.contains("744 P Street, MS 19-37"))
-        #expect(lines.contains("Sacramento, CA 95814"))
+        #expect(lines.contains("PO Box 944243, MS 21-37"))
+        #expect(lines.contains("Sacramento, CA 94244-2430"))
     }
 
     @Test func hearingOfficeLinesMAIncludesBostonHearingOffice() {
@@ -92,9 +92,9 @@ struct SNAPAgencyDirectoryTests {
         let lines = SNAPAgencyDirectory.hearingOfficeLines(for: "CA", language: .spanish)
         #expect(lines.contains("Departamento de Servicios Sociales de California"))
         #expect(lines.contains("División de Audiencias del Estado"))
-        // Street + city/state/zip don't translate.
-        #expect(lines.contains("744 P Street, MS 19-37"))
-        #expect(lines.contains("Sacramento, CA 95814"))
+        // PO Box + city/state/zip don't translate.
+        #expect(lines.contains("PO Box 944243, MS 21-37"))
+        #expect(lines.contains("Sacramento, CA 94244-2430"))
     }
 
     // MARK: - hearingOfficeInlineAddress
@@ -102,7 +102,8 @@ struct SNAPAgencyDirectoryTests {
     @Test func hearingOfficeInlineAddressCAEnglish() {
         let value = SNAPAgencyDirectory.hearingOfficeInlineAddress(for: "CA", language: .english)
         #expect(value.contains("State Hearings Division"))
-        #expect(value.contains("Sacramento, CA 95814"))
+        #expect(value.contains("PO Box 944243, MS 21-37"))
+        #expect(value.contains("Sacramento, CA 94244-2430"))
     }
 
     @Test func hearingOfficeInlineAddressMAEnglish() {
