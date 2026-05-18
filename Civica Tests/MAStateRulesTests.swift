@@ -102,6 +102,45 @@ struct MAStateRulesTests {
         #expect(rules.abawdWaiverActive(fipsCode: "25025", asOf: fy26Date) == nil)
     }
 
+    // MARK: - ABAWD age band (delegated to federal, but assert per-state for regression safety)
+    //
+    // MA delegates abawdStatus to FederalDefaultRules — meaning a
+    // future PR that adds MA-specific ABAWD logic shouldn't silently
+    // change the OBBBA §10102(a) ceiling. These tests pin the
+    // expected age-band behavior at the MA-engine seam.
+
+    @Test func maABAWD18IsSubject() {
+        let draft = Self.draftWithAge(18)
+        #expect(rules.abawdStatus(for: draft, asOf: fy26Date) == .subjectActive)
+    }
+
+    @Test func maABAWD64IsSubject() {
+        // OBBBA §10102(a) raised the upper bound from 54 to 64.
+        let draft = Self.draftWithAge(64)
+        #expect(rules.abawdStatus(for: draft, asOf: fy26Date) == .subjectActive)
+    }
+
+    @Test func maABAWD65IsNotSubject() {
+        let draft = Self.draftWithAge(65)
+        #expect(rules.abawdStatus(for: draft, asOf: fy26Date) == .notSubject)
+    }
+
+    @Test func maABAWDWithChildUnder14IsNotSubject() {
+        var draft = Self.draftWithAge(30)
+        draft.household.hasChildUnder14InHousehold = true
+        #expect(rules.abawdStatus(for: draft, asOf: fy26Date) == .notSubject)
+    }
+
+    @Test func maABAWDWithChild14OrOlderIsSubject() {
+        // OBBBA §10102(a) narrowed the dependent-child exception
+        // from "under 18" to "under 14". A 30yo with only a 14+
+        // child in the household is now ABAWD-subject.
+        var draft = Self.draftWithAge(30)
+        draft.household.hasMinorInHousehold = true
+        draft.household.hasChildUnder14InHousehold = false
+        #expect(rules.abawdStatus(for: draft, asOf: fy26Date) == .subjectActive)
+    }
+
     // MARK: - Categorical eligibility (MA adds BBCE as fallback)
 
     @Test func maTANFRecipientPathInherited() {
@@ -183,5 +222,21 @@ struct MAStateRulesTests {
         let f = ISO8601DateFormatter()
         f.formatOptions = [.withFullDate]
         return f.date(from: string)!
+    }
+
+    /// Builds a minimal draft with the applicant at the given age
+    /// as of fy26Date (2026-03-15) and no minor/elderly flags.
+    /// Mirrors the helper in FederalDefaultRulesTests + CAStateRulesTests
+    /// so the cross-state regression assertions read identically.
+    private static func draftWithAge(_ age: Int) -> SNAPApplicationDraft {
+        var draft = SNAPApplicationDraft()
+        let calendar = Calendar(identifier: .gregorian)
+        let referenceDate = iso("2026-03-15")
+        if let dob = calendar.date(byAdding: .year, value: -age, to: referenceDate) {
+            draft.applicantAge.dateOfBirth = dob
+        }
+        draft.household.hasMinorInHousehold = false
+        draft.household.hasElderlyOrDisabled = false
+        return draft
     }
 }
