@@ -122,5 +122,26 @@
     "withdrawConfirm": "¿Estás seguro de que deseas retirar? Tu paquete volverá al estado de borrador.",
     "blockerQuestions": "{answered} de {total} preguntas requeridas respondidas — completa todas las preguntas antes de enviar.",
     "blockerDocuments": "{uploaded} de {total} documentos requeridos cargados — sube todos los documentos requeridos antes de enviar."
+  },
+  "footer": {
+    "privacy": "Privacidad",
+    "doNotSell": "No Vendas Ni Compartas Mi Información Personal"
+  },
+  "privacy": {
+    "title": "Política de Privacidad",
+    "effectiveDate": "Vigente desde el 18 de mayo de 2026.",
+    "collectHeading": "Qué recopilamos",
+    "collectBody": "Civica recopila solo la información necesaria para preparar tu paquete de solicitud de SNAP — composición del hogar, ingresos, gastos, datos de contacto y documentos justificativos cargados. No recopilamos datos biométricos, historial de navegación ni ubicación más allá del código postal.",
+    "useHeading": "Cómo la usamos",
+    "useBody": "La información que ingresas se usa para armar tu paquete de solicitud y enviarlo a un navegador de SNAP cuando lo solicites. No usamos tu información para publicidad, perfilado ni ningún propósito ajeno a tu solicitud de SNAP.",
+    "rightsHeading": "Tus derechos (Derecho a saber, Derecho a eliminar)",
+    "rightsBody": "Bajo la Ley de Privacidad del Consumidor de California (CCPA) y leyes análogas en otros estados, tienes derecho a solicitar qué información tenemos sobre ti y pedir que la eliminemos. Responderemos en un plazo de 45 días.",
+    "rightsContact": "Para ejercer estos derechos, envía un correo a",
+    "doNotSellHeading": "No Vendas Ni Compartas Mi Información Personal",
+    "doNotSellBody": "Civica no vende ni comparte tu información personal, según las definiciones de la Ley de Privacidad del Consumidor de California (CCPA §1798.140). No intercambiamos tus datos por una contraprestación monetaria u otra contraprestación valiosa, y no los compartimos para publicidad comportamental entre contextos. Divulgamos información a proveedores de servicios (alojamiento en la nube, seguimiento de errores, procesamiento de documentos) bajo acuerdos escritos de procesamiento de datos que prohíben su uso secundario.",
+    "doNotSellContact": "Si crees que tus datos se han vendido o compartido por error, o para excluirte de cualquier cambio futuro a esta política, envía un correo a",
+    "childrenHeading": "Menores de 13 años",
+    "childrenBody": "Civica está diseñada para adultos que solicitan beneficios de SNAP en nombre de un hogar. No recopilamos a sabiendas información personal de menores de 13 años. Si crees que un menor de 13 años nos ha proporcionado información, contáctanos y la eliminaremos.",
+    "contactEmail": "privacy@civica.app"
   }
 }
