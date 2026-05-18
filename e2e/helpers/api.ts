@@ -180,6 +180,64 @@ export async function listHandoffExports(jwt: string, packetId: string) {
   }>;
 }
 
+// ── Enrollment-API: document upload ──────────────────────────────────────────
+
+export async function requestUploadUrl(jwt: string, packetId: string, filename?: string) {
+  const res = await assertOk(
+    await fetch(enrollmentUrl(`/me/packets/${packetId}/upload-url`), {
+      method: "POST",
+      headers: authHeaders(jwt),
+      body: JSON.stringify({ ...(filename && { filename }) }),
+    }),
+    `POST /me/packets/${packetId}/upload-url`,
+  );
+  return (await res.json()) as { signed_url: string; storage_path: string };
+}
+
+export async function registerDocument(
+  jwt: string,
+  packet_id: string,
+  applicant_id: string,
+  storage_path: string,
+  original_filename?: string,
+) {
+  const res = await assertOk(
+    await fetch(enrollmentUrl("/documents"), {
+      method: "POST",
+      headers: authHeaders(jwt),
+      body: JSON.stringify({
+        packet_id,
+        applicant_id,
+        storage_path,
+        on_device_quality_passed: true,
+        ...(original_filename && { original_filename }),
+      }),
+    }),
+    "POST /documents",
+  );
+  return (await res.json()) as {
+    document_id: string;
+    storage_path: string;
+    processing_status: string;
+    uploaded_at: string;
+  };
+}
+
+export async function listDocumentsAsStaff(jwt: string, packetId: string) {
+  const res = await assertOk(
+    await fetch(enrollmentUrl(`/packets/${packetId}/documents`), {
+      headers: authHeaders(jwt),
+    }),
+    `GET /packets/${packetId}/documents`,
+  );
+  return (await res.json()) as Array<{
+    document_id: string;
+    storage_path: string;
+    processing_status: string;
+    uploaded_at: string;
+  }>;
+}
+
 // ── Apps-API: staff handoff PDF ───────────────────────────────────────────────
 
 export async function createPdfHandoff(jwt: string, packetId: string, agency_reference?: string) {

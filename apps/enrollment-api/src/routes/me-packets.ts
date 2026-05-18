@@ -385,6 +385,46 @@ app.delete("/:packetId/consent", async (c) => {
   return c.body(null, 204);
 });
 
+// ── Document upload URL ───────────────────────────────────────────────────────
+
+// POST /me/packets/:packetId/upload-url — generate a Supabase Storage presigned
+// upload URL for a document. The client PUTs the file directly to the returned URL
+// and then calls POST /documents to register it in the DB.
+app.post(
+  "/:packetId/upload-url",
+  zValidator("json", z.object({ filename: z.string().max(255).optional() })),
+  async (c) => {
+    const body = c.req.valid("json");
+    const applicant = await resolveApplicant(c as Context<{ Bindings: Env }>);
+
+    const anonDb = makeAnonClient(c.env, c.get("jwt"));
+    const { data: packet, error: pErr } = await anonDb
+      .schema("snap_enrollment")
+      .from("snap_packets")
+      .select("packet_id")
+      .eq("packet_id", c.req.param("packetId"))
+      .eq("applicant_id", applicant.applicant_id)
+      .is("deleted_at", null)
+      .single();
+
+    if (pErr?.code === "PGRST116" || !packet) throw new HTTPException(404, { message: "Packet not found" });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (pErr) throw new HTTPException(500, { message: (pErr as any).message });
+
+    const ext = body.filename?.split(".").pop()?.toLowerCase() ?? "pdf";
+    const storagePath = `${applicant.applicant_id}/${c.req.param("packetId")}/${crypto.randomUUID()}.${ext}`;
+
+    const svc = makeServiceClient(c.env);
+    const { data, error } = await svc.storage.from("documents").createSignedUploadUrl(storagePath);
+    if (error) throw new HTTPException(500, { message: error.message });
+
+    return c.json({
+      signed_url: data.signedUrl,
+      storage_path: storagePath,
+    }, 201);
+  }
+);
+
 // ── Submit ────────────────────────────────────────────────────────────────────
 
 // POST /me/packets/:packetId/submit
