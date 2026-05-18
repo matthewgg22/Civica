@@ -24,16 +24,23 @@ struct CAStateRulesTests {
     // MARK: - Gross income (BBCE 200% FPL)
 
     @Test func grossIncomeLimitMatchesBBCETable() {
-        #expect(rules.grossIncomeLimit(householdSize: 1, asOf: fy26Date) == 2_510)
-        #expect(rules.grossIncomeLimit(householdSize: 2, asOf: fy26Date) == 3_408)
-        #expect(rules.grossIncomeLimit(householdSize: 3, asOf: fy26Date) == 4_304)
-        #expect(rules.grossIncomeLimit(householdSize: 4, asOf: fy26Date) == 5_200)
+        // CDSS ACIN I-46-25 (FFY 2026) verified values.
+        #expect(rules.grossIncomeLimit(householdSize: 1, asOf: fy26Date) == 2_610)
+        #expect(rules.grossIncomeLimit(householdSize: 2, asOf: fy26Date) == 3_526)
+        #expect(rules.grossIncomeLimit(householdSize: 3, asOf: fy26Date) == 4_442)
+        #expect(rules.grossIncomeLimit(householdSize: 4, asOf: fy26Date) == 5_360)
+        #expect(rules.grossIncomeLimit(householdSize: 5, asOf: fy26Date) == 6_276)
+        #expect(rules.grossIncomeLimit(householdSize: 6, asOf: fy26Date) == 7_192)
+        #expect(rules.grossIncomeLimit(householdSize: 7, asOf: fy26Date) == 8_110)
+        #expect(rules.grossIncomeLimit(householdSize: 8, asOf: fy26Date) == 9_026)
     }
 
-    @Test func grossIncomeLimitClampsLargeHouseholdsToSizeFour() {
-        let four = rules.grossIncomeLimit(householdSize: 4, asOf: fy26Date)
-        #expect(rules.grossIncomeLimit(householdSize: 5, asOf: fy26Date) == four)
-        #expect(rules.grossIncomeLimit(householdSize: 99, asOf: fy26Date) == four)
+    @Test func grossIncomeLimitExtendsBeyondEightWithPerAdditional() {
+        // Per CDSS ACIN I-46-25: +$918 per HH member beyond 8.
+        let eight = rules.grossIncomeLimit(householdSize: 8, asOf: fy26Date)
+        #expect(rules.grossIncomeLimit(householdSize: 9, asOf: fy26Date) == eight + 918)
+        #expect(rules.grossIncomeLimit(householdSize: 10, asOf: fy26Date) == eight + 1_836)
+        #expect(rules.grossIncomeLimit(householdSize: 12, asOf: fy26Date) == eight + 3_672)
     }
 
     @Test func grossIncomeLimitClampsZeroAndNegativeToSizeOne() {
@@ -52,12 +59,14 @@ struct CAStateRulesTests {
         )
     }
 
-    // MARK: - CA SUA (not yet loaded — return nil)
+    // MARK: - CA SUA (CDSS ACL 25-68, FY26 chart)
 
-    @Test func suaValuesAreNilUntilCDSSChartLoaded() {
-        #expect(rules.suaValue(tier: .heatingCooling, asOf: fy26Date) == nil)
-        #expect(rules.suaValue(tier: .nonHeating, asOf: fy26Date) == nil)
-        #expect(rules.suaValue(tier: .phoneOnly, asOf: fy26Date) == nil)
+    @Test func suaValuesMatchCDSSChart() {
+        // SUA full = $663, LUA = $170, TUA = $20 per CDSS ACL 25-68.
+        // Tier `.none` always returns nil (calculator itemizes actuals).
+        #expect(rules.suaValue(tier: .heatingCooling, asOf: fy26Date) == 663)
+        #expect(rules.suaValue(tier: .nonHeating, asOf: fy26Date) == 170)
+        #expect(rules.suaValue(tier: .phoneOnly, asOf: fy26Date) == 20)
         #expect(rules.suaValue(tier: .none, asOf: fy26Date) == nil)
     }
 

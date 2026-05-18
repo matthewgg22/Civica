@@ -11,9 +11,8 @@ import Foundation
 //     test for non-elderly/disabled households. We still return the
 //     federal value so the backend deduction math can reference it
 //     when computing benefit amount.
-//   * suaValue — CA SUA chart is published by CDSS annually. Until
-//     a verified FY26 snapshot lands, return nil (calculator falls
-//     back to actuals) rather than guessing. See TODO below.
+//   * suaValue — CA SUA chart published by CDSS annually. FY26
+//     values seeded from ACL 25-68 (SUA=$663, LUA=$170, TUA=$20).
 //   * rulesVersion — stamps "CA-bbce-200pct-FY26" to match the
 //     audit-footer convention.
 //
@@ -37,8 +36,13 @@ struct CAStateRules: SNAPStateRuleEngine {
 
     func grossIncomeLimit(householdSize: Int, asOf: Date) -> Decimal {
         let snapshot = activeBBCESnapshot(asOf: asOf)
-        let size = max(1, min(householdSize, snapshot.value.count - 1))
-        return snapshot.value[size]
+        let table = snapshot.value
+        let size = max(1, householdSize)
+        if size < table.perSize.count {
+            return table.perSize[size]
+        }
+        let lastIndex = table.perSize.count - 1
+        return table.perSize[lastIndex] + Decimal(size - lastIndex) * table.perAdditional
     }
 
     func netIncomeLimit(householdSize: Int, asOf: Date) -> Decimal {
@@ -89,13 +93,24 @@ struct CAStateRules: SNAPStateRuleEngine {
         federal.assetLimit(isElderlyOrDisabled: isElderlyOrDisabled, asOf: asOf)
     }
 
-    /// TODO(launch/CDSS-data): Load the FY26 CDSS-published CalFresh
-    /// SUA chart and add a `suaSnapshots` table mirroring
-    /// MAStateRules. Until then, return nil so the calculator falls
-    /// back to actual utility costs rather than guessing at SUA
-    /// values that haven't been verified by CDSS.
-    func suaValue(tier _: SUATier, asOf _: Date) -> Decimal? {
-        nil
+    /// CA SUA chart (FY26-seeded from CDSS ACL 25-68 / ACIN I-46-25).
+    /// CDSS uses three tiers: SUA ($663, full heating/cooling
+    /// equivalent), LUA ($170, limited utility allowance), TUA
+    /// ($20, telephone-only). Tier `.none` returns nil so the
+    /// calculator falls back to actual utility costs.
+    ///
+    /// Note: OBBBA §10104 removed internet from the excess shelter
+    /// deduction effective 2025-07-04; ACL 25-68 confirms CDSS
+    /// updated its SUA methodology accordingly. The dollar values
+    /// below already reflect the post-§10104 methodology.
+    func suaValue(tier: SUATier, asOf: Date) -> Decimal? {
+        let snapshot = activeSUASnapshot(asOf: asOf)
+        switch tier {
+        case .none:           return nil
+        case .heatingCooling: return snapshot.value.sua
+        case .nonHeating:     return snapshot.value.lua
+        case .phoneOnly:      return snapshot.value.tua
+        }
     }
 
     /// CA hasn't yet loaded its FNS-approved ABAWD waiver list.
@@ -175,9 +190,8 @@ struct CAStateRules: SNAPStateRuleEngine {
 
     // MARK: - Snapshot freshness (OBBBA audit Q12)
 
-    /// CA freshness = federal freshness ∩ CA's BBCE snapshot window.
-    /// No SUA snapshot yet (see suaValue TODO); when it lands, add
-    /// its expiry to the intersection.
+    /// CA freshness = federal freshness ∩ CA's own BBCE + SUA
+    /// snapshot windows. The earliest expiry wins.
     func snapshotStatus(asOf: Date) -> RuleSnapshotStatus {
         let federalStatus = federal.snapshotStatus(asOf: asOf)
         let federalExpiry: Date
@@ -187,6 +201,7 @@ struct CAStateRules: SNAPStateRuleEngine {
 
         let caExpiries: [Date] = [
             Self.bbce200Snapshots.last!.expiresOn,
+            Self.suaSnapshots.last!.expiresOn,
             federalExpiry
         ]
         let earliestExpiry = caExpiries.min() ?? .distantPast
@@ -200,34 +215,74 @@ struct CAStateRules: SNAPStateRuleEngine {
 
 private extension CAStateRules {
 
-    /// 200% of FY26 federal poverty guideline monthly income, the
-    /// CalFresh BBCE gross income gate. Identical thresholds to MA
-    /// (200% FPL is a federal derivation, not state-specific); kept
-    /// as a separate table so future per-state divergence (e.g. CA
-    /// elderly/disabled at a different multiplier) lands cleanly
-    /// without coupling MA and CA.
-    ///
-    /// Index 0 unused; index 1-4 = household size. For 5+ households
-    /// the size-4 floor is returned (conservative under-estimate of
-    /// eligibility since real size-5+ thresholds are higher; can
-    /// never over-estimate).
-    static let bbce200Snapshots: [PolicySnapshot<[Decimal]>] = [
+    struct CABBCETable {
+        /// Index 0 unused; indices 1-8 = HH size monthly thresholds.
+        let perSize: [Decimal]
+        /// Added to the size-8 value for each member beyond 8.
+        let perAdditional: Decimal
+    }
+
+    /// CalFresh MCE (BBCE) gross income gate at 200% FPL, monthly.
+    /// Verified against CDSS ACIN I-46-25 (FFY 2026 COLA) via the
+    /// Santa Clara County DEBS chart book. CA uses the FFY2026 FPL
+    /// basis (effective 2025-10-01); MA uses the calendar-2026 HHS
+    /// FPL (effective 2026-02-01) — the dollar tables differ even
+    /// though both anchor at 200% FPL. Do not reuse MA's table here.
+    static let bbce200Snapshots: [PolicySnapshot<CABBCETable>] = [
         .iso(
             from: "2025-10-01",
             to: "2026-09-30",
             versionSuffix: "FY26",
-            value: [
-                0,        // unused
-                2_510,    // 1 person: $1,255 x 200%
-                3_408,    // 2 person: $1,704 x 200%
-                4_304,    // 3 person: $2,152 x 200%
-                5_200     // 4 person: $2,600 x 200%
-            ]
+            value: CABBCETable(
+                perSize: [
+                    0,        // unused
+                    2_610,    // HH 1
+                    3_526,    // HH 2
+                    4_442,    // HH 3
+                    5_360,    // HH 4
+                    6_276,    // HH 5
+                    7_192,    // HH 6
+                    8_110,    // HH 7
+                    9_026     // HH 8
+                ],
+                perAdditional: 918
+            )
         )
     ]
 
-    func activeBBCESnapshot(asOf: Date) -> PolicySnapshot<[Decimal]> {
+    func activeBBCESnapshot(asOf: Date) -> PolicySnapshot<CABBCETable> {
         Self.bbce200Snapshots.first(where: { $0.contains(asOf) })
             ?? Self.bbce200Snapshots.last!
+    }
+
+    struct CASUATable {
+        /// Full SUA (heating/cooling equivalent); CDSS label "SUA".
+        let sua: Decimal
+        /// Limited Utility Allowance; CDSS label "LUA".
+        let lua: Decimal
+        /// Telephone-only Utility Allowance; CDSS label "TUA".
+        let tua: Decimal
+    }
+
+    /// CA SUA tiers seeded from CDSS ACL 25-68 (FY26 SUA chart) and
+    /// confirmed against the Santa Clara County DEBS chart book.
+    /// When CDSS publishes FY27 values, add a new snapshot — don't
+    /// edit the FY26 row in place.
+    static let suaSnapshots: [PolicySnapshot<CASUATable>] = [
+        .iso(
+            from: "2025-10-01",
+            to: "2026-09-30",
+            versionSuffix: "FY26",
+            value: CASUATable(
+                sua: 663,
+                lua: 170,
+                tua: 20
+            )
+        )
+    ]
+
+    func activeSUASnapshot(asOf: Date) -> PolicySnapshot<CASUATable> {
+        Self.suaSnapshots.first(where: { $0.contains(asOf) })
+            ?? Self.suaSnapshots.last!
     }
 }
