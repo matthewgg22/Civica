@@ -21,9 +21,18 @@ export async function proxy(request: NextRequest) {
 
   if (!needsAuth) return response;
 
+  // Skip auth checks if Supabase isn't configured (local dev without .env.local)
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    if (isAppRoute) {
+      const locale = pathname.split("/")[1] ?? "en";
+      return NextResponse.redirect(new URL(`/${locale}/sign-in`, request.url));
+    }
+    return response;
+  }
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll() {
