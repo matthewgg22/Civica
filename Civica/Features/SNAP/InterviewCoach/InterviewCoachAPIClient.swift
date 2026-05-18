@@ -12,10 +12,8 @@ import os
 // header lets backend metrics correlate sessions without user sign-in.
 //
 // Edge Function slugs (`interview-coach-turn`, `interview-coach-score`)
-// are placeholders. Until those functions ship to the Civica Supabase
-// project, calls will fail with 404 -- PracticeSessionViewModel surfaces
-// that as `.failed`, so the UI is exercisable in SNAP_DEV builds
-// without a working backend.
+// are implemented in supabase/functions/ and require ANTHROPIC_API_KEY
+// to be set on the Supabase project before calls succeed.
 
 final class InterviewCoachAPIClient {
     enum CoachAPIError: Error, LocalizedError {
@@ -45,6 +43,9 @@ final class InterviewCoachAPIClient {
     private let requestID: String
     private let logger = Logger(subsystem: "Civica", category: "InterviewCoachAPIClient")
     private let requestTimeout: TimeInterval = 65
+    private let maxRetries = 2
+    // Retry on these HTTP status codes (transient server/gateway errors only).
+    private let retryableStatuses: Set<Int> = [429, 500, 502, 503, 504]
 
     init(
         baseURL: URL = SupabaseConfig.current.url,
@@ -83,21 +84,53 @@ final class InterviewCoachAPIClient {
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.timeoutInterval = requestTimeout
         request.httpBody = try encoder.encode(payload)
-
         attachAuthorization(to: &request)
 
-        let (data, urlResponse) = try await session.data(for: request)
-        guard let http = urlResponse as? HTTPURLResponse else {
-            throw CoachAPIError.emptyResponse
+        var lastError: Error = CoachAPIError.emptyResponse
+        for attempt in 0...maxRetries {
+            if attempt > 0 {
+                let backoffNs = UInt64(pow(2.0, Double(attempt - 1))) * 1_000_000_000
+                try? await Task.sleep(nanoseconds: backoffNs)
+                logger.info("Retrying \(path) attempt \(attempt)/\(self.maxRetries)")
+            }
+
+            let data: Data
+            let urlResponse: URLResponse
+            do {
+                (data, urlResponse) = try await session.data(for: request)
+            } catch {
+                lastError = error
+                logger.warning("Network error on \(path) attempt \(attempt): \(error.localizedDescription)")
+                continue
+            }
+
+            guard let http = urlResponse as? HTTPURLResponse else {
+                lastError = CoachAPIError.emptyResponse
+                continue
+            }
+
+            if retryableStatuses.contains(http.statusCode) {
+                let body = String(data: data, encoding: .utf8) ?? ""
+                lastError = CoachAPIError.http(status: http.statusCode, body: body)
+                logger.warning("Retryable HTTP \(http.statusCode) on \(path) attempt \(attempt)")
+                continue
+            }
+
+            if !(200..<300).contains(http.statusCode) {
+                let body = String(data: data, encoding: .utf8) ?? ""
+                throw CoachAPIError.http(status: http.statusCode, body: body)
+            }
+
+            if data.isEmpty { throw CoachAPIError.emptyResponse }
+
+            let decoded = try decoder.decode(Response.self, from: data)
+            if attempt > 0 {
+                logger.info("Recovered on attempt \(attempt) for \(path)")
+            }
+            return decoded
         }
-        if !(200..<300).contains(http.statusCode) {
-            let body = String(data: data, encoding: .utf8) ?? ""
-            throw CoachAPIError.http(status: http.statusCode, body: body)
-        }
-        if data.isEmpty {
-            throw CoachAPIError.emptyResponse
-        }
-        return try decoder.decode(Response.self, from: data)
+
+        throw lastError
     }
 
     private func endpoint(_ path: String) -> URL {

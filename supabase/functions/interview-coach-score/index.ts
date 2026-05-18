@@ -100,9 +100,9 @@ Deno.serve(async (req: Request) => {
   try {
     completion = await anthropic.messages.create({
       model: MODEL,
-      max_tokens: 2048,
+      max_tokens: 1024,
       temperature: 0.2,
-      system: systemPrompt,
+      system: [{ type: "text", text: systemPrompt, cache_control: { type: "ephemeral" } }],
       messages: [{ role: "user", content: transcriptText }],
     });
   } catch (err) {

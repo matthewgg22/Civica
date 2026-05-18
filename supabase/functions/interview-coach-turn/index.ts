@@ -109,7 +109,7 @@ Deno.serve(async (req: Request) => {
       model: MODEL,
       max_tokens: 400,
       temperature: 0.6,
-      system: systemPrompt,
+      system: [{ type: "text", text: systemPrompt, cache_control: { type: "ephemeral" } }],
       messages,
     });
   } catch (err) {
