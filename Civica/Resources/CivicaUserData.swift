@@ -78,10 +78,11 @@ enum CivicaUserData {
     /// Order:
     ///   1. purgeLegacyKeys — drops UserDefaults keys we no longer
     ///      use (e.g. the pre-rotation Interview Coach anon ID).
-    ///   2. Instantiating SNAPApplicationStatusStore runs the
-    ///      one-shot UserDefaults -> Keychain migration for the
-    ///      eligibility result. The instance is discarded; the side
-    ///      effect (migration writes) survives.
+    ///   2. SNAPApplicationStatusStore.migrateLegacyStorageIfNeeded —
+    ///      moves any pre-Q11 UserDefaults eligibility verdict into
+    ///      the Keychain. The status store proper is instantiated
+    ///      once as a @StateObject on CivicaRootView, so this static
+    ///      avoids a redundant Keychain read at launch.
     ///   3. purgeOutOfScopeEligibilityData — if the recorded draft
     ///      state is non-MA, drop the Keychain verdict so a
     ///      stale-state user doesn't carry a federal-default
@@ -89,7 +90,7 @@ enum CivicaUserData {
     ///      Q7 (Revision 2).
     static func runLaunchTimeMigrations() {
         purgeLegacyKeys()
-        _ = SNAPApplicationStatusStore()  // triggers migration via init
+        SNAPApplicationStatusStore.migrateLegacyStorageIfNeeded()
         purgeOutOfScopeEligibilityData()
     }
 

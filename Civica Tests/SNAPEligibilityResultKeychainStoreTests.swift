@@ -137,7 +137,9 @@ struct SNAPEligibilityResultKeychainStoreTests {
         defaults.set(encoded, forKey: legacyKey)
         #expect(defaults.data(forKey: legacyKey) != nil)
 
-        // Instantiating the store triggers the migration branch.
+        // Launch hygiene runs the one-shot migration; the store then
+        // reads the canonical Keychain value at init.
+        SNAPApplicationStatusStore.migrateLegacyStorageIfNeeded()
         let store = SNAPApplicationStatusStore()
 
         // In-memory state reflects the migrated verdict.
