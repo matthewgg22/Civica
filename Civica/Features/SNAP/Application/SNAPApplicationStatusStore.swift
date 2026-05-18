@@ -61,25 +61,35 @@ final class SNAPApplicationStatusStore: ObservableObject {
             self.milestones = [:]
         }
 
-        // Eligibility result: Keychain is the new home. If a legacy
-        // UserDefaults value exists, migrate it into Keychain and
-        // remove the plist entry so subsequent launches read only
-        // from Keychain. New installs skip the migration branch.
-        if let keychainResult = SNAPEligibilityResultKeychainStore.load() {
-            self.eligibilityResult = keychainResult
-            // Belt-and-suspenders: if a stale plist value lingered
-            // through a partial migration, clear it now.
-            defaults.removeObject(forKey: Self.legacyEligibilityResultUserDefaultsKey)
-        } else if let legacyData = defaults.data(forKey: Self.legacyEligibilityResultUserDefaultsKey),
-                  let migrated = try? JSONDecoder().decode(SNAPEligibilityResult.self, from: legacyData) {
-            SNAPEligibilityResultKeychainStore.save(migrated)
-            defaults.removeObject(forKey: Self.legacyEligibilityResultUserDefaultsKey)
-            self.eligibilityResult = migrated
-        } else {
-            self.eligibilityResult = nil
-        }
+        // Eligibility result: Keychain is the new home. The legacy
+        // UserDefaults -> Keychain migration runs once at launch via
+        // `migrateLegacyStorageIfNeeded()` (called from
+        // CivicaUserData.runLaunchTimeMigrations), so this init only
+        // needs to read the canonical Keychain value.
+        self.eligibilityResult = SNAPEligibilityResultKeychainStore.load()
 
         self.interviewScheduledFor = defaults.object(forKey: interviewDateKey) as? Date
+    }
+
+    /// One-shot migration of the eligibility verdict from the legacy
+    /// UserDefaults key into the Keychain. Idempotent: returns
+    /// immediately if Keychain already has a value or if there's no
+    /// legacy payload to migrate. Call from launch hygiene so the
+    /// migration runs even on installs that never visit a SNAP screen
+    /// during the first launch after upgrade.
+    static func migrateLegacyStorageIfNeeded() {
+        let defaults = UserDefaults.standard
+        if SNAPEligibilityResultKeychainStore.load() != nil {
+            // Belt-and-suspenders: if a stale plist value lingered
+            // through a partial migration, clear it now.
+            defaults.removeObject(forKey: legacyEligibilityResultUserDefaultsKey)
+            return
+        }
+        guard let legacyData = defaults.data(forKey: legacyEligibilityResultUserDefaultsKey),
+              let migrated = try? JSONDecoder().decode(SNAPEligibilityResult.self, from: legacyData)
+        else { return }
+        SNAPEligibilityResultKeychainStore.save(migrated)
+        defaults.removeObject(forKey: legacyEligibilityResultUserDefaultsKey)
     }
 
     /// Advance to a new status; records the timestamp as a milestone.
