@@ -1,4 +1,4 @@
-export { PacketStatusSchema, PACKET_STATUSES, PACKET_STATUS_TRANSITIONS } from "./packetStatus.js";
-export type { PacketStatus } from "./packetStatus.js";
-export { DocumentTypeSchema, DocumentStatusSchema } from "./documentEnums.js";
-export type { DocumentType, DocumentStatus } from "./documentEnums.js";
+export { PacketStatusSchema, PACKET_STATUSES, PACKET_STATUS_TRANSITIONS } from "./packetStatus";
+export type { PacketStatus } from "./packetStatus";
+export { DocumentTypeSchema, DocumentStatusSchema } from "./documentEnums";
+export type { DocumentType, DocumentStatus } from "./documentEnums";

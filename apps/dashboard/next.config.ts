@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@civica/snap-rules", "@civica/snap-calculator"],
+  transpilePackages: ["@civica/snap-enums", "@civica/snap-rules", "@civica/snap-calculator"],
 };
 
 export default withSentryConfig(nextConfig, {
