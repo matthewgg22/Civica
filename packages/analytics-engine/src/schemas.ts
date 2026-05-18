@@ -25,6 +25,7 @@ export const ProvenanceSchema = z.object({
     "aei_secondary",
     "civica_qc_evaluation",
     "section_10105_cliff",
+    "civica_qc_mapping",
   ]),
   publication_date: z.string(),
   fiscal_year: z.number().int().optional(),
@@ -153,6 +154,50 @@ export const ScenarioRowSchema = z.object({
   value: z.number(),
 });
 export type ScenarioRow = z.infer<typeof ScenarioRowSchema>;
+
+// ---------------------------------------------------------------------------
+// QC Category Mapping (qc-mappings/) — T7
+// ---------------------------------------------------------------------------
+
+export const CivicaControlSchema = z.object({
+  control_id: z.string(),
+  control_description: z.string(),
+  evidence_link: z.string(),
+  defensibility_impact: z.string(),
+});
+export type CivicaControl = z.infer<typeof CivicaControlSchema>;
+
+export const QcCategoryMappingStatusSchema = z.enum([
+  "documented",
+  "hypothesized",
+  "refuted",
+]);
+export type QcCategoryMappingStatus = z.infer<typeof QcCategoryMappingStatusSchema>;
+
+export const QcCategoryMappingSchema = z.object({
+  element_code: z.string(),
+  cdss_error_category: z.string(),
+  weighted_count: z.number(),
+  share_of_errored_cases_pct: z.number(),
+  cfr_basis: z.string(),
+  obbba_section: z.string(),
+  dollar_attribution_methodology: z.string(),
+  status: QcCategoryMappingStatusSchema,
+  civica_controls: z.array(CivicaControlSchema),
+  case_examples: z.array(z.string()),
+  has_civica_control: z.boolean(),
+  control_count: z.number().int().nonnegative(),
+});
+export type QcCategoryMapping = z.infer<typeof QcCategoryMappingSchema>;
+
+export const QcCategoryCoverageSchema = z.object({
+  element_code: z.string(),
+  cdss_error_category: z.string(),
+  has_civica_control: z.boolean(),
+  status: QcCategoryMappingStatusSchema,
+  share_of_errored_cases_pct: z.number(),
+});
+export type QcCategoryCoverage = z.infer<typeof QcCategoryCoverageSchema>;
 
 export const QcEvaluationSchema = z.object({
   org_id: z.string(),

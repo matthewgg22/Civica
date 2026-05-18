@@ -14,6 +14,11 @@
  * citation footnotes alongside data.
  */
 import { fy29Cliff, tierLiability, type TierScenario } from "./datasets/section10105.js";
+import {
+  byCategory as qcMappingByCategory,
+  byCfrSection as qcMappingByCfrSection,
+  coverage as qcMappingCoverage,
+} from "./datasets/qcMapping.js";
 
 export * from "./schemas.js";
 
@@ -31,6 +36,11 @@ export const analytics = {
   section10105: {
     fy29Cliff,
     tierLiability,
+  },
+  qcMapping: {
+    byCategory: qcMappingByCategory,
+    byCfrSection: qcMappingByCfrSection,
+    coverage: qcMappingCoverage,
   },
   cfr273: {
     byRelevance: (_opts: { grade: "HIGH" | "MEDIUM" | "LOW" }) => todo("cfr273.byRelevance"),

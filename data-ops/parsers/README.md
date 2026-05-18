@@ -16,6 +16,7 @@ the `civica-analytics` bucket layout). Every parser emits a sibling
 ## Implemented
 
 - `section_10105_to_parquet.ts` — Civica §10105 cliff (FY24 baseline + FY28 multi-scenario)
+- `qc_category_mapping_to_parquet.ts` — federal FNS QC ELEMENT codes → Civica controls (T7). Input: `data-ops/derived/qc_category_mapping.yaml`. Output: `qc-mappings/v1/category_mapping.parquet`.
 
 ## Stubbed (T10 phase 2)
 
