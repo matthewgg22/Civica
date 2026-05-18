@@ -201,6 +201,19 @@ class TestPriorityOrder:
         assert result.next_topic == QuestionTopic.DONE
 
 
+class TestApplicantAgePredicate:
+    def test_infant_age_zero_does_not_trigger_applicant_age(self):
+        # Regression: age=0 is a valid infant — predicate must not fire and
+        # cause the selector to re-ask age. state_merge ensures HouseholdMember
+        # always has a real int age, so age is None can never be true here.
+        applicant = _applicant(age=0, citizenship=CitizenshipStatus.UNKNOWN)
+        # APPLICANT_AGE deliberately absent from asked_topics to confirm
+        # the predicate alone does not re-trigger the question.
+        state = PartialHousehold(state="CA", members=[applicant])
+        result = pick_next_topic(state)
+        assert result.next_topic != QuestionTopic.APPLICANT_AGE
+
+
 class TestPriorityClassifications:
     def test_high_priority_topics_block_eligibility(self):
         # State, citizenship, age, etc. are high priority because the

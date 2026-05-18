@@ -74,7 +74,7 @@ def _rules() -> list[_Rule]:
             priority="high",
             justification="Applicant age is required for student rule and ABAWD checks.",
             predicate=lambda h: any(
-                m.is_applicant and m.age == 0 for m in h.members
+                m.is_applicant and m.age is None for m in h.members
             ),
         ),
         _Rule(
