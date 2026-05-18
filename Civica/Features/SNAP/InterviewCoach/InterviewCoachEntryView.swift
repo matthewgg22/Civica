@@ -8,6 +8,7 @@ import CivicaDesignSystem
 // English-only until SME-reviewed Spanish JSON ships).
 struct InterviewCoachEntryView: View {
     @StateObject private var bank = InterviewQuestionBank()
+    @State private var showAITransparency = false
 
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
@@ -19,9 +20,18 @@ struct InterviewCoachEntryView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
-                Text(InterviewCoachStrings.entryTitle.value(in: language))
-                    .font(CivicaTypography.pageTitle)
-                    .foregroundStyle(CivicaColors.ink)
+                HStack(alignment: .top, spacing: CivicaSpacing.sm) {
+                    Text(InterviewCoachStrings.entryTitle.value(in: language))
+                        .font(CivicaTypography.pageTitle)
+                        .foregroundStyle(CivicaColors.ink)
+
+                    Spacer(minLength: CivicaSpacing.sm)
+
+                    CivicaAIBadge {
+                        showAITransparency = true
+                    }
+                    .padding(.top, CivicaSpacing.xs)
+                }
 
                 Text(InterviewCoachStrings.entryBody.value(in: language))
                     .font(CivicaTypography.body)
@@ -68,6 +78,11 @@ struct InterviewCoachEntryView: View {
             InterviewCoachAnalytics.track(.entryViewed, parameters: [
                 "language": InterviewCoachAnalytics.languageCode(language)
             ])
+        }
+        .sheet(isPresented: $showAITransparency) {
+            NavigationStack {
+                CivicaAITransparencyView(presentedAsSheet: true)
+            }
         }
     }
 
