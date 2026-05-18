@@ -5,7 +5,9 @@ import { HTTPException } from "hono/http-exception";
 import { makeAnonClient } from "../lib/supabase.js";
 import { withActorContext } from "../middleware/actorContext.js";
 import type { Env } from "../types.js";
+import type { Logger } from "../lib/logger.js";
 import { evaluateChecklist } from "@civica/snap-rules";
+import { usps, fips, AddressSchema } from "@civica/state-connectors";
 
 // Canonical source: packages/snap-enums/src/packetStatus.ts
 // Inlined here to avoid adding a workspace dep for a single enum.
@@ -28,6 +30,10 @@ const createPacketSchema = z.object({
   org_id: z.string().uuid().optional(),
   county: z.string().max(100).optional(),
   county_fips: z.string().length(5).optional(),
+  // T9 integration stub. When provided AND ENABLE_ADDRESS_VALIDATION=true the
+  // gateway runs USPS validation + ZIP→county resolution and uses the result
+  // to populate county_fips/county when the caller hasn't set them.
+  address: AddressSchema.optional(),
 });
 
 const updatePacketSchema = z.object({
@@ -86,6 +92,41 @@ app.get("/:packetId", async (c) => {
 app.post("/", zValidator("json", createPacketSchema), async (c) => {
   const body = c.req.valid("json");
   const db = await withActorContext(c);
+  // Logger is attached by requestLogger middleware in src/index.ts; the route
+  // app's local Hono generic doesn't declare Variables, so we cast through get.
+  const log = (c.get as (k: string) => Logger)("log");
+
+  // T9: USPS address validation behind a feature flag. Failures are logged
+  // and the packet is still created — address validation is advisory at this
+  // stage, not a gate. When valid we backfill county_fips/county from the
+  // local ZIP table if the caller didn't provide them.
+  let resolvedCounty = body.county ?? null;
+  let resolvedCountyFips = body.county_fips ?? null;
+  if (c.env.ENABLE_ADDRESS_VALIDATION === "true" && body.address) {
+    if (c.env.USPS_CLIENT_ID && c.env.USPS_CLIENT_SECRET) {
+      try {
+        const result = await usps.validateAddress(body.address, {
+          credentials: {
+            clientId: c.env.USPS_CLIENT_ID,
+            clientSecret: c.env.USPS_CLIENT_SECRET,
+          },
+        });
+        log.info("usps_validate", { valid: result.valid, dpv: result.delivery_point_validation });
+        if (result.valid && result.normalized) {
+          const fast = fips.fromZipFast(result.normalized.zip5);
+          if (fast && !resolvedCountyFips) {
+            resolvedCountyFips = fast.fips;
+            resolvedCounty = resolvedCounty ?? fast.county_name;
+          }
+        }
+      } catch (err) {
+        log.warn("usps_validate_error", { err: String(err) });
+      }
+    } else {
+      log.warn("usps_validate_skipped", { reason: "missing_credentials" });
+    }
+  }
+
   const { data, error } = await db
     .schema("snap_enrollment")
     .from("snap_packets")
@@ -94,8 +135,8 @@ app.post("/", zValidator("json", createPacketSchema), async (c) => {
       state_code: body.state_code,
       status: "Draft" as const,
       org_id: body.org_id ?? null,
-      county: body.county ?? null,
-      county_fips: body.county_fips ?? null,
+      county: resolvedCounty,
+      county_fips: resolvedCountyFips,
     })
     .select()
     .single();

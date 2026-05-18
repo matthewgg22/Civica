@@ -1,0 +1,12 @@
+{
+  "address": {
+    "streetAddress": "9999 NOWHERE ST",
+    "city": "LOS ANGELES",
+    "state": "CA",
+    "ZIPCode": "90015"
+  },
+  "additionalInfo": {
+    "DPVConfirmation": "N"
+  },
+  "warnings": ["DPV did not confirm delivery point"]
+}

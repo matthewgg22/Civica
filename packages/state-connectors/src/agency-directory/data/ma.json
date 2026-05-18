@@ -1,0 +1,168 @@
+{
+  "state_code": "MA",
+  "state_name": "Massachusetts",
+  "populated": true,
+  "_source": "https://www.mass.gov/orgs/department-of-transitional-assistance ; https://dtaconnect.eohhs.mass.gov",
+  "state_agency": {
+    "name": "Massachusetts Department of Transitional Assistance",
+    "abbreviation": "DTA",
+    "url": "https://www.mass.gov/orgs/department-of-transitional-assistance",
+    "snap_program_name": "SNAP",
+    "application_portal": "https://dtaconnect.eohhs.mass.gov",
+    "snap_office_phone": "+1-877-382-2363"
+  },
+  "counties": [
+    {
+      "fips": "25001",
+      "name": "Barnstable County",
+      "administering_agency": {
+        "name": "Massachusetts Department of Transitional Assistance",
+        "abbreviation": "DTA",
+        "snap_office_phone": "+1-877-382-2363",
+        "snap_office_url": "https://www.mass.gov/locations/hyannis-dta-office",
+        "application_portal": "https://dtaconnect.eohhs.mass.gov"
+      }
+    },
+    {
+      "fips": "25003",
+      "name": "Berkshire County",
+      "administering_agency": {
+        "name": "Massachusetts Department of Transitional Assistance",
+        "abbreviation": "DTA",
+        "snap_office_phone": "+1-877-382-2363",
+        "snap_office_url": "https://www.mass.gov/locations/pittsfield-dta-office",
+        "application_portal": "https://dtaconnect.eohhs.mass.gov"
+      }
+    },
+    {
+      "fips": "25005",
+      "name": "Bristol County",
+      "administering_agency": {
+        "name": "Massachusetts Department of Transitional Assistance",
+        "abbreviation": "DTA",
+        "snap_office_phone": "+1-877-382-2363",
+        "snap_office_url": "https://www.mass.gov/locations/fall-river-dta-office",
+        "application_portal": "https://dtaconnect.eohhs.mass.gov"
+      }
+    },
+    {
+      "fips": "25007",
+      "name": "Dukes County",
+      "administering_agency": {
+        "name": "Massachusetts Department of Transitional Assistance",
+        "abbreviation": "DTA",
+        "snap_office_phone": "+1-877-382-2363",
+        "application_portal": "https://dtaconnect.eohhs.mass.gov"
+      }
+    },
+    {
+      "fips": "25009",
+      "name": "Essex County",
+      "administering_agency": {
+        "name": "Massachusetts Department of Transitional Assistance",
+        "abbreviation": "DTA",
+        "snap_office_phone": "+1-877-382-2363",
+        "snap_office_url": "https://www.mass.gov/locations/lawrence-dta-office",
+        "application_portal": "https://dtaconnect.eohhs.mass.gov"
+      }
+    },
+    {
+      "fips": "25011",
+      "name": "Franklin County",
+      "administering_agency": {
+        "name": "Massachusetts Department of Transitional Assistance",
+        "abbreviation": "DTA",
+        "snap_office_phone": "+1-877-382-2363",
+        "snap_office_url": "https://www.mass.gov/locations/greenfield-dta-office",
+        "application_portal": "https://dtaconnect.eohhs.mass.gov"
+      }
+    },
+    {
+      "fips": "25013",
+      "name": "Hampden County",
+      "administering_agency": {
+        "name": "Massachusetts Department of Transitional Assistance",
+        "abbreviation": "DTA",
+        "snap_office_phone": "+1-877-382-2363",
+        "snap_office_url": "https://www.mass.gov/locations/springfield-state-street-dta-office",
+        "application_portal": "https://dtaconnect.eohhs.mass.gov"
+      }
+    },
+    {
+      "fips": "25015",
+      "name": "Hampshire County",
+      "administering_agency": {
+        "name": "Massachusetts Department of Transitional Assistance",
+        "abbreviation": "DTA",
+        "snap_office_phone": "+1-877-382-2363",
+        "snap_office_url": "https://www.mass.gov/locations/holyoke-dta-office",
+        "application_portal": "https://dtaconnect.eohhs.mass.gov"
+      }
+    },
+    {
+      "fips": "25017",
+      "name": "Middlesex County",
+      "administering_agency": {
+        "name": "Massachusetts Department of Transitional Assistance",
+        "abbreviation": "DTA",
+        "snap_office_phone": "+1-877-382-2363",
+        "snap_office_url": "https://www.mass.gov/locations/cambridge-dta-office",
+        "application_portal": "https://dtaconnect.eohhs.mass.gov"
+      }
+    },
+    {
+      "fips": "25019",
+      "name": "Nantucket County",
+      "administering_agency": {
+        "name": "Massachusetts Department of Transitional Assistance",
+        "abbreviation": "DTA",
+        "snap_office_phone": "+1-877-382-2363",
+        "application_portal": "https://dtaconnect.eohhs.mass.gov"
+      }
+    },
+    {
+      "fips": "25021",
+      "name": "Norfolk County",
+      "administering_agency": {
+        "name": "Massachusetts Department of Transitional Assistance",
+        "abbreviation": "DTA",
+        "snap_office_phone": "+1-877-382-2363",
+        "snap_office_url": "https://www.mass.gov/locations/quincy-dta-office",
+        "application_portal": "https://dtaconnect.eohhs.mass.gov"
+      }
+    },
+    {
+      "fips": "25023",
+      "name": "Plymouth County",
+      "administering_agency": {
+        "name": "Massachusetts Department of Transitional Assistance",
+        "abbreviation": "DTA",
+        "snap_office_phone": "+1-877-382-2363",
+        "snap_office_url": "https://www.mass.gov/locations/brockton-dta-office",
+        "application_portal": "https://dtaconnect.eohhs.mass.gov"
+      }
+    },
+    {
+      "fips": "25025",
+      "name": "Suffolk County",
+      "administering_agency": {
+        "name": "Massachusetts Department of Transitional Assistance",
+        "abbreviation": "DTA",
+        "snap_office_phone": "+1-877-382-2363",
+        "snap_office_url": "https://www.mass.gov/locations/dudley-square-dta-office",
+        "application_portal": "https://dtaconnect.eohhs.mass.gov"
+      }
+    },
+    {
+      "fips": "25027",
+      "name": "Worcester County",
+      "administering_agency": {
+        "name": "Massachusetts Department of Transitional Assistance",
+        "abbreviation": "DTA",
+        "snap_office_phone": "+1-877-382-2363",
+        "snap_office_url": "https://www.mass.gov/locations/worcester-dta-office",
+        "application_portal": "https://dtaconnect.eohhs.mass.gov"
+      }
+    }
+  ]
+}

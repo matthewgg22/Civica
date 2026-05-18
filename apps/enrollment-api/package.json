@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@civica/snap-rules": "workspace:*",
+    "@civica/state-connectors": "workspace:*",
     "@hono/zod-validator": "^0.4.3",
     "@sentry/cloudflare": "^9.0.0",
     "@supabase/supabase-js": "^2.49.0",

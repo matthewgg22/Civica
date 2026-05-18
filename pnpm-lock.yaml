@@ -215,6 +215,9 @@ importers:
       '@civica/snap-rules':
         specifier: workspace:*
         version: link:../../packages/snap-rules
+      '@civica/state-connectors':
+        specifier: workspace:*
+        version: link:../../packages/state-connectors
       '@hono/zod-validator':
         specifier: ^0.4.3
         version: 0.4.3(hono@4.12.19)(zod@3.25.76)
@@ -466,6 +469,22 @@ importers:
         version: 2.1.9(@types/node@22.19.19)(jsdom@26.1.0)(lightningcss@1.32.0)(terser@5.47.1)
 
   packages/snap-rules:
+    dependencies:
+      zod:
+        specifier: ^3.24.0
+        version: 3.25.76
+    devDependencies:
+      '@civica/config':
+        specifier: workspace:*
+        version: link:../config
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.9
+        version: 2.1.9(@types/node@22.19.19)(jsdom@26.1.0)(lightningcss@1.32.0)(terser@5.47.1)
+
+  packages/state-connectors:
     dependencies:
       zod:
         specifier: ^3.24.0
