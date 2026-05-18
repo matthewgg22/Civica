@@ -1,0 +1,10 @@
+{
+  "github": {
+    "enabled": true,
+    "autoJobCancelation": true,
+    "silent": true,
+    "deploymentEnabled": {
+      "codex/rebuild-feb18": true
+    }
+  }
+}
