@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../lib/supabase";
 import { api } from "../lib/api";
@@ -25,12 +25,13 @@ interface UploadedDoc {
 
 interface Props {
   packetId: string;
+  applicantId: string;
   stateCode: "CA" | "MA";
   items: DocItem[];
   uploadedDocs: UploadedDoc[];
 }
 
-export default function DocumentChecklist({ packetId: _packetId, stateCode, items, uploadedDocs }: Props) {
+export default function DocumentChecklist({ packetId, applicantId, stateCode, items, uploadedDocs }: Props) {
   const router = useRouter();
   const [waiving, setWaiving] = useState<string | null>(null);
 
@@ -47,6 +48,62 @@ export default function DocumentChecklist({ packetId: _packetId, stateCode, item
   const [selectedDocId, setSelectedDocId] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [uploading, setUploading] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const pendingUploadItem = useRef<{ itemId: string; documentKind: string } | null>(null);
+
+  async function handleFileSelected(file: File) {
+    const ctx = pendingUploadItem.current;
+    if (!ctx) return;
+    const { itemId, documentKind } = ctx;
+    pendingUploadItem.current = null;
+
+    setUploading(itemId);
+    setErrors((e) => ({ ...e, [itemId]: "" }));
+    try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("Not authenticated");
+
+      // 1. Get presigned upload URL from enrollment API
+      const { signed_url, storage_path } = (await api.documents.uploadUrl(
+        session.access_token, packetId, file.name,
+      )) as { signed_url: string; storage_path: string };
+
+      // 2. PUT file directly to Supabase Storage
+      const putRes = await fetch(signed_url, {
+        method: "PUT",
+        body: file,
+        headers: { "Content-Type": file.type || "application/octet-stream" },
+      });
+      if (!putRes.ok) throw new Error(`Storage upload failed (${putRes.status})`);
+
+      // 3. Register the document record
+      const doc = (await api.documents.create(session.access_token, {
+        packet_id: packetId,
+        applicant_id: applicantId,
+        storage_path,
+        original_filename: file.name,
+        document_kind: documentKind,
+      })) as { document_id: string };
+
+      // 4. Resolve the checklist item, linking the uploaded document
+      await api.documentItems.resolve(session.access_token, itemId, {
+        resolved_document_id: doc.document_id,
+      });
+
+      router.refresh();
+    } catch (e) {
+      setErrors((prev) => ({ ...prev, [itemId]: e instanceof Error ? e.message : "Upload failed" }));
+    } finally {
+      setUploading(null);
+    }
+  }
+
+  function triggerUpload(itemId: string, documentKind: string) {
+    pendingUploadItem.current = { itemId, documentKind };
+    fileInputRef.current?.click();
+  }
 
   async function resolve(itemId: string) {
     setLoading(itemId);
@@ -103,6 +160,19 @@ export default function DocumentChecklist({ packetId: _packetId, stateCode, item
 
   return (
     <div>
+      {/* Hidden file input shared across all upload buttons */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".pdf,.jpg,.jpeg,.png"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          e.target.value = "";
+          if (file) handleFileSelected(file);
+        }}
+      />
+
       {pending.length > 0 && (
         <div className="mb-4">
           <p className="text-[11px] uppercase tracking-wider font-semibold text-amber mb-2">
@@ -120,6 +190,7 @@ export default function DocumentChecklist({ packetId: _packetId, stateCode, item
               waiveReason={waiveReason}
               selectedDocId={selectedDocId}
               loading={loading}
+              uploading={uploading}
               error={errors[item.item_id]}
               onStartResolve={(id) => { setResolving(id); setWaiving(null); }}
               onStartWaive={(id) => { setWaiving(id); setResolving(null); setWaiveReason(""); }}
@@ -128,6 +199,7 @@ export default function DocumentChecklist({ packetId: _packetId, stateCode, item
               onResolve={resolve}
               onWaive={waive}
               onCancel={() => { setResolving(null); setWaiving(null); setWaiveReason(""); }}
+              onUpload={triggerUpload}
             />
           ))}
         </div>
@@ -171,6 +243,7 @@ interface ItemRowProps {
   waiveReason: string;
   selectedDocId: Record<string, string>;
   loading: string | null;
+  uploading: string | null;
   error?: string;
   onStartResolve: (id: string) => void;
   onStartWaive: (id: string) => void;
@@ -179,13 +252,15 @@ interface ItemRowProps {
   onResolve: (id: string) => void;
   onWaive: (id: string) => void;
   onCancel: () => void;
+  onUpload: (itemId: string, documentKind: string) => void;
 }
 
-function ItemRow({ item, isFirst, kindLabel, uploadedDocs, resolving, waiving, waiveReason, selectedDocId, loading, error, onStartResolve, onStartWaive, onSelectDoc, onWaiveReasonChange, onResolve, onWaive, onCancel }: ItemRowProps) {
+function ItemRow({ item, isFirst, kindLabel, uploadedDocs, resolving, waiving, waiveReason, selectedDocId, loading, uploading, error, onStartResolve, onStartWaive, onSelectDoc, onWaiveReasonChange, onResolve, onWaive, onCancel, onUpload }: ItemRowProps) {
   const matchingDocs = uploadedDocs.filter((d) => d.document_kind === item.document_kind);
   const isResolving = resolving === item.item_id;
   const isWaiving = waiving === item.item_id;
   const isLoading = loading === item.item_id;
+  const isUploading = uploading === item.item_id;
 
   return (
     <div className={`py-4 ${!isFirst ? "border-t border-hairline" : ""}`}>
@@ -196,6 +271,13 @@ function ItemRow({ item, isFirst, kindLabel, uploadedDocs, resolving, waiving, w
         </div>
         {!isResolving && !isWaiving && (
           <div className="flex gap-2 shrink-0">
+            <button
+              onClick={() => onUpload(item.item_id, item.document_kind)}
+              disabled={isUploading || uploading !== null}
+              className="px-3 py-1.5 text-[12px] font-semibold rounded-[3px] bg-indigo text-white hover:bg-indigo/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {isUploading ? "Uploading…" : "Upload on behalf"}
+            </button>
             <button
               onClick={() => onStartResolve(item.item_id)}
               className="px-3 py-1.5 text-[12px] font-semibold rounded-[3px] bg-teal text-white hover:bg-teal/90 transition-colors"

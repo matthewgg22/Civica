@@ -205,7 +205,7 @@ export default async function PacketDetailPage({ params }: { params: Promise<{ p
           count={docItems.length}
           subtitle="Documents needed before handoff. Mark each resolved once received, or waive with a reason."
         >
-          <DocumentChecklist packetId={packetId} stateCode={packet.state_code as "CA" | "MA"} items={docItems} uploadedDocs={docs} />
+          <DocumentChecklist packetId={packetId} applicantId={packet.applicant_id} stateCode={packet.state_code as "CA" | "MA"} items={docItems} uploadedDocs={docs} />
         </Section>
 
         {/* Missing-item requests (navigator-side creator + history) */}

@@ -102,6 +102,21 @@ export default function MissingItemRequestPanel({ packetId, unresolvedItems }: P
     }
   }
 
+  async function resolveRequest(requestId: string) {
+    setError(null);
+    try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("Not authenticated");
+      await api.missingItems.resolve(session.access_token, requestId);
+      const rows = await api.missingItems.list(session.access_token, packetId);
+      setRequests(rows as RequestRow[]);
+      router.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to resolve");
+    }
+  }
+
   return (
     <div className="space-y-4">
       <p className="text-[12px] text-graphite italic leading-snug">
@@ -172,6 +187,15 @@ export default function MissingItemRequestPanel({ packetId, unresolvedItems }: P
                     <span className={`text-[11px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full ${STATUS_STYLE[r.status]}`}>
                       {r.status}
                     </span>
+                    {r.status === "uploaded" && (
+                      <button
+                        type="button"
+                        onClick={() => resolveRequest(r.request_id)}
+                        className="text-[12px] font-semibold text-teal hover:underline"
+                      >
+                        Mark resolved
+                      </button>
+                    )}
                     {r.status === "pending" && (
                       <button
                         type="button"
