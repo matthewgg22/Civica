@@ -8,15 +8,20 @@ The 7-year retention window matches the longest applicable benefits record requi
 
 | Data | Window | Mechanism |
 |------|--------|-----------|
-| `snap_sessions` rows | 7 years from `created_at` | `purge_snap_retention()` daily cron |
-| `snap_conversation_turns` | Cascades with session deletion | FK `on delete cascade` |
-| `snap_extracted_state` | Cascades with session deletion | FK `on delete cascade` |
-| `snap_documents` rows | Cascades with session deletion | FK `on delete cascade` |
-| Document image blobs in Storage | 7 years from upload | Supabase Storage lifecycle rule (configured separately) |
-| `snap_eligibility_results` | Cascades with session deletion | FK `on delete cascade` |
-| `snap_audit_log` | 7 years from `occurred_at` (no cascade) | `purge_snap_retention()` daily cron |
+| `snap_enrollment.snap_packets` | 7 years from `created_at` | `snap_enrollment.purge_snap_retention()` daily cron (04:00 UTC, migration 13) |
+| `snap_enrollment.packet_answers` | Cascades with packet deletion | FK `on delete cascade` |
+| `snap_enrollment.packet_status_history` | Cascades with packet deletion | FK `on delete cascade` |
+| `snap_enrollment.document_extractions` | Cascades with packet deletion | FK `on delete cascade` |
+| `snap_enrollment.uploaded_documents` | Cascades with packet deletion | FK `on delete cascade` |
+| `snap_enrollment.missing_item_requests` | Cascades with packet deletion | FK `on delete cascade` |
+| `snap_enrollment.navigator_notes` | Cascades with packet deletion | FK `on delete cascade` |
+| `snap_enrollment.handoff_exports` | Cascades with packet deletion | FK `on delete cascade` |
+| Document blobs in `documents` Storage bucket | 7 years from upload | Supabase Storage lifecycle rule (configured separately) |
+| `snap_enrollment.audit_log_events` | 7 years from `occurred_at` (no cascade) | Append-only by trigger; purge requires counsel sign-off (see below) |
 
-The cron job runs once per day. Mid-window deletion (subject-deletion request, see below) is on-demand.
+The cron job runs once per day at 04:00 UTC. Mid-window deletion (subject-deletion request, see below) is on-demand.
+
+**Audit log purge procedure.** `snap_enrollment.audit_log_events` is protected by the `block_audit_mutation` trigger which raises on any UPDATE/DELETE. Removing audit rows past their 7-year window requires (1) written counsel authorization, (2) temporary disabling of the trigger inside a single transaction, (3) bounded DELETE with explicit `event_at < now() - interval '7 years'` filter, (4) trigger re-enabled before commit. The daily retention purge function does NOT touch this table.
 
 ---
 
@@ -28,35 +33,37 @@ When a user requests deletion of their data before the 7-year window:
 
 Reply to the request via the same channel the user used to recover their session originally (phone if magic-link was SMS, email if magic-link was email). The reply requires the user to click a confirmation link. Without confirmation, no deletion happens — this prevents impersonation-driven data destruction.
 
-### Step 2 — Identify all session IDs
+### Step 2 — Identify all packet IDs for the applicant
 
 ```sql
-select session_id
-from public.snap_sessions
-where user_id = $1;  -- post-recovery sessions linked to user_id
+select packet_id
+from snap_enrollment.snap_packets
+where applicant_id = (
+  select applicant_id from snap_enrollment.applicants where auth_uid = $1
+);
 ```
 
-For pre-recovery anonymous sessions, use the magic-link issuance log to find the session_id the user originally created. (Pre-recovery sessions have `user_id IS NULL` and can only be linked via the recovery channel records.)
+For pre-recovery anonymous packets (auth_uid IS NULL), use the magic-link issuance log to find the applicant_id the user originally created.
 
 ### Step 3 — Run the deletion
 
 ```sql
-delete from public.snap_sessions
-where session_id = any($1::uuid[]);
+delete from snap_enrollment.snap_packets
+where packet_id = any($1::uuid[]);
 ```
 
-Cascades take care of conversation_turns, extracted_state, documents, eligibility_results.
+Cascades take care of packet_answers, packet_status_history, document_extractions, uploaded_documents, missing_item_requests, navigator_notes, packet_assignments, handoff_exports.
 
 ### Step 4 — Storage blob cleanup
 
 ```bash
-# Pseudocode — actual command depends on Supabase Storage CLI version.
-supabase storage rm snap-documents/<session_id>/* --recursive
+# Path convention: documents/{applicant_id}/{packet_id}/{filename}
+supabase storage rm documents/<applicant_id>/<packet_id>/* --recursive
 ```
 
 ### Step 5 — Audit log preservation
 
-The `snap_audit_log_block_mutation` trigger prevents row deletion from the audit table. The audit trail of what was accessed during the user's session lifetime remains until its own 7-year window passes. This is intentional; SOC 2 audits depend on the audit log existing for the full period.
+The `snap_enrollment.block_audit_mutation` trigger prevents row deletion from `audit_log_events`. The audit trail of what was accessed during the user's session lifetime remains until its own 7-year window passes. This is intentional; SOC 2 audits depend on the audit log existing for the full period.
 
 The deletion event itself produces a final audit row:
 
