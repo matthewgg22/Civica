@@ -42,7 +42,7 @@
     "category": "work_requirements",
     "archetype_tags": ["student"],
     "prompt": "Are you enrolled at least half-time in a college or university?",
-    "guidance": "Half-time students 18-49 are ineligible unless they meet a specific exemption: working 20+ hours per week, caring for a child under 6, in a state-approved employment-and-training program, or receiving certain disability benefits. State which exemption applies to you, with specifics."
+    "guidance": "Half-time students 18-49 are ineligible unless they meet a specific exemption: working 20+ hours per week, caring for a dependent child under 12 when adequate childcare is unavailable, in a state-approved employment-and-training program, or receiving certain disability benefits. State which exemption applies to you, with specifics."
   },
   {
     "id": "ma-initial-immigration-mixed",

@@ -196,8 +196,8 @@ enum InterviewCoachStrings {
     // itself.
 
     static let disclaimerBody = CivicaText(
-        "This is a practice tool, not legal advice. For binding answers about your SNAP application, contact Massachusetts Legal Aid (mass.gov/dta) or your local DTA office. Practice prompts and AI feedback are illustrative — they may not match your situation.",
-        es: "Esto es una herramienta de práctica, no asesoría legal. Para respuestas vinculantes sobre tu solicitud de SNAP, comunícate con Asistencia Legal de Massachusetts (mass.gov/dta) o tu oficina local del DTA. Las preguntas de práctica y los comentarios de la IA son ilustrativos — pueden no aplicar a tu situación."
+        "This is a practice tool, not legal advice. For binding answers about your SNAP application, contact your local DTA office (mass.gov/dta) or a Massachusetts legal aid organization (masslegalhelp.org). Practice prompts and AI feedback are illustrative — they may not match your situation.",
+        es: "Esto es una herramienta de práctica, no asesoría legal. Para respuestas vinculantes sobre tu solicitud de SNAP, comunícate con tu oficina local del DTA (mass.gov/dta) o una organización de asistencia legal de Massachusetts (masslegalhelp.org). Las preguntas de práctica y los comentarios de la IA son ilustrativos — pueden no aplicar a tu situación."
     )
 
     static let disclaimerCompact = CivicaText(
