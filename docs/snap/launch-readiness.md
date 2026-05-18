@@ -89,7 +89,7 @@ Action required: route translations to an external reviewer before launch. Flag 
 
 ### 9. Vercel `civica-app` Root Directory misconfiguration resolved
 
-**✅ Fixed** — Root Directory cleared in Vercel dashboard (2026-05-18). Production deploy confirmed green.
+**✅ Fixed** — Root Directory cleared in Vercel dashboard (2026-05-18). Production deploy confirmed green. Recovery guide if the setting drifts: [`docs/snap/vercel-deploy-fix.md`](vercel-deploy-fix.md).
 
 ---
 
