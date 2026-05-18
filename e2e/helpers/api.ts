@@ -259,6 +259,65 @@ export async function createPdfHandoff(jwt: string, packetId: string, agency_ref
   };
 }
 
+// ── Enrollment-API: navigator document upload ────────────────────────────────
+
+export async function requestUploadUrlAsStaff(jwt: string, packetId: string, filename?: string) {
+  const res = await assertOk(
+    await fetch(enrollmentUrl(`/packets/${packetId}/upload-url`), {
+      method: "POST",
+      headers: authHeaders(jwt),
+      body: JSON.stringify({ ...(filename && { filename }) }),
+    }),
+    `POST /packets/${packetId}/upload-url (staff)`,
+  );
+  return (await res.json()) as { signed_url: string; storage_path: string; applicant_id: string };
+}
+
+// ── Enrollment-API: missing-item requests ────────────────────────────────────
+
+export async function createMissingItemRequest(
+  jwt: string,
+  packetId: string,
+  options?: { required_item_id?: string; message_ciphertext?: string; bump_packet_status?: boolean },
+) {
+  const res = await assertOk(
+    await fetch(enrollmentUrl(`/packets/${packetId}/missing-items`), {
+      method: "POST",
+      headers: authHeaders(jwt),
+      body: JSON.stringify(options ?? {}),
+    }),
+    `POST /packets/${packetId}/missing-items`,
+  );
+  return (await res.json()) as { request_id: string; sent_at: string; status: string };
+}
+
+export async function listMissingItemsAsStaff(jwt: string, packetId: string) {
+  const res = await assertOk(
+    await fetch(enrollmentUrl(`/packets/${packetId}/missing-items`), {
+      headers: authHeaders(jwt),
+    }),
+    `GET /packets/${packetId}/missing-items`,
+  );
+  return (await res.json()) as Array<{
+    request_id: string;
+    status: string;
+    sent_at: string;
+    resolved_at: string | null;
+    requested_by_staff_id: string;
+  }>;
+}
+
+export async function resolveMissingItem(jwt: string, requestId: string) {
+  const res = await fetch(enrollmentUrl(`/missing-items/${requestId}/resolve`), {
+    method: "POST",
+    headers: { Authorization: `Bearer ${jwt}` },
+  });
+  if (res.status !== 204 && !res.ok) {
+    const body = await res.text();
+    throw new Error(`POST /missing-items/${requestId}/resolve → ${res.status}: ${body}`);
+  }
+}
+
 // ── Apps-API: navigator session assignment ────────────────────────────────────
 
 export async function assignSession(
