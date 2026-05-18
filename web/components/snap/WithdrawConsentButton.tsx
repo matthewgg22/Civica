@@ -41,7 +41,7 @@ export function WithdrawConsentButton({ packetId }: Props) {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogTitle>{t("withdraw")}</DialogTitle>
-          <p className="text-sm text-slate-600">{t("withdrawConfirm")}</p>
+          <p className="text-sm text-graphite">{t("withdrawConfirm")}</p>
           {error && (
             <p role="alert" className="text-sm text-red-600">
               {tc("error")}

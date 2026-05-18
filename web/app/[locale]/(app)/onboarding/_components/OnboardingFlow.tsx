@@ -73,7 +73,7 @@ export function OnboardingFlow({ locale, initialState, initialLanguage }: Props)
       {/* Step indicator */}
       <div className="flex items-center gap-2" aria-label="Onboarding progress">
         <StepDot active={step === "state"} done={step === "language"} label="1" />
-        <div className="h-px flex-1 bg-slate-200" />
+        <div className="h-px flex-1 bg-hairline" />
         <StepDot active={step === "language"} done={false} label="2" />
       </div>
 
@@ -125,7 +125,7 @@ function StepDot({
       aria-hidden="true"
       className={[
         "flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium",
-        active ? "bg-slate-900 text-white" : done ? "bg-green-600 text-white" : "bg-slate-100 text-slate-600",
+        active ? "bg-brick text-white" : done ? "bg-teal text-white" : "bg-ink/5 text-graphite",
       ].join(" ")}
     >
       {done ? "✓" : label}
@@ -166,8 +166,8 @@ function StateStep({
             className={[
               "flex cursor-pointer items-center gap-4 rounded-xl border-2 p-4 transition-colors",
               selected === code
-                ? "border-slate-900 bg-slate-50"
-                : "border-slate-200 hover:border-slate-300",
+                ? "border-brick bg-brick/8"
+                : "border-hairline hover:border-brick/40",
             ].join(" ")}
           >
             <RadioGroupItem id={`state-${code}`} value={code} />
@@ -217,10 +217,10 @@ function LanguageStep({
             onClick={() => onSelect(code)}
             aria-pressed={selected === code}
             className={[
-              "rounded-xl border-2 p-6 text-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2",
+              "rounded-xl border-2 p-6 text-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brick focus-visible:ring-offset-2",
               selected === code
-                ? "border-slate-900 bg-slate-900 text-white"
-                : "border-slate-200 bg-white text-slate-900 hover:border-slate-300",
+                ? "border-brick bg-brick text-white"
+                : "border-hairline bg-surface text-ink hover:border-brick/40",
             ].join(" ")}
           >
             {t(labelKey)}

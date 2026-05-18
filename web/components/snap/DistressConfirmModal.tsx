@@ -28,7 +28,7 @@ export function DistressConfirmModal({ open, onContinue, onResources }: Props) {
       >
         <DialogHeader>
           <DialogTitle>{t("distressTitle")}</DialogTitle>
-          <DialogDescription className="pt-2 text-base text-slate-700">
+          <DialogDescription className="pt-2 text-base text-ink">
             {t("distressBody")}
           </DialogDescription>
         </DialogHeader>

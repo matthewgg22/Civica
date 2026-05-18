@@ -26,7 +26,7 @@ export function InboxList({ initialItems }: Props) {
     return (
       <div className="py-16 text-center">
         <p className="text-2xl" aria-hidden="true">✉️</p>
-        <p className="mt-2 text-slate-500">{t("empty")}</p>
+        <p className="mt-2 text-graphite">{t("empty")}</p>
       </div>
     );
   }
@@ -35,7 +35,7 @@ export function InboxList({ initialItems }: Props) {
     <div className="space-y-8">
       {open.length > 0 && (
         <section aria-labelledby="inbox-open-heading">
-          <h2 id="inbox-open-heading" className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
+          <h2 id="inbox-open-heading" className="mb-3 text-sm font-semibold uppercase tracking-wide text-graphite">
             {t("openSection", { count: open.length })}
           </h2>
           <ul className="space-y-3">
@@ -48,7 +48,7 @@ export function InboxList({ initialItems }: Props) {
 
       {resolved.length > 0 && (
         <section aria-labelledby="inbox-resolved-heading">
-          <h2 id="inbox-resolved-heading" className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
+          <h2 id="inbox-resolved-heading" className="mb-3 text-sm font-semibold uppercase tracking-wide text-graphite">
             {t("resolvedSection", { count: resolved.length })}
           </h2>
           <ul className="space-y-3">

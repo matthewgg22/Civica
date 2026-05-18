@@ -12,7 +12,7 @@ export function ProgressBar({ completed, total, label, size = "md" }: Props) {
   return (
     <div className="space-y-1">
       {label && (
-        <p className="text-xs text-slate-500">{label}</p>
+        <p className="text-xs text-graphite">{label}</p>
       )}
       <div
         role="progressbar"
@@ -20,10 +20,10 @@ export function ProgressBar({ completed, total, label, size = "md" }: Props) {
         aria-valuemin={0}
         aria-valuemax={total}
         aria-label={label}
-        className={`w-full overflow-hidden rounded-full bg-slate-100 ${height}`}
+        className={`w-full overflow-hidden rounded-full bg-hairline ${height}`}
       >
         <div
-          className="h-full rounded-full bg-slate-900 motion-safe:transition-all motion-safe:duration-300"
+          className="h-full rounded-full bg-teal motion-safe:transition-all motion-safe:duration-300"
           style={{ width: `${pct}%` }}
         />
       </div>

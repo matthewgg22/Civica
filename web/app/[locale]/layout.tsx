@@ -35,7 +35,7 @@ export default async function LocaleLayout({
 
   return (
     <html lang={resolvedLocale} className="h-full antialiased">
-      <body className="min-h-full flex flex-col bg-white text-zinc-900 font-sans">
+      <body className="min-h-full flex flex-col bg-paper text-ink font-sans">
         <NextIntlClientProvider locale={resolvedLocale} messages={messages}>
           <div className="flex-1">{children}</div>
           <Footer

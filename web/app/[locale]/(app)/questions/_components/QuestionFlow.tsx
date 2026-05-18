@@ -179,7 +179,7 @@ export function QuestionFlow({ packetId, locale, sections, initialAnswers }: Pro
               />
             </div>
 
-            <div className="space-y-6 rounded-xl border border-slate-200 p-4">
+            <div className="space-y-6 rounded-xl border border-hairline p-4">
               {section.questions.map((question) => (
                 <QuestionField
                   key={question.id}
@@ -196,10 +196,10 @@ export function QuestionFlow({ packetId, locale, sections, initialAnswers }: Pro
 
       {/* Continue CTA */}
       {allRequiredAnswered && (
-        <div className="sticky bottom-0 -mx-4 border-t border-slate-200 bg-white px-4 py-4">
+        <div className="sticky bottom-0 -mx-4 border-t border-hairline bg-surface px-4 py-4">
           <button
             type="button"
-            className="w-full rounded-xl bg-slate-900 py-4 text-base font-semibold text-white hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+            className="w-full rounded-xl bg-brick py-4 text-base font-semibold text-white hover:bg-brick-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brick focus-visible:ring-offset-2"
             onClick={() => router.push(`/${locale}/app/documents`)}
           >
             {tc("continue")}

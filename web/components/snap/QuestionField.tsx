@@ -57,7 +57,7 @@ export function QuestionField({ question, value, onChange, saveState, error }: P
             className={cn(
               "text-xs",
               saveState === "saved" && "text-green-700",
-              saveState === "saving" && "text-slate-500",
+              saveState === "saving" && "text-graphite",
               saveState === "offline" && "text-amber-700",
               saveState === "error" && "text-red-600"
             )}
@@ -68,7 +68,7 @@ export function QuestionField({ question, value, onChange, saveState, error }: P
       </div>
 
       {question.hint && (
-        <p id={hintId} className="text-sm text-slate-500">{question.hint}</p>
+        <p id={hintId} className="text-sm text-graphite">{question.hint}</p>
       )}
 
       <FieldInput
@@ -136,7 +136,7 @@ function FieldInput({
     case "currency":
       return (
         <div className="relative">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">$</span>
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-graphite">$</span>
           <Input
             id={fieldId}
             type="text"
@@ -178,7 +178,7 @@ function FieldInput({
               htmlFor={`${fieldId}-${opt.value}`}
               className={cn(
                 "flex cursor-pointer items-center gap-3 rounded-lg border p-3 motion-safe:transition-colors",
-                str === opt.value ? "border-slate-900 bg-slate-50" : "border-slate-200 hover:border-slate-300"
+                str === opt.value ? "border-brick bg-brick/8" : "border-hairline hover:border-brick/40"
               )}
             >
               <RadioGroupItem id={`${fieldId}-${opt.value}`} value={opt.value} />
@@ -205,7 +205,7 @@ function FieldInput({
                 htmlFor={`${fieldId}-${opt.value}`}
                 className={cn(
                   "flex cursor-pointer items-center gap-3 rounded-lg border p-3 motion-safe:transition-colors",
-                  checked ? "border-slate-900 bg-slate-50" : "border-slate-200 hover:border-slate-300"
+                  checked ? "border-brick bg-brick/8" : "border-hairline hover:border-brick/40"
                 )}
               >
                 <Checkbox

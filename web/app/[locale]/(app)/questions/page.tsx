@@ -31,7 +31,7 @@ export default async function QuestionsPage({ params }: Props) {
   if (!packetResult.success) {
     // Non-fatal: render empty state
     return (
-      <div className="py-8 text-center text-slate-500">
+      <div className="py-8 text-center text-graphite">
         Unable to load your application. Please try again.
       </div>
     );
@@ -53,7 +53,7 @@ export default async function QuestionsPage({ params }: Props) {
     <div className="pb-24">
       <h1 className="mb-6 text-2xl font-semibold">{t("sectionHousehold")}</h1>
       {sections.length === 0 ? (
-        <p className="text-slate-500">No questions available yet.</p>
+        <p className="text-graphite">No questions available yet.</p>
       ) : (
         <QuestionFlow
           packetId={packet.id}

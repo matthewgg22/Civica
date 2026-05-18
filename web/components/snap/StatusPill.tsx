@@ -13,9 +13,9 @@ const STATUS_CONFIG: Record<
 > = {
   Draft: {
     icon: "✏️",
-    bg: "bg-slate-100",
-    text: "text-slate-700",
-    border: "border-slate-300",
+    bg: "bg-ink/5",
+    text: "text-ink",
+    border: "border-hairline",
   },
   "Submitted for Review": {
     icon: "📤",
@@ -55,9 +55,9 @@ const STATUS_CONFIG: Record<
   },
   Closed: {
     icon: "🗂️",
-    bg: "bg-slate-50",
-    text: "text-slate-500",
-    border: "border-slate-200",
+    bg: "bg-ink/5",
+    text: "text-graphite",
+    border: "border-hairline",
   },
 };
 

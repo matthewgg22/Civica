@@ -58,8 +58,8 @@ export function InboxItemCard({ item, onResolved }: Props) {
   return (
     <li
       className={[
-        "rounded-xl border bg-white motion-safe:transition-opacity",
-        isResolved ? "border-green-200 opacity-60" : "border-slate-200",
+        "rounded-xl border bg-surface motion-safe:transition-opacity",
+        isResolved ? "border-green-200 opacity-60" : "border-hairline",
       ].join(" ")}
     >
       <div className="p-4 space-y-3">
@@ -73,7 +73,7 @@ export function InboxItemCard({ item, onResolved }: Props) {
             )}
             <p className="text-sm font-medium leading-relaxed">{item.prompt}</p>
             {item.created_at && (
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-graphite">
                 {new Date(item.created_at).toLocaleDateString()}
               </p>
             )}
@@ -103,7 +103,7 @@ export function InboxItemCard({ item, onResolved }: Props) {
         {expanded && !isResolved && (
           <div
             id={uploadControlsId}
-            className="border-t border-slate-100 pt-3 space-y-3"
+            className="border-t border-hairline pt-3 space-y-3"
           >
             {/* The inbox upload proxy uses /api/inbox/:requestId/upload,
                 but DocumentUploader targets /api/upload/:packetId/:documentId.
@@ -180,10 +180,10 @@ function InboxUploader({ requestId, onSuccess }: InboxUploaderProps) {
   if (uploadState === "uploading") {
     return (
       <div aria-live="polite" className="space-y-1">
-        <p className="text-sm text-slate-600">{t("uploadProgress", { percent })}</p>
-        <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+        <p className="text-sm text-graphite">{t("uploadProgress", { percent })}</p>
+        <div className="h-2 w-full overflow-hidden rounded-full bg-hairline">
           <div
-            className="h-full rounded-full bg-slate-900 motion-safe:transition-all"
+            className="h-full rounded-full bg-teal motion-safe:transition-all"
             style={{ width: `${percent}%` }}
             role="progressbar"
             aria-valuenow={percent}
@@ -217,7 +217,7 @@ function InboxUploader({ requestId, onSuccess }: InboxUploaderProps) {
           className="sr-only"
           onChange={handleChange}
         />
-        <span className="flex cursor-pointer items-center justify-center gap-1 rounded-lg border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50 focus-within:ring-2 focus-within:ring-slate-900">
+        <span className="flex cursor-pointer items-center justify-center gap-1 rounded-lg border border-hairline px-3 py-2 text-sm hover:bg-brick/5 focus-within:ring-2 focus-within:ring-brick">
           📷 {t("cameraCapture")}
         </span>
       </label>
@@ -229,7 +229,7 @@ function InboxUploader({ requestId, onSuccess }: InboxUploaderProps) {
           className="sr-only"
           onChange={handleChange}
         />
-        <span className="flex cursor-pointer items-center justify-center gap-1 rounded-lg border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50 focus-within:ring-2 focus-within:ring-slate-900">
+        <span className="flex cursor-pointer items-center justify-center gap-1 rounded-lg border border-hairline px-3 py-2 text-sm hover:bg-brick/5 focus-within:ring-2 focus-within:ring-brick">
           📁 {t("filePicker")}
         </span>
       </label>
