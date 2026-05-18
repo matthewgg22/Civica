@@ -1,0 +1,103 @@
+name: SNAP FY rules-refresh reminder
+
+# Fires annually on Aug 15 to remind engineering to re-run the source-
+# citation signoff workflow for the upcoming federal fiscal year. The
+# USDA FNS COLA memo is typically published in late August / early
+# September; FY+1 values take effect Oct 1.
+#
+# Per OBBBA audit Q18 (deadline 2026-07-31 for FY27 owner assignment),
+# this workflow is the automation layer that fires regardless of who
+# the current owner is — the owner is named in the issue body and can
+# be updated each year without changing the schedule.
+#
+# Cron format: minute hour day-of-month month day-of-week
+# `0 12 15 8 *` = 12:00 UTC on August 15, every year.
+on:
+  schedule:
+    - cron: "0 12 15 8 *"
+  workflow_dispatch:
+    inputs:
+      target_fiscal_year:
+        description: "Fiscal year being refreshed (e.g. FY27)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  open-refresh-issue:
+    name: Open FY rules-refresh tracking issue
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine target fiscal year
+        id: fy
+        run: |
+          if [ -n "${{ github.event.inputs.target_fiscal_year }}" ]; then
+            FY="${{ github.event.inputs.target_fiscal_year }}"
+          else
+            # Cron fires in August; the upcoming FY starts Oct 1.
+            # Federal FY N+1 starts Oct 1 of calendar year N.
+            CALENDAR_YEAR=$(date -u +%Y)
+            FY_NUM=$(( (CALENDAR_YEAR - 2000) + 1 ))
+            FY="FY${FY_NUM}"
+          fi
+          echo "target=$FY" >> "$GITHUB_OUTPUT"
+          echo "Targeting refresh for $FY"
+
+      - name: Open or update tracking issue
+        uses: actions/github-script@v7
+        env:
+          TARGET_FY: ${{ steps.fy.outputs.target }}
+        with:
+          script: |
+            const fy = process.env.TARGET_FY;
+            const title = `[SNAP] Rules refresh: ${fy} COLA + source-citation signoff`;
+
+            // Check for an open issue with this exact title — if one
+            // exists, comment instead of opening a duplicate.
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: "fy-rules-refresh",
+              per_page: 100,
+            });
+            const dup = existing.data.find((i) => i.title === title);
+            if (dup) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: dup.number,
+                body: `Scheduled reminder fired ${new Date().toISOString()}. Issue already open — no new issue created.`,
+              });
+              return;
+            }
+
+            const body = [
+              `Scheduled reminder for the ${fy} SNAP rules refresh.`,
+              ``,
+              `**Trigger:** USDA FNS COLA memo for ${fy} typically published late August / early September. ${fy} values take effect October 1.`,
+              ``,
+              `**Checklist:** [\`docs/snap/fy-rules-refresh-checklist.md\`](docs/snap/fy-rules-refresh-checklist.md) — walk every row, update values, re-run engineering verification.`,
+              ``,
+              `**Owner:** _(assign before Oct 1; OBBBA audit Q18 requires named owner)_`,
+              ``,
+              `**Hard deadline:** Oct 1 (start of ${fy}). Past that date, the rules engine ships stale dollar amounts — \`RuleSnapshotStatus.expired\` will trip and the in-app banner (PR claude/snap-stale-rules-ui) will warn users, but eligibility math will still drift.`,
+              ``,
+              `---`,
+              ``,
+              `_This issue was opened automatically by \`.github/workflows/fy-rules-refresh-reminder.yml\`._`,
+            ].join("\n");
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ["compliance", "fy-rules-refresh"],
+            });
