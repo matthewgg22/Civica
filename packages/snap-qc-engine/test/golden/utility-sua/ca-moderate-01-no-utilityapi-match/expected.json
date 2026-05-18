@@ -1,0 +1,47 @@
+{
+  "flow": "utility-sua",
+  "state": "CA",
+  "defensibility_score": "moderate",
+  "defensibility_factors": [
+    {
+      "name": "utility_self_declared",
+      "weight": "neutral",
+      "detail": "No UtilityAPI account match; relying on attestation"
+    }
+  ],
+  "evidence_package": {
+    "flow": "utility",
+    "applicant_name": "Devon Carter",
+    "service_address": "320 E 18th St, Oakland, CA 94606",
+    "state_code": "CA",
+    "tier": "full",
+    "tier_amount_usd": 670,
+    "rule_citation": "CA CDSS MPP 63-503.43 (HCSUA includes A/C in CA climate zones)",
+    "basis": "self_declared",
+    "utility_accounts_found": [],
+    "name_match": false,
+    "intake_responses": {
+      "state_code": "CA",
+      "landlord_pays_any": false,
+      "utilities_paid_by_applicant": {
+        "heat_gas": false,
+        "electricity": true,
+        "cooling": false,
+        "water": false,
+        "phone_internet": true,
+        "none": false
+      }
+    },
+    "generated_at": "2026-05-18T00:00:00.000Z",
+    "attestation_required": true
+  },
+  "citations": [
+    {
+      "authority": "CA CDSS",
+      "reference": "CA CDSS MPP 63-503.43 (HCSUA includes A/C in CA climate zones)"
+    }
+  ],
+  "warnings": [],
+  "computed_at": "2026-05-18T00:00:00.000Z",
+  "engine_version": "0.1.0"
+}

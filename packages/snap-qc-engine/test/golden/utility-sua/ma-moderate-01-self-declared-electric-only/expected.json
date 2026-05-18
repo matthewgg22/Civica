@@ -1,0 +1,52 @@
+{
+  "flow": "utility-sua",
+  "state": "MA",
+  "defensibility_score": "moderate",
+  "defensibility_factors": [
+    {
+      "name": "utility_self_declared",
+      "weight": "neutral",
+      "detail": "No UtilityAPI account match; relying on attestation"
+    },
+    {
+      "name": "no_qualifying_utility",
+      "weight": "neutral",
+      "detail": "No SUA tier applies"
+    }
+  ],
+  "evidence_package": {
+    "flow": "utility",
+    "applicant_name": "James O'Neill",
+    "service_address": "88 Pleasant St, Worcester, MA 01609",
+    "state_code": "MA",
+    "tier": "none",
+    "tier_amount_usd": 0,
+    "rule_citation": "MA DTA Field Operations Memo 2024 / 106 CMR 364.400",
+    "basis": "self_declared",
+    "utility_accounts_found": [],
+    "name_match": false,
+    "intake_responses": {
+      "state_code": "MA",
+      "landlord_pays_any": false,
+      "utilities_paid_by_applicant": {
+        "heat_gas": false,
+        "electricity": true,
+        "cooling": false,
+        "water": false,
+        "phone_internet": false,
+        "none": false
+      }
+    },
+    "generated_at": "2026-05-18T00:00:00.000Z",
+    "attestation_required": true
+  },
+  "citations": [
+    {
+      "authority": "MA DTA",
+      "reference": "MA DTA Field Operations Memo 2024 / 106 CMR 364.400"
+    }
+  ],
+  "warnings": [],
+  "computed_at": "2026-05-18T00:00:00.000Z",
+  "engine_version": "0.1.0"
+}

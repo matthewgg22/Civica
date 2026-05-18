@@ -1,0 +1,47 @@
+{
+  "flow": "shared-lease",
+  "state": "CA",
+  "inputs": {
+    "applicant_name": "Jasmine Reyes",
+    "state_code": "CA",
+    "intake": {
+      "lease_in_applicant_name": false,
+      "leaseholder_name": "Carlos Reyes",
+      "stated_monthly_rent": 700,
+      "payment_method": "venmo_zelle",
+      "address": "812 S Vermont Ave Apt 4, Los Angeles, CA 90005"
+    },
+    "document_type": "sublease",
+    "document_filename": "sublease-reyes-2026.pdf",
+    "document_upload_id": "doc-upload-001",
+    "bank_evidence": {
+      "match_found": true,
+      "matched_amount": 700,
+      "frequency": "monthly",
+      "confidence": "high",
+      "months_confirmed": 3,
+      "matched_transactions": [
+        {
+          "date": "2026-03-01",
+          "amount": 700,
+          "description": "Zelle to Carlos R",
+          "counterparty": "Carlos Reyes"
+        },
+        {
+          "date": "2026-04-01",
+          "amount": 700,
+          "description": "Zelle to Carlos R",
+          "counterparty": "Carlos Reyes"
+        },
+        {
+          "date": "2026-05-01",
+          "amount": 700,
+          "description": "Zelle to Carlos R",
+          "counterparty": "Carlos Reyes"
+        }
+      ]
+    },
+    "address_valid": true,
+    "address_normalized": "812 S VERMONT AVE APT 4, LOS ANGELES, CA 90005-1234"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "flow": "gig-income",
+  "state": "MA",
+  "defensibility_score": "strong",
+  "defensibility_factors": [
+    {
+      "name": "argyle_payroll_verified",
+      "weight": "positive",
+      "detail": "$3100.00 verified via payroll API"
+    },
+    {
+      "name": "plaid_deposits_corroborated",
+      "weight": "positive",
+      "detail": "$3100.00 corroborated by bank deposits"
+    }
+  ],
+  "evidence_package": {
+    "flow": "gig-income",
+    "applicant_name": "Daniel Souza",
+    "state_code": "MA",
+    "income_sources": [
+      {
+        "type": "platform_gig",
+        "source_name": "Uber",
+        "monthly_average": 3100,
+        "verification_method": "argyle_api",
+        "confidence": "verified"
+      },
+      {
+        "type": "platform_gig",
+        "source_name": "Uber (Plaid)",
+        "monthly_average": 3100,
+        "verification_method": "plaid_deposits",
+        "confidence": "corroborated"
+      }
+    ],
+    "total_monthly_verified": 3100,
+    "total_monthly_bank_corroborated": 3100,
+    "total_monthly_self_declared_cash": 0,
+    "total_monthly_declared": 6200,
+    "reconciliation_gap": 0,
+    "reconciliation_flag": false,
+    "cash_attestation_signed": false,
+    "snap_gross_income_limit_1person": 1632,
+    "snap_bbce_applies": false,
+    "regulatory_citations": [
+      "7 CFR 273.10(c) — calculation of household income",
+      "7 CFR 273.2(f)(1)(ii) — verification of earned income",
+      "106 CMR 363.110 — MA earned income policy"
+    ],
+    "generated_at": "2026-05-18T00:00:00.000Z"
+  },
+  "citations": [
+    {
+      "authority": "7 CFR Part 273",
+      "reference": "7 CFR 273.10(c) — calculation of household income"
+    },
+    {
+      "authority": "7 CFR Part 273",
+      "reference": "7 CFR 273.2(f)(1)(ii) — verification of earned income"
+    },
+    {
+      "authority": "MA DTA",
+      "reference": "106 CMR 363.110 — MA earned income policy"
+    }
+  ],
+  "warnings": [],
+  "computed_at": "2026-05-18T00:00:00.000Z",
+  "engine_version": "0.1.0"
+}

@@ -1,0 +1,18 @@
+{
+  "flow": "gig-income",
+  "state": "CA",
+  "inputs": {
+    "applicant_name": "Esperanza Ortiz",
+    "state_code": "CA",
+    "sources": [
+      {
+        "type": "platform_gig",
+        "source_name": "Uber (Plaid)",
+        "monthly_average": 1850,
+        "verification_method": "plaid_deposits",
+        "confidence": "corroborated"
+      }
+    ],
+    "cash_attestation_signed": false
+  }
+}

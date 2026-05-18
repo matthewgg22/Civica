@@ -1,0 +1,47 @@
+{
+  "flow": "shared-lease",
+  "state": "MA",
+  "inputs": {
+    "applicant_name": "Anaya Patel",
+    "state_code": "MA",
+    "intake": {
+      "lease_in_applicant_name": false,
+      "leaseholder_name": "Rohan Patel",
+      "stated_monthly_rent": 850,
+      "payment_method": "venmo_zelle",
+      "address": "27 Warren Ave Apt 2, Somerville, MA 02143"
+    },
+    "document_type": "landlord_letter",
+    "document_filename": "landlord-letter-patel.pdf",
+    "document_upload_id": "doc-upload-003",
+    "bank_evidence": {
+      "match_found": true,
+      "matched_amount": 850,
+      "frequency": "monthly",
+      "confidence": "high",
+      "months_confirmed": 3,
+      "matched_transactions": [
+        {
+          "date": "2026-03-02",
+          "amount": 850,
+          "description": "Zelle Rohan P",
+          "counterparty": "Rohan Patel"
+        },
+        {
+          "date": "2026-04-01",
+          "amount": 850,
+          "description": "Zelle Rohan P",
+          "counterparty": "Rohan Patel"
+        },
+        {
+          "date": "2026-05-01",
+          "amount": 850,
+          "description": "Zelle Rohan P",
+          "counterparty": "Rohan Patel"
+        }
+      ]
+    },
+    "address_valid": true,
+    "address_normalized": "27 WARREN AVE APT 2, SOMERVILLE, MA 02143-2105"
+  }
+}

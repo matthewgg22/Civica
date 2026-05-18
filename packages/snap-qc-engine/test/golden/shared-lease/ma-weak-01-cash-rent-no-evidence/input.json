@@ -1,0 +1,26 @@
+{
+  "flow": "shared-lease",
+  "state": "MA",
+  "inputs": {
+    "applicant_name": "Ngozi Eze",
+    "state_code": "MA",
+    "intake": {
+      "lease_in_applicant_name": false,
+      "leaseholder_name": "Auntie",
+      "stated_monthly_rent": 500,
+      "payment_method": "cash",
+      "address": "14 Park St, Lynn, MA 01902"
+    },
+    "document_type": "none",
+    "bank_evidence": {
+      "match_found": false,
+      "matched_amount": 0,
+      "frequency": "none",
+      "confidence": "none",
+      "months_confirmed": 0,
+      "matched_transactions": []
+    },
+    "address_valid": true,
+    "address_normalized": "14 PARK ST, LYNN, MA 01902-3140"
+  }
+}

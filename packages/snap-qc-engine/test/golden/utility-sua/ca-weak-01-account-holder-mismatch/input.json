@@ -1,0 +1,31 @@
+{
+  "flow": "utility-sua",
+  "state": "CA",
+  "inputs": {
+    "applicant_name": "Aaliyah Brown",
+    "service_address": "2200 Telegraph Ave, Berkeley, CA 94704",
+    "intake": {
+      "state_code": "CA",
+      "landlord_pays_any": false,
+      "utilities_paid_by_applicant": {
+        "heat_gas": true,
+        "electricity": false,
+        "cooling": false,
+        "water": false,
+        "phone_internet": false,
+        "none": false
+      }
+    },
+    "accounts": [
+      {
+        "utility": "PG&E",
+        "account_holder_name": "Landlord Holdings LLC",
+        "service_address": "2200 Telegraph Ave, Berkeley, CA 94704",
+        "account_status": "active",
+        "utility_type": "gas",
+        "source": "utilityapi_sandbox"
+      }
+    ],
+    "name_match": false
+  }
+}

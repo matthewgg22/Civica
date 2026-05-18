@@ -1,0 +1,22 @@
+{
+  "flow": "utility-sua",
+  "state": "CA",
+  "inputs": {
+    "applicant_name": "Devon Carter",
+    "service_address": "320 E 18th St, Oakland, CA 94606",
+    "intake": {
+      "state_code": "CA",
+      "landlord_pays_any": false,
+      "utilities_paid_by_applicant": {
+        "heat_gas": false,
+        "electricity": true,
+        "cooling": false,
+        "water": false,
+        "phone_internet": true,
+        "none": false
+      }
+    },
+    "accounts": [],
+    "name_match": false
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "flow": "assets",
+  "state": "CA",
+  "inputs": {
+    "applicant_name": "Quinn Alvarez",
+    "state_code": "CA",
+    "assets": [],
+    "elderly_or_disabled": false
+  }
+}

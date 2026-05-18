@@ -1,0 +1,69 @@
+{
+  "flow": "gig-income",
+  "state": "MA",
+  "defensibility_score": "moderate",
+  "defensibility_factors": [
+    {
+      "name": "argyle_payroll_verified",
+      "weight": "positive",
+      "detail": "$1400.00 verified via payroll API"
+    },
+    {
+      "name": "reconciliation_gap",
+      "weight": "negative",
+      "detail": "Plaid/Argyle delta of $-1400.00 exceeds 25% threshold"
+    }
+  ],
+  "evidence_package": {
+    "flow": "gig-income",
+    "applicant_name": "Hannah Levine",
+    "state_code": "MA",
+    "income_sources": [
+      {
+        "type": "platform_gig",
+        "source_name": "Instacart",
+        "monthly_average": 1400,
+        "verification_method": "argyle_api",
+        "confidence": "verified"
+      }
+    ],
+    "total_monthly_verified": 1400,
+    "total_monthly_bank_corroborated": 0,
+    "total_monthly_self_declared_cash": 0,
+    "total_monthly_declared": 1400,
+    "reconciliation_gap": -1400,
+    "reconciliation_flag": true,
+    "cash_attestation_signed": false,
+    "snap_gross_income_limit_1person": 1632,
+    "snap_bbce_applies": false,
+    "regulatory_citations": [
+      "7 CFR 273.10(c) — calculation of household income",
+      "7 CFR 273.2(f)(1)(ii) — verification of earned income",
+      "106 CMR 363.110 — MA earned income policy"
+    ],
+    "generated_at": "2026-05-18T00:00:00.000Z"
+  },
+  "citations": [
+    {
+      "authority": "7 CFR Part 273",
+      "reference": "7 CFR 273.10(c) — calculation of household income"
+    },
+    {
+      "authority": "7 CFR Part 273",
+      "reference": "7 CFR 273.2(f)(1)(ii) — verification of earned income"
+    },
+    {
+      "authority": "MA DTA",
+      "reference": "106 CMR 363.110 — MA earned income policy"
+    }
+  ],
+  "warnings": [
+    {
+      "code": "gig_income.reconciliation_gap",
+      "severity": "warning",
+      "message": "Plaid deposits differ from Argyle payroll by more than 25%"
+    }
+  ],
+  "computed_at": "2026-05-18T00:00:00.000Z",
+  "engine_version": "0.1.0"
+}

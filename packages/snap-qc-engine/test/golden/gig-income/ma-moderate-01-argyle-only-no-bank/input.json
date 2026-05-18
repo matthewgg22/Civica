@@ -1,0 +1,18 @@
+{
+  "flow": "gig-income",
+  "state": "MA",
+  "inputs": {
+    "applicant_name": "Hannah Levine",
+    "state_code": "MA",
+    "sources": [
+      {
+        "type": "platform_gig",
+        "source_name": "Instacart",
+        "monthly_average": 1400,
+        "verification_method": "argyle_api",
+        "confidence": "verified"
+      }
+    ],
+    "cash_attestation_signed": false
+  }
+}

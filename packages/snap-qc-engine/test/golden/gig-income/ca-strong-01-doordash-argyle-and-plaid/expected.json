@@ -1,0 +1,70 @@
+{
+  "flow": "gig-income",
+  "state": "CA",
+  "defensibility_score": "strong",
+  "defensibility_factors": [
+    {
+      "name": "argyle_payroll_verified",
+      "weight": "positive",
+      "detail": "$2400.00 verified via payroll API"
+    },
+    {
+      "name": "plaid_deposits_corroborated",
+      "weight": "positive",
+      "detail": "$2400.00 corroborated by bank deposits"
+    }
+  ],
+  "evidence_package": {
+    "flow": "gig-income",
+    "applicant_name": "Andre Coleman",
+    "state_code": "CA",
+    "income_sources": [
+      {
+        "type": "platform_gig",
+        "source_name": "DoorDash",
+        "monthly_average": 2400,
+        "verification_method": "argyle_api",
+        "confidence": "verified"
+      },
+      {
+        "type": "platform_gig",
+        "source_name": "DoorDash (Plaid)",
+        "monthly_average": 2400,
+        "verification_method": "plaid_deposits",
+        "confidence": "corroborated"
+      }
+    ],
+    "total_monthly_verified": 2400,
+    "total_monthly_bank_corroborated": 2400,
+    "total_monthly_self_declared_cash": 0,
+    "total_monthly_declared": 4800,
+    "reconciliation_gap": 0,
+    "reconciliation_flag": false,
+    "cash_attestation_signed": false,
+    "snap_gross_income_limit_1person": 1632,
+    "snap_bbce_applies": true,
+    "regulatory_citations": [
+      "7 CFR 273.10(c) — calculation of household income",
+      "7 CFR 273.2(f)(1)(ii) — verification of earned income",
+      "CA CDSS MPP 63-503.211 — self-employment income"
+    ],
+    "generated_at": "2026-05-18T00:00:00.000Z"
+  },
+  "citations": [
+    {
+      "authority": "7 CFR Part 273",
+      "reference": "7 CFR 273.10(c) — calculation of household income"
+    },
+    {
+      "authority": "7 CFR Part 273",
+      "reference": "7 CFR 273.2(f)(1)(ii) — verification of earned income"
+    },
+    {
+      "authority": "CA CDSS",
+      "reference": "CA CDSS MPP 63-503.211 — self-employment income"
+    }
+  ],
+  "warnings": [],
+  "computed_at": "2026-05-18T00:00:00.000Z",
+  "engine_version": "0.1.0"
+}
