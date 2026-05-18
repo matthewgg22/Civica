@@ -13,7 +13,7 @@ export interface Blocker {
 
 interface Props {
   packetId: string;
-  nextStatuses: string[];
+  nextStatuses: readonly string[];
   blockers?: Blocker[];
 }
 

@@ -25,9 +25,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "message is required" }, { status: 400 });
   }
 
-  // uat_feedback is in public schema — use default schema (no .schema() call needed)
-  const { error } = await (supabase as ReturnType<typeof createServerClientFromCookies>)
-    .from("uat_feedback" as never)
+  // uat_feedback is in public schema but not in generated db-types yet
+  const { error } = await (supabase as unknown as {
+    from: (table: string) => {
+      insert: (row: Record<string, unknown>) => Promise<{ error: unknown }>;
+    };
+  })
+    .from("uat_feedback")
     .insert({ navigator_email: user.email ?? "", page_path, message });
 
   if (error) {
