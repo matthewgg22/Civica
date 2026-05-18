@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../../lib/supabase";
 
@@ -10,6 +10,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // If middleware bounced us here for missing staff role, kill the lingering
+  // applicant session so we don't loop back to /packets → /login.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (new URLSearchParams(window.location.search).get("error") !== "staff_only") return;
+    setError("This account does not have navigator access.");
+    void createClient().auth.signOut();
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

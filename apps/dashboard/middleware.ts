@@ -23,14 +23,32 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user && !request.nextUrl.pathname.startsWith("/login")) {
+  const isLogin = request.nextUrl.pathname.startsWith("/login");
+
+  if (!user) {
+    if (isLogin) return supabaseResponse;
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
+  // Staff role gate: applicant JWTs from the iOS app share this Supabase project,
+  // so authentication alone is not enough — require app_metadata.role ∈ STAFF_ROLES.
+  // Mirrors apps/api/src/auth/staff.ts.
+  const role = (user.app_metadata as { role?: unknown } | null)?.role;
+  const isStaff = typeof role === "string" && STAFF_ROLES.has(role);
+
+  if (!isStaff && !isLogin) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.searchParams.set("error", "staff_only");
+    return NextResponse.redirect(url);
+  }
+
   return supabaseResponse;
 }
+
+const STAFF_ROLES = new Set(["navigator", "supervisor", "admin"]);
 
 export const config = {
   matcher: [

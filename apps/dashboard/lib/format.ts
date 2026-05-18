@@ -25,11 +25,32 @@ export function timeAgo(dateStr: string): string {
   return formatDate(dateStr);
 }
 
-// Decrypt placeholder: real Fernet ciphertext is `snap_v1::...`, demo is `snap_v1::DEMO:NAME`
+// Demo-only decryptor: real Fernet ciphertext is `snap_v1::<token>`, demo is
+// `snap_v1::DEMO:NAME`. Real decrypt must go through the Python backend so the
+// pii_field_decrypted audit event is recorded — see ALLOW_REAL_CIPHERTEXT below.
+//
+// In prod we refuse to render real ciphertext (would leak as "[encrypted]"
+// silently, which is worse than failing loudly). UAT/staging can opt in with
+// NEXT_PUBLIC_ALLOW_REAL_CIPHERTEXT=1 to render a redacted placeholder while
+// the real decrypt path is being wired up.
+const ALLOW_REAL_CIPHERTEXT = process.env.NEXT_PUBLIC_ALLOW_REAL_CIPHERTEXT === "1";
+const IS_PROD = process.env.NODE_ENV === "production";
+
 export function decryptDemoName(ciphertext: string | null): string {
   if (!ciphertext) return "Unknown";
-  const m = ciphertext.match(/^snap_v1::DEMO:(.+)$/);
-  return m?.[1] ?? "[encrypted]";
+  const demo = ciphertext.match(/^snap_v1::DEMO:(.+)$/);
+  if (demo?.[1]) return demo[1];
+  if (ciphertext.startsWith("snap_v1::")) {
+    if (IS_PROD && !ALLOW_REAL_CIPHERTEXT) {
+      throw new Error(
+        "decryptDemoName received real Fernet ciphertext in production. " +
+          "Real decrypt must route through the backend audit path. " +
+          "Set NEXT_PUBLIC_ALLOW_REAL_CIPHERTEXT=1 only in non-prod environments."
+      );
+    }
+    return "[redacted]";
+  }
+  return "[encrypted]";
 }
 
 export function firstNameLastInitial(name: string): string {
