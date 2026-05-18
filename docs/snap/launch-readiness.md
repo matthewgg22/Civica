@@ -40,9 +40,7 @@ Required per service — see [`docs/snap/deploy.md`](deploy.md) for full setup s
 | `civica-snap-api` | Fly.io | `fly secrets set SENTRY_DSN=... --app civica-snap-api` |
 | `apps/dashboard` | Vercel | `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN` |
 
-Verification: trigger a test 500 on each service and confirm the event appears in Sentry within 30s.
-
-> Note: `civica-snap-engine` (FastAPI/`backend/`) does not yet have Sentry instrumentation. Track separately if needed before launch.
+Verification: trigger a test 500 on each service and confirm the event appears in Sentry within 30s. For snap-engine specifically, see [`docs/snap/observability.md`](observability.md).
 
 ---
 
@@ -136,7 +134,7 @@ All **Required** items must be ✅ before flip. **Nice-to-have** items can follo
 
 ```
 [ ] OBBBA Track 3 external questions answered (Q15 SOC 2, Q16 App Store copy, Q17 marketing site)
-[ ] civica-snap-engine (FastAPI) Sentry instrumentation
+[x] civica-snap-engine (FastAPI) Sentry instrumentation — shipped, see docs/snap/observability.md
 [ ] Lighthouse production score monitored on live URL (not just CI)
 [ ] October rules snapshot owner confirmed (Q18, deadline 2026-07-31)
 [ ] Policy accuracy review by DTA-literate reviewer
