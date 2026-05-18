@@ -19,7 +19,10 @@ function getVerifier(): Uint8Array | JWTVerifyGetKey {
 }
 
 export async function verifySupabaseJwt(token: string): Promise<JWTPayload> {
-  const { payload } = await jwtVerify(token, getVerifier());
+  const key = getVerifier();
+  const { payload } = key instanceof Uint8Array
+    ? await jwtVerify(token, key)
+    : await jwtVerify(token, key);
   return payload;
 }
 

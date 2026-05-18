@@ -86,7 +86,7 @@ describe("Migration parity", () => {
     );
     expect(match, "packet_status enum block not found in migration").not.toBeNull();
 
-    const sqlValues = match![1]
+    const sqlValues = match![1]!
       .split(",")
       .map((v) => v.trim().replace(/^'|'$/g, ""))
       .filter(Boolean);
