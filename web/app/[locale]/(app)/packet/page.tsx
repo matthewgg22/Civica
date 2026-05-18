@@ -33,7 +33,7 @@ export default async function PacketPage({ params }: Props) {
   const packetResult = await getOrCreatePacket(profile.state_code as "CA" | "MA");
   if (!packetResult.success) {
     return (
-      <div className="py-8 text-center text-slate-500">
+      <div className="py-8 text-center text-graphite">
         {tc("loadError")}
       </div>
     );
@@ -79,15 +79,15 @@ export default async function PacketPage({ params }: Props) {
           {t("title")}
         </h1>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-6 space-y-4">
+        <div className="rounded-xl border border-hairline bg-surface p-6 space-y-4">
           <StatusPill status={status} label={statusLabels[status]} size="lg" />
 
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-graphite">
             {t(`statusDesc${statusLabelKey(status)}` as Parameters<typeof t>[0])}
           </p>
 
           {packet.updated_at && (
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-graphite">
               {t("lastUpdated", { date: new Date(packet.updated_at).toLocaleString() })}
             </p>
           )}

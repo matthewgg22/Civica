@@ -22,7 +22,7 @@ export default async function SignInPage({ params }: Props) {
 
         <SignInForm locale={locale} />
 
-        <p className="px-4 text-center text-xs text-slate-500">{t("disclaimer")}</p>
+        <p className="px-4 text-center text-xs text-graphite">{t("disclaimer")}</p>
       </div>
     </main>
   );

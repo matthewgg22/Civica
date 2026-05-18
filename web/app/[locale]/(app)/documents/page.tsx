@@ -28,7 +28,7 @@ export default async function DocumentsPage({ params }: Props) {
   const packetResult = await getOrCreatePacket(profile.state_code as "CA" | "MA");
   if (!packetResult.success) {
     return (
-      <div className="py-8 text-center text-slate-500">
+      <div className="py-8 text-center text-graphite">
         Unable to load your application. Please try again.
       </div>
     );

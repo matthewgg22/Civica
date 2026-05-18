@@ -21,7 +21,7 @@ export function CloseTabButton({ label, fallbackHref }: Props) {
     <button
       type="button"
       onClick={handleClick}
-      className="w-full rounded-xl border border-slate-300 bg-white py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+      className="w-full rounded-xl border border-hairline bg-surface py-3 text-sm font-medium text-ink hover:bg-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brick focus-visible:ring-offset-2"
     >
       {label}
     </button>

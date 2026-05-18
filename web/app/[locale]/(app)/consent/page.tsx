@@ -32,7 +32,7 @@ export default async function ConsentPage({ params }: Props) {
   const packetResult = await getOrCreatePacket(profile.state_code as "CA" | "MA");
   if (!packetResult.success) {
     return (
-      <div className="py-8 text-center text-slate-500">
+      <div className="py-8 text-center text-graphite">
         {tc("loadError")}
       </div>
     );

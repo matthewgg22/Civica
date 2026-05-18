@@ -43,7 +43,7 @@ export function DocumentChecklist({ packetId, initialItems }: Props) {
       />
 
       {items.length === 0 ? (
-        <p className="text-slate-500">No documents required for your packet.</p>
+        <p className="text-graphite">No documents required for your packet.</p>
       ) : (
         <ul className="space-y-3" aria-label={t("title")}>
           {items.map((item) => (

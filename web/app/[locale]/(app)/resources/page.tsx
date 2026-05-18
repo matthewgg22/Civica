@@ -33,21 +33,21 @@ export default async function ResourcesPage({ params }: Props) {
     <div className="space-y-8 pb-24">
       <div>
         <h1 className="text-2xl font-semibold">{t("title")}</h1>
-        <p className="mt-2 text-sm text-slate-600">{t("intro")}</p>
+        <p className="mt-2 text-sm text-graphite">{t("intro")}</p>
       </div>
 
       <ul className="space-y-4">
         {resources.map((r) => (
           <li
             key={r.title}
-            className="rounded-xl border border-slate-200 bg-white p-5 space-y-2"
+            className="rounded-xl border border-hairline bg-surface p-5 space-y-2"
           >
-            <h2 className="font-semibold text-slate-900">{r.title}</h2>
-            <p className="text-sm text-slate-600 leading-relaxed">{r.body}</p>
+            <h2 className="font-semibold text-ink">{r.title}</h2>
+            <p className="text-sm text-graphite leading-relaxed">{r.body}</p>
             {r.action && (
               <a
                 href={r.action.href}
-                className="inline-flex items-center gap-1 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+                className="inline-flex items-center gap-1 rounded-lg bg-brick px-4 py-2 text-sm font-medium text-white hover:bg-brick-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brick focus-visible:ring-offset-2"
               >
                 {r.action.label}
               </a>

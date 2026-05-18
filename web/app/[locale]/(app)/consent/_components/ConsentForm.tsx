@@ -48,7 +48,7 @@ export function ConsentForm({ packetId, locale, readiness }: Props) {
     <form onSubmit={handleSubmit} className="space-y-6" aria-label={t("title")}>
       {/* Consent body */}
       <div
-        className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 leading-relaxed"
+        className="rounded-xl border border-hairline bg-surface p-4 text-sm text-ink leading-relaxed"
         role="note"
         aria-label="Consent text"
       >
