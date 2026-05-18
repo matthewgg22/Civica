@@ -98,7 +98,7 @@ app.post("/packets/:packetId/missing-items", zValidator("json", createSchema), a
   return c.json(inserted, 201);
 });
 
-// POST /missing-items/:requestId/cancel — navigator cancels an open request
+// POST /missing-items/:requestId/cancel — navigator cancels a pending request
 app.post("/missing-items/:requestId/cancel", async (c) => {
   const actor = c.get("actor");
   if (actor.kind === "applicant") {
@@ -111,6 +111,24 @@ app.post("/missing-items/:requestId/cancel", async (c) => {
     .update({ status: "resolved" as const, resolved_at: new Date().toISOString(), resolved_by_staff_id: actor.id })
     .eq("request_id", c.req.param("requestId"))
     .eq("status", "pending");
+  if (error) throw new HTTPException(500, { message: error.message });
+  return c.body(null, 204);
+});
+
+// POST /missing-items/:requestId/resolve — navigator confirms an uploaded document satisfies the request.
+// Accepts both "pending" and "uploaded" statuses (covers both cancel-before-upload and post-upload confirmation).
+app.post("/missing-items/:requestId/resolve", async (c) => {
+  const actor = c.get("actor");
+  if (actor.kind === "applicant") {
+    throw new HTTPException(403, { message: "Applicants cannot resolve requests" });
+  }
+  const db = await withActorContext(c);
+  const { error } = await db
+    .schema("snap_enrollment")
+    .from("missing_item_requests")
+    .update({ status: "resolved" as const, resolved_at: new Date().toISOString(), resolved_by_staff_id: actor.id })
+    .eq("request_id", c.req.param("requestId"))
+    .in("status", ["pending", "uploaded"]);
   if (error) throw new HTTPException(500, { message: error.message });
   return c.body(null, 204);
 });

@@ -60,6 +60,21 @@ export const api = {
   },
   documents: {
     list: (jwt: string, packetId: string) => apiFetch(`/packets/${packetId}/documents`, jwt),
+    uploadUrl: (jwt: string, packetId: string, filename?: string) =>
+      apiFetch(`/packets/${packetId}/upload-url`, jwt, {
+        method: "POST",
+        body: JSON.stringify({ filename }),
+      }),
+    create: (
+      jwt: string,
+      body: {
+        packet_id: string;
+        applicant_id: string;
+        storage_path: string;
+        original_filename?: string;
+        document_kind?: string;
+      },
+    ) => apiFetch("/documents", jwt, { method: "POST", body: JSON.stringify(body) }),
   },
   notes: {
     list: (jwt: string, packetId: string) => apiFetch(`/packets/${packetId}/notes`, jwt),
@@ -153,5 +168,7 @@ export const api = {
       }),
     cancel: (jwt: string, requestId: string) =>
       apiFetch(`/missing-items/${requestId}/cancel`, jwt, { method: "POST" }),
+    resolve: (jwt: string, requestId: string) =>
+      apiFetch(`/missing-items/${requestId}/resolve`, jwt, { method: "POST" }),
   },
 };

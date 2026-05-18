@@ -38,7 +38,7 @@
 2. Review each question–answer pair.
 3. If any answer looks incomplete or inconsistent, note the question key (shown in small text) — you'll use it in the feedback form.
 4. Scroll to **Extracted Fields** (if documents were pre-uploaded by coordinator). Confirm auto-extracted values match the answers where applicable.
-5. If any extraction field is flagged **Needs Review**, click the checkbox to mark it reviewed.
+5. If any extraction field is flagged **Needs Review**, click **Review →** next to the field. Enter the confirmed value in the text box (pre-filled from the OCR or applicant correction column), add an optional note, then click **Confirm**.
 
 **Pass criteria:** All answers are visible; extraction fields can be marked reviewed without page reload errors.
 
@@ -48,14 +48,14 @@
 
 **Goal:** Simulate a navigator uploading a document the applicant couldn't attach themselves.
 
-1. Scroll to the **Document Checklist** section.
-2. Confirm at least one item shows as **Missing** (coordinator pre-configured this).
-3. Click **Upload on behalf** (or the upload icon) next to the missing item.
-4. Select the test file provided by the coordinator (`test_paystub.pdf`).
-5. Wait for the upload to complete — the item should change to **Uploaded / Pending AI review**.
-6. Refresh the page and confirm the uploaded document persists.
+1. Scroll to the **Required Documents** section.
+2. Confirm at least one item shows as outstanding / not yet resolved (coordinator pre-configured this).
+3. Click **Upload on behalf** next to the missing item.
+4. Select the test file provided by the coordinator (`test_paystub.pdf`) from the file picker that opens.
+5. Wait for the upload to complete — the item should disappear from the Outstanding list and appear in the Cleared list as **resolved**.
+6. Refresh the page and confirm the uploaded document persists in both the checklist and the **Uploaded Documents** section.
 
-**Pass criteria:** File uploads without error; checklist item updates to uploaded state; document appears in the document list after refresh.
+**Pass criteria:** File uploads without error; checklist item moves to resolved state; document appears in the document list after refresh.
 
 ---
 
@@ -63,13 +63,13 @@
 
 **Goal:** Mark the uploaded document as satisfying the open missing-item request so the packet can progress.
 
-1. Scroll to the **Missing Item Requests** section (below Document Checklist).
+1. Scroll to the **Missing-Item Requests** section (below Required Documents).
 2. Confirm the open request created by the coordinator is visible (e.g., "Proof of income required").
-3. Click **Resolve** on the request.
-4. In the confirmation dialog, select the document you uploaded in Scenario 3 as the resolving evidence, then confirm.
-5. Verify the request moves to **Resolved** with your navigator name and a timestamp.
+3. If the request shows status **uploaded** (the applicant already uploaded something), click **Mark resolved** next to it. If it still shows **pending**, click **Cancel** to close it (both actions mark the request resolved).
+4. The request status should update to **resolved** in the list.
+5. Refresh the page and verify the request still shows as resolved.
 
-**Pass criteria:** Request resolves; resolved state persists on refresh; no other requests are accidentally closed.
+**Pass criteria:** Request resolves without error; resolved state persists on refresh; no other requests are accidentally closed.
 
 ---
 

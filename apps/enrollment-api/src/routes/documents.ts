@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
-import { makeAnonClient } from "../lib/supabase.js";
+import { makeAnonClient, makeServiceClient } from "../lib/supabase.js";
 import { withActorContext } from "../middleware/actorContext.js";
 import type { Env } from "../types.js";
 
@@ -29,6 +29,45 @@ const updateDocumentSchema = z.object({
   rejected_reason: z.string().max(500).optional(),
   classification_confidence: z.number().min(0).max(1).optional(),
 });
+
+// POST /packets/:packetId/upload-url — navigator generates a presigned upload URL.
+// The client PUTs the file directly to the returned URL, then calls POST /documents to register it.
+app.post(
+  "/packets/:packetId/upload-url",
+  zValidator("json", z.object({ filename: z.string().max(255).optional() })),
+  async (c) => {
+    const body = c.req.valid("json");
+    const actor = c.get("actor");
+    if (actor.kind === "applicant") {
+      throw new HTTPException(403, { message: "Applicants must use /me/packets/:id/upload-url" });
+    }
+
+    const db = makeAnonClient(c.env, c.get("jwt"));
+    const { data: packet, error: pErr } = await db
+      .schema("snap_enrollment")
+      .from("snap_packets")
+      .select("packet_id, applicant_id")
+      .eq("packet_id", c.req.param("packetId"))
+      .is("deleted_at", null)
+      .single();
+
+    if (pErr?.code === "PGRST116" || !packet) throw new HTTPException(404, { message: "Packet not found" });
+    if (pErr) throw new HTTPException(500, { message: pErr.message });
+
+    const ext = body.filename?.split(".").pop()?.toLowerCase() ?? "pdf";
+    const storagePath = `${packet.applicant_id}/${c.req.param("packetId")}/${crypto.randomUUID()}.${ext}`;
+
+    const svc = makeServiceClient(c.env);
+    const { data, error } = await svc.storage.from("documents").createSignedUploadUrl(storagePath);
+    if (error) throw new HTTPException(500, { message: error.message });
+
+    return c.json({
+      signed_url: data.signedUrl,
+      storage_path: storagePath,
+      applicant_id: packet.applicant_id,
+    }, 201);
+  }
+);
 
 app.get("/packets/:packetId/documents", async (c) => {
   const jwt = c.get("jwt");
