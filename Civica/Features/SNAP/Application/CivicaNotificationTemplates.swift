@@ -135,6 +135,42 @@ enum CivicaNotificationTemplates {
             .replacingOccurrences(of: "{county}", with: countyLabel)
     }
 
+    // MARK: - Compliance registry helpers
+
+    /// Returns a CivicaText using the counsel-approved registry string when
+    /// the row's status is .approved; falls back to current production copy
+    /// while .pendingSignoff. Flip status in SNAPComplianceCopyRegistry to
+    /// activate the replacement — no call-site changes needed for these strings.
+    private static func registryText(
+        id: String,
+        fallbackEN: String,
+        fallbackES: String
+    ) -> CivicaText {
+        CivicaText(
+            SNAPComplianceCopyRegistry.approvedEnglish(for: id) ?? fallbackEN,
+            es: SNAPComplianceCopyRegistry.approvedSpanish(for: id) ?? fallbackES
+        )
+    }
+
+    /// Registry-aware EBT PIN CTA label (compliance id: ebt_pin_cta, audit Q3).
+    /// Call sites that render the approvedEmail buttonLabel should switch to this
+    /// function when counsel signs — it returns the state-specific EBT portal URL.
+    /// Falls back to the current "Set the EBT PIN" while .pendingSignoff.
+    static func ebtPinCTALabel(stateCode: String?, language: CivicaLanguage) -> String {
+        guard SNAPComplianceCopyRegistry.approvedEnglish(for: "ebt_pin_cta") != nil else {
+            return language == .english ? "Set the EBT PIN" : "Configurar el PIN de EBT"
+        }
+        let ebtPortal: String
+        switch stateCode {
+        case "CA": ebtPortal = "ebt.ca.gov"
+        case "MA": ebtPortal = "ebtedge.com"
+        default:   ebtPortal = language == .english ? "your state's EBT portal" : "el portal EBT de su estado"
+        }
+        return language == .english
+            ? "Set your EBT PIN at \(ebtPortal)"
+            : "Establezca su PIN de EBT en \(ebtPortal)"
+    }
+
     // MARK: - Application submitted
 
     private static let applicationSubmittedEmail = CivicaNotificationTemplate(
@@ -192,9 +228,11 @@ enum CivicaNotificationTemplates {
             es: "{agency} necesita una cosa más"
         ),
         body: [
-            CivicaText(
-                "{agency} needs one more thing: a recent paystub. Send a photo here or upload in the app. By {deadline} keeps your application moving.",
-                es: "{agency} necesita una cosa más: un talón de pago reciente. Envía una foto aquí o súbela en la app. Antes del {deadline} para que tu solicitud siga su curso."
+            // Compliance Q3: registry id "doc_requested_sms_body" — flip to .approved to activate.
+            registryText(
+                id: "doc_requested_sms_body",
+                fallbackEN: "{agency} needs one more thing: a recent paystub. Send a photo here or upload in the app. By {deadline} keeps your application moving.",
+                fallbackES: "{agency} necesita una cosa más: un talón de pago reciente. Envía una foto aquí o súbela en la app. Antes del {deadline} para que tu solicitud siga su curso."
             ),
         ],
         buttonLabel: CivicaText("Upload now", es: "Subir ahora"),
@@ -205,9 +243,11 @@ enum CivicaNotificationTemplates {
 
     private static let approvedEmail = CivicaNotificationTemplate(
         kind: .approvedEmail,
-        subject: CivicaText(
-            "Approved. ${monthlyBenefit}/mo, starting this month.",
-            es: "Aprobado. ${monthlyBenefit}/mes, a partir de este mes."
+        // Compliance Q3: registry id "approval_email_subject" — flip to .approved to activate.
+        subject: registryText(
+            id: "approval_email_subject",
+            fallbackEN: "Approved. ${monthlyBenefit}/mo, starting this month.",
+            fallbackES: "Aprobado. ${monthlyBenefit}/mes, a partir de este mes."
         ),
         preheader: CivicaText(
             "EBT card is on its way. Set the PIN before it arrives.",
@@ -227,6 +267,9 @@ enum CivicaNotificationTemplates {
                 es: "Recertificación el {recertDate}. Te enviaremos un mensaje 60 y 14 días antes."
             ),
         ],
+        // Compliance Q3: registry id "ebt_pin_cta" — state-parameterized.
+        // When counsel signs, replace this buttonLabel with ebtPinCTALabel(stateCode:language:)
+        // at the render call site (stateCode must flow in from the user's session).
         buttonLabel: CivicaText("Set the EBT PIN", es: "Configurar el PIN de EBT"),
         buttonURLHint: "civica.us/ebt-pin"
     )
@@ -252,9 +295,11 @@ enum CivicaNotificationTemplates {
 
     private static let recertHeadsUpEmail = CivicaNotificationTemplate(
         kind: .recertHeadsUpEmail,
-        subject: CivicaText(
-            "Recertify in 60 days. Usually 4 minutes.",
-            es: "Recertifica en 60 días. Usualmente 4 minutos."
+        // Compliance Q3: registry id "recert_heads_up_email_subject" — flip to .approved to activate.
+        subject: registryText(
+            id: "recert_heads_up_email_subject",
+            fallbackEN: "Recertify in 60 days. Usually 4 minutes.",
+            fallbackES: "Recertifica en 60 días. Usualmente 4 minutos."
         ),
         preheader: CivicaText(
             "Quick check, not the whole form again.",
@@ -309,9 +354,14 @@ enum CivicaNotificationTemplates {
             es: "Último aviso antes de que se pausen los beneficios"
         ),
         body: [
+            // Compliance Q3: registry id "recert_one_day_sms" — flip to .approved to activate.
+            // [Portal] in the approved copy is replaced with {portal} so render() substitutes
+            // the state-specific portal name (BenefitsCal for CA, DTA Connect for MA).
             CivicaText(
-                "Tomorrow is your recert deadline ({recertDate}). 4 minutes if you start now. If you miss it, benefits pause until you submit — text RECERT for a fast link any time.",
-                es: "Mañana vence tu recertificación ({recertDate}). 4 minutos si empiezas ahora. Si lo olvidas, los beneficios se pausan hasta que envíes — envía RECERT para un enlace rápido en cualquier momento."
+                (SNAPComplianceCopyRegistry.approvedEnglish(for: "recert_one_day_sms") ?? "Tomorrow is your recert deadline ({recertDate}). 4 minutes if you start now. If you miss it, benefits pause until you submit — text RECERT for a fast link any time.")
+                    .replacingOccurrences(of: "[Portal]", with: "{portal}"),
+                es: (SNAPComplianceCopyRegistry.approvedSpanish(for: "recert_one_day_sms") ?? "Mañana vence tu recertificación ({recertDate}). 4 minutos si empiezas ahora. Si lo olvidas, los beneficios se pausan hasta que envíes — envía RECERT para un enlace rápido en cualquier momento.")
+                    .replacingOccurrences(of: "[Portal]", with: "{portal}")
             ),
         ],
         buttonLabel: CivicaText("Start now", es: "Empezar ahora"),

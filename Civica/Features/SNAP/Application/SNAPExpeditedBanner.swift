@@ -163,9 +163,11 @@ enum SNAPExpeditedBannerStrings {
         "Expedited service means a decision in 7 days instead of 30. Tell the caseworker the rule you may qualify under.",
         es: "Servicio expedito significa una decisión en 7 días en lugar de 30. Dile al trabajador del caso la regla bajo la que puedes calificar."
     )
+    // Compliance Q3/Q2.4: registry id "expedited_banner_almost" — .pendingSignoff.
+    // Flip to .approved in the registry to activate the replacement below.
     static let uncertainEyebrow = CivicaText(
-        "Almost — one more answer could speed this up",
-        es: "Casi — una respuesta más podría acelerar esto"
+        SNAPComplianceCopyRegistry.approvedEnglish(for: "expedited_banner_almost") ?? "Almost — one more answer could speed this up",
+        es: SNAPComplianceCopyRegistry.approvedSpanish(for: "expedited_banner_almost") ?? "Casi — una respuesta más podría acelerar esto"
     )
     static let uncertainFallback = CivicaText(
         "Your answers point partway toward expedited service. Review your application and confirm key fields with your caseworker.",

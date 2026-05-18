@@ -145,10 +145,30 @@ enum SNAPBenefitEstimatorStrings {
 
     // MARK: - CTAs
 
+    // Compliance Q3/Q2.3: registry id "estimator_apply_cta" — .pendingSignoff.
+    // Once counsel signs, call sites must switch to applyCTA(stateCode:language:) below
+    // so the correct state portal name is used. This static let is the pre-sign fallback.
     static let applyCTA = CivicaText(
         "Apply for SNAP",
         es: "Aplicar para SNAP"
     )
+
+    /// Registry-aware, state-parameterized CTA. Replaces `applyCTA` at call sites
+    /// when counsel signs "estimator_apply_cta". CA → "Apply on BenefitsCal";
+    /// MA → "Apply on DTA Connect". Falls back to generic "Apply for SNAP" while
+    /// .pendingSignoff.
+    static func applyCTA(stateCode: String?, language: CivicaLanguage) -> String {
+        guard SNAPComplianceCopyRegistry.approvedEnglish(for: "estimator_apply_cta") != nil else {
+            return language == .english ? "Apply for SNAP" : "Aplicar para SNAP"
+        }
+        let portal = SNAPAgencyDirectory.portalName(for: stateCode)
+        switch language {
+        case .english:
+            return portal.isEmpty ? "Apply for SNAP benefits" : "Apply on \(portal)"
+        case .spanish:
+            return portal.isEmpty ? "Solicitar beneficios de SNAP" : "Solicitar en \(portal)"
+        }
+    }
     static let seeTheMathLink = CivicaText(
         "See how we calculated this",
         es: "Ver cómo lo calculamos"
@@ -160,10 +180,30 @@ enum SNAPBenefitEstimatorStrings {
         "Estimate your benefit",
         es: "Estima tu beneficio"
     )
+    // Compliance Q3/Q2.3: registry id "estimator_entry_subtitle" — .pendingSignoff.
+    // Once counsel signs, call sites must switch to entryCardSubtitle(stateCode:language:)
+    // below so the agency name is substituted. This static let is the pre-sign fallback.
     static let entryCardSubtitle = CivicaText(
         "Five questions. See your monthly dollar amount before you apply.",
         es: "Cinco preguntas. Ve tu monto mensual antes de aplicar."
     )
+
+    /// Registry-aware, state-parameterized subtitle. Replaces `entryCardSubtitle` at call
+    /// sites when counsel signs "estimator_entry_subtitle". Substitutes [Agency] with the
+    /// state's full agency name from SNAPAgencyDirectory.
+    static func entryCardSubtitle(stateCode: String?, language: CivicaLanguage) -> String {
+        guard let approvedEN = SNAPComplianceCopyRegistry.approvedEnglish(for: "estimator_entry_subtitle"),
+              let approvedES = SNAPComplianceCopyRegistry.approvedSpanish(for: "estimator_entry_subtitle") else {
+            return language == .english
+                ? "Five questions. See your monthly dollar amount before you apply."
+                : "Cinco preguntas. Ve tu monto mensual antes de aplicar."
+        }
+        let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
+        let template = language == .english ? approvedEN : approvedES
+        return template
+            .replacingOccurrences(of: "[Agency]", with: agency)
+            .replacingOccurrences(of: "[Agencia]", with: agency)
+    }
 
     // MARK: - Stale-rules banner (OBBBA Q12)
 

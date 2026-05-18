@@ -369,9 +369,11 @@ enum SNAPDecisionApprovedStrings {
         "Decided",
         es: "Decidido"
     )
+    // Compliance Q3: registry id "decision_approved_headline" — .pendingSignoff.
+    // Flip to .approved in the registry to activate the replacement below.
     static let headline = CivicaText(
-        "You're approved.",
-        es: "Estás aprobada."
+        SNAPComplianceCopyRegistry.approvedEnglish(for: "decision_approved_headline") ?? "You're approved.",
+        es: SNAPComplianceCopyRegistry.approvedSpanish(for: "decision_approved_headline") ?? "Estás aprobada."
     )
 
     static let monthlyAwardLabel = CivicaText(
