@@ -127,6 +127,57 @@
     "privacy": "Privacy",
     "doNotSell": "Do Not Sell or Share My Personal Information"
   },
+  "landing": {
+    "hero": {
+      "headline": "Apply for CalFresh in 10 minutes — guided, secure, accessible.",
+      "subheadline": "Civica walks you through the SNAP application step by step. Estimate your benefits, upload documents from your phone, and submit — all in plain language.",
+      "ctaPrimary": "See if I qualify",
+      "ctaSecondary": "I have an account",
+      "wordmarkAlt": "Civica"
+    },
+    "valueProps": {
+      "eyebrow": "Why Civica",
+      "heading": "Built around how applying actually feels.",
+      "card1": {
+        "title": "Estimate first",
+        "body": "Use our calculator to see roughly what you'd qualify for — before sharing any personal info."
+      },
+      "card2": {
+        "title": "Scan with your phone",
+        "body": "Snap a photo of your paystub or ID. We extract the info for you so you don't have to type it."
+      },
+      "card3": {
+        "title": "Real navigator support",
+        "body": "If you get stuck, a real person reviews your application before submission. No bots, no dead ends."
+      }
+    },
+    "howItWorks": {
+      "eyebrow": "How it works",
+      "heading": "Four steps from start to submission.",
+      "step1": {
+        "title": "Tell us about your household",
+        "body": "Quick questions about who lives with you, your income, and your expenses."
+      },
+      "step2": {
+        "title": "Upload documents",
+        "body": "Snap photos of paystubs, IDs, and rent receipts directly from your phone."
+      },
+      "step3": {
+        "title": "Review with a navigator",
+        "body": "A trained navigator checks your packet for completeness and flags anything missing."
+      },
+      "step4": {
+        "title": "Submit to your county",
+        "body": "We hand off your packet to your county SNAP office and keep you posted on next steps."
+      }
+    },
+    "trust": {
+      "rulesEngine": "USDA-verified rules",
+      "stateCdss": "Built for California (CDSS)",
+      "ccpa": "CCPA-compliant",
+      "wcag": "WCAG 2.1 AA accessible"
+    }
+  },
   "privacy": {
     "title": "Privacy Policy",
     "effectiveDate": "Effective May 18, 2026.",
