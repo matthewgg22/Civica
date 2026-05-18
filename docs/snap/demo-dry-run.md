@@ -13,10 +13,48 @@
 - [ ] Fresh test phone number available (one that has never enrolled)
 - [ ] iOS device or simulator running iOS 26+, TestFlight build installed
 - [ ] Web preview URL confirmed reachable (see [vercel-deploy-fix.md](vercel-deploy-fix.md) if 404)
-- [ ] Dashboard navigator seeded: `psql $UAT_DB_URL -f scripts/seed-uat-navigator.sql`
+- [ ] Dashboard navigator + demo cast seeded: `psql $UAT_DB_URL -f scripts/seed-demo-applicants.sql` (see [Demo cast](#demo-cast) below for what this provisions)
 - [ ] Sentry dashboards open in a background tab (catch errors live)
 - [ ] A sample paystub PDF + photo on hand for doc upload steps
 - [ ] Stopwatch ready for the cross-surface 30s SLO check
+
+---
+
+## Demo cast
+
+The `scripts/seed-demo-applicants.sql` script provisions 6 sympathetic applicants spanning the full packet lifecycle, all in California, mixed EN/ES. They give the dashboard queue + `ActivityTicker` the live-product feel an empty UAT shell lacks.
+
+| Applicant | Lang | Status | What they show |
+|---|---|---|---|
+| **Maria Hernandez** | es | Submitted for Review | expedited flag, 1 missing rent receipt — the "navigator-friction" demo |
+| **James Wilson** | en | In Navigator Review | clean docs (paystub + ID + lease, all confirmed) — the "fast happy path" demo |
+| **Aisha Johnson** | es | Closed | consent withdrawn — shows the consent-withdrawal lifecycle works |
+| **Daniel Park** | en | Needs Applicant Clarification | OCR-vs-applicant income discrepancy ($2,240 paystub vs $1,600 self-report) — the "AI catches errors" demo |
+| **Sarah Chen** | en | Draft | partial answers, no docs — the "in-progress applicant" demo |
+| **Roberto Vasquez** | es | Ready for Handoff | 5 confirmed docs, navigator-confirmed answers, PDF-ready — the "handoff export" demo |
+
+### Recommended demo narrative
+
+Focus on **Maria** (Spanish, expedited, missing one doc) for the navigator-workflow story — she's the sympathetic case that lets you say "watch how the navigator resolves a real human friction point in seconds." Switch to **Daniel** to show the AI-vs-applicant discrepancy catch. Close with **Roberto** to show a packet exporting cleanly via the handoff PDF.
+
+### Live ticker pop (during demo)
+
+To make the `ActivityTicker` light up live in front of the audience, run this single SQL command in a separate terminal while the dashboard is open:
+
+```bash
+psql $UAT_DB_URL -f scripts/demo-trigger-ticker-event.sql
+```
+
+Promotes Sarah's Draft → Submitted for Review. Audience sees the ticker prepend the new event within 1-3s. The script is idempotent — if Sarah was already promoted, it picks the next Draft packet, or notices that none remain.
+
+### Reset between demos
+
+```bash
+psql $UAT_DB_URL -f scripts/seed-demo-applicants-CLEAR.sql  # wipe demo applicants
+psql $UAT_DB_URL -f scripts/seed-demo-applicants.sql        # re-seed
+```
+
+The CLEAR script preserves the demo org + navigator `staff_user` so re-seeding is a 2-second reset, not a full re-provision.
 
 ---
 
