@@ -249,6 +249,9 @@ struct SNAPBenefitEstimatorView: View {
     /// in view is enough to deliver that.
     private var stickyResultFooter: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            if isRulesSnapshotExpired {
+                staleRulesBanner
+            }
             resultCard
             applyCTA
         }
@@ -262,6 +265,41 @@ struct SNAPBenefitEstimatorView: View {
                 .fill(CivicaColors.hairline)
                 .frame(height: 1)
         }
+    }
+
+    // MARK: - Stale-rules banner (OBBBA Q12)
+
+    /// True when the active rules-engine snapshot has passed its
+    /// effective window. Read via the same `static let rules` that
+    /// powers every threshold lookup, so the banner cannot drift
+    /// out of sync with what the calculator actually used.
+    private var isRulesSnapshotExpired: Bool {
+        switch SNAPBenefitEstimatorCalculator.rules.snapshotStatus(asOf: Date()) {
+        case .current: return false
+        case .expired: return true
+        }
+    }
+
+    private var staleRulesBanner: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+            HStack(spacing: CivicaSpacing.xs) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(CivicaColors.destructive)
+                    .accessibilityHidden(true)
+                Text(SNAPBenefitEstimatorStrings.staleRulesHeadline.value(in: language))
+                    .font(CivicaTypography.captionStrong)
+                    .foregroundStyle(CivicaColors.destructive)
+            }
+            Text(SNAPBenefitEstimatorStrings.staleRulesBody.value(in: language))
+                .font(CivicaTypography.footnote)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.brickSurface)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Result card

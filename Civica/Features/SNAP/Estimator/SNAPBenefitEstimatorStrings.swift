@@ -165,6 +165,22 @@ enum SNAPBenefitEstimatorStrings {
         es: "Cinco preguntas. Ve tu monto mensual antes de aplicar."
     )
 
+    // MARK: - Stale-rules banner (OBBBA Q12)
+
+    /// Headline shown above the result card when the rules-engine
+    /// snapshot has passed its effective window. Surfaces staleness
+    /// the engine already knows about — without this the UI would
+    /// happily render a dollar amount the engine itself flagged as
+    /// untrustworthy.
+    static let staleRulesHeadline = CivicaText(
+        "Benefit data may be outdated",
+        es: "Los datos del beneficio pueden estar desactualizados"
+    )
+    static let staleRulesBody = CivicaText(
+        "Civica's SNAP rules were last refreshed for the current fiscal year and may not reflect new federal or state updates. Use the estimate as a rough guide and confirm with your state agency.",
+        es: "Las reglas de SNAP de Civica fueron actualizadas para el año fiscal actual y pueden no reflejar nuevos cambios federales o estatales. Usa la estimación como una guía aproximada y confirma con tu agencia estatal."
+    )
+
     // MARK: - Footer & a11y
 
     static let disclaimerFooter = CivicaText(
