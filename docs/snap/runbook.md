@@ -183,6 +183,76 @@ Remove the route files before merging:
 
 ---
 
+## Interview Coach edge functions
+
+The Interview Coach feature in the iOS Civica target depends on two Supabase
+Edge Functions that proxy to the Anthropic API:
+
+- `supabase/functions/interview-coach-turn` — generates the next caseworker turn.
+- `supabase/functions/interview-coach-score` — scores a completed practice transcript.
+
+Until both functions are deployed, every practice session will 404 and surface
+as `.failed` in the UI. The `InterviewCoachFeatureFlag.isEnabled = true` ships
+the feature broadly; **this runbook entry is the gating mechanism** until a
+remote-config kill switch lands. Do not cut an App Store build with the flag
+on unless the deploy + smoke test below have both succeeded.
+
+### Required Info.plist values
+
+Civica/Info.plist must have the Supabase project pointed at the project that
+hosts these functions:
+
+- `SUPABASE_URL` — `https://<project-ref>.supabase.co`
+- `SUPABASE_ANON_KEY` — project anon key (sent as both `apikey` header and
+  `Authorization: Bearer …` by `InterviewCoachAPIClient`)
+
+No coach-specific Info.plist keys are required. The Anthropic API key lives
+only on the Supabase side (`ANTHROPIC_API_KEY` function secret).
+
+### Deploy
+
+```sh
+# from repo root
+supabase functions deploy interview-coach-turn
+supabase functions deploy interview-coach-score
+
+# one-time secret (rotate via supabase secrets set when needed)
+supabase secrets set ANTHROPIC_API_KEY=sk-ant-…
+```
+
+`verify_jwt` is left ON (default) — Supabase's gateway validates the project
+anon key in the `apikey` header before invoking the function, so no per-user
+auth check is needed inside the function.
+
+### Smoke test
+
+1. Open the Civica app on a device or simulator that points at the deployed
+   Supabase project (check Info.plist `SUPABASE_URL`).
+2. Tap **Interview Coach** on the entry screen.
+3. Tap **Start practice** on any bundled MA question.
+4. **Expected**: the first caseworker turn appears within ~3 seconds.
+   If the screen flips to "Try again", check
+   `supabase functions logs interview-coach-turn` for the failure.
+5. Submit one applicant turn, then tap **Get feedback** on the review screen.
+6. **Expected**: completeness / accuracy-risk / missing-context scores render
+   with non-empty summaries and one per-turn note per applicant turn.
+
+### Rollback
+
+The feature flag is the kill switch. To turn the feature off without a
+client release, leave the functions deployed and stop trusting them — there
+is no remote toggle today. To stop server-side traffic entirely:
+
+```sh
+supabase functions delete interview-coach-turn
+supabase functions delete interview-coach-score
+```
+
+This will start returning 404 to clients, which surfaces as `.failed` in the
+UI with a retry affordance.
+
+---
+
 ## Incident response
 
 ### Sentry event not appearing
