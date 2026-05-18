@@ -51,8 +51,11 @@ app.post(
       .is("deleted_at", null)
       .single();
 
-    if (pErr?.code === "PGRST116" || !packet) throw new HTTPException(404, { message: "Packet not found" });
-    if (pErr) throw new HTTPException(500, { message: pErr.message });
+    if (pErr) {
+      if (pErr.code === "PGRST116") throw new HTTPException(404, { message: "Packet not found" });
+      throw new HTTPException(500, { message: pErr.message });
+    }
+    if (!packet) throw new HTTPException(404, { message: "Packet not found" });
 
     const ext = body.filename?.split(".").pop()?.toLowerCase() ?? "pdf";
     const storagePath = `${packet.applicant_id}/${c.req.param("packetId")}/${crypto.randomUUID()}.${ext}`;
