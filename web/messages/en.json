@@ -122,5 +122,26 @@
     "withdrawConfirm": "Are you sure you want to withdraw? Your packet will return to Draft status.",
     "blockerQuestions": "{answered} of {total} required questions answered — complete all questions before submitting.",
     "blockerDocuments": "{uploaded} of {total} required documents uploaded — upload all required documents before submitting."
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "doNotSell": "Do Not Sell or Share My Personal Information"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "effectiveDate": "Effective May 18, 2026.",
+    "collectHeading": "What we collect",
+    "collectBody": "Civica collects only the information needed to prepare your SNAP application packet — household composition, income, expenses, contact details, and uploaded supporting documents. We do not collect biometric data, browsing history, or location beyond ZIP code.",
+    "useHeading": "How we use it",
+    "useBody": "Information you enter is used to assemble your application packet and route it to a SNAP navigator at your request. We do not use your information for advertising, profiling, or any purpose unrelated to your SNAP application.",
+    "rightsHeading": "Your rights (Right to Know, Right to Delete)",
+    "rightsBody": "Under the California Consumer Privacy Act (CCPA) and analogous laws in other states, you have the right to ask what information we hold about you and to request its deletion. We will respond within 45 days.",
+    "rightsContact": "To exercise these rights, email",
+    "doNotSellHeading": "Do Not Sell or Share My Personal Information",
+    "doNotSellBody": "Civica does not sell or share your personal information, as those terms are defined by the California Consumer Privacy Act (CCPA §1798.140). We do not exchange your data for monetary or other valuable consideration, and we do not share it for cross-context behavioral advertising. We disclose information to service providers (cloud hosting, error tracking, document processing) under written data processing addenda that prohibit secondary use.",
+    "doNotSellContact": "If you believe your data has been sold or shared in error, or to opt out of any future change to this policy, email",
+    "childrenHeading": "Children under 13",
+    "childrenBody": "Civica is designed for adults applying for SNAP benefits on behalf of a household. We do not knowingly collect personal information from children under 13. If you believe a child under 13 has provided information to us, please contact us and we will delete it.",
+    "contactEmail": "privacy@civica.app"
   }
 }
