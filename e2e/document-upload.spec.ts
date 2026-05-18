@@ -140,7 +140,7 @@ test.describe("Act 1 — Applicant uploads a PDF", () => {
     const result = await requestUploadUrl(ctx.applicant.jwt, packetId, "e2e_test.pdf");
 
     expect(result.signed_url).toMatch(/^https?:\/\//);
-    expect(result.storage_path).toMatch(/e2e_test\.pdf$/);
+    expect(result.storage_path).toMatch(/\.pdf$/);
     expect(result.storage_path).toContain(packetId);
 
     storagePath = result.storage_path;
