@@ -6,6 +6,8 @@ The TODO comments at [SNAPStateResources.swift:16](../Civica/Features/SNAP/SNAPS
 
 > **Scope.** This is a product/engineering compliance decision aid for the launch beta. California is the launch state as of 2026-05-13; Massachusetts is retained as a supported peer. It is not a legal opinion. The reviewer signoff converts each row from "engineering's best guess" to a citable, dated source we can present to counsel or regulators.
 
+> **Federal rows 5-11: canonical machine-readable values live at [`docs/snap_source_citation_fy26_federal.json`](snap_source_citation_fy26_federal.json).** The CI test `Civica Tests/SourceCitationConsistencyTests.swift` asserts the rules engine output matches that JSON; any drift between this document, the JSON, and the engine code fails the test. When updating a federal row, edit the JSON first and let the engine + table below follow.
+
 > **Renewal.** All federal rows renew annually with the USDA FNS COLA cycle (Oct. 1). State rows renew with the issuing agency's update cycle — MA's DTA Helpful Charts (typically annually plus mid-year COLA refresh); CA's CDSS All-County Letters / Manual of Policies & Procedures (annually with COLA). The reviewer sets the cadence per row; engineering re-opens this document on each renewal.
 
 ---

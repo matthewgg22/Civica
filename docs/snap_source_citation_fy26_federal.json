@@ -1,0 +1,76 @@
+{
+  "$schema_note": "Canonical FY26 federal source-citation values. Single source of truth referenced by docs/SNAP-source-citation-signoff.md (rows 5-11) AND asserted against the rules engine via Civica Tests/SourceCitationConsistencyTests.swift. When the FY27 refresh ships, replace this file's contents and the consistency test will surface any code site that didn't get updated.",
+  "fiscal_year": "FY26",
+  "effective_date": "2025-10-01",
+  "expires_on": "2026-09-30",
+  "verified_on": "2026-05-18",
+  "source": "USDA FNS FY26 COLA Memo + Maximum Allotments PDF",
+  "rows": {
+    "row_5_max_allotments": {
+      "description": "Max SNAP allotments by household size, 48 states + DC",
+      "per_size": {
+        "1": 298,
+        "2": 546,
+        "3": 785,
+        "4": 994,
+        "5": 1183,
+        "6": 1421,
+        "7": 1571,
+        "8": 1789
+      },
+      "per_additional": 218
+    },
+    "row_6_standard_deduction": {
+      "description": "Standard deduction by household-size bucket",
+      "per_size": {
+        "1": 209,
+        "2": 209,
+        "3": 209,
+        "4": 223,
+        "5": 261,
+        "6": 299
+      }
+    },
+    "row_7_max_excess_shelter_deduction": {
+      "description": "Max excess shelter deduction (non-elderly/disabled). Cap does NOT apply when the household has an elderly or disabled member — engine returns nil in that case.",
+      "cap": 744
+    },
+    "row_8_minimum_benefit": {
+      "description": "Minimum SNAP benefit for HH 1-2",
+      "amount": 24
+    },
+    "row_9_gross_income_limits": {
+      "description": "Gross income limits HH 1-8 (130% FPL), 48 states + DC",
+      "per_size": {
+        "1": 1696,
+        "2": 2292,
+        "3": 2888,
+        "4": 3483,
+        "5": 4079,
+        "6": 4675,
+        "7": 5271,
+        "8": 5867
+      },
+      "per_additional": 596
+    },
+    "row_10_net_income_limits": {
+      "description": "Net income limits HH 1-8 (100% FPL), 48 states + DC",
+      "per_size": {
+        "1": 1305,
+        "2": 1763,
+        "3": 2221,
+        "4": 2680,
+        "5": 3138,
+        "6": 3596,
+        "7": 4055,
+        "8": 4513
+      },
+      "per_additional": 459
+    },
+    "row_11_asset_limits": {
+      "description": "Asset/resource limits — UNCHANGED FY26 per FY26 COLA memo explicit statement",
+      "standard_household": 3000,
+      "elderly_or_disabled_household": 4500
+    }
+  }
+}
