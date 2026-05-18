@@ -134,6 +134,33 @@ app.patch("/:packetId", zValidator("json", updatePacketSchema), async (c) => {
   const body = c.req.valid("json");
   const db = await withActorContext(c);
 
+  // Pre-flight: structured low-confidence gate for "Ready for Handoff".
+  // The DB trigger (snap_enrollment.enforce_status_transition) is the ultimate
+  // guard, but it raises a generic P0001 error string. Doing an app-layer
+  // pre-check lets us return field-level detail so the dashboard and iOS
+  // clients can render which fields need review without parsing error text.
+  if (body.status === "Ready for Handoff") {
+    const { data: flagged, error: flaggedErr } = await db
+      .schema("snap_enrollment")
+      .from("extraction_fields")
+      .select("field_id, field_key, confidence")
+      .eq("packet_id", c.req.param("packetId"))
+      .eq("needs_review", true)
+      .is("reviewed_at", null);
+    if (flaggedErr) throw new HTTPException(500, { message: flaggedErr.message });
+    if ((flagged?.length ?? 0) > 0) {
+      return c.json(
+        {
+          error: "low_confidence_blocks_submission",
+          message:
+            "Cannot advance to Ready for Handoff: extraction fields below the confidence threshold are unreviewed",
+          flagged_fields: flagged,
+        },
+        422,
+      );
+    }
+  }
+
   if (body.status) {
     const reason = c.req.header("X-Transition-Reason");
     if (reason) {

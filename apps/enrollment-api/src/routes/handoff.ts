@@ -103,6 +103,26 @@ app.post("/packets/:packetId/handoff", zValidator("json", createHandoffSchema), 
   // 2. Pre-flight blockers (DB trigger is the final guard)
   const blockers = await collectBlockers(db, packetId, packet.applicant_id);
   if (blockers.length > 0) {
+    const unreviewed = blockers.find((b) => b.kind === "unreviewed_fields");
+    if (unreviewed) {
+      // Structured error so clients can render which fields need review
+      // instead of parsing a flattened message string.
+      const { data: flagged } = await db
+        .schema("snap_enrollment")
+        .from("extraction_fields")
+        .select("field_id, field_key, confidence")
+        .eq("packet_id", packetId)
+        .eq("needs_review", true)
+        .is("reviewed_at", null);
+      return c.json(
+        {
+          error: "low_confidence_blocks_submission",
+          message: `Cannot export: ${blockers.map((b) => b.label).join("; ")}`,
+          flagged_fields: flagged ?? [],
+        },
+        422,
+      );
+    }
     throw new HTTPException(422, {
       message: `Cannot export: ${blockers.map((b) => b.label).join("; ")}`,
     });

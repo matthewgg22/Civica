@@ -12,7 +12,7 @@ import { makeAnonClient } from '../lib/supabase.js';
 import { withActorContext } from '../middleware/actorContext.js';
 import packetsRouter from './packets.js';
 import { app as fullApp } from '../index.js';
-import { TEST_ENV, NAVIGATOR, APPLICANT, makeDbClient, buildTestApp, JSON_HEADERS } from '../test/helpers.js';
+import { TEST_ENV, NAVIGATOR, APPLICANT, makeDbClient, makeQueryBuilder, buildTestApp, JSON_HEADERS } from '../test/helpers.js';
 
 afterEach(() => vi.resetAllMocks());
 
@@ -130,6 +130,62 @@ describe('PATCH /packets/:packetId', () => {
     expect(res.status).toBe(200);
     const body = await res.json() as { status: string };
     expect(body.status).toBe('In Navigator Review');
+  });
+
+  // Confidence-gate enforcement: server-side pre-flight on advance to "Ready for Handoff".
+  // Mirrors the DB trigger (snap_enrollment.enforce_status_transition) but returns
+  // structured field-level detail so clients can render which fields need review.
+  describe('low-confidence gate on "Ready for Handoff"', () => {
+    it('returns 422 + low_confidence_blocks_submission when unreviewed fields exist', async () => {
+      const flagged = [
+        { field_id: 'f1', field_key: 'gross_monthly_income', confidence: 0.42 },
+        { field_id: 'f2', field_key: 'employer_name', confidence: 0.71 },
+      ];
+      // Dispatch by table: extraction_fields returns flagged rows; anything else empty.
+      const fromMock = vi.fn().mockImplementation((table: string) => {
+        if (table === 'extraction_fields') return makeQueryBuilder({ data: flagged, error: null });
+        return makeQueryBuilder({ data: null, error: null });
+      });
+      vi.mocked(withActorContext).mockResolvedValue({
+        schema: vi.fn().mockReturnValue({ from: fromMock }),
+        rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
+      } as unknown as Awaited<ReturnType<typeof withActorContext>>);
+
+      const res = await buildTestApp(packetsRouter, '/packets', NAVIGATOR).request('/packets/p1', {
+        method: 'PATCH',
+        headers: JSON_HEADERS,
+        body: JSON.stringify({ status: 'Ready for Handoff' }),
+      }, TEST_ENV);
+
+      expect(res.status).toBe(422);
+      const body = await res.json() as { error: string; flagged_fields: Array<{ field_key: string }> };
+      expect(body.error).toBe('low_confidence_blocks_submission');
+      expect(body.flagged_fields).toHaveLength(2);
+      expect(body.flagged_fields.map((f) => f.field_key)).toContain('gross_monthly_income');
+    });
+
+    it('returns 200 and advances status when no unreviewed fields exist', async () => {
+      const updated = { packet_id: 'p1', status: 'Ready for Handoff' };
+      const fromMock = vi.fn().mockImplementation((table: string) => {
+        if (table === 'extraction_fields') return makeQueryBuilder({ data: [], error: null });
+        // snap_packets update + select + single → returns updated row
+        return makeQueryBuilder({ data: updated, error: null });
+      });
+      vi.mocked(withActorContext).mockResolvedValue({
+        schema: vi.fn().mockReturnValue({ from: fromMock }),
+        rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
+      } as unknown as Awaited<ReturnType<typeof withActorContext>>);
+
+      const res = await buildTestApp(packetsRouter, '/packets', NAVIGATOR).request('/packets/p1', {
+        method: 'PATCH',
+        headers: JSON_HEADERS,
+        body: JSON.stringify({ status: 'Ready for Handoff' }),
+      }, TEST_ENV);
+
+      expect(res.status).toBe(200);
+      const body = await res.json() as { status: string };
+      expect(body.status).toBe('Ready for Handoff');
+    });
   });
 
   it('returns 422 when DB trigger rejects transition (P0001)', async () => {
