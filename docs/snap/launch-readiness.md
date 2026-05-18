@@ -224,6 +224,10 @@ flyctl deploy --config apps/dashboard/fly.toml --remote-only --wait-timeout 120 
 # Vercel — revert via dashboard: Deployments → prior deploy → Redeploy (Promote to Production)
 ```
 
+### Tagging before launch
+
+Run `bash scripts/tag-launch.sh v1.0.0-ca-launch` from `codex/rebuild-feb18` immediately before starting the deploy sequence. The script validates the version format, refuses to run on a dirty tree or the wrong branch, and applies four annotated tags — `v1.0.0-ca-launch-enrollment-api`, `-api`, `-dashboard`, and `-web` — each carrying the timestamp, commit SHA, and deployer name in its message. It prints the tag list and the push command but does **not** push automatically; review the output, then run `git push origin --tags` when satisfied. If a service deploy goes wrong, roll back that directory alone with `git checkout v1.0.0-ca-launch-<service> -- apps/<service>` and redeploy, leaving the other services untouched.
+
 ### Secrets rotation (rollback due to suspected leak)
 
 If rollback is triggered by a potential secret compromise:
