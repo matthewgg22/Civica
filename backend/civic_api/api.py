@@ -819,9 +819,9 @@ def _init_sentry() -> None:
         return
     sentry_sdk.init(
         dsn=dsn,
-        environment=os.environ.get("FLY_APP_NAME", "development"),
+        environment=os.environ.get("ENVIRONMENT", "production"),
         integrations=[StarletteIntegration(), FastApiIntegration()],
-        traces_sample_rate=0.05,
+        traces_sample_rate=0.1,
         send_default_pii=False,
     )
 
@@ -1216,4 +1216,20 @@ if FastAPI is not None:
             return get_openstates_people_geo(lat=lat, lng=lng, include=include)
 
         return _run_endpoint(handler, bad_request_exceptions=bad_request)
+
+    @app.get("/debug/sentry-check")
+    def debug_sentry_check() -> dict[str, Any]:
+        if os.environ.get("ENVIRONMENT", "production") == "production":
+            raise HTTPException(status_code=404, detail="Not found.")
+        if not _SENTRY_AVAILABLE:
+            return {"ok": False, "reason": "sentry_sdk not installed"}
+        dsn = os.environ.get("SENTRY_DSN")
+        if not dsn:
+            return {"ok": False, "reason": "SENTRY_DSN not set"}
+        sentry_sdk.capture_message("snap-engine /debug/sentry-check", level="error")
+        return {
+            "ok": True,
+            "sentry_dsn_configured": True,
+            "environment": os.environ.get("ENVIRONMENT", "production"),
+        }
 
