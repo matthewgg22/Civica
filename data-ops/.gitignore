@@ -1,0 +1,9 @@
+# Raw downloads and intermediate Parquet stay in Supabase Storage, not git.
+# Sync via scripts/sync-to-supabase-storage.ts. Allow directories themselves
+# (so READMEs and .gitkeep tracks the structure), ignore data payloads.
+raw/**/*
+!raw/**/
+!raw/**/README.md
+!raw/.gitkeep
+parquet/**/*
+!parquet/.gitkeep
