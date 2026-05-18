@@ -14,19 +14,19 @@ type Props = {
 export function Footer({ locale, privacyLabel, doNotSellLabel }: Props) {
   return (
     <footer
-      className="border-t border-zinc-200 bg-zinc-50 px-4 py-4 text-sm text-zinc-600"
+      className="border-t border-hairline px-4 py-4 text-sm text-graphite"
       aria-label={privacyLabel}
     >
       <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-x-6 gap-y-2">
         <a
           href={`/${locale}/privacy`}
-          className="underline decoration-zinc-400 underline-offset-2 hover:text-zinc-900"
+          className="underline decoration-hairline underline-offset-2 hover:text-ink"
         >
           {privacyLabel}
         </a>
         <a
           href={`/${locale}/privacy#do-not-sell`}
-          className="underline decoration-zinc-400 underline-offset-2 hover:text-zinc-900"
+          className="underline decoration-hairline underline-offset-2 hover:text-ink"
         >
           {doNotSellLabel}
         </a>

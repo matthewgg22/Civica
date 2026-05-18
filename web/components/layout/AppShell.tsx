@@ -52,12 +52,12 @@ export function AppShell({
     <div className="flex min-h-screen flex-col">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-slate-900 focus:px-4 focus:py-2 focus:text-white"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-brick focus:px-4 focus:py-2 focus:text-white"
       >
         Skip to main content
       </a>
 
-      <header className="border-b border-slate-200 bg-white">
+      <header className="border-b border-hairline bg-surface">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
           <span className="font-semibold">Civica SNAP</span>
           <Button
@@ -87,8 +87,8 @@ export function AppShell({
                     className={cn(
                       "relative flex flex-col items-center gap-0.5 px-1 py-2 text-xs font-medium motion-safe:transition-colors",
                       active
-                        ? "text-slate-900 border-b-2 border-slate-900"
-                        : "text-slate-500 hover:text-slate-700"
+                        ? "text-brick border-b-2 border-brick"
+                        : "text-graphite hover:text-ink"
                     )}
                   >
                     {label}
