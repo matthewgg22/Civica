@@ -155,10 +155,78 @@
 - **Expected:** New packet appears in "Submitted for Review" bucket **within 30 seconds**. Refresh once at ~15s if not auto-updating.
 - **If it fails:** This is the SLO. If it takes 60s+, say *"Replication is typically sub-30s; we're seeing some latency on the preview env."* If it never appears, check the gateway logs — there may be a webhook drop.
 
-### 4.4 Doc request round-trip
+### 4.4 ActivityTicker lights up within ~3s (the wow-moment)
+
+> **Verified 2026-05-18.** See [§5 — Realtime wire audit](#5-realtime-wire-audit-technical) for the full trace.
+
+- **Action:** While watching the dashboard `/packets` page with the ActivityTicker visible (top-right of the queue), submit from iOS (§4.2) or fire the curl below.
+- **Expected:** The ActivityTicker prepends **"Packet `XXXXX` → Submitted for Review"** (indigo dot) within ~3 seconds of the iOS tap. No page refresh needed.
+- **How it works:** `POST /me/packets/:id/submit` (enrollment-api) updates `snap_packets.status`. A Postgres `BEFORE UPDATE` trigger (`enforce_status_transition`) unconditionally inserts a row into `snap_enrollment.packet_status_history`. The ActivityTicker holds an open Supabase Realtime channel subscribed to `INSERT` on that table — the push arrives in the same DB round-trip.
+- **If it fails — debug order:**
+  1. Check that Supabase Realtime is enabled for `snap_enrollment.packet_status_history` (table-level publication must include the schema; check `supabase_realtime` publication in DB).
+  2. Confirm the enrollment-api is using the **service-role** key for the status update (anon key would hit RLS and may be blocked before the trigger fires).
+  3. Confirm the dashboard Supabase client is using the **anon key + navigator JWT** (service-role on the client side would bypass Realtime channel auth).
+  4. As a fallback, verify the row landed: `SELECT * FROM snap_enrollment.packet_status_history ORDER BY occurred_at DESC LIMIT 5;`
+
+**curl dry-run (staging):** Replace `$TOKEN` with a valid applicant JWT and `$PACKET_ID` with the draft packet's UUID.
+
+```bash
+# Submit a draft packet — same request EnrollmentAPIClient.submitPacket() sends
+curl -X POST "$ENROLLMENT_API_URL/me/packets/$PACKET_ID/submit" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -w "\nHTTP %{http_code} in %{time_total}s\n"
+
+# Verify the history row landed (run against staging DB)
+psql "$STAGING_DB_URL" -c \
+  "SELECT history_id, from_status, to_status, occurred_at \
+   FROM snap_enrollment.packet_status_history \
+   WHERE packet_id = '$PACKET_ID' \
+   ORDER BY occurred_at DESC LIMIT 3;"
+```
+
+Expected history row:
+
+| from\_status | to\_status | occurred\_at |
+|---|---|---|
+| Draft | Submitted for Review | (timestamp within ms of the POST) |
+
+### 4.5 Doc request round-trip
 - **Action:** Open the freshly-submitted packet in dashboard → **Request additional document** → pick a doc type (e.g., utility bill) → send.
 - **Expected:** Confirmation toast in dashboard. **Switch to iOS** → open the app (inbox badge should appear) → tap inbox → **document request visible** with doc type, deadline, and an Upload CTA.
 - **If it fails:** Inbox sync is the newest cross-surface wire. If the request doesn't appear on iOS within 30s, pull-to-refresh the inbox once. If still missing, narrate *"The request is in the DB; the iOS inbox poll is on a 60s cadence in this build."* and pivot.
+
+---
+
+## 5. Realtime wire audit (technical)
+
+> Audited 2026-05-18. No code changes were required — the wire was already intact.
+
+### 5.1 Submit path (iOS + web share the same gateway call)
+
+| Layer | File | Detail |
+|---|---|---|
+| iOS client | `Civica/Features/SNAP/Enrollment/EnrollmentAPIClient.swift:96` | `postEmpty(path: "/me/packets/\(packetId)/submit")` |
+| Web action | `web/lib/api/actions.ts:152` | `client.POST("/me/packets/{packetId}/submit", …)` |
+| Gateway route | `apps/enrollment-api/src/routes/me-packets.ts:431` | `POST /:packetId/submit` — updates `snap_packets.status = 'Submitted for Review'` using the **service-role** client |
+| DB trigger | `supabase/migrations/20260521_snap_enrollment_06_triggers_guards.sql:204` | `guard_status_transition` fires `BEFORE UPDATE OF status` on `snap_packets` |
+| History insert | same file, line 175 | `INSERT INTO snap_enrollment.packet_status_history (packet_id, from_status, to_status, …)` — unconditional on any valid transition |
+| Realtime push | `apps/dashboard/components/ActivityTicker.tsx:32` | Channel subscribes to `{ event: 'INSERT', schema: 'snap_enrollment', table: 'packet_status_history' }` |
+
+### 5.2 What is and isn't populated in the history row
+
+| Column | For applicant submits | For navigator advances |
+|---|---|---|
+| `packet_id` | ✓ | ✓ |
+| `from_status` / `to_status` | ✓ | ✓ |
+| `occurred_at` | ✓ (`clock_timestamp()`) | ✓ |
+| `changed_by_staff_id` | **NULL** (no `withActorContext()` call in submit route) | ✓ (navigator routes call `withActorContext`) |
+| `changed_by_applicant_id` | **NULL** (trigger doesn't populate it; column exists but is unused) | NULL |
+| `reason` | NULL | ✓ (from `snap_enrollment.transition_reason` session var) |
+
+**Impact on ActivityTicker:** none — it reads only `history_id`, `to_status`, `from_status`, `occurred_at`, and `packet_id`. The NULL actor columns don't affect real-time delivery.
+
+**Possible future improvement (not blocking demo):** the submit route could call `SET LOCAL snap_enrollment.actor_id = $applicant_id` so audit trails distinguish applicant- vs. navigator-initiated transitions. This is a one-liner addition to the route handler and could be a follow-up task.
 
 ---
 
