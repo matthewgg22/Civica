@@ -91,11 +91,7 @@ Action: confirm the Vercel project env var `NEXT_PUBLIC_API_BASE_URL` is set to 
 
 ### 9. Vercel `civica-app` Root Directory misconfiguration resolved
 
-**❌ Blocking (deploy is currently broken)** — The `civica-app` Vercel project has Root Directory set to `web`, but `web/` was removed from the repo. Every PR shows a red ✗ from this stale config — it is not caused by code changes.
-
-Fix (one-time, in Vercel dashboard): `civica-app → Settings → Build & Development Settings → unset Root Directory` (or delete the project if the Next.js app is permanently out of the monorepo root).
-
-Do not merge any web/ production deploy until this is resolved.
+**✅ Fixed** — Root Directory cleared in Vercel dashboard (2026-05-18). Production deploy confirmed green.
 
 ---
 
@@ -122,7 +118,7 @@ All **Required** items must be ✅ before flip. **Nice-to-have** items can follo
 [ ] OBBBA Q19 source-citation signoff + FY26 number correction merged (estimator gate)
 [ ] All 9 compliance registry strings: status = .approved with counsel signoff date
 [ ] Spanish parity external review complete
-[ ] Vercel civica-app Root Directory misconfiguration resolved
+[x] Vercel civica-app Root Directory misconfiguration resolved
 [ ] Vercel NEXT_PUBLIC_API_BASE_URL confirmed pointing to production enrollment gateway
 [ ] Staging UAT sign-off from Silo H navigator team (results at docs/snap/uat-results-<date>.md)
 [ ] OBBBA Track 2 counsel answers received (or explicit written deferral accepted by counsel)
