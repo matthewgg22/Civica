@@ -303,6 +303,7 @@ class TurnResult(BaseModel):
     is_terminal: bool
     needs_clarification: bool = False
     clarification_text: str | None = None
+    needs_user_confirmation: bool = False
     cost_telemetry: list[TurnLLMTelemetry] = Field(default_factory=list)
     confidence: float = Field(ge=0.0, le=1.0)
 

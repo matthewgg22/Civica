@@ -21,6 +21,9 @@ final class SNAPConversationViewModel: ObservableObject {
         case awaitingInput
         /// User submitted; waiting for the next assistant turn.
         case sending
+        /// Interpreter returned confidence < 0.6. Holds the next turn
+        /// so the user can confirm before the conversation advances.
+        case awaitingConfirmation(pendingTurn: SNAPTurnResult)
         /// Terminal eligibility verdict reached.
         case terminal(SNAPEligibilityResult?)
         /// Network failure (recoverable). Holds the last-known-good prompt
@@ -108,7 +111,12 @@ final class SNAPConversationViewModel: ObservableObject {
         do {
             let result = try await client.sendTurn(sessionId: sessionId, userText: trimmed)
             appendAssistant(result)
-            applyTurnPhase(result)
+            if result.needsUserConfirmation {
+                SNAPAnalytics.trackConversationConfirmationRequested()
+                phase = .awaitingConfirmation(pendingTurn: result)
+            } else {
+                applyTurnPhase(result)
+            }
         } catch {
             SNAPAnalytics.trackConversationError()
             phase = .error(humanizedError(error))
@@ -129,6 +137,27 @@ final class SNAPConversationViewModel: ObservableObject {
             SNAPAnalytics.trackConversationError()
             phase = .error(humanizedError(error))
         }
+    }
+
+    /// Confirm the low-confidence interpretation and advance to the next question.
+    func confirmTurn() {
+        guard case .awaitingConfirmation(let turn) = phase else { return }
+        applyTurnPhase(turn)
+    }
+
+    /// Discard the low-confidence exchange and let the user re-answer.
+    /// Removes the pending next-question from the display transcript so the
+    /// conversation stays coherent. The user's correction is sent as a new turn;
+    /// the backend's interpreter handles it in context.
+    func retypeAnswer() {
+        guard case .awaitingConfirmation = phase else { return }
+        if let last = transcript.last, case .assistant = last {
+            transcript.removeLast()
+        }
+        currentAssistantTurn = transcript.compactMap {
+            if case .assistant(let t, _) = $0 { return t } else { return nil }
+        }.last
+        phase = .awaitingInput
     }
 
     func reset() {

@@ -226,6 +226,13 @@ struct SNAPConversationView: View {
                 }
             }
             .padding(CivicaSpacing.lg)
+        } else if case .awaitingConfirmation = viewModel.phase {
+            confirmationBanner
+                .padding(CivicaSpacing.lg)
+                .background(CivicaColors.surfacePrimary)
+                .overlay(alignment: .top) {
+                    Rectangle().fill(CivicaColors.hairline).frame(height: 1)
+                }
         } else {
             inputControl
                 .padding(CivicaSpacing.lg)
@@ -233,6 +240,27 @@ struct SNAPConversationView: View {
                 .overlay(alignment: .top) {
                     Rectangle().fill(CivicaColors.hairline).frame(height: 1)
                 }
+        }
+    }
+
+    private var confirmationBanner: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            HStack(spacing: CivicaSpacing.xs) {
+                Image(systemName: "questionmark.circle.fill")
+                    .foregroundStyle(CivicaColors.warningAmber)
+                    .accessibilityHidden(true)
+                Text("Just to confirm — did I understand your answer correctly?")
+                    .font(CivicaTypography.subhead)
+                    .foregroundStyle(CivicaColors.ink)
+            }
+            HStack(spacing: CivicaSpacing.sm) {
+                inputButton("Looks right") {
+                    viewModel.confirmTurn()
+                }
+                inputButton("Let me fix that", style: .secondary) {
+                    viewModel.retypeAnswer()
+                }
+            }
         }
     }
 

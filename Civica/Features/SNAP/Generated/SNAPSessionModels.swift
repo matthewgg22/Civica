@@ -171,6 +171,7 @@ struct SNAPTurnResult: Codable, Sendable, Equatable {
     let isTerminal: Bool
     let needsClarification: Bool
     let clarificationText: String?
+    let needsUserConfirmation: Bool
     let costTelemetry: [SNAPTurnLLMTelemetry]
     let confidence: Double
 
@@ -186,6 +187,7 @@ struct SNAPTurnResult: Codable, Sendable, Equatable {
         case isTerminal = "is_terminal"
         case needsClarification = "needs_clarification"
         case clarificationText = "clarification_text"
+        case needsUserConfirmation = "needs_user_confirmation"
         case costTelemetry = "cost_telemetry"
         case confidence
     }
