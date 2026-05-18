@@ -29,18 +29,17 @@ Shipped in PR [#101](https://github.com/matthewgg22/civica/pull/101). Sign-in ba
 
 ### 3. Sentry secrets configured and receiving events — all 4 services
 
-**❌ Blocking** — Sentry instrumentation code merged in PR [#88](https://github.com/matthewgg22/civica/pull/88) (2026-05-17), but no secrets have been set in any environment.
+**✅ Complete** — DSNs set on all 5 services (2026-05-18). snap-engine verified via `/debug/sentry-check` — event confirmed in Sentry.
 
-Required per service — see [`docs/snap/deploy.md`](deploy.md) for full setup steps:
-
-| Service | Platform | Secret(s) needed |
+| Service | Platform | Status |
 |---|---|---|
-| `civica-enrollment-api` | Cloudflare Workers | `wrangler secret put SENTRY_DSN` |
-| `civica-api` | Fly.io | `fly secrets set SENTRY_DSN=... --app civica-api` |
-| `civica-snap-api` | Fly.io | `fly secrets set SENTRY_DSN=... --app civica-snap-api` |
-| `apps/dashboard` | Vercel | `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN` |
+| `civica-snap-engine` | Fly.io | ✅ DSN set, event verified |
+| `civica-enrollment-api` | Cloudflare Workers | ✅ DSN set |
+| `civica-api` | Fly.io | ✅ DSN set |
+| `civica-snap-api` | Fly.io | ✅ DSN set |
+| `apps/dashboard` | Vercel | ✅ DSN + NEXT_PUBLIC_SENTRY_DSN + SENTRY_AUTH_TOKEN set |
 
-Verification: trigger a test 500 on each service and confirm the event appears in Sentry within 30s. For snap-engine specifically, see [`docs/snap/observability.md`](observability.md).
+For snap-engine verification details see [`docs/snap/observability.md`](observability.md).
 
 ---
 
@@ -118,7 +117,7 @@ All **Required** items must be ✅ before flip. **Nice-to-have** items can follo
 
 ```
 [ ] E2E nightly: most recent run is green (gh run list --workflow=e2e-nightly.yml --limit 1)
-[ ] Sentry DSN set and receiving test event on all 4 services (enrollment-api, civica-api, civica-snap-api, dashboard)
+[x] Sentry DSN set and receiving test event on all 5 services (snap-engine, enrollment-api, civica-api, civica-snap-api, dashboard)
 [ ] Log drain configured and showing structured logs
 [ ] OBBBA Q19 source-citation signoff + FY26 number correction merged (estimator gate)
 [ ] All 9 compliance registry strings: status = .approved with counsel signoff date
