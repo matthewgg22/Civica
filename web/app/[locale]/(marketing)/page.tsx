@@ -59,6 +59,7 @@ export default async function LandingPage({ params }: PageProps) {
               height={32}
               priority
               className="h-7 w-auto"
+              style={{ width: "auto" }}
             />
             <nav aria-label="Sign in" className="text-sm">
               <Link

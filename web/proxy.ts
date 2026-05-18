@@ -15,6 +15,12 @@ export async function proxy(request: NextRequest) {
   const intlResponse = intlMiddleware(request);
   const response = intlResponse ?? NextResponse.next({ request });
 
+  const { pathname } = request.nextUrl;
+  const isAppRoute = pathname.includes("/app/");
+  const needsAuth = isAppRoute || isPublicPath(pathname);
+
+  if (!needsAuth) return response;
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -37,10 +43,7 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
-
   // Gate /[locale]/app/* behind auth
-  const isAppRoute = pathname.includes("/app/");
   if (isAppRoute && !user && !isPublicPath(pathname)) {
     const locale = pathname.split("/")[1] ?? "en";
     return NextResponse.redirect(new URL(`/${locale}/sign-in`, request.url));
