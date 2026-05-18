@@ -1,0 +1,9 @@
+{
+  "extends": "@civica/config/tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "."
+  },
+  "include": ["src", "data"],
+  "exclude": ["src/**/*.test.ts", "dist", "node_modules"]
+}

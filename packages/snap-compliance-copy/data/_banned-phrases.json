@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "id": "submit_to_dta",
+      "phrase": "Submit to DTA Connect",
+      "audit_reference": "Q14",
+      "rationale": "Implies a Civica->DTA write integration that does not exist without written MA DTA authorization. Use 'Open MA DTA Connect to submit' until authorization is confirmed and an integration ships."
+    },
+    {
+      "id": "submit_to_benefitscal",
+      "phrase": "Submit to BenefitsCal",
+      "audit_reference": "Q14 (CA launch parallel)",
+      "rationale": "Implies a Civica->BenefitsCal/CDSS write integration that does not exist without written authorization from CDSS or the user's county welfare department. Use 'Open BenefitsCal to submit' until authorization is confirmed and an integration ships. Parallels the MA DTA Connect ban; CA is the launch state so the bar applies before user-visible surfaces ship."
+    }
+  ]
+}

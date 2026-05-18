@@ -1,0 +1,30 @@
+{
+  "name": "@civica/snap-compliance-copy",
+  "version": "0.1.0",
+  "private": true,
+  "description": "OBBBA-compliance copy registry (banned phrases + counsel-staged copy revisions). Single source of truth for iOS (via Swift codegen) and web (typed TS export).",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "generate:swift": "tsx scripts/generate-swift.ts",
+    "validate": "tsx scripts/validate-all.ts"
+  },
+  "dependencies": {
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@civica/config": "workspace:*",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.9"
+  }
+}
