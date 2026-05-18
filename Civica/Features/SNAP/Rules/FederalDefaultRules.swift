@@ -94,10 +94,13 @@ struct FederalDefaultRules: SNAPStateRuleEngine {
     /// `.unknown` for waiver checks rather than guess.
     func abawdStatus(for draft: SNAPApplicationDraft, asOf: Date) -> ABAWDStatus {
         let age = applicantAge(draft.applicantAge, asOf: asOf)
-        let hasMinor = draft.household.hasMinorInHousehold == true
+        // OBBBA §10102(a) (FNS memo Oct 3 2025): dependent-child exception narrowed
+        // from child under 18 to child under 14. hasMinorInHousehold continues to
+        // gate childcare deductions and other non-ABAWD logic; do not use it here.
+        let hasChildUnder14 = draft.household.hasChildUnder14InHousehold == true
         let elderlyOrDisabled = draft.household.hasElderlyOrDisabled == true
 
-        if elderlyOrDisabled || hasMinor { return .notSubject }
+        if elderlyOrDisabled || hasChildUnder14 { return .notSubject }
 
         guard let age else { return .unknown }
         // OBBBA §10102(a) (eff. July 4 2025): raised ABAWD ceiling from 54 to 64.

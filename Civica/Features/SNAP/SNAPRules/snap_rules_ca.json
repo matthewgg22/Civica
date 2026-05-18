@@ -1,82 +1,61 @@
 {
+  "$schema": "../schema/rules.schema.json",
   "state_code": "CA",
-  "version": "1.0.0-stub",
-  "as_of_date": "2026-05-17",
-  "_comment": "STUB — awaiting packages/snap-rules/data/ca.json from H-web silo. Build phase copies canonical file here; delete this comment once synced.",
+  "version": 1,
+  "as_of_date": "2026-05-01",
   "document_requirements": [
     {
-      "category": "identity",
-      "label_en": "Photo ID",
-      "label_es": "Identificación con foto",
-      "helper_en": "Driver's license, state ID, passport, or other government-issued photo ID.",
-      "helper_es": "Licencia de conducir, identificación estatal, pasaporte u otra identificación con foto emitida por el gobierno.",
-      "required_when": { "always": true },
+      "category": "photo_id",
+      "label": "Photo ID",
+      "helper_text_en": "Driver's license, state ID card, passport, military ID, or tribal ID. CalFresh accepts any government-issued photo ID.",
+      "helper_text_es": "Licencia de conducir, tarjeta de identificación estatal, pasaporte, identificación militar o tribal. CalFresh acepta cualquier identificación con foto emitida por el gobierno.",
+      "required_when": { "household_size_gte": 1 },
       "is_required": true
     },
     {
-      "category": "residence",
-      "label_en": "Proof of address",
-      "label_es": "Comprobante de domicilio",
-      "helper_en": "Recent utility bill, lease agreement, or official mail showing your current address.",
-      "helper_es": "Factura de servicios reciente, contrato de arrendamiento o correo oficial con su dirección actual.",
-      "required_when": { "always": true },
+      "category": "paystub",
+      "label": "Recent pay stub",
+      "helper_text_en": "Your most recent pay stub or an employer letter showing your current wages and hours.",
+      "helper_text_es": "Su talón de pago más reciente o una carta del empleador que muestre su salario y horas actuales.",
+      "required_when": { "has_earned_income": true },
       "is_required": true
     },
     {
-      "category": "income",
-      "label_en": "Proof of income",
-      "label_es": "Comprobante de ingresos",
-      "helper_en": "Recent pay stubs, employer letter, benefit award letter, or most recent tax return.",
-      "helper_es": "Talones de pago recientes, carta del empleador, carta de beneficios o declaración de impuestos más reciente.",
-      "required_when": { "always": true },
+      "category": "bank_statement",
+      "label": "Bank or financial account statement",
+      "helper_text_en": "Most recent statement for checking, savings, or other accounts showing current balances.",
+      "helper_text_es": "Estado de cuenta más reciente de cuentas corrientes, de ahorros u otras, que muestre los saldos actuales.",
+      "required_when": { "has_unearned_income": true },
+      "is_required": true,
+      "review_note": "TODO: confirm with counsel — CA BBCE households may not need asset verification; applicability depends on BBCE vs. standard track."
+    },
+    {
+      "category": "benefit_letter",
+      "label": "Benefit award letter",
+      "helper_text_en": "Official award letter from Social Security, SSI, unemployment, or other benefit programs showing your monthly payment amount.",
+      "helper_text_es": "Carta oficial de adjudicación del Seguro Social, SSI, desempleo u otros programas de beneficios que muestre el monto de su pago mensual.",
+      "required_when": { "has_unearned_income": true },
+      "is_required": true,
+      "review_note": "TODO: confirm with counsel — verify whether benefit_letter and bank_statement are both required, or one-or-the-other, for unearned income."
+    },
+    {
+      "category": "lease",
+      "label": "Proof of address",
+      "helper_text_en": "Lease or rental agreement, mortgage statement, or a letter from your landlord confirming your current address.",
+      "helper_text_es": "Contrato de arrendamiento, estado de cuenta hipotecario, o carta de su arrendador que confirme su dirección actual.",
+      "required_when": { "claims_shelter_deduction": true },
+      "is_required": true,
+      "review_note": "TODO: confirm with counsel — CA may accept a utility bill or a signed statement in lieu of a lease for homeless households; also confirm whether proof of address is required for non-shelter-claiming households."
+    },
+    {
+      "category": "utility_bill",
+      "label": "Utility bill",
+      "helper_text_en": "Recent gas, electric, heating oil, or water bill. Used to verify your utility costs for the shelter deduction.",
+      "helper_text_es": "Factura reciente de gas, electricidad, combustible para calefacción o agua. Se usa para verificar sus costos de servicios públicos para la deducción de vivienda.",
+      "required_when": { "claims_utility_deduction": true },
       "is_required": true
-    },
-    {
-      "category": "shelter",
-      "label_en": "Proof of shelter costs",
-      "label_es": "Comprobante de gastos de vivienda",
-      "helper_en": "Lease or mortgage statement showing your monthly rent or mortgage payment.",
-      "helper_es": "Contrato de arrendamiento o estado de cuenta hipotecario que muestre su pago mensual de renta o hipoteca.",
-      "required_when": { "field": "expenses.monthlyRentOrHousing", "gt": 0 },
-      "is_required": false
-    },
-    {
-      "category": "student",
-      "label_en": "Student enrollment verification",
-      "label_es": "Verificación de matrícula estudiantil",
-      "helper_en": "Official enrollment letter or transcript from your college or university showing current enrollment.",
-      "helper_es": "Carta oficial de matrícula o expediente académico de su universidad que muestre la inscripción actual.",
-      "required_when": { "field": "studentStatus.enrolledInHigherEd", "eq": true },
-      "is_required": false
-    },
-    {
-      "category": "medical",
-      "label_en": "Medical expense documentation",
-      "label_es": "Documentación de gastos médicos",
-      "helper_en": "Receipts, bills, or insurance statements showing monthly out-of-pocket medical costs.",
-      "helper_es": "Recibos, facturas o estados de cuenta del seguro que muestren gastos médicos mensuales de su bolsillo.",
-      "required_when": {
-        "and": [
-          { "field": "household.hasElderlyOrDisabled", "eq": true },
-          { "field": "expenses.monthlyMedical", "gt": 0 }
-        ]
-      },
-      "is_required": false
     }
   ],
-  "flags": [
-    {
-      "key": "expedited_eligible",
-      "trigger_when": {
-        "or": [
-          { "field": "income.grossMonthlyIncome", "lt": 150 },
-          { "field": "household.hasElderlyOrDisabled", "eq": true }
-        ]
-      },
-      "label_en": "You may qualify for expedited processing",
-      "label_es": "Puede calificar para procesamiento acelerado",
-      "context_en": "CalFresh applications are sometimes processed within 3 days for households in urgent need. Ask the county office about expedited service when you apply.",
-      "context_es": "Las solicitudes de CalFresh a veces se procesan en 3 días para hogares con necesidad urgente. Pregunte en la oficina del condado sobre el servicio acelerado cuando solicite."
-    }
-  ]
+  "shelter_rules": [],
+  "income_thresholds": []
 }

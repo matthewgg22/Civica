@@ -18,6 +18,10 @@ import SwiftUI
 struct SNAPHouseholdAnswers: Equatable, Codable {
     var householdSize: String?              // choice from buckets
     var hasMinorInHousehold: Bool?
+    // OBBBA §10102(a) (FNS memo Oct 3 2025): dependent-child ABAWD exception
+    // narrowed from under-18 to under-14. Populated only when hasMinorInHousehold
+    // == true; nil when no minors are present (question is skipped).
+    var hasChildUnder14InHousehold: Bool?
     var hasElderlyOrDisabled: Bool? = false
     /// Migrant or seasonal farmworker status. With low liquid resources,
     /// satisfies 7 CFR 273.2(i)(1)(ii) (migrant/seasonal destitute) and
@@ -38,6 +42,7 @@ struct SNAPHouseholdAnswers: Equatable, Codable {
     var isComplete: Bool {
         householdSize != nil
             && hasMinorInHousehold != nil
+            && (hasMinorInHousehold != true || hasChildUnder14InHousehold != nil)
             && hasElderlyOrDisabled != nil
             && migrantSeasonalFarmworker != nil
     }
@@ -48,6 +53,7 @@ final class SNAPHouseholdQuestionFlowViewModel: ObservableObject {
     enum Step: Int, CaseIterable {
         case size
         case minors
+        case childrenUnder14    // shown only when hasMinorInHousehold == true
         case elderlyOrDisabled
         case migrantFarmworker
 
@@ -64,14 +70,21 @@ final class SNAPHouseholdQuestionFlowViewModel: ObservableObject {
     }
 
     func advance() {
-        if let next = Step(rawValue: step.rawValue + 1) {
-            step = next
+        switch step {
+        case .minors:
+            // Skip childrenUnder14 when no minors in the household.
+            step = answers.hasMinorInHousehold == true ? .childrenUnder14 : .elderlyOrDisabled
+        default:
+            if let next = Step(rawValue: step.rawValue + 1) { step = next }
         }
     }
 
     func goBack() {
-        if let prev = Step(rawValue: step.rawValue - 1) {
-            step = prev
+        switch step {
+        case .elderlyOrDisabled:
+            step = answers.hasMinorInHousehold == true ? .childrenUnder14 : .minors
+        default:
+            if let prev = Step(rawValue: step.rawValue - 1) { step = prev }
         }
     }
 
@@ -79,6 +92,7 @@ final class SNAPHouseholdQuestionFlowViewModel: ObservableObject {
         switch step {
         case .size: return answers.householdSize != nil
         case .minors: return answers.hasMinorInHousehold != nil
+        case .childrenUnder14: return answers.hasChildUnder14InHousehold != nil
         case .elderlyOrDisabled: return answers.hasElderlyOrDisabled != nil
         case .migrantFarmworker: return answers.migrantSeasonalFarmworker != nil
         }
@@ -138,6 +152,7 @@ struct SNAPHouseholdQuestionFlowView: View {
         switch viewModel.step {
         case .size: sizeScreen
         case .minors: minorsScreen
+        case .childrenUnder14: childrenUnder14Screen
         case .elderlyOrDisabled: elderlyOrDisabledScreen
         case .migrantFarmworker: migrantFarmworkerScreen
         }
@@ -181,6 +196,26 @@ struct SNAPHouseholdQuestionFlowView: View {
         ) {
             CivicaQuestionYesNo(
                 selection: $viewModel.answers.hasMinorInHousehold,
+                yesLabel: CivicaQuestionStrings.yesLabel.value(in: language),
+                noLabel: CivicaQuestionStrings.noLabel.value(in: language)
+            )
+        }
+    }
+
+    // MARK: - Screen 3: any children under 14? (shown only when hasMinorInHousehold == true)
+
+    private var childrenUnder14Screen: some View {
+        CivicaQuestionScreen(
+            progress: progress(for: .childrenUnder14),
+            title: SNAPHouseholdQuestionStrings.childrenUnder14Title.value(in: language),
+            helper: SNAPHouseholdQuestionStrings.childrenUnder14Helper.value(in: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            CivicaQuestionYesNo(
+                selection: $viewModel.answers.hasChildUnder14InHousehold,
                 yesLabel: CivicaQuestionStrings.yesLabel.value(in: language),
                 noLabel: CivicaQuestionStrings.noLabel.value(in: language)
             )
@@ -289,6 +324,16 @@ enum SNAPHouseholdQuestionStrings {
     static let minorsHelper = CivicaText(
         "Children in the household can unlock extra SNAP deductions and may make you eligible for expedited service.",
         es: "Los menores en el hogar pueden desbloquear deducciones adicionales de SNAP y pueden hacer que califiques para servicio expedito."
+    )
+
+    // OBBBA §10102(a): shown only when hasMinorInHousehold == true
+    static let childrenUnder14Title = CivicaText(
+        "Are any of those children under 14?",
+        es: "¿Alguno de esos niños tiene menos de 14 años?"
+    )
+    static let childrenUnder14Helper = CivicaText(
+        "This determines who in your household needs to meet SNAP's work requirement for able-bodied adults.",
+        es: "Esto determina quién en tu hogar necesita cumplir con el requisito de trabajo de SNAP para adultos capaces."
     )
 
     static let elderlyOrDisabledTitle = CivicaText(

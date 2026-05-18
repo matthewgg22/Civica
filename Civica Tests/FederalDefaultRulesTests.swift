@@ -111,10 +111,44 @@ struct FederalDefaultRulesTests {
         #expect(rules.abawdStatus(for: draft, asOf: fy26Date) == .notSubject)
     }
 
-    @Test func abawdWithMinorInHouseholdIsNotSubject() {
+    // OBBBA §10102(a): dependent-child exception now requires child under 14.
+
+    @Test func abawdWithChildUnder14IsNotSubject() {
         var draft = Self.draft(age: 30)
         draft.household.hasMinorInHousehold = true
+        draft.household.hasChildUnder14InHousehold = true
         #expect(rules.abawdStatus(for: draft, asOf: fy26Date) == .notSubject)
+    }
+
+    // Boundary: 13 is under 14 — still exempt.
+    @Test func abawdWithChildExactly13IsNotSubject() {
+        var draft = Self.draft(age: 30)
+        draft.household.hasChildUnder14InHousehold = true
+        #expect(rules.abawdStatus(for: draft, asOf: fy26Date) == .notSubject)
+    }
+
+    // Boundary: 14 is no longer exempt under OBBBA §10102(a).
+    @Test func abawdWithChildExactly14IsSubject() {
+        var draft = Self.draft(age: 30)
+        draft.household.hasMinorInHousehold = true
+        draft.household.hasChildUnder14InHousehold = false
+        #expect(rules.abawdStatus(for: draft, asOf: fy26Date) == .subjectActive)
+    }
+
+    // Regression: 17-year-old was exempt pre-OBBBA; now subject.
+    @Test func abawdWithChild17IsSubject() {
+        var draft = Self.draft(age: 30)
+        draft.household.hasMinorInHousehold = true
+        draft.household.hasChildUnder14InHousehold = false
+        #expect(rules.abawdStatus(for: draft, asOf: fy26Date) == .subjectActive)
+    }
+
+    // Regression: hasMinorInHousehold alone no longer grants the exemption.
+    @Test func abawdWithMinorButNoUnder14IsSubject() {
+        var draft = Self.draft(age: 30)
+        draft.household.hasMinorInHousehold = true
+        // hasChildUnder14InHousehold intentionally nil (not yet answered)
+        #expect(rules.abawdStatus(for: draft, asOf: fy26Date) == .subjectActive)
     }
 
     @Test func abawdWithElderlyOrDisabledIsNotSubject() {
