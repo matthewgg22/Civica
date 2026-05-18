@@ -22,6 +22,7 @@ enum SNAPFieldKey: String, Hashable, CaseIterable {
     // household
     case householdSize
     case hasMinorInHousehold
+    case hasChildUnder14InHousehold
     case hasElderlyOrDisabled
 
     // applicantAge

@@ -122,6 +122,8 @@ struct PhantomRecertFlowView: View {
             return section.rawValue
         case .review:
             return "review"
+        case .idScanOffer:
+            return "id_scan_offer"
         }
     }
 
@@ -131,6 +133,8 @@ struct PhantomRecertFlowView: View {
             return (SNAPApplicationSection.allCases.firstIndex(of: section) ?? -1) + 1
         case .review:
             return SNAPApplicationSection.allCases.count + 1
+        case .idScanOffer:
+            return 0
         }
     }
 

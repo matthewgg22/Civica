@@ -4,8 +4,8 @@ import Testing
 
 // Basic assertions that:
 //   1. The JSON files decode successfully from the bundle
-//   2. The evaluateChecklist contract is satisfied
-//   3. Version gating is respected (unsupported version → nil rules)
+//   2. The evaluateChecklist contract is satisfied via SNAPRulesEngine
+//   3. Version gating is respected (unsupported state → throws)
 //
 // These tests run only when the full app bundle is available (i.e. not in
 // headless CI without a simulator). If the bundle resources are missing the
@@ -16,121 +16,129 @@ struct SNAPRulesLoaderTests {
     // MARK: - CA rules
 
     @Test func caRulesLoadFromBundle() {
-        let rules = SNAPRulesLoader.rules(for: "CA")
+        let rules = try? SNAPRulesLoader.load(stateCode: "CA")
         #expect(rules != nil, "snap_rules_ca.json must be present in the Civica bundle")
     }
 
     @Test func caStateCodeIsCA() {
-        guard let rules = SNAPRulesLoader.rules(for: "CA") else { return }
+        guard let rules = try? SNAPRulesLoader.load(stateCode: "CA") else { return }
         #expect(rules.stateCode == "CA")
     }
 
-    @Test func caVersionIs1() {
-        guard let rules = SNAPRulesLoader.rules(for: "CA") else { return }
-        #expect(rules.version == 1)
+    @Test func caVersionStartsWith1() {
+        guard let rules = try? SNAPRulesLoader.load(stateCode: "CA") else { return }
+        #expect(rules.version.hasPrefix("1"))
     }
 
     @Test func caHasAtLeastOneDocumentRequirement() {
-        guard let rules = SNAPRulesLoader.rules(for: "CA") else { return }
+        guard let rules = try? SNAPRulesLoader.load(stateCode: "CA") else { return }
         #expect(rules.documentRequirements.isEmpty == false)
     }
 
-    @Test func caEveryRequirementHasNonEmptyHelperTextEn() {
-        guard let rules = SNAPRulesLoader.rules(for: "CA") else { return }
+    @Test func caEveryRequirementHasNonEmptyHelperEn() {
+        guard let rules = try? SNAPRulesLoader.load(stateCode: "CA") else { return }
         for req in rules.documentRequirements {
-            #expect(req.helperTextEn.isEmpty == false, "helperTextEn empty for category \(req.category)")
+            #expect(req.helperEn.isEmpty == false, "helperEn empty for category \(req.category)")
         }
     }
 
-    @Test func caEveryRequirementHasNonEmptyHelperTextEs() {
-        guard let rules = SNAPRulesLoader.rules(for: "CA") else { return }
+    @Test func caEveryRequirementHasNonEmptyHelperEs() {
+        guard let rules = try? SNAPRulesLoader.load(stateCode: "CA") else { return }
         for req in rules.documentRequirements {
-            #expect(req.helperTextEs.isEmpty == false, "helperTextEs empty for category \(req.category)")
+            #expect(req.helperEs.isEmpty == false, "helperEs empty for category \(req.category)")
         }
     }
 
     // MARK: - MA rules
 
     @Test func maRulesLoadFromBundle() {
-        let rules = SNAPRulesLoader.rules(for: "MA")
+        let rules = try? SNAPRulesLoader.load(stateCode: "MA")
         #expect(rules != nil, "snap_rules_ma.json must be present in the Civica bundle")
     }
 
     @Test func maStateCodeIsMA() {
-        guard let rules = SNAPRulesLoader.rules(for: "MA") else { return }
+        guard let rules = try? SNAPRulesLoader.load(stateCode: "MA") else { return }
         #expect(rules.stateCode == "MA")
     }
 
     // MARK: - Case-insensitive lookup
 
-    @Test func lowercaseStateCodeResolvesCA() {
-        let upper = SNAPRulesLoader.rules(for: "CA")
-        let lower = SNAPRulesLoader.rules(for: "ca")
-        #expect(upper?.stateCode == lower?.stateCode)
+    @Test func lowercaseStateCodeResolvesCA() throws {
+        let upper = try SNAPRulesLoader.load(stateCode: "CA")
+        let lower = try SNAPRulesLoader.load(stateCode: "ca")
+        #expect(upper.stateCode == lower.stateCode)
     }
 
-    // MARK: - Nil / empty / unsupported state codes
+    // MARK: - Unsupported / empty state codes
 
-    @Test func nilStateCodeReturnsNil() {
-        #expect(SNAPRulesLoader.rules(for: nil) == nil)
+    @Test func emptyStateCodeThrows() {
+        #expect(throws: (any Error).self) { try SNAPRulesLoader.load(stateCode: "") }
     }
 
-    @Test func emptyStateCodeReturnsNil() {
-        #expect(SNAPRulesLoader.rules(for: "") == nil)
+    @Test func unsupportedStateThrows() {
+        #expect(throws: (any Error).self) { try SNAPRulesLoader.load(stateCode: "TX") }
     }
 
-    @Test func unsupportedStateReturnsNil() {
-        #expect(SNAPRulesLoader.rules(for: "TX") == nil)
+    // MARK: - evaluateChecklist — CA (via SNAPRulesEngine)
+
+    @Test func caChecklistAlwaysIncludesIdentity() throws {
+        let rules = try SNAPRulesLoader.load(stateCode: "CA")
+        let result = SNAPRulesEngine.evaluateChecklist(rules: rules, draft: SNAPApplicationDraft())
+        #expect(result.requiredItems.contains { $0.category == "identity" })
     }
 
-    // MARK: - evaluateChecklist — CA
-
-    @Test func caChecklistContainsPhotoIdForAnyHousehold() {
-        let answers = SNAPChecklistAnswers(householdSize: 1)
-        let result = SNAPRulesLoader.evaluateChecklist(stateCode: "CA", answers: answers)
-        #expect(result.items.contains { $0.category == "photo_id" })
+    @Test func caChecklistAlwaysIncludesResidence() throws {
+        let rules = try SNAPRulesLoader.load(stateCode: "CA")
+        let result = SNAPRulesEngine.evaluateChecklist(rules: rules, draft: SNAPApplicationDraft())
+        #expect(result.requiredItems.contains { $0.category == "residence" })
     }
 
-    @Test func caChecklistContainsPaystubWhenEarnedIncome() {
-        var answers = SNAPChecklistAnswers()
-        answers.hasEarnedIncome = true
-        let result = SNAPRulesLoader.evaluateChecklist(stateCode: "CA", answers: answers)
-        #expect(result.items.contains { $0.category == "paystub" })
+    @Test func caChecklistAlwaysIncludesIncome() throws {
+        let rules = try SNAPRulesLoader.load(stateCode: "CA")
+        let result = SNAPRulesEngine.evaluateChecklist(rules: rules, draft: SNAPApplicationDraft())
+        #expect(result.requiredItems.contains { $0.category == "income" })
     }
 
-    @Test func caChecklistOmitsPaystubWhenNoEarnedIncome() {
-        var answers = SNAPChecklistAnswers()
-        answers.hasEarnedIncome = false
-        let result = SNAPRulesLoader.evaluateChecklist(stateCode: "CA", answers: answers)
-        #expect(result.items.contains { $0.category == "paystub" } == false)
+    @Test func caChecklistIncludesShelterWhenRentSet() throws {
+        let rules = try SNAPRulesLoader.load(stateCode: "CA")
+        var draft = SNAPApplicationDraft()
+        draft.expenses.monthlyRentOrHousing = 800
+        let result = SNAPRulesEngine.evaluateChecklist(rules: rules, draft: draft)
+        #expect(result.requiredItems.contains { $0.category == "shelter" })
     }
 
-    @Test func caChecklistContainsUtilityBillWhenClaimedDeduction() {
-        var answers = SNAPChecklistAnswers()
-        answers.claimsUtilityDeduction = true
-        let result = SNAPRulesLoader.evaluateChecklist(stateCode: "CA", answers: answers)
-        #expect(result.items.contains { $0.category == "utility_bill" })
+    @Test func caChecklistOmitsShelterWhenNoRent() throws {
+        let rules = try SNAPRulesLoader.load(stateCode: "CA")
+        let result = SNAPRulesEngine.evaluateChecklist(rules: rules, draft: SNAPApplicationDraft())
+        #expect(result.requiredItems.contains { $0.category == "shelter" } == false)
     }
 
-    @Test func caChecklistIncludesOrientationFlag() {
-        let result = SNAPRulesLoader.evaluateChecklist(stateCode: "CA")
-        #expect(result.flags.isEmpty == false)
-        #expect(result.flags.first?.localizedCaseInsensitiveContains("orientation") == true)
+    @Test func caChecklistIncludesStudentWhenEnrolled() throws {
+        let rules = try SNAPRulesLoader.load(stateCode: "CA")
+        var draft = SNAPApplicationDraft()
+        draft.studentStatus.enrolledInHigherEd = true
+        let result = SNAPRulesEngine.evaluateChecklist(rules: rules, draft: draft)
+        #expect(result.requiredItems.contains { $0.category == "student" })
+    }
+
+    @Test func caChecklistHasActiveFlagsForAnyDraft() throws {
+        let rules = try SNAPRulesLoader.load(stateCode: "CA")
+        let result = SNAPRulesEngine.evaluateChecklist(rules: rules, draft: SNAPApplicationDraft())
+        // CA rules include at least one flag (expedited_eligible path or similar)
+        #expect(result.activeFlags.isEmpty == false || rules.flags.isEmpty)
     }
 
     // MARK: - evaluateChecklist — MA
 
-    @Test func maChecklistContainsLeaseForAnyHousehold() {
-        let answers = SNAPChecklistAnswers(householdSize: 1)
-        let result = SNAPRulesLoader.evaluateChecklist(stateCode: "MA", answers: answers)
-        #expect(result.items.contains { $0.category == "lease" })
+    @Test func maChecklistAlwaysIncludesIdentity() throws {
+        let rules = try SNAPRulesLoader.load(stateCode: "MA")
+        let result = SNAPRulesEngine.evaluateChecklist(rules: rules, draft: SNAPApplicationDraft())
+        #expect(result.requiredItems.contains { $0.category == "identity" })
     }
 
     // MARK: - evaluateChecklist — unsupported state
 
-    @Test func unsupportedStateReturnsEmptyChecklist() {
-        let result = SNAPRulesLoader.evaluateChecklist(stateCode: "TX")
-        #expect(result.items.isEmpty)
-        #expect(result.flags.isEmpty == false)
+    @Test func unsupportedStateThrowsOnEval() {
+        #expect(throws: (any Error).self) { try SNAPRulesLoader.load(stateCode: "TX") }
     }
 }

@@ -53,6 +53,7 @@ enum SNAPVoicePrompts {
             Fields:
             • householdSize: a short label like "1", "2", "3-4", "5+".
             • hasMinorInHousehold: any child under 18 in the household?
+            • hasChildUnder14InHousehold: if hasMinorInHousehold is true, are any of those children under 14?
             • hasElderlyOrDisabled: anyone 60+ or with a disability?
             """
         case .applicantAge:

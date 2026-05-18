@@ -147,9 +147,14 @@ struct HouseholdBasicsExtraction: SNAPDraftPatchProducing {
     var householdSize: String?
     var householdSizeConfidence: Double?
 
-    @Guide(description: "Are there any minors (under 18) in the household?")
+    @Guide(description: "Are there any children under 18 in the household?")
     var hasMinorInHousehold: Bool?
     var hasMinorInHouseholdConfidence: Double?
+
+    // OBBBA §10102(a): only relevant when hasMinorInHousehold is true.
+    @Guide(description: "Are any of those children under 14? Only extract when hasMinorInHousehold is true.")
+    var hasChildUnder14InHousehold: Bool?
+    var hasChildUnder14InHouseholdConfidence: Double?
 
     @Guide(description: "Is anyone in the household elderly (60+) or has a disability?")
     var hasElderlyOrDisabled: Bool?
@@ -161,6 +166,9 @@ struct HouseholdBasicsExtraction: SNAPDraftPatchProducing {
 
         assign(hasMinorInHousehold, to: \.household.hasMinorInHousehold, in: &draft)
         record(hasMinorInHouseholdConfidence, for: .hasMinorInHousehold, in: &confidence)
+
+        assign(hasChildUnder14InHousehold, to: \.household.hasChildUnder14InHousehold, in: &draft)
+        record(hasChildUnder14InHouseholdConfidence, for: .hasChildUnder14InHousehold, in: &confidence)
 
         assign(hasElderlyOrDisabled, to: \.household.hasElderlyOrDisabled, in: &draft)
         record(hasElderlyOrDisabledConfidence, for: .hasElderlyOrDisabled, in: &confidence)
