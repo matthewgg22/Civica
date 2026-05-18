@@ -47,6 +47,7 @@ def run_interpreter(
         system=INTERPRETER_PROMPT,
         messages=[{"role": "user", "content": user_message}],
         language=language,
+        max_tokens=512,
     )
 
 

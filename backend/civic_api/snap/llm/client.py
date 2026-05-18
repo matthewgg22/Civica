@@ -99,13 +99,18 @@ class LLMClient:
         system: str,
         messages: list[dict[str, Any]],
         language: str = "en",
+        max_tokens: int = 1024,
     ) -> tuple[T, LLMCallTelemetry]:
         """Run the LLM with structured output. Returns the parsed Pydantic
         instance plus per-call telemetry.
 
         The `language` parameter is appended to the system prompt as a
         directive ("Respond only in <language>."). Every stage of the
-        pipeline threads it through unmodified."""
+        pipeline threads it through unmodified.
+
+        Set `max_tokens` to the tightest ceiling that fits the expected
+        output schema — this is the biggest single lever for cost and
+        latency. Defaults to 1024; callers should override downward."""
         system_localized = (
             f"{system}\n\nRespond ONLY in {language}. All user-facing text must be in {language}."
         )
@@ -118,6 +123,7 @@ class LLMClient:
                     schema=schema,
                     system=system_localized,
                     messages=messages,
+                    max_tokens=max_tokens,
                 )
             except Exception as exc:  # noqa: BLE001 — fallback intent
                 anthropic_error = exc
@@ -140,6 +146,7 @@ class LLMClient:
             schema=schema,
             system=system_localized,
             messages=messages,
+            max_tokens=max_tokens,
         )
         telemetry.fell_back_from_anthropic = True
         return result, telemetry
@@ -153,6 +160,7 @@ class LLMClient:
         schema: type[T],
         system: str,
         messages: list[dict[str, Any]],
+        max_tokens: int = 1024,
     ) -> tuple[T, LLMCallTelemetry]:
         if self._anthropic is None:
             import anthropic  # type: ignore[import-not-found]
@@ -170,7 +178,7 @@ class LLMClient:
             t0 = time.monotonic()
             response = self._anthropic.messages.create(
                 model=model,
-                max_tokens=2048,
+                max_tokens=max_tokens,
                 system=cached_system,
                 messages=messages,
                 tools=[
@@ -228,6 +236,7 @@ class LLMClient:
         schema: type[T],
         system: str,
         messages: list[dict[str, Any]],
+        max_tokens: int = 1024,
     ) -> tuple[T, LLMCallTelemetry]:
         if self._openai is None:
             import openai  # type: ignore[import-not-found]
@@ -240,6 +249,7 @@ class LLMClient:
             t0 = time.monotonic()
             response = self._openai.chat.completions.create(
                 model=model,
+                max_tokens=max_tokens,
                 messages=[{"role": "system", "content": system}, *messages],
                 response_format={"type": "json_schema", "json_schema": {
                     "name": schema.__name__,

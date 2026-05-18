@@ -66,4 +66,5 @@ def run_paystub_extractor(
         system=PAYSTUB_EXTRACTOR_PROMPT,
         messages=messages,
         language=language,
+        max_tokens=1024,
     )

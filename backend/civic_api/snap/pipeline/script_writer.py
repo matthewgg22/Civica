@@ -47,4 +47,5 @@ def run_script_writer(
         system=SCRIPT_WRITER_PROMPT,
         messages=[{"role": "user", "content": user_message}],
         language=language,
+        max_tokens=512,
     )
