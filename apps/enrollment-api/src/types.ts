@@ -4,6 +4,10 @@ export interface Env {
   SUPABASE_ANON_KEY: string;
   SNAP_FERNET_KEY: string;
   SENTRY_DSN: string;
+  // T9: address-validation integration stub. Off unless explicitly "true".
+  ENABLE_ADDRESS_VALIDATION?: string;
+  USPS_CLIENT_ID?: string;
+  USPS_CLIENT_SECRET?: string;
 }
 
 export interface Variables {

@@ -1,0 +1,148 @@
+{
+  "state_code": "CA",
+  "state_name": "California",
+  "populated": true,
+  "_source": "https://www.cdss.ca.gov ; https://www.benefitscal.com ; county DPSS/HSA contact pages",
+  "state_agency": {
+    "name": "California Department of Social Services",
+    "abbreviation": "CDSS",
+    "url": "https://www.cdss.ca.gov",
+    "snap_program_name": "CalFresh",
+    "application_portal": "https://www.benefitscal.com",
+    "snap_office_phone": "+1-877-847-3663"
+  },
+  "counties": [
+    {
+      "fips": "06037",
+      "name": "Los Angeles County",
+      "administering_agency": {
+        "name": "LA County Department of Public Social Services",
+        "abbreviation": "DPSS",
+        "snap_office_phone": "+1-866-613-3777",
+        "snap_office_url": "https://dpss.lacounty.gov",
+        "application_portal": "https://www.benefitscal.com"
+      }
+    },
+    {
+      "fips": "06073",
+      "name": "San Diego County",
+      "administering_agency": {
+        "name": "San Diego County Health & Human Services Agency",
+        "abbreviation": "HHSA",
+        "snap_office_phone": "+1-866-262-9881",
+        "snap_office_url": "https://www.sandiegocounty.gov/hhsa/programs/ssp/calfresh",
+        "application_portal": "https://www.benefitscal.com"
+      }
+    },
+    {
+      "fips": "06059",
+      "name": "Orange County",
+      "administering_agency": {
+        "name": "Orange County Social Services Agency",
+        "abbreviation": "SSA",
+        "snap_office_phone": "+1-800-281-9799",
+        "snap_office_url": "https://ssa.ocgov.com/calfresh",
+        "application_portal": "https://www.benefitscal.com"
+      }
+    },
+    {
+      "fips": "06085",
+      "name": "Santa Clara County",
+      "administering_agency": {
+        "name": "Santa Clara County Social Services Agency",
+        "abbreviation": "SCC SSA",
+        "snap_office_phone": "+1-877-962-3633",
+        "snap_office_url": "https://socialservices.sccgov.org/benefits/calfresh",
+        "application_portal": "https://www.benefitscal.com"
+      }
+    },
+    {
+      "fips": "06075",
+      "name": "San Francisco County",
+      "administering_agency": {
+        "name": "San Francisco Human Services Agency",
+        "abbreviation": "SFHSA",
+        "snap_office_phone": "+1-415-558-4700",
+        "snap_office_url": "https://www.sfhsa.org/services/jobs-money/calfresh",
+        "application_portal": "https://www.benefitscal.com"
+      }
+    },
+    {
+      "fips": "06001",
+      "name": "Alameda County",
+      "administering_agency": {
+        "name": "Alameda County Social Services Agency",
+        "abbreviation": "Alameda SSA",
+        "snap_office_phone": "+1-510-263-2420",
+        "snap_office_url": "https://www.alamedasocialservices.org",
+        "application_portal": "https://www.benefitscal.com"
+      }
+    },
+    {
+      "fips": "06067",
+      "name": "Sacramento County",
+      "administering_agency": {
+        "name": "Sacramento County Department of Human Assistance",
+        "abbreviation": "DHA",
+        "snap_office_phone": "+1-916-874-3100",
+        "snap_office_url": "https://dha.saccounty.gov/CalFresh",
+        "application_portal": "https://www.benefitscal.com"
+      }
+    },
+    {
+      "fips": "06019",
+      "name": "Fresno County",
+      "administering_agency": {
+        "name": "Fresno County Department of Social Services",
+        "abbreviation": "Fresno DSS",
+        "snap_office_phone": "+1-559-600-1377",
+        "snap_office_url": "https://www.co.fresno.ca.us/departments/social-services",
+        "application_portal": "https://www.benefitscal.com"
+      }
+    },
+    {
+      "fips": "06077",
+      "name": "San Joaquin County",
+      "administering_agency": {
+        "name": "San Joaquin County Human Services Agency",
+        "abbreviation": "SJC HSA",
+        "snap_office_phone": "+1-209-468-1000",
+        "snap_office_url": "https://www.sjgov.org/department/hsa",
+        "application_portal": "https://www.benefitscal.com"
+      }
+    },
+    {
+      "fips": "06097",
+      "name": "Sonoma County",
+      "administering_agency": {
+        "name": "Sonoma County Human Services Department",
+        "abbreviation": "Sonoma HSD",
+        "snap_office_phone": "+1-877-699-6868",
+        "snap_office_url": "https://sonomacounty.ca.gov/hsd/services/calfresh",
+        "application_portal": "https://www.benefitscal.com"
+      }
+    },
+    {
+      "fips": "06041",
+      "name": "Marin County",
+      "administering_agency": {
+        "name": "Marin County Health and Human Services",
+        "abbreviation": "Marin HHS",
+        "snap_office_phone": "+1-877-410-8829",
+        "snap_office_url": "https://www.marinhhs.org/calfresh",
+        "application_portal": "https://www.benefitscal.com"
+      }
+    },
+    {
+      "fips": "06089",
+      "name": "Shasta County",
+      "administering_agency": {
+        "name": "Shasta County Health and Human Services Agency",
+        "abbreviation": "Shasta HHSA",
+        "snap_office_phone": "+1-877-652-0734",
+        "snap_office_url": "https://www.shastahhsa.net/calfresh",
+        "application_portal": "https://www.benefitscal.com"
+      }
+    }
+  ]
+}
