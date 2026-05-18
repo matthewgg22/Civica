@@ -132,7 +132,7 @@
 ### 3.6 Generate handoff PDF
 - **Action:** Packet menu → **Generate handoff PDF** → wait for completion → download → open the PDF.
 - **Expected:** Generation completes within ~10s; PDF opens; **applicant data (name, household, income, doc references) is present and readable**.
-- **If it fails:** PDF handoff is a known remaining gap (see [project_e2e_critical_path.md] context). Have a pre-generated sample PDF on disk to show instead, and narrate *"The pipeline runs nightly; for this demo I have a recent output to show you the format."*
+- **If it fails:** Handoff PDF ships and is covered by the nightly E2E (PRs #101–#103). If it errors live, check enrollment-api logs for the signed-URL step — most likely culprit is a missing/expired Supabase service-role secret on the deploy. Keep a recent nightly artifact handy as a backup so the demo can keep moving.
 
 ---
 
