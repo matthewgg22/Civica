@@ -20,47 +20,69 @@ struct FederalDefaultRulesTests {
         #expect(rules.displayName.contains("Federal"))
     }
 
-    // MARK: - Gross income (130% FPL)
+    // MARK: - Gross income (130% FPL exact table, FNS FY26 COLA memo)
 
     @Test func grossIncomeLimitForKnownSizes() {
-        // monthly FPL base (1 person) = 1255, +448.33 per additional;
-        // gross limit = monthly FPL * 1.30, rounded down.
-        #expect(rules.grossIncomeLimit(householdSize: 1, asOf: fy26Date) == 1_631)
-        #expect(rules.grossIncomeLimit(householdSize: 2, asOf: fy26Date) == 2_214)
-        #expect(rules.grossIncomeLimit(householdSize: 3, asOf: fy26Date) == 2_797)
-        #expect(rules.grossIncomeLimit(householdSize: 4, asOf: fy26Date) == 3_379)
-        #expect(rules.grossIncomeLimit(householdSize: 5, asOf: fy26Date) == 3_962)
-        #expect(rules.grossIncomeLimit(householdSize: 6, asOf: fy26Date) == 4_545)
+        // Exact table per FNS FY26 COLA memo, Page 3 (48 states + DC).
+        // Do NOT derive from a monthly FPL formula — drift of ±$1 vs.
+        // the official memo is the documented hazard.
+        #expect(rules.grossIncomeLimit(householdSize: 1, asOf: fy26Date) == 1_696)
+        #expect(rules.grossIncomeLimit(householdSize: 2, asOf: fy26Date) == 2_292)
+        #expect(rules.grossIncomeLimit(householdSize: 3, asOf: fy26Date) == 2_888)
+        #expect(rules.grossIncomeLimit(householdSize: 4, asOf: fy26Date) == 3_483)
+        #expect(rules.grossIncomeLimit(householdSize: 5, asOf: fy26Date) == 4_079)
+        #expect(rules.grossIncomeLimit(householdSize: 6, asOf: fy26Date) == 4_675)
+        #expect(rules.grossIncomeLimit(householdSize: 7, asOf: fy26Date) == 5_271)
+        #expect(rules.grossIncomeLimit(householdSize: 8, asOf: fy26Date) == 5_867)
     }
 
-    // MARK: - Net income (100% FPL)
+    @Test func grossIncomeLimitExtendsBeyondEightWithPerAdditional() {
+        // Per FNS FY26 COLA memo: +$596 per HH member beyond 8.
+        let eight = rules.grossIncomeLimit(householdSize: 8, asOf: fy26Date)
+        #expect(rules.grossIncomeLimit(householdSize: 9, asOf: fy26Date) == eight + 596)
+        #expect(rules.grossIncomeLimit(householdSize: 12, asOf: fy26Date) == eight + 2_384)
+    }
+
+    // MARK: - Net income (100% FPL exact table, FNS FY26 COLA memo)
 
     @Test func netIncomeLimitForKnownSizes() {
-        #expect(rules.netIncomeLimit(householdSize: 1, asOf: fy26Date) == 1_255)
-        #expect(rules.netIncomeLimit(householdSize: 2, asOf: fy26Date) == 1_703)
-        #expect(rules.netIncomeLimit(householdSize: 3, asOf: fy26Date) == 2_151)
-        #expect(rules.netIncomeLimit(householdSize: 4, asOf: fy26Date) == 2_599)
+        #expect(rules.netIncomeLimit(householdSize: 1, asOf: fy26Date) == 1_305)
+        #expect(rules.netIncomeLimit(householdSize: 2, asOf: fy26Date) == 1_763)
+        #expect(rules.netIncomeLimit(householdSize: 3, asOf: fy26Date) == 2_221)
+        #expect(rules.netIncomeLimit(householdSize: 4, asOf: fy26Date) == 2_680)
+        #expect(rules.netIncomeLimit(householdSize: 5, asOf: fy26Date) == 3_138)
+        #expect(rules.netIncomeLimit(householdSize: 6, asOf: fy26Date) == 3_596)
+        #expect(rules.netIncomeLimit(householdSize: 7, asOf: fy26Date) == 4_055)
+        #expect(rules.netIncomeLimit(householdSize: 8, asOf: fy26Date) == 4_513)
+    }
+
+    @Test func netIncomeLimitExtendsBeyondEightWithPerAdditional() {
+        let eight = rules.netIncomeLimit(householdSize: 8, asOf: fy26Date)
+        #expect(rules.netIncomeLimit(householdSize: 9, asOf: fy26Date) == eight + 459)
+        #expect(rules.netIncomeLimit(householdSize: 12, asOf: fy26Date) == eight + 1_836)
     }
 
     // MARK: - Standard deduction (7 CFR 273.9(d)(1))
 
     @Test func standardDeductionByBucket() {
+        // FY26 COLA memo, Page 6.
         // Sizes 1-3 share the same value.
-        #expect(rules.standardDeduction(householdSize: 1, asOf: fy26Date) == 204)
-        #expect(rules.standardDeduction(householdSize: 2, asOf: fy26Date) == 204)
-        #expect(rules.standardDeduction(householdSize: 3, asOf: fy26Date) == 204)
+        #expect(rules.standardDeduction(householdSize: 1, asOf: fy26Date) == 209)
+        #expect(rules.standardDeduction(householdSize: 2, asOf: fy26Date) == 209)
+        #expect(rules.standardDeduction(householdSize: 3, asOf: fy26Date) == 209)
         // 4 and 5 step.
-        #expect(rules.standardDeduction(householdSize: 4, asOf: fy26Date) == 217)
-        #expect(rules.standardDeduction(householdSize: 5, asOf: fy26Date) == 254)
+        #expect(rules.standardDeduction(householdSize: 4, asOf: fy26Date) == 223)
+        #expect(rules.standardDeduction(householdSize: 5, asOf: fy26Date) == 261)
         // 6+ caps at the size-6 value.
-        #expect(rules.standardDeduction(householdSize: 6, asOf: fy26Date) == 291)
-        #expect(rules.standardDeduction(householdSize: 12, asOf: fy26Date) == 291)
+        #expect(rules.standardDeduction(householdSize: 6, asOf: fy26Date) == 299)
+        #expect(rules.standardDeduction(householdSize: 12, asOf: fy26Date) == 299)
     }
 
     // MARK: - Shelter deduction cap
 
     @Test func shelterCapWithoutElderlyOrDisabled() {
-        #expect(rules.shelterDeductionCap(isElderlyOrDisabled: false, asOf: fy26Date) == 712)
+        // FY26 COLA memo, Table 3.
+        #expect(rules.shelterDeductionCap(isElderlyOrDisabled: false, asOf: fy26Date) == 744)
     }
 
     @Test func shelterCapWithElderlyOrDisabledIsNil() {
@@ -248,27 +270,29 @@ struct FederalDefaultRulesTests {
     // MARK: - Max allotment (FNS COLA table)
 
     @Test func maxAllotmentTableSizesOneThroughEight() {
-        #expect(rules.maxAllotment(householdSize: 1, asOf: fy26Date) == 292)
-        #expect(rules.maxAllotment(householdSize: 2, asOf: fy26Date) == 536)
-        #expect(rules.maxAllotment(householdSize: 3, asOf: fy26Date) == 768)
-        #expect(rules.maxAllotment(householdSize: 4, asOf: fy26Date) == 975)
-        #expect(rules.maxAllotment(householdSize: 5, asOf: fy26Date) == 1_158)
-        #expect(rules.maxAllotment(householdSize: 6, asOf: fy26Date) == 1_390)
-        #expect(rules.maxAllotment(householdSize: 7, asOf: fy26Date) == 1_536)
-        #expect(rules.maxAllotment(householdSize: 8, asOf: fy26Date) == 1_756)
+        // FY26 COLA memo, Table 1 (48 states + DC).
+        #expect(rules.maxAllotment(householdSize: 1, asOf: fy26Date) == 298)
+        #expect(rules.maxAllotment(householdSize: 2, asOf: fy26Date) == 546)
+        #expect(rules.maxAllotment(householdSize: 3, asOf: fy26Date) == 785)
+        #expect(rules.maxAllotment(householdSize: 4, asOf: fy26Date) == 994)
+        #expect(rules.maxAllotment(householdSize: 5, asOf: fy26Date) == 1_183)
+        #expect(rules.maxAllotment(householdSize: 6, asOf: fy26Date) == 1_421)
+        #expect(rules.maxAllotment(householdSize: 7, asOf: fy26Date) == 1_571)
+        #expect(rules.maxAllotment(householdSize: 8, asOf: fy26Date) == 1_789)
     }
 
     @Test func maxAllotmentExtrapolatesForLargeHouseholds() {
-        // Size 9 = size 8 ($1756) + 1 * $220 = $1976
-        #expect(rules.maxAllotment(householdSize: 9, asOf: fy26Date) == 1_976)
-        // Size 12 = 1756 + 4 * 220 = 2636
-        #expect(rules.maxAllotment(householdSize: 12, asOf: fy26Date) == 2_636)
+        // Size 9 = size 8 ($1789) + 1 * $218 = $2007
+        #expect(rules.maxAllotment(householdSize: 9, asOf: fy26Date) == 2_007)
+        // Size 12 = 1789 + 4 * 218 = 2661
+        #expect(rules.maxAllotment(householdSize: 12, asOf: fy26Date) == 2_661)
     }
 
     // MARK: - Minimum benefit
 
     @Test func minimumBenefitForFY26() {
-        #expect(rules.minimumBenefit(asOf: fy26Date) == 23)
+        // FY26 COLA memo minimum allotment table.
+        #expect(rules.minimumBenefit(asOf: fy26Date) == 24)
     }
 
     // MARK: - Asset limits
