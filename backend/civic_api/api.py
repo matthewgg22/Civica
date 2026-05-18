@@ -810,6 +810,8 @@ try:
 except ImportError:  # pragma: no cover
     _SENTRY_AVAILABLE = False
 
+from backend.civic_api.sentry_scrubber import scrub_event
+
 
 def _init_sentry() -> None:
     if not _SENTRY_AVAILABLE:
@@ -823,6 +825,11 @@ def _init_sentry() -> None:
         integrations=[StarletteIntegration(), FastApiIntegration()],
         traces_sample_rate=0.1,
         send_default_pii=False,
+        # PII scrubber mirrors the Node services. send_default_pii=False
+        # blocks auto-captured IP/cookies; this callback handles the
+        # case where developers populate event context/extras/breadcrumbs
+        # with dicts that may contain PII_KEYS-listed keys.
+        before_send=scrub_event,
     )
 
 
