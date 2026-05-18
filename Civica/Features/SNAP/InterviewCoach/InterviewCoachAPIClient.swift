@@ -70,6 +70,57 @@ final class InterviewCoachAPIClient {
         try await postJSON(path: "/functions/v1/interview-coach-turn", payload: payload)
     }
 
+    // Streaming variant — yields CoachTurnEvents as the edge function sends SSE.
+    // Callers iterate the returned AsyncThrowingStream; the stream ends after
+    // a .completed event or throws on network/parse error.
+    func streamTurn(_ payload: InterviewTurnRequestDTO) -> AsyncThrowingStream<CoachTurnEvent, Error> {
+        AsyncThrowingStream { continuation in
+            Task {
+                do {
+                    var request = URLRequest(url: endpoint("/functions/v1/interview-coach-turn"))
+                    request.httpMethod = "POST"
+                    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    request.setValue("text/event-stream", forHTTPHeaderField: "Accept")
+                    request.timeoutInterval = requestTimeout
+                    request.httpBody = try encoder.encode(payload)
+                    attachAuthorization(to: &request)
+
+                    let (bytes, urlResponse) = try await session.bytes(for: request)
+                    guard let http = urlResponse as? HTTPURLResponse,
+                          (200..<300).contains(http.statusCode) else {
+                        continuation.finish(throwing: CoachAPIError.emptyResponse)
+                        return
+                    }
+
+                    for try await line in bytes.lines {
+                        guard line.hasPrefix("data: ") else { continue }
+                        let jsonString = String(line.dropFirst(6))
+
+                        guard let data = jsonString.data(using: .utf8),
+                              let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+                        else { continue }
+
+                        if let delta = obj["delta"] as? String {
+                            continuation.yield(.delta(delta))
+                        } else if let done = obj["done"] as? Bool, done {
+                            let text = obj["caseworker_text"] as? String ?? ""
+                            let eoi = obj["end_of_interview"] as? Bool ?? false
+                            continuation.yield(.completed(caseworkerText: text, endOfInterview: eoi))
+                            continuation.finish()
+                            return
+                        } else if let errorMsg = obj["error"] as? String {
+                            continuation.finish(throwing: CoachAPIError.http(status: 502, body: errorMsg))
+                            return
+                        }
+                    }
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+        }
+    }
+
     func postScore(_ payload: InterviewScoreRequestDTO) async throws -> InterviewScoreResponseDTO {
         try await postJSON(path: "/functions/v1/interview-coach-score", payload: payload)
     }

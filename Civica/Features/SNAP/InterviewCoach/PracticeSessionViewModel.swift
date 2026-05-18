@@ -53,6 +53,7 @@ final class PracticeSessionViewModel: ObservableObject {
     @Published private(set) var transcript: [InterviewTurnDTO] = []
     @Published private(set) var status: SessionStatus = .idle
     @Published private(set) var score: InterviewScoreResponseDTO?
+    @Published private(set) var streamingCaseworkerText: String = ""
     @Published var draftResponse: String = ""
 
     let sessionID: String
@@ -125,6 +126,8 @@ final class PracticeSessionViewModel: ObservableObject {
     private func requestCaseworkerTurn() async {
         lastAttempt = .turn
         status = .awaitingCaseworker
+        streamingCaseworkerText = ""
+
         let payload = InterviewTurnRequestDTO(
             sessionId: sessionID,
             stateCode: context.stateCode,
@@ -138,14 +141,18 @@ final class PracticeSessionViewModel: ObservableObject {
         )
 
         do {
-            let response = try await client.postTurn(payload)
-            transcript.append(InterviewTurnDTO(role: "caseworker", text: response.caseworkerText))
-            if response.endOfInterview {
-                status = .complete
-            } else {
-                status = .awaitingUser
+            for try await event in client.streamTurn(payload) {
+                switch event {
+                case .delta(let text):
+                    streamingCaseworkerText += text
+                case .completed(let caseworkerText, let endOfInterview):
+                    streamingCaseworkerText = ""
+                    transcript.append(InterviewTurnDTO(role: "caseworker", text: caseworkerText))
+                    status = endOfInterview ? .complete : .awaitingUser
+                }
             }
         } catch {
+            streamingCaseworkerText = ""
             status = .failed("Caseworker turn failed: \(error.localizedDescription)")
         }
     }
