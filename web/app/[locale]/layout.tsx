@@ -7,10 +7,53 @@ import { DevA11yAudit } from "@/components/DevA11yAudit";
 import { Footer } from "@/components/layout/Footer";
 import "../globals.css";
 
-export const metadata: Metadata = {
-  title: "Civica SNAP — Prepare your application",
-  description: "Civica helps you prepare your SNAP application packet.",
-};
+const SITE_NAME = "Civica";
+const DEFAULT_TITLE = "Civica SNAP — Prepare your application";
+const DEFAULT_DESCRIPTION_EN =
+  "Civica helps you prepare your SNAP application packet.";
+const DEFAULT_DESCRIPTION_ES =
+  "Civica te ayuda a preparar tu paquete de solicitud de SNAP.";
+const OG_IMAGE = "/og-image.png";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const isEs = locale === "es";
+  const ogLocale = isEs ? "es_US" : "en_US";
+  const description = isEs ? DEFAULT_DESCRIPTION_ES : DEFAULT_DESCRIPTION_EN;
+
+  return {
+    title: {
+      default: DEFAULT_TITLE,
+      template: `%s | ${SITE_NAME}`,
+    },
+    description,
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      title: DEFAULT_TITLE,
+      description,
+      locale: ogLocale,
+      images: [
+        {
+          url: OG_IMAGE,
+          width: 1200,
+          height: 630,
+          alt: SITE_NAME,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: DEFAULT_TITLE,
+      description,
+      images: [OG_IMAGE],
+    },
+  };
+}
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
