@@ -20,6 +20,8 @@ struct SNAPVoiceTranscriptOverlay: View {
                     Text(headerText)
                         .font(CivicaTypography.captionStrong)
                         .foregroundStyle(CivicaColors.muted)
+                    Spacer(minLength: CivicaSpacing.sm)
+                    CivicaAIBadge()
                 }
                 Text(displayText)
                     .font(CivicaTypography.footnote)

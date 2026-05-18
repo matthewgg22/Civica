@@ -38,8 +38,11 @@ struct PracticeSessionView: View {
                                 Text(InterviewCoachStrings.caseworkerTyping.value(in: language))
                                     .font(CivicaTypography.captionStrong)
                                     .foregroundStyle(CivicaColors.graphite)
+                                Spacer(minLength: CivicaSpacing.sm)
+                                CivicaAIBadge()
                             }
                             .padding(.leading, CivicaSpacing.sm)
+                            .padding(.trailing, CivicaSpacing.sm)
                         }
 
                         if case .scoring = viewModel.status {

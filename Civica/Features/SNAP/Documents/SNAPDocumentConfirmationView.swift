@@ -33,6 +33,10 @@ struct SNAPDocumentConfirmationView: View {
                 } else {
                     nonPaystubFallback
                 }
+                HStack {
+                    Spacer(minLength: 0)
+                    CivicaAIBadge()
+                }
                 if !extraction.validationFlags.isEmpty {
                     validationFlagsSection
                 }
