@@ -24,16 +24,23 @@ struct MAStateRulesTests {
     // MARK: - Gross income (BBCE 200% FPL)
 
     @Test func grossIncomeLimitMatchesBBCETable() {
-        #expect(rules.grossIncomeLimit(householdSize: 1, asOf: fy26Date) == 2_510)
-        #expect(rules.grossIncomeLimit(householdSize: 2, asOf: fy26Date) == 3_408)
-        #expect(rules.grossIncomeLimit(householdSize: 3, asOf: fy26Date) == 4_304)
-        #expect(rules.grossIncomeLimit(householdSize: 4, asOf: fy26Date) == 5_200)
+        // DTA 106 CMR 364.976 verified values (effective 2026-02-01).
+        #expect(rules.grossIncomeLimit(householdSize: 1, asOf: fy26Date) == 2_660)
+        #expect(rules.grossIncomeLimit(householdSize: 2, asOf: fy26Date) == 3_607)
+        #expect(rules.grossIncomeLimit(householdSize: 3, asOf: fy26Date) == 4_553)
+        #expect(rules.grossIncomeLimit(householdSize: 4, asOf: fy26Date) == 5_500)
+        #expect(rules.grossIncomeLimit(householdSize: 5, asOf: fy26Date) == 6_447)
+        #expect(rules.grossIncomeLimit(householdSize: 6, asOf: fy26Date) == 7_393)
+        #expect(rules.grossIncomeLimit(householdSize: 7, asOf: fy26Date) == 8_340)
+        #expect(rules.grossIncomeLimit(householdSize: 8, asOf: fy26Date) == 9_287)
     }
 
-    @Test func grossIncomeLimitClampsLargeHouseholdsToSizeFour() {
-        let four = rules.grossIncomeLimit(householdSize: 4, asOf: fy26Date)
-        #expect(rules.grossIncomeLimit(householdSize: 5, asOf: fy26Date) == four)
-        #expect(rules.grossIncomeLimit(householdSize: 99, asOf: fy26Date) == four)
+    @Test func grossIncomeLimitExtendsBeyondEightWithPerAdditional() {
+        // Per DTA 106 CMR 364.976: +$947 per HH member beyond 8.
+        let eight = rules.grossIncomeLimit(householdSize: 8, asOf: fy26Date)
+        #expect(rules.grossIncomeLimit(householdSize: 9, asOf: fy26Date) == eight + 947)
+        #expect(rules.grossIncomeLimit(householdSize: 10, asOf: fy26Date) == eight + 1_894)
+        #expect(rules.grossIncomeLimit(householdSize: 12, asOf: fy26Date) == eight + 3_788)
     }
 
     @Test func grossIncomeLimitClampsZeroAndNegativeToSizeOne() {
@@ -52,18 +59,19 @@ struct MAStateRulesTests {
         )
     }
 
-    // MARK: - MA SUA chart
+    // MARK: - MA SUA chart (DTA 106 CMR 364.945, FY26)
 
     @Test func suaHeatingCoolingTier() {
-        #expect(rules.suaValue(tier: .heatingCooling, asOf: fy26Date) == 799)
+        // FY26 H/C SUA = $914. Bay State CAP recipients use this tier.
+        #expect(rules.suaValue(tier: .heatingCooling, asOf: fy26Date) == 914)
     }
 
     @Test func suaNonHeatingTier() {
-        #expect(rules.suaValue(tier: .nonHeating, asOf: fy26Date) == 507)
+        #expect(rules.suaValue(tier: .nonHeating, asOf: fy26Date) == 556)
     }
 
     @Test func suaPhoneOnlyTier() {
-        #expect(rules.suaValue(tier: .phoneOnly, asOf: fy26Date) == 63)
+        #expect(rules.suaValue(tier: .phoneOnly, asOf: fy26Date) == 64)
     }
 
     @Test func suaNoneTierReturnsNil() {

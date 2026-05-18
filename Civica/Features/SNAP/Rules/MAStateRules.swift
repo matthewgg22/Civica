@@ -33,8 +33,13 @@ struct MAStateRules: SNAPStateRuleEngine {
 
     func grossIncomeLimit(householdSize: Int, asOf: Date) -> Decimal {
         let snapshot = activeBBCESnapshot(asOf: asOf)
-        let size = max(1, min(householdSize, snapshot.value.count - 1))
-        return snapshot.value[size]
+        let table = snapshot.value
+        let size = max(1, householdSize)
+        if size < table.perSize.count {
+            return table.perSize[size]
+        }
+        let lastIndex = table.perSize.count - 1
+        return table.perSize[lastIndex] + Decimal(size - lastIndex) * table.perAdditional
     }
 
     func netIncomeLimit(householdSize: Int, asOf: Date) -> Decimal {
@@ -85,8 +90,10 @@ struct MAStateRules: SNAPStateRuleEngine {
         federal.assetLimit(isElderlyOrDisabled: isElderlyOrDisabled, asOf: asOf)
     }
 
-    /// MA SUA chart (FY26-seeded from backend FY25 values). Tiers:
-    /// heating_cooling = $799, non_heating = $507, phone_only = $63.
+    /// MA SUA chart (FY26 from DTA 106 CMR 364.945). Tiers:
+    /// heating_cooling = $914, non_heating = $556, phone_only = $64.
+    /// Bay State CAP recipients use the heating/cooling tier per
+    /// DTA note (Bay State CAP SUA = $914, identical to H/C).
     /// Tier `.none` returns nil so the calculator falls back to
     /// actual utility costs.
     func suaValue(tier: SUATier, asOf: Date) -> Decimal? {
@@ -175,31 +182,42 @@ struct MAStateRules: SNAPStateRuleEngine {
 
 private extension MAStateRules {
 
-    /// 200% of FY26 federal poverty guideline monthly income, the
-    /// Massachusetts BBCE gross income gate. Index 0 unused; index
-    /// 1-4 = household size. For 5+ households the size-4 floor is
-    /// returned (conservative under-estimate of eligibility since
-    /// real size-5+ thresholds are higher; can never over-estimate).
-    ///
-    /// Identical to the pre-refactor SNAPLocalEligibilityEvaluator
-    /// ma200FplMonthly array, preserved bit-for-bit so MA users see
-    /// the same verdict after the cutover.
-    static let bbce200Snapshots: [PolicySnapshot<[Decimal]>] = [
+    struct MABBCETable {
+        /// Index 0 unused; indices 1-8 = HH size monthly thresholds.
+        let perSize: [Decimal]
+        /// Added to the size-8 value for each member beyond 8.
+        let perAdditional: Decimal
+    }
+
+    /// Massachusetts BBCE gross income gate at 200% FPL, monthly.
+    /// Verified against DTA 106 CMR 364.976 (effective 2026-02-01).
+    /// MA uses the 2026 HHS FPL basis (Feb 2026 update); CA uses
+    /// the FFY2026 FPL basis (Oct 2025). The dollar tables differ
+    /// even though both anchor at 200% FPL — do not reuse CA's
+    /// table here.
+    static let bbce200Snapshots: [PolicySnapshot<MABBCETable>] = [
         .iso(
             from: "2025-10-01",
             to: "2026-09-30",
             versionSuffix: "FY26",
-            value: [
-                0,        // unused
-                2_510,    // 1 person: $1,255 x 200%
-                3_408,    // 2 person: $1,704 x 200%
-                4_304,    // 3 person: $2,152 x 200%
-                5_200     // 4 person: $2,600 x 200%
-            ]
+            value: MABBCETable(
+                perSize: [
+                    0,        // unused
+                    2_660,    // HH 1
+                    3_607,    // HH 2
+                    4_553,    // HH 3
+                    5_500,    // HH 4
+                    6_447,    // HH 5
+                    7_393,    // HH 6
+                    8_340,    // HH 7
+                    9_287     // HH 8
+                ],
+                perAdditional: 947
+            )
         )
     ]
 
-    func activeBBCESnapshot(asOf: Date) -> PolicySnapshot<[Decimal]> {
+    func activeBBCESnapshot(asOf: Date) -> PolicySnapshot<MABBCETable> {
         Self.bbce200Snapshots.first(where: { $0.contains(asOf) })
             ?? Self.bbce200Snapshots.last!
     }
@@ -210,18 +228,20 @@ private extension MAStateRules {
         let phoneOnly: Decimal
     }
 
-    /// MA SUA tiers seeded from backend poverty_guidelines.py
-    /// FY25 chart (MA DTA). When MA publishes FY27 values, add a
-    /// new snapshot — don't edit the FY26 row in place.
+    /// MA SUA tiers from DTA 106 CMR 364.945 (effective 2025-10-01).
+    /// Bay State CAP recipients use the heating/cooling value
+    /// ($914 = same as H/C tier) per DTA note. When MA publishes
+    /// FY27 values, add a new snapshot — don't edit the FY26 row
+    /// in place.
     static let suaSnapshots: [PolicySnapshot<MASUATable>] = [
         .iso(
             from: "2025-10-01",
             to: "2026-09-30",
             versionSuffix: "FY26",
             value: MASUATable(
-                heatingCooling: 799,
-                nonHeating: 507,
-                phoneOnly: 63
+                heatingCooling: 914,
+                nonHeating: 556,
+                phoneOnly: 64
             )
         )
     ]

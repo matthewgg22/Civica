@@ -116,11 +116,11 @@ struct SNAPBenefitCalculatorTests {
     // MARK: - Elderly/disabled removes the shelter cap
 
     /// Same shelter math as above but no cap — full excess shelter
-    /// deducts.
-    ///   shelter    = 800 + max(100, 799)           = 1599
-    ///   raw excess = 1599 - 495.5                  = 1103.5
-    ///   excess     = 1103.5 (no cap for elderly/disabled) → round 1104
-    ///   net        = 991 - 1103.5                  = -112.5 → 0
+    /// deducts. MA SUA H/C = $914 (FY26 from DTA 106 CMR 364.945).
+    ///   shelter    = 800 + max(100, 914)           = 1714
+    ///   raw excess = 1714 - 495.5                  = 1218.5 → 1219
+    ///   excess     = 1219 (no cap for elderly/disabled)
+    ///   net        = 991 - 1219                    = -228 → 0
     ///   30% of net = 0
     ///   benefit    = 546 - 0                       = 546
     @Test func elderlyDisabledHasNoShelterCap() {
@@ -138,7 +138,7 @@ struct SNAPBenefitCalculatorTests {
             today: fy26Date
         )
 
-        #expect(calc.excessShelterDeduction == 1_104)
+        #expect(calc.excessShelterDeduction == 1_219)
         #expect(calc.netMonthlyIncome == 0)
         #expect(calc.thirtyPercentOfNet == 0)
         #expect(calc.monthlyBenefit == 546)
