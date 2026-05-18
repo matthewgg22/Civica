@@ -61,6 +61,8 @@ class LLMCallTelemetry:
     provider_used: str
     input_tokens: int = 0
     output_tokens: int = 0
+    cache_creation_input_tokens: int = 0
+    cache_read_input_tokens: int = 0
     latency_ms: int = 0
     retries: int = 0
     fell_back_from_anthropic: bool = False
@@ -157,6 +159,11 @@ class LLMClient:
 
             self._anthropic = anthropic.Anthropic(api_key=self._anthropic_api_key, timeout=self._timeout_seconds)
 
+        # Cache the static system prompt so repeated turns in the same
+        # conversation pay 10% of input price instead of full price for
+        # the prompt tokens.
+        cached_system = [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}]
+
         retries = 0
         last_validation_error: ValidationError | None = None
         while retries <= self._max_retries:
@@ -164,7 +171,7 @@ class LLMClient:
             response = self._anthropic.messages.create(
                 model=model,
                 max_tokens=2048,
-                system=system,
+                system=cached_system,
                 messages=messages,
                 tools=[
                     {
@@ -194,14 +201,18 @@ class LLMClient:
 
             input_tokens = getattr(response.usage, "input_tokens", 0)
             output_tokens = getattr(response.usage, "output_tokens", 0)
+            cache_creation = getattr(response.usage, "cache_creation_input_tokens", 0) or 0
+            cache_read = getattr(response.usage, "cache_read_input_tokens", 0) or 0
             telemetry = LLMCallTelemetry(
                 model_used=model,
                 provider_used="anthropic",
                 input_tokens=input_tokens,
                 output_tokens=output_tokens,
+                cache_creation_input_tokens=cache_creation,
+                cache_read_input_tokens=cache_read,
                 latency_ms=latency_ms,
                 retries=retries,
-                cost_usd=_compute_cost(model, input_tokens, output_tokens),
+                cost_usd=_compute_cost(model, input_tokens, output_tokens, cache_creation, cache_read),
             )
             return parsed, telemetry
 
@@ -266,12 +277,22 @@ class LLMClient:
         )
 
 
-def _compute_cost(model: str, input_tokens: int, output_tokens: int) -> Decimal:
+def _compute_cost(
+    model: str,
+    input_tokens: int,
+    output_tokens: int,
+    cache_creation_tokens: int = 0,
+    cache_read_tokens: int = 0,
+) -> Decimal:
     pricing = _PRICING.get(model)
     if pricing is None:
         return Decimal("0")
     in_rate, out_rate = pricing
+    # Cache reads are billed at 10% of the regular input rate.
+    # Cache creation is billed at the regular input rate.
     return (
         Decimal(input_tokens) * in_rate / Decimal(1_000_000)
         + Decimal(output_tokens) * out_rate / Decimal(1_000_000)
+        + Decimal(cache_creation_tokens) * in_rate / Decimal(1_000_000)
+        + Decimal(cache_read_tokens) * in_rate / Decimal(10_000_000)
     )
