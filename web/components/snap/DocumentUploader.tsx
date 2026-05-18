@@ -2,6 +2,7 @@
 
 import { useRef, useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { downscaleImage } from "@/lib/storage/imageUtils";
 import { cn } from "@/lib/utils";
@@ -82,10 +83,12 @@ export function DocumentUploader({ packetId, documentId, onSuccess, compact = fa
             ? URL.createObjectURL(toUpload)
             : "";
           setState({ phase: "done", previewUrl, fileName: toUpload.name });
+          toast.success(t("toastUploadSuccess"));
           onSuccess();
         })
         .catch((err: Error) => {
           setState({ phase: "error", message: err.message });
+          toast.error(t("toastUploadError"));
         });
     },
     [packetId, documentId, onSuccess, t]

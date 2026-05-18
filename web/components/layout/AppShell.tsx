@@ -2,6 +2,8 @@
 
 import { useTransition } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { signOut } from "@/lib/auth/actions";
 import { DisclaimerBanner } from "./DisclaimerBanner";
@@ -29,10 +31,12 @@ export function AppShell({
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const pathname = usePathname();
+  const tc = useTranslations("common");
 
   function handleSignOut() {
     startTransition(async () => {
       await signOut();
+      toast(tc("toastSignedOut"));
       router.push(`/${locale}/sign-in`);
     });
   }

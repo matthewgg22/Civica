@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createClient } from "../lib/supabase";
 import { api } from "../lib/api";
 import { formatDateTime } from "../lib/format";
@@ -79,9 +80,12 @@ export default function MissingItemRequestPanel({ packetId, unresolvedItems }: P
       setNote("");
       const rows = await api.missingItems.list(session.access_token, packetId);
       setRequests(rows as RequestRow[]);
+      toast.success("Request sent to applicant");
       router.refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to send request");
+      const msg = e instanceof Error ? e.message : "Failed to send request";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
