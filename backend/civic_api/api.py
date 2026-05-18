@@ -802,6 +802,32 @@ except Exception:  # pragma: no cover
     HTMLResponse = None
     Response = None
 
+try:
+    import sentry_sdk
+    from sentry_sdk.integrations.fastapi import FastApiIntegration
+    from sentry_sdk.integrations.starlette import StarletteIntegration
+    _SENTRY_AVAILABLE = True
+except ImportError:  # pragma: no cover
+    _SENTRY_AVAILABLE = False
+
+
+def _init_sentry() -> None:
+    if not _SENTRY_AVAILABLE:
+        return
+    dsn = os.environ.get("SENTRY_DSN")
+    if not dsn:
+        return
+    sentry_sdk.init(
+        dsn=dsn,
+        environment=os.environ.get("FLY_APP_NAME", "development"),
+        integrations=[StarletteIntegration(), FastApiIntegration()],
+        traces_sample_rate=0.05,
+        send_default_pii=False,
+    )
+
+
+_init_sentry()
+
 
 def _extract_bearer_token(authorization_header: str | None) -> str:
     header = (authorization_header or "").strip()
