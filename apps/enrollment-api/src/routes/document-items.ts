@@ -128,11 +128,12 @@ app.post(
 
     // Build answers without undefined-valued keys so that
     // exactOptionalPropertyTypes is satisfied at the snap-rules boundary.
+    // household_size is a top-level EvaluateInput field (not in answers) since PR #94.
     const ra = body.answers;
-    const { items } = evaluateChecklist({
-      state: packet.state_code,
+    const { required_items } = evaluateChecklist({
+      state_code: packet.state_code as "CA" | "MA",
+      household_size: ra.household_size ?? 1,
       answers: {
-        ...(ra.household_size !== undefined && { household_size: ra.household_size }),
         ...(ra.has_earned_income !== undefined && { has_earned_income: ra.has_earned_income }),
         ...(ra.has_unearned_income !== undefined && { has_unearned_income: ra.has_unearned_income }),
         ...(ra.claims_shelter_deduction !== undefined && { claims_shelter_deduction: ra.claims_shelter_deduction }),
@@ -140,15 +141,16 @@ app.post(
       },
     });
 
-    if (items.length === 0) {
+    if (required_items.length === 0) {
       return c.json({ seeded: 0, items: [] }, 200);
     }
 
-    const rows = items.map((item) => ({
+    const rows = required_items.map((item) => ({
       packet_id: packetId,
       state_code: packet.state_code,
-      document_kind: item.category,
-      label: item.label,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      document_kind: item.document_kind as any,
+      label: item.label_en,
       is_required: true,
     }));
 
