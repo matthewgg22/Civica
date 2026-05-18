@@ -221,6 +221,26 @@ enum SNAPBenefitEstimatorStrings {
         es: "Las reglas de SNAP de Civica fueron actualizadas para el año fiscal actual y pueden no reflejar nuevos cambios federales o estatales. Usa la estimación como una guía aproximada y confirma con tu agencia estatal."
     )
 
+    // MARK: - Federal-vs-state clarifier
+
+    /// One-line clarifier shown on the eligible result card below
+    /// the dollar amount. Frames the estimate as *federal* so users
+    /// aren't surprised when their full state application produces a
+    /// different number (state deductions, BBCE, categorical
+    /// eligibility, etc). See SNAPBenefitEstimatorCalculator.swift
+    /// (search "Top-of-funnel uses federal rules") for why the
+    /// estimator intentionally uses federal rules at top-of-funnel.
+    static func federalEstimateNote(stateCode: String?, language: CivicaLanguage) -> String {
+        let resolved = stateCode ?? SNAPAgencyDirectory.launchStateCode
+        let agency = SNAPAgencyDirectory.agencyShortName(for: resolved, language: language)
+        switch language {
+        case .english:
+            return "Federal estimate. Your full \(agency) application uses state-specific rules and may show a different amount."
+        case .spanish:
+            return "Estimación federal. Tu solicitud completa de \(agency) usa reglas estatales y puede mostrar un monto diferente."
+        }
+    }
+
     // MARK: - Source-citation footer (signoff defensibility)
 
     /// One-line provenance shown under the dollar amount on every

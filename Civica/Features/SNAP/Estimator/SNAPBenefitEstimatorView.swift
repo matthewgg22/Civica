@@ -358,6 +358,15 @@ struct SNAPBenefitEstimatorView: View {
                 .fixedSize()
             }
 
+            // Federal-vs-state clarifier. Top-of-funnel estimator
+            // intentionally runs federal rules — call that out so
+            // the full state application's different number isn't a
+            // surprise.
+            Text(SNAPBenefitEstimatorStrings.federalEstimateNote(stateCode: nil, language: language))
+                .font(CivicaTypography.footnote)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+
             // Source-citation footer — defensibility surface. If a user
             // appeals a state determination and screenshots the app, the
             // FY + COLA source is visible without opening the math sheet.
