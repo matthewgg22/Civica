@@ -1,6 +1,6 @@
 # SNAP B2C v1 Launch Readiness
 
-> **Scope:** California public launch. Last updated: 2026-05-17.
+> **Scope:** California public launch. Last updated: 2026-05-18.
 > This document is the single go/no-go gate. Update statuses here; do not duplicate detail — link to source docs.
 
 ---
@@ -83,9 +83,7 @@ Action required: route translations to an external reviewer before launch. Flag 
 
 ### 8. Vercel production env vars confirmed (`NEXT_PUBLIC_API_BASE_URL`)
 
-**⏳ Needs dashboard verification** — `web/.env.example` is correct (points to enrollment gateway). The Lighthouse CI workflow hard-codes `https://civica-enrollment-api.civica-api.workers.dev` for build-time checks.
-
-Action: confirm the Vercel project env var `NEXT_PUBLIC_API_BASE_URL` is set to the production enrollment gateway URL, not any legacy or staging value. Do this in the Vercel dashboard before the staging E2E sign-off.
+**✅ Confirmed** — `NEXT_PUBLIC_API_BASE_URL` verified in Vercel dashboard (2026-05-18) pointing to `https://civica-enrollment-api.civica-api.workers.dev` for the Production environment.
 
 ---
 
@@ -119,10 +117,10 @@ All **Required** items must be ✅ before flip. **Nice-to-have** items can follo
 [ ] All 9 compliance registry strings: status = .approved with counsel signoff date
 [ ] Spanish parity external review complete
 [x] Vercel civica-app Root Directory misconfiguration resolved
-[ ] Vercel NEXT_PUBLIC_API_BASE_URL confirmed pointing to production enrollment gateway
+[x] Vercel NEXT_PUBLIC_API_BASE_URL confirmed pointing to production enrollment gateway
 [ ] Staging UAT sign-off from Silo H navigator team (results at docs/snap/uat-results-<date>.md)
 [ ] OBBBA Track 2 counsel answers received (or explicit written deferral accepted by counsel)
-[ ] GitHub Actions secrets set: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, ENROLLMENT_API_PROD_URL, API_PROD_URL
+[x] GitHub Actions secrets set: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, ENROLLMENT_API_PROD_URL, API_PROD_URL
 ```
 
 ### Nice-to-have (can launch without, track as fast-follow)
@@ -143,11 +141,11 @@ All **Required** items must be ✅ before flip. **Nice-to-have** items can follo
 
 | Role | Person | Contact |
 |---|---|---|
-| Launch lead | `<navigator team lead>` | `<fill in>` |
-| iOS engineering | Matthew | `<fill in>` |
-| Backend / infra | `<fill in>` | `<fill in>` |
-| Counsel on-call | `<fill in>` | `<fill in>` |
-| Sentry alert recipient | `<fill in>` | `<fill in>` |
+| Launch lead | TBD | TBD |
+| iOS engineering | Matthew Greer-Gentis | matthewgg22 (GitHub) |
+| Backend / infra | TBD | TBD |
+| Counsel on-call | TBD | TBD |
+| Sentry alert recipient | TBD | TBD |
 
 ### Order of operations
 
@@ -244,7 +242,7 @@ Migrations flagged as especially high-risk:
 | [`20260524_drop_public_snap_legacy.sql`](../../supabase/migrations/20260524_drop_public_snap_legacy.sql) | Permanently drops `public.snap_*` tables. If applied to prod and a rollback is needed, data in those tables is gone unless the backup predates this migration. |
 | [`20260528_snap_enrollment_12_storage_documents.sql`](../../supabase/migrations/20260528_snap_enrollment_12_storage_documents.sql) | Storage bucket + RLS for documents. Bucket contents survive migration reversal via backup, but re-applying the drop would delete them. |
 
-**Before launch:** verify Supabase point-in-time recovery is enabled on the production project and note the current recovery point. For any incident that requires DB rollback, open a Supabase support ticket immediately — PITR restores are time-sensitive.
+**✅ PITR confirmed enabled** (2026-05-18) — verified in Supabase dashboard → Production project → Settings → Database → Backups. For any incident that requires DB rollback, open a Supabase support ticket immediately — PITR restores are time-sensitive.
 
 ---
 
