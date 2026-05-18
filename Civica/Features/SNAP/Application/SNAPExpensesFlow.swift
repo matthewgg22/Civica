@@ -357,13 +357,13 @@ enum SNAPExpensesStrings {
         case (.rent, .spanish):
             return "Incluye renta, hipoteca o cualquier pago regular por donde vives. Una estimación está bien. Pon 0 si no pagas renta ahora mismo."
         case (.paysUtilitiesSeparately, .english):
-            return "Select Yes if you get and pay your own electric, gas, water, or heat bills. Select No if utilities are included in your rent."
+            return "Select Yes if you get and pay your own electric, gas, water, heat, or phone bills. Select No if utilities are included in your rent. (Internet is not counted as a utility for SNAP.)"
         case (.paysUtilitiesSeparately, .spanish):
-            return "Selecciona Sí si recibes y pagas tus propias facturas de electricidad, gas, agua o calefacción. Selecciona No si los servicios están incluidos en tu renta."
+            return "Selecciona Sí si recibes y pagas tus propias facturas de electricidad, gas, agua, calefacción o teléfono. Selecciona No si los servicios están incluidos en tu renta. (El internet no cuenta como servicio para SNAP.)"
         case (.utilities, .english):
-            return "Add up a typical month — electricity, heat, gas, water, phone. The total matters more than each line item."
+            return "Add up a typical month — electricity, heat, gas, water, phone. Do not include internet (SNAP doesn't count internet as a utility). The total matters more than each line item."
         case (.utilities, .spanish):
-            return "Suma un mes típico — electricidad, calefacción, gas, agua, teléfono. El total importa más que cada línea."
+            return "Suma un mes típico — electricidad, calefacción, gas, agua, teléfono. No incluyas internet (SNAP no cuenta el internet como servicio). El total importa más que cada línea."
         case (.utilityShutoff, .english):
             return "A written or paper notice that power, gas, water, or heat will be cut off if you don't pay. This can speed up your SNAP application."
         case (.utilityShutoff, .spanish):

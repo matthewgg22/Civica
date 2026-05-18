@@ -309,7 +309,10 @@ struct ExpensesExtraction: SNAPDraftPatchProducing {
     var monthlyRentOrHousing: Double?
     var monthlyRentOrHousingConfidence: Double?
 
-    @Guide(description: "Monthly utilities cost in US dollars. Range 0 to 5000.")
+    // OBBBA §10104 (eff. 2025-07-04) removed internet from the SNAP
+    // excess-shelter deduction. The Guide explicitly excludes internet
+    // so the LLM doesn't roll an internet bill into the utilities total.
+    @Guide(description: "Monthly utilities cost in US dollars — electricity, heat, gas, water, phone. Do NOT include internet; SNAP does not count internet as a utility. Range 0 to 5000.")
     var monthlyUtilities: Double?
     var monthlyUtilitiesConfidence: Double?
 
