@@ -4,6 +4,8 @@ export interface Env {
   SUPABASE_ANON_KEY: string;
   SNAP_FERNET_KEY: string;
   SENTRY_DSN: string;
+  /** Temporary: set to "1" to enable /debug/sentry-check — remove before prod. */
+  SENTRY_CHECK_ENABLED?: string;
 }
 
 export interface Variables {

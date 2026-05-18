@@ -26,6 +26,12 @@ app.use("*", cors({ origin: "*", allowMethods: ["GET", "POST", "PATCH", "PUT", "
 
 app.get("/health", (c) => c.json({ ok: true, service: "civica-enrollment-api" }));
 
+// TEMPORARY — remove before merging. Enabled by wrangler secret SENTRY_CHECK_ENABLED=1.
+app.get("/debug/sentry-check", (c) => {
+  if (!c.env.SENTRY_CHECK_ENABLED) return c.json({ error: "not_enabled" }, 404);
+  throw new Error("Sentry check: intentional test error from civica-enrollment-api");
+});
+
 // All enrollment routes require a valid Supabase JWT
 const api = new Hono<{ Bindings: Env }>();
 api.use("*", authMiddleware);

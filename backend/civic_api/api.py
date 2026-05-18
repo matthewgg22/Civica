@@ -802,6 +802,32 @@ except Exception:  # pragma: no cover
     HTMLResponse = None
     Response = None
 
+try:
+    import sentry_sdk
+    from sentry_sdk.integrations.fastapi import FastApiIntegration
+    from sentry_sdk.integrations.starlette import StarletteIntegration
+    _SENTRY_AVAILABLE = True
+except ImportError:  # pragma: no cover
+    _SENTRY_AVAILABLE = False
+
+
+def _init_sentry() -> None:
+    if not _SENTRY_AVAILABLE:
+        return
+    dsn = os.environ.get("SENTRY_DSN")
+    if not dsn:
+        return
+    sentry_sdk.init(
+        dsn=dsn,
+        environment=os.environ.get("FLY_APP_NAME", "development"),
+        integrations=[StarletteIntegration(), FastApiIntegration()],
+        traces_sample_rate=0.05,
+        send_default_pii=False,
+    )
+
+
+_init_sentry()
+
 
 def _extract_bearer_token(authorization_header: str | None) -> str:
     header = (authorization_header or "").strip()
@@ -1001,6 +1027,12 @@ if FastAPI is not None:
     @app.get("/healthz")
     def healthz() -> dict[str, bool]:
         return {"ok": True}
+
+    # TEMPORARY — remove before merging. Enable with SENTRY_CHECK_ENABLED=1 fly secret.
+    if os.environ.get("SENTRY_CHECK_ENABLED"):
+        @app.get("/debug/sentry-check")
+        def sentry_check() -> None:
+            raise RuntimeError("Sentry check: intentional test error from civica-snap-engine")
 
     @app.get("/api/v1/civic/examples")
     def civic_examples(request: Request) -> dict[str, Any]:
