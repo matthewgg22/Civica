@@ -20,14 +20,14 @@ export function PacketTimeline({ entries, statusLabels }: Props) {
   return (
     <ol
       aria-label="Application history"
-      className="relative space-y-0 border-l border-slate-200 pl-6"
+      className="relative space-y-0 border-l border-hairline pl-6"
     >
       {sorted.map((entry, i) => (
         <li key={i} className="relative pb-6 last:pb-0">
           {/* Dot */}
           <span
             aria-hidden="true"
-            className="absolute -left-[25px] top-1 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white bg-slate-300 ring-2 ring-slate-200"
+            className="absolute -left-[25px] top-1 flex h-4 w-4 items-center justify-center rounded-full border-2 border-surface bg-graphite ring-2 ring-hairline"
           />
 
           <div className="space-y-1">
@@ -35,11 +35,11 @@ export function PacketTimeline({ entries, statusLabels }: Props) {
               status={entry.status as PacketStatus}
               label={statusLabels?.[entry.status as PacketStatus]}
             />
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-graphite">
               {new Date(entry.timestamp).toLocaleString()}
             </p>
             {entry.note && (
-              <p className="text-sm text-slate-600">{entry.note}</p>
+              <p className="text-sm text-graphite">{entry.note}</p>
             )}
           </div>
         </li>

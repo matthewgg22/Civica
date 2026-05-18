@@ -10,9 +10,9 @@ const STATUS_CONFIG: Record<
 > = {
   "Not Started": {
     icon: "○",
-    bg: "bg-slate-100",
-    text: "text-slate-700",
-    border: "border-slate-300",
+    bg: "bg-ink/5",
+    text: "text-ink",
+    border: "border-hairline",
   },
   Uploaded: {
     icon: "↑",
@@ -46,15 +46,15 @@ const STATUS_CONFIG: Record<
   },
   Optional: {
     icon: "◇",
-    bg: "bg-slate-50",
-    text: "text-slate-600",
-    border: "border-slate-200",
+    bg: "bg-ink/5",
+    text: "text-graphite",
+    border: "border-hairline",
   },
   "N/A": {
     icon: "–",
-    bg: "bg-slate-50",
-    text: "text-slate-600",
-    border: "border-slate-200",
+    bg: "bg-ink/5",
+    text: "text-graphite",
+    border: "border-hairline",
   },
 };
 

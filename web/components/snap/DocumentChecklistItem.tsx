@@ -38,20 +38,20 @@ export function DocumentChecklistItem({ item, packetId, onUploaded }: Props) {
   }
 
   return (
-    <li className="rounded-xl border border-slate-200 bg-white">
+    <li className="rounded-xl border border-hairline bg-surface">
       {/* Row */}
       <div className="flex items-start gap-3 p-4">
         <div className="min-w-0 flex-1 space-y-1">
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-medium">{item.name}</span>
             {item.required && (
-              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
+              <span className="rounded-full border border-hairline bg-paper px-2 py-0.5 text-xs text-graphite">
                 {t("required")}
               </span>
             )}
           </div>
           {item.description && (
-            <p className="text-sm text-slate-500">{item.description}</p>
+            <p className="text-sm text-graphite">{item.description}</p>
           )}
           <DocumentStatusChip status={localStatus} className="mt-1" />
         </div>
@@ -71,7 +71,7 @@ export function DocumentChecklistItem({ item, packetId, onUploaded }: Props) {
 
       {/* Expandable uploader */}
       {expanded && canUpload && (
-        <div id={controlsId} className="border-t border-slate-100 p-4">
+        <div id={controlsId} className="border-t border-hairline p-4">
           <DocumentUploader
             packetId={packetId}
             documentId={item.id}

@@ -182,10 +182,10 @@ export function DocumentUploader({ packetId, documentId, onSuccess, compact = fa
           onKeyDown={handleDropZoneKeyDown}
           onClick={() => fileInputRef.current?.click()}
           className={cn(
-            "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-6 text-sm text-slate-500 motion-safe:transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2",
+            "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-6 text-sm text-graphite motion-safe:transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brick focus-visible:ring-offset-2",
             isDragOver
-              ? "border-slate-900 bg-slate-50 text-slate-900"
-              : "border-slate-200 hover:border-slate-400"
+              ? "border-brick bg-brick/8 text-ink"
+              : "border-hairline hover:border-brick/40"
           )}
         >
           <span className="text-2xl" aria-hidden="true">📎</span>
@@ -222,18 +222,18 @@ export function DocumentUploader({ packetId, documentId, onSuccess, compact = fa
 
       {/* Upload progress */}
       {state.phase === "processing" && (
-        <p className="text-sm text-slate-500" aria-live="polite">
+        <p className="text-sm text-graphite" aria-live="polite">
           {tc("processing")}
         </p>
       )}
       {state.phase === "uploading" && (
         <div className="space-y-1" aria-live="polite">
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-graphite">
             {t("uploadProgress", { percent: state.percent })}
           </p>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+          <div className="h-2 w-full overflow-hidden rounded-full bg-hairline">
             <div
-              className="h-full rounded-full bg-slate-900 motion-safe:transition-all motion-safe:duration-150"
+              className="h-full rounded-full bg-teal motion-safe:transition-all motion-safe:duration-150"
               style={{ width: `${state.percent}%` }}
               role="progressbar"
               aria-valuenow={state.percent}
