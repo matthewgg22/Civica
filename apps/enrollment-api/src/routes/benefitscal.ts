@@ -27,6 +27,7 @@ import { makeAnonClient, makeServiceClient } from "../lib/supabase.js";
 import { withActorContext } from "../middleware/actorContext.js";
 import { runBenefitsCalSubmission } from "../lib/benefitscal-submit.js";
 import type { BrowserDriverFactory } from "@civica/benefitscal-cbo";
+import { browserlessDriverFactory } from "@civica/benefitscal-cbo/drivers/browserless";
 import type { Env } from "../types.js";
 
 /**
@@ -330,7 +331,15 @@ app.post(
         void p;
       }
     };
-    const factory = driverFactoryOverride;
+    // Driver resolution order:
+    //   1. driverFactoryOverride — set by tests via __setBenefitsCalDriverFactory.
+    //   2. BROWSERLESS_API_KEY in env — production path (TODO-15).
+    //   3. null — graceful DRIVER_NOT_WIRED failure (dev / staging without secrets).
+    const factory: BrowserDriverFactory | null =
+      driverFactoryOverride ??
+      (c.env.BROWSERLESS_API_KEY
+        ? browserlessDriverFactory({ apiKey: c.env.BROWSERLESS_API_KEY })
+        : null);
     if (factory) {
       waitUntil(
         runBenefitsCalSubmission({

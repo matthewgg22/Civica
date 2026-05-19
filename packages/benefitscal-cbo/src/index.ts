@@ -35,3 +35,8 @@ export type {
   BrowserDriverPage,
   BrowserDriverFactory,
 } from "./submitter";
+export { browserlessDriverFactory } from "./drivers/browserless";
+export type {
+  BrowserlessDriverOptions,
+  BrowserlessFunctionResponse,
+} from "./drivers/browserless";
