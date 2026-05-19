@@ -87,7 +87,7 @@ app.post('/', async (c) => {
   const rawBody = await c.req.text();
 
   const sigHeader = c.req.header('Argyle-Signature');
-  const secret = (c.env as unknown as { ARGYLE_WEBHOOK_SECRET?: string }).ARGYLE_WEBHOOK_SECRET;
+  const secret = c.env.ARGYLE_WEBHOOK_SECRET;
 
   if (secret) {
     const valid = await verifyArgyleSignature(secret, rawBody, sigHeader);

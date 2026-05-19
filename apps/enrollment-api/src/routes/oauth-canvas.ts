@@ -84,16 +84,8 @@ async function decryptToken(secret: string, ciphertext: string): Promise<string>
 // Canvas token exchange helper
 // ---------------------------------------------------------------------------
 
-interface CanvasEnv {
-  CANVAS_CLIENT_ID: string;
-  CANVAS_CLIENT_SECRET: string;
-  CANVAS_INSTANCE_URL: string;   // e.g. https://myschool.instructure.com
-  CANVAS_REDIRECT_URI: string;
-  SNAP_FERNET_KEY: string;
-}
-
 async function exchangeCanvasCode(
-  env: CanvasEnv,
+  env: Env,
   code: string,
 ): Promise<{ accessToken: string; refreshToken: string; expiresIn: number }> {
   const body = new URLSearchParams({
@@ -142,16 +134,14 @@ const app = new Hono<{ Bindings: Env }>();
 app.post('/exchange', zValidator('json', exchangeBodySchema), async (c) => {
   const actor = c.get('actor');
   const body = c.req.valid('json');
-  const canvasEnv = c.env as unknown as CanvasEnv;
-
-  if (!canvasEnv.CANVAS_CLIENT_ID || !canvasEnv.CANVAS_CLIENT_SECRET) {
+  if (!c.env.CANVAS_CLIENT_ID || !c.env.CANVAS_CLIENT_SECRET) {
     throw new HTTPException(503, { message: 'Canvas integration not configured' });
   }
 
-  const { accessToken, refreshToken, expiresIn } = await exchangeCanvasCode(canvasEnv, body.code);
+  const { accessToken, refreshToken, expiresIn } = await exchangeCanvasCode(c.env, body.code);
 
-  const encryptedAccess = await encryptToken(canvasEnv.SNAP_FERNET_KEY, accessToken);
-  const encryptedRefresh = await encryptToken(canvasEnv.SNAP_FERNET_KEY, refreshToken);
+  const encryptedAccess = await encryptToken(c.env.SNAP_FERNET_KEY, accessToken);
+  const encryptedRefresh = await encryptToken(c.env.SNAP_FERNET_KEY, refreshToken);
   const expiresAt = new Date(Date.now() + expiresIn * 1000).toISOString();
 
   const db = makeServiceClient(c.env);
@@ -165,7 +155,7 @@ app.post('/exchange', zValidator('json', exchangeBodySchema), async (c) => {
       access_token_enc: encryptedAccess,
       refresh_token_enc: encryptedRefresh,
       expires_at: expiresAt,
-      canvas_instance_url: canvasEnv.CANVAS_INSTANCE_URL,
+      canvas_instance_url: c.env.CANVAS_INSTANCE_URL ?? '',
       revoked_at: null,
     }, { onConflict: 'applicant_id' });
 
@@ -218,7 +208,6 @@ app.get('/schedule', async (c) => {
   const cached = getCache<CanvasSchedule>(cacheKey);
   if (cached) return c.json(cached);
 
-  const canvasEnv = c.env as unknown as CanvasEnv;
   const serviceDb = makeServiceClient(c.env);
 
   // Fetch encrypted token from canvas_connections
@@ -235,7 +224,7 @@ app.get('/schedule', async (c) => {
     throw new HTTPException(401, { message: 'Canvas token expired — reconnect Canvas' });
   }
 
-  const accessToken = await decryptToken(canvasEnv.SNAP_FERNET_KEY, conn.access_token_enc);
+  const accessToken = await decryptToken(c.env.SNAP_FERNET_KEY, conn.access_token_enc);
   const instanceUrl = conn.canvas_instance_url;
 
   // Query Canvas calendar events for the next 30 days
