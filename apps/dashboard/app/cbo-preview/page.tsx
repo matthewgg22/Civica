@@ -1,20 +1,86 @@
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import { homeForRole } from "../../lib/roleRouting";
+import DemoModeBadge from "../../components/DemoModeBadge";
 
 export const dynamic = "force-dynamic";
 
-// T5 audience view: prospective CBO licensee (read-only demo). Shows what a
-// CBO would see if they licensed the Civica platform — enrollment funnel,
-// error-rate comparison vs their current process, navigator productivity.
-// Used as a sales asset during licensing conversations. Content lands in a
-// follow-up PR (lower priority than /county; CDSS and CBO views can ship
-// after the urgent county pitch).
+// ---------------------------------------------------------------------------
+// Feature flag — CBO_PREVIEW_ENABLED must be set to render this page.
+// If unset: 404.
+// Set in Vercel project env or .env.local: CBO_PREVIEW_ENABLED=true
+// ---------------------------------------------------------------------------
+function cboPreviewEnabled(): boolean {
+  const v = process.env.CBO_PREVIEW_ENABLED;
+  return v === "true" || v === "1";
+}
+
+// ---------------------------------------------------------------------------
+// Static demo data — no Supabase query; all content is a sales asset.
+// ---------------------------------------------------------------------------
+const FUNNEL_STEPS = [
+  { name: "Intake", count: 1_240, pct: null },
+  { name: "Screened", count: 1_087, pct: "87.7%" },
+  { name: "Draft complete", count: 891, pct: "71.9%" },
+  { name: "Navigator review", count: 812, pct: "65.5%" },
+  { name: "Handoff", count: 764, pct: "61.6%" },
+] as const;
+
+const VALUE_PROPS = [
+  {
+    icon: "⚡",
+    headline: "Faster intakes",
+    description:
+      "AI-assisted Q&A reduces intake from ~45 min to ~12 min per applicant.",
+  },
+  {
+    icon: "✓",
+    headline: "Lower error rate",
+    description:
+      "Structured data collection cuts PER to below the §10105 penalty threshold.",
+  },
+  {
+    icon: "👥",
+    headline: "Navigator leverage",
+    description:
+      "One navigator can support 3× more households using Civica than manual forms.",
+  },
+  {
+    icon: "📋",
+    headline: "Document readiness",
+    description:
+      "Auto-checklist reduces missing-document rates by ~60% at handoff.",
+  },
+  {
+    icon: "🔒",
+    headline: "Compliance built-in",
+    description:
+      "Consent logging, data retention, and CCPA/OBBBA guardrails out of the box.",
+  },
+  {
+    icon: "📡",
+    headline: "Real-time status",
+    description:
+      "Applicants self-track on mobile; navigators see live queue with priority flags.",
+  },
+] as const;
+
+// ---------------------------------------------------------------------------
+// Server component
+// ---------------------------------------------------------------------------
 export default async function CBOPreviewPage() {
+  // Feature flag gate — return 404 if not enabled.
+  if (!cboPreviewEnabled()) {
+    notFound();
+  }
+
+  // Role gate — server component must enforce independently of middleware.
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   const role = (user?.app_metadata as { role?: unknown } | null)?.role;
 
   if (typeof role !== "string" || (role !== "cbo_preview" && role !== "admin")) {
@@ -22,26 +88,252 @@ export default async function CBOPreviewPage() {
   }
 
   return (
-    <main className="min-h-screen bg-paper">
-      <header className="px-8 py-6 border-b border-hairline">
-        <p className="text-[11px] text-muted uppercase tracking-wider font-medium">Civica · CBO preview</p>
-        <h1 className="text-2xl font-semibold text-ink mt-2 tracking-tight">Platform preview</h1>
-        <p className="text-sm text-graphite mt-1">Read-only demo for prospective licensee CBOs</p>
+    <main className="min-h-screen bg-paper flex flex-col">
+      {/* ------------------------------------------------------------------ */}
+      {/* Page header                                                          */}
+      {/* ------------------------------------------------------------------ */}
+      <header className="px-6 md:px-8 py-5 border-b border-hairline flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <p className="eyebrow">Civica · CBO preview</p>
+          <h1 className="text-2xl font-semibold text-ink mt-1.5 tracking-tight">
+            Platform preview
+          </h1>
+          <p className="text-sm text-graphite mt-0.5">
+            Read-only demo for prospective licensee CBOs
+          </p>
+        </div>
+        {/* DemoModeBadge always visible — this page is always demo data */}
+        <DemoModeBadge />
       </header>
-      <section className="px-8 py-12 max-w-4xl">
-        <div className="border border-hairline rounded-[4px] bg-surface p-8">
-          <h2 className="text-base font-semibold text-ink">Coming soon</h2>
-          <p className="text-sm text-graphite mt-2 leading-relaxed">
-            This view will show enrollment funnel from intake to handoff, error rate
-            comparison against the CBO&apos;s current manual process, and navigator
-            throughput — the value proposition for CBOs evaluating whether to
-            license the Civica platform vs continuing manual SNAP outreach.
-          </p>
-          <p className="text-xs text-graphite mt-4">
-            Route + role guard active. Content lands in a follow-up PR.
-          </p>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* KPI row — 3 cards                                                   */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="px-6 md:px-8 py-6" aria-label="Platform impact metrics">
+        <p className="eyebrow mb-4">Impact at a glance</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <KpiCard
+            label="Avg applications / navigator / mo"
+            value="23"
+            subtext="Without Civica: 7 (manual process)"
+            variant="positive"
+          />
+          <KpiCard
+            label="Error rate (Civica cohort)"
+            value="4.2%"
+            subtext="Without Civica: ~10.8%"
+            variant="positive"
+          />
+          <KpiCard
+            label="Avg time to handoff"
+            value="6 days"
+            subtext="Without Civica: ~22 days"
+            variant="positive"
+          />
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Enrollment funnel                                                    */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="px-6 md:px-8 py-6" aria-label="Enrollment funnel">
+        <p className="eyebrow mb-4">Enrollment funnel (demo cohort, 30 days)</p>
+        <div className="flex flex-wrap items-stretch gap-2">
+          {FUNNEL_STEPS.map((step, i) => (
+            <FunnelStep
+              key={step.name}
+              name={step.name}
+              count={step.count}
+              pct={step.pct ?? null}
+              isFirst={i === 0}
+              isLast={i === FUNNEL_STEPS.length - 1}
+            />
+          ))}
+        </div>
+        <p className="text-[11px] text-muted mt-3">
+          Conversion % relative to intake (1,240 applicants).
+        </p>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Value proposition grid                                               */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="px-6 md:px-8 py-6" aria-label="Value propositions">
+        <p className="eyebrow mb-4">Why CBOs license Civica</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {VALUE_PROPS.map((vp) => (
+            <ValuePropCard
+              key={vp.headline}
+              icon={vp.icon}
+              headline={vp.headline}
+              description={vp.description}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* CTA / contact card                                                   */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="px-6 md:px-8 py-6 mt-auto" aria-label="Contact">
+        <div
+          className="border border-hairline rounded-[4px] bg-surface p-6 md:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+          style={{
+            borderColor:
+              "color-mix(in srgb, var(--color-brick) 25%, transparent)",
+          }}
+        >
+          <div>
+            <p className="text-base font-semibold text-ink">
+              Interested in licensing Civica for your CBO?
+            </p>
+            <p className="text-sm text-graphite mt-1">
+              We partner with community-based organizations serving SNAP-eligible
+              households. Reach out to start a conversation.
+            </p>
+          </div>
+          <a
+            href="mailto:partnerships@civica.app"
+            className="inline-flex items-center gap-2 rounded-[4px] px-5 py-2.5 text-sm font-semibold text-white whitespace-nowrap flex-shrink-0 transition-opacity hover:opacity-90"
+            style={{ backgroundColor: "var(--color-brick)" }}
+          >
+            Contact Civica partnerships
+          </a>
         </div>
       </section>
     </main>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// KPI card sub-component
+// ---------------------------------------------------------------------------
+function KpiCard({
+  label,
+  value,
+  subtext,
+  variant,
+}: {
+  label: string;
+  value: string;
+  subtext: string;
+  variant: "neutral" | "positive" | "warning";
+}) {
+  const valueColor =
+    variant === "positive"
+      ? "var(--color-ink)"
+      : variant === "warning"
+        ? "var(--color-amber)"
+        : "var(--color-ink)";
+
+  const borderStyle =
+    variant === "warning"
+      ? { borderColor: "color-mix(in srgb, var(--color-amber) 30%, transparent)" }
+      : {};
+
+  return (
+    <div
+      className="bg-surface rounded-[4px] border border-hairline p-5"
+      style={borderStyle}
+    >
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+        {label}
+      </p>
+      <p
+        className="text-3xl font-semibold tabular-nums mt-2 leading-none"
+        style={{ color: valueColor }}
+      >
+        {value}
+      </p>
+      <p className="text-[12px] text-graphite mt-1.5 leading-relaxed">
+        {subtext}
+      </p>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Funnel step sub-component
+// ---------------------------------------------------------------------------
+function FunnelStep({
+  name,
+  count,
+  pct,
+  isFirst,
+  isLast,
+}: {
+  name: string;
+  count: number;
+  pct: string | null;
+  isFirst: boolean;
+  isLast: boolean;
+}) {
+  const isHandoff = isLast;
+
+  return (
+    <div className="flex items-center gap-2">
+      <div
+        className="bg-surface border border-hairline rounded-[4px] px-4 py-3 min-w-[120px]"
+        style={
+          isHandoff
+            ? {
+                borderColor:
+                  "color-mix(in srgb, var(--color-brick) 30%, transparent)",
+              }
+            : {}
+        }
+      >
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+          {name}
+        </p>
+        <p className="text-xl font-semibold tabular-nums text-ink mt-1">
+          {count.toLocaleString()}
+        </p>
+        {pct !== null && (
+          <p className="text-[11px] text-graphite mt-0.5">{pct}</p>
+        )}
+        {isFirst && (
+          <p className="text-[11px] text-muted mt-0.5">applicants</p>
+        )}
+      </div>
+      {!isLast && (
+        <span
+          className="text-xl font-light flex-shrink-0"
+          style={{ color: "var(--color-graphite)" }}
+          aria-hidden="true"
+        >
+          ›
+        </span>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Value proposition card sub-component
+// ---------------------------------------------------------------------------
+function ValuePropCard({
+  icon,
+  headline,
+  description,
+}: {
+  icon: string;
+  headline: string;
+  description: string;
+}) {
+  return (
+    <div className="bg-surface border border-hairline rounded-[4px] p-5">
+      <div className="flex items-start gap-3">
+        <span className="text-xl leading-none flex-shrink-0" aria-hidden="true">
+          {icon}
+        </span>
+        <div>
+          <p className="text-sm font-semibold text-ink">{headline}</p>
+          <p className="text-[12px] text-graphite mt-1 leading-relaxed">
+            {description}
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
