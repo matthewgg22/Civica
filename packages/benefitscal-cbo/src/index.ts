@@ -23,3 +23,15 @@ export {
   ClientSignatureTypeSchema,
   SubmissionStatusSchema,
 } from "./schemas";
+export {
+  submitToBenefitsCal,
+  nodePlaywrightDriverFactory,
+} from "./submitter";
+export type {
+  SubmitterOptions,
+  SubmitterResult,
+  TranscriptStep,
+  BrowserDriver,
+  BrowserDriverPage,
+  BrowserDriverFactory,
+} from "./submitter";

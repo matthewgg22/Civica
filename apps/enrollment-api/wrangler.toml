@@ -47,3 +47,11 @@ RECERT_AI_ENABLED = "true"
 #                                       # wrangler secret put CANVAS_INSTANCE_URL
 #   CANVAS_REDIRECT_URI=https://civica-enrollment-api.workers.dev/v1/enrollment/oauth/canvas/exchange
 #                                       # wrangler secret put CANVAS_REDIRECT_URI
+#
+# Session M1 (BenefitsCal Phase 2 async submission) — CBO Manager credentials.
+# Required only when the Phase 2 submitter is enabled per-packet (see
+# packages/benefitscal-cbo/README.md for the rollout gate). Set via:
+#   BENEFITSCAL_CBO_USERNAME=...        # wrangler secret put BENEFITSCAL_CBO_USERNAME
+#   BENEFITSCAL_CBO_PASSWORD=...        # wrangler secret put BENEFITSCAL_CBO_PASSWORD
+#   BENEFITSCAL_BASE_URL=https://...    # optional override; defaults to https://benefitscal.com
+#                                       # wrangler secret put BENEFITSCAL_BASE_URL
