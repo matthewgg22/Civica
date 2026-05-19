@@ -7,7 +7,7 @@
 
 **Hard launch gate (Revision 2 §11):** No App Store review, external pilot, or estimator use until Q19 source-citation rows + FY26 number correction land.
 
-> ⚠️ **Live production bug — act immediately:** Q19 row 16 (CA State Hearings address) has two errors in `SNAPAgencyDirectory.swift`: MS code `19-37` should be `21-37`, and a street address is used instead of the PO Box. Correct: **PO Box 944243, MS 21-37, Sacramento CA 94244-2430**. This field surfaces in user-printable appeal letters. File PR before launch.
+> ✅ **Previously-live production bug, RESOLVED (2026-05-19):** Q19 row 16 (CA State Hearings address) was flagged with two errors (MS code `19-37` should be `21-37`, street address used instead of PO Box). Verified RESOLVED in current `codex/rebuild-feb18` source: `Civica/Features/SNAP/SNAPAgencyDirectory.swift:75-76` + `:113-114` use the correct **PO Box 944243, MS 21-37, Sacramento CA 94244-2430** in both English and Spanish.
 
 ---
 
@@ -33,7 +33,7 @@
 | Q16 | App Store listing copy | 3 — external | ⏳ Compliant draft written; pending counsel review | — |
 | Q17 | Marketing site copy | 3 — external | ⏳ Compliant draft written; pending counsel review | — |
 | Q18 | October rules-refresh owner (FY27 deadline 2026-07-31) | 3 — external | ✅ Automation shipped; **Matthew must name owner** | [PR #121](https://github.com/matthewgg22/civica/pull/121) |
-| Q19 | Source-citation reviewer signoffs + FY26 corrections | 3 — external | ⚠️ 18 rows verified; **live bug row 16**; reviewer signoffs pending | [`docs/SNAP-source-citation-signoff.md`](docs/SNAP-source-citation-signoff.md) |
+| Q19 | Source-citation reviewer signoffs + FY26 corrections | 3 — external | ⚠️ 18 rows verified; row 16 **RESOLVED** (2026-05-19); reviewer signoffs pending | [`docs/SNAP-source-citation-signoff.md`](docs/SNAP-source-citation-signoff.md) |
 
 ---
 
@@ -424,7 +424,7 @@ Code: `Civica/Features/SNAP/Application/SNAPStatusHomeStrings.swift`.
 
 Working document: [`docs/SNAP-source-citation-signoff.md`](docs/SNAP-source-citation-signoff.md).
 
-> ⚠️ **Live production bug — Row 16:** Current code in `SNAPAgencyDirectory.swift` has MS code `19-37` (should be `21-37`) and uses a street address instead of PO Box. Correct address: **PO Box 944243, MS 21-37, Sacramento CA 94244-2430**. This surfaces in user-printable appeal letters. **File PR immediately.**
+> ✅ **Row 16 — RESOLVED (2026-05-19):** Earlier audits flagged a live production bug at `SNAPAgencyDirectory.swift` row 16 (CA State Hearings address) with MS code `19-37` (should be `21-37`) and a street address instead of PO Box. Verified in current `codex/rebuild-feb18` source — `SNAPAgencyDirectory.swift:75-76` + `:113-114` use the correct **PO Box 944243, MS 21-37, Sacramento CA 94244-2430** in both English and Spanish. No further action required.
 
 **All 18 rows are verified with source URLs. Policy reviewer must fill: Reviewer + Signoff Date.**
 
@@ -445,7 +445,7 @@ Working document: [`docs/SNAP-source-citation-signoff.md`](docs/SNAP-source-cita
 | 13 | CA | CalFresh Info Line | 877-847-3663 (877-USCFOOD) | cdss.ca.gov/calfresh | Current | Annually | |
 | 14 | CA | MCE income limits | HH1–8: $2,610/$3,526/$4,442/$5,360/$6,276/$7,192/$8,110/$9,026 + $918/add | CDSS ACIN I-46-25, Attachment I (Becky Silva 09/03/2025) | 2025-10-01 | Annually Oct | FFY2026 FPL basis. Do NOT reuse for MA BBCE. |
 | 15 | CA | Standard Utility Allowances | SUA $663 · LUA $170 · TUA $20 | CDSS ACIN I-46-25 | 2025-10-01 | Annually Oct | §10104-compliant; ACL 25-50 'No CWD action required'. |
-| 16 | CA | State Hearings address | **PO Box 944243, MS 21-37, Sacramento CA 94244-2430** | cdss.ca.gov/inforesources/state-hearings | Current | Annually | ⚠️ **LIVE BUG**: code has wrong MS code (19-37) and street address. PR required. |
+| 16 | CA | State Hearings address | **PO Box 944243, MS 21-37, Sacramento CA 94244-2430** | cdss.ca.gov/inforesources/state-hearings | Current | Annually | ✅ **RESOLVED (2026-05-19)**: verified at `SNAPAgencyDirectory.swift:75-76` + `:113-114`. |
 | 17 | CA | CA agency name | California Department of Social Services (CDSS) / CalFresh | cdss.ca.gov/calfresh | Current | Stable | Full legal name + program name both needed. |
 | 18 | CA | CA expedited SNAP threshold | $150 gross monthly income OR liquid resources ≤ $100 AND combined income + resources < rent/mortgage + utilities | CDSS ACIN I-46-25 | 2025-10-01 | Annually Oct | |
 

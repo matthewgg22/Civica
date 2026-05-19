@@ -94,6 +94,13 @@ enum SNAPComplianceCopyRegistry {
         /// Proposed replacement (Spanish). Nil until counsel signs.
         /// Spanish parity is required before flipping to `.approved`.
         let approvedSpanish: String?
+        /// Optional per-state English override. Keys are USPS state
+        /// codes (e.g. "CA", "MA"). When the surface knows the user's
+        /// state, the state-aware lookup prefers this map; otherwise
+        /// the flat `approvedEnglish` slot is the default fallback.
+        let approvedEnglishByState: [String: String]
+        /// Spanish-parity companion to `approvedEnglishByState`.
+        let approvedSpanishByState: [String: String]
         /// OBBBA audit reference.
         let auditReference: String
         /// What's wrong with the current copy.
@@ -101,6 +108,10 @@ enum SNAPComplianceCopyRegistry {
         /// Status — toggled to `.approved` by the PR that lands the
         /// signed strings.
         let status: RevisionStatus
+        /// True until the Session K Spanish reviewer validates the
+        /// Spanish strings. Surfaces in the launch preflight so that
+        /// "9 approved" can still flag remaining native-review debt.
+        let spanishParityReviewPending: Bool
     }
 
     /// Each row from Revision 2 §6 table. Until counsel signs, all
@@ -125,5 +136,49 @@ enum SNAPComplianceCopyRegistry {
         guard let row = pendingCopyRevisions.first(where: { $0.id == id }),
               row.status == .approved else { return nil }
         return row.approvedSpanish
+    }
+
+    /// State-aware English lookup. When the row carries a per-state
+    /// override map (e.g. CalFresh CA / SNAP MA), returns the variant
+    /// for `stateCode`; otherwise falls back to the flat
+    /// `approvedEnglish`. Returns nil if the row isn't `.approved`.
+    static func approvedEnglish(for id: String, stateCode: String?) -> String? {
+        guard let row = pendingCopyRevisions.first(where: { $0.id == id }),
+              row.status == .approved else { return nil }
+        if let code = stateCode, let variant = row.approvedEnglishByState[code] {
+            return variant
+        }
+        return row.approvedEnglish
+    }
+
+    /// Spanish-parity companion to `approvedEnglish(for:stateCode:)`.
+    static func approvedSpanish(for id: String, stateCode: String?) -> String? {
+        guard let row = pendingCopyRevisions.first(where: { $0.id == id }),
+              row.status == .approved else { return nil }
+        if let code = stateCode, let variant = row.approvedSpanishByState[code] {
+            return variant
+        }
+        return row.approvedSpanish
+    }
+
+    // MARK: - Preflight helpers
+
+    /// Counts of rows by status. Surfaced to the launch preflight
+    /// (and tests) so a single grep doesn't have to walk the file.
+    static var approvedRevisionCount: Int {
+        pendingCopyRevisions.filter { $0.status == .approved }.count
+    }
+
+    static var pendingRevisionCount: Int {
+        pendingCopyRevisions.filter { $0.status == .pendingSignoff }.count
+    }
+
+    /// IDs of rows whose Spanish strings still need the Session K
+    /// reviewer's sign-off. Useful for surfacing native-review debt
+    /// alongside counsel sign-off in the launch preflight.
+    static var spanishParityReviewPendingIDs: [String] {
+        pendingCopyRevisions
+            .filter { $0.spanishParityReviewPending }
+            .map { $0.id }
     }
 }

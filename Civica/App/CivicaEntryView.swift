@@ -110,7 +110,14 @@ struct CivicaEntryView: View {
                 imageName: "HomeIconEstimator",
                 iconAccent: CivicaColors.accentTeal,
                 title: SNAPBenefitEstimatorStrings.entryCardTitle.value(in: language),
-                subtitle: SNAPBenefitEstimatorStrings.entryCardSubtitle.value(in: language)
+                // Compliance row 4 (estimator_entry_subtitle): counsel-prep
+                // approved (2026-05-19), state-aware. Resolves the [Agency]
+                // placeholder against the persisted draft's stateCode when
+                // present, falling back to the launch state.
+                subtitle: SNAPBenefitEstimatorStrings.entryCardSubtitle(
+                    stateCode: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode,
+                    language: language
+                )
             )
         }
         .buttonStyle(.plain)

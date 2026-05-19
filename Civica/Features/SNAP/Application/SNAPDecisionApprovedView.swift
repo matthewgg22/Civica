@@ -180,7 +180,10 @@ struct SNAPDecisionApprovedView: View {
                     .kerning(1.2)
                     .padding(.top, CivicaSpacing.xs)
             }
-            Text(SNAPDecisionApprovedStrings.headline.value(in: language))
+            Text(SNAPDecisionApprovedStrings.headline(
+                stateCode: draft?.whereApplying.stateCode,
+                language: language
+            ))
                 .font(CivicaTypography.pageTitle)
                 .foregroundStyle(CivicaColors.ink)
                 .accessibilityAddTraits(.isHeader)
@@ -369,12 +372,31 @@ enum SNAPDecisionApprovedStrings {
         "Decided",
         es: "Decidido"
     )
-    // Compliance Q3: registry id "decision_approved_headline" — .pendingSignoff.
-    // Flip to .approved in the registry to activate the replacement below.
+    // Compliance Q3: registry id "decision_approved_headline" — counsel-prep
+    // approved (2026-05-19). State-keyed: CalFresh (CA) vs SNAP (MA).
+    // Pre-sign fallback retained for tests / surfaces that don't have a state.
     static let headline = CivicaText(
         SNAPComplianceCopyRegistry.approvedEnglish(for: "decision_approved_headline") ?? "You're approved.",
         es: SNAPComplianceCopyRegistry.approvedSpanish(for: "decision_approved_headline") ?? "Estás aprobada."
     )
+
+    /// State-aware headline. Production view should call this so CA users
+    /// see "CalFresh" and MA users see "SNAP". Falls back to the static
+    /// `headline` CivicaText (the state-agnostic default) when no state.
+    static func headline(stateCode: String?, language: CivicaLanguage) -> String {
+        switch language {
+        case .english:
+            return SNAPComplianceCopyRegistry.approvedEnglish(
+                for: "decision_approved_headline",
+                stateCode: stateCode
+            ) ?? headline.value(in: .english)
+        case .spanish:
+            return SNAPComplianceCopyRegistry.approvedSpanish(
+                for: "decision_approved_headline",
+                stateCode: stateCode
+            ) ?? headline.value(in: .spanish)
+        }
+    }
 
     static let monthlyAwardLabel = CivicaText(
         "Monthly award",
