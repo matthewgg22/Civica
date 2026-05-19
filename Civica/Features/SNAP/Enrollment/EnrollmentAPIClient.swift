@@ -35,6 +35,13 @@ protocol EnrollmentAPIClient: Sendable {
 
     /// Fetch pending missing-item requests from the navigator for the applicant's packets.
     func fetchInbox() async throws -> [EnrollmentInboxItem]
+
+    /// POST /v1/enrollment/work-requirements/:packetId/evaluate
+    /// Navigator-only. Returns OBBBA compliance determination for the household.
+    func evaluateWorkRequirements(
+        packetId: String,
+        members: [WorkRequirementsHouseholdMember]
+    ) async throws -> WorkRequirementsEvaluation
 }
 
 // MARK: - Errors
@@ -157,6 +164,17 @@ struct HTTPEnrollmentAPIClient: EnrollmentAPIClient {
 
     func fetchInbox() async throws -> [EnrollmentInboxItem] {
         try await getJSON(path: "/me/inbox")
+    }
+
+    func evaluateWorkRequirements(
+        packetId: String,
+        members: [WorkRequirementsHouseholdMember]
+    ) async throws -> WorkRequirementsEvaluation {
+        struct Body: Encodable { let householdMembers: [WorkRequirementsHouseholdMember] }
+        return try await post(
+            path: "/work-requirements/\(packetId)/evaluate",
+            body: Body(householdMembers: members)
+        )
     }
 
     // MARK: - Private helpers
@@ -377,6 +395,21 @@ final class MockEnrollmentAPIClient: EnrollmentAPIClient, @unchecked Sendable {
 
     func fetchInbox() async throws -> [EnrollmentInboxItem] {
         inboxItems
+    }
+
+    func evaluateWorkRequirements(
+        packetId: String,
+        members: [WorkRequirementsHouseholdMember]
+    ) async throws -> WorkRequirementsEvaluation {
+        if shouldFailNext { shouldFailNext = false; throw EnrollmentAPIError.unexpectedStatus(500, body: "mock error") }
+        return WorkRequirementsEvaluation(
+            isSubject: true,
+            subjectMemberIds: members.prefix(1).map { $0.id },
+            timeLimitApplicable: true,
+            citations: [WRCitation(section: "OBBBA §10102", title: "Work Requirements", url: nil)],
+            exemptionType: nil,
+            complianceStatus: "unknown"
+        )
     }
 }
 
