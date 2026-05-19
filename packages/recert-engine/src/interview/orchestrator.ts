@@ -11,6 +11,8 @@
 
 import { getQuestionsForState } from './questions.js';
 import type { StateCode, InterviewQuestion } from './questions.js';
+import { personalizeQuestions } from './personalizer.js';
+import type { PacketSnapshot } from './personalizer.js';
 
 export type { StateCode, InterviewQuestion };
 
@@ -25,10 +27,11 @@ export type Flag = {
   description: string;
 };
 
+export type { PacketSnapshot };
+
 export type StartInput = {
   recertId: string;
-  /** Snapshot of the enrollment packet (unused in stub; passed through for future AI wiring). */
-  packetSnapshot: Record<string, unknown>;
+  packetSnapshot: PacketSnapshot;
   state: StateCode;
 };
 
@@ -139,14 +142,15 @@ async function fetchCoaching(
  * Returns the sessionId and the first question.
  */
 export function start(input: StartInput): StartResult {
-  const { recertId, state } = input;
+  const { recertId, state, packetSnapshot } = input;
   const sessionId = crypto.randomUUID();
   const questions = getQuestionsForState(state);
+  const personalizedQuestions = personalizeQuestions(questions, packetSnapshot);
 
   const session: SessionState = {
     recertId,
     state,
-    questions,
+    questions: personalizedQuestions,
     currentIndex: 0,
     turns: [],
     flags: [],
@@ -155,7 +159,7 @@ export function start(input: StartInput): StartResult {
 
   sessions.set(sessionId, session);
 
-  const first = questions[0];
+  const first = personalizedQuestions[0];
   if (!first) throw new Error('Question bank is empty for state: ' + state);
   const firstQuestion: InterviewTurn = {
     questionId: first.id,

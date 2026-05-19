@@ -236,13 +236,10 @@ describe('POST /recert/:recertId/practice/start', () => {
       done: false,
     };
 
-    // makeAnonClient is called twice: once for recert, once for packet
-    let anonCallCount = 0;
-    vi.mocked(makeAnonClient).mockImplementation(() => {
-      anonCallCount++;
-      if (anonCallCount === 1) return makeDbClient({ data: recertRow, error: null });
-      return makeDbClient({ data: packetRow, error: null });
-    });
+    // makeAnonClient is called once; the shared client handles recert + packet + answers
+    // queries — all return recertRow since the shared query builder doesn't distinguish tables.
+    // The personalizer receives [] (via Array.isArray guard) and falls back to generic questions.
+    vi.mocked(makeAnonClient).mockReturnValue(makeDbClient({ data: recertRow, error: null }));
     vi.mocked(withActorContext).mockResolvedValue(makeDbClient({ data: sessionRow, error: null }));
 
     const res = await buildTestApp(recertRouter, '/', NAVIGATOR).request(
@@ -284,7 +281,7 @@ describe('POST /recert/:recertId/practice/:sessionId/respond', () => {
     const { recertEngine } = await import('@civica/recert-engine');
     const { sessionId: realSessionId } = recertEngine.interview.start({
       recertId: RECERT_ID,
-      packetSnapshot: {},
+      packetSnapshot: { state_code: 'CA' },
       state: 'CA',
     });
 

@@ -8,6 +8,6 @@ export { deadline, interview };
 export type { DeadlineEstimate, DeadlineEstimateInput, HouseholdType, ReminderSchedule, StateCode as DeadlineStateCode } from './deadline.js';
 export { getQuestionsForState } from './interview/questions.js';
 export type { InterviewQuestion, StateCode } from './interview/questions.js';
-export type { InterviewTurn, Flag, StartInput, StartResult, RespondInput, RespondResult } from './interview/orchestrator.js';
+export type { InterviewTurn, Flag, StartInput, StartResult, RespondInput, RespondResult, PacketSnapshot } from './interview/orchestrator.js';
 
 export const recertEngine = { deadline, interview };

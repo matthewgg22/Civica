@@ -6,6 +6,7 @@ import { makeAnonClient } from "../lib/supabase.js";
 import { withActorContext } from "../middleware/actorContext.js";
 import type { Env } from "../types.js";
 import { recertEngine } from "@civica/recert-engine";
+import type { PacketSnapshot } from "@civica/recert-engine";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -38,6 +39,30 @@ const patchRecertSchema = z.object({
 const respondSchema = z.object({
   user_message: z.string().min(1),
 });
+
+// ---------------------------------------------------------------------------
+// Packet snapshot builder — maps packet_answers rows to a PersonalizeQuestions snapshot
+// ---------------------------------------------------------------------------
+
+function buildSnapshot(
+  state: 'CA' | 'MA',
+  answers: Array<{ question_key: string; applicant_answer: string | null }>,
+): PacketSnapshot {
+  const get = (key: string): string | null =>
+    answers.find((a) => a.question_key === key)?.applicant_answer ?? null;
+
+  return {
+    state_code: state,
+    is_employed: get("employment_status") === "employed",
+    income_source_count: parseInt(get("income_source_count") ?? "1") || 1,
+    has_dependent_under_6: get("has_dependent_under_6") === "true",
+    has_dependent_under_14: get("has_dependent_under_14") === "true",
+    has_students: get("has_students") === "true",
+    has_vehicles: get("has_vehicles") === "true",
+    has_bank_accounts: get("has_bank_accounts") === "true",
+    is_subject_to_work_requirements: get("is_subject_to_work_requirements") === "true",
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Auth guard helper — navigator or above
@@ -212,10 +237,19 @@ app.post("/:recertId/practice/start", async (c) => {
 
   const state = packet.state_code as "CA" | "MA";
 
+  // Fetch packet answers to build a personalized snapshot
+  const { data: answers } = await anonDb
+    .schema("snap_enrollment")
+    .from("packet_answers")
+    .select("question_key, applicant_answer")
+    .eq("packet_id", recert.packet_id);
+
+  const snapshot = buildSnapshot(state, Array.isArray(answers) ? answers : []);
+
   // Start the in-memory interview session
   const { sessionId, firstQuestion } = recertEngine.interview.start({
     recertId,
-    packetSnapshot: { packet_id: recert.packet_id, state_code: state },
+    packetSnapshot: snapshot,
     state,
   });
 
