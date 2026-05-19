@@ -44,32 +44,30 @@ struct SNAPWorkRequirementsView: View {
 
     @State private var isEvaluating = false
 
-    // MARK: - Strings
+    // MARK: - Strings (via SNAPWorkRequirementsStrings — see companion file)
 
     private var pageTitle: String {
-        language == .spanish ? "Requisitos laborales" : "Work Requirements"
+        SNAPWorkRequirementsStrings.pageTitle.value(in: language)
     }
 
     private var sectionHeaderText: String {
-        language == .spanish ? "Miembros del hogar" : "Household Members"
+        SNAPWorkRequirementsStrings.sectionHeader.value(in: language)
     }
 
     private var tribalMemberLabel: String {
-        language == .spanish ? "Miembro tribal inscrito" : "Enrolled tribal member"
+        SNAPWorkRequirementsStrings.tribalMemberLabel.value(in: language)
     }
 
     private var qualifyingProgramLabel: String {
-        language == .spanish ? "Inscrito en programa calificado" : "Enrolled in qualifying program"
+        SNAPWorkRequirementsStrings.qualifyingProgramLabel.value(in: language)
     }
 
     private var qualifyingProgramSubtitle: String {
-        language == .spanish
-            ? "SNAP E&T, tratamiento por drogas/alcohol, o salud mental comunitaria"
-            : "SNAP E&T, drug/alcohol treatment, or community mental health"
+        SNAPWorkRequirementsStrings.qualifyingProgramSubtitle.value(in: language)
     }
 
     private var evaluateLabel: String {
-        language == .spanish ? "Evaluar" : "Evaluate"
+        SNAPWorkRequirementsStrings.evaluateButton.value(in: language)
     }
 
     // MARK: - Body
