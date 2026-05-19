@@ -22,6 +22,13 @@ import type { Json } from '@civica/db-types';
 
 const OutreachReasonSchema = z.enum(['cliff_event', 'manual']);
 
+const OutreachStatusSchema = z.enum(['pending', 'contacted', 'resolved', 'cancelled']);
+
+const patchOutreachBodySchema = z.object({
+  status: OutreachStatusSchema,
+  resolution_notes: z.string().max(2000).optional(),
+});
+
 const outreachBodySchema = z.object({
   packet_id: z.string().uuid(),
   reason: OutreachReasonSchema,
@@ -119,6 +126,47 @@ app.post('/outreach', zValidator('json', outreachBodySchema), async (c) => {
   }
 
   return c.json(task, 201);
+});
+
+// ---------------------------------------------------------------------------
+// PATCH /navigator/outreach/:taskId — update task status
+// ---------------------------------------------------------------------------
+
+app.patch('/outreach/:taskId', zValidator('json', patchOutreachBodySchema), async (c) => {
+  const actor = c.get('actor');
+  requireNavigator(actor.kind);
+
+  const taskId = c.req.param('taskId');
+  const body = c.req.valid('json');
+  const db = await withActorContext(c);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const updatePayload: Record<string, any> = { status: body.status };
+  if (body.resolution_notes !== undefined) {
+    updatePayload['resolution_notes'] = body.resolution_notes;
+  }
+  // Set timestamp fields based on the new status
+  const now = new Date().toISOString();
+  if (body.status === 'contacted') updatePayload['contacted_at'] = now;
+  if (body.status === 'resolved') {
+    updatePayload['resolved_at'] = now;
+  }
+
+  const { data: task, error } = await db
+    .schema('snap_enrollment')
+    .from('navigator_outreach_queue')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .update(updatePayload as any)
+    .eq('outreach_task_id', taskId)
+    .select()
+    .single();
+
+  if (error?.code === 'PGRST116') {
+    throw new HTTPException(404, { message: 'Outreach task not found' });
+  }
+  if (error) throw new HTTPException(500, { message: error.message });
+
+  return c.json(task);
 });
 
 export default app;
