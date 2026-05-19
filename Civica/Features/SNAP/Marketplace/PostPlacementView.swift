@@ -151,6 +151,7 @@ struct PostPlacementView: View {
         .padding(CivicaSpacing.lg)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.warningAmber.opacity(0.08))
+        .accessibilityIdentifier("marketplace.post_placement.cliff_banner")
     }
 
     private var obbbaSection: some View {
@@ -170,6 +171,7 @@ struct PostPlacementView: View {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(CivicaSecondaryCTAButtonStyle())
+            .accessibilityIdentifier("marketplace.post_placement.see_breakdown")
 
             Button(action: onReportProblem) {
                 Text("Report a problem")
@@ -177,6 +179,7 @@ struct PostPlacementView: View {
                     .foregroundStyle(CivicaColors.accentTeal)
             }
             .buttonStyle(.plain)
+            .accessibilityIdentifier("marketplace.post_placement.report_problem")
         }
         .padding(.horizontal, CivicaSpacing.xl)
         .padding(.vertical, CivicaSpacing.lg)
@@ -194,7 +197,7 @@ struct PostPlacementView: View {
         PostPlacementView(
             state: MarketplaceState(
                 canvasConnected: true, argyleConnected: true,
-                currentBenefitUSD: 214,
+                currentBenefitUSD: 214, incomeCap: 1580,
                 jobs: [], confirmedJobID: "2",
                 confirmedPaycheckDate: Date(),
                 obbbaHoursCompleted: 32, obbbaHoursRequired: 80,

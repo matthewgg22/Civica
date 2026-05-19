@@ -57,19 +57,19 @@ struct RecertPulledRow: View {
     private var sourceTagText: String {
         switch source {
         case .argyle(let employer, let date):
-            return "Pulled from Argyle · \(employer) · \(date.formatted(.dateTime.month(.abbreviated).day()))"
+            return String(localized: "Pulled from Argyle · \(employer) · \(date.formatted(.dateTime.month(.abbreviated).day()))")
         case .canvas(let date):
-            return "Pulled from Canvas · synced \(date.formatted(.dateTime.month(.abbreviated).day()))"
+            return String(localized: "Pulled from Canvas · synced \(date.formatted(.dateTime.month(.abbreviated).day()))")
         case .selfReported(let date):
-            return "Self-reported · last packet \(date.formatted(.dateTime.month(.abbreviated).year()))"
+            return String(localized: "Self-reported · last packet \(date.formatted(.dateTime.month(.abbreviated).year()))")
         }
     }
 
     private var sourceDescription: String {
         switch source {
-        case .argyle(let employer, _): return "Source: Argyle, \(employer)"
-        case .canvas: return "Source: Canvas LMS"
-        case .selfReported: return "Source: self-reported"
+        case .argyle(let employer, _): return String(localized: "Source: Argyle, \(employer)")
+        case .canvas: return String(localized: "Source: Canvas LMS")
+        case .selfReported: return String(localized: "Source: self-reported")
         }
     }
 }

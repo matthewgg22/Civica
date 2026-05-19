@@ -55,7 +55,7 @@ struct ApplyHandoffSheet: View {
         }
     }
 
-    private func consentRow(label: String, source: String) -> some View {
+    private func consentRow(label: LocalizedStringKey, source: LocalizedStringKey) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: "checkmark.circle.fill")
                 .foregroundStyle(CivicaColors.accentTeal)
@@ -91,6 +91,7 @@ struct ApplyHandoffSheet: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(CivicaPrimaryCTAButtonStyle())
+                .accessibilityIdentifier("marketplace.handoff.apply_handshake")
             }
 
             if let fallback = job.fallbackCareerURL {
@@ -101,6 +102,7 @@ struct ApplyHandoffSheet: View {
                     .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(CivicaSecondaryCTAButtonStyle())
+                .accessibilityIdentifier("marketplace.handoff.apply_fallback")
             }
         }
     }

@@ -62,7 +62,7 @@ struct PendingBenefitBanner: View {
     MarketplaceEntryCard(
         state: MarketplaceState(
             canvasConnected: true, argyleConnected: true,
-            currentBenefitUSD: 292,
+            currentBenefitUSD: 292, incomeCap: 1580,
             jobs: [],
             confirmedJobID: nil, confirmedPaycheckDate: nil,
             obbbaHoursCompleted: 0, obbbaHoursRequired: 80,

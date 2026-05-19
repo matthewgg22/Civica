@@ -57,6 +57,7 @@ struct BenefitImpactView: View {
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(CivicaPrimaryCTAButtonStyle())
+        .accessibilityIdentifier("marketplace.benefit_impact.apply_button")
     }
 
     private var benefitReduction: Decimal {

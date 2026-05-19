@@ -34,6 +34,7 @@ struct JobMatchListView: View {
                         benefitAmount: job.projectedBenefitUSD,
                         onTap: { onSelectJob(job) }
                     )
+                    .accessibilityIdentifier("marketplace.job_row.\(job.id)")
                     if idx < sorted.count - 1 { hairline }
                 }
 
@@ -164,6 +165,7 @@ struct JobMatchListView: View {
                 canvasConnected: true,
                 argyleConnected: true,
                 currentBenefitUSD: 292,
+                incomeCap: 1_580,
                 jobs: [
                     MarketplaceJob(
                         id: "1", title: "Library Assistant", employerName: "Campus Library",

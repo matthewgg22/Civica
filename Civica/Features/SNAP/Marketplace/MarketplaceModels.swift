@@ -31,6 +31,9 @@ struct MarketplaceState {
     var canvasConnected: Bool
     var argyleConnected: Bool
     var currentBenefitUSD: Decimal?
+    /// 130% FPL gross income limit (SNAP eligibility threshold) for this household.
+    /// Shown as the income cap in JobMatchListView.
+    var incomeCap: Decimal
     var jobs: [MarketplaceJob]
     var confirmedJobID: String?
     var confirmedPaycheckDate: Date?
@@ -42,6 +45,7 @@ struct MarketplaceState {
         canvasConnected: false,
         argyleConnected: false,
         currentBenefitUSD: nil,
+        incomeCap: 1580,   // CA 2026 1-person 130% FPL gross limit
         jobs: [],
         confirmedJobID: nil,
         confirmedPaycheckDate: nil,
