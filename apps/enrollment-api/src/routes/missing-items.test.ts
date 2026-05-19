@@ -132,3 +132,34 @@ describe('POST /missing-items/:requestId/cancel', () => {
     expect(res.status).toBe(204);
   });
 });
+
+// ── POST /missing-items/:requestId/resolve ────────────────────────────────
+
+describe('POST /missing-items/:requestId/resolve', () => {
+  it('returns 403 for applicant actor', async () => {
+    const res = await buildTestApp(missingItemsRouter, '/', APPLICANT).request(
+      `/missing-items/req-001/resolve`, { method: 'POST' }, TEST_ENV,
+    );
+    expect(res.status).toBe(403);
+  });
+
+  it('returns 204 on happy path', async () => {
+    vi.mocked(withActorContext).mockResolvedValue(makeDbClient({ data: null, error: null }));
+
+    const res = await buildTestApp(missingItemsRouter, '/', NAVIGATOR).request(
+      `/missing-items/req-001/resolve`, { method: 'POST' }, TEST_ENV,
+    );
+    expect(res.status).toBe(204);
+  });
+
+  it('returns 500 when DB update fails', async () => {
+    vi.mocked(withActorContext).mockResolvedValue(
+      makeDbClient({ data: null, error: { message: 'db error' } }),
+    );
+
+    const res = await buildTestApp(missingItemsRouter, '/', NAVIGATOR).request(
+      `/missing-items/req-001/resolve`, { method: 'POST' }, TEST_ENV,
+    );
+    expect(res.status).toBe(500);
+  });
+});

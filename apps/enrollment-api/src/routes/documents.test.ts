@@ -8,7 +8,7 @@ vi.mock('../middleware/actorContext.js', () => ({
   withActorContext: vi.fn(),
 }));
 
-import { makeAnonClient } from '../lib/supabase.js';
+import { makeAnonClient, makeServiceClient } from '../lib/supabase.js';
 import { withActorContext } from '../middleware/actorContext.js';
 import documentsRouter from './documents.js';
 import { app as fullApp } from '../index.js';
@@ -179,5 +179,80 @@ describe('DELETE /documents/:documentId', () => {
       TEST_ENV,
     );
     expect(res.status).toBe(204);
+  });
+});
+
+// ── POST /packets/:packetId/upload-url ────────────────────────────────────
+
+describe('POST /packets/:packetId/upload-url', () => {
+  it('returns 403 for applicant actor', async () => {
+    const res = await buildTestApp(documentsRouter, '/', APPLICANT).request(
+      `/packets/${PACKET_ID}/upload-url`,
+      { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify({}) },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(403);
+  });
+
+  it('returns 201 with signed_url and storage_path on happy path', async () => {
+    const packet = { packet_id: PACKET_ID, applicant_id: 'a0000000-0000-0000-0000-000000000001' };
+    vi.mocked(makeAnonClient).mockReturnValue(makeDbClient({ data: packet, error: null }));
+    vi.mocked(makeServiceClient).mockReturnValue(makeDbClient({ data: null, error: null }));
+
+    const res = await buildTestApp(documentsRouter, '/', NAVIGATOR).request(
+      `/packets/${PACKET_ID}/upload-url`,
+      { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify({ filename: 'paystub.pdf' }) },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(201);
+    const body = await res.json() as { signed_url: string; storage_path: string; applicant_id: string };
+    expect(body.signed_url).toBe('https://example.com/upload');
+    expect(body.storage_path).toMatch(/\.pdf$/);
+    expect(body.applicant_id).toBe(packet.applicant_id);
+  });
+
+  it('returns 404 when packet does not exist', async () => {
+    vi.mocked(makeAnonClient).mockReturnValue(
+      makeDbClient({ data: null, error: { code: 'PGRST116', message: 'not found' } }),
+    );
+
+    const res = await buildTestApp(documentsRouter, '/', NAVIGATOR).request(
+      `/packets/missing-packet/upload-url`,
+      { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify({}) },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(404);
+  });
+
+  it('returns 500 when storage createSignedUploadUrl fails', async () => {
+    const packet = { packet_id: PACKET_ID, applicant_id: 'a0000000-0000-0000-0000-000000000001' };
+    vi.mocked(makeAnonClient).mockReturnValue(makeDbClient({ data: packet, error: null }));
+    const svcClient = makeDbClient({ data: null, error: null });
+    svcClient.storage.from.mockReturnValue({
+      createSignedUploadUrl: vi.fn().mockResolvedValue({ data: null, error: { message: 'storage error' } }),
+    });
+    vi.mocked(makeServiceClient).mockReturnValue(svcClient);
+
+    const res = await buildTestApp(documentsRouter, '/', NAVIGATOR).request(
+      `/packets/${PACKET_ID}/upload-url`,
+      { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify({}) },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(500);
+  });
+
+  it('uses pdf extension as default when filename is omitted', async () => {
+    const packet = { packet_id: PACKET_ID, applicant_id: 'a0000000-0000-0000-0000-000000000001' };
+    vi.mocked(makeAnonClient).mockReturnValue(makeDbClient({ data: packet, error: null }));
+    vi.mocked(makeServiceClient).mockReturnValue(makeDbClient({ data: null, error: null }));
+
+    const res = await buildTestApp(documentsRouter, '/', NAVIGATOR).request(
+      `/packets/${PACKET_ID}/upload-url`,
+      { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify({}) },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(201);
+    const body = await res.json() as { storage_path: string };
+    expect(body.storage_path).toMatch(/\.pdf$/);
   });
 });
