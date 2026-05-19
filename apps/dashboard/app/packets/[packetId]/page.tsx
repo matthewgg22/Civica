@@ -14,7 +14,7 @@ import HandoffPanel from "../../../components/HandoffPanel";
 import MissingItemRequestPanel from "../../../components/MissingItemRequestPanel";
 import ExpeditedReviewGate from "./ExpeditedReviewGate";
 import ComplianceNarrative from "../../../components/ComplianceNarrative";
-import { formatDateTime, decryptDemoName, firstNameLastInitial, shortId } from "../../../lib/format";
+import { formatDateTime, decryptDemoName, docKindLabel, firstNameLastInitial, shortId } from "../../../lib/format";
 import { PACKET_STATUS_TRANSITIONS } from "@civica/snap-enums";
 
 // Statuses where the expedited-review gate is relevant
@@ -338,14 +338,7 @@ function UnifiedTimeline({ history, docs, notes }: { history: HistoryRow[]; docs
   }
 
   for (const d of docs) {
-    const kindLabel = d.document_kind === "paystub" ? "Pay stub"
-      : d.document_kind === "photo_id" ? "Photo ID"
-      : d.document_kind === "utility_bill" ? "Utility bill"
-      : d.document_kind === "bank_statement" ? "Bank statement"
-      : d.document_kind === "tax_return" ? "Tax return"
-      : d.document_kind === "benefit_letter" ? "Benefit letter"
-      : d.document_kind === "lease" ? "Lease"
-      : "Document";
+    const kindLabel = docKindLabel(d.document_kind);
     events.push({
       id: `d-${d.document_id}`,
       at: d.uploaded_at,

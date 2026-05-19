@@ -9,6 +9,7 @@ import SwiftUI
 struct WorkRequirementsMember: Identifiable {
     let id = UUID()
     var displayName: String
+    var age: Int
     var isTribalMember: Bool
     var isEnrolledInQualifyingProgram: Bool
 }
@@ -22,9 +23,20 @@ struct WorkRequirementsMember: Identifiable {
 ///   - `isTribalMember`                 → Native American exemption (OBBBA §2619(a)(3))
 ///   - `isEnrolledInQualifyingProgram`  → SNAP E&T, drug/alcohol tx, community MH
 ///
-/// The "Evaluate" button currently stubs the POST; wire to
-/// `EnrollmentAPIClient.evaluateWorkRequirements(...)` when the endpoint ships.
+/// Wire `packetId` and `apiClient` from the navigator flow.
+/// Both are optional so previews compile without injection.
 struct SNAPWorkRequirementsView: View {
+
+    let packetId: String
+    let apiClient: (any EnrollmentAPIClient)?
+
+    init(
+        packetId: String = "",
+        apiClient: (any EnrollmentAPIClient)? = nil
+    ) {
+        self.packetId = packetId
+        self.apiClient = apiClient
+    }
 
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
@@ -35,14 +47,18 @@ struct SNAPWorkRequirementsView: View {
 
     @State private var members: [WorkRequirementsMember] = [
         WorkRequirementsMember(displayName: "Member 1",
+                               age: 30,
                                isTribalMember: false,
                                isEnrolledInQualifyingProgram: false),
         WorkRequirementsMember(displayName: "Member 2",
+                               age: 30,
                                isTribalMember: false,
                                isEnrolledInQualifyingProgram: false),
     ]
 
     @State private var isEvaluating = false
+    @State private var evaluationResult: WorkRequirementsEvaluation?
+    @State private var evaluationError: String?
 
     // MARK: - Strings (via SNAPWorkRequirementsStrings — see companion file)
 
@@ -77,6 +93,12 @@ struct SNAPWorkRequirementsView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.xxl) {
                 membersSection
                 evaluateButton
+                if let result = evaluationResult {
+                    resultCard(result)
+                }
+                if let errorMessage = evaluationError {
+                    errorView(errorMessage)
+                }
                 Spacer(minLength: CivicaSpacing.xl)
             }
             .padding(CivicaSpacing.xl)
@@ -157,12 +179,27 @@ struct SNAPWorkRequirementsView: View {
 
     private var evaluateButton: some View {
         Button {
-            isEvaluating = true
-            // TODO: wire to EnrollmentAPIClient.evaluateWorkRequirements(members)
-            // when the /work-requirements endpoint ships. The payload shape is:
-            //   members: [{ isTribalMember: Bool, isEnrolledInQualifyingProgram: Bool }]
-            print("[SNAPWorkRequirementsView] evaluate tapped — members: \(members.map { ($0.displayName, $0.isTribalMember, $0.isEnrolledInQualifyingProgram) })")
-            isEvaluating = false
+            Task {
+                isEvaluating = true
+                evaluationError = nil
+                defer { isEvaluating = false }
+                let apiMembers = members.map { m in
+                    WorkRequirementsHouseholdMember(
+                        id: m.id.uuidString,
+                        age: m.age,
+                        isTribalMember: m.isTribalMember ? true : nil,
+                        isEnrolledInQualifyingProgram: m.isEnrolledInQualifyingProgram ? true : nil
+                    )
+                }
+                do {
+                    evaluationResult = try await apiClient?.evaluateWorkRequirements(
+                        packetId: packetId,
+                        members: apiMembers
+                    )
+                } catch {
+                    evaluationError = error.localizedDescription
+                }
+            }
         } label: {
             Group {
                 if isEvaluating {
@@ -182,6 +219,65 @@ struct SNAPWorkRequirementsView: View {
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         .disabled(isEvaluating)
     }
+
+    // MARK: - Result card
+
+    private func resultCard(_ result: WorkRequirementsEvaluation) -> some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            Text(result.isSubject
+                 ? SNAPWorkRequirementsStrings.resultSubject.value(in: language)
+                 : SNAPWorkRequirementsStrings.resultNotSubject.value(in: language))
+                .font(CivicaTypography.subheadStrong)
+                .foregroundStyle(CivicaColors.ink)
+
+            if let status = result.complianceStatus {
+                HStack(spacing: CivicaSpacing.xs) {
+                    Text(SNAPWorkRequirementsStrings.resultCompliance.value(in: language) + ":")
+                        .font(CivicaTypography.body)
+                        .foregroundStyle(CivicaColors.graphite)
+                    Text(status)
+                        .font(CivicaTypography.body)
+                        .foregroundStyle(CivicaColors.ink)
+                }
+            }
+
+            if let exemption = result.exemptionType {
+                HStack(spacing: CivicaSpacing.xs) {
+                    Text(SNAPWorkRequirementsStrings.resultExemption.value(in: language) + ":")
+                        .font(CivicaTypography.body)
+                        .foregroundStyle(CivicaColors.graphite)
+                    Text(exemption)
+                        .font(CivicaTypography.body)
+                        .foregroundStyle(CivicaColors.ink)
+                }
+            }
+
+            Text(SNAPWorkRequirementsStrings.resultCitations.value(in: language) + ": \(result.citations.count)")
+                .font(CivicaTypography.footnote)
+                .foregroundStyle(CivicaColors.graphite)
+        }
+        .padding(CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.hairline, lineWidth: 1)
+        )
+    }
+
+    // MARK: - Error view
+
+    private func errorView(_ message: String) -> some View {
+        let prefix = SNAPWorkRequirementsStrings.evaluationErrorPrefix.value(in: language)
+        return Text("\(prefix): \(message)")
+            .font(CivicaTypography.body)
+            .foregroundStyle(Color.red)
+            .padding(CivicaSpacing.md)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.red.opacity(0.08))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
+    }
 }
 
 // MARK: - Preview
@@ -200,6 +296,15 @@ struct SNAPWorkRequirementsView: View {
     .onAppear {
         UserDefaults.standard.set(CivicaLanguage.spanish.rawValue,
                                   forKey: CivicaLanguage.defaultStorageKey)
+    }
+}
+
+#Preview("With mock client") {
+    NavigationStack {
+        SNAPWorkRequirementsView(
+            packetId: "mock-packet-123",
+            apiClient: MockEnrollmentAPIClient()
+        )
     }
 }
 #endif

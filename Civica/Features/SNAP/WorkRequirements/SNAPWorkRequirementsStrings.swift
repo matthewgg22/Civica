@@ -35,4 +35,38 @@ enum SNAPWorkRequirementsStrings {
         "Evaluate",
         es: "Evaluar"
     )
+
+    // MARK: - Evaluation result
+
+    static let resultSubject = CivicaText(
+        "Subject to work requirements",
+        es: "Sujeto a requisitos laborales"
+    )
+
+    static let resultNotSubject = CivicaText(
+        "Not subject to work requirements",
+        es: "No sujeto a requisitos laborales"
+    )
+
+    static let resultCompliance = CivicaText(
+        "Compliance",
+        es: "Cumplimiento"
+    )
+
+    static let resultCitations = CivicaText(
+        "Citations",
+        es: "Citas reglamentarias"
+    )
+
+    static let resultExemption = CivicaText(
+        "Exemption",
+        es: "Exención"
+    )
+
+    // MARK: - Error
+
+    static let evaluationErrorPrefix = CivicaText(
+        "Evaluation failed",
+        es: "Error en la evaluación"
+    )
 }
