@@ -129,6 +129,73 @@ app.post('/outreach', zValidator('json', outreachBodySchema), async (c) => {
 });
 
 // ---------------------------------------------------------------------------
+// POST /navigator/packets/:packetId/qc-outcome — log a QC sampling result
+// ---------------------------------------------------------------------------
+//
+// Called when a navigator receives a QC response for a sampled case.
+// Only QC-sampled cases should have error_found set; unsampled cases must
+// have error_found = null (unsampled ≠ clean — prevents label contamination
+// in the Phase 2 retraining pipeline).
+
+const qcOutcomeBodySchema = z.object({
+  qc_sampled: z.boolean(),
+  error_found: z.boolean().nullable(),
+  error_type: z.string().max(100).nullable().optional(),
+  error_amount: z.number().min(0).nullable().optional(),
+}).refine(
+  (d) => d.qc_sampled || d.error_found === null,
+  { message: "error_found must be null when qc_sampled is false" }
+);
+
+app.post('/packets/:packetId/qc-outcome', zValidator('json', qcOutcomeBodySchema), async (c) => {
+  const actor = c.get('actor');
+  requireNavigator(actor.kind);
+
+  const packetId = c.req.param('packetId');
+  const body = c.req.valid('json');
+  const jwt = c.get('jwt');
+
+  // Verify packet exists and fetch org_id for RLS column
+  const anonDb = makeAnonClient(c.env, jwt);
+  const { data: packet, error: packetErr } = await anonDb
+    .schema('snap_enrollment')
+    .from('snap_packets')
+    .select('packet_id, org_id')
+    .eq('packet_id', packetId)
+    .is('deleted_at', null)
+    .single();
+
+  if (packetErr?.code === 'PGRST116') {
+    throw new HTTPException(404, { message: 'Packet not found' });
+  }
+  if (packetErr) throw new HTTPException(500, { message: packetErr.message });
+
+  const db = await withActorContext(c);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: outcome, error: insertErr } = await db
+    .schema('snap_enrollment')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .from('qc_outcomes' as any)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .insert({
+      packet_id: packetId,
+      org_id: packet.org_id ?? '',
+      qc_sampled: body.qc_sampled,
+      error_found: body.error_found ?? null,
+      error_type: body.error_type ?? null,
+      error_amount: body.error_amount ?? null,
+      logged_by: actor.id,
+    } as any)
+    .select()
+    .single();
+
+  if (insertErr) throw new HTTPException(500, { message: insertErr.message });
+
+  return c.json(outcome, 201);
+});
+
+// ---------------------------------------------------------------------------
 // PATCH /navigator/outreach/:taskId — update task status
 // ---------------------------------------------------------------------------
 

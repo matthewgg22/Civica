@@ -7,6 +7,7 @@ import { makeAnonClient, makeServiceClient } from "../lib/supabase.js";
 import { getOrCreateApplicant } from "../lib/applicant.js";
 import { getQuestionsForState } from "../lib/questions.js";
 import type { Env } from "../types.js";
+import { scoreErrorRisk } from "@civica/snap-qc-engine";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -424,6 +425,113 @@ app.post(
     }, 201);
   }
 );
+
+// ── Error Risk Score ──────────────────────────────────────────────────────────
+
+// POST /me/packets/:packetId/error-risk
+// Returns a pre-submission QC error risk score for the packet.
+// Phase 1: derives defensibility signals from Argyle connection status and
+// packet answers. Phase 2: replaces with full QC engine flow evaluation.
+app.post("/:packetId/error-risk", async (c) => {
+  const applicant = await resolveApplicant(c as Context<{ Bindings: Env }>);
+  const packetId = c.req.param("packetId");
+  const anonDb = makeAnonClient(c.env, c.get("jwt"));
+
+  const { data: packet, error: pErr } = await anonDb
+    .schema("snap_enrollment")
+    .from("snap_packets")
+    .select("packet_id, applicant_id")
+    .eq("packet_id", packetId)
+    .eq("applicant_id", applicant.applicant_id)
+    .is("deleted_at", null)
+    .single();
+
+  if (pErr?.code === "PGRST116" || !packet) throw new HTTPException(404, { message: "Packet not found" });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (pErr) throw new HTTPException(500, { message: (pErr as any).message });
+
+  // Parallel: relevant answers + Argyle connection status (one round trip)
+  const [answersResult, argyleResult] = await Promise.all([
+    anonDb
+      .schema("snap_enrollment")
+      .from("packet_answers")
+      .select("question_key, applicant_answer")
+      .eq("packet_id", packetId)
+      .in("question_key", ["employment_status", "housing_situation", "monthly_utilities"]),
+    anonDb
+      .schema("snap_enrollment")
+      .from("argyle_connections")
+      .select("linked_accounts")
+      .eq("applicant_id", applicant.applicant_id)
+      .is("revoked_at", null)
+      .maybeSingle(),
+  ]);
+
+  type AnswerRow = { question_key: string; applicant_answer: string | null };
+  const answers: Record<string, string> = Object.fromEntries(
+    (answersResult.data ?? [])
+      .map((a: AnswerRow) => [a.question_key, a.applicant_answer ?? ""])
+      .filter(([, v]) => v !== "")
+  );
+
+  const linkedAccounts = (argyleResult.data?.linked_accounts as unknown[]) ?? [];
+  const argyleConnected = linkedAccounts.length > 0;
+
+  // Phase 1 defensibility signal derivation.
+  // Replace each flow with qcEngine.evaluate() when the corresponding API
+  // data (Argyle payroll, UtilityAPI, Plaid) is fetchable at score time.
+  type FlowSignal = { flow: "gig-income" | "utility-sua" | "shared-lease"; defensibility_score: "strong" | "moderate" | "weak" };
+  const flowSignals: FlowSignal[] = [];
+
+  const incomeStatuses = new Set(["employed_full_time", "employed_part_time", "self_employed"]);
+  const employmentStatus = answers["employment_status"];
+  if (employmentStatus && incomeStatuses.has(employmentStatus)) {
+    flowSignals.push({
+      flow: "gig-income",
+      // Argyle API-verified = strong; self-declared = weak (highest QC citation rate)
+      defensibility_score: argyleConnected ? "strong" : "weak",
+    });
+  }
+
+  const monthlyUtilities = parseFloat(answers["monthly_utilities"] ?? "0");
+  if (monthlyUtilities > 0) {
+    // Phase 2: replace with UtilityAPI name-match result
+    flowSignals.push({ flow: "utility-sua", defensibility_score: "moderate" });
+  }
+
+  const housingSituation = answers["housing_situation"];
+  if (housingSituation === "renting" || housingSituation === "living_with_family") {
+    // Phase 2: replace with resolved sublease/landlord_letter doc status
+    flowSignals.push({ flow: "shared-lease", defensibility_score: "moderate" });
+  }
+
+  const result = scoreErrorRisk(flowSignals);
+
+  // Persist for analytics history (non-blocking; score is returned regardless)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (result.score !== null) {
+    void (makeServiceClient(c.env)
+      .schema("snap_enrollment")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .from("packet_error_risk" as any)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .insert({
+        packet_id: packetId,
+        engine_version: result.engine_version,
+        score: result.score,
+        factors: result.factors,
+        tier: result.tier,
+      } as any)
+      .then(() => {}, () => {}));
+  }
+
+  return c.json({
+    score: result.score,
+    tier: result.tier,
+    factors: result.factors,
+    engine_version: result.engine_version,
+  });
+});
 
 // ── Submit ────────────────────────────────────────────────────────────────────
 
