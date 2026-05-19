@@ -29,7 +29,7 @@ set -u
 # ---------------------------------------------------------------------------
 
 ENROLLMENT_API_URL="https://civica-enrollment-api.civica-api.workers.dev"
-DASHBOARD_URL="https://civica-dashboard.vercel.app"
+DASHBOARD_URL="https://civica-api.vercel.app"
 SNAP_ENGINE_URL="https://civica-snap-engine.fly.dev"
 CIVICA_API_URL="https://civica-api.fly.dev"
 
@@ -290,9 +290,9 @@ check_snap_engine_reachable() {
   should_run "$name" || return 0
   local status
   if dry_run; then status="200"; else
-    status=$(curl -sS --max-time 8 -o /dev/null -w '%{http_code}' "$SNAP_ENGINE_URL/health" 2>/dev/null || echo "000")
+    status=$(curl -sS --max-time 8 -o /dev/null -w '%{http_code}' "$SNAP_ENGINE_URL/healthz" 2>/dev/null || echo "000")
   fi
-  vecho "GET $SNAP_ENGINE_URL/health → $status"
+  vecho "GET $SNAP_ENGINE_URL/healthz → $status"
   if [[ "$status" == "000" ]]; then
     report SKIP "$name" "host did not resolve / connect ($SNAP_ENGINE_URL)"
   elif [[ "$status" == "200" ]]; then
@@ -307,9 +307,9 @@ check_civica_api_reachable() {
   should_run "$name" || return 0
   local status
   if dry_run; then status="200"; else
-    status=$(curl -sS --max-time 8 -o /dev/null -w '%{http_code}' "$CIVICA_API_URL/health" 2>/dev/null || echo "000")
+    status=$(curl -sS --max-time 8 -o /dev/null -w '%{http_code}' "$CIVICA_API_URL/healthz" 2>/dev/null || echo "000")
   fi
-  vecho "GET $CIVICA_API_URL/health → $status"
+  vecho "GET $CIVICA_API_URL/healthz → $status"
   if [[ "$status" == "200" ]]; then
     report PASS "$name" "200 OK from civica-api"
   else
@@ -333,7 +333,7 @@ check_cors_allowlist() {
   # Allowed origin: should be reflected back.
   local allowed_hdr
   allowed_hdr=$(curl -fsS -X OPTIONS \
-    -H "Origin: https://civica-dashboard.vercel.app" \
+    -H "Origin: https://civica-api.vercel.app" \
     -H "Access-Control-Request-Method: POST" \
     --max-time 8 -i "$ENROLLMENT_API_URL/v1/enrollment/feature-flags" 2>/dev/null \
     | tr -d '\r' \
@@ -351,7 +351,7 @@ check_cors_allowlist() {
   vecho "evil preflight header: $evil_hdr"
 
   local allow_ok=0 evil_ok=0
-  echo "$allowed_hdr" | grep -qi "civica-dashboard.vercel.app" && allow_ok=1
+  echo "$allowed_hdr" | grep -qi "civica-api.vercel.app" && allow_ok=1
   if [[ -z "$evil_hdr" ]] || ! echo "$evil_hdr" | grep -qi "evil.example.com"; then
     evil_ok=1
   fi
