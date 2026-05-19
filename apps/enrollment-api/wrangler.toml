@@ -29,4 +29,8 @@ RECERT_AI_ENABLED = "true"
 #   TWILIO_ACCOUNT_SID=...              # wrangler secret put TWILIO_ACCOUNT_SID
 #   TWILIO_AUTH_TOKEN=...               # wrangler secret put TWILIO_AUTH_TOKEN
 #   TWILIO_FROM_NUMBER=+1...            # wrangler secret put TWILIO_FROM_NUMBER
+#
+# T15 (AI coaching for practice interview) — enable coaching via Claude Haiku:
+#   RECERT_AI_ENABLED=true
+#   ANTHROPIC_API_KEY=...               # wrangler secret put ANTHROPIC_API_KEY
 

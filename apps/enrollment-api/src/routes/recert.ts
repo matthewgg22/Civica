@@ -272,15 +272,21 @@ app.post("/:recertId/practice/:sessionId/respond", zValidator("json", respondSch
   }
 
   // Run the in-memory orchestrator
-  let result: ReturnType<typeof recertEngine.interview.respond>;
+  const aiEnabled = c.env.RECERT_AI_ENABLED === 'true';
+  const anthropicApiKey = aiEnabled ? c.env.ANTHROPIC_API_KEY : undefined;
+  let result: Awaited<ReturnType<typeof recertEngine.interview.respond>>;
   try {
-    result = recertEngine.interview.respond({ sessionId, userMessage: user_message });
+    result = await recertEngine.interview.respond({
+      sessionId,
+      userMessage: user_message,
+      ...(anthropicApiKey !== undefined && { anthropicApiKey }),
+    });
   } catch (err) {
     // Session not in memory (e.g. Worker restart) — return 410 Gone so client can start fresh
     throw new HTTPException(410, { message: "Session state lost; please start a new practice session" });
   }
 
-  const { turn, flags, done } = result;
+  const { turn, flags, done, coaching } = result;
 
   // Merge new flags with existing flags array
   const existingFlags = Array.isArray(session.flags) ? session.flags : [];
@@ -300,7 +306,7 @@ app.post("/:recertId/practice/:sessionId/respond", zValidator("json", respondSch
 
   if (updateErr) throw new HTTPException(500, { message: updateErr.message });
 
-  return c.json({ turn, flags, done });
+  return c.json({ turn, flags, done, coaching });
 });
 
 // ---------------------------------------------------------------------------

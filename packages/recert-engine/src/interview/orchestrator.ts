@@ -1,11 +1,12 @@
 /**
- * Recertification interview orchestrator — STUB implementation.
+ * Recertification interview orchestrator.
  *
  * This module runs the interview entirely in-memory using the static question bank.
- * Real AI (Anthropic API) wiring is a separate PR, gated behind RECERT_AI_ENABLED.
+ * AI coaching (Anthropic API) is gated behind `anthropicApiKey` being passed to
+ * `respond()` — only provided when RECERT_AI_ENABLED="true" in the Worker env.
  *
  * Sessions are kept in a module-level Map for the duration of the Worker process.
- * Production persistence (DB-backed sessions) will be added alongside AI wiring.
+ * Production persistence (DB-backed sessions) will be added in a future PR.
  */
 
 import { getQuestionsForState } from './questions.js';
@@ -39,12 +40,16 @@ export type StartResult = {
 export type RespondInput = {
   sessionId: string;
   userMessage: string;
+  /** If provided + RECERT_AI_ENABLED, generates per-turn coaching via Claude Haiku. */
+  anthropicApiKey?: string;
 };
 
 export type RespondResult = {
   turn: InterviewTurn;
   flags: Flag[];
   done: boolean;
+  /** AI coaching tip, null when AI disabled or session done. */
+  coaching: string | null;
 };
 
 // ---------------------------------------------------------------------------
@@ -62,6 +67,68 @@ type SessionState = {
 };
 
 const sessions = new Map<string, SessionState>();
+
+// ---------------------------------------------------------------------------
+// AI coaching helper
+// ---------------------------------------------------------------------------
+
+/**
+ * Calls the Anthropic Messages API for a brief coaching tip.
+ * Returns null on any error — coaching is best-effort and never blocks the interview.
+ */
+async function fetchCoaching(
+  apiKey: string,
+  questionText: string,
+  userMessage: string,
+): Promise<string | null> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 4000);
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5',
+        max_tokens: 200,
+        system:
+          'You are a compassionate SNAP recertification interview coach. The applicant ' +
+          'is practicing for their government benefits interview. After each answer, ' +
+          'give ONE brief coaching tip (1-2 sentences max) to help them answer more ' +
+          'clearly or confidently in their real interview. Be warm and encouraging. ' +
+          'If the answer is already strong, affirm it briefly. Never mention food ' +
+          'insecurity distress directly — focus only on interview technique.',
+        messages: [
+          {
+            role: 'user',
+            content:
+              `Interview question: "${questionText}"\n` +
+              `Applicant's answer: "${userMessage}"\n\n` +
+              'Give a brief coaching tip.',
+          },
+        ],
+      }),
+    });
+
+    if (!response.ok) return null;
+
+    const data = (await response.json()) as {
+      content?: Array<{ type: string; text: string }>;
+    };
+
+    const text = data?.content?.find((b) => b.type === 'text')?.text ?? null;
+    return text ?? null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -101,9 +168,10 @@ export function start(input: StartInput): StartResult {
 /**
  * Submit a response to the current question and advance the interview.
  * Checks flagTriggers on the current question against userMessage.
+ * If `anthropicApiKey` is provided, generates per-turn AI coaching (best-effort).
  */
-export function respond(input: RespondInput): RespondResult {
-  const { sessionId, userMessage } = input;
+export async function respond(input: RespondInput): Promise<RespondResult> {
+  const { sessionId, userMessage, anthropicApiKey } = input;
   const session = sessions.get(sessionId);
   if (!session) {
     throw new Error(`Session not found: ${sessionId}`);
@@ -154,7 +222,13 @@ export function respond(input: RespondInput): RespondResult {
     };
   }
 
-  return { turn, flags: newFlags, done };
+  // AI coaching — best-effort, never blocking, null when session is done
+  let coaching: string | null = null;
+  if (!done && anthropicApiKey) {
+    coaching = await fetchCoaching(anthropicApiKey, currentQuestion.text, userMessage);
+  }
+
+  return { turn, flags: newFlags, done, coaching };
 }
 
 /**
