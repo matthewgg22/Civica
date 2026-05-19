@@ -18,6 +18,8 @@ struct CivicaEntryView: View {
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
 
+    @State private var presentingDebugMenu = false
+
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
     }
@@ -40,6 +42,7 @@ struct CivicaEntryView: View {
                 }
                 Spacer(minLength: CivicaSpacing.xl)
                 privacyFooterLink
+                versionFooter
             }
             .padding(CivicaSpacing.xl)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -47,6 +50,31 @@ struct CivicaEntryView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $presentingDebugMenu) {
+            DebugMenuView()
+        }
+    }
+
+    // MARK: - Version footer (hidden debug menu trigger)
+
+    /// Tiny, low-contrast version stamp. Tapped 5 times in a row it
+    /// pops the QA debug menu. Standard iOS hidden-affordance pattern;
+    /// not discoverable to normal users — design review D7.
+    private var versionFooter: some View {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
+        return HStack {
+            Spacer()
+            Text("v\(version) (\(build))")
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+                .onTapGesture(count: 5) {
+                    presentingDebugMenu = true
+                }
+                .accessibilityHidden(true)
+            Spacer()
+        }
+        .padding(.top, CivicaSpacing.md)
     }
 
     // MARK: - Recert Companion tile (feature-flagged)
