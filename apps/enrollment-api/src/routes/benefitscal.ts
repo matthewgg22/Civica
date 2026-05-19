@@ -167,7 +167,7 @@ app.post(
       .from("benefitscal_submissions")
       .insert({
         packet_id: packetId,
-        org_id: packet.org_id ?? actor.orgId ?? null,
+        org_id: packet.org_id ?? actor.orgId ?? "",
         payload_json: payloadSnapshot,
         status: "pending_review",
         consent_type: body.consent_type,

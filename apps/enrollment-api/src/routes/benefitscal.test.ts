@@ -191,7 +191,7 @@ describe('POST /benefitscal/prepare-export/:packetId', () => {
       },
     };
 
-    vi.mocked(makeAnonClient).mockReturnValue(db as ReturnType<typeof makeAnonClient>);
+    vi.mocked(makeAnonClient).mockReturnValue(db as unknown as ReturnType<typeof makeAnonClient>);
     vi.mocked(withActorContext).mockResolvedValue(
       makeDbClient({ data: insertedSubmission, error: null }),
     );

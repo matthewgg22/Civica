@@ -115,7 +115,8 @@ describe('POST /work-requirements/:packetId/evaluate', () => {
     expect(body.isSubject).toBe(true);
     expect(body.subjectMemberIds).toEqual(['m1']);
     expect(body.timeLimitApplicable).toBe(true);
-    expect(body.citations).toHaveLength(2);
+    // 4 citations: base SNAP + OBBBA §10102 + tribal (7 CFR 273.24(b)(6)) + qualifying program (7 CFR 273.7(d)(1))
+    expect(body.citations).toHaveLength(4);
     expect(body.citations[0]?.section).toBe('7 CFR 273.24');
     expect(body.status_row.wr_status_id).toBe(WR_STATUS_ID);
   });
