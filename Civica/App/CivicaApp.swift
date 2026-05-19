@@ -21,10 +21,29 @@ struct CivicaApp: App {
         MainActor.assumeIsolated {
             CivicaUserData.runLaunchTimeMigrations()
         }
+
+        // Session A follow-up: refresh the LPIE feature flag on cold
+        // launch. Best-effort; failures are silent and fall through to
+        // the cached / default value. The flag drives CA student-
+        // exemption copy + decisions in CAStateRules.
+        Task.detached(priority: .background) {
+            await LPIEFeatureFlag.refresh(
+                baseURL: Self.enrollmentAPIBaseURL,
+                session: .shared
+            )
+        }
     }
 
     private static let isMarketplaceUITest =
         CommandLine.arguments.contains("--marketplace-ui-test")
+
+    /// Enrollment API origin. Matches the URL used by EnrollmentAPIClient
+    /// in production; kept here as a small explicit constant rather
+    /// than threading it through CivicaApp's environment.
+    private static let enrollmentAPIBaseURL: URL? =
+        URL(string: "https://civica-enrollment-api.civica-api.workers.dev")
+
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
@@ -37,6 +56,19 @@ struct CivicaApp: App {
                         // No-op if already cached; runs once per install in the background.
                         await FindHelpFixtureDownloader.shared.prefetchIfNeeded()
                     }
+            }
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            // Mirror applicationDidBecomeActive — refresh the flag
+            // each time the app comes to the foreground so users in
+            // long-lived sessions still pick up server-side flips.
+            if newPhase == .active {
+                Task.detached(priority: .background) {
+                    await LPIEFeatureFlag.refresh(
+                        baseURL: Self.enrollmentAPIBaseURL,
+                        session: .shared
+                    )
+                }
             }
         }
     }

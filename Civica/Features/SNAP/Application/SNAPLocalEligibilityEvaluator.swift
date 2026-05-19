@@ -63,7 +63,12 @@ enum SNAPLocalEligibilityEvaluator {
                  .workStudy,
                  .dependentChildCare,
                  .under18OrOver50,
+                 .lpie,
                  .stateSpecific:
+                // Session A: CA LPIE is treated like the other
+                // federal/state student exemptions for the local
+                // directional verdict. The server-side flag gates
+                // whether `.lpie` is produced upstream.
                 contributingFactors.append("student_exception_met")
             case .lessThanHalfTime:
                 break

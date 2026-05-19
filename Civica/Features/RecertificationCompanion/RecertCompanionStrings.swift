@@ -31,15 +31,111 @@ enum RecertCompanionStrings {
         es: "Fecha no establecida"
     )
 
+    // MARK: - Status summary card (design review D3)
+
+    /// Top-line hero on the dashboard. Renders into the card with a
+    /// "{N} days" interpolation. Plural handling is done in the view —
+    /// these are the bare templates.
+    static let statusInDays = CivicaText(
+        "Recert in %d days",
+        es: "Recert en %d días"
+    )
+    static let statusInOneDay = CivicaText(
+        "Recert tomorrow",
+        es: "Recert mañana"
+    )
+    static let statusToday = CivicaText(
+        "Recert is today",
+        es: "Recert es hoy"
+    )
+    static let statusOverdueDays = CivicaText(
+        "%d days overdue",
+        es: "%d días vencido"
+    )
+    static let statusOneDayOverdue = CivicaText(
+        "1 day overdue",
+        es: "1 día vencido"
+    )
+    static let statusUnscheduled = CivicaText(
+        "Recert isn't scheduled yet",
+        es: "Recert aún no programado"
+    )
+    static let statusActionsNeeded = CivicaText(
+        "%d actions needed",
+        es: "%d acciones necesarias"
+    )
+    static let statusOneActionNeeded = CivicaText(
+        "1 action needed",
+        es: "1 acción necesaria"
+    )
+    static let statusNoActions = CivicaText(
+        "Nothing to do right now",
+        es: "Nada por hacer por ahora"
+    )
+
+    static let statusCTAStartPhantom = CivicaText(
+        "Start phantom recert",
+        es: "Iniciar práctica de recert"
+    )
+    static let statusCTAViewCalendar = CivicaText(
+        "View expiration calendar",
+        es: "Ver calendario de vencimientos"
+    )
+    static let statusCTAContactNavigator = CivicaText(
+        "Contact your navigator",
+        es: "Contactar a tu navegador"
+    )
+
+    // MARK: - No-date placeholder (design review D4)
+
+    static let noDateTitle = CivicaText(
+        "Recert isn't scheduled yet",
+        es: "La recertificación aún no está programada"
+    )
+    static let noDateBody = CivicaText(
+        "We'll update this once your enrollment is approved.",
+        es: "Lo actualizaremos cuando se apruebe tu inscripción."
+    )
+    static let noDateExplainerLink = CivicaText(
+        "How does recert work?",
+        es: "¿Cómo funciona la recertificación?"
+    )
+
+    // MARK: - Overdue banner (design review D4)
+
+    static let overdueBannerTitle = CivicaText(
+        "Your recert is overdue",
+        es: "Tu recertificación está vencida"
+    )
+    /// Body uses a "%d days ago" interpolation. Singular handled in view.
+    static let overdueBannerBody = CivicaText(
+        "It was due %d days ago — contact your navigator now.",
+        es: "Venció hace %d días — contacta a tu navegador ahora."
+    )
+    static let overdueBannerBodySingular = CivicaText(
+        "It was due yesterday — contact your navigator now.",
+        es: "Venció ayer — contacta a tu navegador ahora."
+    )
+
+    // MARK: - Practice section (groups phantom + interview coach)
+
+    /// Header that wraps the Phantom Recert + Interview Coach tiles
+    /// — design review D5 disambiguation. Renames make clear that
+    /// phantom is "practice the form" and coach is "practice the call."
+    static let practiceSectionHeader = CivicaText(
+        "Practice for your recert",
+        es: "Practica para tu recertificación"
+    )
+
     // MARK: - Phantom Recert (Feature 1)
 
     static let phantomEntryTitle = CivicaText(
-        "Walk through your recert early",
-        es: "Practica tu recertificación con tiempo"
+        "Practice the form",
+        es: "Practica el formulario"
     )
     static let phantomEntrySubtitle = CivicaText(
-        "A complete dry run — no submission. About 5 minutes.",
-        es: "Una práctica completa — sin enviar. Unos 5 minutos."
+        "Walk through what you'll fill out.",
+        es: "Repasa lo que vas a llenar."
     )
     static let phantomEntryCTA = CivicaText(
         "Start dry run",
@@ -112,12 +208,12 @@ enum RecertCompanionStrings {
     // MARK: - Interview Coach (Feature 5)
 
     static let interviewCoachEntryTitle = CivicaText(
-        "Practice your interview",
-        es: "Practica tu entrevista"
+        "Practice the call",
+        es: "Practica la llamada"
     )
     static let interviewCoachEntrySubtitle = CivicaText(
-        "8 min · voice or text",
-        es: "8 min · voz o texto"
+        "Rehearse what the navigator will ask.",
+        es: "Ensaya lo que el navegador preguntará."
     )
     static let interviewCoachEntryCTA = CivicaText(
         "Start",

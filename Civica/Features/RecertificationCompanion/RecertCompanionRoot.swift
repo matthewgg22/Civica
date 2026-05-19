@@ -15,10 +15,12 @@ struct RecertCompanionRoot: View {
 
     @EnvironmentObject private var statusStore: SNAPApplicationStatusStore
     @StateObject private var scheduleStore = RecertScheduleStore()
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     /// USPS two-letter state code for the rules + appeal lookups.
-    /// Defaults to MA — the current launch state. CA is configured
-    /// but not yet surfaced from the application draft.
+    /// Defaults to CA — the current launch state (2026-05-13 switch
+    /// from MA). MA is still configured for the back-cohort tests
+    /// but new flows surface CA by default.
     let stateCode: String
 
     @State private var isEditingDate = false
@@ -33,7 +35,7 @@ struct RecertCompanionRoot: View {
     /// recert flow is noise.
     static let phantomEligibleWindowDays = 60
 
-    init(stateCode: String = "MA") {
+    init(stateCode: String = "CA") {
         self.stateCode = stateCode
     }
 
@@ -55,13 +57,22 @@ struct RecertCompanionRoot: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 header
-                RecertNotificationPermissionView()
-                recertDateCard
 
-                if shouldOfferPhantom {
-                    PhantomRecertEntryView(onStart: {
-                        presentingPhantom = true
-                    })
+                if isOverdue {
+                    overdueBanner
+                }
+
+                StatusSummaryCard(
+                    daysUntilRecert: daysUntilRecert,
+                    actionsNeeded: actionsNeededCount,
+                    language: language,
+                    onPrimaryAction: handleStatusSummaryAction
+                )
+
+                if effectiveRecertDate == nil {
+                    noRecertDatePlaceholder
+                } else {
+                    recertDateCard
                 }
 
                 if let recert = effectiveRecertDate {
@@ -74,11 +85,31 @@ struct RecertCompanionRoot: View {
                     )
                 }
 
+                if shouldOfferPhantom || shouldShowInterviewCoachInline {
+                    Text(RecertCompanionStrings.practiceSectionHeader.value(in: language))
+                        .font(CivicaTypography.sectionHeader)
+                        .foregroundStyle(CivicaColors.ink)
+                        .accessibilityAddTraits(.isHeader)
+                }
+
+                if shouldOfferPhantom {
+                    PhantomRecertEntryView(onStart: {
+                        presentingPhantom = true
+                    })
+                }
+
+                if shouldShowInterviewCoachInline {
+                    interviewCoachEntryTile
+                }
+
                 if statusStore.status == .decisionDenied {
                     appealEntryTile
                 }
 
-                interviewCoachEntryTile
+                // Permission affordance lives at the bottom as a dismissible
+                // hint — design review D3 moved it out of the hero slot.
+                // Only surface when notifications haven't been decided yet.
+                RecertNotificationPermissionView()
 
                 Spacer(minLength: CivicaSpacing.xl)
             }
@@ -214,6 +245,138 @@ struct RecertCompanionRoot: View {
         return daysUntil >= 0 && daysUntil <= Self.phantomEligibleWindowDays
     }
 
+    /// We keep the inline interview-coach tile visible whenever the
+    /// recert is on the horizon. Hidden when overdue — the user
+    /// doesn't need rehearsal copy when the date has already passed;
+    /// the hero CTA routes them to a navigator instead.
+    private var shouldShowInterviewCoachInline: Bool {
+        !isOverdue
+    }
+
+    /// Negative when overdue. Nil when no recert date is set.
+    var daysUntilRecert: Int? {
+        guard let recert = effectiveRecertDate else { return nil }
+        return Calendar.current.dateComponents([.day], from: Date(), to: recert).day
+    }
+
+    var isOverdue: Bool {
+        if let d = daysUntilRecert, d < 0 { return true }
+        return false
+    }
+
+    /// Count of upcoming actions on the ExpirationCalendar. Computed
+    /// the same way the calendar view does it, but de-duplicated into
+    /// a single integer for the StatusSummaryCard. Returns 0 when no
+    /// recert is scheduled — we can't forecast without a target date.
+    var actionsNeededCount: Int {
+        guard let recert = effectiveRecertDate else { return 0 }
+        let vault = Dictionary(uniqueKeysWithValues:
+            SNAPDocumentVaultReader.allCaptured().map { ($0.type, $0.capturedAt) }
+        )
+        let forecast = DocumentExpirationPredictor.forecast(.init(
+            today: Date(),
+            nextRecertDate: recert,
+            vault: vault,
+            stateCode: stateCode
+        ))
+        return forecast.documentsNeedingReplacement
+    }
+
+    private func handleStatusSummaryAction() {
+        let card = StatusSummaryCard(
+            daysUntilRecert: daysUntilRecert,
+            actionsNeeded: actionsNeededCount,
+            language: language,
+            onPrimaryAction: {}
+        )
+        switch card.primaryActionKind {
+        case .contactNavigator:
+            // SMS link — best-effort. Falls through if Messages isn't
+            // available (e.g. iPad without cellular). The navigator
+            // outreach number is configured per-county; for now we
+            // route to a generic CDSS info line until the per-user
+            // navigator phone is wired through the enrollment API.
+            if let url = URL(string: "sms:&body=I%20need%20help%20with%20my%20CalFresh%20recertification") {
+                #if canImport(UIKit)
+                UIApplication.shared.open(url)
+                #endif
+            }
+        case .startPhantom:
+            presentingPhantom = true
+        case .viewCalendar:
+            // Calendar is already on this screen — the tap is a no-op
+            // beyond the implicit "look down." A future iteration can
+            // scroll-to-anchor; for v1 the visual feedback of the
+            // pressed button is enough.
+            break
+        }
+    }
+
+    private var overdueBanner: some View {
+        let days = max(1, -(daysUntilRecert ?? 0))
+        let body: String = days == 1
+            ? RecertCompanionStrings.overdueBannerBodySingular.value(in: language)
+            : String(
+                format: RecertCompanionStrings.overdueBannerBody.value(in: language),
+                days
+            )
+        return HStack(alignment: .top, spacing: CivicaSpacing.sm) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundStyle(CivicaColors.warningAmber)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Text(RecertCompanionStrings.overdueBannerTitle.value(in: language))
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                Text(body)
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.warningAmber.opacity(0.12))
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .strokeBorder(CivicaColors.warningAmber.opacity(0.4), lineWidth: 1)
+        )
+        .accessibilityElement(children: .combine)
+    }
+
+    /// Rendered in place of the recertDateCard when no date has been
+    /// captured yet. Design review D4 — the empty state should
+    /// communicate "we're waiting on your enrollment" rather than
+    /// leaving the user staring at "Date not set."
+    private var noRecertDatePlaceholder: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            Text(RecertCompanionStrings.noDateTitle.value(in: language))
+                .font(CivicaTypography.sectionHeader)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+            Text(RecertCompanionStrings.noDateBody.value(in: language))
+                .font(CivicaTypography.footnoteStrong)
+                .foregroundStyle(CivicaColors.graphite)
+                .fixedSize(horizontal: false, vertical: true)
+            Button(action: { isEditingDate = true }) {
+                Text(RecertCompanionStrings.noDateExplainerLink.value(in: language))
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .underline()
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+        )
+    }
+
     /// Build a fresh forecast and reconcile the system's pending
     /// reminder requests against it. Idempotent — safe to call from
     /// every onAppear.
@@ -251,7 +414,57 @@ struct RecertCompanionRoot: View {
         }
     }
 
+    /// At accessibility Dynamic Type sizes, the trailing Edit button
+    /// pushes the date text into truncation. Switch to a vertical
+    /// layout so both fields keep their full width.
+    @ViewBuilder
     private var recertDateCard: some View {
+        if dynamicTypeSize >= .accessibility1 {
+            recertDateCardVertical
+        } else {
+            recertDateCardHorizontal
+        }
+    }
+
+    private var recertDateCardVertical: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            Image(systemName: "calendar")
+                .font(.system(size: 24))
+                .foregroundStyle(CivicaColors.brickPrimary)
+                .frame(width: 44, height: 44)
+                .background(
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                        .fill(CivicaColors.brickPrimary.opacity(0.12))
+                )
+                .accessibilityHidden(true)
+            Text(RecertCompanionStrings.recertDateLabel.value(in: language))
+                .font(CivicaTypography.footnoteStrong)
+                .foregroundStyle(CivicaColors.graphite)
+                .textCase(.uppercase)
+                .kerning(1.2)
+            Text(recertDateDisplay)
+                .font(CivicaTypography.sectionHeader)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+            Button(action: { isEditingDate = true }) {
+                Text(RecertCompanionStrings.editDateAction.value(in: language))
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .frame(minHeight: 44)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+        )
+    }
+
+    private var recertDateCardHorizontal: some View {
         HStack(spacing: CivicaSpacing.md) {
             Image(systemName: "calendar")
                 .font(.system(size: 24))
@@ -309,5 +522,21 @@ struct RecertCompanionRoot_Previews: PreviewProvider {
                 .environmentObject(SNAPApplicationStatusStore())
         }
     }
+}
+
+#Preview("xxxLarge") {
+    NavigationStack {
+        RecertCompanionRoot()
+            .environmentObject(SNAPApplicationStatusStore())
+    }
+    .dynamicTypeSize(.xxxLarge)
+}
+
+#Preview("accessibility1") {
+    NavigationStack {
+        RecertCompanionRoot()
+            .environmentObject(SNAPApplicationStatusStore())
+    }
+    .dynamicTypeSize(.accessibility1)
 }
 #endif
