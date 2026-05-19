@@ -1391,6 +1391,46 @@ export type Database = {
       [_ in never]: never
     }
   }
+  public: {
+    Tables: {
+      uat_feedback: {
+        Row: {
+          id: string
+          navigator_email: string
+          page_path: string
+          message: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          navigator_email: string
+          page_path: string
+          message: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          navigator_email?: string
+          page_path?: string
+          message?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
 }
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">

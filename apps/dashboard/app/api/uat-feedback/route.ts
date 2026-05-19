@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createServerClientFromCookies } from "../../../lib/supabase";
+import { isStaff } from "../../../lib/roleRouting";
 
 export async function POST(req: NextRequest) {
   const cookieStore = await cookies();
@@ -9,6 +10,11 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const role = (user.app_metadata as { role?: unknown } | null)?.role;
+  if (!isStaff(role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   let body: { page_path?: unknown; message?: unknown };
@@ -25,12 +31,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "message is required" }, { status: 400 });
   }
 
-  // uat_feedback is in public schema but not in generated db-types yet
-  const { error } = await (supabase as unknown as {
-    from: (table: string) => {
-      insert: (row: Record<string, unknown>) => Promise<{ error: unknown }>;
-    };
-  })
+  const { error } = await supabase
+    .schema("public")
     .from("uat_feedback")
     .insert({ navigator_email: user.email ?? "", page_path, message });
 
