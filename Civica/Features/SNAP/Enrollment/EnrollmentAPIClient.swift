@@ -216,7 +216,7 @@ struct HTTPEnrollmentAPIClient: EnrollmentAPIClient {
     }
 
     func fetchErrorRisk(packetId: String) async throws -> ErrorRiskResult {
-        return try await postEmpty(path: "/me/packets/\(packetId)/error-risk")
+        return try await postEmpty(path: "/navigator/packets/\(packetId)/error-risk")
     }
 
     func disconnectArgyle() async throws {
