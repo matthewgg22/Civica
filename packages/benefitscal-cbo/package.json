@@ -1,0 +1,23 @@
+{
+  "name": "@civica/benefitscal-cbo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "BenefitsCal CBO submission pipeline: normalize Civica packet data to BenefitsCal portal payload. Pure compute, no I/O.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@civica/config": "workspace:*",
+    "typescript": "^5.5.3",
+    "vitest": "^2.1.9"
+  }
+}
