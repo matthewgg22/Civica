@@ -69,14 +69,14 @@ CREATE POLICY "navigator can manage own org qc outcomes"
   USING (
     org_id IN (
       SELECT org_id FROM snap_enrollment.navigator_outreach_queue
-      WHERE created_by = auth.uid()
+      WHERE created_by = auth.uid()::text
       LIMIT 1
     )
   )
   WITH CHECK (
     org_id IN (
       SELECT org_id FROM snap_enrollment.navigator_outreach_queue
-      WHERE created_by = auth.uid()
+      WHERE created_by = auth.uid()::text
       LIMIT 1
     )
   );
