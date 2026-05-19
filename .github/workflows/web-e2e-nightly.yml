@@ -1,8 +1,12 @@
 name: Web B2C E2E (nightly)
 
 # Runs nightly against the live Vercel deployment and on manual trigger.
-# Requires secrets: WEB_E2E_BASE_URL, E2E_TEST_EMAIL, E2E_TEST_PASSWORD,
-#   NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY.
+# Required secrets:
+#   WEB_E2E_BASE_URL          — production URL of the deployed web/ B2C app
+#   E2E_TEST_EMAIL            — Supabase test account email
+#   E2E_TEST_PASSWORD         — Supabase test account password
+# Reuses existing E2E_SUPABASE_* secrets that are already set for the
+# enrollment-api nightly suite (no duplicate secrets to provision).
 # Tests skip gracefully when credentials are absent (hasAuth() guard in specs).
 
 on:
@@ -24,9 +28,10 @@ jobs:
       PLAYWRIGHT_BASE_URL: ${{ inputs.base_url || secrets.WEB_E2E_BASE_URL }}
       E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
       E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
-      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-      NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
+      # Reuse the E2E_SUPABASE_* secrets already set for the enrollment-api suite
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.E2E_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.E2E_SUPABASE_ANON_KEY }}
+      NEXT_PUBLIC_API_BASE_URL: https://civica-enrollment-api.civica-api.workers.dev
 
     steps:
       - uses: actions/checkout@v4
