@@ -1,0 +1,134 @@
+import CivicaDesignSystem
+import SwiftUI
+
+// Screen 4 — Apply via Handshake with consent checklist.
+// DR3-6: verified-data list + explicit "we don't share your benefit amount" line.
+// DR3-7: fallback to employer career URL when Handshake is unavailable.
+struct ApplyHandoffSheet: View {
+    let job: MarketplaceJob
+    @Environment(\.openURL) private var openURL
+    @Environment(\.dismiss) private var dismiss
+    let onHandoffLogged: () -> Void   // fires after either CTA so Argyle webhook still triggers recalc
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
+                    header
+                    consentList
+                    privacyLine
+                    ctaStack
+                }
+                .padding(CivicaSpacing.lg)
+            }
+            .background(CivicaColors.paper)
+            .navigationTitle("Applying to \(job.employerName)")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                        .foregroundStyle(CivicaColors.accentTeal)
+                }
+            }
+        }
+    }
+
+    // MARK: - Private
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            Text("We'll share the following with \(job.employerName)")
+                .font(CivicaTypography.subheadStrong)
+                .foregroundStyle(CivicaColors.ink)
+            Text("Handshake is the employer's system. Applying there means your application reaches the right person fast.")
+                .font(CivicaTypography.body)
+                .foregroundStyle(CivicaColors.graphite)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private var consentList: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            consentRow(label: "Your name and contact info", source: "Plaid-verified")
+            consentRow(label: "Class schedule (availability)", source: "Canvas-connected")
+            consentRow(label: "SNAP enrollment status", source: "Your application")
+        }
+    }
+
+    private func consentRow(label: String, source: String) -> some View {
+        HStack(alignment: .top, spacing: CivicaSpacing.md) {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(CivicaColors.accentTeal)
+                .font(.system(size: 16))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(label)
+                    .font(CivicaTypography.body)
+                    .foregroundStyle(CivicaColors.ink)
+                Text(source)
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+            }
+        }
+    }
+
+    private var privacyLine: some View {
+        Text("We don't share your benefit amount with employers.")
+            .font(CivicaTypography.footnote)
+            .foregroundStyle(CivicaColors.graphite)
+            .padding(CivicaSpacing.md)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                    .fill(CivicaColors.surfacePrimary)
+            )
+    }
+
+    private var ctaStack: some View {
+        VStack(spacing: CivicaSpacing.md) {
+            if job.handshakeJobURL != nil {
+                Button(action: openHandshake) {
+                    Text("Apply on Handshake")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(CivicaPrimaryCTAButtonStyle())
+            }
+
+            if let fallback = job.fallbackCareerURL {
+                Button(action: { openFallback(fallback) }) {
+                    Text(job.handshakeJobURL != nil
+                         ? "Or apply on employer's site"
+                         : "Apply on employer's site")
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(CivicaSecondaryCTAButtonStyle())
+            }
+        }
+    }
+
+    private func openHandshake() {
+        guard let url = job.handshakeJobURL else { return }
+        onHandoffLogged()
+        openURL(url)
+        dismiss()
+    }
+
+    private func openFallback(_ url: URL) {
+        onHandoffLogged()
+        openURL(url)
+        dismiss()
+    }
+}
+
+#Preview {
+    ApplyHandoffSheet(
+        job: MarketplaceJob(
+            id: "2", title: "Dining Services", employerName: "Campus Dining",
+            type: .w2, scheduleDescription: "16 hr/wk · $17/hr · T/Th evenings",
+            monthlyAmountUSD: 1_179, pillText: "Counts as income",
+            handshakeJobURL: URL(string: "https://app.joinhandshake.com/jobs/1"),
+            fallbackCareerURL: URL(string: "https://dining.example.edu/jobs"),
+            projectedBenefitUSD: 214, currentBenefitUSD: 292
+        ),
+        onHandoffLogged: {}
+    )
+}
