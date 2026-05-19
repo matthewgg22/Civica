@@ -2,6 +2,8 @@ import { cookies } from "next/headers";
 import { redirect, notFound } from "next/navigation";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import { homeForRole } from "../../lib/roleRouting";
+import { adminCostExposure } from "../../lib/analytics/section10106";
+import { trackPageView } from "../../lib/analytics/events";
 import CountyUrgencyBanner from "../../components/CountyUrgencyBanner";
 import DemoModeBadge from "../../components/DemoModeBadge";
 
@@ -16,21 +18,6 @@ function auditSurfaceEnabled(): boolean {
   const v = process.env.AUDIT_SURFACE_ENABLED;
   return v === "true" || v === "1";
 }
-
-// ---------------------------------------------------------------------------
-// Demo data (CA FY2024 placeholders).
-// Used when ?demo=true OR when the real analytics pipeline hasn't been wired.
-// Real data path: query analytics-engine / Supabase bucket once populated.
-// Default: demo mode (pipeline not yet active in staging).
-// ---------------------------------------------------------------------------
-const DEMO_DATA = {
-  // CA FY2024 Payment Error Rate from HHS/FNS SNAP QC report
-  caPerFy2024Pct: 7.2,
-  // Federal admin cost estimate for CA SNAP administration (placeholder)
-  federalAdminCostDollars: 850_000_000,
-  // 50% → 25% exposure = 25% of federal admin cost
-  exposureDollars: 850_000_000 * 0.25,
-};
 
 function formatCurrency(n: number): string {
   if (n >= 1_000_000_000)
@@ -75,10 +62,38 @@ export default async function CountyPage({
     redirect(typeof role === "string" ? homeForRole(role) : "/login");
   }
 
-  // Demo mode: ?demo=true OR default (real pipeline not yet active).
+  // After the redirect guard above, TypeScript still considers user possibly null.
+  // The redirect() throws, so execution only continues here when user is non-null.
+  const actorId = (user as NonNullable<typeof user>).id;
+  const profile = (user as NonNullable<typeof user>).user_metadata as
+    | { org_id?: string }
+    | undefined;
+
+  // Page-view event (server-side; PostHog/Segment will plug in here post-MVP).
+  trackPageView({
+    page: "county-10106",
+    actorId,
+    orgId: profile?.org_id,
+  });
+
+  // Demo mode: ?demo=true forces demo regardless of DB availability.
   const sp = await searchParams;
   const demoParam = sp["demo"];
-  const isDemoMode = demoParam === "true" || demoParam === undefined;
+  const forceDemo = demoParam === "true";
+
+  // Fetch real (or demo-fallback) analytics. When ?demo=true, skip DB query.
+  const stateCode = "CA";
+  const analytics = forceDemo
+    ? {
+        stateCode,
+        federalAdminCostDollars: 850_000_000,
+        perFy2024Pct: 7.2,
+        exposureDollars: 212_500_000,
+        demoMode: true,
+      }
+    : await adminCostExposure(stateCode);
+
+  const isDemoMode = analytics.demoMode;
 
   const days = daysUntilOct1_2026();
 
@@ -104,7 +119,7 @@ export default async function CountyPage({
           </p>
         </div>
 
-        {/* T-DR2: Demo mode badge */}
+        {/* T-DR2: Demo mode badge — hidden when real analytics data is available */}
         {isDemoMode && <DemoModeBadge />}
       </header>
 
@@ -115,11 +130,11 @@ export default async function CountyPage({
       <section className="px-6 md:px-8 py-6" aria-label="Key metrics">
         {isDemoMode && (
           <p className="text-[11px] text-muted mb-4">
-            Showing CA FY2024 demo data. Pass{" "}
+            Showing {analytics.stateCode} FY2024 demo data. Pass{" "}
             <code className="font-mono bg-surface border border-hairline rounded px-1 py-0.5">
               ?demo=false
             </code>{" "}
-            to see live data (requires analytics pipeline).
+            to see live data (requires analytics pipeline with &ge;10 active packets).
           </p>
         )}
 
@@ -140,19 +155,11 @@ export default async function CountyPage({
             variant="warning"
           />
 
-          {/* KPI (c): Exposure */}
+          {/* KPI (c): Exposure — driven by analytics engine (live or demo) */}
           <KpiCard
-            label="Estimated CA exposure"
-            value={
-              isDemoMode
-                ? formatCurrency(DEMO_DATA.exposureDollars)
-                : "Live data loading…"
-            }
-            subtext={
-              isDemoMode
-                ? `Based on ~${formatCurrency(DEMO_DATA.federalAdminCostDollars)} federal admin cost (CA FY2024)`
-                : "Connect analytics pipeline to populate"
-            }
+            label={`Estimated ${analytics.stateCode} exposure`}
+            value={formatCurrency(analytics.exposureDollars)}
+            subtext={`Based on ~${formatCurrency(analytics.federalAdminCostDollars)} federal admin cost (${analytics.stateCode} FY2024${isDemoMode ? " demo" : ""})`}
             variant="warning"
           />
         </div>
@@ -174,11 +181,9 @@ export default async function CountyPage({
           <p className="text-sm text-graphite mt-2 leading-relaxed">
             State-level breakdown coming soon.
           </p>
-          {isDemoMode && (
-            <p className="text-xs text-muted mt-4">
-              CA PER (FY2024 demo): {DEMO_DATA.caPerFy2024Pct}%
-            </p>
-          )}
+          <p className="text-xs text-muted mt-4">
+            {analytics.stateCode} PER (FY2024{isDemoMode ? " demo" : ""}): {analytics.perFy2024Pct}%
+          </p>
         </div>
       </section>
     </main>
