@@ -15,7 +15,6 @@ import meRouter from "./routes/me.js";
 import mePacketsRouter from "./routes/me-packets.js";
 import meInboxRouter from "./routes/me-inbox.js";
 import recertRouter from "./routes/recert.js";
-import workRequirementsRouter from "./routes/work-requirements.js";
 import { requestLogger } from "./lib/logger.js";
 import { scrubEvent } from "./lib/sentry.js";
 import { withSentry } from "@sentry/cloudflare";
@@ -44,9 +43,6 @@ api.route("/", missingItemsRouter);      // /packets/:id/missing-items, /missing
 
 // Recertification routes (T11)
 api.route("/recert", recertRouter);            // /recert/:packetId/init, /recert/:packetId, etc.
-
-// Work requirements routes (T12 — OBBBA §10102)
-api.route("/work-requirements", workRequirementsRouter);  // /work-requirements/:packetId/evaluate, etc.
 
 // Applicant self-service routes
 api.route("/me", meRouter);                    // GET/PATCH /me
