@@ -1,0 +1,46 @@
+{
+  "flow": "benefit-impact-projection",
+  "state": "MA",
+  "defensibility_score": "strong",
+  "defensibility_factors": [
+    {
+      "name": "income_type",
+      "weight": "positive",
+      "detail": "FWS income excluded from SNAP calculation under 7 CFR 273.9(c)(3)"
+    }
+  ],
+  "evidence_package": {
+    "flow": "benefit-impact-projection",
+    "applicant_name": "Devon Williams",
+    "state_code": "MA",
+    "household_size": 2,
+    "job_type": "fws",
+    "employer_name": "UMass Boston Federal Work-Study",
+    "gross_job_income_usd": 1200,
+    "fws_excluded_usd": 1200,
+    "counted_income_usd": 0,
+    "eid_applied_usd": 0,
+    "benefit_reduction_usd": 0,
+    "current_benefit_usd": 292,
+    "projected_benefit_usd": 292,
+    "benefit_change_usd": 0,
+    "regulatory_citations": [
+      "7 CFR 273.9(c)(3) — Federal Work-Study earnings excluded from income",
+      "7 CFR 273.5(b)(5) — Student exemption: Federal Work-Study participant"
+    ],
+    "generated_at": "2026-05-19T15:00:00Z"
+  },
+  "citations": [
+    {
+      "authority": "federal",
+      "reference": "7 CFR 273.9(c)(3) — Federal Work-Study earnings excluded from income"
+    },
+    {
+      "authority": "federal",
+      "reference": "7 CFR 273.5(b)(5) — Student exemption: Federal Work-Study participant"
+    }
+  ],
+  "warnings": [],
+  "computed_at": "2026-05-19T15:00:00Z",
+  "engine_version": "0.1.0"
+}

@@ -1,0 +1,15 @@
+{
+  "flow": "benefit-impact-projection",
+  "state": "MA",
+  "inputs": {
+    "applicant_name": "Devon Williams",
+    "state_code": "MA",
+    "household_size": 2,
+    "current_benefit_usd": 292,
+    "job_offer": {
+      "type": "fws",
+      "employer_name": "UMass Boston Federal Work-Study",
+      "monthly_amount": 1200
+    }
+  }
+}

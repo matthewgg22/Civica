@@ -5,17 +5,23 @@ import { discoverGoldenFixtures } from "./golden/_discover";
 
 const fixtures = discoverGoldenFixtures();
 
-// Sanity guard: T4 contract requires ≥24 fixtures (4 flows × 2 states × 3+).
+// Sanity guard: contract requires ≥30 fixtures (4 flows × 6 + benefit-impact × 6).
 // If somebody deletes fixtures without explicit review, fail loudly.
 describe("golden fixture inventory", () => {
-  it("has at least 24 fixtures (3+ per flow × 4 flows × 2 states)", () => {
-    expect(fixtures.length).toBeGreaterThanOrEqual(24);
+  it("has at least 30 fixtures (3+ per (flow, state) × 5 flows × 2 states)", () => {
+    expect(fixtures.length).toBeGreaterThanOrEqual(30);
   });
 
-  it("covers all four flows", () => {
+  it("covers all five flows", () => {
     const flowsSeen = new Set(fixtures.map((f) => f.flow));
     expect(flowsSeen).toEqual(
-      new Set(["utility-sua", "shared-lease", "gig-income", "assets"]),
+      new Set([
+        "utility-sua",
+        "shared-lease",
+        "gig-income",
+        "assets",
+        "benefit-impact-projection",
+      ]),
     );
   });
 

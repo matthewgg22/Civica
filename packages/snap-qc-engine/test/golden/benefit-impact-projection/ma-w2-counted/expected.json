@@ -1,0 +1,46 @@
+{
+  "flow": "benefit-impact-projection",
+  "state": "MA",
+  "defensibility_score": "moderate",
+  "defensibility_factors": [
+    {
+      "name": "income_type",
+      "weight": "neutral",
+      "detail": "W-2 income subject to 20% EID; 30% benefit reduction on net"
+    }
+  ],
+  "evidence_package": {
+    "flow": "benefit-impact-projection",
+    "applicant_name": "Priya Patel",
+    "state_code": "MA",
+    "household_size": 2,
+    "job_type": "w2",
+    "employer_name": "Stop & Shop #441",
+    "gross_job_income_usd": 1179,
+    "fws_excluded_usd": 0,
+    "counted_income_usd": 1179,
+    "eid_applied_usd": 235.8,
+    "benefit_reduction_usd": 282.96,
+    "current_benefit_usd": 292,
+    "projected_benefit_usd": 9.04,
+    "benefit_change_usd": -282.96,
+    "regulatory_citations": [
+      "7 CFR 273.9(d)(1) — 20% earned-income deduction",
+      "7 CFR 273.10(e)(1)(i) — 30% of net income benefit reduction"
+    ],
+    "generated_at": "2026-05-19T15:00:00Z"
+  },
+  "citations": [
+    {
+      "authority": "federal",
+      "reference": "7 CFR 273.9(d)(1) — 20% earned-income deduction"
+    },
+    {
+      "authority": "federal",
+      "reference": "7 CFR 273.10(e)(1)(i) — 30% of net income benefit reduction"
+    }
+  ],
+  "warnings": [],
+  "computed_at": "2026-05-19T15:00:00Z",
+  "engine_version": "0.1.0"
+}
