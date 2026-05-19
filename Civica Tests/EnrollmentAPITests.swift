@@ -70,7 +70,7 @@ private func verifySuccessSession(userId: String = "user-abc") -> URLSession {
 
 // MARK: - Auth flow tests
 
-@Suite(.serialized)  // MockURLProtocol.requestHandler is a static — must not run in parallel.
+@Suite(.serialized, .enabled(if: keychainAvailableForTests))  // MockURLProtocol.requestHandler is a static — must not run in parallel.
 struct EnrollmentAuthTests {
     private let supabaseURL = URL(string: "https://test.supabase.co")!
 

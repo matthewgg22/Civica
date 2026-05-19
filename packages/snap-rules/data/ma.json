@@ -1,62 +1,62 @@
 {
-  "$schema": "../schema/rules.schema.json",
   "state_code": "MA",
-  "version": 1,
-  "as_of_date": "2026-05-01",
+  "version": "1.0",
+  "as_of_date": "2026-05-17",
   "document_requirements": [
     {
-      "category": "photo_id",
-      "label": "Photo ID",
-      "helper_text_en": "Driver's license, state ID card, passport, military ID, or any government-issued photo ID accepted by the MA DTA.",
-      "helper_text_es": "Licencia de conducir, tarjeta de identificación estatal, pasaporte, identificación militar o cualquier identificación con foto emitida por el gobierno aceptada por el DTA de MA.",
-      "required_when": { "household_size_gte": 1 },
-      "is_required": true,
-      "review_note": "TODO: confirm with counsel — verify MA DTA current accepted ID list, including non-standard forms (e.g., consular ID, school ID for students)."
-    },
-    {
-      "category": "paystub",
-      "label": "Recent pay stub",
-      "helper_text_en": "Your most recent pay stub or an employer letter showing your current wages and hours.",
-      "helper_text_es": "Su talón de pago más reciente o una carta del empleador que muestre su salario y horas actuales.",
-      "required_when": { "has_earned_income": true },
+      "category": "identity",
+      "label_en": "Photo ID",
+      "label_es": "Identificación con foto",
+      "helper_en": "Government-issued photo ID such as a driver's license, state ID, or passport.",
+      "helper_es": "Identificación con foto emitida por el gobierno, como licencia de conducir, tarjeta de identificación estatal o pasaporte.",
+      "required_when": { "always": true },
       "is_required": true
     },
     {
-      "category": "bank_statement",
-      "label": "Bank or financial account statement",
-      "helper_text_en": "Most recent statement for checking, savings, or other accounts showing current balances.",
-      "helper_text_es": "Estado de cuenta más reciente de cuentas corrientes, de ahorros u otras, que muestre los saldos actuales.",
-      "required_when": { "has_unearned_income": true },
-      "is_required": true,
-      "review_note": "TODO: confirm with counsel — verify asset test applicability under MA DTA rules and whether BBCE broadens or narrows the bank-statement requirement."
-    },
-    {
-      "category": "benefit_letter",
-      "label": "Benefit award letter",
-      "helper_text_en": "Official award letter from Social Security, SSI, DTA cash assistance, unemployment, or other benefit programs showing your monthly payment.",
-      "helper_text_es": "Carta oficial de adjudicación del Seguro Social, SSI, asistencia en efectivo del DTA, desempleo u otros programas de beneficios que muestre su pago mensual.",
-      "required_when": { "has_unearned_income": true },
-      "is_required": true,
-      "review_note": "TODO: confirm with counsel — confirm whether benefit_letter and bank_statement are both required or either/or for unearned income under MA DTA policy."
-    },
-    {
-      "category": "lease",
-      "label": "Proof of address",
-      "helper_text_en": "Lease or rental agreement, mortgage statement, or letter from your landlord confirming your current address.",
-      "helper_text_es": "Contrato de arrendamiento, estado de cuenta hipotecario, o carta de su arrendador que confirme su dirección actual.",
-      "required_when": { "household_size_gte": 1 },
-      "is_required": true,
-      "review_note": "TODO: confirm with counsel — MA DTA may accept utility bills or a self-declaration for households without a fixed address; confirm required vs. optional status for homeless households."
-    },
-    {
-      "category": "utility_bill",
-      "label": "Utility bill",
-      "helper_text_en": "Recent gas, electric, heating oil, or water bill. Used to verify utility costs for the shelter deduction.",
-      "helper_text_es": "Factura reciente de gas, electricidad, combustible para calefacción o agua. Se usa para verificar los costos de servicios públicos para la deducción de vivienda.",
-      "required_when": { "claims_utility_deduction": true },
+      "category": "residence",
+      "label_en": "Proof of address",
+      "label_es": "Comprobante de domicilio",
+      "helper_en": "Utility bill, lease, or mortgage statement showing your current address.",
+      "helper_es": "Factura de servicios, contrato de arrendamiento o estado hipotecario que muestre su dirección actual.",
+      "required_when": { "always": true },
       "is_required": true
+    },
+    {
+      "category": "income",
+      "label_en": "Proof of income",
+      "label_es": "Comprobante de ingresos",
+      "helper_en": "Recent pay stubs or benefit award letter.",
+      "helper_es": "Talones de pago recientes o carta de adjudicación de beneficios.",
+      "required_when": { "always": true },
+      "is_required": true
+    },
+    {
+      "category": "shelter",
+      "label_en": "Proof of shelter costs",
+      "label_es": "Comprobante de gastos de vivienda",
+      "helper_en": "Lease or mortgage statement showing your monthly housing cost.",
+      "helper_es": "Contrato de arrendamiento o estado hipotecario que muestre su costo mensual de vivienda.",
+      "required_when": { "field": "expenses.monthlyRentOrHousing", "gt": 0 },
+      "is_required": false
+    },
+    {
+      "category": "student",
+      "label_en": "Student enrollment verification",
+      "label_es": "Verificación de matrícula estudiantil",
+      "helper_en": "Enrollment letter or transcript from your college or university.",
+      "helper_es": "Carta de matrícula o expediente académico de su institución educativa.",
+      "required_when": { "field": "studentStatus.enrolledInHigherEd", "eq": true },
+      "is_required": false
+    },
+    {
+      "category": "medical",
+      "label_en": "Medical expense documentation",
+      "label_es": "Documentación de gastos médicos",
+      "helper_en": "Receipts or bills for monthly out-of-pocket medical costs.",
+      "helper_es": "Recibos o facturas por gastos médicos mensuales de su bolsillo.",
+      "required_when": { "and": [{ "field": "household.hasElderlyOrDisabled", "eq": true }, { "field": "expenses.monthlyMedical", "gt": 0 }] },
+      "is_required": false
     }
   ],
-  "shelter_rules": [],
-  "income_thresholds": []
+  "flags": []
 }
