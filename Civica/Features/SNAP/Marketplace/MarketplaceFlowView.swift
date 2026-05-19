@@ -9,6 +9,7 @@ struct MarketplaceFlowView: View {
     let state: MarketplaceState
     @State private var path = NavigationPath()
     @State private var applySheetJob: MarketplaceJob?
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -19,6 +20,16 @@ struct MarketplaceFlowView: View {
                 onShowMore: {},
                 onFilter: {}
             )
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .accessibilityLabel(Text("Close"))
+                    }
+                }
+            }
             .accessibilityIdentifier("marketplace.job_list")
             .navigationDestination(for: MarketplaceJob.self) { job in
                 BenefitImpactView(

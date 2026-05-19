@@ -10,6 +10,9 @@ struct SNAPConfirmationView: View {
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
 
+    @State private var showingMarketplace = false
+    @State private var marketplaceState = MarketplaceState.empty
+
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
     }
@@ -57,6 +60,12 @@ struct SNAPConfirmationView: View {
                         .foregroundStyle(CivicaColors.graphite)
                 }
 
+                MarketplaceEntryCard(
+                    state: marketplaceState,
+                    onConnectTapped: { showingMarketplace = true },
+                    onJobsTapped: { showingMarketplace = true }
+                )
+
                 Button(SNAPConfirmationStrings.reviewDraftAgain.value(in: language)) {
                     viewModel.currentStep = .review
                 }
@@ -73,6 +82,9 @@ struct SNAPConfirmationView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             viewModel.markNextStepsViewed()
+        }
+        .sheet(isPresented: $showingMarketplace) {
+            MarketplaceFlowView(state: marketplaceState)
         }
     }
 
