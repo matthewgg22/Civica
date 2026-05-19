@@ -4,20 +4,19 @@ import SwiftUI
 // MARK: - State Models
 
 struct MarketplaceBenefit {
-    var amount: Int = 292
-    var effectiveDate: Date = {
-        var c = DateComponents(); c.year = 2026; c.month = 5; c.day = 25
-        return Calendar.current.date(from: c) ?? Date()
-    }()
-    var recertifyBy: Date = {
-        var c = DateComponents(); c.year = 2026; c.month = 7; c.day = 18
-        return Calendar.current.date(from: c) ?? Date()
-    }()
+    /// Monthly benefit amount in whole dollars. `nil` until the API populates it.
+    var amount: Int?
+    /// First-deposit effective date. `nil` until the API populates it.
+    var effectiveDate: Date?
+    /// Recertification deadline. `nil` until the API populates it.
+    var recertifyBy: Date?
 }
 
 struct MarketplaceHousehold {
-    var size: Int = 2
-    var shelterCost: Int = 800
+    /// Household size from the packet snapshot. `nil` until the API populates it.
+    var size: Int?
+    /// Monthly shelter cost in whole dollars. `nil` until the API populates it.
+    var shelterCost: Int?
 }
 
 struct MarketplaceSchedule {
@@ -236,12 +235,20 @@ final class SNAPMarketplaceViewModel: ObservableObject {
 
     // MARK: Derived display helpers
 
-    var benefitAmountFormatted: String { "$\(benefit.amount)" }
+    /// Formatted monthly benefit (e.g. "$292"), or `nil` while the API hasn't
+    /// populated `benefit.amount` yet. Views should render a placeholder when nil.
+    var benefitAmountFormatted: String? {
+        guard let amount = benefit.amount else { return nil }
+        return "$\(amount)"
+    }
 
-    var depositDateFormatted: String {
+    /// Formatted first-deposit line (e.g. "First deposit by May 25"), or `nil`
+    /// while `benefit.effectiveDate` hasn't loaded.
+    var depositDateFormatted: String? {
+        guard let date = benefit.effectiveDate else { return nil }
         let f = DateFormatter()
         f.dateFormat = "MMM d"
-        return "First deposit by \(f.string(from: benefit.effectiveDate))"
+        return "First deposit by \(f.string(from: date))"
     }
 
     var recertByFormatted: String {
