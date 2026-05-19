@@ -179,7 +179,7 @@ export default async function LandingPage({ params }: PageProps) {
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href={`/${locale}/app/onboarding`}
-                  className="inline-flex items-center justify-center rounded-[3px] bg-brick px-6 py-3 text-base font-medium text-white hover:bg-brick-soft motion-safe:transition-transform motion-safe:hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brick focus-visible:ring-offset-2"
+                  className="inline-flex items-center justify-center rounded-[3px] bg-brick px-6 py-3 text-base font-medium text-white hover:bg-brick-pressed motion-safe:transition-transform motion-safe:hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brick focus-visible:ring-offset-2"
                 >
                   {t("hero.ctaPrimary")}
                 </Link>
@@ -263,7 +263,7 @@ export default async function LandingPage({ params }: PageProps) {
           <div className="mt-10">
             <Link
               href={`/${locale}/app/onboarding`}
-              className="inline-flex items-center justify-center rounded-[3px] bg-brick px-6 py-3 text-base font-medium text-white hover:bg-brick-soft motion-safe:transition-transform motion-safe:hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brick focus-visible:ring-offset-2"
+              className="inline-flex items-center justify-center rounded-[3px] bg-brick px-6 py-3 text-base font-medium text-white hover:bg-brick-pressed motion-safe:transition-transform motion-safe:hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brick focus-visible:ring-offset-2"
             >
               {t("hero.ctaPrimary")}
             </Link>

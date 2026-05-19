@@ -47,7 +47,7 @@ export default async function ResourcesPage({ params }: Props) {
             {r.action && (
               <a
                 href={r.action.href}
-                className="inline-flex items-center gap-1 rounded-lg bg-brick px-4 py-2 text-sm font-medium text-white hover:bg-brick-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brick focus-visible:ring-offset-2"
+                className="inline-flex items-center gap-1 rounded-lg bg-brick px-4 py-2 text-sm font-medium text-white hover:bg-brick-pressed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brick focus-visible:ring-offset-2"
               >
                 {r.action.label}
               </a>
