@@ -52,22 +52,40 @@ struct SNAPEnrolledView: View {
                 .kerning(1.5)
                 .padding(.bottom, 8)
 
-            // $292
-            Text(vm.benefitAmountFormatted)
-                .font(MFont.heroNumeral)
-                .foregroundStyle(Color.civicaInk)
-                .monospacedDigit()
-                .accessibilityLabel("Monthly benefit: \(vm.benefitAmountFormatted)")
+            // $292 — or placeholder while the API hasn't populated benefit.amount.
+            Group {
+                if let amountText = vm.benefitAmountFormatted {
+                    Text(amountText)
+                        .font(MFont.heroNumeral)
+                        .foregroundStyle(Color.civicaInk)
+                        .monospacedDigit()
+                        .accessibilityLabel("Monthly benefit: \(amountText)")
+                } else {
+                    Text("—")
+                        .font(MFont.heroNumeral)
+                        .foregroundStyle(Color.civicaGraphite)
+                        .monospacedDigit()
+                        .accessibilityLabel("Loading monthly benefit")
+                }
+            }
 
-            // Teal pill
-            Text(vm.depositDateFormatted)
-                .font(MFont.metaMedium)
-                .foregroundStyle(Color.civicaTeal)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(Color.civicaPaper2)
-                .clipShape(Capsule())
-                .padding(.top, 16)
+            // Teal pill — or skeleton while the deposit date hasn't loaded.
+            Group {
+                if let depositText = vm.depositDateFormatted {
+                    Text(depositText)
+                        .font(MFont.metaMedium)
+                        .foregroundStyle(Color.civicaTeal)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color.civicaPaper2)
+                        .clipShape(Capsule())
+                } else {
+                    ProgressView()
+                        .frame(width: 60, height: 16)
+                        .accessibilityLabel("Loading first deposit date")
+                }
+            }
+            .padding(.top, 16)
         }
         .padding(.top, 12)
         .padding(.horizontal, 24)
