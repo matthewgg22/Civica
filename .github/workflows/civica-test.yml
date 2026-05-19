@@ -76,6 +76,7 @@ jobs:
             -configuration Debug \
             -destination 'generic/platform=iOS Simulator' \
             -quiet \
+            ENABLE_USER_SCRIPT_SANDBOXING=NO \
             build
 
       - name: Pre-boot test simulator
@@ -116,6 +117,7 @@ jobs:
             -resultBundlePath /tmp/civica-test-result.xcresult \
             -quiet \
             CODE_SIGNING_ALLOWED=NO \
+            ENABLE_USER_SCRIPT_SANDBOXING=NO \
             test
 
       - name: Upload xcresult on failure
