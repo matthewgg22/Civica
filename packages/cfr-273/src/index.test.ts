@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { allCitations, byRelevance, bySection } from "./index.js";
+import { allCitations, byRelevance, bySection } from "./index";
 
 describe("@civica/cfr-273", () => {
   it("loads all 223 curated citations", () => {

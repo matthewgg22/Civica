@@ -1,4 +1,4 @@
-import type { OcrResult } from "./schemas.js";
+import type { OcrResult } from "./schemas";
 
 export const FIXTURE_TEXTRACT_OCR_RESULT: OcrResult = {
   document_id: "00000000-0000-0000-0000-000000000020",

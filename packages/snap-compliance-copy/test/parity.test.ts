@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { bannedPhrases, pendingCopyRevisions } from "../src/index.js";
+import { bannedPhrases, pendingCopyRevisions } from "../src/index";
 
 // Parity expectations are the values that lived in
 // SNAPComplianceCopyRegistry.swift before T6 extracted them to JSON.

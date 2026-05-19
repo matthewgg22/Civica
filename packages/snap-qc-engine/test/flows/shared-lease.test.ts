@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   analyzeRentTransactions,
   qcEngine,
-} from "../../src/index.js";
-import type { RentTransaction } from "../../src/schemas.js";
+} from "../../src/index";
+import type { RentTransaction } from "../../src/schemas";
 
 const txn = (date: string, amount: number, counterparty = "Sam"): RentTransaction => ({
   transaction_id: `tx_${date}`,

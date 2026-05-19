@@ -6,7 +6,7 @@ import type {
   Defensibility,
   DefensibilityFactor,
   Warning,
-} from "../../schemas.js";
+} from "../../schemas";
 
 export interface AssetsEvaluationOptions {
   now?: () => string;

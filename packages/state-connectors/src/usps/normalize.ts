@@ -1,5 +1,5 @@
-import type { NormalizedAddress, ValidationResult } from "../schemas.js";
-import type { USPSAddressApiResponse } from "./types.js";
+import type { NormalizedAddress, ValidationResult } from "../schemas";
+import type { USPSAddressApiResponse } from "./types";
 
 export function normalizeUSPSResponse(raw: USPSAddressApiResponse): ValidationResult {
   const a = raw.address;

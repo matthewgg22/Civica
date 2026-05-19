@@ -4,7 +4,7 @@ import {
   LiabilityScenarioSchema,
   ProvenanceSchema,
   PERSchema,
-} from "./schemas.js";
+} from "./schemas";
 
 describe("analytics-engine schemas", () => {
   it("parses a valid provenance sidecar", () => {

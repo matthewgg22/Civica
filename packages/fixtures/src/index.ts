@@ -1,3 +1,3 @@
-export * from "./users.js";
-export * from "./packets.js";
-export * from "./ocr.js";
+export * from "./users";
+export * from "./packets";
+export * from "./ocr";

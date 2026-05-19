@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
-import { PACKET_STATUSES, PacketStatusSchema, PACKET_STATUS_TRANSITIONS } from "./packetStatus.js";
+import { PACKET_STATUSES, PacketStatusSchema, PACKET_STATUS_TRANSITIONS } from "./packetStatus";
 
 const CANONICAL_ORDER = [
   "Draft",

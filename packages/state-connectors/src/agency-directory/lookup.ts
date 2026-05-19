@@ -2,7 +2,7 @@ import {
   StateAgencyRecordSchema,
   type AgencyLookupResult,
   type StateAgencyRecord,
-} from "../schemas.js";
+} from "../schemas";
 import caData from "./data/ca.json";
 import maData from "./data/ma.json";
 import stubData from "./data/states-stub.json";

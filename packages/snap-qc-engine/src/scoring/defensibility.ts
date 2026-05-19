@@ -1,4 +1,4 @@
-import type { Defensibility, DefensibilityFactor } from "../schemas.js";
+import type { Defensibility, DefensibilityFactor } from "../schemas";
 
 // Cross-flow helpers. Today, defensibility is determined per-flow inside the
 // flow modules; this file exists as the shared home for any future scoring

@@ -4,7 +4,7 @@ import {
   sha256Hex,
   HANDOFF_DISCLAIMER,
   type HandoffPayload,
-} from "./index.js";
+} from "./index";
 
 // ---------------------------------------------------------------------------
 // Fixtures — column names match commit f3abbe28 (applicant_answer, answer_source,

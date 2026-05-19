@@ -1,7 +1,7 @@
 import type { DuckDBConnection } from "@duckdb/node-api";
 import type { z, ZodTypeAny } from "zod";
-import { getDuckDBConnection } from "./duckdb-client.js";
-import { ProvenanceSchema, type Provenance } from "../schemas.js";
+import { getDuckDBConnection } from "./duckdb-client";
+import { ProvenanceSchema, type Provenance } from "../schemas";
 
 const BUCKET = "civica-analytics";
 
@@ -23,7 +23,7 @@ export async function readParquetWithProvenance<S extends ZodTypeAny>(
   const dataReader = await conn.runAndReadAll(
     `SELECT * FROM read_parquet('${esc(dataS3)}');`,
   );
-  const rows = dataReader.getRowObjects().map((row) => schema.parse(row));
+  const rows = dataReader.getRowObjects().map((row: Record<string, unknown>) => schema.parse(row));
 
   // DuckDB can read JSON over httpfs with read_json_auto; one row, one struct.
   const sidecarReader = await conn.runAndReadAll(
@@ -45,7 +45,7 @@ export async function rawQuery<S extends ZodTypeAny>(
 ): Promise<z.infer<S>[]> {
   const conn = await getDuckDBConnection();
   const reader = await conn.runAndReadAll(sql);
-  return reader.getRowObjects().map((row) => schema.parse(row));
+  return reader.getRowObjects().map((row: Record<string, unknown>) => schema.parse(row));
 }
 
 export function s3Path(bucketPath: string): string {

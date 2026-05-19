@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { fromAddress, fromZipFast } from "../src/fips/resolver.js";
-import { makeFakeFetch } from "./helpers/fakeFetch.js";
+import { fromAddress, fromZipFast } from "../src/fips/resolver";
+import { makeFakeFetch } from "./helpers/fakeFetch";
 
 describe("fips.fromZipFast", () => {
   it("resolves an LA ZIP to Los Angeles County FIPS 06037", () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { lookup, listSupportedStates, getStateRecord } from "../src/agency-directory/lookup.js";
+import { lookup, listSupportedStates, getStateRecord } from "../src/agency-directory/lookup";
 
 describe("agencyDirectory.lookup", () => {
   it("returns the LA County DPSS for CA / 06037", () => {

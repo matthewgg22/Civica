@@ -1,10 +1,10 @@
-import { AddressSchema, type Address, type ValidationResult } from "../schemas.js";
-import { normalizeUSPSResponse } from "./normalize.js";
+import { AddressSchema, type Address, type ValidationResult } from "../schemas";
+import { normalizeUSPSResponse } from "./normalize";
 import type {
   USPSAddressApiResponse,
   USPSClientOptions,
   USPSTokenResponse,
-} from "./types.js";
+} from "./types";
 
 const DEFAULT_BASE_URL = "https://apis.usps.com";
 const DEFAULT_SKEW_SECONDS = 30;

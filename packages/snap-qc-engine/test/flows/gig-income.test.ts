@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { qcEngine } from "../../src/index.js";
-import type { IncomeSource } from "../../src/schemas.js";
+import { qcEngine } from "../../src/index";
+import type { IncomeSource } from "../../src/schemas";
 
 const src = (
   type: IncomeSource["type"],

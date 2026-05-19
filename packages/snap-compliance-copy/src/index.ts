@@ -6,7 +6,7 @@ import {
   type BannedPhrase,
   type PendingCopyRevision,
   type RevisionStatus,
-} from "./schemas.js";
+} from "./schemas";
 
 export type { BannedPhrase, PendingCopyRevision, RevisionStatus };
 export {
@@ -15,7 +15,7 @@ export {
   RevisionStatusSchema,
   BannedPhrasesFileSchema,
   PendingRevisionsFileSchema,
-} from "./schemas.js";
+} from "./schemas";
 
 const bannedPhrasesFile = BannedPhrasesFileSchema.parse(bannedPhrasesRaw);
 const pendingRevisionsFile = PendingRevisionsFileSchema.parse(pendingRevisionsRaw);

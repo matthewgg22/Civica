@@ -1,11 +1,11 @@
-import { readParquetWithProvenance } from "../runtime/node.js";
+import { readParquetWithProvenance } from "../runtime/node";
 import {
   CliffEntrySchema,
   LiabilityScenarioSchema,
   type CliffEntry,
   type LiabilityScenario,
   type Result,
-} from "../schemas.js";
+} from "../schemas";
 
 const FY24_PATH = "section-10105/fy=2024/state_liability.parquet";
 const FY28_PATH = "section-10105/fy=2028/state_liability_adjusted.parquet";

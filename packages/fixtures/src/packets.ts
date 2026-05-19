@@ -1,5 +1,5 @@
-import type { Packet, Document } from "./schemas.js";
-import { FIXTURE_APPLICANT, FIXTURE_NAVIGATOR } from "./users.js";
+import type { Packet, Document } from "./schemas";
+import { FIXTURE_APPLICANT, FIXTURE_NAVIGATOR } from "./users";
 
 export const FIXTURE_DOCUMENT_PAYSTUB: Document = {
   id: "00000000-0000-0000-0000-000000000020",

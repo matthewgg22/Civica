@@ -1,5 +1,5 @@
-export { normalizeForPortal } from "./normalize.js";
-export type { NormalizeInput, PacketAnswer, DocumentItem, PacketHouseholdMember, PacketIncomeSource, ApplicantInfo } from "./normalize.js";
+export { normalizeForPortal } from "./normalize";
+export type { NormalizeInput, PacketAnswer, DocumentItem, PacketHouseholdMember, PacketIncomeSource, ApplicantInfo } from "./normalize";
 export type {
   BenefitsCalPayload,
   SubmissionResult,
@@ -11,7 +11,7 @@ export type {
   UtilityAllowanceType,
   ClientSignatureType,
   SubmissionStatus,
-} from "./schemas.js";
+} from "./schemas";
 export {
   BenefitsCalPayloadSchema,
   SubmissionResultSchema,
@@ -22,4 +22,4 @@ export {
   UtilityAllowanceTypeSchema,
   ClientSignatureTypeSchema,
   SubmissionStatusSchema,
-} from "./schemas.js";
+} from "./schemas";

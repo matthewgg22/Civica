@@ -1,24 +1,24 @@
-import { ENGINE_VERSION } from "./version.js";
-import { evaluateUtilitySua } from "./flows/utility-sua/index.js";
-import { evaluateSharedLease } from "./flows/shared-lease/index.js";
-import { evaluateGigIncome } from "./flows/gig-income/index.js";
-import { evaluateAssets } from "./flows/assets/index.js";
-import type { EvaluateRequest, FlowKind, QcResult } from "./schemas.js";
+import { ENGINE_VERSION } from "./version";
+import { evaluateUtilitySua } from "./flows/utility-sua/index";
+import { evaluateSharedLease } from "./flows/shared-lease/index";
+import { evaluateGigIncome } from "./flows/gig-income/index";
+import { evaluateAssets } from "./flows/assets/index";
+import type { EvaluateRequest, FlowKind, QcResult } from "./schemas";
 
-export * from "./schemas.js";
-export { ENGINE_VERSION } from "./version.js";
+export * from "./schemas";
+export { ENGINE_VERSION } from "./version";
 
 export {
   analyzeRentTransactions,
   buildSharedLeasePackage,
-} from "./flows/shared-lease/index.js";
+} from "./flows/shared-lease/index";
 export {
   buildUtilityPackage,
   determineSuaTier,
-} from "./flows/utility-sua/index.js";
-export { buildGigIncomePackage } from "./flows/gig-income/index.js";
-export { buildAssetPackage } from "./flows/assets/index.js";
-export { combineScores, rollupFactors } from "./scoring/defensibility.js";
+} from "./flows/utility-sua/index";
+export { buildGigIncomePackage } from "./flows/gig-income/index";
+export { buildAssetPackage } from "./flows/assets/index";
+export { combineScores, rollupFactors } from "./scoring/defensibility";
 
 export interface EvaluateOptions {
   /** Override timestamp source (for deterministic tests). */

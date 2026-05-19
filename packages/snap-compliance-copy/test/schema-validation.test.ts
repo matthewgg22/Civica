@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   BannedPhrasesFileSchema,
   PendingRevisionsFileSchema,
-} from "../src/schemas.js";
+} from "../src/schemas";
 
 const DATA_DIR = resolve(__dirname, "..", "data");
 

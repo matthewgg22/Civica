@@ -1,4 +1,4 @@
-import type { Address, CountyResult } from "../schemas.js";
+import type { Address, CountyResult } from "../schemas";
 import zipTable from "./data/zip-to-county.json";
 
 interface ZipEntry {

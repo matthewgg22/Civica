@@ -5,7 +5,7 @@ import {
   QcCategoryMappingSchema,
   QcCategoryMappingStatusSchema,
   type QcCategoryMapping,
-} from "../schemas.js";
+} from "../schemas";
 
 // Pure-schema tests. The dataset reader hits Supabase Storage and is exercised
 // by the analytics integration suite (T8 territory); here we just lock the

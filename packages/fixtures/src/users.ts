@@ -1,4 +1,4 @@
-import type { User, Navigator } from "./schemas.js";
+import type { User, Navigator } from "./schemas";
 
 export const FIXTURE_APPLICANT: User = {
   id: "00000000-0000-0000-0000-000000000010",

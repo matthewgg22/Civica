@@ -2,7 +2,7 @@
   "name": "@civica/cfr-273",
   "version": "0.1.0",
   "private": true,
-  "description": "Curated index of 7 CFR Part 273 (SNAP eligibility/benefits rules) — 223 citations with Civica-relevance grading. Tier 2 reference data, mirrored to Tier 3 for analytical joins.",
+  "description": "Curated index of 7 CFR Part 273 (SNAP eligibility/benefits rules) \u2014 223 citations with Civica-relevance grading. Tier 2 reference data, mirrored to Tier 3 for analytical joins.",
   "type": "module",
   "exports": {
     ".": {
@@ -23,6 +23,7 @@
   "devDependencies": {
     "@civica/config": "workspace:*",
     "@duckdb/node-api": "^1.1.3-alpha.7",
+    "@types/node": "^20.0.0",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3",
     "vitest": "^2.1.9"

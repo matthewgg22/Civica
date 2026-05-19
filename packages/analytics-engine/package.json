@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@civica/config": "workspace:*",
+    "@types/node": "^20.0.0",
     "typescript": "^5.6.3",
     "vitest": "^2.1.9"
   }

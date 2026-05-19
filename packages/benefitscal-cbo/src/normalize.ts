@@ -21,7 +21,7 @@
  * inside the `packet` argument.
  */
 
-import type { BenefitsCalPayload, HouseholdMember, IncomeSource } from "./schemas.js";
+import type { BenefitsCalPayload, HouseholdMember, IncomeSource } from "./schemas";
 
 // ---------------------------------------------------------------------------
 // Input types

@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { qcEngine, ENGINE_VERSION } from "../src/index.js";
-import { discoverGoldenFixtures } from "./golden/_discover.js";
+import { qcEngine, ENGINE_VERSION } from "../src/index";
+import { discoverGoldenFixtures } from "./golden/_discover";
 
 const fixtures = discoverGoldenFixtures();
 

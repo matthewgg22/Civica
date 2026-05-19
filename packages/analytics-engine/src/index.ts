@@ -13,14 +13,14 @@
  * Every query returns `{ rows, provenance }` so consumers can render
  * citation footnotes alongside data.
  */
-import { fy29Cliff, tierLiability, type TierScenario } from "./datasets/section10105.js";
+import { fy29Cliff, tierLiability, type TierScenario } from "./datasets/section10105";
 import {
   byCategory as qcMappingByCategory,
   byCfrSection as qcMappingByCfrSection,
   coverage as qcMappingCoverage,
-} from "./datasets/qcMapping.js";
+} from "./datasets/qcMapping";
 
-export * from "./schemas.js";
+export * from "./schemas";
 
 const todo = (name: string): never => {
   // TODO: T10 phase 2 — wire to data-ops parser output.

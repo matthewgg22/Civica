@@ -9,7 +9,7 @@ import type {
   UtilityPackage,
   UtilitySuaInput,
   Warning,
-} from "../../schemas.js";
+} from "../../schemas";
 
 export { determineSuaTier };
 

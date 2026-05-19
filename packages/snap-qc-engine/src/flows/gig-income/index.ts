@@ -9,7 +9,7 @@ import type {
   GigIncomeInput,
   GigIncomePackage,
   Warning,
-} from "../../schemas.js";
+} from "../../schemas";
 
 export interface GigEvaluationOptions {
   now?: () => string;

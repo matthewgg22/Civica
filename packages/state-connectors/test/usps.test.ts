@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { makeUSPSClient } from "../src/usps/client.js";
-import { makeFakeFetch } from "./helpers/fakeFetch.js";
+import { makeUSPSClient } from "../src/usps/client";
+import { makeFakeFetch } from "./helpers/fakeFetch";
 
 const baseUrl = "https://apis.usps.test";
 

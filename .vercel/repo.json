@@ -1,0 +1,11 @@
+{
+  "remoteName": "origin",
+  "projects": [
+    {
+      "id": "prj_1XCWm4rVkaySM20yrAxtXUb8i5I5",
+      "name": "civica-api",
+      "directory": ".",
+      "orgId": "team_8cWic3JZvSea7AQQkFrXisOo"
+    }
+  ]
+}

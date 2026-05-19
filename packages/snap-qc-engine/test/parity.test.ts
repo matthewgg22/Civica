@@ -6,8 +6,8 @@
 // these assertions will fail.
 
 import { describe, expect, it } from "vitest";
-import { qcEngine } from "../src/index.js";
-import type { UtilityAccount } from "../src/schemas.js";
+import { qcEngine } from "../src/index";
+import type { UtilityAccount } from "../src/schemas";
 
 const FIXED_NOW = () => "2026-05-18T12:00:00.000Z";
 

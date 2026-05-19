@@ -6,7 +6,7 @@ import {
   PendingRevisionsFileSchema,
   type BannedPhrase,
   type PendingCopyRevision,
-} from "../src/schemas.js";
+} from "../src/schemas";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

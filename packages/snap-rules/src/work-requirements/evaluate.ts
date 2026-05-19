@@ -1,4 +1,4 @@
-import type { WorkRequirementInput, WorkRequirementResult, ExemptionType } from './types.js';
+import type { WorkRequirementInput, WorkRequirementResult, ExemptionType } from './types';
 
 // OBBBA §10102 age bounds: adults 18–54 are subject to the expanded work requirement.
 const MIN_AGE = 18;

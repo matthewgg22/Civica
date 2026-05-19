@@ -8,7 +8,7 @@ import type {
   SharedLeaseInput,
   SharedLeasePackage,
   Warning,
-} from "../../schemas.js";
+} from "../../schemas";
 
 export interface SharedLeaseEvaluationOptions {
   now?: () => string;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { qcEngine } from "../../src/index.js";
-import type { AssetItem } from "../../src/schemas.js";
+import { qcEngine } from "../../src/index";
+import type { AssetItem } from "../../src/schemas";
 
 const bank = (balance: number): AssetItem => ({
   type: "bank_account",

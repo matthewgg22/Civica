@@ -1,5 +1,5 @@
 {
-  "extends": "@civica/config/tsconfig.node.json",
+  "extends": "@civica/config/tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist"

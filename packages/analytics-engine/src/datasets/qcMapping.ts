@@ -1,4 +1,4 @@
-import { readParquetWithProvenance } from "../runtime/node.js";
+import { readParquetWithProvenance } from "../runtime/node";
 import {
   CivicaControlSchema,
   QcCategoryCoverageSchema,
@@ -6,7 +6,7 @@ import {
   type QcCategoryCoverage,
   type QcCategoryMapping,
   type Result,
-} from "../schemas.js";
+} from "../schemas";
 import { z } from "zod";
 
 const QC_MAPPING_PATH = "qc-mappings/v1/category_mapping.parquet";

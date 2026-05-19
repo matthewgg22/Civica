@@ -10,8 +10,8 @@
  * Usage:  pnpm --filter @civica/snap-qc-engine regenerate:goldens
  */
 import { readFileSync, writeFileSync } from "node:fs";
-import { qcEngine } from "../src/index.js";
-import { discoverGoldenFixtures } from "../test/golden/_discover.js";
+import { qcEngine } from "../src/index";
+import { discoverGoldenFixtures } from "../test/golden/_discover";
 
 const FROZEN_NOW = "2026-05-18T00:00:00.000Z";
 

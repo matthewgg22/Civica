@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { qcEngine, determineSuaTier, ENGINE_VERSION } from "../../src/index.js";
-import type { StateCode, UtilityIntake } from "../../src/schemas.js";
+import { qcEngine, determineSuaTier, ENGINE_VERSION } from "../../src/index";
+import type { StateCode, UtilityIntake } from "../../src/schemas";
 
 const intake = (
   paid: Partial<UtilityIntake["utilities_paid_by_applicant"]>,

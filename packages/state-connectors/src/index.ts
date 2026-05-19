@@ -3,9 +3,9 @@
 // Three concerns, exported as namespaces so callers self-document at the
 // call site (usps.validate(), fips.fromAddress(), agencyDirectory.lookup()).
 
-export * as usps from "./usps/client.js";
-export * as fips from "./fips/resolver.js";
-export * as agencyDirectory from "./agency-directory/lookup.js";
+export * as usps from "./usps/client";
+export * as fips from "./fips/resolver";
+export * as agencyDirectory from "./agency-directory/lookup";
 
 export {
   AddressSchema,
@@ -16,7 +16,7 @@ export {
   CountyAgencySchema,
   StateAgencyRecordSchema,
   AgencyLookupResultSchema,
-} from "./schemas.js";
+} from "./schemas";
 
 export type {
   Address,
@@ -28,11 +28,11 @@ export type {
   CountyAgency,
   StateAgencyRecord,
   AgencyLookupResult,
-} from "./schemas.js";
+} from "./schemas";
 
 export type {
   USPSCredentials,
   USPSClientOptions,
   USPSAddressApiResponse,
   USPSTokenResponse,
-} from "./usps/types.js";
+} from "./usps/types";

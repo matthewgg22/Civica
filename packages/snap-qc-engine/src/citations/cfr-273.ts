@@ -5,7 +5,7 @@
 // are pinned to match the prototype's existing output verbatim so
 // parity tests on evidence_package don't drift.
 
-import type { Citation } from "../schemas.js";
+import type { Citation } from "../schemas";
 
 export const CFR_273_SHELTER_VERIFICATION =
   "7 CFR 273.2(f)(1)(vi) — verification of shelter expenses";

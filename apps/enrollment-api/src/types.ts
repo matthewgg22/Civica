@@ -13,6 +13,9 @@ export interface Env {
   TWILIO_ACCOUNT_SID?: string;
   TWILIO_AUTH_TOKEN?: string;
   TWILIO_FROM_NUMBER?: string;
+  // T15: AI-powered recert practice interview. Off unless RECERT_AI_ENABLED="true".
+  RECERT_AI_ENABLED?: string;
+  ANTHROPIC_API_KEY?: string;
 }
 
 export interface Variables {

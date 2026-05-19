@@ -5,6 +5,9 @@ compatibility_flags = ["nodejs_compat"]
 
 [vars]
 SUPABASE_URL = "https://zgqphgcqfxsgviofsccs.supabase.co"
+# T15: enable AI-powered coaching in the recert practice interview.
+# ANTHROPIC_API_KEY must be set as a wrangler secret (never in [vars]).
+RECERT_AI_ENABLED = "true"
 # SENTRY_DSN is intentionally absent from [vars] — set it as a secret:
 #   wrangler secret put SENTRY_DSN
 # This prevents the DSN from being committed to source control.
