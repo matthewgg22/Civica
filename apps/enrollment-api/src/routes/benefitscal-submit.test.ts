@@ -8,6 +8,27 @@ vi.mock('../middleware/actorContext.js', () => ({
   withActorContext: vi.fn(),
 }));
 
+// Spy on the Browserless driver factory so we can verify the route
+// auto-builds it when BROWSERLESS_API_KEY is set (TODO-15).
+const mockBrowserlessFactoryFn = vi.hoisted(() =>
+  vi.fn(() => ({
+    launch: vi.fn().mockResolvedValue({
+      newPage: vi.fn().mockResolvedValue({
+        goto: vi.fn().mockResolvedValue(undefined),
+        fill: vi.fn().mockResolvedValue(undefined),
+        click: vi.fn().mockResolvedValue(undefined),
+        waitForURL: vi.fn().mockResolvedValue(undefined),
+        textContent: vi.fn().mockResolvedValue(null),
+        screenshot: vi.fn().mockResolvedValue(null),
+      }),
+      close: vi.fn().mockResolvedValue(undefined),
+    }),
+  })),
+);
+vi.mock('@civica/benefitscal-cbo/drivers/browserless', () => ({
+  browserlessDriverFactory: mockBrowserlessFactoryFn,
+}));
+
 import { makeServiceClient } from '../lib/supabase.js';
 import { withActorContext } from '../middleware/actorContext.js';
 import benefitsCalRouter, { __setBenefitsCalDriverFactory } from './benefitscal.js';
@@ -29,6 +50,7 @@ import type {
 afterEach(() => {
   vi.resetAllMocks();
   __setBenefitsCalDriverFactory(null);
+  mockBrowserlessFactoryFn.mockClear();
 });
 
 const PACKET_ID = 'p0000000-0000-0000-0000-000000000001';
@@ -246,5 +268,59 @@ describe('POST /benefitscal/submit/:packetId', () => {
 
     // Route still returns 202 (the failure is recorded in the background).
     expect(res.status).toBe(202);
+  });
+
+  it('TODO-15: builds Browserless driver factory when BROWSERLESS_API_KEY is set', async () => {
+    const db = makeSequencedDbClient([
+      { data: null, error: null },
+      { data: pendingRow, error: null },
+    ]);
+    vi.mocked(makeServiceClient).mockReturnValue(db as unknown as ReturnType<typeof makeServiceClient>);
+    vi.mocked(withActorContext).mockResolvedValue(
+      makeDbClient({ data: { submission_id: SUBMISSION_ID, status: 'queued' }, error: null }),
+    );
+    // No test override — the route must resolve the factory from env.
+    __setBenefitsCalDriverFactory(null);
+
+    const res = await buildTestApp(benefitsCalRouter, '/benefitscal', NAVIGATOR).request(
+      `/benefitscal/submit/${PACKET_ID}`,
+      {
+        method: 'POST',
+        headers: JSON_HEADERS,
+        body: JSON.stringify({ confirm: true }),
+      },
+      { ...TEST_ENV, BROWSERLESS_API_KEY: 'browserless-test-token' },
+    );
+
+    expect(res.status).toBe(202);
+    expect(mockBrowserlessFactoryFn).toHaveBeenCalledOnce();
+    expect(mockBrowserlessFactoryFn).toHaveBeenCalledWith({
+      apiKey: 'browserless-test-token',
+    });
+  });
+
+  it('TODO-15: does NOT build Browserless factory when BROWSERLESS_API_KEY is absent', async () => {
+    const db = makeSequencedDbClient([
+      { data: null, error: null },
+      { data: pendingRow, error: null },
+    ]);
+    vi.mocked(makeServiceClient).mockReturnValue(db as unknown as ReturnType<typeof makeServiceClient>);
+    vi.mocked(withActorContext).mockResolvedValue(
+      makeDbClient({ data: { submission_id: SUBMISSION_ID, status: 'queued' }, error: null }),
+    );
+    __setBenefitsCalDriverFactory(null);
+
+    const res = await buildTestApp(benefitsCalRouter, '/benefitscal', NAVIGATOR).request(
+      `/benefitscal/submit/${PACKET_ID}`,
+      {
+        method: 'POST',
+        headers: JSON_HEADERS,
+        body: JSON.stringify({ confirm: true }),
+      },
+      TEST_ENV, // no BROWSERLESS_API_KEY
+    );
+
+    expect(res.status).toBe(202);
+    expect(mockBrowserlessFactoryFn).not.toHaveBeenCalled();
   });
 });

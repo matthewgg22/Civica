@@ -55,3 +55,14 @@ RECERT_AI_ENABLED = "true"
 #   BENEFITSCAL_CBO_PASSWORD=...        # wrangler secret put BENEFITSCAL_CBO_PASSWORD
 #   BENEFITSCAL_BASE_URL=https://...    # optional override; defaults to https://benefitscal.com
 #                                       # wrangler secret put BENEFITSCAL_BASE_URL
+#
+# TODO-15 (Browserless.io driver) — external Playwright service for Phase 2.
+# When set, POST /benefitscal/submit/:packetId auto-builds a Browserless driver
+# and the submitter drives the BenefitsCal portal via Browserless. When absent,
+# the route marks newly queued rows failed with DRIVER_NOT_WIRED.
+#
+# Free tier: 1000 units/month (≈200x pilot volume). Migrate to a Fly.io sidecar
+# once monthly submissions exceed ~500 OR a data-pass-through audit requires
+# in-house browser execution. See packages/benefitscal-cbo/README.md for the
+# v1→v2 migration playbook.
+#   BROWSERLESS_API_KEY=...             # wrangler secret put BROWSERLESS_API_KEY

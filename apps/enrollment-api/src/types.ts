@@ -29,6 +29,11 @@ export interface Env {
   BENEFITSCAL_CBO_USERNAME?: string;
   BENEFITSCAL_CBO_PASSWORD?: string;
   BENEFITSCAL_BASE_URL?: string;
+  // TODO-15: Browserless.io driver for Phase 2 BenefitsCal submission.
+  // When set, the route auto-builds a browserlessDriverFactory and the
+  // submitter drives the portal via Browserless. When absent, the route
+  // marks newly queued rows failed with DRIVER_NOT_WIRED (graceful degrade).
+  BROWSERLESS_API_KEY?: string;
 }
 
 export interface Variables {

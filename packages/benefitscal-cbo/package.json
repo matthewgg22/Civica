@@ -5,7 +5,8 @@
   "description": "BenefitsCal CBO submission pipeline: normalize Civica packet data to BenefitsCal portal payload. Pure compute, no I/O.",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./drivers/browserless": "./src/drivers/browserless.ts"
   },
   "scripts": {
     "test": "vitest run",

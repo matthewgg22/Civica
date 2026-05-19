@@ -19,12 +19,13 @@ BenefitsCal CBO portal submission pipeline. Two phases:
 
 Phase 2 automation is **off by default**. v1 launch path is the manual
 PDF export SOP (see Session F coordinator guide). Phase 2 switches on
-per-packet only once **all three** are true:
+per-packet only once **all** of the following are true:
 
-1. M1 has 5 successful sandbox submissions on file.
-2. M2 credentials (`BENEFITSCAL_CBO_USERNAME` / `BENEFITSCAL_CBO_PASSWORD`)
-   are live as Worker secrets.
-3. ≥ 2 navigator-driven smoke tests pass against the production portal.
+- [x] Driver service wired — Browserless v1 (TODO-15)
+- [ ] 5 successful sandbox submissions logged
+- [ ] M2: `BENEFITSCAL_CBO_USERNAME` + `BENEFITSCAL_CBO_PASSWORD` secrets set in production
+- [ ] 9 portal form-fill TODOs in `submitter.ts` completed
+- [ ] ≥2 navigator-driven smoke tests pass against production portal
 
 ## Architecture
 
@@ -59,14 +60,46 @@ POST /benefitscal/submit/:packetId
 
 Cloudflare Workers cannot run real Playwright / Chromium in-process. The
 submitter takes a `BrowserDriverFactory` so production can wire to an
-external browser service (Browserless WebSocket, self-hosted Playwright
-server, or a Durable Object proxy) while tests inject fakes. Until that
-external service is wired, the route gracefully marks newly queued rows
-`failed` with a clear `DRIVER_NOT_WIRED` message — the navigator UI
-shows this and falls back to the manual PDF SOP.
+external browser service while tests inject fakes.
 
-A `nodePlaywrightDriverFactory()` helper is exported for Node-side tooling
-/ offline iteration. Do NOT use this from the Worker.
+**v1 (current) — Browserless.io.** Set `BROWSERLESS_API_KEY` as a Worker
+secret and the route auto-builds a `browserlessDriverFactory()`. Each
+`BrowserDriverPage` method (`goto`, `fill`, `click`, `waitForURL`,
+`textContent`, `screenshot`) becomes a POST to Browserless's `/function`
+endpoint. Session continuity is preserved across calls via the
+`browserWSEndpoint` returned by Browserless on the first call.
+
+When `BROWSERLESS_API_KEY` is absent (dev, staging without secrets), the
+route gracefully marks newly queued rows `failed` with a clear
+`DRIVER_NOT_WIRED` message — the navigator UI shows this and falls back
+to the manual PDF SOP.
+
+**Setup (operator):**
+
+```sh
+# 1. Sign up at https://browserless.io — free tier (1000 units/month)
+# 2. Copy the API key from the dashboard
+# 3. Set as a Worker secret:
+wrangler secret put BROWSERLESS_API_KEY --env production
+# 4. Deploy:
+wrangler deploy --env production
+```
+
+**v2 migration path — Fly.io sidecar.** Migrate when:
+
+- Monthly submissions exceed ~500 (Browserless free tier is 1000
+  units/month; a paid plan is fine up to ~5k but at that scale in-house
+  is cheaper), OR
+- A data-handling audit requires that BenefitsCal credentials never
+  transit a third-party vendor's TLS pipeline.
+
+Migration steps (sketch): new Fly app with Node + Playwright, expose a
+REST API mirroring the Browserless `/function` shape, swap
+`browserlessDriverFactory` for a `flyDriverFactory` keyed off a
+`FLY_BROWSER_URL` secret. The submitter framework does not change.
+
+A `nodePlaywrightDriverFactory()` helper is also exported for Node-side
+tooling / offline iteration. Do NOT use this from the Worker.
 
 ## TODO list — portal flow
 
