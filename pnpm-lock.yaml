@@ -323,6 +323,22 @@ importers:
 
   packages/api-types: {}
 
+  packages/benefitscal-cbo:
+    dependencies:
+      zod:
+        specifier: ^3.24.0
+        version: 3.25.76
+    devDependencies:
+      '@civica/config':
+        specifier: workspace:*
+        version: link:../config
+      typescript:
+        specifier: ^5.5.3
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.9
+        version: 2.1.9(@types/node@22.19.19)(jsdom@26.1.0)(lightningcss@1.32.0)(terser@5.47.1)
+
   packages/cfr-273:
     dependencies:
       zod:
