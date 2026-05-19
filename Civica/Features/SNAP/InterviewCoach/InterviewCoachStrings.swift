@@ -140,6 +140,10 @@ enum InterviewCoachStrings {
         "Try again",
         es: "Intentar de nuevo"
     )
+    static let micAccessNeeded = CivicaText(
+        "Enable microphone in Settings",
+        es: "Activar micrófono en Configuración"
+    )
 
     // MARK: Review summary
 

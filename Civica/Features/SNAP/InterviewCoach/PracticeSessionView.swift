@@ -1,5 +1,6 @@
-import SwiftUI
+import AVFoundation
 import CivicaDesignSystem
+import SwiftUI
 
 // EXPERIMENTAL SILOED MODULE: practice session chat UI.
 // Renders the transcript as alternating bubbles, exposes a text input bar
@@ -17,6 +18,10 @@ struct PracticeSessionView: View {
     // review and edit before sending. Gated on iOS 26 because the service
     // is `@available(iOS 26.0, *)`.
     @StateObject private var voiceService = VoiceServiceContainer()
+
+    // T-DR7: track mic permission so the mic button is suppressed when
+    // the user has explicitly denied access.
+    @State private var micPermissionStatus: AVAudioApplication.recordPermission = AVAudioApplication.shared.recordPermission
 
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
@@ -193,51 +198,92 @@ struct PracticeSessionView: View {
     }
 
     private var inputBar: some View {
-        HStack(alignment: .bottom, spacing: CivicaSpacing.sm) {
-            TextField(InterviewCoachStrings.yourAnswerPlaceholder.value(in: language),
-                      text: $viewModel.draftResponse,
-                      axis: .vertical)
-                .focused($inputFocused)
-                .textInputAutocapitalization(.sentences)
-                .font(CivicaTypography.body)
-                .padding(CivicaSpacing.sm)
-                .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                        .fill(CivicaColors.surfacePrimary)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                        .stroke(CivicaColors.hairline, lineWidth: 1)
-                )
-                .lineLimit(1...5)
-                .disabled(viewModel.status != .awaitingUser)
+        VStack(spacing: 0) {
+            // T-DR7: when mic access is denied, show an inline link to Settings
+            // instead of the mic button so the user knows how to re-enable it.
+            if micPermissionStatus == .denied {
+                HStack(spacing: CivicaSpacing.xs) {
+                    Image(systemName: "mic.slash.fill")
+                        .font(CivicaTypography.footnoteStrong)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .accessibilityHidden(true)
+                    Button(InterviewCoachStrings.micAccessNeeded.value(in: language)) {
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundStyle(CivicaColors.brickPrimary)
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, CivicaSpacing.md)
+                .padding(.top, CivicaSpacing.xs)
+            }
 
-            // Voice mic: tap to record, transcript fills the field above
-            // for review + edit before send. Hidden on pre-iOS-26 devices.
-            if #available(iOS 26.0, *), let micService = voiceService.service {
-                SNAPVoiceMicButton(service: micService)
+            HStack(alignment: .bottom, spacing: CivicaSpacing.sm) {
+                TextField(InterviewCoachStrings.yourAnswerPlaceholder.value(in: language),
+                          text: $viewModel.draftResponse,
+                          axis: .vertical)
+                    .focused($inputFocused)
+                    .textInputAutocapitalization(.sentences)
+                    .font(CivicaTypography.body)
+                    .padding(CivicaSpacing.sm)
+                    .background(
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                            .fill(CivicaColors.surfacePrimary)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                            .stroke(CivicaColors.hairline, lineWidth: 1)
+                    )
+                    .lineLimit(1...5)
                     .disabled(viewModel.status != .awaitingUser)
-                    .opacity(viewModel.status == .awaitingUser ? 1.0 : 0.4)
-            }
 
-            Button {
-                inputFocused = false
-                InterviewCoachAnalytics.track(.sessionTurnSent, parameters: [
-                    "turn_count": String(viewModel.transcript.count + 1)
-                ])
-                Task { await viewModel.submitUserResponse() }
-            } label: {
-                Image(systemName: "arrow.up.circle.fill")
-                    .resizable().scaledToFit()
-                    .frame(width: 36, height: 36)
-                    .foregroundStyle(canSend ? CivicaColors.brickPrimary : CivicaColors.graphite.opacity(0.4))
+                // T-DR7: mic button — shown only when permission is granted or
+                // undetermined (tapping undetermined requests permission first).
+                // Hidden entirely when denied; Settings link shown above instead.
+                if #available(iOS 26.0, *), let micService = voiceService.service {
+                    if micPermissionStatus != .denied {
+                        SNAPVoiceMicButton(service: micService)
+                            .disabled(viewModel.status != .awaitingUser)
+                            .opacity(viewModel.status == .awaitingUser ? 1.0 : 0.4)
+                            .simultaneousGesture(TapGesture().onEnded {
+                                // Request permission on first tap when undetermined.
+                                if micPermissionStatus == .undetermined {
+                                    AVAudioApplication.requestRecordPermission { _ in
+                                        DispatchQueue.main.async {
+                                            micPermissionStatus = AVAudioApplication.shared.recordPermission
+                                        }
+                                    }
+                                }
+                            })
+                    }
+                }
+
+                // T-DR8: send button — minimum 44×44pt touch target (HIG).
+                // The icon is rendered at 28pt; the tappable area is padded
+                // out to 44pt via the inner frame + contentShape.
+                Button {
+                    inputFocused = false
+                    InterviewCoachAnalytics.track(.sessionTurnSent, parameters: [
+                        "turn_count": String(viewModel.transcript.count + 1)
+                    ])
+                    Task { await viewModel.submitUserResponse() }
+                } label: {
+                    Image(systemName: "arrow.up.circle.fill")
+                        .resizable().scaledToFit()
+                        .frame(width: 28, height: 28)
+                        .foregroundStyle(canSend ? CivicaColors.brickPrimary : CivicaColors.graphite.opacity(0.4))
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .disabled(!canSend)
+                .buttonStyle(.plain)
+                .accessibilityLabel("Send response")
             }
-            .disabled(!canSend)
-            .buttonStyle(.plain)
-            .accessibilityLabel("Send response")
+            .padding(.horizontal, CivicaSpacing.md)
+            .padding(.vertical, CivicaSpacing.sm)
         }
-        .padding(.horizontal, CivicaSpacing.md)
-        .padding(.vertical, CivicaSpacing.sm)
         .background(CivicaColors.paper)
         .overlay(
             Rectangle().frame(height: 1).foregroundStyle(CivicaColors.hairline),
