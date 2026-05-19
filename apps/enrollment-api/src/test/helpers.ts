@@ -24,7 +24,7 @@ export function makeQueryBuilder(result: MockResult): any {
   const qb: Record<string, any> = {};
   for (const m of [
     'select', 'eq', 'is', 'order', 'limit', 'insert', 'upsert',
-    'update', 'delete', 'in', 'filter', 'neq', 'not', 'single', 'head',
+    'update', 'delete', 'in', 'filter', 'neq', 'not', 'single', 'maybeSingle', 'head',
   ]) {
     qb[m] = vi.fn().mockReturnValue(qb);
   }
