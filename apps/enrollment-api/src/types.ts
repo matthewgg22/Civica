@@ -8,6 +8,11 @@ export interface Env {
   ENABLE_ADDRESS_VALIDATION?: string;
   USPS_CLIENT_ID?: string;
   USPS_CLIENT_SECRET?: string;
+  // T14: Twilio recertification outreach. Off unless RECERT_TWILIO_ENABLED="true".
+  RECERT_TWILIO_ENABLED?: string;
+  TWILIO_ACCOUNT_SID?: string;
+  TWILIO_AUTH_TOKEN?: string;
+  TWILIO_FROM_NUMBER?: string;
 }
 
 export interface Variables {

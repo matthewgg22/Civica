@@ -78,7 +78,7 @@ struct SNAPLocalEligibilityEvaluatorTests {
         var draft = SNAPApplicationDraft()
         draft.whereApplying.stateCode = "CA"
         draft.household.householdSize = "2 people"
-        draft.income.grossMonthlyIncome = 3_409
+        draft.income.grossMonthlyIncome = 3_527
         draft.studentStatus.enrolledInHigherEd = false
 
         let result = SNAPLocalEligibilityEvaluator.evaluate(draft, today: fy26Date)

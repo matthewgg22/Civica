@@ -72,7 +72,7 @@ struct DocumentExpirationPredictorTests {
 
     @Test func proofOfIncomeWithBiweeklyFrequency_capturedRecently_butCadenceDue() {
         // Within max-age but past biweekly cadence.
-        let recert = days(20, from: now)
+        let recert = days(5, from: now)
         let capturedAt = days(-20, from: now)
 
         let forecast = DocumentExpirationPredictor.forecast(.init(

@@ -112,7 +112,7 @@ private func makeClient() -> HTTPEnrollmentAPIClient {
 // .serialized prevents concurrent test execution, which would cause
 // EnrollmentStubProtocol.handlers (nonisolated(unsafe) static) to be
 // cleared by one test's init() while another test is mid-flight.
-@Suite(.serialized)
+@Suite(.serialized, .enabled(if: keychainAvailableForTests))
 struct EnrollmentAPIClientTests {
 
     init() {

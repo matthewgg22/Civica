@@ -20,4 +20,10 @@ SUPABASE_URL = "https://zgqphgcqfxsgviofsccs.supabase.co"
 #   ENABLE_ADDRESS_VALIDATION=true
 #   USPS_CLIENT_ID=...                  # wrangler secret put USPS_CLIENT_ID
 #   USPS_CLIENT_SECRET=...              # wrangler secret put USPS_CLIENT_SECRET
+#
+# T14 (Twilio recertification outreach) — set to use LiveTwilioAdapter in prod:
+#   RECERT_TWILIO_ENABLED=true
+#   TWILIO_ACCOUNT_SID=...              # wrangler secret put TWILIO_ACCOUNT_SID
+#   TWILIO_AUTH_TOKEN=...               # wrangler secret put TWILIO_AUTH_TOKEN
+#   TWILIO_FROM_NUMBER=+1...            # wrangler secret put TWILIO_FROM_NUMBER
 
