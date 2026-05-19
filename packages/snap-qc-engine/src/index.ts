@@ -3,6 +3,7 @@ import { evaluateUtilitySua } from "./flows/utility-sua/index";
 import { evaluateSharedLease } from "./flows/shared-lease/index";
 import { evaluateGigIncome } from "./flows/gig-income/index";
 import { evaluateAssets } from "./flows/assets/index";
+import { evaluateBenefitImpact } from "./flows/benefit-impact-projection/index";
 import type { EvaluateRequest, FlowKind, QcResult } from "./schemas";
 
 export * from "./schemas";
@@ -18,6 +19,10 @@ export {
 } from "./flows/utility-sua/index";
 export { buildGigIncomePackage } from "./flows/gig-income/index";
 export { buildAssetPackage } from "./flows/assets/index";
+export {
+  buildBenefitImpactPackage,
+  evaluateBenefitImpact,
+} from "./flows/benefit-impact-projection/index";
 export { combineScores, rollupFactors } from "./scoring/defensibility";
 
 export interface EvaluateOptions {
@@ -45,6 +50,9 @@ async function evaluate<F extends FlowKind>(
       break;
     case "assets":
       result = evaluateAssets(request.inputs as never, { now });
+      break;
+    case "benefit-impact-projection":
+      result = evaluateBenefitImpact(request.inputs as never, { now });
       break;
     default: {
       const _exhaustive: never = request.flow;

@@ -1322,6 +1322,186 @@ export type Database = {
         }
         Relationships: []
       }
+      // ── T-DR3-7: marketplace cliff event navigator outreach ──────────────
+      navigator_outreach_queue: {
+        Row: {
+          outreach_task_id: string
+          packet_id: string
+          org_id: string
+          applicant_id: string
+          reason: 'cliff_event' | 'manual'
+          income_usd: number | null
+          sla_hours: number
+          due_at: string
+          status: 'pending' | 'contacted' | 'resolved' | 'cancelled'
+          contacted_at: string | null
+          resolved_at: string | null
+          resolution_notes: string | null
+          created_by: string
+          assigned_to: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          outreach_task_id?: string
+          packet_id: string
+          org_id: string
+          applicant_id: string
+          reason: 'cliff_event' | 'manual'
+          income_usd?: number | null
+          sla_hours?: number
+          due_at: string
+          status?: 'pending' | 'contacted' | 'resolved' | 'cancelled'
+          contacted_at?: string | null
+          resolved_at?: string | null
+          resolution_notes?: string | null
+          created_by: string
+          assigned_to?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          outreach_task_id?: string
+          packet_id?: string
+          org_id?: string
+          applicant_id?: string
+          reason?: 'cliff_event' | 'manual'
+          income_usd?: number | null
+          sla_hours?: number
+          due_at?: string
+          status?: 'pending' | 'contacted' | 'resolved' | 'cancelled'
+          contacted_at?: string | null
+          resolved_at?: string | null
+          resolution_notes?: string | null
+          created_by?: string
+          assigned_to?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      // ── T-DR3-8: Argyle paycheck confirmation ───────────────────────────
+      argyle_connections: {
+        Row: {
+          connection_id: string
+          applicant_id: string
+          packet_id: string | null
+          argyle_user_id: string
+          linked_accounts: Json
+          linked_at: string
+          revoked_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          connection_id?: string
+          applicant_id: string
+          packet_id?: string | null
+          argyle_user_id: string
+          linked_accounts?: Json
+          linked_at?: string
+          revoked_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          connection_id?: string
+          applicant_id?: string
+          packet_id?: string | null
+          argyle_user_id?: string
+          linked_accounts?: Json
+          linked_at?: string
+          revoked_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      marketplace_paychecks: {
+        Row: {
+          marketplace_paycheck_id: string
+          applicant_id: string
+          packet_id: string | null
+          org_id: string | null
+          argyle_paycheck_id: string
+          employer_name: string
+          monthly_amount_usd: number
+          projected_benefit_usd: number
+          is_cliff_event: boolean
+          pay_date: string
+          created_at: string
+        }
+        Insert: {
+          marketplace_paycheck_id?: string
+          applicant_id: string
+          packet_id?: string | null
+          org_id?: string | null
+          argyle_paycheck_id: string
+          employer_name?: string
+          monthly_amount_usd: number
+          projected_benefit_usd: number
+          is_cliff_event?: boolean
+          pay_date: string
+          created_at?: string
+        }
+        Update: {
+          marketplace_paycheck_id?: string
+          applicant_id?: string
+          packet_id?: string | null
+          org_id?: string | null
+          argyle_paycheck_id?: string
+          employer_name?: string
+          monthly_amount_usd?: number
+          projected_benefit_usd?: number
+          is_cliff_event?: boolean
+          pay_date?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
+      // ── T-DR3-9: Canvas LMS schedule integration ─────────────────────────
+      canvas_connections: {
+        Row: {
+          connection_id: string
+          applicant_id: string
+          packet_id: string | null
+          access_token_enc: string
+          refresh_token_enc: string
+          expires_at: string
+          canvas_instance_url: string
+          connected_at: string
+          revoked_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          connection_id?: string
+          applicant_id: string
+          packet_id?: string | null
+          access_token_enc: string
+          refresh_token_enc: string
+          expires_at: string
+          canvas_instance_url: string
+          connected_at?: string
+          revoked_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          connection_id?: string
+          applicant_id?: string
+          packet_id?: string | null
+          access_token_enc?: string
+          refresh_token_enc?: string
+          expires_at?: string
+          canvas_instance_url?: string
+          connected_at?: string
+          revoked_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

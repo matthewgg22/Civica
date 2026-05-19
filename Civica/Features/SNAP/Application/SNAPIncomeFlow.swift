@@ -42,6 +42,11 @@ struct SNAPIncomeAnswers: Equatable, Codable {
     /// `anyoneEarning` + `hasUnearnedIncome`. A dedicated screen
     /// asking the exact split lands as separate work.
     var monthlyEarnedAmount: Decimal?
+    /// Monthly Federal Work-Study (FWS) earnings. Excluded from SNAP
+    /// gross income entirely before any deduction math runs, per
+    /// 7 CFR 273.9(c)(3). Must be subtracted from grossMonthlyIncome
+    /// before passing to SNAPBenefitCalculator.
+    var fwsMonthlyAmount: Decimal?
 }
 
 @MainActor

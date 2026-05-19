@@ -17,6 +17,10 @@ import meInboxRouter from "./routes/me-inbox.js";
 import benefitsCalRouter from "./routes/benefitscal.js";
 import recertRouter from "./routes/recert.js";
 import twilioWebhookRouter from "./routes/twilio-webhook.js";
+import workRequirementsRouter from "./routes/work-requirements.js";
+import navigatorRouter from "./routes/navigator.js";
+import argyleWebhookRouter from "./routes/argyle-webhook.js";
+import oauthCanvasRouter from "./routes/oauth-canvas.js";
 import { requestLogger } from "./lib/logger.js";
 import { scrubEvent } from "./lib/sentry.js";
 import { withSentry } from "@sentry/cloudflare";
@@ -49,6 +53,15 @@ api.route("/", missingItemsRouter);      // /packets/:id/missing-items, /missing
 // Recertification routes (T11)
 api.route("/recert", recertRouter);            // /recert/:packetId/init, /recert/:packetId, etc.
 
+// Work requirements routes (T12 — OBBBA §10102)
+api.route("/work-requirements", workRequirementsRouter);  // /work-requirements/:packetId/evaluate, etc.
+
+// Navigator outreach routes (T-DR3-7 — marketplace cliff event)
+api.route("/navigator", navigatorRouter);                 // /navigator/outreach
+
+// Canvas OAuth proxy (T-DR3-9 — schedule integration)
+api.route("/oauth/canvas", oauthCanvasRouter);            // /oauth/canvas/exchange, /status, DELETE
+
 // Applicant self-service routes
 api.route("/me", meRouter);                    // GET/PATCH /me
 api.route("/me/packets", mePacketsRouter);     // /me/packets/*
@@ -57,6 +70,10 @@ api.route("/me/inbox", meInboxRouter);         // /me/inbox/*
 api.route("/benefitscal", benefitsCalRouter);  // /benefitscal/prepare-export/:packetId, /benefitscal/status/:packetId
 
 app.route("/v1/enrollment", api);
+
+// Argyle webhook — outside auth middleware (inbound from Argyle, HMAC-verified)
+// T-DR3-8: receives paycheck.added, detects cliff event, fires navigator task.
+app.route("/webhooks/argyle", argyleWebhookRouter);
 
 app.onError((err, c) => {
   if (err instanceof HTTPException) {
