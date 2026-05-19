@@ -363,6 +363,10 @@ enum SNAPConversationViewStrings {
         "Close",
         es: "Cerrar"
     )
+    static let confirmUnderstanding = CivicaText(
+        "Just to confirm, did I understand your answer correctly?",
+        es: "Solo para confirmar, ¿entendí tu respuesta correctamente?"
+    )
 }
 
 // Existing `SNAPPrivacyNoticeStrings` enum (in SNAPPrivacyNoticeView.swift)

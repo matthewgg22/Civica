@@ -249,7 +249,7 @@ struct SNAPConversationView: View {
                 Image(systemName: "questionmark.circle.fill")
                     .foregroundStyle(CivicaColors.warningAmber)
                     .accessibilityHidden(true)
-                Text("Just to confirm — did I understand your answer correctly?")
+                Text(SNAPConversationViewStrings.confirmUnderstanding.value(in: language))
                     .font(CivicaTypography.subhead)
                     .foregroundStyle(CivicaColors.ink)
             }
