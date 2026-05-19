@@ -1,0 +1,12 @@
+{
+  "address": {
+    "streetAddress": "1 MAIN ST",
+    "city": "SPRINGFIELD",
+    "state": "MA",
+    "ZIPCode": "01103",
+    "ZIPPlus4": "1500"
+  },
+  "additionalInfo": {
+    "DPVConfirmation": "S"
+  }
+}

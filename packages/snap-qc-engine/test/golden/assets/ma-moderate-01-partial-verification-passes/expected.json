@@ -1,0 +1,57 @@
+{
+  "flow": "assets",
+  "state": "MA",
+  "defensibility_score": "moderate",
+  "defensibility_factors": [
+    {
+      "name": "partial_asset_verification",
+      "weight": "neutral",
+      "detail": "1/2 assets verified; rest self-declared"
+    }
+  ],
+  "evidence_package": {
+    "flow": "assets",
+    "applicant_name": "Owen Driscoll",
+    "state_code": "MA",
+    "assets": [
+      {
+        "type": "bank_account",
+        "description": "Citizens Bank checking",
+        "stated_value": 290,
+        "exempt": false,
+        "countable_value": 290,
+        "verification_method": "plaid_balance"
+      },
+      {
+        "type": "other_liquid",
+        "description": "Cash on hand (self-reported)",
+        "stated_value": 200,
+        "exempt": false,
+        "countable_value": 200,
+        "verification_method": "self_declared"
+      }
+    ],
+    "total_countable_assets": 490,
+    "asset_limit_usd": 2750,
+    "asset_test_applies": true,
+    "asset_test_result": "pass",
+    "regulatory_citations": [
+      "106 CMR 365.180 — Massachusetts resource limits",
+      "7 CFR 273.8 — Federal resource test"
+    ],
+    "generated_at": "2026-05-18T00:00:00.000Z"
+  },
+  "citations": [
+    {
+      "authority": "MA DTA",
+      "reference": "106 CMR 365.180 — Massachusetts resource limits"
+    },
+    {
+      "authority": "7 CFR Part 273",
+      "reference": "7 CFR 273.8 — Federal resource test"
+    }
+  ],
+  "warnings": [],
+  "computed_at": "2026-05-18T00:00:00.000Z",
+  "engine_version": "0.1.0"
+}

@@ -1,0 +1,56 @@
+{
+  "flow": "utility-sua",
+  "state": "MA",
+  "defensibility_score": "strong",
+  "defensibility_factors": [
+    {
+      "name": "utility_account_name_match",
+      "weight": "positive",
+      "detail": "UtilityAPI account holder matches applicant name"
+    }
+  ],
+  "evidence_package": {
+    "flow": "utility",
+    "applicant_name": "Maria Lopez",
+    "service_address": "42 Belmont St, Brockton, MA 02301",
+    "state_code": "MA",
+    "tier": "full",
+    "tier_amount_usd": 745,
+    "rule_citation": "MA DTA Field Operations Memo 2024 / 106 CMR 364.400",
+    "basis": "api_confirmed",
+    "utility_accounts_found": [
+      {
+        "utility": "National Grid",
+        "account_holder_name": "Maria Lopez",
+        "service_address": "42 Belmont St, Brockton, MA 02301",
+        "account_status": "active",
+        "utility_type": "gas",
+        "source": "utilityapi_sandbox"
+      }
+    ],
+    "name_match": true,
+    "intake_responses": {
+      "state_code": "MA",
+      "landlord_pays_any": false,
+      "utilities_paid_by_applicant": {
+        "heat_gas": true,
+        "electricity": true,
+        "cooling": false,
+        "water": false,
+        "phone_internet": false,
+        "none": false
+      }
+    },
+    "generated_at": "2026-05-18T00:00:00.000Z",
+    "attestation_required": false
+  },
+  "citations": [
+    {
+      "authority": "MA DTA",
+      "reference": "MA DTA Field Operations Memo 2024 / 106 CMR 364.400"
+    }
+  ],
+  "warnings": [],
+  "computed_at": "2026-05-18T00:00:00.000Z",
+  "engine_version": "0.1.0"
+}

@@ -10,12 +10,25 @@ import Speech
 // distress pass). Audio buffers are released on utterance end — the
 // service never retains PCM beyond the active transcribe call.
 //
+// Two listening modes:
+//   • startListening(forStep:)        — full intake. Final transcript runs
+//                                       through FoundationModels extraction
+//                                       (step-specific patch + distress pass).
+//   • startListeningTranscriptOnly()  — transcript-only. Skips extraction.
+//                                       Used by InterviewCoach where the
+//                                       transcript flows into a free-form
+//                                       text input the user reviews + edits
+//                                       before sending. Works even when the
+//                                       on-device LLM is unavailable.
+//
 // Public surface:
 //   • state            — UI-observable VoiceIntakeState
 //   • partialTranscript — live transcript while listening (UI hint)
 //   • updates          — AsyncStream<VoiceIntakeUpdate> of extraction events
-//   • startListening(forStep:) — begin a new utterance window
-//   • stopListening()  — finalize the current utterance and run extraction
+//   • startListening(forStep:) — begin a new full-extraction window
+//   • startListeningTranscriptOnly() — begin a transcript-only window
+//   • stopListening()  — finalize the current utterance; runs extraction
+//                        only when started with a step
 //   • cancel()         — abort without running extraction
 //
 // The service is created per consumer view and disposed when that view
@@ -123,6 +136,35 @@ final class SNAPVoiceIntakeService: ObservableObject {
         }
     }
 
+    /// Transcript-only listening for callers that just need speech-to-text
+    /// fed into a free-form input (e.g., InterviewCoach PracticeSessionView).
+    /// Does not invoke the on-device LLM, so the service is usable even when
+    /// Apple Intelligence is unavailable. The final transcript is emitted
+    /// via `.finalTranscript(_)` and no `.extracted(_, _)` event fires.
+    func startListeningTranscriptOnly() async {
+        // Allow recovery from prior `.unavailable` state — that flag tracks
+        // LLM availability, not the speech recognizer. Transcript-only mode
+        // doesn't need the LLM.
+        if case .listening = state { return }
+
+        currentStep = nil
+        partialTranscript = ""
+        finalTranscriptText = ""
+
+        do {
+            try await requestPermissions()
+            try startAudio()
+            state = .listening
+        } catch let err as SNAPVoiceIntakeError {
+            state = .error(err)
+            updatesContinuation.yield(.failed(err))
+        } catch {
+            let mapped = SNAPVoiceIntakeError.audioEngineFailed(underlying: error.localizedDescription)
+            state = .error(mapped)
+            updatesContinuation.yield(.failed(mapped))
+        }
+    }
+
     func stopListening() async {
         guard case .listening = state else { return }
         let transcript = await finalizeAudio()
@@ -131,8 +173,12 @@ final class SNAPVoiceIntakeService: ObservableObject {
             return
         }
         updatesContinuation.yield(.finalTranscript(transcript))
-        state = .processing
-        await runExtraction(transcript: transcript)
+        // Transcript-only mode skips extraction. currentStep is the source
+        // of truth for which mode the active utterance was started in.
+        if currentStep != nil {
+            state = .processing
+            await runExtraction(transcript: transcript)
+        }
         state = .idle
     }
 

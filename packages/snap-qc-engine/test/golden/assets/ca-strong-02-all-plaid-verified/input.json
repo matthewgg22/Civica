@@ -1,0 +1,28 @@
+{
+  "flow": "assets",
+  "state": "CA",
+  "inputs": {
+    "applicant_name": "Yael Stein",
+    "state_code": "CA",
+    "assets": [
+      {
+        "type": "bank_account",
+        "description": "Chase checking",
+        "stated_value": 240,
+        "exempt": false,
+        "countable_value": 240,
+        "verification_method": "plaid_balance"
+      },
+      {
+        "type": "vehicle",
+        "description": "2014 Honda Civic",
+        "stated_value": 6500,
+        "exempt": true,
+        "exemption_reason": "primary_transport",
+        "countable_value": 0,
+        "verification_method": "document_upload"
+      }
+    ],
+    "elderly_or_disabled": false
+  }
+}

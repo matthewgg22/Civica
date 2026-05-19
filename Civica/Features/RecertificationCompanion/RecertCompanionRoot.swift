@@ -24,6 +24,7 @@ struct RecertCompanionRoot: View {
     @State private var isEditingDate = false
     @State private var presentingPhantom = false
     @State private var presentingAppeal = false
+    @State private var presentingInterviewCoach = false
     @State private var capturingDocument: SNAPDocumentType?
 
     /// Phantom Recert is offered when the next recert is within 60
@@ -77,6 +78,8 @@ struct RecertCompanionRoot: View {
                     appealEntryTile
                 }
 
+                interviewCoachEntryTile
+
                 Spacer(minLength: CivicaSpacing.xl)
             }
             .padding(CivicaSpacing.xl)
@@ -111,6 +114,9 @@ struct RecertCompanionRoot: View {
         }
         .navigationDestination(isPresented: $presentingAppeal) {
             AppealEntryView(stateCode: stateCode)
+        }
+        .navigationDestination(isPresented: $presentingInterviewCoach) {
+            PracticeSessionView()
         }
         .onAppear {
             RecertCompanionAnalytics.trackHomeViewed()
@@ -155,6 +161,51 @@ struct RecertCompanionRoot: View {
             )
         }
         .buttonStyle(.plain)
+    }
+
+    private var interviewCoachEntryTile: some View {
+        HStack(spacing: CivicaSpacing.md) {
+            Image(systemName: "person.wave.2.fill")
+                .font(.system(size: 28))
+                .foregroundStyle(CivicaColors.brickPrimary)
+                .frame(width: 48, height: 48)
+                .background(
+                    RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                        .fill(CivicaColors.brickPrimary.opacity(0.12))
+                )
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Text(RecertCompanionStrings.interviewCoachEntryTitle.value(in: language))
+                    .font(CivicaTypography.sectionHeader)
+                    .foregroundStyle(CivicaColors.ink)
+                Text(RecertCompanionStrings.interviewCoachEntrySubtitle.value(in: language))
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: CivicaSpacing.sm)
+            Button(action: { presentingInterviewCoach = true }) {
+                Text(RecertCompanionStrings.interviewCoachEntryCTA.value(in: language))
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundStyle(CivicaColors.paper)
+                    .padding(.horizontal, CivicaSpacing.md)
+                    .frame(minWidth: 44, minHeight: 44)
+                    .background(
+                        RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                            .fill(CivicaColors.brickPrimary)
+                    )
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+        )
     }
 
     private var shouldOfferPhantom: Bool {

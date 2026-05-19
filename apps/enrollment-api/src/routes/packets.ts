@@ -5,7 +5,9 @@ import { HTTPException } from "hono/http-exception";
 import { makeAnonClient } from "../lib/supabase.js";
 import { withActorContext } from "../middleware/actorContext.js";
 import type { Env } from "../types.js";
+import type { Logger } from "../lib/logger.js";
 import { evaluateChecklist } from "@civica/snap-rules";
+import { usps, fips, AddressSchema } from "@civica/state-connectors";
 
 // Canonical source: packages/snap-enums/src/packetStatus.ts
 // Inlined here to avoid adding a workspace dep for a single enum.
@@ -28,6 +30,10 @@ const createPacketSchema = z.object({
   org_id: z.string().uuid().optional(),
   county: z.string().max(100).optional(),
   county_fips: z.string().length(5).optional(),
+  // T9 integration stub. When provided AND ENABLE_ADDRESS_VALIDATION=true the
+  // gateway runs USPS validation + ZIP→county resolution and uses the result
+  // to populate county_fips/county when the caller hasn't set them.
+  address: AddressSchema.optional(),
 });
 
 const updatePacketSchema = z.object({
@@ -86,6 +92,41 @@ app.get("/:packetId", async (c) => {
 app.post("/", zValidator("json", createPacketSchema), async (c) => {
   const body = c.req.valid("json");
   const db = await withActorContext(c);
+  // Logger is attached by requestLogger middleware in src/index.ts; the route
+  // app's local Hono generic doesn't declare Variables, so we cast through get.
+  const log = (c.get as (k: string) => Logger)("log");
+
+  // T9: USPS address validation behind a feature flag. Failures are logged
+  // and the packet is still created — address validation is advisory at this
+  // stage, not a gate. When valid we backfill county_fips/county from the
+  // local ZIP table if the caller didn't provide them.
+  let resolvedCounty = body.county ?? null;
+  let resolvedCountyFips = body.county_fips ?? null;
+  if (c.env.ENABLE_ADDRESS_VALIDATION === "true" && body.address) {
+    if (c.env.USPS_CLIENT_ID && c.env.USPS_CLIENT_SECRET) {
+      try {
+        const result = await usps.validateAddress(body.address, {
+          credentials: {
+            clientId: c.env.USPS_CLIENT_ID,
+            clientSecret: c.env.USPS_CLIENT_SECRET,
+          },
+        });
+        log.info("usps_validate", { valid: result.valid, dpv: result.delivery_point_validation });
+        if (result.valid && result.normalized) {
+          const fast = fips.fromZipFast(result.normalized.zip5);
+          if (fast && !resolvedCountyFips) {
+            resolvedCountyFips = fast.fips;
+            resolvedCounty = resolvedCounty ?? fast.county_name;
+          }
+        }
+      } catch (err) {
+        log.warn("usps_validate_error", { err: String(err) });
+      }
+    } else {
+      log.warn("usps_validate_skipped", { reason: "missing_credentials" });
+    }
+  }
+
   const { data, error } = await db
     .schema("snap_enrollment")
     .from("snap_packets")
@@ -94,8 +135,8 @@ app.post("/", zValidator("json", createPacketSchema), async (c) => {
       state_code: body.state_code,
       status: "Draft" as const,
       org_id: body.org_id ?? null,
-      county: body.county ?? null,
-      county_fips: body.county_fips ?? null,
+      county: resolvedCounty,
+      county_fips: resolvedCountyFips,
     })
     .select()
     .single();
@@ -133,6 +174,33 @@ app.post("/", zValidator("json", createPacketSchema), async (c) => {
 app.patch("/:packetId", zValidator("json", updatePacketSchema), async (c) => {
   const body = c.req.valid("json");
   const db = await withActorContext(c);
+
+  // Pre-flight: structured low-confidence gate for "Ready for Handoff".
+  // The DB trigger (snap_enrollment.enforce_status_transition) is the ultimate
+  // guard, but it raises a generic P0001 error string. Doing an app-layer
+  // pre-check lets us return field-level detail so the dashboard and iOS
+  // clients can render which fields need review without parsing error text.
+  if (body.status === "Ready for Handoff") {
+    const { data: flagged, error: flaggedErr } = await db
+      .schema("snap_enrollment")
+      .from("extraction_fields")
+      .select("field_id, field_key, confidence")
+      .eq("packet_id", c.req.param("packetId"))
+      .eq("needs_review", true)
+      .is("reviewed_at", null);
+    if (flaggedErr) throw new HTTPException(500, { message: flaggedErr.message });
+    if ((flagged?.length ?? 0) > 0) {
+      return c.json(
+        {
+          error: "low_confidence_blocks_submission",
+          message:
+            "Cannot advance to Ready for Handoff: extraction fields below the confidence threshold are unreviewed",
+          flagged_fields: flagged,
+        },
+        422,
+      );
+    }
+  }
 
   if (body.status) {
     const reason = c.req.header("X-Transition-Reason");

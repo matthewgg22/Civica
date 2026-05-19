@@ -1,0 +1,14 @@
+{
+  "result": {
+    "addressMatches": [
+      {
+        "matchedAddress": "1100 S BROADWAY, LOS ANGELES, CA, 90015",
+        "geographies": {
+          "Counties": [
+            { "STATE": "06", "COUNTY": "037", "NAME": "Los Angeles County" }
+          ]
+        }
+      }
+    ]
+  }
+}

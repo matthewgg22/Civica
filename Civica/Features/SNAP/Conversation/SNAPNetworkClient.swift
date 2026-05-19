@@ -250,6 +250,7 @@ final class MockSNAPNetworkClient: SNAPNetworkClient, @unchecked Sendable {
             isTerminal: false,
             needsClarification: false,
             clarificationText: nil,
+            needsUserConfirmation: false,
             costTelemetry: [],
             confidence: 1.0
         )

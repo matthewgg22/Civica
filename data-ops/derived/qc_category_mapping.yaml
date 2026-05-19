@@ -1,0 +1,305 @@
+# QC Category Mapping — federal FNS QC ELEMENT codes → Civica controls
+#
+# Source for category list + weighting: USDA FNS SNAP QC Public-Use File FY2023
+# (`qc_fy2023_error_attribution.csv`), 43,776 cases × 854 vars, weighted by FYWGT.
+# Each US state (including California / CDSS) reports against this federal coding.
+#
+# `status` controls how the row is treated in coverage reporting:
+#   documented   — at least one `civica_controls` entry resolves to a real path
+#                  in this repo today.
+#   hypothesized — no Civica control exists yet; product surface is named but
+#                  unbuilt.
+#   refuted      — investigated and intentionally out of scope.
+#
+# Loader: data-ops/parsers/qc_category_mapping_to_parquet.ts
+# Schema: packages/analytics-engine/src/schemas.ts → QcCategoryMappingSchema
+# See data-ops/METHODOLOGY.md (2026-05-18 — QC category mapping).
+
+version: 1
+generated_from: data-ops/derived/qc_category_mapping.yaml
+source_publication: "USDA FNS SNAP QC Public-Use File FY2023"
+source_pulled_at: "2026-05-13"
+
+categories:
+  - cdss_error_category: "ELEMENT 363 — Shelter deduction"
+    element_code: "363"
+    weighted_count: 3522289
+    share_of_errored_cases_pct: 40.9
+    cfr_basis: "7 CFR 273.9(d)(6)"
+    obbba_section: "§10103 (SUA verification — indirect; shelter is the joint denominator with utility allowance)"
+    dollar_attribution_methodology: >-
+      FY23 weighted share of errored cases (40.9%) × FY24 national over-payment
+      dollars (~$10.93% PER × $93.66B = $10.24B) ≈ $4.19B attributable to
+      shelter-deduction error nationally. State allocation: pro-rata by FY24
+      benefit share unless state-specific QC reveals different mix.
+    civica_controls:
+      - control_id: "qc-engine.flows.shared-lease"
+        control_description: >-
+          Rent transaction analyzer + shared-lease evidence packet. Produces
+          §273.9(d)(6) excess-shelter narrative with bank-statement-anchored
+          rent verification.
+        evidence_link: "packages/snap-qc-engine/src/flows/shared-lease/index.ts"
+        defensibility_impact: >-
+          strong → eliminates ELEMENT 363 risk when applicant pays rent and
+          shelter packet generated; partial → cohabitant/shared-lease cases
+          still need manual review for proration.
+      - control_id: "qc-engine.flows.utility-sua"
+        control_description: >-
+          v_SUA / v_Expense verification flow with utility bills + SUA tier
+          reconciliation; ties into shelter deduction via §273.9(d)(6) excess.
+        evidence_link: "packages/snap-qc-engine/src/flows/utility-sua/index.ts"
+        defensibility_impact: >-
+          strong → eliminates conflated 363/364 errors when both shelter and
+          utility flows run; weak → flags as exposure.
+      - control_id: "snap-calculator.shelter-citations"
+        control_description: >-
+          Shelter calculation chain (excess shelter, elderly/disabled cap) with
+          SHELTER_CITATIONS pinned to 7 CFR 273.9(d)(6).
+        evidence_link: "packages/snap-calculator/src/asset-rules.ts"
+        defensibility_impact: "strong → arithmetic step 4 verifiable."
+    case_examples:
+      - >-
+        Maria Lopez MA packet (PR #62) — $1,650 rent + $651 MA HCSUA = $2,301
+        excess-shelter chain explicitly cited.
+      - >-
+        FY23 microdata headline: 40.9% of all errored cases have ELEMENT 363
+        attribution (qc_fy2023_profile.md, headline 1).
+    status: "documented"
+
+  - cdss_error_category: "ELEMENT 311 — Wages and salaries"
+    element_code: "311"
+    weighted_count: 2305001
+    share_of_errored_cases_pct: 26.77
+    cfr_basis: "7 CFR 273.10(c)(2); 7 CFR 273.9(b)(1)(i); 7 CFR 273.2(f)(1)(ii)"
+    obbba_section: "§10105 (PER tier exposure — wage-only PER 15.61% nationally, ~20–25% in high-tier states)"
+    dollar_attribution_methodology: >-
+      26.77% × $10.24B national over-payment ≈ $2.74B attributable to
+      wage/salary verification error. Note: wage-only households are 22.1% of
+      the SNAP population but generate this disproportionate share of error
+      dollars (qc_fy2023_profile.md headline 2).
+    civica_controls:
+      - control_id: "qc-engine.flows.wages"
+        control_description: >-
+          (planned) Wage-verification flow: §273.10(c)(2) conversion rule
+          (weekly → monthly × 4.3) + pay-stub OCR + employer letter fallback.
+        evidence_link: "packages/snap-qc-engine/src/flows/ (no `wages/` dir yet)"
+        defensibility_impact: >-
+          v3 packet target per qc_fy2023_profile.md. Largest volume opportunity
+          (22.1% pop × 15.61% PER) but not yet built.
+    case_examples:
+      - >-
+        FY23 microdata: wage-only PER 15.61%; mixed wage+SE 19.26%
+        (qc_fy2023_profile.md headline 2).
+    status: "hypothesized"
+
+  - cdss_error_category: "ELEMENT 364 — Standard utility allowance"
+    element_code: "364"
+    weighted_count: 827585
+    share_of_errored_cases_pct: 9.61
+    cfr_basis: "7 CFR 273.9(d)(6)(iii)"
+    obbba_section: "§10103 (utility allowance verification; §10104 utilities sweep cleanup)"
+    dollar_attribution_methodology: >-
+      9.61% × $10.24B ≈ $984M attributable to SUA mis-tiering. Concentrated in
+      states with multi-tier SUA structures (MA HCSUA cohort = ~45k households
+      flagged in §10103-adjacent analysis).
+    civica_controls:
+      - control_id: "qc-engine.flows.utility-sua"
+        control_description: >-
+          Utility-bill ingestion → tier determination (HCSUA / LUA / Telephone)
+          per STATE_SUA_RULES with name-match reconciliation against utility
+          accounts. Produces v_SUA evidence package.
+        evidence_link: "packages/snap-qc-engine/src/flows/utility-sua/index.ts"
+        defensibility_impact: >-
+          strong → tier mis-assignment eliminated when utility flow runs;
+          conflicting → flagged when applicant declares paying but no account
+          name-match.
+      - control_id: "snap-calculator.determineSuaTier"
+        control_description: "Deterministic tier lookup against STATE_SUA_RULES."
+        evidence_link: "packages/snap-calculator/src/sua-rules.ts"
+        defensibility_impact: "strong → reproducible computation, statable."
+      - control_id: "compliance-copy.Q10"
+        control_description: >-
+          §10104 utilities sweep narrative (PR #116) — surfaces SUA basis to
+          applicant at intake.
+        evidence_link: "COMPLIANCE_AUDIT_OBBBA.md (Q10)"
+        defensibility_impact: "informational; supports auditor disclosure."
+    case_examples:
+      - >-
+        MA HCSUA §10103 cohort — ~45k households flagged for SUA verification
+        (qc_fy2023_profile.md headline 1, MA DTA findings).
+    status: "documented"
+
+  - cdss_error_category: "ELEMENT 331 — RSDI (Social Security retirement / disability) benefits"
+    element_code: "331"
+    weighted_count: 773802
+    share_of_errored_cases_pct: 8.99
+    cfr_basis: "7 CFR 273.9(b)(2)(i); 7 CFR 273.2(f)(1)(ii)(B)"
+    obbba_section: "—  (no direct OBBBA provision; rolls up via §10105 PER)"
+    dollar_attribution_methodology: >-
+      8.99% × $10.24B ≈ $921M attributable to RSDI verification error.
+      Typically arises from COLA timing and SSA-to-state data-feed lag
+      (1099-SSA vs current month).
+    civica_controls:
+      - control_id: "qc-engine.flows.unearned-income"
+        control_description: >-
+          (planned) Unearned-income packet covering SSA / RSDI / SSI / VA with
+          COLA-aware effective-date logic and SSA 1099 anchoring.
+        evidence_link: "packages/snap-qc-engine/src/flows/ (no `unearned-income/` dir yet)"
+        defensibility_impact: "TBD — would close 331 / 333 / 332 jointly."
+    case_examples: []
+    status: "hypothesized"
+
+  - cdss_error_category: "ELEMENT 333 — SSI"
+    element_code: "333"
+    weighted_count: 522086
+    share_of_errored_cases_pct: 6.06
+    cfr_basis: "7 CFR 273.9(b)(2)(ii)"
+    obbba_section: "—"
+    dollar_attribution_methodology: >-
+      6.06% × $10.24B ≈ $621M. SSI errors often co-occur with RSDI (331) due
+      to dual eligibility for elderly/disabled adults.
+    civica_controls:
+      - control_id: "qc-engine.flows.unearned-income"
+        control_description: "(planned) shared with 331; SSI awards anchor on SSA award letter."
+        evidence_link: "packages/snap-qc-engine/src/flows/ (no `unearned-income/` dir yet)"
+        defensibility_impact: "TBD."
+    case_examples: []
+    status: "hypothesized"
+
+  - cdss_error_category: "ELEMENT 350 — Child support received"
+    element_code: "350"
+    weighted_count: 509010
+    share_of_errored_cases_pct: 5.91
+    cfr_basis: "7 CFR 273.9(b)(2)(iv)"
+    obbba_section: "—"
+    dollar_attribution_methodology: >-
+      5.91% × $10.24B ≈ $605M. Child support received is income; child support
+      paid (ELEMENT 366) is a deduction — they are routinely confused at intake.
+    civica_controls:
+      - control_id: "qc-engine.flows.child-support"
+        control_description: >-
+          (planned) Joint received/paid packet that distinguishes 350 (income)
+          from 366 (deduction) via state CSE portal screenshot + 12-month
+          payment history.
+        evidence_link: "packages/snap-qc-engine/src/flows/ (no `child-support/` dir yet)"
+        defensibility_impact: "TBD."
+    case_examples: []
+    status: "hypothesized"
+
+  - cdss_error_category: "ELEMENT 365 — Medical expense deduction"
+    element_code: "365"
+    weighted_count: 472424
+    share_of_errored_cases_pct: 5.49
+    cfr_basis: "7 CFR 273.9(d)(3)"
+    obbba_section: "—  (elderly/disabled-only deduction; not OBBBA-touched)"
+    dollar_attribution_methodology: >-
+      5.49% × $10.24B ≈ $562M. Concentrated in elderly/disabled households —
+      the only segment for which medical expenses are deductible.
+    civica_controls:
+      - control_id: "qc-engine.flows.medical-deduction"
+        control_description: >-
+          (planned) Receipt-and-EOB ingestion for elderly/disabled with
+          $35-threshold deduction logic per §273.9(d)(3).
+        evidence_link: "packages/snap-qc-engine/src/flows/ (no `medical-deduction/` dir yet)"
+        defensibility_impact: "TBD."
+    case_examples: []
+    status: "hypothesized"
+
+  - cdss_error_category: "ELEMENT 312 — Self-employment income"
+    element_code: "312"
+    weighted_count: 371385
+    share_of_errored_cases_pct: 4.31
+    cfr_basis: "7 CFR 273.9(b)(1)(ii); 7 CFR 273.10(c)(3)(ii); 7 CFR 273.11(a)"
+    obbba_section: "§10105 (PER exposure — mixed wage+SE PER 19.26%, the highest sub-segment)"
+    dollar_attribution_methodology: >-
+      4.31% × $10.24B ≈ $441M for SE-only error. But mixed wage+SE generates
+      $93/case ($mean error) at 19.26% PER — Civica's highest-leverage segment
+      per qc_fy2023_profile.md headline 2.
+    civica_controls:
+      - control_id: "qc-engine.flows.gig-income"
+        control_description: >-
+          1099-NEC / 1099-K / gig-platform earnings ingestion with §273.11(a)
+          allowable-cost reconciliation and 12-month averaging per
+          §273.10(c)(3)(ii).
+        evidence_link: "packages/snap-qc-engine/src/flows/gig-income/index.ts"
+        defensibility_impact: >-
+          strong → eliminates ELEMENT 312 risk for pure-SE; partial → mixed
+          wage+SE still needs wage-side packet (not yet built).
+      - control_id: "snap-calculator.INCOME_CITATIONS"
+        control_description: "Pinned CFR-273 citations for income chain."
+        evidence_link: "packages/snap-calculator/src/asset-rules.ts"
+        defensibility_impact: "strong."
+    case_examples:
+      - >-
+        v1 SE-focused MA packet (PR #62) — validates rule-citation methodology
+        end-to-end.
+    status: "documented"
+
+  - cdss_error_category: "ELEMENT 520 — Arithmetic computation"
+    element_code: "520"
+    weighted_count: 362695
+    share_of_errored_cases_pct: 4.21
+    cfr_basis: "7 CFR 273.10(e)"
+    obbba_section: "—  (state worker computation; not OBBBA-touched)"
+    dollar_attribution_methodology: >-
+      4.21% × $10.24B ≈ $431M. Pure worker-side arithmetic — adversarial to
+      Civica's value (we are precisely the deterministic calculator), so
+      coverage is structural rather than packet-based.
+    civica_controls:
+      - control_id: "snap-calculator"
+        control_description: >-
+          Whole 7-step calculation chain (gross test → earned-income deduction
+          → standard deduction → dependent care → excess shelter → net test →
+          allotment). Replaces worker arithmetic with a deterministic engine.
+        evidence_link: "packages/snap-calculator/src/index.ts"
+        defensibility_impact: "strong → arithmetic step is fully reproducible from the audit trail."
+    case_examples: []
+    status: "documented"
+
+  - cdss_error_category: "ELEMENT 150 — Unit composition"
+    element_code: "150"
+    weighted_count: 284191
+    share_of_errored_cases_pct: 3.3
+    cfr_basis: "7 CFR 273.1"
+    obbba_section: "§10102 (ABAWD age-band change — affects who must be counted in unit)"
+    dollar_attribution_methodology: >-
+      3.3% × $10.24B ≈ $338M. Unit composition errors compound: a wrong unit
+      size cascades into wrong standard deduction, wrong gross test, wrong
+      benefit. ABAWD age-band shift (54→64) per §10102 makes this newly volatile.
+    civica_controls:
+      - control_id: "snap.application.household-question-flow"
+        control_description: >-
+          SNAPHouseholdQuestionFlow + FederalDefaultRules.abawdStatus()
+          implement the §10102 age-band and Native American / ANCSA exemption
+          logic.
+        evidence_link: "Civica/Features/SNAP/Application/SNAPHouseholdQuestionFlow.swift"
+        defensibility_impact: >-
+          partial → ABAWD computation deterministic; broader unit-composition
+          questions (cohabitation, purchase-prepare separately) still surface
+          as worker-discretion zones.
+      - control_id: "compliance-copy.Q1"
+        control_description: "OBBBA §10102(a) tribal exemption strings (drafted, pending counsel)."
+        evidence_link: "COMPLIANCE_AUDIT_OBBBA.md (Q1)"
+        defensibility_impact: "informational."
+    case_examples: []
+    status: "documented"
+
+  - cdss_error_category: "ELEMENT 211 — Bank accounts / cash on hand"
+    element_code: "211"
+    weighted_count: 452
+    share_of_errored_cases_pct: 0.01
+    cfr_basis: "7 CFR 273.8"
+    obbba_section: "—  (asset test largely waived in BBCE states per 7 CFR 273.2(j))"
+    dollar_attribution_methodology: >-
+      Low-volume error (BBCE has neutralized asset test in CA + ~40 states),
+      but included because Civica has a built control surface.
+    civica_controls:
+      - control_id: "qc-engine.flows.assets"
+        control_description: >-
+          Asset-test reconciliation flow producing v_Asset evidence packet
+          (bank balances against STATE_ASSET_RULES). No-op in BBCE states
+          where the test is waived.
+        evidence_link: "packages/snap-qc-engine/src/flows/assets/index.ts"
+        defensibility_impact: "strong in non-BBCE states; no-op in BBCE."
+    case_examples: []
+    status: "documented"

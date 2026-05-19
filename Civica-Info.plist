@@ -32,6 +32,10 @@
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Civica uses the camera only when you choose to capture and attach a photo in the app.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Civica uses the microphone only when you tap to speak instead of typing.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Civica transcribes what you say into text on your device. Audio is not sent to Apple.</string>
 	<key>SNAP_ENROLLMENT_API_URL</key>
 	<string>https://civica-enrollment-api.civica-api.workers.dev</string>
 </dict>

@@ -2,13 +2,26 @@ import CivicaDesignSystem
 import SwiftUI
 
 // Mic button mounted in the consumer view's step header. Tap toggles
-// listening for the currently-active step. State drives appearance and
-// VoiceOver labels. The button never blocks the typed flow — if voice
-// is unavailable the button renders disabled with a quiet hint.
+// listening. State drives appearance and VoiceOver labels. The button
+// never blocks the typed flow — if voice is unavailable the button
+// renders disabled with a quiet hint.
+//
+// Two modes:
+//   • `step != nil` — SNAP intake. Final transcript runs through the
+//     step-specific LLM extraction pipeline. Disabled when LLM is
+//     unavailable (.unavailable state).
+//   • `step == nil` — transcript-only. Used by InterviewCoach where the
+//     transcript flows into a free-form input. Stays enabled even when
+//     the LLM is unavailable (transcription doesn't need it).
 @available(iOS 26.0, *)
 struct SNAPVoiceMicButton: View {
     @ObservedObject var service: SNAPVoiceIntakeService
-    let step: SNAPDraftStep
+    let step: SNAPDraftStep?
+
+    init(service: SNAPVoiceIntakeService, step: SNAPDraftStep? = nil) {
+        self.service = service
+        self.step = step
+    }
 
     @State private var isPulsing: Bool = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -71,7 +84,11 @@ struct SNAPVoiceMicButton: View {
     }
 
     private var isDisabled: Bool {
-        isUnavailable || isProcessing
+        // Transcript-only callers (step == nil) don't need the on-device LLM,
+        // so .unavailable doesn't block them. Step-bound callers do.
+        if isProcessing { return true }
+        if isUnavailable && step != nil { return true }
+        return false
     }
 
     private var fillColor: Color {
@@ -125,20 +142,34 @@ struct SNAPVoiceMicButton: View {
     // MARK: - Accessibility
 
     private var accessibilityLabel: String {
+        let isTranscriptOnly = (step == nil)
         switch service.state {
-        case .idle: return "Fill this step by voice"
-        case .listening: return "Stop voice fill"
-        case .processing: return "Processing voice input"
-        case .error: return "Voice fill error"
-        case .unavailable(let reason): return "Voice fill unavailable: \(reason)"
+        case .idle:
+            return isTranscriptOnly ? "Speak your answer" : "Fill this step by voice"
+        case .listening:
+            return isTranscriptOnly ? "Stop recording" : "Stop voice fill"
+        case .processing:
+            return "Processing voice input"
+        case .error:
+            return isTranscriptOnly ? "Voice error" : "Voice fill error"
+        case .unavailable(let reason):
+            return isTranscriptOnly ? "Voice unavailable: \(reason)" : "Voice fill unavailable: \(reason)"
         }
     }
 
     private var accessibilityHint: String {
+        let isTranscriptOnly = (step == nil)
         switch service.state {
-        case .idle: return "Double tap to speak. Your audio is processed on device and not stored."
-        case .listening: return "Double tap to stop recording and fill the fields."
-        default: return ""
+        case .idle:
+            return isTranscriptOnly
+                ? "Double tap to speak. Your audio is processed on device."
+                : "Double tap to speak. Your audio is processed on device and not stored."
+        case .listening:
+            return isTranscriptOnly
+                ? "Double tap to stop recording. Your words will appear in the input field."
+                : "Double tap to stop recording and fill the fields."
+        default:
+            return ""
         }
     }
 
@@ -147,8 +178,12 @@ struct SNAPVoiceMicButton: View {
     private func handleTap() {
         Task {
             switch service.state {
-            case .idle, .error:
-                await service.startListening(forStep: step)
+            case .idle, .error, .unavailable:
+                if let step {
+                    await service.startListening(forStep: step)
+                } else {
+                    await service.startListeningTranscriptOnly()
+                }
             case .listening:
                 await service.stopListening()
             default:

@@ -11,7 +11,10 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@civica/analytics-engine": "workspace:*",
+    "@civica/cfr-273": "workspace:*",
     "@civica/snap-calculator": "workspace:*",
+    "@civica/snap-compliance-copy": "workspace:*",
     "@civica/snap-enums": "workspace:*",
     "@civica/snap-rules": "workspace:*",
     "@sentry/nextjs": "^9.0.0",

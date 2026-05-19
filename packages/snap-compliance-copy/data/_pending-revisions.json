@@ -1,0 +1,103 @@
+{
+  "entries": [
+    {
+      "id": "approval_email_subject",
+      "surface_file": "CivicaNotificationTemplates.swift",
+      "string_id": "approvedEmail.subject",
+      "current_english": "Approved. ${monthlyBenefit}/mo, starting this month.",
+      "approved_english": "Your SNAP application: eligibility determination complete",
+      "approved_spanish": "Su solicitud de SNAP: determinación de elegibilidad completada",
+      "audit_reference": "Q3",
+      "rationale": "Dollar-amount-first subject reads as incentive; reframe as factual state-agency status update.",
+      "status": "pending_signoff"
+    },
+    {
+      "id": "decision_approved_headline",
+      "surface_file": "SNAPDecisionApprovedView.swift",
+      "string_id": "SNAPDecisionApprovedStrings.headline",
+      "current_english": "You're approved.",
+      "approved_english": "You have been determined eligible for SNAP benefits.",
+      "approved_spanish": "Se ha determinado que usted es elegible para recibir beneficios de SNAP.",
+      "audit_reference": "Q3 (boundary)",
+      "rationale": "Attributes the state agency's determination to Civica. Replace with state-attributed phrasing.",
+      "status": "pending_signoff"
+    },
+    {
+      "id": "expedited_banner_almost",
+      "surface_file": "SNAPExpeditedBanner.swift",
+      "string_id": "almostHeadline",
+      "current_english": "Almost — one more answer could speed this up",
+      "approved_english": "You may qualify for expedited SNAP benefits — answer one more question to check.",
+      "approved_spanish": "Es posible que califique para beneficios expeditados de SNAP. Responda una pregunta más para verificar.",
+      "audit_reference": "Q3 / Q2.4",
+      "rationale": "Gamification of a regulatory eligibility category. Reframe to attribute expedited criteria to 7 CFR 273.2(i).",
+      "status": "pending_signoff"
+    },
+    {
+      "id": "estimator_entry_subtitle",
+      "surface_file": "SNAPBenefitEstimatorStrings.swift",
+      "string_id": "entryCardSubtitle",
+      "current_english": "Five questions. See your monthly dollar amount before you apply.",
+      "approved_english": "Answer a few questions to estimate your potential SNAP eligibility. Results are estimates only — actual eligibility is determined by [Agency].",
+      "approved_spanish": "Responda algunas preguntas para estimar su posible elegibilidad para SNAP. Los resultados son estimaciones únicamente; la elegibilidad real es determinada por [Agencia].",
+      "audit_reference": "Q3 / Q2.3",
+      "rationale": "Pairs ease cue with incentive cue connected to applying. Reframe as a screening estimate.",
+      "status": "pending_signoff"
+    },
+    {
+      "id": "estimator_apply_cta",
+      "surface_file": "SNAPBenefitEstimatorStrings.swift",
+      "string_id": "applyCTA",
+      "current_english": "Apply for SNAP",
+      "approved_english": "Apply on BenefitsCal",
+      "approved_spanish": "Solicitar en BenefitsCal",
+      "audit_reference": "Q3 / Q2.3",
+      "rationale": "Generic 'Apply for SNAP' CTA without official-link attribution; should route via the state apply portal (e.g. 'Open BenefitsCal application' for CA, 'Open MA DTA Connect application' for MA) or similar neutral path. CA-portal naming requires the same counsel sign-off MA's did.",
+      "status": "pending_signoff"
+    },
+    {
+      "id": "doc_requested_sms_body",
+      "surface_file": "CivicaNotificationTemplates.swift",
+      "string_id": "documentRequestedSMS.body",
+      "current_english": "DTA needs one more thing: a recent paystub. Send a photo here or upload in the app. By {deadline} keeps your application moving.",
+      "approved_english": "Your SNAP application requires additional documentation. Please submit a recent paystub by {deadline}. You can reply to this message with a photo or upload it in the app.",
+      "approved_spanish": "Su solicitud de SNAP requiere documentación adicional. Envíe un talón de pago reciente antes del {deadline}. Puede responder a este mensaje con una foto o cargarlo en la aplicación.",
+      "audit_reference": "Q3",
+      "rationale": "'Keeps your application moving' is loss-aversion framing. Reframe as factual deadline.",
+      "status": "pending_signoff"
+    },
+    {
+      "id": "recert_one_day_sms",
+      "surface_file": "CivicaNotificationTemplates.swift",
+      "string_id": "recertOneDayBeforeSMS.body",
+      "current_english": "Tomorrow is your recert deadline ({recertDate}). 4 minutes if you start now. If you miss it, benefits pause until you submit — text RECERT for a fast link any time.",
+      "approved_english": "Your SNAP recertification is due {recertDate}. To recertify, visit [Portal] or text RECERT for a link.",
+      "approved_spanish": "Su recertificación de SNAP vence el {recertDate}. Para recertificar, visite [Portal] o escriba RECERT para recibir un enlace.",
+      "audit_reference": "Q3",
+      "rationale": "Urgency + ease + loss-aversion stacked. Reframe as factual deadline with consequence stated neutrally.",
+      "status": "pending_signoff"
+    },
+    {
+      "id": "recert_heads_up_email_subject",
+      "surface_file": "CivicaNotificationTemplates.swift",
+      "string_id": "recertHeadsUpEmail.subject",
+      "current_english": "Recertify in 60 days. Usually 4 minutes.",
+      "approved_english": "SNAP recertification required — deadline in 60 days",
+      "approved_spanish": "Recertificación de SNAP requerida — fecha límite en 60 días",
+      "audit_reference": "Q3",
+      "rationale": "Ease framing tied to recertification. Reframe to factual deadline only.",
+      "status": "pending_signoff"
+    },
+    {
+      "id": "ebt_pin_cta",
+      "surface_file": "CivicaNotificationTemplates.swift",
+      "string_id": "approvedEmail.buttonLabel",
+      "current_english": "Set the EBT PIN",
+      "approved_english": "Set your EBT PIN at ebt.ca.gov",
+      "approved_spanish": "Establezca su PIN de EBT en ebt.ca.gov",
+      "audit_reference": "Q3",
+      "rationale": "Implies Civica performs the PIN action. Reframe as 'Learn how to set your EBT card PIN' linking to official EBT/DTA instructions.",
+      "status": "pending_signoff"
+    }
+  ]
+}

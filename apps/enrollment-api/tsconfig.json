@@ -17,7 +17,9 @@
     "resolveJsonModule": true,
     "paths": {
       "@civica/db-types": ["../../packages/db-types/snap_enrollment.ts"],
-      "@civica/snap-enums": ["../../packages/snap-enums/src/index.ts"]
+      "@civica/snap-enums": ["../../packages/snap-enums/src/index.ts"],
+      "@civica/recert-engine": ["../../packages/recert-engine/src/index.ts"],
+      "@civica/benefitscal-cbo": ["../../packages/benefitscal-cbo/src/index.ts"]
     }
   },
   "include": ["src/**/*.ts"],

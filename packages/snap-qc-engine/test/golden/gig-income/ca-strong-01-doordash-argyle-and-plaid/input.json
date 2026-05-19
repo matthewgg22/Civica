@@ -1,0 +1,25 @@
+{
+  "flow": "gig-income",
+  "state": "CA",
+  "inputs": {
+    "applicant_name": "Andre Coleman",
+    "state_code": "CA",
+    "sources": [
+      {
+        "type": "platform_gig",
+        "source_name": "DoorDash",
+        "monthly_average": 2400,
+        "verification_method": "argyle_api",
+        "confidence": "verified"
+      },
+      {
+        "type": "platform_gig",
+        "source_name": "DoorDash (Plaid)",
+        "monthly_average": 2400,
+        "verification_method": "plaid_deposits",
+        "confidence": "corroborated"
+      }
+    ],
+    "cash_attestation_signed": false
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "flow": "utility-sua",
+  "state": "MA",
+  "inputs": {
+    "applicant_name": "Priya Shah",
+    "service_address": "150 Hyde Park Ave, Jamaica Plain, MA 02130",
+    "intake": {
+      "state_code": "MA",
+      "landlord_pays_any": false,
+      "utilities_paid_by_applicant": {
+        "heat_gas": true,
+        "electricity": false,
+        "cooling": false,
+        "water": false,
+        "phone_internet": false,
+        "none": false
+      }
+    },
+    "accounts": [
+      {
+        "utility": "Eversource",
+        "account_holder_name": "Daniel Kim",
+        "service_address": "150 Hyde Park Ave, Jamaica Plain, MA 02130",
+        "account_status": "active",
+        "utility_type": "gas",
+        "source": "utilityapi_sandbox"
+      }
+    ],
+    "name_match": false
+  }
+}

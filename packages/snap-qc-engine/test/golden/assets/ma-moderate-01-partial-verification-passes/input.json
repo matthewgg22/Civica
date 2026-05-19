@@ -1,0 +1,27 @@
+{
+  "flow": "assets",
+  "state": "MA",
+  "inputs": {
+    "applicant_name": "Owen Driscoll",
+    "state_code": "MA",
+    "assets": [
+      {
+        "type": "bank_account",
+        "description": "Citizens Bank checking",
+        "stated_value": 290,
+        "exempt": false,
+        "countable_value": 290,
+        "verification_method": "plaid_balance"
+      },
+      {
+        "type": "other_liquid",
+        "description": "Cash on hand (self-reported)",
+        "stated_value": 200,
+        "exempt": false,
+        "countable_value": 200,
+        "verification_method": "self_declared"
+      }
+    ],
+    "elderly_or_disabled": false
+  }
+}

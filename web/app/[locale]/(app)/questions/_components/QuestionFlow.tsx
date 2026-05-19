@@ -199,7 +199,7 @@ export function QuestionFlow({ packetId, locale, sections, initialAnswers }: Pro
         <div className="sticky bottom-0 -mx-4 border-t border-hairline bg-surface px-4 py-4">
           <button
             type="button"
-            className="w-full rounded-xl bg-brick py-4 text-base font-semibold text-white hover:bg-brick-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brick focus-visible:ring-offset-2"
+            className="w-full rounded-xl bg-brick py-4 text-base font-semibold text-white hover:bg-brick-pressed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brick focus-visible:ring-offset-2"
             onClick={() => router.push(`/${locale}/app/documents`)}
           >
             {tc("continue")}

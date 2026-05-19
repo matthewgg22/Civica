@@ -1,0 +1,49 @@
+{
+  "flow": "assets",
+  "state": "MA",
+  "defensibility_score": "strong",
+  "defensibility_factors": [
+    {
+      "name": "all_assets_verified",
+      "weight": "positive",
+      "detail": "Every declared asset has Plaid or document verification"
+    }
+  ],
+  "evidence_package": {
+    "flow": "assets",
+    "applicant_name": "Patricia Walsh",
+    "state_code": "MA",
+    "assets": [
+      {
+        "type": "bank_account",
+        "description": "Bank of America checking",
+        "stated_value": 410,
+        "exempt": false,
+        "countable_value": 410,
+        "verification_method": "plaid_balance"
+      }
+    ],
+    "total_countable_assets": 410,
+    "asset_limit_usd": 2750,
+    "asset_test_applies": true,
+    "asset_test_result": "pass",
+    "regulatory_citations": [
+      "106 CMR 365.180 — Massachusetts resource limits",
+      "7 CFR 273.8 — Federal resource test"
+    ],
+    "generated_at": "2026-05-18T00:00:00.000Z"
+  },
+  "citations": [
+    {
+      "authority": "MA DTA",
+      "reference": "106 CMR 365.180 — Massachusetts resource limits"
+    },
+    {
+      "authority": "7 CFR Part 273",
+      "reference": "7 CFR 273.8 — Federal resource test"
+    }
+  ],
+  "warnings": [],
+  "computed_at": "2026-05-18T00:00:00.000Z",
+  "engine_version": "0.1.0"
+}

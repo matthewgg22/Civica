@@ -1,0 +1,30 @@
+# Machine-readable mirror of PROVENANCE.md. One entry per parquet upload.
+# Keep in sync when adding a dataset; consumed by the analytics-engine to
+# render citation footnotes on dashboards.
+
+sources:
+  - source_kind: section_10105_cliff
+    label: "Civica §10105 state liability FY24 calculator output"
+    source_url: data-ops/raw/section-10105/civica_state_liability_fy24.csv
+    publication_date: 2026-05-12
+    fiscal_year: 2024
+    bucket_path: section-10105/fy=2024/state_liability.parquet
+    parser_path: data-ops/parsers/section_10105_to_parquet.ts
+
+  - source_kind: section_10105_cliff
+    label: "Civica §10105 state liability FY28 adjusted (conservative/mid/aggressive)"
+    source_url: data-ops/raw/section-10105/state_liability_fy28_adjusted.csv
+    publication_date: 2026-05-12
+    fiscal_year: 2028
+    bucket_path: section-10105/fy=2028/state_liability_adjusted.parquet
+    parser_path: data-ops/parsers/section_10105_to_parquet.ts
+    notes: |
+      Multi-scenario projection. fy24_per_pct used as forward proxy for
+      FY25/FY26 PER per statute; see METHODOLOGY.md 2026-05-12 entry.
+
+  - source_kind: ecfr_rule_index
+    label: "7 CFR Part 273 rule index (Civica-curated, 223 rows)"
+    source_url: packages/cfr-273/data/rule_index.csv
+    publication_date: 2026-05-08
+    bucket_path: cfr-273/ecfr=2026-05-08/rule_index.parquet
+    parser_path: packages/cfr-273/scripts/build-parquet.ts

@@ -1,0 +1,36 @@
+{
+  "flow": "gig-income",
+  "state": "CA",
+  "inputs": {
+    "applicant_name": "Lupita Vargas",
+    "state_code": "CA",
+    "sources": [
+      {
+        "type": "cash",
+        "source_name": "House cleaning (self)",
+        "monthly_average": 600,
+        "verification_method": "self_declared",
+        "confidence": "self_declared"
+      }
+    ],
+    "cash_attestation_signed": true,
+    "cash_log": [
+      {
+        "week_of": "2026-04-06",
+        "amount": 150
+      },
+      {
+        "week_of": "2026-04-13",
+        "amount": 140
+      },
+      {
+        "week_of": "2026-04-20",
+        "amount": 160
+      },
+      {
+        "week_of": "2026-04-27",
+        "amount": 150
+      }
+    ]
+  }
+}

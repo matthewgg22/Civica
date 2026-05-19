@@ -1,0 +1,28 @@
+{
+  "flow": "shared-lease",
+  "state": "CA",
+  "inputs": {
+    "applicant_name": "Tomas Aguilar",
+    "state_code": "CA",
+    "intake": {
+      "lease_in_applicant_name": false,
+      "leaseholder_name": "Lin Wei",
+      "stated_monthly_rent": 900,
+      "payment_method": "cash",
+      "address": "1505 47th Ave, Oakland, CA 94601"
+    },
+    "document_type": "sublease",
+    "document_filename": "sublease-aguilar.pdf",
+    "document_upload_id": "doc-upload-002",
+    "bank_evidence": {
+      "match_found": false,
+      "matched_amount": 0,
+      "frequency": "none",
+      "confidence": "none",
+      "months_confirmed": 0,
+      "matched_transactions": []
+    },
+    "address_valid": true,
+    "address_normalized": "1505 47TH AVE, OAKLAND, CA 94601-3210"
+  }
+}

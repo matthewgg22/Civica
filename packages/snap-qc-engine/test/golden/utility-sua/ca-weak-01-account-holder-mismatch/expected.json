@@ -1,0 +1,62 @@
+{
+  "flow": "utility-sua",
+  "state": "CA",
+  "defensibility_score": "weak",
+  "defensibility_factors": [
+    {
+      "name": "utility_account_name_mismatch",
+      "weight": "negative",
+      "detail": "Account holder differs from applicant; attestation required"
+    }
+  ],
+  "evidence_package": {
+    "flow": "utility",
+    "applicant_name": "Aaliyah Brown",
+    "service_address": "2200 Telegraph Ave, Berkeley, CA 94704",
+    "state_code": "CA",
+    "tier": "full",
+    "tier_amount_usd": 670,
+    "rule_citation": "CA CDSS MPP 63-503.43 (HCSUA includes A/C in CA climate zones)",
+    "basis": "conflicting",
+    "utility_accounts_found": [
+      {
+        "utility": "PG&E",
+        "account_holder_name": "Landlord Holdings LLC",
+        "service_address": "2200 Telegraph Ave, Berkeley, CA 94704",
+        "account_status": "active",
+        "utility_type": "gas",
+        "source": "utilityapi_sandbox"
+      }
+    ],
+    "name_match": false,
+    "intake_responses": {
+      "state_code": "CA",
+      "landlord_pays_any": false,
+      "utilities_paid_by_applicant": {
+        "heat_gas": true,
+        "electricity": false,
+        "cooling": false,
+        "water": false,
+        "phone_internet": false,
+        "none": false
+      }
+    },
+    "generated_at": "2026-05-18T00:00:00.000Z",
+    "attestation_required": true
+  },
+  "citations": [
+    {
+      "authority": "CA CDSS",
+      "reference": "CA CDSS MPP 63-503.43 (HCSUA includes A/C in CA climate zones)"
+    }
+  ],
+  "warnings": [
+    {
+      "code": "utility.account_holder_mismatch",
+      "severity": "warning",
+      "message": "Applicant declares paying utilities but account is held by someone else"
+    }
+  ],
+  "computed_at": "2026-05-18T00:00:00.000Z",
+  "engine_version": "0.1.0"
+}

@@ -1,0 +1,25 @@
+{
+  "flow": "gig-income",
+  "state": "MA",
+  "inputs": {
+    "applicant_name": "Daniel Souza",
+    "state_code": "MA",
+    "sources": [
+      {
+        "type": "platform_gig",
+        "source_name": "Uber",
+        "monthly_average": 3100,
+        "verification_method": "argyle_api",
+        "confidence": "verified"
+      },
+      {
+        "type": "platform_gig",
+        "source_name": "Uber (Plaid)",
+        "monthly_average": 3100,
+        "verification_method": "plaid_deposits",
+        "confidence": "corroborated"
+      }
+    ],
+    "cash_attestation_signed": false
+  }
+}

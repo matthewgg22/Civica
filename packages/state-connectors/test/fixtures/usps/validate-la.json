@@ -1,0 +1,13 @@
+{
+  "address": {
+    "streetAddress": "1100 S BROADWAY",
+    "city": "LOS ANGELES",
+    "state": "CA",
+    "ZIPCode": "90015",
+    "ZIPPlus4": "2353"
+  },
+  "additionalInfo": {
+    "deliveryPoint": "00",
+    "DPVConfirmation": "Y"
+  }
+}

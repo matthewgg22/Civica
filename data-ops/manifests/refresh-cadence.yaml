@@ -1,0 +1,61 @@
+# Refresh cadence for every analytical dataset Civica tracks.
+# Used by future automation (cron/GitHub Actions) and by humans deciding
+# when to re-run parsers. Append-only when a new dataset arrives.
+
+datasets:
+  - id: usda_fns_per
+    label: USDA SNAP Payment Error Rates by State
+    cadence: annual
+    typical_release: June
+    last_pulled: 2026-05-12
+    next_expected: 2026-06
+    bucket_prefix: per/
+    parser: data-ops/parsers/per_pdf_to_parquet.py  # stub — T10 phase 2
+    notes: FY25 PER expected June 2026.
+
+  - id: usda_fns_benefits
+    label: USDA SNAP State Benefit Totals
+    cadence: monthly (state-level), annual rollup
+    last_pulled: 2026-05-12
+    bucket_prefix: benefits/
+    parser: data-ops/parsers/benefits_to_parquet.py  # stub
+
+  - id: usda_qc_microdata
+    label: USDA QC Public-Use Microdata
+    cadence: annual
+    bucket_prefix: qc-microdata/
+    parser: data-ops/parsers/qc_microdata_to_parquet.py  # stub
+
+  - id: usda_state_options
+    label: USDA State Options Report
+    cadence: biennial
+    edition: 17
+    bucket_prefix: state-options/
+    parser: data-ops/parsers/state_options_to_parquet.py  # stub
+
+  - id: ecfr_rule_index
+    label: CFR Title 7 Part 273 rule index (Civica-curated)
+    cadence: on ecfr update
+    last_pulled: 2026-05-08
+    bucket_prefix: cfr-273/
+    parser: data-ops/parsers/cfr_273_csv_to_parquet.ts
+    mirror_of: packages/cfr-273
+
+  - id: section_10105_cliff
+    label: §10105 state liability calculator (Civica-derived)
+    cadence: on PER refresh
+    bucket_prefix: section-10105/
+    parser: data-ops/parsers/section_10105_to_parquet.ts
+
+  - id: obbba_scenarios
+    label: OBBBA conservative/mid/aggressive scenario rollup
+    cadence: on CBO score refresh
+    bucket_prefix: obbba-scenarios/
+    parser: data-ops/parsers/obbba_scenarios_to_parquet.ts  # stub
+
+  - id: civica_qc_evaluation
+    label: Civica-emit shadow-mode QC evaluation events (T8)
+    cadence: daily
+    bucket_prefix: civica-emit/qc-evaluations/
+    parser: apps/enrollment-api (writes directly)  # T8 territory
+    tenant_aware: true

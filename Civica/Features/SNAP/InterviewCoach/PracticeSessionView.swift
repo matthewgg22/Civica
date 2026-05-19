@@ -1,5 +1,6 @@
-import SwiftUI
+import AVFoundation
 import CivicaDesignSystem
+import SwiftUI
 
 // EXPERIMENTAL SILOED MODULE: practice session chat UI.
 // Renders the transcript as alternating bubbles, exposes a text input bar
@@ -12,11 +13,41 @@ struct PracticeSessionView: View {
     @State private var showScoreSheet = false
     @FocusState private var inputFocused: Bool
 
+    // Voice input: SNAPVoiceIntakeService in transcript-only mode feeds
+    // the final transcript into `viewModel.draftResponse` so the user can
+    // review and edit before sending. Gated on iOS 26 because the service
+    // is `@available(iOS 26.0, *)`.
+    @StateObject private var voiceService = VoiceServiceContainer()
+
+    // T-DR7: track mic permission so the mic button is suppressed when
+    // the user has explicitly denied access.
+    @State private var micPermissionStatus: AVAudioApplication.recordPermission = AVAudioApplication.shared.recordPermission
+
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
 
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
+
+    /// Wrapper that hides the iOS 26 availability gate behind a plain
+    /// ObservableObject. SwiftUI's @StateObject requires a non-conditional
+    /// type, so we own the optional service inside and expose it via
+    /// `service`. Older iOS versions get nil → voice UI is suppressed.
+    @MainActor
+    final class VoiceServiceContainer: ObservableObject {
+        private var _service: AnyObject?
+
+        @available(iOS 26.0, *)
+        var service: SNAPVoiceIntakeService? {
+            if _service == nil { _service = SNAPVoiceIntakeService() }
+            return _service as? SNAPVoiceIntakeService
+        }
+
+        var isAvailable: Bool {
+            if #available(iOS 26.0, *) { return true }
+            return false
+        }
     }
 
     var body: some View {
@@ -167,48 +198,125 @@ struct PracticeSessionView: View {
     }
 
     private var inputBar: some View {
-        HStack(alignment: .bottom, spacing: CivicaSpacing.sm) {
-            TextField(InterviewCoachStrings.yourAnswerPlaceholder.value(in: language),
-                      text: $viewModel.draftResponse,
-                      axis: .vertical)
-                .focused($inputFocused)
-                .textInputAutocapitalization(.sentences)
-                .font(CivicaTypography.body)
-                .padding(CivicaSpacing.sm)
-                .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                        .fill(CivicaColors.surfacePrimary)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                        .stroke(CivicaColors.hairline, lineWidth: 1)
-                )
-                .lineLimit(1...5)
-                .disabled(viewModel.status != .awaitingUser)
-
-            Button {
-                inputFocused = false
-                InterviewCoachAnalytics.track(.sessionTurnSent, parameters: [
-                    "turn_count": String(viewModel.transcript.count + 1)
-                ])
-                Task { await viewModel.submitUserResponse() }
-            } label: {
-                Image(systemName: "arrow.up.circle.fill")
-                    .resizable().scaledToFit()
-                    .frame(width: 36, height: 36)
-                    .foregroundStyle(canSend ? CivicaColors.brickPrimary : CivicaColors.graphite.opacity(0.4))
+        VStack(spacing: 0) {
+            // T-DR7: when mic access is denied, show an inline link to Settings
+            // instead of the mic button so the user knows how to re-enable it.
+            if micPermissionStatus == .denied {
+                HStack(spacing: CivicaSpacing.xs) {
+                    Image(systemName: "mic.slash.fill")
+                        .font(CivicaTypography.footnoteStrong)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .accessibilityHidden(true)
+                    Button(InterviewCoachStrings.micAccessNeeded.value(in: language)) {
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundStyle(CivicaColors.brickPrimary)
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, CivicaSpacing.md)
+                .padding(.top, CivicaSpacing.xs)
             }
-            .disabled(!canSend)
-            .buttonStyle(.plain)
-            .accessibilityLabel("Send response")
+
+            HStack(alignment: .bottom, spacing: CivicaSpacing.sm) {
+                TextField(InterviewCoachStrings.yourAnswerPlaceholder.value(in: language),
+                          text: $viewModel.draftResponse,
+                          axis: .vertical)
+                    .focused($inputFocused)
+                    .textInputAutocapitalization(.sentences)
+                    .font(CivicaTypography.body)
+                    .padding(CivicaSpacing.sm)
+                    .background(
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                            .fill(CivicaColors.surfacePrimary)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                            .stroke(CivicaColors.hairline, lineWidth: 1)
+                    )
+                    .lineLimit(1...5)
+                    .disabled(viewModel.status != .awaitingUser)
+
+                // T-DR7: mic button — shown only when permission is granted or
+                // undetermined (tapping undetermined requests permission first).
+                // Hidden entirely when denied; Settings link shown above instead.
+                if #available(iOS 26.0, *), let micService = voiceService.service {
+                    if micPermissionStatus != .denied {
+                        SNAPVoiceMicButton(service: micService)
+                            .disabled(viewModel.status != .awaitingUser)
+                            .opacity(viewModel.status == .awaitingUser ? 1.0 : 0.4)
+                            .simultaneousGesture(TapGesture().onEnded {
+                                // Request permission on first tap when undetermined.
+                                if micPermissionStatus == .undetermined {
+                                    AVAudioApplication.requestRecordPermission { _ in
+                                        DispatchQueue.main.async {
+                                            micPermissionStatus = AVAudioApplication.shared.recordPermission
+                                        }
+                                    }
+                                }
+                            })
+                    }
+                }
+
+                // T-DR8: send button — minimum 44×44pt touch target (HIG).
+                // The icon is rendered at 28pt; the tappable area is padded
+                // out to 44pt via the inner frame + contentShape.
+                Button {
+                    inputFocused = false
+                    InterviewCoachAnalytics.track(.sessionTurnSent, parameters: [
+                        "turn_count": String(viewModel.transcript.count + 1)
+                    ])
+                    Task { await viewModel.submitUserResponse() }
+                } label: {
+                    Image(systemName: "arrow.up.circle.fill")
+                        .resizable().scaledToFit()
+                        .frame(width: 28, height: 28)
+                        .foregroundStyle(canSend ? CivicaColors.brickPrimary : CivicaColors.graphite.opacity(0.4))
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .disabled(!canSend)
+                .buttonStyle(.plain)
+                .accessibilityLabel("Send response")
+            }
+            .padding(.horizontal, CivicaSpacing.md)
+            .padding(.vertical, CivicaSpacing.sm)
         }
-        .padding(.horizontal, CivicaSpacing.md)
-        .padding(.vertical, CivicaSpacing.sm)
         .background(CivicaColors.paper)
         .overlay(
             Rectangle().frame(height: 1).foregroundStyle(CivicaColors.hairline),
             alignment: .top
         )
+        .task {
+            // Drain the voice service's update stream once per view lifetime.
+            // On `.finalTranscript(text)` the recognized speech is appended
+            // to draftResponse so the user can review + edit before sending.
+            // Cancellation propagates when the view goes away (.task scope).
+            if #available(iOS 26.0, *), let micService = voiceService.service {
+                for await update in micService.updates {
+                    switch update {
+                    case .finalTranscript(let text):
+                        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+                        guard !trimmed.isEmpty else { continue }
+                        // Append to existing draft if user was typing, otherwise replace.
+                        if viewModel.draftResponse.isEmpty {
+                            viewModel.draftResponse = trimmed
+                        } else {
+                            viewModel.draftResponse += " " + trimmed
+                        }
+                        inputFocused = true
+                    case .partialTranscript, .extracted, .failed:
+                        // Partial transcripts are shown in the mic button's
+                        // visual state; extracted/failed don't apply to
+                        // transcript-only mode (extracted) or are surfaced
+                        // by the mic button's error state (failed).
+                        break
+                    }
+                }
+            }
+        }
     }
 
     private var canSend: Bool {
