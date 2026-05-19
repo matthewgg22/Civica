@@ -6,6 +6,8 @@ import type { WorkRequirementInput } from '../src/work-requirements/types.js';
 const EXPECTED_CITATIONS = [
   { section: '7 CFR 273.24', title: 'SNAP work requirements' },
   { section: 'OBBBA §10102', title: 'Work requirement expansion (P.L. 119-21)' },
+  { section: '7 CFR 273.24(b)(6)', title: 'Native American tribal exemption' },
+  { section: '7 CFR 273.7(d)(1)', title: 'Qualifying program exemption' },
 ];
 
 function input(overrides: Partial<WorkRequirementInput> & { members?: WorkRequirementInput['householdMembers'] }): WorkRequirementInput {
@@ -208,8 +210,71 @@ describe('evaluateWorkRequirement', () => {
 
     for (const result of [subject, exempt, neither]) {
       expect(result.citations).toEqual(EXPECTED_CITATIONS);
-      expect(result.citations).toHaveLength(2);
+      expect(result.citations).toHaveLength(4);
     }
+  });
+
+  // ── Native American tribal exemption (OBBBA 1.3, 7 CFR 273.24(b)(6)) ───────
+
+  it('tribal member → exempt, exemptionType: native_american', () => {
+    const result = evaluateWorkRequirement(input({
+      members: [{ id: 'm1', age: 30, isTribalMember: true }],
+    }));
+    expect(result.isSubject).toBe(false);
+    expect(result.exemptionType).toBe('native_american');
+    expect(result.exemptionReason).toMatch(/7 CFR 273\.24\(b\)\(6\)/);
+    expect(result.subjectMemberIds).toEqual([]);
+    expect(result.timeLimitApplicable).toBe(false);
+  });
+
+  it('isTribalMember: false + no other exemption → isSubject: true (flag off has no effect)', () => {
+    const result = evaluateWorkRequirement(input({
+      members: [{ id: 'm1', age: 30, isTribalMember: false }],
+    }));
+    expect(result.isSubject).toBe(true);
+    expect(result.subjectMemberIds).toEqual(['m1']);
+    expect(result.exemptionType).toBeNull();
+  });
+
+  it('SSI takes priority over native_american (SSI check comes first)', () => {
+    const result = evaluateWorkRequirement(input({
+      members: [{ id: 'm1', age: 30, receivesSSI: true, isTribalMember: true }],
+    }));
+    expect(result.isSubject).toBe(false);
+    expect(result.exemptionType).toBe('ssdi_ssi');
+  });
+
+  it('mixed household: tribal member exempt, subject member still flagged → isSubject: true', () => {
+    const result = evaluateWorkRequirement(input({
+      members: [
+        { id: 'm1', age: 30, isTribalMember: true },  // exempt
+        { id: 'm2', age: 35 },                         // subject
+      ],
+    }));
+    expect(result.isSubject).toBe(true);
+    expect(result.subjectMemberIds).toEqual(['m2']);
+    expect(result.subjectMemberIds).not.toContain('m1');
+    expect(result.exemptionType).toBeNull();
+  });
+
+  // ── Qualifying program exemption (7 CFR 273.7(d)(1)) ────────────────────────
+
+  it('enrolled in qualifying program → exempt, exemptionType: qualifying_program', () => {
+    const result = evaluateWorkRequirement(input({
+      members: [{ id: 'm1', age: 30, isEnrolledInQualifyingProgram: true }],
+    }));
+    expect(result.isSubject).toBe(false);
+    expect(result.exemptionType).toBe('qualifying_program');
+    expect(result.exemptionReason).toMatch(/7 CFR 273\.7\(d\)\(1\)/);
+    expect(result.subjectMemberIds).toEqual([]);
+  });
+
+  it('SSI takes priority over qualifying_program (SSI check comes first)', () => {
+    const result = evaluateWorkRequirement(input({
+      members: [{ id: 'm1', age: 30, receivesSSI: true, isEnrolledInQualifyingProgram: true }],
+    }));
+    expect(result.isSubject).toBe(false);
+    expect(result.exemptionType).toBe('ssdi_ssi');
   });
 
   // ── MA state parity ─────────────────────────────────────────────────────────

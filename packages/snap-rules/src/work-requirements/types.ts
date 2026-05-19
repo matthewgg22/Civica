@@ -3,6 +3,7 @@ export type ExemptionType =
   | 'pregnancy'
   | 'caretaker_under_6'
   | 'qualifying_program'
+  | 'native_american'
   | 'waiver_county'
   | 'ssdi_ssi'
   | 'none';
@@ -16,7 +17,9 @@ export type WorkRequirementInput = {
     hasDisability?: boolean;
     receivesSSI?: boolean;
     receivesSSDA?: boolean;
-    dependentChildAges?: number[];   // ages of children this member is caretaker for
+    dependentChildAges?: number[];              // ages of children this member is caretaker for
+    isTribalMember?: boolean;                   // federally enrolled tribal member (7 CFR 273.24(b)(6))
+    isEnrolledInQualifyingProgram?: boolean;    // drug/alcohol tx, SNAP E&T, community MH (7 CFR 273.7(d)(1))
   }>;
   hasWaiverCounty: boolean;
 };

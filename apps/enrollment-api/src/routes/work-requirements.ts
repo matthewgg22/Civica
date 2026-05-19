@@ -38,6 +38,8 @@ const HouseholdMemberSchema = z.object({
   receivesSSI: z.boolean().optional(),
   receivesSSDA: z.boolean().optional(),
   dependentChildAges: z.array(z.number().int().min(0)).optional(),
+  isTribalMember: z.boolean().optional(),
+  isEnrolledInQualifyingProgram: z.boolean().optional(),
 });
 
 const evaluateBodySchema = z.object({
@@ -52,6 +54,7 @@ const ExemptionTypeSchema = z.enum([
   'pregnancy',
   'caretaker_under_6',
   'qualifying_program',
+  'native_american',
   'waiver_county',
   'ssdi_ssi',
   'none',

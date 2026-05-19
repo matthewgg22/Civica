@@ -14,6 +14,8 @@ const CARETAKER_UNDER_6_CUTOFF = 6;
 const BASE_CITATIONS: WorkRequirementResult['citations'] = [
   { section: '7 CFR 273.24', title: 'SNAP work requirements' },
   { section: 'OBBBA §10102', title: 'Work requirement expansion (P.L. 119-21)' },
+  { section: '7 CFR 273.24(b)(6)', title: 'Native American tribal exemption' },
+  { section: '7 CFR 273.7(d)(1)', title: 'Qualifying program exemption' },
 ];
 
 /**
@@ -50,11 +52,17 @@ function determineMember(
   if (m.receivesSSI || m.receivesSSDA) {
     return { kind: 'exempt', exemptionType: 'ssdi_ssi', reason: 'Member receives SSI or SSDA benefits' };
   }
+  if (m.isTribalMember) {
+    return { kind: 'exempt', exemptionType: 'native_american', reason: 'Enrolled tribal member — exempt per 7 CFR 273.24(b)(6)' };
+  }
   if (m.hasDisability) {
     return { kind: 'exempt', exemptionType: 'disability', reason: 'Member has documented disability' };
   }
   if (m.isPregnant) {
     return { kind: 'exempt', exemptionType: 'pregnancy', reason: 'Member is pregnant' };
+  }
+  if (m.isEnrolledInQualifyingProgram) {
+    return { kind: 'exempt', exemptionType: 'qualifying_program', reason: 'Member enrolled in qualifying program per 7 CFR 273.7(d)(1)' };
   }
 
   // Waiver county covers all remaining members who reach this point
@@ -74,10 +82,12 @@ function determineMember(
  * 2. Caretaker of a child under 6 → exempt (caretaker_under_6).
  * 3. Has dependent child 6–13 (under §10102 cutoff of 14) → not subject (no exemption type).
  * 4. SSI/SSDA → exempt (ssdi_ssi).
- * 5. Disability → exempt (disability).
- * 6. Pregnancy → exempt (pregnancy).
- * 7. Waiver county → exempt (waiver_county).
- * 8. Remaining → subject.
+ * 5. Tribal member → exempt (native_american) per 7 CFR 273.24(b)(6).
+ * 6. Disability → exempt (disability).
+ * 7. Pregnancy → exempt (pregnancy).
+ * 8. Enrolled in qualifying program → exempt (qualifying_program) per 7 CFR 273.7(d)(1).
+ * 9. Waiver county → exempt (waiver_county).
+ * 10. Remaining → subject.
  *
  * The caretaker_under_6 check (step 2) precedes the under-14 sweep (step 3) so
  * that under-6 dependents produce the statutory exemption type rather than the
