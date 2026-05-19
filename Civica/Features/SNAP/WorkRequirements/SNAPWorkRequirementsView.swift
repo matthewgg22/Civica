@@ -91,6 +91,7 @@ struct SNAPWorkRequirementsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xxl) {
+                SNAPErrorRiskBadge(packetId: packetId, apiClient: apiClient)
                 membersSection
                 evaluateButton
                 if let result = evaluationResult {

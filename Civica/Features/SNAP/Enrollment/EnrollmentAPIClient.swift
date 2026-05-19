@@ -43,6 +43,12 @@ protocol EnrollmentAPIClient: Sendable {
         members: [WorkRequirementsHouseholdMember]
     ) async throws -> WorkRequirementsEvaluation
 
+    // MARK: Error risk
+
+    /// POST /v1/enrollment/me/packets/:packetId/error-risk
+    /// Returns the pre-submission QC error risk score for this packet.
+    func fetchErrorRisk(packetId: String) async throws -> ErrorRiskResult
+
     // MARK: Argyle connection (T-DR3-8)
 
     /// GET /v1/enrollment/me/argyle/connect
@@ -207,6 +213,10 @@ struct HTTPEnrollmentAPIClient: EnrollmentAPIClient {
             path: "/me/argyle/connect",
             body: Body(argyle_user_id: argyleUserId, packet_id: packetId)
         )
+    }
+
+    func fetchErrorRisk(packetId: String) async throws -> ErrorRiskResult {
+        return try await postEmpty(path: "/me/packets/\(packetId)/error-risk")
     }
 
     func disconnectArgyle() async throws {
@@ -473,6 +483,12 @@ final class MockEnrollmentAPIClient: EnrollmentAPIClient, @unchecked Sendable {
             exemptionType: nil,
             complianceStatus: "unknown"
         )
+    }
+
+    // MARK: Error risk
+
+    func fetchErrorRisk(packetId: String) async throws -> ErrorRiskResult {
+        ErrorRiskResult(tier: .low, score: 5, factors: [], engineVersion: "0.2.0")
     }
 
     // MARK: Argyle connection (T-DR3-8)
