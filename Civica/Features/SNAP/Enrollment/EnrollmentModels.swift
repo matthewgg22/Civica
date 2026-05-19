@@ -130,6 +130,24 @@ struct EnrollmentInboxItem: Codable, Identifiable, Equatable {
     }
 }
 
+// MARK: - Error Risk
+
+enum ErrorRiskTier: String, Codable, Equatable {
+    case high, medium, low, incomplete
+}
+
+struct ErrorRiskResult: Decodable, Equatable {
+    let tier: ErrorRiskTier
+    let score: Int?
+    let factors: [String]
+    let engineVersion: String
+
+    enum CodingKeys: String, CodingKey {
+        case tier, score, factors
+        case engineVersion = "engine_version"
+    }
+}
+
 // MARK: - Shared decoder
 
 extension JSONDecoder {
