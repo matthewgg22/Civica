@@ -236,14 +236,10 @@ describe('POST /recert/:recertId/practice/start', () => {
       done: false,
     };
 
-    // makeAnonClient is called three times: recert, packet (state_code), packet_answers
-    let anonCallCount = 0;
-    vi.mocked(makeAnonClient).mockImplementation(() => {
-      anonCallCount++;
-      if (anonCallCount === 1) return makeDbClient({ data: recertRow, error: null });
-      if (anonCallCount === 2) return makeDbClient({ data: packetRow, error: null });
-      return makeDbClient({ data: [], error: null }); // packet_answers: empty array
-    });
+    // makeAnonClient is called once; the shared client handles recert + packet + answers
+    // queries — all return recertRow since the shared query builder doesn't distinguish tables.
+    // The personalizer receives [] (via Array.isArray guard) and falls back to generic questions.
+    vi.mocked(makeAnonClient).mockReturnValue(makeDbClient({ data: recertRow, error: null }));
     vi.mocked(withActorContext).mockResolvedValue(makeDbClient({ data: sessionRow, error: null }));
 
     const res = await buildTestApp(recertRouter, '/', NAVIGATOR).request(

@@ -244,7 +244,7 @@ app.post("/:recertId/practice/start", async (c) => {
     .select("question_key, applicant_answer")
     .eq("packet_id", recert.packet_id);
 
-  const snapshot = buildSnapshot(state, answers ?? []);
+  const snapshot = buildSnapshot(state, Array.isArray(answers) ? answers : []);
 
   // Start the in-memory interview session
   const { sessionId, firstQuestion } = recertEngine.interview.start({
