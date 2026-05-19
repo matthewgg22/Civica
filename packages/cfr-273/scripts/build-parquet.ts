@@ -30,9 +30,22 @@ async function main() {
 
   const instance = await DuckDBInstance.create(":memory:");
   const conn = await instance.connect();
+  // Force all columns to VARCHAR via `all_varchar = true`. Without this,
+  // DuckDB's auto-typer treats `section` "273.10" as float 273.1 (silent
+  // data loss) and inferred-NULL `key_quote` columns trip strict consumers.
   await conn.run(
-    `COPY (SELECT * FROM read_csv_auto('${CSV.replaceAll("'", "''")}', header = true)) ` +
-      `TO '${OUT.replaceAll("'", "''")}' (FORMAT PARQUET);`,
+    `COPY (
+       SELECT
+         citation,
+         section,
+         topic,
+         heading,
+         summary,
+         household_types_affected,
+         civica_relevance,
+         COALESCE(key_quote, '') AS key_quote
+       FROM read_csv('${CSV.replaceAll("'", "''")}', header = true, all_varchar = true)
+     ) TO '${OUT.replaceAll("'", "''")}' (FORMAT PARQUET);`,
   );
 
   const buf = await readFile(CSV);
@@ -52,7 +65,11 @@ async function main() {
   };
   await writeFile(`${OUT}.provenance.json`, `${JSON.stringify(provenance, null, 2)}\n`);
 
-  conn.disconnectSync();
+  try {
+    (conn as unknown as { disconnectSync?: () => void }).disconnectSync?.();
+  } catch {
+    /* @duckdb/node-api dropped disconnectSync in newer alphas */
+  }
   console.log(`built ${OUT} (${provenance.row_count} rows)`);
 }
 

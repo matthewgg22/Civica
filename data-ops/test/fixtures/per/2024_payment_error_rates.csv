@@ -1,0 +1,7 @@
+state_code,state_name,fiscal_year,per_total,per_overpayment,per_underpayment
+CA,California,2024,10.98,8.42,2.56
+NY,New York,2024,14.09,11.05,3.04
+TX,Texas,2024,7.42,5.01,2.41
+MA,Massachusetts,2024,5.31,3.80,1.51
+AK,Alaska,2024,60.40,48.10,12.30
+DC,District of Columbia,2024,4.12,2.95,1.17

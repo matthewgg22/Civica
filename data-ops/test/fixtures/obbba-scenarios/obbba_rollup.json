@@ -1,0 +1,34 @@
+{
+  "model_version": "test-1.0",
+  "publication_date": "2026-05-12",
+  "scenarios": [
+    {
+      "scenario": "baseline",
+      "metric": "fy28_total_state_liability_billions",
+      "value": 0.0,
+      "narrative": "FY24 PER carried forward; no OBBBA participation drop."
+    },
+    {
+      "scenario": "mid",
+      "metric": "fy28_total_state_liability_billions",
+      "value": 4.85,
+      "narrative": "Baseline PER × §10101/§10102 participation reductions."
+    },
+    {
+      "scenario": "aggressive",
+      "metric": "fy28_total_state_liability_billions",
+      "value": 7.62,
+      "narrative": "Upper-bound enrollment churn + TFP cut."
+    },
+    {
+      "scenario": "mid",
+      "metric": "fy29_annualized_state_liability_billions",
+      "value": 5.10
+    },
+    {
+      "scenario": "aggressive",
+      "metric": "fy29_annualized_state_liability_billions",
+      "value": 8.01
+    }
+  ]
+}
