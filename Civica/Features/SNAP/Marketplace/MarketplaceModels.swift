@@ -6,13 +6,13 @@ import Foundation
 // is the authoritative calculation result.
 // ---------------------------------------------------------------------------
 
-enum MarketplaceJobType: String, Codable {
+enum MarketplaceJobType: String, Codable, Hashable {
     case fws          // Federal Work-Study — excluded from SNAP income (7 CFR 273.9(c)(3))
     case w2           // Standard wage employment
     case platformGig  // Gig/platform — counts toward OBBBA 80-hour requirement
 }
 
-struct MarketplaceJob: Identifiable, Codable {
+struct MarketplaceJob: Identifiable, Codable, Hashable {
     let id: String
     let title: String
     let employerName: String

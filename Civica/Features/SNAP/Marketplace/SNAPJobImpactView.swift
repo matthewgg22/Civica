@@ -7,7 +7,7 @@ import SwiftUI
 /// Leads to the Apply modal (Screen 04) or "Save for later".
 struct SNAPJobImpactView: View {
     @ObservedObject var vm: SNAPMarketplaceViewModel
-    let job: MarketplaceJob
+    let job: SNAPMarketplaceJob
     var onApply: () -> Void
     var onSaveForLater: () -> Void
 
