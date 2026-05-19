@@ -14,6 +14,7 @@ import missingItemsRouter from "./routes/missing-items.js";
 import meRouter from "./routes/me.js";
 import mePacketsRouter from "./routes/me-packets.js";
 import meInboxRouter from "./routes/me-inbox.js";
+import meArgyleRouter from "./routes/me-argyle.js";
 import benefitsCalRouter from "./routes/benefitscal.js";
 import recertRouter from "./routes/recert.js";
 import twilioWebhookRouter from "./routes/twilio-webhook.js";
@@ -63,9 +64,10 @@ api.route("/navigator", navigatorRouter);                 // /navigator/outreach
 api.route("/oauth/canvas", oauthCanvasRouter);            // /oauth/canvas/exchange, /status, DELETE
 
 // Applicant self-service routes
-api.route("/me", meRouter);                    // GET/PATCH /me
-api.route("/me/packets", mePacketsRouter);     // /me/packets/*
-api.route("/me/inbox", meInboxRouter);         // /me/inbox/*
+api.route("/me", meRouter);                         // GET/PATCH /me
+api.route("/me/packets", mePacketsRouter);          // /me/packets/*
+api.route("/me/inbox", meInboxRouter);              // /me/inbox/*
+api.route("/me/argyle/connect", meArgyleRouter);    // GET/POST/DELETE /me/argyle/connect (T-DR3-8)
 
 api.route("/benefitscal", benefitsCalRouter);  // /benefitscal/prepare-export/:packetId, /benefitscal/status/:packetId
 
