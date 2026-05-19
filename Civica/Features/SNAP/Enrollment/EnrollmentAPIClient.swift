@@ -42,6 +42,21 @@ protocol EnrollmentAPIClient: Sendable {
         packetId: String,
         members: [WorkRequirementsHouseholdMember]
     ) async throws -> WorkRequirementsEvaluation
+
+    // MARK: Argyle connection (T-DR3-8)
+
+    /// GET /v1/enrollment/me/argyle/connect
+    /// Returns current Argyle link status for the authenticated applicant.
+    func fetchArgyleConnectionStatus() async throws -> ArgyleConnectionStatus
+
+    /// POST /v1/enrollment/me/argyle/connect
+    /// Register the Argyle user ID obtained from the iOS Argyle SDK after a
+    /// successful link. Idempotent — revokes prior connection automatically.
+    func connectArgyle(argyleUserId: String, packetId: String?) async throws -> ArgyleConnectionStatus
+
+    /// DELETE /v1/enrollment/me/argyle/connect
+    /// Revoke the active Argyle connection.
+    func disconnectArgyle() async throws
 }
 
 // MARK: - Errors
@@ -177,6 +192,35 @@ struct HTTPEnrollmentAPIClient: EnrollmentAPIClient {
         )
     }
 
+    // MARK: Argyle connection (T-DR3-8)
+
+    func fetchArgyleConnectionStatus() async throws -> ArgyleConnectionStatus {
+        try await getJSON(path: "/me/argyle/connect")
+    }
+
+    func connectArgyle(argyleUserId: String, packetId: String?) async throws -> ArgyleConnectionStatus {
+        struct Body: Encodable {
+            let argyle_user_id: String
+            let packet_id: String?
+        }
+        return try await post(
+            path: "/me/argyle/connect",
+            body: Body(argyle_user_id: argyleUserId, packet_id: packetId)
+        )
+    }
+
+    func disconnectArgyle() async throws {
+        guard let token = await tokenProvider() else { throw EnrollmentAPIError.unauthenticated }
+        guard let url = URL(string: "/me/argyle/connect", relativeTo: baseURL) else {
+            throw EnrollmentAPIError.invalidURL
+        }
+        var req = URLRequest(url: url)
+        req.httpMethod = "DELETE"
+        req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        let (_, response) = try await session.data(for: req)
+        try validate(response)
+    }
+
     // MARK: - Private helpers
 
     private func buildMultipartBody(
@@ -289,6 +333,25 @@ struct HTTPEnrollmentAPIClient: EnrollmentAPIClient {
 
 // Sentinel used when a POST returns 204 No Content.
 private struct EmptyResponse: Decodable {}
+
+// MARK: - Argyle response models
+
+struct ArgyleConnectionStatus: Decodable, Sendable {
+    let linked: Bool
+    let connection: ArgyleConnection?
+}
+
+struct ArgyleConnection: Decodable, Sendable {
+    let connectionId: String
+    let argyleUserId: String
+    let linkedAt: Date
+
+    enum CodingKeys: String, CodingKey {
+        case connectionId = "connection_id"
+        case argyleUserId = "argyle_user_id"
+        case linkedAt = "linked_at"
+    }
+}
 
 private extension Data {
     mutating func appendASCII(_ string: String) {
@@ -410,6 +473,24 @@ final class MockEnrollmentAPIClient: EnrollmentAPIClient, @unchecked Sendable {
             exemptionType: nil,
             complianceStatus: "unknown"
         )
+    }
+
+    // MARK: Argyle connection (T-DR3-8)
+
+    func fetchArgyleConnectionStatus() async throws -> ArgyleConnectionStatus {
+        .init(linked: false, connection: nil)
+    }
+
+    func connectArgyle(argyleUserId: String, packetId: String?) async throws -> ArgyleConnectionStatus {
+        .init(linked: true, connection: ArgyleConnection(
+            connectionId: "mock-connection",
+            argyleUserId: argyleUserId,
+            linkedAt: Date()
+        ))
+    }
+
+    func disconnectArgyle() async throws {
+        // no-op in mock
     }
 }
 

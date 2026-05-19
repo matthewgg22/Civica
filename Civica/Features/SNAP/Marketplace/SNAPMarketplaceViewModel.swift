@@ -124,7 +124,14 @@ struct MarketplaceRecertification {
 @MainActor
 final class SNAPMarketplaceViewModel: ObservableObject {
 
-    // MARK: State surface (hardcoded demo — no live API)
+    // MARK: Dependencies
+    private let enrollmentClient: EnrollmentAPIClient
+
+    init(enrollmentClient: EnrollmentAPIClient = MockEnrollmentAPIClient()) {
+        self.enrollmentClient = enrollmentClient
+    }
+
+    // MARK: State surface
     @Published var benefit      = MarketplaceBenefit()
     @Published var household    = MarketplaceHousehold()
     @Published var schedule     = MarketplaceSchedule()
@@ -134,9 +141,46 @@ final class SNAPMarketplaceViewModel: ObservableObject {
     @Published var dataSources  = MarketplaceDataSources()
     @Published var recertification = MarketplaceRecertification()
 
+    @Published var argyleConnectError: String? = nil
+
     // MARK: UI selection state
     @Published var selectedJob: MarketplaceJob? = nil
     @Published var showApplySheet: Bool = false
+
+    // MARK: Argyle connection lifecycle
+
+    /// Called on view appear — refreshes the live Argyle connection status.
+    func refreshArgyleStatus() async {
+        do {
+            let status = try await enrollmentClient.fetchArgyleConnectionStatus()
+            dataSources.argyle = status.linked ? .connected : .disconnected
+        } catch {
+            // Non-fatal — marketplace still works with demo data
+        }
+    }
+
+    /// Called by the iOS Argyle SDK completion handler with the new user ID.
+    func handleArgyleSDKLink(argyleUserId: String, packetId: String?) async {
+        dataSources.argyle = .pending
+        argyleConnectError = nil
+        do {
+            let status = try await enrollmentClient.connectArgyle(argyleUserId: argyleUserId, packetId: packetId)
+            dataSources.argyle = status.linked ? .connected : .disconnected
+        } catch {
+            dataSources.argyle = .disconnected
+            argyleConnectError = error.localizedDescription
+        }
+    }
+
+    /// Called from Settings > Connections to revoke the Argyle link.
+    func disconnectArgyle() async {
+        do {
+            try await enrollmentClient.disconnectArgyle()
+            dataSources.argyle = .disconnected
+        } catch {
+            // Ignore — stale local state is acceptable
+        }
+    }
 
     // MARK: Demo jobs
     private static var demoJobs: [MarketplaceJob] {
