@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import AppHeader from "../../components/AppHeader";
 import { formatDateTime, decryptDemoName, firstNameLastInitial } from "../../lib/format";
+import { OutreachTaskActions } from "./OutreachTaskActions";
 
 type OutreachTask = {
   outreach_task_id: string;
@@ -177,13 +178,14 @@ export default async function OutreachPage() {
                     </div>
                   </div>
 
-                  {/* Link to packet */}
-                  <div className="shrink-0">
+                  {/* Actions + link */}
+                  <div className="flex items-center gap-3 shrink-0">
+                    <OutreachTaskActions taskId={task.outreach_task_id} />
                     <Link
                       href={`/packets/${task.packet_id}`}
                       className="text-[13px] font-semibold text-teal hover:underline whitespace-nowrap"
                     >
-                      View packet →
+                      View →
                     </Link>
                   </div>
                 </div>
