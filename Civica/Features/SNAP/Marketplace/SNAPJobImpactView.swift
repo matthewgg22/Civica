@@ -11,6 +11,10 @@ struct SNAPJobImpactView: View {
     var onApply: () -> Void
     var onSaveForLater: () -> Void
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+    private var language: CivicaLanguage { CivicaLanguage(rawValue: languageRaw) ?? .english }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -32,12 +36,17 @@ struct SNAPJobImpactView: View {
 
     private var heroBlock: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("\(job.title) · Campus")
+            Text(job.title + SNAPMarketplaceStrings.campusSuffix.value(in: language))
                 .font(MFont.heroHeadline)
                 .foregroundStyle(Color.civicaInk)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text("\(job.hours) hr/wk · $\(job.wage)/hr · \(job.schedule) + weekends")
+            Text("\(job.hours)"
+                 + SNAPMarketplaceStrings.hrPerWk.value(in: language)
+                 + "\(job.wage)"
+                 + SNAPMarketplaceStrings.hrRate.value(in: language)
+                 + job.schedule
+                 + SNAPMarketplaceStrings.plusWeekends.value(in: language))
                 .font(MFont.meta)
                 .foregroundStyle(Color.civicaGraphite)
         }
@@ -81,7 +90,7 @@ struct SNAPJobImpactView: View {
                     isTotal: true)
 
             // FWS exclusion citation — italic
-            Text("FWS earnings would be $0 in this calculation — they're excluded by federal rule 7\u{00A0}CFR\u{00A0}273.9(c)(3).")
+            Text(SNAPMarketplaceStrings.fwsExclusion.value(in: language))
                 .font(MFont.fwsCitation)
                 .foregroundStyle(Color.civicaGraphite)
                 .lineSpacing(13 * 0.5)  // line-height 1.5
@@ -102,10 +111,10 @@ struct SNAPJobImpactView: View {
             // "$1,393/month total income — $315 more than benefit alone."
             // "$1,393/month" is 600 weight + tabular-nums within a 500 teal line
             Group {
-                Text("$1,393/month")
+                Text(SNAPMarketplaceStrings.demoTotalIncome.value(in: language))
                     .font(.custom("HankenGrotesk-SemiBold", size: 17))
                     .monospacedDigit()
-                + Text(" total income — $315 more than benefit alone.")
+                + Text(SNAPMarketplaceStrings.totalIncomeSuffix.value(in: language))
                     .font(MFont.bodySmallMedium)
             }
             .foregroundStyle(Color.civicaTeal)
@@ -119,7 +128,7 @@ struct SNAPJobImpactView: View {
     // MARK: Footnote
 
     private var footnoteBlock: some View {
-        Text("Estimate based on your household of 2 and current shelter cost. Civica updates it monthly when you submit pay stubs.")
+        Text(SNAPMarketplaceStrings.footnoteEstimate.value(in: language))
             .font(MFont.meta)
             .foregroundStyle(Color.civicaGraphite)
             .lineSpacing(13 * 0.5)

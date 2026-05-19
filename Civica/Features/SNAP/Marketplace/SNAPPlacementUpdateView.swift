@@ -13,6 +13,10 @@ struct SNAPPlacementUpdateView: View {
 
     @State private var barProgress: Double = 0
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+    private var language: CivicaLanguage { CivicaLanguage(rawValue: languageRaw) ?? .english }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -26,7 +30,7 @@ struct SNAPPlacementUpdateView: View {
             }
         }
         .background(Color.civicaPaper.ignoresSafeArea())
-        .navigationTitle("Update")
+        .navigationTitle(SNAPMarketplaceStrings.updateNavTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             // 300ms ease-out fill — only on first appearance
@@ -49,10 +53,10 @@ struct SNAPPlacementUpdateView: View {
 
             // "Dining Services · $612 (first paycheck)"
             Group {
-                Text("Dining Services · $\(vm.placement.firstPaycheckAmount) ")
+                Text(SNAPMarketplaceStrings.diningServicesPrefix.value(in: language) + "\(vm.placement.firstPaycheckAmount) ")
                     .font(.custom("HankenGrotesk-SemiBold", size: 20))
                     .foregroundStyle(Color.civicaInk)
-                + Text("(first paycheck)")
+                + Text(SNAPMarketplaceStrings.firstPaycheck.value(in: language))
                     .font(.custom("HankenGrotesk-Medium", size: 20))
                     .foregroundStyle(Color.civicaGraphite)
             }
@@ -60,7 +64,9 @@ struct SNAPPlacementUpdateView: View {
             .padding(.horizontal, 24)
             .accessibilityLabel("Dining Services, $\(vm.placement.firstPaycheckAmount), first paycheck")
 
-            Text("Confirmed via \(vm.placement.confirmationSource) from your direct deposit.")
+            Text(SNAPMarketplaceStrings.confirmedViaPrefix.value(in: language)
+                 + vm.placement.confirmationSource
+                 + SNAPMarketplaceStrings.confirmedViaSuffix.value(in: language))
                 .font(MFont.bodySmall)
                 .foregroundStyle(Color.civicaGraphite)
                 .lineSpacing(15 * 0.45)
@@ -76,7 +82,7 @@ struct SNAPPlacementUpdateView: View {
 
     private var beforeAfterBlock: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("YOUR BENEFIT ESTIMATE")
+            Text(SNAPMarketplaceStrings.yourBenefitEstimate.value(in: language))
                 .font(MFont.capsLabel)
                 .foregroundStyle(Color.civicaGraphite)
                 .kerning(1.5)
@@ -85,7 +91,7 @@ struct SNAPPlacementUpdateView: View {
             HStack(alignment: .bottom, spacing: 18) {
                 // Was
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("WAS")
+                    Text(SNAPMarketplaceStrings.was.value(in: language))
                         .font(MFont.capsLabel)
                         .foregroundStyle(Color.civicaGraphite)
                         .kerning(1.2)
@@ -104,7 +110,7 @@ struct SNAPPlacementUpdateView: View {
 
                 // Now
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("NOW")
+                    Text(SNAPMarketplaceStrings.now.value(in: language))
                         .font(MFont.capsLabel)
                         .foregroundStyle(Color.civicaGraphite)
                         .kerning(1.2)
@@ -117,7 +123,7 @@ struct SNAPPlacementUpdateView: View {
             }
 
             // Key copy — the "killer copy" per spec
-            Text("Your county worker has been notified. No action needed.")
+            Text(SNAPMarketplaceStrings.countyNotified.value(in: language))
                 .font(MFont.metaMedium)
                 .foregroundStyle(Color.civicaTeal)
                 .lineSpacing(13 * 0.45)
@@ -133,7 +139,7 @@ struct SNAPPlacementUpdateView: View {
 
     private var obbbaLog: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("OBBBA WORK-HOUR LOG")
+            Text(SNAPMarketplaceStrings.obbbaWorkHourLog.value(in: language))
                 .font(MFont.capsLabel)
                 .foregroundStyle(Color.civicaGraphite)
                 .kerning(1.5)
@@ -147,7 +153,9 @@ struct SNAPPlacementUpdateView: View {
                 Group {
                     Text("\(vm.placement.obbbaHoursLogged)")
                         .font(.custom("HankenGrotesk-SemiBold", size: 15))
-                    + Text(" of \(vm.placement.obbbaHoursRequired) hours")
+                    + Text(SNAPMarketplaceStrings.ofPrefix.value(in: language)
+                           + "\(vm.placement.obbbaHoursRequired)"
+                           + SNAPMarketplaceStrings.hoursSuffix.value(in: language))
                         .font(MFont.bodySmallMedium)
                         .foregroundStyle(Color.civicaGraphite)
                 }
@@ -172,7 +180,7 @@ struct SNAPPlacementUpdateView: View {
             .accessibilityLabel("OBBBA progress: \(vm.placement.obbbaHoursLogged) of \(vm.placement.obbbaHoursRequired) hours")
             .accessibilityValue("\(Int(vm.obbbaProgress * 100)) percent")
 
-            Text("Civica auto-counts hours from your verified employer. No timesheet to submit.")
+            Text(SNAPMarketplaceStrings.autoCountsNote.value(in: language))
                 .font(MFont.meta)
                 .foregroundStyle(Color.civicaGraphite)
                 .lineSpacing(13 * 0.45)

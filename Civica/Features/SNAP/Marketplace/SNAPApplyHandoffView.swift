@@ -10,6 +10,10 @@ struct SNAPApplyHandoffView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+    private var language: CivicaLanguage { CivicaLanguage(rawValue: languageRaw) ?? .english }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -36,7 +40,7 @@ struct SNAPApplyHandoffView: View {
                     .frame(minWidth: 44, minHeight: 44)
                 }
                 ToolbarItem(placement: .principal) {
-                    Text("Apply")
+                    Text(SNAPMarketplaceStrings.applyNavTitle.value(in: language))
                         .font(MFont.navTitle)
                         .foregroundStyle(Color.civicaInk)
                 }
@@ -50,7 +54,7 @@ struct SNAPApplyHandoffView: View {
     // MARK: Hero
 
     private var heroBlock: some View {
-        Text("Apply to Dining Services through Handshake")
+        Text(SNAPMarketplaceStrings.applyHeroHeadline.value(in: language))
             .font(MFont.heroHeadline)
             .foregroundStyle(Color.civicaInk)
             .lineSpacing(20 * 0.22)  // line-height 1.22
@@ -63,7 +67,7 @@ struct SNAPApplyHandoffView: View {
     // MARK: Intro
 
     private var introBlock: some View {
-        Text("Handshake is your campus's official jobs platform. Civica passes your verified income and class schedule so you don't re-enter them.")
+        Text(SNAPMarketplaceStrings.handshakeIntro.value(in: language))
             .font(MFont.body)
             .foregroundStyle(Color.civicaGraphite)
             .lineSpacing(16 * 0.45)
@@ -114,7 +118,7 @@ struct SNAPApplyHandoffView: View {
     // MARK: Not-shared note
 
     private var notSharedNote: some View {
-        Text("Handshake will see only what's needed for your application. Civica does not share your benefit amount.")
+        Text(SNAPMarketplaceStrings.notSharedNote.value(in: language))
             .font(MFont.bodySmall)
             .foregroundStyle(Color.civicaGraphite)
             .lineSpacing(15 * 0.45)
@@ -149,12 +153,12 @@ struct SNAPApplyHandoffView: View {
                 }
             } label: {
                 HStack(spacing: 4) {
-                    Text("Continue to ")
+                    Text(SNAPMarketplaceStrings.continueTo.value(in: language))
                         .font(MFont.bodySmallMedium)
-                    + Text("Handshake")
+                    + Text(SNAPMarketplaceStrings.handshakeBrand.value(in: language))
                         .font(.custom("HankenGrotesk-SemiBold", size: 17))
                         .kerning(-0.3)
-                    + Text(" \u{2192}")
+                    + Text(SNAPMarketplaceStrings.arrowSuffix.value(in: language))
                         .font(MFont.bodySmallMedium)
                 }
                 .foregroundStyle(Color.civicaPaper)
@@ -222,7 +226,8 @@ private struct StepRow: View {
 
 #if DEBUG
 #Preview {
-    Text("Tap to open sheet")
+    let previewLabel = SNAPMarketplaceStrings.tapToOpenSheet.value(in: .english)
+    Text(previewLabel)
         .sheet(isPresented: .constant(true)) {
             SNAPApplyHandoffView(vm: SNAPMarketplaceViewModel())
         }

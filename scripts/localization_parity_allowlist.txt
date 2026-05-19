@@ -35,3 +35,10 @@ Close
 This surface is for the Civica founder + concierge team. It exports the upcoming-interview list for manual outreach.
 Upcoming interview (next 72 hours)
 No row to export. The current device either hasn't granted TCPA consent, has no scheduled interview date, or the interview is more than 72 hours away.
+
+# Decorative glyphs — not translatable, language-neutral.
+# \u{2731} = HEAVY ASTERISK used as a bullet in SNAPRecertRefreshView InputRow.
+# \u{2192} = RIGHTWARDS ARROW used as a button suffix in SNAPApplyHandoffView.
+\u{2731}
+\u{2192}
+ \u{2192}

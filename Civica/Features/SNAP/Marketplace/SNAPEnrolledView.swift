@@ -10,6 +10,10 @@ struct SNAPEnrolledView: View {
     var onSeeJobs: () -> Void
     var onLater: () -> Void
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+    private var language: CivicaLanguage { CivicaLanguage(rawValue: languageRaw) ?? .english }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -23,7 +27,7 @@ struct SNAPEnrolledView: View {
             }
         }
         .background(Color.civicaPaper.ignoresSafeArea())
-        .navigationTitle("You're enrolled")
+        .navigationTitle(SNAPMarketplaceStrings.enrolledNavTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -34,7 +38,7 @@ struct SNAPEnrolledView: View {
             // Brick check + headline
             HStack(alignment: .center, spacing: 10) {
                 MCheckGlyph(size: 26, color: .civicaBrick)
-                Text("You're enrolled in SNAP")
+                Text(SNAPMarketplaceStrings.enrolledHeadline.value(in: language))
                     .font(MFont.heroEnrolled)
                     .foregroundStyle(Color.civicaInk)
                     .fixedSize(horizontal: false, vertical: true)
@@ -42,7 +46,7 @@ struct SNAPEnrolledView: View {
             .padding(.bottom, 28)
 
             // "MONTHLY BENEFIT" caps label
-            Text("MONTHLY BENEFIT")
+            Text(SNAPMarketplaceStrings.monthlyBenefit.value(in: language))
                 .font(MFont.capsLabel)
                 .foregroundStyle(Color.civicaGraphite)
                 .kerning(1.5)
@@ -77,13 +81,13 @@ struct SNAPEnrolledView: View {
             MCapsLabel(text: "What's next")
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("Earn up to $1,580/month and keep your full benefit")
+                Text(SNAPMarketplaceStrings.earnUpTo.value(in: language))
                     .font(MFont.bodySmallMedium)
                     .foregroundStyle(Color.civicaInk)
                     .lineSpacing(17 * 0.3)  // line-height 1.3
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("We'll show you campus jobs that work around your classes, with the income impact already calculated.")
+                Text(SNAPMarketplaceStrings.whatsNextBody.value(in: language))
                     .font(MFont.bodySmall)
                     .foregroundStyle(Color.civicaGraphite)
                     .lineSpacing(15 * 0.45)  // line-height 1.45

@@ -9,6 +9,10 @@ struct SNAPJobsView: View {
     @ObservedObject var vm: SNAPMarketplaceViewModel
     var onSelectJob: (MarketplaceJob) -> Void
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+    private var language: CivicaLanguage { CivicaLanguage(rawValue: languageRaw) ?? .english }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -23,7 +27,7 @@ struct SNAPJobsView: View {
             }
         }
         .background(Color.civicaPaper.ignoresSafeArea())
-        .navigationTitle("Jobs for you")
+        .navigationTitle(SNAPMarketplaceStrings.jobsNavTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -57,7 +61,7 @@ struct SNAPJobsView: View {
     // MARK: Open hours
 
     private var openHoursLine: some View {
-        Text("Open hours: \(vm.schedule.openSummary)")
+        Text(SNAPMarketplaceStrings.openHoursPrefix.value(in: language) + vm.schedule.openSummary)
             .font(MFont.meta)
             .foregroundStyle(Color.civicaGraphite)
             .padding(.top, 12)
@@ -69,7 +73,9 @@ struct SNAPJobsView: View {
 
     private var incomeCapLine: some View {
         HStack(spacing: 10) {
-            Text("Income cap: $\(vm.incomeCap, format: .number)/mo before benefit changes")
+            Text(SNAPMarketplaceStrings.incomeCapPrefix.value(in: language)
+                 + "\(vm.incomeCap)"
+                 + SNAPMarketplaceStrings.incomeCapSuffix.value(in: language))
                 .font(MFont.bodySmallMedium)
                 .foregroundStyle(Color.civicaInk)
                 .fixedSize(horizontal: false, vertical: true)
@@ -106,7 +112,7 @@ struct SNAPJobsView: View {
     private var footer: some View {
         HStack(spacing: 0) {
             Spacer()
-            Button("Show more") {}
+            Button(SNAPMarketplaceStrings.showMore.value(in: language)) {}
                 .font(MFont.bodySmallMedium)
                 .foregroundStyle(Color.civicaTeal)
                 .padding(.vertical, 6)
@@ -119,7 +125,7 @@ struct SNAPJobsView: View {
                 .frame(width: 1, height: 14)
                 .padding(.horizontal, 12)
 
-            Button("Filter") {}
+            Button(SNAPMarketplaceStrings.filter.value(in: language)) {}
                 .font(MFont.bodySmallMedium)
                 .foregroundStyle(Color.civicaTeal)
                 .padding(.vertical, 6)
