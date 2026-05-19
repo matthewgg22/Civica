@@ -6,9 +6,19 @@
  * Implemented (T10 phase 1):
  *   - analytics.section10105.fy29Cliff()
  *   - analytics.section10105.tierLiability({ scenario, fy })
+ *   - analytics.qcMapping.* (T7)
  *
- * Stubbed (T10 phase 2):
- *   - everything else; throws with a // TODO: T10 phase 2 marker.
+ * Implemented (T10 phase 2 — Session C):
+ *   - analytics.paymentErrorRate.byState({ fy, state })
+ *   - analytics.paymentErrorRate.trend({ stateCode, fyRange })
+ *   - analytics.cfr273.byRelevance({ grade })
+ *   - analytics.cfr273.bySection({ section })
+ *   - analytics.obbbaScenarios.compare({ metric? })
+ *
+ * Still stubbed (blocked on data Civica doesn't emit yet):
+ *   - analytics.qcMicrodata.* — blocked on USDA QC public-use microdata load
+ *   - analytics.stateFoia.* / federalFoia.* — blocked on FOIA inventory parser
+ *   - analytics.civicaEmit.qcEvaluations.byOrg — blocked on pilot QC emit
  *
  * Every query returns `{ rows, provenance }` so consumers can render
  * citation footnotes alongside data.
@@ -19,19 +29,28 @@ import {
   byCfrSection as qcMappingByCfrSection,
   coverage as qcMappingCoverage,
 } from "./datasets/qcMapping";
+import {
+  byState as paymentErrorRateByState,
+  trend as paymentErrorRateTrend,
+} from "./datasets/paymentErrorRate";
+import {
+  byRelevance as cfr273ByRelevance,
+  bySection as cfr273BySection,
+} from "./datasets/cfr273";
+import { compare as obbbaScenariosCompare } from "./datasets/obbbaScenarios";
 
 export * from "./schemas";
 
-const todo = (name: string): never => {
-  // TODO: T10 phase 2 — wire to data-ops parser output.
-  throw new Error(`[@civica/analytics-engine] ${name}: not implemented yet (T10 phase 2).`);
+const blocked = (name: string, reason: string): never => {
+  throw new Error(
+    `[@civica/analytics-engine] ${name}: not implemented yet — ${reason}.`,
+  );
 };
 
 export const analytics = {
   paymentErrorRate: {
-    byState: (_opts: { fy: number; state?: string }) => todo("paymentErrorRate.byState"),
-    trend: (_opts: { stateCode: string; fyRange: [number, number] }) =>
-      todo("paymentErrorRate.trend"),
+    byState: paymentErrorRateByState,
+    trend: paymentErrorRateTrend,
   },
   section10105: {
     fy29Cliff,
@@ -43,25 +62,40 @@ export const analytics = {
     coverage: qcMappingCoverage,
   },
   cfr273: {
-    byRelevance: (_opts: { grade: "HIGH" | "MEDIUM" | "LOW" }) => todo("cfr273.byRelevance"),
-    bySection: (_opts: { section: string }) => todo("cfr273.bySection"),
+    byRelevance: cfr273ByRelevance,
+    bySection: cfr273BySection,
   },
   qcMicrodata: {
     errorCausesByIncomeSource: (_opts: { years: number[] }) =>
-      todo("qcMicrodata.errorCausesByIncomeSource"),
+      blocked(
+        "qcMicrodata.errorCausesByIncomeSource",
+        "blocked on USDA QC public-use microdata load (qc-microdata/ bucket prefix empty)",
+      ),
   },
   stateFoia: {
-    byState: (_opts: { stateCode: string }) => todo("stateFoia.byState"),
+    byState: (_opts: { stateCode: string }) =>
+      blocked(
+        "stateFoia.byState",
+        "blocked on FOIA inventory parser (state-foia/{state}/{date}/ tree empty)",
+      ),
   },
   federalFoia: {
-    list: () => todo("federalFoia.list"),
+    list: () =>
+      blocked(
+        "federalFoia.list",
+        "blocked on FOIA inventory parser (federal-foia/ tree empty)",
+      ),
   },
   obbbaScenarios: {
-    compare: () => todo("obbbaScenarios.compare"),
+    compare: obbbaScenariosCompare,
   },
   civicaEmit: {
     qcEvaluations: {
-      byOrg: (_opts: { orgId: string }) => todo("civicaEmit.qcEvaluations.byOrg"),
+      byOrg: (_opts: { orgId: string }) =>
+        blocked(
+          "civicaEmit.qcEvaluations.byOrg",
+          "blocked on pilot start (apps/enrollment-api emits to civica-emit/qc-evaluations/date=*/)",
+        ),
     },
   },
 };

@@ -10,8 +10,11 @@ datasets:
     last_pulled: 2026-05-12
     next_expected: 2026-06
     bucket_prefix: per/
-    parser: data-ops/parsers/per_pdf_to_parquet.py  # stub — T10 phase 2
-    notes: FY25 PER expected June 2026.
+    parser: data-ops/parsers/per_to_parquet.ts
+    notes: |
+      FY25 PER expected June 2026. Parser auto-discovers any
+      data-ops/raw/per/{FY}_payment_error_rates.csv and emits Hive-
+      partitioned Parquet at per/fy={FY}/by_state.parquet.
 
   - id: usda_fns_benefits
     label: USDA SNAP State Benefit Totals
@@ -38,7 +41,7 @@ datasets:
     cadence: on ecfr update
     last_pulled: 2026-05-08
     bucket_prefix: cfr-273/
-    parser: data-ops/parsers/cfr_273_csv_to_parquet.ts
+    parser: packages/cfr-273/scripts/build-parquet.ts
     mirror_of: packages/cfr-273
 
   - id: section_10105_cliff
@@ -51,7 +54,7 @@ datasets:
     label: OBBBA conservative/mid/aggressive scenario rollup
     cadence: on CBO score refresh
     bucket_prefix: obbba-scenarios/
-    parser: data-ops/parsers/obbba_scenarios_to_parquet.ts  # stub
+    parser: data-ops/parsers/obbba_scenarios_to_parquet.ts
 
   - id: civica_qc_evaluation
     label: Civica-emit shadow-mode QC evaluation events (T8)

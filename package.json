@@ -19,6 +19,9 @@
     "data:build:section-10105": "tsx data-ops/parsers/section_10105_to_parquet.ts",
     "data:build:cfr-273": "tsx packages/cfr-273/scripts/build-parquet.ts",
     "data:build:qc-mapping": "tsx data-ops/parsers/qc_category_mapping_to_parquet.ts",
+    "data:build:per": "tsx data-ops/parsers/per_to_parquet.ts",
+    "data:build:obbba-scenarios": "tsx data-ops/parsers/obbba_scenarios_to_parquet.ts",
+    "data:build:all": "pnpm data:build:section-10105 && pnpm data:build:cfr-273 && pnpm data:build:qc-mapping && pnpm data:build:per && pnpm data:build:obbba-scenarios",
     "data:report:baseline": "tsx scripts/generate-baseline-report.ts"
   },
   "devDependencies": {

@@ -28,3 +28,27 @@ sources:
     publication_date: 2026-05-08
     bucket_path: cfr-273/ecfr=2026-05-08/rule_index.parquet
     parser_path: packages/cfr-273/scripts/build-parquet.ts
+
+  - source_kind: usda_fns_per
+    label: "USDA SNAP Payment Error Rate by State, FY24"
+    source_url: data-ops/raw/per/2024_payment_error_rates.csv
+    publication_date: 2026-06  # USDA FNS FY24 PER (annual June release)
+    fiscal_year: 2024
+    bucket_path: per/fy=2024/by_state.parquet
+    parser_path: data-ops/parsers/per_to_parquet.ts
+    notes: |
+      Operator-loaded from ~/Desktop/Civica USDA data/. Parser is
+      column-name forgiving; canonical schema is state_code, state_name,
+      fiscal_year, per_total, per_overpayment (optional), per_underpayment
+      (optional). Add a sibling FY23 row when historical CSVs land to
+      enable analytics.paymentErrorRate.trend().
+
+  - source_kind: cbo_distributional
+    label: "OBBBA conservative/mid/aggressive scenario rollup"
+    source_url: data-ops/raw/obbba-scenarios/obbba_rollup.json
+    publication_date: 2026-05-12
+    bucket_path: obbba-scenarios/obbba_rollup.parquet
+    parser_path: data-ops/parsers/obbba_scenarios_to_parquet.ts
+    notes: |
+      Long-format rollup: one row per (scenario, metric, value, narrative?).
+      Consumed by analytics.obbbaScenarios.compare().
