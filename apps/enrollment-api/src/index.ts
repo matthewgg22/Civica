@@ -14,8 +14,7 @@ import missingItemsRouter from "./routes/missing-items.js";
 import meRouter from "./routes/me.js";
 import mePacketsRouter from "./routes/me-packets.js";
 import meInboxRouter from "./routes/me-inbox.js";
-import recertRouter from "./routes/recert.js";
-import workRequirementsRouter from "./routes/work-requirements.js";
+import twilioWebhookRouter from "./routes/twilio-webhook.js";
 import { requestLogger } from "./lib/logger.js";
 import { scrubEvent } from "./lib/sentry.js";
 import { withSentry } from "@sentry/cloudflare";
@@ -27,6 +26,9 @@ app.use("*", requestLogger);
 app.use("*", cors({ origin: "*", allowMethods: ["GET", "POST", "PATCH", "PUT", "DELETE"] }));
 
 app.get("/health", (c) => c.json({ ok: true, service: "civica-enrollment-api" }));
+
+// T14: Twilio webhook — no auth middleware (uses Twilio HMAC signature instead of JWT)
+app.route("/", twilioWebhookRouter);
 
 // All enrollment routes require a valid Supabase JWT
 const api = new Hono<{ Bindings: Env }>();
@@ -41,12 +43,6 @@ api.route("/", fieldsRouter);            // /packets/:id/fields, /fields/:id/rev
 api.route("/", documentItemsRouter);     // /packets/:id/document-items, /document-items/:id/*
 api.route("/", handoffRouter);           // /packets/:id/handoff*
 api.route("/", missingItemsRouter);      // /packets/:id/missing-items, /missing-items/:id/cancel
-
-// Recertification routes (T11)
-api.route("/recert", recertRouter);            // /recert/:packetId/init, /recert/:packetId, etc.
-
-// Work requirements routes (T12 — OBBBA §10102)
-api.route("/work-requirements", workRequirementsRouter);  // /work-requirements/:packetId/evaluate, etc.
 
 // Applicant self-service routes
 api.route("/me", meRouter);                    // GET/PATCH /me

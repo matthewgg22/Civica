@@ -215,6 +215,9 @@ importers:
 
   apps/enrollment-api:
     dependencies:
+      '@civica/recert-engine':
+        specifier: workspace:*
+        version: link:../../packages/recert-engine
       '@civica/snap-rules':
         specifier: workspace:*
         version: link:../../packages/snap-rules
@@ -233,6 +236,9 @@ importers:
       hono:
         specifier: ^4.7.0
         version: 4.12.19
+      twilio:
+        specifier: ^5.0.0
+        version: 5.13.1
       zod:
         specifier: ^3.24.0
         version: 3.25.76
