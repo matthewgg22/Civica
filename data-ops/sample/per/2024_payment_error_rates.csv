@@ -1,0 +1,54 @@
+state_code,state_name,fiscal_year,per_total,per_overpayment,per_underpayment
+AL,Alabama,2024,11.53,7.52,4.01
+AK,Alaska,2024,8.81,5.41,3.40
+AZ,Arizona,2024,11.09,8.44,2.65
+AR,Arkansas,2024,11.81,7.23,4.58
+CA,California,2024,10.98,7.58,3.40
+CO,Colorado,2024,9.22,7.09,2.13
+CT,Connecticut,2024,5.65,3.70,1.95
+DE,Delaware,2024,7.95,6.32,1.63
+FL,Florida,2024,7.78,6.13,1.65
+GA,Georgia,2024,7.75,4.69,3.06
+HI,Hawaii,2024,4.70,2.84,1.86
+ID,Idaho,2024,8.73,5.26,3.47
+IL,Illinois,2024,8.53,5.83,2.70
+IN,Indiana,2024,10.50,7.36,3.14
+IA,Iowa,2024,11.94,7.40,4.54
+KS,Kansas,2024,6.36,4.90,1.46
+KY,Kentucky,2024,8.43,6.73,1.70
+LA,Louisiana,2024,11.39,7.62,3.77
+ME,Maine,2024,5.67,4.52,1.15
+MD,Maryland,2024,8.52,6.31,2.21
+MA,Massachusetts,2024,10.06,6.45,3.61
+MI,Michigan,2024,6.95,5.47,1.48
+MN,Minnesota,2024,11.94,9.01,2.93
+MS,Mississippi,2024,6.44,3.99,2.45
+MO,Missouri,2024,9.18,6.57,2.61
+MT,Montana,2024,7.43,5.09,2.34
+NE,Nebraska,2024,7.92,5.40,2.52
+NV,Nevada,2024,9.95,6.48,3.47
+NH,New Hampshire,2024,12.24,7.54,4.70
+NJ,New Jersey,2024,8.58,6.63,1.95
+NM,New Mexico,2024,10.27,6.54,3.73
+NY,New York,2024,8.76,5.32,3.44
+NC,North Carolina,2024,12.12,7.71,4.41
+ND,North Dakota,2024,5.62,4.46,1.16
+OH,Ohio,2024,6.72,4.44,2.28
+OK,Oklahoma,2024,5.80,3.58,2.22
+OR,Oregon,2024,7.71,5.14,2.57
+PA,Pennsylvania,2024,10.29,6.90,3.39
+RI,Rhode Island,2024,12.00,8.38,3.62
+SC,South Carolina,2024,10.04,7.49,2.55
+SD,South Dakota,2024,6.00,3.88,2.12
+TN,Tennessee,2024,6.15,4.08,2.07
+TX,Texas,2024,9.77,6.31,3.46
+UT,Utah,2024,5.10,3.69,1.41
+VT,Vermont,2024,5.37,3.69,1.68
+VA,Virginia,2024,5.31,3.53,1.78
+WA,Washington,2024,10.49,8.19,2.30
+WV,West Virginia,2024,11.83,9.29,2.54
+WI,Wisconsin,2024,8.93,5.73,3.20
+WY,Wyoming,2024,5.31,3.59,1.72
+DC,District of Columbia,2024,8.81,6.69,2.12
+PR,Puerto Rico,2024,6.93,5.34,1.59
+GU,Guam,2024,11.65,9.18,2.47

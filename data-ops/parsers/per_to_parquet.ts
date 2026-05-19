@@ -36,6 +36,17 @@ const ROOT = process.cwd();
 const RAW = join(ROOT, "data-ops", "raw", "per");
 const OUT = join(ROOT, "data-ops", "parquet", "per");
 
+function parseCliArg(name: string): string | undefined {
+  // Supports `--name=value` and `--name value` forms.
+  const argv = process.argv.slice(2);
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i]!;
+    if (arg === `--${name}` && i + 1 < argv.length) return argv[i + 1];
+    if (arg.startsWith(`--${name}=`)) return arg.slice(`--${name}=`.length);
+  }
+  return undefined;
+}
+
 interface Job {
   inputCsv: string;
   outputParquet: string;
@@ -55,17 +66,20 @@ async function fileExists(path: string): Promise<boolean> {
   }
 }
 
-async function discoverJobs(): Promise<Job[]> {
-  if (!(await fileExists(RAW))) return [];
-  const entries = await readdir(RAW);
+async function discoverJobs(
+  rawDir: string = RAW,
+  outDir: string = OUT,
+): Promise<Job[]> {
+  if (!(await fileExists(rawDir))) return [];
+  const entries = await readdir(rawDir);
   const jobs: Job[] = [];
   for (const name of entries) {
     const m = /^(\d{4})_payment_error_rates\.csv$/i.exec(name);
     if (!m) continue;
     const fy = Number(m[1]);
     jobs.push({
-      inputCsv: join(RAW, name),
-      outputParquet: join(OUT, `fy=${fy}`, "by_state.parquet"),
+      inputCsv: join(rawDir, name),
+      outputParquet: join(outDir, `fy=${fy}`, "by_state.parquet"),
       fiscalYear: fy,
     });
   }
@@ -156,31 +170,63 @@ async function buildOne(conn: Awaited<ReturnType<Awaited<ReturnType<typeof DuckD
   return Number(countResult.getRows()[0]?.[0] ?? 0);
 }
 
-async function writeSidecar(job: Job, inputHash: string, rowCount: number) {
+async function writeSidecar(
+  job: Job,
+  inputHash: string,
+  rowCount: number,
+  opts: { isSample?: boolean; sourceDirRel?: string } = {},
+) {
   const sidecarPath = `${job.outputParquet}.provenance.json`;
-  const provenance = {
-    source_url: `data-ops/raw/per/${job.inputCsv.split("/").pop()}`,
-    source_kind: "usda_fns_per",
-    publication_date: `FY${job.fiscalYear} publication`,
-    fiscal_year: job.fiscalYear,
-    pulled_at: new Date().toISOString(),
-    sha256_of_source: inputHash,
-    parser_path: PARSER_PATH,
-    parser_version: PARSER_VERSION,
-    row_count: rowCount,
-    notes:
-      `USDA FNS SNAP Payment Error Rate, FY${job.fiscalYear}. ` +
-      "Canonical schema: state_code, state_name, fiscal_year, per_total, " +
-      "per_overpayment, per_underpayment. See data-ops/raw/per/README.md.",
-  };
+  const fileName = job.inputCsv.split("/").pop();
+  const sourceDirRel = opts.sourceDirRel ?? "data-ops/raw/per";
+  const provenance = opts.isSample
+    ? {
+        source_url: `${sourceDirRel}/${fileName}`,
+        source_kind: "sample-fixtures",
+        publication_date: "2026-05-19",
+        fiscal_year: job.fiscalYear,
+        pulled_at: new Date().toISOString(),
+        sha256_of_source: inputHash,
+        parser_path: PARSER_PATH,
+        parser_version: PARSER_VERSION,
+        row_count: rowCount,
+        notes:
+          `Generated for demo purposes only. NOT real USDA data. ` +
+          `Use ANALYTICS_USE_SAMPLE_DATA=true to query. ` +
+          `Regenerate via \`pnpm data:build:sample\`.`,
+      }
+    : {
+        source_url: `${sourceDirRel}/${fileName}`,
+        source_kind: "usda_fns_per",
+        publication_date: `FY${job.fiscalYear} publication`,
+        fiscal_year: job.fiscalYear,
+        pulled_at: new Date().toISOString(),
+        sha256_of_source: inputHash,
+        parser_path: PARSER_PATH,
+        parser_version: PARSER_VERSION,
+        row_count: rowCount,
+        notes:
+          `USDA FNS SNAP Payment Error Rate, FY${job.fiscalYear}. ` +
+          "Canonical schema: state_code, state_name, fiscal_year, per_total, " +
+          "per_overpayment, per_underpayment. See data-ops/raw/per/README.md.",
+      };
   await writeFile(sidecarPath, `${JSON.stringify(provenance, null, 2)}\n`);
 }
 
 async function main() {
-  const jobs = await discoverJobs();
+  // `--input <dir>` / `--output <dir>` overrides for the sample-data pipeline.
+  // Paths are interpreted relative to the repo root (process.cwd()).
+  const inputDir = parseCliArg("input");
+  const outputDir = parseCliArg("output");
+  const rawDir = inputDir ? join(ROOT, inputDir) : RAW;
+  const outDir = outputDir ? join(ROOT, outputDir) : OUT;
+  const isSample = (inputDir ?? "").includes("sample");
+  const sourceDirRel = inputDir ?? "data-ops/raw/per";
+
+  const jobs = await discoverJobs(rawDir, outDir);
   if (jobs.length === 0) {
     console.log(
-      `No PER CSVs found under ${RAW}. See data-ops/raw/per/README.md for the expected filenames.`,
+      `No PER CSVs found under ${rawDir}. See data-ops/raw/per/README.md for the expected filenames.`,
     );
     return;
   }
@@ -207,7 +253,7 @@ async function main() {
     }
 
     const rowCount = await buildOne(conn, job);
-    await writeSidecar(job, inputHash, rowCount);
+    await writeSidecar(job, inputHash, rowCount, { isSample, sourceDirRel });
     console.log(`built ${job.outputParquet} (${rowCount} rows)`);
   }
 

@@ -26,6 +26,7 @@ export const ProvenanceSchema = z.object({
     "civica_qc_evaluation",
     "section_10105_cliff",
     "civica_qc_mapping",
+    "sample-fixtures",
   ]),
   publication_date: z.string(),
   fiscal_year: z.number().int().optional(),
@@ -148,8 +149,28 @@ export const FoiaIndexSchema = z.object({
 });
 export type FoiaIndex = z.infer<typeof FoiaIndexSchema>;
 
+/**
+ * Scenario rollup row.
+ *
+ * Two scenario vocabularies are supported:
+ *  - Real-data (CBO distributional rollup): baseline | mid | aggressive
+ *  - Sample-fixtures (demo path, ANALYTICS_USE_SAMPLE_DATA=true):
+ *      current_law | obbba_full | obbba_with_bbce_removal
+ *      | obbba_with_bbce_removal_and_lpie
+ *
+ * Both share the same { scenario, metric, value } shape so the dashboard
+ * `obbbaScenarios.compare()` consumer doesn't need to fork.
+ */
 export const ScenarioRowSchema = z.object({
-  scenario: z.enum(["baseline", "mid", "aggressive"]),
+  scenario: z.enum([
+    "baseline",
+    "mid",
+    "aggressive",
+    "current_law",
+    "obbba_full",
+    "obbba_with_bbce_removal",
+    "obbba_with_bbce_removal_and_lpie",
+  ]),
   metric: z.string(),
   value: z.number(),
 });

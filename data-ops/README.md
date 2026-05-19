@@ -120,6 +120,45 @@ node --input-type=module -e "
 "
 ```
 
+## Sample dataset
+
+For pilot demos / staging environments where Matthew hasn't yet uploaded
+the real USDA + OBBBA inputs, the analytics-engine ships a parallel
+**sample data** path. The CDSS / county / CBO-preview dashboards render
+against this dataset when `ANALYTICS_USE_SAMPLE_DATA=true` is set.
+
+The sample dataset is:
+- Fully fabricated (provenance `source_kind: sample-fixtures`).
+- Deterministic — `pnpm data:build:sample` produces byte-identical output
+  on every run (seeded RNG keyed off each state's USPS code).
+- Stored under a `sample/` prefix in Supabase Storage so it can never
+  collide with real data at the bucket root.
+
+### Operator action — load sample data
+
+```sh
+# 1. Generate CSV/JSON sources + Parquet outputs (idempotent).
+pnpm data:build:sample
+
+# 2. Push to Supabase Storage under sample/.
+export SUPABASE_URL='https://<ref>.supabase.co'
+export SUPABASE_SERVICE_ROLE_KEY='<service role key>'
+pnpm data:sync -- --prefix sample
+
+# 3. Flip the engine switch on the dashboard env (Vercel project settings).
+#    ANALYTICS_USE_SAMPLE_DATA=true
+#    Redeploy.
+
+# 4. Visit /cdss, /county, /cbo-preview — should render real-shape charts
+#    behind the "Demo data" banner.
+```
+
+To go back to real data: unset `ANALYTICS_USE_SAMPLE_DATA` and redeploy.
+The engine immediately stops prepending `sample/` to bucket paths.
+
+See [apps/dashboard/SAMPLE_DATA.md](../apps/dashboard/SAMPLE_DATA.md) for
+the dashboard operator's view of the same workflow.
+
 ## See also
 
 - [PROVENANCE.md](./PROVENANCE.md) — source ledger (lift from `~/Desktop/Civica USDA data/PROVENANCE.md`)

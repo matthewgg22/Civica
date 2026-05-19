@@ -7,6 +7,30 @@ import { ProvenanceSchema, type Provenance } from "../schemas";
 const BUCKET = "civica-analytics";
 
 /**
+ * When `ANALYTICS_USE_SAMPLE_DATA=true`, all bucket reads are routed under a
+ * `sample/` prefix (Storage) or `sample/` subdirectory (local override).
+ *
+ * Production reads stay unchanged when the env var is unset/false. This is
+ * the single switch that flips the engine onto the fabricated demo dataset
+ * published by `pnpm data:build:sample` + `pnpm data:sync -- --prefix sample`.
+ *
+ * The `ScenarioRowSchema` allows demo-only scenario enums so the parquet
+ * payloads round-trip; provenance carries source_kind="sample-fixtures" so
+ * the dashboard can render the "Demo data" banner unambiguously.
+ */
+function useSampleData(): boolean {
+  const v = process.env.ANALYTICS_USE_SAMPLE_DATA;
+  return v === "true" || v === "1";
+}
+
+function applySamplePrefix(bucketPath: string): string {
+  if (!useSampleData()) return bucketPath;
+  // Idempotent — if a caller has already prefixed, don't double-up.
+  if (bucketPath.startsWith("sample/")) return bucketPath;
+  return `sample/${bucketPath}`;
+}
+
+/**
  * Optional local-filesystem override for tests + CLI workflows that don't
  * want to hit Supabase Storage. When `ANALYTICS_LOCAL_PARQUET_DIR` is set,
  * `readParquetWithProvenance(bucketPath, …)` resolves `bucketPath` relative
@@ -42,13 +66,14 @@ export async function readParquetWithProvenance<S extends ZodTypeAny>(
   bucketPath: string,
   schema: S,
 ): Promise<{ rows: z.infer<S>[]; provenance: Provenance }> {
+  const effectivePath = applySamplePrefix(bucketPath);
   const localDir = localDirOverride();
   if (localDir) {
-    return readParquetWithProvenanceLocal(localDir, bucketPath, schema);
+    return readParquetWithProvenanceLocal(localDir, effectivePath, schema);
   }
   const conn = await getDuckDBConnection();
-  const dataS3 = s3Path(bucketPath);
-  const sidecarS3 = s3Path(`${bucketPath}.provenance.json`);
+  const dataS3 = s3Path(effectivePath);
+  const sidecarS3 = s3Path(`${effectivePath}.provenance.json`);
 
   const dataReader = await conn.runAndReadAll(
     `SELECT * FROM read_parquet('${esc(dataS3)}');`,
@@ -63,10 +88,10 @@ export async function readParquetWithProvenance<S extends ZodTypeAny>(
   );
   const [provRow] = sidecarReader.getRowObjects();
   if (!provRow) {
-    throw new Error(`Missing provenance sidecar for s3://${BUCKET}/${bucketPath}`);
+    throw new Error(`Missing provenance sidecar for s3://${BUCKET}/${effectivePath}`);
   }
   const provenance = ProvenanceSchema.parse(
-    coerceBigInts({ ...provRow, bucket_path: bucketPath }),
+    coerceBigInts({ ...provRow, bucket_path: effectivePath }),
   );
 
   return { rows, provenance };
