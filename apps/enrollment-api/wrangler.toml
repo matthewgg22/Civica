@@ -33,4 +33,17 @@ RECERT_AI_ENABLED = "true"
 # T15 (AI coaching for practice interview) — enable coaching via Claude Haiku:
 #   RECERT_AI_ENABLED=true
 #   ANTHROPIC_API_KEY=...               # wrangler secret put ANTHROPIC_API_KEY
-
+#
+# T-DR3-8 (Argyle webhook) — optional; signature verification skipped when absent.
+# Get the webhook secret from the Argyle dashboard → Webhooks → Signing secret.
+#   ARGYLE_WEBHOOK_SECRET=...           # wrangler secret put ARGYLE_WEBHOOK_SECRET
+#
+# T-DR3-9 (Canvas OAuth proxy) — required for schedule integration.
+# Register a Developer Key in your Canvas instance → Admin → Developer Keys.
+# Redirect URI must match exactly: https://<worker-host>/v1/enrollment/oauth/canvas/exchange
+#   CANVAS_CLIENT_ID=...                # wrangler secret put CANVAS_CLIENT_ID
+#   CANVAS_CLIENT_SECRET=...           # wrangler secret put CANVAS_CLIENT_SECRET
+#   CANVAS_INSTANCE_URL=https://myschool.instructure.com
+#                                       # wrangler secret put CANVAS_INSTANCE_URL
+#   CANVAS_REDIRECT_URI=https://civica-enrollment-api.workers.dev/v1/enrollment/oauth/canvas/exchange
+#                                       # wrangler secret put CANVAS_REDIRECT_URI
