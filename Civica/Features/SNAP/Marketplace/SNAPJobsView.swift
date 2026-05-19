@@ -7,7 +7,7 @@ import SwiftUI
 /// ink benefit numbers. Amber appears only as a 5×5pt dot in the pill.
 struct SNAPJobsView: View {
     @ObservedObject var vm: SNAPMarketplaceViewModel
-    var onSelectJob: (MarketplaceJob) -> Void
+    var onSelectJob: (SNAPMarketplaceJob) -> Void
 
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
@@ -162,7 +162,7 @@ private struct InfoDotView: View {
 // MARK: - Job row
 
 private struct JobRowView: View {
-    let job: MarketplaceJob
+    let job: SNAPMarketplaceJob
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
@@ -218,7 +218,7 @@ private struct JobRowView: View {
 // MARK: - Pill
 
 private struct PillView: View {
-    let job: MarketplaceJob
+    let job: SNAPMarketplaceJob
 
     var body: some View {
         HStack(spacing: 5) {

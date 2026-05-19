@@ -37,7 +37,7 @@ enum JobClassification {
     case obbbaHours     // Counts as OBBBA work hours
 }
 
-struct MarketplaceJob: Identifiable {
+struct SNAPMarketplaceJob: Identifiable {
     let id: UUID
     let title: String
     let employer: String
@@ -136,7 +136,7 @@ final class SNAPMarketplaceViewModel: ObservableObject {
     @Published var household    = MarketplaceHousehold()
     @Published var schedule     = MarketplaceSchedule()
     @Published var incomeCap: Int = 1_580
-    @Published var jobs: [MarketplaceJob] = SNAPMarketplaceViewModel.demoJobs
+    @Published var jobs: [SNAPMarketplaceJob] = SNAPMarketplaceViewModel.demoJobs
     @Published var placement    = MarketplacePlacement()
     @Published var dataSources  = MarketplaceDataSources()
     @Published var recertification = MarketplaceRecertification()
@@ -144,7 +144,7 @@ final class SNAPMarketplaceViewModel: ObservableObject {
     @Published var argyleConnectError: String? = nil
 
     // MARK: UI selection state
-    @Published var selectedJob: MarketplaceJob? = nil
+    @Published var selectedJob: SNAPMarketplaceJob? = nil
     @Published var showApplySheet: Bool = false
 
     // MARK: Argyle connection lifecycle
@@ -183,10 +183,10 @@ final class SNAPMarketplaceViewModel: ObservableObject {
     }
 
     // MARK: Demo jobs
-    private static var demoJobs: [MarketplaceJob] {
+    private static var demoJobs: [SNAPMarketplaceJob] {
         let id1 = UUID(), id2 = UUID(), id3 = UUID()
         return [
-            MarketplaceJob(
+            SNAPMarketplaceJob(
                 id: id1,
                 title: "Library Assistant",
                 employer: "University Library",
@@ -201,7 +201,7 @@ final class SNAPMarketplaceViewModel: ObservableObject {
                 pillDotColor: .teal,
                 applyURL: "https://handshake.com"
             ),
-            MarketplaceJob(
+            SNAPMarketplaceJob(
                 id: id2,
                 title: "Dining Services",
                 employer: "Campus Dining",
@@ -216,7 +216,7 @@ final class SNAPMarketplaceViewModel: ObservableObject {
                 pillDotColor: .amber,
                 applyURL: "https://handshake.com"
             ),
-            MarketplaceJob(
+            SNAPMarketplaceJob(
                 id: id3,
                 title: "DoorDash · flexible hours",
                 employer: "DoorDash",
