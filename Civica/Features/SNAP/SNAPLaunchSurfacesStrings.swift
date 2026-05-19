@@ -374,6 +374,10 @@ enum SNAPConversationViewStrings {
 // assert exact substrings. Spanish parity for those bodies is a separate
 // legal-review task. This enum just covers nav/buttons added here.
 enum SNAPPrivacyNoticeNavStrings {
+    static let navTitle = CivicaText(
+        "Before You Start",
+        es: "Antes de comenzar"
+    )
     static let continueToPrep = CivicaText(
         "Continue to SNAP prep",
         es: "Continuar a preparación de SNAP"

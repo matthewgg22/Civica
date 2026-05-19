@@ -116,6 +116,8 @@ struct SNAPReviewView: View {
             .padding(CivicaSpacing.lg)
         }
         .background(CivicaColors.tealSurface.ignoresSafeArea())
+        .navigationTitle(SNAPReviewStrings.title.value(in: language))
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             viewModel.markReviewViewed()
         }

@@ -69,6 +69,8 @@ struct SNAPConfirmationView: View {
             .padding(CivicaSpacing.lg)
         }
         .background(CivicaColors.tealSurface.ignoresSafeArea())
+        .navigationTitle(SNAPConfirmationStrings.title.value(in: language))
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             viewModel.markNextStepsViewed()
         }
