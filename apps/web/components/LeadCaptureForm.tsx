@@ -22,6 +22,12 @@ export function LeadCaptureForm({ copy }: { copy: Copy }) {
       setStatus({ kind: "error", message: copy.formValidationError });
       return;
     }
+    // Campus is required by the API (pilot_leads CHECK constraint enforces
+    // it for source='student-lpie-web').
+    if (!campus.trim()) {
+      setStatus({ kind: "error", message: copy.formCampusRequired });
+      return;
+    }
 
     setStatus({ kind: "submitting" });
     try {
@@ -31,7 +37,7 @@ export function LeadCaptureForm({ copy }: { copy: Copy }) {
         body: JSON.stringify({
           email,
           phone: phone || undefined,
-          campus: campus || undefined,
+          campus,
         }),
       });
       if (res.status === 201 || res.status === 503) {

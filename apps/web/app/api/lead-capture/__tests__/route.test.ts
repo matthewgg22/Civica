@@ -26,6 +26,15 @@ function makeReq(body: unknown, ip = "1.2.3.4"): Request {
   });
 }
 
+function studentLead(overrides: Record<string, unknown> = {}) {
+  return {
+    email: "student@cccd.edu",
+    phone: "5551234567",
+    campus: "Santa Monica College",
+    ...overrides,
+  };
+}
+
 describe("POST /api/lead-capture", () => {
   beforeEach(() => {
     insertMock.mockReset();
@@ -41,38 +50,47 @@ describe("POST /api/lead-capture", () => {
 
   it("inserts and returns 201 on happy path", async () => {
     insertMock.mockResolvedValue({ error: null });
-    const res = await POST(
-      makeReq({
-        email: "student@cccd.edu",
-        phone: "5551234567",
-        campus: "Santa Monica College",
-      }),
-    );
+    const res = await POST(makeReq(studentLead()));
     expect(res.status).toBe(201);
     expect(insertMock).toHaveBeenCalledTimes(1);
     const row = insertMock.mock.calls[0]![0] as Record<string, unknown>;
     expect(row.email).toBe("student@cccd.edu");
-    expect(row.organization).toBe("Santa Monica College");
-    expect(row.qc_process).toBe("5551234567");
+    expect(row.phone).toBe("5551234567");
+    expect(row.campus).toBe("Santa Monica College");
     expect(row.source).toBe("student-lpie-web");
+    // Migration 20260556 removed the qc_process workaround; the row should
+    // not synthesize name/organization or stash phone into qc_process.
+    expect(row.name).toBeUndefined();
+    expect(row.organization).toBeUndefined();
+    expect(row.qc_process).toBeUndefined();
   });
 
   it("returns 422 on invalid email", async () => {
-    const res = await POST(makeReq({ email: "not-an-email" }));
+    const res = await POST(makeReq(studentLead({ email: "not-an-email" })));
     expect(res.status).toBe(422);
     expect(insertMock).not.toHaveBeenCalled();
   });
 
   it("returns 422 on missing email", async () => {
-    const res = await POST(makeReq({ phone: "5551234567" }));
+    const res = await POST(
+      makeReq({ phone: "5551234567", campus: "Santa Monica College" }),
+    );
     expect(res.status).toBe(422);
+  });
+
+  it("returns 422 on missing campus (pilot_leads CHECK constraint requires it)", async () => {
+    const res = await POST(
+      makeReq({ email: "student@cccd.edu", phone: "5551234567" }),
+    );
+    expect(res.status).toBe(422);
+    expect(insertMock).not.toHaveBeenCalled();
   });
 
   it("returns 503 when Supabase env vars are missing", async () => {
     delete process.env.NEXT_PUBLIC_SUPABASE_URL;
     delete process.env.SUPABASE_SERVICE_ROLE_KEY;
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-    const res = await POST(makeReq({ email: "student@cccd.edu" }));
+    const res = await POST(makeReq(studentLead()));
     expect(res.status).toBe(503);
     expect(insertMock).not.toHaveBeenCalled();
     warn.mockRestore();
@@ -83,7 +101,7 @@ describe("POST /api/lead-capture", () => {
       error: { message: "permission denied" },
     });
     const err = vi.spyOn(console, "error").mockImplementation(() => {});
-    const res = await POST(makeReq({ email: "student@cccd.edu" }));
+    const res = await POST(makeReq(studentLead()));
     expect(res.status).toBe(500);
     err.mockRestore();
   });
@@ -92,10 +110,14 @@ describe("POST /api/lead-capture", () => {
     insertMock.mockResolvedValue({ error: null });
     const ip = "9.9.9.9";
     for (let i = 0; i < 5; i++) {
-      const ok = await POST(makeReq({ email: `s${i}@cccd.edu` }, ip));
+      const ok = await POST(
+        makeReq(studentLead({ email: `s${i}@cccd.edu` }), ip),
+      );
       expect(ok.status).toBe(201);
     }
-    const blocked = await POST(makeReq({ email: "s5@cccd.edu" }, ip));
+    const blocked = await POST(
+      makeReq(studentLead({ email: "s5@cccd.edu" }), ip),
+    );
     expect(blocked.status).toBe(429);
   });
 });

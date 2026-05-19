@@ -8,7 +8,9 @@ export const runtime = "nodejs";
 const Body = z.object({
   email: z.string().email(),
   phone: z.string().trim().min(7).max(32).optional(),
-  campus: z.string().trim().min(1).max(120).optional(),
+  // Required by the pilot_leads_audience_shape CHECK constraint in
+  // migration 20260556 — student-lpie-web rows must have email + campus.
+  campus: z.string().trim().min(1).max(120),
 });
 
 function clientIp(req: Request): string {
@@ -60,16 +62,14 @@ export async function POST(req: Request) {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  // pilot_leads schema requires (name, organization, email) NOT NULL. Until
-  // the form collects name + we add a dedicated student_leads table, derive
-  // those from email/campus and tag the source so this batch is filterable.
-  const emailPrefix = parsed.data.email.split("@")[0] ?? parsed.data.email;
+  // pilot_leads schema accepts both CBO-audience (name+organization) and
+  // student-audience (email+campus) shapes since migration 20260556. The
+  // source-conditional CHECK constraint enforces the right fields per audience.
   const row = {
-    name: emailPrefix,
-    organization: parsed.data.campus ?? "unspecified-campus",
     email: parsed.data.email,
-    qc_process: parsed.data.phone ?? null,
-    source: "student-lpie-web",
+    phone: parsed.data.phone ?? null,
+    campus: parsed.data.campus,
+    source: "student-lpie-web" as const,
   };
 
   const { error } = await supabase.from("pilot_leads").insert(row);
