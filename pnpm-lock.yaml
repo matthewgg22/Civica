@@ -315,14 +315,14 @@ importers:
         specifier: workspace:*
         version: link:../config
       '@types/node':
-        specifier: ^20.0.0
-        version: 20.19.41
+        specifier: ^22.0.0
+        version: 22.19.19
       typescript:
         specifier: ^5.6.3
         version: 5.9.3
       vitest:
         specifier: ^2.1.9
-        version: 2.1.9(@types/node@20.19.41)(jsdom@26.1.0)(lightningcss@1.32.0)(terser@5.47.1)
+        version: 2.1.9(@types/node@22.19.19)(jsdom@26.1.0)(lightningcss@1.32.0)(terser@5.47.1)
 
   packages/api-types: {}
 
