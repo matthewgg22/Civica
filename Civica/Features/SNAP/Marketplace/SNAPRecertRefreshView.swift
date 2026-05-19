@@ -11,6 +11,10 @@ struct SNAPRecertRefreshView: View {
     var onSaveForLater: () -> Void
     var onInterviewPrep: () -> Void
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+    private var language: CivicaLanguage { CivicaLanguage(rawValue: languageRaw) ?? .english }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -26,7 +30,7 @@ struct SNAPRecertRefreshView: View {
             }
         }
         .background(Color.civicaPaper.ignoresSafeArea())
-        .navigationTitle("Recertify")
+        .navigationTitle(SNAPMarketplaceStrings.recertNavTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -41,7 +45,7 @@ struct SNAPRecertRefreshView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 8)
 
-            Text("Most of your packet is ready")
+            Text(SNAPMarketplaceStrings.packetReady.value(in: language))
                 .font(MFont.heroHeadline)
                 .foregroundStyle(Color.civicaInk)
                 .padding(.horizontal, 24)
@@ -94,12 +98,12 @@ struct SNAPRecertRefreshView: View {
 
             HStack(alignment: .center, spacing: 14) {
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Practice your county interview")
+                    Text(SNAPMarketplaceStrings.practiceInterview.value(in: language))
                         .font(MFont.bodySmallMedium)
                         .foregroundStyle(Color.civicaInk)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    Text("8 min · voice or text")
+                    Text(SNAPMarketplaceStrings.interviewDuration.value(in: language))
                         .font(MFont.meta)
                         .foregroundStyle(Color.civicaGraphite)
                 }
@@ -109,7 +113,7 @@ struct SNAPRecertRefreshView: View {
                 Button {
                     onInterviewPrep()
                 } label: {
-                    Text("Start")
+                    Text(SNAPMarketplaceStrings.startButton.value(in: language))
                         .font(MFont.regular(14).weight(.medium))
                         .foregroundStyle(Color.civicaPaper)
                         .padding(.horizontal, 14)
