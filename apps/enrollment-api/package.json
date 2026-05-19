@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@civica/recert-engine": "workspace:*",
+    "@civica/snap-calculator": "workspace:*",
     "@civica/snap-rules": "workspace:*",
     "twilio": "^5.0.0",
     "@civica/state-connectors": "workspace:*",

@@ -50,7 +50,11 @@ describe('POST /webhooks/argyle', () => {
         error: null,
       }))
       .mockReturnValueOnce(makeQueryBuilder({   // snap_packets lookup
-        data: { org_id: 'org-001', state_code: 'CA', current_benefit_usd: 292 },
+        data: { org_id: 'org-001', state_code: 'CA' },
+        error: null,
+      }))
+      .mockReturnValueOnce(makeQueryBuilder({   // packet_answers lookup
+        data: [{ question_key: 'household_size', applicant_answer: '2' }],
         error: null,
       }))
       .mockReturnValueOnce(makeQueryBuilder({   // marketplace_paychecks insert
@@ -75,15 +79,18 @@ describe('POST /webhooks/argyle', () => {
     expect(body.marketplace_paycheck_id).toBe('mp-001');
   });
 
-  it('returns 200 with cliff_event_queued when projected benefit reaches 0', async () => {
+  it('returns 200 with cliff_event_queued when income exceeds SNAP gross limit', async () => {
     const fromMock = vi.fn()
       .mockReturnValueOnce(makeQueryBuilder({
         data: { applicant_id: APPLICANT_ID, packet_id: PACKET_ID },
         error: null,
       }))
       .mockReturnValueOnce(makeQueryBuilder({
-        // current_benefit_usd is low enough that a $3200/mo job hits cliff
-        data: { org_id: 'org-001', state_code: 'CA', current_benefit_usd: 100 },
+        data: { org_id: 'org-001', state_code: 'CA' },
+        error: null,
+      }))
+      .mockReturnValueOnce(makeQueryBuilder({   // packet_answers (HH size 1 → limit $1,632)
+        data: [{ question_key: 'household_size', applicant_answer: '1' }],
         error: null,
       }))
       .mockReturnValueOnce(makeQueryBuilder({   // marketplace_paychecks insert

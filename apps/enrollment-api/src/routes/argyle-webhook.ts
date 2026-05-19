@@ -3,8 +3,8 @@
  *
  * POST /webhooks/argyle — receives paycheck.added events from Argyle.
  * Verifies HMAC-SHA256 signature, looks up the applicant via argyle_connections,
- * persists the paycheck, recomputes benefit impact, and fires a navigator
- * outreach task if the new income crosses the cliff (projected_benefit = 0).
+ * persists the paycheck, detects cliff events via grossIncomeLimitMonthly, and
+ * fires a navigator outreach task on cliff.
  *
  * Route is outside authMiddleware — Argyle calls it directly.
  * Auth is the HMAC signature only.
@@ -14,6 +14,7 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { HTTPException } from 'hono/http-exception';
 import { makeServiceClient } from '../lib/supabase.js';
+import { grossIncomeLimitMonthly } from '@civica/snap-calculator';
 import type { Env } from '../types.js';
 
 // ---------------------------------------------------------------------------
@@ -62,19 +63,6 @@ async function verifyArgyleSignature(
     .map(b => b.toString(16).padStart(2, '0'))
     .join('');
   return hex === expected;
-}
-
-// ---------------------------------------------------------------------------
-// Cliff detection (mirrors snap-qc-engine logic for benefit-impact-projection)
-// ---------------------------------------------------------------------------
-
-const EID_RATE = 0.20;
-const BENEFIT_REDUCTION_RATE = 0.30;
-
-function projectBenefit(currentBenefit: number, monthlyAmountUsd: number): number {
-  const netCounted = monthlyAmountUsd * (1 - EID_RATE);
-  const reduction = Math.round(netCounted * BENEFIT_REDUCTION_RATE);
-  return Math.max(0, Math.round(currentBenefit - reduction));
 }
 
 // ---------------------------------------------------------------------------
@@ -136,18 +124,38 @@ app.post('/', async (c) => {
 
   const monthlyUsd = Math.round(paycheck.gross_pay_amount / 100); // cents → dollars
 
-  // Fetch packet to get current benefit amount
+  // Fetch packet to get org_id and state_code
   const { data: packet } = await db
     .schema('snap_enrollment')
     .from('snap_packets')
-    .select('org_id, state_code, current_benefit_usd')
+    .select('org_id, state_code')
     .eq('packet_id', conn.packet_id)
     .is('deleted_at', null)
-    .single() as unknown as { data: { org_id: string; state_code: string; current_benefit_usd: number | null } | null };
+    .single() as unknown as { data: { org_id: string; state_code: string } | null };
 
-  const currentBenefitUsd = packet?.current_benefit_usd ?? 0;
-  const projectedBenefitUsd = projectBenefit(currentBenefitUsd, monthlyUsd);
-  const isCliffEvent = projectedBenefitUsd === 0 && currentBenefitUsd > 0;
+  // Fetch household size from packet answers for accurate cliff detection
+  const { data: answers } = await db
+    .schema('snap_enrollment')
+    .from('packet_answers' as never)
+    .select('question_key, applicant_answer')
+    .eq('packet_id', conn.packet_id) as unknown as {
+      data: Array<{ question_key: string; applicant_answer: string | null }> | null;
+    };
+
+  const householdSizeStr = Array.isArray(answers)
+    ? answers.find((a) => a.question_key === 'household_size')?.applicant_answer
+    : null;
+  const householdSize = parseInt(String(householdSizeStr ?? '1')) || 1;
+
+  // Cliff: monthly income exceeds SNAP gross income limit (7 CFR 273.10)
+  // For CA, BBCE raises the limit to 200% FPL for households without elderly/disabled — we
+  // use the standard 130% FPL limit here as a conservative cliff trigger; navigators who
+  // serve BBCE-eligible households can dismiss false-positive outreach tasks.
+  const grossLimit = grossIncomeLimitMonthly(householdSize);
+  const isCliffEvent = monthlyUsd > grossLimit;
+
+  // Projected benefit: $0 on cliff, else non-zero sentinel for DB constraint
+  const projectedBenefitUsd = isCliffEvent ? 0 : Math.max(1, grossLimit - monthlyUsd);
 
   // Persist confirmed paycheck
   const { data: paycheckRow } = await db
