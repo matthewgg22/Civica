@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { homeForRole, isPathAllowedForRole, isStaff } from "./lib/roleRouting";
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -23,7 +24,8 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  const isLogin = request.nextUrl.pathname.startsWith("/login");
+  const path = request.nextUrl.pathname;
+  const isLogin = path.startsWith("/login");
 
   if (!user) {
     if (isLogin) return supabaseResponse;
@@ -36,19 +38,33 @@ export async function middleware(request: NextRequest) {
   // so authentication alone is not enough — require app_metadata.role ∈ STAFF_ROLES.
   // Mirrors apps/api/src/auth/staff.ts.
   const role = (user.app_metadata as { role?: unknown } | null)?.role;
-  const isStaff = typeof role === "string" && STAFF_ROLES.has(role);
-
-  if (!isStaff && !isLogin) {
+  if (!isStaff(role)) {
+    if (isLogin) return supabaseResponse;
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("error", "staff_only");
     return NextResponse.redirect(url);
   }
 
+  // T5: audience-role routing. Restricted roles (state_deputy /
+  // county_director / cbo_preview) can only access their assigned route;
+  // root requests redirect to that role's home. Operational roles
+  // (navigator / supervisor / admin) have full access and a default home
+  // of /packets.
+  if (path === "/") {
+    const url = request.nextUrl.clone();
+    url.pathname = homeForRole(role);
+    return NextResponse.redirect(url);
+  }
+
+  if (!isPathAllowedForRole(path, role)) {
+    const url = request.nextUrl.clone();
+    url.pathname = homeForRole(role);
+    return NextResponse.redirect(url);
+  }
+
   return supabaseResponse;
 }
-
-const STAFF_ROLES = new Set(["navigator", "supervisor", "admin"]);
 
 export const config = {
   matcher: [
