@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createServiceClient } from "../../../lib/supabase";
 
 // T5 lead-capture endpoint for the §10106 county admin cost dashboard.
 // Phase 1: log submission server-side and return 200.
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid email" }, { status: 400 });
   }
 
-  // Phase 1: structured log. Vercel Log Drains or Datadog can pick this up.
+  // Structured log — consumed by Vercel Log Drains / Datadog.
   console.log("[lead-capture]", {
     name,
     organization,
@@ -57,9 +58,27 @@ export async function POST(req: NextRequest) {
     source: "county-10106-dashboard",
   });
 
-  // TODO(post-MVP): persist to Supabase public.lead_captures table and/or
-  // forward to HubSpot via HUBSPOT_ACCESS_TOKEN env var.
-  //   await supabase.from("lead_captures").insert({ name, organization, email, qc_process: qcProcess, source: "county-10106" });
+  // Persist to Supabase via service role (non-blocking — UX always gets 200).
+  try {
+    const supabase = createServiceClient();
+    const { error } = await supabase.from("pilot_leads").insert({
+      name,
+      organization,
+      email,
+      qc_process: qcProcess || null,
+      source: "county-10106",
+    });
+    if (error) {
+      console.error("[lead-capture] Supabase insert failed", {
+        error: error.message,
+        email,
+      });
+    }
+  } catch (err) {
+    console.error("[lead-capture] Unexpected Supabase error", { err, email });
+  }
+
+  // TODO(post-MVP): forward to HubSpot via HUBSPOT_ACCESS_TOKEN env var.
   //   await hubspotCreateContact({ name, organization, email });
 
   return NextResponse.json({ ok: true }, { status: 200 });
