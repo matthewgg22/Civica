@@ -13,6 +13,10 @@
  * DELETE /oauth/canvas — revokes the stored Canvas tokens and marks the
  *   connection row as revoked. Used by Settings > Connections.
  *
+ * GET  /oauth/canvas/schedule — fetches the student's Canvas class schedule,
+ *   decrypts the stored access token, calls Canvas calendar API, and caches
+ *   the result for 5 minutes. Used by JobMatchListView schedule strip.
+ *
  * The Canvas client secret never leaves this service. The iOS app only
  * sends the short-lived auth code; all token storage happens server-side.
  */
@@ -22,7 +26,21 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { HTTPException } from 'hono/http-exception';
 import { makeAnonClient, makeServiceClient } from '../lib/supabase.js';
+import { getCache, setCache } from '../lib/cache.js';
 import type { Env } from '../types.js';
+
+const SCHEDULE_TTL_SECONDS = 300; // 5-min cache for Canvas schedule
+
+// Day slots in the JobMatchListView schedule strip: 0=Mon … 6=Sun
+interface DayAvailability {
+  dayIndex: number;
+  hasClass: boolean;
+}
+
+interface CanvasSchedule {
+  availability: DayAvailability[];
+  syncedAt: string;
+}
 
 // ---------------------------------------------------------------------------
 // AES-GCM helpers (Web Crypto — available in Cloudflare Workers)
@@ -186,6 +204,72 @@ app.delete('/', async (c) => {
     .is('revoked_at', null);
 
   return c.json({ connected: false });
+});
+
+// ---------------------------------------------------------------------------
+// GET /oauth/canvas/schedule
+// Fetches the student's Canvas calendar for the current term and transforms
+// it into a 7-day availability bitmap for JobMatchListView. Cached 5 min.
+// ---------------------------------------------------------------------------
+
+app.get('/schedule', async (c) => {
+  const actor = c.get('actor');
+  const cacheKey = `canvas:schedule:${actor.id}`;
+  const cached = getCache<CanvasSchedule>(cacheKey);
+  if (cached) return c.json(cached);
+
+  const canvasEnv = c.env as unknown as CanvasEnv;
+  const serviceDb = makeServiceClient(c.env);
+
+  // Fetch encrypted token from canvas_connections
+  const { data: conn } = await serviceDb
+    .schema('snap_enrollment')
+    .from('canvas_connections' as never)
+    .select('access_token_enc, expires_at, canvas_instance_url')
+    .eq('applicant_id', actor.id)
+    .is('revoked_at', null)
+    .single() as unknown as { data: { access_token_enc: string; expires_at: string; canvas_instance_url: string } | null };
+
+  if (!conn) throw new HTTPException(404, { message: 'Canvas not connected' });
+  if (new Date(conn.expires_at) < new Date()) {
+    throw new HTTPException(401, { message: 'Canvas token expired — reconnect Canvas' });
+  }
+
+  const accessToken = await decryptToken(canvasEnv.SNAP_FERNET_KEY, conn.access_token_enc);
+  const instanceUrl = conn.canvas_instance_url;
+
+  // Query Canvas calendar events for the next 30 days
+  const since = new Date().toISOString();
+  const until = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+  const calRes = await fetch(
+    `${instanceUrl}/api/v1/calendar_events?type=event&start_date=${since}&end_date=${until}&per_page=100`,
+    { headers: { Authorization: `Bearer ${accessToken}` } },
+  );
+
+  if (!calRes.ok) {
+    throw new HTTPException(502, { message: `Canvas API error: ${calRes.status}` });
+  }
+
+  const events = await calRes.json() as Array<{ start_at: string }>;
+
+  // Build a Set of JS day-of-week values (0=Sun…6=Sat) → remap to Mon=0…Sun=6
+  const classDays = new Set<number>();
+  for (const ev of events) {
+    const dow = new Date(ev.start_at).getDay(); // 0=Sun
+    const monBased = dow === 0 ? 6 : dow - 1;   // Mon=0 … Sun=6
+    classDays.add(monBased);
+  }
+
+  const schedule: CanvasSchedule = {
+    availability: [0, 1, 2, 3, 4, 5, 6].map(d => ({
+      dayIndex: d,
+      hasClass: classDays.has(d),
+    })),
+    syncedAt: new Date().toISOString(),
+  };
+
+  setCache(cacheKey, schedule, SCHEDULE_TTL_SECONDS);
+  return c.json(schedule);
 });
 
 export default app;

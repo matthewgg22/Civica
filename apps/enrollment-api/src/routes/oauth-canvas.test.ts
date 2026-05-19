@@ -84,6 +84,22 @@ describe('DELETE /oauth/canvas', () => {
   });
 });
 
+describe('GET /oauth/canvas/schedule', () => {
+  it('returns 404 when Canvas is not connected', async () => {
+    vi.mocked(makeServiceClient).mockReturnValue({
+      schema: vi.fn().mockReturnValue({
+        from: vi.fn().mockReturnValue(makeQueryBuilder({
+          data: null, error: { code: 'PGRST116' },
+        })),
+      }),
+    } as never);
+
+    const app = buildTestApp(oauthCanvasRouter, '/oauth/canvas', APPLICANT);
+    const res = await app.request('/oauth/canvas/schedule', { method: 'GET' }, CANVAS_ENV);
+    expect(res.status).toBe(404);
+  });
+});
+
 describe('POST /oauth/canvas/exchange', () => {
   it('returns 503 when Canvas env vars are not set', async () => {
     const app = buildTestApp(oauthCanvasRouter, '/oauth/canvas', APPLICANT);
