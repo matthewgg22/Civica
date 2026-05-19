@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   BannedPhrasesFileSchema,
   PendingRevisionsFileSchema,
+  ExemptionCopyFileSchema,
 } from "../src/schemas";
 
 const DATA_DIR = resolve(__dirname, "..", "data");
@@ -25,10 +26,22 @@ describe("data JSON files", () => {
     expect(parsed.entries.length).toBeGreaterThan(0);
   });
 
+  it("exemption-copy.json parses against the schema", () => {
+    const raw = JSON.parse(
+      readFileSync(resolve(DATA_DIR, "exemption-copy.json"), "utf8"),
+    );
+    const parsed = ExemptionCopyFileSchema.parse(raw);
+    expect(parsed.entries.length).toBeGreaterThan(0);
+  });
+
   it("every JSON file in data/ is one of the known registry files", () => {
     const files = readdirSync(DATA_DIR).filter((f) => f.endsWith(".json"));
     for (const f of files) {
-      expect(["_banned-phrases.json", "_pending-revisions.json"]).toContain(f);
+      expect([
+        "_banned-phrases.json",
+        "_pending-revisions.json",
+        "exemption-copy.json",
+      ]).toContain(f);
     }
   });
 

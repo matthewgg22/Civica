@@ -36,6 +36,28 @@ export const BannedPhrasesFileSchema = z
   })
   .strict();
 
+// Session A — bilingual exemption description copy.
+// One row per exemption-type key; consumed by both iOS (via Swift codegen
+// or hand-mirrored constants) and the dashboard/web surfaces.
+export const ExemptionCopySchema = z
+  .object({
+    id: idSchema,
+    audit_reference: z.string().min(1),
+    rationale: z.string().min(1),
+    en: z.string().min(1),
+    es: z.string().min(1),
+  })
+  .strict();
+
+export const ExemptionCopyFileSchema = z
+  .object({
+    $schema: z.string().optional(),
+    entries: z.array(ExemptionCopySchema).min(1),
+  })
+  .strict();
+
+export type ExemptionCopy = z.infer<typeof ExemptionCopySchema>;
+
 export const PendingRevisionsFileSchema = z
   .object({
     $schema: z.string().optional(),
