@@ -18,6 +18,7 @@ import { HTTPException } from 'hono/http-exception';
 import { makeAnonClient, makeServiceClient } from '../lib/supabase.js';
 import { withActorContext } from '../middleware/actorContext.js';
 import type { Env } from '../types.js';
+import type { Json } from '@civica/db-types';
 import {
   evaluateWorkRequirement,
   CA_WAIVER_COUNTY_FIPS,
@@ -137,7 +138,7 @@ app.post('/:packetId/evaluate', zValidator('json', evaluateBodySchema), async (c
     .upsert(
       {
         packet_id: packetId,
-        org_id: packet.org_id,
+        org_id: packet.org_id ?? '',
         applicant_id: packet.applicant_id,
         is_subject: determination.isSubject,
         subject_member_ids: determination.subjectMemberIds,
@@ -160,7 +161,7 @@ app.post('/:packetId/evaluate', zValidator('json', evaluateBodySchema), async (c
     .from('work_requirement_events')
     .insert({
       wr_status_id: (statusRow as unknown as { wr_status_id: string }).wr_status_id,
-      org_id: packet.org_id,
+      org_id: packet.org_id ?? '',
       actor_id: actor.id,
       event_type: 'subject_determination',
       payload: {
@@ -170,7 +171,7 @@ app.post('/:packetId/evaluate', zValidator('json', evaluateBodySchema), async (c
         exemption_reason: determination.exemptionReason,
         determination_basis: 'rules_engine',
         household_member_count: body.householdMembers.length,
-      },
+      } as unknown as Json,
     });
 
   if (eventErr) throw new HTTPException(500, { message: eventErr.message });
@@ -253,7 +254,8 @@ app.patch('/:wrStatusId', zValidator('json', patchBodySchema), async (c) => {
   const { data: updated, error: updateErr } = await db
     .schema('snap_enrollment')
     .from('work_requirement_statuses')
-    .update(updatePayload)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .update(updatePayload as any)
     .eq('wr_status_id', wrStatusId)
     .select()
     .single();
@@ -278,7 +280,7 @@ app.patch('/:wrStatusId', zValidator('json', patchBodySchema), async (c) => {
       org_id: (current as unknown as { org_id: string }).org_id,
       actor_id: actor.id,
       event_type: eventType,
-      payload: { changed_fields: changedFields, navigator_override: true },
+      payload: { changed_fields: changedFields, navigator_override: true } as unknown as Json,
     });
 
   if (eventErr) throw new HTTPException(500, { message: eventErr.message });
@@ -319,7 +321,7 @@ app.post('/:wrStatusId/events', zValidator('json', eventBodySchema), async (c) =
       org_id: (statusRow as unknown as { org_id: string }).org_id,
       actor_id: actor.id,
       event_type: body.event_type,
-      payload: body.payload,
+      payload: body.payload as unknown as Json,
     })
     .select()
     .single();

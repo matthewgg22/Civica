@@ -1003,7 +1003,7 @@ export type Database = {
           recert_id?: string
           packet_id: string
           org_id: string
-          applicant_id: string
+          applicant_id?: string
           cert_period_end: string
           cert_period_end_source: string
           reminder_opted_in?: boolean
