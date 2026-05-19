@@ -1,0 +1,60 @@
+name: Web B2C E2E (nightly)
+
+# Runs nightly against the live Vercel deployment and on manual trigger.
+# Requires secrets: WEB_E2E_BASE_URL, E2E_TEST_EMAIL, E2E_TEST_PASSWORD,
+#   NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY.
+# Tests skip gracefully when credentials are absent (hasAuth() guard in specs).
+
+on:
+  schedule:
+    - cron: "0 5 * * *" # 05:00 UTC daily (after enrollment-api nightly at 04:00)
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Override WEB_E2E_BASE_URL (leave blank for secret default)"
+        required: false
+
+jobs:
+  playwright:
+    name: Playwright E2E (mobile viewport)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      PLAYWRIGHT_BASE_URL: ${{ inputs.base_url || secrets.WEB_E2E_BASE_URL }}
+      E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
+      E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install web dependencies
+        working-directory: web
+        run: npm ci --no-audit --no-fund
+
+      - name: Install Playwright browsers
+        working-directory: web
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        working-directory: web
+        run: npm run test:e2e
+        env:
+          CI: true
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: web/playwright-report/
+          retention-days: 7
