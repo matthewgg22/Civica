@@ -65,3 +65,20 @@ export function firstNameLastInitial(name: string): string {
 export function shortId(uuid: string): string {
   return uuid.replace(/-/g, "").slice(-6).toUpperCase();
 }
+
+const DOCUMENT_KIND_LABELS: Record<string, string> = {
+  paystub: "Pay stub",
+  photo_id: "Photo ID",
+  utility_bill: "Utility bill",
+  bank_statement: "Bank statement",
+  tax_return: "Tax return",
+  benefit_letter: "Benefit letter",
+  lease: "Lease",
+  snap_approval_letter: "SNAP approval letter",
+  proof_of_address: "Proof of address",
+};
+
+/** Human-readable label for a document_kind slug (e.g. "paystub" → "Pay stub"). */
+export function docKindLabel(kind: string): string {
+  return DOCUMENT_KIND_LABELS[kind] ?? (kind.charAt(0).toUpperCase() + kind.slice(1).replace(/_/g, " "));
+}

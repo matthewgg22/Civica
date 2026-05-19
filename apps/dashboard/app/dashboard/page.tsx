@@ -11,7 +11,7 @@ import CaliforniaMap from "../../components/CaliforniaMap";
 import MapInteractiveWrapper from "../../components/MapInteractiveWrapper";
 import Link from "next/link";
 import { caCountyToFips } from "../../lib/caCounties";
-import { decryptDemoName, firstNameLastInitial, shortId } from "../../lib/format";
+import { decryptDemoName, docKindLabel, firstNameLastInitial, shortId } from "../../lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -246,7 +246,7 @@ export default async function DashboardPage() {
     events.push({
       id: `d-${d.document_id}`,
       kind: "doc",
-      text: `${d.document_kind === "paystub" ? "Pay stub" : d.document_kind === "photo_id" ? "Photo ID" : d.document_kind === "utility_bill" ? "Utility bill" : d.document_kind === "bank_statement" ? "Bank statement" : d.document_kind === "tax_return" ? "Tax return" : d.document_kind === "benefit_letter" ? "Benefit letter" : d.document_kind.charAt(0).toUpperCase() + d.document_kind.slice(1)} uploaded`,
+      text: `${docKindLabel(d.document_kind)} uploaded`,
       detail: `packet ${shortId(d.packet_id)}`,
       at: d.uploaded_at,
       packetId: d.packet_id,
