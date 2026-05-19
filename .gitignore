@@ -20,6 +20,9 @@ __pycache__/
 *.pbxproj.bak
 *.pbxproj.bak*
 
+# Xcode secrets — real values live here, never committed
+Civica/Configuration/Secrets.xcconfig
+
 # Swift package build output
 **/.*build/
 CivicaDesignSystem/.build/

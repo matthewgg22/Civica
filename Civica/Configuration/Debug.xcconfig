@@ -1,0 +1,6 @@
+// Debug build settings for the Civica target.
+// Secret values (ADMIN_PIN, etc.) come from Secrets.xcconfig which is gitignored.
+// Copy Secrets.xcconfig.template to Secrets.xcconfig and fill in values before building.
+
+ADMIN_PIN = 000000
+#include? "Secrets.xcconfig"
