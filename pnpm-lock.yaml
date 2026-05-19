@@ -12,12 +12,24 @@ importers:
 
   .:
     devDependencies:
+      '@duckdb/node-api':
+        specifier: ^1.1.3-alpha.7
+        version: 1.1.3-alpha.12
+      '@supabase/supabase-js':
+        specifier: ^2.105.4
+        version: 2.105.4
+      tsx:
+        specifier: ^4.19.2
+        version: 4.22.0
       turbo:
         specifier: ^2.3.0
         version: 2.9.14
       typescript:
         specifier: ^5.6.3
         version: 5.9.3
+      yaml:
+        specifier: ^2.9.0
+        version: 2.9.0
 
   apps/api:
     dependencies:
@@ -103,9 +115,18 @@ importers:
 
   apps/dashboard:
     dependencies:
+      '@civica/analytics-engine':
+        specifier: workspace:*
+        version: link:../../packages/analytics-engine
+      '@civica/cfr-273':
+        specifier: workspace:*
+        version: link:../../packages/cfr-273
       '@civica/snap-calculator':
         specifier: workspace:*
         version: link:../../packages/snap-calculator
+      '@civica/snap-compliance-copy':
+        specifier: workspace:*
+        version: link:../../packages/snap-compliance-copy
       '@civica/snap-enums':
         specifier: workspace:*
         version: link:../../packages/snap-enums
@@ -197,6 +218,9 @@ importers:
       '@civica/snap-rules':
         specifier: workspace:*
         version: link:../../packages/snap-rules
+      '@civica/state-connectors':
+        specifier: workspace:*
+        version: link:../../packages/state-connectors
       '@hono/zod-validator':
         specifier: ^0.4.3
         version: 0.4.3(hono@4.12.19)(zod@3.25.76)
@@ -228,6 +252,12 @@ importers:
 
   apps/snap-verification-prototype:
     dependencies:
+      '@civica/snap-calculator':
+        specifier: workspace:*
+        version: link:../../packages/snap-calculator
+      '@civica/snap-qc-engine':
+        specifier: workspace:*
+        version: link:../../packages/snap-qc-engine
       '@react-pdf/renderer':
         specifier: ^3.4.4
         version: 3.4.5(react@18.3.1)
@@ -266,10 +296,11 @@ importers:
         specifier: ^2.1.9
         version: 2.1.9(@types/node@20.19.41)(jsdom@26.1.0)(lightningcss@1.32.0)(terser@5.47.1)
 
-  packages/api-types: {}
-
-  packages/benefitscal-cbo:
+  packages/analytics-engine:
     dependencies:
+      '@duckdb/node-api':
+        specifier: ^1.1.3-alpha.7
+        version: 1.1.3-alpha.12
       zod:
         specifier: ^3.24.0
         version: 3.25.76
@@ -278,7 +309,31 @@ importers:
         specifier: workspace:*
         version: link:../config
       typescript:
-        specifier: ^5.5.3
+        specifier: ^5.6.3
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.9
+        version: 2.1.9(@types/node@22.19.19)(jsdom@26.1.0)(lightningcss@1.32.0)(terser@5.47.1)
+
+  packages/api-types: {}
+
+  packages/cfr-273:
+    dependencies:
+      zod:
+        specifier: ^3.24.0
+        version: 3.25.76
+    devDependencies:
+      '@civica/config':
+        specifier: workspace:*
+        version: link:../config
+      '@duckdb/node-api':
+        specifier: ^1.1.3-alpha.7
+        version: 1.1.3-alpha.12
+      tsx:
+        specifier: ^4.19.2
+        version: 4.22.0
+      typescript:
+        specifier: ^5.6.3
         version: 5.9.3
       vitest:
         specifier: ^2.1.9
@@ -365,6 +420,25 @@ importers:
         specifier: ^2.1.9
         version: 2.1.9(@types/node@22.19.19)(jsdom@26.1.0)(lightningcss@1.32.0)(terser@5.47.1)
 
+  packages/snap-compliance-copy:
+    dependencies:
+      zod:
+        specifier: ^3.24.0
+        version: 3.25.76
+    devDependencies:
+      '@civica/config':
+        specifier: workspace:*
+        version: link:../config
+      tsx:
+        specifier: ^4.19.1
+        version: 4.22.0
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.9
+        version: 2.1.9(@types/node@22.19.19)(jsdom@26.1.0)(lightningcss@1.32.0)(terser@5.47.1)
+
   packages/snap-enums:
     dependencies:
       zod:
@@ -400,7 +474,42 @@ importers:
         specifier: ^2.1.9
         version: 2.1.9(@types/node@22.19.19)(jsdom@26.1.0)(lightningcss@1.32.0)(terser@5.47.1)
 
+  packages/snap-qc-engine:
+    dependencies:
+      '@civica/snap-calculator':
+        specifier: workspace:*
+        version: link:../snap-calculator
+      zod:
+        specifier: ^3.24.0
+        version: 3.25.76
+    devDependencies:
+      tsx:
+        specifier: ^4.19.2
+        version: 4.22.0
+      typescript:
+        specifier: ^5.5.3
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.9
+        version: 2.1.9(@types/node@22.19.19)(jsdom@26.1.0)(lightningcss@1.32.0)(terser@5.47.1)
+
   packages/snap-rules:
+    dependencies:
+      zod:
+        specifier: ^3.24.0
+        version: 3.25.76
+    devDependencies:
+      '@civica/config':
+        specifier: workspace:*
+        version: link:../config
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.9
+        version: 2.1.9(@types/node@22.19.19)(jsdom@26.1.0)(lightningcss@1.32.0)(terser@5.47.1)
+
+  packages/state-connectors:
     dependencies:
       zod:
         specifier: ^3.24.0
@@ -646,6 +755,37 @@ packages:
   '@csstools/css-tokenizer@3.0.4':
     resolution: {integrity: sha512-Vd/9EVDiu6PPJt9yAh6roZP6El1xHrdvIVGjyBsHR0RYwNHgL7FJPyIIW4fANJNG6FtyZfvlRPpFI4ZM/lubvw==}
     engines: {node: '>=18'}
+
+  '@duckdb/node-api@1.1.3-alpha.12':
+    resolution: {integrity: sha512-7n4o3/IFVrhvsyGlogueK0J5Y2EMwoN4hWM5IXNe9EwZ+zyvPU/JJEDaRwaWCjXtECfYLz6H7CKDorhvssHl4A==}
+
+  '@duckdb/node-bindings-darwin-arm64@1.1.3-alpha.12':
+    resolution: {integrity: sha512-fuO+r4Y2qkrnbBs2FsUsgJ5p4sUOcsu0LTexz4HMnC7WkVcQK308n/+ILbZ8VSztjQR7UhNlfy4grGKUnGRzKg==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@duckdb/node-bindings-darwin-x64@1.1.3-alpha.12':
+    resolution: {integrity: sha512-97jw6ZO0ZO7YLJx83ifUg9Fsm7hKPeqNJi+AJSbSxmx9D3dWI7ndeBCMLX7CX8DW4Jjm6tZH7+VmLVrjt2vjQg==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@duckdb/node-bindings-linux-arm64@1.1.3-alpha.12':
+    resolution: {integrity: sha512-+3/ASrQoA5nPdoQofFGjtjklaYndW/UlUyzfHuUVxs21EfPZi4LI+6N0BA+78kPI1wHYHn1+4La0pc2wA6bzfg==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@duckdb/node-bindings-linux-x64@1.1.3-alpha.12':
+    resolution: {integrity: sha512-kuAXWslGSPWZp5ienlV0LtSTO72Fhhst6qPbBxX59HeJLpCS4ZHkU9FNYKgXU8HziYh/3G81c/vBvqBgRKYbSA==}
+    cpu: [x64]
+    os: [linux]
+
+  '@duckdb/node-bindings-win32-x64@1.1.3-alpha.12':
+    resolution: {integrity: sha512-6JeeQR9Fs8WcBF22TkDjWWnpte5ijxnBlvpov154dBKbFDZMh5L43zYmfcvamtnzYtqfhkhox1LDIkSovyHZwQ==}
+    cpu: [x64]
+    os: [win32]
+
+  '@duckdb/node-bindings@1.1.3-alpha.12':
+    resolution: {integrity: sha512-I89ljU1Xnyrwv9W2Eel0NQQgjRH0JmOexmRBUrOdw3K+ajoDSe3Bdmd0WeI4kW1p5AWCVe7qG/YnGdM0AsS5JQ==}
 
   '@emnapi/core@1.10.0':
     resolution: {integrity: sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw==}
@@ -5909,6 +6049,33 @@ snapshots:
 
   '@csstools/css-tokenizer@3.0.4': {}
 
+  '@duckdb/node-api@1.1.3-alpha.12':
+    dependencies:
+      '@duckdb/node-bindings': 1.1.3-alpha.12
+
+  '@duckdb/node-bindings-darwin-arm64@1.1.3-alpha.12':
+    optional: true
+
+  '@duckdb/node-bindings-darwin-x64@1.1.3-alpha.12':
+    optional: true
+
+  '@duckdb/node-bindings-linux-arm64@1.1.3-alpha.12':
+    optional: true
+
+  '@duckdb/node-bindings-linux-x64@1.1.3-alpha.12':
+    optional: true
+
+  '@duckdb/node-bindings-win32-x64@1.1.3-alpha.12':
+    optional: true
+
+  '@duckdb/node-bindings@1.1.3-alpha.12':
+    optionalDependencies:
+      '@duckdb/node-bindings-darwin-arm64': 1.1.3-alpha.12
+      '@duckdb/node-bindings-darwin-x64': 1.1.3-alpha.12
+      '@duckdb/node-bindings-linux-arm64': 1.1.3-alpha.12
+      '@duckdb/node-bindings-linux-x64': 1.1.3-alpha.12
+      '@duckdb/node-bindings-win32-x64': 1.1.3-alpha.12
+
   '@emnapi/core@1.10.0':
     dependencies:
       '@emnapi/wasi-threads': 1.2.1
@@ -8749,7 +8916,7 @@ snapshots:
       '@next/eslint-plugin-next': 16.2.6
       eslint: 9.39.4(jiti@2.7.0)
       eslint-import-resolver-node: 0.3.10
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(eslint@9.39.4(jiti@2.7.0)))(eslint@9.39.4(jiti@2.7.0))
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.4(jiti@2.7.0))
       eslint-plugin-import: 2.32.0(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.4(jiti@2.7.0))
       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.39.4(jiti@2.7.0))
       eslint-plugin-react: 7.37.5(eslint@9.39.4(jiti@2.7.0))
@@ -8772,7 +8939,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(eslint@9.39.4(jiti@2.7.0)))(eslint@9.39.4(jiti@2.7.0)):
+  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.4(jiti@2.7.0)):
     dependencies:
       '@nolyfill/is-core-module': 1.0.39
       debug: 4.4.3
@@ -8787,13 +8954,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(eslint@9.39.4(jiti@2.7.0)))(eslint@9.39.4(jiti@2.7.0)))(eslint@9.39.4(jiti@2.7.0)):
+  eslint-module-utils@2.12.1(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.4(jiti@2.7.0)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
       eslint: 9.39.4(jiti@2.7.0)
       eslint-import-resolver-node: 0.3.10
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(eslint@9.39.4(jiti@2.7.0)))(eslint@9.39.4(jiti@2.7.0))
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.4(jiti@2.7.0))
     transitivePeerDependencies:
       - supports-color
 
@@ -8808,7 +8975,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.39.4(jiti@2.7.0)
       eslint-import-resolver-node: 0.3.10
-      eslint-module-utils: 2.12.1(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(eslint@9.39.4(jiti@2.7.0)))(eslint@9.39.4(jiti@2.7.0)))(eslint@9.39.4(jiti@2.7.0))
+      eslint-module-utils: 2.12.1(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.4(jiti@2.7.0))
       hasown: 2.0.3
       is-core-module: 2.16.2
       is-glob: 4.0.3
