@@ -3,6 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import { homeForRole } from "../../lib/roleRouting";
 import DemoModeBadge from "../../components/DemoModeBadge";
+import CBOContactButton from "../../components/CBOContactButton";
 
 export const dynamic = "force-dynamic";
 
@@ -197,13 +198,7 @@ export default async function CBOPreviewPage() {
               households. Reach out to start a conversation.
             </p>
           </div>
-          <a
-            href="mailto:partnerships@civica.app"
-            className="inline-flex items-center gap-2 rounded-[4px] px-5 py-2.5 text-sm font-semibold text-white whitespace-nowrap flex-shrink-0 transition-opacity hover:opacity-90"
-            style={{ backgroundColor: "var(--color-brick)" }}
-          >
-            Contact Civica partnerships
-          </a>
+          <CBOContactButton />
         </div>
       </section>
     </main>
