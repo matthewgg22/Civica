@@ -6,15 +6,15 @@ import Foundation
 // devices Civica's founder may physically borrow at enrollment
 // events. The PIN just keeps casual users out of the export sheet.
 //
-// Rotation: change this constant in source, rebuild, redistribute.
-// No remote config, no Keychain — the threat model is "someone
-// noticed the hidden long-press," not "a determined attacker
-// extracted the binary."
+// Rotation: update ADMIN_PIN in Civica/Configuration/Secrets.xcconfig
+// (gitignored), rebuild, redistribute. No remote config, no Keychain —
+// the threat model is "someone noticed the hidden long-press," not "a
+// determined attacker extracted the binary."
 //
-// TODO: Move this to a build-time xcconfig secret before any
-// external pilot beyond the founder's own MA cohort, so the value
-// doesn't ship in source control.
+// The value is injected at build time via Civica/Configuration/Secrets.xcconfig
+// → Info.plist → Bundle, so it no longer ships in source control.
 
 enum AdminPIN {
-    static let current: String = "490321"
+    static let current: String =
+        Bundle.main.object(forInfoDictionaryKey: "ADMIN_PIN") as? String ?? ""
 }

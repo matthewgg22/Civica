@@ -1,0 +1,6 @@
+// Release build settings for the Civica target.
+// Secret values (ADMIN_PIN, etc.) come from Secrets.xcconfig which is gitignored.
+// CI must supply these via environment or xcconfig injection before archiving.
+
+ADMIN_PIN = 000000
+#include? "Secrets.xcconfig"
