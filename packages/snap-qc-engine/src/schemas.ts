@@ -13,6 +13,7 @@ export const FlowKindSchema = z.enum([
   "shared-lease",
   "gig-income",
   "assets",
+  "benefit-impact-projection",
 ]);
 export type FlowKind = z.infer<typeof FlowKindSchema>;
 
@@ -148,7 +149,7 @@ export type SharedLeasePackage = z.infer<typeof SharedLeasePackageSchema>;
 
 // ---------- Gig Income ----------
 
-export const IncomeSourceTypeSchema = z.enum(["w2", "platform_gig", "cash"]);
+export const IncomeSourceTypeSchema = z.enum(["w2", "platform_gig", "cash", "fws"]);
 export type IncomeSourceType = z.infer<typeof IncomeSourceTypeSchema>;
 
 export const IncomeSourceSchema = z.object({
@@ -241,6 +242,46 @@ export const AssetPackageSchema = z.object({
 });
 export type AssetPackage = z.infer<typeof AssetPackageSchema>;
 
+// ---------- Benefit Impact Projection ----------
+
+// Income type for a job offer being evaluated. "fws" (Federal Work-Study)
+// is excluded from SNAP income entirely under 7 CFR 273.9(c)(3).
+export const JobOfferTypeSchema = z.enum(["fws", "w2", "platform_gig"]);
+export type JobOfferType = z.infer<typeof JobOfferTypeSchema>;
+
+export const BenefitImpactInputSchema = z.object({
+  applicant_name: z.string(),
+  state_code: StateCodeSchema,
+  household_size: z.number().int().min(1).max(20),
+  current_benefit_usd: z.number().min(0),
+  job_offer: z.object({
+    type: JobOfferTypeSchema,
+    employer_name: z.string(),
+    monthly_amount: z.number().min(0),
+  }),
+});
+export type BenefitImpactInput = z.infer<typeof BenefitImpactInputSchema>;
+
+export const BenefitImpactPackageSchema = z.object({
+  flow: z.literal("benefit-impact-projection"),
+  applicant_name: z.string(),
+  state_code: StateCodeSchema,
+  household_size: z.number().int(),
+  job_type: JobOfferTypeSchema,
+  employer_name: z.string(),
+  gross_job_income_usd: z.number(),
+  fws_excluded_usd: z.number(),
+  counted_income_usd: z.number(),
+  eid_applied_usd: z.number(),
+  benefit_reduction_usd: z.number(),
+  current_benefit_usd: z.number(),
+  projected_benefit_usd: z.number(),
+  benefit_change_usd: z.number(),
+  regulatory_citations: z.array(z.string()),
+  generated_at: z.string(),
+});
+export type BenefitImpactPackage = z.infer<typeof BenefitImpactPackageSchema>;
+
 // ---------- Evidence package union ----------
 
 export const EvidencePackageSchema = z.discriminatedUnion("flow", [
@@ -248,6 +289,7 @@ export const EvidencePackageSchema = z.discriminatedUnion("flow", [
   SharedLeasePackageSchema,
   GigIncomePackageSchema,
   AssetPackageSchema,
+  BenefitImpactPackageSchema,
 ]);
 export type EvidencePackage = z.infer<typeof EvidencePackageSchema>;
 
@@ -297,7 +339,9 @@ export type FlowInput<F extends FlowKind> = F extends "utility-sua"
       ? GigIncomeInput
       : F extends "assets"
         ? AssetsInput
-        : never;
+        : F extends "benefit-impact-projection"
+          ? BenefitImpactInput
+          : never;
 
 export type EvaluateRequest<F extends FlowKind = FlowKind> = {
   flow: F;

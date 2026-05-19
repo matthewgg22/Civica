@@ -395,6 +395,63 @@ struct SNAPBenefitCalculatorTests {
         #expect(calc.dependentCareDeduction == 250)
     }
 
+    // MARK: - FWS exclusion (7 CFR 273.9(c)(3))
+
+    /// FWS income must be subtracted from gross before any deduction math.
+    /// gross=$1,500, fws=$600 → effective gross=$900.
+    ///   earned_deduction = 900 * 0.20            = 180
+    ///   standard         (size 1, FY26)           = 209
+    ///   net              = 900 - 180 - 209        = 511
+    ///   30% of net       = round(511 * 0.30)      = 153
+    ///   max_allotment    (size 1, FY26)           = 298
+    ///   monthly_benefit  = 298 - 153              = 145
+    @Test func fwsExclusionReducesGrossBeforeEID() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.stateCode = "MA"
+        draft.household.householdSize = "Just me"
+        draft.income.grossMonthlyIncome = 1_500
+        draft.income.fwsMonthlyAmount = 600
+
+        let calc = SNAPBenefitCalculator.calculate(
+            draft: draft,
+            rules: MAStateRules(),
+            today: fy26Date
+        )
+
+        // Effective gross is $900 — FWS excluded before EID.
+        #expect(calc.grossMonthlyIncome == 900)
+        // 20% EID on $900
+        #expect(calc.earnedIncomeDeduction == 180)
+    }
+
+    /// Mixed FWS + W-2: FWS excluded; W-2 subject to 20% EID.
+    /// gross=$1,500, fws=$600 (excluded), w2=$900 (counted, 20% EID applied).
+    @Test func fwsExclusionDoesNotAffectW2EID() {
+        var draftFwsOnly = SNAPApplicationDraft()
+        draftFwsOnly.whereApplying.stateCode = "MA"
+        draftFwsOnly.household.householdSize = "Just me"
+        draftFwsOnly.income.grossMonthlyIncome = 900  // only W-2 in gross
+        draftFwsOnly.income.fwsMonthlyAmount = nil    // no FWS field set
+
+        var draftMixed = SNAPApplicationDraft()
+        draftMixed.whereApplying.stateCode = "MA"
+        draftMixed.household.householdSize = "Just me"
+        draftMixed.income.grossMonthlyIncome = 1_500  // $900 W-2 + $600 FWS reported in gross
+        draftMixed.income.fwsMonthlyAmount = 600      // $600 FWS excluded
+
+        let calcFwsOnly = SNAPBenefitCalculator.calculate(
+            draft: draftFwsOnly, rules: MAStateRules(), today: fy26Date
+        )
+        let calcMixed = SNAPBenefitCalculator.calculate(
+            draft: draftMixed, rules: MAStateRules(), today: fy26Date
+        )
+
+        // Both should arrive at the same result: only the $900 W-2 portion is in the math.
+        #expect(calcMixed.grossMonthlyIncome == calcFwsOnly.grossMonthlyIncome)
+        #expect(calcMixed.earnedIncomeDeduction == calcFwsOnly.earnedIncomeDeduction)
+        #expect(calcMixed.monthlyBenefit == calcFwsOnly.monthlyBenefit)
+    }
+
     // MARK: - Helpers
 
     private static func iso(_ string: String) -> Date {

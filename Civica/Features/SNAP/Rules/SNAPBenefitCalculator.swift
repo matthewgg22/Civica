@@ -198,7 +198,12 @@ enum SNAPBenefitCalculator {
 
         init(draft: SNAPApplicationDraft, suaTier: SUATier) {
             self.householdSize = Self.parseHouseholdSize(draft.household.householdSize)
-            let gross = draft.income.grossMonthlyIncome ?? 0
+            // FWS earnings are excluded from SNAP gross income before any deduction math
+            // runs, per 7 CFR 273.9(c)(3). Subtract them from gross first so the EID,
+            // shelter, and 30%-of-net calculations all operate on the correct base.
+            let rawGross = draft.income.grossMonthlyIncome ?? 0
+            let fwsExcluded = draft.income.fwsMonthlyAmount ?? 0
+            let gross = max(0, rawGross - fwsExcluded)
             self.gross = gross
             self.earnedIncome = Self.resolveEarnedIncome(income: draft.income, gross: gross)
             self.hasElderlyOrDisabled = draft.household.hasElderlyOrDisabled == true
