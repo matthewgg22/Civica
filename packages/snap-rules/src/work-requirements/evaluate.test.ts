@@ -12,8 +12,8 @@ function caStudent(opts: { half?: boolean; degree?: boolean }): WorkRequirementI
       {
         id: 'm1',
         age: 22,
-        halfTimeEnrolled: opts.half,
-        degreeOrCertificateProgram: opts.degree,
+        ...(opts.half !== undefined && { halfTimeEnrolled: opts.half }),
+        ...(opts.degree !== undefined && { degreeOrCertificateProgram: opts.degree }),
       },
     ],
   };
