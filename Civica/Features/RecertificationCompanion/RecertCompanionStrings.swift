@@ -109,6 +109,21 @@ enum RecertCompanionStrings {
         es: "Ahora no"
     )
 
+    // MARK: - Interview Coach (Feature 5)
+
+    static let interviewCoachEntryTitle = CivicaText(
+        "Practice your interview",
+        es: "Practica tu entrevista"
+    )
+    static let interviewCoachEntrySubtitle = CivicaText(
+        "8 min · voice or text",
+        es: "8 min · voz o texto"
+    )
+    static let interviewCoachEntryCTA = CivicaText(
+        "Start",
+        es: "Comenzar"
+    )
+
     // MARK: - Appeal (Feature 4)
 
     static let appealEntryTitle = CivicaText(
