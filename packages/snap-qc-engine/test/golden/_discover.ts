@@ -12,6 +12,14 @@ export interface GoldenFixture {
   expectedPath: string;
 }
 
+// Flows currently covered by the golden fixture suite. The discovery below is
+// directory-driven (so new fixtures are picked up automatically), but this
+// list documents the expected flow set and mirrors `golden.test.ts`:
+//   - utility-sua
+//   - shared-lease
+//   - gig-income
+//   - assets
+//   - benefit-impact-projection
 export function discoverGoldenFixtures(): GoldenFixture[] {
   const out: GoldenFixture[] = [];
   const flows = readdirSync(here).filter((entry) => {

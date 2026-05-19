@@ -1,0 +1,52 @@
+{
+  "flow": "benefit-impact-projection",
+  "state": "CA",
+  "defensibility_score": "weak",
+  "defensibility_factors": [
+    {
+      "name": "income_type",
+      "weight": "neutral",
+      "detail": "W-2 income subject to 20% EID; 30% benefit reduction on net"
+    }
+  ],
+  "evidence_package": {
+    "flow": "benefit-impact-projection",
+    "applicant_name": "Sofia Ramirez",
+    "state_code": "CA",
+    "household_size": 1,
+    "job_type": "w2",
+    "employer_name": "Amazon Fulfillment Center LAX9",
+    "gross_job_income_usd": 1800,
+    "fws_excluded_usd": 0,
+    "counted_income_usd": 1800,
+    "eid_applied_usd": 360,
+    "benefit_reduction_usd": 432,
+    "current_benefit_usd": 292,
+    "projected_benefit_usd": 0,
+    "benefit_change_usd": -292,
+    "regulatory_citations": [
+      "7 CFR 273.9(d)(1) — 20% earned-income deduction",
+      "7 CFR 273.10(e)(1)(i) — 30% of net income benefit reduction"
+    ],
+    "generated_at": "2026-05-19T15:00:00Z"
+  },
+  "citations": [
+    {
+      "authority": "federal",
+      "reference": "7 CFR 273.9(d)(1) — 20% earned-income deduction"
+    },
+    {
+      "authority": "federal",
+      "reference": "7 CFR 273.10(e)(1)(i) — 30% of net income benefit reduction"
+    }
+  ],
+  "warnings": [
+    {
+      "code": "benefit_impact.cliff_event",
+      "message": "Projected benefit reaches $0. This income level exceeds the gross income limit for this household size. Navigator outreach recommended before accepting this offer.",
+      "severity": "critical"
+    }
+  ],
+  "computed_at": "2026-05-19T15:00:00Z",
+  "engine_version": "0.1.0"
+}

@@ -1,0 +1,15 @@
+{
+  "flow": "benefit-impact-projection",
+  "state": "MA",
+  "inputs": {
+    "applicant_name": "Jamal Robinson",
+    "state_code": "MA",
+    "household_size": 1,
+    "current_benefit_usd": 234,
+    "job_offer": {
+      "type": "platform_gig",
+      "employer_name": "DoorDash",
+      "monthly_amount": 800
+    }
+  }
+}

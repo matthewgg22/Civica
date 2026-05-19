@@ -1,0 +1,15 @@
+{
+  "flow": "benefit-impact-projection",
+  "state": "CA",
+  "inputs": {
+    "applicant_name": "Marcus Johnson",
+    "state_code": "CA",
+    "household_size": 2,
+    "current_benefit_usd": 292,
+    "job_offer": {
+      "type": "w2",
+      "employer_name": "Trader Joe's #205",
+      "monthly_amount": 1179
+    }
+  }
+}

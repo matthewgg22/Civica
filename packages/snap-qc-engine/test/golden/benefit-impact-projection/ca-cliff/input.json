@@ -1,0 +1,15 @@
+{
+  "flow": "benefit-impact-projection",
+  "state": "CA",
+  "inputs": {
+    "applicant_name": "Sofia Ramirez",
+    "state_code": "CA",
+    "household_size": 1,
+    "current_benefit_usd": 292,
+    "job_offer": {
+      "type": "w2",
+      "employer_name": "Amazon Fulfillment Center LAX9",
+      "monthly_amount": 1800
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "flow": "benefit-impact-projection",
+  "state": "MA",
+  "defensibility_score": "moderate",
+  "defensibility_factors": [
+    {
+      "name": "income_type",
+      "weight": "neutral",
+      "detail": "Gig income variable; projection uses stated monthly average"
+    }
+  ],
+  "evidence_package": {
+    "flow": "benefit-impact-projection",
+    "applicant_name": "Jamal Robinson",
+    "state_code": "MA",
+    "household_size": 1,
+    "job_type": "platform_gig",
+    "employer_name": "DoorDash",
+    "gross_job_income_usd": 800,
+    "fws_excluded_usd": 0,
+    "counted_income_usd": 800,
+    "eid_applied_usd": 160,
+    "benefit_reduction_usd": 192,
+    "current_benefit_usd": 234,
+    "projected_benefit_usd": 42,
+    "benefit_change_usd": -192,
+    "regulatory_citations": [
+      "7 CFR 273.9(d)(1) — 20% earned-income deduction",
+      "7 CFR 273.10(e)(1)(i) — 30% of net income benefit reduction",
+      "OBBBA §10102 — Gig platform work counts toward 80-hour monthly work-activity requirement"
+    ],
+    "generated_at": "2026-05-19T15:00:00Z"
+  },
+  "citations": [
+    {
+      "authority": "federal",
+      "reference": "7 CFR 273.9(d)(1) — 20% earned-income deduction"
+    },
+    {
+      "authority": "federal",
+      "reference": "7 CFR 273.10(e)(1)(i) — 30% of net income benefit reduction"
+    },
+    {
+      "authority": "federal",
+      "reference": "OBBBA §10102 — Gig platform work counts toward 80-hour monthly work-activity requirement"
+    }
+  ],
+  "warnings": [
+    {
+      "code": "benefit_impact.gig_income_variable",
+      "message": "Gig income varies monthly. Benefit impact is an estimate based on the stated monthly average. Actual recalculation happens when each paycheck is confirmed via Argyle.",
+      "severity": "info"
+    }
+  ],
+  "computed_at": "2026-05-19T15:00:00Z",
+  "engine_version": "0.1.0"
+}

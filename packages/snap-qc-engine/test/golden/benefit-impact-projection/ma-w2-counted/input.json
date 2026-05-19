@@ -1,0 +1,15 @@
+{
+  "flow": "benefit-impact-projection",
+  "state": "MA",
+  "inputs": {
+    "applicant_name": "Priya Patel",
+    "state_code": "MA",
+    "household_size": 2,
+    "current_benefit_usd": 292,
+    "job_offer": {
+      "type": "w2",
+      "employer_name": "Stop & Shop #441",
+      "monthly_amount": 1179
+    }
+  }
+}
