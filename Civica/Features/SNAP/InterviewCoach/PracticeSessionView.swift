@@ -12,11 +12,37 @@ struct PracticeSessionView: View {
     @State private var showScoreSheet = false
     @FocusState private var inputFocused: Bool
 
+    // Voice input: SNAPVoiceIntakeService in transcript-only mode feeds
+    // the final transcript into `viewModel.draftResponse` so the user can
+    // review and edit before sending. Gated on iOS 26 because the service
+    // is `@available(iOS 26.0, *)`.
+    @StateObject private var voiceService = VoiceServiceContainer()
+
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
 
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
+
+    /// Wrapper that hides the iOS 26 availability gate behind a plain
+    /// ObservableObject. SwiftUI's @StateObject requires a non-conditional
+    /// type, so we own the optional service inside and expose it via
+    /// `service`. Older iOS versions get nil → voice UI is suppressed.
+    @MainActor
+    final class VoiceServiceContainer: ObservableObject {
+        private var _service: AnyObject?
+
+        @available(iOS 26.0, *)
+        var service: SNAPVoiceIntakeService? {
+            if _service == nil { _service = SNAPVoiceIntakeService() }
+            return _service as? SNAPVoiceIntakeService
+        }
+
+        var isAvailable: Bool {
+            if #available(iOS 26.0, *) { return true }
+            return false
+        }
     }
 
     var body: some View {
@@ -186,6 +212,14 @@ struct PracticeSessionView: View {
                 .lineLimit(1...5)
                 .disabled(viewModel.status != .awaitingUser)
 
+            // Voice mic: tap to record, transcript fills the field above
+            // for review + edit before send. Hidden on pre-iOS-26 devices.
+            if #available(iOS 26.0, *), let micService = voiceService.service {
+                SNAPVoiceMicButton(service: micService)
+                    .disabled(viewModel.status != .awaitingUser)
+                    .opacity(viewModel.status == .awaitingUser ? 1.0 : 0.4)
+            }
+
             Button {
                 inputFocused = false
                 InterviewCoachAnalytics.track(.sessionTurnSent, parameters: [
@@ -209,6 +243,34 @@ struct PracticeSessionView: View {
             Rectangle().frame(height: 1).foregroundStyle(CivicaColors.hairline),
             alignment: .top
         )
+        .task {
+            // Drain the voice service's update stream once per view lifetime.
+            // On `.finalTranscript(text)` the recognized speech is appended
+            // to draftResponse so the user can review + edit before sending.
+            // Cancellation propagates when the view goes away (.task scope).
+            if #available(iOS 26.0, *), let micService = voiceService.service {
+                for await update in micService.updates {
+                    switch update {
+                    case .finalTranscript(let text):
+                        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+                        guard !trimmed.isEmpty else { continue }
+                        // Append to existing draft if user was typing, otherwise replace.
+                        if viewModel.draftResponse.isEmpty {
+                            viewModel.draftResponse = trimmed
+                        } else {
+                            viewModel.draftResponse += " " + trimmed
+                        }
+                        inputFocused = true
+                    case .partialTranscript, .extracted, .failed:
+                        // Partial transcripts are shown in the mic button's
+                        // visual state; extracted/failed don't apply to
+                        // transcript-only mode (extracted) or are surfaced
+                        // by the mic button's error state (failed).
+                        break
+                    }
+                }
+            }
+        }
     }
 
     private var canSend: Bool {
