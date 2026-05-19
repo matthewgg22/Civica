@@ -238,6 +238,6 @@ export function evaluateChecklist(input: EvaluateInput): EvaluateOutput {
 // Work requirements (OBBBA §10102) — re-exported from the sub-module
 // ---------------------------------------------------------------------------
 
-export type { ExemptionType, WorkRequirementInput, WorkRequirementResult } from './work-requirements/types';
+export type { ExemptionType, WorkRequirementInput, WorkRequirementResult, FeatureFlags } from './work-requirements/types';
 export { evaluateWorkRequirement } from './work-requirements/evaluate';
 export { CA_WAIVER_COUNTY_FIPS, MA_WAIVER_COUNTY_FIPS } from './work-requirements/waiver-counties';

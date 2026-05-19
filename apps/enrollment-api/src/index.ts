@@ -22,6 +22,7 @@ import workRequirementsRouter from "./routes/work-requirements.js";
 import navigatorRouter from "./routes/navigator.js";
 import argyleWebhookRouter from "./routes/argyle-webhook.js";
 import oauthCanvasRouter from "./routes/oauth-canvas.js";
+import featureFlagsRouter from "./routes/feature-flags.js";
 import { requestLogger } from "./lib/logger.js";
 import { scrubEvent } from "./lib/sentry.js";
 import { withSentry } from "@sentry/cloudflare";
@@ -30,12 +31,38 @@ import type { Env, Variables } from "./types.js";
 const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 app.use("*", requestLogger);
-app.use("*", cors({ origin: "*", allowMethods: ["GET", "POST", "PATCH", "PUT", "DELETE"] }));
+// CORS allowlist — production dashboard, marketing site, localhost dev, and
+// Vercel preview deploys. Disallowed origins receive no Access-Control-Allow-Origin
+// header (browsers block the response). Same-origin / server-to-server requests
+// (no Origin header) are allowed through CORS — auth middleware gates them.
+const CORS_ALLOWED_ORIGINS = [
+  "https://civica-dashboard.vercel.app",
+  "https://civica.app",
+  "http://localhost:3000",
+];
+const CORS_VERCEL_PREVIEW = /^https:\/\/civica-dashboard-.*\.vercel\.app$/;
+app.use(
+  "*",
+  cors({
+    origin: (origin) => {
+      if (!origin) return null;
+      if (CORS_ALLOWED_ORIGINS.includes(origin)) return origin;
+      if (CORS_VERCEL_PREVIEW.test(origin)) return origin;
+      return null;
+    },
+    allowMethods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
+    credentials: false,
+  }),
+);
 
 app.get("/health", (c) => c.json({ ok: true, service: "civica-enrollment-api" }));
 
 // T14: Twilio webhook — no auth middleware (uses Twilio HMAC signature instead of JWT)
 app.route("/", twilioWebhookRouter);
+
+// Session A — feature flags public read (no auth: non-sensitive product config).
+// Mounted BEFORE the authed /v1/enrollment subtree so it bypasses authMiddleware.
+app.route("/v1/enrollment/feature-flags", featureFlagsRouter);
 
 // All enrollment routes require a valid Supabase JWT
 const api = new Hono<{ Bindings: Env }>();

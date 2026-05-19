@@ -59,8 +59,29 @@ struct CAStateRules: SNAPStateRuleEngine {
         federal.shelterDeductionCap(isElderlyOrDisabled: isElderlyOrDisabled, asOf: asOf)
     }
 
+    /// Session A — CA LPIE override.
+    ///
+    /// When the server-side `lpie_auto_exempt_enabled` flag is on AND the
+    /// applicant is enrolled at least half-time AND in a degree or
+    /// certificate program, return `.exempted(reason: .lpie)` immediately,
+    /// bypassing the federal 5-path checklist. Otherwise delegate to
+    /// `FederalDefaultRules.studentExemption` so the existing behavior is
+    /// preserved on every other CA case.
+    ///
+    /// Flag flow: `LPIEFeatureFlag.refresh(...)` is called by the app at
+    /// scene-active transitions and writes into a UserDefaults cache;
+    /// `LPIEFeatureFlag.isEnabled` here is a pure read. Flipping the DB
+    /// row instantly reverts this surface to pre-LPIE behavior on the
+    /// applicant's next active session.
+    ///
+    /// TODO: replace with actual CA CDSS ACL number for LPIE expansion (Matthew to provide)
     func studentExemption(for draft: SNAPApplicationDraft, asOf: Date) -> StudentExemption {
-        federal.studentExemption(for: draft, asOf: asOf)
+        if LPIEFeatureFlag.isEnabled
+            && draft.studentStatus.enrolledHalfTime == true
+            && draft.studentStatus.degreeOrCertificateProgram == true {
+            return .exempted(reason: .lpie)
+        }
+        return federal.studentExemption(for: draft, asOf: asOf)
     }
 
     func expeditedCriteria(asOf: Date) -> ExpeditedCriteria {

@@ -19,6 +19,13 @@ struct SNAPStudentStatusAnswers: Equatable, Codable {
     var works20PlusHours: Bool?
     var inWorkStudy: Bool?
     var responsibleForDependentChild: Bool?
+    /// Session A — CA LPIE override input. True when the applicant is
+    /// enrolled in a degree or certificate program at a CA Community
+    /// College, CSU, or UC. When combined with enrolledHalfTime == true
+    /// AND the server-side `lpie_auto_exempt_enabled` flag is on,
+    /// CAStateRules.studentExemption returns .exempted(reason: .lpie)
+    /// without consulting the federal 5-path checklist.
+    var degreeOrCertificateProgram: Bool?
 }
 
 @MainActor

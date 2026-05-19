@@ -1,13 +1,13 @@
 import { Hono } from "hono";
 import { makeServiceClient } from "../lib/supabase.js";
-import type { Env } from "../types.js";
+import type { Env, Variables } from "../types.js";
 import {
   LiveTwilioAdapter,
   NoopTwilioAdapter,
   TwilioWebhookBodySchema,
 } from "@civica/recert-engine/outreach";
 
-const app = new Hono<{ Bindings: Env }>();
+const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 // ---------------------------------------------------------------------------
 // POST /webhooks/twilio/sms
@@ -37,7 +37,12 @@ app.post("/webhooks/twilio/sms", async (c) => {
   let formData: FormData;
   try {
     formData = await c.req.formData();
-  } catch {
+  } catch (err) {
+    c.get("log")?.error("twilio webhook parse failed", {
+      name: (err as Error)?.name,
+      message: (err as Error)?.message,
+      stage: "formData",
+    });
     return c.text("Bad Request: expected form body", 400);
   }
 

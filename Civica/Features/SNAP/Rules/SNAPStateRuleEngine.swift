@@ -240,6 +240,13 @@ enum ExemptionReason: Equatable {
     case dependentChildCare
     case under18OrOver50
     case lessThanHalfTime
+    /// Session A — CA LPIE (Local Program for Integrated Education /
+    /// "limited part-time enrolled" expansion): at-least-half-time
+    /// enrollment in a degree or certificate program at a CA Community
+    /// College, CSU, or UC qualifies as a student exemption.
+    /// Gated by the server-side `lpie_auto_exempt_enabled` feature flag.
+    /// TODO: replace with actual CA CDSS ACL number for LPIE expansion (Matthew to provide)
+    case lpie
     /// State-specific exemption (MA self-sufficiency program,
     /// CA EOPS, etc.). Free-form so each state can name its own
     /// without forcing protocol-level enum churn.

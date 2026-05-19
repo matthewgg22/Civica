@@ -15,7 +15,7 @@ import { z } from 'zod';
 import { HTTPException } from 'hono/http-exception';
 import { makeServiceClient } from '../lib/supabase.js';
 import { grossIncomeLimitMonthly } from '@civica/snap-calculator';
-import type { Env } from '../types.js';
+import type { Env, Variables } from '../types.js';
 
 // ---------------------------------------------------------------------------
 // Zod schemas for Argyle paycheck.added payload
@@ -69,7 +69,7 @@ async function verifyArgyleSignature(
 // Route
 // ---------------------------------------------------------------------------
 
-const app = new Hono<{ Bindings: Env }>();
+const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 app.post('/', async (c) => {
   const rawBody = await c.req.text();
@@ -82,16 +82,27 @@ app.post('/', async (c) => {
     if (!valid) throw new HTTPException(401, { message: 'Invalid Argyle signature' });
   }
 
+  const log = c.get('log');
   let rawParsed: unknown;
   try {
     rawParsed = JSON.parse(rawBody);
-  } catch {
+  } catch (err) {
+    log?.error('argyle webhook parse failed', {
+      name: (err as Error)?.name,
+      message: (err as Error)?.message,
+      stage: 'json',
+    });
     throw new HTTPException(400, { message: 'Invalid Argyle payload' });
   }
 
   // Ignore non-paycheck events before full schema validation.
   const eventType = (rawParsed as Record<string, unknown>)?.event;
   if (typeof eventType !== 'string') {
+    log?.error('argyle webhook parse failed', {
+      name: 'InvalidEvent',
+      message: 'event field missing or non-string',
+      stage: 'event',
+    });
     throw new HTTPException(400, { message: 'Invalid Argyle payload' });
   }
   if (eventType !== 'paycheck.added') {
@@ -101,7 +112,12 @@ app.post('/', async (c) => {
   let payload: z.infer<typeof ArgyleWebhookSchema>;
   try {
     payload = ArgyleWebhookSchema.parse(rawParsed);
-  } catch {
+  } catch (err) {
+    log?.error('argyle webhook parse failed', {
+      name: (err as Error)?.name,
+      message: (err as Error)?.message,
+      stage: 'zod',
+    });
     throw new HTTPException(400, { message: 'Invalid Argyle payload' });
   }
 

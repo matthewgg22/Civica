@@ -1,4 +1,4 @@
-import type { WorkRequirementInput, WorkRequirementResult, ExemptionType } from './types';
+import type { WorkRequirementInput, WorkRequirementResult, ExemptionType, FeatureFlags } from './types';
 
 // OBBBA §10102 age bounds: adults 18–54 are subject to the expanded work requirement.
 const MIN_AGE = 18;
@@ -31,9 +31,29 @@ type MemberDetermination =
 function determineMember(
   m: WorkRequirementInput['householdMembers'][number],
   hasWaiverCounty: boolean,
+  state: WorkRequirementInput['state'],
+  featureFlags: FeatureFlags,
 ): MemberDetermination {
   // Age gate: only 18–54 are subject
   if (m.age < MIN_AGE || m.age > MAX_AGE) return { kind: 'not_subject_age' };
+
+  // Session A — CA LPIE override (gated by server-side feature flag).
+  // When CA + half-time + degree/certificate program AND the flag is on,
+  // surface the LPIE exemption BEFORE the standard 5-path checklist so it
+  // takes precedence. Flipping the flag off in the DB reverts behavior.
+  // TODO: replace with actual CA CDSS ACL number for LPIE expansion (Matthew to provide)
+  if (
+    state === 'CA'
+    && featureFlags.lpie_auto_exempt_enabled === true
+    && m.halfTimeEnrolled === true
+    && m.degreeOrCertificateProgram === true
+  ) {
+    return {
+      kind: 'exempt',
+      exemptionType: 'lpie_half_time_degree',
+      reason: 'Enrolled at least half-time in a degree or certificate program at a CA Community College, CSU, or UC',
+    };
+  }
 
   const childAges = m.dependentChildAges ?? [];
 
@@ -93,10 +113,13 @@ function determineMember(
  * that under-6 dependents produce the statutory exemption type rather than the
  * generic "not subject due to dependent" determination.
  */
-export function evaluateWorkRequirement(input: WorkRequirementInput): WorkRequirementResult {
+export function evaluateWorkRequirement(
+  input: WorkRequirementInput,
+  featureFlags: FeatureFlags = {},
+): WorkRequirementResult {
   const determinations = input.householdMembers.map((m) => ({
     member: m,
-    det: determineMember(m, input.hasWaiverCounty),
+    det: determineMember(m, input.hasWaiverCounty, input.state, featureFlags),
   }));
 
   const subjectMembers = determinations.filter((d) => d.det.kind === 'subject').map((d) => d.member);
