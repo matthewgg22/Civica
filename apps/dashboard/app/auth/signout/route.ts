@@ -6,5 +6,7 @@ export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
   await supabase.auth.signOut();
-  return NextResponse.redirect(new URL("/login", request.url));
+  // 303 See Other: browser follows with GET rather than repeating the POST.
+  // NextResponse.redirect defaults to 307, which would POST to /login.
+  return NextResponse.redirect(new URL("/login", request.url), 303);
 }
