@@ -16,6 +16,13 @@ export interface Env {
   // T15: AI-powered recert practice interview. Off unless RECERT_AI_ENABLED="true".
   RECERT_AI_ENABLED?: string;
   ANTHROPIC_API_KEY?: string;
+  // T-DR3-8: Argyle webhook signature verification (optional; skip if absent in dev).
+  ARGYLE_WEBHOOK_SECRET?: string;
+  // T-DR3-9: Canvas LMS OAuth integration (optional; 503 if absent).
+  CANVAS_CLIENT_ID?: string;
+  CANVAS_CLIENT_SECRET?: string;
+  CANVAS_INSTANCE_URL?: string;
+  CANVAS_REDIRECT_URI?: string;
 }
 
 export interface Variables {
