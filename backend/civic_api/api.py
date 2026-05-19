@@ -1224,19 +1224,4 @@ if FastAPI is not None:
 
         return _run_endpoint(handler, bad_request_exceptions=bad_request)
 
-    @app.get("/debug/sentry-check")
-    def debug_sentry_check() -> dict[str, Any]:
-        if os.environ.get("ENVIRONMENT", "production") == "production":
-            raise HTTPException(status_code=404, detail="Not found.")
-        if not _SENTRY_AVAILABLE:
-            return {"ok": False, "reason": "sentry_sdk not installed"}
-        dsn = os.environ.get("SENTRY_DSN")
-        if not dsn:
-            return {"ok": False, "reason": "SENTRY_DSN not set"}
-        sentry_sdk.capture_message("snap-engine /debug/sentry-check", level="error")
-        return {
-            "ok": True,
-            "sentry_dsn_configured": True,
-            "environment": os.environ.get("ENVIRONMENT", "production"),
-        }
 
