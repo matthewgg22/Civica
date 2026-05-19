@@ -160,6 +160,83 @@ Required once backup job is set up:
 
 ---
 
+## 7. Log drain setup (launch blocker — required before beta)
+
+Structured JSON logs are emitted on all three runtimes but currently not shipped to an external destination. Choose **one** aggregator and configure the drain on all runtimes before beta launch. Axiom is the recommended default (free tier is generous; first-class Fly.io + CF integration).
+
+### 7a. Fly.io apps (`civica-api`, `civica-snap-engine`, `civica-snap-api`)
+
+**Option A — Axiom (recommended)**
+
+1. Create an Axiom account at axiom.co and create a dataset (e.g. `civica-prod-logs`).
+2. Generate an API token: *Settings → API Tokens → New API Token* with `ingest` permission.
+3. Install the Axiom CLI: `brew install axiomhq/tap/axiom`.
+4. For each Fly app, pipe logs via a GitHub Actions cron or a small process:
+
+```bash
+# One-off verification (pipe live logs to Axiom for 60s)
+fly logs --app civica-api --json | axiom ingest civica-prod-logs --timestamp-field timestamp
+
+# Production: run as a Fly Machine side-car or an external log-shipper process
+```
+
+**Option B — Fly.io native Vector drain** (Fly `fly-log-shipper` image)
+
+Fly supports a managed log-shipper machine using Vector. Add this to each `fly.toml`:
+
+```toml
+# fly.toml (apps/api/fly.toml and equivalent for other apps)
+[deploy]
+  # existing settings ...
+
+# Add a [mounts] + [machines] block for the log-shipper OR use the
+# fly-log-shipper managed app:
+# https://fly.io/docs/reference/log-shipping/
+```
+
+Follow the official guide at https://fly.io/docs/reference/log-shipping/ — deploys a Vector-based shipper machine that reads Fly's NATS log stream and forwards to Axiom/Datadog/BetterStack.
+
+**Minimum secrets to add to the log-shipper app:**
+```bash
+fly secrets set \
+  AXIOM_DATASET="civica-prod-logs" \
+  AXIOM_TOKEN="<axiom-api-token>" \
+  --app civica-log-shipper
+```
+
+### 7b. Cloudflare Workers (`civica-enrollment-api`)
+
+Cloudflare Workers supports **Logpush** to ship tail logs to an external HTTP endpoint.
+
+1. In the Cloudflare dashboard: *Workers & Pages → [your worker] → Logs → Logpush → Add destination*.
+2. Choose *HTTP destination* (for Axiom) or one of the native integrations (Datadog, Splunk, R2).
+3. For Axiom: set the endpoint to `https://cloud.axiom.co/api/v1/datasets/civica-prod-logs/ingest` with `Authorization: Bearer <axiom-api-token>` header.
+4. Alternatively, use the Axiom Cloudflare integration at https://app.axiom.co/integrations — it configures Logpush automatically.
+
+### 7c. Vercel dashboard (`apps/dashboard`)
+
+Vercel supports log drains via project integrations:
+1. In the Vercel project: *Settings → Log Drains → Add Drain*.
+2. Point at the same Axiom ingest endpoint with the same token.
+
+### 7d. Verify
+
+After configuring all three drains, trigger one event on each runtime and confirm it appears in the aggregator:
+
+```bash
+# Fly: trigger a log line
+curl https://civica-api.fly.dev/healthz
+
+# CF Worker: trigger a request
+curl https://civica-enrollment-api.civica-api.workers.dev/health
+
+# Dashboard: load any page in the Vercel preview
+```
+
+Then update `docs/snap/launch-readiness.md` item 4 (Log drain) to ✅.
+
+---
+
 ## Secret rotation
 
 - **SNAP_FERNET_KEY**: follow `docs/snap/key_rotation.md`

@@ -45,9 +45,9 @@ For snap-engine verification details see [`docs/snap/observability.md`](observab
 
 ### 4. Log drain configured and receiving
 
-**❌ Blocking** — No log drain has been configured on any service. Structured JSON logging is in place on enrollment-api (PII logger, PR #88), but logs are not being shipped to any external destination.
+**⚠️ Operator action required** — Engineering setup guide added to [`docs/snap/deploy.md §7`](deploy.md#7-log-drain-setup-launch-blocker--required-before-beta). Covers Axiom (recommended) and alternatives for all three runtimes: Fly.io apps (Vector log-shipper), Cloudflare Workers (Logpush), Vercel (log drain integration). Engineering is done; operator must provision the aggregator account, set secrets, and verify events appear before flipping this to ✅.
 
-Action required: choose a log aggregator (e.g., Axiom, BetterStack, Datadog), configure a drain on each Fly app and the CF Worker tail, and verify logs appear before launch. Add setup steps to [`docs/snap/deploy.md`](deploy.md).
+Update this item to ✅ once: drain secrets are set on all services AND a test event appears in the aggregator for each runtime.
 
 ---
 
