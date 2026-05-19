@@ -974,6 +974,354 @@ export type Database = {
           },
         ]
       }
+      recertifications: {
+        Row: {
+          recert_id: string
+          packet_id: string
+          org_id: string
+          applicant_id: string
+          cert_period_end: string
+          cert_period_end_source: string
+          reminder_opted_in: boolean
+          first_reminder_sent_at: string | null
+          second_reminder_sent_at: string | null
+          day_of_reminder_sent_at: string | null
+          phone_prep_sent_at: string | null
+          post_interview_captured_at: string | null
+          practice_session_count: number
+          last_practice_at: string | null
+          refreshed_packet_id: string | null
+          refresh_triggered_at: string | null
+          refresh_completed_at: string | null
+          status: string
+          outcome_recorded_at: string | null
+          outcome_notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          recert_id?: string
+          packet_id: string
+          org_id: string
+          applicant_id: string
+          cert_period_end: string
+          cert_period_end_source: string
+          reminder_opted_in?: boolean
+          first_reminder_sent_at?: string | null
+          second_reminder_sent_at?: string | null
+          day_of_reminder_sent_at?: string | null
+          phone_prep_sent_at?: string | null
+          post_interview_captured_at?: string | null
+          practice_session_count?: number
+          last_practice_at?: string | null
+          refreshed_packet_id?: string | null
+          refresh_triggered_at?: string | null
+          refresh_completed_at?: string | null
+          status?: string
+          outcome_recorded_at?: string | null
+          outcome_notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          recert_id?: string
+          packet_id?: string
+          org_id?: string
+          applicant_id?: string
+          cert_period_end?: string
+          cert_period_end_source?: string
+          reminder_opted_in?: boolean
+          first_reminder_sent_at?: string | null
+          second_reminder_sent_at?: string | null
+          day_of_reminder_sent_at?: string | null
+          phone_prep_sent_at?: string | null
+          post_interview_captured_at?: string | null
+          practice_session_count?: number
+          last_practice_at?: string | null
+          refreshed_packet_id?: string | null
+          refresh_triggered_at?: string | null
+          refresh_completed_at?: string | null
+          status?: string
+          outcome_recorded_at?: string | null
+          outcome_notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      recert_practice_sessions: {
+        Row: {
+          session_id: string
+          recert_id: string
+          org_id: string
+          started_at: string
+          completed_at: string | null
+          turn_count: number
+          done: boolean
+          state_code: string | null
+          ai_session_ref: string | null
+          flags: Json | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          session_id?: string
+          recert_id: string
+          org_id: string
+          started_at?: string
+          completed_at?: string | null
+          turn_count?: number
+          done?: boolean
+          state_code?: string | null
+          ai_session_ref?: string | null
+          flags?: Json | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          session_id?: string
+          recert_id?: string
+          org_id?: string
+          started_at?: string
+          completed_at?: string | null
+          turn_count?: number
+          done?: boolean
+          state_code?: string | null
+          ai_session_ref?: string | null
+          flags?: Json | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      work_requirement_statuses: {
+        Row: {
+          wr_status_id: string
+          packet_id: string
+          org_id: string
+          applicant_id: string
+          is_subject: boolean
+          subject_member_ids: string[]
+          determination_basis: string
+          determined_at: string
+          exemption_type: string | null
+          exemption_documented_at: string | null
+          exemption_expires_at: string | null
+          exemption_notes: string | null
+          compliance_status: string
+          hours_reported_per_week: number | null
+          compliance_verified_at: string | null
+          compliance_notes: string | null
+          months_used_in_window: number
+          window_start_date: string | null
+          time_limit_reached_at: string | null
+          last_reviewed_by: string | null
+          last_reviewed_at: string | null
+          next_review_due: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          wr_status_id?: string
+          packet_id: string
+          org_id: string
+          applicant_id: string
+          is_subject: boolean
+          subject_member_ids?: string[]
+          determination_basis: string
+          determined_at?: string
+          exemption_type?: string | null
+          exemption_documented_at?: string | null
+          exemption_expires_at?: string | null
+          exemption_notes?: string | null
+          compliance_status?: string
+          hours_reported_per_week?: number | null
+          compliance_verified_at?: string | null
+          compliance_notes?: string | null
+          months_used_in_window?: number
+          window_start_date?: string | null
+          time_limit_reached_at?: string | null
+          last_reviewed_by?: string | null
+          last_reviewed_at?: string | null
+          next_review_due?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          wr_status_id?: string
+          packet_id?: string
+          org_id?: string
+          applicant_id?: string
+          is_subject?: boolean
+          subject_member_ids?: string[]
+          determination_basis?: string
+          determined_at?: string
+          exemption_type?: string | null
+          exemption_documented_at?: string | null
+          exemption_expires_at?: string | null
+          exemption_notes?: string | null
+          compliance_status?: string
+          hours_reported_per_week?: number | null
+          compliance_verified_at?: string | null
+          compliance_notes?: string | null
+          months_used_in_window?: number
+          window_start_date?: string | null
+          time_limit_reached_at?: string | null
+          last_reviewed_by?: string | null
+          last_reviewed_at?: string | null
+          next_review_due?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      work_requirement_events: {
+        Row: {
+          event_id: string
+          wr_status_id: string
+          org_id: string
+          actor_id: string
+          event_type: string
+          payload: Json
+          created_at: string
+        }
+        Insert: {
+          event_id?: string
+          wr_status_id: string
+          org_id: string
+          actor_id: string
+          event_type: string
+          payload: Json
+          created_at?: string
+        }
+        Update: {
+          event_id?: string
+          wr_status_id?: string
+          org_id?: string
+          actor_id?: string
+          event_type?: string
+          payload?: Json
+          created_at?: string
+        }
+        Relationships: []
+      }
+      benefitscal_submissions: {
+        Row: {
+          submission_id: string
+          packet_id: string
+          org_id: string
+          payload_json: Json
+          status: string
+          benefitscal_confirmation_number: string | null
+          submitted_at: string | null
+          submitted_by: string | null
+          assister_account_id: string | null
+          consent_type: string
+          telephonic_consent_recorded_at: string | null
+          error_message: string | null
+          retry_count: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          submission_id?: string
+          packet_id: string
+          org_id: string
+          payload_json: Json
+          status?: string
+          benefitscal_confirmation_number?: string | null
+          submitted_at?: string | null
+          submitted_by?: string | null
+          assister_account_id?: string | null
+          consent_type: string
+          telephonic_consent_recorded_at?: string | null
+          error_message?: string | null
+          retry_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          submission_id?: string
+          packet_id?: string
+          org_id?: string
+          payload_json?: Json
+          status?: string
+          benefitscal_confirmation_number?: string | null
+          submitted_at?: string | null
+          submitted_by?: string | null
+          assister_account_id?: string | null
+          consent_type?: string
+          telephonic_consent_recorded_at?: string | null
+          error_message?: string | null
+          retry_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      recert_outreach_log: {
+        Row: {
+          log_id: string
+          recert_id: string
+          org_id: string
+          outreach_type: string
+          to_phone: string
+          body_preview: string | null
+          twilio_message_sid: string | null
+          status: string
+          error_message: string | null
+          sent_at: string | null
+          created_at: string
+        }
+        Insert: {
+          log_id?: string
+          recert_id: string
+          org_id: string
+          outreach_type: string
+          to_phone: string
+          body_preview?: string | null
+          twilio_message_sid?: string | null
+          status?: string
+          error_message?: string | null
+          sent_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          log_id?: string
+          recert_id?: string
+          org_id?: string
+          outreach_type?: string
+          to_phone?: string
+          body_preview?: string | null
+          twilio_message_sid?: string | null
+          status?: string
+          error_message?: string | null
+          sent_at?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      recert_outreach_optouts: {
+        Row: {
+          optout_id: string
+          phone_hash: string
+          opted_out_at: string
+          opted_in_at: string | null
+        }
+        Insert: {
+          optout_id?: string
+          phone_hash: string
+          opted_out_at?: string
+          opted_in_at?: string | null
+        }
+        Update: {
+          optout_id?: string
+          phone_hash?: string
+          opted_out_at?: string
+          opted_in_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
