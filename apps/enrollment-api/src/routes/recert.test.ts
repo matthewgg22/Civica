@@ -236,12 +236,13 @@ describe('POST /recert/:recertId/practice/start', () => {
       done: false,
     };
 
-    // makeAnonClient is called twice: once for recert, once for packet
+    // makeAnonClient is called three times: recert, packet (state_code), packet_answers
     let anonCallCount = 0;
     vi.mocked(makeAnonClient).mockImplementation(() => {
       anonCallCount++;
       if (anonCallCount === 1) return makeDbClient({ data: recertRow, error: null });
-      return makeDbClient({ data: packetRow, error: null });
+      if (anonCallCount === 2) return makeDbClient({ data: packetRow, error: null });
+      return makeDbClient({ data: [], error: null }); // packet_answers: empty array
     });
     vi.mocked(withActorContext).mockResolvedValue(makeDbClient({ data: sessionRow, error: null }));
 
