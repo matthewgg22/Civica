@@ -284,7 +284,7 @@ describe('POST /recert/:recertId/practice/:sessionId/respond', () => {
     const { recertEngine } = await import('@civica/recert-engine');
     const { sessionId: realSessionId } = recertEngine.interview.start({
       recertId: RECERT_ID,
-      packetSnapshot: {},
+      packetSnapshot: { state_code: 'CA' },
       state: 'CA',
     });
 
