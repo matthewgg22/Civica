@@ -118,9 +118,6 @@ importers:
       '@civica/analytics-engine':
         specifier: workspace:*
         version: link:../../packages/analytics-engine
-      '@civica/cfr-273':
-        specifier: workspace:*
-        version: link:../../packages/cfr-273
       '@civica/snap-calculator':
         specifier: workspace:*
         version: link:../../packages/snap-calculator
