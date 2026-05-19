@@ -1,3 +1,4 @@
+import CivicaDesignSystem
 import SwiftUI
 
 // MARK: - Navigation destination enum
@@ -36,6 +37,19 @@ struct SNAPMarketplaceFlow: View {
     @State private var path: [SNAPMarketplaceDestination] = []
     @State private var showApplySheet = false
 
+    // Task 1: "Save for later" toast
+    @State private var savedJobTitle: String? = nil
+
+    // Task 2: "Report a problem" sheet
+    @State private var showReportSheet = false
+
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+
+    private var language: CivicaLanguage {
+        CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
+
     /// Injected dismiss closure — used by "I'll come back later" on Screen 01.
     var onDismiss: (() -> Void)?
 
@@ -67,7 +81,9 @@ struct SNAPMarketplaceFlow: View {
                                 showApplySheet = true
                             },
                             onSaveForLater: {
-                                // TODO: show toast then pop
+                                if let matchedJob = vm.jobs.first(where: { $0.id == jobId }) {
+                                    savedJobTitle = matchedJob.title
+                                }
                                 path.removeLast()
                             }
                         )
@@ -88,7 +104,7 @@ struct SNAPMarketplaceFlow: View {
                             }
                         },
                         onReportProblem: {
-                            // TODO: wire to support form
+                            showReportSheet = true
                         }
                     )
 
@@ -115,6 +131,52 @@ struct SNAPMarketplaceFlow: View {
             }
         }
         .background(Color.civicaPaper.ignoresSafeArea())
+        .overlay(alignment: .bottom) {
+            if savedJobTitle != nil {
+                SavedForLaterBanner(language: language)
+                    .padding(.bottom, CivicaSpacing.xxl)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: savedJobTitle)
+        .onChange(of: savedJobTitle) { _, newValue in
+            guard newValue != nil else { return }
+            Task {
+                try? await Task.sleep(for: .seconds(2.5))
+                savedJobTitle = nil
+            }
+        }
+        .sheet(isPresented: $showReportSheet) {
+            SNAPReportProblemView()
+        }
+    }
+}
+
+// MARK: - Save for later banner
+
+private struct SavedForLaterBanner: View {
+    let language: CivicaLanguage
+
+    private var label: String {
+        language == .spanish ? "Guardado para después" : "Saved for later"
+    }
+
+    var body: some View {
+        HStack(spacing: CivicaSpacing.sm) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(CivicaColors.onPrimaryText)
+            Text(label)
+                .font(CivicaTypography.footnote)
+                .foregroundStyle(CivicaColors.onPrimaryText)
+        }
+        .padding(.vertical, CivicaSpacing.sm)
+        .padding(.horizontal, CivicaSpacing.lg)
+        .background(CivicaColors.accentTeal)
+        .clipShape(Capsule())
+        .shadow(color: CivicaColors.shadowSoft, radius: 4, x: 0, y: 2)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(label)
     }
 }
 
