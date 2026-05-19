@@ -482,6 +482,31 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		CCAA000000000000000000C1 /* Sync SNAP Rules JSON */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/packages/snap-rules/data/ca.json",
+				"$(SRCROOT)/packages/snap-rules/data/ma.json",
+			);
+			name = "Sync SNAP Rules JSON";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/Civica/Features/SNAP/SNAPRules/snap_rules_ca.json",
+				"$(SRCROOT)/Civica/Features/SNAP/SNAPRules/snap_rules_ma.json",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Copies canonical SNAP rules JSON from packages/snap-rules/data/\n# into the iOS resource tree so Civica/Features/SNAP/SNAPRules/*.json\n# never drift from the H-web authored source.\n#\n# No-op when packages/snap-rules/data/ does not exist yet (stub mode).\n# Remove the existence guard once H-web merges packages/snap-rules.\nset -euo pipefail\nRULES_SRC=\"${SRCROOT}/packages/snap-rules/data\"\nRULES_DST=\"${SRCROOT}/Civica/Features/SNAP/SNAPRules\"\nif [ -d \"${RULES_SRC}\" ]; then\n  cp \"${RULES_SRC}/ca.json\" \"${RULES_DST}/snap_rules_ca.json\"\n  cp \"${RULES_SRC}/ma.json\" \"${RULES_DST}/snap_rules_ma.json\"\n  echo \"Sync SNAP Rules JSON: copied ca.json + ma.json\"\nelse\n  echo \"Sync SNAP Rules JSON: packages/snap-rules/data not found — using stubs\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		C36C73052F415639007CB83D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -526,27 +551,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		CCAA000000000000000000C1 /* Sync SNAP Rules JSON */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Sync SNAP Rules JSON";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Copies canonical SNAP rules JSON from packages/snap-rules/data/\n# into the iOS resource tree so Civica/Features/SNAP/SNAPRules/*.json\n# never drift from the H-web authored source.\n#\n# No-op when packages/snap-rules/data/ does not exist yet (stub mode).\n# Remove the existence guard once H-web merges packages/snap-rules.\nset -euo pipefail\nRULES_SRC=\"${SRCROOT}/packages/snap-rules/data\"\nRULES_DST=\"${SRCROOT}/Civica/Features/SNAP/SNAPRules\"\nif [ -d \"${RULES_SRC}\" ]; then\n  cp \"${RULES_SRC}/ca.json\" \"${RULES_DST}/snap_rules_ca.json\"\n  cp \"${RULES_SRC}/ma.json\" \"${RULES_DST}/snap_rules_ma.json\"\n  echo \"Sync SNAP Rules JSON: copied ca.json + ma.json\"\nelse\n  echo \"Sync SNAP Rules JSON: packages/snap-rules/data not found — using stubs\"\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		C3B862FA2D9A42E20092C1CB /* PBXTargetDependency */ = {
