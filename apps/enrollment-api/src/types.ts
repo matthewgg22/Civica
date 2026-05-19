@@ -23,6 +23,12 @@ export interface Env {
   CANVAS_CLIENT_SECRET?: string;
   CANVAS_INSTANCE_URL?: string;
   CANVAS_REDIRECT_URI?: string;
+  // Session M1: BenefitsCal Phase 2 CBO Manager portal credentials.
+  // Optional in types so dev/test can run without them. The submitter
+  // throws cleanly at runtime if either is missing in production.
+  BENEFITSCAL_CBO_USERNAME?: string;
+  BENEFITSCAL_CBO_PASSWORD?: string;
+  BENEFITSCAL_BASE_URL?: string;
 }
 
 export interface Variables {
