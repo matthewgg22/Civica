@@ -163,7 +163,7 @@ app.post('/', async (c) => {
       projected_benefit_usd: projectedBenefitUsd,
       pay_date: paycheck.pay_date,
       is_cliff_event: isCliffEvent,
-    })
+    } as never)
     .select('marketplace_paycheck_id')
     .single() as unknown as { data: { marketplace_paycheck_id: string } | null };
 
@@ -182,7 +182,7 @@ app.post('/', async (c) => {
         due_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
         status: 'pending',
         created_by: 'system:argyle-webhook',
-      });
+      } as never);
   }
 
   return c.json({

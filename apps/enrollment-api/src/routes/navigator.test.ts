@@ -105,7 +105,7 @@ describe('POST /navigator/outreach', () => {
     );
 
     expect(res.status).toBe(201);
-    const body = await res.json();
+    const body = await res.json() as { reason: string; status: string };
     expect(body.reason).toBe('cliff_event');
     expect(body.status).toBe('pending');
   });

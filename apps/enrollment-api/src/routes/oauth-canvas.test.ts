@@ -45,7 +45,7 @@ describe('GET /oauth/canvas/status', () => {
     const res = await app.request('/oauth/canvas/status', { method: 'GET' }, CANVAS_ENV);
 
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = await res.json() as { connected: boolean };
     expect(body.connected).toBe(false);
   });
 
@@ -64,7 +64,7 @@ describe('GET /oauth/canvas/status', () => {
     const res = await app.request('/oauth/canvas/status', { method: 'GET' }, CANVAS_ENV);
 
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = await res.json() as { connected: boolean };
     expect(body.connected).toBe(true);
   });
 });
@@ -79,7 +79,7 @@ describe('DELETE /oauth/canvas', () => {
     const res = await app.request('/oauth/canvas', { method: 'DELETE' }, CANVAS_ENV);
 
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = await res.json() as { connected: boolean };
     expect(body.connected).toBe(false);
   });
 });

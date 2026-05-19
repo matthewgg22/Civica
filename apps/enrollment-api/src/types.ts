@@ -23,6 +23,9 @@ export interface Env {
   CANVAS_CLIENT_SECRET?: string;
   CANVAS_INSTANCE_URL?: string;
   CANVAS_REDIRECT_URI?: string;
+  // T15: AI-powered recert practice interview. Off unless RECERT_AI_ENABLED="true".
+  RECERT_AI_ENABLED?: string;
+  ANTHROPIC_API_KEY?: string;
 }
 
 export interface Variables {

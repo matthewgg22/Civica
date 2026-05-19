@@ -90,9 +90,9 @@ async function exchangeCanvasCode(
 ): Promise<{ accessToken: string; refreshToken: string; expiresIn: number }> {
   const body = new URLSearchParams({
     grant_type: 'authorization_code',
-    client_id: env.CANVAS_CLIENT_ID,
-    client_secret: env.CANVAS_CLIENT_SECRET,
-    redirect_uri: env.CANVAS_REDIRECT_URI,
+    client_id: env.CANVAS_CLIENT_ID ?? '',
+    client_secret: env.CANVAS_CLIENT_SECRET ?? '',
+    redirect_uri: env.CANVAS_REDIRECT_URI ?? '',
     code,
   });
 
@@ -157,7 +157,7 @@ app.post('/exchange', zValidator('json', exchangeBodySchema), async (c) => {
       expires_at: expiresAt,
       canvas_instance_url: c.env.CANVAS_INSTANCE_URL ?? '',
       revoked_at: null,
-    }, { onConflict: 'applicant_id' });
+    } as never, { onConflict: 'applicant_id' });
 
   return c.json({ connected: true, expires_at: expiresAt }, 200);
 });
@@ -189,7 +189,7 @@ app.delete('/', async (c) => {
   await db
     .schema('snap_enrollment')
     .from('canvas_connections' as never)
-    .update({ revoked_at: new Date().toISOString() })
+    .update({ revoked_at: new Date().toISOString() } as never)
     .eq('applicant_id', actor.id)
     .is('revoked_at', null);
 

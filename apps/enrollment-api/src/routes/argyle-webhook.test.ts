@@ -70,7 +70,7 @@ describe('POST /webhooks/argyle', () => {
     );
 
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = await res.json() as { action: string; marketplace_paycheck_id: string; projected_benefit_usd: number; ok: boolean };
     expect(body.action).toBe('paycheck_recorded');
     expect(body.marketplace_paycheck_id).toBe('mp-001');
   });
@@ -113,7 +113,7 @@ describe('POST /webhooks/argyle', () => {
     );
 
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = await res.json() as { action: string; projected_benefit_usd: number; ok: boolean };
     expect(body.action).toBe('cliff_event_queued');
     expect(body.projected_benefit_usd).toBe(0);
   });
@@ -130,7 +130,7 @@ describe('POST /webhooks/argyle', () => {
       TEST_ENV,
     );
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = await res.json() as { action: string; event: string };
     expect(body.action).toBe('ignored');
     expect(body.event).toBe('account.connected');
   });
@@ -152,7 +152,7 @@ describe('POST /webhooks/argyle', () => {
       TEST_ENV,
     );
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = await res.json() as { action: string; reason: string };
     expect(body.action).toBe('ignored');
     expect(body.reason).toBe('no_connection');
   });
