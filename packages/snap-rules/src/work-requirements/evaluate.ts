@@ -1,0 +1,117 @@
+import type { WorkRequirementInput, WorkRequirementResult, ExemptionType } from './types.js';
+
+// OBBBA §10102 age bounds: adults 18–54 are subject to the expanded work requirement.
+const MIN_AGE = 18;
+const MAX_AGE = 54;
+
+// §10102: household member is NOT subject if they have a dependent child UNDER age 14.
+// (The prior ABAWD rule used under-18; this is the key OBBBA change.)
+const DEPENDENT_EXEMPTION_AGE_CUTOFF = 14;
+
+// Caretaker exemption: caring for a dependent child under age 6.
+const CARETAKER_UNDER_6_CUTOFF = 6;
+
+const BASE_CITATIONS: WorkRequirementResult['citations'] = [
+  { section: '7 CFR 273.24', title: 'SNAP work requirements' },
+  { section: 'OBBBA §10102', title: 'Work requirement expansion (P.L. 119-21)' },
+];
+
+/**
+ * Per-member determination: whether the member is subject, exempt (with type),
+ * or simply not subject (due to under-14 dependent, no exemption type assigned).
+ */
+type MemberDetermination =
+  | { kind: 'subject' }
+  | { kind: 'exempt'; exemptionType: ExemptionType; reason: string }
+  | { kind: 'not_subject_age' }        // outside 18–54 age band
+  | { kind: 'not_subject_dependent' }; // has dependent 6–13 (under-14 cutoff, no explicit exemption)
+
+function determineMember(
+  m: WorkRequirementInput['householdMembers'][number],
+  hasWaiverCounty: boolean,
+): MemberDetermination {
+  // Age gate: only 18–54 are subject
+  if (m.age < MIN_AGE || m.age > MAX_AGE) return { kind: 'not_subject_age' };
+
+  const childAges = m.dependentChildAges ?? [];
+
+  // Caretaker of a child under 6 → explicit statutory exemption (7 CFR 273.24(b)(5))
+  // Check this before the under-14 sweep so under-6 dependents get the exemption type.
+  if (childAges.some((age) => age < CARETAKER_UNDER_6_CUTOFF)) {
+    return { kind: 'exempt', exemptionType: 'caretaker_under_6', reason: 'Member is caretaker of a child under age 6' };
+  }
+
+  // §10102 cutoff: dependent child under 14 → not subject (no explicit exemption type)
+  if (childAges.some((age) => age < DEPENDENT_EXEMPTION_AGE_CUTOFF)) {
+    return { kind: 'not_subject_dependent' };
+  }
+
+  // Named exemptions (checked in priority order)
+  if (m.receivesSSI || m.receivesSSDA) {
+    return { kind: 'exempt', exemptionType: 'ssdi_ssi', reason: 'Member receives SSI or SSDA benefits' };
+  }
+  if (m.hasDisability) {
+    return { kind: 'exempt', exemptionType: 'disability', reason: 'Member has documented disability' };
+  }
+  if (m.isPregnant) {
+    return { kind: 'exempt', exemptionType: 'pregnancy', reason: 'Member is pregnant' };
+  }
+
+  // Waiver county covers all remaining members who reach this point
+  if (hasWaiverCounty) {
+    return { kind: 'exempt', exemptionType: 'waiver_county', reason: 'County has an active USDA ABAWD waiver' };
+  }
+
+  return { kind: 'subject' };
+}
+
+/**
+ * Pure function — no I/O. Determines whether any household member is subject to
+ * SNAP work requirements under OBBBA §10102.
+ *
+ * Logic (per member):
+ * 1. Must be aged 18–54.
+ * 2. Caretaker of a child under 6 → exempt (caretaker_under_6).
+ * 3. Has dependent child 6–13 (under §10102 cutoff of 14) → not subject (no exemption type).
+ * 4. SSI/SSDA → exempt (ssdi_ssi).
+ * 5. Disability → exempt (disability).
+ * 6. Pregnancy → exempt (pregnancy).
+ * 7. Waiver county → exempt (waiver_county).
+ * 8. Remaining → subject.
+ *
+ * The caretaker_under_6 check (step 2) precedes the under-14 sweep (step 3) so
+ * that under-6 dependents produce the statutory exemption type rather than the
+ * generic "not subject due to dependent" determination.
+ */
+export function evaluateWorkRequirement(input: WorkRequirementInput): WorkRequirementResult {
+  const determinations = input.householdMembers.map((m) => ({
+    member: m,
+    det: determineMember(m, input.hasWaiverCounty),
+  }));
+
+  const subjectMembers = determinations.filter((d) => d.det.kind === 'subject').map((d) => d.member);
+
+  // Capture the first (highest priority) exemption type seen across non-subject members.
+  // This is reported at the household level when isSubject is false.
+  let dominantExemptionType: ExemptionType | null = null;
+  let dominantExemptionReason: string | null = null;
+  for (const { det } of determinations) {
+    if (det.kind === 'exempt' && !dominantExemptionType) {
+      dominantExemptionType = det.exemptionType;
+      dominantExemptionReason = det.reason;
+      break;
+    }
+  }
+
+  const isSubject = subjectMembers.length > 0;
+  const subjectMemberIds = subjectMembers.map((m) => m.id);
+
+  return {
+    isSubject,
+    subjectMemberIds,
+    exemptionType: isSubject ? null : dominantExemptionType,
+    exemptionReason: isSubject ? null : dominantExemptionReason,
+    timeLimitApplicable: isSubject,
+    citations: BASE_CITATIONS,
+  };
+}
