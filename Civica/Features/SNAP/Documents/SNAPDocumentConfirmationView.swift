@@ -45,6 +45,8 @@ struct SNAPDocumentConfirmationView: View {
             .padding(CivicaSpacing.lg)
         }
         .background(CivicaColors.paper)
+        .navigationTitle(SNAPDocumentConfirmationStrings.title.value(in: language))
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     private var header: some View {

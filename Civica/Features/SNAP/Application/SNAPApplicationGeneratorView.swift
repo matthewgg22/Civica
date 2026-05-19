@@ -38,6 +38,8 @@ struct SNAPApplicationGeneratorView: View {
         }
         .padding(CivicaSpacing.lg)
         .background(CivicaColors.paper)
+        .navigationTitle(SNAPApplicationGeneratorStrings.title.value(in: language))
+        .navigationBarTitleDisplayMode(.inline)
         .task {
             if case .idle = viewModel.phase {
                 await viewModel.generate()

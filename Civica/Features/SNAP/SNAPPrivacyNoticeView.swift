@@ -91,6 +91,8 @@ struct SNAPPrivacyNoticeView: View {
             .padding(CivicaSpacing.lg)
         }
         .background(CivicaColors.tealSurface.ignoresSafeArea())
+        .navigationTitle(SNAPPrivacyNoticeNavStrings.navTitle.value(in: language))
+        .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(isPresented: $continueToEligibility) {
             SNAPEligibilityIntroView(viewModel: viewModel)
                 .navigationTitle(SNAPPrivacyNoticeNavStrings.checkWhatYouNeed.value(in: language))
