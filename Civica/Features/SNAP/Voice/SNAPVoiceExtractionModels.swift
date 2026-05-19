@@ -116,6 +116,15 @@ struct DistressSignalExtraction {
     var confidence: Double
 }
 
+// Identifiable conformance is required so SNAPVoiceSection can use
+// .sheet(item: $pendingDistress). Confidence doubles as a stable
+// enough identity within a single recording session (the sheet is
+// dismissed before another extraction could produce the same value).
+@available(iOS 26.0, *)
+extension DistressSignalExtraction: Identifiable {
+    public var id: Double { confidence }
+}
+
 // MARK: - Per-step extraction structs
 
 @available(iOS 26.0, *)
