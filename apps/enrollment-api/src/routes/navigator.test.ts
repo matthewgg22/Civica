@@ -150,6 +150,118 @@ describe('POST /navigator/outreach', () => {
   });
 });
 
+// ── POST /navigator/packets/:packetId/qc-outcome ─────────────────────────────
+// RLS enforcement (cross-org isolation) must be verified in staging against a
+// real Supabase instance with navigator JWT from a different org_id.
+
+describe('POST /navigator/packets/:packetId/qc-outcome', () => {
+  const OUTCOME_BODY = {
+    qc_sampled: true,
+    error_found: true,
+    error_type: 'earned_income_unreported',
+    error_amount: 320,
+  };
+
+  const MOCK_OUTCOME = {
+    id: 'c0000000-0000-0000-0000-000000000001',
+    packet_id: PACKET_ID,
+    org_id: 'org-001',
+    qc_sampled: true,
+    error_found: true,
+    error_type: 'earned_income_unreported',
+    error_amount: 320,
+    logged_at: '2026-05-19T00:00:00.000Z',
+    logged_by: 'nav-001',
+  };
+
+  it('returns 201 with outcome row on happy path', async () => {
+    const qbPacket = makeQueryBuilder({ data: { packet_id: PACKET_ID, org_id: 'org-001' }, error: null });
+    vi.mocked(makeAnonClient).mockReturnValue({
+      schema: vi.fn().mockReturnValue({ from: vi.fn().mockReturnValue(qbPacket) }),
+    } as never);
+
+    const dbClient = makeDbClient({ data: MOCK_OUTCOME, error: null });
+    vi.mocked(withActorContext).mockResolvedValue(dbClient);
+
+    const app = buildTestApp(navigatorRouter, '/navigator', NAVIGATOR);
+    const res = await app.request(
+      `/navigator/packets/${PACKET_ID}/qc-outcome`,
+      { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify(OUTCOME_BODY) },
+      TEST_ENV,
+    );
+
+    expect(res.status).toBe(201);
+    const body = await res.json() as typeof MOCK_OUTCOME;
+    expect(body.qc_sampled).toBe(true);
+    expect(body.error_found).toBe(true);
+    expect(body.error_type).toBe('earned_income_unreported');
+  });
+
+  it('returns 201 for unsampled outcome with error_found null', async () => {
+    const qbPacket = makeQueryBuilder({ data: { packet_id: PACKET_ID, org_id: 'org-001' }, error: null });
+    vi.mocked(makeAnonClient).mockReturnValue({
+      schema: vi.fn().mockReturnValue({ from: vi.fn().mockReturnValue(qbPacket) }),
+    } as never);
+
+    const dbClient = makeDbClient({ data: { ...MOCK_OUTCOME, qc_sampled: false, error_found: null }, error: null });
+    vi.mocked(withActorContext).mockResolvedValue(dbClient);
+
+    const app = buildTestApp(navigatorRouter, '/navigator', NAVIGATOR);
+    const res = await app.request(
+      `/navigator/packets/${PACKET_ID}/qc-outcome`,
+      {
+        method: 'POST',
+        headers: JSON_HEADERS,
+        body: JSON.stringify({ qc_sampled: false, error_found: null }),
+      },
+      TEST_ENV,
+    );
+
+    expect(res.status).toBe(201);
+  });
+
+  it('returns 400 when qc_sampled=false but error_found is set (label contamination guard)', async () => {
+    const app = buildTestApp(navigatorRouter, '/navigator', NAVIGATOR);
+    const res = await app.request(
+      `/navigator/packets/${PACKET_ID}/qc-outcome`,
+      {
+        method: 'POST',
+        headers: JSON_HEADERS,
+        body: JSON.stringify({ qc_sampled: false, error_found: false }),
+      },
+      TEST_ENV,
+    );
+
+    // Zod refine validation rejects this body
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 403 when actor is applicant', async () => {
+    const app = buildTestApp(navigatorRouter, '/navigator', APPLICANT);
+    const res = await app.request(
+      `/navigator/packets/${PACKET_ID}/qc-outcome`,
+      { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify(OUTCOME_BODY) },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(403);
+  });
+
+  it('returns 404 when packet does not exist', async () => {
+    const qbNotFound = makeQueryBuilder({ data: null, error: { code: 'PGRST116' } });
+    vi.mocked(makeAnonClient).mockReturnValue({
+      schema: vi.fn().mockReturnValue({ from: vi.fn().mockReturnValue(qbNotFound) }),
+    } as never);
+
+    const app = buildTestApp(navigatorRouter, '/navigator', NAVIGATOR);
+    const res = await app.request(
+      `/navigator/packets/${PACKET_ID}/qc-outcome`,
+      { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify(OUTCOME_BODY) },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(404);
+  });
+});
+
 // ── PATCH /navigator/outreach/:taskId ─────────────────────────────────────────
 
 const TASK_ID = 't0000000-0000-0000-0000-000000000001';

@@ -1,6 +1,6 @@
 {
   "name": "@civica/snap-qc-engine",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "QC engine: rule logic, defensibility scoring, evidence package builder, and citations for SNAP verification flows. Tenant-agnostic; pure compute; no network.",
   "type": "module",

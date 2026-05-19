@@ -12,6 +12,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@civica/snap-qc-engine": "workspace:*",
     "@civica/recert-engine": "workspace:*",
     "@civica/snap-calculator": "workspace:*",
     "@civica/snap-rules": "workspace:*",

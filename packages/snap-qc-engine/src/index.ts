@@ -24,6 +24,8 @@ export {
   evaluateBenefitImpact,
 } from "./flows/benefit-impact-projection/index";
 export { combineScores, rollupFactors } from "./scoring/defensibility";
+export { scoreErrorRisk, ERROR_WEIGHT } from "./scoring/error-risk";
+export type { ErrorRiskResult, ErrorRiskTier } from "./scoring/error-risk";
 
 export interface EvaluateOptions {
   /** Override timestamp source (for deterministic tests). */
