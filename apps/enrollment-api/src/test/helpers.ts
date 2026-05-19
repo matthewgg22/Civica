@@ -52,6 +52,9 @@ export function makeDbClient(result: MockResult): any {
         createSignedUrl: vi.fn().mockResolvedValue({
           data: { signedUrl: 'https://example.com/dl' }, error: null,
         }),
+        createSignedUploadUrl: vi.fn().mockResolvedValue({
+          data: { signedUrl: 'https://example.com/upload', token: 'tok' }, error: null,
+        }),
       }),
     },
   };
