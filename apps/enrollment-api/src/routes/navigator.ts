@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { HTTPException } from 'hono/http-exception';
 import { makeAnonClient } from '../lib/supabase.js';
 import { withActorContext } from '../middleware/actorContext.js';
+import { scoreErrorRisk } from '@civica/snap-qc-engine';
 import type { Env } from '../types.js';
 import type { Json } from '@civica/db-types';
 
@@ -234,6 +235,85 @@ app.patch('/outreach/:taskId', zValidator('json', patchOutreachBodySchema), asyn
   if (error) throw new HTTPException(500, { message: error.message });
 
   return c.json(task);
+});
+
+// ---------------------------------------------------------------------------
+// POST /navigator/packets/:packetId/error-risk
+// Navigator-facing mirror of the applicant error-risk endpoint.
+// Uses the navigator's JWT so org-scoped RLS applies; reads packet_answers
+// and argyle_connections for the packet's applicant via service role for the
+// cross-owner read (navigator can see the packet but not the applicant's auth row).
+// ---------------------------------------------------------------------------
+
+app.post('/packets/:packetId/error-risk', async (c) => {
+  const actor = c.get('actor');
+  requireNavigator(actor.kind);
+
+  const packetId = c.req.param('packetId');
+  const anonDb = makeAnonClient(c.env, c.get('jwt'));
+
+  // Verify navigator can see the packet (RLS: is_navigator_in_org).
+  const { data: packet, error: pErr } = await anonDb
+    .schema('snap_enrollment')
+    .from('snap_packets')
+    .select('packet_id, applicant_id')
+    .eq('packet_id', packetId)
+    .is('deleted_at', null)
+    .single();
+
+  if (pErr?.code === 'PGRST116' || !packet) {
+    throw new HTTPException(404, { message: 'Packet not found' });
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (pErr) throw new HTTPException(500, { message: (pErr as any).message });
+
+  // Read packet answers and Argyle connection via anon client (navigator RLS covers these).
+  type AnswerRow = { question_key: string; applicant_answer: string | null };
+  const [answersResult, argyleResult] = await Promise.all([
+    anonDb
+      .schema('snap_enrollment')
+      .from('packet_answers')
+      .select('question_key, applicant_answer')
+      .eq('packet_id', packetId)
+      .in('question_key', ['employment_status', 'housing_situation', 'monthly_utilities']),
+    anonDb
+      .schema('snap_enrollment')
+      .from('argyle_connections')
+      .select('linked_accounts')
+      .eq('applicant_id', packet.applicant_id)
+      .is('revoked_at', null)
+      .maybeSingle(),
+  ]);
+
+  const answers: Record<string, string> = Object.fromEntries(
+    (answersResult.data ?? [])
+      .map((a: AnswerRow) => [a.question_key, a.applicant_answer ?? ''])
+      .filter(([, v]) => v !== '')
+  );
+
+  const linkedAccounts = (argyleResult.data?.linked_accounts as unknown[]) ?? [];
+  const argyleConnected = linkedAccounts.length > 0;
+
+  type FlowSignal = { flow: 'gig-income' | 'utility-sua' | 'shared-lease'; defensibility_score: 'strong' | 'moderate' | 'weak' };
+  const flowSignals: FlowSignal[] = [];
+
+  const incomeStatuses = new Set(['employed_full_time', 'employed_part_time', 'self_employed']);
+  const employmentStatus = answers['employment_status'];
+  if (employmentStatus && incomeStatuses.has(employmentStatus)) {
+    flowSignals.push({ flow: 'gig-income', defensibility_score: argyleConnected ? 'strong' : 'weak' });
+  }
+
+  const monthlyUtilities = parseFloat(answers['monthly_utilities'] ?? '0');
+  if (monthlyUtilities > 0) {
+    flowSignals.push({ flow: 'utility-sua', defensibility_score: 'moderate' });
+  }
+
+  const housingSituation = answers['housing_situation'];
+  if (housingSituation === 'renting' || housingSituation === 'living_with_family') {
+    flowSignals.push({ flow: 'shared-lease', defensibility_score: 'moderate' });
+  }
+
+  return c.json(scoreErrorRisk(flowSignals));
 });
 
 export default app;

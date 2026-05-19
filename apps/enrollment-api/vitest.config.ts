@@ -12,6 +12,7 @@ export default defineConfig({
       '@civica/recert-engine':         resolve(__dirname, '../../packages/recert-engine/src/index.ts'),
       '@civica/benefitscal-cbo': resolve(__dirname, '../../packages/benefitscal-cbo/src/index.ts'),
       '@civica/snap-rules':      resolve(__dirname, '../../packages/snap-rules/src/index.ts'),
+      '@civica/snap-qc-engine':  resolve(__dirname, '../../packages/snap-qc-engine/src/index.ts'),
     },
   },
   test: {

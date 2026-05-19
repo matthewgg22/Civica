@@ -342,3 +342,111 @@ describe('PATCH /navigator/outreach/:taskId', () => {
     expect(res.status).toBe(403);
   });
 });
+
+// ── POST /navigator/packets/:packetId/error-risk ──────────────────────────────
+
+function mockErrorRiskDb(
+  packetResult: { data: unknown; error: unknown },
+  answersResult: { data: unknown; error: unknown },
+  argyleResult: { data: unknown; error: unknown },
+) {
+  const qbPacket = makeQueryBuilder(packetResult);
+  const qbAnswers = makeQueryBuilder(answersResult);
+  const qbArgyle = makeQueryBuilder(argyleResult);
+  vi.mocked(makeAnonClient).mockReturnValue({
+    schema: vi.fn().mockReturnValue({
+      from: vi.fn()
+        .mockReturnValueOnce(qbPacket)   // snap_packets ownership check
+        .mockReturnValueOnce(qbAnswers)  // packet_answers
+        .mockReturnValueOnce(qbArgyle),  // argyle_connections
+    }),
+  } as never);
+}
+
+describe('POST /navigator/packets/:packetId/error-risk', () => {
+  it('returns tier=high when income unverified and no Argyle', async () => {
+    mockErrorRiskDb(
+      { data: { packet_id: PACKET_ID, applicant_id: 'a0000000-0000-0000-0000-000000000001' }, error: null },
+      { data: [{ question_key: 'employment_status', applicant_answer: 'employed_full_time' }], error: null },
+      { data: { linked_accounts: [] }, error: null },
+    );
+
+    const app = buildTestApp(navigatorRouter, '/navigator', NAVIGATOR);
+    const res = await app.request(
+      `/navigator/packets/${PACKET_ID}/error-risk`,
+      { method: 'POST', headers: JSON_HEADERS },
+      TEST_ENV,
+    );
+
+    expect(res.status).toBe(200);
+    const body = await res.json() as { tier: string; score: number; factors: string[] };
+    expect(body.tier).toBe('high');
+    expect(body.score).toBe(80);
+    expect(body.factors).toContain('earned_income_unverified');
+  });
+
+  it('returns tier=low when Argyle connected (API-verified income)', async () => {
+    mockErrorRiskDb(
+      { data: { packet_id: PACKET_ID, applicant_id: 'a0000000-0000-0000-0000-000000000001' }, error: null },
+      { data: [{ question_key: 'employment_status', applicant_answer: 'self_employed' }], error: null },
+      { data: { linked_accounts: [{ account_id: 'acc-1' }] }, error: null },
+    );
+
+    const app = buildTestApp(navigatorRouter, '/navigator', NAVIGATOR);
+    const res = await app.request(
+      `/navigator/packets/${PACKET_ID}/error-risk`,
+      { method: 'POST', headers: JSON_HEADERS },
+      TEST_ENV,
+    );
+
+    expect(res.status).toBe(200);
+    const body = await res.json() as { tier: string; score: number };
+    expect(body.tier).toBe('low');
+    expect(body.score).toBe(5);
+  });
+
+  it('returns tier=incomplete when no answers collected', async () => {
+    mockErrorRiskDb(
+      { data: { packet_id: PACKET_ID, applicant_id: 'a0000000-0000-0000-0000-000000000001' }, error: null },
+      { data: [], error: null },
+      { data: null, error: null },
+    );
+
+    const app = buildTestApp(navigatorRouter, '/navigator', NAVIGATOR);
+    const res = await app.request(
+      `/navigator/packets/${PACKET_ID}/error-risk`,
+      { method: 'POST', headers: JSON_HEADERS },
+      TEST_ENV,
+    );
+
+    expect(res.status).toBe(200);
+    const body = await res.json() as { tier: string; score: null };
+    expect(body.tier).toBe('incomplete');
+    expect(body.score).toBeNull();
+  });
+
+  it('returns 404 when packet not in navigator org', async () => {
+    const qbNotFound = makeQueryBuilder({ data: null, error: { code: 'PGRST116' } });
+    vi.mocked(makeAnonClient).mockReturnValue({
+      schema: vi.fn().mockReturnValue({ from: vi.fn().mockReturnValue(qbNotFound) }),
+    } as never);
+
+    const app = buildTestApp(navigatorRouter, '/navigator', NAVIGATOR);
+    const res = await app.request(
+      `/navigator/packets/${PACKET_ID}/error-risk`,
+      { method: 'POST', headers: JSON_HEADERS },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(404);
+  });
+
+  it('returns 403 when actor is applicant', async () => {
+    const app = buildTestApp(navigatorRouter, '/navigator', APPLICANT);
+    const res = await app.request(
+      `/navigator/packets/${PACKET_ID}/error-risk`,
+      { method: 'POST', headers: JSON_HEADERS },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(403);
+  });
+});
