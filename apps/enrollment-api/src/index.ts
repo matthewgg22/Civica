@@ -35,12 +35,15 @@ app.use("*", requestLogger);
 // Vercel preview deploys. Disallowed origins receive no Access-Control-Allow-Origin
 // header (browsers block the response). Same-origin / server-to-server requests
 // (no Origin header) are allowed through CORS — auth middleware gates them.
+// Vercel project is named `civica-api` (hosts the dashboard — confusing legacy
+// naming). The `civica-dashboard.vercel.app` subdomain returns 404 (deployment
+// not found). See docs/launch/production-url-audit-2026-05-19.md.
 const CORS_ALLOWED_ORIGINS = [
-  "https://civica-dashboard.vercel.app",
+  "https://civica-api.vercel.app",
   "https://civica.app",
   "http://localhost:3000",
 ];
-const CORS_VERCEL_PREVIEW = /^https:\/\/civica-dashboard-.*\.vercel\.app$/;
+const CORS_VERCEL_PREVIEW = /^https:\/\/civica-api-.*\.vercel\.app$/;
 app.use(
   "*",
   cors({
