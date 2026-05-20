@@ -337,5 +337,5 @@ struct T16ShelterAccuracyTests {
         return f.date(from: string)!
     }
 
-    private let fy26Date = Self.iso("2026-03-15")
+    private static let fy26Date = Self.iso("2026-03-15")
 }
