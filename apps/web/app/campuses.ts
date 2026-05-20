@@ -20,13 +20,13 @@ export const CAMPUSES: readonly string[] = [
   "Cypress College",
   "El Camino College",
   // CSU
-  "CSU Fullerton",
-  "CSU Long Beach",
-  "CSU Northridge",
-  "San Diego State University",
-  "San Jose State University",
+  "Cal State Fullerton",
+  "Cal State Long Beach",
+  "Cal State Northridge",
+  "San Diego State",
+  "San Jose State",
   "Sacramento State",
-  "CSU Los Angeles",
+  "Cal State LA",
   "Fresno State",
   // UC
   "UCLA",
@@ -36,5 +36,5 @@ export const CAMPUSES: readonly string[] = [
   "UC San Diego",
   "UC Santa Barbara",
   "UC Riverside",
-  "Other / not listed",
+  "Other / Not Listed",
 ];

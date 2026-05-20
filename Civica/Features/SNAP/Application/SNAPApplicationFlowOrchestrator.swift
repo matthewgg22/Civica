@@ -237,6 +237,18 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
     func autosave() { persist() }
 
     private func persist() {
+        // Snapshot mode + draft on the main actor before handing off —
+        // both are @MainActor-isolated and must not be read from a
+        // detached task. The encode + UserDefaults write are moved to
+        // a background task so they never block the main thread.
+        let snapshot = buildPersistedState()
+        let store = store
+        Task.detached(priority: .utility) {
+            store.save(snapshot)
+        }
+    }
+
+    private func buildPersistedState() -> SNAPApplicationDraftStore.PersistedState {
         let persistedMode: SNAPApplicationDraftStore.PersistedMode
         var sequentialSection: SNAPApplicationSection?
         switch mode {
@@ -261,11 +273,7 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
             // returns to the summary, not a half-edited sub-flow.
             persistedMode = .review
         }
-        store.save(.init(
-            draft: draft,
-            mode: persistedMode,
-            sequentialSection: sequentialSection
-        ))
+        return .init(draft: draft, mode: persistedMode, sequentialSection: sequentialSection)
     }
 }
 
