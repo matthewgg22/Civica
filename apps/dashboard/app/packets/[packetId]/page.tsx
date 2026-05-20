@@ -6,6 +6,7 @@ import StatusTransition, { type Blocker } from "../../../components/StatusTransi
 import ConsentCapture from "../../../components/ConsentCapture";
 import ExtractionFieldList from "../../../components/ExtractionFieldList";
 import DocumentChecklist from "../../../components/DocumentChecklist";
+import DocumentGrid from "../../../components/DocumentGrid";
 import AnswerReviewList from "../../../components/AnswerReviewList";
 import NotesList from "../../../components/NotesList";
 import StatusPill from "../../../components/StatusPill";
@@ -41,7 +42,7 @@ export default async function PacketDetailPage({
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
 
-  const [packetResult, answersResult, docsResult, notesResult, historyResult, fieldsResult, docItemsResult, wrStatusResult, recertResult] = await Promise.all([
+  const [packetResult, answersResult, docsResult, notesResult, historyResult, fieldsResult, docItemsResult, wrStatusResult, recertResult, extractionsResult] = await Promise.all([
     supabase.schema("snap_enrollment").from("snap_packets").select(`*, applicants(*)`).eq("packet_id", packetId).is("deleted_at", null).single(),
     supabase.schema("snap_enrollment").from("packet_answers").select("*").eq("packet_id", packetId).order("question_key"),
     supabase.schema("snap_enrollment").from("uploaded_documents").select("*").eq("packet_id", packetId).is("deleted_at", null).order("uploaded_at", { ascending: false }),
@@ -63,6 +64,14 @@ export default async function PacketDetailPage({
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
+    // Map document_id -> extraction_id so the document viewer can filter
+    // extraction_fields (which only carries extraction_id) to the rows for
+    // the opened document. We join via uploaded_documents.packet_id rather
+    // than a follow-up query so this stays in the parallel batch.
+    supabase.schema("snap_enrollment")
+      .from("document_extractions")
+      .select("extraction_id, document_id, uploaded_documents!inner(packet_id)")
+      .eq("uploaded_documents.packet_id", packetId),
   ]);
 
   if (!packetResult.data) notFound();
@@ -76,6 +85,11 @@ export default async function PacketDetailPage({
   const docItems = docItemsResult.data ?? [];
   const wrStatus = wrStatusResult.data ?? null;
   const recert = recertResult.data ?? null;
+  const extractions = (extractionsResult.data ?? []) as Array<{ extraction_id: string; document_id: string }>;
+  const extractionsByDoc: Record<string, string[]> = {};
+  for (const ex of extractions) {
+    (extractionsByDoc[ex.document_id] ??= []).push(ex.extraction_id);
+  }
   const nextStatuses = PACKET_STATUS_TRANSITIONS[packet.status as keyof typeof PACKET_STATUS_TRANSITIONS] ?? [];
 
   // Expedited review gate (OBBBA §10102(a)): show when employment_status = "unemployed"
@@ -266,31 +280,19 @@ export default async function PacketDetailPage({
           </Section>
         )}
 
-        {/* Documents */}
-        <Section title="Uploaded Documents" count={docs.length} subtitle="Files submitted by the applicant.">
+        {/* Documents — click a thumbnail to open the inline viewer */}
+        <Section title="Uploaded Documents" count={docs.length} subtitle="Click a document to view the original file alongside its extracted fields.">
           {docs.length === 0 ? (
             <EmptyState
               title="No documents uploaded"
               description="move packet to 'Needs Documents' to request files"
             />
           ) : (
-            <div>
-              {docs.map((doc, i) => (
-                <div key={doc.document_id} className={`flex items-center justify-between py-3.5 ${i > 0 ? "border-t border-hairline" : ""}`}>
-                  <div>
-                    <p className="text-[15px] font-medium text-ink">{doc.document_kind}</p>
-                    <p className="text-[12px] text-muted mt-0.5">{doc.original_filename ?? shortId(doc.document_id)}</p>
-                  </div>
-                  <span className={`text-[11px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full ${
-                    doc.processing_status === "complete"
-                      ? "bg-teal/10 text-teal"
-                      : "bg-amber/15 text-amber"
-                  }`}>
-                    {doc.processing_status}
-                  </span>
-                </div>
-              ))}
-            </div>
+            <DocumentGrid
+              docs={docs as Array<{ document_id: string; document_kind: string; original_filename: string | null; processing_status: string; uploaded_at: string }>}
+              fields={fields as Array<{ field_id: string; extraction_id: string; field_key: string; field_label: string; original_ocr_value: string | null; applicant_answer: string | null; navigator_confirmed_value: string | null; confidence: number; needs_review: boolean; reviewed_at: string | null; review_note: string | null }>}
+              extractionsByDoc={extractionsByDoc}
+            />
           )}
         </Section>
 
