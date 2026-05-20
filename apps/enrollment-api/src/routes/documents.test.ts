@@ -131,6 +131,53 @@ describe('PATCH /documents/:documentId', () => {
     expect(res.status).toBe(400);
   });
 
+  // Regression: each of the 6 DB-valid processing_status values must round-trip 200.
+  // The Zod enum on this route used to be the stale set (pending/processing/complete/
+  // failed) which caused every PATCH to 400 in production.
+  const VALID_STATUSES = [
+    'uploaded',
+    'classifying',
+    'extracting',
+    'awaiting_confirmation',
+    'confirmed',
+    'rejected',
+  ] as const;
+
+  for (const status of VALID_STATUSES) {
+    it(`accepts processing_status='${status}' and returns 200`, async () => {
+      const updated = { document_id: DOC_ID, processing_status: status };
+      vi.mocked(withActorContext).mockResolvedValue(makeDbClient({ data: updated, error: null }));
+
+      const res = await buildTestApp(documentsRouter, '/', NAVIGATOR).request(
+        `/documents/${DOC_ID}`,
+        {
+          method: 'PATCH',
+          headers: JSON_HEADERS,
+          body: JSON.stringify({ processing_status: status }),
+        },
+        TEST_ENV,
+      );
+      expect(res.status).toBe(200);
+    });
+  }
+
+  // Regression: the old enum values that the broken Zod schema accepted must now be
+  // rejected. Anything that was relying on them was already 400ing pre-fix anyway.
+  for (const stale of ['pending', 'processing', 'complete', 'failed']) {
+    it(`rejects stale processing_status='${stale}' with 400`, async () => {
+      const res = await buildTestApp(documentsRouter, '/', NAVIGATOR).request(
+        `/documents/${DOC_ID}`,
+        {
+          method: 'PATCH',
+          headers: JSON_HEADERS,
+          body: JSON.stringify({ processing_status: stale }),
+        },
+        TEST_ENV,
+      );
+      expect(res.status).toBe(400);
+    });
+  }
+
   it('updates classification and returns 200 on happy path', async () => {
     const updated = { document_id: DOC_ID, document_kind: 'photo_id' };
     vi.mocked(withActorContext).mockResolvedValue(makeDbClient({ data: updated, error: null }));
@@ -140,7 +187,7 @@ describe('PATCH /documents/:documentId', () => {
       {
         method: 'PATCH',
         headers: JSON_HEADERS,
-        body: JSON.stringify({ document_kind: 'photo_id', processing_status: 'complete' }),
+        body: JSON.stringify({ document_kind: 'photo_id', processing_status: 'confirmed' }),
       },
       TEST_ENV,
     );
@@ -159,7 +206,7 @@ describe('PATCH /documents/:documentId', () => {
       {
         method: 'PATCH',
         headers: JSON_HEADERS,
-        body: JSON.stringify({ processing_status: 'complete' }),
+        body: JSON.stringify({ processing_status: 'confirmed' }),
       },
       TEST_ENV,
     );
