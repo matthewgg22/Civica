@@ -1,31 +1,53 @@
 import Foundation
 import os
 
-// EXPERIMENTAL SILOED MODULE: HTTP client for the Interview Coach backend.
+// HTTP client for the Interview Coach (practice session) backend.
 //
-// Civica adaptation: this is a rewrite of VoteNow's CIVIC_API_BASE_URL +
-// SupabaseManager-token version. Civica routes coach traffic through
-// Supabase Edge Functions and does not stand up the Supabase auth
-// singletons VoteNow uses, so this client reads SUPABASE_URL +
-// SUPABASE_ANON_KEY from SupabaseConfig.current and sends the anon key
-// as both the `apikey` header and a Bearer token. An anonymous-ID
-// header lets backend metrics correlate sessions without user sign-in.
+// This client targets the enrollment-api Cloudflare Workers project, which
+// owns the Claude-Haiku-backed practice interview routes shipped in PR #181
+// (T15). The legacy Supabase Edge Function (`/functions/v1/interview-coach-turn`)
+// is no longer wired here — see git history if you need to recover it.
 //
-// Edge Function slugs (`interview-coach-turn`, `interview-coach-score`)
-// are implemented in supabase/functions/ and require ANTHROPIC_API_KEY
-// to be set on the Supabase project before calls succeed.
+// Routes consumed:
+//   POST /v1/enrollment/recert/:recertId/practice/start
+//   POST /v1/enrollment/recert/:recertId/practice/:sessionId/respond
+//   GET  /v1/enrollment/recert/:recertId/practice/:sessionId
+//
+// Auth: enrollment-api requires the user's Supabase JWT in the
+// `Authorization: Bearer <jwt>` header. The token is pulled from the
+// CivicaEnrollmentAuth session — same pattern as EnrollmentAPIClient.
+//
+// Known backend gaps (flagged here, not iOS issues):
+//   - All practice/* routes are gated by `requireNavigator(actor)` in
+//     recert.ts → applicants get 403. The applicant-facing practice flow
+//     needs that guard relaxed or a dedicated applicant route.
+//   - `respond` accepts only `user_message`; the orchestrator's RespondInput
+//     has no `audio_bytes_duration` field. Voice duration telemetry is
+//     dropped on the floor today.
 
 final class InterviewCoachAPIClient {
-    enum CoachAPIError: Error, LocalizedError {
+    enum CoachAPIError: Error, LocalizedError, Equatable {
         case missingBaseURL(String)
-        case http(status: Int, body: String)
+        case notAuthenticated
+        case notAuthorized         // 401
+        case forbidden(String)     // 403 (e.g. navigator-required)
+        case notFound              // 404
+        case sessionLost           // 410 — session_id no longer in memory
+        case serverError(status: Int, body: String)
+        case decodingFailed(String)
         case emptyResponse
 
         var errorDescription: String? {
             switch self {
-            case .missingBaseURL(let reason): return "Coach API base URL is invalid: \(reason)"
-            case .http(let status, let body): return "Coach API HTTP \(status): \(body)"
-            case .emptyResponse: return "Coach API returned an empty response."
+            case .missingBaseURL(let reason): return "Interview Coach base URL is invalid: \(reason)"
+            case .notAuthenticated:           return NSLocalizedString("enrollment.api.error.unauthenticated", comment: "")
+            case .notAuthorized:              return "Please sign in to use the practice interview."
+            case .forbidden(let msg):         return msg.isEmpty ? "Not authorized for this resource." : msg
+            case .notFound:                   return "Practice session not found."
+            case .sessionLost:                return "Your practice session expired. Please start a new one."
+            case .serverError(let status, let body): return "Server returned \(status): \(body)"
+            case .decodingFailed(let msg):    return "Could not read server response: \(msg)"
+            case .emptyResponse:              return "Interview Coach returned an empty response."
             }
         }
     }
@@ -36,26 +58,35 @@ final class InterviewCoachAPIClient {
     static let legacyAnonymousIDKey = "co.civica.interview_coach.anonymous_id.v1"
 
     private let baseURL: URL
-    private let anonKey: String
+    private let tokenProvider: @Sendable () async -> String?
     private let session: URLSession
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
-    private let requestID: String
     private let logger = Logger(subsystem: "Civica", category: "InterviewCoachAPIClient")
     private let requestTimeout: TimeInterval = 65
-    private let maxRetries = 2
-    // Retry on these HTTP status codes (transient server/gateway errors only).
-    private let retryableStatuses: Set<Int> = [429, 500, 502, 503, 504]
+
+    /// Default enrollment-api host. Mirrors the resolver in
+    /// `HTTPEnrollmentAPIClient.resolveBaseURL()` — falls back to the
+    /// production Workers URL when neither env nor Info.plist override
+    /// is present. The Bundle/env lookup keys are shared with the
+    /// EnrollmentAPIClient so a staging override only has to be set once.
+    static func defaultBaseURL() -> URL {
+        let env = ProcessInfo.processInfo.environment
+        let raw = env["SNAP_ENROLLMENT_API_URL"]
+            ?? (Bundle.main.object(forInfoDictionaryKey: "SNAP_ENROLLMENT_API_URL") as? String)
+            ?? "https://civica-enrollment-api.civica-api.workers.dev"
+        let root = URL(string: raw) ?? URL(string: "https://civica-enrollment-api.civica-api.workers.dev")!
+        return root.appendingPathComponent("v1/enrollment")
+    }
 
     init(
-        baseURL: URL = SupabaseConfig.current.url,
-        anonKey: String = SupabaseConfig.current.anonKey,
+        baseURL: URL = InterviewCoachAPIClient.defaultBaseURL(),
+        tokenProvider: @escaping @Sendable () async -> String? = { nil },
         session: URLSession = .shared
     ) {
         self.baseURL = baseURL
-        self.anonKey = anonKey
+        self.tokenProvider = tokenProvider
         self.session = session
-        self.requestID = UUID().uuidString
 
         let encoder = JSONEncoder()
         encoder.keyEncodingStrategy = .convertToSnakeCase
@@ -66,139 +97,116 @@ final class InterviewCoachAPIClient {
         self.decoder = decoder
     }
 
-    func postTurn(_ payload: InterviewTurnRequestDTO) async throws -> InterviewTurnResponseDTO {
-        try await postJSON(path: "/functions/v1/interview-coach-turn", payload: payload)
-    }
+    // MARK: - Public API (recert/practice/*)
 
-    // Streaming variant — yields CoachTurnEvents as the edge function sends SSE.
-    // Callers iterate the returned AsyncThrowingStream; the stream ends after
-    // a .completed event or throws on network/parse error.
-    func streamTurn(_ payload: InterviewTurnRequestDTO) -> AsyncThrowingStream<CoachTurnEvent, Error> {
-        AsyncThrowingStream { continuation in
-            Task {
-                do {
-                    var request = URLRequest(url: endpoint("/functions/v1/interview-coach-turn"))
-                    request.httpMethod = "POST"
-                    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                    request.setValue("text/event-stream", forHTTPHeaderField: "Accept")
-                    request.timeoutInterval = requestTimeout
-                    request.httpBody = try encoder.encode(payload)
-                    attachAuthorization(to: &request)
-
-                    let (bytes, urlResponse) = try await session.bytes(for: request)
-                    guard let http = urlResponse as? HTTPURLResponse,
-                          (200..<300).contains(http.statusCode) else {
-                        continuation.finish(throwing: CoachAPIError.emptyResponse)
-                        return
-                    }
-
-                    for try await line in bytes.lines {
-                        guard line.hasPrefix("data: ") else { continue }
-                        let jsonString = String(line.dropFirst(6))
-
-                        guard let data = jsonString.data(using: .utf8),
-                              let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
-                        else { continue }
-
-                        if let delta = obj["delta"] as? String {
-                            continuation.yield(.delta(delta))
-                        } else if let done = obj["done"] as? Bool, done {
-                            let text = obj["caseworker_text"] as? String ?? ""
-                            let eoi = obj["end_of_interview"] as? Bool ?? false
-                            continuation.yield(.completed(caseworkerText: text, endOfInterview: eoi))
-                            continuation.finish()
-                            return
-                        } else if let errorMsg = obj["error"] as? String {
-                            continuation.finish(throwing: CoachAPIError.http(status: 502, body: errorMsg))
-                            return
-                        }
-                    }
-                    continuation.finish()
-                } catch {
-                    continuation.finish(throwing: error)
-                }
-            }
+    /// POST /v1/enrollment/recert/:recertId/practice/start
+    /// The route currently derives the snapshot from packet_answers
+    /// server-side, so the body is ignored — we still send an empty `{}`
+    /// for forward-compatibility with future schema additions.
+    func startPracticeSession(
+        recertId: String,
+        snapshot: PacketSnapshotDTO? = nil
+    ) async throws -> StartPracticeResponseDTO {
+        let path = "/recert/\(recertId)/practice/start"
+        // Server ignores body today; pass snapshot when supplied so we're
+        // ready when the route schema accepts it.
+        if let snapshot {
+            return try await postJSON(path: path, body: snapshot)
+        } else {
+            return try await postJSON(path: path, body: EmptyBody())
         }
     }
 
-    func postScore(_ payload: InterviewScoreRequestDTO) async throws -> InterviewScoreResponseDTO {
-        try await postJSON(path: "/functions/v1/interview-coach-score", payload: payload)
+    /// POST /v1/enrollment/recert/:recertId/practice/:sessionId/respond
+    /// `audioBytesDuration` is accepted by the iOS call site but is NOT
+    /// part of the current Zod schema on the route and is dropped silently.
+    /// Kept here so the call site doesn't need to change when the backend
+    /// adds duration telemetry.
+    func sendPracticeResponse(
+        recertId: String,
+        sessionId: String,
+        response: String,
+        audioBytesDuration: Int? = nil
+    ) async throws -> PracticeRespondResponseDTO {
+        _ = audioBytesDuration   // intentionally unused; backend has no field for this yet
+        let path = "/recert/\(recertId)/practice/\(sessionId)/respond"
+        let body = PracticeRespondRequestDTO(userMessage: response)
+        return try await postJSON(path: path, body: body)
     }
+
+    /// GET /v1/enrollment/recert/:recertId/practice/:sessionId
+    func fetchPracticeSession(
+        recertId: String,
+        sessionId: String
+    ) async throws -> PracticeSessionStateDTO {
+        let path = "/recert/\(recertId)/practice/\(sessionId)"
+        return try await getJSON(path: path)
+    }
+
+    // MARK: - HTTP plumbing
+
+    private struct EmptyBody: Encodable {}
 
     private func postJSON<Request: Encodable, Response: Decodable>(
         path: String,
-        payload: Request
+        body: Request
     ) async throws -> Response {
+        guard let token = await tokenProvider() else { throw CoachAPIError.notAuthenticated }
+
         var request = URLRequest(url: endpoint(path))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.timeoutInterval = requestTimeout
-        request.httpBody = try encoder.encode(payload)
-        attachAuthorization(to: &request)
+        request.httpBody = try encoder.encode(body)
 
-        var lastError: Error = CoachAPIError.emptyResponse
-        for attempt in 0...maxRetries {
-            if attempt > 0 {
-                let backoffNs = UInt64(pow(2.0, Double(attempt - 1))) * 1_000_000_000
-                try? await Task.sleep(nanoseconds: backoffNs)
-                logger.info("Retrying \(path) attempt \(attempt)/\(self.maxRetries)")
-            }
+        let (data, urlResponse) = try await session.data(for: request)
+        try validate(urlResponse, data: data)
+        return try decode(data)
+    }
 
-            let data: Data
-            let urlResponse: URLResponse
-            do {
-                (data, urlResponse) = try await session.data(for: request)
-            } catch {
-                lastError = error
-                logger.warning("Network error on \(path) attempt \(attempt): \(error.localizedDescription)")
-                continue
-            }
+    private func getJSON<Response: Decodable>(path: String) async throws -> Response {
+        guard let token = await tokenProvider() else { throw CoachAPIError.notAuthenticated }
 
-            guard let http = urlResponse as? HTTPURLResponse else {
-                lastError = CoachAPIError.emptyResponse
-                continue
-            }
+        var request = URLRequest(url: endpoint(path))
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.timeoutInterval = requestTimeout
 
-            if retryableStatuses.contains(http.statusCode) {
-                let body = String(data: data, encoding: .utf8) ?? ""
-                lastError = CoachAPIError.http(status: http.statusCode, body: body)
-                logger.warning("Retryable HTTP \(http.statusCode) on \(path) attempt \(attempt)")
-                continue
-            }
+        let (data, urlResponse) = try await session.data(for: request)
+        try validate(urlResponse, data: data)
+        return try decode(data)
+    }
 
-            if !(200..<300).contains(http.statusCode) {
-                let body = String(data: data, encoding: .utf8) ?? ""
-                throw CoachAPIError.http(status: http.statusCode, body: body)
-            }
-
-            if data.isEmpty { throw CoachAPIError.emptyResponse }
-
-            let decoded = try decoder.decode(Response.self, from: data)
-            if attempt > 0 {
-                logger.info("Recovered on attempt \(attempt) for \(path)")
-            }
-            return decoded
+    private func validate(_ response: URLResponse, data: Data) throws {
+        guard let http = response as? HTTPURLResponse else {
+            throw CoachAPIError.emptyResponse
         }
+        if (200..<300).contains(http.statusCode) { return }
 
-        throw lastError
+        let body = String(data: data, encoding: .utf8) ?? ""
+        switch http.statusCode {
+        case 401: throw CoachAPIError.notAuthorized
+        case 403: throw CoachAPIError.forbidden(body)
+        case 404: throw CoachAPIError.notFound
+        case 410: throw CoachAPIError.sessionLost
+        default:  throw CoachAPIError.serverError(status: http.statusCode, body: body)
+        }
+    }
+
+    private func decode<R: Decodable>(_ data: Data) throws -> R {
+        if data.isEmpty { throw CoachAPIError.emptyResponse }
+        do {
+            return try decoder.decode(R.self, from: data)
+        } catch {
+            logger.error("InterviewCoach decode error: \(error.localizedDescription, privacy: .public)")
+            throw CoachAPIError.decodingFailed(error.localizedDescription)
+        }
     }
 
     private func endpoint(_ path: String) -> URL {
         baseURL.appendingPathComponent(path.hasPrefix("/") ? String(path.dropFirst()) : path)
-    }
-
-    // Supabase Edge Functions accept the project anon key as both the
-    // `apikey` header and a Bearer token. No per-user JWT here -- the
-    // Civica core flow is on-device and Coach is opt-in.
-    // X-Anonymous-ID is a per-client UUID generated at init. It does NOT
-    // persist across launches or across practice sessions -- a new
-    // InterviewCoachAPIClient (typically one per PracticeSessionViewModel)
-    // gets a fresh ID, so the backend cannot link two sessions from the
-    // same device through this header alone.
-    private func attachAuthorization(to request: inout URLRequest) {
-        request.setValue(requestID, forHTTPHeaderField: "X-Anonymous-ID")
-        request.setValue(anonKey, forHTTPHeaderField: "apikey")
-        request.setValue("Bearer \(anonKey)", forHTTPHeaderField: "Authorization")
     }
 }

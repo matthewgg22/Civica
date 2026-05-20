@@ -207,8 +207,11 @@ app.patch("/:recertId", zValidator("json", patchRecertSchema), async (c) => {
 // ---------------------------------------------------------------------------
 
 app.post("/:recertId/practice/start", async (c) => {
-  const actor = c.get("actor");
-  requireNavigator(actor);
+  // Practice sessions are applicant-facing — applicants practice their own
+  // recert interview. RLS via anonDb (below) enforces that an applicant can
+  // only start a session on a recertification they own. Navigators may also
+  // start sessions on packets they have access to, also enforced by RLS.
+  // No role guard needed here.
 
   const recertId = c.req.param("recertId");
   const db = await withActorContext(c);
@@ -280,8 +283,7 @@ app.post("/:recertId/practice/start", async (c) => {
 // ---------------------------------------------------------------------------
 
 app.post("/:recertId/practice/:sessionId/respond", zValidator("json", respondSchema), async (c) => {
-  const actor = c.get("actor");
-  requireNavigator(actor);
+  // Applicant-facing route — RLS via anonDb enforces session ownership.
 
   const recertId = c.req.param("recertId");
   const sessionId = c.req.param("sessionId");
@@ -349,8 +351,7 @@ app.post("/:recertId/practice/:sessionId/respond", zValidator("json", respondSch
 // ---------------------------------------------------------------------------
 
 app.get("/:recertId/practice/:sessionId", async (c) => {
-  const actor = c.get("actor");
-  requireNavigator(actor);
+  // Applicant-facing route — RLS via anonDb enforces session ownership.
 
   const recertId = c.req.param("recertId");
   const sessionId = c.req.param("sessionId");

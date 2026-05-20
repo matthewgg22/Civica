@@ -9,9 +9,29 @@ import SwiftUI
 // caseworker turns come back in the language the backend produced them
 // (English-only at v1 -- backend localization tracked separately).
 struct PracticeSessionView: View {
-    @StateObject private var viewModel = PracticeSessionViewModel()
+    // The parent passes a recertId (or empty string when not yet wired up
+    // to a real recert store — the VM surfaces a clear error in that case).
+    @StateObject private var viewModel: PracticeSessionViewModel
     @State private var showScoreSheet = false
     @FocusState private var inputFocused: Bool
+
+    /// Default initializer used by existing call sites that don't yet have
+    /// a recertId or a wired auth in scope. Constructs a VM whose token
+    /// provider returns nil, so the first network call lands the VM in a
+    /// clear `.notAuthenticated` / `.failed` state until the call site is
+    /// migrated to `init(recertId:auth:)`.
+    init(recertId: String = "") {
+        _viewModel = StateObject(wrappedValue: PracticeSessionViewModel(recertId: recertId))
+    }
+
+    /// Preferred init: wires the live token provider against an
+    /// already-resolved CivicaEnrollmentAuth.
+    init(recertId: String, auth: CivicaEnrollmentAuth) {
+        _viewModel = StateObject(wrappedValue: PracticeSessionViewModel.make(
+            recertId: recertId,
+            auth: auth
+        ))
+    }
 
     // Voice input: SNAPVoiceIntakeService in transcript-only mode feeds
     // the final transcript into `viewModel.draftResponse` so the user can
@@ -94,14 +114,15 @@ struct PracticeSessionView: View {
                             }
                         }
 
-                        if case .scoring = viewModel.status {
-                            HStack(spacing: CivicaSpacing.xs) {
-                                ProgressView().controlSize(.small)
-                                Text(InterviewCoachStrings.scoringSession.value(in: language))
+                        if let coaching = viewModel.latestCoaching, !coaching.isEmpty {
+                            HStack(alignment: .top, spacing: CivicaSpacing.xs) {
+                                CivicaAIBadge()
+                                Text(coaching)
                                     .font(CivicaTypography.captionStrong)
                                     .foregroundStyle(CivicaColors.graphite)
+                                Spacer(minLength: 0)
                             }
-                            .padding(.leading, CivicaSpacing.sm)
+                            .padding(.horizontal, CivicaSpacing.sm)
                         }
 
                         if case .failed(let message) = viewModel.status {
@@ -125,7 +146,7 @@ struct PracticeSessionView: View {
                 }
             }
 
-            if viewModel.status != .complete && viewModel.status != .scoring {
+            if viewModel.status != .complete {
                 inputBar
             }
         }
@@ -398,17 +419,25 @@ struct PracticeSessionView: View {
 private struct TurnRowView: View {
     let turn: InterviewTurnDTO
 
+    /// The new orchestrator-shaped DTO doesn't carry an explicit role.
+    /// Applicant turns are synthesized client-side with a known
+    /// questionId prefix ("applicant-turn-"). Caseworker / system turns
+    /// have orchestrator-issued question IDs.
+    private var isApplicant: Bool {
+        turn.questionId.hasPrefix("applicant-turn-")
+    }
+
     var body: some View {
         HStack {
-            if turn.role == "applicant" { Spacer(minLength: 32) }
+            if isApplicant { Spacer(minLength: 32) }
 
-            Text(turn.text)
+            Text(turn.questionText)
                 .font(CivicaTypography.body)
                 .foregroundStyle(CivicaColors.ink)
                 .padding(CivicaSpacing.sm)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                        .fill(turn.role == "applicant"
+                        .fill(isApplicant
                               ? CivicaColors.brickPrimary.opacity(0.12)
                               : CivicaColors.surfacePrimary)
                 )
@@ -417,7 +446,7 @@ private struct TurnRowView: View {
                         .stroke(CivicaColors.hairline, lineWidth: 1)
                 )
 
-            if turn.role == "caseworker" { Spacer(minLength: 32) }
+            if !isApplicant { Spacer(minLength: 32) }
         }
     }
 }
