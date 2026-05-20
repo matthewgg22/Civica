@@ -56,6 +56,14 @@ export const PERSchema = z.object({
   per_total: z.number(),
   per_overpayment: z.number().optional(),
   per_underpayment: z.number().optional(),
+  // Income-source stratification — USDA FNS QC microdata (available FY2023+).
+  // Wage-only households run ~2.7× the error rate of no-earned-income households
+  // nationally; populate from state_options_x_qc parquet when available.
+  per_wage_only: z.number().optional(),
+  per_se_only: z.number().optional(),
+  per_no_earned: z.number().optional(),
+  n_wage_only: z.number().int().optional(),
+  n_se_only: z.number().int().optional(),
 });
 export type PER = z.infer<typeof PERSchema>;
 

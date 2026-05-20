@@ -130,6 +130,9 @@ importers:
       '@civica/snap-enums':
         specifier: workspace:*
         version: link:../../packages/snap-enums
+      '@civica/snap-qc-engine':
+        specifier: workspace:*
+        version: link:../../packages/snap-qc-engine
       '@civica/snap-rules':
         specifier: workspace:*
         version: link:../../packages/snap-rules

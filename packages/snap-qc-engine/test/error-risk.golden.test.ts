@@ -4,8 +4,11 @@ import type { ErrorRiskResult } from "../src/scoring/error-risk";
 import type { Defensibility, FlowKind } from "../src/schemas";
 
 // Frozen golden fixtures for scoreErrorRisk().
-// Scores are computed from USDA FY2024 ERROR_WEIGHT constants + DEFENSIBILITY_ERROR_PROB.
-// Any change that shifts a score requires an intentional fixture update + PR comment.
+// Scores are computed from USDA CA FY2023 ERROR_WEIGHT constants + DEFENSIBILITY_ERROR_PROB.
+// Recalibrated 2026-05-20: weights updated from real CA FY2023 element attribution data
+//   (ca_fy2023_element_attribution.csv). Key changes: assets 0.082→0.002 (near-zero in CA
+//   QC data), gig-income 0.268→0.354 (added SE income element 312), utility-sua 0.505→0.495.
+// Any further change that shifts a score requires an intentional fixture update + PR comment.
 // ENGINE_VERSION major bump requires full re-authoring of all fixtures.
 
 type FlowResult = { flow: FlowKind; defensibility_score: Defensibility };
@@ -35,7 +38,7 @@ const FIXTURES: Array<{
   },
   {
     id: "ca-medium-01-utility-weak-rest-strong",
-    // Shelter/utility self-declared; highest USDA weight (0.505) drives score to 43
+    // Shelter/utility self-declared; highest CA weight (0.495) drives score to 42
     input: [
       { flow: "utility-sua", defensibility_score: "weak" },
       { flow: "gig-income", defensibility_score: "strong" },
@@ -45,14 +48,15 @@ const FIXTURES: Array<{
     ],
     expected: {
       tier: "medium",
-      score: 43,
+      score: 42,
       factors: ["shelter_utility_unverified"],
       engine_version: ENGINE_VERSION,
     },
   },
   {
     id: "ca-medium-02-gig-weak-rest-strong",
-    // Income self-declared; second-highest weight (0.268) gives score 25 — boundary case
+    // Income self-declared; gig-income weight raised to 0.354 (now includes SE element 312)
+    // Score 32 — solidly medium (was a boundary 25 under the prior placeholder weight)
     input: [
       { flow: "utility-sua", defensibility_score: "strong" },
       { flow: "gig-income", defensibility_score: "weak" },
@@ -62,14 +66,16 @@ const FIXTURES: Array<{
     ],
     expected: {
       tier: "medium",
-      score: 25,
+      score: 32,
       factors: ["earned_income_unverified"],
       engine_version: ENGINE_VERSION,
     },
   },
   {
     id: "ca-high-01-utility-and-gig-weak",
-    // Two top-weight flows weak (utility 0.505 + gig 0.268 = 0.773 of risk budget)
+    // Two top-weight flows weak (utility 0.495 + gig 0.354 = 0.849 of risk budget)
+    // Score 69 — was 63 under prior weights; increase reflects gig-income weight
+    // correction (SE income element 312 added, assets weight corrected to near-zero)
     input: [
       { flow: "utility-sua", defensibility_score: "weak" },
       { flow: "gig-income", defensibility_score: "weak" },
@@ -79,7 +85,7 @@ const FIXTURES: Array<{
     ],
     expected: {
       tier: "high",
-      score: 63,
+      score: 69,
       factors: ["shelter_utility_unverified", "earned_income_unverified"],
       engine_version: ENGINE_VERSION,
     },
