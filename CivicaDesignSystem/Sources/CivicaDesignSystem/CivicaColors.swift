@@ -14,6 +14,10 @@ public enum CivicaColors {
     /// Accent teal. **Deltas, success, on-target SLA only. Never body. Never paragraphs.**
     public static let accentTeal           = Color.dynamic(light: "#2A6F66", dark: "#5FA89E")
 
+    /// Alias for `accentTeal`. Use when reading at the call site as a plain color
+    /// name (e.g. low-risk indicator dots) rather than as an accent semantic.
+    public static let teal                 = accentTeal
+
     /// Warm white background. Pure white reserved for printed output.
     public static let paper                = Color.dynamic(light: "#F5F2EC", dark: "#111418")
 
