@@ -18,12 +18,37 @@ import SwiftUI
 
 struct SNAPExpensesAnswers: Equatable, Codable {
     var monthlyRentOrHousing: Decimal?
-    /// Whether the household pays for utilities separately from rent.
-    /// Defaults to false (No pre-selected). When false the utilities
-    /// amount and shutoff screens are skipped and monthlyUtilities is
-    /// treated as nil by the rules engine.
-    var paysUtilitiesSeparately: Bool? = false
+
+    // T16 — Gap #1/#2/#3: Per-utility intake replaces the single Bool.
+    //
+    // selectedUtilities drives SUA tier determination. An empty set means
+    // utilities are included in rent (or the household has none), which
+    // maps to SUATier.none → zero SUA deduction in the calculator.
+    //
+    // paysUtilitiesSeparately is now a computed property (Bool, not Bool?)
+    // so all downstream callers (document checklist, rules engine key
+    // lookup, voice extraction) keep working without modification.
+    var selectedUtilities: Set<UtilityType> = []
+
+    /// Computed SUA tier from the selected utility types.
+    /// Feeds directly into SNAPBenefitCalculator — the calculator reads
+    /// this instead of defaulting to .heatingCooling.
+    var suaTier: SUATier { SUATier.determineTier(for: selectedUtilities) }
+
+    /// Backward-compatible computed property: true when any utility
+    /// type is selected. Replaces the stored Bool? — all callers that
+    /// previously read `paysUtilitiesSeparately == true` continue to
+    /// work unchanged (Bool is == comparable without Optional unwrap).
+    var paysUtilitiesSeparately: Bool { !selectedUtilities.isEmpty }
+
+    /// Actual monthly dollar spend across all selected utilities.
+    /// Used as the lower bound in the SUA substitution: the calculator
+    /// takes max(monthlyUtilities, suaValue) so a low reported amount
+    /// never penalises a household that qualifies for a higher SUA tier.
+    /// Kept as `monthlyUtilities` (not renamed) to avoid breaking voice
+    /// extraction and other callers.
     var monthlyUtilities: Decimal?
+
     /// Whether the household has received a utility-shutoff notice —
     /// a strong soft signal for expedited need, asked right after
     /// utilities cost while the user is in that frame of mind.
@@ -35,7 +60,10 @@ struct SNAPExpensesAnswers: Equatable, Codable {
 @MainActor
 final class SNAPExpensesFlowViewModel: ObservableObject {
     enum Step: Int, CaseIterable {
-        case rent, paysUtilitiesSeparately, utilities, utilityShutoff, childcare, medical
+        // T16: .paysUtilitiesSeparately (yes/no) replaced by .utilityTypes
+        // (multi-select checklist of UtilityType). Steps after .utilityTypes
+        // are unchanged.
+        case rent, utilityTypes, utilities, utilityShutoff, childcare, medical
 
         var oneBasedIndex: Int { rawValue + 1 }
         static let total = Self.allCases.count
@@ -51,12 +79,12 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
     private let hasMinorInHousehold: Bool
     private let hasElderlyOrDisabled: Bool
 
-    /// Recomputed on every access so the utilities and shutoff screens
-    /// appear / disappear immediately when the user toggles
-    /// paysUtilitiesSeparately — without restarting the flow.
+    /// Recomputed on every access so the utilities-amount and shutoff
+    /// screens appear/disappear immediately when the user changes their
+    /// utility-type selections — without restarting the flow.
     var effectiveSteps: [Step] {
-        var steps: [Step] = [.rent, .paysUtilitiesSeparately]
-        if answers.paysUtilitiesSeparately == true {
+        var steps: [Step] = [.rent, .utilityTypes]
+        if !answers.selectedUtilities.isEmpty {
             steps.append(.utilities)
             steps.append(.utilityShutoff)
         }
@@ -86,12 +114,12 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
 
     func recordCurrentField() {
         switch step {
-        case .rent:                   answers.monthlyRentOrHousing = decimalValue(rentField)
-        case .paysUtilitiesSeparately: break  // bound directly into answers.paysUtilitiesSeparately
-        case .utilities:              answers.monthlyUtilities     = decimalValue(utilitiesField)
-        case .utilityShutoff:         break  // bound directly into answers.utilityShutoffNotice
-        case .childcare:              answers.monthlyChildcare     = decimalValue(childcareField)
-        case .medical:                answers.monthlyMedical       = decimalValue(medicalField)
+        case .rent:         answers.monthlyRentOrHousing = decimalValue(rentField)
+        case .utilityTypes: break  // selectedUtilities bound directly via toggle callbacks
+        case .utilities:    answers.monthlyUtilities     = decimalValue(utilitiesField)
+        case .utilityShutoff: break  // bound directly into answers.utilityShutoffNotice
+        case .childcare:    answers.monthlyChildcare     = decimalValue(childcareField)
+        case .medical:      answers.monthlyMedical       = decimalValue(medicalField)
         }
     }
 
@@ -99,8 +127,8 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
         switch step {
         case .rent, .utilities, .childcare, .medical:
             return true  // empty = $0, already a valid answer
-        case .paysUtilitiesSeparately:
-            return true  // defaults to false (No), user can always proceed
+        case .utilityTypes:
+            return true  // empty selection = utilities in rent, always a valid answer
         case .utilityShutoff:
             return answers.utilityShutoffNotice != nil
         }
@@ -108,9 +136,9 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
 
     func advance() {
         recordCurrentField()
-        // When the user says they don't pay utilities separately, clear
-        // any previously entered utilities data before skipping forward.
-        if step == .paysUtilitiesSeparately && answers.paysUtilitiesSeparately != true {
+        // When the user clears all utility selections, purge the downstream
+        // data so previous entries don't ghost into the draft.
+        if step == .utilityTypes && answers.selectedUtilities.isEmpty {
             answers.monthlyUtilities = nil
             answers.utilityShutoffNotice = nil
         }
@@ -184,31 +212,77 @@ struct SNAPExpensesFlowView: View {
     @ViewBuilder
     private var currentScreen: some View {
         switch viewModel.step {
-        case .rent:                    moneyScreen(.rent, binding: $viewModel.rentField)
-        case .paysUtilitiesSeparately: paysUtilitiesSeparatelyScreen
-        case .utilities:               moneyScreen(.utilities, binding: $viewModel.utilitiesField)
-        case .utilityShutoff:          utilityShutoffScreen
-        case .childcare:               moneyScreen(.childcare, binding: $viewModel.childcareField)
-        case .medical:                 moneyScreen(.medical, binding: $viewModel.medicalField)
+        case .rent:         moneyScreen(.rent, binding: $viewModel.rentField)
+        case .utilityTypes: utilityTypesScreen
+        case .utilities:    moneyScreen(.utilities, binding: $viewModel.utilitiesField)
+        case .utilityShutoff: utilityShutoffScreen
+        case .childcare:    moneyScreen(.childcare, binding: $viewModel.childcareField)
+        case .medical:      moneyScreen(.medical, binding: $viewModel.medicalField)
         }
     }
 
-    private var paysUtilitiesSeparatelyScreen: some View {
+    // T16 Gap #1/#3: Multi-select utility type checklist.
+    // Replaces the yes/no paysUtilitiesSeparately toggle.
+    // Selecting .cooling (AC) alone yields the full SUA in CA —
+    // Gap #3 (A/C question) closes for free here.
+    private var utilityTypesScreen: some View {
         CivicaQuestionScreen(
-            progress: progress(for: .paysUtilitiesSeparately),
-            title: SNAPExpensesStrings.title(for: .paysUtilitiesSeparately, language: language),
-            helper: SNAPExpensesStrings.helper(for: .paysUtilitiesSeparately, language: language),
+            progress: progress(for: .utilityTypes),
+            title: SNAPExpensesStrings.title(for: .utilityTypes, language: language),
+            helper: SNAPExpensesStrings.helper(for: .utilityTypes, language: language),
             primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
             primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
             onPrimary: advanceOrComplete,
             language: language
         ) {
-            CivicaQuestionYesNo(
-                selection: $viewModel.answers.paysUtilitiesSeparately,
-                yesLabel: CivicaQuestionStrings.yesLabel.value(in: language),
-                noLabel: CivicaQuestionStrings.noLabel.value(in: language)
-            )
+            VStack(spacing: CivicaSpacing.sm) {
+                ForEach(UtilityType.allCases) { utilityType in
+                    utilityTypeRow(utilityType)
+                }
+            }
         }
+    }
+
+    private func utilityTypeRow(_ utilityType: UtilityType) -> some View {
+        let isSelected = viewModel.answers.selectedUtilities.contains(utilityType)
+        return Button {
+            if isSelected {
+                viewModel.answers.selectedUtilities.remove(utilityType)
+            } else {
+                viewModel.answers.selectedUtilities.insert(utilityType)
+            }
+        } label: {
+            HStack(spacing: CivicaSpacing.md) {
+                Image(systemName: isSelected ? "checkmark.square.fill" : "square")
+                    .font(.system(size: 22))
+                    .foregroundStyle(isSelected ? CivicaColors.teal : CivicaColors.graphite)
+                    .frame(width: 28)
+                Text(utilityType.displayName(in: language))
+                    .font(CivicaTypography.body)
+                    .foregroundStyle(CivicaColors.ink)
+                    .multilineTextAlignment(.leading)
+                Spacer()
+            }
+            .padding(.horizontal, CivicaSpacing.lg)
+            .padding(.vertical, CivicaSpacing.md)
+            .background(isSelected ? CivicaColors.tealSurface : CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.control)
+                    .strokeBorder(
+                        isSelected ? CivicaColors.teal : CivicaColors.hairline,
+                        lineWidth: isSelected ? 2 : 1
+                    )
+            )
+            .animation(.easeInOut(duration: 0.12), value: isSelected)
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+        .accessibilityLabel(utilityType.displayName(in: language))
+        .accessibilityHint(isSelected
+            ? SNAPExpensesStrings.deselectHint(language: language)
+            : SNAPExpensesStrings.selectHint(language: language)
+        )
     }
 
     private var utilityShutoffScreen: some View {
@@ -327,14 +401,15 @@ enum SNAPExpensesStrings {
             return "About how much is your rent or housing payment each month?"
         case (.rent, .spanish):
             return "¿Cuánto es tu renta o pago de vivienda cada mes?"
-        case (.paysUtilitiesSeparately, .english):
-            return "Do you pay for utilities separately from your rent?"
-        case (.paysUtilitiesSeparately, .spanish):
-            return "¿Pagas los servicios por separado de tu renta?"
+        // T16: replaces paysUtilitiesSeparately yes/no
+        case (.utilityTypes, .english):
+            return "Which utilities do you pay on your own — not included in rent?"
+        case (.utilityTypes, .spanish):
+            return "¿Cuáles servicios pagas tú directamente, sin incluirlos en la renta?"
         case (.utilities, .english):
-            return "What do you spend on utilities each month?"
+            return "About how much do you spend on those utilities each month?"
         case (.utilities, .spanish):
-            return "¿Cuánto gastas en servicios cada mes?"
+            return "¿Cuánto gastas en esos servicios cada mes?"
         case (.utilityShutoff, .english):
             return "Have you received a shutoff notice from any utility?"
         case (.utilityShutoff, .spanish):
@@ -356,14 +431,15 @@ enum SNAPExpensesStrings {
             return "Include rent, mortgage, or anything you pay regularly to live where you live. Estimate is fine. Enter 0 if you don't pay rent right now."
         case (.rent, .spanish):
             return "Incluye renta, hipoteca o cualquier pago regular por donde vives. Una estimación está bien. Pon 0 si no pagas renta ahora mismo."
-        case (.paysUtilitiesSeparately, .english):
-            return "Select Yes if you get and pay your own electric, gas, water, heat, or phone bills. Select No if utilities are included in your rent. (Internet is not counted as a utility for SNAP.)"
-        case (.paysUtilitiesSeparately, .spanish):
-            return "Selecciona Sí si recibes y pagas tus propias facturas de electricidad, gas, agua, calefacción o teléfono. Selecciona No si los servicios están incluidos en tu renta. (El internet no cuenta como servicio para SNAP.)"
+        // T16: replaces paysUtilitiesSeparately yes/no helper
+        case (.utilityTypes, .english):
+            return "Select everything that applies. If utilities are included in your rent, leave everything unchecked. Air conditioning counts in California. Internet is not counted by SNAP."
+        case (.utilityTypes, .spanish):
+            return "Selecciona todo lo que aplique. Si los servicios están incluidos en tu renta, deja todo sin marcar. El aire acondicionado cuenta en California. Internet no cuenta para SNAP."
         case (.utilities, .english):
-            return "Add up a typical month — electricity, heat, gas, water, phone. Do not include internet (SNAP doesn't count internet as a utility). The total matters more than each line item."
+            return "Add up a typical month for the utilities you selected. Estimate is fine — the total is what matters."
         case (.utilities, .spanish):
-            return "Suma un mes típico — electricidad, calefacción, gas, agua, teléfono. No incluyas internet (SNAP no cuenta el internet como servicio). El total importa más que cada línea."
+            return "Suma un mes típico de los servicios que seleccionaste. Una estimación está bien — el total es lo que importa."
         case (.utilityShutoff, .english):
             return "A written or paper notice that power, gas, water, or heat will be cut off if you don't pay. This can speed up your SNAP application."
         case (.utilityShutoff, .spanish):
@@ -388,16 +464,30 @@ enum SNAPExpensesStrings {
 
     static func fieldAccessibilityLabel(for step: SNAPExpensesFlowViewModel.Step, language: CivicaLanguage) -> String {
         switch (step, language) {
-        case (.rent, .english):                    return "Monthly rent or housing payment, in dollars"
-        case (.rent, .spanish):                    return "Pago mensual de renta o vivienda, en dólares"
-        case (.utilities, .english):               return "Monthly utilities, in dollars"
-        case (.utilities, .spanish):               return "Servicios mensuales, en dólares"
-        case (.childcare, .english):               return "Monthly childcare costs, in dollars"
-        case (.childcare, .spanish):               return "Costos mensuales de cuidado infantil, en dólares"
-        case (.medical, .english):                 return "Monthly out-of-pocket medical costs, in dollars"
-        case (.medical, .spanish):                 return "Gastos médicos mensuales de bolsillo, en dólares"
-        case (.utilityShutoff, _):                 return ""
-        case (.paysUtilitiesSeparately, _):        return ""
+        case (.rent, .english):         return "Monthly rent or housing payment, in dollars"
+        case (.rent, .spanish):         return "Pago mensual de renta o vivienda, en dólares"
+        case (.utilities, .english):    return "Monthly utilities total, in dollars"
+        case (.utilities, .spanish):    return "Total de servicios mensuales, en dólares"
+        case (.childcare, .english):    return "Monthly childcare costs, in dollars"
+        case (.childcare, .spanish):    return "Costos mensuales de cuidado infantil, en dólares"
+        case (.medical, .english):      return "Monthly out-of-pocket medical costs, in dollars"
+        case (.medical, .spanish):      return "Gastos médicos mensuales de bolsillo, en dólares"
+        case (.utilityShutoff, _):      return ""
+        case (.utilityTypes, _):        return ""  // each row has its own accessibilityLabel
+        }
+    }
+
+    static func selectHint(language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return "Double tap to select"
+        case .spanish: return "Toca dos veces para seleccionar"
+        }
+    }
+
+    static func deselectHint(language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return "Double tap to deselect"
+        case .spanish: return "Toca dos veces para deseleccionar"
         }
     }
 
