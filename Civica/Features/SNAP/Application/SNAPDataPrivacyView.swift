@@ -213,7 +213,7 @@ struct SNAPDataPrivacyView: View {
             } label: {
                 actionRow(
                     title: SNAPDataPrivacyStrings.deleteEverything.value(in: language),
-                    accent: CivicaColors.brickPrimary
+                    accent: CivicaColors.pinePrimary
                 )
             }
             .buttonStyle(.plain)

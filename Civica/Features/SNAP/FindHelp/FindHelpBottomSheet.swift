@@ -166,12 +166,12 @@ struct FindHelpBottomSheet: View {
                         .foregroundStyle(
                             layer == store.layerSelection
                                 ? CivicaColors.onPrimaryText
-                                : CivicaColors.brickPrimary
+                                : CivicaColors.pinePrimary
                         )
                         .frame(maxWidth: .infinity)
                         .background(
                             layer == store.layerSelection
-                                ? CivicaColors.brickPrimary
+                                ? CivicaColors.pinePrimary
                                 : Color.clear
                         )
                 }
@@ -179,7 +179,7 @@ struct FindHelpBottomSheet: View {
         }
         .background(CivicaColors.surfacePrimary)
         .clipShape(Capsule())
-        .overlay(Capsule().stroke(CivicaColors.brickPrimary.opacity(0.4), lineWidth: 1))
+        .overlay(Capsule().stroke(CivicaColors.pinePrimary.opacity(0.4), lineWidth: 1))
     }
 
     private func layerLabel(for layer: FindHelpLayerSelection) -> String {

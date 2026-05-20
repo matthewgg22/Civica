@@ -136,7 +136,7 @@ struct SNAPNotificationPreviewView: View {
                         .padding(.vertical, CivicaSpacing.sm)
                         .background(
                             RoundedRectangle(cornerRadius: CivicaRadius.control)
-                                .fill(CivicaColors.brickPrimary)
+                                .fill(CivicaColors.pinePrimary)
                         )
                 }
                 Text(SNAPNotificationPreviewStrings.emailFooter.value(in: language))
@@ -211,7 +211,7 @@ struct SNAPNotificationPreviewView: View {
             .foregroundStyle(CivicaColors.onPrimaryText)
             .padding(.horizontal, CivicaSpacing.md)
             .padding(.vertical, CivicaSpacing.sm)
-            .background(CivicaColors.accentTeal)
+            .background(CivicaColors.pinePrimary)
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
             .frame(maxWidth: .infinity, alignment: .leading)
             .fixedSize(horizontal: false, vertical: true)

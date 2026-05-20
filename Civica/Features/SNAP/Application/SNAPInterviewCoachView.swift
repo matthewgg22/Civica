@@ -95,7 +95,7 @@ struct SNAPInterviewCoachView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
             Text(SNAPInterviewPrepStrings.eyebrow.value(in: language))
                 .font(CivicaTypography.captionStrong)
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
                 .textCase(.uppercase)
                 .kerning(1.2)
             Text(SNAPInterviewPrepStrings.title.value(in: language))
@@ -140,7 +140,7 @@ struct SNAPInterviewCoachView: View {
                     HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                         Text("•")
                             .font(CivicaTypography.body)
-                            .foregroundStyle(CivicaColors.brickPrimary)
+                            .foregroundStyle(CivicaColors.pinePrimary)
                         Text(prompt)
                             .font(CivicaTypography.body)
                             .foregroundStyle(CivicaColors.ink)
@@ -218,7 +218,7 @@ struct SNAPInterviewCoachView: View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: "bubble.left.and.bubble.right.fill")
                 .font(.title3)
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 32, alignment: .center)
                 .accessibilityHidden(true)
 
@@ -234,7 +234,7 @@ struct SNAPInterviewCoachView: View {
                     .fixedSize(horizontal: false, vertical: true)
                 Text(SNAPInterviewStrings.rehearseAction.value(in: language))
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                     .padding(.top, CivicaSpacing.xs)
             }
 
@@ -250,7 +250,7 @@ struct SNAPInterviewCoachView: View {
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card)
-                .strokeBorder(CivicaColors.brickPrimary.opacity(0.25), lineWidth: 1)
+                .strokeBorder(CivicaColors.pinePrimary.opacity(0.25), lineWidth: 1)
         )
     }
 
@@ -289,7 +289,7 @@ struct SNAPInterviewCoachView: View {
             HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                 Text("\(index + 1).")
                     .font(CivicaTypography.subheadStrong.monospacedDigit())
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                 Text(question.questionText)
                     .font(CivicaTypography.body)
                     .foregroundStyle(CivicaColors.ink)
@@ -299,7 +299,7 @@ struct SNAPInterviewCoachView: View {
             HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                 Text(SNAPInterviewStrings.youCanSayLabel.value(in: language))
                     .font(CivicaTypography.caption.monospacedDigit())
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                     .textCase(.uppercase)
                     .kerning(0.8)
                 Text(question.suggestion)
@@ -327,12 +327,12 @@ struct SNAPInterviewCoachView: View {
             HStack {
                 Text(SNAPInterviewStrings.liveEyebrow.value(in: language))
                     .font(CivicaTypography.captionStrong)
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                     .textCase(.uppercase)
                     .kerning(1.2)
                 Spacer()
                 Circle()
-                    .fill(CivicaColors.brickPrimary)
+                    .fill(CivicaColors.pinePrimary)
                     .frame(width: 8, height: 8)
                     .accessibilityHidden(true)
             }
@@ -356,7 +356,7 @@ struct SNAPInterviewCoachView: View {
                     .fixedSize(horizontal: false, vertical: true)
                 Text(SNAPInterviewStrings.youCanSayLabel.value(in: language) + " " + current.suggestion)
                     .font(CivicaTypography.footnote)
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, CivicaSpacing.xs)
             }
@@ -366,7 +366,7 @@ struct SNAPInterviewCoachView: View {
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
             .overlay(
                 RoundedRectangle(cornerRadius: CivicaRadius.card)
-                    .strokeBorder(CivicaColors.brickPrimary, lineWidth: 2)
+                    .strokeBorder(CivicaColors.pinePrimary, lineWidth: 2)
             )
 
             // What's coming next
@@ -467,7 +467,7 @@ struct SNAPInterviewCoachView: View {
                 RoundedRectangle(cornerRadius: CivicaRadius.card)
                     .strokeBorder(
                         isSelected
-                            ? (option == .rude || option == .noCall ? CivicaColors.brickPrimary : CivicaColors.accentTeal)
+                            ? (option == .rude || option == .noCall ? CivicaColors.brickAccent : CivicaColors.accentTeal)
                             : CivicaColors.hairline,
                         lineWidth: isSelected ? 2 : 1
                     )

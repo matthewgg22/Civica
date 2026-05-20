@@ -133,7 +133,7 @@ struct PhantomRecertSummaryView: View {
                 ForEach(changes, id: \.self) { change in
                     HStack(spacing: CivicaSpacing.sm) {
                         Image(systemName: iconForChange(change.kind))
-                            .foregroundStyle(CivicaColors.brickPrimary)
+                            .foregroundStyle(CivicaColors.pinePrimary)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(sectionLabel(change.section).value(in: language))
                                 .font(CivicaTypography.body)
@@ -198,7 +198,7 @@ struct PhantomRecertSummaryView: View {
                     .frame(height: 56)
                     .background(
                         RoundedRectangle(cornerRadius: 3, style: .continuous)
-                            .fill(CivicaColors.brickPrimary)
+                            .fill(CivicaColors.pinePrimary)
                     )
             }
             .buttonStyle(.plain)
@@ -206,7 +206,7 @@ struct PhantomRecertSummaryView: View {
             Button(action: onClose) {
                 Text(RecertCompanionStrings.phantomCloseCTA.value(in: language))
                     .font(CivicaTypography.sectionHeader)
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
             }

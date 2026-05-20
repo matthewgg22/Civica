@@ -82,7 +82,7 @@ struct FindHelpEmptyView: View {
                             .frame(maxWidth: .infinity, minHeight: 44)
                             .background(
                                 RoundedRectangle(cornerRadius: CivicaRadius.control)
-                                    .fill(CivicaColors.brickPrimary)
+                                    .fill(CivicaColors.pinePrimary)
                             )
                     }
                     .padding(.top, CivicaSpacing.sm)
@@ -136,7 +136,7 @@ struct FindHelpTransportErrorView: View {
                         .frame(maxWidth: .infinity, minHeight: 44)
                         .background(
                             RoundedRectangle(cornerRadius: CivicaRadius.control)
-                                .fill(CivicaColors.brickPrimary)
+                                .fill(CivicaColors.pinePrimary)
                         )
                 }
                 .padding(.top, CivicaSpacing.sm)
@@ -144,7 +144,7 @@ struct FindHelpTransportErrorView: View {
                 Button(action: onUseZipInstead) {
                     Text(FindHelpStrings.permissionZipCTA.value(in: language))
                         .font(CivicaTypography.footnoteStrong)
-                        .foregroundStyle(CivicaColors.brickPrimary)
+                        .foregroundStyle(CivicaColors.pinePrimary)
                         .underline()
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.top, CivicaSpacing.xs)

@@ -46,7 +46,7 @@ struct CivicaPrimaryButton: View {
             .frame(maxWidth: .infinity, minHeight: 56)
             .background(
                 RoundedRectangle(cornerRadius: CivicaRadius.control)
-                    .fill(isEnabled ? CivicaColors.brickPrimary : CivicaColors.brickPrimaryDisabled)
+                    .fill(isEnabled ? CivicaColors.pinePrimary : CivicaColors.brickPrimaryDisabled)
             )
         }
         .disabled(!isEnabled)

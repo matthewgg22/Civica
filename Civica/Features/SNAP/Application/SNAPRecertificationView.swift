@@ -163,7 +163,7 @@ struct SNAPRecertificationView: View {
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 Image(systemName: "person.2.fill")
                     .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                     .frame(width: 28, alignment: .leading)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {

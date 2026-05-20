@@ -97,7 +97,7 @@ struct SNAPDecisionDeniedView: View {
                     icon: "scale.3d",
                     title: SNAPStatusHomeStrings.deniedAppealTitle.value(in: language),
                     body: SNAPStatusHomeStrings.deniedAppealBody.value(in: language),
-                    accent: CivicaColors.brickPrimary
+                    accent: CivicaColors.brickAccent
                 )
                 nextStepCard(
                     icon: "doc.text.magnifyingglass",
@@ -198,7 +198,7 @@ struct SNAPDecisionDeniedView: View {
                     .frame(maxWidth: .infinity, minHeight: 56)
                     .background(
                         RoundedRectangle(cornerRadius: CivicaRadius.control)
-                            .fill(CivicaColors.brickPrimary)
+                            .fill(CivicaColors.brickAccent)
                     )
             }
             .simultaneousGesture(TapGesture().onEnded { onAppeal() })

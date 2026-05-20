@@ -76,7 +76,7 @@ struct SNAPIDScanOfferView: View {
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, CivicaSpacing.sm)
-                    .background(CivicaColors.brickPrimary)
+                    .background(CivicaColors.pinePrimary)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
                 }
                 .buttonStyle(.plain)
@@ -173,7 +173,7 @@ struct SNAPIDScanOfferView: View {
         HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Image(systemName: icon)
                 .font(.system(size: 15, weight: .medium))
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 20)
                 .accessibilityHidden(true)
             Text(text)

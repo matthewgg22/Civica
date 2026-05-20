@@ -162,7 +162,7 @@ struct SNAPReviewDraftFlowView: View {
                 } label: {
                     Text(SNAPReviewDraftStrings.editLabel.value(in: language))
                         .font(CivicaTypography.footnoteStrong)
-                        .foregroundStyle(CivicaColors.brickPrimary)
+                        .foregroundStyle(CivicaColors.pinePrimary)
                 }
                 .buttonStyle(.plain)
             }

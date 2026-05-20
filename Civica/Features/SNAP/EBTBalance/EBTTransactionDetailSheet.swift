@@ -81,7 +81,7 @@ struct EBTTransactionDetailSheet: View {
     // Merchant-monogram avatar, matching the activity-row treatment;
     // deposits get a distinct down-arrow.
     private var avatar: some View {
-        let tint = transaction.isDeposit ? CivicaColors.accentTeal : CivicaColors.brickPrimary
+        let tint = transaction.isDeposit ? CivicaColors.wheatPrimary : CivicaColors.brickAccent
         return ZStack {
             RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                 .fill(tint.opacity(0.12))
@@ -146,7 +146,7 @@ struct EBTTransactionDetailSheet: View {
                 .frame(maxWidth: .infinity, minHeight: 44)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.control)
-                        .fill(CivicaColors.brickPrimary)
+                        .fill(CivicaColors.pinePrimary)
                 )
         }
         .buttonStyle(.plain)

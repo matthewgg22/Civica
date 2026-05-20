@@ -16,7 +16,7 @@ struct FindHelpDisclosureFooter: View {
             } label: {
                 HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                     Image(systemName: "info.circle.fill")
-                        .foregroundStyle(CivicaColors.brickPrimary)
+                        .foregroundStyle(CivicaColors.pinePrimary)
                         .accessibilityHidden(true)
                     Text("find_help.disclosure.short")
                         .font(CivicaTypography.footnoteStrong)

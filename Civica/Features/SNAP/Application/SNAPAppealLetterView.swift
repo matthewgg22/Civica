@@ -149,7 +149,7 @@ struct SNAPAppealLetterView: View {
                     Task { await generate() }
                 }
                 .font(CivicaTypography.subheadStrong)
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
             }
             .padding(CivicaSpacing.lg)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -183,11 +183,11 @@ struct SNAPAppealLetterView: View {
             } label: {
                 HStack(spacing: CivicaSpacing.sm) {
                     Image(systemName: "safari")
-                        .foregroundStyle(CivicaColors.brickPrimary)
+                        .foregroundStyle(CivicaColors.pinePrimary)
                         .accessibilityHidden(true)
                     Text(SNAPAppealLetterScreenStrings.openOnlinePortalText(language: language, stateCode: stateCode))
                         .font(CivicaTypography.subheadStrong)
-                        .foregroundStyle(CivicaColors.brickPrimary)
+                        .foregroundStyle(CivicaColors.pinePrimary)
                         .underline()
                     Spacer(minLength: 0)
                 }

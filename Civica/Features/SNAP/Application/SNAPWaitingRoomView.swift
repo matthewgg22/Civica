@@ -347,7 +347,7 @@ struct SNAPWaitingRoomView: View {
                         icon: "person.2.fill",
                         title: SNAPStatusHomeStrings.findHelpApplicationLinkTitle.value(in: language),
                         body: SNAPStatusHomeStrings.findHelpApplicationLinkSubtitle.value(in: language),
-                        accent: CivicaColors.brickPrimary
+                        accent: CivicaColors.pinePrimary
                     )
                 }
                 .buttonStyle(.plain)

@@ -85,7 +85,7 @@ struct CivicaEntryView: View {
         } label: {
             tileCard(
                 icon: "arrow.triangle.2.circlepath",
-                iconAccent: CivicaColors.brickPrimary,
+                iconAccent: CivicaColors.pinePrimary,
                 title: CivicaEntryStrings.recertCompanionTitle.value(in: language),
                 subtitle: CivicaEntryStrings.recertCompanionSubtitle.value(in: language)
             )
@@ -200,7 +200,7 @@ struct CivicaEntryView: View {
         } label: {
             tileCard(
                 imageName: "HomeIconSnapApply",
-                iconAccent: CivicaColors.brickPrimary,
+                iconAccent: CivicaColors.pinePrimary,
                 title: CivicaEntryStrings.snapTitle.value(in: language),
                 subtitle: CivicaEntryStrings.snapSubtitle.value(in: language)
             )
@@ -256,7 +256,7 @@ struct CivicaEntryView: View {
         } label: {
             tileCard(
                 imageName: "HomeIconInterviewCoach",
-                iconAccent: CivicaColors.brickPrimary,
+                iconAccent: CivicaColors.pinePrimary,
                 title: CivicaEntryStrings.interviewCoachTitle.value(in: language),
                 subtitle: CivicaEntryStrings.interviewCoachSubtitle.value(in: language)
             )

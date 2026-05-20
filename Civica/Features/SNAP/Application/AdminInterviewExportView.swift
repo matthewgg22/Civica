@@ -50,7 +50,7 @@ struct AdminInterviewExportView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Close", action: onDismiss)
-                        .foregroundStyle(CivicaColors.brickPrimary)
+                        .foregroundStyle(CivicaColors.pinePrimary)
                 }
             }
         }

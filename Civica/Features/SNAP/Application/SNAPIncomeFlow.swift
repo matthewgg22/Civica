@@ -372,7 +372,7 @@ struct SNAPIncomeFlowView: View {
             } label: {
                 Text(SNAPIncomeStrings.paystubEnterDifferent.value(in: language))
                     .font(CivicaTypography.footnote.weight(.semibold))
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
             }
             .buttonStyle(.plain)
         }

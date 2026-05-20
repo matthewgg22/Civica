@@ -103,7 +103,7 @@ struct SNAPDocumentUploadView: View {
     private var loadingView: some View {
         HStack {
             Spacer()
-            ProgressView().tint(CivicaColors.brickPrimary)
+            ProgressView().tint(CivicaColors.pinePrimary)
             Spacer()
         }
         .padding(.top, CivicaSpacing.xl)
@@ -174,7 +174,7 @@ struct SNAPDocumentUploadView: View {
                         .padding(.vertical, CivicaSpacing.sm)
                 }
                 .buttonStyle(.bordered)
-                .tint(CivicaColors.brickPrimary)
+                .tint(CivicaColors.pinePrimary)
 
                 Button {
                     uploadError = nil
@@ -186,7 +186,7 @@ struct SNAPDocumentUploadView: View {
                         .padding(.vertical, CivicaSpacing.sm)
                 }
                 .buttonStyle(.bordered)
-                .tint(CivicaColors.brickPrimary)
+                .tint(CivicaColors.pinePrimary)
             }
         }
     }
@@ -203,7 +203,7 @@ struct SNAPDocumentUploadView: View {
 
     private var uploadingRow: some View {
         HStack(spacing: CivicaSpacing.sm) {
-            ProgressView().tint(CivicaColors.brickPrimary)
+            ProgressView().tint(CivicaColors.pinePrimary)
             Text(Strings.uploading.value(in: language))
                 .font(CivicaTypography.footnote)
                 .foregroundStyle(CivicaColors.graphite)
@@ -214,7 +214,7 @@ struct SNAPDocumentUploadView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             if isLoadingDocuments {
                 ProgressView()
-                    .tint(CivicaColors.brickPrimary)
+                    .tint(CivicaColors.pinePrimary)
                     .frame(maxWidth: .infinity)
             } else if documents.isEmpty {
                 Text(Strings.noDocumentsYet.value(in: language))

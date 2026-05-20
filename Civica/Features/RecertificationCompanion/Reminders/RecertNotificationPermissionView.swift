@@ -52,7 +52,7 @@ struct RecertNotificationPermissionView: View {
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: "bell.badge")
                     .font(.system(size: 22))
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                 Text(RecertCompanionStrings.reminderPermissionTitle.value(in: language))
                     .font(CivicaTypography.sectionHeader)
                     .foregroundStyle(CivicaColors.ink)
@@ -71,7 +71,7 @@ struct RecertNotificationPermissionView: View {
                         .padding(.vertical, CivicaSpacing.sm)
                         .background(
                             RoundedRectangle(cornerRadius: 3, style: .continuous)
-                                .fill(CivicaColors.brickPrimary)
+                                .fill(CivicaColors.pinePrimary)
                         )
                 }
                 .buttonStyle(.plain)

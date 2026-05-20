@@ -14,7 +14,7 @@ struct CivicaStatusTimeline: View {
     let steps: [Step]
     let accent: Color
 
-    init(steps: [Step], accent: Color = CivicaColors.brickPrimary) {
+    init(steps: [Step], accent: Color = CivicaColors.pinePrimary) {
         self.steps = steps
         self.accent = accent
     }
@@ -123,11 +123,11 @@ struct CivicaStatusTimeline: View {
         // per HANDOFF, instead of repeating the brand brick that
         // dominates every CTA on the same screens.
         case .complete: return CivicaColors.accentTeal
-        // Current step uses the dedicated timelineFocusGold token
+        // Current step uses the wheatPop token
         // ("this is where you are right now") so the eye reads it
         // as a distinct "you are here" rather than a duplicate of
-        // either completed (teal) or the screen's primary CTA (brick).
-        case .current:  return CivicaColors.timelineFocusGold
+        // either completed (teal) or the screen's primary CTA (pine).
+        case .current:  return CivicaColors.wheatPop
         case .future:   return CivicaColors.surfacePrimary
         case .blocked:  return CivicaColors.warningAmber
         }

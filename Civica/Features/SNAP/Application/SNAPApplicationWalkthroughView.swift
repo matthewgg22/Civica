@@ -97,7 +97,7 @@ struct SNAPApplicationWalkthroughView: View {
                 .font(CivicaTypography.subheadBold)
                 .foregroundColor(CivicaColors.onPrimaryText)
                 .frame(width: 28, height: 28)
-                .background(CivicaColors.brickPrimary)
+                .background(CivicaColors.pinePrimary)
                 .clipShape(Circle())
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(title)
@@ -110,7 +110,7 @@ struct SNAPApplicationWalkthroughView: View {
                     Button(action: action) {
                         Text(label)
                             .font(CivicaTypography.footnoteStrong)
-                            .foregroundColor(CivicaColors.brickPrimary)
+                            .foregroundColor(CivicaColors.pinePrimary)
                     }
                 }
             }

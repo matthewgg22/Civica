@@ -68,11 +68,11 @@ struct FindHelpFilterBar: View {
                     .font(.system(size: 11, weight: .semibold))
                     .accessibilityHidden(true)
             }
-            .foregroundStyle(CivicaColors.brickPrimary)
+            .foregroundStyle(CivicaColors.pinePrimary)
             .padding(.horizontal, CivicaSpacing.md)
             .padding(.vertical, CivicaSpacing.xs)
             .background(
-                Capsule().stroke(CivicaColors.brickPrimary.opacity(0.4), lineWidth: 1)
+                Capsule().stroke(CivicaColors.pinePrimary.opacity(0.4), lineWidth: 1)
             )
         }
     }

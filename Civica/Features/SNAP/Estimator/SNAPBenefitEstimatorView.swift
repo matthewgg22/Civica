@@ -465,7 +465,7 @@ struct SNAPBenefitEstimatorView: View {
             (
                 Text(SNAPBenefitEstimatorStrings.seeTheMathLink.value(in: language))
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundColor(CivicaColors.brickPrimary)
+                    .foregroundColor(CivicaColors.pinePrimary)
                 + Text("  ·  ")
                     .font(CivicaTypography.footnote)
                     .foregroundColor(CivicaColors.graphite)
@@ -575,7 +575,7 @@ struct SNAPBenefitEstimatorView: View {
                 .foregroundStyle(isOn.wrappedValue ? CivicaColors.graphite : CivicaColors.ink)
             Toggle("", isOn: isOn)
                 .labelsHidden()
-                .tint(CivicaColors.brickPrimary)
+                .tint(CivicaColors.pinePrimary)
             Text(SNAPBenefitEstimatorStrings.toggleYes.value(in: language))
                 .font(CivicaTypography.subhead)
                 .foregroundStyle(isOn.wrappedValue ? CivicaColors.ink : CivicaColors.graphite)
@@ -605,7 +605,7 @@ struct SNAPBenefitEstimatorView: View {
             .foregroundStyle(CivicaColors.ink)
 
             Slider(value: doubleBinding, in: lower...upper, step: step)
-                .tint(CivicaColors.brickPrimary)
+                .tint(CivicaColors.pinePrimary)
 
             HStack {
                 CivicaMoney(amount: range.lowerBound, font: CivicaTypography.caption)

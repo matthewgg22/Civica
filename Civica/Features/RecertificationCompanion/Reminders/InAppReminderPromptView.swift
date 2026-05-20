@@ -27,7 +27,7 @@ struct InAppReminderPromptView: View {
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: "bell.fill")
                     .font(.system(size: 22))
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                 Text(promptTitle)
                     .font(CivicaTypography.sectionHeader)
                     .foregroundStyle(CivicaColors.ink)
@@ -53,7 +53,7 @@ struct InAppReminderPromptView: View {
                         .padding(.vertical, CivicaSpacing.sm)
                         .background(
                             RoundedRectangle(cornerRadius: 3, style: .continuous)
-                                .fill(CivicaColors.brickPrimary)
+                                .fill(CivicaColors.pinePrimary)
                         )
                 }
                 .buttonStyle(.plain)
@@ -74,7 +74,7 @@ struct InAppReminderPromptView: View {
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card)
-                .strokeBorder(CivicaColors.brickPrimary.opacity(0.4), lineWidth: 1)
+                .strokeBorder(CivicaColors.pinePrimary.opacity(0.4), lineWidth: 1)
         )
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(promptTitle). \(promptBody)")

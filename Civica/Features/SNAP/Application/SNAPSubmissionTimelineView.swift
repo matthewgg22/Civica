@@ -147,7 +147,7 @@ struct SNAPSubmissionTimelineView: View {
         // Now = "you are here right now" -> gold focus
         case .now:
             Circle()
-                .fill(CivicaColors.timelineFocusGold)
+                .fill(CivicaColors.wheatPop)
                 .frame(width: 14, height: 14)
         case .upcoming:
             Circle()
@@ -193,7 +193,7 @@ struct SNAPSubmissionTimelineView: View {
                 if let cta {
                     Text(cta)
                         .font(CivicaTypography.footnoteStrong)
-                        .foregroundStyle(CivicaColors.brickPrimary)
+                        .foregroundStyle(CivicaColors.pinePrimary)
                         .padding(.top, CivicaSpacing.xs)
                 }
             }

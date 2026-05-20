@@ -163,7 +163,7 @@ struct SNAPDocumentConfirmationView: View {
                 Text(SNAPDocumentConfirmationStrings.looksRight.value(in: language))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, CivicaSpacing.sm)
-                    .background(CivicaColors.brickPrimary)
+                    .background(CivicaColors.pinePrimary)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
                     .foregroundColor(CivicaColors.onPrimaryText)
             }

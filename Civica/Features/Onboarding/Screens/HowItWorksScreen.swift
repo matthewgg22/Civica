@@ -60,7 +60,7 @@ struct HowItWorksScreen: View {
                 .foregroundStyle(CivicaColors.onPrimaryText)
                 .frame(width: 32, height: 32)
                 .background(
-                    Circle().fill(CivicaColors.brickPrimary)
+                    Circle().fill(CivicaColors.pinePrimary)
                 )
                 .accessibilityHidden(true)
 

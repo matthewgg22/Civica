@@ -132,7 +132,7 @@ struct CivicaAITransparencyView: View {
                     HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                         Text("•")
                             .font(.body)
-                            .foregroundStyle(CivicaColors.brickPrimary)
+                            .foregroundStyle(CivicaColors.pinePrimary)
                             .accessibilityHidden(true)
                         Text(bullet)
                             .font(.body)

@@ -38,7 +38,7 @@ struct FindHelpOnboardingCard: View {
                     .frame(maxWidth: .infinity, minHeight: 44)
                     .background(
                         RoundedRectangle(cornerRadius: CivicaRadius.control)
-                            .fill(CivicaColors.brickPrimary)
+                            .fill(CivicaColors.pinePrimary)
                     )
             }
             .padding(.top, CivicaSpacing.xs)

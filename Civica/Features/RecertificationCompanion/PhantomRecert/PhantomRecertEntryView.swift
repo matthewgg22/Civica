@@ -23,11 +23,11 @@ struct PhantomRecertEntryView: View {
             HStack(spacing: CivicaSpacing.md) {
                 Image(systemName: "wand.and.stars")
                     .font(.system(size: 28))
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                     .frame(width: 48, height: 48)
                     .background(
                         RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                            .fill(CivicaColors.brickPrimary.opacity(0.12))
+                            .fill(CivicaColors.pinePrimary.opacity(0.12))
                     )
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {

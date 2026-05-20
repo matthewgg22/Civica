@@ -150,7 +150,7 @@ struct EBTBalanceDashboardView: View {
         .animation(.easeInOut(duration: 0.25), value: depositLanded)
     }
 
-    private func banner(icon: String, text: String, tint: Color = CivicaColors.brickPrimary) -> some View {
+    private func banner(icon: String, text: String, tint: Color = CivicaColors.pinePrimary) -> some View {
         HStack(spacing: CivicaSpacing.sm) {
             Image(systemName: icon)
                 .foregroundStyle(tint)
@@ -292,7 +292,7 @@ struct EBTBalanceDashboardView: View {
     // deposits get a distinct down-arrow instead of a monogram.
     @ViewBuilder
     private func transactionAvatar(_ transaction: EBTTransaction) -> some View {
-        let tint = transaction.isDeposit ? CivicaColors.accentTeal : CivicaColors.brickPrimary
+        let tint = transaction.isDeposit ? CivicaColors.wheatPrimary : CivicaColors.brickAccent
         ZStack {
             Circle().fill(tint.opacity(0.12))
             if transaction.isDeposit {
@@ -404,7 +404,7 @@ struct EBTBalanceDashboardView: View {
             HStack(spacing: CivicaSpacing.md) {
                 Image(systemName: store.isCardLocked ? "lock.fill" : "lock.open")
                     .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(store.isCardLocked ? CivicaColors.brickPrimary : CivicaColors.graphite)
+                    .foregroundStyle(store.isCardLocked ? CivicaColors.pinePrimary : CivicaColors.graphite)
                     .frame(width: 28, alignment: .leading)
                     .accessibilityHidden(true)
                 Text(EBTBalanceStrings.securityRowTitle.value(in: language))
@@ -415,7 +415,7 @@ struct EBTBalanceDashboardView: View {
                      ? EBTBalanceStrings.securityStatusLocked.value(in: language)
                      : EBTBalanceStrings.securityStatusUnlocked.value(in: language))
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundStyle(store.isCardLocked ? CivicaColors.brickPrimary : CivicaColors.graphite)
+                    .foregroundStyle(store.isCardLocked ? CivicaColors.pinePrimary : CivicaColors.graphite)
                 Image(systemName: "chevron.right")
                     .foregroundStyle(CivicaColors.graphite)
                     .accessibilityHidden(true)

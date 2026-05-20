@@ -41,7 +41,7 @@ struct InterviewCountdownCard: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(InterviewCountdownStrings.eyebrow.value(in: language))
                 .font(CivicaTypography.captionStrong)
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
                 .textCase(.uppercase)
                 .kerning(1.2)
 
@@ -126,7 +126,7 @@ struct InterviewDateCaptureCard: View {
             )
             .labelsHidden()
             .datePickerStyle(.compact)
-            .tint(CivicaColors.brickPrimary)
+            .tint(CivicaColors.pinePrimary)
 
             CivicaPrimaryButton(
                 InterviewCountdownStrings.dateCaptureSave.value(in: language),

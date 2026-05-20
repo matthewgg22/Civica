@@ -285,14 +285,14 @@ struct SNAPDecisionApprovedView: View {
             Button(action: onOpenDTAConnect) {
                 Text(SNAPDecisionApprovedStrings.openDTAConnect.value(in: language))
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.vertical, CivicaSpacing.md)
                     .background(CivicaColors.surfacePrimary)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
                     .overlay(
                         RoundedRectangle(cornerRadius: CivicaRadius.control)
-                            .strokeBorder(CivicaColors.brickPrimary, lineWidth: 1)
+                            .strokeBorder(CivicaColors.pinePrimary, lineWidth: 1)
                     )
             }
             .buttonStyle(.plain)

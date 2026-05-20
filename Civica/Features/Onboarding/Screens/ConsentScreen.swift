@@ -48,7 +48,7 @@ struct ConsentScreen: View {
     private func bullet(_ text: String) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Image(systemName: "checkmark.circle.fill")
-                .foregroundStyle(CivicaColors.accentTeal)
+                .foregroundStyle(CivicaColors.pinePrimary)
                 .accessibilityHidden(true)
             Text(text)
                 .font(CivicaTypography.body)
@@ -72,7 +72,7 @@ struct ConsentScreen: View {
                       : "square")
                     .font(.system(size: 22, weight: .regular))
                     .foregroundStyle(viewModel.hasConsented
-                                     ? CivicaColors.brickPrimary
+                                     ? CivicaColors.pinePrimary
                                      : CivicaColors.graphite)
                 Text(consentToggleText)
                     .font(CivicaTypography.subhead)

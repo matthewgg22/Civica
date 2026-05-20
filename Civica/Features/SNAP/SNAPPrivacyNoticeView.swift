@@ -77,7 +77,7 @@ struct SNAPPrivacyNoticeView: View {
                             openURL(officialURL)
                         }
                         .font(CivicaTypography.subheadStrong)
-                        .foregroundStyle(CivicaColors.brickPrimary)
+                        .foregroundStyle(CivicaColors.pinePrimary)
                         .buttonStyle(.plain)
                     }
 

@@ -51,7 +51,7 @@ struct SNAPExpeditedBanner: View {
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 Image(systemName: "bolt.fill")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                     .frame(width: 24, alignment: .leading)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
@@ -129,7 +129,7 @@ struct SNAPExpeditedBanner: View {
                 } label: {
                     Text(SNAPExpeditedBannerStrings.uncertainCta.value(in: language))
                         .font(CivicaTypography.footnoteStrong)
-                        .foregroundStyle(CivicaColors.brickPrimary)
+                        .foregroundStyle(CivicaColors.pinePrimary)
                 }
                 .buttonStyle(.plain)
                 .padding(.leading, 24 + CivicaSpacing.md)

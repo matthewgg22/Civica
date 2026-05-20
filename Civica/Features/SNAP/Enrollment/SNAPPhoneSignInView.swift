@@ -51,7 +51,7 @@ struct SNAPPhoneSignInView: View {
         .overlay {
             if auth.isLoading {
                 Color.black.opacity(0.15).ignoresSafeArea()
-                ProgressView().tint(CivicaColors.brickPrimary)
+                ProgressView().tint(CivicaColors.pinePrimary)
             }
         }
     }
@@ -99,7 +99,7 @@ struct SNAPPhoneSignInView: View {
                     .padding(.vertical, CivicaSpacing.sm)
             }
             .buttonStyle(.borderedProminent)
-            .tint(CivicaColors.brickPrimary)
+            .tint(CivicaColors.pinePrimary)
             .disabled(phoneText.trimmingCharacters(in: .whitespaces).isEmpty)
 
             Text(Strings.phoneDisclosure.value(in: language))
@@ -145,7 +145,7 @@ struct SNAPPhoneSignInView: View {
                     .padding(.vertical, CivicaSpacing.sm)
             }
             .buttonStyle(.borderedProminent)
-            .tint(CivicaColors.brickPrimary)
+            .tint(CivicaColors.pinePrimary)
             .disabled(otpText.count < 6)
 
             Button {
@@ -154,7 +154,7 @@ struct SNAPPhoneSignInView: View {
             } label: {
                 Text(Strings.resend.value(in: language))
                     .font(CivicaTypography.subhead)
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
             }
             .buttonStyle(.plain)
         }

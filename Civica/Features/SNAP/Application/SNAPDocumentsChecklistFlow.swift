@@ -269,7 +269,7 @@ struct SNAPDocumentsChecklistFlowView: View {
                 HStack(alignment: .top, spacing: CivicaSpacing.md) {
                     Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
                         .font(.system(size: 22))
-                        .foregroundStyle(isChecked ? CivicaColors.brickPrimary : CivicaColors.graphite)
+                        .foregroundStyle(isChecked ? CivicaColors.pinePrimary : CivicaColors.graphite)
                         .padding(.top, 2)
                         .accessibilityHidden(true)
 
@@ -306,7 +306,7 @@ struct SNAPDocumentsChecklistFlowView: View {
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.control)
                 .strokeBorder(
-                    isChecked ? CivicaColors.brickPrimary : CivicaColors.hairline,
+                    isChecked ? CivicaColors.pinePrimary : CivicaColors.hairline,
                     lineWidth: isChecked ? 2 : 1
                 )
         )
@@ -322,13 +322,13 @@ struct SNAPDocumentsChecklistFlowView: View {
         } label: {
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: hasCapture ? "checkmark.shield.fill" : "camera.fill")
-                    .foregroundStyle(hasCapture ? CivicaColors.accentTeal : CivicaColors.brickPrimary)
+                    .foregroundStyle(hasCapture ? CivicaColors.accentTeal : CivicaColors.pinePrimary)
                     .accessibilityHidden(true)
                 Text(hasCapture
                     ? SNAPDocumentsChecklistStrings.photoSaved.value(in: language)
                     : SNAPDocumentsChecklistStrings.takePhoto.value(in: language))
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundStyle(hasCapture ? CivicaColors.accentTeal : CivicaColors.brickPrimary)
+                    .foregroundStyle(hasCapture ? CivicaColors.accentTeal : CivicaColors.pinePrimary)
                 Spacer(minLength: 0)
             }
             .padding(.vertical, CivicaSpacing.xs)

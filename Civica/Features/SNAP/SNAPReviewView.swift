@@ -181,7 +181,7 @@ private struct SNAPReviewSectionCard: View {
                 }
                 .font(CivicaTypography.subheadStrong)
                 .buttonStyle(.plain)
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
             }
 
             ForEach(Array(rows.enumerated()), id: \.offset) { _, row in

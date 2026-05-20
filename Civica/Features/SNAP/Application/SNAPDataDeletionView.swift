@@ -82,7 +82,7 @@ struct SNAPDataDeletionView: View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Text("\(number)")
                 .font(CivicaTypography.subheadStrong.monospacedDigit())
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 22, alignment: .leading)
                 .padding(.top, 1)
                 .accessibilityHidden(true)
