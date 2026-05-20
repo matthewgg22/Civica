@@ -5,10 +5,8 @@ public enum CivicaColors {
     private static let statusSurfaceAlpha: Double = 0.13
 
     // MARK: - Civica v1 brand (HANDOFF.md, locked May 10, 2026)
-
-    /// Primary brand. Brick on Paper 6.42:1, on White 7.06:1 (AAA). Brick-light reads on dark surfaces.
-    public static let brickPrimary         = Color.dynamic(light: "#9C3A24", dark: "#E8856E")
-    public static let brickPrimaryPressed  = Color.dynamic(light: "#84311E", dark: "#D26A52")
+    // brickPrimary + brickPrimaryPressed moved to deprecation shims below (v2: → brickAccent).
+    // brickPrimaryDisabled kept as-is; deprecated in Phase 3 once button component swap ships.
     public static let brickPrimaryDisabled = Color.dynamic(light: "#B07A6E", dark: "#9D5C4D")
 
     /// Accent teal. **Deltas, success, on-target SLA only. Never body. Never paragraphs.**
@@ -19,7 +17,8 @@ public enum CivicaColors {
     public static let teal                 = accentTeal
 
     /// Warm white background. Pure white reserved for printed output.
-    public static let paper                = Color.dynamic(light: "#F5F2EC", dark: "#111418")
+    /// v2: lifted 2 pts cooler (#F5F2EC → #F7F5EF) — less papery-wood under pine.
+    public static let paper                = Color.dynamic(light: "#F7F5EF", dark: "#111418")
 
     /// Primary text.
     public static let ink                  = Color.dynamic(light: "#1A1714", dark: "#F2F5F8")
@@ -57,20 +56,24 @@ public enum CivicaColors {
     // MARK: - Carried-forward surfaces (not addressed by handoff)
 
     public static let surfacePrimary       = Color.dynamic(light: "#FFFFFF", dark: "#1B1F24")
-    public static let surfaceSecondary     = Color.dynamic(light: "#F7FAFD", dark: "#242A31")
+    /// v2: rebased from cool blue-white → warm-neutral (old value read off-family with pine).
+    public static let surfaceSecondary     = Color.dynamic(light: "#F0EEE6", dark: "#2A2620")
     public static let onPrimaryText        = Color.dynamic(light: "#FFFFFF", dark: "#F8FBFF")
     public static let iconOnPrimarySurface = Color.dynamic(light: "#FFFFFF", dark: "#DCE8F4")
     public static let iconOnPrimaryBorder  = Color.dynamic(light: "#FFFFFFE0", dark: "#DCE8F4E0")
     public static let shadowSoft           = Color.dynamic(light: "#00000029", dark: "#00000080")
 
-    public static let warningAmber         = Color.dynamic(light: "#9A5A14", dark: "#9A5A14")
+    /// v2: shifted to burnt orange — separates clearly from wheatPressed (#9A5A14 → #B5511E).
+    public static let warningAmber         = Color.dynamic(light: "#B5511E", dark: "#B5511E")
     public static let neutralStatus        = Color.dynamic(light: "#5A5F66", dark: "#5A5F66")
     public static let indigoStatus         = Color.dynamic(light: "#4F46A5", dark: "#4F46A5")
 
-    public static let statusSuccessSurface = accentTeal.opacity(statusSurfaceAlpha)
+    // v2: success routes to pine (in family); info re-routes to indigo soft tint at 8%
+    // (was brickPrimary @13% — collided with success when both were pine).
+    public static let statusSuccessSurface = pinePrimary.opacity(statusSurfaceAlpha)
     public static let statusWarningSurface = warningAmber.opacity(statusSurfaceAlpha)
     public static let statusErrorSurface   = destructive.opacity(statusSurfaceAlpha)
-    public static let statusInfoSurface    = brickPrimary.opacity(statusSurfaceAlpha)
+    public static let statusInfoSurface    = indigoStatus.opacity(0.08)
     public static let statusNeutralSurface = neutralStatus.opacity(statusSurfaceAlpha)
 
     public static let secondaryButtonFill          = surfaceSecondary
@@ -82,7 +85,7 @@ public enum CivicaColors {
     public static let mapvCardBackground   = Color.dynamic(light: "#F3EBCB", dark: "#2A241B")
     public static let supportPageBackground = Color.dynamic(light: "#ACD5E3", dark: "#1A2833")
     public static let supportWarmSurface   = Color.dynamic(light: "#F3D487", dark: "#3A2D15")
-    public static let timelineFocusGold    = Color.dynamic(light: "#D79B1F", dark: "#F3D487")
+    // timelineFocusGold moved to deprecation shim below (v2: → wheatPop).
 }
 
 public extension Color {
@@ -212,4 +215,22 @@ public struct CivicaSecondaryCTAButtonStyle: ButtonStyle {
             )
             .opacity(configuration.isPressed ? 0.9 : 1)
     }
+}
+
+// MARK: - v2 deprecation shims
+// v1 token names continue to compile with warnings, pointing to their v2 replacements.
+// Remove these after Phase 3 (one deprecation cycle post Phase 2 ship).
+
+extension CivicaColors {
+    @available(*, deprecated, renamed: "brickAccent",
+               message: "brickPrimary demoted to recovery only. Use pinePrimary for CTAs; brickAccent for recovery flows.")
+    public static var brickPrimary: Color { brickAccent }
+
+    @available(*, deprecated, renamed: "brickAccentPressed",
+               message: "Use pinePrimaryPressed for CTA press states; brickAccentPressed for recovery.")
+    public static var brickPrimaryPressed: Color { brickAccentPressed }
+
+    @available(*, deprecated, renamed: "wheatPop",
+               message: "timelineFocusGold superseded by wheatPop in the same focused/hover role.")
+    public static var timelineFocusGold: Color { wheatPop }
 }

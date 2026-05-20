@@ -26,7 +26,7 @@ struct SNAPJobsView: View {
                 footer
             }
         }
-        .background(Color.civicaPaper.ignoresSafeArea())
+        .background(Color.mktPaper.ignoresSafeArea())
         .navigationTitle(SNAPMarketplaceStrings.jobsNavTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -40,12 +40,12 @@ struct SNAPJobsView: View {
                 VStack(spacing: 6) {
                     Text(day)
                         .font(MFont.capsLabel)
-                        .foregroundStyle(Color.civicaGraphite)
+                        .foregroundStyle(Color.mktGraphite)
                         .kerning(1.5)
                         .accessibilityHidden(true)
                     // Teal bar on class-block days; transparent otherwise
                     RoundedRectangle(cornerRadius: 1)
-                        .fill(vm.schedule.classBlocks[idx] ? Color.civicaTeal : Color.clear)
+                        .fill(vm.schedule.classBlocks[idx] ? Color.mktTeal : Color.clear)
                         .frame(width: 18, height: 2)
                         .accessibilityHidden(true)
                 }
@@ -54,7 +54,7 @@ struct SNAPJobsView: View {
         }
         .padding(.horizontal, 24)
         .frame(height: 56)
-        .background(Color.civicaPaper2)
+        .background(Color.mktPaper2)
         .accessibilityLabel("Class schedule: Tuesday and Thursday class blocks")
     }
 
@@ -63,7 +63,7 @@ struct SNAPJobsView: View {
     private var openHoursLine: some View {
         Text(SNAPMarketplaceStrings.openHoursPrefix.value(in: language) + vm.schedule.openSummary)
             .font(MFont.meta)
-            .foregroundStyle(Color.civicaGraphite)
+            .foregroundStyle(Color.mktGraphite)
             .padding(.top, 12)
             .padding(.horizontal, 24)
             .padding(.bottom, 16)
@@ -77,9 +77,9 @@ struct SNAPJobsView: View {
                  + "\(vm.incomeCap)"
                  + SNAPMarketplaceStrings.incomeCapSuffix.value(in: language))
                 .font(MFont.bodySmallMedium)
-                .foregroundStyle(Color.civicaInk)
+                .foregroundStyle(Color.mktInk)
                 .fixedSize(horizontal: false, vertical: true)
-            InfoDotView(color: .civicaTeal)
+            InfoDotView(color: .mktTeal)
                 .accessibilityLabel("Income cap information")
                 .accessibilityHint("Tap to learn about the income limit before your benefit changes")
         }
@@ -114,20 +114,20 @@ struct SNAPJobsView: View {
             Spacer()
             Button(SNAPMarketplaceStrings.showMore.value(in: language)) {}
                 .font(MFont.bodySmallMedium)
-                .foregroundStyle(Color.civicaTeal)
+                .foregroundStyle(Color.mktTeal)
                 .padding(.vertical, 6)
                 .padding(.horizontal, 4)
                 .frame(minWidth: 44, minHeight: 44)
                 .accessibilityLabel("Show more jobs")
 
             Rectangle()
-                .fill(Color.civicaGraphite.opacity(0.25))
+                .fill(Color.mktGraphite.opacity(0.25))
                 .frame(width: 1, height: 14)
                 .padding(.horizontal, 12)
 
             Button(SNAPMarketplaceStrings.filter.value(in: language)) {}
                 .font(MFont.bodySmallMedium)
-                .foregroundStyle(Color.civicaTeal)
+                .foregroundStyle(Color.mktTeal)
                 .padding(.vertical, 6)
                 .padding(.horizontal, 4)
                 .frame(minWidth: 44, minHeight: 44)
@@ -170,14 +170,14 @@ private struct JobRowView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(job.title)
                     .font(MFont.listTitle)
-                    .foregroundStyle(Color.civicaInk)
+                    .foregroundStyle(Color.mktInk)
                     .fixedSize(horizontal: false, vertical: true)
 
                 let metaText = metaLabel
                 if !metaText.isEmpty {
                     Text(metaText)
                         .font(MFont.meta)
-                        .foregroundStyle(Color.civicaGraphite)
+                        .foregroundStyle(Color.mktGraphite)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
@@ -209,8 +209,8 @@ private struct JobRowView: View {
 
     private var benefitColor: Color {
         switch job.projectedBenefitColor {
-        case .teal: return .civicaTeal
-        case .ink:  return .civicaInk
+        case .teal: return .mktTeal
+        case .ink:  return .mktInk
         }
     }
 }
@@ -237,22 +237,22 @@ private struct PillView: View {
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 3)
-        .background(Color.civicaPaper2)
+        .background(Color.mktPaper2)
         .clipShape(Capsule())
     }
 
     private var pillTextColor: Color {
         switch job.pillColor {
-        case .teal:     return .civicaTeal
-        case .graphite: return .civicaGraphite
+        case .teal:     return .mktTeal
+        case .graphite: return .mktGraphite
         }
     }
 
     private var dotColor: Color {
         switch job.pillDotColor {
-        case .teal:     return .civicaTeal
-        case .amber:    return .civicaAmber
-        case .graphite: return .civicaGraphite
+        case .teal:     return .mktTeal
+        case .amber:    return .mktAmber
+        case .graphite: return .mktGraphite
         case .none:     return .clear
         }
     }

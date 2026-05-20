@@ -28,7 +28,7 @@ struct SNAPApplyHandoffView: View {
                     Spacer(minLength: 32)
                 }
             }
-            .background(Color.civicaPaper.ignoresSafeArea())
+            .background(Color.mktPaper.ignoresSafeArea())
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
@@ -42,7 +42,7 @@ struct SNAPApplyHandoffView: View {
                 ToolbarItem(placement: .principal) {
                     Text(SNAPMarketplaceStrings.applyNavTitle.value(in: language))
                         .font(MFont.navTitle)
-                        .foregroundStyle(Color.civicaInk)
+                        .foregroundStyle(Color.mktInk)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -56,7 +56,7 @@ struct SNAPApplyHandoffView: View {
     private var heroBlock: some View {
         Text(SNAPMarketplaceStrings.applyHeroHeadline.value(in: language))
             .font(MFont.heroHeadline)
-            .foregroundStyle(Color.civicaInk)
+            .foregroundStyle(Color.mktInk)
             .lineSpacing(20 * 0.22)  // line-height 1.22
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, 24)
@@ -69,7 +69,7 @@ struct SNAPApplyHandoffView: View {
     private var introBlock: some View {
         Text(SNAPMarketplaceStrings.handshakeIntro.value(in: language))
             .font(MFont.body)
-            .foregroundStyle(Color.civicaGraphite)
+            .foregroundStyle(Color.mktGraphite)
             .lineSpacing(16 * 0.45)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, 24)
@@ -86,7 +86,7 @@ struct SNAPApplyHandoffView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
-        .background(Color.civicaPaper2)
+        .background(Color.mktPaper2)
         .clipShape(RoundedRectangle(cornerRadius: 4))
         .padding(.horizontal, 24)
         .padding(.bottom, 14)
@@ -94,20 +94,20 @@ struct SNAPApplyHandoffView: View {
 
     private func sharedRow(label: String, detail: String?) -> some View {
         HStack(alignment: .top, spacing: 12) {
-            MCheckGlyph(size: 18, color: .civicaBrick)
+            MCheckGlyph(size: 18, color: .mktBrick)
                 .padding(.top, 1)
             Group {
                 if let d = detail {
                     Text(label)
                         .font(MFont.bodySmallMedium)
-                        .foregroundStyle(Color.civicaInk)
+                        .foregroundStyle(Color.mktInk)
                     + Text(" \(d)")
                         .font(MFont.bodySmall)
-                        .foregroundStyle(Color.civicaGraphite)
+                        .foregroundStyle(Color.mktGraphite)
                 } else {
                     Text(label)
                         .font(MFont.bodySmallMedium)
-                        .foregroundStyle(Color.civicaInk)
+                        .foregroundStyle(Color.mktInk)
                 }
             }
             .lineSpacing(15 * 0.35)
@@ -120,7 +120,7 @@ struct SNAPApplyHandoffView: View {
     private var notSharedNote: some View {
         Text(SNAPMarketplaceStrings.notSharedNote.value(in: language))
             .font(MFont.bodySmall)
-            .foregroundStyle(Color.civicaGraphite)
+            .foregroundStyle(Color.mktGraphite)
             .lineSpacing(15 * 0.45)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, 24)
@@ -161,10 +161,10 @@ struct SNAPApplyHandoffView: View {
                     + Text(SNAPMarketplaceStrings.arrowSuffix.value(in: language))
                         .font(MFont.bodySmallMedium)
                 }
-                .foregroundStyle(Color.civicaPaper)
+                .foregroundStyle(Color.mktPaper)
                 .frame(maxWidth: .infinity)
                 .frame(height: 48)
-                .background(Color.civicaBrick)
+                .background(Color.mktBrick)
                 .clipShape(RoundedRectangle(cornerRadius: 3))
             }
             .buttonStyle(.plain)
@@ -192,7 +192,7 @@ private struct XCloseIcon: View {
             p.addLine(to: CGPoint(x: s.width * 14/16, y: s.height * 14/16))
             p.move(to: CGPoint(x: s.width * 14/16, y: s.height * 2/16))
             p.addLine(to: CGPoint(x: s.width * 2/16, y: s.height * 14/16))
-            ctx.stroke(p, with: .color(Color.civicaInk),
+            ctx.stroke(p, with: .color(Color.mktInk),
                        style: StrokeStyle(lineWidth: 2, lineCap: .round))
         }
         .frame(width: 16, height: 16)
@@ -209,12 +209,12 @@ private struct StepRow: View {
         HStack(alignment: .top, spacing: 12) {
             Text("\(number).")
                 .font(MFont.bodySmallMedium)
-                .foregroundStyle(Color.civicaGraphite)
+                .foregroundStyle(Color.mktGraphite)
                 .monospacedDigit()
                 .frame(minWidth: 14, alignment: .leading)
             Text(text)
                 .font(MFont.bodySmall)
-                .foregroundStyle(Color.civicaInk)
+                .foregroundStyle(Color.mktInk)
                 .lineSpacing(15 * 0.4)
                 .fixedSize(horizontal: false, vertical: true)
         }

@@ -14,19 +14,19 @@ import SwiftUI
 
 extension Color {
     /// Primary brand, primary CTAs only. #9C3A24
-    static let civicaBrick     = Color(hex: "#9C3A24")
+    static let mktBrick     = Color(hex: "#9C3A24")
     /// Positive outcomes, secondary actions, links. #2A6F66
-    static let civicaTeal      = Color(hex: "#2A6F66")
+    static let mktTeal      = Color(hex: "#2A6F66")
     /// Page background. #F5F2EC
-    static let civicaPaper     = Color(hex: "#F5F2EC")
+    static let mktPaper     = Color(hex: "#F5F2EC")
     /// Cards, pills, inset surfaces. #EDE8DD
-    static let civicaPaper2    = Color(hex: "#EDE8DD")
+    static let mktPaper2    = Color(hex: "#EDE8DD")
     /// Body text, primary numerals. #1A1714
-    static let civicaInk       = Color(hex: "#1A1714")
+    static let mktInk       = Color(hex: "#1A1714")
     /// Secondary text, captions, labels. #5A544D
-    static let civicaGraphite  = Color(hex: "#5A544D")
+    static let mktGraphite  = Color(hex: "#5A544D")
     /// Warnings / deadlines only. #9A5A14
-    static let civicaAmber     = Color(hex: "#9A5A14")
+    static let mktAmber     = Color(hex: "#9A5A14")
 }
 
 // MARK: - Marketplace-scoped Font helpers
@@ -74,7 +74,7 @@ enum MFont {
 struct MHairline: View {
     var body: some View {
         Rectangle()
-            .fill(Color.civicaGraphite.opacity(0.20))
+            .fill(Color.mktGraphite.opacity(0.20))
             .frame(height: 1)
             .padding(.horizontal, 24)
     }
@@ -83,7 +83,7 @@ struct MHairline: View {
 /// ALL-CAPS eyebrow label (11pt Medium, 1.5pt tracking).
 struct MCapsLabel: View {
     let text: String
-    var color: Color = .civicaGraphite
+    var color: Color = .mktGraphite
     var body: some View {
         Text(text)
             .font(MFont.capsLabel)
@@ -97,7 +97,7 @@ struct MCapsLabel: View {
 /// Brick stroke check glyph (no circle). Matches both 26×26 (hero) and 18×18 variants.
 struct MCheckGlyph: View {
     var size: CGFloat = 18
-    var color: Color = .civicaBrick
+    var color: Color = .mktBrick
 
     var body: some View {
         Canvas { ctx, sz in
@@ -127,7 +127,7 @@ struct MChevron: View {
             path.addLine(to: CGPoint(x: sz.width * 7/8, y: sz.height * 7/14))
             path.addLine(to: CGPoint(x: sz.width * 1/8, y: sz.height * 13/14))
             ctx.stroke(path,
-                       with: .color(Color.civicaGraphite.opacity(0.5)),
+                       with: .color(Color.mktGraphite.opacity(0.5)),
                        style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
         }
         .frame(width: 8, height: 14)
@@ -144,10 +144,10 @@ struct MBrickButton: View {
         Button(action: action) {
             Text(label)
                 .font(MFont.bodySmallMedium.weight(.medium))
-                .foregroundStyle(Color.civicaPaper)
+                .foregroundStyle(Color.mktPaper)
                 .frame(maxWidth: .infinity)
                 .frame(height: 48)
-                .background(Color.civicaBrick)
+                .background(Color.mktBrick)
                 .clipShape(RoundedRectangle(cornerRadius: 3))
         }
         .buttonStyle(.plain)
@@ -164,12 +164,12 @@ struct MBrickOutlineButton: View {
         Button(action: action) {
             Text(label)
                 .font(MFont.bodySmallMedium.weight(.medium))
-                .foregroundStyle(Color.civicaBrick)
+                .foregroundStyle(Color.mktBrick)
                 .frame(maxWidth: .infinity)
                 .frame(height: 48)
                 .overlay(
                     RoundedRectangle(cornerRadius: 3)
-                        .stroke(Color.civicaBrick, lineWidth: 1)
+                        .stroke(Color.mktBrick, lineWidth: 1)
                 )
         }
         .buttonStyle(.plain)
@@ -186,12 +186,12 @@ struct MTealOutlineButton: View {
         Button(action: action) {
             Text(label)
                 .font(MFont.bodySmallMedium.weight(.medium))
-                .foregroundStyle(Color.civicaTeal)
+                .foregroundStyle(Color.mktTeal)
                 .frame(maxWidth: .infinity)
                 .frame(height: 48)
                 .overlay(
                     RoundedRectangle(cornerRadius: 3)
-                        .stroke(Color.civicaTeal, lineWidth: 1)
+                        .stroke(Color.mktTeal, lineWidth: 1)
                 )
         }
         .buttonStyle(.plain)
@@ -210,7 +210,7 @@ struct MTealTextLink: View {
             Button(action: action) {
                 Text(label)
                     .font(MFont.bodySmall)
-                    .foregroundStyle(Color.civicaTeal)
+                    .foregroundStyle(Color.mktTeal)
                     .padding(.vertical, 8)
                     .padding(.horizontal, 12)
                     .frame(minWidth: 44, minHeight: 44)

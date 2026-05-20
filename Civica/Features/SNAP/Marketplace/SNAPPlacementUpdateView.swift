@@ -29,7 +29,7 @@ struct SNAPPlacementUpdateView: View {
                 Spacer(minLength: 32)
             }
         }
-        .background(Color.civicaPaper.ignoresSafeArea())
+        .background(Color.mktPaper.ignoresSafeArea())
         .navigationTitle(SNAPMarketplaceStrings.updateNavTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
@@ -46,7 +46,7 @@ struct SNAPPlacementUpdateView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(vm.placementConfirmedDateFormatted)
                 .font(MFont.capsLabel)
-                .foregroundStyle(Color.civicaGraphite)
+                .foregroundStyle(Color.mktGraphite)
                 .kerning(1.5)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 10)
@@ -55,10 +55,10 @@ struct SNAPPlacementUpdateView: View {
             Group {
                 Text(SNAPMarketplaceStrings.diningServicesPrefix.value(in: language) + "\(vm.placement.firstPaycheckAmount) ")
                     .font(.custom("HankenGrotesk-SemiBold", size: 20))
-                    .foregroundStyle(Color.civicaInk)
+                    .foregroundStyle(Color.mktInk)
                 + Text(SNAPMarketplaceStrings.firstPaycheck.value(in: language))
                     .font(.custom("HankenGrotesk-Medium", size: 20))
-                    .foregroundStyle(Color.civicaGraphite)
+                    .foregroundStyle(Color.mktGraphite)
             }
             .monospacedDigit()
             .padding(.horizontal, 24)
@@ -68,7 +68,7 @@ struct SNAPPlacementUpdateView: View {
                  + vm.placement.confirmationSource
                  + SNAPMarketplaceStrings.confirmedViaSuffix.value(in: language))
                 .font(MFont.bodySmall)
-                .foregroundStyle(Color.civicaGraphite)
+                .foregroundStyle(Color.mktGraphite)
                 .lineSpacing(15 * 0.45)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, 24)
@@ -84,7 +84,7 @@ struct SNAPPlacementUpdateView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(SNAPMarketplaceStrings.yourBenefitEstimate.value(in: language))
                 .font(MFont.capsLabel)
-                .foregroundStyle(Color.civicaGraphite)
+                .foregroundStyle(Color.mktGraphite)
                 .kerning(1.5)
                 .padding(.bottom, 14)
 
@@ -93,12 +93,12 @@ struct SNAPPlacementUpdateView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(SNAPMarketplaceStrings.was.value(in: language))
                         .font(MFont.capsLabel)
-                        .foregroundStyle(Color.civicaGraphite)
+                        .foregroundStyle(Color.mktGraphite)
                         .kerning(1.2)
                     Text("$\(vm.placement.oldBenefit)")
                         .font(MFont.listTitle)
-                        .foregroundStyle(Color.civicaGraphite)
-                        .strikethrough(true, color: Color.civicaGraphite.opacity(0.6))
+                        .foregroundStyle(Color.mktGraphite)
+                        .strikethrough(true, color: Color.mktGraphite.opacity(0.6))
                         .monospacedDigit()
                 }
                 .accessibilityLabel("Was: $\(vm.placement.oldBenefit)")
@@ -112,11 +112,11 @@ struct SNAPPlacementUpdateView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(SNAPMarketplaceStrings.now.value(in: language))
                         .font(MFont.capsLabel)
-                        .foregroundStyle(Color.civicaGraphite)
+                        .foregroundStyle(Color.mktGraphite)
                         .kerning(1.2)
                     Text("$\(vm.placement.newBenefit)")
                         .font(.custom("HankenGrotesk-SemiBold", size: 24))
-                        .foregroundStyle(Color.civicaInk)
+                        .foregroundStyle(Color.mktInk)
                         .monospacedDigit()
                 }
                 .accessibilityLabel("Now: $\(vm.placement.newBenefit)")
@@ -125,7 +125,7 @@ struct SNAPPlacementUpdateView: View {
             // Key copy — the "killer copy" per spec
             Text(SNAPMarketplaceStrings.countyNotified.value(in: language))
                 .font(MFont.metaMedium)
-                .foregroundStyle(Color.civicaTeal)
+                .foregroundStyle(Color.mktTeal)
                 .lineSpacing(13 * 0.45)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 16)
@@ -141,14 +141,14 @@ struct SNAPPlacementUpdateView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(SNAPMarketplaceStrings.obbbaWorkHourLog.value(in: language))
                 .font(MFont.capsLabel)
-                .foregroundStyle(Color.civicaGraphite)
+                .foregroundStyle(Color.mktGraphite)
                 .kerning(1.5)
                 .padding(.bottom, 12)
 
             HStack(alignment: .lastTextBaseline) {
                 Text(vm.placement.obbbaMonth)
                     .font(MFont.bodySmallMedium)
-                    .foregroundStyle(Color.civicaInk)
+                    .foregroundStyle(Color.mktInk)
                 Spacer()
                 Group {
                     Text("\(vm.placement.obbbaHoursLogged)")
@@ -157,9 +157,9 @@ struct SNAPPlacementUpdateView: View {
                            + "\(vm.placement.obbbaHoursRequired)"
                            + SNAPMarketplaceStrings.hoursSuffix.value(in: language))
                         .font(MFont.bodySmallMedium)
-                        .foregroundStyle(Color.civicaGraphite)
+                        .foregroundStyle(Color.mktGraphite)
                 }
-                .foregroundStyle(Color.civicaInk)
+                .foregroundStyle(Color.mktInk)
                 .monospacedDigit()
                 .accessibilityLabel("\(vm.placement.obbbaHoursLogged) of \(vm.placement.obbbaHoursRequired) hours")
             }
@@ -168,11 +168,11 @@ struct SNAPPlacementUpdateView: View {
             // Progress bar — 12pt tall, radius 999, teal fill
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 999)
-                    .fill(Color.civicaGraphite.opacity(0.15))
+                    .fill(Color.mktGraphite.opacity(0.15))
                     .frame(height: 12)
                 GeometryReader { geo in
                     RoundedRectangle(cornerRadius: 999)
-                        .fill(Color.civicaTeal)
+                        .fill(Color.mktTeal)
                         .frame(width: geo.size.width * barProgress, height: 12)
                 }
                 .frame(height: 12)
@@ -182,7 +182,7 @@ struct SNAPPlacementUpdateView: View {
 
             Text(SNAPMarketplaceStrings.autoCountsNote.value(in: language))
                 .font(MFont.meta)
-                .foregroundStyle(Color.civicaGraphite)
+                .foregroundStyle(Color.mktGraphite)
                 .lineSpacing(13 * 0.45)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 12)
@@ -227,7 +227,7 @@ private struct ArrowRightIcon: View {
             // Arrowhead down
             p.move(to: CGPoint(x: w * 20/22, y: h * 7/14))
             p.addLine(to: CGPoint(x: w * 14/22, y: h * 12.5/14))
-            ctx.stroke(p, with: .color(Color.civicaGraphite),
+            ctx.stroke(p, with: .color(Color.mktGraphite),
                        style: StrokeStyle(lineWidth: 1.6, lineCap: .round, lineJoin: .round))
         }
         .frame(width: 22, height: 14)

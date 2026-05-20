@@ -26,7 +26,7 @@ struct SNAPEnrolledView: View {
                 Spacer(minLength: 32)
             }
         }
-        .background(Color.civicaPaper.ignoresSafeArea())
+        .background(Color.mktPaper.ignoresSafeArea())
         .navigationTitle(SNAPMarketplaceStrings.enrolledNavTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -37,10 +37,10 @@ struct SNAPEnrolledView: View {
         VStack(alignment: .leading, spacing: 0) {
             // Brick check + headline
             HStack(alignment: .center, spacing: 10) {
-                MCheckGlyph(size: 26, color: .civicaBrick)
+                MCheckGlyph(size: 26, color: .mktBrick)
                 Text(SNAPMarketplaceStrings.enrolledHeadline.value(in: language))
                     .font(MFont.heroEnrolled)
-                    .foregroundStyle(Color.civicaInk)
+                    .foregroundStyle(Color.mktInk)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.bottom, 28)
@@ -48,7 +48,7 @@ struct SNAPEnrolledView: View {
             // "MONTHLY BENEFIT" caps label
             Text(SNAPMarketplaceStrings.monthlyBenefit.value(in: language))
                 .font(MFont.capsLabel)
-                .foregroundStyle(Color.civicaGraphite)
+                .foregroundStyle(Color.mktGraphite)
                 .kerning(1.5)
                 .padding(.bottom, 8)
 
@@ -57,13 +57,13 @@ struct SNAPEnrolledView: View {
                 if let amountText = vm.benefitAmountFormatted {
                     Text(amountText)
                         .font(MFont.heroNumeral)
-                        .foregroundStyle(Color.civicaInk)
+                        .foregroundStyle(Color.mktInk)
                         .monospacedDigit()
                         .accessibilityLabel("Monthly benefit: \(amountText)")
                 } else {
                     Text("—")
                         .font(MFont.heroNumeral)
-                        .foregroundStyle(Color.civicaGraphite)
+                        .foregroundStyle(Color.mktGraphite)
                         .monospacedDigit()
                         .accessibilityLabel("Loading monthly benefit")
                 }
@@ -74,10 +74,10 @@ struct SNAPEnrolledView: View {
                 if let depositText = vm.depositDateFormatted {
                     Text(depositText)
                         .font(MFont.metaMedium)
-                        .foregroundStyle(Color.civicaTeal)
+                        .foregroundStyle(Color.mktTeal)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(Color.civicaPaper2)
+                        .background(Color.mktPaper2)
                         .clipShape(Capsule())
                 } else {
                     ProgressView()
@@ -101,18 +101,18 @@ struct SNAPEnrolledView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(SNAPMarketplaceStrings.earnUpTo.value(in: language))
                     .font(MFont.bodySmallMedium)
-                    .foregroundStyle(Color.civicaInk)
+                    .foregroundStyle(Color.mktInk)
                     .lineSpacing(17 * 0.3)  // line-height 1.3
                     .fixedSize(horizontal: false, vertical: true)
 
                 Text(SNAPMarketplaceStrings.whatsNextBody.value(in: language))
                     .font(MFont.bodySmall)
-                    .foregroundStyle(Color.civicaGraphite)
+                    .foregroundStyle(Color.mktGraphite)
                     .lineSpacing(15 * 0.45)  // line-height 1.45
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding(16)
-            .background(Color.civicaPaper2)
+            .background(Color.mktPaper2)
             .clipShape(RoundedRectangle(cornerRadius: 4))
             .padding(.horizontal, 24)
         }

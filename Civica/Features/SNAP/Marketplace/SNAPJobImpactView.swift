@@ -27,7 +27,7 @@ struct SNAPJobImpactView: View {
                 Spacer(minLength: 32)
             }
         }
-        .background(Color.civicaPaper.ignoresSafeArea())
+        .background(Color.mktPaper.ignoresSafeArea())
         .navigationTitle(job.title)
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -38,7 +38,7 @@ struct SNAPJobImpactView: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(job.title + SNAPMarketplaceStrings.campusSuffix.value(in: language))
                 .font(MFont.heroHeadline)
-                .foregroundStyle(Color.civicaInk)
+                .foregroundStyle(Color.mktInk)
                 .fixedSize(horizontal: false, vertical: true)
 
             Text("\(job.hours)"
@@ -48,7 +48,7 @@ struct SNAPJobImpactView: View {
                  + job.schedule
                  + SNAPMarketplaceStrings.plusWeekends.value(in: language))
                 .font(MFont.meta)
-                .foregroundStyle(Color.civicaGraphite)
+                .foregroundStyle(Color.mktGraphite)
         }
         .padding(.horizontal, 24)
         .padding(.top, 12)
@@ -78,7 +78,7 @@ struct SNAPJobImpactView: View {
 
             // Sum rule line — 1.5pt ink
             Rectangle()
-                .fill(Color.civicaInk)
+                .fill(Color.mktInk)
                 .frame(height: 1.5)
                 .padding(.horizontal, 24)
                 .padding(.top, 14)
@@ -92,7 +92,7 @@ struct SNAPJobImpactView: View {
             // FWS exclusion citation — italic
             Text(SNAPMarketplaceStrings.fwsExclusion.value(in: language))
                 .font(MFont.fwsCitation)
-                .foregroundStyle(Color.civicaGraphite)
+                .foregroundStyle(Color.mktGraphite)
                 .lineSpacing(13 * 0.5)  // line-height 1.5
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, 24)
@@ -117,7 +117,7 @@ struct SNAPJobImpactView: View {
                 + Text(SNAPMarketplaceStrings.totalIncomeSuffix.value(in: language))
                     .font(MFont.bodySmallMedium)
             }
-            .foregroundStyle(Color.civicaTeal)
+            .foregroundStyle(Color.mktTeal)
             .lineSpacing(17 * 0.4)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, 24)
@@ -130,7 +130,7 @@ struct SNAPJobImpactView: View {
     private var footnoteBlock: some View {
         Text(SNAPMarketplaceStrings.footnoteEstimate.value(in: language))
             .font(MFont.meta)
-            .foregroundStyle(Color.civicaGraphite)
+            .foregroundStyle(Color.mktGraphite)
             .lineSpacing(13 * 0.5)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, 24)
@@ -170,12 +170,12 @@ private struct CalcRow: View {
             HStack(alignment: .lastTextBaseline, spacing: 6) {
                 Text(label)
                     .font(isTotal ? MFont.calcTotalLabel : MFont.calcRowLabel)
-                    .foregroundStyle(Color.civicaInk)
+                    .foregroundStyle(Color.mktInk)
 
                 if let q = qualifier {
                     Text(q)
                         .font(isTotal ? MFont.calcRowLabel : MFont.calcRowLabel)
-                        .foregroundStyle(Color.civicaGraphite)
+                        .foregroundStyle(Color.mktGraphite)
                 }
             }
             .fixedSize(horizontal: false, vertical: true)
@@ -185,7 +185,7 @@ private struct CalcRow: View {
             // Amount — tabular numerals, right-aligned, no wrap
             Text(amount)
                 .font(isTotal ? MFont.calcTotalAmount : MFont.calcRowAmount)
-                .foregroundStyle(Color.civicaInk)
+                .foregroundStyle(Color.mktInk)
                 .monospacedDigit()
                 .lineLimit(1)
                 .accessibilityLabel(amount.replacingOccurrences(of: "\u{2212}", with: "minus "))

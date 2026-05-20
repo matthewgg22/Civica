@@ -29,7 +29,7 @@ struct SNAPRecertRefreshView: View {
                 Spacer(minLength: 32)
             }
         }
-        .background(Color.civicaPaper.ignoresSafeArea())
+        .background(Color.mktPaper.ignoresSafeArea())
         .navigationTitle(SNAPMarketplaceStrings.recertNavTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -40,14 +40,14 @@ struct SNAPRecertRefreshView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(vm.recertByFormatted)
                 .font(MFont.capsLabel)
-                .foregroundStyle(Color.civicaGraphite)
+                .foregroundStyle(Color.mktGraphite)
                 .kerning(1.5)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 8)
 
             Text(SNAPMarketplaceStrings.packetReady.value(in: language))
                 .font(MFont.heroHeadline)
-                .foregroundStyle(Color.civicaInk)
+                .foregroundStyle(Color.mktInk)
                 .padding(.horizontal, 24)
         }
         .padding(.top, 10)
@@ -100,12 +100,12 @@ struct SNAPRecertRefreshView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(SNAPMarketplaceStrings.practiceInterview.value(in: language))
                         .font(MFont.bodySmallMedium)
-                        .foregroundStyle(Color.civicaInk)
+                        .foregroundStyle(Color.mktInk)
                         .fixedSize(horizontal: false, vertical: true)
 
                     Text(SNAPMarketplaceStrings.interviewDuration.value(in: language))
                         .font(MFont.meta)
-                        .foregroundStyle(Color.civicaGraphite)
+                        .foregroundStyle(Color.mktGraphite)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -115,10 +115,10 @@ struct SNAPRecertRefreshView: View {
                 } label: {
                     Text(SNAPMarketplaceStrings.startButton.value(in: language))
                         .font(MFont.regular(14).weight(.medium))
-                        .foregroundStyle(Color.civicaPaper)
+                        .foregroundStyle(Color.mktPaper)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 8)
-                        .background(Color.civicaBrick)
+                        .background(Color.mktBrick)
                         .clipShape(RoundedRectangle(cornerRadius: 3))
                         .fixedSize()
                 }
@@ -127,7 +127,7 @@ struct SNAPRecertRefreshView: View {
                 .accessibilityLabel("Start interview prep")
             }
             .padding(16)
-            .background(Color.civicaPaper2)
+            .background(Color.mktPaper2)
             .clipShape(RoundedRectangle(cornerRadius: 4))
             .padding(.horizontal, 24)
         }
@@ -161,15 +161,15 @@ private struct PulledRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center, spacing: 12) {
-                MCheckGlyph(size: 18, color: .civicaBrick)
+                MCheckGlyph(size: 18, color: .mktBrick)
                 Text(label)
                     .font(MFont.bodySmallMedium)
-                    .foregroundStyle(Color.civicaInk)
+                    .foregroundStyle(Color.mktInk)
                     .fixedSize(horizontal: false, vertical: true)
             }
             Text(source)
                 .font(MFont.meta)
-                .foregroundStyle(Color.civicaGraphite)
+                .foregroundStyle(Color.mktGraphite)
                 .padding(.leading, 30)
                 .padding(.top, 4)
         }
@@ -191,7 +191,7 @@ private struct InputRow: View {
             // U+2731 HEAVY ASTERISK bullet
             Text("\u{2731}")
                 .font(.custom("HankenGrotesk-SemiBold", size: 16))
-                .foregroundStyle(Color.civicaBrick)
+                .foregroundStyle(Color.mktBrick)
                 .frame(width: 18)
                 .accessibilityHidden(true)
 
@@ -201,16 +201,16 @@ private struct InputRow: View {
                     Group {
                         Text(label + " ")
                             .font(MFont.bodySmallMedium)
-                            .foregroundStyle(Color.civicaInk)
+                            .foregroundStyle(Color.mktInk)
                         + Text(sub)
                             .font(MFont.bodySmall)
-                            .foregroundStyle(Color.civicaGraphite)
+                            .foregroundStyle(Color.mktGraphite)
                     }
                     .fixedSize(horizontal: false, vertical: true)
                 } else {
                     Text(label)
                         .font(MFont.bodySmallMedium)
-                        .foregroundStyle(Color.civicaInk)
+                        .foregroundStyle(Color.mktInk)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }

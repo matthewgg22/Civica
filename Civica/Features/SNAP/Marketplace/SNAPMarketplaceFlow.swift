@@ -130,7 +130,7 @@ struct SNAPMarketplaceFlow: View {
                 }
             }
         }
-        .background(Color.civicaPaper.ignoresSafeArea())
+        .background(Color.mktPaper.ignoresSafeArea())
         .overlay(alignment: .bottom) {
             if savedJobTitle != nil {
                 SavedForLaterBanner(language: language)
