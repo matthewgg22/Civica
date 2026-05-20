@@ -708,6 +708,7 @@ app.get("/:packetId/verification-summary", async (c) => {
           addr.zip,
           c.env.SMARTY_AUTH_ID,
           c.env.SMARTY_AUTH_TOKEN,
+          packetId,
         );
         addressResult = smarty;
       }

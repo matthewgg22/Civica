@@ -1,4 +1,4 @@
-import { getCache, setCache } from "./cache.js";
+import { getCache, setCache, deleteCache } from "./cache.js";
 
 export type Deliverability = "deliverable" | "deliverable-missing-unit" | "undeliverable" | "unavailable";
 
@@ -15,6 +15,15 @@ interface SmartyCandidate {
 
 const CACHE_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days — address data is stable
 
+function addressCacheKey(packetId: string, street: string, city: string, state: string, zip: string): string {
+  return `smarty:${packetId}:${street}:${city}:${state}:${zip}`;
+}
+
+/** Evict any cached Smarty result for a packet (call when OCR corrects the address). */
+export function invalidateAddressCache(packetId: string, street: string, city: string, state: string, zip: string): void {
+  deleteCache(addressCacheKey(packetId, street, city, state, zip));
+}
+
 export async function validateAddress(
   street: string,
   city: string,
@@ -22,8 +31,9 @@ export async function validateAddress(
   zip: string,
   authId: string,
   authToken: string,
+  packetId = "global",
 ): Promise<SmartyResult> {
-  const cacheKey = `smarty:${street}:${city}:${state}:${zip}`;
+  const cacheKey = addressCacheKey(packetId, street, city, state, zip);
   const cached = getCache<SmartyResult>(cacheKey);
   if (cached) return cached;
 
