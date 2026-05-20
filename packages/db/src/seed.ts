@@ -1,4 +1,4 @@
-import { prisma } from "./client";
+import { prisma } from "./client.js";
 
 async function main() {
   await prisma.user.upsert({

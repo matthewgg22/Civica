@@ -273,7 +273,7 @@ export default async function PacketDetailPage({
       .eq("consent_kind", "privacy_notice").is("revoked_at", null).limit(1),
     supabase.schema("snap_enrollment")
       .from("argyle_connections")
-      .select("connection_id, linked_at, argyle_user_id")
+      .select("connection_id, linked_at, argyle_user_id, linked_accounts")
       .eq("applicant_id", packet.applicant_id)
       .is("revoked_at", null)
       .limit(1)

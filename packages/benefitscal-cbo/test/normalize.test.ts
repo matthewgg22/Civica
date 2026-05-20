@@ -278,20 +278,20 @@ describe("normalizeForPortal — income derived from packet_answers", () => {
 
 describe("normalizeForPortal — edge cases", () => {
   it("defaults utility_allowance_type to none when omitted", () => {
+    const { utility_allowance_type: _ua, ...rest } = utilityHouseholdInput;
     const input: NormalizeInput = {
-      ...utilityHouseholdInput,
+      ...rest,
       packet_id: "ffffffff-0000-0000-0000-000000000001",
-      utility_allowance_type: undefined,
     };
     const payload = normalizeForPortal(input);
     expect(payload.utility_allowance_type).toBe("none");
   });
 
   it("defaults client_signature_type to async_portal when omitted", () => {
+    const { client_signature_type: _cst, ...rest } = utilityHouseholdInput;
     const input: NormalizeInput = {
-      ...utilityHouseholdInput,
+      ...rest,
       packet_id: "ffffffff-0000-0000-0000-000000000002",
-      client_signature_type: undefined,
     };
     const payload = normalizeForPortal(input);
     expect(payload.client_signature_type).toBe("async_portal");
