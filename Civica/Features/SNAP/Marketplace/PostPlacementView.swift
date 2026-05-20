@@ -1,6 +1,8 @@
 import CivicaDesignSystem
 import SwiftUI
 
+// DEPRECATED — use SNAPPlacementUpdateView instead.
+// See MarketplaceFlowView.swift for context.
 // Screen 5 — Post-placement update (paycheck confirmed via Argyle).
 // DR3-5: combined accessibilityLabel on before→after benefit row.
 // DR3-7: cliff event amber banner + navigator outreach status.

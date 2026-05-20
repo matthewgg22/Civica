@@ -26,6 +26,7 @@ struct SNAPJobsView: View {
                 footer
             }
         }
+        .accessibilityIdentifier("marketplace.job_list")
         .background(Color.civicaPaper.ignoresSafeArea())
         .navigationTitle(SNAPMarketplaceStrings.jobsNavTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
@@ -99,6 +100,7 @@ struct SNAPJobsView: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("\(job.title), \(job.pillText), \(job.projectedBenefitLabel)")
+                .accessibilityIdentifier("marketplace.job_row.\(job.id.uuidString)")
 
                 if idx < vm.jobs.count - 1 {
                     MHairline()

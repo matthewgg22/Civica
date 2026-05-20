@@ -135,7 +135,8 @@ struct MChevron: View {
     }
 }
 
-/// Brick primary CTA button — full-width, 48pt tall, 3pt radius.
+/// Brick primary CTA button — full-width, 56pt tall, 3pt radius.
+/// Height matches CivicaPrimaryCTAButtonStyle (HANDOFF.md §1).
 struct MBrickButton: View {
     let label: String
     let action: () -> Void
@@ -146,7 +147,7 @@ struct MBrickButton: View {
                 .font(MFont.bodySmallMedium.weight(.medium))
                 .foregroundStyle(Color.civicaPaper)
                 .frame(maxWidth: .infinity)
-                .frame(height: 48)
+                .frame(height: 56)
                 .background(Color.civicaBrick)
                 .clipShape(RoundedRectangle(cornerRadius: 3))
         }

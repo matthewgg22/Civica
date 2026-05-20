@@ -163,13 +163,14 @@ struct SNAPApplyHandoffView: View {
                 }
                 .foregroundStyle(Color.civicaPaper)
                 .frame(maxWidth: .infinity)
-                .frame(height: 48)
+                .frame(height: 56)
                 .background(Color.civicaBrick)
                 .clipShape(RoundedRectangle(cornerRadius: 3))
             }
             .buttonStyle(.plain)
             .padding(.horizontal, 24)
             .accessibilityLabel("Continue to Handshake")
+            .accessibilityIdentifier("marketplace.handoff.apply_handshake")
 
             MTealTextLink(label: "Apply somewhere else") {
                 dismiss()

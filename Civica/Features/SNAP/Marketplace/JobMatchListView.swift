@@ -1,6 +1,7 @@
 import CivicaDesignSystem
 import SwiftUI
 
+// DEPRECATED — use SNAPJobsView instead. See MarketplaceFlowView.swift for context.
 // Screen 2 — Jobs that fit your schedule.
 // DR3-1: FWS → W-2 → gig sort order.
 // DR3-4: ◆/○/∶ leading glyphs.

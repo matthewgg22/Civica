@@ -27,6 +27,7 @@ struct SNAPJobImpactView: View {
                 Spacer(minLength: 32)
             }
         }
+        .accessibilityIdentifier("marketplace.benefit_impact")
         .background(Color.civicaPaper.ignoresSafeArea())
         .navigationTitle(job.title)
         .navigationBarTitleDisplayMode(.inline)
@@ -145,6 +146,7 @@ struct SNAPJobImpactView: View {
                 onApply()
             }
             .accessibilityLabel("Apply through Handshake")
+            .accessibilityIdentifier("marketplace.benefit_impact.apply_button")
 
             MTealOutlineButton(label: "Save for later") {
                 onSaveForLater()
@@ -174,7 +176,7 @@ private struct CalcRow: View {
 
                 if let q = qualifier {
                     Text(q)
-                        .font(isTotal ? MFont.calcRowLabel : MFont.calcRowLabel)
+                        .font(isTotal ? MFont.calcTotalLabel : MFont.calcRowLabel)
                         .foregroundStyle(Color.civicaGraphite)
                 }
             }

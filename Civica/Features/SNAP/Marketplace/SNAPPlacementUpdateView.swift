@@ -200,11 +200,13 @@ struct SNAPPlacementUpdateView: View {
                 onSeeBreakdown()
             }
             .accessibilityLabel("See full benefit breakdown")
+            .accessibilityIdentifier("marketplace.post_placement.see_breakdown")
 
             MTealTextLink(label: "Report a problem") {
                 onReportProblem()
             }
             .padding(.top, 14)
+            .accessibilityIdentifier("marketplace.post_placement.report_problem")
         }
         .padding(.top, 24)
         .padding(.bottom, 16)
