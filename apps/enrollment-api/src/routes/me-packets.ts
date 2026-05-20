@@ -800,6 +800,9 @@ app.get("/:packetId/verification-summary", async (c) => {
     ? (latestPaycheck as { monthly_amount_usd: number }).monthly_amount_usd
     : null;
 
+  // Re-score with enriched data so packet_error_risk stays fresh (§4).
+  void scorePacketRisk(c.env, c.get("jwt"), packetId, packet.applicant_id as string).catch(() => {});
+
   return c.json({
     shelter: {
       address: addressResult,

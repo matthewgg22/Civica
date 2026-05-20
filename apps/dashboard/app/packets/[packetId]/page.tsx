@@ -262,8 +262,7 @@ export default async function PacketDetailPage({
   for (const a of answers) {
     if (a.applicant_answer != null) answersMap[a.question_key] = a.applicant_answer;
   }
-  const monthlyUtilities = parseFloat(answersMap["monthly_utilities"] ?? "");
-  const hasUtilityAnswer = !isNaN(monthlyUtilities) && monthlyUtilities > 0;
+  const suaQuestionsAnswered = suaComputed !== null;
   const hasHousingSituation = !!answersMap["housing_situation"];
   const hasIncomeDocs = docs.some((d) =>
     ["pay_stub", "tax_return", "w2", "1099", "income"].some((k) =>
@@ -283,7 +282,7 @@ export default async function PacketDetailPage({
     return Math.round(weight * (from - to));
   }
 
-  const suaDef: "moderate" | "weak"   = hasUtilityAnswer    ? "moderate" : "weak";
+  const suaDef: "moderate" | "weak"   = suaQuestionsAnswered ? "moderate" : "weak";
   const gigDef: "strong"  | "weak"    = isArgyleConnected   ? "strong"   : "weak";
   const leaseDef: "moderate" | "weak" = hasHousingSituation ? "moderate" : "weak";
 
@@ -297,12 +296,13 @@ export default async function PacketDetailPage({
       actionable: true,
       impactIfImproved: impactIfUpgraded(50.5, suaDef),
       detail: suaDef === "weak"
-        ? "No utility cost was reported in the eligibility questionnaire. USDA classifies SUA as the highest payment-error driver (50.5% weight). Without a verifiable utility amount, this flow defaults to weak defensibility."
-        : "A monthly utility amount was reported, providing a basis for SUA verification. Phase 2 will connect UtilityAPI for independent verification.",
+        ? "SUA utility questions (heating, electric/gas, phone) have not been answered. USDA classifies SUA as the highest payment-error driver (50.5% weight). Complete the expense questions to move this flow to moderate."
+        : `SUA tier determined: ${suaComputed} (${ { FULL: "$663", LIMITED: "$170", TELEPHONE: "$44", NONE: "$0" }[suaComputed!] }/mo). Phase 2 will verify utility costs independently.`,
       evidence: [
-        { label: "Monthly utilities", value: hasUtilityAnswer ? `$${monthlyUtilities.toFixed(0)}/mo` : "missing" },
-        { label: "UtilityAPI", value: "phase 2" },
-        { label: "SUA election", value: answersMap["sua_election"] ?? "not answered" },
+        { label: "Heating costs", value: answersMap["has_heating_costs"] ?? "not answered" },
+        { label: "Electric / gas", value: answersMap["has_electric_or_gas"] ?? "not answered" },
+        { label: "Phone costs", value: answersMap["has_phone"] ?? "not answered" },
+        { label: "SUA tier", value: suaComputed ?? "incomplete — questions unanswered" },
       ],
     },
     {
@@ -379,7 +379,7 @@ export default async function PacketDetailPage({
       n: i + 1,
       title:
         f.id === "gig-income"   ? "Connect Argyle to verify income" :
-        f.id === "utility-sua"  ? "Record monthly utility costs"    :
+        f.id === "utility-sua"  ? "Complete SUA expense questions"   :
         f.id === "shared-lease" ? "Document housing situation"      : "Improve defensibility",
       flowLabel: f.label,
       weight: f.weight,
@@ -390,7 +390,7 @@ export default async function PacketDetailPage({
         f.id === "gig-income"
           ? "Ask the applicant to connect their employer via Argyle in the Civica iOS app. Once connected, Civica can independently verify income — moving this flow from weak to strong and significantly reducing the score."
           : f.id === "utility-sua"
-          ? "Enter the monthly utility cost in the packet answers. Even a self-reported amount moves SUA from weak to moderate. Phase 2 will connect UtilityAPI for independent verification."
+          ? "Answer the three SUA utility questions in the packet: heating costs, electric/gas, and phone. Answering all three lets Civica derive the correct SUA tier (FULL/LIMITED/TELEPHONE/NONE) and moves this flow from weak to moderate defensibility."
           : "Ask the applicant to clarify their housing arrangement in the eligibility questionnaire. Any concrete answer (own, rent, shared) moves this flow from weak to moderate.",
       cta: f.id === "gig-income" ? "Connect Argyle" : "Update Answers",
       ctaSub: f.id === "gig-income" ? "via iOS app" : "in questionnaire",
