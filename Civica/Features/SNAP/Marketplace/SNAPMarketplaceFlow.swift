@@ -105,6 +105,12 @@ struct SNAPMarketplaceFlow: View {
                         },
                         onReportProblem: {
                             showReportSheet = true
+                        },
+                        onNavigatorEscalate: {
+                            // TODO: open NavigatorInboxView pre-filled with vm.navigatorPreFillMessage
+                            // Example: path.append(.navigatorInbox(prefill: vm.navigatorPreFillMessage))
+                            // Wiring blocked until navigator inbox deep-link API is confirmed.
+                            showReportSheet = true
                         }
                     )
 

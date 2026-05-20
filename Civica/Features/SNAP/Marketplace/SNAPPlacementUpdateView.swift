@@ -10,6 +10,9 @@ struct SNAPPlacementUpdateView: View {
     @ObservedObject var vm: SNAPMarketplaceViewModel
     var onSeeBreakdown: () -> Void
     var onReportProblem: () -> Void
+    /// Called when the user taps the navigator escalation card (cliff events only).
+    /// Caller should open the navigator inbox pre-filled with vm.navigatorPreFillMessage.
+    var onNavigatorEscalate: (() -> Void)? = nil
 
     @State private var barProgress: Double = 0
 
@@ -129,10 +132,49 @@ struct SNAPPlacementUpdateView: View {
                 .lineSpacing(13 * 0.45)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 16)
+
+            // Navigator escalation card — shown only on cliff events (D11)
+            if vm.isCliffEvent, let escalate = onNavigatorEscalate {
+                navigatorEscalationCard(onEscalate: escalate)
+                    .padding(.top, 14)
+            }
         }
         .padding(.horizontal, 24)
         .padding(.top, 20)
         .padding(.bottom, 8)
+    }
+
+    // MARK: Navigator escalation card (D11)
+
+    private func navigatorEscalationCard(onEscalate: @escaping () -> Void) -> some View {
+        Button(action: onEscalate) {
+            HStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(SNAPMarketplaceStrings.navigatorEscalationTitle.value(in: language))
+                        .font(MFont.bodySmallMedium)
+                        .foregroundStyle(Color.civicaTeal)
+                    Text(SNAPMarketplaceStrings.navigatorEscalationSub.value(in: language))
+                        .font(MFont.meta)
+                        .foregroundStyle(Color.civicaGraphite)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                MChevron()
+            }
+            .padding(14)
+            .background(Color.civicaPaper2)
+            .overlay(
+                RoundedRectangle(cornerRadius: 4)
+                    .stroke(Color.civicaTeal.opacity(0.4), lineWidth: 1)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 4))
+            .padding(.horizontal, 24)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(SNAPMarketplaceStrings.navigatorEscalationTitle.value(in: language))
+        .accessibilityHint(SNAPMarketplaceStrings.navigatorEscalationSub.value(in: language))
+        .accessibilityIdentifier("marketplace.post_placement.navigator_escalation")
     }
 
     // MARK: OBBBA work-hour log

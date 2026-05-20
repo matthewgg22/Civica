@@ -194,6 +194,15 @@ enum SNAPMarketplaceStrings {
         "Civica auto-counts hours from your verified employer. No timesheet to submit.",
         es: "Civica cuenta automáticamente las horas de tu empleador verificado. No se necesita entrada manual."
     )
+    // Screen 05 navigator escalation (D11)
+    static let navigatorEscalationTitle = CivicaText(
+        "Talk to your navigator",
+        es: "Habla con tu navegador"
+    )
+    static let navigatorEscalationSub = CivicaText(
+        "Message your assigned worker about this change.",
+        es: "Envía un mensaje a tu trabajador asignado sobre este cambio."
+    )
 
     // MARK: - SNAPEnrolledView (Screen 01)
 

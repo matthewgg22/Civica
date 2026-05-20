@@ -278,4 +278,16 @@ final class SNAPMarketplaceViewModel: ObservableObject {
         guard placement.obbbaHoursRequired > 0 else { return 0 }
         return Double(placement.obbbaHoursLogged) / Double(placement.obbbaHoursRequired)
     }
+
+    /// Pre-fill text for the navigator inbox when Screen 05 cliff escalation is tapped.
+    var navigatorPreFillMessage: String {
+        "I started working at \(placement.employer) and my benefit changed from " +
+        "$\(placement.oldBenefit) to $\(placement.newBenefit). I have a question about my eligibility."
+    }
+
+    /// True when the benefit reduction is severe enough to surface the navigator escalation prompt.
+    var isCliffEvent: Bool {
+        placement.newBenefit == 0 ||
+        (placement.oldBenefit > 0 && placement.newBenefit < placement.oldBenefit * 60 / 100)
+    }
 }
