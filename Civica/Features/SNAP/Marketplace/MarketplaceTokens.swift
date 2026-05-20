@@ -137,7 +137,8 @@ struct MChevron: View {
     }
 }
 
-/// Brick primary CTA button — full-width, 48pt tall, 3pt radius.
+/// Brick primary CTA button — full-width, 56pt tall, 3pt radius.
+/// Height matches CivicaPrimaryCTAButtonStyle (HANDOFF.md §1).
 struct MBrickButton: View {
     let label: String
     let action: () -> Void
@@ -148,7 +149,7 @@ struct MBrickButton: View {
                 .font(MFont.bodySmallMedium.weight(.medium))
                 .foregroundStyle(Color.civicaPaper)
                 .frame(maxWidth: .infinity)
-                .frame(height: 48)
+                .frame(height: 56)
                 .background(Color.civicaBrick)
                 .clipShape(RoundedRectangle(cornerRadius: 3))
         }
@@ -198,6 +199,28 @@ struct MTealOutlineButton: View {
         }
         .buttonStyle(.plain)
         .padding(.horizontal, 24)
+    }
+}
+
+/// Shimmer placeholder for numeric or text content that is still loading.
+/// Width and height match the content being replaced; use cornerRadius 999 for pill shapes.
+struct MShimmer: View {
+    let width: CGFloat
+    let height: CGFloat
+    var cornerRadius: CGFloat = 4
+
+    @State private var phase: Double = 0.3
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: cornerRadius)
+            .fill(Color.civicaGraphite.opacity(phase))
+            .frame(width: width, height: height)
+            .onAppear {
+                withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
+                    phase = 0.1
+                }
+            }
+            .accessibilityHidden(true)
     }
 }
 

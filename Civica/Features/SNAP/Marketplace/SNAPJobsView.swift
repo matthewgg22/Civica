@@ -17,6 +17,7 @@ struct SNAPJobsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 scheduleStrip
+                canvasProvenanceLine
                 openHoursLine
                 MHairline()
                 incomeCapLine
@@ -26,6 +27,7 @@ struct SNAPJobsView: View {
                 footer
             }
         }
+        .accessibilityIdentifier("marketplace.job_list")
         .background(Color.civicaPaper.ignoresSafeArea())
         .navigationTitle(SNAPMarketplaceStrings.jobsNavTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
@@ -58,6 +60,20 @@ struct SNAPJobsView: View {
         .accessibilityLabel("Class schedule: Tuesday and Thursday class blocks")
     }
 
+    // MARK: Canvas provenance (D6)
+
+    @ViewBuilder
+    private var canvasProvenanceLine: some View {
+        if vm.schedule.source == .canvas {
+            Text(SNAPMarketplaceStrings.canvasProvenance.value(in: language))
+                .font(MFont.meta)
+                .foregroundStyle(Color.civicaGraphite)
+                .padding(.top, 8)
+                .padding(.horizontal, 24)
+                .accessibilityLabel("Schedule source: Canvas")
+        }
+    }
+
     // MARK: Open hours
 
     private var openHoursLine: some View {
@@ -69,22 +85,40 @@ struct SNAPJobsView: View {
             .padding(.bottom, 16)
     }
 
-    // MARK: Income cap line
+    // MARK: Income cap hero (D2 — 20pt SemiBold numeral)
 
     private var incomeCapLine: some View {
-        HStack(spacing: 10) {
-            Text(SNAPMarketplaceStrings.incomeCapPrefix.value(in: language)
-                 + "\(vm.incomeCap)"
-                 + SNAPMarketplaceStrings.incomeCapSuffix.value(in: language))
-                .font(MFont.bodySmallMedium)
-                .foregroundStyle(Color.civicaInk)
-                .fixedSize(horizontal: false, vertical: true)
-            InfoDotView(color: .civicaTeal)
-                .accessibilityLabel("Income cap information")
-                .accessibilityHint("Tap to learn about the income limit before your benefit changes")
+        VStack(alignment: .leading, spacing: 4) {
+            Text(SNAPMarketplaceStrings.incomeCapLabel.value(in: language))
+                .font(MFont.capsLabel)
+                .foregroundStyle(Color.civicaGraphite)
+                .kerning(1.5)
+
+            HStack(alignment: .lastTextBaseline, spacing: 0) {
+                Text("$\(vm.incomeCap)")
+                    .font(MFont.heroHeadline)   // 20pt SemiBold
+                    .foregroundStyle(Color.civicaInk)
+                    .monospacedDigit()
+                Text(SNAPMarketplaceStrings.incomeCapPerMonth.value(in: language))
+                    .font(MFont.bodySmall)
+                    .foregroundStyle(Color.civicaGraphite)
+
+                Spacer(minLength: 12)
+
+                InfoDotView(color: .civicaTeal)
+            }
+
+            Text(SNAPMarketplaceStrings.incomeCapChangeNote.value(in: language))
+                .font(MFont.meta)
+                .foregroundStyle(Color.civicaGraphite)
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 16)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(
+            String(format: SNAPMarketplaceStrings.incomeCapA11y.value(in: language), vm.incomeCap)
+        )
+        .accessibilityHint("Tap the info icon for more details")
     }
 
     // MARK: Job rows
@@ -99,6 +133,7 @@ struct SNAPJobsView: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("\(job.title), \(job.pillText), \(job.projectedBenefitLabel)")
+                .accessibilityIdentifier("marketplace.job_row.\(job.id.uuidString)")
 
                 if idx < vm.jobs.count - 1 {
                     MHairline()

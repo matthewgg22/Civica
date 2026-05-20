@@ -1,6 +1,7 @@
 import CivicaDesignSystem
 import SwiftUI
 
+// DEPRECATED — use SNAPJobImpactView instead. See MarketplaceFlowView.swift for context.
 // Screen 3 — Benefit impact detail for a selected job.
 // DR3-3: BenefitImpactCard with 4-line math + FWS exclusion call-out.
 // DR3-10: tabular nums handled by CivicaMoney inside BenefitImpactCard.

@@ -1,6 +1,7 @@
 import CivicaDesignSystem
 import SwiftUI
 
+// DEPRECATED — use SNAPApplyHandoffView instead. See MarketplaceFlowView.swift for context.
 // Screen 4 — Apply via Handshake with consent checklist.
 // DR3-6: verified-data list + explicit "we don't share your benefit amount" line.
 // DR3-7: fallback to employer career URL when Handshake is unavailable.

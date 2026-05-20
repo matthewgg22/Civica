@@ -1,10 +1,12 @@
 import CivicaDesignSystem
 import SwiftUI
 
-// Marketplace navigation coordinator — Screens 2→3→4 (job browse → impact → apply).
-// Screen 1 (MarketplaceEntryCard) is embedded by the parent packet view.
-// Screen 5 (PostPlacementView) is entered from the Argyle webhook callback.
-// Screen 6 (RecertPulledRow) is embedded in the recert companion.
+// DEPRECATED — use SNAPMarketplaceFlow instead.
+// This family (MarketplaceFlowView / JobMatchListView / BenefitImpactView /
+// ApplyHandoffSheet / PostPlacementView) is the prior implementation and is
+// retained only because MarketplaceUITestHarness + MarketplaceFlowUITests still
+// exercise it. Consolidation into the SNAPMarketplace* family is tracked as a
+// separate follow-on PR.
 struct MarketplaceFlowView: View {
     let state: MarketplaceState
     @State private var path = NavigationPath()

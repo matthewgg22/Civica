@@ -16,6 +16,11 @@ enum SNAPMarketplaceStrings {
         "Open hours: ",
         es: "Horario: "
     )
+    // Screen 02 Canvas provenance attribution (D6)
+    static let canvasProvenance = CivicaText(
+        "Schedule synced from Canvas",
+        es: "Horario sincronizado desde Canvas"
+    )
     static let incomeCapPrefix = CivicaText(
         "Income cap: $",
         es: "Límite de ingresos: $"
@@ -23,6 +28,23 @@ enum SNAPMarketplaceStrings {
     static let incomeCapSuffix = CivicaText(
         "/mo before benefit changes",
         es: "/mes antes de cambios en el beneficio"
+    )
+    // Screen 02 income cap hero layout (D2)
+    static let incomeCapLabel = CivicaText(
+        "INCOME CAP",
+        es: "LÍMITE DE INGRESOS"
+    )
+    static let incomeCapPerMonth = CivicaText(
+        "/mo",
+        es: "/mes"
+    )
+    static let incomeCapChangeNote = CivicaText(
+        "before your benefit changes",
+        es: "antes de que cambie tu beneficio"
+    )
+    static let incomeCapA11y = CivicaText(
+        "Income cap: $%d per month. Earn more and your benefit adjusts.",
+        es: "Límite de ingresos: $%d por mes. Si ganas más, tu beneficio cambia."
     )
     static let showMore = CivicaText(
         "Show more",
@@ -93,6 +115,28 @@ enum SNAPMarketplaceStrings {
         "Tap to open sheet",
         es: "Toca para abrir"
     )
+    // Screen 04 shared-data card row labels
+    static let sharedRowPlaid = CivicaText(
+        "Income verified by Plaid",
+        es: "Ingresos verificados por Plaid"
+    )
+    static let sharedRowCanvas = CivicaText(
+        "Class schedule from Canvas",
+        es: "Horario de clases de Canvas"
+    )
+    static let sharedRowSnapEligible = CivicaText(
+        "SNAP-eligible status confirmed",
+        es: "Estado elegible para SNAP confirmado"
+    )
+    // Screen 04 disconnected-source state (D5)
+    static let reconnect = CivicaText(
+        "Reconnect",
+        es: "Reconectar"
+    )
+    static let disconnectedSource = CivicaText(
+        "Not connected",
+        es: "No conectado"
+    )
 
     // MARK: - SNAPPlacementUpdateView (Screen 05)
 
@@ -150,12 +194,34 @@ enum SNAPMarketplaceStrings {
         "Civica auto-counts hours from your verified employer. No timesheet to submit.",
         es: "Civica cuenta automáticamente las horas de tu empleador verificado. No se necesita entrada manual."
     )
+    // Screen 05 navigator escalation (D11)
+    static let navigatorEscalationTitle = CivicaText(
+        "Talk to your navigator",
+        es: "Habla con tu navegador"
+    )
+    static let navigatorEscalationSub = CivicaText(
+        "Message your assigned worker about this change.",
+        es: "Envía un mensaje a tu trabajador asignado sobre este cambio."
+    )
 
     // MARK: - SNAPEnrolledView (Screen 01)
 
     static let enrolledNavTitle = CivicaText(
         "You're enrolled",
         es: "Estás inscrito/a"
+    )
+    // Screen 01 error inline block (D3)
+    static let benefitLoadErrorHeadline = CivicaText(
+        "Couldn't load your benefit",
+        es: "No se pudo cargar tu beneficio"
+    )
+    static let benefitLoadErrorBody = CivicaText(
+        "Check your connection and try again.",
+        es: "Verifica tu conexión e inténtalo de nuevo."
+    )
+    static let retry = CivicaText(
+        "Try again",
+        es: "Intentar de nuevo"
     )
     static let enrolledHeadline = CivicaText(
         "You're enrolled in SNAP",
@@ -208,5 +274,14 @@ enum SNAPMarketplaceStrings {
     static let footnoteEstimate = CivicaText(
         "Estimate based on your household of 2 and current shelter cost. Civica updates it monthly when you submit pay stubs.",
         es: "Estimación basada en tu hogar de 2 personas y la deducción de vivienda actual."
+    )
+    // Screen 03 partial-error accessibility labels (D4)
+    static let amountUnavailable = CivicaText(
+        "Amount unavailable",
+        es: "Cantidad no disponible"
+    )
+    static let totalIncomeUnavailable = CivicaText(
+        "Total income unavailable",
+        es: "Ingresos totales no disponibles"
     )
 }

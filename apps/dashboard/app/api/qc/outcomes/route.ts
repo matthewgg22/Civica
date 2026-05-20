@@ -51,5 +51,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ qc_outcome_id: (data as { qc_outcome_id: string }).qc_outcome_id }, { status: 201 });
+  return NextResponse.json({ qc_outcome_id: (data as unknown as { qc_outcome_id: string }).qc_outcome_id }, { status: 201 });
 }

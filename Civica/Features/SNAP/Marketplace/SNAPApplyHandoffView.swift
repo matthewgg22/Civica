@@ -10,9 +10,20 @@ struct SNAPApplyHandoffView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
 
+    /// Called when user taps "Reconnect" on a disconnected Plaid row.
+    var onReconnectPlaid: (() -> Void)? = nil
+    /// Called when user taps "Reconnect" on a disconnected Canvas row.
+    var onReconnectCanvas: (() -> Void)? = nil
+
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
     private var language: CivicaLanguage { CivicaLanguage(rawValue: languageRaw) ?? .english }
+
+    private var plaidDateFormatted: String {
+        let f = DateFormatter()
+        f.dateFormat = "MMM d"
+        return f.string(from: vm.dataSources.plaidLastVerified)
+    }
 
     var body: some View {
         NavigationStack {
@@ -80,9 +91,37 @@ struct SNAPApplyHandoffView: View {
 
     private var sharedCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            sharedRow(label: "Income verified by Plaid", detail: "(May 12)")
-            sharedRow(label: "Class schedule from Canvas", detail: nil)
-            sharedRow(label: "SNAP-eligible status confirmed", detail: nil)
+            // Plaid income — grayed out with amber dot + Reconnect when disconnected
+            if vm.dataSources.plaidConnected {
+                sharedRow(
+                    label: SNAPMarketplaceStrings.sharedRowPlaid.value(in: language),
+                    detail: "(\(plaidDateFormatted))"
+                )
+            } else {
+                disconnectedRow(
+                    label: SNAPMarketplaceStrings.sharedRowPlaid.value(in: language),
+                    onReconnect: onReconnectPlaid
+                )
+            }
+
+            // Canvas schedule — grayed out when Canvas is not connected
+            if vm.dataSources.canvas == .connected {
+                sharedRow(
+                    label: SNAPMarketplaceStrings.sharedRowCanvas.value(in: language),
+                    detail: nil
+                )
+            } else {
+                disconnectedRow(
+                    label: SNAPMarketplaceStrings.sharedRowCanvas.value(in: language),
+                    onReconnect: onReconnectCanvas
+                )
+            }
+
+            // SNAP status is always confirmed once we reach this screen
+            sharedRow(
+                label: SNAPMarketplaceStrings.sharedRowSnapEligible.value(in: language),
+                detail: nil
+            )
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
@@ -113,6 +152,38 @@ struct SNAPApplyHandoffView: View {
             .lineSpacing(15 * 0.35)
             .fixedSize(horizontal: false, vertical: true)
         }
+    }
+
+    // Amber-dot row shown when Plaid or Canvas is disconnected (D5).
+    // Label is grayed out; "Reconnect" button appears when a reconnect handler is wired.
+    private func disconnectedRow(label: String, onReconnect: (() -> Void)?) -> some View {
+        HStack(alignment: .center, spacing: 12) {
+            Circle()
+                .fill(Color.civicaAmber)
+                .frame(width: 8, height: 8)
+                .padding(.top, 1)
+                .accessibilityHidden(true)
+
+            Text(label)
+                .font(MFont.bodySmallMedium)
+                .foregroundStyle(Color.civicaGraphite)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            if let handler = onReconnect {
+                Button(SNAPMarketplaceStrings.reconnect.value(in: language)) {
+                    handler()
+                }
+                .font(MFont.metaMedium)
+                .foregroundStyle(Color.civicaAmber)
+                .frame(minWidth: 44, minHeight: 44)
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(
+            label + ", " + SNAPMarketplaceStrings.disconnectedSource.value(in: language)
+        )
+        .accessibilityHint(onReconnect != nil ? "Tap Reconnect to link your account" : "")
     }
 
     // MARK: Not-shared note
@@ -163,13 +234,14 @@ struct SNAPApplyHandoffView: View {
                 }
                 .foregroundStyle(Color.civicaPaper)
                 .frame(maxWidth: .infinity)
-                .frame(height: 48)
+                .frame(height: 56)
                 .background(Color.civicaBrick)
                 .clipShape(RoundedRectangle(cornerRadius: 3))
             }
             .buttonStyle(.plain)
             .padding(.horizontal, 24)
             .accessibilityLabel("Continue to Handshake")
+            .accessibilityIdentifier("marketplace.handoff.apply_handshake")
 
             MTealTextLink(label: "Apply somewhere else") {
                 dismiss()
@@ -225,11 +297,37 @@ private struct StepRow: View {
 }
 
 #if DEBUG
-#Preview {
+#Preview("Connected") {
     let previewLabel = SNAPMarketplaceStrings.tapToOpenSheet.value(in: .english)
     Text(previewLabel)
         .sheet(isPresented: .constant(true)) {
             SNAPApplyHandoffView(vm: SNAPMarketplaceViewModel())
+        }
+}
+
+#Preview("Plaid disconnected") {
+    let vm = SNAPMarketplaceViewModel()
+    vm.dataSources.plaidConnected = false
+    let previewLabel = SNAPMarketplaceStrings.tapToOpenSheet.value(in: .english)
+    return Text(previewLabel)
+        .sheet(isPresented: .constant(true)) {
+            SNAPApplyHandoffView(
+                vm: vm,
+                onReconnectPlaid: { print("Reconnect Plaid tapped") }
+            )
+        }
+}
+
+#Preview("Canvas disconnected") {
+    let vm = SNAPMarketplaceViewModel()
+    vm.dataSources.canvas = .disconnected
+    let previewLabel = SNAPMarketplaceStrings.tapToOpenSheet.value(in: .english)
+    return Text(previewLabel)
+        .sheet(isPresented: .constant(true)) {
+            SNAPApplyHandoffView(
+                vm: vm,
+                onReconnectCanvas: { print("Reconnect Canvas tapped") }
+            )
         }
 }
 #endif
