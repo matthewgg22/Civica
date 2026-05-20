@@ -54,6 +54,11 @@ public enum CivicaColors {
     /// Soft teal wash — solid pastel for cool civic-engagement backgrounds.
     public static let tealSurface          = Color.dynamic(light: "#BCE0DA", dark: "#2C4D49")
 
+    /// Warm card surface — sits one step above `paper` for card/pill backgrounds
+    /// that need contrast against the cream base. Dark value is near-black to
+    /// match the elevated surface intent in dark mode.
+    public static let cardSurface          = Color.dynamic(light: "#EDE8DD", dark: "#1E1B17")
+
     // MARK: - Carried-forward surfaces (not addressed by handoff)
 
     public static let surfacePrimary       = Color.dynamic(light: "#FFFFFF", dark: "#1B1F24")
@@ -211,5 +216,76 @@ public struct CivicaSecondaryCTAButtonStyle: ButtonStyle {
                     .stroke(isEnabled ? CivicaColors.secondaryButtonBorder : CivicaColors.secondaryButtonDisabledBorder, lineWidth: 1)
             )
             .opacity(configuration.isPressed ? 0.9 : 1)
+    }
+}
+
+/// Teal outline button. **48pt min hit target.**
+/// Use for secondary actions in contexts where brick would compete with a
+/// primary brick CTA on the same surface (e.g. marketplace action rows).
+public struct CivicaTealOutlineButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    public init() {}
+
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundColor(isEnabled ? CivicaColors.accentTeal : CivicaColors.muted)
+            .padding(.horizontal, CivicaSpacing.lg)
+            .padding(.vertical, CivicaSpacing.sm)
+            .frame(minHeight: 48)
+            .background(
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                    .fill(configuration.isPressed ? CivicaColors.tealSurface.opacity(0.4) : Color.clear)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                    .stroke(isEnabled ? CivicaColors.accentTeal.opacity(0.7) : CivicaColors.muted.opacity(0.4),
+                            lineWidth: 1)
+            )
+            .opacity(configuration.isPressed ? 0.88 : 1)
+    }
+}
+
+/// Brick transparent button — brick-colored text, no border, no fill.
+/// **44pt min hit target.** Use for tertiary text-link-style CTAs where a
+/// full outline would add visual weight.
+public struct CivicaBrickTransparentButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    public init() {}
+
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundColor(isEnabled ? CivicaColors.brickPrimary : CivicaColors.brickPrimaryDisabled)
+            .padding(.horizontal, CivicaSpacing.md)
+            .padding(.vertical, CivicaSpacing.xs)
+            .frame(minHeight: 44)
+            .opacity(configuration.isPressed ? 0.7 : 1)
+    }
+}
+
+/// Compact primary button. **40pt min hit target.**
+/// Use for inline or list-row CTAs where 56pt would be too tall.
+/// Same brick fill as `CivicaPrimaryCTAButtonStyle`.
+public struct CivicaCompactButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    public init() {}
+
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundColor(CivicaColors.onPrimaryText)
+            .padding(.horizontal, CivicaSpacing.md)
+            .padding(.vertical, CivicaSpacing.xs)
+            .frame(minHeight: 40)
+            .background(
+                RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                    .fill(compactFill(isPressed: configuration.isPressed))
+            )
+    }
+
+    private func compactFill(isPressed: Bool) -> Color {
+        guard isEnabled else { return CivicaColors.brickPrimaryDisabled }
+        return isPressed ? CivicaColors.brickPrimaryPressed : CivicaColors.brickPrimary
     }
 }

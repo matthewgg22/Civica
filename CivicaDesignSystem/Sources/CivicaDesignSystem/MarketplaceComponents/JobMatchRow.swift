@@ -141,7 +141,7 @@ public struct JobMatchRow: View {
         .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, 3)
         .background(
-            Capsule().fill(CivicaColors.surfacePrimary)
+            Capsule().fill(CivicaColors.cardSurface)
         )
     }
 
