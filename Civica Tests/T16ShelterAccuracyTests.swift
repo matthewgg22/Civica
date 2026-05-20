@@ -337,5 +337,367 @@ struct T16ShelterAccuracyTests {
         return f.date(from: string)!
     }
 
-    private let fy26Date = Self.iso("2026-03-15")
+    private static let fy26Date = iso("2026-03-15")
+}
+
+// MARK: - P1: Gap #4 — Shared housing pro-rate
+
+@Suite("T16 Shelter Accuracy — P1 Gap #4 (shared housing pro-rate)")
+struct T16SharedHousingProRateTests {
+
+    private static func iso(_ string: String) -> Date {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        f.timeZone = TimeZone(identifier: "UTC")
+        return f.date(from: string)!
+    }
+    private static let fy26Date = iso("2026-03-15")
+
+    // MARK: - SNAPExpensesAnswers model
+
+    @Test("sharedHousingOccupants nil by default")
+    func expensesAnswers_sharedHousingOccupants_nilByDefault() {
+        let answers = SNAPExpensesAnswers()
+        #expect(answers.sharedHousingOccupants == nil)
+    }
+
+    @Test("sharedHousingOccupants can be set to 4")
+    func expensesAnswers_sharedHousingOccupants_canBeSet() {
+        var answers = SNAPExpensesAnswers()
+        answers.sharedHousingOccupants = 4
+        #expect(answers.sharedHousingOccupants == 4)
+    }
+
+    // MARK: - SNAPBenefitCalculator: pro-rate math
+
+    /// Sole renter: $1,200 rent, nil sharedHousingOccupants → full $1,200 counts.
+    @Test("Sole renter: full rent counted when sharedHousingOccupants is nil")
+    func calculator_soleRenter_fullRentCounted() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.stateCode = "CA"
+        draft.household.householdSize = "Just me"
+        draft.income.grossMonthlyIncome = 2000
+        draft.income.anyoneEarning = .yes
+        draft.expenses.monthlyRentOrHousing = 1200
+        draft.expenses.sharedHousingOccupants = nil
+        draft.expenses.selectedUtilities = []
+
+        let rules = CAStateRules()
+        let soleResult = SNAPBenefitCalculator.calculate(draft: draft, rules: rules, today: Self.fy26Date)
+
+        // Now share with 4 people — should produce a lower shelter deduction
+        draft.expenses.sharedHousingOccupants = 4
+        let sharedResult = SNAPBenefitCalculator.calculate(draft: draft, rules: rules, today: Self.fy26Date)
+
+        #expect(soleResult.excessShelterDeduction >= sharedResult.excessShelterDeduction)
+    }
+
+    /// 4-person shared lease: $1,600 total, sharedHousingOccupants = 4.
+    /// Pro-rated rent = $1,600 / 4 = $400.
+    ///   earned_deduction = 1600 * 0.20          = 320
+    ///   standard (HH 1 FY26)                    = 219
+    ///   adjusted = 1600 - 320 - 219             = 1061
+    ///   half_adjusted = 530.5
+    ///   shelterCost = 400 (pro-rated, no utilities)
+    ///   excessShelter = max(400 - 530.5, 0)     = 0 (shelter < half_adjusted)
+    @Test("4-person shared lease: rent pro-rated to 1/4 of total")
+    func calculator_fourPersonLease_rentProRated() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.stateCode = "CA"
+        draft.household.householdSize = "Just me"
+        draft.income.grossMonthlyIncome = 1600
+        draft.income.anyoneEarning = .yes
+        draft.expenses.monthlyRentOrHousing = 1600  // total 4-person lease
+        draft.expenses.sharedHousingOccupants = 4
+        draft.expenses.selectedUtilities = []
+
+        let rules = CAStateRules()
+        let result = SNAPBenefitCalculator.calculate(draft: draft, rules: rules, today: Self.fy26Date)
+
+        // Pro-rated rent = $400 < half_adjusted ($530.50) → excessShelter = 0
+        #expect(result.excessShelterDeduction == 0)
+    }
+
+    /// Without pro-rate (nil occupants), $1,600 rent on $1,600 income
+    /// yields a large excess shelter deduction.
+    @Test("Same total rent without pro-rate: larger shelter deduction")
+    func calculator_sameRentNoProRate_largerShelterDeduction() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.stateCode = "CA"
+        draft.household.householdSize = "Just me"
+        draft.income.grossMonthlyIncome = 1600
+        draft.income.anyoneEarning = .yes
+        draft.expenses.monthlyRentOrHousing = 1600
+        draft.expenses.sharedHousingOccupants = nil  // sole renter
+        draft.expenses.selectedUtilities = []
+
+        let rules = CAStateRules()
+        let result = SNAPBenefitCalculator.calculate(draft: draft, rules: rules, today: Self.fy26Date)
+
+        // shelterCost = 1600, half_adjusted = 530.5
+        // excessShelter = min(1600 - 530.5, 744) = 744 (capped)
+        #expect(result.excessShelterDeduction == 744)
+    }
+
+    /// 2-person lease $900, sharedHousingOccupants = 2.
+    /// Pro-rated rent = $450.
+    @Test("2-person shared lease: rent halved")
+    func calculator_twoPeopleLease_rentHalved() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.stateCode = "CA"
+        draft.household.householdSize = "Just me"
+        draft.income.grossMonthlyIncome = 1200
+        draft.income.anyoneEarning = .yes
+        draft.expenses.monthlyRentOrHousing = 900
+        draft.expenses.sharedHousingOccupants = 2
+        draft.expenses.selectedUtilities = []
+
+        let rules = CAStateRules()
+        let resultShared = SNAPBenefitCalculator.calculate(draft: draft, rules: rules, today: Self.fy26Date)
+
+        draft.expenses.sharedHousingOccupants = nil  // same rent, sole renter
+        let resultSole = SNAPBenefitCalculator.calculate(draft: draft, rules: rules, today: Self.fy26Date)
+
+        // Shared case must have lower or equal shelter deduction
+        #expect(resultShared.excessShelterDeduction <= resultSole.excessShelterDeduction)
+    }
+
+    // MARK: - ViewModel: sharedHousing step behavior
+
+    @Test("ViewModel: sharedHousingOccupants nil by default")
+    @MainActor func viewModel_sharedHousingOccupants_nilByDefault() {
+        let vm = SNAPExpensesFlowViewModel()
+        #expect(vm.answers.sharedHousingOccupants == nil)
+    }
+
+    @Test("ViewModel: unhoused status skips sharedHousing step")
+    @MainActor func viewModel_unhoused_skipsSharedHousingStep() {
+        let vm = SNAPExpensesFlowViewModel(housingStatus: .unhoused)
+        #expect(!vm.effectiveSteps.contains(.sharedHousing))
+    }
+
+    @Test("ViewModel: stableHome status includes sharedHousing step")
+    @MainActor func viewModel_stableHome_includesSharedHousingStep() {
+        let vm = SNAPExpensesFlowViewModel(housingStatus: .stableHome)
+        #expect(vm.effectiveSteps.contains(.sharedHousing))
+    }
+
+    @Test("ViewModel: nil housingStatus includes sharedHousing step")
+    @MainActor func viewModel_nilHousingStatus_includesSharedHousingStep() {
+        let vm = SNAPExpensesFlowViewModel(housingStatus: nil)
+        #expect(vm.effectiveSteps.contains(.sharedHousing))
+    }
+}
+
+// MARK: - P1: Gap #7 — ShelterQCHeuristics
+
+@Suite("T16 Shelter Accuracy — P1 Gap #7 (ShelterQCHeuristics)")
+struct T16ShelterQCHeuristicsTests {
+
+    // MARK: - Flag A: rent below county floor
+
+    @Test("Flag A: LA rent $200 below $350 floor → rentBelowCountyFloor")
+    func flagA_laRentBelowFloor() {
+        var draft = makeDraft(rent: 200, income: 1000)
+        draft.whereApplying.housingStatus = .stableHome
+        draft.expenses.selectedUtilities = [.electricity]
+
+        let flags = ShelterQCHeuristics.evaluate(draft: draft, county: "Los Angeles")
+        #expect(flags.contains(.rentBelowCountyFloor(reported: 200, floor: 350)))
+    }
+
+    @Test("Flag A: rent exactly at floor → no flag")
+    func flagA_rentAtFloor_noFlag() {
+        var draft = makeDraft(rent: 350, income: 1000)
+        draft.whereApplying.housingStatus = .stableHome
+        draft.expenses.selectedUtilities = [.electricity]
+
+        let flags = ShelterQCHeuristics.evaluate(draft: draft, county: "Los Angeles")
+        let hasA = flags.contains {
+            if case .rentBelowCountyFloor = $0 { return true }
+            return false
+        }
+        #expect(!hasA)
+    }
+
+    @Test("Flag A: sharing already set → no floor flag (pro-rated amount is expected to be low)")
+    func flagA_sharingSet_noFloorFlag() {
+        var draft = makeDraft(rent: 200, income: 1000)
+        draft.whereApplying.housingStatus = .stableHome
+        draft.expenses.sharedHousingOccupants = 4
+        draft.expenses.selectedUtilities = [.electricity]
+
+        let flags = ShelterQCHeuristics.evaluate(draft: draft, county: "Los Angeles")
+        let hasA = flags.contains {
+            if case .rentBelowCountyFloor = $0 { return true }
+            return false
+        }
+        #expect(!hasA)
+    }
+
+    @Test("Flag A: unknown county falls back to statewide floor $250")
+    func flagA_unknownCounty_statewideFloor() {
+        var draft = makeDraft(rent: 200, income: 1000)
+        draft.whereApplying.housingStatus = .stableHome
+        draft.expenses.selectedUtilities = [.electricity]
+
+        let flags = ShelterQCHeuristics.evaluate(draft: draft, county: "Shasta")
+        #expect(flags.contains(.rentBelowCountyFloor(reported: 200, floor: 250)))
+    }
+
+    // MARK: - Flag B: rent exceeds income
+
+    @Test("Flag B: rent $1,200 exceeds income $900 → rentExceedsIncome")
+    func flagB_rentExceedsIncome() {
+        var draft = makeDraft(rent: 1200, income: 900)
+        draft.whereApplying.housingStatus = .stableHome
+        draft.expenses.selectedUtilities = [.heatFuel]
+
+        let flags = ShelterQCHeuristics.evaluate(draft: draft, county: "Los Angeles")
+        #expect(flags.contains(.rentExceedsIncome(rent: 1200, income: 900)))
+    }
+
+    @Test("Flag B: rent equals income → no flag (must strictly exceed)")
+    func flagB_rentEqualsIncome_noFlag() {
+        var draft = makeDraft(rent: 1000, income: 1000)
+        draft.whereApplying.housingStatus = .stableHome
+        draft.expenses.selectedUtilities = [.heatFuel]
+
+        let flags = ShelterQCHeuristics.evaluate(draft: draft, county: "Los Angeles")
+        let hasB = flags.contains {
+            if case .rentExceedsIncome = $0 { return true }
+            return false
+        }
+        #expect(!hasB)
+    }
+
+    // MARK: - Flag C: no utilities off-campus
+
+    @Test("Flag C: stableHome, no utilities, not on campus → noUtilitiesOffCampus")
+    func flagC_offCampusNoUtilities() {
+        var draft = makeDraft(rent: 800, income: 1200)
+        draft.whereApplying.housingStatus = .stableHome
+        draft.expenses.selectedUtilities = []
+
+        let flags = ShelterQCHeuristics.evaluate(draft: draft, county: "Los Angeles", onCampus: false)
+        #expect(flags.contains(.noUtilitiesOffCampus))
+    }
+
+    @Test("Flag C: onCampus=true suppresses flag")
+    func flagC_onCampus_noFlag() {
+        var draft = makeDraft(rent: 800, income: 1200)
+        draft.whereApplying.housingStatus = .stableHome
+        draft.expenses.selectedUtilities = []
+
+        let flags = ShelterQCHeuristics.evaluate(draft: draft, county: "Los Angeles", onCampus: true)
+        #expect(!flags.contains(.noUtilitiesOffCampus))
+    }
+
+    @Test("Flag C: has utilities → no flag")
+    func flagC_hasUtilities_noFlag() {
+        var draft = makeDraft(rent: 800, income: 1200)
+        draft.whereApplying.housingStatus = .stableHome
+        draft.expenses.selectedUtilities = [.electricity]
+
+        let flags = ShelterQCHeuristics.evaluate(draft: draft, county: "Los Angeles")
+        #expect(!flags.contains(.noUtilitiesOffCampus))
+    }
+
+    // MARK: - Flag D: rent suggests un-pro-rated lease
+
+    @Test("Flag D: LA rent $2,500 above $2,100 P80 without sharing set → rentSuggestsUnproratedLease")
+    func flagD_rentAboveP80_noSharing() {
+        var draft = makeDraft(rent: 2500, income: 3000)
+        draft.whereApplying.housingStatus = .stableHome
+        draft.expenses.selectedUtilities = [.heatFuel]
+
+        let flags = ShelterQCHeuristics.evaluate(draft: draft, county: "Los Angeles")
+        #expect(flags.contains(.rentSuggestsUnproratedLease(reported: 2500, singlePersonP80: 2100)))
+    }
+
+    @Test("Flag D: sharing already set → no flag (high rent expected for full lease)")
+    func flagD_sharingSet_noFlag() {
+        var draft = makeDraft(rent: 2500, income: 3000)
+        draft.whereApplying.housingStatus = .stableHome
+        draft.expenses.sharedHousingOccupants = 3
+        draft.expenses.selectedUtilities = [.heatFuel]
+
+        let flags = ShelterQCHeuristics.evaluate(draft: draft, county: "Los Angeles")
+        let hasD = flags.contains {
+            if case .rentSuggestsUnproratedLease = $0 { return true }
+            return false
+        }
+        #expect(!hasD)
+    }
+
+    @Test("Flag D: unknown county falls back to statewide P80 $1,600")
+    func flagD_unknownCounty_statewideP80() {
+        var draft = makeDraft(rent: 1800, income: 3000)
+        draft.whereApplying.housingStatus = .stableHome
+        draft.expenses.selectedUtilities = [.heatFuel]
+
+        let flags = ShelterQCHeuristics.evaluate(draft: draft, county: "Shasta")
+        #expect(flags.contains(.rentSuggestsUnproratedLease(reported: 1800, singlePersonP80: 1600)))
+    }
+
+    // MARK: - Unhoused skip
+
+    @Test("Unhoused applicant: all flags suppressed")
+    func unhoused_allFlagsSuppressed() {
+        var draft = makeDraft(rent: 100, income: 300)
+        draft.whereApplying.housingStatus = .unhoused
+
+        let flags = ShelterQCHeuristics.evaluate(draft: draft, county: "Los Angeles")
+        #expect(flags.isEmpty)
+    }
+
+    // MARK: - Zero rent skip
+
+    @Test("Zero rent: only non-rent flags can fire")
+    func zeroRent_rentFlagsSkipped() {
+        var draft = makeDraft(rent: 0, income: 1200)
+        draft.whereApplying.housingStatus = .stableHome
+        draft.expenses.selectedUtilities = []
+
+        let flags = ShelterQCHeuristics.evaluate(draft: draft, county: "Los Angeles")
+        // Flag C (no utilities) may fire; rent-based flags A, B, D must not
+        let hasRentFlag = flags.contains {
+            switch $0 {
+            case .rentBelowCountyFloor, .rentExceedsIncome, .rentSuggestsUnproratedLease:
+                return true
+            case .noUtilitiesOffCampus:
+                return false
+            }
+        }
+        #expect(!hasRentFlag)
+    }
+
+    // MARK: - Priority order
+
+    @Test("Flag ordering: C appears before A, B, D")
+    func flagOrdering_cBeforeRentFlags() {
+        // Rent $150 (below LA floor), income $200, no utilities → flags C + A
+        var draft = makeDraft(rent: 150, income: 200)
+        draft.whereApplying.housingStatus = .stableHome
+        draft.expenses.selectedUtilities = []
+
+        let flags = ShelterQCHeuristics.evaluate(draft: draft, county: "Los Angeles")
+        if let cIdx = flags.firstIndex(of: .noUtilitiesOffCampus),
+           let aIdx = flags.firstIndex(where: { if case .rentBelowCountyFloor = $0 { return true }; return false })
+        {
+            #expect(cIdx < aIdx)
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func makeDraft(rent: Decimal, income: Decimal) -> SNAPApplicationDraft {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.stateCode = "CA"
+        draft.household.householdSize = "Just me"
+        draft.income.grossMonthlyIncome = income
+        draft.income.anyoneEarning = .yes
+        draft.expenses.monthlyRentOrHousing = rent
+        return draft
+    }
 }
