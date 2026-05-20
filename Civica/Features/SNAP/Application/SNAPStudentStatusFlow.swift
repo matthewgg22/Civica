@@ -33,6 +33,11 @@ final class SNAPStudentStatusFlowViewModel: ObservableObject {
     enum Step: Int, CaseIterable {
         case enrollment
         case halfTime
+        // CA LPIE — asked after halfTime so we can short-circuit before
+        // the federal 5-path checklist when the LPIE exemption applies.
+        // Session A: "Is your program a degree or certificate program at
+        // a CA Community College, CSU, or UC system?"
+        case degreeProgram
         case twentyHours
         case workStudy
         case dependentChild
@@ -43,6 +48,7 @@ final class SNAPStudentStatusFlowViewModel: ObservableObject {
 
     @Published var step: Step = .enrollment
     @Published var answers: SNAPStudentStatusAnswers
+    @Published var lpieExemptionFired: Bool = false
 
     init(answers: SNAPStudentStatusAnswers = .init()) {
         self.answers = answers
@@ -54,6 +60,27 @@ final class SNAPStudentStatusFlowViewModel: ObservableObject {
             isComplete = true
             return
         }
+        if step == .halfTime && answers.enrolledHalfTime == false {
+            // Not half-time: skip degreeProgram (LPIE requires half-time)
+            // and go straight to the federal exception screens.
+            answers.degreeOrCertificateProgram = nil  // clear any stale value
+            step = .twentyHours
+            return
+        }
+        if step == .degreeProgram {
+            // LPIE fast-path: half-time + CCC/CSU/UC degree/cert program
+            // + flag enabled → exempt immediately, skip federal checklist.
+            if answers.enrolledHalfTime == true
+                && answers.degreeOrCertificateProgram == true
+                && LPIEFeatureFlag.isEnabled {
+                lpieExemptionFired = true
+                isComplete = true
+                return
+            }
+            // Not LPIE-eligible: continue to federal screens.
+            step = .twentyHours
+            return
+        }
         if let next = Step(rawValue: step.rawValue + 1) {
             step = next
         } else {
@@ -62,6 +89,16 @@ final class SNAPStudentStatusFlowViewModel: ObservableObject {
     }
 
     func goBack() {
+        if step == .twentyHours && answers.enrolledHalfTime == false {
+            // The user came from halfTime=no (skipped degreeProgram).
+            step = .halfTime
+            return
+        }
+        if step == .twentyHours {
+            // Came from degreeProgram (LPIE not triggered).
+            step = .degreeProgram
+            return
+        }
         if let prev = Step(rawValue: step.rawValue - 1) {
             step = prev
         }
@@ -71,27 +108,38 @@ final class SNAPStudentStatusFlowViewModel: ObservableObject {
 
     var canAdvanceFromCurrentStep: Bool {
         switch step {
-        case .enrollment:      return answers.enrolledInHigherEd != nil
-        case .halfTime:        return answers.enrolledHalfTime != nil
-        case .twentyHours:     return answers.works20PlusHours != nil
-        case .workStudy:       return answers.inWorkStudy != nil
-        case .dependentChild:  return answers.responsibleForDependentChild != nil
+        case .enrollment:     return answers.enrolledInHigherEd != nil
+        case .halfTime:       return answers.enrolledHalfTime != nil
+        case .degreeProgram:  return answers.degreeOrCertificateProgram != nil
+        case .twentyHours:    return answers.works20PlusHours != nil
+        case .workStudy:      return answers.inWorkStudy != nil
+        case .dependentChild: return answers.responsibleForDependentChild != nil
         }
     }
 
     var isAtFirstStep: Bool { step == .enrollment }
 
-    /// When non-student: enrollment is the only step, so it's also
-    /// the last step. When enrolled: dependent-child is the last.
+    /// Functional last step accounts for LPIE short-circuit and
+    /// non-student short-circuit.
     var isAtFunctionalLastStep: Bool {
         if step == .enrollment && answers.enrolledInHigherEd == false {
             return true
         }
+        // degreeProgram can be last if LPIE fires (handled in advance()).
         return step == .dependentChild
     }
 
-    /// Total screens for the progress chip. Five when student-flow
-    /// applies; one when the user said "no" on screen 1.
+    /// True when the LPIE exemption would fire on the current answers.
+    /// Used to show the "You automatically qualify" callout on the
+    /// degreeProgram screen before the user taps Continue.
+    var lpieWouldFire: Bool {
+        LPIEFeatureFlag.isEnabled
+            && answers.enrolledHalfTime == true
+            && answers.degreeOrCertificateProgram == true
+    }
+
+    /// Total screens for the progress chip.
+    /// Six when full student-flow applies; one when non-student.
     var visibleTotal: Int {
         answers.enrolledInHigherEd == false ? 1 : Step.total
     }
@@ -145,6 +193,7 @@ struct SNAPStudentStatusFlowView: View {
         switch viewModel.step {
         case .enrollment:     enrollmentScreen
         case .halfTime:       halfTimeScreen
+        case .degreeProgram:  degreeProgramScreen
         case .twentyHours:    twentyHoursScreen
         case .workStudy:      workStudyScreen
         case .dependentChild: dependentChildScreen
@@ -175,6 +224,70 @@ struct SNAPStudentStatusFlowView: View {
                 set: { viewModel.answers.enrolledHalfTime = $0 }
             )
         )
+    }
+
+    // CA LPIE: asks whether the program is a degree/certificate at a
+    // CCC, CSU, or UC. When yes + half-time + flag enabled, renders an
+    // "automatically qualifies" callout and lets the user skip the
+    // federal exception screens entirely.
+    private var degreeProgramScreen: some View {
+        CivicaQuestionScreen(
+            progress: .init(
+                current: SNAPStudentStatusFlowViewModel.Step.degreeProgram.oneBasedIndex,
+                total: viewModel.visibleTotal,
+                sectionIndex: SNAPApplicationSection.studentStatus.oneBasedIndex,
+                sectionCount: SNAPApplicationSection.count,
+                sectionTitle: SNAPApplicationSection.studentStatus.title(in: language)
+            ),
+            title: SNAPStudentStatusStrings.degreeProgramTitle.value(in: language),
+            helper: SNAPStudentStatusStrings.degreeProgramHelper.value(in: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            VStack(spacing: CivicaSpacing.md) {
+                CivicaQuestionYesNo(
+                    selection: Binding(
+                        get: { viewModel.answers.degreeOrCertificateProgram },
+                        set: { viewModel.answers.degreeOrCertificateProgram = $0 }
+                    ),
+                    yesLabel: CivicaQuestionStrings.yesLabel.value(in: language),
+                    noLabel: CivicaQuestionStrings.noLabel.value(in: language)
+                )
+                // LPIE callout — shown as soon as the user selects "Yes"
+                // so they see the good news before tapping Continue.
+                if viewModel.lpieWouldFire {
+                    lpieAutoExemptCallout
+                }
+            }
+        }
+    }
+
+    private var lpieAutoExemptCallout: some View {
+        HStack(alignment: .top, spacing: CivicaSpacing.sm) {
+            Image(systemName: "checkmark.seal.fill")
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(CivicaColors.accentTeal)
+                .imageScale(.large)
+                .padding(.top, 2)
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Text(SNAPStudentStatusStrings.lpieCalloutTitle.value(in: language))
+                    .font(CivicaTypography.bodyStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                Text(SNAPStudentStatusStrings.lpieCalloutBody.value(in: language))
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.tealSurface)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .transition(.opacity.combined(with: .move(edge: .top))
+            .animation(.easeInOut(duration: 0.2)))
+        .accessibilityElement(children: .combine)
     }
 
     private var twentyHoursScreen: some View {
@@ -305,6 +418,30 @@ enum SNAPStudentStatusStrings {
     static let dependentChildHelper = CivicaText(
         "Caring for a child under 6 is a SNAP student exception. Caring for a child under 12 may also qualify if you can't find adequate childcare.",
         es: "Cuidar a un menor de 6 años es una excepción estudiantil de SNAP. Cuidar a un menor de 12 años también puede calificar si no encuentras cuidado infantil adecuado."
+    )
+
+    // MARK: - CA LPIE strings (Session A)
+    // Source: CA CDSS CalFresh LPIE (Low-Income Student Pathway to Improved
+    // Enrollment) expansion. All CCC, CSU, and UC half-time degree or
+    // certificate students satisfy the student exemption automatically
+    // starting June 2026 (pending final ACL — see CAStateRules.swift TODO).
+
+    static let degreeProgramTitle = CivicaText(
+        "Is your program at a California Community College, CSU, or UC?",
+        es: "¿Tu programa es en un Colegio Comunitario de California, la CSU o la UC?"
+    )
+    static let degreeProgramHelper = CivicaText(
+        "Community colleges (City College, Santa Monica College, etc.), Cal State campuses, and UC campuses all qualify. Private colleges, trade schools, and out-of-state schools do not.",
+        es: "Los colegios comunitarios (City College, Santa Monica College, etc.), los campus de Cal State y los campus de la UC califican. Los colegios privados, las escuelas técnicas y las escuelas fuera del estado no califican."
+    )
+
+    static let lpieCalloutTitle = CivicaText(
+        "Great news — you may automatically qualify",
+        es: "Buenas noticias — es posible que califiques automáticamente"
+    )
+    static let lpieCalloutBody = CivicaText(
+        "California's LPIE expansion lets half-time CCC, CSU, and UC students skip the usual work and income checks. Tap Continue to confirm.",
+        es: "La expansión LPIE de California permite a los estudiantes de medio tiempo de CCC, CSU y UC omitir las verificaciones habituales de trabajo e ingresos. Toca Continuar para confirmar."
     )
 }
 
