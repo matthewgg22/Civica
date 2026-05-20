@@ -42,10 +42,10 @@ export async function validateAddress(
     const res = await fetch(`https://us-street.api.smarty.com/street-address?${params}`);
     if (res.ok) {
       const candidates = (await res.json()) as SmartyCandidate[];
-      if (candidates.length === 0) {
+      const c = candidates[0];
+      if (!c) {
         result = { deliverability: "undeliverable", rdi: "Unknown" };
       } else {
-        const c = candidates[0];
         const code = c.analysis?.dpv_match_code;
         const rdi = (c.metadata?.rdi ?? "Unknown") as SmartyResult["rdi"];
 
