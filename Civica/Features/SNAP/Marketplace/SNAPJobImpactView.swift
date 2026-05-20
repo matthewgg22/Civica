@@ -15,6 +15,13 @@ struct SNAPJobImpactView: View {
     private var languageRaw: String = CivicaLanguage.english.rawValue
     private var language: CivicaLanguage { CivicaLanguage(rawValue: languageRaw) ?? .english }
 
+    private enum CalcState { case loading, loaded, error }
+    private var calcState: CalcState {
+        if vm.benefitLoadError != nil { return .error }
+        if vm.benefit.amount == nil   { return .loading }
+        return .loaded
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -64,17 +71,25 @@ struct SNAPJobImpactView: View {
                 .padding(.top, 20)
                 .padding(.bottom, 14)
 
+            // Three render paths: shimmer (loading) / values (loaded) / em-dash (error)
             VStack(spacing: 10) {
-                CalcRow(label: "Job income (gross)",
-                        amount: "+$1,179")
-                CalcRow(label: "Earned income deduction",
-                        qualifier: "(20%)",
-                        amount: "\u{2212}$236")   // U+2212 minus
-                CalcRow(label: "Counted income added",
-                        amount: "+$943")
-                CalcRow(label: "Reduces benefit by",
-                        qualifier: "(30%)",
-                        amount: "\u{2212}$78")    // U+2212 minus
+                switch calcState {
+                case .loading:
+                    CalcRow(label: "Job income (gross)",          amount: nil)
+                    CalcRow(label: "Earned income deduction",     qualifier: "(20%)", amount: nil)
+                    CalcRow(label: "Counted income added",        amount: nil)
+                    CalcRow(label: "Reduces benefit by",          qualifier: "(30%)", amount: nil)
+                case .loaded:
+                    CalcRow(label: "Job income (gross)",          amount: "+$1,179")
+                    CalcRow(label: "Earned income deduction",     qualifier: "(20%)", amount: "\u{2212}$236")
+                    CalcRow(label: "Counted income added",        amount: "+$943")
+                    CalcRow(label: "Reduces benefit by",          qualifier: "(30%)", amount: "\u{2212}$78")
+                case .error:
+                    CalcRow(label: "Job income (gross)",          amount: "—")
+                    CalcRow(label: "Earned income deduction",     qualifier: "(20%)", amount: "—")
+                    CalcRow(label: "Counted income added",        amount: "—")
+                    CalcRow(label: "Reduces benefit by",          qualifier: "(30%)", amount: "—")
+                }
             }
 
             // Sum rule line — 1.5pt ink
@@ -85,10 +100,11 @@ struct SNAPJobImpactView: View {
                 .padding(.top, 14)
                 .padding(.bottom, 12)
 
-            // Total row (strong variant)
-            CalcRow(label: "Your new monthly benefit",
-                    amount: "$214",
-                    isTotal: true)
+            CalcRow(
+                label: "Your new monthly benefit",
+                amount: calcState == .loading ? nil : calcState == .error ? "—" : "$214",
+                isTotal: true
+            )
 
             // FWS exclusion citation — italic
             Text(SNAPMarketplaceStrings.fwsExclusion.value(in: language))
@@ -109,20 +125,30 @@ struct SNAPJobImpactView: View {
             MCapsLabel(text: "Together (job + benefit)")
                 .padding(.top, 20)
 
-            // "$1,393/month total income — $315 more than benefit alone."
-            // "$1,393/month" is 600 weight + tabular-nums within a 500 teal line
-            Group {
-                Text(SNAPMarketplaceStrings.demoTotalIncome.value(in: language))
-                    .font(.custom("HankenGrotesk-SemiBold", size: 17))
-                    .monospacedDigit()
-                + Text(SNAPMarketplaceStrings.totalIncomeSuffix.value(in: language))
+            switch calcState {
+            case .loading:
+                MShimmer(width: 180, height: 20)
+                    .padding(.horizontal, 24)
+            case .error:
+                Text("—")
                     .font(MFont.bodySmallMedium)
+                    .foregroundStyle(Color.civicaGraphite)
+                    .padding(.horizontal, 24)
+                    .accessibilityLabel(SNAPMarketplaceStrings.totalIncomeUnavailable.value(in: language))
+            case .loaded:
+                Group {
+                    Text(SNAPMarketplaceStrings.demoTotalIncome.value(in: language))
+                        .font(.custom("HankenGrotesk-SemiBold", size: 17))
+                        .monospacedDigit()
+                    + Text(SNAPMarketplaceStrings.totalIncomeSuffix.value(in: language))
+                        .font(MFont.bodySmallMedium)
+                }
+                .foregroundStyle(Color.civicaTeal)
+                .lineSpacing(17 * 0.4)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 24)
+                .accessibilityLabel("$1,393 per month total income — $315 more than benefit alone.")
             }
-            .foregroundStyle(Color.civicaTeal)
-            .lineSpacing(17 * 0.4)
-            .fixedSize(horizontal: false, vertical: true)
-            .padding(.horizontal, 24)
-            .accessibilityLabel("$1,393 per month total income — $315 more than benefit alone.")
         }
     }
 
@@ -163,12 +189,12 @@ struct SNAPJobImpactView: View {
 private struct CalcRow: View {
     let label: String
     var qualifier: String? = nil
-    let amount: String
+    /// Nil shows a shimmer; "—" shows an em-dash in graphite (partial error); other values render in ink.
+    let amount: String?
     var isTotal: Bool = false
 
     var body: some View {
         HStack(alignment: .lastTextBaseline, spacing: 16) {
-            // Label (+ optional inline qualifier in graphite)
             HStack(alignment: .lastTextBaseline, spacing: 6) {
                 Text(label)
                     .font(isTotal ? MFont.calcTotalLabel : MFont.calcRowLabel)
@@ -184,13 +210,21 @@ private struct CalcRow: View {
 
             Spacer(minLength: 8)
 
-            // Amount — tabular numerals, right-aligned, no wrap
-            Text(amount)
-                .font(isTotal ? MFont.calcTotalAmount : MFont.calcRowAmount)
-                .foregroundStyle(Color.civicaInk)
-                .monospacedDigit()
-                .lineLimit(1)
-                .accessibilityLabel(amount.replacingOccurrences(of: "\u{2212}", with: "minus "))
+            if let amt = amount {
+                Text(amt)
+                    .font(isTotal ? MFont.calcTotalAmount : MFont.calcRowAmount)
+                    .foregroundStyle(amt == "—" ? Color.civicaGraphite : Color.civicaInk)
+                    .monospacedDigit()
+                    .lineLimit(1)
+                    .accessibilityLabel(
+                        amt == "—"
+                            ? "Amount unavailable"
+                            : amt.replacingOccurrences(of: "\u{2212}", with: "minus ")
+                    )
+            } else {
+                MShimmer(width: isTotal ? 72 : 60, height: isTotal ? 22 : 16)
+                    .padding(.bottom, isTotal ? 0 : 2)
+            }
         }
         .padding(.horizontal, 24)
         .frame(minHeight: 28)
@@ -198,15 +232,26 @@ private struct CalcRow: View {
 }
 
 #if DEBUG
-#Preview {
+#Preview("Loading (shimmers)") {
     let vm = SNAPMarketplaceViewModel()
     return NavigationStack {
-        SNAPJobImpactView(
-            vm: vm,
-            job: vm.jobs[1],
-            onApply: {},
-            onSaveForLater: {}
-        )
+        SNAPJobImpactView(vm: vm, job: vm.jobs[1], onApply: {}, onSaveForLater: {})
+    }
+}
+
+#Preview("Loaded") {
+    let vm = SNAPMarketplaceViewModel()
+    vm.benefit.amount = 292
+    return NavigationStack {
+        SNAPJobImpactView(vm: vm, job: vm.jobs[1], onApply: {}, onSaveForLater: {})
+    }
+}
+
+#Preview("Partial error (em-dashes)") {
+    let vm = SNAPMarketplaceViewModel()
+    vm.benefitLoadError = "Network unavailable"
+    return NavigationStack {
+        SNAPJobImpactView(vm: vm, job: vm.jobs[1], onApply: {}, onSaveForLater: {})
     }
 }
 #endif

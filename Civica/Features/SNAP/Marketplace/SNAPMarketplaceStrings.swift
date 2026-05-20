@@ -244,4 +244,13 @@ enum SNAPMarketplaceStrings {
         "Estimate based on your household of 2 and current shelter cost. Civica updates it monthly when you submit pay stubs.",
         es: "Estimación basada en tu hogar de 2 personas y la deducción de vivienda actual."
     )
+    // Screen 03 partial-error accessibility labels (D4)
+    static let amountUnavailable = CivicaText(
+        "Amount unavailable",
+        es: "Cantidad no disponible"
+    )
+    static let totalIncomeUnavailable = CivicaText(
+        "Total income unavailable",
+        es: "Ingresos totales no disponibles"
+    )
 }
