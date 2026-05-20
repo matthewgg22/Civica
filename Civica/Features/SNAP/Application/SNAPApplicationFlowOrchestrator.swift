@@ -56,6 +56,13 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
     /// income") to offer a prefilled "From your paystub" affordance.
     @Published var confirmedPaystub: SNAPPaystub?
 
+    /// Snapshot of `draft.whereApplying` taken the moment the user
+    /// first generates a packet. On subsequent reviews, the review
+    /// screen compares this to the current `draft.whereApplying` to
+    /// detect mid-period housing/location changes (7 CFR 273.12).
+    /// Nil until the first packet generation — no banner shown on first visit.
+    @Published var whereApplyingSnapshot: SNAPWhereApplyingAnswers?
+
     /// True when this orchestrator was constructed for the Recert
     /// Companion's phantom run. Used by downstream views to swap
     /// CTAs and skip status-mutating side effects. Set at init
@@ -196,6 +203,7 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
         SNAPCapturedDocumentStore.clearAll()
         SNAPCapturedDocumentStore.clearPacketPDFs()
         triageResult = nil
+        whereApplyingSnapshot = nil
     }
 
     var isAtFirstSectionInSequence: Bool {
@@ -346,8 +354,17 @@ struct SNAPApplicationFlowOrchestratorView: View {
                 SNAPReviewDraftFlowView(
                     draft: viewModel.draft,
                     language: language,
+                    priorWhereApplying: viewModel.whereApplyingSnapshot,
                     onEdit: viewModel.startEditing,
-                    onGeneratePacket: { onGeneratePacket(viewModel.draft) },
+                    onGeneratePacket: {
+                        // Snapshot whereApplying at first packet generation
+                        // so subsequent review visits can detect mid-period
+                        // housing/county changes (7 CFR 273.12 / Gap #6).
+                        if viewModel.whereApplyingSnapshot == nil {
+                            viewModel.whereApplyingSnapshot = viewModel.draft.whereApplying
+                        }
+                        onGeneratePacket(viewModel.draft)
+                    },
                     onStartOver: { viewModel.resetDraft() },
                     onExit: onDismiss
                 )

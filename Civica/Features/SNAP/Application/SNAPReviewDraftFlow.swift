@@ -443,15 +443,16 @@ struct SNAPReviewDraftFlowView: View {
             if draft.studentStatus.enrolledInHigherEd != nil { return .inProgress }
             return .notStarted
         case .expenses:
-            // At minimum rent + utilities should be answered for the
-            // shelter deduction to compute. Childcare + medical are
-            // truly optional.
-            if draft.expenses.monthlyRentOrHousing != nil && draft.expenses.monthlyUtilities != nil {
-                return .complete
-            }
-            if draft.expenses.monthlyRentOrHousing != nil || draft.expenses.monthlyUtilities != nil {
-                return .inProgress
-            }
+            // T16 P1: monthlyUtilities is intentionally nil when the
+            // user's utilities are included in rent (selectedUtilities
+            // is empty → paysUtilitiesSeparately == false). Only
+            // require the dollar amount when at least one utility type
+            // was selected. Childcare + medical are always optional.
+            let needsUtilityAmount = draft.expenses.paysUtilitiesSeparately
+            let hasRent = draft.expenses.monthlyRentOrHousing != nil
+            let hasUtilityAmount = !needsUtilityAmount || draft.expenses.monthlyUtilities != nil
+            if hasRent && hasUtilityAmount { return .complete }
+            if hasRent || draft.expenses.monthlyUtilities != nil { return .inProgress }
             return .notStarted
         case .documentsChecklist:
             return .complete  // optional checklist — always passes
