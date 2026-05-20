@@ -373,11 +373,29 @@ describe('GET /recert/:recertId/practice/:sessionId', () => {
     expect(res.status).toBe(404);
   });
 
-  it('returns 403 for applicant', async () => {
-    vi.mocked(makeAnonClient).mockReturnValue(makeDbClient({ data: null, error: null }));
+  it('applicants can read their own session (RLS-enforced ownership)', async () => {
+    // Practice sessions are applicant-facing — they practice their own recert
+    // interview. RLS via anonDb enforces session ownership, so the route
+    // does NOT gate on actor.kind. An applicant fetching their own session
+    // gets 200 (with session data); fetching someone else's gets 404 from RLS.
+    vi.mocked(makeAnonClient).mockReturnValue(
+      makeDbClient({
+        data: {
+          session_id: SESSION_ID,
+          recert_id: RECERT_ID,
+          state_code: 'CA',
+          turn_count: 1,
+          flags: {},
+          done: false,
+          started_at: '2026-05-19T00:00:00Z',
+          completed_at: null,
+        },
+        error: null,
+      }),
+    );
     const res = await buildTestApp(recertRouter, '/', APPLICANT).request(
       `/${RECERT_ID}/practice/${SESSION_ID}`, {}, TEST_ENV,
     );
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(200);
   });
 });

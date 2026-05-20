@@ -1,24 +1,45 @@
 import Foundation
 
 // Protocol abstracting the Interview Coach backend.
-// Conformers: InterviewCoachAPIClient (live) and OfflineInterviewCoachClient (bundled).
+// Conformers: InterviewCoachAPIClient (live, enrollment-api) and
+// OfflineInterviewCoachClient (bundled question bank, no network).
 // PracticeSessionViewModel holds `any InterviewCoachProviding` so it can swap
 // to offline when the live backend is unavailable.
 
 protocol InterviewCoachProviding: AnyObject {
-    func postTurn(_ payload: InterviewTurnRequestDTO) async throws -> InterviewTurnResponseDTO
-    func postScore(_ payload: InterviewScoreRequestDTO) async throws -> InterviewScoreResponseDTO
+    func startPracticeSession(
+        recertId: String,
+        snapshot: PacketSnapshotDTO?
+    ) async throws -> StartPracticeResponseDTO
+
+    func sendPracticeResponse(
+        recertId: String,
+        sessionId: String,
+        response: String,
+        audioBytesDuration: Int?
+    ) async throws -> PracticeRespondResponseDTO
+
+    func fetchPracticeSession(
+        recertId: String,
+        sessionId: String
+    ) async throws -> PracticeSessionStateDTO
 }
 
 extension InterviewCoachAPIClient: InterviewCoachProviding {}
 
 // Offline fallback that drives a practice session entirely from the bundled
-// InterviewQuestions_MA.json question bank. No network calls; no AI scoring.
-// Activated automatically by PracticeSessionViewModel when the live backend
-// returns 404 and the user chooses "Practice offline instead."
+// InterviewQuestions_MA.json question bank. No network calls; no AI coaching.
+// Used by previews and by PracticeSessionViewModel when the live backend is
+// unreachable or the user is not signed in.
 final class OfflineInterviewCoachClient: InterviewCoachProviding {
 
+    private struct OfflineSession {
+        var index: Int
+        var questions: [InterviewQuestion]
+    }
+
     private let questions: [InterviewQuestion]
+    private var sessions: [String: OfflineSession] = [:]
 
     init() {
         guard
@@ -33,53 +54,65 @@ final class OfflineInterviewCoachClient: InterviewCoachProviding {
         questions = loaded.filter { $0.scenario == .initial && $0.archetypeTags.isEmpty }
     }
 
-    func postTurn(_ payload: InterviewTurnRequestDTO) async throws -> InterviewTurnResponseDTO {
-        let applicantCount = payload.transcript.filter { $0.role == "applicant" }.count
-
-        if applicantCount == 0 {
-            return InterviewTurnResponseDTO(
-                sessionId: payload.sessionId,
-                caseworkerText: "Hi, I'm with Massachusetts DTA. This is your SNAP interview. I'll ask a few questions — please answer as completely as you can.",
-                endOfInterview: false
-            )
-        }
-
-        let qIndex = applicantCount - 1
-        if qIndex < questions.count {
-            return InterviewTurnResponseDTO(
-                sessionId: payload.sessionId,
-                caseworkerText: questions[qIndex].prompt,
-                endOfInterview: false
-            )
-        }
-
-        return InterviewTurnResponseDTO(
-            sessionId: payload.sessionId,
-            caseworkerText: "Thank you — that covers everything I need. You'll receive a written decision within 30 days.",
-            endOfInterview: true
+    func startPracticeSession(
+        recertId: String,
+        snapshot: PacketSnapshotDTO?
+    ) async throws -> StartPracticeResponseDTO {
+        let sessionId = UUID().uuidString
+        sessions[sessionId] = OfflineSession(index: 0, questions: questions)
+        let first = questions.first
+        let turn = InterviewTurnDTO(
+            questionId: first?.id ?? "offline-greeting",
+            questionText: first?.prompt
+                ?? "Hi, this is your practice SNAP interview. I'll ask a few questions — answer as completely as you can.",
+            response: nil
         )
+        return StartPracticeResponseDTO(sessionId: sessionId, firstQuestion: turn)
     }
 
-    func postScore(_ payload: InterviewScoreRequestDTO) async throws -> InterviewScoreResponseDTO {
-        let applicantTurns = payload.transcript.filter { $0.role == "applicant" }.count
-        let expected = max(1, questions.count)
-        let completeness = min(1.0, Double(applicantTurns) / Double(expected))
+    func sendPracticeResponse(
+        recertId: String,
+        sessionId: String,
+        response: String,
+        audioBytesDuration: Int?
+    ) async throws -> PracticeRespondResponseDTO {
+        guard var session = sessions[sessionId] else {
+            throw InterviewCoachAPIClient.CoachAPIError.sessionLost
+        }
+        session.index += 1
+        let done = session.index >= session.questions.count
+        sessions[sessionId] = session
 
-        return InterviewScoreResponseDTO(
-            sessionId: payload.sessionId,
-            completeness: InterviewScoreAxisDTO(
-                score: completeness,
-                summary: "You answered \(applicantTurns) of \(expected) questions in offline practice. Offline scores are indicative only."
-            ),
-            accuracyRisk: InterviewScoreAxisDTO(
-                score: 0.25,
-                summary: "Offline mode can't assess accuracy. Review your answers against the guidance in the question browser."
-            ),
-            missingContext: InterviewScoreAxisDTO(
-                score: 0.30,
-                summary: "Offline mode can't detect missing context. Consider whether you referenced specific numbers and documents."
-            ),
-            perTurnNotes: []
+        let turn: InterviewTurnDTO
+        if done {
+            turn = InterviewTurnDTO(
+                questionId: session.questions.last?.id ?? "offline-end",
+                questionText: "Thank you — that covers everything. You'll receive a written decision within 30 days.",
+                response: response
+            )
+        } else {
+            let q = session.questions[session.index]
+            turn = InterviewTurnDTO(questionId: q.id, questionText: q.prompt, response: nil)
+        }
+        return PracticeRespondResponseDTO(turn: turn, flags: [], done: done, coaching: nil)
+    }
+
+    func fetchPracticeSession(
+        recertId: String,
+        sessionId: String
+    ) async throws -> PracticeSessionStateDTO {
+        guard let session = sessions[sessionId] else {
+            throw InterviewCoachAPIClient.CoachAPIError.notFound
+        }
+        return PracticeSessionStateDTO(
+            sessionId: sessionId,
+            recertId: recertId,
+            stateCode: "MA",
+            turnCount: session.index,
+            flags: [],
+            done: session.index >= session.questions.count,
+            startedAt: nil,
+            completedAt: nil
         )
     }
 }

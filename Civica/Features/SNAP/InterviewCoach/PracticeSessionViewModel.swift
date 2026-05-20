@@ -1,18 +1,30 @@
 import Foundation
 import SwiftUI
 
-// EXPERIMENTAL SILOED MODULE: practice session orchestrator.
-// Owns the transcript + status state, drives turn requests via
-// InterviewCoachAPIClient, and exposes scoring as a separate async step.
-// All Coach state is session-only; nothing is persisted to disk or
-// transmitted to the server beyond the transcript itself when requested.
+// Practice session orchestrator.
+//
+// Owns the transcript + status state and drives the three new enrollment-api
+// recert/practice routes via InterviewCoachProviding:
+//   start    → recert/:recertId/practice/start
+//   respond  → recert/:recertId/practice/:sessionId/respond
+//   resume   → recert/:recertId/practice/:sessionId  (GET)
+//
+// Active session_id is persisted under
+// `co.civica.interviewCoach.activeSessionId.<recertId>` so a mid-session
+// app kill can resume cleanly.
+//
+// recertId sourcing: there is no shared iOS recert store yet. The parent
+// view (RecertCompanionRoot or a debug entry point) is responsible for
+// passing a real recertId. When `recertId.isEmpty`, the VM lands in a
+// `.failed` state with a clear "practice not configured" message rather
+// than hitting the network. Wiring a real applicant-side recert store is
+// tracked separately.
 @MainActor
 final class PracticeSessionViewModel: ObservableObject {
     enum SessionStatus: Equatable {
         case idle
         case awaitingCaseworker
         case awaitingUser
-        case scoring
         case complete
         case failed(String)
     }
@@ -33,7 +45,6 @@ final class PracticeSessionViewModel: ObservableObject {
         )
 
         /// CA is the launch state — practice mode defaults here.
-        /// MA is still selectable from the scenario picker.
         static let defaultCA = SessionContext(
             stateCode: "CA",
             stateName: "California",
@@ -43,117 +54,179 @@ final class PracticeSessionViewModel: ObservableObject {
         )
     }
 
-    // Tracks what call last hit the network so retry() knows which one to
-    // re-issue when the user taps "Try again" after a .failed status.
-    private enum LastAttempt {
-        case turn
-        case score
-    }
+    // MARK: - Published state
 
     @Published private(set) var transcript: [InterviewTurnDTO] = []
     @Published private(set) var status: SessionStatus = .idle
+    @Published private(set) var flags: [InterviewFlagDTO] = []
+    @Published private(set) var latestCoaching: String?
+    @Published private(set) var sessionId: String?
+    /// Score sheet is not surfaced in the new backend flow but the property
+    /// is kept so PracticeSessionView's completion footer compiles unchanged
+    /// while the score sheet is being rebuilt around per-turn coaching.
     @Published private(set) var score: InterviewScoreResponseDTO?
+    /// Compatibility shim — the old SSE flow streamed tokens into this string.
+    /// The new backend returns full responses, so it's always empty. The view
+    /// uses it to gate between "Caseworker is typing…" spinner and live tokens;
+    /// keeping it empty means the spinner is always shown during inflight.
     @Published private(set) var streamingCaseworkerText: String = ""
     @Published var draftResponse: String = ""
 
-    let sessionID: String
     let context: SessionContext
-    private let client: InterviewCoachAPIClient
-    private var lastAttempt: LastAttempt = .turn
+    let recertId: String
+    private let client: any InterviewCoachProviding
 
-    init(context: SessionContext = .defaultCA,
-         client: InterviewCoachAPIClient = InterviewCoachAPIClient()) {
-        self.sessionID = UUID().uuidString
-        self.context = context
-        self.client = client
+    private var activeSessionStorageKey: String {
+        "co.civica.interviewCoach.activeSessionId.\(recertId)"
     }
+
+    init(
+        recertId: String,
+        context: SessionContext = .defaultCA,
+        client: (any InterviewCoachProviding)? = nil
+    ) {
+        self.recertId = recertId
+        self.context = context
+        // The default client cannot reach a signed-in token by itself, so
+        // requests will fail with `.notAuthenticated` until the View
+        // constructs the VM with a wired client via `make(recertId:auth:)`.
+        self.client = client ?? InterviewCoachAPIClient(tokenProvider: { nil })
+    }
+
+    /// Convenience factory that wires the live client against the supplied
+    /// CivicaEnrollmentAuth. PracticeSessionView reads `@EnvironmentObject`
+    /// auth and calls this to construct a VM with a working token provider.
+    static func make(
+        recertId: String,
+        context: SessionContext = .defaultCA,
+        auth: CivicaEnrollmentAuth
+    ) -> PracticeSessionViewModel {
+        let live = InterviewCoachAPIClient(tokenProvider: { [weak auth] in
+            await auth?.currentAccessToken()
+        })
+        return PracticeSessionViewModel(recertId: recertId, context: context, client: live)
+    }
+
+    // MARK: - Lifecycle
 
     func startIfNeeded() async {
         guard status == .idle else { return }
-        await requestCaseworkerTurn()
+
+        guard !recertId.isEmpty else {
+            status = .failed("Practice interview isn't configured for this packet yet.")
+            return
+        }
+
+        // Try to resume any persisted session for this recert.
+        if let persisted = UserDefaults.standard.string(forKey: activeSessionStorageKey),
+           !persisted.isEmpty {
+            do {
+                let state = try await client.fetchPracticeSession(
+                    recertId: recertId,
+                    sessionId: persisted
+                )
+                if !state.done {
+                    sessionId = state.sessionId
+                    flags = state.flags
+                    status = .awaitingUser
+                    // We don't have the prior transcript from the GET route —
+                    // surface a placeholder so the user has visible context.
+                    transcript = [
+                        InterviewTurnDTO(
+                            questionId: "resume-placeholder",
+                            questionText: "Resumed practice session. Continue your interview below.",
+                            response: nil
+                        )
+                    ]
+                    return
+                } else {
+                    // Stale completed session; drop it and start fresh.
+                    UserDefaults.standard.removeObject(forKey: activeSessionStorageKey)
+                }
+            } catch {
+                // 404/410 → session is gone, fall through to start a new one.
+                UserDefaults.standard.removeObject(forKey: activeSessionStorageKey)
+            }
+        }
+
+        await requestStart()
     }
 
     func submitUserResponse() async {
         let text = draftResponse.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return }
-        guard status == .awaitingUser else { return }
+        guard status == .awaitingUser, let sessionId else { return }
 
-        transcript.append(InterviewTurnDTO(role: "applicant", text: text))
+        transcript.append(InterviewTurnDTO(
+            questionId: "applicant-turn-\(transcript.count)",
+            questionText: text,
+            response: text
+        ))
         draftResponse = ""
+        status = .awaitingCaseworker
 
-        await requestCaseworkerTurn()
+        do {
+            let resp = try await client.sendPracticeResponse(
+                recertId: recertId,
+                sessionId: sessionId,
+                response: text,
+                audioBytesDuration: nil
+            )
+            flags.append(contentsOf: resp.flags)
+            latestCoaching = resp.coaching
+            if resp.done {
+                // Echo the final turn (with done=true) into the transcript.
+                transcript.append(resp.turn)
+                status = .complete
+                UserDefaults.standard.removeObject(forKey: activeSessionStorageKey)
+            } else {
+                transcript.append(resp.turn)
+                status = .awaitingUser
+            }
+        } catch let err as InterviewCoachAPIClient.CoachAPIError {
+            status = .failed(err.localizedDescription)
+        } catch {
+            status = .failed("Practice response failed: \(error.localizedDescription)")
+        }
     }
 
     func retry() async {
         guard case .failed = status else { return }
-        switch lastAttempt {
-        case .turn:  await requestCaseworkerTurn()
-        case .score: await requestScore()
+        if sessionId == nil {
+            await requestStart()
+        } else {
+            // Re-issue the last applicant turn if there is one buffered.
+            // Simplest behavior: reset to awaitingUser so the user can resend.
+            status = .awaitingUser
         }
     }
 
-    func requestScore() async {
-        guard score == nil else { return }
-        guard !transcript.isEmpty else { return }
+    // MARK: - Legacy compatibility (no-op in new flow)
 
-        let previous = status
-        lastAttempt = .score
-        status = .scoring
-        let payload = InterviewScoreRequestDTO(
-            sessionId: sessionID,
-            stateCode: context.stateCode,
-            stateName: context.stateName,
-            scenario: context.scenario.rawValue,
-            scenarioLabel: context.scenario.label,
-            applicantArchetype: context.archetype.rawValue,
-            applicantArchetypeLabel: context.archetype.label,
-            caseworkerPersona: context.persona.rawValue,
-            transcript: transcript
-        )
+    /// Kept so PracticeSessionView's "Get feedback" button still compiles.
+    /// The new backend has no end-of-session scoring endpoint — coaching is
+    /// returned per-turn instead. This intentionally does nothing.
+    func requestScore() async { /* no-op in new flow */ }
 
-        do {
-            let response = try await client.postScore(payload)
-            score = response
-            status = .complete
-        } catch {
-            status = .failed("Scoring failed: \(error.localizedDescription)")
-            if case .failed = previous { /* keep the new failure */ } else {
-                // Leave .failed so the UI can surface a retry affordance.
-            }
-        }
-    }
+    // MARK: - Private
 
-    private func requestCaseworkerTurn() async {
-        lastAttempt = .turn
+    private func requestStart() async {
         status = .awaitingCaseworker
         streamingCaseworkerText = ""
 
-        let payload = InterviewTurnRequestDTO(
-            sessionId: sessionID,
-            stateCode: context.stateCode,
-            stateName: context.stateName,
-            scenario: context.scenario.rawValue,
-            scenarioLabel: context.scenario.label,
-            applicantArchetype: context.archetype.rawValue,
-            applicantArchetypeLabel: context.archetype.label,
-            caseworkerPersona: context.persona.rawValue,
-            transcript: transcript
-        )
-
         do {
-            for try await event in client.streamTurn(payload) {
-                switch event {
-                case .delta(let text):
-                    streamingCaseworkerText += text
-                case .completed(let caseworkerText, let endOfInterview):
-                    streamingCaseworkerText = ""
-                    transcript.append(InterviewTurnDTO(role: "caseworker", text: caseworkerText))
-                    status = endOfInterview ? .complete : .awaitingUser
-                }
-            }
+            let result = try await client.startPracticeSession(
+                recertId: recertId,
+                snapshot: nil
+            )
+            sessionId = result.sessionId
+            UserDefaults.standard.set(result.sessionId, forKey: activeSessionStorageKey)
+            transcript.append(result.firstQuestion)
+            status = .awaitingUser
+        } catch let err as InterviewCoachAPIClient.CoachAPIError {
+            status = .failed(err.localizedDescription)
         } catch {
-            streamingCaseworkerText = ""
-            status = .failed("Caseworker turn failed: \(error.localizedDescription)")
+            status = .failed("Could not start practice interview: \(error.localizedDescription)")
         }
     }
 }
