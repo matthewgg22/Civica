@@ -129,8 +129,8 @@ describe('GET /navigator/sessions/:id', () => {
     const token = await staffToken();
     const res = await buildApp().request('/navigator/sessions/missing', { headers: auth(token) });
     expect(res.status).toBe(404);
-    const body = await res.json() as { error: string };
-    expect(body.error).toBe('session_not_found');
+    const body = await res.json() as { code: string };
+    expect(body.code).toBe('session_not_found');
   });
 
   it('returns session detail with related data', async () => {
@@ -158,8 +158,8 @@ describe('PATCH /navigator/sessions/:id/status', () => {
       body: JSON.stringify({}),
     });
     expect(res.status).toBe(400);
-    const body = await res.json() as { error: string; field: string };
-    expect(body.error).toBe('missing_field');
+    const body = await res.json() as { code: string; field: string };
+    expect(body.code).toBe('missing_field');
     expect(body.field).toBe('to');
   });
 
@@ -188,8 +188,8 @@ describe('PATCH /navigator/sessions/:id/status', () => {
       body: JSON.stringify({ to: 'In Navigator Review' }),
     });
     expect(res.status).toBe(422);
-    const body = await res.json() as { error: string };
-    expect(body.error).toBe('not_assigned');
+    const body = await res.json() as { code: string };
+    expect(body.code).toBe('not_assigned');
   });
 
   it('returns 422 with missing_required_docs when unresolved items block Ready for Handoff', async () => {
@@ -204,8 +204,8 @@ describe('PATCH /navigator/sessions/:id/status', () => {
       body: JSON.stringify({ to: 'Ready for Handoff' }),
     });
     expect(res.status).toBe(422);
-    const body = await res.json() as { error: string };
-    expect(body.error).toBe('missing_required_docs');
+    const body = await res.json() as { code: string };
+    expect(body.code).toBe('missing_required_docs');
   });
 
   it('returns 422 with terminal_state when packet is Handed Off', async () => {
@@ -220,8 +220,8 @@ describe('PATCH /navigator/sessions/:id/status', () => {
       body: JSON.stringify({ to: 'In Navigator Review' }),
     });
     expect(res.status).toBe(422);
-    const body = await res.json() as { error: string };
-    expect(body.error).toBe('terminal_state');
+    const body = await res.json() as { code: string };
+    expect(body.code).toBe('terminal_state');
   });
 
   it('transitions and returns updated status when guard passes', async () => {
@@ -371,8 +371,8 @@ describe('PATCH /navigator/sessions/:id/missing-items/:itemId', () => {
       body: JSON.stringify({}),
     });
     expect(res.status).toBe(404);
-    const body = await res.json() as { error: string };
-    expect(body.error).toBe('missing_item_not_found');
+    const body = await res.json() as { code: string };
+    expect(body.code).toBe('missing_item_not_found');
   });
 
   it('returns 409 when item already resolved', async () => {
@@ -388,8 +388,8 @@ describe('PATCH /navigator/sessions/:id/missing-items/:itemId', () => {
       body: JSON.stringify({ resolution_note: 'done' }),
     });
     expect(res.status).toBe(409);
-    const body = await res.json() as { error: string };
-    expect(body.error).toBe('already_resolved');
+    const body = await res.json() as { code: string };
+    expect(body.code).toBe('already_resolved');
   });
 
   it('returns 200 with resolved item on success', async () => {

@@ -24,28 +24,28 @@ interface OcrWebhookPayload {
 
 webhookRoutes.post('/ocr', async (c) => {
   const secret = process.env.OCR_WEBHOOK_HMAC_SECRET;
-  if (!secret) return c.json({ error: 'webhook_not_configured' }, 503);
+  if (!secret) return c.json({ code: 'webhook_not_configured', message: 'Webhook secret not configured' }, 503);
 
   // Read raw body before any parsing — signature covers the exact bytes received.
   const rawBody = await c.req.text();
   const sigHeader = c.req.header('x-webhook-signature') ?? '';
 
   if (!verifyWebhookSignature(rawBody, sigHeader, secret)) {
-    return c.json({ error: 'invalid_signature' }, 401);
+    return c.json({ code: 'invalid_signature', message: 'Invalid webhook signature' }, 401);
   }
 
   let payload: OcrWebhookPayload;
   try {
     payload = JSON.parse(rawBody) as OcrWebhookPayload;
   } catch {
-    return c.json({ error: 'invalid_json' }, 400);
+    return c.json({ code: 'invalid_json', message: 'Invalid JSON body' }, 400);
   }
 
   if (!payload.document_id) {
-    return c.json({ error: 'missing_field', field: 'document_id' }, 400);
+    return c.json({ code: 'missing_field', message: 'Missing required field: document_id', field: 'document_id' }, 400);
   }
   if (payload.status !== 'success' && payload.status !== 'failure') {
-    return c.json({ error: 'missing_field', field: 'status' }, 400);
+    return c.json({ code: 'missing_field', message: 'Missing required field: status', field: 'status' }, 400);
   }
 
   const db = getDb();
@@ -56,7 +56,7 @@ webhookRoutes.post('/ocr', async (c) => {
     .where('document_id', '=', payload.document_id)
     .executeTakeFirst();
 
-  if (!doc) return c.json({ error: 'document_not_found' }, 404);
+  if (!doc) return c.json({ code: 'document_not_found', message: 'Document not found' }, 404);
 
   // Idempotency: already in a terminal state — acknowledge without reprocessing.
   const TERMINAL: DocumentProcessingStatus[] = ['confirmed', 'rejected'];

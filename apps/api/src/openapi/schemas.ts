@@ -9,11 +9,11 @@ import { z } from 'zod';
 // ── Shared ────────────────────────────────────────────────────────────────
 
 export const ErrorSchema = z
-  .object({ error: z.string(), message: z.string().optional() })
+  .object({ code: z.string(), message: z.string() })
   .openapi('Error');
 
 export const MissingFieldErrorSchema = z
-  .object({ error: z.literal('missing_field'), field: z.string() })
+  .object({ code: z.literal('missing_field'), message: z.string(), field: z.string() })
   .openapi('MissingFieldError');
 
 export const PaginationSchema = z
@@ -125,7 +125,7 @@ export const StatusTransitionResponseSchema = z
 
 export const TransitionErrorSchema = z
   .object({
-    error: z.enum([
+    code: z.enum([
       'not_assigned',
       'missing_consent',
       'missing_required_docs',
