@@ -123,7 +123,7 @@ export default async function CountyPage({
           {/* T-DR2: Demo mode badge — hidden when real analytics data is available */}
           {isDemoMode && <DemoModeBadge />}
           <form action="/auth/signout" method="post">
-            <button className="text-[13px] font-medium text-brick hover:underline">Sign out</button>
+            <button className="text-[13px] font-medium text-pine hover:underline">Sign out</button>
           </form>
         </div>
       </header>

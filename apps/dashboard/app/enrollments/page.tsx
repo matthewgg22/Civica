@@ -144,7 +144,7 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
               name="q"
               defaultValue={query}
               placeholder="Search by household, county, or packet ID…"
-              className="w-full bg-surface border border-hairline rounded-[3px] pl-9 pr-3 py-2 text-[14px] focus:outline-none focus:border-teal focus:ring-2 focus:ring-teal/15 transition-all"
+              className="w-full bg-surface border border-hairline rounded-[3px] pl-9 pr-3 py-2 text-[14px] focus:outline-none focus:border-pine focus:ring-2 focus:ring-pine/15 transition-all"
             />
           </form>
           {(activeBucket as string) !== "all" && (
@@ -153,7 +153,7 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
               <span className={`font-semibold ${BUCKET_META[activeBucket].accent}`}>{BUCKET_META[activeBucket].label}</span>
               <Link
                 href={query ? `/enrollments?q=${encodeURIComponent(query)}` : "/enrollments"}
-                className="text-teal hover:underline font-medium"
+                className="text-pine hover:underline font-medium"
               >
                 clear ×
               </Link>
@@ -165,7 +165,7 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
               <span className="font-semibold text-ink">"{query}"</span>
               <Link
                 href={(activeBucket as string) === "all" ? "/enrollments" : `/enrollments?bucket=${activeBucket}`}
-                className="text-teal hover:underline font-medium"
+                className="text-pine hover:underline font-medium"
               >
                 clear ×
               </Link>

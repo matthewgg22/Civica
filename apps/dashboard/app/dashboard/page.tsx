@@ -430,13 +430,13 @@ export default async function DashboardPage() {
         </div>
 
         {/* Funnel full-width — primary operational view, given heavier visual weight */}
-        <section className="bg-surface border-2 border-teal/30 rounded-[4px] p-7 shadow-sm">
+        <section className="bg-surface border-2 border-pine/30 rounded-[4px] p-7 shadow-sm">
           <div className="mb-5 flex items-baseline justify-between gap-3 flex-wrap">
             <div>
               <h3 className="section-title">Enrollment Funnel</h3>
               <p className="section-sub mt-1 leading-snug">From Draft to Handed Off — conversion and time-in-stage averages.</p>
             </div>
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-teal uppercase tracking-wider bg-teal/10 px-2.5 py-1 rounded-full">
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-pine uppercase tracking-wider bg-pine/10 px-2.5 py-1 rounded-full">
               ◆ Operations
             </span>
           </div>
@@ -527,7 +527,7 @@ function UrgentBanner({
           {mineToday.touchedPackets === 0 ? (
             <div>
               <p className="text-[14px] text-graphite italic">No packet activity yet today.</p>
-              <Link href="/packets?filter=needs-attention" className="text-[13px] font-semibold text-teal hover:underline mt-1.5 inline-block">
+              <Link href="/packets?filter=needs-attention" className="text-[13px] font-semibold text-pine hover:underline mt-1.5 inline-block">
                 Start with what needs attention →
               </Link>
             </div>
@@ -545,7 +545,7 @@ function UrgentBanner({
                 <p className="text-[22px] font-bold tabular-nums text-amber leading-none">{mineToday.notes}</p>
                 <p className="text-[12px] font-semibold text-graphite mt-1.5">notes added</p>
               </div>
-              <Link href="/packets?filter=mine" className="text-[13px] font-semibold text-teal hover:underline ml-auto">
+              <Link href="/packets?filter=mine" className="text-[13px] font-semibold text-pine hover:underline ml-auto">
                 See all mine →
               </Link>
             </div>

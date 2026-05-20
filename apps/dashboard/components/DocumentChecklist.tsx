@@ -219,7 +219,7 @@ export default function DocumentChecklist({ packetId, applicantId, stateCode, it
                 <p className="text-[12px] text-muted">{kindLabels[item.document_kind] ?? item.document_kind}</p>
               </div>
               {item.resolved_at ? (
-                <span className="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-teal/10 text-teal">✓ resolved</span>
+                <span className="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-pine/10 text-pine">✓ resolved</span>
               ) : (
                 <span className="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-graphite/10 text-graphite" title={item.waive_reason ?? ""}>
                   waived
@@ -280,7 +280,7 @@ function ItemRow({ item, isFirst, kindLabel, uploadedDocs, resolving, waiving, w
             </button>
             <button
               onClick={() => onStartResolve(item.item_id)}
-              className="px-3 py-1.5 text-[12px] font-semibold rounded-[3px] bg-teal text-white hover:bg-teal/90 transition-colors"
+              className="px-3 py-1.5 text-[12px] font-semibold rounded-[3px] bg-pine text-white hover:bg-pine/90 transition-colors"
             >
               Mark resolved
             </button>
@@ -304,7 +304,7 @@ function ItemRow({ item, isFirst, kindLabel, uploadedDocs, resolving, waiving, w
               <select
                 value={selectedDocId[item.item_id] ?? ""}
                 onChange={(e) => onSelectDoc(item.item_id, e.target.value)}
-                className="w-full border border-hairline rounded-[3px] px-3 py-2 text-[13px] bg-paper focus:outline-none focus:border-teal"
+                className="w-full border border-hairline rounded-[3px] px-3 py-2 text-[13px] bg-paper focus:outline-none focus:border-pine"
               >
                 <option value="">(no specific document)</option>
                 {matchingDocs.map((d) => (

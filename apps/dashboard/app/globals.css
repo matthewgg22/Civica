@@ -2,16 +2,27 @@
 @import "tailwindcss";
 
 @theme {
-  /* Civica brand */
+  /* Civica brand — v2 pine palette */
+  --color-pine: #2D5A45;
+  --color-pine-pressed: #224636;
+  --color-pine-disabled: #7A998C;
+  --color-pine-surface: #D8E6DE;
+
+  /* Wheat — benefit-positive fill only (deposits, streaks). Never text on paper. */
+  --color-wheat: #E8C547;
+  --color-wheat-pressed: #C9A046;
+  --color-wheat-surface: #F7E89C;
+
+  /* Brick — error / overdue / danger states only */
   --color-brick: #9C3A24;
   --color-brick-pressed: #84311E;
   --color-teal: #2A6F66;
-  --color-amber: #9A5A14;
+  --color-amber: #B5511E;
   --color-indigo: #4F46A5;
   --color-error: #C84637;
 
   /* Surfaces */
-  --color-paper: #F5F2EC;
+  --color-paper: #F7F5EF;
   --color-surface: #FFFFFF;
   --color-ink: #1A1714;
   --color-graphite: #5A544D;
@@ -27,7 +38,7 @@
 }
 
 html, body {
-  background-color: #F5F2EC;
+  background-color: #F7F5EF;
   color: #1A1714;
   font-family: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
   font-feature-settings: "ss01", "cv11";

@@ -23,7 +23,7 @@ export default function FilterChips({
             href={opt.key === "all" ? "/packets" : `/packets?filter=${opt.key}`}
             className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors ${
               isActive
-                ? "bg-teal text-white border border-teal"
+                ? "bg-pine text-white border border-pine"
                 : "bg-surface border border-hairline text-graphite hover:border-graphite"
             }`}
           >

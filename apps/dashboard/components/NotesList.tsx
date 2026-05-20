@@ -46,7 +46,7 @@ export default function NotesList({ packetId, initialNotes }: { packetId: string
           onChange={(e) => setBody(e.target.value)}
           placeholder="Add a note…"
           rows={3}
-          className="w-full border border-hairline rounded-[3px] px-3 py-2 text-[15px] bg-paper focus:outline-none focus:border-teal focus:bg-white resize-none transition-colors"
+          className="w-full border border-hairline rounded-[3px] px-3 py-2 text-[15px] bg-paper focus:outline-none focus:border-pine focus:bg-white resize-none transition-colors"
         />
         <div className="flex items-center justify-between">
           <label className="flex items-center gap-2 text-[13px] text-graphite cursor-pointer">
@@ -61,7 +61,7 @@ export default function NotesList({ packetId, initialNotes }: { packetId: string
           <button
             type="submit"
             disabled={saving || !body.trim()}
-            className="px-5 py-2 text-[13px] font-semibold bg-teal text-white rounded-[3px] hover:bg-teal/90 disabled:bg-graphite/20 disabled:text-graphite disabled:cursor-not-allowed transition-all"
+            className="px-5 py-2 text-[13px] font-semibold bg-pine text-white rounded-[3px] hover:bg-pine/90 disabled:bg-graphite/20 disabled:text-graphite disabled:cursor-not-allowed transition-all"
           >
             {saving ? "Saving…" : "Add Note"}
           </button>
@@ -73,7 +73,7 @@ export default function NotesList({ packetId, initialNotes }: { packetId: string
       ) : (
         <div className="space-y-3">
           {notes.map((note) => (
-            <div key={note.note_id} className="text-[15px] border-l-2 border-teal pl-4 py-1">
+            <div key={note.note_id} className="text-[15px] border-l-2 border-pine pl-4 py-1">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-[12px] text-muted tabular-nums">{new Date(note.created_at).toLocaleString()}</span>
                 {note.is_internal && (

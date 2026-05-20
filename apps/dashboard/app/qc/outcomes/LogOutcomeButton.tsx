@@ -132,7 +132,7 @@ export function LogOutcomeButton({ packetId }: { packetId: string }) {
           <button
             onClick={handleSubmit}
             disabled={errorFound === null || saving}
-            className="flex-1 py-2 bg-brick text-white rounded text-[13px] font-semibold hover:bg-brick/90 transition-colors disabled:opacity-50"
+            className="flex-1 py-2 bg-pine text-white rounded text-[13px] font-semibold hover:bg-pine/90 transition-colors disabled:opacity-50"
           >
             {saving ? "Saving…" : "Save outcome"}
           </button>

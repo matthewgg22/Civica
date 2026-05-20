@@ -58,7 +58,7 @@ export default function AnswerReviewList({ answers }: { answers: Answer[] }) {
             <div>
               <p className="eyebrow mb-1">Confirmed</p>
               {saved.has(a.answer_id) || a.reviewed_at ? (
-                <p className="text-teal font-semibold">
+                <p className="text-pine font-semibold">
                   {confirmed[a.answer_id] ?? a.navigator_confirmed_value ?? "—"}
                 </p>
               ) : (
@@ -74,19 +74,19 @@ export default function AnswerReviewList({ answers }: { answers: Answer[] }) {
                 placeholder="Confirmed value"
                 value={confirmed[a.answer_id] ?? a.applicant_answer ?? ""}
                 onChange={(e) => setConfirmed((c) => ({ ...c, [a.answer_id]: e.target.value }))}
-                className="flex-1 border border-hairline rounded-[3px] px-3 py-1.5 text-[13px] focus:outline-none focus:border-brick"
+                className="flex-1 border border-hairline rounded-[3px] px-3 py-1.5 text-[13px] focus:outline-none focus:border-pine"
               />
               <input
                 type="text"
                 placeholder="Note (optional)"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                className="flex-1 border border-hairline rounded-[3px] px-3 py-1.5 text-[13px] focus:outline-none focus:border-brick"
+                className="flex-1 border border-hairline rounded-[3px] px-3 py-1.5 text-[13px] focus:outline-none focus:border-pine"
               />
               <button
                 onClick={() => saveReview(a.answer_id)}
                 disabled={saving}
-                className="px-4 py-1.5 text-[13px] font-medium bg-brick text-white rounded-[3px] hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-1.5 text-[13px] font-medium bg-pine text-white rounded-[3px] hover:opacity-90 disabled:opacity-50"
               >
                 {saving ? "…" : "Save"}
               </button>
@@ -104,7 +104,7 @@ export default function AnswerReviewList({ answers }: { answers: Answer[] }) {
                   setEditing(a.answer_id);
                   setConfirmed((c) => ({ ...c, [a.answer_id]: a.applicant_answer ?? "" }));
                 }}
-                className="text-[13px] font-medium text-brick hover:underline"
+                className="text-[13px] font-medium text-pine hover:underline"
               >
                 Review →
               </button>

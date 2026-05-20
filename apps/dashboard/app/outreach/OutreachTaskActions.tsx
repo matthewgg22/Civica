@@ -25,7 +25,7 @@ export function OutreachTaskActions({ taskId }: Props) {
       <button
         onClick={() => handleUpdate("contacted")}
         disabled={isPending}
-        className="text-[12px] font-semibold px-3 py-1.5 rounded-[4px] bg-teal/10 text-teal hover:bg-teal/20 transition-colors disabled:opacity-50 whitespace-nowrap"
+        className="text-[12px] font-semibold px-3 py-1.5 rounded-[4px] bg-pine/10 text-pine hover:bg-pine/20 transition-colors disabled:opacity-50 whitespace-nowrap"
       >
         {isPending ? "…" : "Contacted"}
       </button>

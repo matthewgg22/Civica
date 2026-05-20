@@ -64,9 +64,9 @@ export default function CountyDetailDrawer({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-teal/5 border-b border-teal/20 px-6 py-5 flex items-start justify-between gap-3">
+        <div className="bg-pine/5 border-b border-pine/20 px-6 py-5 flex items-start justify-between gap-3">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.15em] font-semibold text-teal">County Detail</p>
+            <p className="text-[11px] uppercase tracking-[0.15em] font-semibold text-pine">County Detail</p>
             <h3 className="text-[22px] font-semibold tracking-tight text-ink mt-1 leading-tight">{countyName} County</h3>
             <p className="text-[13px] text-graphite mt-1">{packets.length} packet{packets.length === 1 ? "" : "s"} active</p>
           </div>
@@ -152,7 +152,7 @@ export default function CountyDetailDrawer({
           <div className="border-t border-hairline px-6 py-4 bg-paper/40">
             <Link
               href={`/packets?county=${encodeURIComponent(countyName)}`}
-              className="block text-center bg-teal text-white px-4 py-2.5 rounded-[3px] text-[14px] font-semibold hover:bg-teal/90 transition-colors"
+              className="block text-center bg-pine text-white px-4 py-2.5 rounded-[3px] text-[14px] font-semibold hover:bg-pine/90 transition-colors"
             >
               View all {packets.length} in queue →
             </Link>

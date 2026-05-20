@@ -55,7 +55,7 @@ export default async function AuditPage({ params }: { params: Promise<{ packetId
     <div className="min-h-screen bg-paper">
       <header className="bg-surface border-b border-hairline px-8 py-4">
         <div className="max-w-5xl mx-auto flex items-center gap-3">
-          <Link href={`/packets/${packetId}`} className="text-[13px] font-semibold text-brick hover:underline">
+          <Link href={`/packets/${packetId}`} className="text-[13px] font-semibold text-pine hover:underline">
             ← Packet
           </Link>
           <span className="text-hairline">·</span>

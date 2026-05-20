@@ -81,7 +81,7 @@ export default function CBOContactButton() {
                 </p>
                 <button
                   onClick={close}
-                  className="mt-6 px-4 py-2 rounded-[4px] text-sm font-semibold text-surface bg-brick hover:opacity-90 transition-opacity"
+                  className="mt-6 px-4 py-2 rounded-[4px] text-sm font-semibold text-surface bg-pine hover:opacity-90 transition-opacity"
                 >
                   Close
                 </button>
@@ -96,7 +96,7 @@ export default function CBOContactButton() {
                     id="cbo-name" name="name" type="text" required
                     value={form.name} onChange={handleChange}
                     placeholder="Jane Smith"
-                    className="w-full px-3 py-2 text-sm border border-hairline rounded-[4px] bg-paper text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brick/30 focus:border-brick transition-colors"
+                    className="w-full px-3 py-2 text-sm border border-hairline rounded-[4px] bg-paper text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-pine/30 focus:border-pine transition-colors"
                   />
                 </div>
                 <div>
@@ -107,7 +107,7 @@ export default function CBOContactButton() {
                     id="cbo-org" name="organization" type="text" required
                     value={form.organization} onChange={handleChange}
                     placeholder="Bay Area Food Bank"
-                    className="w-full px-3 py-2 text-sm border border-hairline rounded-[4px] bg-paper text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brick/30 focus:border-brick transition-colors"
+                    className="w-full px-3 py-2 text-sm border border-hairline rounded-[4px] bg-paper text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-pine/30 focus:border-pine transition-colors"
                   />
                 </div>
                 <div>
@@ -118,7 +118,7 @@ export default function CBOContactButton() {
                     id="cbo-email" name="email" type="email" required
                     value={form.email} onChange={handleChange}
                     placeholder="jane@bayfoodfbank.org"
-                    className="w-full px-3 py-2 text-sm border border-hairline rounded-[4px] bg-paper text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brick/30 focus:border-brick transition-colors"
+                    className="w-full px-3 py-2 text-sm border border-hairline rounded-[4px] bg-paper text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-pine/30 focus:border-pine transition-colors"
                   />
                 </div>
                 <div>
@@ -129,7 +129,7 @@ export default function CBOContactButton() {
                     id="cbo-qc" name="qcProcess" rows={2}
                     value={form.qcProcess} onChange={handleChange}
                     placeholder="e.g. ~500 SNAP-eligible households per year"
-                    className="w-full px-3 py-2 text-sm border border-hairline rounded-[4px] bg-paper text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brick/30 focus:border-brick transition-colors resize-none"
+                    className="w-full px-3 py-2 text-sm border border-hairline rounded-[4px] bg-paper text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-pine/30 focus:border-pine transition-colors resize-none"
                   />
                 </div>
 
@@ -144,7 +144,7 @@ export default function CBOContactButton() {
                   <button
                     type="submit"
                     disabled={status === "submitting"}
-                    className="px-5 py-2 rounded-[4px] text-sm font-semibold text-surface bg-brick hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+                    className="px-5 py-2 rounded-[4px] text-sm font-semibold text-surface bg-pine hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
                   >
                     {status === "submitting" ? "Submitting…" : "Request partnership call"}
                   </button>

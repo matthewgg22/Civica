@@ -404,7 +404,7 @@ export default async function PacketDetailPage({
     <div className="min-h-screen bg-paper">
       <header className="bg-surface border-b border-hairline px-8 py-4">
         <div className="max-w-5xl mx-auto flex items-center gap-3">
-          <Link href="/packets" className="text-[13px] font-semibold text-brick hover:underline">← Queue</Link>
+          <Link href="/packets" className="text-[13px] font-semibold text-pine hover:underline">← Queue</Link>
           <span className="text-hairline">·</span>
           <span className="text-[12px] font-mono tabular-nums text-muted">{shortId(packetId)}</span>
           <span className="text-hairline">·</span>

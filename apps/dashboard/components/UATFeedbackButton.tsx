@@ -41,7 +41,7 @@ export default function UATFeedbackButton() {
     <>
       <button
         onClick={open}
-        className="text-[12px] font-semibold text-teal hover:underline focus:outline-none"
+        className="text-[12px] font-semibold text-pine hover:underline focus:outline-none"
       >
         Send UAT feedback
       </button>
@@ -78,7 +78,7 @@ export default function UATFeedbackButton() {
 
             {state === "sent" ? (
               <div className="py-6 text-center">
-                <p className="text-[15px] font-semibold text-teal">Feedback sent — thank you!</p>
+                <p className="text-[15px] font-semibold text-pine">Feedback sent — thank you!</p>
                 <button
                   onClick={close}
                   className="mt-4 text-[13px] font-semibold text-graphite hover:text-ink"
@@ -95,7 +95,7 @@ export default function UATFeedbackButton() {
                   placeholder="Describe what worked, what was confusing, or any bugs you found…"
                   rows={5}
                   disabled={state === "sending"}
-                  className="w-full border border-hairline rounded-[3px] px-3 py-2 text-[13px] text-ink placeholder:text-muted bg-paper resize-none focus:outline-none focus:ring-1 focus:ring-teal disabled:opacity-50"
+                  className="w-full border border-hairline rounded-[3px] px-3 py-2 text-[13px] text-ink placeholder:text-muted bg-paper resize-none focus:outline-none focus:ring-1 focus:ring-pine disabled:opacity-50"
                 />
 
                 {state === "error" && (
@@ -113,7 +113,7 @@ export default function UATFeedbackButton() {
                   <button
                     onClick={submit}
                     disabled={state === "sending" || !message.trim()}
-                    className="px-4 py-2 bg-teal text-surface text-[13px] font-semibold rounded-[3px] hover:bg-teal/90 disabled:opacity-40 transition-colors"
+                    className="px-4 py-2 bg-pine text-surface text-[13px] font-semibold rounded-[3px] hover:bg-pine/90 disabled:opacity-40 transition-colors"
                   >
                     {state === "sending" ? "Sending…" : "Send"}
                   </button>
