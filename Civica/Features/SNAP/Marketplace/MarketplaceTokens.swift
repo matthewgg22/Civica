@@ -200,6 +200,28 @@ struct MTealOutlineButton: View {
     }
 }
 
+/// Shimmer placeholder for numeric or text content that is still loading.
+/// Width and height match the content being replaced; use cornerRadius 999 for pill shapes.
+struct MShimmer: View {
+    let width: CGFloat
+    let height: CGFloat
+    var cornerRadius: CGFloat = 4
+
+    @State private var phase: Double = 0.3
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: cornerRadius)
+            .fill(Color.civicaGraphite.opacity(phase))
+            .frame(width: width, height: height)
+            .onAppear {
+                withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
+                    phase = 0.1
+                }
+            }
+            .accessibilityHidden(true)
+    }
+}
+
 /// Teal text link — centered, 15pt Regular.
 struct MTealTextLink: View {
     let label: String

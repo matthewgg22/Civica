@@ -142,6 +142,17 @@ final class SNAPMarketplaceViewModel: ObservableObject {
 
     @Published var argyleConnectError: String? = nil
 
+    /// Set by the caller when a benefit-data fetch fails. Triggers the error inline
+    /// block on Screen 01. Cleared on retry so shimmers resume.
+    @Published var benefitLoadError: String? = nil
+
+    /// Resets the benefit error so shimmers return (loading state). The parent
+    /// coordinator re-triggers the actual fetch after calling this.
+    func retryBenefitLoad() {
+        benefitLoadError = nil
+        benefit = MarketplaceBenefit()
+    }
+
     // MARK: UI selection state
     @Published var selectedJob: SNAPMarketplaceJob? = nil
     @Published var showApplySheet: Bool = false

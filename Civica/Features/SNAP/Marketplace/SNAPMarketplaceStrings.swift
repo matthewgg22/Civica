@@ -179,6 +179,19 @@ enum SNAPMarketplaceStrings {
         "You're enrolled",
         es: "Estás inscrito/a"
     )
+    // Screen 01 error inline block (D3)
+    static let benefitLoadErrorHeadline = CivicaText(
+        "Couldn't load your benefit",
+        es: "No se pudo cargar tu beneficio"
+    )
+    static let benefitLoadErrorBody = CivicaText(
+        "Check your connection and try again.",
+        es: "Verifica tu conexión e inténtalo de nuevo."
+    )
+    static let retry = CivicaText(
+        "Try again",
+        es: "Intentar de nuevo"
+    )
     static let enrolledHeadline = CivicaText(
         "You're enrolled in SNAP",
         es: "Estás inscrito/a en SNAP"
