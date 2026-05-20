@@ -53,6 +53,17 @@ export default async function OutreachPage() {
   const supabase = createServerClientFromCookies(cookieStore);
   const { data: { user } } = await supabase.auth.getUser();
 
+  // navigator_outreach_queue RLS policies filter by app.current_org_id; set it
+  // before querying so Postgres's current_setting() doesn't throw.
+  const orgId = (user?.user_metadata as { org_id?: string } | undefined)?.org_id ?? null;
+  if (orgId) {
+    await supabase.rpc("set_config" as never, {
+      setting_name: "app.current_org_id",
+      new_value: orgId,
+      is_local: false,
+    } as never);
+  }
+
   // Query 1: pending outreach tasks
   const { data: tasks, error } = await supabase
     .schema("snap_enrollment")

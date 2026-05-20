@@ -35,6 +35,8 @@ type Packet = {
   applicants: { preferred_language: string; full_name_ciphertext: string | null } | null;
 };
 
+type RiskTier = "low" | "medium" | "high";
+
 export default async function PacketsPage({ searchParams }: { searchParams: Promise<{ filter?: string; county?: string }> }) {
   const params = await searchParams;
   const filter = (params.filter as Filter) ?? "all";
@@ -52,6 +54,28 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
     .limit(500);
 
   const allRaw = (packets ?? []) as Packet[];
+
+  // Fetch the most recent error-risk tier for each packet in one round trip.
+  // Multiple rows per packet are possible (one per scoring event); we take
+  // the first per packet_id after sorting by created_at DESC.
+  const packetIds = allRaw.map((p) => p.packet_id);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: riskRows } = packetIds.length > 0
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ? await supabase.schema("snap_enrollment").from("packet_error_risk" as any)
+        .select("packet_id, tier, created_at")
+        .in("packet_id", packetIds)
+        .order("created_at", { ascending: false })
+    : { data: [] };
+
+  const riskTierByPacket = new Map<string, RiskTier>();
+  const riskScoredAtByPacket = new Map<string, string>();
+  for (const row of (riskRows ?? []) as Array<{ packet_id: string; tier: string | null; created_at: string }>) {
+    if (!riskTierByPacket.has(row.packet_id) && row.tier) {
+      riskTierByPacket.set(row.packet_id, row.tier as RiskTier);
+      riskScoredAtByPacket.set(row.packet_id, row.created_at);
+    }
+  }
 
   // Compute "mine" = packets the current user has personally touched (status changes or notes authored)
   let minePacketIds = new Set<string>();
@@ -158,11 +182,11 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
             {BUCKETS.map((bucket) => {
               const bucketPackets = visible.filter((p) => bucket.statuses.includes(p.status));
               if (bucketPackets.length === 0) return null;
-              return <Bucket key={bucket.key} label={bucket.label} count={bucketPackets.length} defaultOpen={bucket.defaultOpen} packets={bucketPackets} accent={bucket.accent} />;
+              return <Bucket key={bucket.key} label={bucket.label} count={bucketPackets.length} defaultOpen={bucket.defaultOpen} packets={bucketPackets} accent={bucket.accent} riskTiers={riskTierByPacket} riskScoredAt={riskScoredAtByPacket} />;
             })}
           </div>
         ) : (
-          visible.length > 0 && <PacketList packets={visible} />
+          visible.length > 0 && <PacketList packets={visible} riskTiers={riskTierByPacket} riskScoredAt={riskScoredAtByPacket} />
         )}
       </main>
     </div>
@@ -178,7 +202,7 @@ function StatCard({ label, value, accent, bg }: { label: string; value: number; 
   );
 }
 
-function Bucket({ label, count, defaultOpen, packets, accent }: { label: string; count: number; defaultOpen: boolean; packets: Packet[]; accent: string }) {
+function Bucket({ label, count, defaultOpen, packets, accent, riskTiers, riskScoredAt }: { label: string; count: number; defaultOpen: boolean; packets: Packet[]; accent: string; riskTiers: Map<string, RiskTier>; riskScoredAt: Map<string, string> }) {
   return (
     <details open={defaultOpen} className="group">
       <summary className="flex items-center gap-3 mb-3 cursor-pointer select-none">
@@ -187,7 +211,7 @@ function Bucket({ label, count, defaultOpen, packets, accent }: { label: string;
         <span className="text-[13px] text-muted tabular-nums font-semibold">{count}</span>
         <span className="text-[12px] text-muted ml-auto group-open:rotate-90 transition-transform">▶</span>
       </summary>
-      <PacketList packets={packets} />
+      <PacketList packets={packets} riskTiers={riskTiers} riskScoredAt={riskScoredAt} />
     </details>
   );
 }
@@ -195,7 +219,15 @@ function Bucket({ label, count, defaultOpen, packets, accent }: { label: string;
 const STALE_DAYS = 7;
 const INACTIVE_STATUSES = new Set(["Handed Off", "Closed"]);
 
-function PacketList({ packets }: { packets: Packet[] }) {
+const RISK_DOT: Record<RiskTier, { bg: string; label: string }> = {
+  low: { bg: "bg-teal", label: "Low risk" },
+  medium: { bg: "bg-amber", label: "Medium risk" },
+  high: { bg: "bg-brick", label: "High risk" },
+};
+
+const SCORE_STALE_DAYS = 3;
+
+function PacketList({ packets, riskTiers, riskScoredAt }: { packets: Packet[]; riskTiers: Map<string, RiskTier>; riskScoredAt: Map<string, string> }) {
   const now = Date.now();
   return (
     <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
@@ -205,6 +237,13 @@ function PacketList({ packets }: { packets: Packet[] }) {
           : null;
         const daysOld = (now - new Date(packet.updated_at).getTime()) / 86_400_000;
         const isStale = daysOld > STALE_DAYS && !INACTIVE_STATUSES.has(packet.status);
+        const riskTier = riskTiers.get(packet.packet_id) ?? null;
+        const riskDot = riskTier ? RISK_DOT[riskTier] : null;
+        const scoredAt = riskScoredAt.get(packet.packet_id);
+        const isScoreStale = scoredAt
+          ? new Date(packet.updated_at).getTime() > new Date(scoredAt).getTime()
+            && (now - new Date(scoredAt).getTime()) / 86_400_000 > SCORE_STALE_DAYS
+          : false;
         return (
           <Link
             key={packet.packet_id}
@@ -231,6 +270,18 @@ function PacketList({ packets }: { packets: Packet[] }) {
               </div>
               <div className="flex items-center gap-2 mt-1.5">
                 <StatusPill status={packet.status} />
+                {riskDot && (
+                  <span
+                    className={`inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider`}
+                    title={isScoreStale
+                      ? `${riskDot.label} — score may be stale (packet updated after last scoring)`
+                      : riskDot.label}
+                  >
+                    <span className={`w-2 h-2 rounded-full shrink-0 ${isScoreStale ? "ring-1 ring-amber ring-offset-1" : ""} ${riskDot.bg}`} />
+                    <span className="text-muted">{riskDot.label}</span>
+                    {isScoreStale && <span className="text-amber">·</span>}
+                  </span>
+                )}
               </div>
             </div>
             <div className="text-right shrink-0">

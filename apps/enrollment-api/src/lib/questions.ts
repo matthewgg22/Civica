@@ -156,6 +156,57 @@ const CORE_SECTIONS: QuestionSection[] = [
         options: [],
         order: 3,
       },
+      // SUA tier determination questions — CalFresh deduction §63-502.33
+      {
+        id: "has_heating_costs",
+        section_key: "expenses",
+        type: "single",
+        label: "Does your household pay for heating or cooling costs (gas, electric, oil, propane)?",
+        hint: "This helps determine your Standard Utility Allowance deduction.",
+        required: false,
+        options: [
+          { value: "yes", label: "Yes" },
+          { value: "no", label: "No" },
+        ],
+        order: 4,
+      },
+      {
+        id: "has_electric_or_gas",
+        section_key: "expenses",
+        type: "single",
+        label: "Does your household pay for electricity or gas (not counting heating or cooling)?",
+        required: false,
+        options: [
+          { value: "yes", label: "Yes" },
+          { value: "no", label: "No" },
+        ],
+        order: 5,
+      },
+      {
+        id: "has_phone",
+        section_key: "expenses",
+        type: "single",
+        label: "Does your household pay for a phone or internet service?",
+        required: false,
+        options: [
+          { value: "yes", label: "Yes" },
+          { value: "no", label: "No" },
+        ],
+        order: 6,
+      },
+      {
+        id: "receives_heap",
+        section_key: "expenses",
+        type: "single",
+        label: "Does your household receive HEAP (Home Energy Assistance Program) benefits?",
+        hint: "Federal law (OBBBA 2026) changed how HEAP affects your utility deduction.",
+        required: false,
+        options: [
+          { value: "yes", label: "Yes" },
+          { value: "no", label: "No" },
+        ],
+        order: 7,
+      },
     ],
   },
   {

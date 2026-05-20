@@ -34,6 +34,11 @@ export interface Env {
   // submitter drives the portal via Browserless. When absent, the route
   // marks newly queued rows failed with DRIVER_NOT_WIRED (graceful degrade).
   BROWSERLESS_API_KEY?: string;
+  // Verification API integrations (Phase 1). Optional — features degrade
+  // gracefully to null when keys are absent.
+  HUD_TOKEN?: string;
+  SMARTY_AUTH_ID?: string;
+  SMARTY_AUTH_TOKEN?: string;
 }
 
 export interface Variables {

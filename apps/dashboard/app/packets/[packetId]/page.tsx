@@ -15,6 +15,12 @@ import HandoffPanel from "../../../components/HandoffPanel";
 import MissingItemRequestPanel from "../../../components/MissingItemRequestPanel";
 import ExpeditedReviewGate from "./ExpeditedReviewGate";
 import ComplianceNarrative from "../../../components/ComplianceNarrative";
+import APIVerificationPanel from "../../../components/APIVerificationPanel";
+import type { VerificationSummary } from "../../../components/APIVerificationPanel";
+import { determineSUATier, checkHEAPCompliance } from "@civica/snap-rules";
+import type { SUATier } from "@civica/snap-rules";
+import { compareIncome } from "../../../lib/income-verification";
+import type { PayPeriod } from "../../../lib/income-verification";
 
 import { formatDateTime, formatDate, decryptDemoName, docKindLabel, firstNameLastInitial, shortId } from "../../../lib/format";
 import { PACKET_STATUS_TRANSITIONS } from "@civica/snap-enums";
@@ -47,7 +53,7 @@ export default async function PacketDetailPage({
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
 
-  const [packetResult, answersResult, docsResult, notesResult, historyResult, fieldsResult, docItemsResult, wrStatusResult, recertResult, extractionsResult] = await Promise.all([
+  const [packetResult, answersResult, docsResult, notesResult, historyResult, fieldsResult, docItemsResult, wrStatusResult, recertResult, extractionsResult, paychecksResult, errorRiskResult] = await Promise.all([
     supabase.schema("snap_enrollment").from("snap_packets").select(`*, applicants(*)`).eq("packet_id", packetId).is("deleted_at", null).single(),
     supabase.schema("snap_enrollment").from("packet_answers").select("*").eq("packet_id", packetId).order("question_key"),
     supabase.schema("snap_enrollment").from("uploaded_documents").select("*").eq("packet_id", packetId).is("deleted_at", null).order("uploaded_at", { ascending: false }),
@@ -77,6 +83,21 @@ export default async function PacketDetailPage({
       .from("document_extractions")
       .select("extraction_id, document_id, uploaded_documents!inner(packet_id)")
       .eq("uploaded_documents.packet_id", packetId),
+    // Argyle marketplace paychecks for cross-verification income panel
+    supabase.schema("snap_enrollment")
+      .from("marketplace_paychecks")
+      .select("monthly_amount_usd, pay_date, employer_name")
+      .eq("packet_id", packetId)
+      .order("pay_date", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    supabase.schema("snap_enrollment").from("packet_error_risk" as any)
+      .select("score, tier, factors, engine_version, created_at")
+      .eq("packet_id", packetId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
 
   if (!packetResult.data) notFound();
@@ -95,6 +116,8 @@ export default async function PacketDetailPage({
   for (const ex of extractions) {
     (extractionsByDoc[ex.document_id] ??= []).push(ex.extraction_id);
   }
+  const latestPaycheck = paychecksResult.data as { monthly_amount_usd: number; pay_date: string; employer_name: string | null } | null;
+  const errorRisk = errorRiskResult.data as { score: number | null; tier: string | null } | null;
   const nextStatuses = PACKET_STATUS_TRANSITIONS[packet.status as keyof typeof PACKET_STATUS_TRANSITIONS] ?? [];
 
   // Expedited review gate (OBBBA §10102(a)): show when employment_status = "unemployed"
@@ -139,6 +162,89 @@ export default async function PacketDetailPage({
   const hasConsent = (consentResult.data?.length ?? 0) > 0;
   const consentedAt = hasConsent ? (consentResult.data![0] as { consented_at: string }).consented_at : null;
 
+  // ── Verification Summary (computed server-side from DB data) ────────────────
+  type AnswerRow = { question_key: string; applicant_answer: string | null };
+  const answerMap: Record<string, string | null> = Object.fromEntries(
+    answers.map((r: AnswerRow) => [r.question_key, r.applicant_answer])
+  );
+  const getAnswer = (key: string): string | null => answerMap[key] ?? null;
+
+  const suaAnswers = {
+    has_heating_costs: getAnswer("has_heating_costs") as "yes" | "no" | null,
+    has_electric_or_gas: getAnswer("has_electric_or_gas") as "yes" | "no" | null,
+    has_phone: getAnswer("has_phone") as "yes" | "no" | null,
+  };
+  const suaComputed = determineSUATier(suaAnswers);
+  const heapCheck = checkHEAPCompliance({
+    receives_heap: getAnswer("receives_heap") as "yes" | "no" | null | undefined,
+    sua_tier_claimed: suaComputed,
+  });
+
+  type FieldRow = { field_key: string; original_ocr_value: string | null; confidence: number };
+  const payFields = (fields as FieldRow[]).filter((f) =>
+    ["gross_pay", "pay_amount", "monthly_gross_income"].includes(f.field_key)
+  ).sort((a, b) => b.confidence - a.confidence);
+  const payPeriodField = (fields as FieldRow[]).find((f) => f.field_key === "pay_period");
+
+  const ocrPayAmount = payFields[0]?.original_ocr_value
+    ? parseFloat(payFields[0].original_ocr_value) || null
+    : null;
+
+  let ocrPayPeriod: PayPeriod | null = null;
+  if (payPeriodField?.original_ocr_value) {
+    const raw = payPeriodField.original_ocr_value.toLowerCase();
+    if (raw.includes("biweekly") || raw.includes("bi-weekly")) ocrPayPeriod = "biweekly";
+    else if (raw.includes("weekly")) ocrPayPeriod = "weekly";
+    else if (raw.includes("semi")) ocrPayPeriod = "semimonthly";
+    else if (raw.includes("monthly")) ocrPayPeriod = "monthly";
+    else if (raw.includes("annual") || raw.includes("yearly")) ocrPayPeriod = "annual";
+  } else if (payFields[0]?.field_key === "monthly_gross_income") {
+    ocrPayPeriod = "monthly";
+  }
+
+  const reportedMonthly = parseFloat(getAnswer("monthly_gross_income") ?? "") || null;
+  const incomeComparison = compareIncome(reportedMonthly, ocrPayAmount, ocrPayPeriod);
+
+  const argyleLinked = ((argyleResult.data?.linked_accounts as unknown[]) ?? []).length > 0;
+
+  const verificationSummary: VerificationSummary = {
+    shelter: {
+      address: { deliverability: "unavailable", rdi: "Unknown" },
+      rent: {
+        claimed: parseFloat(getAnswer("monthly_rent_or_mortgage") ?? "") || null,
+        fmr: null,
+        ratio: null,
+        flagged: false,
+      },
+      sua_tier: {
+        claimed: suaComputed as SUATier | null,
+        computed: suaComputed as SUATier | null,
+        flagged: false,
+        heap_flag: heapCheck.heap_flag,
+      },
+    },
+    income: {
+      reported_monthly: incomeComparison.reported_monthly,
+      ocr_monthly: incomeComparison.ocr_monthly,
+      delta_pct: incomeComparison.delta_pct,
+      direction: incomeComparison.direction,
+      flagged: incomeComparison.flagged,
+      argyle_monthly: latestPaycheck?.monthly_amount_usd ?? null,
+    },
+    obbba: {
+      heap_flag: heapCheck.heap_flag,
+      flag_reason: heapCheck.flag_reason,
+    },
+  };
+
+  const verificationFlagCount = [
+    verificationSummary.shelter.rent.flagged,
+    verificationSummary.shelter.sua_tier.heap_flag,
+    verificationSummary.income.flagged,
+  ].filter(Boolean).length;
+
+  void argyleLinked; // used for future Argyle-connected UI indicator
+
   const blockers: Blocker[] = [];
   if ((unresolvedDocsResult.data?.length ?? 0) > 0)
     blockers.push({ kind: "unresolved_docs", label: "Required documents not yet resolved", count: unresolvedDocsResult.data!.length });
@@ -156,8 +262,7 @@ export default async function PacketDetailPage({
   for (const a of answers) {
     if (a.applicant_answer != null) answersMap[a.question_key] = a.applicant_answer;
   }
-  const monthlyUtilities = parseFloat(answersMap["monthly_utilities"] ?? "");
-  const hasUtilityAnswer = !isNaN(monthlyUtilities) && monthlyUtilities > 0;
+  const suaQuestionsAnswered = suaComputed !== null;
   const hasHousingSituation = !!answersMap["housing_situation"];
   const hasIncomeDocs = docs.some((d) =>
     ["pay_stub", "tax_return", "w2", "1099", "income"].some((k) =>
@@ -177,7 +282,7 @@ export default async function PacketDetailPage({
     return Math.round(weight * (from - to));
   }
 
-  const suaDef: "moderate" | "weak"   = hasUtilityAnswer    ? "moderate" : "weak";
+  const suaDef: "moderate" | "weak"   = suaQuestionsAnswered ? "moderate" : "weak";
   const gigDef: "strong"  | "weak"    = isArgyleConnected   ? "strong"   : "weak";
   const leaseDef: "moderate" | "weak" = hasHousingSituation ? "moderate" : "weak";
 
@@ -191,12 +296,13 @@ export default async function PacketDetailPage({
       actionable: true,
       impactIfImproved: impactIfUpgraded(50.5, suaDef),
       detail: suaDef === "weak"
-        ? "No utility cost was reported in the eligibility questionnaire. USDA classifies SUA as the highest payment-error driver (50.5% weight). Without a verifiable utility amount, this flow defaults to weak defensibility."
-        : "A monthly utility amount was reported, providing a basis for SUA verification. Phase 2 will connect UtilityAPI for independent verification.",
+        ? "SUA utility questions (heating, electric/gas, phone) have not been answered. USDA classifies SUA as the highest payment-error driver (50.5% weight). Complete the expense questions to move this flow to moderate."
+        : `SUA tier determined: ${suaComputed} (${ { FULL: "$663", LIMITED: "$170", TELEPHONE: "$44", NONE: "$0" }[suaComputed!] }/mo). Phase 2 will verify utility costs independently.`,
       evidence: [
-        { label: "Monthly utilities", value: hasUtilityAnswer ? `$${monthlyUtilities.toFixed(0)}/mo` : "missing" },
-        { label: "UtilityAPI", value: "phase 2" },
-        { label: "SUA election", value: answersMap["sua_election"] ?? "not answered" },
+        { label: "Heating costs", value: answersMap["has_heating_costs"] ?? "not answered" },
+        { label: "Electric / gas", value: answersMap["has_electric_or_gas"] ?? "not answered" },
+        { label: "Phone costs", value: answersMap["has_phone"] ?? "not answered" },
+        { label: "SUA tier", value: suaComputed ?? "incomplete — questions unanswered" },
       ],
     },
     {
@@ -273,7 +379,7 @@ export default async function PacketDetailPage({
       n: i + 1,
       title:
         f.id === "gig-income"   ? "Connect Argyle to verify income" :
-        f.id === "utility-sua"  ? "Record monthly utility costs"    :
+        f.id === "utility-sua"  ? "Complete SUA expense questions"   :
         f.id === "shared-lease" ? "Document housing situation"      : "Improve defensibility",
       flowLabel: f.label,
       weight: f.weight,
@@ -284,7 +390,7 @@ export default async function PacketDetailPage({
         f.id === "gig-income"
           ? "Ask the applicant to connect their employer via Argyle in the Civica iOS app. Once connected, Civica can independently verify income — moving this flow from weak to strong and significantly reducing the score."
           : f.id === "utility-sua"
-          ? "Enter the monthly utility cost in the packet answers. Even a self-reported amount moves SUA from weak to moderate. Phase 2 will connect UtilityAPI for independent verification."
+          ? "Answer the three SUA utility questions in the packet: heating costs, electric/gas, and phone. Answering all three lets Civica derive the correct SUA tier (FULL/LIMITED/TELEPHONE/NONE) and moves this flow from weak to moderate defensibility."
           : "Ask the applicant to clarify their housing arrangement in the eligibility questionnaire. Any concrete answer (own, rent, shared) moves this flow from weak to moderate.",
       cta: f.id === "gig-income" ? "Connect Argyle" : "Update Answers",
       ctaSub: f.id === "gig-income" ? "via iOS app" : "in questionnaire",
@@ -340,8 +446,13 @@ export default async function PacketDetailPage({
               {packet.county ?? "Unknown County"}, {packet.state_code}
               {language && <span className="text-muted"> · {language}</span>}
             </p>
-            <div className="mt-3 mb-6">
+            <div className="mt-3 mb-6 flex items-center gap-3 flex-wrap">
               <StatusPill status={packet.status} />
+              {errorRisk && errorRisk.tier && (
+                <a href="#api-verification" className="inline-flex items-center gap-1.5 group">
+                  <RiskTierBadge tier={errorRisk.tier as "high" | "medium" | "low"} score={errorRisk.score} />
+                </a>
+              )}
             </div>
 
             {/* Lifecycle progress strip */}
@@ -492,6 +603,16 @@ export default async function PacketDetailPage({
             <ExtractionFieldList fields={fields} />
           </Section>
         )}
+
+        {/* API Cross-Verification */}
+        <Section
+          id="api-verification"
+          title="API Cross-Verification"
+          count={verificationFlagCount > 0 ? verificationFlagCount : undefined}
+          subtitle="Rules-first accuracy checks: address deliverability, rent vs FMR, SUA tier, income OCR vs reported, OBBBA compliance."
+        >
+          <APIVerificationPanel summary={verificationSummary} />
+        </Section>
 
         {/* Documents — click a thumbnail to open the inline viewer */}
         <Section title="Uploaded Documents" count={docs.length} subtitle="Click a document to view the original file alongside its extracted fields.">
@@ -711,9 +832,9 @@ function RecertBanner({ status, handedOffAt, recert }: { status: string; handedO
   );
 }
 
-function Section({ title, count, subtitle, children }: { title: string; count?: number; subtitle?: string; children: React.ReactNode }) {
+function Section({ id, title, count, subtitle, children }: { id?: string; title: string; count?: number; subtitle?: string; children: React.ReactNode }) {
   return (
-    <section className="bg-surface border border-hairline rounded-[4px] p-6">
+    <section id={id} className="bg-surface border border-hairline rounded-[4px] p-6">
       <div className="mb-5">
         <div className="flex items-baseline gap-2">
           <h2 className="section-title">{title}</h2>
@@ -832,6 +953,26 @@ function WorkRequirementsCard({ wrStatus }: { wrStatus: WrStatusData }) {
         )}
       </div>
     </section>
+  );
+}
+
+const RISK_TIER_STYLE: Record<"high" | "medium" | "low", { bg: string; text: string; dot: string; label: string }> = {
+  high:   { bg: "bg-brick/10",   text: "text-brick",   dot: "bg-brick",   label: "High risk" },
+  medium: { bg: "bg-amber/15",   text: "text-amber",   dot: "bg-amber",   label: "Medium risk" },
+  low:    { bg: "bg-teal/10",    text: "text-teal",    dot: "bg-teal",    label: "Low risk" },
+};
+
+function RiskTierBadge({ tier, score }: { tier: "high" | "medium" | "low"; score: number | null }) {
+  const s = RISK_TIER_STYLE[tier];
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-semibold ${s.bg} ${s.text}`}
+      title={`Error-risk score: ${score ?? "—"}/100 — click to jump to verification panel`}
+    >
+      <span className={`w-2 h-2 rounded-full ${s.dot}`} />
+      {s.label}
+      {score !== null && <span className="opacity-70 tabular-nums">({score})</span>}
+    </span>
   );
 }
 

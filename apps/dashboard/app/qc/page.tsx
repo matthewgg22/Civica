@@ -4,6 +4,7 @@ import AppHeader from "../../components/AppHeader";
 import ApiCoveragePanel from "../../components/qc/ApiCoveragePanel";
 import ScoringPanel from "../../components/qc/ScoringPanel";
 import BaselinePanel from "../../components/qc/BaselinePanel";
+import { ENGINE_VERSION } from "@civica/snap-qc-engine";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +43,7 @@ export default async function QCPage() {
       .limit(2000),
     supabase.schema("snap_enrollment").from("packet_answers")
       .select("packet_id, question_key, applicant_answer")
-      .in("question_key", ["monthly_utilities", "housing_situation", "employment_status"])
+      .in("question_key", ["has_heating_costs", "has_electric_or_gas", "has_phone", "housing_situation", "employment_status"])
       .limit(10000),
   ]);
 
@@ -66,12 +67,12 @@ export default async function QCPage() {
       since: "Live since Jan 2026",
     },
     {
-      id: "utility", name: "UtilityAPI", status: "phase2" as const,
-      purpose: "Shelter / utility cost verification",
+      id: "sua-rules", name: "SUA Rules Engine", status: "live" as const,
+      purpose: "Shelter / utility allowance tier determination",
       flow: "sua", weight: 50.5,
-      connectedPct: 0, connectedN: 0, totalN: totalPackets,
-      detail: "Not yet integrated. Highest-weight USDA error category remains unverified.",
-      since: "Target Q3 2026",
+      connectedPct: 100, connectedN: totalPackets, totalN: totalPackets,
+      detail: "determineSUATier() from @civica/snap-rules — deterministic, free, no external API. HEAP compliance via checkHEAPCompliance(). UtilityAPI removed from roadmap.",
+      since: "Live since May 2026",
     },
     {
       id: "sublease", name: "Sublease classifier", status: "phase2" as const,
@@ -116,9 +117,9 @@ export default async function QCPage() {
     // gig: Argyle = strong, else weak
     if (hasArgyle) gigStrong++; else gigWeak++;
 
-    // sua: utilities answered > 0 = moderate (Phase 1 heuristic), else weak
-    const util = parseFloat(pa["monthly_utilities"] ?? "0");
-    if (util > 0) suaModerate++; else suaWeak++;
+    // sua: any of the 3 SUA utility questions answered = moderate; none answered = weak
+    const hasSuaAnswer = pa["has_heating_costs"] || pa["has_electric_or_gas"] || pa["has_phone"];
+    if (hasSuaAnswer) suaModerate++; else suaWeak++;
 
     // lease: housing_situation answered = moderate, else weak
     if (pa["housing_situation"]) leaseModerate++; else leaseWeak++;
@@ -230,7 +231,7 @@ export default async function QCPage() {
       </div>
 
       <footer className="border-t border-hairline px-8 py-5 flex justify-between items-center text-[11px] text-muted font-mono tracking-wide mt-8">
-        <span>Civica · error-rate intelligence v0.1 · live</span>
+        <span>Civica · error-rate intelligence · qc-engine v{ENGINE_VERSION} · live</span>
         <span>QC baseline: USDA FNS-380 FY2024 · weights are payment-error contribution</span>
       </footer>
     </div>

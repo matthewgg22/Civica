@@ -241,3 +241,10 @@ export function evaluateChecklist(input: EvaluateInput): EvaluateOutput {
 export type { ExemptionType, WorkRequirementInput, WorkRequirementResult, FeatureFlags } from './work-requirements/types';
 export { evaluateWorkRequirement } from './work-requirements/evaluate';
 export { CA_WAIVER_COUNTY_FIPS, MA_WAIVER_COUNTY_FIPS } from './work-requirements/waiver-counties';
+
+// ---------------------------------------------------------------------------
+// SUA tier constants and derivation — CA FFY2026
+// ---------------------------------------------------------------------------
+
+export type { SUATier } from './sua';
+export { CA_SUA_FFY2026, determineSUATier, checkHEAPCompliance } from './sua';
