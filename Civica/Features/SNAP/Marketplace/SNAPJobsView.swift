@@ -70,22 +70,40 @@ struct SNAPJobsView: View {
             .padding(.bottom, 16)
     }
 
-    // MARK: Income cap line
+    // MARK: Income cap hero (D2 — 20pt SemiBold numeral)
 
     private var incomeCapLine: some View {
-        HStack(spacing: 10) {
-            Text(SNAPMarketplaceStrings.incomeCapPrefix.value(in: language)
-                 + "\(vm.incomeCap)"
-                 + SNAPMarketplaceStrings.incomeCapSuffix.value(in: language))
-                .font(MFont.bodySmallMedium)
-                .foregroundStyle(Color.civicaInk)
-                .fixedSize(horizontal: false, vertical: true)
-            InfoDotView(color: .civicaTeal)
-                .accessibilityLabel("Income cap information")
-                .accessibilityHint("Tap to learn about the income limit before your benefit changes")
+        VStack(alignment: .leading, spacing: 4) {
+            Text(SNAPMarketplaceStrings.incomeCapLabel.value(in: language))
+                .font(MFont.capsLabel)
+                .foregroundStyle(Color.civicaGraphite)
+                .kerning(1.5)
+
+            HStack(alignment: .lastTextBaseline, spacing: 0) {
+                Text("$\(vm.incomeCap)")
+                    .font(MFont.heroHeadline)   // 20pt SemiBold
+                    .foregroundStyle(Color.civicaInk)
+                    .monospacedDigit()
+                Text(SNAPMarketplaceStrings.incomeCapPerMonth.value(in: language))
+                    .font(MFont.bodySmall)
+                    .foregroundStyle(Color.civicaGraphite)
+
+                Spacer(minLength: 12)
+
+                InfoDotView(color: .civicaTeal)
+            }
+
+            Text(SNAPMarketplaceStrings.incomeCapChangeNote.value(in: language))
+                .font(MFont.meta)
+                .foregroundStyle(Color.civicaGraphite)
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 16)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(
+            String(format: SNAPMarketplaceStrings.incomeCapA11y.value(in: language), vm.incomeCap)
+        )
+        .accessibilityHint("Tap the info icon for more details")
     }
 
     // MARK: Job rows

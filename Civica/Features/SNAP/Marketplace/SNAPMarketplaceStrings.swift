@@ -24,6 +24,23 @@ enum SNAPMarketplaceStrings {
         "/mo before benefit changes",
         es: "/mes antes de cambios en el beneficio"
     )
+    // Screen 02 income cap hero layout (D2)
+    static let incomeCapLabel = CivicaText(
+        "INCOME CAP",
+        es: "LÍMITE DE INGRESOS"
+    )
+    static let incomeCapPerMonth = CivicaText(
+        "/mo",
+        es: "/mes"
+    )
+    static let incomeCapChangeNote = CivicaText(
+        "before your benefit changes",
+        es: "antes de que cambie tu beneficio"
+    )
+    static let incomeCapA11y = CivicaText(
+        "Income cap: $%d per month. Earn more and your benefit adjusts.",
+        es: "Límite de ingresos: $%d por mes. Si ganas más, tu beneficio cambia."
+    )
     static let showMore = CivicaText(
         "Show more",
         es: "Ver más"
