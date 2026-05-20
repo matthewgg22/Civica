@@ -1,9 +1,15 @@
 import { cookies } from "next/headers";
 import { redirect, notFound } from "next/navigation";
+import { analytics } from "@civica/analytics-engine";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import { homeForRole } from "../../lib/roleRouting";
-import { adminCostExposure } from "../../lib/analytics/section10106";
 import { trackPageView } from "../../lib/analytics/events";
+import {
+  safeAnalyticsCall,
+  transformPerByStateToExposure,
+  findScenarioMetric,
+  isSampleDataMode,
+} from "../../lib/analytics/transforms";
 import CountyUrgencyBanner from "../../components/CountyUrgencyBanner";
 import DemoModeBadge from "../../components/DemoModeBadge";
 
@@ -20,10 +26,8 @@ function auditSurfaceEnabled(): boolean {
 }
 
 function formatCurrency(n: number): string {
-  if (n >= 1_000_000_000)
-    return `$${(n / 1_000_000_000).toFixed(1)}B`;
-  if (n >= 1_000_000)
-    return `$${(n / 1_000_000).toFixed(0)}M`;
+  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`;
+  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(0)}M`;
   return `$${n.toLocaleString()}`;
 }
 
@@ -43,14 +47,10 @@ export default async function CountyPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  // Feature flag gate — return 404 if not enabled.
   if (!auditSurfaceEnabled()) {
     notFound();
   }
 
-  // Role gate — server component must enforce independently of middleware.
-  // TODO(post-MVP): also accept shared-link audit_access_tokens (see
-  // state-audit-surface-design spec §4.2). For MVP, require Supabase session.
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
   const {
@@ -62,50 +62,60 @@ export default async function CountyPage({
     redirect(typeof role === "string" ? homeForRole(role) : "/login");
   }
 
-  // After the redirect guard above, TypeScript still considers user possibly null.
-  // The redirect() throws, so execution only continues here when user is non-null.
   const actorId = (user as NonNullable<typeof user>).id;
   const profile = (user as NonNullable<typeof user>).user_metadata as
     | { org_id?: string }
     | undefined;
 
-  // Page-view event (server-side; PostHog/Segment will plug in here post-MVP).
   trackPageView({
     page: "county-10106",
     actorId,
     orgId: profile?.org_id,
   });
 
-  // Demo mode: ?demo=true forces demo regardless of DB availability.
   const sp = await searchParams;
-  const demoParam = sp["demo"];
-  const forceDemo = demoParam === "true";
+  void sp["demo"]; // legacy flag; ignored — sample mode is engine-driven.
 
-  // Fetch real (or demo-fallback) analytics. When ?demo=true, skip DB query.
   const stateCode = "CA";
-  const analytics = forceDemo
-    ? {
-        stateCode,
-        federalAdminCostDollars: 850_000_000,
-        perFy2024Pct: 7.2,
-        exposureDollars: 212_500_000,
-        demoMode: true,
-      }
-    : await adminCostExposure(stateCode);
 
-  const isDemoMode = analytics.demoMode;
+  // -------------------------------------------------------------------------
+  // Live engine reads. Engine output replaces the old static §10106 demo.
+  // -------------------------------------------------------------------------
+  const [perResult, adminCostScenarioResult] = await Promise.all([
+    safeAnalyticsCall(
+      () => analytics.paymentErrorRate.byState({ fy: 2024, state: stateCode }),
+      `paymentErrorRate.byState(fy=2024, state=${stateCode})`,
+    ),
+    safeAnalyticsCall(
+      () =>
+        analytics.obbbaScenarios.compare({
+          metric: "ca_fy28_admin_cost_shift_usd",
+        }),
+      "obbbaScenarios.compare(ca_fy28_admin_cost_shift_usd)",
+    ),
+  ]);
+
+  const exposure = perResult
+    ? transformPerByStateToExposure(perResult.rows, stateCode)
+    : null;
+
+  const adminCostShift = adminCostScenarioResult
+    ? findScenarioMetric(
+        adminCostScenarioResult.rows,
+        "obbba_full",
+        "ca_fy28_admin_cost_shift_usd",
+      )
+    : null;
+
+  const sampleMode = isSampleDataMode();
+  const dataUnavailable = !exposure && !adminCostShift;
 
   const days = daysUntilOct1_2026();
 
   return (
     <main className="min-h-screen bg-paper flex flex-col">
-      {/* ------------------------------------------------------------------ */}
-      {/* T-DR1 + T-DR4: Urgency banner — amber token, NOT brick              */}
-      {/* T-DR5: responsive — text wraps on tablet, no overflow               */}
-      {/* ------------------------------------------------------------------ */}
       <CountyUrgencyBanner daysUntilDeadline={days} />
 
-      {/* Page header */}
       <header className="px-6 md:px-8 py-5 border-b border-hairline flex items-start justify-between gap-4 flex-wrap">
         <div>
           <p className="text-[11px] text-muted uppercase tracking-wider font-medium">
@@ -120,29 +130,37 @@ export default async function CountyPage({
         </div>
 
         <div className="flex items-center gap-4 shrink-0">
-          {/* T-DR2: Demo mode badge — hidden when real analytics data is available */}
-          {isDemoMode && <DemoModeBadge />}
+          {sampleMode && <DemoModeBadge />}
           <form action="/auth/signout" method="post">
             <button className="text-[13px] font-medium text-brick hover:underline">Sign out</button>
           </form>
         </div>
       </header>
 
-      {/* ------------------------------------------------------------------ */}
-      {/* T-DR1 + T-DR5: KPI row                                              */}
-      {/* 3-col desktop, 2-col tablet (md), 1-col stacked mobile              */}
-      {/* ------------------------------------------------------------------ */}
-      <section className="px-6 md:px-8 py-6" aria-label="Key metrics">
-        {isDemoMode && (
-          <p className="text-[11px] text-muted mb-4">
-            Showing {analytics.stateCode} FY2024 demo data. Pass{" "}
-            <code className="font-mono bg-surface border border-hairline rounded px-1 py-0.5">
-              ?demo=false
-            </code>{" "}
-            to see live data (requires analytics pipeline with &ge;10 active packets).
-          </p>
-        )}
+      {dataUnavailable && (
+        <section className="px-6 md:px-8 py-6">
+          <div
+            className="border rounded-[4px] bg-surface p-5"
+            style={{
+              borderColor: "color-mix(in srgb, var(--color-amber) 40%, transparent)",
+            }}
+          >
+            <p className="eyebrow mb-2" style={{ color: "var(--color-amber)" }}>
+              Analytics data not loaded
+            </p>
+            <p className="text-[13px] text-graphite leading-relaxed">
+              Could not read PER or OBBBA scenario data. Set{" "}
+              <code className="font-mono bg-paper border border-hairline rounded px-1 py-0.5">
+                ANALYTICS_USE_SAMPLE_DATA=true
+              </code>{" "}
+              for the demo dataset, or upload real parquet per{" "}
+              <code className="font-mono">data-ops/README.md</code>.
+            </p>
+          </div>
+        </section>
+      )}
 
+      <section className="px-6 md:px-8 py-6" aria-label="Key metrics">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* KPI (a): Current admin share */}
           <KpiCard
@@ -160,19 +178,22 @@ export default async function CountyPage({
             variant="warning"
           />
 
-          {/* KPI (c): Exposure — driven by analytics engine (live or demo) */}
+          {/* KPI (c): Exposure — engine-driven (obbba_full scenario admin cost shift) */}
           <KpiCard
-            label={`Estimated ${analytics.stateCode} exposure`}
-            value={formatCurrency(analytics.exposureDollars)}
-            subtext={`Based on ~${formatCurrency(analytics.federalAdminCostDollars)} federal admin cost (${analytics.stateCode} FY2024${isDemoMode ? " demo" : ""})`}
+            label={`Estimated ${stateCode} exposure`}
+            value={
+              adminCostShift ? formatCurrency(adminCostShift.value) : "—"
+            }
+            subtext={
+              adminCostShift
+                ? `Modeled FY28 federal admin cost shift to ${stateCode} (OBBBA-full scenario)`
+                : "OBBBA scenario data unavailable"
+            }
             variant="warning"
           />
         </div>
       </section>
 
-      {/* ------------------------------------------------------------------ */}
-      {/* T-DR1: State-level breakdown placeholder                             */}
-      {/* ------------------------------------------------------------------ */}
       <section
         className="px-6 md:px-8 py-4 flex-1"
         aria-label="State-level breakdown"
@@ -186,9 +207,12 @@ export default async function CountyPage({
           <p className="text-sm text-graphite mt-2 leading-relaxed">
             State-level breakdown coming soon.
           </p>
-          <p className="text-xs text-muted mt-4">
-            {analytics.stateCode} PER (FY2024{isDemoMode ? " demo" : ""}): {analytics.perFy2024Pct}%
-          </p>
+          {exposure && (
+            <p className="text-xs text-muted mt-4">
+              {exposure.stateCode} PER (FY2024): {exposure.statewidePER}% — national
+              avg {exposure.nationalAvgPER}% (§10105 threshold {exposure.thresholdPER}%).
+            </p>
+          )}
         </div>
       </section>
     </main>

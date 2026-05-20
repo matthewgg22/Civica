@@ -1,7 +1,12 @@
 import { cookies } from "next/headers";
 import { redirect, notFound } from "next/navigation";
+import { analytics } from "@civica/analytics-engine";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import { homeForRole } from "../../lib/roleRouting";
+import {
+  safeAnalyticsCall,
+  transformPerByStateToExposure,
+} from "../../lib/analytics/transforms";
 import DemoModeBadge from "../../components/DemoModeBadge";
 import CBOContactButton from "../../components/CBOContactButton";
 
@@ -88,6 +93,20 @@ export default async function CBOPreviewPage() {
     redirect(typeof role === "string" ? homeForRole(role) : "/login");
   }
 
+  // Live PER read — the "without Civica" comparison number is now sourced
+  // from `paymentErrorRate.byState(fy=2024)` instead of being hardcoded.
+  // The Civica-cohort value remains a sales target until the engine emits
+  // cohort-level PER (blocked on civicaEmit.qcEvaluations.byOrg).
+  const perResult = await safeAnalyticsCall(
+    () => analytics.paymentErrorRate.byState({ fy: 2024 }),
+    "paymentErrorRate.byState(fy=2024) — cbo-preview",
+  );
+  const exposure = perResult
+    ? transformPerByStateToExposure(perResult.rows, "CA")
+    : null;
+  const caStatewidePER = exposure ? exposure.statewidePER : 10.8;
+  const civicaCohortPER = 4.2; // sales target — see comment above
+
   return (
     <main className="min-h-screen bg-paper flex flex-col">
       {/* ------------------------------------------------------------------ */}
@@ -126,8 +145,8 @@ export default async function CBOPreviewPage() {
           />
           <KpiCard
             label="Error rate (Civica cohort)"
-            value="4.2%"
-            subtext="Without Civica: ~10.8%"
+            value={`${civicaCohortPER}%`}
+            subtext={`Without Civica: ~${caStatewidePER}% (CA statewide FY2024)`}
             variant="positive"
           />
           <KpiCard
