@@ -55,6 +55,24 @@ final class MockInterviewCoachClient: InterviewCoachProviding {
         }
         throw InterviewCoachAPIClient.CoachAPIError.notFound
     }
+
+    var scoreResult: InterviewScoreResponseDTO = InterviewScoreResponseDTO(
+        sessionId: "sess-1",
+        overallScore: 75,
+        strengths: [],
+        improvements: [],
+        summaryEn: "Good job.",
+        summaryEs: "Buen trabajo.",
+        generatedAt: "2026-01-01T00:00:00Z",
+        engineVersion: "mock-v1"
+    )
+
+    nonisolated func fetchScore(
+        recertId: String,
+        sessionId: String
+    ) async throws -> InterviewScoreResponseDTO {
+        return await MainActor.run { scoreResult }
+    }
 }
 
 @MainActor
