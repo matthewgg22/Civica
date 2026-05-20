@@ -132,11 +132,11 @@ struct ExpirationCalendarView: View {
         HStack(spacing: CivicaSpacing.md) {
             Image(systemName: action.reason == .missing ? "doc.badge.plus" : "arrow.triangle.2.circlepath")
                 .font(.system(size: 22))
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 40, height: 40)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                        .fill(CivicaColors.brickPrimary.opacity(0.12))
+                        .fill(CivicaColors.pinePrimary.opacity(0.12))
                 )
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {

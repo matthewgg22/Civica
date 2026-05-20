@@ -160,11 +160,11 @@ struct RecertCompanionRoot: View {
             HStack(spacing: CivicaSpacing.md) {
                 Image(systemName: "scale.3d")
                     .font(.system(size: 28))
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                     .frame(width: 48, height: 48)
                     .background(
                         RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                            .fill(CivicaColors.brickPrimary.opacity(0.12))
+                            .fill(CivicaColors.pinePrimary.opacity(0.12))
                     )
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
@@ -198,11 +198,11 @@ struct RecertCompanionRoot: View {
         HStack(spacing: CivicaSpacing.md) {
             Image(systemName: "person.wave.2.fill")
                 .font(.system(size: 28))
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 48, height: 48)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                        .fill(CivicaColors.brickPrimary.opacity(0.12))
+                        .fill(CivicaColors.pinePrimary.opacity(0.12))
                 )
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
@@ -224,7 +224,7 @@ struct RecertCompanionRoot: View {
                     .frame(minWidth: 44, minHeight: 44)
                     .background(
                         RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                            .fill(CivicaColors.brickPrimary)
+                            .fill(CivicaColors.pinePrimary)
                     )
             }
             .buttonStyle(.plain)
@@ -362,7 +362,7 @@ struct RecertCompanionRoot: View {
             Button(action: { isEditingDate = true }) {
                 Text(RecertCompanionStrings.noDateExplainerLink.value(in: language))
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                     .underline()
             }
             .buttonStyle(.plain)
@@ -430,11 +430,11 @@ struct RecertCompanionRoot: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Image(systemName: "calendar")
                 .font(.system(size: 24))
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 44, height: 44)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                        .fill(CivicaColors.brickPrimary.opacity(0.12))
+                        .fill(CivicaColors.pinePrimary.opacity(0.12))
                 )
                 .accessibilityHidden(true)
             Text(RecertCompanionStrings.recertDateLabel.value(in: language))
@@ -449,7 +449,7 @@ struct RecertCompanionRoot: View {
             Button(action: { isEditingDate = true }) {
                 Text(RecertCompanionStrings.editDateAction.value(in: language))
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                     .frame(minHeight: 44)
             }
             .buttonStyle(.plain)
@@ -468,11 +468,11 @@ struct RecertCompanionRoot: View {
         HStack(spacing: CivicaSpacing.md) {
             Image(systemName: "calendar")
                 .font(.system(size: 24))
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 44, height: 44)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                        .fill(CivicaColors.brickPrimary.opacity(0.12))
+                        .fill(CivicaColors.pinePrimary.opacity(0.12))
                 )
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
@@ -489,7 +489,7 @@ struct RecertCompanionRoot: View {
             Button(action: { isEditingDate = true }) {
                 Text(RecertCompanionStrings.editDateAction.value(in: language))
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
             }
             .buttonStyle(.plain)
         }

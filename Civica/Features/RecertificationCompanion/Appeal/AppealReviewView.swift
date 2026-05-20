@@ -103,7 +103,7 @@ struct AppealReviewView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: "exclamationmark.triangle.fill")
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.brickAccent)
                 Text(AppealReviewStrings.missingSlotsTitle.value(in: language))
                     .font(CivicaTypography.sectionHeader)
                     .foregroundStyle(CivicaColors.ink)
@@ -116,7 +116,7 @@ struct AppealReviewView: View {
                 presentingFixSlots = true
             }
             .font(CivicaTypography.footnoteStrong)
-            .foregroundStyle(CivicaColors.brickPrimary)
+            .foregroundStyle(CivicaColors.brickAccent)
         }
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -156,7 +156,7 @@ struct AppealReviewView: View {
                 .frame(height: 56)
                 .background(
                     RoundedRectangle(cornerRadius: 3, style: .continuous)
-                        .fill(CivicaColors.brickPrimary)
+                        .fill(CivicaColors.brickAccent)
                 )
         }
         .buttonStyle(.plain)

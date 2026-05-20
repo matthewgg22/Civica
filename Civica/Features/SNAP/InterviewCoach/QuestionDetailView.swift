@@ -64,8 +64,8 @@ struct QuestionDetailView: View {
                         HStack(spacing: CivicaSpacing.xs) {
                             ForEach(question.archetypeTags) { tag in
                                 chip(text: tag.localizedLabel(in: language),
-                                     tint: CivicaColors.brickPrimary.opacity(0.12),
-                                     foreground: CivicaColors.brickPrimary)
+                                     tint: CivicaColors.pinePrimary.opacity(0.12),
+                                     foreground: CivicaColors.pinePrimary)
                             }
                         }
                     }
@@ -97,8 +97,8 @@ struct QuestionDetailView: View {
                  tint: CivicaColors.accentTeal.opacity(0.12),
                  foreground: CivicaColors.accentTeal)
             chip(text: question.category.localizedLabel(in: language),
-                 tint: CivicaColors.brickPrimary.opacity(0.12),
-                 foreground: CivicaColors.brickPrimary)
+                 tint: CivicaColors.pinePrimary.opacity(0.12),
+                 foreground: CivicaColors.pinePrimary)
         }
     }
 

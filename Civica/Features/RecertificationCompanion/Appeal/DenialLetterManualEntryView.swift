@@ -64,7 +64,7 @@ struct DenialLetterManualEntryView: View {
                         displayedComponents: .date
                     )
                     .labelsHidden()
-                    .tint(CivicaColors.brickPrimary)
+                    .tint(CivicaColors.brickAccent)
                 }
 
                 reasonPicker
@@ -77,7 +77,7 @@ struct DenialLetterManualEntryView: View {
                         .frame(height: 56)
                         .background(
                             RoundedRectangle(cornerRadius: 3, style: .continuous)
-                                .fill(continueEnabled ? CivicaColors.brickPrimary : CivicaColors.graphite.opacity(0.4))
+                                .fill(continueEnabled ? CivicaColors.brickAccent : CivicaColors.graphite.opacity(0.4))
                         )
                 }
                 .buttonStyle(.plain)
@@ -120,7 +120,7 @@ struct DenialLetterManualEntryView: View {
                     Button(action: { reason = value }) {
                         HStack(spacing: CivicaSpacing.sm) {
                             Image(systemName: reason == value ? "largecircle.fill.circle" : "circle")
-                                .foregroundStyle(reason == value ? CivicaColors.brickPrimary : CivicaColors.graphite)
+                                .foregroundStyle(reason == value ? CivicaColors.brickAccent : CivicaColors.graphite)
                             Text(reasonLabel(for: value).value(in: language))
                                 .font(CivicaTypography.body)
                                 .foregroundStyle(CivicaColors.ink)
@@ -134,7 +134,7 @@ struct DenialLetterManualEntryView: View {
                         .overlay(
                             RoundedRectangle(cornerRadius: CivicaRadius.card)
                                 .strokeBorder(
-                                    reason == value ? CivicaColors.brickPrimary : CivicaColors.hairline,
+                                    reason == value ? CivicaColors.brickAccent : CivicaColors.hairline,
                                     lineWidth: reason == value ? 2 : 1
                                 )
                         )

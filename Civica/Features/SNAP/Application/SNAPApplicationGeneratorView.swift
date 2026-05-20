@@ -116,7 +116,7 @@ struct SNAPApplicationGeneratorView: View {
                 Label(SNAPApplicationGeneratorStrings.saveOrShare.value(in: language), systemImage: "square.and.arrow.up")
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, CivicaSpacing.sm)
-                    .background(CivicaColors.brickPrimary)
+                    .background(CivicaColors.pinePrimary)
                     .foregroundColor(CivicaColors.onPrimaryText)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
             }

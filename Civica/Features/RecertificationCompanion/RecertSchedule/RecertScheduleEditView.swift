@@ -60,7 +60,7 @@ struct RecertScheduleEditView: View {
                         displayedComponents: .date
                     )
                     .datePickerStyle(.graphical)
-                    .tint(CivicaColors.brickPrimary)
+                    .tint(CivicaColors.pinePrimary)
 
                     if let defaultDate {
                         Button(action: {
@@ -71,7 +71,7 @@ struct RecertScheduleEditView: View {
                                 Text(RecertScheduleEditStrings.useDefault.value(in: language))
                                     .font(CivicaTypography.footnoteStrong)
                             }
-                            .foregroundStyle(CivicaColors.brickPrimary)
+                            .foregroundStyle(CivicaColors.pinePrimary)
                         }
                     }
 
@@ -83,7 +83,7 @@ struct RecertScheduleEditView: View {
                             .frame(height: 56)
                             .background(
                                 RoundedRectangle(cornerRadius: 3, style: .continuous)
-                                    .fill(CivicaColors.brickPrimary)
+                                    .fill(CivicaColors.pinePrimary)
                             )
                     }
                     .buttonStyle(.plain)

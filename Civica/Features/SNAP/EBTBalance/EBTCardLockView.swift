@@ -40,14 +40,14 @@ struct EBTCardLockView: View {
             )) {
                 HStack(spacing: CivicaSpacing.sm) {
                     Image(systemName: store.isCardLocked ? "lock.fill" : "lock.open")
-                        .foregroundStyle(store.isCardLocked ? CivicaColors.brickPrimary : CivicaColors.graphite)
+                        .foregroundStyle(store.isCardLocked ? CivicaColors.pinePrimary : CivicaColors.graphite)
                         .accessibilityHidden(true)
                     Text(EBTBalanceStrings.lockToggleTitle.value(in: language))
                         .font(CivicaTypography.sectionHeader)
                         .foregroundStyle(CivicaColors.ink)
                 }
             }
-            .tint(CivicaColors.brickPrimary)
+            .tint(CivicaColors.pinePrimary)
 
             Text(EBTBalanceStrings.lockToggleHelp.value(in: language))
                 .font(CivicaTypography.footnote)
@@ -60,7 +60,7 @@ struct EBTCardLockView: View {
                  ? EBTBalanceStrings.lockStatusOnLine.value(in: language)
                  : EBTBalanceStrings.lockStatusOffLine.value(in: language))
                 .font(CivicaTypography.footnoteStrong)
-                .foregroundStyle(store.isCardLocked ? CivicaColors.brickPrimary : CivicaColors.ink)
+                .foregroundStyle(store.isCardLocked ? CivicaColors.pinePrimary : CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
                 .animation(.easeInOut(duration: 0.2), value: store.isCardLocked)
         }
@@ -127,7 +127,7 @@ struct EBTCardLockView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
-        .tint(CivicaColors.brickPrimary)
+        .tint(CivicaColors.pinePrimary)
     }
 
     // MARK: - Demo disclosure

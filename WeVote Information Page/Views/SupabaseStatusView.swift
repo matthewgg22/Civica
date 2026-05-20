@@ -86,7 +86,7 @@ struct SupabaseStatusView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 1)
+                .stroke(CivicaColors.pinePrimary.opacity(0.18), lineWidth: 1)
         )
         .task {
             guard shouldAutoRefresh else { return }
@@ -115,7 +115,7 @@ struct SupabaseStatusView: View {
         if authStore.isSignedIn {
             return StatusIndicator(
                 iconName: "checkmark.circle.fill",
-                tint: CivicaColors.accentTeal,
+                tint: CivicaColors.pinePrimary,
                 surface: CivicaColors.statusSuccessSurface
             )
         }
@@ -137,7 +137,7 @@ struct SupabaseStatusView: View {
         if healthStatus.isHealthy {
             return StatusIndicator(
                 iconName: "checkmark.seal.fill",
-                tint: CivicaColors.accentTeal,
+                tint: CivicaColors.pinePrimary,
                 surface: CivicaColors.statusSuccessSurface
             )
         }

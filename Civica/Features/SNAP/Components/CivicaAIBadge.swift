@@ -53,16 +53,16 @@ struct CivicaAIBadge: View {
             Text(CivicaAIBadgeStrings.label.value(in: language))
                 .font(CivicaTypography.caption)
         }
-        .foregroundStyle(CivicaColors.brickPrimary)
+        .foregroundStyle(CivicaColors.pinePrimary)
         .padding(.horizontal, CivicaSpacing.sm)
         .padding(.vertical, 3)
         .background(
             Capsule(style: .continuous)
-                .fill(CivicaColors.brickPrimary.opacity(0.10))
+                .fill(CivicaColors.pinePrimary.opacity(0.10))
         )
         .overlay(
             Capsule(style: .continuous)
-                .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 0.5)
+                .stroke(CivicaColors.pinePrimary.opacity(0.18), lineWidth: 0.5)
         )
     }
 }

@@ -190,7 +190,7 @@ struct VoterIDGuideCard: View {
     }
 
     private var categoryAccentColor: Color {
-        guard let metric else { return CivicaColors.brickPrimary }
+        guard let metric else { return CivicaColors.pinePrimary }
         switch requirementClassification(for: metric) {
         case .photoRequired:
             return CivicaColors.destructive
@@ -199,7 +199,7 @@ struct VoterIDGuideCard: View {
         case .noDocument:
             return CivicaColors.accentTeal
         case .conditional:
-            return CivicaColors.brickPrimary
+            return CivicaColors.pinePrimary
         }
     }
 
@@ -240,9 +240,9 @@ struct VoterIDGuideCard: View {
                 HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                     Image(systemName: "person.text.rectangle.fill")
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(CivicaColors.brickPrimary)
+                        .foregroundColor(CivicaColors.pinePrimary)
                         .frame(width: 30, height: 30)
-                        .background(CivicaColors.brickPrimary.opacity(0.12))
+                        .background(CivicaColors.pinePrimary.opacity(0.12))
                         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
 
                     VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
@@ -321,7 +321,7 @@ struct VoterIDGuideCard: View {
                 HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                     Image(systemName: "location.slash")
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(CivicaColors.brickPrimary)
+                        .foregroundColor(CivicaColors.pinePrimary)
                     Text(missingStatePromptText)
                         .font(CivicaTypography.subheadStrong)
                         .foregroundColor(CivicaColors.graphite)
@@ -349,7 +349,7 @@ struct VoterIDGuideCard: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                .stroke(CivicaColors.brickPrimary.opacity(0.16), lineWidth: 1)
+                .stroke(CivicaColors.pinePrimary.opacity(0.16), lineWidth: 1)
         )
         .shadow(color: CivicaColors.ink.opacity(0.07), radius: 4, x: 0, y: 2)
     }
@@ -374,9 +374,9 @@ struct VoterIDGuideCard: View {
         } else {
             Image(systemName: "location.slash")
                 .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(CivicaColors.brickPrimary)
+                .foregroundColor(CivicaColors.pinePrimary)
                 .frame(width: 28, height: 28)
-                .background(CivicaColors.brickPrimary.opacity(0.10))
+                .background(CivicaColors.pinePrimary.opacity(0.10))
                 .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         }
     }

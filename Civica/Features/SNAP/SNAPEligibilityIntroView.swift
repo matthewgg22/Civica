@@ -93,7 +93,7 @@ struct SNAPEligibilityIntroView: View {
 
                             Text(SNAPEligibilityIntroStrings.openNextSteps.value(in: language))
                                 .font(CivicaTypography.subheadStrong)
-                                .foregroundStyle(CivicaColors.brickPrimary)
+                                .foregroundStyle(CivicaColors.pinePrimary)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(CivicaSpacing.md)
@@ -235,7 +235,7 @@ private struct SNAPIntroHeader: View {
                         RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                             .stroke(CivicaColors.hairline, lineWidth: 1)
                     )
-                    .shadow(color: CivicaColors.brickPrimary.opacity(0.14), radius: 6, x: 0, y: 3)
+                    .shadow(color: CivicaColors.pinePrimary.opacity(0.14), radius: 6, x: 0, y: 3)
 
                 Image("SNAPOfficialLogo")
                     .resizable()
@@ -275,7 +275,7 @@ private struct SNAPDescriptionRow: View {
         HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Image(systemName: iconName)
                 .font(CivicaTypography.footnoteStrong)
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 20, height: 20)
                 .padding(.top, CivicaSpacing.xs)
 

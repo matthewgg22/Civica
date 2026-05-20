@@ -146,12 +146,12 @@ struct SNAPDecisionLeversView: View {
             HStack(alignment: .firstTextBaseline) {
                 Text(lever.title)
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundStyle(lever.isPrioritized ? CivicaColors.brickPrimary : CivicaColors.ink)
+                    .foregroundStyle(lever.isPrioritized ? CivicaColors.pinePrimary : CivicaColors.ink)
                 Spacer(minLength: CivicaSpacing.sm)
                 if let estimate = lever.estimate {
                     Text(estimate)
                         .font(CivicaTypography.footnoteStrong.monospacedDigit())
-                        .foregroundStyle(lever.isPrioritized ? CivicaColors.brickPrimary : CivicaColors.graphite)
+                        .foregroundStyle(lever.isPrioritized ? CivicaColors.pinePrimary : CivicaColors.graphite)
                 }
             }
             Text(lever.body)
@@ -166,7 +166,7 @@ struct SNAPDecisionLeversView: View {
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card)
                 .strokeBorder(
-                    lever.isPrioritized ? CivicaColors.brickPrimary : CivicaColors.hairline,
+                    lever.isPrioritized ? CivicaColors.pinePrimary : CivicaColors.hairline,
                     lineWidth: lever.isPrioritized ? 2 : 1
                 )
         )

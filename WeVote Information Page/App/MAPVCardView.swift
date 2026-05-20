@@ -211,7 +211,7 @@ struct MAPVCardView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
-                .stroke(CivicaColors.brickPrimary.opacity(0.25), lineWidth: 1)
+                .stroke(CivicaColors.pinePrimary.opacity(0.25), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous))
         .animation(reduceMotion ? nil : CivicaAnimation.standard, value: presentation.status)
@@ -317,7 +317,7 @@ struct MAPVCardView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Label("Completed", systemImage: "checkmark.circle.fill")
                 .font(CivicaTypography.captionBold)
-                .foregroundStyle(CivicaColors.accentTeal)
+                .foregroundStyle(CivicaColors.pinePrimary)
             Text("You’re done for this election")
                 .font(CivicaTypography.sectionHeaderBold)
             Text("Completion method: \(completionMethodText(status: status, plan: plan))")
@@ -340,7 +340,7 @@ struct MAPVCardView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                .stroke(CivicaColors.accentTeal.opacity(0.58), lineWidth: 1)
+                .stroke(CivicaColors.pinePrimary.opacity(0.58), lineWidth: 1)
         )
     }
 
@@ -373,7 +373,7 @@ struct MAPVCardView: View {
 
     private func color(for token: MAPVStatusColorToken) -> Color {
         switch token {
-        case .blue: return CivicaColors.brickPrimary
+        case .blue: return CivicaColors.pinePrimary
         case .green: return CivicaColors.accentTeal
         case .orange: return CivicaColors.warningAmber
         case .red: return CivicaColors.destructive
@@ -438,7 +438,7 @@ struct MAPVCardView: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                    .stroke(CivicaColors.brickPrimary.opacity(0.38), lineWidth: 1)
+                    .stroke(CivicaColors.pinePrimary.opacity(0.38), lineWidth: 1)
             )
         }
     }
@@ -579,13 +579,13 @@ private struct MAPVPrimaryActionButtonStyle: ButtonStyle {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                    .stroke(CivicaColors.brickPrimary.opacity(0.24), lineWidth: 1)
+                    .stroke(CivicaColors.pinePrimary.opacity(0.24), lineWidth: 1)
             )
     }
 
     private func backgroundColor(isPressed: Bool) -> Color {
-        guard isEnabled else { return CivicaColors.brickPrimaryDisabled }
-        return isPressed ? CivicaColors.brickPrimaryPressed : CivicaColors.brickPrimary
+        guard isEnabled else { return CivicaColors.pinePrimaryDisabled }
+        return isPressed ? CivicaColors.pinePrimaryPressed : CivicaColors.pinePrimary
     }
 }
 

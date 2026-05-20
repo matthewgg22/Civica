@@ -96,7 +96,7 @@ struct InterviewCoachEntryView: View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: systemImage)
                 .font(.title2)
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 36, alignment: .center)
                 .accessibilityHidden(true)
 

@@ -119,11 +119,11 @@ struct AppealEntryView: View {
         HStack(spacing: CivicaSpacing.md) {
             Image(systemName: icon)
                 .font(.system(size: 28))
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.brickAccent)
                 .frame(width: 48, height: 48)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                        .fill(CivicaColors.brickPrimary.opacity(0.12))
+                        .fill(CivicaColors.brickAccent.opacity(0.12))
                 )
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {

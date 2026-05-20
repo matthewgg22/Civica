@@ -182,7 +182,7 @@ private struct SavedForLaterBanner: View {
         }
         .padding(.vertical, CivicaSpacing.sm)
         .padding(.horizontal, CivicaSpacing.lg)
-        .background(CivicaColors.accentTeal)
+        .background(CivicaColors.pineSurface)
         .clipShape(Capsule())
         .shadow(color: CivicaColors.shadowSoft, radius: 4, x: 0, y: 2)
         .accessibilityElement(children: .combine)

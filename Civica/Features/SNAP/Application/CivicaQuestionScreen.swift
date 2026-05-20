@@ -215,7 +215,7 @@ struct CivicaQuestionScreen<Affordance: View>: View {
                 // the user sees the bar moving rather than snapping.
                 ProgressView(value: displayedFraction)
                     .progressViewStyle(.linear)
-                    .tint(CivicaColors.accentTeal)
+                    .tint(CivicaColors.pinePrimary)
                     .accessibilityLabel(
                         CivicaQuestionStrings.overallProgressAccessibilityLabel(
                             fraction: p.overallFraction ?? 0,
@@ -320,7 +320,7 @@ struct CivicaQuestionChoices: View {
                 } label: {
                     HStack(spacing: CivicaSpacing.md) {
                         Image(systemName: selection == option ? "checkmark.circle.fill" : "circle")
-                            .foregroundStyle(selection == option ? CivicaColors.brickPrimary : CivicaColors.graphite)
+                            .foregroundStyle(selection == option ? CivicaColors.pinePrimary : CivicaColors.graphite)
                             .font(.system(size: 22))
                             .accessibilityHidden(true)
                         Text(option)
@@ -336,7 +336,7 @@ struct CivicaQuestionChoices: View {
                     .overlay(
                         RoundedRectangle(cornerRadius: CivicaRadius.control)
                             .strokeBorder(
-                                selection == option ? CivicaColors.brickPrimary : CivicaColors.hairline,
+                                selection == option ? CivicaColors.pinePrimary : CivicaColors.hairline,
                                 lineWidth: selection == option ? 2 : 1
                             )
                     )
@@ -376,12 +376,12 @@ struct CivicaQuestionYesNo: View {
                 .frame(maxWidth: .infinity, minHeight: 56)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.control)
-                        .fill(isSelected ? CivicaColors.brickPrimary : CivicaColors.surfacePrimary)
+                        .fill(isSelected ? CivicaColors.pinePrimary : CivicaColors.surfacePrimary)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: CivicaRadius.control)
                         .strokeBorder(
-                            isSelected ? CivicaColors.brickPrimary : CivicaColors.hairline,
+                            isSelected ? CivicaColors.pinePrimary : CivicaColors.hairline,
                             lineWidth: isSelected ? 2 : 1
                         )
                 )

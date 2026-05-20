@@ -161,7 +161,7 @@ struct AppealExportSheetView: View {
         HStack(spacing: CivicaSpacing.md) {
             Image(systemName: icon)
                 .font(.system(size: 22))
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.brickAccent)
                 .frame(width: 32)
             Text(title)
                 .font(CivicaTypography.sectionHeader)

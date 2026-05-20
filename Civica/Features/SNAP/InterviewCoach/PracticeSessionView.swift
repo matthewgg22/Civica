@@ -234,7 +234,7 @@ struct PracticeSessionView: View {
                         }
                     }
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                     Spacer(minLength: 0)
                 }
                 .padding(.horizontal, CivicaSpacing.md)
@@ -294,7 +294,7 @@ struct PracticeSessionView: View {
                     Image(systemName: "arrow.up.circle.fill")
                         .resizable().scaledToFit()
                         .frame(width: 28, height: 28)
-                        .foregroundStyle(canSend ? CivicaColors.brickPrimary : CivicaColors.graphite.opacity(0.4))
+                        .foregroundStyle(canSend ? CivicaColors.pinePrimary : CivicaColors.graphite.opacity(0.4))
                         .frame(minWidth: 44, minHeight: 44)
                         .contentShape(Rectangle())
                 }
@@ -364,7 +364,7 @@ struct PracticeSessionView: View {
                         .foregroundStyle(.white)
                         .padding(.horizontal, CivicaSpacing.lg)
                         .padding(.vertical, CivicaSpacing.sm)
-                        .background(Capsule().fill(CivicaColors.brickPrimary))
+                        .background(Capsule().fill(CivicaColors.pinePrimary))
                 }
                 .buttonStyle(.plain)
             } else {
@@ -376,7 +376,7 @@ struct PracticeSessionView: View {
                         .foregroundStyle(.white)
                         .padding(.horizontal, CivicaSpacing.lg)
                         .padding(.vertical, CivicaSpacing.sm)
-                        .background(Capsule().fill(CivicaColors.brickPrimary))
+                        .background(Capsule().fill(CivicaColors.pinePrimary))
                 }
                 .buttonStyle(.plain)
             }
@@ -408,7 +408,7 @@ struct PracticeSessionView: View {
                 .foregroundStyle(.white)
                 .padding(.horizontal, CivicaSpacing.lg)
                 .padding(.vertical, CivicaSpacing.sm)
-                .background(Capsule().fill(CivicaColors.brickPrimary))
+                .background(Capsule().fill(CivicaColors.pinePrimary))
         }
         .buttonStyle(.plain)
         .frame(maxWidth: .infinity)
@@ -438,7 +438,7 @@ private struct TurnRowView: View {
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                         .fill(isApplicant
-                              ? CivicaColors.brickPrimary.opacity(0.12)
+                              ? CivicaColors.pinePrimary.opacity(0.12)
                               : CivicaColors.surfacePrimary)
                 )
                 .overlay(

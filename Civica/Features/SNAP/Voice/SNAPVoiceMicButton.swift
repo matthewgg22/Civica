@@ -104,20 +104,20 @@ struct SNAPVoiceMicButton: View {
     private var borderColor: Color {
         switch service.state {
         case .listening: return CivicaColors.destructivePressed
-        case .processing: return CivicaColors.brickPrimary.opacity(0.4)
+        case .processing: return CivicaColors.pinePrimary.opacity(0.4)
         case .error: return CivicaColors.warningAmber
         case .unavailable: return CivicaColors.secondaryButtonDisabledBorder
-        case .idle: return CivicaColors.brickPrimary.opacity(0.5)
+        case .idle: return CivicaColors.pinePrimary.opacity(0.5)
         }
     }
 
     private var iconColor: Color {
         switch service.state {
         case .listening: return .white
-        case .processing: return CivicaColors.brickPrimary
+        case .processing: return CivicaColors.pinePrimary
         case .error: return CivicaColors.warningAmber
         case .unavailable: return CivicaColors.muted
-        case .idle: return CivicaColors.brickPrimary
+        case .idle: return CivicaColors.pinePrimary
         }
     }
 
@@ -127,7 +127,7 @@ struct SNAPVoiceMicButton: View {
         case .processing:
             ProgressView()
                 .controlSize(.small)
-                .tint(CivicaColors.brickPrimary)
+                .tint(CivicaColors.pinePrimary)
         case .error:
             Image(systemName: "exclamationmark.circle.fill")
         case .unavailable:

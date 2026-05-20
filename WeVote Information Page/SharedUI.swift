@@ -151,7 +151,7 @@ private struct MyInfoLongPressModifier: ViewModifier {
             .overlay {
                 RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                     .stroke(
-                        CivicaColors.brickPrimary.opacity(showActivationRing ? 0.76 : (isPressing ? 0.34 : 0)),
+                        CivicaColors.pinePrimary.opacity(showActivationRing ? 0.76 : (isPressing ? 0.34 : 0)),
                         lineWidth: showActivationRing ? 2 : 1
                     )
                     .padding(-2)
@@ -795,14 +795,14 @@ struct WhyCallView: View {
                 systemImage: "bubble.left.and.bubble.right.fill"
             )
             .font(CivicaTypography.subheadStrong)
-            .foregroundColor(CivicaColors.brickPrimary)
+            .foregroundColor(CivicaColors.pinePrimary)
             .padding(.horizontal, CivicaSpacing.sm)
             .padding(.vertical, CivicaSpacing.sm)
             .background(CivicaColors.surfacePrimary)
             .clipShape(Capsule(style: .continuous))
             .overlay(
                 Capsule(style: .continuous)
-                    .stroke(CivicaColors.brickPrimary.opacity(0.34), lineWidth: 1)
+                    .stroke(CivicaColors.pinePrimary.opacity(0.34), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
@@ -838,7 +838,7 @@ private struct WhyCallStatCard: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(stat.value)
                 .font(.title2.weight(.bold))
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
             if !stat.title.isEmpty {
                 Text(stat.title)
                     .font(CivicaTypography.sectionHeader)

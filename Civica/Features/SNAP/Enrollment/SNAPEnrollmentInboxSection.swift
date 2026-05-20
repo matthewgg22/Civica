@@ -24,7 +24,7 @@ struct SNAPEnrollmentInboxSection: View {
         if isLoading {
             HStack {
                 ProgressView()
-                    .tint(CivicaColors.brickPrimary)
+                    .tint(CivicaColors.pinePrimary)
                 Text(Strings.loading.value(in: language))
                     .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.graphite)

@@ -461,7 +461,7 @@ struct VoterRegistrationView: View {
                 prePhaseHeaderText,
                 "",
                 CivicaColors.paper,
-                CivicaColors.brickPrimary.opacity(0.68)
+                CivicaColors.pinePrimary.opacity(0.68)
             ),
             (
                 .duringElection,
@@ -637,7 +637,7 @@ struct VoterRegistrationView: View {
                                     Text(l("app.reps.action.edit_location", "Change Location"))
                                         .font(CivicaTypography.supportStrong)
                                         .italic()
-                                        .foregroundColor(CivicaColors.brickPrimary)
+                                        .foregroundColor(CivicaColors.pinePrimary)
                                         .lineLimit(1)
                                 }
                                 .buttonStyle(.plain)
@@ -720,7 +720,7 @@ struct VoterRegistrationView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(section.title)
                     .font(CivicaTypography.subheadBold)
-                    .foregroundColor(CivicaColors.brickPrimary)
+                    .foregroundColor(CivicaColors.pinePrimary)
                 if !section.subtitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     Text(section.subtitle)
                         .font(CivicaTypography.supportStrong)
@@ -801,7 +801,7 @@ struct VoterRegistrationView: View {
                             HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                                 Text("•")
                                     .font(CivicaTypography.supportStrong)
-                                    .foregroundColor(CivicaColors.brickPrimary)
+                                    .foregroundColor(CivicaColors.pinePrimary)
                                 Text(bullet)
                                     .font(CivicaTypography.support)
                                     .foregroundColor(CivicaColors.ink)
@@ -850,11 +850,11 @@ struct VoterRegistrationView: View {
                     .font(CivicaTypography.subheadStrong)
                     .padding(.horizontal, CivicaSpacing.lg)
                     .padding(.vertical, CivicaSpacing.sm)
-                    .foregroundColor(CivicaColors.brickPrimary)
-                    .background(CivicaColors.brickPrimary.opacity(0.10))
+                    .foregroundColor(CivicaColors.pinePrimary)
+                    .background(CivicaColors.pinePrimary.opacity(0.10))
                     .overlay(
                         Capsule()
-                            .stroke(CivicaColors.brickPrimary.opacity(0.34), lineWidth: 1)
+                            .stroke(CivicaColors.pinePrimary.opacity(0.34), lineWidth: 1)
                     )
                     .clipShape(Capsule())
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -865,7 +865,7 @@ struct VoterRegistrationView: View {
                     .font(CivicaTypography.sectionHeader)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, CivicaSpacing.md)
-                    .background(CivicaColors.brickPrimary)
+                    .background(CivicaColors.pinePrimary)
                     .foregroundColor(CivicaColors.onPrimaryText)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
                 }
@@ -878,7 +878,7 @@ struct VoterRegistrationView: View {
                     handleCardAction(secondaryAction)
                 }
                 .font(CivicaTypography.subheadStrong)
-                .foregroundColor(CivicaColors.brickPrimary)
+                .foregroundColor(CivicaColors.pinePrimary)
             }
 
             if card.kind == .deadline {
@@ -902,7 +902,7 @@ struct VoterRegistrationView: View {
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                .stroke(CivicaColors.brickPrimary.opacity(0.12), lineWidth: 1)
+                .stroke(CivicaColors.pinePrimary.opacity(0.12), lineWidth: 1)
         )
         .shadow(color: CivicaColors.ink.opacity(0.05), radius: 5, x: 0, y: 2)
     }
@@ -922,13 +922,13 @@ struct VoterRegistrationView: View {
                         )
                     )
                         .font(CivicaTypography.supportStrong)
-                        .foregroundColor(CivicaColors.brickPrimary)
+                        .foregroundColor(CivicaColors.pinePrimary)
 
                     Spacer(minLength: 8)
 
                     Image(systemName: "chevron.down")
                         .font(CivicaTypography.captionBold)
-                        .foregroundColor(CivicaColors.brickPrimary)
+                        .foregroundColor(CivicaColors.pinePrimary)
                         .rotationEffect(.degrees(showStepOneWhyRegisterDropdown ? 180 : 0))
                         .animation(dropdownRevealAnimation, value: showStepOneWhyRegisterDropdown)
                 }
@@ -941,7 +941,7 @@ struct VoterRegistrationView: View {
                     (
                         Text(l("app.registration.dropdown.why_register.intro.prefix", "The "))
                         + Text(l("app.guide.party.democrat", "Democrat"))
-                            .foregroundColor(CivicaColors.brickPrimary)
+                            .foregroundColor(CivicaColors.pinePrimary)
                             .fontWeight(.semibold)
                         + Text(l("app.registration.dropdown.why_register.intro.middle", " and "))
                         + Text(l("app.guide.party.republican", "Republican"))
@@ -999,13 +999,13 @@ struct VoterRegistrationView: View {
                         )
                     )
                     .font(CivicaTypography.supportStrong)
-                    .foregroundColor(CivicaColors.brickPrimary)
+                    .foregroundColor(CivicaColors.pinePrimary)
 
                     Spacer(minLength: 8)
 
                     Image(systemName: "chevron.down")
                         .font(CivicaTypography.captionBold)
-                        .foregroundColor(CivicaColors.brickPrimary)
+                        .foregroundColor(CivicaColors.pinePrimary)
                         .rotationEffect(.degrees(showStepTwoPollIssuesDropdown ? 180 : 0))
                         .animation(dropdownRevealAnimation, value: showStepTwoPollIssuesDropdown)
                 }
@@ -1048,7 +1048,7 @@ struct VoterRegistrationView: View {
                                 HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                                     Text("•")
                                         .font(CivicaTypography.supportStrong)
-                                        .foregroundColor(CivicaColors.brickPrimary)
+                                        .foregroundColor(CivicaColors.pinePrimary)
                                     Text(bullet)
                                         .font(CivicaTypography.support)
                                         .foregroundColor(CivicaColors.ink)
@@ -1065,7 +1065,7 @@ struct VoterRegistrationView: View {
                     .padding(.horizontal, CivicaSpacing.lg)
                     .padding(.vertical, CivicaSpacing.sm)
                     .foregroundColor(CivicaColors.onPrimaryText)
-                    .background(CivicaColors.brickPrimary)
+                    .background(CivicaColors.pinePrimary)
                     .clipShape(Capsule())
                     .frame(maxWidth: .infinity, alignment: .center)
                 }
@@ -1099,13 +1099,13 @@ struct VoterRegistrationView: View {
                         )
                     )
                     .font(CivicaTypography.supportStrong)
-                    .foregroundColor(CivicaColors.brickPrimary)
+                    .foregroundColor(CivicaColors.pinePrimary)
 
                     Spacer(minLength: 8)
 
                     Image(systemName: showStepThreeBallotErrorDropdown ? "chevron.up" : "chevron.down")
                         .font(CivicaTypography.captionBold)
-                        .foregroundColor(CivicaColors.brickPrimary)
+                        .foregroundColor(CivicaColors.pinePrimary)
                 }
             }
             .buttonStyle(.plain)
@@ -1132,7 +1132,7 @@ struct VoterRegistrationView: View {
                             HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                                 Text("•")
                                     .font(CivicaTypography.supportStrong)
-                                    .foregroundColor(CivicaColors.brickPrimary)
+                                    .foregroundColor(CivicaColors.pinePrimary)
                                 Text(bullet)
                                     .font(CivicaTypography.support)
                                     .foregroundColor(CivicaColors.ink)
@@ -1191,7 +1191,7 @@ struct VoterRegistrationView: View {
             if !stepLabel.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 Text(stepLabel)
                     .font(CivicaTypography.supportBold)
-                    .foregroundColor(CivicaColors.brickPrimary)
+                    .foregroundColor(CivicaColors.pinePrimary)
             }
             Text(title)
                 .font(CivicaTypography.cardTitle)
@@ -1214,14 +1214,14 @@ struct VoterRegistrationView: View {
                         .stroke(CivicaColors.iconOnPrimaryBorder, lineWidth: 1)
                     Image(systemName: "arrow.up.right")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(CivicaColors.brickPrimary)
+                        .foregroundColor(CivicaColors.pinePrimary)
                 }
                 .frame(width: 28, height: 28)
             }
             .padding(.horizontal, CivicaSpacing.lg)
             .padding(.vertical, CivicaSpacing.sm)
             .frame(maxWidth: .infinity)
-            .background(CivicaColors.brickPrimary)
+            .background(CivicaColors.pinePrimary)
             .clipShape(Capsule())
         }
         .buttonStyle(.plain)
@@ -1244,11 +1244,11 @@ struct VoterRegistrationView: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, CivicaSpacing.md)
             .foregroundColor(isEnabled ? CivicaColors.onPrimaryText : CivicaColors.graphite)
-            .background(isEnabled ? CivicaColors.brickPrimary : CivicaColors.secondaryButtonFillDisabled)
+            .background(isEnabled ? CivicaColors.pinePrimary : CivicaColors.secondaryButtonFillDisabled)
             .overlay(
                 Capsule(style: .continuous)
                     .stroke(
-                        isEnabled ? CivicaColors.brickPrimary.opacity(0.25) : CivicaColors.secondaryButtonDisabledBorder,
+                        isEnabled ? CivicaColors.pinePrimary.opacity(0.25) : CivicaColors.secondaryButtonDisabledBorder,
                         lineWidth: 1
                     )
             )
@@ -1269,11 +1269,11 @@ struct VoterRegistrationView: View {
             .font(CivicaTypography.subheadStrong)
             .frame(maxWidth: .infinity)
             .padding(.vertical, CivicaSpacing.sm)
-            .foregroundColor(CivicaColors.brickPrimary)
-            .background(CivicaColors.brickPrimary.opacity(0.10))
+            .foregroundColor(CivicaColors.pinePrimary)
+            .background(CivicaColors.pinePrimary.opacity(0.10))
             .overlay(
                 Capsule()
-                    .stroke(CivicaColors.brickPrimary.opacity(0.34), lineWidth: 1)
+                    .stroke(CivicaColors.pinePrimary.opacity(0.34), lineWidth: 1)
             )
             .clipShape(Capsule())
 
@@ -1283,7 +1283,7 @@ struct VoterRegistrationView: View {
                 } label: {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(CivicaColors.brickPrimary)
+                        .foregroundColor(CivicaColors.pinePrimary)
                         .frame(width: 30, height: 30)
                         .background(
                             Circle()
@@ -1303,7 +1303,7 @@ struct VoterRegistrationView: View {
         } label: {
             Image(systemName: "square.and.arrow.up")
                 .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(CivicaColors.brickPrimary)
+                .foregroundColor(CivicaColors.pinePrimary)
                 .frame(width: 30, height: 30)
                 .background(
                     Circle()
@@ -1348,7 +1348,7 @@ struct VoterRegistrationView: View {
         .background(CivicaColors.tealSurface)
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                .stroke(CivicaColors.brickPrimary.opacity(0.16), lineWidth: 1)
+                .stroke(CivicaColors.pinePrimary.opacity(0.16), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
     }
@@ -1380,7 +1380,7 @@ struct VoterRegistrationView: View {
         .background(CivicaColors.tealSurface.opacity(0.72))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 1)
+                .stroke(CivicaColors.pinePrimary.opacity(0.18), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
     }
@@ -1445,7 +1445,7 @@ struct VoterRegistrationView: View {
                     HStack(alignment: .top, spacing: CivicaSpacing.xs) {
                         Text("•")
                             .font(CivicaTypography.captionStrong)
-                            .foregroundColor(CivicaColors.brickPrimary)
+                            .foregroundColor(CivicaColors.pinePrimary)
                         Text(note)
                             .font(CivicaTypography.caption)
                             .foregroundColor(CivicaColors.graphite)
@@ -1462,7 +1462,7 @@ struct VoterRegistrationView: View {
         .background(CivicaColors.tealSurface.opacity(0.62))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                .stroke(CivicaColors.brickPrimary.opacity(0.16), lineWidth: 1)
+                .stroke(CivicaColors.pinePrimary.opacity(0.16), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
     }
@@ -1489,7 +1489,7 @@ struct VoterRegistrationView: View {
                     .foregroundColor(CivicaColors.onPrimaryText)
                     .padding(.horizontal, CivicaSpacing.sm)
                     .padding(.vertical, CivicaSpacing.sm)
-                    .background(CivicaColors.brickPrimary)
+                    .background(CivicaColors.pinePrimary)
                     .clipShape(Capsule())
             }
             .buttonStyle(.plain)
@@ -1504,7 +1504,7 @@ struct VoterRegistrationView: View {
         .background(CivicaColors.tealSurface)
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                .stroke(CivicaColors.brickPrimary.opacity(0.16), lineWidth: 1)
+                .stroke(CivicaColors.pinePrimary.opacity(0.16), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
     }
@@ -1522,7 +1522,7 @@ struct VoterRegistrationView: View {
         HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Image(systemName: symbolName)
                 .font(.system(size: 15, weight: .semibold))
-                .foregroundColor(CivicaColors.brickPrimary)
+                .foregroundColor(CivicaColors.pinePrimary)
                 .frame(width: 24, height: 24, alignment: .center)
 
             (
@@ -1687,7 +1687,7 @@ struct VoterRegistrationView: View {
             upcomingElectionTimelinePreviewCard
 
             Divider()
-                .overlay(CivicaColors.brickPrimary.opacity(0.16))
+                .overlay(CivicaColors.pinePrimary.opacity(0.16))
                 .padding(.top, CivicaSpacing.xs)
 
             registrationGuideStripContent(proxy: proxy)
@@ -1708,7 +1708,7 @@ struct VoterRegistrationView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                .stroke(CivicaColors.brickPrimary.opacity(0.12), lineWidth: 1)
+                .stroke(CivicaColors.pinePrimary.opacity(0.12), lineWidth: 1)
         )
     }
 
@@ -1739,7 +1739,7 @@ struct VoterRegistrationView: View {
                     "\(l("app.registration.readiness.deadline", "Registration deadline")): \(formattedElectionDay(guideContent?.registrationDeadline))"
                 )
                 .font(CivicaTypography.captionStrong)
-                .foregroundColor(CivicaColors.brickPrimary)
+                .foregroundColor(CivicaColors.pinePrimary)
                 .padding(.horizontal, CivicaSpacing.sm)
                 .padding(.vertical, CivicaSpacing.xs)
                 .background(CivicaColors.tealSurface)
@@ -1789,7 +1789,7 @@ struct VoterRegistrationView: View {
         VStack(alignment: .center, spacing: CivicaSpacing.xs) {
             Text(title)
                 .font(CivicaTypography.captionBold)
-                .foregroundColor(CivicaColors.brickPrimary)
+                .foregroundColor(CivicaColors.pinePrimary)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .minimumScaleFactor(0.8)
@@ -1806,7 +1806,7 @@ struct VoterRegistrationView: View {
         .background(CivicaColors.tealSurface.opacity(0.85))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 1)
+                .stroke(CivicaColors.pinePrimary.opacity(0.18), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
     }
@@ -1877,7 +1877,7 @@ struct VoterRegistrationView: View {
             )
             .overlay(
                 BottomRoundedRectangle(radius: 12)
-                    .stroke(CivicaColors.brickPrimary.opacity(0.22), lineWidth: 2)
+                    .stroke(CivicaColors.pinePrimary.opacity(0.22), lineWidth: 2)
             )
             .clipShape(BottomRoundedRectangle(radius: 12))
             .civicaShadow(.card)
@@ -2012,9 +2012,9 @@ struct VoterRegistrationView: View {
     private func guidePhaseHighlightColor(for phase: VoterRegistrationCard.Phase) -> Color {
         switch phase {
         case .preElection:
-            return CivicaColors.brickPrimary
+            return CivicaColors.pinePrimary
         case .duringElection:
-            return CivicaColors.timelineFocusGold
+            return CivicaColors.wheatPop
         case .postElection:
             return CivicaColors.accentTeal
         }
@@ -2179,7 +2179,7 @@ struct VoterRegistrationView: View {
                     .fill(CivicaColors.tealSurface)
                 Text(registrationStateCode ?? "US")
                     .font(CivicaTypography.captionBold)
-                    .foregroundColor(CivicaColors.brickPrimary)
+                    .foregroundColor(CivicaColors.pinePrimary)
             }
             .frame(width: width, height: height)
         }
@@ -2255,7 +2255,7 @@ struct VoterRegistrationView: View {
             (
                 Text(l("app.guide.card.party_affiliation.prefix", "The "))
                 + Text(l("app.guide.party.democrat", "Democrat"))
-                    .foregroundColor(CivicaColors.brickPrimary)
+                    .foregroundColor(CivicaColors.pinePrimary)
                     .fontWeight(.semibold)
                 + Text(l("app.guide.card.party_affiliation.middle", " and "))
                 + Text(l("app.guide.party.republican", "Republican"))
@@ -2290,7 +2290,7 @@ struct VoterRegistrationView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                .stroke(CivicaColors.brickPrimary.opacity(0.24), lineWidth: 1)
+                .stroke(CivicaColors.pinePrimary.opacity(0.24), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
     }
@@ -2321,7 +2321,7 @@ struct VoterRegistrationView: View {
         .background(CivicaColors.tealSurface.opacity(0.72))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                .stroke(CivicaColors.brickPrimary.opacity(0.18), lineWidth: 1)
+                .stroke(CivicaColors.pinePrimary.opacity(0.18), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
     }
@@ -2347,7 +2347,7 @@ struct VoterRegistrationView: View {
     private var currentPartyColor: Color {
         switch planVM.selectedParty {
         case .democrat:
-            return CivicaColors.brickPrimary
+            return CivicaColors.pinePrimary
         case .republican:
             return CivicaColors.destructive
         case .independent:

@@ -43,7 +43,7 @@ struct CivicaRootView: View {
                     NavigationStack {
                         rootSurface
                     }
-                    .tint(CivicaColors.brickPrimary)
+                    .tint(CivicaColors.pinePrimary)
                     // Single shared status store for everything below the
                     // root. SNAPEligibilityIntroView writes the verdict +
                     // advances status; CivicaRootView's rootSurface

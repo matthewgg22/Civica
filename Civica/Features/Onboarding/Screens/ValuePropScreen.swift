@@ -20,7 +20,7 @@ struct ValuePropScreen: View {
 
             Image(systemName: "clock.arrow.circlepath")
                 .font(.system(size: 56, weight: .light))
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
                 .accessibilityHidden(true)
 
             Text(OnboardingStrings.valuePropTitle.value(in: lang))

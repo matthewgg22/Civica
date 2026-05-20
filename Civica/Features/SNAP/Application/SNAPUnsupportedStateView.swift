@@ -58,7 +58,7 @@ struct SNAPUnsupportedStateView: View {
                         } label: {
                             Text(SNAPUnsupportedStateStrings.openDirectoryCTA.value(in: language))
                                 .font(CivicaTypography.footnoteStrong)
-                                .foregroundStyle(CivicaColors.brickPrimary)
+                                .foregroundStyle(CivicaColors.pinePrimary)
                         }
                         .buttonStyle(.plain)
 

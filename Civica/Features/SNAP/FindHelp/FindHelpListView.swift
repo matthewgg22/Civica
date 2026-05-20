@@ -58,7 +58,7 @@ private struct FindHelpListRow: View {
                     }
                     Spacer()
                     Image(systemName: "chevron.right")
-                        .foregroundStyle(isSelected ? CivicaColors.brickPrimary : CivicaColors.graphite)
+                        .foregroundStyle(isSelected ? CivicaColors.pinePrimary : CivicaColors.graphite)
                         .accessibilityHidden(true)
                 }
             }
@@ -68,13 +68,13 @@ private struct FindHelpListRow: View {
         .background(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .fill(isSelected
-                    ? CivicaColors.brickPrimary.opacity(0.06)
+                    ? CivicaColors.pinePrimary.opacity(0.06)
                     : CivicaColors.surfacePrimary)
         )
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
                 .stroke(
-                    isSelected ? CivicaColors.brickPrimary : CivicaColors.hairline,
+                    isSelected ? CivicaColors.pinePrimary : CivicaColors.hairline,
                     lineWidth: isSelected ? 1.5 : 1
                 )
         )
@@ -120,7 +120,7 @@ struct ServiceTypeBadge: View {
 
     var backgroundColor: Color {
         switch serviceType {
-        case .snapApplicationHelp: return CivicaColors.brickPrimary
+        case .snapApplicationHelp: return CivicaColors.pinePrimary
         case .foodAssistance: return CivicaColors.warningAmber
         case .both: return CivicaColors.indigoStatus
         }

@@ -200,7 +200,7 @@ struct NYCMayoralElectionView: View {
                     Text(l("app.reps.action.my_info", "My Info") + "...")
                         .font(CivicaTypography.supportStrong)
                         .italic()
-                        .foregroundColor(CivicaColors.brickPrimary)
+                        .foregroundColor(CivicaColors.pinePrimary)
                         .lineLimit(1)
                 }
                 .buttonStyle(.plain)
@@ -613,7 +613,7 @@ struct NYCMayoralElectionView: View {
         composed += AttributedString(primaryPhrase.prefixText)
         composed += linkedDescriptorSegment(
             text: primaryPhrase.highlightedPhrase,
-            color: CivicaColors.accentTeal,
+            color: CivicaColors.pinePrimary,
             target: .primaryGuide
         )
         composed += AttributedString(".")
@@ -2317,7 +2317,7 @@ struct NYCMayoralElectionView: View {
             : election.jurisdictionName
         return Text(". \(stateDisplayName) has ")
             + Text(primaryPhrase)
-                .foregroundColor(CivicaColors.accentTeal)
+                .foregroundColor(CivicaColors.pinePrimary)
                 .bold()
                 .italic()
     }
@@ -2368,7 +2368,7 @@ struct NYCMayoralElectionView: View {
                 (
                     Text("• ").foregroundColor(CivicaColors.ink)
                     + Text("Registered Democrat")
-                        .foregroundColor(CivicaColors.brickPrimary)
+                        .foregroundColor(CivicaColors.pinePrimary)
                         .bold()
                         .fontWeight(.heavy)
                     + Text(": Only Democrats advance to the general election.")
@@ -2651,14 +2651,14 @@ struct NYCMayoralElectionView: View {
 
                                 Text(isExpanded ? "Tap to collapse" : "Tap to expand")
                                     .font(CivicaTypography.captionStrong)
-                                    .foregroundColor(CivicaColors.brickPrimary)
+                                    .foregroundColor(CivicaColors.pinePrimary)
                             }
 
                             Spacer(minLength: 8)
 
                             Image(systemName: isExpanded ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
                                 .font(.subheadline)
-                                .foregroundColor(CivicaColors.brickPrimary.opacity(0.9))
+                                .foregroundColor(CivicaColors.pinePrimary.opacity(0.9))
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -2776,7 +2776,7 @@ struct NYCMayoralElectionView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, CivicaSpacing.sm)
                     .padding(.vertical, CivicaSpacing.sm)
-                    .background(CivicaColors.brickPrimary)
+                    .background(CivicaColors.pinePrimary)
                     .clipShape(Capsule())
             }
             .buttonStyle(.plain)
@@ -3198,7 +3198,7 @@ private enum ElectionGuideCardAccent {
         case .neutral:
             return CivicaColors.ink
         case .primary:
-            return CivicaColors.brickPrimary
+            return CivicaColors.pinePrimary
         case .primaryHighlight:
             return CivicaColors.accentTeal
         case .midterm:
@@ -3208,7 +3208,7 @@ private enum ElectionGuideCardAccent {
         case .runoff:
             return CivicaColors.destructive
         case .presidential:
-            return CivicaColors.brickPrimary
+            return CivicaColors.pinePrimary
         case .special:
             return CivicaColors.destructive
         case .specialRules:

@@ -82,7 +82,7 @@ struct RaceCandidatesView: View {
                                 if let websiteURL = URL(string: candidate.websiteURL) {
                                     Link(l("app.race_candidates.website", "Website"), destination: websiteURL)
                                         .font(CivicaTypography.caption)
-                                        .foregroundColor(CivicaColors.brickPrimary)
+                                        .foregroundColor(CivicaColors.pinePrimary)
                                 } else {
                                     Text(l("app.race_candidates.website", "Website"))
                                         .font(CivicaTypography.caption)

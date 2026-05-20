@@ -141,7 +141,7 @@ struct PhantomRecertFlowView: View {
     private var phantomBanner: some View {
         HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Image(systemName: "wand.and.stars")
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text(PhantomRecertFlowStrings.bannerTitle.value(in: language))

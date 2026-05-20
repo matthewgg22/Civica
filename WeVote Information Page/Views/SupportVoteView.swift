@@ -207,7 +207,7 @@ struct SupportVoteView: View {
             if let success = applePayManager.successMessage, !success.isEmpty {
                 Label(success, systemImage: "checkmark.circle.fill")
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundStyle(CivicaColors.accentTeal)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                     .padding(CivicaSpacing.sm)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(CivicaColors.statusSuccessSurface)
@@ -277,12 +277,12 @@ struct SupportVoteView: View {
                         .frame(height: 40)
                         .background(
                             RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                                .fill(selectedAmount == preset ? CivicaColors.brickPrimary : CivicaColors.tealSurface)
+                                .fill(selectedAmount == preset ? CivicaColors.pinePrimary : CivicaColors.tealSurface)
                         )
                         .foregroundStyle(selectedAmount == preset ? CivicaColors.surfacePrimary : CivicaColors.ink)
                         .overlay(
                             RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                                .stroke(selectedAmount == preset ? CivicaColors.brickPrimary : CivicaColors.ink.opacity(0.08), lineWidth: 1)
+                                .stroke(selectedAmount == preset ? CivicaColors.pinePrimary : CivicaColors.ink.opacity(0.08), lineWidth: 1)
                         )
                 }
                 .buttonStyle(.plain)

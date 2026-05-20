@@ -130,7 +130,7 @@ struct SNAPApplicationPacketView: View {
                     Task { await generate() }
                 }
                 .font(CivicaTypography.subheadStrong)
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
             }
             .padding(CivicaSpacing.lg)
             .frame(maxWidth: .infinity, alignment: .leading)

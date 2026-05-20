@@ -143,7 +143,7 @@ struct SNAPWorkRequirementsView: View {
                     .font(CivicaTypography.body)
                     .foregroundStyle(CivicaColors.ink)
             }
-            .tint(CivicaColors.accentTeal)
+            .tint(CivicaColors.pinePrimary)
             .padding(.horizontal, CivicaSpacing.lg)
             .padding(.vertical, CivicaSpacing.md)
 
@@ -163,7 +163,7 @@ struct SNAPWorkRequirementsView: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
-                .tint(CivicaColors.accentTeal)
+                .tint(CivicaColors.pinePrimary)
             }
             .padding(.horizontal, CivicaSpacing.lg)
             .padding(.vertical, CivicaSpacing.md)
@@ -216,7 +216,7 @@ struct SNAPWorkRequirementsView: View {
             .frame(maxWidth: .infinity)
             .frame(minHeight: 56)
         }
-        .background(CivicaColors.brickPrimary)
+        .background(CivicaColors.pinePrimary)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         .disabled(isEvaluating)
     }

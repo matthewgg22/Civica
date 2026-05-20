@@ -98,18 +98,18 @@ struct QuestionBrowserView: View {
             Text(state.code)
                 .font(CivicaTypography.subheadStrong)
                 .foregroundStyle(isSelected
-                                 ? CivicaColors.brickPrimary
+                                 ? CivicaColors.pinePrimary
                                  : (isSupported ? CivicaColors.ink : CivicaColors.muted))
                 .frame(width: 44, height: 30)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
                         .fill(isSelected
-                              ? CivicaColors.brickPrimary.opacity(0.12)
+                              ? CivicaColors.pinePrimary.opacity(0.12)
                               : CivicaColors.surfacePrimary)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                        .stroke(isSelected ? CivicaColors.brickPrimary : CivicaColors.hairline,
+                        .stroke(isSelected ? CivicaColors.pinePrimary : CivicaColors.hairline,
                                 lineWidth: 1)
                 )
                 .opacity(isSupported ? 1.0 : 0.55)
@@ -160,12 +160,12 @@ struct QuestionBrowserView: View {
         Button(action: action) {
             Text(label)
                 .font(CivicaTypography.captionStrong)
-                .foregroundStyle(isSelected ? Color.white : CivicaColors.brickPrimary)
+                .foregroundStyle(isSelected ? Color.white : CivicaColors.pinePrimary)
                 .padding(.horizontal, CivicaSpacing.sm)
                 .padding(.vertical, CivicaSpacing.xs)
                 .background(
                     Capsule()
-                        .fill(isSelected ? CivicaColors.brickPrimary : CivicaColors.brickPrimary.opacity(0.10))
+                        .fill(isSelected ? CivicaColors.pinePrimary : CivicaColors.pinePrimary.opacity(0.10))
                 )
         }
         .buttonStyle(.plain)
@@ -207,7 +207,7 @@ struct QuestionBrowserView: View {
                         .foregroundStyle(CivicaColors.graphite)
                     Text(question.category.localizedLabel(in: language))
                         .font(CivicaTypography.captionStrong)
-                        .foregroundStyle(CivicaColors.brickPrimary)
+                        .foregroundStyle(CivicaColors.pinePrimary)
                 }
             }
 

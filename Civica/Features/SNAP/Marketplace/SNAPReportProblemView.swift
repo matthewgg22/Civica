@@ -63,7 +63,7 @@ struct SNAPReportProblemView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(cancelLabel) { dismiss() }
-                        .foregroundStyle(CivicaColors.brickPrimary)
+                        .foregroundStyle(CivicaColors.pinePrimary)
                 }
             }
         }
@@ -82,7 +82,7 @@ struct SNAPReportProblemView: View {
             .foregroundStyle(CivicaColors.onPrimaryText)
             .frame(maxWidth: .infinity)
             .frame(minHeight: 56)
-            .background(CivicaColors.brickPrimary)
+            .background(CivicaColors.pinePrimary)
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         }
     }

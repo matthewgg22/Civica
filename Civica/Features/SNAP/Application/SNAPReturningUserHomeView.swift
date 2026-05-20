@@ -223,8 +223,8 @@ struct SNAPReturningUserHomeView: View {
         case .documentsRequested, .recertDue: return CivicaColors.warningAmber
         case .decisionApproved: return CivicaColors.accentTeal
         case .decisionDenied: return CivicaColors.destructive
-        case .submittedToState, .interviewScheduled, .interviewCompleted: return CivicaColors.brickPrimary
-        default: return CivicaColors.brickPrimary
+        case .submittedToState, .interviewScheduled, .interviewCompleted: return CivicaColors.pinePrimary
+        default: return CivicaColors.pinePrimary
         }
     }
 }

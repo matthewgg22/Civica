@@ -73,7 +73,7 @@ struct SNAPConversationView: View {
                     .foregroundColor(CivicaColors.onPrimaryText)
                     .padding(.horizontal, CivicaSpacing.md)
                     .padding(.vertical, CivicaSpacing.sm)
-                    .background(CivicaColors.brickPrimary)
+                    .background(CivicaColors.pinePrimary)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
             }
         case .assistant(let turn, _):
@@ -156,7 +156,7 @@ struct SNAPConversationView: View {
                         Image(systemName: "arrow.right")
                             .accessibilityHidden(true)
                     }
-                    .foregroundColor(CivicaColors.brickPrimary)
+                    .foregroundColor(CivicaColors.pinePrimary)
                     .padding(.top, CivicaSpacing.xs)
                 }
                 .accessibilityHint("Shows every deduction line that produced this benefit estimate.")
@@ -331,7 +331,7 @@ struct SNAPConversationView: View {
                 .padding(.vertical, CivicaSpacing.sm)
                 .background(
                     style == .primary
-                        ? (enabled ? CivicaColors.brickPrimary : CivicaColors.brickPrimaryDisabled)
+                        ? (enabled ? CivicaColors.pinePrimary : CivicaColors.brickPrimaryDisabled)
                         : CivicaColors.secondaryButtonFill
                 )
                 .overlay(

@@ -102,7 +102,7 @@ struct SNAPErrorRiskBadge: View {
 
     private func dotColor(_ tier: ErrorRiskTier) -> Color {
         switch tier {
-        case .high:       return CivicaColors.brickPrimary
+        case .high:       return CivicaColors.pinePrimary
         case .medium:     return CivicaColors.warningAmber
         case .low:        return CivicaColors.teal
         case .incomplete: return CivicaColors.graphite
@@ -111,7 +111,7 @@ struct SNAPErrorRiskBadge: View {
 
     private func factorColor(_ tier: ErrorRiskTier) -> Color {
         switch tier {
-        case .high:   return CivicaColors.brickPrimary
+        case .high:   return CivicaColors.pinePrimary
         case .medium: return CivicaColors.warningAmber
         default:      return CivicaColors.graphite
         }
@@ -119,7 +119,7 @@ struct SNAPErrorRiskBadge: View {
 
     private func cardBackground(_ tier: ErrorRiskTier) -> Color {
         switch tier {
-        case .high:       return CivicaColors.brickPrimary.opacity(0.06)
+        case .high:       return CivicaColors.pinePrimary.opacity(0.06)
         case .medium:     return CivicaColors.warningAmber.opacity(0.06)
         case .low:        return CivicaColors.tealSurface
         case .incomplete: return CivicaColors.surfacePrimary
@@ -128,7 +128,7 @@ struct SNAPErrorRiskBadge: View {
 
     private func cardBorder(_ tier: ErrorRiskTier) -> Color {
         switch tier {
-        case .high:       return CivicaColors.brickPrimary.opacity(0.25)
+        case .high:       return CivicaColors.pinePrimary.opacity(0.25)
         case .medium:     return CivicaColors.warningAmber.opacity(0.25)
         case .low:        return CivicaColors.teal.opacity(0.25)
         case .incomplete: return CivicaColors.hairline

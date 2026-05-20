@@ -251,9 +251,9 @@ struct MobilizationView: View {
                                             .padding(.vertical, CivicaSpacing.md)
                                     }
                                     .buttonStyle(MAPVUtilityButtonStyle(
-                                        fill: CivicaColors.brickPrimary,
+                                        fill: CivicaColors.pinePrimary,
                                         foreground: .white,
-                                        border: CivicaColors.brickPrimary.opacity(0.85)
+                                        border: CivicaColors.pinePrimary.opacity(0.85)
                                     ))
                                     .padding(.horizontal)
                                 }
@@ -266,7 +266,7 @@ struct MobilizationView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, CivicaSpacing.md)
                             .padding(.horizontal, CivicaSpacing.lg)
-                            .background(CivicaColors.brickPrimary)
+                            .background(CivicaColors.pinePrimary)
                             .foregroundColor(.white)
                             .clipShape(Capsule(style: .continuous))
                             .voteNowPillDualOrbit(
@@ -295,7 +295,7 @@ struct MobilizationView: View {
                                                 .fixedSize(horizontal: true, vertical: true)
                                         } else if section == .feedback {
                                             Image(systemName: "bubble.left.and.bubble.right.fill")
-                                                .foregroundColor(CivicaColors.brickPrimary)
+                                                .foregroundColor(CivicaColors.pinePrimary)
                                                 .frame(width: 30, alignment: .center)
                                         }
                                         Text(section.localizedTitle(locale: locale))
@@ -805,7 +805,7 @@ struct FeedbackView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, CivicaSpacing.md)
-                        .background(canSend ? CivicaColors.brickPrimary : CivicaColors.hairline.opacity(0.6))
+                        .background(canSend ? CivicaColors.pinePrimary : CivicaColors.hairline.opacity(0.6))
                         .foregroundColor(.white)
                         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     }
@@ -923,7 +923,7 @@ private struct FeedbackSubmissionConfirmationView: View {
 
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 68, weight: .semibold))
-                .foregroundColor(CivicaColors.accentTeal)
+                .foregroundColor(CivicaColors.pinePrimary)
 
             Text(l("app.feedback.success.screen.title", "Feedback Sent"))
                 .font(.title2.weight(.bold))
@@ -941,7 +941,7 @@ private struct FeedbackSubmissionConfirmationView: View {
             .font(CivicaTypography.sectionHeader)
             .frame(maxWidth: .infinity)
             .padding(.vertical, CivicaSpacing.md)
-            .background(CivicaColors.brickPrimary)
+            .background(CivicaColors.pinePrimary)
             .foregroundColor(.white)
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             .buttonStyle(.plain)

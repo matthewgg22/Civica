@@ -142,7 +142,7 @@ struct CivicaSNAPFlowView: View {
     private var recertBanner: some View {
         HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Image(systemName: "arrow.triangle.2.circlepath")
-                .foregroundStyle(CivicaColors.brickPrimary)
+                .foregroundStyle(CivicaColors.pinePrimary)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text(CivicaSNAPFlowStrings.recertBannerTitle.value(in: language))

@@ -53,7 +53,7 @@ struct StatusSummaryCard: View {
                     .frame(maxWidth: .infinity, minHeight: 44)
                     .background(
                         RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                            .fill(CivicaColors.brickPrimary)
+                            .fill(CivicaColors.pinePrimary)
                     )
             }
             .buttonStyle(.plain)

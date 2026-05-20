@@ -100,7 +100,7 @@ struct SNAPDocumentRetryView: View {
     private var reasonBanner: some View {
         HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Rectangle()
-                .fill(CivicaColors.brickPrimary)
+                .fill(CivicaColors.pinePrimary)
                 .frame(width: 4)
                 .clipShape(RoundedRectangle(cornerRadius: 2))
                 .accessibilityHidden(true)
@@ -122,7 +122,7 @@ struct SNAPDocumentRetryView: View {
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card)
-                .strokeBorder(CivicaColors.brickPrimary.opacity(0.25), lineWidth: 1)
+                .strokeBorder(CivicaColors.pinePrimary.opacity(0.25), lineWidth: 1)
         )
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(headlineReason). \(detailedReason)")
@@ -168,7 +168,7 @@ struct SNAPDocumentRetryView: View {
                     .foregroundStyle(CivicaColors.paper)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, CivicaSpacing.sm)
-                    .background(CivicaColors.brickPrimary)
+                    .background(CivicaColors.pinePrimary)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
             }
             .buttonStyle(.plain)

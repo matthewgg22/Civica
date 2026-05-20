@@ -261,7 +261,7 @@ struct SNAPContactFlowView: View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Toggle("", isOn: tcpaConsentBinding)
                 .labelsHidden()
-                .tint(CivicaColors.brickPrimary)
+                .tint(CivicaColors.pinePrimary)
                 .accessibilityLabel(SNAPContactStrings.tcpaConsentBody.value(in: language))
             Text(SNAPContactStrings.tcpaConsentBody.value(in: language))
                 .font(CivicaTypography.footnote)
