@@ -1,0 +1,80 @@
+name: iOS — test target compiles
+
+# Fast pre-check that catches test-target compile drift the moment it lands.
+#
+# Why this exists (separate from civica-test.yml):
+#   civica-test.yml runs the full `xcodebuild test` with continue-on-error: true
+#   to tolerate ~148 pre-existing test failures. When the test target FAILS TO
+#   COMPILE (e.g., a protocol gains a method but a Mock conformer isn't updated),
+#   xcodebuild exits 65 the same way it does on test failures — invisible.
+#
+#   This job runs `build-for-testing` only (no test execution, ~1-2 min), and
+#   does NOT swallow errors. If the test target won't compile, this gate fails
+#   loudly. Drift becomes a red check on the PR instead of a silent regression.
+#
+#   Real-world precedents in the last 48 hours:
+#     - bc3ed5b4 (MA BBCE refresh): test edits missed siblings, masked by 457
+#       other failures.
+#     - PR #219 (fetchScore on InterviewCoachProviding): MockInterviewCoachClient
+#       never updated, test target broke, not caught until PR #225's triage.
+
+on:
+  pull_request:
+    branches:
+      - codex/rebuild-feb18
+    paths:
+      - 'Civica/**'
+      - 'Civica Tests/**'
+      - 'Civica.xcodeproj/**'
+      - 'CivicaDesignSystem/**'
+      - 'packages/snap-enums/**'        # iOS consumes the enum JSON directly
+      - 'packages/snap-rules/data/**'   # copied into Civica/Features/SNAP/SNAPRules at build time
+      - '.github/workflows/ios-build-for-testing.yml'
+  workflow_dispatch:
+
+jobs:
+  build-for-testing:
+    runs-on: macos-15
+    # build-for-testing is much faster than full test; cap at 25m to absorb
+    # the ~3m sim runtime download + cold compile, leaving headroom but
+    # cutting off runaway infra issues well below the 45m used by civica-test.yml.
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        # Match civica-test.yml: Xcode 26.x for iOS 26 FoundationModels / @Generable.
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '~26.0'
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          xcrun simctl list runtimes | grep iOS || true
+
+      - name: Install iOS simulator runtime
+        # macos-15 ships Xcode without paired simulator runtimes. Even for
+        # build-for-testing on a generic destination, xcodebuild expects the
+        # SDK to be present. Matches civica-test.yml's approach.
+        run: sudo xcodebuild -downloadPlatform iOS
+
+      - name: Build for testing (Civica scheme)
+        # build-for-testing compiles BOTH the app target and the test target
+        # but does not execute tests. This is what catches mock/fixture drift:
+        # if a protocol changes and a Mock conformer is stale, this fails to
+        # compile and the job fails — loudly, not swallowed by continue-on-error.
+        #
+        # Generic destination avoids needing a booted simulator (we're not
+        # running anything). CODE_SIGNING_ALLOWED=NO + ENABLE_USER_SCRIPT_SANDBOXING=NO
+        # mirror civica-test.yml per feedback_ios_ci_patterns.md memory.
+        run: |
+          xcodebuild build-for-testing \
+            -project Civica.xcodeproj \
+            -scheme Civica \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            -quiet \
+            CODE_SIGNING_ALLOWED=NO \
+            ENABLE_USER_SCRIPT_SANDBOXING=NO
