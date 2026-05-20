@@ -20,12 +20,29 @@ const createDocumentSchema = z.object({
   on_device_quality_passed: z.boolean().default(false),
 });
 
+// processing_status state flow for uploaded_documents:
+//   uploaded → classifying → extracting → awaiting_confirmation → confirmed
+//                                       ↘ rejected (terminal failure / not-accepted)
+// Mirrors the CHECK constraint in
+// supabase/migrations/20260518_snap_enrollment_03_tables_documents.sql.
+// NOTE: @civica/snap-enums DocumentStatusSchema currently lists a stale set
+// (pending/uploading/processing/extracted/failed/rejected) that matches
+// neither this constraint nor anything else — see follow-up.
+const processingStatusSchema = z.enum([
+  "uploaded",
+  "classifying",
+  "extracting",
+  "awaiting_confirmation",
+  "confirmed",
+  "rejected",
+]);
+
 const updateDocumentSchema = z.object({
   document_kind: z.enum([
     "paystub", "photo_id", "lease", "utility_bill",
     "bank_statement", "tax_return", "benefit_letter", "other",
   ]).optional(),
-  processing_status: z.enum(["pending", "processing", "complete", "failed"]).optional(),
+  processing_status: processingStatusSchema.optional(),
   rejected_reason: z.string().max(500).optional(),
   classification_confidence: z.number().min(0).max(1).optional(),
 });
