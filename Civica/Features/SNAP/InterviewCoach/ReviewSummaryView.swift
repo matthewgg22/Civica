@@ -1,12 +1,11 @@
 import SwiftUI
 import CivicaDesignSystem
 
-// EXPERIMENTAL SILOED MODULE: review-summary screen.
-// Renders the three rubric axes as labeled progress bars with the model's
-// per-axis summary, plus per-turn notes. UI chrome bilingual via
-// InterviewCoachStrings; the LLM-generated axis.summary and note.note
-// text comes back in whatever language the backend produced it in
-// (currently English-only -- one of the open items in BACKEND_CONTRACT).
+// EXPERIMENTAL SILOED MODULE: end-of-session feedback screen.
+// Renders the overall readiness score, strengths, improvements, and a
+// bilingual one-paragraph summary returned by POST .../practice/:sessionId/score.
+// UI chrome is bilingual via InterviewCoachStrings; the LLM-generated
+// content (strengths/improvements/summary) comes back already-translated.
 struct ReviewSummaryView: View {
     let score: InterviewScoreResponseDTO
 
@@ -15,6 +14,19 @@ struct ReviewSummaryView: View {
 
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
+
+    private var localizedSummary: String {
+        switch language {
+        case .english: return score.summaryEn
+        case .spanish: return score.summaryEs
+        }
+    }
+
+    private var scoreTint: Color {
+        if score.overallScore >= 70 { return CivicaColors.accentTeal }
+        if score.overallScore >= 50 { return CivicaColors.brickPrimary }
+        return CivicaColors.destructive
     }
 
     var body: some View {
@@ -34,24 +46,36 @@ struct ReviewSummaryView: View {
                     .font(CivicaTypography.footnoteStrong)
                     .foregroundStyle(CivicaColors.graphite)
 
-                axisCard(title: InterviewCoachStrings.axisCompleteness.value(in: language),
-                         axis: score.completeness,
-                         interpretation: .higherIsBetter,
-                         hint: InterviewCoachStrings.axisCompletenessHint.value(in: language))
+                overallScoreCard
 
-                axisCard(title: InterviewCoachStrings.axisAccuracyRisk.value(in: language),
-                         axis: score.accuracyRisk,
-                         interpretation: .lowerIsBetter,
-                         hint: InterviewCoachStrings.axisAccuracyRiskHint.value(in: language))
-
-                axisCard(title: InterviewCoachStrings.axisMissingContext.value(in: language),
-                         axis: score.missingContext,
-                         interpretation: .lowerIsBetter,
-                         hint: InterviewCoachStrings.axisMissingContextHint.value(in: language))
-
-                if !score.perTurnNotes.isEmpty {
-                    perTurnSection
+                if !localizedSummary.isEmpty {
+                    Text(localizedSummary)
+                        .font(CivicaTypography.body)
+                        .foregroundStyle(CivicaColors.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(CivicaSpacing.md)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                                .fill(CivicaColors.surfacePrimary)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                                .stroke(CivicaColors.hairline, lineWidth: 1)
+                        )
                 }
+
+                bulletSection(
+                    header: InterviewCoachStrings.strengthsHeader.value(in: language),
+                    bullets: score.strengths,
+                    tint: CivicaColors.accentTeal
+                )
+
+                bulletSection(
+                    header: InterviewCoachStrings.improvementsHeader.value(in: language),
+                    bullets: score.improvements,
+                    tint: CivicaColors.brickPrimary
+                )
 
                 InterviewCoachDisclaimer(language: language)
 
@@ -66,53 +90,29 @@ struct ReviewSummaryView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             InterviewCoachAnalytics.track(.feedbackViewed, parameters: [
-                "axis_completeness":     InterviewCoachAnalytics.bucket(score.completeness.score),
-                "axis_accuracy_risk":    InterviewCoachAnalytics.bucket(score.accuracyRisk.score),
-                "axis_missing_context":  InterviewCoachAnalytics.bucket(score.missingContext.score)
+                "overall_score_bucket": InterviewCoachAnalytics.bucket(Double(score.overallScore) / 100.0),
+                "engine_version":       score.engineVersion
             ])
         }
     }
 
-    private enum AxisInterpretation { case higherIsBetter, lowerIsBetter }
+    private var overallScoreCard: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+            Text(InterviewCoachStrings.overallScoreLabel.value(in: language))
+                .font(CivicaTypography.subheadStrong)
+                .foregroundStyle(CivicaColors.ink)
 
-    private func axisCard(title: String,
-                          axis: InterviewScoreAxisDTO,
-                          interpretation: AxisInterpretation,
-                          hint: String) -> some View {
-        let tint: Color = {
-            switch interpretation {
-            case .higherIsBetter: return axis.score >= 0.7 ? CivicaColors.accentTeal : axis.score >= 0.4 ? CivicaColors.brickPrimary : CivicaColors.destructive
-            case .lowerIsBetter:  return axis.score <= 0.2 ? CivicaColors.accentTeal : axis.score <= 0.5 ? CivicaColors.brickPrimary : CivicaColors.destructive
-            }
-        }()
-
-        return VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(title)
-                    .font(CivicaTypography.subheadStrong)
-                    .foregroundStyle(CivicaColors.ink)
-
-                Spacer(minLength: 0)
-
-                Text(String(format: "%.2f", axis.score))
+            HStack(alignment: .lastTextBaseline, spacing: CivicaSpacing.xs) {
+                Text("\(score.overallScore)")
+                    .font(.system(size: 56, weight: .bold, design: .rounded))
+                    .foregroundStyle(scoreTint)
+                Text("/ 100")
                     .font(CivicaTypography.captionStrong)
-                    .foregroundStyle(tint)
+                    .foregroundStyle(CivicaColors.graphite)
             }
 
-            ProgressView(value: max(0.0, min(1.0, axis.score)))
-                .tint(tint)
-
-            Text(hint)
-                .font(CivicaTypography.captionStrong)
-                .foregroundStyle(CivicaColors.graphite)
-
-            if !axis.summary.isEmpty {
-                Text(axis.summary)
-                    .font(CivicaTypography.body)
-                    .foregroundStyle(CivicaColors.ink)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, CivicaSpacing.xs)
-            }
+            ProgressView(value: Double(min(100, max(0, score.overallScore))) / 100.0)
+                .tint(scoreTint)
         }
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -126,43 +126,37 @@ struct ReviewSummaryView: View {
         )
     }
 
-    private var perTurnSection: some View {
-        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-            Text(InterviewCoachStrings.perTurnNotes.value(in: language))
+    private func bulletSection(header: String, bullets: [String], tint: Color) -> some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+            Text(header)
                 .font(CivicaTypography.sectionHeader)
                 .foregroundStyle(CivicaColors.ink)
 
-            ForEach(score.perTurnNotes, id: \.turnIndex) { note in
-                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-                    Text(InterviewCoachStrings.turnLabel(note.turnIndex + 1, language: language))
-                        .font(CivicaTypography.captionStrong)
-                        .foregroundStyle(CivicaColors.graphite)
+            ForEach(Array(bullets.enumerated()), id: \.offset) { _, bullet in
+                HStack(alignment: .top, spacing: CivicaSpacing.xs) {
+                    Circle()
+                        .fill(tint)
+                        .frame(width: 6, height: 6)
+                        .padding(.top, 7)
+                        .accessibilityHidden(true)
 
-                    if !note.applicantText.isEmpty {
-                        Text(note.applicantText)
-                            .font(CivicaTypography.footnoteStrong)
-                            .foregroundStyle(CivicaColors.graphite)
-                            .italic()
-                    }
-
-                    Text(note.note)
+                    Text(bullet)
                         .font(CivicaTypography.body)
-                        .foregroundStyle(note.note.uppercased() == "OK"
-                                         ? CivicaColors.accentTeal
-                                         : CivicaColors.ink)
+                        .foregroundStyle(CivicaColors.ink)
                         .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(CivicaSpacing.md)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                        .fill(CivicaColors.surfacePrimary)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                        .stroke(CivicaColors.hairline, lineWidth: 1)
-                )
             }
         }
+        .padding(CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .fill(CivicaColors.surfacePrimary)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                .stroke(CivicaColors.hairline, lineWidth: 1)
+        )
     }
 }

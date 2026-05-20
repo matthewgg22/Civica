@@ -1049,6 +1049,45 @@ export type Database = {
         }
         Relationships: []
       }
+      recert_practice_scores: {
+        Row: {
+          score_id: string
+          session_id: string
+          overall_score: number
+          strengths: Json
+          improvements: Json
+          summary_en: string
+          summary_es: string
+          engine_version: string
+          generated_at: string
+          created_at: string
+        }
+        Insert: {
+          score_id?: string
+          session_id: string
+          overall_score: number
+          strengths: Json
+          improvements: Json
+          summary_en: string
+          summary_es: string
+          engine_version: string
+          generated_at?: string
+          created_at?: string
+        }
+        Update: {
+          score_id?: string
+          session_id?: string
+          overall_score?: number
+          strengths?: Json
+          improvements?: Json
+          summary_en?: string
+          summary_es?: string
+          engine_version?: string
+          generated_at?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
       recert_practice_sessions: {
         Row: {
           session_id: string

@@ -17,13 +17,9 @@ import os
 // `Authorization: Bearer <jwt>` header. The token is pulled from the
 // CivicaEnrollmentAuth session — same pattern as EnrollmentAPIClient.
 //
-// Known backend gaps (flagged here, not iOS issues):
-//   - All practice/* routes are gated by `requireNavigator(actor)` in
-//     recert.ts → applicants get 403. The applicant-facing practice flow
-//     needs that guard relaxed or a dedicated applicant route.
-//   - `respond` accepts only `user_message`; the orchestrator's RespondInput
-//     has no `audio_bytes_duration` field. Voice duration telemetry is
-//     dropped on the floor today.
+// Routes consumed (additions in the practice-chatbot gap-closing pass):
+//   POST /v1/enrollment/recert/:recertId/practice/:sessionId/score
+//     — end-of-session scoring. Idempotent. Returns InterviewScoreResponseDTO.
 
 final class InterviewCoachAPIClient {
     enum CoachAPIError: Error, LocalizedError, Equatable {
@@ -118,19 +114,17 @@ final class InterviewCoachAPIClient {
     }
 
     /// POST /v1/enrollment/recert/:recertId/practice/:sessionId/respond
-    /// `audioBytesDuration` is accepted by the iOS call site but is NOT
-    /// part of the current Zod schema on the route and is dropped silently.
-    /// Kept here so the call site doesn't need to change when the backend
-    /// adds duration telemetry.
+    /// `audioBytesDuration` is sent when the response was captured via
+    /// SNAPVoiceIntakeService on-device — the orchestrator threads it
+    /// into the AI coach prompt as a "stuck vs confident" signal.
     func sendPracticeResponse(
         recertId: String,
         sessionId: String,
         response: String,
         audioBytesDuration: Int? = nil
     ) async throws -> PracticeRespondResponseDTO {
-        _ = audioBytesDuration   // intentionally unused; backend has no field for this yet
         let path = "/recert/\(recertId)/practice/\(sessionId)/respond"
-        let body = PracticeRespondRequestDTO(userMessage: response)
+        let body = PracticeRespondRequestDTO(userMessage: response, audioBytesDuration: audioBytesDuration)
         return try await postJSON(path: path, body: body)
     }
 
@@ -141,6 +135,18 @@ final class InterviewCoachAPIClient {
     ) async throws -> PracticeSessionStateDTO {
         let path = "/recert/\(recertId)/practice/\(sessionId)"
         return try await getJSON(path: path)
+    }
+
+    /// POST /v1/enrollment/recert/:recertId/practice/:sessionId/score
+    /// Generates (or returns cached) end-of-session score. Idempotent on
+    /// the backend — repeated calls with the same sessionId return the
+    /// same score row. Only callable when the session is `done`.
+    func fetchScore(
+        recertId: String,
+        sessionId: String
+    ) async throws -> InterviewScoreResponseDTO {
+        let path = "/recert/\(recertId)/practice/\(sessionId)/score"
+        return try await postJSON(path: path, body: EmptyBody())
     }
 
     // MARK: - HTTP plumbing

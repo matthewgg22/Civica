@@ -61,10 +61,11 @@ final class PracticeSessionViewModel: ObservableObject {
     @Published private(set) var flags: [InterviewFlagDTO] = []
     @Published private(set) var latestCoaching: String?
     @Published private(set) var sessionId: String?
-    /// Score sheet is not surfaced in the new backend flow but the property
-    /// is kept so PracticeSessionView's completion footer compiles unchanged
-    /// while the score sheet is being rebuilt around per-turn coaching.
+    /// End-of-session score, populated when the user taps "Get feedback"
+    /// after the interview completes. Backed by POST .../practice/:id/score.
     @Published private(set) var score: InterviewScoreResponseDTO?
+    @Published private(set) var isScoring: Bool = false
+    @Published private(set) var scoreError: String?
     /// Compatibility shim — the old SSE flow streamed tokens into this string.
     /// The new backend returns full responses, so it's always empty. The view
     /// uses it to gate between "Caseworker is typing…" spinner and live tokens;
@@ -201,12 +202,25 @@ final class PracticeSessionViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Legacy compatibility (no-op in new flow)
+    // MARK: - End-of-session scoring
 
-    /// Kept so PracticeSessionView's "Get feedback" button still compiles.
-    /// The new backend has no end-of-session scoring endpoint — coaching is
-    /// returned per-turn instead. This intentionally does nothing.
-    func requestScore() async { /* no-op in new flow */ }
+    /// Fetch (or generate) the end-of-session score for the completed
+    /// practice run. Idempotent on the backend — repeat calls are cheap.
+    /// Only meaningful when `status == .complete`.
+    func requestScore() async {
+        guard status == .complete, let sessionId, score == nil else { return }
+        isScoring = true
+        scoreError = nil
+        defer { isScoring = false }
+        do {
+            let result = try await client.fetchScore(recertId: recertId, sessionId: sessionId)
+            score = result
+        } catch let err as InterviewCoachAPIClient.CoachAPIError {
+            scoreError = err.localizedDescription
+        } catch {
+            scoreError = "Could not generate feedback: \(error.localizedDescription)"
+        }
+    }
 
     // MARK: - Private
 

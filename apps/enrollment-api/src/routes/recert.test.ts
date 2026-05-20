@@ -322,6 +322,64 @@ describe('POST /recert/:recertId/practice/:sessionId/respond', () => {
     expect(res.status).toBe(404);
   });
 
+  it('accepts audio_bytes_duration and threads it through (voice input)', async () => {
+    const { recertEngine } = await import('@civica/recert-engine');
+    const { sessionId: realSessionId } = recertEngine.interview.start({
+      recertId: RECERT_ID,
+      packetSnapshot: { state_code: 'CA' },
+      state: 'CA',
+    });
+
+    const sessionRow = {
+      session_id: realSessionId,
+      recert_id: RECERT_ID,
+      turn_count: 0,
+      flags: [],
+      done: false,
+    };
+
+    vi.mocked(makeAnonClient).mockReturnValue(makeDbClient({ data: sessionRow, error: null }));
+    vi.mocked(withActorContext).mockResolvedValue(makeDbClient({ data: null, error: null }));
+
+    const res = await buildTestApp(recertRouter, '/', NAVIGATOR).request(
+      `/${RECERT_ID}/practice/${realSessionId}/respond`,
+      {
+        method: 'POST',
+        headers: JSON_HEADERS,
+        body: JSON.stringify({ user_message: 'I work part-time at a cafe.', audio_bytes_duration: 48000 }),
+      },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(200);
+  });
+
+  it('accepts respond without audio_bytes_duration (text input — backward compat)', async () => {
+    const { recertEngine } = await import('@civica/recert-engine');
+    const { sessionId: realSessionId } = recertEngine.interview.start({
+      recertId: RECERT_ID,
+      packetSnapshot: { state_code: 'CA' },
+      state: 'CA',
+    });
+
+    const sessionRow = {
+      session_id: realSessionId,
+      recert_id: RECERT_ID,
+      turn_count: 0,
+      flags: [],
+      done: false,
+    };
+
+    vi.mocked(makeAnonClient).mockReturnValue(makeDbClient({ data: sessionRow, error: null }));
+    vi.mocked(withActorContext).mockResolvedValue(makeDbClient({ data: null, error: null }));
+
+    const res = await buildTestApp(recertRouter, '/', NAVIGATOR).request(
+      `/${RECERT_ID}/practice/${realSessionId}/respond`,
+      { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify({ user_message: 'No changes.' }) },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(200);
+  });
+
   it('returns 400 for missing user_message', async () => {
     vi.mocked(makeAnonClient).mockReturnValue(makeDbClient({ data: null, error: null }));
     vi.mocked(withActorContext).mockResolvedValue(makeDbClient({ data: null, error: null }));
@@ -399,3 +457,119 @@ describe('GET /recert/:recertId/practice/:sessionId', () => {
     expect(res.status).toBe(200);
   });
 });
+
+// ---------------------------------------------------------------------------
+// POST /recert/:recertId/practice/:sessionId/score
+// ---------------------------------------------------------------------------
+
+describe('POST /recert/:recertId/practice/:sessionId/score', () => {
+  it('returns existing score when one is already persisted (idempotency)', async () => {
+    const sessionRow = {
+      session_id: SESSION_ID,
+      recert_id: RECERT_ID,
+      state_code: 'CA',
+      flags: [],
+      done: true,
+    };
+    const scoreRow = {
+      session_id: SESSION_ID,
+      overall_score: 82,
+      strengths: ['Clear about address'],
+      improvements: ['Detail income'],
+      summary_en: 'Good run.',
+      summary_es: 'Buena práctica.',
+      engine_version: 'claude-haiku-4-5/score-v1',
+      generated_at: '2026-05-19T00:00:00Z',
+    };
+
+    // Both lookups (session + score) use the same anon client + query builder;
+    // returning scoreRow on the second await is OK because the builder echoes.
+    // Trick: chain by overriding sequence — first call returns session, then score.
+    const seqClient = makeDbClient({ data: scoreRow, error: null });
+    // override `from` to return different shapes for sessions vs scores
+    let call = 0;
+    seqClient.schema = vi.fn().mockReturnValue({
+      from: vi.fn().mockImplementation((tbl: string) => {
+        call += 1;
+        const result = tbl === 'recert_practice_sessions'
+          ? { data: sessionRow, error: null }
+          : { data: scoreRow, error: null };
+        return makeQueryBuilder(result);
+      }),
+    });
+    vi.mocked(makeAnonClient).mockReturnValue(seqClient);
+    vi.mocked(withActorContext).mockResolvedValue(makeDbClient({ data: null, error: null }));
+
+    const res = await buildTestApp(recertRouter, '/', APPLICANT).request(
+      `/${RECERT_ID}/practice/${SESSION_ID}/score`,
+      { method: 'POST' },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json() as Record<string, unknown>;
+    expect(body.overall_score).toBe(82);
+    expect(call).toBeGreaterThanOrEqual(2);
+  });
+
+  it('returns 400 when session is not yet done', async () => {
+    const sessionRow = {
+      session_id: SESSION_ID,
+      recert_id: RECERT_ID,
+      state_code: 'CA',
+      flags: [],
+      done: false,
+    };
+    vi.mocked(makeAnonClient).mockReturnValue(makeDbClient({ data: sessionRow, error: null }));
+    vi.mocked(withActorContext).mockResolvedValue(makeDbClient({ data: null, error: null }));
+
+    const res = await buildTestApp(recertRouter, '/', APPLICANT).request(
+      `/${RECERT_ID}/practice/${SESSION_ID}/score`,
+      { method: 'POST' },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 404 when session is not found', async () => {
+    vi.mocked(makeAnonClient).mockReturnValue(
+      makeDbClient({ data: null, error: { code: 'PGRST116', message: 'Not found' } }),
+    );
+    vi.mocked(withActorContext).mockResolvedValue(makeDbClient({ data: null, error: null }));
+
+    const res = await buildTestApp(recertRouter, '/', APPLICANT).request(
+      `/${RECERT_ID}/practice/${SESSION_ID}/score`,
+      { method: 'POST' },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(404);
+  });
+
+  it('returns 410 when session done but transcript no longer in memory', async () => {
+    const sessionRow = {
+      session_id: SESSION_ID,   // sentinel sessionId not in orchestrator memory
+      recert_id: RECERT_ID,
+      state_code: 'CA',
+      flags: [],
+      done: true,
+    };
+    const seqClient = makeDbClient({ data: null, error: null });
+    seqClient.schema = vi.fn().mockReturnValue({
+      from: vi.fn().mockImplementation((tbl: string) => {
+        const result = tbl === 'recert_practice_sessions'
+          ? { data: sessionRow, error: null }
+          : { data: null, error: { code: 'PGRST116', message: 'Not found' } };
+        return makeQueryBuilder(result);
+      }),
+    });
+    vi.mocked(makeAnonClient).mockReturnValue(seqClient);
+    vi.mocked(withActorContext).mockResolvedValue(makeDbClient({ data: null, error: null }));
+
+    const res = await buildTestApp(recertRouter, '/', APPLICANT).request(
+      `/${RECERT_ID}/practice/${SESSION_ID}/score`,
+      { method: 'POST' },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(410);
+  });
+});
+

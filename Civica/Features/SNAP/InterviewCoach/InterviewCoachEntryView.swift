@@ -10,6 +10,17 @@ struct InterviewCoachEntryView: View {
     @StateObject private var bank = InterviewQuestionBank()
     @State private var showAITransparency = false
 
+    @EnvironmentObject private var enrollmentAuth: CivicaEnrollmentAuth
+
+    enum ActiveRecertState: Equatable {
+        case loading
+        case ready(ActiveRecertResponseDTO)
+        case none      // signed-in applicant has no active recert
+        case unauthenticated
+        case failed(String)
+    }
+    @State private var activeRecert: ActiveRecertState = .loading
+
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
 
@@ -52,15 +63,7 @@ struct InterviewCoachEntryView: View {
                 .buttonStyle(.plain)
                 .disabled(bank.allQuestions.isEmpty)
 
-                NavigationLink {
-                    PracticeSessionView()
-                } label: {
-                    affordanceRow(title: InterviewCoachStrings.practiceTitle.value(in: language),
-                                  subtitle: InterviewCoachStrings.practiceSubtitle.value(in: language),
-                                  systemImage: "person.wave.2.fill",
-                                  enabled: true)
-                }
-                .buttonStyle(.plain)
+                practiceAffordance
 
                 InterviewCoachDisclaimer(language: language)
                     .padding(.top, CivicaSpacing.sm)
@@ -78,6 +81,9 @@ struct InterviewCoachEntryView: View {
             InterviewCoachAnalytics.track(.entryViewed, parameters: [
                 "language": InterviewCoachAnalytics.languageCode(language)
             ])
+        }
+        .task(id: enrollmentAuth.state.isAuthenticated) {
+            await loadActiveRecert()
         }
         .sheet(isPresented: $showAITransparency) {
             NavigationStack {
@@ -124,6 +130,97 @@ struct InterviewCoachEntryView: View {
                 .stroke(CivicaColors.hairline, lineWidth: 1)
         )
         .opacity(enabled ? 1.0 : 0.55)
+    }
+
+    @ViewBuilder
+    private var practiceAffordance: some View {
+        switch activeRecert {
+        case .loading:
+            HStack(spacing: CivicaSpacing.sm) {
+                ProgressView().controlSize(.small)
+                Text(InterviewCoachStrings.practiceTitle.value(in: language))
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.graphite)
+                Spacer(minLength: 0)
+            }
+            .padding(CivicaSpacing.md)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                    .fill(CivicaColors.surfacePrimary)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                    .stroke(CivicaColors.hairline, lineWidth: 1)
+            )
+
+        case .ready(let recert):
+            NavigationLink {
+                PracticeSessionView(recertId: recert.recertId, auth: enrollmentAuth)
+            } label: {
+                affordanceRow(title: InterviewCoachStrings.practiceTitle.value(in: language),
+                              subtitle: InterviewCoachStrings.practiceSubtitle.value(in: language),
+                              systemImage: "person.wave.2.fill",
+                              enabled: true)
+            }
+            .buttonStyle(.plain)
+
+        case .none, .unauthenticated, .failed:
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Text(InterviewCoachStrings.practiceTitle.value(in: language))
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                Text(noRecertSubtitle)
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundStyle(CivicaColors.graphite)
+            }
+            .padding(CivicaSpacing.md)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                    .fill(CivicaColors.surfacePrimary)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                    .stroke(CivicaColors.hairline, lineWidth: 1)
+            )
+            .opacity(0.85)
+        }
+    }
+
+    private var noRecertSubtitle: String {
+        switch activeRecert {
+        case .unauthenticated:
+            return language == .spanish
+                ? "Inicia sesión para practicar tu entrevista."
+                : "Sign in to practice your interview."
+        case .failed(let msg):
+            return msg
+        default:
+            return language == .spanish
+                ? "Aún no hay una recertificación activa. Inicia una para practicar tu entrevista."
+                : "No active recertification yet. Start one to practice your interview."
+        }
+    }
+
+    private func loadActiveRecert() async {
+        guard enrollmentAuth.state.isAuthenticated else {
+            activeRecert = .unauthenticated
+            return
+        }
+        activeRecert = .loading
+        let client = enrollmentAuth.makeEnrollmentAPIClient()
+        do {
+            if let recert = try await client.fetchActiveRecert() {
+                activeRecert = .ready(recert)
+            } else {
+                activeRecert = .none
+            }
+        } catch {
+            activeRecert = .failed(language == .spanish
+                ? "No se pudo verificar tu recertificación."
+                : "Could not check your recertification.")
+        }
     }
 
     private func loadErrorBanner(_ error: String) -> some View {

@@ -60,4 +60,32 @@ app.patch("/", zValidator("json", patchMeSchema), async (c) => {
   return c.json({ id: data.applicant_id, state_code: data.state_code, language: data.preferred_language });
 });
 
+// GET /me/active-recert — return the signed-in applicant's most recent
+// recertification (any status). RLS enforces that an applicant can only see
+// their own. Returns 404 when no recert exists, so iOS can render a
+// "start a recert first" prompt instead of an error.
+app.get("/active-recert", async (c) => {
+  const actor = c.get("actor");
+  if (actor.kind !== "applicant") {
+    throw new HTTPException(403, { message: "Applicant role required" });
+  }
+
+  const db = makeAnonClient(c.env, c.get("jwt"));
+  const { data, error } = await db
+    .schema("snap_enrollment")
+    .from("recertifications")
+    .select("recert_id, packet_id, cert_period_end, status")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error && error.code !== "PGRST116") {
+    throw new HTTPException(500, { message: error.message });
+  }
+  if (!data) {
+    throw new HTTPException(404, { message: "No active recertification" });
+  }
+  return c.json(data);
+});
+
 export default app;

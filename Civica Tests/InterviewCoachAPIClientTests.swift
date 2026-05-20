@@ -223,7 +223,59 @@ struct InterviewCoachAPIClientTests {
         }
     }
 
-    // 7. Missing token → notAuthenticated (no network call attempted).
+    // 7a. POST .../respond includes audio_bytes_duration when provided.
+    @Test func sendPracticeResponseEncodesAudioBytesDuration() async throws {
+        InterviewCoachStubProtocol.handlers.append { _ in (respondResponseJSON(done: false), 200) }
+
+        _ = try await makeClient().sendPracticeResponse(
+            recertId: "rec-1",
+            sessionId: "sess-1",
+            response: "I work part-time.",
+            audioBytesDuration: 48_000
+        )
+
+        let req = InterviewCoachStubProtocol.capturedRequests.first!
+        struct Body: Decodable {
+            let user_message: String
+            let audio_bytes_duration: Int?
+        }
+        let decoded = try JSONDecoder().decode(Body.self, from: req.httpBody!)
+        #expect(decoded.user_message == "I work part-time.")
+        #expect(decoded.audio_bytes_duration == 48_000)
+    }
+
+    // 7b. POST .../score parses the new InterviewScoreResponseDTO.
+    @Test func fetchScoreParsesResponse() async throws {
+        let scoreJSON = """
+        {
+          "session_id": "sess-1",
+          "overall_score": 82,
+          "strengths": ["Clear about address", "Mentioned new job"],
+          "improvements": ["Add start date", "Include hours/week"],
+          "summary_en": "Solid run; tighten income details.",
+          "summary_es": "Buena práctica; detalla los ingresos.",
+          "generated_at": "2026-05-19T01:00:00Z",
+          "engine_version": "claude-haiku-4-5/score-v1"
+        }
+        """.data(using: .utf8)!
+        InterviewCoachStubProtocol.handlers.append { _ in (scoreJSON, 200) }
+
+        let score = try await makeClient().fetchScore(recertId: "rec-1", sessionId: "sess-1")
+
+        #expect(score.sessionId == "sess-1")
+        #expect(score.overallScore == 82)
+        #expect(score.strengths.count == 2)
+        #expect(score.improvements.count == 2)
+        #expect(score.summaryEn.contains("Solid run"))
+        #expect(score.summaryEs.contains("Buena práctica"))
+        #expect(score.engineVersion.contains("claude-haiku"))
+
+        let req = InterviewCoachStubProtocol.capturedRequests.first!
+        #expect(req.httpMethod == "POST")
+        #expect(req.url?.path.contains("/recert/rec-1/practice/sess-1/score") == true)
+    }
+
+    // 8. Missing token → notAuthenticated (no network call attempted).
     @Test func missingTokenSurfacesNotAuthenticated() async throws {
         let client = InterviewCoachAPIClient(
             baseURL: testBaseURL,
