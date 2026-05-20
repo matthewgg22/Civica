@@ -1,16 +1,27 @@
 import { ENGINE_VERSION } from "../version";
 import type { Defensibility, FlowKind, QcResult } from "../schemas";
 
-// USDA FY2024 QC national error-rate distribution weights.
-// Each weight represents the proportion of all CA payment errors attributable
-// to that error category (derived from FNS QC database, data.gov, FY2024).
-// Update annually after USDA publishes QC data; rerun golden fixtures on any change.
+// USDA CA FY2023 QC element-attribution weights.
+// Source: USDA FNS QC microdata — ca_fy2023_element_attribution.csv
+// Each weight = share of CA errored cases attributable to the elements that
+// flow covers, normalized to the 5 flows Civica currently evaluates.
+//
+// Element mapping:
+//   utility-sua  → 363 Shelter deduction (sua-portion ~81.6%) + 364 SUA = 39.94×0.816+4.49 = 37.1%
+//   gig-income   → 311 Wages (21.35%) + 312 Self-employment (5.16%) = 26.5%
+//   shared-lease → 363 Shelter deduction (remainder ~18.4%) = 39.94×0.184 = 7.3%
+//   assets       → 211 Bank accounts (0.01%) + 221 Real property (0.01%) ≈ 0%
+//   benefit-impact-projection → 520 Arithmetic (2.03%) + 150 Unit comp (1.91%) = 3.9%
+//
+// Unmapped elements (RSDI 11%, SSI 7.6%, other unearned 6.3%, medical 3.9%, etc.)
+// account for ~33% of CA errors and are not yet covered by a FlowKind.
+// Update annually; rerun golden fixtures on any change.
 export const ERROR_WEIGHT: Record<FlowKind, number> = {
-  "utility-sua": 0.505, // 7 CFR 273.9(d) — shelter/utility overclaim
-  "gig-income": 0.268, // 7 CFR 273.9(b) — earned income unreported
-  "shared-lease": 0.114, // 7 CFR 273.9(d) — shelter cost unverifiable
-  assets: 0.082, // 7 CFR 273.8 — asset test errors
-  "benefit-impact-projection": 0.031, // categorical / student eligibility
+  "utility-sua": 0.495, // 363 shelter (sua share) + 364 SUA — 7 CFR 273.9(d)
+  "gig-income": 0.354, // 311 wages + 312 SE — 7 CFR 273.9(b)
+  "shared-lease": 0.098, // 363 shelter (unverifiable share) — 7 CFR 273.9(d)
+  assets: 0.002, // 211+221 — 7 CFR 273.8 (near-zero in CA QC data)
+  "benefit-impact-projection": 0.051, // 520 arithmetic + 150 unit comp
 };
 
 // Per-flow error probability by defensibility score.
@@ -85,3 +96,61 @@ export function scoreErrorRisk(results: ScoringInput[]): ErrorRiskResult {
 
   return { tier, score, factors, engine_version: ENGINE_VERSION };
 }
+
+// ---------------------------------------------------------------------------
+// USDA reference data — not used in scoring yet; inform future calibration
+// ---------------------------------------------------------------------------
+
+/**
+ * National FY2023 payment error rate by income-source group.
+ * Source: USDA FNS QC microdata — qc_trend_fy21_fy23.csv / qc_fy2023_by_income_type.csv
+ *
+ * Key finding: wage-only households have a ~2.7× higher PER (15.61%) than
+ * no-earned-income households (5.84%). Civica's TAM skews toward earned-income
+ * households, so the Civica population PER is structurally higher than the
+ * national average.
+ */
+export const INCOME_GROUP_PER_FY23 = {
+  wage_only: 15.61, // 22.1% of national caseload
+  mixed_wage_se: 19.26, // 0.6% of caseload — highest PER group
+  se_only: 6.62, // 4.6% of caseload
+  no_earned: 5.84, // 72.7% of caseload
+  civica_tam: 13.95, // any earned income — Civica's target population
+} as const;
+
+/**
+ * CA FY2023 payment error rate by income-source group.
+ * Source: USDA FNS QC microdata — ca_fy2023_by_income_type.csv
+ *
+ * CA no-earned PER (8.44%) runs above the national no-earned rate (5.84%),
+ * largely driven by higher RSDI/SSI attribution (11+7.6% of CA errors vs. 9+6% national).
+ */
+export const CA_INCOME_GROUP_PER_FY23 = {
+  wage_only: 16.79, // 20.0% of CA caseload; mean $59 error/case
+  mixed_wage_se: 15.84, // 0.8% of CA caseload; mean $74 error/case
+  se_only: 7.77, // 5.8% of CA caseload; mean $32 error/case
+  no_earned: 8.44, // 73.3% of CA caseload; mean $23 error/case
+} as const;
+
+/**
+ * CA FY2023 error attribution by USDA element code.
+ * Source: ca_fy2023_element_attribution.csv
+ * These are the raw percentages that feed ERROR_WEIGHT above.
+ */
+export const CA_ELEMENT_ATTRIBUTION_FY23: Record<string, { label: string; share_pct: number }> = {
+  "363": { label: "Shelter deduction", share_pct: 39.94 },
+  "311": { label: "Wages", share_pct: 21.35 },
+  "331": { label: "RSDI", share_pct: 11.06 },
+  "333": { label: "SSI", share_pct: 7.65 },
+  "346": { label: "Other unearned income", share_pct: 6.25 },
+  "312": { label: "Self-employment", share_pct: 5.16 },
+  "364": { label: "Standard utility allowance", share_pct: 4.49 },
+  "365": { label: "Medical expense deduction", share_pct: 3.88 },
+  "350": { label: "Child support received", share_pct: 2.31 },
+  "334": { label: "Unemployment compensation", share_pct: 2.23 },
+  "520": { label: "Arithmetic computation", share_pct: 2.03 },
+  "150": { label: "Unit composition", share_pct: 1.91 },
+  "366": { label: "Child support paid deduction", share_pct: 1.74 },
+  "342": { label: "Contributions", share_pct: 1.30 },
+  "323": { label: "Dependent care deduction", share_pct: 0.87 },
+};

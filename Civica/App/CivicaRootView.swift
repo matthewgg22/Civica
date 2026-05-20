@@ -23,6 +23,7 @@ struct CivicaRootView: View {
     /// the various "Open DTA Connect" / "Start an appeal" handlers
     /// so all three status surfaces share one sheet presentation.
     @State private var externalLink: URL?
+    @State private var splashReady = false
 
     /// True while the user is actively walking the recertification
     /// flow. Routes them through CivicaSNAPFlowView with the recert
@@ -36,29 +37,36 @@ struct CivicaRootView: View {
     }
 
     var body: some View {
-        Group {
-            if hasCompletedOnboarding {
-                NavigationStack {
-                    rootSurface
-                }
-                .tint(CivicaColors.brickPrimary)
-                // Single shared status store for everything below the
-                // root. SNAPEligibilityIntroView writes the verdict +
-                // advances status; CivicaRootView's rootSurface
-                // re-routes on the change.
-                .environmentObject(statusStore)
-                .environmentObject(enrollmentAuth)
-                .sheet(item: $externalLink) { url in
-                    CivicaSafariSheet(url: url)
-                }
-            } else {
-                OnboardingFlowView { chosenLanguage in
-                    languageRaw = chosenLanguage.rawValue
-                    withAnimation(.easeInOut(duration: 0.32)) {
-                        hasCompletedOnboarding = true
+        ZStack {
+            Group {
+                if hasCompletedOnboarding {
+                    NavigationStack {
+                        rootSurface
+                    }
+                    .tint(CivicaColors.brickPrimary)
+                    // Single shared status store for everything below the
+                    // root. SNAPEligibilityIntroView writes the verdict +
+                    // advances status; CivicaRootView's rootSurface
+                    // re-routes on the change.
+                    .environmentObject(statusStore)
+                    .environmentObject(enrollmentAuth)
+                    .sheet(item: $externalLink) { url in
+                        CivicaSafariSheet(url: url)
+                    }
+                } else {
+                    OnboardingFlowView { chosenLanguage in
+                        languageRaw = chosenLanguage.rawValue
+                        withAnimation(.easeInOut(duration: 0.32)) {
+                            hasCompletedOnboarding = true
+                        }
                     }
                 }
             }
+            SplashView(ready: splashReady)
+        }
+        .task(id: "splash") {
+            try? await Task.sleep(for: .milliseconds(200))
+            splashReady = true
         }
         // Government benefits enrollment carries a stronger trust signal
         // in light mode — pure-white/cream backgrounds with high-contrast
