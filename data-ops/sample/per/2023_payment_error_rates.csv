@@ -1,0 +1,54 @@
+state_code,state_name,fiscal_year,per_total,per_overpayment,per_underpayment
+AL,Alabama,2023,7.91,6.13,1.78
+AK,Alaska,2023,4.78,3.57,1.21
+AZ,Arizona,2023,8.12,5.40,2.72
+AR,Arkansas,2023,10.40,7.22,3.18
+CA,California,2023,9.85,7.18,2.67
+CO,Colorado,2023,9.79,6.22,3.57
+CT,Connecticut,2023,7.90,5.40,2.50
+DE,Delaware,2023,12.31,7.46,4.85
+FL,Florida,2023,10.28,6.87,3.41
+GA,Georgia,2023,10.30,7.91,2.39
+HI,Hawaii,2023,6.56,5.05,1.51
+ID,Idaho,2023,11.67,8.88,2.79
+IL,Illinois,2023,7.99,6.31,1.68
+IN,Indiana,2023,5.73,4.54,1.19
+IA,Iowa,2023,6.58,5.19,1.39
+KS,Kansas,2023,5.88,4.55,1.33
+KY,Kentucky,2023,6.93,5.26,1.67
+LA,Louisiana,2023,8.22,5.71,2.51
+ME,Maine,2023,10.64,7.56,3.08
+MD,Maryland,2023,8.62,5.48,3.14
+MA,Massachusetts,2023,8.86,6.46,2.40
+MI,Michigan,2023,10.34,6.21,4.13
+MN,Minnesota,2023,6.08,3.77,2.31
+MS,Mississippi,2023,4.67,3.68,0.99
+MO,Missouri,2023,8.27,5.75,2.52
+MT,Montana,2023,4.97,3.26,1.71
+NE,Nebraska,2023,5.90,4.23,1.67
+NV,Nevada,2023,7.38,5.71,1.67
+NH,New Hampshire,2023,12.16,7.76,4.40
+NJ,New Jersey,2023,5.09,3.22,1.87
+NM,New Mexico,2023,9.27,7.13,2.14
+NY,New York,2023,10.63,7.51,3.12
+NC,North Carolina,2023,10.71,6.56,4.15
+ND,North Dakota,2023,6.95,4.45,2.50
+OH,Ohio,2023,4.53,3.54,0.99
+OK,Oklahoma,2023,9.58,6.60,2.98
+OR,Oregon,2023,12.37,9.27,3.10
+PA,Pennsylvania,2023,7.93,5.99,1.94
+RI,Rhode Island,2023,8.93,5.81,3.12
+SC,South Carolina,2023,10.24,8.19,2.05
+SD,South Dakota,2023,4.95,3.25,1.70
+TN,Tennessee,2023,10.89,8.38,2.51
+TX,Texas,2023,8.45,5.49,2.96
+UT,Utah,2023,12.41,7.91,4.50
+VT,Vermont,2023,4.73,3.08,1.65
+VA,Virginia,2023,12.18,7.40,4.78
+WA,Washington,2023,10.19,8.04,2.15
+WV,West Virginia,2023,8.89,6.97,1.92
+WI,Wisconsin,2023,10.05,7.79,2.26
+WY,Wyoming,2023,5.90,4.42,1.48
+DC,District of Columbia,2023,6.59,4.39,2.20
+PR,Puerto Rico,2023,12.39,8.29,4.10
+GU,Guam,2023,11.84,7.59,4.25

@@ -19,9 +19,32 @@ import { readFile, readdir, stat } from "node:fs/promises";
 import { join, relative } from "node:path";
 
 const BUCKET = "civica-analytics";
-const LOCAL_ROOT = join(process.cwd(), "data-ops", "parquet");
 
 const dryRun = process.argv.includes("--dry-run");
+
+/**
+ * Optional `--prefix <name>` (default: none). When passed, walks
+ * `data-ops/<prefix>/parquet/` instead of `data-ops/parquet/` and uploads
+ * each file to `<prefix>/<relative-path>` inside the bucket.
+ *
+ * Used by `pnpm data:sync -- --prefix sample` so demo data lands at
+ * `sample/per/fy=2024/by_state.parquet` etc., never colliding with the
+ * real-data layout at the bucket root.
+ */
+function parsePrefix(): string | null {
+  const argv = process.argv.slice(2);
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i]!;
+    if (arg === "--prefix" && i + 1 < argv.length) return argv[i + 1] ?? null;
+    if (arg.startsWith("--prefix=")) return arg.slice("--prefix=".length);
+  }
+  return null;
+}
+
+const PREFIX = parsePrefix();
+const LOCAL_ROOT = PREFIX
+  ? join(process.cwd(), "data-ops", PREFIX, "parquet")
+  : join(process.cwd(), "data-ops", "parquet");
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -76,7 +99,8 @@ async function main() {
   let uploaded = 0;
   let skipped = 0;
   for await (const file of walk(LOCAL_ROOT)) {
-    const remotePath = relative(LOCAL_ROOT, file);
+    const relPath = relative(LOCAL_ROOT, file);
+    const remotePath = PREFIX ? `${PREFIX}/${relPath}` : relPath;
     const buf = await readFile(file);
     const localHash = sha256(buf);
 

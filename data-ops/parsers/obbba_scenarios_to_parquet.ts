@@ -40,8 +40,27 @@ const OUT_PARQUET = join(
   "obbba_rollup.parquet",
 );
 
+type ScenarioName =
+  | "baseline"
+  | "mid"
+  | "aggressive"
+  | "current_law"
+  | "obbba_full"
+  | "obbba_with_bbce_removal"
+  | "obbba_with_bbce_removal_and_lpie";
+
+const VALID_SCENARIOS: ReadonlySet<string> = new Set([
+  "baseline",
+  "mid",
+  "aggressive",
+  "current_law",
+  "obbba_full",
+  "obbba_with_bbce_removal",
+  "obbba_with_bbce_removal_and_lpie",
+]);
+
 interface ScenarioInput {
-  scenario: "baseline" | "mid" | "aggressive";
+  scenario: ScenarioName;
   metric: string;
   value: number;
   narrative?: string;
@@ -54,7 +73,7 @@ interface RollupInput {
 }
 
 interface FlatRow {
-  scenario: "baseline" | "mid" | "aggressive";
+  scenario: ScenarioName;
   metric: string;
   value: number;
   narrative: string | null;
@@ -96,9 +115,10 @@ export async function buildFromInput(opts: {
     );
   }
   for (const s of rollup.scenarios) {
-    if (!["baseline", "mid", "aggressive"].includes(s.scenario)) {
+    if (!VALID_SCENARIOS.has(s.scenario)) {
       throw new Error(
-        `[obbba_scenarios_to_parquet] invalid scenario "${s.scenario}" — must be baseline|mid|aggressive.`,
+        `[obbba_scenarios_to_parquet] invalid scenario "${s.scenario}" — ` +
+          `must be one of ${[...VALID_SCENARIOS].join("|")}.`,
       );
     }
     if (typeof s.metric !== "string" || s.metric.length === 0) {
@@ -147,24 +167,51 @@ export async function buildFromInput(opts: {
   }
 }
 
+function parseCliArg(name: string): string | undefined {
+  // Supports `--name=value` and `--name value` forms.
+  const argv = process.argv.slice(2);
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i]!;
+    if (arg === `--${name}` && i + 1 < argv.length) return argv[i + 1];
+    if (arg.startsWith(`--${name}=`)) return arg.slice(`--${name}=`.length);
+  }
+  return undefined;
+}
+
 async function main() {
-  if (!(await fileExists(INPUT_JSON))) {
+  // `--input <dir>` / `--output <dir>` overrides for the sample-data pipeline.
+  // When absent, fall back to the canonical data-ops/raw + data-ops/parquet
+  // paths so real-data ingestion stays untouched.
+  const inputDir = parseCliArg("input");
+  const outputDir = parseCliArg("output");
+  const inputJson = inputDir
+    ? join(ROOT, inputDir, "obbba_rollup.json")
+    : INPUT_JSON;
+  const outParquet = outputDir
+    ? join(ROOT, outputDir, "obbba_rollup.parquet")
+    : OUT_PARQUET;
+  const sourceUrl = inputDir
+    ? `${inputDir}/obbba_rollup.json`
+    : "data-ops/raw/obbba-scenarios/obbba_rollup.json";
+  const isSample = (inputDir ?? "").includes("/sample/") || (inputDir ?? "").startsWith("data-ops/sample");
+
+  if (!(await fileExists(inputJson))) {
     console.log(
-      `No OBBBA rollup JSON found at ${INPUT_JSON}. See data-ops/raw/obbba-scenarios/README.md.`,
+      `No OBBBA rollup JSON found at ${inputJson}. See data-ops/raw/obbba-scenarios/README.md.`,
     );
     return;
   }
 
-  const inputHash = await sha256(INPUT_JSON);
-  const sidecarPath = `${OUT_PARQUET}.provenance.json`;
+  const inputHash = await sha256(inputJson);
+  const sidecarPath = `${outParquet}.provenance.json`;
 
-  if ((await fileExists(OUT_PARQUET)) && (await fileExists(sidecarPath))) {
+  if ((await fileExists(outParquet)) && (await fileExists(sidecarPath))) {
     try {
       const prev = JSON.parse(await readFile(sidecarPath, "utf8")) as {
         sha256_of_source?: string;
       };
       if (prev.sha256_of_source === inputHash) {
-        console.log(`unchanged ${OUT_PARQUET}`);
+        console.log(`unchanged ${outParquet}`);
         return;
       }
     } catch {
@@ -173,26 +220,29 @@ async function main() {
   }
 
   const result = await buildFromInput({
-    inputJsonPath: INPUT_JSON,
-    outputParquetPath: OUT_PARQUET,
+    inputJsonPath: inputJson,
+    outputParquetPath: outParquet,
   });
 
   const provenance = {
-    source_url: "data-ops/raw/obbba-scenarios/obbba_rollup.json",
-    source_kind: "cbo_distributional",
+    source_url: sourceUrl,
+    source_kind: isSample ? "sample-fixtures" : "cbo_distributional",
     publication_date: result.publicationDate,
     pulled_at: new Date().toISOString(),
     sha256_of_source: inputHash,
     parser_path: PARSER_PATH,
     parser_version: PARSER_VERSION,
     row_count: result.rowCount,
-    notes:
-      `OBBBA macro scenario rollup (model_version=${result.modelVersion}). ` +
-      "Civica-derived from CBO §10105 distributional model + USDA FNS PER. " +
-      "See data-ops/METHODOLOGY.md.",
+    notes: isSample
+      ? `Generated for demo purposes only. NOT real OBBBA / CBO data. ` +
+        `Use ANALYTICS_USE_SAMPLE_DATA=true to query. Regenerate via ` +
+        `\`pnpm data:build:sample\`. (model_version=${result.modelVersion})`
+      : `OBBBA macro scenario rollup (model_version=${result.modelVersion}). ` +
+        "Civica-derived from CBO §10105 distributional model + USDA FNS PER. " +
+        "See data-ops/METHODOLOGY.md.",
   };
   await writeFile(sidecarPath, `${JSON.stringify(provenance, null, 2)}\n`);
-  console.log(`built ${OUT_PARQUET} (${result.rowCount} rows)`);
+  console.log(`built ${outParquet} (${result.rowCount} rows)`);
 }
 
 const isMain =

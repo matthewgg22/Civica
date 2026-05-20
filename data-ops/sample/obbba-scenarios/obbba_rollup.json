@@ -1,0 +1,109 @@
+{
+  "model_version": "sample-fixtures-1.0",
+  "publication_date": "2026-05-19",
+  "scenarios": [
+    {
+      "scenario": "current_law",
+      "metric": "ca_fy28_state_liability_usd",
+      "value": 0
+    },
+    {
+      "scenario": "obbba_full",
+      "metric": "ca_fy28_state_liability_usd",
+      "value": 1720000000,
+      "narrative": "OBBBA §10105 cost-share triggered by CA's FY24 PER of 10.98%."
+    },
+    {
+      "scenario": "obbba_with_bbce_removal",
+      "metric": "ca_fy28_state_liability_usd",
+      "value": 2140000000,
+      "narrative": "BBCE removal lifts caseload churn → PER drift → larger liability."
+    },
+    {
+      "scenario": "obbba_with_bbce_removal_and_lpie",
+      "metric": "ca_fy28_state_liability_usd",
+      "value": 1980000000,
+      "narrative": "LPIE softens the BBCE-removal liability lift by ~$160M."
+    },
+    {
+      "scenario": "current_law",
+      "metric": "ca_fy28_estimated_per_pct",
+      "value": 9.85
+    },
+    {
+      "scenario": "obbba_full",
+      "metric": "ca_fy28_estimated_per_pct",
+      "value": 10.98
+    },
+    {
+      "scenario": "obbba_with_bbce_removal",
+      "metric": "ca_fy28_estimated_per_pct",
+      "value": 12.4
+    },
+    {
+      "scenario": "obbba_with_bbce_removal_and_lpie",
+      "metric": "ca_fy28_estimated_per_pct",
+      "value": 11.6
+    },
+    {
+      "scenario": "current_law",
+      "metric": "national_fy28_admin_cost_shift_usd",
+      "value": 0
+    },
+    {
+      "scenario": "obbba_full",
+      "metric": "national_fy28_admin_cost_shift_usd",
+      "value": 4850000000
+    },
+    {
+      "scenario": "obbba_with_bbce_removal",
+      "metric": "national_fy28_admin_cost_shift_usd",
+      "value": 6120000000
+    },
+    {
+      "scenario": "obbba_with_bbce_removal_and_lpie",
+      "metric": "national_fy28_admin_cost_shift_usd",
+      "value": 5790000000
+    },
+    {
+      "scenario": "current_law",
+      "metric": "ca_fy28_admin_cost_shift_usd",
+      "value": 0
+    },
+    {
+      "scenario": "obbba_full",
+      "metric": "ca_fy28_admin_cost_shift_usd",
+      "value": 580000000
+    },
+    {
+      "scenario": "obbba_with_bbce_removal",
+      "metric": "ca_fy28_admin_cost_shift_usd",
+      "value": 740000000
+    },
+    {
+      "scenario": "obbba_with_bbce_removal_and_lpie",
+      "metric": "ca_fy28_admin_cost_shift_usd",
+      "value": 690000000
+    },
+    {
+      "scenario": "current_law",
+      "metric": "ca_per_change_pct_vs_baseline",
+      "value": 0
+    },
+    {
+      "scenario": "obbba_full",
+      "metric": "ca_per_change_pct_vs_baseline",
+      "value": 1.13
+    },
+    {
+      "scenario": "obbba_with_bbce_removal",
+      "metric": "ca_per_change_pct_vs_baseline",
+      "value": 2.55
+    },
+    {
+      "scenario": "obbba_with_bbce_removal_and_lpie",
+      "metric": "ca_per_change_pct_vs_baseline",
+      "value": 1.75
+    }
+  ]
+}

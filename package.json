@@ -22,6 +22,7 @@
     "data:build:per": "tsx data-ops/parsers/per_to_parquet.ts",
     "data:build:obbba-scenarios": "tsx data-ops/parsers/obbba_scenarios_to_parquet.ts",
     "data:build:all": "pnpm data:build:section-10105 && pnpm data:build:cfr-273 && pnpm data:build:qc-mapping && pnpm data:build:per && pnpm data:build:obbba-scenarios",
+    "data:build:sample": "tsx scripts/generate-sample-analytics-data.ts && tsx data-ops/parsers/per_to_parquet.ts --input data-ops/sample/per --output data-ops/sample/parquet/per && tsx data-ops/parsers/obbba_scenarios_to_parquet.ts --input data-ops/sample/obbba-scenarios --output data-ops/sample/parquet/obbba-scenarios",
     "data:report:baseline": "tsx scripts/generate-baseline-report.ts"
   },
   "devDependencies": {
