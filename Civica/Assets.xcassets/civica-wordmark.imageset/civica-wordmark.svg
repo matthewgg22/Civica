@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!-- Single-color template asset — tinted at runtime via .foregroundStyle(). -->
+<!-- Do not add multiple fills; the Riso effect is achieved in SplashView    -->
+<!-- by rendering this asset twice with different tints + a 4pt offset.      -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 130" width="480" height="130">
+  <text x="0" y="100" font-family="Hanken Grotesk, system-ui, sans-serif" font-weight="600" font-size="100" letter-spacing="-4" fill="black">civica</text>
+</svg>

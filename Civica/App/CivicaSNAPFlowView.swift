@@ -82,6 +82,9 @@ struct CivicaSNAPFlowView: View {
         }) {
             SNAPPhoneSignInView(auth: enrollmentAuth, language: language)
         }
+        // Both destinations registered at the same NavigationStack level —
+        // nesting a second navigationDestination inside the first destination's
+        // view body is unsupported in iOS 17+ and causes navigation freezes.
         .navigationDestination(isPresented: $presentingVerdict) {
             if let verdict {
                 SNAPDecisionMathView(
@@ -90,25 +93,19 @@ struct CivicaSNAPFlowView: View {
                     onContinue: { presentingPacket = true },
                     draft: generatedDraft
                 )
-                .navigationDestination(isPresented: $presentingPacket) {
-                    if let draft = generatedDraft {
-                        SNAPApplicationPacketView(
-                            draft: draft,
-                            language: language,
-                            onClose: {
-                                // Explicitly unwind each navigationDestination
-                                // before popping the flow itself. A single
-                                // dismiss() from this deep in the stack
-                                // doesn't reliably propagate up two
-                                // navigationDestination layers in iOS 17+,
-                                // so we collapse them in order.
-                                presentingPacket = false
-                                presentingVerdict = false
-                                dismiss()
-                            }
-                        )
+            }
+        }
+        .navigationDestination(isPresented: $presentingPacket) {
+            if let draft = generatedDraft {
+                SNAPApplicationPacketView(
+                    draft: draft,
+                    language: language,
+                    onClose: {
+                        presentingPacket = false
+                        presentingVerdict = false
+                        dismiss()
                     }
-                }
+                )
             }
         }
     }

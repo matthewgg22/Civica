@@ -15,6 +15,8 @@ import SwiftUI
 extension Color {
     /// Primary brand, primary CTAs only. #9C3A24
     static let civicaBrick     = Color(hex: "#9C3A24")
+    /// Riso front layer — bright brick for icon + splash only. #E54B3C
+    static let civicaBrickPop  = Color(hex: "#E54B3C")
     /// Positive outcomes, secondary actions, links. #2A6F66
     static let civicaTeal      = Color(hex: "#2A6F66")
     /// Page background. #F5F2EC

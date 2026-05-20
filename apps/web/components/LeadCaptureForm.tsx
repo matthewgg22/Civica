@@ -22,6 +22,10 @@ export function LeadCaptureForm({ copy }: { copy: Copy }) {
       setStatus({ kind: "error", message: copy.formValidationError });
       return;
     }
+    if (phone.trim().length > 0 && phone.trim().length < 7) {
+      setStatus({ kind: "error", message: copy.formValidationErrorPhone });
+      return;
+    }
     // Campus is required by the API (pilot_leads CHECK constraint enforces
     // it for source='student-lpie-web').
     if (!campus.trim()) {
@@ -49,13 +53,9 @@ export function LeadCaptureForm({ copy }: { copy: Copy }) {
         setCampus("");
         return;
       }
-      const body = (await res.json().catch(() => ({}))) as {
-        message?: string;
-      };
-      setStatus({
-        kind: "error",
-        message: body.message ?? copy.formError,
-      });
+      const errorMessage =
+        res.status === 429 ? copy.formErrorRateLimit : copy.formError;
+      setStatus({ kind: "error", message: errorMessage });
     } catch {
       setStatus({ kind: "error", message: copy.formError });
     }
