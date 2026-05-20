@@ -19,13 +19,16 @@ import Foundation
 //   * Property taxes and homeowners insurance are not collected;
 //     treated as $0.
 //   * Child support paid is not collected; treated as $0.
-//   * Standard Utility Allowance tier defaults to .heatingCooling
-//     for MA when the household reports nonzero utilities;
-//     effective utility cost is max(actual_utilities, SUA_value)
-//     so SUA-eligible households can't lose deduction by reporting
-//     low actuals. A household that reports $0 utilities gets no
-//     SUA deduction (SUA is a substitution, not an additive
-//     phantom).
+//   * Standard Utility Allowance tier is derived from
+//     draft.expenses.suaTier (computed from selectedUtilities —
+//     the per-utility-type checklist). When no utility types are
+//     selected, tier is .none and utility deduction is $0. When a
+//     tier IS selected, effective utility = max(actual, suaValue)
+//     so a household that qualifies for SUA can't lose deduction
+//     by reporting low actuals. (T16 Gap #1/#2)
+//   * When housingStatus == .unhoused, the federal homeless shelter
+//     standard deduction ($179/mo) is applied automatically in place
+//     of rent + utilities. (T16 Gap #8)
 //   * Medical expenses count only when the household has an elderly
 //     or disabled member, and only the portion above $35 (7 CFR
 //     273.9(d)(3)).
@@ -37,21 +40,27 @@ import Foundation
 
 enum SNAPBenefitCalculator {
 
-    /// Default SUA tier when the flow doesn't yet ask the user.
-    /// Heating/cooling is the most permissive row for MA.
-    static let defaultSUATier: SUATier = .heatingCooling
-
     /// Computes a full itemized benefit calculation for the
     /// draft against the active rules engine. Returns nil only
     /// when household size cannot be parsed (degenerate input);
     /// otherwise always returns a detail -- a zero benefit is a
     /// valid result, not an error.
+    ///
+    /// T16 Gap #2: SUA tier is now derived from
+    /// `draft.expenses.suaTier` (computed from selectedUtilities)
+    /// rather than a hardcoded default. The rules engine already
+    /// had correct CA SUA values ($663/$170/$20); the missing piece
+    /// was passing the right tier in.
+    ///
+    /// T16 Gap #8: When `draft.whereApplying.housingStatus == .unhoused`
+    /// the federal homeless shelter standard deduction ($179/mo, 7 CFR
+    /// 273.9(d)(6)) is applied automatically in place of rent + utilities.
     static func calculate(
         draft: SNAPApplicationDraft,
         rules: SNAPStateRuleEngine,
         today: Date
     ) -> SNAPBenefitCalculationDetail {
-        let inputs = Inputs(draft: draft, suaTier: defaultSUATier)
+        let inputs = Inputs(draft: draft)
         let householdSize = inputs.householdSize
 
         let earnedDeduction = roundDollar(
@@ -82,25 +91,42 @@ enum SNAPBenefitCalculator {
         if adjustedIncome < 0 { adjustedIncome = 0 }
         let halfAdjusted = adjustedIncome / 2
 
-        // Effective utility cost: SUA is a *substitution* for
-        // itemized utility costs, not an additive phantom. A
-        // household with zero reported utilities does not get an
-        // SUA deduction (they declared they have no utility cost).
-        // When the user reported nonzero utilities, the SUA tier
-        // substitutes the larger of actuals and the state SUA value.
+        // T16 Gap #2: Effective utility cost.
+        // SUA is a *substitution* for itemized costs, not additive.
+        //
+        // Old logic: checked if actualUtilities <= 0 — this penalised
+        // households who selected utility types but hadn't entered a
+        // dollar amount yet, collapsing their deduction to zero.
+        //
+        // New logic: check suaTier == .none (household selected no utility
+        // types → utilities included in rent → no SUA deduction). When a
+        // tier IS selected, take max(actuals, suaValue) so a low reported
+        // amount doesn't penalise a household that qualifies for SUA.
         let effectiveUtility: Decimal
-        if inputs.actualUtilities <= 0 {
+        if inputs.suaTier == .none {
             effectiveUtility = 0
         } else if let sua = rules.suaValue(tier: inputs.suaTier, asOf: today) {
             effectiveUtility = max(inputs.actualUtilities, sua)
         } else {
+            // Rules engine has no SUA chart (federal default) — fall back
+            // to actual reported utilities.
             effectiveUtility = inputs.actualUtilities
         }
 
-        let shelterCosts = inputs.rentOrMortgage
-            + inputs.propertyTaxes
-            + inputs.homeownersInsurance
-            + effectiveUtility
+        // T16 Gap #8: Homeless shelter standard deduction.
+        // 7 CFR 273.9(d)(6): unhoused households receive a federal
+        // standard deduction ($179/mo FY2026) in place of documented
+        // rent + utilities. When the applicant is unhoused, skip rent
+        // and utilities and apply the standard deduction directly.
+        let shelterCosts: Decimal
+        if inputs.isUnhoused {
+            shelterCosts = SNAPHomelessShelterDeduction.monthlyFY2026
+        } else {
+            shelterCosts = inputs.rentOrMortgage
+                + inputs.propertyTaxes
+                + inputs.homeownersInsurance
+                + effectiveUtility
+        }
 
         let excessShelterRaw = shelterCosts - halfAdjusted
         let excessShelter: Decimal
@@ -190,13 +216,18 @@ enum SNAPBenefitCalculator {
         /// TODO: not collected by the flow yet; assumed $0.
         let homeownersInsurance: Decimal
         let actualUtilities: Decimal
+        /// T16 Gap #2: derived from draft.expenses.suaTier (computed
+        /// from selectedUtilities) instead of a hardcoded default.
         let suaTier: SUATier
+        /// T16 Gap #8: true when housingStatus == .unhoused.
+        /// Triggers the federal homeless shelter standard deduction.
+        let isUnhoused: Bool
         let dependentCare: Decimal
         let medical: Decimal
         /// TODO: not collected by the flow yet; assumed $0.
         let childSupportPaid: Decimal
 
-        init(draft: SNAPApplicationDraft, suaTier: SUATier) {
+        init(draft: SNAPApplicationDraft) {
             self.householdSize = Self.parseHouseholdSize(draft.household.householdSize)
             // FWS earnings are excluded from SNAP gross income before any deduction math
             // runs, per 7 CFR 273.9(c)(3). Subtract them from gross first so the EID,
@@ -211,7 +242,10 @@ enum SNAPBenefitCalculator {
             self.propertyTaxes = 0
             self.homeownersInsurance = 0
             self.actualUtilities = draft.expenses.monthlyUtilities ?? 0
-            self.suaTier = suaTier
+            // T16 Gap #2: read tier from the draft's computed suaTier property
+            self.suaTier = draft.expenses.suaTier
+            // T16 Gap #8
+            self.isUnhoused = draft.whereApplying.housingStatus == .unhoused
             self.dependentCare = draft.expenses.monthlyChildcare ?? 0
             self.medical = draft.expenses.monthlyMedical ?? 0
             self.childSupportPaid = 0
