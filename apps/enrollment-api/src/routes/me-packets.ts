@@ -282,12 +282,19 @@ app.get("/:packetId/documents", async (c) => {
     (data ?? []).map((row) => {
       const docRow = row.uploaded_documents as Record<string, unknown> | null;
 
+      // processing_status maps to the canonical snap-enums DocumentStatus.
+      // Prior code checked "complete" / "processing" — values that never exist
+      // in the DB CHECK constraint, so these branches silently never fired
+      // (every doc fell through to "Uploaded"). Translation:
+      //   "complete"   → "confirmed"             (navigator approved doc into packet)
+      //   "processing" → "awaiting_confirmation" (OCR done, navigator review pending)
+      const procStatus = docRow?.processing_status as string | undefined;
       let status: string;
       if (row.waived_at) {
         status = "N/A";
-      } else if (row.resolved_at && docRow?.processing_status === "complete") {
+      } else if (row.resolved_at && procStatus === "confirmed") {
         status = "Accepted for Packet";
-      } else if (docRow?.processing_status === "processing") {
+      } else if (procStatus === "awaiting_confirmation") {
         status = "Needs Review";
       } else if (docRow) {
         status = "Uploaded";

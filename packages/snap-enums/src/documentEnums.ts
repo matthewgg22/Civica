@@ -15,13 +15,31 @@ export const DocumentTypeSchema = z.enum([
 ]);
 export type DocumentType = z.infer<typeof DocumentTypeSchema>;
 
-// Document processing status — mirrors the processing_status CHECK constraint.
+// Document processing status — mirrors the processing_status CHECK constraint
+// in supabase/migrations. The flow is:
+//   uploaded → classifying → extracting → awaiting_confirmation
+//     → confirmed (navigator approved) OR rejected (navigator rejected)
 export const DocumentStatusSchema = z.enum([
-  "pending",
-  "uploading",
-  "processing",
-  "extracted",
-  "failed",
+  "uploaded",
+  "classifying",
+  "extracting",
+  "awaiting_confirmation",
+  "confirmed",
   "rejected",
 ]);
 export type DocumentStatus = z.infer<typeof DocumentStatusSchema>;
+
+// Set helpers — useful for downstream consumers that want to ask
+// "is this status pre-review?" or "is this terminal?"
+export const PRE_REVIEW_STATUSES = new Set<DocumentStatus>([
+  "uploaded",
+  "classifying",
+  "extracting",
+]);
+export const REVIEW_READY_STATUSES = new Set<DocumentStatus>([
+  "awaiting_confirmation",
+]);
+export const TERMINAL_STATUSES = new Set<DocumentStatus>([
+  "confirmed",
+  "rejected",
+]);

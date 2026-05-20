@@ -362,28 +362,34 @@ struct SNAPDocumentUploadView: View {
 
     private func statusIcon(_ status: EnrollmentDocumentProcessingStatus) -> String {
         switch status {
-        case .pending:    return "clock"
-        case .processing: return "gearshape"
-        case .complete:   return "checkmark.circle.fill"
-        case .failed:     return "xmark.circle.fill"
+        case .uploaded:              return "clock"
+        case .classifying:           return "doc.text.magnifyingglass"
+        case .extracting:            return "gearshape"
+        case .awaitingConfirmation:  return "hand.raised"
+        case .confirmed:             return "checkmark.circle.fill"
+        case .rejected:              return "xmark.circle.fill"
         }
     }
 
     private func statusColor(_ status: EnrollmentDocumentProcessingStatus) -> Color {
         switch status {
-        case .pending:    return CivicaColors.graphite
-        case .processing: return CivicaColors.warningAmber
-        case .complete:   return CivicaColors.accentTeal
-        case .failed:     return CivicaColors.destructive
+        case .uploaded:              return CivicaColors.graphite
+        case .classifying:           return CivicaColors.warningAmber
+        case .extracting:            return CivicaColors.warningAmber
+        case .awaitingConfirmation:  return CivicaColors.warningAmber
+        case .confirmed:             return CivicaColors.accentTeal
+        case .rejected:              return CivicaColors.destructive
         }
     }
 
     private func statusLabel(_ status: EnrollmentDocumentProcessingStatus) -> String {
         switch status {
-        case .pending:    return Strings.statusPending.value(in: language)
-        case .processing: return Strings.statusProcessing.value(in: language)
-        case .complete:   return Strings.statusComplete.value(in: language)
-        case .failed:     return Strings.statusFailed.value(in: language)
+        case .uploaded:              return Strings.statusPending.value(in: language)
+        case .classifying:           return Strings.statusProcessing.value(in: language)
+        case .extracting:            return Strings.statusProcessing.value(in: language)
+        case .awaitingConfirmation:  return Strings.statusAwaitingReview.value(in: language)
+        case .confirmed:             return Strings.statusComplete.value(in: language)
+        case .rejected:              return Strings.statusFailed.value(in: language)
         }
     }
 
@@ -411,6 +417,7 @@ struct SNAPDocumentUploadView: View {
         static let unknownKind     = CivicaText("Document", es: "Documento")
         static let statusPending   = CivicaText("Received", es: "Recibido")
         static let statusProcessing = CivicaText("Processing", es: "Procesando")
+        static let statusAwaitingReview = CivicaText("Awaiting review", es: "Pendiente de revisión")
         static let statusComplete  = CivicaText("Accepted", es: "Aceptado")
         static let statusFailed    = CivicaText("Review needed", es: "Requiere revisión")
         static let loadError       = CivicaText("Could not load the selected image.", es: "No se pudo cargar la imagen seleccionada.")
