@@ -63,6 +63,11 @@ protocol EnrollmentAPIClient: Sendable {
     /// DELETE /v1/enrollment/me/argyle/connect
     /// Revoke the active Argyle connection.
     func disconnectArgyle() async throws
+
+    /// GET /v1/enrollment/me/active-recert
+    /// Returns the signed-in applicant's most recent recertification.
+    /// Returns nil when none exists (gateway returns 404 → mapped to nil here).
+    func fetchActiveRecert() async throws -> ActiveRecertResponseDTO?
 }
 
 // MARK: - Errors
@@ -229,6 +234,24 @@ struct HTTPEnrollmentAPIClient: EnrollmentAPIClient {
         req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         let (_, response) = try await session.data(for: req)
         try validate(response)
+    }
+
+    func fetchActiveRecert() async throws -> ActiveRecertResponseDTO? {
+        guard let token = await tokenProvider() else { throw EnrollmentAPIError.unauthenticated }
+        guard let url = URL(string: "/me/active-recert", relativeTo: baseURL) else {
+            throw EnrollmentAPIError.invalidURL
+        }
+        var req = URLRequest(url: url)
+        req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        let (data, response) = try await session.data(for: req)
+        if let http = response as? HTTPURLResponse, http.statusCode == 404 {
+            return nil
+        }
+        try validate(response)
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return try decoder.decode(ActiveRecertResponseDTO.self, from: data)
     }
 
     // MARK: - Private helpers
@@ -507,6 +530,10 @@ final class MockEnrollmentAPIClient: EnrollmentAPIClient, @unchecked Sendable {
 
     func disconnectArgyle() async throws {
         // no-op in mock
+    }
+
+    func fetchActiveRecert() async throws -> ActiveRecertResponseDTO? {
+        return nil
     }
 }
 

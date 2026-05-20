@@ -53,16 +53,17 @@ struct PacketSnapshotDTO: Codable, Hashable {
 struct StartPracticeRequestDTO: Codable {}
 
 /// POST /v1/enrollment/recert/:recertId/practice/:sessionId/respond
-/// Per respondSchema in recert.ts: `{ user_message: string }`.
-/// NOTE: the orchestrator's RespondInput has no `audio_bytes_duration` field,
-/// and neither does the Zod schema on the route. Voice input is transcribed
-/// on-device and only the resulting text is sent. If we later want duration
-/// telemetry that's a backend gap.
+/// Per respondSchema in recert.ts: `{ user_message: string, audio_bytes_duration?: int }`.
+/// `audioBytesDuration` is only sent when the response was captured via
+/// SNAPVoiceIntakeService on-device — it's a soft "stuck vs confident"
+/// signal that the orchestrator threads into the AI coach prompt.
 struct PracticeRespondRequestDTO: Codable {
     let userMessage: String
+    let audioBytesDuration: Int?
 
     enum CodingKeys: String, CodingKey {
         case userMessage = "user_message"
+        case audioBytesDuration = "audio_bytes_duration"
     }
 }
 
@@ -99,31 +100,30 @@ struct PracticeSessionStateDTO: Codable {
     let completedAt: String?
 }
 
-// MARK: - Legacy types (retained for compile-compatibility)
+// MARK: - End-of-session scoring
 //
-// `InterviewScoreResponseDTO` and friends are still referenced by
-// `ReviewSummaryView.swift` and `InterviewCoachAnalytics.swift`. The new
-// backend has no end-of-session scoring endpoint — only per-turn
-// `coaching`. The score sheet is not surfaced in the new flow, so these
-// types live on as dormant shapes. A follow-up PR can either rebuild the
-// score sheet from accumulated `coaching` text or remove the score path
-// entirely. See InterviewCoachAPIClient for the new live calls.
-
-struct InterviewScoreAxisDTO: Codable, Hashable {
-    let score: Double
-    let summary: String
-}
-
-struct InterviewPerTurnNoteDTO: Codable, Hashable {
-    let turnIndex: Int
-    let applicantText: String
-    let note: String
-}
-
-struct InterviewScoreResponseDTO: Codable {
+// 200/201 response from POST .../practice/:sessionId/score.
+// Mirrors `ScoreResult` from packages/recert-engine/src/interview/scorer.ts
+// plus the route-side `session_id` and `generated_at` envelope fields.
+struct InterviewScoreResponseDTO: Codable, Hashable {
     let sessionId: String
-    let completeness: InterviewScoreAxisDTO
-    let accuracyRisk: InterviewScoreAxisDTO
-    let missingContext: InterviewScoreAxisDTO
-    let perTurnNotes: [InterviewPerTurnNoteDTO]
+    let overallScore: Int           // 0-100
+    let strengths: [String]         // 2-4 bullets
+    let improvements: [String]      // 2-4 bullets
+    let summaryEn: String           // 1-2 sentences in English
+    let summaryEs: String           // 1-2 sentences in Spanish
+    let generatedAt: String         // ISO-8601 timestamp
+    let engineVersion: String       // e.g. "claude-haiku-4-5/score-v1"
+}
+
+// MARK: - GET /me/active-recert
+//
+// Returns the signed-in applicant's most recent recertification (any status),
+// or 404 when none exists. Used by InterviewCoachEntryView to wire recertId
+// into PracticeSessionView without requiring the user to know their packetId.
+struct ActiveRecertResponseDTO: Codable, Hashable {
+    let recertId: String
+    let packetId: String
+    let certPeriodEnd: String?
+    let status: String
 }
