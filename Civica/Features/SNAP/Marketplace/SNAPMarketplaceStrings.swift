@@ -93,6 +93,28 @@ enum SNAPMarketplaceStrings {
         "Tap to open sheet",
         es: "Toca para abrir"
     )
+    // Screen 04 shared-data card row labels
+    static let sharedRowPlaid = CivicaText(
+        "Income verified by Plaid",
+        es: "Ingresos verificados por Plaid"
+    )
+    static let sharedRowCanvas = CivicaText(
+        "Class schedule from Canvas",
+        es: "Horario de clases de Canvas"
+    )
+    static let sharedRowSnapEligible = CivicaText(
+        "SNAP-eligible status confirmed",
+        es: "Estado elegible para SNAP confirmado"
+    )
+    // Screen 04 disconnected-source state (D5)
+    static let reconnect = CivicaText(
+        "Reconnect",
+        es: "Reconectar"
+    )
+    static let disconnectedSource = CivicaText(
+        "Not connected",
+        es: "No conectado"
+    )
 
     // MARK: - SNAPPlacementUpdateView (Screen 05)
 
