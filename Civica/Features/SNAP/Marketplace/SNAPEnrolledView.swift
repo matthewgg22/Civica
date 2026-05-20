@@ -14,6 +14,17 @@ struct SNAPEnrolledView: View {
     private var languageRaw: String = CivicaLanguage.english.rawValue
     private var language: CivicaLanguage { CivicaLanguage(rawValue: languageRaw) ?? .english }
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    /// Hero numeral reduces from 48pt to 34pt at xLarge+ to prevent overflow (D10).
+    private var heroNumeralFont: Font {
+        dynamicTypeSize >= .xLarge ? MFont.semibold(34) : MFont.heroNumeral
+    }
+
+    private var heroNumeralShimmerSize: CGSize {
+        dynamicTypeSize >= .xLarge ? CGSize(width: 72, height: 42) : CGSize(width: 100, height: 58)
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -58,16 +69,20 @@ struct SNAPEnrolledView: View {
                 .padding(.bottom, 8)
 
             // $292 — shimmer while loading, populated once API responds.
+            // Font reduces from 48pt to 34pt at xLarge+ DynamicTypeSize (D10).
             Group {
                 if let amountText = vm.benefitAmountFormatted {
                     Text(amountText)
-                        .font(MFont.heroNumeral)
+                        .font(heroNumeralFont)
                         .foregroundStyle(Color.civicaInk)
                         .monospacedDigit()
                         .accessibilityLabel("Monthly benefit: \(amountText)")
                 } else if vm.benefitLoadError == nil {
-                    MShimmer(width: 100, height: 58)
-                        .accessibilityLabel("Loading monthly benefit amount")
+                    MShimmer(
+                        width: heroNumeralShimmerSize.width,
+                        height: heroNumeralShimmerSize.height
+                    )
+                    .accessibilityLabel("Loading monthly benefit amount")
                 }
             }
 

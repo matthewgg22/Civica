@@ -16,6 +16,11 @@ enum SNAPMarketplaceStrings {
         "Open hours: ",
         es: "Horario: "
     )
+    // Screen 02 Canvas provenance attribution (D6)
+    static let canvasProvenance = CivicaText(
+        "Schedule synced from Canvas",
+        es: "Horario sincronizado desde Canvas"
+    )
     static let incomeCapPrefix = CivicaText(
         "Income cap: $",
         es: "Límite de ingresos: $"

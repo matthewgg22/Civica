@@ -17,6 +17,7 @@ struct SNAPJobsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 scheduleStrip
+                canvasProvenanceLine
                 openHoursLine
                 MHairline()
                 incomeCapLine
@@ -57,6 +58,20 @@ struct SNAPJobsView: View {
         .frame(height: 56)
         .background(Color.civicaPaper2)
         .accessibilityLabel("Class schedule: Tuesday and Thursday class blocks")
+    }
+
+    // MARK: Canvas provenance (D6)
+
+    @ViewBuilder
+    private var canvasProvenanceLine: some View {
+        if vm.schedule.source == .canvas {
+            Text(SNAPMarketplaceStrings.canvasProvenance.value(in: language))
+                .font(MFont.meta)
+                .foregroundStyle(Color.civicaGraphite)
+                .padding(.top, 8)
+                .padding(.horizontal, 24)
+                .accessibilityLabel("Schedule source: Canvas")
+        }
     }
 
     // MARK: Open hours
