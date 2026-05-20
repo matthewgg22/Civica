@@ -98,13 +98,28 @@ struct SNAPReviewDraftFlowView: View {
     let onStartOver: (() -> Void)?
     let onExit: () -> Void
 
+    // T16 Gap #7: Shelter QC flags. Evaluated once per render from the
+    // draft — advisory only, never block submission.
+    // `county` is read from draft.whereApplying.county; the caller may
+    // pass `onCampus: true` when a Banner housing assignment confirms
+    // on-campus residence (low/zero rent + no utilities is expected).
+    let onCampus: Bool
+
+    // T16 Gap #6: Mid-period change detection.
+    // When the orchestrator has a prior snapshot of whereApplying (taken
+    // at the last packet generation), passing it here enables the
+    // mid-period change banner. nil = first-time review, no banner shown.
+    let priorWhereApplying: SNAPWhereApplyingAnswers?
+
     init(
         draft: SNAPApplicationDraft,
         language: CivicaLanguage,
         onEdit: @escaping (SNAPApplicationSection) -> Void,
         onGeneratePacket: @escaping () -> Void,
         onStartOver: (() -> Void)? = nil,
-        onExit: @escaping () -> Void
+        onExit: @escaping () -> Void,
+        onCampus: Bool = false,
+        priorWhereApplying: SNAPWhereApplyingAnswers? = nil
     ) {
         self.draft = draft
         self.language = language
@@ -112,6 +127,8 @@ struct SNAPReviewDraftFlowView: View {
         self.onGeneratePacket = onGeneratePacket
         self.onStartOver = onStartOver
         self.onExit = onExit
+        self.onCampus = onCampus
+        self.priorWhereApplying = priorWhereApplying
     }
 
     var body: some View {
@@ -128,8 +145,19 @@ struct SNAPReviewDraftFlowView: View {
             language: language
         ) {
             VStack(spacing: CivicaSpacing.md) {
+                // T16 Gap #6: Mid-period change banner (shown when the
+                // user re-edits whereApplying after generating a packet).
+                if let prior = priorWhereApplying, housingLocationChanged(prior: prior) {
+                    midPeriodChangeBanner
+                }
+
                 ForEach(SNAPApplicationSection.allCases) { section in
                     sectionCard(section)
+                    // T16 Gap #7: Shelter QC advisory flags shown below
+                    // the expenses section card.
+                    if section == .expenses {
+                        shelterQCFlagsView
+                    }
                 }
             }
         }
@@ -194,6 +222,107 @@ struct SNAPReviewDraftFlowView: View {
             RoundedRectangle(cornerRadius: CivicaRadius.card)
                 .strokeBorder(CivicaColors.hairline, lineWidth: 1)
         )
+    }
+
+    // MARK: - T16 Gap #7: Shelter QC advisory flags
+
+    /// Advisory shelter data-quality flags derived from the current draft.
+    /// Renders as zero-height (EmptyView) when there are no flags — never
+    /// injects padding into the card stack when clean.
+    @ViewBuilder
+    private var shelterQCFlagsView: some View {
+        let flags = ShelterQCHeuristics.evaluate(
+            draft: draft,
+            county: draft.whereApplying.county,
+            onCampus: onCampus
+        )
+        if !flags.isEmpty {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                HStack(spacing: CivicaSpacing.xs) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(CivicaColors.warningAmber)
+                        .imageScale(.small)
+                    Text(SNAPReviewDraftStrings.shelterFlagsHeader.value(in: language))
+                        .font(CivicaTypography.footnoteStrong)
+                        .foregroundStyle(CivicaColors.warningAmber)
+                }
+
+                ForEach(Array(flags.enumerated()), id: \.offset) { _, flag in
+                    HStack(alignment: .top, spacing: CivicaSpacing.sm) {
+                        Circle()
+                            .fill(CivicaColors.warningAmber)
+                            .frame(width: 4, height: 4)
+                            .padding(.top, 6)
+                        Text(SNAPReviewDraftStrings.shelterFlagPrompt(flag, language: language))
+                            .font(CivicaTypography.footnote)
+                            .foregroundStyle(CivicaColors.ink)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+
+                Button {
+                    onEdit(.expenses)
+                } label: {
+                    Text(SNAPReviewDraftStrings.shelterFlagsEditAction.value(in: language))
+                        .font(CivicaTypography.footnoteStrong)
+                        .foregroundStyle(CivicaColors.brickPrimary)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(CivicaSpacing.md)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.warningAmber.opacity(0.08))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.warningAmber.opacity(0.35), lineWidth: 1)
+            )
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(
+                SNAPReviewDraftStrings.shelterFlagsAccessibilityLabel(
+                    count: flags.count,
+                    language: language
+                )
+            )
+        }
+    }
+
+    // MARK: - T16 Gap #6: Mid-period change banner
+
+    /// True when the user has changed their housing status or county
+    /// since the last packet was generated — triggers mid-period change
+    /// reporting prompt (7 CFR 273.12).
+    private func housingLocationChanged(prior: SNAPWhereApplyingAnswers) -> Bool {
+        prior.housingStatus != draft.whereApplying.housingStatus
+            || prior.county != draft.whereApplying.county
+    }
+
+    private var midPeriodChangeBanner: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            HStack(spacing: CivicaSpacing.xs) {
+                Image(systemName: "info.circle.fill")
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundStyle(CivicaColors.accentTeal)
+                    .imageScale(.small)
+                Text(SNAPReviewDraftStrings.midPeriodChangeHeader.value(in: language))
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundStyle(CivicaColors.accentTeal)
+            }
+            Text(SNAPReviewDraftStrings.midPeriodChangeBody.value(in: language))
+                .font(CivicaTypography.footnote)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.tealSurface)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .strokeBorder(CivicaColors.teal.opacity(0.35), lineWidth: 1)
+        )
+        .accessibilityElement(children: .combine)
     }
 
     // Pills only fire on incomplete sections — the rows the user
@@ -544,6 +673,59 @@ enum SNAPReviewDraftStrings {
     static let rowChildcare = CivicaText("Childcare", es: "Cuidado infantil")
     static let rowMedical = CivicaText("Medical", es: "Médico")
     static let rowDocumentsCount = CivicaText("Documents marked", es: "Documentos marcados")
+
+    // MARK: - T16 Gap #7: Shelter QC flag strings
+
+    static let shelterFlagsHeader = CivicaText(
+        "Check before submitting",
+        es: "Verifica antes de enviar"
+    )
+    static let shelterFlagsEditAction = CivicaText(
+        "Update expenses →",
+        es: "Actualizar gastos →"
+    )
+
+    static func shelterFlagsAccessibilityLabel(count: Int, language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return "\(count) shelter data \(count == 1 ? "question" : "questions") to review before submitting"
+        case .spanish: return "\(count) \(count == 1 ? "pregunta" : "preguntas") sobre gastos de vivienda para revisar antes de enviar"
+        }
+    }
+
+    /// Student-facing prompt text for each advisory flag.
+    /// Softer than the navigator-facing `navigatorSummary` on ShelterQCFlag —
+    /// framed as a question to invite correction rather than an accusation.
+    static func shelterFlagPrompt(_ flag: ShelterQCFlag, language: CivicaLanguage) -> String {
+        switch (flag, language) {
+        case (.rentBelowCountyFloor, .english):
+            return "That rent seems low for a solo renter in your area — is that your full rent, or your share with roommates?"
+        case (.rentBelowCountyFloor, .spanish):
+            return "Esa renta parece baja para alquilar solo en tu área — ¿es tu renta completa o tu parte con compañeros?"
+        case (.rentExceedsIncome, .english):
+            return "Your rent appears higher than your reported income — confirm both amounts are correct before submitting."
+        case (.rentExceedsIncome, .spanish):
+            return "Tu renta parece ser mayor que tu ingreso reportado — confirma que ambas cantidades sean correctas antes de enviar."
+        case (.noUtilitiesOffCampus, .english):
+            return "You didn't select any utilities — are they included in your rent? If not, go back and add them."
+        case (.noUtilitiesOffCampus, .spanish):
+            return "No seleccionaste ningún servicio — ¿están incluidos en tu renta? Si no, regresa y agrégalos."
+        case (.rentSuggestsUnproratedLease, .english):
+            return "That rent is high for a single person in your area — are you splitting it with roommates who aren't on your case?"
+        case (.rentSuggestsUnproratedLease, .spanish):
+            return "Esa renta es alta para una sola persona en tu área — ¿la compartes con compañeros que no están en tu caso?"
+        }
+    }
+
+    // MARK: - T16 Gap #6: Mid-period change strings
+
+    static let midPeriodChangeHeader = CivicaText(
+        "Your housing situation changed",
+        es: "Tu situación de vivienda cambió"
+    )
+    static let midPeriodChangeBody = CivicaText(
+        "You changed your housing status or county since your last packet. You may need to report this change to your SNAP caseworker within 10 days (7 CFR 273.12). Contact your county office to report a mid-period change.",
+        es: "Cambiaste tu estado de vivienda o condado desde tu último paquete. Es posible que debas reportar este cambio a tu trabajador social de SNAP dentro de 10 días (7 CFR 273.12). Comunícate con tu oficina del condado para reportar un cambio de período intermedio."
+    )
 }
 
 #if DEBUG
