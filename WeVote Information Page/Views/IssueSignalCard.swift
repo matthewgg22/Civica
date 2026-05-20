@@ -256,7 +256,7 @@ struct HowCallsBecomeSignalCardDemo: View {
                 VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                     Text("Only 23% of constituents call their reps annually")
                         .font(CivicaTypography.sectionHeader)
-                        .foregroundStyle(CivicaColors.brickPrimary)
+                        .foregroundStyle(CivicaColors.pinePrimary)
                     Text("When fewer people call, each call carries more signal.")
                         .font(CivicaTypography.subhead)
                 }

@@ -363,7 +363,7 @@ extension View {
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
             .padding(.vertical, CivicaSpacing.md)
-            .background(CivicaColors.brickPrimary)
+            .background(CivicaColors.pinePrimary)
             .clipShape(Capsule(style: .continuous))
             .voteNowPillDualOrbit()
     }

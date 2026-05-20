@@ -500,7 +500,7 @@ struct IssueCallCenterView: View {
         ]
 
         var map: [String: Color] = [
-            Self.allExamplesFilterLabel.lowercased(): CivicaColors.brickPrimary,
+            Self.allExamplesFilterLabel.lowercased(): CivicaColors.pinePrimary,
             Self.urgentExamplesFilterLabel.lowercased(): CivicaColors.destructive,
             Self.searchExamplesFilterLabel.lowercased(): Color(hex: "#0F766E")
         ]
@@ -726,7 +726,7 @@ struct IssueCallCenterView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, CivicaSpacing.md)
                 .foregroundColor(.white)
-                .background(CivicaColors.brickPrimary)
+                .background(CivicaColors.pinePrimary)
                 .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 .buttonStyle(.plain)
                 .accessibilityIdentifier("issue_call.intro.ready")
@@ -820,7 +820,7 @@ struct IssueCallCenterView: View {
                                 .foregroundColor(.white)
                                 .frame(minWidth: 58, minHeight: 32, alignment: .center)
                                 .padding(.horizontal, CivicaSpacing.sm)
-                                .background(CivicaColors.brickPrimary)
+                                .background(CivicaColors.pinePrimary)
                                 .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         }
                         .buttonStyle(.plain)
@@ -849,7 +849,7 @@ struct IssueCallCenterView: View {
                         Text(l("app.reps.action.edit_location", "Change Location"))
                             .font(CivicaTypography.supportStrong)
                             .italic()
-                            .foregroundColor(CivicaColors.brickPrimary)
+                            .foregroundColor(CivicaColors.pinePrimary)
                             .lineLimit(1)
                     }
                     .buttonStyle(.plain)
@@ -886,7 +886,7 @@ struct IssueCallCenterView: View {
                         + Text(l("app.issue_call.location.change_address", "Change to your Address..."))
                             .font(CivicaTypography.captionBold)
                             .italic()
-                            .foregroundColor(CivicaColors.brickPrimary)
+                            .foregroundColor(CivicaColors.pinePrimary)
                     )
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -946,7 +946,7 @@ struct IssueCallCenterView: View {
                         isComplete
                         ? CivicaColors.warningAmber
                         : (isCurrent
-                           ? (isLastStep ? CivicaColors.accentTeal : CivicaColors.brickPrimary)
+                           ? CivicaColors.pinePrimary
                            : CivicaColors.surfacePrimary)
                     )
                     .clipShape(Capsule())
@@ -987,7 +987,7 @@ struct IssueCallCenterView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                .stroke(CivicaColors.brickPrimary.opacity(0.22), lineWidth: 2)
+                .stroke(CivicaColors.pinePrimary.opacity(0.22), lineWidth: 2)
         )
         .civicaShadow(.card)
         .padding(.horizontal, CivicaSpacing.lg)
@@ -1061,13 +1061,13 @@ struct IssueCallCenterView: View {
     private func issueCallTopTabHighlightColor(for tab: CivicIssueCallTab) -> Color {
         switch tab {
         case .assistant:
-            return CivicaColors.brickPrimary
+            return CivicaColors.pinePrimary
         case .examples:
             return CivicaColors.warningAmber
         case .civicScore:
-            return CivicaColors.accentTeal
+            return CivicaColors.pinePrimary
         case .history:
-            return CivicaColors.brickPrimary
+            return CivicaColors.pinePrimary
         }
     }
 
@@ -1442,7 +1442,7 @@ struct IssueCallCenterView: View {
             .padding(.vertical, CivicaSpacing.sm)
             .background(
                 RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                    .fill(isUser ? CivicaColors.brickPrimary : CivicaColors.surfacePrimary)
+                    .fill(isUser ? CivicaColors.pinePrimary : CivicaColors.surfacePrimary)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
@@ -1476,7 +1476,7 @@ struct IssueCallCenterView: View {
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(width: 36, height: 36)
-                    .background(CivicaColors.brickPrimary)
+                    .background(CivicaColors.pinePrimary)
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
@@ -1588,7 +1588,7 @@ struct IssueCallCenterView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, CivicaSpacing.sm)
-                            .background(CivicaColors.brickPrimary)
+                            .background(CivicaColors.pinePrimary)
                             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     }
                     .buttonStyle(.plain)
@@ -1666,7 +1666,7 @@ struct IssueCallCenterView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, CivicaSpacing.sm)
-                            .background(CivicaColors.brickPrimary)
+                            .background(CivicaColors.pinePrimary)
                             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     }
                     .buttonStyle(.plain)
@@ -1697,7 +1697,7 @@ struct IssueCallCenterView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, CivicaSpacing.sm)
-                        .background(CivicaColors.brickPrimary)
+                        .background(CivicaColors.pinePrimary)
                         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 }
                 .buttonStyle(.plain)
@@ -1761,7 +1761,7 @@ struct IssueCallCenterView: View {
                                     .padding(.horizontal, CivicaSpacing.sm)
                                     .padding(.vertical, CivicaSpacing.sm)
                                     .frame(maxWidth: .infinity)
-                                    .background(viewModel.selectedAsk == ask ? CivicaColors.brickPrimary : CivicaColors.surfacePrimary)
+                                    .background(viewModel.selectedAsk == ask ? CivicaColors.pinePrimary : CivicaColors.surfacePrimary)
                                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                                     .overlay(
                                         RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
@@ -1811,7 +1811,7 @@ struct IssueCallCenterView: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, CivicaSpacing.md)
-                .background(viewModel.canSubmit ? CivicaColors.brickPrimary : CivicaColors.graphite.opacity(0.45))
+                .background(viewModel.canSubmit ? CivicaColors.pinePrimary : CivicaColors.graphite.opacity(0.45))
                 .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             }
             .buttonStyle(.plain)
@@ -3094,7 +3094,7 @@ struct IssueCallCenterView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, CivicaSpacing.sm)
-                        .background(CivicaColors.brickPrimary)
+                        .background(CivicaColors.pinePrimary)
                         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                 }
                 .buttonStyle(.plain)
@@ -3300,7 +3300,7 @@ struct IssueCallCenterView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, CivicaSpacing.md)
-                            .background(primaryCallURL == nil ? CivicaColors.graphite.opacity(0.45) : CivicaColors.brickPrimary)
+                            .background(primaryCallURL == nil ? CivicaColors.graphite.opacity(0.45) : CivicaColors.pinePrimary)
                             .clipShape(Capsule(style: .continuous))
                             .voteNowPillDualOrbit(
                                 enabled: true,
@@ -3323,7 +3323,7 @@ struct IssueCallCenterView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, CivicaSpacing.md)
-                            .background(primaryCallURL == nil ? CivicaColors.graphite.opacity(0.45) : CivicaColors.brickPrimary)
+                            .background(primaryCallURL == nil ? CivicaColors.graphite.opacity(0.45) : CivicaColors.pinePrimary)
                             .clipShape(Capsule(style: .continuous))
                         }
                     }
@@ -3390,7 +3390,7 @@ struct IssueCallCenterView: View {
                             Spacer(minLength: 0)
                             Image(systemName: isVoicemailExpanded ? "chevron.up" : "chevron.down")
                                 .font(CivicaTypography.captionBold)
-                                .foregroundColor(CivicaColors.brickPrimary)
+                                .foregroundColor(CivicaColors.pinePrimary)
                         }
                         .padding(.horizontal, CivicaSpacing.sm)
                         .padding(.vertical, CivicaSpacing.sm)
@@ -3443,7 +3443,7 @@ struct IssueCallCenterView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, CivicaSpacing.md)
-                                .background(CivicaColors.brickPrimary)
+                                .background(CivicaColors.pinePrimary)
                                 .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         }
                         .buttonStyle(.plain)
@@ -3472,7 +3472,7 @@ struct IssueCallCenterView: View {
                 .stroke(
                     condensedForMAPC
                     ? CivicaColors.hairline.opacity(0.5)
-                    : (isActive ? CivicaColors.brickPrimary : CivicaColors.hairline.opacity(0.7)),
+                    : (isActive ? CivicaColors.pinePrimary : CivicaColors.hairline.opacity(0.7)),
                     lineWidth: condensedForMAPC ? 0.9 : 1
                 )
         )
@@ -3650,7 +3650,7 @@ struct IssueCallCenterView: View {
                                 .padding(.horizontal, CivicaSpacing.md)
                                 .padding(.vertical, CivicaSpacing.sm)
                                 .frame(maxWidth: .infinity, alignment: .center)
-                                .background(CivicaColors.brickPrimary)
+                                .background(CivicaColors.pinePrimary)
                                 .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                                 .voteNowPillDualOrbit(
                                     redColor: CivicaColors.partyRepublican.opacity(0.94),
@@ -3752,7 +3752,7 @@ struct IssueCallCenterView: View {
                                 Spacer(minLength: 0)
                                 Image(systemName: expandedPremadeLiveScriptIDs.contains(example.id) ? "chevron.up" : "chevron.down")
                                     .font(CivicaTypography.captionBold)
-                                    .foregroundColor(CivicaColors.brickPrimary)
+                                    .foregroundColor(CivicaColors.pinePrimary)
                             }
                             .padding(.horizontal, CivicaSpacing.sm)
                             .padding(.vertical, CivicaSpacing.sm)
@@ -3783,7 +3783,7 @@ struct IssueCallCenterView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, CivicaSpacing.sm)
-                                .background(CivicaColors.brickPrimary)
+                                .background(CivicaColors.pinePrimary)
                                 .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         }
                         .buttonStyle(.plain)
@@ -3812,7 +3812,7 @@ struct IssueCallCenterView: View {
                             Image(systemName: showAllPremadeExamples ? "chevron.up" : "chevron.down")
                                 .font(CivicaTypography.captionStrong)
                         }
-                        .foregroundColor(CivicaColors.brickPrimary)
+                        .foregroundColor(CivicaColors.pinePrimary)
                         .padding(.horizontal, CivicaSpacing.md)
                         .padding(.vertical, CivicaSpacing.sm)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -3955,12 +3955,12 @@ struct IssueCallCenterView: View {
             HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                 Text("\(displayedUserCalls.formatted(.number)) \(l("app.issue_call.score.stats.your_calls", "Your calls"))")
                     .font(.system(size: 36, weight: .bold, design: .rounded))
-                    .foregroundColor(CivicaColors.brickPrimary)
+                    .foregroundColor(CivicaColors.pinePrimary)
 
                 if showGainBadge {
                     Text("+\(gain)")
                         .font(CivicaTypography.cardTitle)
-                        .foregroundColor(CivicaColors.accentTeal)
+                        .foregroundColor(CivicaColors.pinePrimary)
                         .transition(.move(edge: .top).combined(with: .opacity))
                 }
             }
@@ -3970,7 +3970,7 @@ struct IssueCallCenterView: View {
             if showGainBadge {
                 Text("+\(gain) calls completed")
                     .font(CivicaTypography.captionStrong)
-                    .foregroundColor(CivicaColors.accentTeal)
+                    .foregroundColor(CivicaColors.pinePrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
@@ -3980,7 +3980,7 @@ struct IssueCallCenterView: View {
         HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
             Text(value.formatted(.number))
                 .font(CivicaTypography.cardTitle)
-                .foregroundColor(CivicaColors.brickPrimary)
+                .foregroundColor(CivicaColors.pinePrimary)
             Text(label)
                 .font(CivicaTypography.subhead)
                 .foregroundColor(CivicaColors.ink)
@@ -4008,7 +4008,7 @@ struct IssueCallCenterView: View {
                     if result.baselineCrossed {
                         Text(l("app.issue_call.completion.baseline", "You crossed the baseline"))
                             .font(CivicaTypography.captionStrong)
-                            .foregroundColor(CivicaColors.accentTeal)
+                            .foregroundColor(CivicaColors.pinePrimary)
                     }
 
                     if !result.changedComponents.isEmpty {
@@ -4140,7 +4140,7 @@ struct IssueCallCenterView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding(.horizontal, CivicaSpacing.md)
                                 .padding(.vertical, CivicaSpacing.sm)
-                                .background(CivicaColors.brickPrimary)
+                                .background(CivicaColors.pinePrimary)
                                 .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                         }
                         .buttonStyle(.plain)
@@ -4261,7 +4261,7 @@ struct IssueCallCenterView: View {
                     .fill(CivicaColors.tealSurface)
 
                 Capsule()
-                    .fill(CivicaColors.brickPrimary)
+                    .fill(CivicaColors.pinePrimary)
                     .frame(width: filledWidth)
             }
             .overlay(
@@ -4399,13 +4399,13 @@ struct IssueCallCenterView: View {
             } label: {
                 Image(systemName: "square.and.arrow.up")
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundColor(CivicaColors.brickPrimary)
+                    .foregroundColor(CivicaColors.pinePrimary)
                     .frame(width: 34, height: 34)
                     .background(CivicaColors.surfacePrimary)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                            .stroke(CivicaColors.brickPrimary.opacity(0.4), lineWidth: 1)
+                            .stroke(CivicaColors.pinePrimary.opacity(0.4), lineWidth: 1)
                     )
             }
             .buttonStyle(.plain)
@@ -4830,7 +4830,7 @@ struct IssueCallCenterView: View {
             if let telURL = URL(string: "tel:\(phone.filter(\.isNumber))"), !phone.filter(\.isNumber).isEmpty {
                 Link(phone, destination: telURL)
                     .font(CivicaTypography.caption)
-                    .foregroundColor(CivicaColors.brickPrimary)
+                    .foregroundColor(CivicaColors.pinePrimary)
             } else {
                 Text(phone)
                     .font(CivicaTypography.caption)
@@ -4927,7 +4927,7 @@ struct IssueCallCenterView: View {
                             .background(
                                 selectedOutcome == outcome
                                 ? outcomeColor(for: outcome)
-                                : CivicaColors.brickPrimary
+                                : CivicaColors.pinePrimary
                             )
                             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
                             .overlay(
@@ -5251,7 +5251,7 @@ struct IssueCallCenterView: View {
                 Image(systemName: isTalkingPointsExpanded ? "chevron.up" : "chevron.down")
                     .font(CivicaTypography.captionBold)
             }
-            .foregroundColor(CivicaColors.brickPrimary)
+            .foregroundColor(CivicaColors.pinePrimary)
             .padding(.horizontal, CivicaSpacing.sm)
             .padding(.vertical, CivicaSpacing.xs)
             .background(CivicaColors.tealSurface)
@@ -5282,7 +5282,7 @@ struct IssueCallCenterView: View {
         if let mapped = exampleCategoryColorMap[normalized] {
             return mapped
         }
-        return CivicaColors.brickPrimary
+        return CivicaColors.pinePrimary
     }
 }
 

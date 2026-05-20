@@ -290,7 +290,7 @@ struct MarbleSimulationView: View {
         }
         .buttonStyle(
             RoundedControlButtonStyle(
-                fill: CivicaColors.brickPrimary,
+                fill: CivicaColors.pinePrimary,
                 minHeight: isEmbedded ? 44 : 52,
                 verticalPadding: isEmbedded ? 3 : 6
             )

@@ -155,8 +155,8 @@ struct TurnoutExplorer: View {
                         MetricMiniStat(
                             title: "Eligible voters",
                             value: TurnoutExplorerFormatters.compactPopulationFromThousands(summary.citizenPopulationThousands),
-                            backgroundColor: CivicaColors.brickPrimary.opacity(0.12),
-                            borderColor: CivicaColors.brickPrimary.opacity(0.28)
+                            backgroundColor: CivicaColors.pinePrimary.opacity(0.12),
+                            borderColor: CivicaColors.pinePrimary.opacity(0.28)
                         )
                     }
 
@@ -193,7 +193,7 @@ struct TurnoutExplorer: View {
                 } label: {
                     Text("How this data works")
                         .font(CivicaTypography.footnoteStrong)
-                        .foregroundColor(CivicaColors.brickPrimary)
+                        .foregroundColor(CivicaColors.pinePrimary)
                 }
                 .buttonStyle(.plain)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -291,12 +291,12 @@ struct TurnoutExplorer: View {
 
     private var turnoutCueColor: Color {
         guard let adapter = store.adapter else {
-            return CivicaColors.brickPrimary
+            return CivicaColors.pinePrimary
         }
 
         let stops = adapter.sliderStops(for: selectedElectionType)
         guard !stops.isEmpty else {
-            return CivicaColors.brickPrimary
+            return CivicaColors.pinePrimary
         }
 
         let activeRange = clampedRange(selectedRange, within: stops)
@@ -304,7 +304,7 @@ struct TurnoutExplorer: View {
             return TurnoutGraphPalette.palette(forTurnoutRate: turnoutRate).votedColor
         }
 
-        return CivicaColors.brickPrimary
+        return CivicaColors.pinePrimary
     }
 
     private func publishTurnoutCueColor() {
@@ -316,7 +316,7 @@ struct TurnoutExplorer: View {
             return CivicaColors.destructive
         }
         if gapPoints > 0.2 {
-            return CivicaColors.brickPrimary
+            return CivicaColors.pinePrimary
         }
         return CivicaColors.warningAmber
     }
@@ -347,7 +347,7 @@ private struct ElectionTypeSegmentedControl: View {
                 .padding(.vertical, CivicaSpacing.sm)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                        .fill(isSelected ? CivicaColors.brickPrimary : CivicaColors.surfacePrimary)
+                        .fill(isSelected ? CivicaColors.pinePrimary : CivicaColors.surfacePrimary)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
@@ -576,7 +576,7 @@ private struct AgeTurnoutBandSlider: View {
 
     private func sliderCueColor(turnoutRatePct: Double?) -> Color {
         guard let turnoutRatePct else {
-            return CivicaColors.brickPrimary
+            return CivicaColors.pinePrimary
         }
         return TurnoutGraphPalette.palette(forTurnoutRate: turnoutRatePct).votedColor
     }
@@ -665,7 +665,7 @@ private struct TurnoutRiskMap: View {
                         .padding(.vertical, CivicaSpacing.xs)
                         .background(
                             RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                                .fill(inSelection ? CivicaColors.brickPrimary.opacity(0.12) : Color.clear)
+                                .fill(inSelection ? CivicaColors.pinePrimary.opacity(0.12) : Color.clear)
                         )
                     }
                 }
@@ -708,7 +708,7 @@ private struct TurnoutRiskMap: View {
             return CivicaColors.warningAmber
         }
         if diagnostic.representationGapPoints > 2 {
-            return CivicaColors.brickPrimary
+            return CivicaColors.pinePrimary
         }
         return CivicaColors.accentTeal
     }
@@ -920,7 +920,7 @@ private struct MethodologySheet: View {
     private func methodologyRow(_ text: String) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Circle()
-                .fill(CivicaColors.brickPrimary)
+                .fill(CivicaColors.pinePrimary)
                 .frame(width: 6, height: 6)
                 .padding(.top, CivicaSpacing.xs)
             Text(text)

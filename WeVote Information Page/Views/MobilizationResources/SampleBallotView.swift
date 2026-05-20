@@ -400,7 +400,7 @@ struct CandidateRow: View {
                     Link(destination: url) {
                         Image(systemName: "link.circle.fill")
                             .font(.title3)
-                            .foregroundColor(CivicaColors.brickPrimary)
+                            .foregroundColor(CivicaColors.pinePrimary)
                     }
                 }
 

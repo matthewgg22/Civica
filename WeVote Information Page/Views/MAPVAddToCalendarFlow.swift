@@ -149,7 +149,7 @@ struct PrePermissionSheetView: View {
                     .font(CivicaTypography.subheadStrong)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, CivicaSpacing.md)
-                    .background(CivicaColors.brickPrimary)
+                    .background(CivicaColors.pinePrimary)
                     .foregroundStyle(.white)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
             }
@@ -206,7 +206,7 @@ struct AddToCalendarButtonView: View {
             .padding(.vertical, CivicaSpacing.md)
         }
         .buttonStyle(.plain)
-        .background(CivicaColors.brickPrimary)
+        .background(CivicaColors.pinePrimary)
         .foregroundStyle(.white)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         .disabled(isWorking)
