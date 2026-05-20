@@ -31,11 +31,14 @@ struct SNAPLocalEligibilityEvaluatorTests {
 
     @Test func maHouseholdAtThresholdIsEligible() {
         // Boundary: income exactly equal to the threshold is eligible
-        // (the gate is gross <= threshold).
+        // (the gate is gross <= threshold). MA BBCE size-2 limit was
+        // refreshed to $3,607 in commit bc3ed5b4 (DTA 106 CMR 364.976,
+        // effective 2026-02-01); keep this in sync with MAStateRules
+        // bbce200Snapshots.
         var draft = SNAPApplicationDraft()
         draft.whereApplying.stateCode = "MA"
         draft.household.householdSize = "2 people"
-        draft.income.grossMonthlyIncome = 3_408 // MA size-2 BBCE limit
+        draft.income.grossMonthlyIncome = 3_607 // MA size-2 BBCE limit
         draft.studentStatus.enrolledInHigherEd = false
 
         let result = SNAPLocalEligibilityEvaluator.evaluate(draft, today: fy26Date)
@@ -46,7 +49,7 @@ struct SNAPLocalEligibilityEvaluatorTests {
         var draft = SNAPApplicationDraft()
         draft.whereApplying.stateCode = "MA"
         draft.household.householdSize = "2 people"
-        draft.income.grossMonthlyIncome = 3_409
+        draft.income.grossMonthlyIncome = 3_608
         draft.studentStatus.enrolledInHigherEd = false
 
         let result = SNAPLocalEligibilityEvaluator.evaluate(draft, today: fy26Date)
