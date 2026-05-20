@@ -14,6 +14,7 @@ import { fetchFMR, householdSizeToBedrooms } from "../lib/hud-fmr.js";
 import { validateAddress } from "../lib/smarty.js";
 import { compareIncome } from "../lib/income-verification.js";
 import type { PayPeriod } from "../lib/income-verification.js";
+import type { Logger } from "../lib/logger.js";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -802,6 +803,18 @@ app.get("/:packetId/verification-summary", async (c) => {
 
   // Re-score with enriched data so packet_error_risk stays fresh (§4).
   void scorePacketRisk(c.env, c.get("jwt"), packetId, packet.applicant_id as string).catch(() => {});
+
+  const log = (c.get as (k: string) => Logger | undefined)("log");
+  log?.info("verification_summary_fetched", {
+    packet_id: packetId,
+    sua_tier: suaComputed,
+    heap_flag: heapCheck.heap_flag,
+    income_direction: incomeComparison.direction,
+    income_flagged: incomeComparison.flagged,
+    address_deliverability: addressResult.deliverability,
+    rent_flagged: rentFlagged,
+    argyle_connected: !!(argyleResult.data?.linked_accounts?.length),
+  });
 
   return c.json({
     shelter: {

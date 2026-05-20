@@ -15,6 +15,7 @@
     "@civica/snap-calculator": "workspace:*",
     "@civica/snap-compliance-copy": "workspace:*",
     "@civica/snap-enums": "workspace:*",
+    "@civica/snap-qc-engine": "workspace:*",
     "@civica/snap-rules": "workspace:*",
     "@sentry/nextjs": "^9.0.0",
     "@supabase/ssr": "^0.10.3",

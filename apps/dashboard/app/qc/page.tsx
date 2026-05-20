@@ -4,6 +4,7 @@ import AppHeader from "../../components/AppHeader";
 import ApiCoveragePanel from "../../components/qc/ApiCoveragePanel";
 import ScoringPanel from "../../components/qc/ScoringPanel";
 import BaselinePanel from "../../components/qc/BaselinePanel";
+import { ENGINE_VERSION } from "@civica/snap-qc-engine";
 
 export const dynamic = "force-dynamic";
 
@@ -230,7 +231,7 @@ export default async function QCPage() {
       </div>
 
       <footer className="border-t border-hairline px-8 py-5 flex justify-between items-center text-[11px] text-muted font-mono tracking-wide mt-8">
-        <span>Civica · error-rate intelligence v0.1 · live</span>
+        <span>Civica · error-rate intelligence · qc-engine v{ENGINE_VERSION} · live</span>
         <span>QC baseline: USDA FNS-380 FY2024 · weights are payment-error contribution</span>
       </footer>
     </div>

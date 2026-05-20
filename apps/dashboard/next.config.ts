@@ -4,6 +4,7 @@ import { withSentryConfig } from "@sentry/nextjs";
 const nextConfig: NextConfig = {
   transpilePackages: [
     "@civica/snap-enums",
+    "@civica/snap-qc-engine",
     "@civica/snap-rules",
     "@civica/snap-calculator",
     "@civica/snap-compliance-copy",
