@@ -10,12 +10,34 @@ import Testing
 final class EnrollmentStubProtocol: URLProtocol, @unchecked Sendable {
     nonisolated(unsafe) static var handlers: [(URLRequest) -> (Data, Int)] = []
     nonisolated(unsafe) static var capturedRequests: [URLRequest] = []
+    // URLSession migrates `httpBody` to `httpBodyStream` before delivering
+    // the request to URLProtocol, so `request.httpBody` is nil at this point.
+    // Capture the stream contents ourselves for body-shape assertions.
+    nonisolated(unsafe) static var capturedBodies: [Data] = []
 
     override class func canInit(with request: URLRequest) -> Bool { true }
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
 
+    private static func readBody(_ request: URLRequest) -> Data {
+        if let body = request.httpBody { return body }
+        guard let stream = request.httpBodyStream else { return Data() }
+        stream.open()
+        defer { stream.close() }
+        var data = Data()
+        let bufSize = 4096
+        let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufSize)
+        defer { buffer.deallocate() }
+        while stream.hasBytesAvailable {
+            let read = stream.read(buffer, maxLength: bufSize)
+            if read <= 0 { break }
+            data.append(buffer, count: read)
+        }
+        return data
+    }
+
     override func startLoading() {
         EnrollmentStubProtocol.capturedRequests.append(request)
+        EnrollmentStubProtocol.capturedBodies.append(Self.readBody(request))
         guard !EnrollmentStubProtocol.handlers.isEmpty else {
             client?.urlProtocol(self, didFailWithError: URLError(.unknown))
             return
@@ -119,6 +141,7 @@ struct EnrollmentAPIClientTests {
         // Clean state before each test.
         EnrollmentStubProtocol.handlers.removeAll()
         EnrollmentStubProtocol.capturedRequests.removeAll()
+        EnrollmentStubProtocol.capturedBodies.removeAll()
     }
 
     // 1. POST /me/packets encodes state_code in request body.
@@ -131,7 +154,8 @@ struct EnrollmentAPIClientTests {
 
         let req = EnrollmentStubProtocol.capturedRequests.first!
         #expect(req.httpMethod == "POST")
-        let body = try JSONDecoder().decode([String: String].self, from: req.httpBody!)
+        let bodyData = EnrollmentStubProtocol.capturedBodies.first ?? Data()
+        let body = try JSONDecoder().decode([String: String].self, from: bodyData)
         #expect(body["state_code"] == "TX")
     }
 

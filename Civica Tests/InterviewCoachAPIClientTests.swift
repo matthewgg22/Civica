@@ -9,12 +9,34 @@ import Testing
 final class InterviewCoachStubProtocol: URLProtocol, @unchecked Sendable {
     nonisolated(unsafe) static var handlers: [(URLRequest) -> (Data, Int)] = []
     nonisolated(unsafe) static var capturedRequests: [URLRequest] = []
+    // URLSession converts `httpBody` into `httpBodyStream` before delivering
+    // the request to URLProtocol, so `request.httpBody` is nil here. Capture
+    // the stream contents ourselves so assertions can inspect the JSON body.
+    nonisolated(unsafe) static var capturedBodies: [Data] = []
 
     override class func canInit(with request: URLRequest) -> Bool { true }
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
 
+    private static func readBody(_ request: URLRequest) -> Data {
+        if let body = request.httpBody { return body }
+        guard let stream = request.httpBodyStream else { return Data() }
+        stream.open()
+        defer { stream.close() }
+        var data = Data()
+        let bufSize = 4096
+        let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufSize)
+        defer { buffer.deallocate() }
+        while stream.hasBytesAvailable {
+            let read = stream.read(buffer, maxLength: bufSize)
+            if read <= 0 { break }
+            data.append(buffer, count: read)
+        }
+        return data
+    }
+
     override func startLoading() {
         InterviewCoachStubProtocol.capturedRequests.append(request)
+        InterviewCoachStubProtocol.capturedBodies.append(Self.readBody(request))
         guard !InterviewCoachStubProtocol.handlers.isEmpty else {
             client?.urlProtocol(self, didFailWithError: URLError(.unknown))
             return
@@ -111,6 +133,7 @@ struct InterviewCoachAPIClientTests {
     init() {
         InterviewCoachStubProtocol.handlers.removeAll()
         InterviewCoachStubProtocol.capturedRequests.removeAll()
+        InterviewCoachStubProtocol.capturedBodies.removeAll()
     }
 
     // 1. POST .../practice/start parses session_id + first turn and sends Bearer.
@@ -151,7 +174,8 @@ struct InterviewCoachAPIClientTests {
 
         let req = InterviewCoachStubProtocol.capturedRequests.first!
         #expect(req.httpMethod == "POST")
-        let body = try JSONDecoder().decode([String: String].self, from: req.httpBody!)
+        let bodyData = InterviewCoachStubProtocol.capturedBodies.first ?? Data()
+        let body = try JSONDecoder().decode([String: String].self, from: bodyData)
         #expect(body["user_message"] == "I make about $800 a week.")
     }
 
@@ -235,11 +259,13 @@ struct InterviewCoachAPIClientTests {
         )
 
         let req = InterviewCoachStubProtocol.capturedRequests.first!
+        _ = req
         struct Body: Decodable {
             let user_message: String
             let audio_bytes_duration: Int?
         }
-        let decoded = try JSONDecoder().decode(Body.self, from: req.httpBody!)
+        let bodyData = InterviewCoachStubProtocol.capturedBodies.first ?? Data()
+        let decoded = try JSONDecoder().decode(Body.self, from: bodyData)
         #expect(decoded.user_message == "I work part-time.")
         #expect(decoded.audio_bytes_duration == 48_000)
     }
