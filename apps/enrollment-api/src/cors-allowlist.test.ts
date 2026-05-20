@@ -38,10 +38,20 @@ async function simpleGet(origin: string | null): Promise<Response> {
 
 describe('CORS allowlist (apps/enrollment-api index.ts)', () => {
   it('reflects allowed production dashboard origin', async () => {
-    const res = await preflight('https://civica-dashboard.vercel.app');
+    // Vercel project name is `civica-api` (legacy naming). See
+    // docs/launch/production-url-audit-2026-05-19.md.
+    const res = await preflight('https://civica-api.vercel.app');
     expect(res.headers.get('Access-Control-Allow-Origin')).toBe(
-      'https://civica-dashboard.vercel.app',
+      'https://civica-api.vercel.app',
     );
+  });
+
+  it('rejects the legacy civica-dashboard.vercel.app subdomain', async () => {
+    // This origin used to be in the allowlist but the Vercel project doesn't
+    // exist at that subdomain. Anyone hitting it is either misconfigured or
+    // probing — explicitly do not reflect it.
+    const res = await simpleGet('https://civica-dashboard.vercel.app');
+    expect(res.headers.get('Access-Control-Allow-Origin')).toBeNull();
   });
 
   it('reflects allowed marketing origin', async () => {
@@ -55,7 +65,7 @@ describe('CORS allowlist (apps/enrollment-api index.ts)', () => {
   });
 
   it('reflects a Vercel preview deploy that matches the regex', async () => {
-    const previewOrigin = 'https://civica-dashboard-git-feature-foo.vercel.app';
+    const previewOrigin = 'https://civica-api-git-feature-foo.vercel.app';
     const res = await preflight(previewOrigin);
     expect(res.headers.get('Access-Control-Allow-Origin')).toBe(previewOrigin);
   });
