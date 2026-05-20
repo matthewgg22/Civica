@@ -430,7 +430,7 @@ final class MockEnrollmentAPIClient: EnrollmentAPIClient, @unchecked Sendable {
             storagePath: "handoffs/\(packetId)/mock.jpg",
             originalFilename: "document.jpg",
             documentKind: documentKind,
-            processingStatus: .pending,
+            processingStatus: .uploaded,
             onDeviceQualityPassed: onDeviceQualityPassed,
             uploadedAt: Date()
         )

@@ -84,8 +84,21 @@ enum EnrollmentDocumentKind: String, Codable, CaseIterable {
     }
 }
 
+/// Mirrors the canonical `DocumentStatus` Zod schema in `@civica/snap-enums`,
+/// which mirrors the DB `processing_status` CHECK constraint:
+///   uploaded → classifying → extracting → awaiting_confirmation
+///     → confirmed (navigator approved) OR rejected (navigator rejected)
+///
+/// IMPORTANT: prior values (`pending`/`processing`/`complete`/`failed`) never
+/// matched the DB, so the JSON decoder would throw on any live response. If
+/// you add a case here, update `documentEnums.ts` and the SQL migration too.
 enum EnrollmentDocumentProcessingStatus: String, Codable {
-    case pending, processing, complete, failed
+    case uploaded
+    case classifying
+    case extracting
+    case awaitingConfirmation = "awaiting_confirmation"
+    case confirmed
+    case rejected
 }
 
 struct EnrollmentDocument: Codable, Identifiable, Equatable {

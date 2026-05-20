@@ -47,7 +47,7 @@ const fixtureDocs = [
     document_kind: "proof_of_identity",
     original_filename: "id.pdf",
     uploaded_at: "2026-05-01T13:00:00.000Z",
-    processing_status: "complete",
+    processing_status: "confirmed",
   },
 ];
 

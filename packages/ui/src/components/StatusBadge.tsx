@@ -14,13 +14,13 @@ const statusStyles: Record<Status, string> = {
   "Ready for Handoff":            "bg-green-100 text-green-700",
   "Handed Off":                   "bg-green-200 text-green-800",
   "Closed":                       "bg-gray-200 text-gray-500",
-  // DocumentStatus
-  pending:    "bg-gray-100 text-gray-700",
-  uploading:  "bg-blue-50 text-blue-600",
-  processing: "bg-purple-100 text-purple-700",
-  extracted:  "bg-green-100 text-green-700",
-  failed:     "bg-red-100 text-red-700",
-  rejected:   "bg-red-200 text-red-800",
+  // DocumentStatus — canonical 6-value enum from snap-enums (mirrors DB CHECK).
+  uploaded:              "bg-gray-100 text-gray-700",
+  classifying:           "bg-blue-50 text-blue-600",
+  extracting:            "bg-purple-100 text-purple-700",
+  awaiting_confirmation: "bg-amber-100 text-amber-700",
+  confirmed:             "bg-green-100 text-green-700",
+  rejected:              "bg-red-200 text-red-800",
 };
 
 const statusLabels: Record<Status, string> = {
@@ -34,12 +34,12 @@ const statusLabels: Record<Status, string> = {
   "Handed Off":                   "Handed Off",
   "Closed":                       "Closed",
   // DocumentStatus
-  pending:    "Pending",
-  uploading:  "Uploading",
-  processing: "Processing",
-  extracted:  "Extracted",
-  failed:     "Failed",
-  rejected:   "Not Accepted",
+  uploaded:              "Uploaded",
+  classifying:           "Classifying",
+  extracting:            "Extracting",
+  awaiting_confirmation: "Awaiting Review",
+  confirmed:             "Confirmed",
+  rejected:              "Not Accepted",
 };
 
 interface StatusBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {

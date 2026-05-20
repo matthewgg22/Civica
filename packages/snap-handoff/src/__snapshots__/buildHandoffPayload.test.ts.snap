@@ -42,7 +42,7 @@ exports[`buildHandoffPayload > snapshots the full payload shape so future drift 
         "document_id": "doc-00000001",
         "document_kind": "proof_of_identity",
         "original_filename": "id.pdf",
-        "processing_status": "complete",
+        "processing_status": "confirmed",
         "uploaded_at": "2026-05-01T13:00:00.000Z",
       },
     ],
