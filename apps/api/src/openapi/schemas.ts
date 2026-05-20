@@ -75,7 +75,16 @@ export const TranscriptSchema = z
 export const DocumentUploadResponseSchema = z
   .object({
     document_id: z.string().uuid(),
-    processing_status: z.enum(['processing', 'awaiting_confirmation', 'rejected']),
+    // Mirrors snap_enrollment.uploaded_documents.processing_status CHECK
+    // constraint — canonical 6-value enum from @civica/snap-enums.
+    processing_status: z.enum([
+      'uploaded',
+      'classifying',
+      'extracting',
+      'awaiting_confirmation',
+      'confirmed',
+      'rejected',
+    ]),
   })
   .openapi('DocumentUploadResponse');
 

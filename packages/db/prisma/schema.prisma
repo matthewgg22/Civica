@@ -1,3 +1,10 @@
+// TODO: This Prisma schema appears to be dead code as of 2026-05-19. No
+// runtime code in this monorepo imports `@civica/db` or `@prisma/client`
+// (only declarations in this package's own package.json and pnpm-lock).
+// CI does not run `prisma migrate`. The DocumentStatus enum below is stale
+// vs the live DB CHECK constraint (which has 6 values: uploaded, classifying,
+// extracting, awaiting_confirmation, confirmed, rejected — see snap-enums).
+// Confirm whether this schema is live before fixing the enum here.
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"

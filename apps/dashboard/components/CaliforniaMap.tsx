@@ -2,6 +2,7 @@ import { geoMercator, geoPath } from "d3-geo";
 import { feature } from "topojson-client";
 import countiesData from "us-atlas/counties-10m.json";
 import statesData from "us-atlas/states-10m.json";
+import type { MapMode, CountyRiskStats } from "./mapTypes";
 
 // Minimal local types — avoid pulling in @types/topojson-specification + @types/geojson
 type AnyFeature = { id?: string | number; properties: { name: string }; geometry: unknown };
@@ -26,7 +27,6 @@ const PAD = 4;
 function colorFor(count: number, max: number): string {
   if (count === 0) return "#EEEAE0";
   const t = max > 0 ? count / max : 0;
-  // Brick scale from light to deep
   if (t < 0.15) return "#F5D8CF";
   if (t < 0.35) return "#E8A493";
   if (t < 0.6)  return "#D27158";
@@ -34,7 +34,26 @@ function colorFor(count: number, max: number): string {
   return "#7A2D1B";
 }
 
-export default function CaliforniaMap({ byCountyFips }: { byCountyFips: Record<string, CountyStats> }) {
+function riskColorFor(risk: CountyRiskStats | undefined): string {
+  if (!risk || risk.scored === 0) return "#EEEAE0";
+  const avg = risk.avgScore ?? 0;
+  if (avg < 20) return "#C8E6D4";
+  if (avg < 35) return "#A3D1B5";
+  if (avg < 50) return "#E8C97A";
+  if (avg < 65) return "#D4A033";
+  if (avg < 80) return "#C06030";
+  return "#8B2A18";
+}
+
+export default function CaliforniaMap({
+  byCountyFips,
+  byCountyRisk,
+  mode = "packets",
+}: {
+  byCountyFips: Record<string, CountyStats>;
+  byCountyRisk?: Record<string, CountyRiskStats>;
+  mode?: MapMode;
+}) {
   // us-atlas counties-10m.json has objects.counties with FIPS id (state+county = 5-digit)
   const topo = countiesData as unknown as AnyTopology;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -84,7 +103,7 @@ export default function CaliforniaMap({ byCountyFips }: { byCountyFips: Record<s
             Click any shaded county for a snapshot
           </p>
         </div>
-        <Legend max={max} />
+        {mode === "risk" ? <RiskLegend /> : <Legend max={max} />}
       </div>
       <div className="relative mx-auto" style={{ maxWidth: 240 }}>
         <svg viewBox={vb} className="w-full h-auto block">
@@ -92,14 +111,16 @@ export default function CaliforniaMap({ byCountyFips }: { byCountyFips: Record<s
             {caCounties.map((f) => {
               const fips = String(f.id ?? "").padStart(5, "0");
               const stats = byCountyFips[fips];
+              const risk = byCountyRisk?.[fips];
               const count = stats?.count ?? 0;
-              const fill = colorFor(count, max);
+              const fill = mode === "risk" ? riskColorFor(risk) : colorFor(count, max);
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const d = path(f as any) ?? "";
-              const isActive = count > 0;
-              // Anchors stay as <a href> for non-JS fallback, but the client wrapper
-              // intercepts clicks via [data-county] and opens a drawer instead.
+              const isActive = mode === "risk" ? (risk?.scored ?? 0) > 0 : count > 0;
               const href = isActive ? `#county-${encodeURIComponent(f.properties.name)}` : "#";
+              const tooltip = mode === "risk"
+                ? `${f.properties.name} County — avg risk score ${risk?.avgScore != null ? risk.avgScore : "n/a"} · ${risk?.high ?? 0} high, ${risk?.medium ?? 0} medium, ${risk?.low ?? 0} low${isActive ? " · click for detail" : ""}`
+                : `${f.properties.name} County — ${count} packet${count === 1 ? "" : "s"}${stats?.needsAttention ? ` · ${stats.needsAttention} need attention` : ""}${isActive ? " · click for detail" : ""}`;
               return (
                 <a
                   key={fips}
@@ -116,9 +137,7 @@ export default function CaliforniaMap({ byCountyFips }: { byCountyFips: Record<s
                     strokeWidth={0.5}
                     className={isActive ? "transition-all group-hover:stroke-[#2A6F66] group-hover:[stroke-width:1.5]" : ""}
                   >
-                    <title>
-                      {`${f.properties.name} County — ${count} packet${count === 1 ? "" : "s"}${stats?.needsAttention ? ` · ${stats.needsAttention} need attention` : ""}${isActive ? " · click for detail" : ""}`}
-                    </title>
+                    <title>{tooltip}</title>
                   </path>
                 </a>
               );
@@ -196,6 +215,26 @@ function Legend({ max }: { max: number }) {
         ))}
       </div>
       <span className="text-[10px] text-muted tabular-nums">{stops[0].label}–{stops[stops.length - 1].label}</span>
+    </div>
+  );
+}
+
+function RiskLegend() {
+  const stops = [
+    { color: "#C8E6D4", label: "Low" },
+    { color: "#E8C97A", label: "Med" },
+    { color: "#C06030", label: "" },
+    { color: "#8B2A18", label: "High" },
+  ];
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-[10px] text-muted uppercase tracking-wider font-medium">Risk</span>
+      <div className="flex">
+        {stops.map((s, i) => (
+          <div key={i} className="w-5 h-3" style={{ background: s.color }} />
+        ))}
+      </div>
+      <span className="text-[10px] text-muted">{stops[0].label}→{stops[stops.length - 1].label}</span>
     </div>
   );
 }

@@ -23,6 +23,11 @@ protocol InterviewCoachProviding: AnyObject {
         recertId: String,
         sessionId: String
     ) async throws -> PracticeSessionStateDTO
+
+    func fetchScore(
+        recertId: String,
+        sessionId: String
+    ) async throws -> InterviewScoreResponseDTO
 }
 
 extension InterviewCoachAPIClient: InterviewCoachProviding {}
@@ -113,6 +118,30 @@ final class OfflineInterviewCoachClient: InterviewCoachProviding {
             done: session.index >= session.questions.count,
             startedAt: nil,
             completedAt: nil
+        )
+    }
+
+    // Offline mode synthesizes a neutral encouragement score so the
+    // UI flow still surfaces a summary sheet even without network.
+    func fetchScore(
+        recertId: String,
+        sessionId: String
+    ) async throws -> InterviewScoreResponseDTO {
+        return InterviewScoreResponseDTO(
+            sessionId: sessionId,
+            overallScore: 70,
+            strengths: [
+                "You walked through the whole practice interview.",
+                "You gave concrete answers in your own words.",
+            ],
+            improvements: [
+                "Try the live practice mode for personalized feedback.",
+                "Practice once more with the trickier questions.",
+            ],
+            summaryEn: "Solid practice run. Try again online when you can — we'll give you tailored feedback.",
+            summaryEs: "Buena práctica. Inténtalo en línea cuando puedas — te daremos comentarios personalizados.",
+            generatedAt: ISO8601DateFormatter().string(from: Date()),
+            engineVersion: "offline-stub-v1"
         )
     }
 }

@@ -206,5 +206,37 @@ struct EnrollmentAPIClientTests {
                     "Request to \(req.url?.path ?? "?") missing Bearer token, got: \(auth)")
         }
     }
+
+    // 6. GET /me/active-recert — happy path decodes the response.
+    @Test func fetchActiveRecertDecodesRecert() async throws {
+        let payload = """
+        {
+          "recert_id": "rec-001",
+          "packet_id": "pkt-001",
+          "cert_period_end": "2027-05-18",
+          "status": "pending"
+        }
+        """.data(using: .utf8)!
+        EnrollmentStubProtocol.handlers.append { _ in (payload, 200) }
+
+        let result = try await makeClient().fetchActiveRecert()
+
+        #expect(result?.recertId == "rec-001")
+        #expect(result?.packetId == "pkt-001")
+        #expect(result?.status == "pending")
+
+        let req = EnrollmentStubProtocol.capturedRequests.first!
+        #expect(req.url?.path.contains("/me/active-recert") == true)
+    }
+
+    // 7. GET /me/active-recert — 404 maps to nil (no active recert).
+    @Test func fetchActiveRecertReturnsNilOn404() async throws {
+        EnrollmentStubProtocol.handlers.append { _ in
+            ("{\"error\":\"No active recertification\"}".data(using: .utf8)!, 404)
+        }
+
+        let result = try await makeClient().fetchActiveRecert()
+        #expect(result == nil)
+    }
 }
 

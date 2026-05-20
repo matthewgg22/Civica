@@ -43,7 +43,7 @@ const RESTRICTED_ROLE_ALLOWED_PREFIXES: Record<string, string[]> = {
 // Always allowed regardless of role. Auth/sign-out and API routes must
 // remain reachable so users can recover from a stuck session and so the
 // app's internal API calls aren't blocked.
-const PUBLIC_PREFIXES = ["/auth/", "/api/", "/login"];
+const PUBLIC_PREFIXES = ["/auth/", "/api/", "/login", "/qc"];
 
 export function isStaff(role: unknown): role is string {
   return typeof role === "string" && STAFF_ROLES.has(role);

@@ -24,6 +24,10 @@ import type { PayPeriod } from "../../../lib/income-verification";
 
 import { formatDateTime, formatDate, decryptDemoName, docKindLabel, firstNameLastInitial, shortId } from "../../../lib/format";
 import { PACKET_STATUS_TRANSITIONS } from "@civica/snap-enums";
+import RiskScoreHero from "../../../components/packet-risk/RiskScoreHero";
+import FlowBreakdown from "../../../components/packet-risk/FlowBreakdown";
+import RecommendedActions from "../../../components/packet-risk/RecommendedActions";
+import type { RiskFlow, RiskAction } from "../../../components/packet-risk/types";
 
 // Statuses where the expedited-review gate is relevant
 const EXPEDITED_GATE_STATUSES = new Set(["Submitted for Review", "In Navigator Review"]);
@@ -45,6 +49,7 @@ export default async function PacketDetailPage({
   const { packetId } = await params;
   const resolvedSearchParams = (await searchParams) ?? {};
   const devtoolsEnabled = resolvedSearchParams.devtools === "1";
+  const tab = typeof resolvedSearchParams.tab === "string" ? resolvedSearchParams.tab : "overview";
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
 
@@ -128,8 +133,8 @@ export default async function PacketDetailPage({
     (packet as { is_expedited?: boolean | null }).is_expedited === null &&
     EXPEDITED_GATE_STATUSES.has(packet.status);
 
-  // Pre-flight blockers for "Ready for Handoff" + Argyle connection (needs applicant_id from packet)
-  const [unresolvedDocsResult, unreviewedFieldsResult, consentResult, argyleResult] = await Promise.all([
+  // Pre-flight blockers for "Ready for Handoff" + risk data
+  const [unresolvedDocsResult, unreviewedFieldsResult, consentResult, riskResult, argyleResult] = await Promise.all([
     supabase.schema("snap_enrollment").from("required_document_items")
       .select("item_id").eq("packet_id", packetId).eq("is_required", true)
       .is("resolved_at", null).is("waived_at", null),
@@ -138,11 +143,19 @@ export default async function PacketDetailPage({
     supabase.schema("snap_enrollment").from("user_consents")
       .select("consent_id, consented_at").eq("applicant_id", packet.applicant_id)
       .eq("consent_kind", "privacy_notice").is("revoked_at", null).limit(1),
+    (supabase.schema("snap_enrollment") as any)
+      .from("packet_error_risk")
+      .select("score, tier, engine_version, created_at, factors")
+      .eq("packet_id", packetId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
     supabase.schema("snap_enrollment")
       .from("argyle_connections")
-      .select("linked_accounts")
+      .select("connection_id, linked_at, argyle_user_id")
       .eq("applicant_id", packet.applicant_id)
       .is("revoked_at", null)
+      .limit(1)
       .maybeSingle(),
   ]);
 
@@ -240,6 +253,150 @@ export default async function PacketDetailPage({
   if (!hasConsent)
     blockers.push({ kind: "missing_consent", label: "Privacy notice consent not on file" });
 
+  // ── Error risk tab data ──────────────────────────────────────────────────
+  const riskRow = riskResult.data ?? null;
+  const argyleConn = argyleResult.data ?? null;
+  const isArgyleConnected = argyleConn !== null;
+
+  const answersMap: Record<string, string> = {};
+  for (const a of answers) {
+    if (a.applicant_answer != null) answersMap[a.question_key] = a.applicant_answer;
+  }
+  const monthlyUtilities = parseFloat(answersMap["monthly_utilities"] ?? "");
+  const hasUtilityAnswer = !isNaN(monthlyUtilities) && monthlyUtilities > 0;
+  const hasHousingSituation = !!answersMap["housing_situation"];
+  const hasIncomeDocs = docs.some((d) =>
+    ["pay_stub", "tax_return", "w2", "1099", "income"].some((k) =>
+      d.document_kind.toLowerCase().includes(k)
+    )
+  );
+
+  function flowPoints(weight: number, def: RiskFlow["defensibility"]): number | null {
+    if (def === "not-scored") return null;
+    const m = def === "strong" ? 0.05 : def === "moderate" ? 0.35 : 0.80;
+    return Math.round(weight * m);
+  }
+  function impactIfUpgraded(weight: number, def: RiskFlow["defensibility"]): number | null {
+    if (def === "strong" || def === "not-scored") return null;
+    const from = def === "weak" ? 0.80 : 0.35;
+    const to   = def === "weak" ? 0.35 : 0.05;
+    return Math.round(weight * (from - to));
+  }
+
+  const suaDef: "moderate" | "weak"   = hasUtilityAnswer    ? "moderate" : "weak";
+  const gigDef: "strong"  | "weak"    = isArgyleConnected   ? "strong"   : "weak";
+  const leaseDef: "moderate" | "weak" = hasHousingSituation ? "moderate" : "weak";
+
+  const riskFlows: RiskFlow[] = [
+    {
+      id: "utility-sua",
+      label: "SUA / Utility Verification",
+      weight: 50.5,
+      defensibility: suaDef,
+      points: flowPoints(50.5, suaDef),
+      actionable: true,
+      impactIfImproved: impactIfUpgraded(50.5, suaDef),
+      detail: suaDef === "weak"
+        ? "No utility cost was reported in the eligibility questionnaire. USDA classifies SUA as the highest payment-error driver (50.5% weight). Without a verifiable utility amount, this flow defaults to weak defensibility."
+        : "A monthly utility amount was reported, providing a basis for SUA verification. Phase 2 will connect UtilityAPI for independent verification.",
+      evidence: [
+        { label: "Monthly utilities", value: hasUtilityAnswer ? `$${monthlyUtilities.toFixed(0)}/mo` : "missing" },
+        { label: "UtilityAPI", value: "phase 2" },
+        { label: "SUA election", value: answersMap["sua_election"] ?? "not answered" },
+      ],
+    },
+    {
+      id: "gig-income",
+      label: "Gig & Informal Income",
+      weight: 26.8,
+      defensibility: gigDef,
+      points: flowPoints(26.8, gigDef),
+      actionable: gigDef !== "strong",
+      impactIfImproved: impactIfUpgraded(26.8, gigDef),
+      detail: gigDef === "weak"
+        ? "Argyle is not connected. Without payroll data, income cannot be independently verified — this is the primary verification gap for gig and informal workers. Connect Argyle to move this flow to strong."
+        : `Argyle connected${argyleConn?.linked_at ? " " + formatDate(argyleConn.linked_at) : ""}. Payroll data available for income verification — this flow is strongly defensible.`,
+      evidence: [
+        { label: "Argyle", value: isArgyleConnected ? `connected${argyleConn?.linked_at ? " " + formatDate(argyleConn.linked_at) : ""}` : "not connected" },
+        { label: "Income docs", value: hasIncomeDocs ? "uploaded" : "not uploaded" },
+        { label: "Employment", value: answersMap["employment_status"] ?? "not answered" },
+      ],
+    },
+    {
+      id: "shared-lease",
+      label: "Shared Housing / Lease",
+      weight: 11.4,
+      defensibility: leaseDef,
+      points: flowPoints(11.4, leaseDef),
+      actionable: true,
+      impactIfImproved: impactIfUpgraded(11.4, leaseDef),
+      detail: leaseDef === "weak"
+        ? "Housing situation was not answered in the questionnaire. Shared-lease arrangements are a known error source — USDA assigns 11.4% weight. A clear housing answer moves this to moderate."
+        : "Housing situation is on file. A sublease classifier (Phase 2) will upgrade this to strong with independent verification.",
+      evidence: [
+        { label: "Housing situation", value: answersMap["housing_situation"] ?? "missing" },
+        { label: "Lease document", value: docs.some((d) => d.document_kind.toLowerCase().includes("lease")) ? "uploaded" : "not uploaded" },
+        { label: "Sublease classifier", value: "phase 2" },
+      ],
+    },
+    {
+      id: "assets",
+      label: "Asset Verification",
+      weight: 8.2,
+      defensibility: "moderate",
+      points: flowPoints(8.2, "moderate"),
+      actionable: false,
+      impactIfImproved: null,
+      detail: "Asset declarations are taken from the eligibility questionnaire. Phase 1 scores this as moderate; Phase 2 will verify against bank statement data.",
+      evidence: [
+        { label: "Vehicle value", value: answersMap["vehicle_value"] ?? "not answered" },
+        { label: "Savings", value: answersMap["savings_amount"] ?? "not answered" },
+        { label: "Bank verification", value: "phase 2" },
+      ],
+    },
+    {
+      id: "benefit-calc",
+      label: "Benefit Calculation",
+      weight: 3.1,
+      defensibility: "strong",
+      points: flowPoints(3.1, "strong"),
+      actionable: false,
+      impactIfImproved: null,
+      detail: "Civica runs a deterministic benefit calculation from collected data. This flow is fully defensible — the calculation is repeatable from the packet record.",
+      evidence: [
+        { label: "Household size", value: answersMap["household_size"] ?? "not answered" },
+        { label: "Gross income", value: answersMap["monthly_gross_income"] ? `$${parseFloat(answersMap["monthly_gross_income"]).toFixed(0)}/mo` : "not answered" },
+        { label: "Calc engine", value: "deterministic" },
+      ],
+    },
+  ];
+
+  const riskActions: RiskAction[] = riskFlows
+    .filter((f) => f.actionable && f.impactIfImproved != null)
+    .sort((a, b) => (b.impactIfImproved ?? 0) - (a.impactIfImproved ?? 0))
+    .map((f, i) => ({
+      id: f.id,
+      n: i + 1,
+      title:
+        f.id === "gig-income"   ? "Connect Argyle to verify income" :
+        f.id === "utility-sua"  ? "Record monthly utility costs"    :
+        f.id === "shared-lease" ? "Document housing situation"      : "Improve defensibility",
+      flowLabel: f.label,
+      weight: f.weight,
+      impact: f.impactIfImproved!,
+      timeEst: f.id === "gig-income" ? "3–5 min" : "2–3 min",
+      actor: f.id === "gig-income" ? "Applicant" : "Navigator",
+      body:
+        f.id === "gig-income"
+          ? "Ask the applicant to connect their employer via Argyle in the Civica iOS app. Once connected, Civica can independently verify income — moving this flow from weak to strong and significantly reducing the score."
+          : f.id === "utility-sua"
+          ? "Enter the monthly utility cost in the packet answers. Even a self-reported amount moves SUA from weak to moderate. Phase 2 will connect UtilityAPI for independent verification."
+          : "Ask the applicant to clarify their housing arrangement in the eligibility questionnaire. Any concrete answer (own, rent, shared) moves this flow from weak to moderate.",
+      cta: f.id === "gig-income" ? "Connect Argyle" : "Update Answers",
+      ctaSub: f.id === "gig-income" ? "via iOS app" : "in questionnaire",
+    }));
+  // ── end risk data ────────────────────────────────────────────────────────
+
   const applicantName = applicant ? firstNameLastInitial(decryptDemoName(applicant.full_name_ciphertext)) : "Unknown applicant";
   const language = applicant ? (LANG_LABELS[applicant.preferred_language] ?? applicant.preferred_language) : null;
 
@@ -304,6 +461,56 @@ export default async function PacketDetailPage({
             </div>
           </div>
         </div>
+
+        {/* Tab nav */}
+        <div className="flex items-center gap-1 bg-surface border border-hairline rounded-[4px] p-1 self-start">
+          <Link
+            href={`/packets/${packetId}`}
+            className={`px-4 py-2 text-[13px] font-medium rounded-[3px] transition-colors ${
+              tab === "overview"
+                ? "bg-paper text-ink shadow-sm"
+                : "text-muted hover:text-graphite"
+            }`}
+          >
+            Overview
+          </Link>
+          <Link
+            href={`/packets/${packetId}?tab=risk`}
+            className={`px-4 py-2 text-[13px] font-medium rounded-[3px] transition-colors flex items-center gap-2 ${
+              tab === "risk"
+                ? "bg-paper text-ink shadow-sm"
+                : "text-muted hover:text-graphite"
+            }`}
+          >
+            Error Risk
+            {riskRow && (
+              <span
+                className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm"
+                style={{
+                  color: riskRow.tier === "high" ? "#9C3A24" : riskRow.tier === "medium" ? "#9A5A14" : "#2A6F66",
+                  background: riskRow.tier === "high" ? "rgba(156,58,36,0.10)" : riskRow.tier === "medium" ? "rgba(154,90,20,0.10)" : "rgba(42,111,102,0.10)",
+                }}
+              >
+                {riskRow.score}
+              </span>
+            )}
+          </Link>
+        </div>
+
+        {tab === "risk" ? (
+          <>
+            <RiskScoreHero
+              score={riskRow?.score ?? null}
+              tier={(riskRow?.tier as "high" | "medium" | "low" | "incomplete") ?? "incomplete"}
+              engineVersion={riskRow?.engine_version ?? "v0.2.0"}
+              evaluatedAt={riskRow?.created_at ? formatDate(riskRow.created_at) : null}
+              flows={riskFlows}
+            />
+            <FlowBreakdown flows={riskFlows} />
+            <RecommendedActions actions={riskActions} currentScore={riskRow?.score ?? null} />
+          </>
+        ) : (
+          <>
 
         {/* Recert countdown — only for active enrollments (Handed Off / Closed) */}
         {(packet.status === "Handed Off" || packet.status === "Closed") && packet.handed_off_at && (
@@ -450,6 +657,9 @@ export default async function PacketDetailPage({
             <ComplianceNarrative />
           </Section>
         ) : null}
+
+          </>
+        )}
       </main>
     </div>
   );

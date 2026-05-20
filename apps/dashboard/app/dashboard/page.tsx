@@ -7,8 +7,8 @@ import LanguageDonut from "../../components/LanguageDonut";
 import Sparkline from "../../components/Sparkline";
 import DocumentAIPanel from "../../components/DocumentAIPanel";
 import ActivityTicker from "../../components/ActivityTicker";
-import CaliforniaMap from "../../components/CaliforniaMap";
 import MapInteractiveWrapper from "../../components/MapInteractiveWrapper";
+import QCOutcomesPanel from "../../components/QCOutcomesPanel";
 import Link from "next/link";
 import { caCountyToFips } from "../../lib/caCounties";
 import { decryptDemoName, docKindLabel, firstNameLastInitial, shortId } from "../../lib/format";
@@ -28,7 +28,7 @@ export default async function DashboardPage() {
   const supabase = createServerClientFromCookies(cookieStore);
   const { data: { user } } = await supabase.auth.getUser();
 
-  const [packetsRes, applicantsRes, historyRes, docsRes] = await Promise.all([
+  const [packetsRes, applicantsRes, historyRes, docsRes, riskRes, qcRes] = await Promise.all([
     supabase.schema("snap_enrollment").from("snap_packets")
       .select("packet_id, status, state_code, county, county_fips, submitted_at, handed_off_at, created_at, updated_at, applicants(full_name_ciphertext, preferred_language)")
       .is("deleted_at", null)
@@ -43,12 +43,37 @@ export default async function DashboardPage() {
       .select("document_id, document_kind, classification_confidence, processing_status, uploaded_at, packet_id")
       .is("deleted_at", null)
       .limit(2000),
+    (supabase.schema("snap_enrollment") as any)
+      .from("packet_error_risk")
+      .select("packet_id, score, tier, created_at")
+      .order("created_at", { ascending: false })
+      .limit(5000),
+    (supabase.schema("snap_enrollment") as any)
+      .from("qc_outcomes")
+      .select("packet_id, qc_sampled, error_found, error_type, error_amount")
+      .eq("qc_sampled", true)
+      .limit(2000),
   ]);
 
   const packets = packetsRes.data ?? [];
   const applicants = applicantsRes.data ?? [];
   const history = historyRes.data ?? [];
   const docs = docsRes.data ?? [];
+  const allRiskRows: Array<{ packet_id: string; score: number | null; tier: string; created_at: string }> = riskRes.data ?? [];
+  const qcRows: Array<{ packet_id: string; qc_sampled: boolean; error_found: boolean | null; error_type: string | null; error_amount: number | null }> = qcRes.data ?? [];
+
+  // Deduplicate risk rows — keep newest row per packet
+  const latestRiskByPacket = new Map<string, (typeof allRiskRows)[0]>();
+  for (const row of allRiskRows) {
+    const existing = latestRiskByPacket.get(row.packet_id);
+    if (!existing || row.created_at > existing.created_at) {
+      latestRiskByPacket.set(row.packet_id, row);
+    }
+  }
+  const packetRiskMap: Record<string, { tier: string; score: number | null }> = {};
+  for (const [pid, row] of latestRiskByPacket) {
+    packetRiskMap[pid] = { tier: row.tier, score: row.score };
+  }
 
   // ── "Mine today" — work the logged-in navigator did since midnight local time
   let mineToday = { transitions: 0, notes: 0, touchedPackets: 0 };
@@ -195,6 +220,53 @@ export default async function DashboardPage() {
     if (p.status === "Handed Off" || p.status === "Closed") k.enrolled += 1;
     byCountyFips[fips] = k;
   }
+
+  // ── County-level risk aggregation for the risk map mode
+  type CountyRiskBuild = { scored: number; high: number; medium: number; low: number; _scores: number[] };
+  const byCountyRisk: Record<string, { scored: number; avgScore: number | null; high: number; medium: number; low: number }> = {};
+  for (const p of packets) {
+    if (p.state_code !== "CA") continue;
+    const fips = p.county_fips ?? caCountyToFips(p.county);
+    if (!fips) continue;
+    const risk = packetRiskMap[p.packet_id];
+    if (!risk) continue;
+    const k: CountyRiskBuild = (byCountyRisk[fips] as unknown as CountyRiskBuild | undefined) ?? { scored: 0, high: 0, medium: 0, low: 0, _scores: [] };
+    k.scored += 1;
+    if (risk.tier === "high") k.high += 1;
+    else if (risk.tier === "medium") k.medium += 1;
+    else if (risk.tier === "low") k.low += 1;
+    if (risk.score != null) k._scores.push(risk.score);
+    (byCountyRisk as Record<string, unknown>)[fips] = k;
+  }
+  for (const fips of Object.keys(byCountyRisk)) {
+    const k = byCountyRisk[fips] as unknown as CountyRiskBuild;
+    byCountyRisk[fips] = {
+      scored: k.scored,
+      avgScore: k._scores.length > 0 ? Math.round(k._scores.reduce((a, b) => a + b, 0) / k._scores.length) : null,
+      high: k.high,
+      medium: k.medium,
+      low: k.low,
+    };
+  }
+
+  // ── QC outcomes stats
+  const sampledRows = qcRows.filter((r) => r.qc_sampled);
+  const errorRows   = sampledRows.filter((r) => r.error_found === true);
+  const byErrorType: Record<string, number> = {};
+  for (const r of errorRows) {
+    const t = r.error_type ?? "unknown";
+    byErrorType[t] = (byErrorType[t] ?? 0) + 1;
+  }
+  const sampledPacketIds = new Set(sampledRows.map((r) => r.packet_id));
+  const qcStats = {
+    totalOutcomes: sampledRows.length,
+    sampledCount: sampledRows.length,
+    errorCount: errorRows.length,
+    errorRate: sampledRows.length > 0 ? errorRows.length / sampledRows.length : null,
+    packetsCovered: sampledPacketIds.size,
+    totalPackets: packets.length,
+    byErrorType: Object.entries(byErrorType).sort((a, b) => b[1] - a[1]) as [string, number][],
+  };
 
   // ── Urgent counts for the top-of-dashboard action banner
   const nowMs = Date.now();
@@ -344,10 +416,13 @@ export default async function DashboardPage() {
         {/* Map + Activity (two-up). items-start so each card sizes to its own
             content instead of stretching to match the taller one. */}
         <div className="grid grid-cols-3 gap-5 items-start">
-          <Card title="California Footprint" subtitle="Packets by county. Click any shaded county for a snapshot." className="col-span-2">
-            <MapInteractiveWrapper byCountyPackets={byCountyPackets}>
-              <CaliforniaMap byCountyFips={byCountyFips} />
-            </MapInteractiveWrapper>
+          <Card title="California Footprint" subtitle="Packets by county. Toggle to view error risk by county." className="col-span-2">
+            <MapInteractiveWrapper
+              byCountyPackets={byCountyPackets}
+              byCountyFips={byCountyFips}
+              byCountyRisk={byCountyRisk}
+              packetRiskMap={packetRiskMap}
+            />
           </Card>
           <Card title="Live Activity" subtitle="Real-time status transitions and uploads.">
             <ActivityTicker initial={initialActivity} />
@@ -377,6 +452,9 @@ export default async function DashboardPage() {
             <LanguageDonut counts={langCounts} />
           </Card>
         </div>
+
+        {/* QC Outcomes */}
+        <QCOutcomesPanel stats={qcStats} />
 
         {/* Doc AI panel */}
         <Card title="Document AI" subtitle="Classification + extraction performance across uploaded documents." weight="secondary">

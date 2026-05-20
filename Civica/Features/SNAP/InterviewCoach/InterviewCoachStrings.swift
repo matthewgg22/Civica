@@ -152,8 +152,20 @@ enum InterviewCoachStrings {
         es: "Comentarios de la sesión"
     )
     static let sessionFeedbackIntro = CivicaText(
-        "This is practice feedback, not a prediction of your real interview. It reflects how a caseworker might read your answers — a learning signal, not a guarantee. Lower accuracy-risk and lower missing-context are better; higher completeness is better.",
-        es: "Estos son comentarios de práctica, no una predicción de tu entrevista real. Reflejan cómo un trabajador social podría leer tus respuestas — una señal para aprender, no una garantía. Menos riesgo de precisión y menos contexto faltante es mejor; más completitud es mejor."
+        "This is practice feedback, not a prediction of your real interview. It's meant to help you spot strengths to lean on and rough edges to polish before the real thing.",
+        es: "Estos son comentarios de práctica, no una predicción de tu entrevista real. Te ayudarán a identificar fortalezas y áreas a mejorar antes de la entrevista oficial."
+    )
+    static let overallScoreLabel = CivicaText(
+        "Overall readiness",
+        es: "Preparación general"
+    )
+    static let strengthsHeader = CivicaText(
+        "What went well",
+        es: "Lo que salió bien"
+    )
+    static let improvementsHeader = CivicaText(
+        "What to work on",
+        es: "Qué practicar"
     )
     static let axisCompleteness = CivicaText(
         "Completeness",

@@ -38,6 +38,10 @@ const patchRecertSchema = z.object({
 
 const respondSchema = z.object({
   user_message: z.string().min(1),
+  // Voice-input duration (bytes captured by SNAPVoiceIntakeService on-device).
+  // Optional — text-input call sites omit it. Threaded through to the
+  // orchestrator as a "stuck vs confident" signal for the AI coach.
+  audio_bytes_duration: z.number().int().min(0).optional(),
 });
 
 // ---------------------------------------------------------------------------
@@ -287,7 +291,7 @@ app.post("/:recertId/practice/:sessionId/respond", zValidator("json", respondSch
 
   const recertId = c.req.param("recertId");
   const sessionId = c.req.param("sessionId");
-  const { user_message } = c.req.valid("json");
+  const { user_message, audio_bytes_duration } = c.req.valid("json");
   const db = await withActorContext(c);
   const anonDb = makeAnonClient(c.env, c.get("jwt"));
 
@@ -315,6 +319,7 @@ app.post("/:recertId/practice/:sessionId/respond", zValidator("json", respondSch
     result = await recertEngine.interview.respond({
       sessionId,
       userMessage: user_message,
+      ...(audio_bytes_duration !== undefined && { audioBytesDuration: audio_bytes_duration }),
       ...(anthropicApiKey !== undefined && { anthropicApiKey }),
     });
   } catch (err) {
@@ -369,6 +374,134 @@ app.get("/:recertId/practice/:sessionId", async (c) => {
   if (error) throw new HTTPException(500, { message: error.message });
 
   return c.json(data);
+});
+
+// ---------------------------------------------------------------------------
+// POST /v1/enrollment/recert/:recertId/practice/:sessionId/score
+// Generate (or return cached) end-of-session score for a completed session.
+// Idempotent: a second call returns the existing row.
+// ---------------------------------------------------------------------------
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyDb = any;
+
+interface ScoreRow {
+  session_id: string;
+  overall_score: number;
+  strengths: unknown;
+  improvements: unknown;
+  summary_en: string;
+  summary_es: string;
+  engine_version: string;
+  generated_at: string;
+}
+
+async function fetchExistingScore(anonDb: AnyDb, sessionId: string): Promise<ScoreRow | null> {
+  const { data, error } = await anonDb
+    .schema("snap_enrollment")
+    .from("recert_practice_scores")
+    .select("session_id, overall_score, strengths, improvements, summary_en, summary_es, engine_version, generated_at")
+    .eq("session_id", sessionId)
+    .maybeSingle();
+  if (error && error.code !== "PGRST116") {
+    throw new HTTPException(500, { message: error.message });
+  }
+  return (data ?? null) as ScoreRow | null;
+}
+
+async function insertScore(db: AnyDb, payload: Record<string, unknown>): Promise<{ data: ScoreRow | null; code?: string; message?: string }> {
+  const { data, error } = await db
+    .schema("snap_enrollment")
+    .from("recert_practice_scores")
+    .insert(payload)
+    .select("session_id, overall_score, strengths, improvements, summary_en, summary_es, engine_version, generated_at")
+    .single();
+  return { data: (data ?? null) as ScoreRow | null, code: error?.code, message: error?.message };
+}
+
+app.post("/:recertId/practice/:sessionId/score", async (c) => {
+  // Applicant-facing — RLS via anonDb enforces session ownership.
+
+  const recertId = c.req.param("recertId");
+  const sessionId = c.req.param("sessionId");
+  const db: AnyDb = await withActorContext(c);
+  const anonDb: AnyDb = makeAnonClient(c.env, c.get("jwt"));
+
+  // Verify session exists and is complete
+  const { data: session, error: sessionErr } = await anonDb
+    .schema("snap_enrollment")
+    .from("recert_practice_sessions")
+    .select("session_id, recert_id, state_code, flags, done")
+    .eq("session_id", sessionId)
+    .eq("recert_id", recertId)
+    .single();
+
+  if (sessionErr?.code === "PGRST116") throw new HTTPException(404, { message: "Session not found" });
+  if (sessionErr) throw new HTTPException(500, { message: sessionErr.message });
+
+  if (!session.done) {
+    throw new HTTPException(400, { message: "Session is not complete; finish the interview first" });
+  }
+
+  // Idempotency: return existing score if present
+  const existing = await fetchExistingScore(anonDb, sessionId);
+  if (existing) {
+    return c.json(existing);
+  }
+
+  // Generate fresh — pull transcript from in-memory orchestrator state.
+  const transcript = recertEngine.interview.getTranscript(sessionId);
+  if (!transcript) {
+    throw new HTTPException(410, {
+      message: "Session transcript no longer in memory; cannot generate score. Run a new practice session.",
+    });
+  }
+
+  const aiEnabled = c.env.RECERT_AI_ENABLED === "true";
+  const apiKey = aiEnabled ? c.env.ANTHROPIC_API_KEY : undefined;
+  if (!apiKey) {
+    throw new HTTPException(503, { message: "Practice scoring requires RECERT_AI_ENABLED and an ANTHROPIC_API_KEY" });
+  }
+
+  let result: Awaited<ReturnType<typeof recertEngine.scorer.scoreSession>>;
+  try {
+    result = await recertEngine.scorer.scoreSession(
+      {
+        sessionId,
+        turns: transcript.turns,
+        flags: transcript.flags,
+        stateCode: session.state_code as "CA" | "MA",
+      },
+      { apiKey },
+    );
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Score generation failed";
+    throw new HTTPException(502, { message });
+  }
+
+  const generatedAt = new Date().toISOString();
+
+  const insertResult = await insertScore(db, {
+    session_id: sessionId,
+    overall_score: result.overall_score,
+    strengths: result.strengths,
+    improvements: result.improvements,
+    summary_en: result.summary_en,
+    summary_es: result.summary_es,
+    engine_version: result.engine_version,
+    generated_at: generatedAt,
+  });
+
+  if (insertResult.code) {
+    // 23505 = unique violation — race with concurrent generate; re-fetch + return.
+    if (insertResult.code === "23505") {
+      const raced = await fetchExistingScore(anonDb, sessionId);
+      if (raced) return c.json(raced);
+    }
+    throw new HTTPException(500, { message: insertResult.message ?? "Insert failed" });
+  }
+
+  return c.json(insertResult.data, 201);
 });
 
 export default app;

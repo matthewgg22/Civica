@@ -43,6 +43,12 @@ export type StartResult = {
 export type RespondInput = {
   sessionId: string;
   userMessage: string;
+  /**
+   * Optional voice-input duration in bytes (captured on-device by the iOS
+   * voice intake service). When present, surfaced to the AI coach as a
+   * "stuck vs confident" signal — long durations often indicate hesitation.
+   */
+  audioBytesDuration?: number;
   /** If provided + RECERT_AI_ENABLED, generates per-turn coaching via Claude Haiku. */
   anthropicApiKey?: string;
 };
@@ -83,6 +89,7 @@ async function fetchCoaching(
   apiKey: string,
   questionText: string,
   userMessage: string,
+  audioBytesDuration?: number,
 ): Promise<string | null> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 4000);
@@ -111,8 +118,11 @@ async function fetchCoaching(
             role: 'user',
             content:
               `Interview question: "${questionText}"\n` +
-              `Applicant's answer: "${userMessage}"\n\n` +
-              'Give a brief coaching tip.',
+              `Applicant's answer: "${userMessage}"\n` +
+              (audioBytesDuration !== undefined
+                ? `Voice-input duration (bytes): ${audioBytesDuration} — long durations may indicate hesitation; short, fluent answers may indicate confidence. Use as a soft signal only.\n`
+                : '') +
+              '\nGive a brief coaching tip.',
           },
         ],
       }),
@@ -175,7 +185,7 @@ export function start(input: StartInput): StartResult {
  * If `anthropicApiKey` is provided, generates per-turn AI coaching (best-effort).
  */
 export async function respond(input: RespondInput): Promise<RespondResult> {
-  const { sessionId, userMessage, anthropicApiKey } = input;
+  const { sessionId, userMessage, audioBytesDuration, anthropicApiKey } = input;
   const session = sessions.get(sessionId);
   if (!session) {
     throw new Error(`Session not found: ${sessionId}`);
@@ -229,7 +239,7 @@ export async function respond(input: RespondInput): Promise<RespondResult> {
   // AI coaching — best-effort, never blocking, null when session is done
   let coaching: string | null = null;
   if (!done && anthropicApiKey) {
-    coaching = await fetchCoaching(anthropicApiKey, currentQuestion.text, userMessage);
+    coaching = await fetchCoaching(anthropicApiKey, currentQuestion.text, userMessage, audioBytesDuration);
   }
 
   return { turn, flags: newFlags, done, coaching };
@@ -240,4 +250,15 @@ export async function respond(input: RespondInput): Promise<RespondResult> {
  */
 export function getSession(sessionId: string): SessionState | undefined {
   return sessions.get(sessionId);
+}
+
+/**
+ * Read the recorded turns + accumulated flags for a session.
+ * Used by the scorer to build a transcript for end-of-session evaluation.
+ * Returns undefined when the in-memory session is gone (e.g. Worker restart).
+ */
+export function getTranscript(sessionId: string): { turns: InterviewTurn[]; flags: Flag[]; state: StateCode } | undefined {
+  const s = sessions.get(sessionId);
+  if (!s) return undefined;
+  return { turns: s.turns, flags: s.flags, state: s.state };
 }
