@@ -491,8 +491,8 @@ async function scorePacketRisk(
   type AnswerRow = { question_key: string; applicant_answer: string | null };
   const answers: Record<string, string> = Object.fromEntries(
     (answersResult.data ?? [])
-      .map((a: AnswerRow) => [a.question_key, a.applicant_answer ?? ""])
-      .filter(([, v]: [string, string]) => v !== "")
+      .map((a: AnswerRow) => [a.question_key, a.applicant_answer ?? ""] as [string, string])
+      .filter(([, v]) => v !== "")
   );
 
   const linkedAccounts = (argyleResult.data?.linked_accounts as unknown[]) ?? [];
