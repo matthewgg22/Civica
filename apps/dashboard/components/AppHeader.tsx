@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function AppHeader({ email, active }: { email?: string; active: "dashboard" | "queue" | "enrollments" | "county" | "outreach" }) {
+export default function AppHeader({ email, active }: { email?: string; active: "dashboard" | "queue" | "enrollments" | "county" | "outreach" | "qc" }) {
   return (
     <header className="bg-surface border-b border-hairline px-8 py-4 flex items-center justify-between">
       <div className="flex items-center gap-8">
@@ -20,6 +20,7 @@ export default function AppHeader({ email, active }: { email?: string; active: "
           <NavTab href="/enrollments"  label="Enrollments" active={active === "enrollments"} />
           <NavTab href="/county"       label="§10106"      active={active === "county"} />
           <NavTab href="/outreach"     label="Outreach"    active={active === "outreach"} />
+          <NavTab href="/qc"           label="QC"          active={active === "qc"} />
         </nav>
       </div>
       <div className="flex items-center gap-5">
