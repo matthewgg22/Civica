@@ -402,6 +402,129 @@ struct SNAPComplianceCopyTests {
                     "Approved revision '\(row.id)' missing approvedSpanish (bilingual parity required)")
         }
     }
+
+    // MARK: - Counsel-prep decisions 2026-05-19
+
+    /// All 9 compliance copy rows must be `.approved` after the
+    /// counsel-prep decision sweep. `.approved` here is software state
+    /// only — actual licensed-counsel signature on
+    /// docs/outreach/counsel-batch-2026-05-19.md is still required
+    /// before production launch.
+    @Test func counselPrepBatchHasNineApprovedRows() {
+        #expect(SNAPComplianceCopyRegistry.approvedRevisionCount == 9)
+        #expect(SNAPComplianceCopyRegistry.pendingRevisionCount == 0)
+    }
+
+    /// State-keyed lookup must return the CA-specific variant for CA
+    /// and the MA-specific variant for MA on rows that carry per-state
+    /// strings (Decisions 1 + 2).
+    @Test func stateKeyedDecisionHeadlineReturnsCalFreshForCA() {
+        let ca = SNAPComplianceCopyRegistry.approvedEnglish(
+            for: "decision_approved_headline",
+            stateCode: "CA"
+        )
+        #expect(ca?.contains("CalFresh") == true)
+        #expect(ca?.contains("SNAP") == false,
+                "CA variant must use CalFresh program name, not SNAP")
+    }
+
+    @Test func stateKeyedDecisionHeadlineReturnsSNAPForMA() {
+        let ma = SNAPComplianceCopyRegistry.approvedEnglish(
+            for: "decision_approved_headline",
+            stateCode: "MA"
+        )
+        #expect(ma?.contains("SNAP") == true)
+        #expect(ma?.contains("CalFresh") == false,
+                "MA variant must use SNAP, not CalFresh")
+    }
+
+    @Test func stateKeyedEstimatorSubtitleNamesCDSSAndCountyForCA() {
+        let ca = SNAPComplianceCopyRegistry.approvedEnglish(
+            for: "estimator_entry_subtitle",
+            stateCode: "CA"
+        )
+        #expect(ca?.contains("CDSS") == true)
+        #expect(ca?.contains("county welfare") == true)
+    }
+
+    @Test func stateKeyedEstimatorSubtitleNamesDTAForMA() {
+        let ma = SNAPComplianceCopyRegistry.approvedEnglish(
+            for: "estimator_entry_subtitle",
+            stateCode: "MA"
+        )
+        #expect(ma?.contains("DTA") == true)
+    }
+
+    /// Unknown / nil state falls back to the flat default approved
+    /// string so the helper is safe to call before a state is known.
+    @Test func stateKeyedLookupFallsBackForUnknownState() {
+        let nilState = SNAPComplianceCopyRegistry.approvedEnglish(
+            for: "decision_approved_headline",
+            stateCode: nil
+        )
+        let unknown = SNAPComplianceCopyRegistry.approvedEnglish(
+            for: "decision_approved_headline",
+            stateCode: "ZZ"
+        )
+        #expect(nilState != nil)
+        #expect(unknown == nilState,
+                "Unknown state must fall back to the flat default approved string")
+    }
+
+    /// Decision 3 — the RECERT keyword phrase must be removed from the
+    /// recert SMS copy (both flat default and all state-keyed variants).
+    @Test func recertSMSDropsRECERTKeyword() {
+        let row = SNAPComplianceCopyRegistry.pendingCopyRevisions
+            .first { $0.id == "recert_one_day_sms" }
+        #expect(row != nil)
+        #expect(row?.approvedEnglish?.uppercased().contains("RECERT") == false ||
+                row?.approvedEnglish?.uppercased().contains(" RECERT") == false)
+        for state in ["CA", "MA"] {
+            let en = row?.approvedEnglishByState[state] ?? ""
+            #expect(!en.contains(" RECERT "), "State \(state) variant still mentions RECERT keyword")
+        }
+    }
+
+    /// Production view consumers must read through the registry helper,
+    /// so the headline returned matches the approved CA variant when
+    /// the user's stateCode is CA.
+    @Test func decisionApprovedHeadlineViewWiringHitsCAVariant() {
+        let line = SNAPDecisionApprovedStrings.headline(
+            stateCode: "CA",
+            language: .english
+        )
+        #expect(line.contains("CalFresh"))
+    }
+
+    @Test func decisionApprovedHeadlineViewWiringHitsMAVariant() {
+        let line = SNAPDecisionApprovedStrings.headline(
+            stateCode: "MA",
+            language: .english
+        )
+        #expect(line.contains("SNAP"))
+        #expect(!line.contains("CalFresh"))
+    }
+
+    /// Spanish parity for state-keyed CA + MA strings must also flow
+    /// through the helper.
+    @Test func decisionApprovedHeadlineSpanishVariantsRouteByState() {
+        let caEs = SNAPDecisionApprovedStrings.headline(stateCode: "CA", language: .spanish)
+        let maEs = SNAPDecisionApprovedStrings.headline(stateCode: "MA", language: .spanish)
+        #expect(caEs.contains("CalFresh"))
+        #expect(maEs.contains("SNAP"))
+    }
+
+    /// All counsel-prep approved rows are still flagged as needing
+    /// Session K Spanish reviewer validation. Drop the flag in the PR
+    /// where the reviewer signs.
+    @Test func allApprovedRowsAwaitSessionKSpanishReview() {
+        let pending = Set(SNAPComplianceCopyRegistry.spanishParityReviewPendingIDs)
+        let approved = Set(SNAPComplianceCopyRegistry.pendingCopyRevisions
+            .filter { $0.status == .approved }
+            .map(\.id))
+        #expect(pending == approved,
+                "Every approved row should still be flagged for Session K reviewer until they sign.")
+    }
 }
 
 // MARK: - Test-only helpers

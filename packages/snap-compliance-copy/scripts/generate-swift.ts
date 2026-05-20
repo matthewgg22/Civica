@@ -89,6 +89,15 @@ function renderStatus(s: "pending_signoff" | "approved"): string {
   return s === "approved" ? ".approved" : ".pendingSignoff";
 }
 
+function renderStateMap(map: Record<string, string> | undefined): string {
+  if (!map) return "[:]";
+  // Stable key order for deterministic output.
+  const keys = Object.keys(map).sort();
+  if (keys.length === 0) return "[:]";
+  const entries = keys.map((k) => `${quote(k)}: ${quote(map[k]!)}`);
+  return `[${entries.join(", ")}]`;
+}
+
 function renderRevision(r: PendingCopyRevision): string {
   return [
     "        PendingCopyRevision(",
@@ -98,9 +107,12 @@ function renderRevision(r: PendingCopyRevision): string {
     `            currentEnglish: ${quote(r.current_english)},`,
     `            approvedEnglish: ${quoteOpt(r.approved_english)},`,
     `            approvedSpanish: ${quoteOpt(r.approved_spanish)},`,
+    `            approvedEnglishByState: ${renderStateMap(r.approved_english_by_state)},`,
+    `            approvedSpanishByState: ${renderStateMap(r.approved_spanish_by_state)},`,
     `            auditReference: ${quote(r.audit_reference)},`,
     `            rationale: ${quote(r.rationale)},`,
-    `            status: ${renderStatus(r.status)}`,
+    `            status: ${renderStatus(r.status)},`,
+    `            spanishParityReviewPending: ${r.spanish_parity_review_pending ? "true" : "false"}`,
     "        )",
   ].join("\n");
 }

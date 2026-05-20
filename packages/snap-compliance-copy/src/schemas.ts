@@ -15,6 +15,20 @@ export const BannedPhraseSchema = z
 
 export const RevisionStatusSchema = z.enum(["pending_signoff", "approved"]);
 
+// State-keyed variant map. Rows where program name / agency attribution
+// differs between launch states (CA = "CalFresh"/CDSS, MA = "SNAP"/DTA)
+// supply per-state strings; rows whose copy is state-agnostic use the
+// flat `approved_english` / `approved_spanish` slot.
+const StateKeyedStringSchema = z
+  .object({
+    CA: z.string().min(1).optional(),
+    MA: z.string().min(1).optional(),
+  })
+  .strict()
+  .refine((v) => v.CA !== undefined || v.MA !== undefined, {
+    message: "state-keyed variant must include at least one state",
+  });
+
 export const PendingCopyRevisionSchema = z
   .object({
     id: idSchema,
@@ -23,9 +37,17 @@ export const PendingCopyRevisionSchema = z
     current_english: z.string().min(1),
     approved_english: z.string().min(1).nullable(),
     approved_spanish: z.string().min(1).nullable(),
+    // Optional state-keyed override maps. When present, the registry's
+    // state-aware lookup prefers the state's variant; the flat
+    // `approved_english`/`approved_spanish` slot is the default fallback.
+    approved_english_by_state: StateKeyedStringSchema.optional(),
+    approved_spanish_by_state: StateKeyedStringSchema.optional(),
     audit_reference: z.string().min(1),
     rationale: z.string().min(1),
     status: RevisionStatusSchema,
+    // Set to true when Spanish strings haven't been validated by the
+    // Session K Spanish reviewer yet. Surfaces to QA / launch preflight.
+    spanish_parity_review_pending: z.boolean().optional(),
   })
   .strict();
 

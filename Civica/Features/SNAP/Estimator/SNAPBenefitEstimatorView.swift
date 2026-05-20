@@ -432,7 +432,15 @@ struct SNAPBenefitEstimatorView: View {
     // MARK: - CTAs
 
     private var applyCTA: some View {
-        CivicaPrimaryButton(SNAPBenefitEstimatorStrings.applyCTA.value(in: language)) {
+        // Compliance row 5 (estimator_apply_cta): counsel-prep approved
+        // (2026-05-19) — "Apply on BenefitsCal" (CA launch). External-link
+        // affordance per Decision 4 signals outbound navigation to the
+        // state portal. State-aware lookup via the registry; falls back to
+        // generic "Apply for SNAP" if the row is reverted to .pendingSignoff.
+        CivicaPrimaryButton(
+            SNAPBenefitEstimatorStrings.applyCTA(stateCode: nil, language: language),
+            isExternalLink: SNAPComplianceCopyRegistry.approvedEnglish(for: "estimator_apply_cta") != nil
+        ) {
             persistEligibleResultIfNeeded()
             onApply()
         }

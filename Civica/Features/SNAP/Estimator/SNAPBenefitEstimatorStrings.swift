@@ -189,9 +189,30 @@ enum SNAPBenefitEstimatorStrings {
     )
 
     /// Registry-aware, state-parameterized subtitle. Replaces `entryCardSubtitle` at call
-    /// sites when counsel signs "estimator_entry_subtitle". Substitutes [Agency] with the
-    /// state's full agency name from SNAPAgencyDirectory.
+    /// sites when counsel signs "estimator_entry_subtitle". Prefers the state-keyed variant
+    /// from the registry (Decision 2 — CA: CDSS/county; MA: DTA) and falls back to substituting
+    /// [Agency] in the flat default for any other state.
     static func entryCardSubtitle(stateCode: String?, language: CivicaLanguage) -> String {
+        // State-keyed lookup first.
+        switch language {
+        case .english:
+            if let stateKeyed = SNAPComplianceCopyRegistry.approvedEnglish(
+                for: "estimator_entry_subtitle",
+                stateCode: stateCode
+            ), stateKeyed != SNAPComplianceCopyRegistry.approvedEnglish(for: "estimator_entry_subtitle") {
+                return stateKeyed
+            }
+        case .spanish:
+            if let stateKeyed = SNAPComplianceCopyRegistry.approvedSpanish(
+                for: "estimator_entry_subtitle",
+                stateCode: stateCode
+            ), stateKeyed != SNAPComplianceCopyRegistry.approvedSpanish(for: "estimator_entry_subtitle") {
+                return stateKeyed
+            }
+        }
+
+        // Fall back to flat approved string with [Agency] substitution, or
+        // to the pre-sign production copy when the row is reverted.
         guard let approvedEN = SNAPComplianceCopyRegistry.approvedEnglish(for: "estimator_entry_subtitle"),
               let approvedES = SNAPComplianceCopyRegistry.approvedSpanish(for: "estimator_entry_subtitle") else {
             return language == .english
