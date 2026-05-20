@@ -1133,6 +1133,42 @@ export type Database = {
         }
         Relationships: []
       }
+      recert_practice_turns: {
+        Row: {
+          turn_id: string
+          session_id: string
+          turn_index: number
+          caseworker_question: string
+          applicant_response: string | null
+          coaching: Json | null
+          audio_bytes_duration: number | null
+          asked_at: string
+          responded_at: string | null
+        }
+        Insert: {
+          turn_id?: string
+          session_id: string
+          turn_index: number
+          caseworker_question: string
+          applicant_response?: string | null
+          coaching?: Json | null
+          audio_bytes_duration?: number | null
+          asked_at?: string
+          responded_at?: string | null
+        }
+        Update: {
+          turn_id?: string
+          session_id?: string
+          turn_index?: number
+          caseworker_question?: string
+          applicant_response?: string | null
+          coaching?: Json | null
+          audio_bytes_duration?: number | null
+          asked_at?: string
+          responded_at?: string | null
+        }
+        Relationships: []
+      }
       work_requirement_statuses: {
         Row: {
           wr_status_id: string

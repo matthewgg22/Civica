@@ -278,6 +278,22 @@ app.post("/:recertId/practice/start", async (c) => {
 
   if (sessionErr) throw new HTTPException(500, { message: sessionErr.message });
 
+  // Persist the first turn (no response yet) so the score endpoint can recover
+  // the transcript even after a Worker restart. See migration 20260562.
+  const { error: turnErr } = await db
+    .schema("snap_enrollment")
+    .from("recert_practice_turns")
+    .insert({
+      session_id: session.session_id,
+      turn_index: 0,
+      caseworker_question: firstQuestion.questionText,
+      applicant_response: null,
+      coaching: null,
+      asked_at: new Date().toISOString(),
+    });
+
+  if (turnErr) throw new HTTPException(500, { message: turnErr.message });
+
   return c.json({ session_id: session.session_id, first_question: firstQuestion }, 201);
 });
 
@@ -323,7 +339,11 @@ app.post("/:recertId/practice/:sessionId/respond", zValidator("json", respondSch
       ...(anthropicApiKey !== undefined && { anthropicApiKey }),
     });
   } catch (err) {
-    // Session not in memory (e.g. Worker restart) — return 410 Gone so client can start fresh
+    // Session not in memory (e.g. Worker restart) — return 410 Gone so client can start fresh.
+    // Note: scoring no longer relies on in-memory state (transcript is now persisted to
+    // recert_practice_turns), so this 410 only fires for mid-session restarts where the
+    // orchestrator's question-index state is lost. v2 follow-up: rehydrate orchestrator
+    // state from the turns table instead of forcing a restart.
     throw new HTTPException(410, { message: "Session state lost; please start a new practice session" });
   }
 
@@ -346,6 +366,42 @@ app.post("/:recertId/practice/:sessionId/respond", zValidator("json", respondSch
     .eq("session_id", sessionId);
 
   if (updateErr) throw new HTTPException(500, { message: updateErr.message });
+
+  // Persist transcript: (1) record the applicant's response + coaching on the
+  // turn that was just answered; (2) if more turns are coming, insert the next
+  // caseworker question with applicant_response = null. See migration 20260562.
+  const respondedTurnIndex = session.turn_count; // 0-indexed; matches the turn that just got answered
+  const nowIso = new Date().toISOString();
+
+  const { error: turnUpdateErr } = await db
+    .schema("snap_enrollment")
+    .from("recert_practice_turns")
+    .update({
+      applicant_response: user_message,
+      coaching,
+      ...(audio_bytes_duration !== undefined && { audio_bytes_duration }),
+      responded_at: nowIso,
+    })
+    .eq("session_id", sessionId)
+    .eq("turn_index", respondedTurnIndex);
+
+  if (turnUpdateErr) throw new HTTPException(500, { message: turnUpdateErr.message });
+
+  if (!done) {
+    const { error: turnInsertErr } = await db
+      .schema("snap_enrollment")
+      .from("recert_practice_turns")
+      .insert({
+        session_id: sessionId,
+        turn_index: respondedTurnIndex + 1,
+        caseworker_question: turn.questionText,
+        applicant_response: null,
+        coaching: null,
+        asked_at: nowIso,
+      });
+
+    if (turnInsertErr) throw new HTTPException(500, { message: turnInsertErr.message });
+  }
 
   return c.json({ turn, flags, done, coaching });
 });
@@ -449,13 +505,41 @@ app.post("/:recertId/practice/:sessionId/score", async (c) => {
     return c.json(existing);
   }
 
-  // Generate fresh — pull transcript from in-memory orchestrator state.
-  const transcript = recertEngine.interview.getTranscript(sessionId);
-  if (!transcript) {
-    throw new HTTPException(410, {
-      message: "Session transcript no longer in memory; cannot generate score. Run a new practice session.",
-    });
+  // Generate fresh — pull transcript from the persisted recert_practice_turns
+  // table. Resilient to Worker restarts: scoring no longer depends on the
+  // in-memory orchestrator state. Sessions completed BEFORE migration 20260562
+  // applied will have no turn rows and surface as 404 here.
+  const { data: turnRows, error: turnsErr } = await anonDb
+    .schema("snap_enrollment")
+    .from("recert_practice_turns")
+    .select("turn_index, caseworker_question, applicant_response, coaching")
+    .eq("session_id", sessionId)
+    .order("turn_index", { ascending: true });
+
+  if (turnsErr) throw new HTTPException(500, { message: turnsErr.message });
+
+  if (!turnRows || turnRows.length === 0) {
+    // Either the session predates persistence (migration 20260562) or some
+    // other anomaly. Either way, no transcript = no score.
+    throw new HTTPException(404, { message: "No turns found for this session" });
   }
+
+  // Map persisted rows to the InterviewTurn shape the scorer expects. The
+  // questionId is not persisted (we only need question text + response for
+  // scoring), so synthesize a stable id from turn_index.
+  const turns = (turnRows as Array<{
+    turn_index: number;
+    caseworker_question: string;
+    applicant_response: string | null;
+    coaching: unknown;
+  }>).map((t) => {
+    const base: { questionId: string; questionText: string; response?: string } = {
+      questionId: `turn-${t.turn_index}`,
+      questionText: t.caseworker_question,
+    };
+    if (t.applicant_response !== null) base.response = t.applicant_response;
+    return base;
+  });
 
   const aiEnabled = c.env.RECERT_AI_ENABLED === "true";
   const apiKey = aiEnabled ? c.env.ANTHROPIC_API_KEY : undefined;
@@ -463,13 +547,18 @@ app.post("/:recertId/practice/:sessionId/score", async (c) => {
     throw new HTTPException(503, { message: "Practice scoring requires RECERT_AI_ENABLED and an ANTHROPIC_API_KEY" });
   }
 
+  // session.flags is the accumulated set captured on the sessions row.
+  const persistedFlags = Array.isArray(session.flags)
+    ? (session.flags as Array<{ type: string; description: string }>)
+    : [];
+
   let result: Awaited<ReturnType<typeof recertEngine.scorer.scoreSession>>;
   try {
     result = await recertEngine.scorer.scoreSession(
       {
         sessionId,
-        turns: transcript.turns,
-        flags: transcript.flags,
+        turns,
+        flags: persistedFlags,
         stateCode: session.state_code as "CA" | "MA",
       },
       { apiKey },

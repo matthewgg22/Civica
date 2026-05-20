@@ -544,9 +544,12 @@ describe('POST /recert/:recertId/practice/:sessionId/score', () => {
     expect(res.status).toBe(404);
   });
 
-  it('returns 410 when session done but transcript no longer in memory', async () => {
+  it('returns 404 when session done but no persisted turns exist (predates persistence)', async () => {
+    // After PR #219 hardening, scoring reads from recert_practice_turns instead
+    // of in-memory orchestrator state. Sessions completed BEFORE migration
+    // 20260562 applied will have no turn rows → 404 (not 410).
     const sessionRow = {
-      session_id: SESSION_ID,   // sentinel sessionId not in orchestrator memory
+      session_id: SESSION_ID,
       recert_id: RECERT_ID,
       state_code: 'CA',
       flags: [],
@@ -555,10 +558,16 @@ describe('POST /recert/:recertId/practice/:sessionId/score', () => {
     const seqClient = makeDbClient({ data: null, error: null });
     seqClient.schema = vi.fn().mockReturnValue({
       from: vi.fn().mockImplementation((tbl: string) => {
-        const result = tbl === 'recert_practice_sessions'
-          ? { data: sessionRow, error: null }
-          : { data: null, error: { code: 'PGRST116', message: 'Not found' } };
-        return makeQueryBuilder(result);
+        if (tbl === 'recert_practice_sessions') {
+          return makeQueryBuilder({ data: sessionRow, error: null });
+        }
+        if (tbl === 'recert_practice_scores') {
+          return makeQueryBuilder({ data: null, error: { code: 'PGRST116', message: 'Not found' } });
+        }
+        if (tbl === 'recert_practice_turns') {
+          return makeQueryBuilder({ data: [], error: null });
+        }
+        return makeQueryBuilder({ data: null, error: null });
       }),
     });
     vi.mocked(makeAnonClient).mockReturnValue(seqClient);
@@ -569,7 +578,241 @@ describe('POST /recert/:recertId/practice/:sessionId/score', () => {
       { method: 'POST' },
       TEST_ENV,
     );
-    expect(res.status).toBe(410);
+    expect(res.status).toBe(404);
+  });
+
+  it('reads transcript from persisted turns (survives Worker restart)', async () => {
+    // Simulate the post-restart scenario: the in-memory orchestrator session
+    // is gone, but the persisted turns table has the transcript. Scoring
+    // should still succeed (this is the whole point of the hardening).
+    const sessionRow = {
+      session_id: SESSION_ID,
+      recert_id: RECERT_ID,
+      state_code: 'CA',
+      flags: [],
+      done: true,
+    };
+    const persistedTurns = [
+      { turn_index: 0, caseworker_question: 'Has your address changed?', applicant_response: 'No, same place.', coaching: null },
+      { turn_index: 1, caseworker_question: 'Has your income changed?', applicant_response: 'No changes.', coaching: null },
+    ];
+    const insertedScore = {
+      session_id: SESSION_ID,
+      overall_score: 75,
+      strengths: ['a', 'b'],
+      improvements: ['c', 'd'],
+      summary_en: 'ok',
+      summary_es: 'bien',
+      engine_version: 'claude-haiku-4-5/score-v1',
+      generated_at: '2026-05-19T00:00:00Z',
+    };
+
+    const seqClient = makeDbClient({ data: null, error: null });
+    seqClient.schema = vi.fn().mockReturnValue({
+      from: vi.fn().mockImplementation((tbl: string) => {
+        if (tbl === 'recert_practice_sessions') {
+          return makeQueryBuilder({ data: sessionRow, error: null });
+        }
+        if (tbl === 'recert_practice_scores') {
+          return makeQueryBuilder({ data: null, error: { code: 'PGRST116', message: 'Not found' } });
+        }
+        if (tbl === 'recert_practice_turns') {
+          return makeQueryBuilder({ data: persistedTurns, error: null });
+        }
+        return makeQueryBuilder({ data: null, error: null });
+      }),
+    });
+    vi.mocked(makeAnonClient).mockReturnValue(seqClient);
+    vi.mocked(withActorContext).mockResolvedValue(makeDbClient({ data: insertedScore, error: null }));
+
+    const { recertEngine } = await import('@civica/recert-engine');
+    const scoreSpy = vi.spyOn(recertEngine.scorer, 'scoreSession').mockResolvedValue({
+      overall_score: 75,
+      strengths: ['a', 'b'],
+      improvements: ['c', 'd'],
+      summary_en: 'ok',
+      summary_es: 'bien',
+      engine_version: 'claude-haiku-4-5/score-v1',
+    });
+
+    const res = await buildTestApp(recertRouter, '/', APPLICANT).request(
+      `/${RECERT_ID}/practice/${SESSION_ID}/score`,
+      { method: 'POST' },
+      { ...TEST_ENV, RECERT_AI_ENABLED: 'true', ANTHROPIC_API_KEY: 'test-key' },
+    );
+    expect(res.status).toBe(201);
+    const body = await res.json() as Record<string, unknown>;
+    expect(body.overall_score).toBe(75);
+
+    expect(scoreSpy).toHaveBeenCalledTimes(1);
+    const scoreInput = scoreSpy.mock.calls[0]?.[0] as { turns: Array<{ questionText: string; response?: string }> };
+    expect(scoreInput.turns).toHaveLength(2);
+    expect(scoreInput.turns[0]?.questionText).toBe('Has your address changed?');
+    expect(scoreInput.turns[0]?.response).toBe('No, same place.');
+
+    scoreSpy.mockRestore();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Transcript persistence (recert_practice_turns)
+// ---------------------------------------------------------------------------
+
+describe('practice turn persistence', () => {
+  it('start route inserts turn 0 with applicant_response=null', async () => {
+    const recertRow = { recert_id: RECERT_ID, org_id: 'org-001', packet_id: PACKET_ID };
+    const sessionRow = {
+      session_id: SESSION_ID, recert_id: RECERT_ID, state_code: 'CA',
+      turn_count: 0, flags: [], done: false,
+    };
+
+    vi.mocked(makeAnonClient).mockReturnValue(makeDbClient({ data: recertRow, error: null }));
+
+    const insertCalls: Array<{ table: string; payload: unknown }> = [];
+    const serviceClient = makeDbClient({ data: sessionRow, error: null });
+    serviceClient.schema = vi.fn().mockReturnValue({
+      from: vi.fn().mockImplementation((tbl: string) => {
+        const qb = makeQueryBuilder(
+          tbl === 'recert_practice_sessions'
+            ? { data: sessionRow, error: null }
+            : { data: null, error: null },
+        );
+        const realInsert = qb.insert;
+        qb.insert = vi.fn().mockImplementation((payload: unknown) => {
+          insertCalls.push({ table: tbl, payload });
+          return realInsert(payload);
+        });
+        return qb;
+      }),
+    });
+    vi.mocked(withActorContext).mockResolvedValue(serviceClient);
+
+    const res = await buildTestApp(recertRouter, '/', NAVIGATOR).request(
+      `/${RECERT_ID}/practice/start`,
+      { method: 'POST' },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(201);
+
+    const turnInsert = insertCalls.find((c) => c.table === 'recert_practice_turns');
+    expect(turnInsert).toBeDefined();
+    const payload = turnInsert?.payload as Record<string, unknown>;
+    expect(payload.turn_index).toBe(0);
+    expect(payload.applicant_response).toBeNull();
+    expect(payload.coaching).toBeNull();
+    expect(typeof payload.caseworker_question).toBe('string');
+  });
+
+  it('respond route updates current turn and inserts next turn when not done', async () => {
+    const { recertEngine } = await import('@civica/recert-engine');
+    const { sessionId: realSessionId } = recertEngine.interview.start({
+      recertId: RECERT_ID,
+      packetSnapshot: { state_code: 'CA' },
+      state: 'CA',
+    });
+
+    const sessionRow = {
+      session_id: realSessionId, recert_id: RECERT_ID,
+      turn_count: 0, flags: [], done: false,
+    };
+    vi.mocked(makeAnonClient).mockReturnValue(makeDbClient({ data: sessionRow, error: null }));
+
+    const turnOps: Array<{ op: 'insert' | 'update'; payload: unknown }> = [];
+    const serviceClient = makeDbClient({ data: null, error: null });
+    serviceClient.schema = vi.fn().mockReturnValue({
+      from: vi.fn().mockImplementation((tbl: string) => {
+        const qb = makeQueryBuilder({ data: null, error: null });
+        if (tbl === 'recert_practice_turns') {
+          qb.insert = vi.fn().mockImplementation((payload: unknown) => {
+            turnOps.push({ op: 'insert', payload });
+            return qb;
+          });
+          qb.update = vi.fn().mockImplementation((payload: unknown) => {
+            turnOps.push({ op: 'update', payload });
+            return qb;
+          });
+        }
+        return qb;
+      }),
+    });
+    vi.mocked(withActorContext).mockResolvedValue(serviceClient);
+
+    const res = await buildTestApp(recertRouter, '/', NAVIGATOR).request(
+      `/${RECERT_ID}/practice/${realSessionId}/respond`,
+      { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify({ user_message: 'No changes.' }) },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(200);
+
+    expect(turnOps.find((t) => t.op === 'update')).toBeDefined();
+    expect(turnOps.find((t) => t.op === 'insert')).toBeDefined();
+
+    const updatePayload = turnOps.find((t) => t.op === 'update')?.payload as Record<string, unknown>;
+    expect(updatePayload.applicant_response).toBe('No changes.');
+    expect(updatePayload.responded_at).toBeDefined();
+
+    const insertPayload = turnOps.find((t) => t.op === 'insert')?.payload as Record<string, unknown>;
+    expect(insertPayload.turn_index).toBe(1);
+    expect(insertPayload.applicant_response).toBeNull();
+  });
+
+  it('respond route updates final turn but does NOT insert next when done=true', async () => {
+    const { recertEngine } = await import('@civica/recert-engine');
+    // First, discover how many questions the CA bank yields for this snapshot
+    // by driving a throwaway session to completion.
+    const { sessionId: throwaway } = recertEngine.interview.start({
+      recertId: RECERT_ID,
+      packetSnapshot: { state_code: 'CA' },
+      state: 'CA',
+    });
+    let totalTurns = 0;
+    for (let i = 0; i < 50; i += 1) {
+      const r = await recertEngine.interview.respond({ sessionId: throwaway, userMessage: 'x' });
+      totalTurns += 1;
+      if (r.done) break;
+    }
+
+    // Now start a fresh session and walk it to the last unanswered turn.
+    const { sessionId: freshSession } = recertEngine.interview.start({
+      recertId: RECERT_ID,
+      packetSnapshot: { state_code: 'CA' },
+      state: 'CA',
+    });
+    for (let i = 0; i < totalTurns - 1; i += 1) {
+      await recertEngine.interview.respond({ sessionId: freshSession, userMessage: 'placeholder' });
+    }
+
+    const sessionRow = {
+      session_id: freshSession, recert_id: RECERT_ID,
+      turn_count: totalTurns - 1, flags: [], done: false,
+    };
+    vi.mocked(makeAnonClient).mockReturnValue(makeDbClient({ data: sessionRow, error: null }));
+
+    const turnOps: Array<{ op: 'insert' | 'update' }> = [];
+    const serviceClient = makeDbClient({ data: null, error: null });
+    serviceClient.schema = vi.fn().mockReturnValue({
+      from: vi.fn().mockImplementation((tbl: string) => {
+        const qb = makeQueryBuilder({ data: null, error: null });
+        if (tbl === 'recert_practice_turns') {
+          qb.insert = vi.fn().mockImplementation(() => { turnOps.push({ op: 'insert' }); return qb; });
+          qb.update = vi.fn().mockImplementation(() => { turnOps.push({ op: 'update' }); return qb; });
+        }
+        return qb;
+      }),
+    });
+    vi.mocked(withActorContext).mockResolvedValue(serviceClient);
+
+    const res = await buildTestApp(recertRouter, '/', NAVIGATOR).request(
+      `/${RECERT_ID}/practice/${freshSession}/respond`,
+      { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify({ user_message: 'Done.' }) },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json() as Record<string, unknown>;
+    expect(body.done).toBe(true);
+
+    expect(turnOps.filter((t) => t.op === 'update')).toHaveLength(1);
+    expect(turnOps.filter((t) => t.op === 'insert')).toHaveLength(0);
   });
 });
 
