@@ -147,7 +147,7 @@ export default function HandoffPanel({ packetId, packetStatus, blockerCount }: P
             placeholder="Intake / confirmation number from the agency"
             value={agencyRef}
             onChange={(e) => setAgencyRef(e.target.value)}
-            className="mt-1 w-full border border-hairline rounded-[3px] px-3 py-2 text-[15px] bg-paper focus:outline-none focus:border-teal focus:bg-white transition-colors"
+            className="mt-1 w-full border border-hairline rounded-[3px] px-3 py-2 text-[15px] bg-paper focus:outline-none focus:border-pine focus:bg-white transition-colors"
           />
         </label>
 
@@ -161,7 +161,7 @@ export default function HandoffPanel({ packetId, packetStatus, blockerCount }: P
                 onClick={() => exportPacket(f.value as "json_api" | "csv_summary" | "pdf_packet")}
                 disabled={!canExport || loading !== null}
                 title={disabledReason || undefined}
-                className="px-4 py-2 text-[13px] font-semibold rounded-[3px] bg-teal text-white hover:bg-teal/90 disabled:bg-graphite/20 disabled:text-graphite disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 text-[13px] font-semibold rounded-[3px] bg-pine text-white hover:bg-pine/90 disabled:bg-graphite/20 disabled:text-graphite disabled:cursor-not-allowed transition-colors"
               >
                 {isActive ? "Exporting…" : `Export packet (${formatLabel(f.value)})`}
               </button>
@@ -219,7 +219,7 @@ export default function HandoffPanel({ packetId, packetStatus, blockerCount }: P
                   <button
                     type="button"
                     onClick={() => downloadExport(row.export_id)}
-                    className="text-[13px] font-semibold text-teal hover:underline shrink-0"
+                    className="text-[13px] font-semibold text-pine hover:underline shrink-0"
                   >
                     Download
                   </button>

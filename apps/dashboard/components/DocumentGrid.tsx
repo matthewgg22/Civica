@@ -93,7 +93,7 @@ function DocCard({
       onClick={onOpen}
       aria-label={`View ${docKindLabel(doc.document_kind)} (${doc.original_filename ?? shortId(doc.document_id)})`}
       data-testid={`doc-card-${doc.document_id}`}
-      className="group text-left bg-surface border border-hairline rounded-[4px] overflow-hidden hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-brick"
+      className="group text-left bg-surface border border-hairline rounded-[4px] overflow-hidden hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-pine"
     >
       {/* Thumbnail (200x260) */}
       <div className="aspect-[10/13] bg-paper relative flex items-center justify-center overflow-hidden">

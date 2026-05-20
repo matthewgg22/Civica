@@ -72,7 +72,7 @@ export default function StatusTransition({ packetId, nextStatuses, blockers = []
           placeholder="Why are you moving this packet?"
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          className="w-full border border-hairline rounded-[3px] px-3 py-2.5 text-[15px] bg-paper focus:outline-none focus:border-teal focus:bg-white transition-colors"
+          className="w-full border border-hairline rounded-[3px] px-3 py-2.5 text-[15px] bg-paper focus:outline-none focus:border-pine focus:bg-white transition-colors"
         />
         <p className="text-[11px] text-muted mt-1.5 italic">↳ This message will appear in the packet's audit trail for compliance review.</p>
       </div>
@@ -86,7 +86,7 @@ export default function StatusTransition({ packetId, nextStatuses, blockers = []
               onClick={() => transition(status)}
               disabled={loading !== null || isBlocked}
               title={isBlocked ? "Resolve all blockers before advancing to Ready for Handoff" : undefined}
-              className="px-4 py-2 text-[13px] font-semibold rounded-[3px] bg-teal text-white hover:bg-teal/90 disabled:bg-graphite/20 disabled:text-graphite disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 text-[13px] font-semibold rounded-[3px] bg-pine text-white hover:bg-pine/90 disabled:bg-graphite/20 disabled:text-graphite disabled:cursor-not-allowed transition-colors"
             >
               {loading === status ? "Moving…" : `→ ${status}`}
             </button>

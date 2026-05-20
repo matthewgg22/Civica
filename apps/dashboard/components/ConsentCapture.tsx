@@ -83,7 +83,7 @@ export default function ConsentCapture({ applicantId, hasConsent, consentedAt }:
         <select
           value={method}
           onChange={(e) => setMethod(e.target.value as ConsentMethod)}
-          className="w-full border border-hairline rounded-[3px] px-3 py-2.5 text-[14px] bg-paper focus:outline-none focus:border-teal focus:bg-white transition-colors"
+          className="w-full border border-hairline rounded-[3px] px-3 py-2.5 text-[14px] bg-paper focus:outline-none focus:border-pine focus:bg-white transition-colors"
         >
           {CONSENT_METHODS.map((m) => (
             <option key={m.value} value={m.value}>{m.label}</option>
@@ -94,7 +94,7 @@ export default function ConsentCapture({ applicantId, hasConsent, consentedAt }:
       <button
         onClick={record}
         disabled={recording}
-        className="px-4 py-2 text-[13px] font-semibold rounded-[3px] bg-brick text-white hover:bg-brick/90 disabled:bg-graphite/20 disabled:text-graphite disabled:cursor-not-allowed transition-colors"
+        className="px-4 py-2 text-[13px] font-semibold rounded-[3px] bg-pine text-white hover:bg-pine/90 disabled:bg-graphite/20 disabled:text-graphite disabled:cursor-not-allowed transition-colors"
       >
         {recording ? "Recording…" : "Record privacy notice consent"}
       </button>

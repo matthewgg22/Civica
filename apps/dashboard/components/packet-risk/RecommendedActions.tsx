@@ -66,7 +66,7 @@ export default function RecommendedActions({
                 {projectedTier.label}
               </span>
             </div>
-            <span className="text-[11px] text-teal font-mono tracking-wide">−{totalImpact} pts combined</span>
+            <span className="text-[11px] text-pine font-mono tracking-wide">−{totalImpact} pts combined</span>
           </div>
         )}
       </div>
@@ -125,13 +125,13 @@ function ActionRow({ action: a }: { action: RiskAction }) {
       {/* Impact + CTA */}
       <div className="flex flex-col items-end gap-3 pt-0.5">
         <div className="flex flex-col items-end gap-0.5">
-          <p className="eyebrow text-teal text-[10px] tracking-[0.12em]">est. impact</p>
-          <span className="text-[28px] font-bold tabular-nums text-teal leading-none" style={{ letterSpacing: -0.6 }}>
+          <p className="eyebrow text-pine text-[10px] tracking-[0.12em]">est. impact</p>
+          <span className="text-[28px] font-bold tabular-nums text-pine leading-none" style={{ letterSpacing: -0.6 }}>
             −{a.impact}
           </span>
           <span className="text-[11px] text-muted font-mono">pts</span>
         </div>
-        <button className="bg-brick text-white text-[13px] font-medium px-3 py-2 rounded-[3px] hover:bg-brick/90 transition-colors whitespace-nowrap w-full text-center">
+        <button className="bg-pine text-white text-[13px] font-medium px-3 py-2 rounded-[3px] hover:bg-pine/90 transition-colors whitespace-nowrap w-full text-center">
           {a.cta}
         </button>
         <span className="text-[10px] text-muted font-mono tracking-wide text-right">{a.ctaSub}</span>

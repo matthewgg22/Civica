@@ -38,7 +38,7 @@ export default function QCOutcomesPanel({ stats }: { stats: QCStats }) {
             Navigator-logged quality control sampling results — ground truth for error rate tracking.
           </p>
         </div>
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-brick uppercase tracking-wider bg-brick/10 px-2.5 py-1 rounded-full">
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-pine uppercase tracking-wider bg-pine/10 px-2.5 py-1 rounded-full">
           ◆ Error Risk
         </span>
       </div>

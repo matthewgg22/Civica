@@ -194,7 +194,7 @@ export default async function OutreachPage() {
                     <OutreachTaskActions taskId={task.outreach_task_id} />
                     <Link
                       href={`/packets/${task.packet_id}`}
-                      className="text-[13px] font-semibold text-teal hover:underline whitespace-nowrap"
+                      className="text-[13px] font-semibold text-pine hover:underline whitespace-nowrap"
                     >
                       View →
                     </Link>

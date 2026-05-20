@@ -2,15 +2,29 @@
 /* Hanken Grotesk loaded via next/font in layout.tsx. */
 
 :root {
-  /* Color — light mode (HANDOFF.md, locked May 10 2026) */
-  --civica-paper: #F5F2EC;
+  /* Color — light mode (v2 pine palette, locked 2026-05-20) */
+  --civica-paper: #F7F5EF;
   --civica-ink: #1A1714;
   --civica-graphite: #5A544D;
   --civica-muted: #6B655C;
+
+  /* Pine — primary CTA, links, nav chrome */
+  --civica-pine: #2D5A45;
+  --civica-pine-pressed: #224636;
+  --civica-pine-disabled: #7A998C;
+  --civica-pine-surface: #D8E6DE;
+
+  /* Wheat — benefit-positive fill only */
+  --civica-wheat: #E8C547;
+  --civica-wheat-pressed: #C9A046;
+  --civica-wheat-surface: #F7E89C;
+
+  /* Brick — error / recovery states only */
   --civica-brick: #9C3A24;
   --civica-brick-pressed: #84311E;
   --civica-brick-disabled: #B07A6E;
   --civica-brick-surface: #F1D4C8;
+
   --civica-teal: #2A6F66;
   --civica-teal-surface: #BCE0DA;
   --civica-hairline: rgba(0, 0, 0, 0.12);
@@ -44,6 +58,13 @@
     --civica-ink: #F2F5F8;
     --civica-graphite: #BCC6D0;
     --civica-muted: #9AA0A6;
+    --civica-pine: #6FA98F;
+    --civica-pine-pressed: #5A9279;
+    --civica-pine-disabled: #4E7565;
+    --civica-pine-surface: #2C3F37;
+    --civica-wheat: #F4D670;
+    --civica-wheat-pressed: #DEB94F;
+    --civica-wheat-surface: #4A3D1F;
     --civica-brick: #E8856E;
     --civica-brick-pressed: #D26A52;
     --civica-brick-disabled: #9D5C4D;
@@ -73,14 +94,14 @@ body {
 }
 
 a {
-  color: var(--civica-brick);
+  color: var(--civica-pine);
   text-decoration: underline;
   text-underline-offset: 2px;
   text-decoration-thickness: 1px;
 }
 
 a:hover {
-  color: var(--civica-brick-pressed);
+  color: var(--civica-pine-pressed);
 }
 
 button {
@@ -89,7 +110,7 @@ button {
 }
 
 ::selection {
-  background: var(--civica-brick-surface);
+  background: var(--civica-pine-surface);
   color: var(--civica-ink);
 }
 
@@ -166,7 +187,7 @@ button {
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--civica-brick);
+  color: var(--civica-pine);
   margin: 0 0 var(--civica-space-xl);
 }
 
@@ -210,13 +231,13 @@ button {
 }
 
 .btn--primary {
-  background: var(--civica-brick);
+  background: var(--civica-pine);
   color: #ffffff;
   border-color: rgba(0, 0, 0, 0.08);
 }
 
 .btn--primary:hover {
-  background: var(--civica-brick-pressed);
+  background: var(--civica-pine-pressed);
   color: #ffffff;
 }
 
@@ -232,7 +253,7 @@ button {
 }
 
 .btn:disabled {
-  background: var(--civica-brick-disabled);
+  background: var(--civica-pine-disabled);
   cursor: not-allowed;
 }
 
@@ -298,9 +319,9 @@ button {
 
 .lead-form__input:focus,
 .lead-form__select:focus {
-  outline: 2px solid var(--civica-brick);
+  outline: 2px solid var(--civica-pine);
   outline-offset: -1px;
-  border-color: var(--civica-brick);
+  border-color: var(--civica-pine);
 }
 
 .lead-form__select {
@@ -318,7 +339,7 @@ button {
 }
 
 .lead-form__status--success {
-  background: var(--civica-teal-surface);
+  background: var(--civica-pine-surface);
   color: var(--civica-ink);
 }
 

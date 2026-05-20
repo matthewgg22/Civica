@@ -178,7 +178,7 @@ function FieldRow({ f, idx, isFirst, editing, confirmed, note, saving, reviewed,
         <div>
           <p className="eyebrow mb-1">Confirmed</p>
           {reviewed ? (
-            <p className="text-teal font-semibold">
+            <p className="text-pine font-semibold">
               {confirmed[f.field_id] ?? f.navigator_confirmed_value ?? "—"}
             </p>
           ) : (
@@ -194,19 +194,19 @@ function FieldRow({ f, idx, isFirst, editing, confirmed, note, saving, reviewed,
             placeholder="Confirmed value"
             value={confirmed[f.field_id] ?? ""}
             onChange={(e) => onConfirmChange(f.field_id, e.target.value)}
-            className="flex-1 border border-hairline rounded-[3px] px-3 py-1.5 text-[13px] focus:outline-none focus:border-brick"
+            className="flex-1 border border-hairline rounded-[3px] px-3 py-1.5 text-[13px] focus:outline-none focus:border-pine"
           />
           <input
             type="text"
             placeholder="Note (optional)"
             value={note}
             onChange={(e) => onNoteChange(e.target.value)}
-            className="flex-1 border border-hairline rounded-[3px] px-3 py-1.5 text-[13px] focus:outline-none focus:border-brick"
+            className="flex-1 border border-hairline rounded-[3px] px-3 py-1.5 text-[13px] focus:outline-none focus:border-pine"
           />
           <button
             onClick={() => onSave(f.field_id)}
             disabled={saving}
-            className="px-4 py-1.5 text-[13px] font-medium bg-brick text-white rounded-[3px] hover:opacity-90 disabled:opacity-50"
+            className="px-4 py-1.5 text-[13px] font-medium bg-pine text-white rounded-[3px] hover:opacity-90 disabled:opacity-50"
           >
             {saving ? "…" : "Confirm"}
           </button>
@@ -221,7 +221,7 @@ function FieldRow({ f, idx, isFirst, editing, confirmed, note, saving, reviewed,
         !reviewed && (
           <button
             onClick={() => onStartEdit(f)}
-            className="text-[13px] font-medium text-brick hover:underline"
+            className="text-[13px] font-medium text-pine hover:underline"
           >
             Review →
           </button>

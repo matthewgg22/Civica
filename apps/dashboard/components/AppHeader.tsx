@@ -26,7 +26,7 @@ export default function AppHeader({ email, active }: { email?: string; active: "
       <div className="flex items-center gap-5">
         {email && <span className="text-[13px] text-graphite">{email}</span>}
         <form action="/auth/signout" method="post">
-          <button className="text-[13px] font-medium text-brick hover:underline">Sign out</button>
+          <button className="text-[13px] font-medium text-pine hover:underline">Sign out</button>
         </form>
       </div>
     </header>

@@ -75,7 +75,7 @@ function DeductionsInner() {
     <div className="min-h-screen bg-paper">
       <header className="bg-surface border-b border-hairline px-8 py-4">
         <div className="max-w-5xl mx-auto flex items-center gap-3">
-          <Link href="/packets" className="text-[13px] font-semibold text-brick hover:underline">← Queue</Link>
+          <Link href="/packets" className="text-[13px] font-semibold text-pine hover:underline">← Queue</Link>
           <span className="text-hairline">·</span>
           <span className="text-[13px] text-muted">SNAP benefit estimate</span>
         </div>
@@ -251,7 +251,7 @@ function DeductionsInner() {
   );
 }
 
-const input = "w-full border border-hairline rounded-[3px] px-3 py-2 text-[13px] bg-paper focus:outline-none focus:border-teal transition-colors mt-1";
+const input = "w-full border border-hairline rounded-[3px] px-3 py-2 text-[13px] bg-paper focus:outline-none focus:border-pine transition-colors mt-1";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (

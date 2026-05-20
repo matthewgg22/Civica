@@ -107,7 +107,7 @@ export default async function CBOPreviewPage() {
         <div className="flex items-center gap-4 shrink-0">
           <DemoModeBadge />
           <form action="/auth/signout" method="post">
-            <button className="text-[13px] font-medium text-brick hover:underline">Sign out</button>
+            <button className="text-[13px] font-medium text-pine hover:underline">Sign out</button>
           </form>
         </div>
       </header>

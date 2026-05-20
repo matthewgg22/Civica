@@ -229,7 +229,7 @@ export default function DocumentViewer({ doc, fields, extractionsByDoc, onClose 
                   href={signedUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-brick text-[13px] underline"
+                  className="text-pine text-[13px] underline"
                 >
                   Open file in new tab
                 </a>
@@ -288,7 +288,7 @@ export default function DocumentViewer({ doc, fields, extractionsByDoc, onClose 
                 action={
                   <button
                     onClick={() => router.refresh()}
-                    className="text-[13px] font-medium text-brick hover:underline"
+                    className="text-[13px] font-medium text-pine hover:underline"
                   >
                     Refresh
                   </button>
@@ -343,14 +343,14 @@ export default function DocumentViewer({ doc, fields, extractionsByDoc, onClose 
                             onChange={(e) =>
                               setConfirmed((c) => ({ ...c, [f.field_id]: e.target.value }))
                             }
-                            className="w-full border border-hairline rounded-[3px] px-2 py-1 text-[13px] focus:outline-none focus:border-brick"
+                            className="w-full border border-hairline rounded-[3px] px-2 py-1 text-[13px] focus:outline-none focus:border-pine"
                           />
                           <div className="flex gap-2">
                             <button
                               onClick={() => saveReview(f.field_id)}
                               disabled={saving}
                               aria-label={`Save ${f.field_label}`}
-                              className="px-3 py-1 text-[12px] font-medium bg-brick text-white rounded-[3px] hover:opacity-90 disabled:opacity-50"
+                              className="px-3 py-1 text-[12px] font-medium bg-pine text-white rounded-[3px] hover:opacity-90 disabled:opacity-50"
                             >
                               {saving ? "…" : "Save"}
                             </button>
@@ -375,7 +375,7 @@ export default function DocumentViewer({ doc, fields, extractionsByDoc, onClose 
                                 }));
                               }}
                               aria-label={`Confirm ${f.field_label}`}
-                              className="text-[12px] font-medium text-brick hover:underline"
+                              className="text-[12px] font-medium text-pine hover:underline"
                             >
                               Confirm / Edit →
                             </button>

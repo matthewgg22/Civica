@@ -23,7 +23,7 @@ const BUCKETS: { key: Filter; label: string; statuses: string[]; defaultOpen: bo
   { key: "in-progress",     label: "In Progress",       statuses: ["Submitted for Review", "In Navigator Review"],      defaultOpen: true,  accent: "bg-indigo"   },
   { key: "ready",           label: "Ready for Handoff", statuses: ["Ready for Handoff"],                                 defaultOpen: true,  accent: "bg-teal"     },
   { key: "draft",           label: "Draft",             statuses: ["Draft"],                                             defaultOpen: false, accent: "bg-graphite" },
-  { key: "complete",        label: "Complete",          statuses: ["Handed Off", "Closed"],                              defaultOpen: false, accent: "bg-brick"    },
+  { key: "complete",        label: "Complete",          statuses: ["Handed Off", "Closed"],                              defaultOpen: false, accent: "bg-pine"     },
 ];
 
 type Packet = {
@@ -324,7 +324,7 @@ const STATUS_BADGE: Record<string, { bg: string; icon: string }> = {
   "Needs Applicant Clarification": { bg: "bg-amber", icon: "?" },
   "In Navigator Review": { bg: "bg-indigo", icon: "◉" },
   "Ready for Handoff": { bg: "bg-teal", icon: "✓" },
-  "Handed Off": { bg: "bg-brick", icon: "→" },
+  "Handed Off": { bg: "bg-pine", icon: "→" },
   "Closed": { bg: "bg-graphite", icon: "•" },
 };
 

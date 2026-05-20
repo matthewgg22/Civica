@@ -172,7 +172,7 @@ export default function CaliforniaMap({
                     className="block hover:bg-paper -mx-2 px-2 py-1.5 rounded-[3px] transition-colors cursor-pointer group"
                   >
                     <div className="flex items-baseline justify-between mb-1">
-                      <span className="text-[13px] font-semibold text-ink group-hover:text-teal transition-colors">{c.name}</span>
+                      <span className="text-[13px] font-semibold text-ink group-hover:text-pine transition-colors">{c.name}</span>
                       <span className="text-[12px] text-graphite tabular-nums font-semibold">{total}</span>
                     </div>
                     {/* 2px gaps (via gap-0.5) on a white-track parent give visible dividers between segments */}

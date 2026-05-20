@@ -103,7 +103,7 @@ export default function LeadCaptureModal({ open, onClose }: LeadCaptureModalProp
             </p>
             <button
               onClick={handleClose}
-              className="mt-6 px-4 py-2 rounded-[4px] text-sm font-semibold text-surface bg-brick hover:bg-brick-pressed transition-colors"
+              className="mt-6 px-4 py-2 rounded-[4px] text-sm font-semibold text-surface bg-pine hover:bg-pine-pressed transition-colors"
             >
               Close
             </button>
@@ -126,7 +126,7 @@ export default function LeadCaptureModal({ open, onClose }: LeadCaptureModalProp
                 value={form.name}
                 onChange={handleChange}
                 placeholder="Jane Smith"
-                className="w-full px-3 py-2 text-sm border border-hairline rounded-[4px] bg-paper text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brick/30 focus:border-brick transition-colors"
+                className="w-full px-3 py-2 text-sm border border-hairline rounded-[4px] bg-paper text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-pine/30 focus:border-pine transition-colors"
               />
             </div>
 
@@ -146,7 +146,7 @@ export default function LeadCaptureModal({ open, onClose }: LeadCaptureModalProp
                 value={form.organization}
                 onChange={handleChange}
                 placeholder="Los Angeles DPSS"
-                className="w-full px-3 py-2 text-sm border border-hairline rounded-[4px] bg-paper text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brick/30 focus:border-brick transition-colors"
+                className="w-full px-3 py-2 text-sm border border-hairline rounded-[4px] bg-paper text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-pine/30 focus:border-pine transition-colors"
               />
             </div>
 
@@ -166,7 +166,7 @@ export default function LeadCaptureModal({ open, onClose }: LeadCaptureModalProp
                 value={form.email}
                 onChange={handleChange}
                 placeholder="jane@lacounty.gov"
-                className="w-full px-3 py-2 text-sm border border-hairline rounded-[4px] bg-paper text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brick/30 focus:border-brick transition-colors"
+                className="w-full px-3 py-2 text-sm border border-hairline rounded-[4px] bg-paper text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-pine/30 focus:border-pine transition-colors"
               />
             </div>
 
@@ -185,7 +185,7 @@ export default function LeadCaptureModal({ open, onClose }: LeadCaptureModalProp
                 value={form.qcProcess}
                 onChange={handleChange}
                 placeholder="e.g. manual case review, supervisor sampling, vendor tool..."
-                className="w-full px-3 py-2 text-sm border border-hairline rounded-[4px] bg-paper text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brick/30 focus:border-brick transition-colors resize-none"
+                className="w-full px-3 py-2 text-sm border border-hairline rounded-[4px] bg-paper text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-pine/30 focus:border-pine transition-colors resize-none"
               />
             </div>
 
@@ -207,7 +207,7 @@ export default function LeadCaptureModal({ open, onClose }: LeadCaptureModalProp
               <button
                 type="submit"
                 disabled={status === "submitting"}
-                className="px-5 py-2 rounded-[4px] text-sm font-semibold text-surface bg-brick hover:bg-brick-pressed disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-5 py-2 rounded-[4px] text-sm font-semibold text-surface bg-pine hover:bg-pine-pressed disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {status === "submitting"
                   ? "Submitting…"

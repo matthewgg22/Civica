@@ -218,7 +218,7 @@ function ApiCard({ api }: { api: ApiEntry }) {
 
 function StatusPill({ status }: { status: "live" | "phase2" }) {
   return status === "live" ? (
-    <span className="text-[10px] font-bold uppercase tracking-wider text-teal bg-teal/10 px-2 py-0.5 rounded-sm">Live</span>
+    <span className="text-[10px] font-bold uppercase tracking-wider text-pine bg-pine/10 px-2 py-0.5 rounded-sm">Live</span>
   ) : (
     <span className="text-[10px] font-bold uppercase tracking-wider text-amber bg-amber/10 px-2 py-0.5 rounded-sm">Phase 2</span>
   );
