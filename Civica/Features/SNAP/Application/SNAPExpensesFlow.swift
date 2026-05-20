@@ -53,6 +53,21 @@ struct SNAPExpensesAnswers: Equatable, Codable {
     /// a strong soft signal for expedited need, asked right after
     /// utilities cost while the user is in that frame of mind.
     var utilityShutoffNotice: SNAPTri?
+
+    // T16 Gap #4: Shared housing pro-rate.
+    //
+    // CCC students frequently share apartments with roommates who are NOT
+    // on their SNAP case. The lease shows total rent (e.g. $1,600 for a
+    // 4-person apartment) but SNAP counts only the applicant's pro-rated
+    // share ($400). Without this question, Civica over-states shelter cost
+    // by up to 4x — a direct QC error source.
+    //
+    // When sharedHousingOccupants is set (>1), the calculator divides
+    // monthlyRentOrHousing by the total occupant count. Setting it to 1
+    // (or leaving it nil) means the full rent is counted — correct for
+    // solo renters or households where all members are on the SNAP case.
+    var sharedHousingOccupants: Int?   // nil = not shared / all on case
+
     var monthlyChildcare: Decimal?
     var monthlyMedical: Decimal?
 }
@@ -60,10 +75,11 @@ struct SNAPExpensesAnswers: Equatable, Codable {
 @MainActor
 final class SNAPExpensesFlowViewModel: ObservableObject {
     enum Step: Int, CaseIterable {
-        // T16: .paysUtilitiesSeparately (yes/no) replaced by .utilityTypes
-        // (multi-select checklist of UtilityType). Steps after .utilityTypes
-        // are unchanged.
-        case rent, utilityTypes, utilities, utilityShutoff, childcare, medical
+        // T16 P0: .paysUtilitiesSeparately replaced by .utilityTypes.
+        // T16 P1: .sharedHousing added after rent — shown only when
+        //         housingStatus is NOT .unhoused (unhoused students don't
+        //         have a lease to pro-rate).
+        case rent, sharedHousing, utilityTypes, utilities, utilityShutoff, childcare, medical
 
         var oneBasedIndex: Int { rawValue + 1 }
         static let total = Self.allCases.count
@@ -78,12 +94,20 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
 
     private let hasMinorInHousehold: Bool
     private let hasElderlyOrDisabled: Bool
+    /// Passed in from the WhereApplying answers so the flow can gate
+    /// the shared-housing step (unhoused applicants skip it — they
+    /// don't have a lease to pro-rate).
+    private let housingStatus: HousingStatus?
 
-    /// Recomputed on every access so the utilities-amount and shutoff
-    /// screens appear/disappear immediately when the user changes their
-    /// utility-type selections — without restarting the flow.
+    /// Recomputed on every access so screens appear/disappear immediately
+    /// when the user changes answers — without restarting the flow.
     var effectiveSteps: [Step] {
-        var steps: [Step] = [.rent, .utilityTypes]
+        var steps: [Step] = [.rent]
+        // T16 Gap #4: skip sharedHousing for unhoused applicants
+        if housingStatus != .unhoused {
+            steps.append(.sharedHousing)
+        }
+        steps.append(.utilityTypes)
         if !answers.selectedUtilities.isEmpty {
             steps.append(.utilities)
             steps.append(.utilityShutoff)
@@ -96,11 +120,13 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
     init(
         answers: SNAPExpensesAnswers = .init(),
         hasMinorInHousehold: Bool = false,
-        hasElderlyOrDisabled: Bool = false
+        hasElderlyOrDisabled: Bool = false,
+        housingStatus: HousingStatus? = nil
     ) {
         self.answers = answers
         self.hasMinorInHousehold = hasMinorInHousehold
         self.hasElderlyOrDisabled = hasElderlyOrDisabled
+        self.housingStatus = housingStatus
 
         func render(_ value: Decimal?) -> String {
             guard let value else { return "" }
@@ -114,21 +140,22 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
 
     func recordCurrentField() {
         switch step {
-        case .rent:         answers.monthlyRentOrHousing = decimalValue(rentField)
-        case .utilityTypes: break  // selectedUtilities bound directly via toggle callbacks
-        case .utilities:    answers.monthlyUtilities     = decimalValue(utilitiesField)
+        case .rent:          answers.monthlyRentOrHousing = decimalValue(rentField)
+        case .sharedHousing: break  // sharedHousingOccupants bound directly
+        case .utilityTypes:  break  // selectedUtilities bound directly via toggle callbacks
+        case .utilities:     answers.monthlyUtilities     = decimalValue(utilitiesField)
         case .utilityShutoff: break  // bound directly into answers.utilityShutoffNotice
-        case .childcare:    answers.monthlyChildcare     = decimalValue(childcareField)
-        case .medical:      answers.monthlyMedical       = decimalValue(medicalField)
+        case .childcare:     answers.monthlyChildcare     = decimalValue(childcareField)
+        case .medical:       answers.monthlyMedical       = decimalValue(medicalField)
         }
     }
 
     var canAdvanceFromCurrentStep: Bool {
         switch step {
         case .rent, .utilities, .childcare, .medical:
-            return true  // empty = $0, already a valid answer
-        case .utilityTypes:
-            return true  // empty selection = utilities in rent, always a valid answer
+            return true  // empty = $0, always a valid answer
+        case .sharedHousing, .utilityTypes:
+            return true  // no required selection
         case .utilityShutoff:
             return answers.utilityShutoffNotice != nil
         }
@@ -212,12 +239,97 @@ struct SNAPExpensesFlowView: View {
     @ViewBuilder
     private var currentScreen: some View {
         switch viewModel.step {
-        case .rent:         moneyScreen(.rent, binding: $viewModel.rentField)
-        case .utilityTypes: utilityTypesScreen
-        case .utilities:    moneyScreen(.utilities, binding: $viewModel.utilitiesField)
+        case .rent:          moneyScreen(.rent, binding: $viewModel.rentField)
+        case .sharedHousing: sharedHousingScreen
+        case .utilityTypes:  utilityTypesScreen
+        case .utilities:     moneyScreen(.utilities, binding: $viewModel.utilitiesField)
         case .utilityShutoff: utilityShutoffScreen
-        case .childcare:    moneyScreen(.childcare, binding: $viewModel.childcareField)
-        case .medical:      moneyScreen(.medical, binding: $viewModel.medicalField)
+        case .childcare:     moneyScreen(.childcare, binding: $viewModel.childcareField)
+        case .medical:       moneyScreen(.medical, binding: $viewModel.medicalField)
+        }
+    }
+
+    // T16 Gap #4: Shared housing pro-rate.
+    // Stepper: 2 through 8 occupants. Selecting "Not sharing" stores nil
+    // (full rent counts). Stepper is disabled until user taps it or taps
+    // the row to activate sharing mode.
+    private var sharedHousingScreen: some View {
+        let displayCount: Int = viewModel.answers.sharedHousingOccupants ?? 2
+        return CivicaQuestionScreen(
+            progress: progress(for: .sharedHousing),
+            title: SNAPExpensesStrings.title(for: .sharedHousing, language: language),
+            helper: SNAPExpensesStrings.helper(for: .sharedHousing, language: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: true,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            VStack(spacing: CivicaSpacing.md) {
+                // "Not sharing" pill — clears the occupant count
+                Button {
+                    viewModel.answers.sharedHousingOccupants = nil
+                } label: {
+                    HStack {
+                        Text(SNAPExpensesStrings.notSharingLabel(language: language))
+                            .font(CivicaTypography.body)
+                            .foregroundStyle(viewModel.answers.sharedHousingOccupants == nil
+                                ? CivicaColors.ink : CivicaColors.graphite)
+                        Spacer()
+                        if viewModel.answers.sharedHousingOccupants == nil {
+                            Image(systemName: "checkmark")
+                                .foregroundStyle(CivicaColors.teal)
+                        }
+                    }
+                    .padding(.horizontal, CivicaSpacing.lg)
+                    .padding(.vertical, CivicaSpacing.md)
+                    .background(viewModel.answers.sharedHousingOccupants == nil
+                        ? CivicaColors.tealSurface : CivicaColors.surfacePrimary)
+                    .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+                    .overlay(RoundedRectangle(cornerRadius: CivicaRadius.control)
+                        .strokeBorder(
+                            viewModel.answers.sharedHousingOccupants == nil
+                                ? CivicaColors.teal : CivicaColors.hairline,
+                            lineWidth: viewModel.answers.sharedHousingOccupants == nil ? 2 : 1
+                        ))
+                }
+                .buttonStyle(.plain)
+
+                // Stepper row — tap to activate sharing, then adjust count
+                HStack(spacing: CivicaSpacing.md) {
+                    Text(SNAPExpensesStrings.totalOccupantsLabel(language: language))
+                        .font(CivicaTypography.body)
+                        .foregroundStyle(CivicaColors.ink)
+                    Spacer()
+                    Stepper(
+                        value: Binding(
+                            get: { viewModel.answers.sharedHousingOccupants ?? 2 },
+                            set: { viewModel.answers.sharedHousingOccupants = $0 }
+                        ),
+                        in: 2...8
+                    ) {
+                        Text("\(displayCount)")
+                            .font(CivicaTypography.bodyStrong)
+                            .foregroundStyle(CivicaColors.ink)
+                            .monospacedDigit()
+                            .frame(minWidth: 28, alignment: .trailing)
+                    }
+                }
+                .padding(.horizontal, CivicaSpacing.lg)
+                .padding(.vertical, CivicaSpacing.md)
+                .background(viewModel.answers.sharedHousingOccupants != nil
+                    ? CivicaColors.surfacePrimary : CivicaColors.surfaceSecondary)
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+                .overlay(RoundedRectangle(cornerRadius: CivicaRadius.control)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1))
+                .opacity(viewModel.answers.sharedHousingOccupants == nil ? 0.4 : 1)
+                .animation(.easeInOut(duration: 0.15), value: viewModel.answers.sharedHousingOccupants)
+                .disabled(viewModel.answers.sharedHousingOccupants == nil)
+                .onTapGesture {
+                    if viewModel.answers.sharedHousingOccupants == nil {
+                        viewModel.answers.sharedHousingOccupants = 2
+                    }
+                }
+            }
         }
     }
 
@@ -401,6 +513,11 @@ enum SNAPExpensesStrings {
             return "About how much is your rent or housing payment each month?"
         case (.rent, .spanish):
             return "¿Cuánto es tu renta o pago de vivienda cada mes?"
+        // T16 Gap #4
+        case (.sharedHousing, .english):
+            return "Do you share your home with people who are NOT on your SNAP case?"
+        case (.sharedHousing, .spanish):
+            return "¿Compartes tu hogar con personas que NO están en tu caso de SNAP?"
         // T16: replaces paysUtilitiesSeparately yes/no
         case (.utilityTypes, .english):
             return "Which utilities do you pay on your own — not included in rent?"
@@ -431,6 +548,11 @@ enum SNAPExpensesStrings {
             return "Include rent, mortgage, or anything you pay regularly to live where you live. Estimate is fine. Enter 0 if you don't pay rent right now."
         case (.rent, .spanish):
             return "Incluye renta, hipoteca o cualquier pago regular por donde vives. Una estimación está bien. Pon 0 si no pagas renta ahora mismo."
+        // T16 Gap #4
+        case (.sharedHousing, .english):
+            return "If roommates or family members share your address but are NOT on your SNAP case, only your share of the rent counts. Select 'Not sharing' if you live alone or everyone at your address is on your case."
+        case (.sharedHousing, .spanish):
+            return "Si compañeros de cuarto o familiares comparten tu domicilio pero NO están en tu caso de SNAP, solo tu parte de la renta cuenta. Selecciona 'No comparto' si vives solo o todos en tu domicilio están en tu caso."
         // T16: replaces paysUtilitiesSeparately yes/no helper
         case (.utilityTypes, .english):
             return "Select everything that applies. If utilities are included in your rent, leave everything unchecked. Air conditioning counts in California. Internet is not counted by SNAP."
@@ -474,6 +596,21 @@ enum SNAPExpensesStrings {
         case (.medical, .spanish):      return "Gastos médicos mensuales de bolsillo, en dólares"
         case (.utilityShutoff, _):      return ""
         case (.utilityTypes, _):        return ""  // each row has its own accessibilityLabel
+        case (.sharedHousing, _):       return ""  // stepper and pill have their own labels
+        }
+    }
+
+    static func notSharingLabel(language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return "Not sharing — this rent is just mine"
+        case .spanish: return "No comparto — esta renta es solo mía"
+        }
+    }
+
+    static func totalOccupantsLabel(language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return "Total people at this address"
+        case .spanish: return "Total de personas en este domicilio"
         }
     }
 

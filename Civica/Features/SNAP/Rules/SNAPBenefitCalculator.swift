@@ -210,6 +210,9 @@ enum SNAPBenefitCalculator {
         /// adds a dedicated screen to capture the exact split.
         let earnedIncome: Decimal
         let hasElderlyOrDisabled: Bool
+        /// T16 Gap #4: pro-rated rent. When sharedHousingOccupants is set
+        /// (>1), monthlyRentOrHousing is divided by the total occupant count so
+        /// SNAP counts only the applicant's share.
         let rentOrMortgage: Decimal
         /// TODO: not collected by the flow yet; assumed $0.
         let propertyTaxes: Decimal
@@ -238,7 +241,14 @@ enum SNAPBenefitCalculator {
             self.gross = gross
             self.earnedIncome = Self.resolveEarnedIncome(income: draft.income, gross: gross)
             self.hasElderlyOrDisabled = draft.household.hasElderlyOrDisabled == true
-            self.rentOrMortgage = draft.expenses.monthlyRentOrHousing ?? 0
+            // T16 Gap #4: pro-rate rent by shared occupants.
+            // nil or 1 occupant = full rent counts (sole renter or all members on case).
+            let rawRent = draft.expenses.monthlyRentOrHousing ?? 0
+            if let occupants = draft.expenses.sharedHousingOccupants, occupants > 1 {
+                self.rentOrMortgage = rawRent / Decimal(occupants)
+            } else {
+                self.rentOrMortgage = rawRent
+            }
             self.propertyTaxes = 0
             self.homeownersInsurance = 0
             self.actualUtilities = draft.expenses.monthlyUtilities ?? 0
