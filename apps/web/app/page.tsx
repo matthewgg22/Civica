@@ -64,7 +64,7 @@ export default function Page() {
       </main>
 
       <footer className="site-footer">
-        <div className="container">{copy.footer}</div>
+        <div className="container">© 2026 Civica</div>
       </footer>
     </div>
   );

@@ -91,7 +91,7 @@ struct SNAPPhoneSignInView: View {
 
             Button {
                 phoneFieldFocused = false
-                Task { await auth.requestOTP(phone: phoneText) }
+                Task { @MainActor in await auth.requestOTP(phone: phoneText) }
             } label: {
                 Text(Strings.sendCode.value(in: language))
                     .font(CivicaTypography.subheadStrong)
@@ -137,7 +137,7 @@ struct SNAPPhoneSignInView: View {
 
             Button {
                 otpFieldFocused = false
-                Task { await auth.verifyOTP(code: otpText) }
+                Task { @MainActor in await auth.verifyOTP(code: otpText) }
             } label: {
                 Text(Strings.verify.value(in: language))
                     .font(CivicaTypography.subheadStrong)
@@ -150,7 +150,7 @@ struct SNAPPhoneSignInView: View {
 
             Button {
                 otpText = ""
-                Task { await auth.requestOTP(phone: phone) }
+                Task { @MainActor in await auth.requestOTP(phone: phone) }
             } label: {
                 Text(Strings.resend.value(in: language))
                     .font(CivicaTypography.subhead)

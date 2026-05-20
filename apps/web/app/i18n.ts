@@ -10,46 +10,47 @@ export const STORAGE_KEY = "civica-web.locale";
 
 export const strings = {
   en: {
-    eyebrow: "NEW IN CALIFORNIA — JUNE 2026",
+    eyebrow: "NOW IN CALIFORNIA",
     heroHeadline:
       "If you're a half-time student at a Community College, CSU, or UC, you likely qualify for CalFresh now.",
     heroSub:
-      "The rules changed. Many students who were told no before are eligible today.",
+      "Takes about 10 minutes to apply. No minimum income required.",
     ctaQualify: "See if you qualify",
     ctaTestFlight: "Get the app (TestFlight)",
 
-    whatTitle: "What's CalFresh?",
+    whatTitle: "Up to $292/month for groceries",
     whatBody:
-      "CalFresh (SNAP) puts up to ~$292/month on a card for groceries. The average eligible California Community College student is missing this benefit because they didn't know the rules just changed.",
+      "CalFresh (SNAP) loads money onto a card you use like a debit card at any grocery store. Most eligible California Community College students don't claim it — they don't know the rules just changed.",
 
     formTitle: "Tell us where you go to school.",
     formSub: "We'll text you when our app is ready for your campus.",
     fieldEmail: "Email",
     fieldPhone: "Phone (optional)",
     fieldCampus: "Campus",
-    fieldCampusPlaceholder: "Select your campus…",
+    fieldCampusPlaceholder: "Choose one…",
     formSubmit: "Notify me",
     formSubmitting: "Submitting…",
-    formSuccess: "Thanks — we'll reach out when Civica is live on your campus.",
+    formSuccess: "You're on the list. We'll text you when Civica is ready for your campus.",
     formError: "Something went wrong. Please try again.",
+    formErrorRateLimit: "Too many attempts. Please wait a few minutes and try again.",
     formValidationError: "Please enter a valid email.",
+    formValidationErrorPhone: "Please enter a valid phone number (at least 7 digits).",
     formCampusRequired: "Please choose your campus.",
 
-    footer: "Civica — built for California students.",
     languageToggleAria: "Switch language",
   },
   es: {
-    eyebrow: "NUEVO EN CALIFORNIA — JUNIO 2026",
+    eyebrow: "AHORA EN CALIFORNIA",
     heroHeadline:
       "Si eres estudiante de medio tiempo en un Community College, CSU o UC, probablemente calificas para CalFresh ahora.",
     heroSub:
-      "Las reglas cambiaron. Muchos estudiantes a quienes les dijeron que no antes son elegibles hoy.",
+      "Toma unos 10 minutos aplicar. No se requiere ingreso mínimo.",
     ctaQualify: "Ver si calificas",
     ctaTestFlight: "Obtén la app (TestFlight)",
 
-    whatTitle: "¿Qué es CalFresh?",
+    whatTitle: "Hasta $292/mes para comestibles",
     whatBody:
-      "CalFresh (SNAP) deposita hasta ~$292/mes en una tarjeta para comestibles. El estudiante promedio elegible en los Community Colleges de California no recibe este beneficio porque no sabía que las reglas acaban de cambiar.",
+      "CalFresh (SNAP) carga dinero en una tarjeta que usas como débito en cualquier supermercado. La mayoría de los estudiantes elegibles en California no lo solicitan — no sabían que las reglas acaban de cambiar.",
 
     formTitle: "Cuéntanos dónde estudias.",
     formSub:
@@ -57,16 +58,16 @@ export const strings = {
     fieldEmail: "Correo electrónico",
     fieldPhone: "Teléfono (opcional)",
     fieldCampus: "Campus",
-    fieldCampusPlaceholder: "Selecciona tu campus…",
+    fieldCampusPlaceholder: "Elige uno…",
     formSubmit: "Avísame",
     formSubmitting: "Enviando…",
-    formSuccess:
-      "Gracias — te contactaremos cuando Civica esté disponible en tu campus.",
+    formSuccess: "Estás en la lista. Te avisaremos por mensaje cuando Civica esté lista para tu campus.",
     formError: "Algo salió mal. Por favor intenta de nuevo.",
+    formErrorRateLimit: "Demasiados intentos. Por favor espera unos minutos y vuelve a intentarlo.",
     formValidationError: "Por favor ingresa un correo válido.",
+    formValidationErrorPhone: "Por favor ingresa un número de teléfono válido (mínimo 7 dígitos).",
     formCampusRequired: "Por favor elige tu campus.",
 
-    footer: "Civica — hecho para estudiantes de California.",
     languageToggleAria: "Cambiar idioma",
   },
 } satisfies Record<Locale, Record<string, string>>;

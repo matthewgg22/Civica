@@ -39,6 +39,7 @@ struct SNAPMarketplaceFlow: View {
 
     // Task 1: "Save for later" toast
     @State private var savedJobTitle: String? = nil
+    @State private var bannerDismissTask: Task<Void, Never>? = nil
 
     // Task 2: "Report a problem" sheet
     @State private var showReportSheet = false
@@ -141,8 +142,10 @@ struct SNAPMarketplaceFlow: View {
         .animation(.easeInOut(duration: 0.25), value: savedJobTitle)
         .onChange(of: savedJobTitle) { _, newValue in
             guard newValue != nil else { return }
-            Task {
+            bannerDismissTask?.cancel()
+            bannerDismissTask = Task { @MainActor in
                 try? await Task.sleep(for: .seconds(2.5))
+                guard !Task.isCancelled else { return }
                 savedJobTitle = nil
             }
         }
