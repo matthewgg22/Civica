@@ -20,7 +20,7 @@ import type {
 // ---------------------------------------------------------------------------
 
 const TIER_META: Record<VerificationTier, { color: string; bg: string; hint: string }> = {
-  Strong:        { color: "#C9922A", bg: "rgba(201,146,42,0.10)", hint: "third-party data source" },
+  Strong:        { color: "#2D5A45", bg: "rgba(45,90,69,0.10)", hint: "third-party data source" },
   Moderate:      { color: "#B5511E", bg: "rgba(181,81,30,0.10)",  hint: "derived from intake answers" },
   Weak:          { color: "#9C3A24", bg: "rgba(156,58,36,0.10)",  hint: "applicant self-reports" },
   Discretionary: { color: "#5A544D", bg: "rgba(90,84,77,0.10)",   hint: "navigator judgment" },
@@ -34,14 +34,12 @@ const TIER_META: Record<VerificationTier, { color: string; bg: string; hint: str
 //     companion is purpose-built, OBBBA work requirement doesn't apply)
 // ---------------------------------------------------------------------------
 
-type Cohort = "students" | "elderly";
+type Cohort = "students" | "elderly" | "gig" | "labor";
 
 const COHORT_META: Record<Cohort, { label: string; short: string; color: string; bg: string; border: string }> = {
   students: {
     label: "Working college students",
     short: "STU",
-    // Teal — cohort identifier, intentionally distinct from amber/wheat
-    // which are reserved for status/attention roles (Live, Partial, etc.).
     color: "#2A6F66",
     bg: "rgba(42,111,102,0.08)",
     border: "rgba(42,111,102,0.30)",
@@ -52,6 +50,20 @@ const COHORT_META: Record<Cohort, { label: string; short: string; color: string;
     color: "#5C1F11",
     bg: "rgba(92,31,17,0.08)",
     border: "rgba(92,31,17,0.30)",
+  },
+  gig: {
+    label: "Gig & platform workers",
+    short: "GIG",
+    color: "#3A4A6A",
+    bg: "rgba(58,74,106,0.08)",
+    border: "rgba(58,74,106,0.30)",
+  },
+  labor: {
+    label: "Home care & agricultural workers",
+    short: "LBR",
+    color: "#3A5C2A",
+    bg: "rgba(58,92,42,0.08)",
+    border: "rgba(58,92,42,0.30)",
   },
 };
 
@@ -247,49 +259,6 @@ function CoverageMatrix({ tools }: { tools: VerificationTool[] }) {
         </p>
       </div>
 
-      {/* Tier breakdown bar */}
-      <TierBar tools={tools} />
-    </div>
-  );
-}
-
-function TierBar({ tools }: { tools: VerificationTool[] }) {
-  const live = tools.filter((t) => t.status === "Live");
-  const counts: Record<VerificationTier, number> = {
-    Strong: 0, Moderate: 0, Weak: 0, Discretionary: 0,
-  };
-  live.forEach((t) => counts[t.tier]++);
-  const total = live.length;
-
-  return (
-    <div className="mt-4 pt-4 border-t border-hairline/40">
-      <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-2">
-        Evidence tier breakdown · {total} live tools
-      </p>
-      <div className="flex rounded-full overflow-hidden h-2">
-        {(Object.entries(counts) as [VerificationTier, number][])
-          .filter(([, n]) => n > 0)
-          .map(([tier, n]) => (
-            <div
-              key={tier}
-              style={{
-                width: `${(n / total) * 100}%`,
-                background: TIER_META[tier].color,
-              }}
-              title={`${tier}: ${n}`}
-            />
-          ))}
-      </div>
-      <div className="flex gap-4 mt-1.5">
-        {(Object.entries(counts) as [VerificationTier, number][])
-          .filter(([, n]) => n > 0)
-          .map(([tier, n]) => (
-            <span key={tier} className="text-[10px] text-muted flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: TIER_META[tier].color }} />
-              {tier} {n}
-            </span>
-          ))}
-      </div>
     </div>
   );
 }
@@ -353,7 +322,7 @@ const FLAGSHIPS: FlagshipTool[] = [
 ];
 
 function MockupAnswerUI({ screen }: { screen: MockupScreen }) {
-  const teal = "#C9922A";
+  const teal = "#2D5A45";
   const muted = "#6B655C";
   const ink = "#1A1714";
   const hairline = "rgba(0,0,0,0.10)";
@@ -363,7 +332,7 @@ function MockupAnswerUI({ screen }: { screen: MockupScreen }) {
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
           {["Yes", "No"].map((label, i) => (
-            <div key={label} style={{ borderRadius: 3, border: `1px solid ${i === 0 ? teal : hairline}`, background: i === 0 ? "rgba(201,146,42,0.08)" : "transparent", padding: "3px 6px", textAlign: "center", fontSize: 6, fontWeight: 700, color: i === 0 ? teal : muted }}>
+            <div key={label} style={{ borderRadius: 3, border: `1px solid ${i === 0 ? teal : hairline}`, background: i === 0 ? "rgba(45,90,69,0.08)" : "transparent", padding: "3px 6px", textAlign: "center", fontSize: 6, fontWeight: 700, color: i === 0 ? teal : muted }}>
               {label}
             </div>
           ))}
@@ -371,8 +340,8 @@ function MockupAnswerUI({ screen }: { screen: MockupScreen }) {
       );
     case "upload":
       return (
-        <div style={{ borderRadius: 3, border: "1px dashed rgba(0,0,0,0.18)", background: "rgba(201,146,42,0.04)", padding: "10px 4px", display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
-          <div style={{ width: 16, height: 16, borderRadius: "50%", background: "rgba(201,146,42,0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ borderRadius: 3, border: "1px dashed rgba(0,0,0,0.18)", background: "rgba(45,90,69,0.04)", padding: "10px 4px", display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
+          <div style={{ width: 16, height: 16, borderRadius: "50%", background: "rgba(45,90,69,0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <span style={{ fontSize: 9, color: teal, lineHeight: 1 }}>↑</span>
           </div>
           <span style={{ fontSize: 5, color: muted, fontWeight: 600 }}>Tap to upload</span>
@@ -380,7 +349,7 @@ function MockupAnswerUI({ screen }: { screen: MockupScreen }) {
       );
     case "status":
       return (
-        <div style={{ borderRadius: 3, background: "rgba(201,146,42,0.10)", border: "1px solid rgba(201,146,42,0.20)", padding: "4px 6px", display: "flex", alignItems: "center", gap: 3 }}>
+        <div style={{ borderRadius: 3, background: "rgba(45,90,69,0.10)", border: "1px solid rgba(45,90,69,0.20)", padding: "4px 6px", display: "flex", alignItems: "center", gap: 3 }}>
           <div style={{ width: 5, height: 5, borderRadius: "50%", background: teal, flexShrink: 0 }} />
           <span style={{ fontSize: 5.5, color: teal, fontWeight: 700 }}>{screen.answer}</span>
         </div>
@@ -412,7 +381,7 @@ function MockupAnswerUI({ screen }: { screen: MockupScreen }) {
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
           {[100, 80, 100, 65].map((w, i) => (
-            <div key={i} style={{ height: 3.5, background: i < 3 ? "rgba(201,146,42,0.15)" : "rgba(0,0,0,0.07)", borderRadius: 2, width: `${w}%` }} />
+            <div key={i} style={{ height: 3.5, background: i < 3 ? "rgba(45,90,69,0.15)" : "rgba(0,0,0,0.07)", borderRadius: 2, width: `${w}%` }} />
           ))}
           <div style={{ marginTop: 4, borderRadius: 3, background: teal, padding: "3.5px 0", textAlign: "center" }}>
             <span style={{ fontSize: 5.5, color: "#fff", fontWeight: 700 }}>Review &amp; confirm</span>
@@ -461,7 +430,7 @@ function PhoneMockup({ screen }: { screen: MockupScreen }) {
       </div>
       {/* Progress bar */}
       <div style={{ height: 2, background: "rgba(0,0,0,0.05)" }}>
-        <div style={{ height: "100%", width: `${progress}%`, background: "#C9922A", borderRadius: "0 1px 1px 0" }} />
+        <div style={{ height: "100%", width: `${progress}%`, background: "#2D5A45", borderRadius: "0 1px 1px 0" }} />
       </div>
       {/* Content */}
       <div style={{ padding: "7px 8px 14px" }}>
@@ -729,27 +698,46 @@ function DistributionMath() {
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~75 residents</td>
               <td className="py-2.5 text-right tabular-nums font-bold text-ink">~450K</td>
             </tr>
+            <tr className="border-b border-hairline/50">
+              <td className="py-2.5 pr-3 text-ink">
+                <span className="font-semibold">Gig & platform workers</span>
+                <CohortBadge cohort="gig" />
+                <p className="text-[10px] text-muted leading-snug mt-0.5">Uber, DoorDash, Instacart — in-app enrollment at driver/courier onboarding</p>
+              </td>
+              <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">3 platforms</td>
+              <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~17K / platform</td>
+              <td className="py-2.5 text-right tabular-nums font-bold text-ink">~52K</td>
+            </tr>
+            <tr>
+              <td className="py-2.5 pr-3 text-ink">
+                <span className="font-semibold">Home care &amp; agricultural</span>
+                <CohortBadge cohort="labor" />
+                <p className="text-[10px] text-muted leading-snug mt-0.5">SEIU 2015 IHSS stewards + UFW regional organizers — enrollment via union hall</p>
+              </td>
+              <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~2,600 stewards</td>
+              <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~12 members</td>
+              <td className="py-2.5 text-right tabular-nums font-bold text-ink">~31K</td>
+            </tr>
             <tr className="border-t-2 border-hairline">
               <td className="pt-2.5 text-[10px] uppercase tracking-wider font-semibold text-muted" colSpan={3}>
                 Combined addressable cohort
               </td>
-              <td className="pt-2.5 text-right tabular-nums font-bold text-[#5C1F11] text-[15px]">~461K / yr</td>
+              <td className="pt-2.5 text-right tabular-nums font-bold text-[#5C1F11] text-[15px]">~544K / yr</td>
             </tr>
             <tr>
               <td className="text-[10px] text-graphite italic" colSpan={3}>
                 ↳ at average per-cohort allotments
               </td>
               <td className="text-right tabular-nums font-semibold text-amber text-[12px]">
-                ≈ $840M / yr in SNAP benefits to households
+                ≈ $1.0B / yr in SNAP benefits to households
               </td>
             </tr>
           </tbody>
         </table>
         <p className="text-[10px] text-muted italic leading-snug mt-3">
-          Senior housing channel is roughly 40× the campus channel in addressable households at full CA coverage —
-          which is why students validate the engine fast and elderly is the scale play. The $840M figure is
-          household-side value (11K students × ~$2,400/yr + 450K elderly × ~$1,800/yr); Civica&apos;s revenue is a
-          small fraction, paid by the channel partner, never by the household.
+          Senior housing is the scale channel (~450K); gig workers and labor union halls are greenfield — high eligibility density, low existing navigation. The $1.0B figure is household-side value
+          (11K students × ~$2,400/yr + 450K elderly × ~$1,800/yr + 52K gig × ~$2,100/yr + 31K labor × ~$1,920/yr);
+          Civica&apos;s revenue is a small fraction, paid by the channel partner, never by the household.
         </p>
       </div>
     </div>
