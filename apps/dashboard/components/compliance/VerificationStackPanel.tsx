@@ -659,24 +659,33 @@ function CohortHeaderStrip() {
                 </div>
               </div>
 
-              <dl className="space-y-1.5 text-[11px]">
-                <div className="flex gap-2">
-                  <dt className="text-muted font-semibold uppercase tracking-wider text-[9px] w-[80px] shrink-0 pt-0.5">Load-bearing</dt>
-                  <dd className="text-graphite leading-snug">{c.loadBearingTools}</dd>
-                </div>
-                <div className="flex gap-2">
-                  <dt className="text-muted font-semibold uppercase tracking-wider text-[9px] w-[80px] shrink-0 pt-0.5">Recert</dt>
-                  <dd className="text-graphite leading-snug">{c.recertAcuity}</dd>
-                </div>
-                <div className="flex gap-2">
-                  <dt className="text-muted font-semibold uppercase tracking-wider text-[9px] w-[80px] shrink-0 pt-0.5">OBBBA</dt>
-                  <dd className="text-graphite leading-snug">{c.obbbaImplication}</dd>
-                </div>
-                <div className="flex gap-2">
-                  <dt className="text-muted font-semibold uppercase tracking-wider text-[9px] w-[80px] shrink-0 pt-0.5">Pilot</dt>
-                  <dd className="text-graphite leading-snug italic">{c.pilotStatus}</dd>
-                </div>
-              </dl>
+              <details className="group">
+                <summary
+                  className="flex items-center justify-between cursor-pointer list-none text-[10px] font-semibold uppercase tracking-wider select-none"
+                  style={{ color: m.color }}
+                >
+                  <span>Tools · Recert · OBBBA · Pilot</span>
+                  <span className="ml-2 transition-transform group-open:rotate-180 text-[8px]">▼</span>
+                </summary>
+                <dl className="space-y-1.5 text-[11px] mt-2.5 pt-2.5 border-t" style={{ borderColor: m.border }}>
+                  <div className="flex gap-2">
+                    <dt className="text-muted font-semibold uppercase tracking-wider text-[9px] w-[80px] shrink-0 pt-0.5">Load-bearing</dt>
+                    <dd className="text-graphite leading-snug">{c.loadBearingTools}</dd>
+                  </div>
+                  <div className="flex gap-2">
+                    <dt className="text-muted font-semibold uppercase tracking-wider text-[9px] w-[80px] shrink-0 pt-0.5">Recert</dt>
+                    <dd className="text-graphite leading-snug">{c.recertAcuity}</dd>
+                  </div>
+                  <div className="flex gap-2">
+                    <dt className="text-muted font-semibold uppercase tracking-wider text-[9px] w-[80px] shrink-0 pt-0.5">OBBBA</dt>
+                    <dd className="text-graphite leading-snug">{c.obbbaImplication}</dd>
+                  </div>
+                  <div className="flex gap-2">
+                    <dt className="text-muted font-semibold uppercase tracking-wider text-[9px] w-[80px] shrink-0 pt-0.5">Pilot</dt>
+                    <dd className="text-graphite leading-snug italic">{c.pilotStatus}</dd>
+                  </div>
+                </dl>
+              </details>
             </div>
           );
         })}
