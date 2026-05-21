@@ -565,6 +565,32 @@ const COHORT_CARDS: CohortCardData[] = [
     obbbaImplication: "Out of scope for §10102's work requirement (over age 54). Adding low-error elderly to the state cohort actively drives down state PER, moving California away from §10105 / §10106 cost-share triggers — the engine's defensive benefit doubles as offense.",
     pilotStatus: "Channel work to start · senior housing coordinator track",
   },
+  {
+    cohort: "gig",
+    tagline: "Engine handles irregular income",
+    whatItProves: "Gig and platform workers have highly variable week-to-week income that traditional intake cannot average correctly — Argyle's payroll connection pulls authenticated 1099 and W-2 data directly, eliminating the income-verification gap that causes the most QC errors in this cohort.",
+    gap: "1.8M",
+    gapPct: "~52% of eligible not enrolled",
+    channel: "Worker centers · platform-worker advocacy orgs",
+    channelSize: "Rideshare, delivery, and care platforms with CA worker populations",
+    loadBearingTools: "Argyle payroll · income averaging logic · self-attested asset declaration · just-in-time reminders",
+    recertAcuity: "High · income fluctuation causes recert failures",
+    obbbaImplication: "Subject to §10102's expanded work requirement but most already meet the threshold — the problem is documentation, not hours. Civica's Argyle connection produces the authenticated income record that satisfies the work-requirement verification without manual paperwork.",
+    pilotStatus: "Not yet active · logical next channel after campus pilot",
+  },
+  {
+    cohort: "labor",
+    tagline: "Proves the engine on lowest-doc workers",
+    whatItProves: "Agricultural and home care workers frequently have cash wages, informal employment, or employer reluctance to provide verification — the same population USDA flags highest for QC scrutiny. Receipt upload + self-attestation with navigator review closes the documentation gap without requiring employers to participate.",
+    gap: "2.1M",
+    gapPct: "~61% of eligible not enrolled",
+    channel: "Agricultural worker advocacy · home care agency partnerships",
+    channelSize: "CA has the largest agricultural workforce in the US and ~500K home care workers",
+    loadBearingTools: "Receipt or invoice upload · self-attested utility flags · navigator distress-review gate · procedural appeal drafter",
+    recertAcuity: "Very high · seasonal employment creates enrollment gaps every harvest cycle",
+    obbbaImplication: "Migrant and seasonal agricultural workers have specific §10102 exemptions. Civica's exemption-routing engine handles these pathways — the same logic used for student work-study exemptions applies here, proving generalizability across exemption types.",
+    pilotStatus: "Not yet active · high-impact third channel",
+  },
 ];
 
 function CohortHeaderStrip() {
@@ -572,7 +598,7 @@ function CohortHeaderStrip() {
     <div className="mb-6 pb-6 border-b border-hairline">
       <div className="mb-4">
         <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-muted mb-1">
-          Target users · two parallel motions
+          Target users · four cohorts
         </p>
         <h4 className="text-[16px] font-semibold tracking-tight text-ink leading-tight">
           Who Civica is optimized for — and what each cohort proves about the engine
@@ -580,11 +606,13 @@ function CohortHeaderStrip() {
         <p className="text-[12px] text-graphite mt-1 leading-snug max-w-3xl">
           Students prove the engine on SNAP&apos;s hardest eligibility surface; elderly is where the
           $8.1M-household TAM lives and where the recertification companion&apos;s value is highest.
-          Different channels, different sales motions, same engine.
+          Gig workers prove the engine on irregular income verification — the leading QC error source.
+          Agricultural and home care workers prove it on lowest-documentation populations, where manual
+          intake fails most often. Different channels, different sales motions, same engine.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {COHORT_CARDS.map((c) => {
           const m = COHORT_META[c.cohort];
           return (
