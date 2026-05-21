@@ -28,7 +28,7 @@ struct ApplyHandoffSheet: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
-                        .foregroundStyle(CivicaColors.accentTeal)
+                        .foregroundStyle(CivicaColors.amberPrimary)
                 }
             }
         }
@@ -59,7 +59,7 @@ struct ApplyHandoffSheet: View {
     private func consentRow(label: LocalizedStringKey, source: LocalizedStringKey) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: "checkmark.circle.fill")
-                .foregroundStyle(CivicaColors.accentTeal)
+                .foregroundStyle(CivicaColors.amberPrimary)
                 .font(.system(size: 16))
             VStack(alignment: .leading, spacing: 2) {
                 Text(label)

@@ -48,8 +48,8 @@ struct RecertPulledRow: View {
 
     private var sourceDotColor: Color {
         switch source {
-        case .argyle: return CivicaColors.accentTeal
-        case .canvas: return CivicaColors.accentTeal
+        case .argyle: return CivicaColors.amberPrimary
+        case .canvas: return CivicaColors.amberPrimary
         case .selfReported: return CivicaColors.graphite
         }
     }

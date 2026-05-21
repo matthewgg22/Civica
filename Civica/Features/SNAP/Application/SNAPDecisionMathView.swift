@@ -118,9 +118,9 @@ struct SNAPDecisionMathView: View {
                     denominator: language == .english ? "mo" : "mes",
                     font: CivicaTypography.pageTitle
                 )
-                // Positive-outcome money lives in teal across the app
-                // (matches the estimator's eligible result card).
-                .foregroundStyle(CivicaColors.accentTeal)
+                // Amber gold on light background — pairs with the dark pine
+                // hero card below where the same amount appears in wheat-gold.
+                .foregroundStyle(CivicaColors.amberPrimary)
             } else if let reason = result.ineligibilityReason {
                 Text(reason)
                     .font(CivicaTypography.body)
@@ -184,6 +184,7 @@ struct SNAPDecisionMathView: View {
                     )
                 }
                 if calc.excessShelterDeduction > 0 {
+                    mathSectionLabel(SNAPDecisionMathStrings.shelterSectionLabel.value(in: language))
                     mathRow(
                         label: SNAPDecisionMathStrings.excessShelterDeduction.value(in: language),
                         amount: calc.excessShelterDeduction,
@@ -226,38 +227,38 @@ struct SNAPDecisionMathView: View {
             HStack {
                 Text(SNAPDecisionMathStrings.maxAllotment.value(in: language))
                     .font(CivicaTypography.subhead)
-                    .foregroundStyle(CivicaColors.ink)
+                    .foregroundStyle(Color.white.opacity(0.70))
                 Spacer()
                 CivicaMoney(amount: calc.maxAllotmentForHouseholdSize, font: CivicaTypography.subhead)
-                    .foregroundStyle(CivicaColors.ink)
+                    .foregroundStyle(Color.white.opacity(0.70))
             }
             HStack {
                 Text("− " + SNAPDecisionMathStrings.thirtyPercentOfNet.value(in: language))
                     .font(CivicaTypography.subhead)
-                    .foregroundStyle(CivicaColors.graphite)
+                    .foregroundStyle(Color.white.opacity(0.50))
                 Spacer()
                 CivicaMoney(amount: calc.thirtyPercentOfNet, font: CivicaTypography.subhead)
-                    .foregroundStyle(CivicaColors.graphite)
+                    .foregroundStyle(Color.white.opacity(0.50))
             }
-            Divider().background(CivicaColors.ink)
+            Divider().overlay(Color.white.opacity(0.20))
             HStack(alignment: .firstTextBaseline) {
                 Text(SNAPDecisionMathStrings.monthlyBenefit.value(in: language))
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundStyle(CivicaColors.ink)
+                    .foregroundStyle(Color.white.opacity(0.85))
                 Spacer()
                 CivicaMoney(
                     amount: calc.monthlyBenefit,
                     denominator: language == .english ? "mo" : "mes",
                     font: CivicaTypography.cardTitle
                 )
-                .foregroundStyle(CivicaColors.accentTeal)
+                // Wheat-gold on dark pine — the same pairing as the EBT
+                // hero card so the two most important numbers in the app
+                // share one visual language: "this is your benefit."
+                .foregroundStyle(CivicaColors.wheatPrimary)
             }
         }
         .padding(CivicaSpacing.lg)
-        // Match the estimator's eligible card — tealSurface tints
-        // the positive-outcome summary; brickSurface is reserved
-        // for warm decorative tints that aren't outcome cards.
-        .background(CivicaColors.tealSurface)
+        .background(CivicaColors.pinePrimary)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
         .accessibilityElement(children: .contain)
         .accessibilityLabel(finalBenefitAccessibilityLabel(calc))
@@ -336,6 +337,9 @@ struct SNAPDecisionMathView: View {
     /// Returns nil for unrecognized formats so the caller can fall back
     /// to displaying the raw stamp.
     static func humanizedRulesVersion(_ stamp: String, language: CivicaLanguage) -> String? {
+        if let estimator = humanizedLocalEstimator(stamp, language: language) {
+            return estimator
+        }
         if let local = humanizedLocalEval(stamp) {
             return local
         }
@@ -343,6 +347,42 @@ struct SNAPDecisionMathView: View {
             return federal
         }
         return nil
+    }
+
+    /// `local-estimator-via-CA-bbce-200pct-FY26`
+    ///     → `CalFresh estimate · California (200% BBCE, FY2026)`
+    /// Handles the `SNAPBenefitEstimatorCalculator.rulesVersion` stamp
+    /// format, which prefixes the state-rules version with
+    /// "local-estimator-via-" rather than "local-eval-".
+    private static func humanizedLocalEstimator(_ stamp: String, language: CivicaLanguage) -> String? {
+        let prefix = "local-estimator-via-"
+        guard stamp.hasPrefix(prefix) else { return nil }
+        let body = stamp.dropFirst(prefix.count)
+        // Expected tail: "<STATE>-<LOGIC>-<THRESHOLD>-<CYCLE>"
+        // Example:       "CA-bbce-200pct-FY26"
+        let parts = body.split(separator: "-")
+        guard parts.count >= 4 else { return nil }
+        let stateAbbr = String(parts[0])
+        let logic = String(parts[1]).uppercased()
+        let threshold = String(parts[2])
+        let cycleRaw = String(parts[3])
+
+        let thresholdHuman: String
+        if threshold.hasSuffix("pct"), let n = Int(threshold.dropLast(3)) {
+            thresholdHuman = "\(n)%"
+        } else {
+            thresholdHuman = threshold
+        }
+
+        let cycle: String
+        if cycleRaw.hasPrefix("FY"), cycleRaw.count == 4 {
+            cycle = "FY20" + cycleRaw.dropFirst(2)
+        } else {
+            cycle = cycleRaw
+        }
+
+        let estimatorLabel = language == .english ? "CalFresh estimate" : "Estimación de CalFresh"
+        return "\(estimatorLabel) · \(stateFullName(stateAbbr)) (\(thresholdHuman) \(logic), \(cycle))"
     }
 
     /// `local-eval-FY26/MA-bbce-200pct` → `FY2026 · Massachusetts (200% BBCE)`
@@ -394,6 +434,7 @@ struct SNAPDecisionMathView: View {
 
     private static func stateFullName(_ abbr: String) -> String {
         switch abbr.uppercased() {
+        case "CA": return "California"
         case "MA": return "Massachusetts"
         default: return abbr
         }
@@ -435,6 +476,21 @@ struct SNAPDecisionMathView: View {
             case .add:      return "plus"
             }
         }
+    }
+
+    /// Thin inline section label that visually groups rows beneath
+    /// it. Used to separate the income-adjustment block from the
+    /// shelter block without breaking the card boundary.
+    private func mathSectionLabel(_ text: String) -> some View {
+        Text(text)
+            .font(CivicaTypography.caption)
+            .foregroundStyle(CivicaColors.graphite)
+            .textCase(.uppercase)
+            .kerning(0.8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, CivicaSpacing.sm)
+            .padding(.bottom, 2)
+            .accessibilityAddTraits(.isHeader)
     }
 
     private func mathRow(
@@ -495,7 +551,7 @@ struct SNAPDecisionMathView: View {
     private var verdictAccentColor: Color {
         switch result.status {
         case .eligible, .eligibleWithConditions:
-            return CivicaColors.accentTeal
+            return CivicaColors.amberPrimary
         case .ineligible:
             return CivicaColors.destructive
         case .insufficientInformation:

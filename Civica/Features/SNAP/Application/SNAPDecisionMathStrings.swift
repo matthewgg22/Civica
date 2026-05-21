@@ -51,6 +51,14 @@ enum SNAPDecisionMathStrings {
         "Child support paid",
         es: "Manutención pagada"
     )
+    /// Thin inline section header that visually separates the
+    /// income-adjustment deductions (earned income, standard,
+    /// dependent care, medical) from the shelter block, which is
+    /// computed differently and applied after the half-net test.
+    static let shelterSectionLabel = CivicaText(
+        "Shelter deduction",
+        es: "Deducción por vivienda"
+    )
     static let excessShelterDeduction = CivicaText(
         "Excess shelter deduction",
         es: "Deducción por exceso de vivienda"

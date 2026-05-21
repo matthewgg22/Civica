@@ -25,7 +25,7 @@ struct SNAPEligibilityIntroView: View {
 
     var body: some View {
         ZStack {
-            CivicaColors.tealSurface.ignoresSafeArea()
+            CivicaColors.paper.ignoresSafeArea()
 
             ScrollView {
                 VStack(alignment: .leading, spacing: CivicaSpacing.md) {
@@ -34,12 +34,12 @@ struct SNAPEligibilityIntroView: View {
 
                     Text(SNAPEligibilityIntroStrings.snapDescription.value(in: language))
                         .font(CivicaTypography.bodyStrong)
-                        .foregroundStyle(Color.black)
+                        .foregroundStyle(CivicaColors.ink)
                         .fixedSize(horizontal: false, vertical: true)
 
                     Text(SNAPIntroCopy.approvalHeading(stateCode: viewModel.application.state, language: language))
                         .font(CivicaTypography.subheadStrong)
-                        .foregroundStyle(Color.black)
+                        .foregroundStyle(CivicaColors.ink)
 
                     VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                         SNAPDescriptionRow(
@@ -79,7 +79,7 @@ struct SNAPEligibilityIntroView: View {
                                     .foregroundStyle(CivicaColors.graphite)
                                 Text(SNAPEligibilityIntroStrings.prepCompleted.value(in: language))
                                     .font(CivicaTypography.subheadBold)
-                                    .foregroundStyle(CivicaColors.accentTeal)
+                                    .foregroundStyle(CivicaColors.amberPrimary)
                             }
 
                             HStack(spacing: CivicaSpacing.sm) {
@@ -126,9 +126,9 @@ struct SNAPEligibilityIntroView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(CivicaSpacing.lg)
             }
-            .background(CivicaColors.tealSurface)
+            .background(CivicaColors.paper)
         }
-        .toolbarBackground(CivicaColors.tealSurface, for: .navigationBar)
+        .toolbarBackground(CivicaColors.paper, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationDestination(isPresented: $continueToGuidedDraft) {
             // Route dispatch: when SNAP_CONVERSATION_ENABLED is set at
@@ -246,7 +246,7 @@ private struct SNAPIntroHeader: View {
 
             Text(title)
                 .font(CivicaTypography.pageTitle)
-                .foregroundStyle(Color.black)
+                .foregroundStyle(CivicaColors.ink)
                 .lineLimit(1)
                 .minimumScaleFactor(0.84)
                 .padding(.top, CivicaSpacing.xs)
@@ -281,7 +281,7 @@ private struct SNAPDescriptionRow: View {
 
             Text(text)
                 .font(CivicaTypography.subhead)
-                .foregroundStyle(Color.black)
+                .foregroundStyle(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
         }
     }

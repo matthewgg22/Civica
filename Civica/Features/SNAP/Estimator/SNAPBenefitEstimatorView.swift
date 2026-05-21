@@ -228,11 +228,13 @@ struct SNAPBenefitEstimatorView: View {
     }
 
     private var utilitiesCard: some View {
-        // Lives in the 2-column row alongside elderlyOrDisabledCard.
-        // Same compact treatment — helper dropped, short question
-        // only.
+        // Helper re-added: the SUA toggle now moves the estimate by
+        // $663 (CA FY26), so the clarification "not included in your
+        // rent" earns its space. HStack(alignment: .top) in the parent
+        // row handles differing card heights cleanly.
         inputCard(
-            question: SNAPBenefitEstimatorStrings.utilitiesQuestion.value(in: language)
+            question: SNAPBenefitEstimatorStrings.utilitiesQuestion.value(in: language),
+            helper: SNAPBenefitEstimatorStrings.utilitiesHelper.value(in: language)
         ) {
             yesNoToggle(isOn: $inputs.paysUtilitiesSeparately)
         }
@@ -341,7 +343,12 @@ struct SNAPBenefitEstimatorView: View {
                     denominator: language == .english ? "mo" : "mes",
                     font: CivicaTypography.pageTitle
                 )
-                .foregroundStyle(CivicaColors.accentTeal)
+                .foregroundStyle(CivicaColors.amberPrimary)
+                // Roll the number when the estimate changes as the
+                // user moves a slider — makes the live-calc feel
+                // responsive rather than a static snap to new value.
+                .contentTransition(.numericText())
+                .animation(.spring(response: 0.25, dampingFraction: 0.8), value: monthly)
 
                 Spacer(minLength: 0)
 
@@ -351,6 +358,8 @@ struct SNAPBenefitEstimatorView: View {
                         .foregroundStyle(CivicaColors.graphite)
                     CivicaMoney(amount: annual, font: CivicaTypography.footnoteStrong)
                         .foregroundStyle(CivicaColors.graphite)
+                        .contentTransition(.numericText())
+                        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: annual)
                     Text("/" + (language == .english ? "yr" : "año"))
                         .font(CivicaTypography.footnote)
                         .foregroundStyle(CivicaColors.graphite)
@@ -377,10 +386,10 @@ struct SNAPBenefitEstimatorView: View {
         }
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
-        // tealSurface (cool pastel wash) instead of brickSurface so
-        // the result card reads as "positive outcome" rather than
-        // sharing the warm brand hue with every CTA on the screen.
-        .background(CivicaColors.tealSurface)
+        // amberSurface (warm pastel wash) so the result card reads as
+        // "positive outcome" in the warm palette — amber gold signals
+        // benefit/money rather than the removed accentTeal.
+        .background(CivicaColors.amberSurface)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
     }
 
@@ -433,13 +442,15 @@ struct SNAPBenefitEstimatorView: View {
 
     private var applyCTA: some View {
         // Compliance row 5 (estimator_apply_cta): counsel-prep approved
-        // (2026-05-19) — "Apply on BenefitsCal" (CA launch). External-link
-        // affordance per Decision 4 signals outbound navigation to the
-        // state portal. State-aware lookup via the registry; falls back to
-        // generic "Apply for SNAP" if the row is reverted to .pendingSignoff.
+        // (2026-05-19) — "Apply on BenefitsCal" (CA launch). The
+        // isExternalLink affordance is intentionally NOT set here:
+        // onApply() routes into the Civica in-app screener
+        // (SNAPEstimatorFlowView → CivicaSNAPFlowView), not directly
+        // to a browser. The external-link icon would mislead users into
+        // expecting a browser tab to open. State-aware label via the
+        // registry; falls back to generic "Apply for SNAP" if reverted.
         CivicaPrimaryButton(
-            SNAPBenefitEstimatorStrings.applyCTA(stateCode: nil, language: language),
-            isExternalLink: SNAPComplianceCopyRegistry.approvedEnglish(for: "estimator_apply_cta") != nil
+            SNAPBenefitEstimatorStrings.applyCTA(stateCode: nil, language: language)
         ) {
             persistEligibleResultIfNeeded()
             onApply()

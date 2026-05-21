@@ -33,7 +33,7 @@ private struct LoadingWaveDots: View {
         HStack(spacing: 10) {
             ForEach(0..<3, id: \.self) { index in
                 Circle()
-                    .fill(CivicaColors.accentTeal)
+                    .fill(CivicaColors.pinePrimary)
                     .frame(width: 11, height: 11)
                     .offset(y: animating ? -10 : 0)
                     .animation(
@@ -203,7 +203,7 @@ struct FindHelpHumanPathRow: View {
         } label: {
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: "phone.fill")
-                    .foregroundStyle(CivicaColors.accentTeal)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                     .accessibilityHidden(true)
                 Text(FindHelpStrings.emptyHumanLineLabel.value(in: language))
                     .font(CivicaTypography.subheadStrong)
@@ -211,7 +211,7 @@ struct FindHelpHumanPathRow: View {
                 Spacer(minLength: CivicaSpacing.sm)
                 Text(FindHelpStrings.emptyHumanLineNumber)
                     .font(CivicaTypography.subheadStrong.monospacedDigit())
-                    .foregroundStyle(CivicaColors.accentTeal)
+                    .foregroundStyle(CivicaColors.pinePrimary)
                     .underline()
             }
             .padding(CivicaSpacing.lg)

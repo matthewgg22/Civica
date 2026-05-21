@@ -80,7 +80,7 @@ struct SNAPApplicationGeneratorView: View {
         case .ready:
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: "doc.text.fill")
-                    .foregroundColor(CivicaColors.accentTeal)
+                    .foregroundColor(CivicaColors.amberPrimary)
                     .accessibilityHidden(true)
                 Text(SNAPApplicationGeneratorStrings.ready.value(in: language))
                     .font(CivicaTypography.subheadStrong)

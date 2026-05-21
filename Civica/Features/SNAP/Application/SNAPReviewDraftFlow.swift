@@ -208,7 +208,7 @@ struct SNAPReviewDraftFlowView: View {
         case .complete:
             Image(systemName: "checkmark.circle.fill")
                 .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(CivicaColors.accentTeal)
+                .foregroundStyle(CivicaColors.amberPrimary)
                 .imageScale(.medium)
                 .accessibilityLabel(SNAPStatusHomeStrings.statusComplete.value(in: language))
         case .inProgress, .notStarted:

@@ -116,7 +116,7 @@ struct PostPlacementView: View {
 
             Text("Your county worker has been notified. No action needed.")
                 .font(CivicaTypography.body)
-                .foregroundStyle(CivicaColors.accentTeal)
+                .foregroundStyle(CivicaColors.amberPrimary)
         }
         .padding(.horizontal, CivicaSpacing.xl)
         .padding(.vertical, CivicaSpacing.lg)
@@ -142,7 +142,7 @@ struct PostPlacementView: View {
             if navigatorOutreachScheduled {
                 HStack(spacing: CivicaSpacing.sm) {
                     Image(systemName: "checkmark.circle")
-                        .foregroundStyle(CivicaColors.accentTeal)
+                        .foregroundStyle(CivicaColors.amberPrimary)
                         .font(.system(size: 14))
                     Text("Navigator outreach scheduled — we'll text you when they call.")
                         .font(CivicaTypography.footnote)
@@ -178,7 +178,7 @@ struct PostPlacementView: View {
             Button(action: onReportProblem) {
                 Text("Report a problem")
                     .font(CivicaTypography.body)
-                    .foregroundStyle(CivicaColors.accentTeal)
+                    .foregroundStyle(CivicaColors.amberPrimary)
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("marketplace.post_placement.report_problem")

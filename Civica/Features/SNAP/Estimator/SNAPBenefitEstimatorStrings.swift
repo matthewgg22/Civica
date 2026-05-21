@@ -79,8 +79,8 @@ enum SNAPBenefitEstimatorStrings {
         es: "¿Pagas servicios aparte?"
     )
     static let utilitiesHelper = CivicaText(
-        "Heat, electricity, water, gas — even just one counts.",
-        es: "Calefacción, electricidad, agua, gas — incluso solo uno cuenta."
+        "Electric, gas, or heating bill not covered by your rent — even one qualifies.",
+        es: "Factura de luz, gas o calefacción que no está incluida en tu renta — aunque sea una cuenta."
     )
 
     // MARK: - Yes / No toggle
@@ -245,20 +245,17 @@ enum SNAPBenefitEstimatorStrings {
     // MARK: - Federal-vs-state clarifier
 
     /// One-line clarifier shown on the eligible result card below
-    /// the dollar amount. Frames the estimate as *federal* so users
-    /// aren't surprised when their full state application produces a
-    /// different number (state deductions, BBCE, categorical
-    /// eligibility, etc). See SNAPBenefitEstimatorCalculator.swift
-    /// (search "Top-of-funnel uses federal rules") for why the
-    /// estimator intentionally uses federal rules at top-of-funnel.
+    /// the dollar amount. Notes that this is a CalFresh estimate so
+    /// users aren't surprised when their official determination may
+    /// differ (different income period, categorical eligibility, etc).
     static func federalEstimateNote(stateCode: String?, language: CivicaLanguage) -> String {
         let resolved = stateCode ?? SNAPAgencyDirectory.launchStateCode
         let agency = SNAPAgencyDirectory.agencyShortName(for: resolved, language: language)
         switch language {
         case .english:
-            return "Federal estimate. Your full \(agency) application uses state-specific rules and may show a different amount."
+            return "CalFresh estimate. Your official \(agency) determination uses your full case file and may differ."
         case .spanish:
-            return "Estimación federal. Tu solicitud completa de \(agency) usa reglas estatales y puede mostrar un monto diferente."
+            return "Estimación de CalFresh. La determinación oficial de \(agency) usa tu expediente completo y puede ser diferente."
         }
     }
 

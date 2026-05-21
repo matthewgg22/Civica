@@ -120,8 +120,8 @@ enum SNAPEligibilityIntroStrings {
         es: "Abrir próximos pasos"
     )
     static let prepareApplication = CivicaText(
-        "Prepare my SNAP application",
-        es: "Preparar mi solicitud de SNAP"
+        "See if I qualify",
+        es: "Ver si califico"
     )
     static let questionnaireTitle = CivicaText(
         "SNAP Application",

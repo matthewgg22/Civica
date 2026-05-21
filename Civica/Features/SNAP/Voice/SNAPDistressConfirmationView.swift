@@ -82,7 +82,7 @@ struct SNAPDistressConfirmationView: View {
                         onPause()
                     }
                     .font(CivicaTypography.subhead)
-                    .foregroundColor(CivicaColors.accentTeal)
+                    .foregroundColor(CivicaColors.pinePrimary)
                     .frame(maxWidth: .infinity, minHeight: 44)
                 }
             }
@@ -114,7 +114,7 @@ struct SNAPDistressConfirmationView: View {
             Link(destination: url) {
                 Image(systemName: "phone.fill")
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(CivicaColors.accentTeal)
+                    .foregroundColor(CivicaColors.pinePrimary)
                     .frame(width: 44, height: 44)
             }
             .accessibilityLabel(accessibilityLabel)

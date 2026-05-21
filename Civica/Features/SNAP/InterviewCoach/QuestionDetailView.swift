@@ -94,8 +94,8 @@ struct QuestionDetailView: View {
     private var chipRow: some View {
         HStack(spacing: CivicaSpacing.xs) {
             chip(text: question.scenario.localizedLabel(in: language),
-                 tint: CivicaColors.accentTeal.opacity(0.12),
-                 foreground: CivicaColors.accentTeal)
+                 tint: CivicaColors.amberPrimary.opacity(0.12),
+                 foreground: CivicaColors.amberPrimary)
             chip(text: question.category.localizedLabel(in: language),
                  tint: CivicaColors.pinePrimary.opacity(0.12),
                  foreground: CivicaColors.pinePrimary)
@@ -122,7 +122,7 @@ struct QuestionDetailView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                    .fill(CivicaColors.tealSurface.opacity(0.4))
+                    .fill(CivicaColors.amberSurface.opacity(0.4))
             )
     }
 }

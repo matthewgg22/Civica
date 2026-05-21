@@ -49,7 +49,7 @@ struct InterviewCoachDisclaimer: View {
                 .padding(.horizontal, CivicaSpacing.md)
                 .padding(.vertical, CivicaSpacing.xs)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(CivicaColors.tealSurface.opacity(0.3))
+                .background(CivicaColors.amberSurface.opacity(0.3))
                 .accessibilityLabel(InterviewCoachStrings.disclaimerCompact.value(in: language))
         }
     }

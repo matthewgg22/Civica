@@ -33,6 +33,14 @@ enum EBTBalanceStrings {
         es: "Actualizado hace un momento"
     )
 
+    /// Velocity bar sub-label: "X spent" below the spend progress bar.
+    static func velocitySpent(amount: String, language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return "\(amount) spent"
+        case .spanish: return "\(amount) gastados"
+        }
+    }
+
     // MARK: - Next deposit
 
     static let nextDepositLabel = CivicaText(

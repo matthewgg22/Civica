@@ -119,7 +119,7 @@ struct EBTTransactionDetailSheet: View {
                 CivicaMoney(amount: transaction.amount, font: CivicaTypography.subheadStrong)
             }
             .font(CivicaTypography.subheadStrong)
-            .foregroundStyle(CivicaColors.accentTeal)
+            .foregroundStyle(CivicaColors.amberPrimary)
         } else {
             CivicaMoney(amount: transaction.amount, font: CivicaTypography.subheadStrong)
                 .foregroundStyle(CivicaColors.ink)

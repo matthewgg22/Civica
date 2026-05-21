@@ -24,7 +24,7 @@ struct ReviewSummaryView: View {
     }
 
     private var scoreTint: Color {
-        if score.overallScore >= 70 { return CivicaColors.accentTeal }
+        if score.overallScore >= 70 { return CivicaColors.amberPrimary }
         if score.overallScore >= 50 { return CivicaColors.pinePrimary }
         return CivicaColors.destructive
     }
@@ -68,7 +68,7 @@ struct ReviewSummaryView: View {
                 bulletSection(
                     header: InterviewCoachStrings.strengthsHeader.value(in: language),
                     bullets: score.strengths,
-                    tint: CivicaColors.accentTeal
+                    tint: CivicaColors.amberPrimary
                 )
 
                 bulletSection(

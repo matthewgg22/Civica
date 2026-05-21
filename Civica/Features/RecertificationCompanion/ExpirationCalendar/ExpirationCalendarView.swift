@@ -75,7 +75,7 @@ struct ExpirationCalendarView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: "checkmark.seal.fill")
-                    .foregroundStyle(CivicaColors.accentTeal)
+                    .foregroundStyle(CivicaColors.amberPrimary)
                 Text(RecertCompanionStrings.calendarEmptyState.value(in: language))
                     .font(CivicaTypography.body)
                     .foregroundStyle(CivicaColors.graphite)

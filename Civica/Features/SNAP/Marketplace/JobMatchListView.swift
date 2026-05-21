@@ -64,7 +64,7 @@ struct JobMatchListView: View {
                         .textCase(.uppercase)
                         .kerning(1.2)
                     Capsule()
-                        .fill(classOn[i] ? CivicaColors.accentTeal : Color.clear)
+                        .fill(classOn[i] ? CivicaColors.amberPrimary : Color.clear)
                         .frame(width: 18, height: 2)
                 }
                 .frame(maxWidth: .infinity)
@@ -94,11 +94,11 @@ struct JobMatchListView: View {
             // Info dot
             ZStack {
                 Circle()
-                    .strokeBorder(CivicaColors.accentTeal, lineWidth: 1)
+                    .strokeBorder(CivicaColors.amberPrimary, lineWidth: 1)
                     .frame(width: 16, height: 16)
                 Text("i")
                     .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(CivicaColors.accentTeal)
+                    .foregroundStyle(CivicaColors.amberPrimary)
             }
             Spacer()
         }
@@ -121,13 +121,13 @@ struct JobMatchListView: View {
         HStack(spacing: CivicaSpacing.xl) {
             Button("Show more", action: onShowMore)
                 .font(CivicaTypography.body)
-                .foregroundStyle(CivicaColors.accentTeal)
+                .foregroundStyle(CivicaColors.amberPrimary)
             Rectangle()
                 .fill(CivicaColors.hairline)
                 .frame(width: 1, height: 14)
             Button("Filter", action: onFilter)
                 .font(CivicaTypography.body)
-                .foregroundStyle(CivicaColors.accentTeal)
+                .foregroundStyle(CivicaColors.amberPrimary)
         }
         .padding(CivicaSpacing.xl)
         .frame(maxWidth: .infinity)

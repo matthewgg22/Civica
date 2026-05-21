@@ -146,7 +146,7 @@ struct FindHelpLocationDetailSheet: View {
     private var chipStrip: some View {
         if location.resolvedRecordKind == .ebtRetailer {
             HStack(spacing: CivicaSpacing.xs) {
-                chip(FindHelpStrings.chipEbt.value(in: language), background: CivicaColors.accentTeal)
+                chip(FindHelpStrings.chipEbt.value(in: language), background: CivicaColors.amberPrimary)
                 if location.acceptsWic == true {
                     chip(FindHelpStrings.chipWic.value(in: language), background: CivicaColors.indigoStatus)
                 }

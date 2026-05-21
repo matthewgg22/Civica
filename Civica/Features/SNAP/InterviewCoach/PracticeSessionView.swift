@@ -196,7 +196,7 @@ struct PracticeSessionView: View {
                 .padding(.vertical, 2)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                        .fill(CivicaColors.tealSurface)
+                        .fill(CivicaColors.amberSurface)
                 )
             VStack(alignment: .leading, spacing: 0) {
                 Text("\(viewModel.context.stateName) — \(viewModel.context.scenario.localizedLabel(in: language))")

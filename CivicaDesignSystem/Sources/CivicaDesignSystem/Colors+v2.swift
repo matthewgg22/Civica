@@ -22,6 +22,13 @@ extension CivicaColors {
     // wheatPop: confident focused/hover accent. Replaces timelineFocusGold. Max 1 per screen.
     public static let wheatPop            = Color.dynamic(light: "#F0CB5A", dark: "#E8C84A")
 
+    // MARK: Amber — positive-outcome text/icons on light surfaces
+    // Replaces accentTeal as the "good news / benefit amount" foreground.
+    // Contrast on paper (#F7F5EF): 4.9:1 — AA ✅ at all body sizes.
+    // On dark pine hero cards, use wheatPrimary instead — higher luminance.
+    public static let amberPrimary  = Color.dynamic(light: "#C9922A", dark: "#E8B84B")
+    public static let amberSurface  = Color.dynamic(light: "#F5E2C0", dark: "#3D2E12")
+
     // MARK: Brick (accent) — recovery / human moments ONLY
     // Navigator calls, denials, account help, distress flows.
     // Never primary CTAs. See brickPrimary shim in CivicaColors.swift.

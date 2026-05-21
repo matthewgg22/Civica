@@ -104,7 +104,7 @@ struct SNAPErrorRiskBadge: View {
         switch tier {
         case .high:       return CivicaColors.pinePrimary
         case .medium:     return CivicaColors.warningAmber
-        case .low:        return CivicaColors.teal
+        case .low:        return CivicaColors.amberPrimary
         case .incomplete: return CivicaColors.graphite
         }
     }
@@ -121,7 +121,7 @@ struct SNAPErrorRiskBadge: View {
         switch tier {
         case .high:       return CivicaColors.pinePrimary.opacity(0.06)
         case .medium:     return CivicaColors.warningAmber.opacity(0.06)
-        case .low:        return CivicaColors.tealSurface
+        case .low:        return CivicaColors.amberSurface
         case .incomplete: return CivicaColors.surfacePrimary
         }
     }
@@ -130,7 +130,7 @@ struct SNAPErrorRiskBadge: View {
         switch tier {
         case .high:       return CivicaColors.pinePrimary.opacity(0.25)
         case .medium:     return CivicaColors.warningAmber.opacity(0.25)
-        case .low:        return CivicaColors.teal.opacity(0.25)
+        case .low:        return CivicaColors.amberPrimary.opacity(0.25)
         case .incomplete: return CivicaColors.hairline
         }
     }

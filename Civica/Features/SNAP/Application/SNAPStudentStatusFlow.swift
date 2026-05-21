@@ -268,7 +268,7 @@ struct SNAPStudentStatusFlowView: View {
         HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Image(systemName: "checkmark.seal.fill")
                 .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(CivicaColors.accentTeal)
+                .foregroundStyle(CivicaColors.amberPrimary)
                 .imageScale(.large)
                 .padding(.top, 2)
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
@@ -283,7 +283,7 @@ struct SNAPStudentStatusFlowView: View {
         }
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(CivicaColors.tealSurface)
+        .background(CivicaColors.amberSurface)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
         .transition(.opacity.combined(with: .move(edge: .top))
             .animation(.easeInOut(duration: 0.2)))

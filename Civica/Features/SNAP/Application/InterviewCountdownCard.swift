@@ -57,7 +57,7 @@ struct InterviewCountdownCard: View {
         }
         .padding(CivicaSpacing.lg)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(CivicaColors.brickSurface)
+        .background(CivicaColors.amberSurface)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
         .onAppear { now = Date() }
         .onChange(of: scenePhase) { _, newPhase in

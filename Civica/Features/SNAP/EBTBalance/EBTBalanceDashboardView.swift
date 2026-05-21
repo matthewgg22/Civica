@@ -32,6 +32,21 @@ struct EBTBalanceDashboardView: View {
             if let account = store.account {
                 let insights = EBTBalanceInsights(account: account)
                 VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+                    // Status banners sit above the dark hero card so they
+                    // can use their standard light-background styling.
+                    if let landed = depositLanded {
+                        banner(
+                            icon: "checkmark.circle.fill",
+                            text: EBTBalanceStrings.depositLandedBanner(amount: plainMoney(landed), language: language),
+                            tint: CivicaColors.amberPrimary
+                        )
+                    }
+                    if store.isCardLocked {
+                        banner(icon: "lock.fill", text: EBTBalanceStrings.lockedBannerText.value(in: language))
+                    }
+                    if insights.isLowBalance {
+                        banner(icon: "exclamationmark.circle.fill", text: EBTBalanceStrings.lowBalanceBanner.value(in: language))
+                    }
                     heroCard(account, insights: insights)
                     spendingInsightsCard(account, insights: insights)
                     if !account.transactions.isEmpty {
@@ -95,59 +110,88 @@ struct EBTBalanceDashboardView: View {
     }
 
     // MARK: - Hero balance card
+    //
+    // Dark pine background, wheat-gold balance amount, velocity bar.
+    // Status banners (locked, low-balance, deposit landed) are rendered
+    // above the card in the scroll view so they use standard light-bg
+    // styling rather than fighting the dark surface.
 
     private func heroCard(_ account: EBTAccount, insights: EBTBalanceInsights) -> some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
-            if let landed = depositLanded {
-                banner(
-                    icon: "checkmark.circle.fill",
-                    text: EBTBalanceStrings.depositLandedBanner(amount: plainMoney(landed), language: language),
-                    tint: CivicaColors.accentTeal
-                )
-            }
-            if store.isCardLocked {
-                banner(icon: "lock.fill", text: EBTBalanceStrings.lockedBannerText.value(in: language))
-            }
-            if insights.isLowBalance {
-                banner(icon: "exclamationmark.circle.fill", text: EBTBalanceStrings.lowBalanceBanner.value(in: language))
-            }
-
             Text(EBTBalanceStrings.balanceEyebrow.value(in: language))
                 .font(CivicaTypography.captionStrong)
-                .foregroundStyle(CivicaColors.graphite)
+                .foregroundStyle(Color.white.opacity(0.55))
                 .textCase(.uppercase)
                 .kerning(1.2)
 
             HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                 CivicaMoney(amount: account.foodBalance, font: CivicaTypography.pageTitle)
-                    .foregroundStyle(CivicaColors.ink)
+                    .foregroundStyle(CivicaColors.wheatPrimary)
                     .contentTransition(.numericText())
+                    .animation(.spring(response: 0.25, dampingFraction: 0.8), value: account.foodBalance)
                 Text(EBTBalanceStrings.balanceRemainingSuffix.value(in: language))
                     .font(CivicaTypography.subhead)
-                    .foregroundStyle(CivicaColors.graphite)
+                    .foregroundStyle(Color.white.opacity(0.55))
+            }
+
+            // Spending velocity bar — shows how far through this month's
+            // benefit the user has spent. 3pt track; wheat-gold fill.
+            if insights.spentPercent > 0 {
+                velocityBar(insights, account: account)
             }
 
             Text(lastUpdatedLine(account))
                 .font(CivicaTypography.footnote)
-                .foregroundStyle(CivicaColors.graphite)
+                .foregroundStyle(Color.white.opacity(0.45))
 
             if let deposit = account.nextDeposit {
                 Divider()
-                    .overlay(CivicaColors.hairline)
+                    .overlay(Color.white.opacity(0.15))
                     .padding(.vertical, CivicaSpacing.xs)
                 nextDepositRow(deposit)
             }
         }
         .padding(CivicaSpacing.lg)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(CivicaColors.surfacePrimary)
+        .background(CivicaColors.pinePrimary)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
-        .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.card)
-                .strokeBorder(CivicaColors.hairline, lineWidth: 1)
-        )
         .animation(.easeInOut(duration: 0.25), value: store.isCardLocked)
         .animation(.easeInOut(duration: 0.25), value: depositLanded)
+    }
+
+    /// 3pt progress bar showing spending velocity for the current month.
+    private func velocityBar(_ insights: EBTBalanceInsights, account: EBTAccount) -> some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(Color.white.opacity(0.15))
+                        .frame(height: 3)
+                    Capsule()
+                        .fill(CivicaColors.wheatPrimary.opacity(0.85))
+                        .frame(width: geo.size.width * insights.spentPercent, height: 3)
+                        .animation(CivicaAnimation.standard, value: insights.spentPercent)
+                }
+            }
+            .frame(height: 3)
+            HStack {
+                Text(EBTBalanceStrings.velocitySpent(
+                    amount: plainMoney(insights.spentThisMonth),
+                    language: language
+                ))
+                .font(CivicaTypography.caption)
+                .foregroundStyle(Color.white.opacity(0.45))
+                Spacer(minLength: CivicaSpacing.sm)
+                if let deposit = account.nextDeposit {
+                    Text(EBTBalanceStrings.nextDepositTiming(
+                        days: daysUntil(deposit.expectedDate),
+                        language: language
+                    ))
+                    .font(CivicaTypography.caption)
+                    .foregroundStyle(Color.white.opacity(0.45))
+                }
+            }
+        }
     }
 
     private func banner(icon: String, text: String, tint: Color = CivicaColors.pinePrimary) -> some View {
@@ -172,16 +216,16 @@ struct EBTBalanceDashboardView: View {
         HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
             Text(EBTBalanceStrings.nextDepositLabel.value(in: language))
                 .font(CivicaTypography.subhead)
-                .foregroundStyle(CivicaColors.ink)
+                .foregroundStyle(Color.white.opacity(0.70))
             Spacer(minLength: CivicaSpacing.sm)
             CivicaMoney(amount: deposit.amount, font: CivicaTypography.subheadStrong)
-                .foregroundStyle(CivicaColors.accentTeal)
+                .foregroundStyle(CivicaColors.wheatPrimary)
             Text("· " + EBTBalanceStrings.nextDepositTiming(
                 days: daysUntil(deposit.expectedDate),
                 language: language
             ))
             .font(CivicaTypography.footnote)
-            .foregroundStyle(CivicaColors.graphite)
+            .foregroundStyle(Color.white.opacity(0.50))
         }
     }
 
@@ -292,7 +336,7 @@ struct EBTBalanceDashboardView: View {
     // deposits get a distinct down-arrow instead of a monogram.
     @ViewBuilder
     private func transactionAvatar(_ transaction: EBTTransaction) -> some View {
-        let tint = transaction.isDeposit ? CivicaColors.wheatPrimary : CivicaColors.brickAccent
+        let tint = transaction.isDeposit ? CivicaColors.amberPrimary : CivicaColors.brickAccent
         ZStack {
             Circle().fill(tint.opacity(0.12))
             if transaction.isDeposit {
@@ -317,7 +361,7 @@ struct EBTBalanceDashboardView: View {
                 CivicaMoney(amount: transaction.amount, font: CivicaTypography.subheadStrong)
             }
             .font(CivicaTypography.subheadStrong)
-            .foregroundStyle(CivicaColors.accentTeal)
+            .foregroundStyle(CivicaColors.amberPrimary)
         } else {
             // Negative amount — CivicaMoney renders the leading minus.
             CivicaMoney(amount: transaction.amount, font: CivicaTypography.subheadStrong)
@@ -331,7 +375,7 @@ struct EBTBalanceDashboardView: View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: "calendar")
                 .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(CivicaColors.accentTeal)
+                .foregroundStyle(CivicaColors.amberPrimary)
                 .frame(width: 28, alignment: .leading)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
@@ -483,7 +527,7 @@ struct EBTBalanceDashboardView: View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: icon)
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(CivicaColors.accentTeal)
+                .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 28, height: 28, alignment: .center)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {

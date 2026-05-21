@@ -78,7 +78,7 @@ struct FindHelpPermissionExplainerView: View {
         explainerCard(
             eyebrow: FindHelpStrings.permissionDoEyebrow.value(in: language),
             body: FindHelpStrings.permissionDoBody.value(in: language),
-            accent: CivicaColors.accentTeal
+            accent: CivicaColors.pinePrimary
         )
     }
 

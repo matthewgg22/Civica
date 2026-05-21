@@ -122,7 +122,7 @@ struct CivicaStatusTimeline: View {
         // Completed milestones land on teal — positive-outcome cue
         // per HANDOFF, instead of repeating the brand brick that
         // dominates every CTA on the same screens.
-        case .complete: return CivicaColors.accentTeal
+        case .complete: return CivicaColors.amberPrimary
         // Current step uses the wheatPop token
         // ("this is where you are right now") so the eye reads it
         // as a distinct "you are here" rather than a duplicate of
@@ -160,7 +160,7 @@ struct CivicaStatusTimeline: View {
         switch step.state {
         // Match the completed-marker tint so the connector line
         // visually "carries" completion forward.
-        case .complete: return CivicaColors.accentTeal
+        case .complete: return CivicaColors.amberPrimary
         case .current:  return CivicaColors.hairline
         case .future:   return CivicaColors.hairline
         case .blocked:  return CivicaColors.warningAmber.opacity(0.4)

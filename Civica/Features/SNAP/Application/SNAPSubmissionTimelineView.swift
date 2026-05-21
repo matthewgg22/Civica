@@ -119,7 +119,7 @@ struct SNAPSubmissionTimelineView: View {
                     // Done stations -> teal (positive past milestone),
                     // matching the dot. Upcoming + now lean graphite
                     // so the gold "now" dot stays the eye anchor.
-                    .foregroundStyle(station.state == .done ? CivicaColors.accentTeal : CivicaColors.graphite)
+                    .foregroundStyle(station.state == .done ? CivicaColors.amberPrimary : CivicaColors.graphite)
                     .textCase(.uppercase)
                     .kerning(1.2)
                 Text(station.title)
@@ -142,7 +142,7 @@ struct SNAPSubmissionTimelineView: View {
         // Done = positive past milestone -> teal
         case .done:
             Circle()
-                .fill(CivicaColors.accentTeal)
+                .fill(CivicaColors.amberPrimary)
                 .frame(width: 14, height: 14)
         // Now = "you are here right now" -> gold focus
         case .now:

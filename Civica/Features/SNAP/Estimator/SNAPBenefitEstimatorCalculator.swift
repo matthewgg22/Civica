@@ -28,11 +28,12 @@ import Foundation
 // in one place (FederalDefaultRules / MAStateRules) and propagate
 // here automatically.
 //
-// Today the rules engine is FederalDefaultRules — SUA returns nil
-// from the federal default, so paysUtilitiesSeparately collapses
-// to zero deduction. Threading MA-specific rules in (so MA users
-// get the MA SUA chart and BBCE gross test) is a follow-up that
-// also requires expanding the 5-question form.
+// The rules engine uses CAStateRules (launch state) so:
+//   (a) the utilities toggle produces a real $663 SUA deduction
+//       instead of silently collapsing to zero, and
+//   (b) the BBCE gross-income gate matches CalFresh (200% FPL).
+// When the state question moves earlier in the funnel, swap in
+// SNAPRulesRegistry.rules(for: capturedStateCode) here.
 //
 // All money math runs in Decimal (matches CivicaMoney + the existing
 // SNAPBenefitCalculationDetail model).
@@ -83,14 +84,15 @@ enum SNAPBenefitEstimatorCalculator {
     // limits, standard deduction, shelter cap, minimum benefit,
     // earned-income deduction rate) comes from the rules engine
     // selected below. This is the "single source of truth" the
-    // audit requires. Today the estimator entry runs through
-    // FederalDefaultRules regardless of the user's state because
-    // the estimator is top-of-funnel and the state isn't known
-    // yet. SNAPCoveragePolicy (states {"CA", "MA"} today) gates
-    // the deeper application flow once the state is captured. A
-    // follow-up commit can thread state-specific rules into the
-    // estimator once the state question moves earlier in the funnel.
-    static let rules: SNAPStateRuleEngine = FederalDefaultRules()
+    // audit requires.
+    //
+    // Using CAStateRules (launch state) so:
+    //   (a) the utilities toggle produces a real $663 SUA deduction
+    //       instead of silently collapsing to zero, and
+    //   (b) the BBCE gross-income gate matches CalFresh (200% FPL).
+    // When the state question moves earlier in the funnel, swap in
+    // SNAPRulesRegistry.rules(for: capturedStateCode) here.
+    static let rules: SNAPStateRuleEngine = CAStateRules()
 
     /// Stamped on the estimator outcome's audit footer. Threads the
     /// active rules-engine version so the estimator's provenance

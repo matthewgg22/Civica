@@ -36,6 +36,18 @@ struct EBTBalanceInsights {
             .reduce(Decimal(0)) { $0 + abs($1.amount) }
     }
 
+    /// Fraction of the estimated starting balance spent so far this month.
+    /// Drives the hero card velocity bar. Approximates the starting balance
+    /// as (current balance + spent this month); returns 0 when there's been
+    /// no spend yet (avoids division-by-zero on a fresh deposit day).
+    var spentPercent: Double {
+        let spent   = (spentThisMonth as NSDecimalNumber).doubleValue
+        let balance = (account.foodBalance as NSDecimalNumber).doubleValue
+        let total   = spent + balance
+        guard total > 0 else { return 0 }
+        return min(1.0, spent / total)
+    }
+
     /// Estimated date the balance runs out at the current average
     /// daily spend. nil when there isn't enough history to project.
     /// Math runs in Double — the projection is an estimate, so Decimal
