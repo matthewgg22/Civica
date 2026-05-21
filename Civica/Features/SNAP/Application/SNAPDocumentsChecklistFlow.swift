@@ -322,13 +322,13 @@ struct SNAPDocumentsChecklistFlowView: View {
         } label: {
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: hasCapture ? "checkmark.shield.fill" : "camera.fill")
-                    .foregroundStyle(hasCapture ? CivicaColors.accentTeal : CivicaColors.pinePrimary)
+                    .foregroundStyle(hasCapture ? CivicaColors.amberPrimary : CivicaColors.pinePrimary)
                     .accessibilityHidden(true)
                 Text(hasCapture
                     ? SNAPDocumentsChecklistStrings.photoSaved.value(in: language)
                     : SNAPDocumentsChecklistStrings.takePhoto.value(in: language))
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundStyle(hasCapture ? CivicaColors.accentTeal : CivicaColors.pinePrimary)
+                    .foregroundStyle(hasCapture ? CivicaColors.amberPrimary : CivicaColors.pinePrimary)
                 Spacer(minLength: 0)
             }
             .padding(.vertical, CivicaSpacing.xs)

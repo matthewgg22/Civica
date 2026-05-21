@@ -75,7 +75,7 @@ struct CivicaAITransparencyView: View {
             .padding(CivicaSpacing.lg)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .background(CivicaColors.tealSurface.ignoresSafeArea())
+        .background(CivicaColors.amberSurface.ignoresSafeArea())
         .navigationTitle(CivicaAITransparencyStrings.navTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

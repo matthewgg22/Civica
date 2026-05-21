@@ -53,7 +53,7 @@ struct SNAPCrossProgramTeaserView: View {
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 Image(systemName: "leaf.circle.fill")
                     .font(.system(size: 28))
-                    .foregroundStyle(CivicaColors.accentTeal)
+                    .foregroundStyle(CivicaColors.amberPrimary)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                     Text(SNAPCrossProgramTeaserStrings.wicTitle.value(in: language))

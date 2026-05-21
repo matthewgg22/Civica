@@ -63,7 +63,7 @@ struct QuestionBrowserView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                    .fill(CivicaColors.tealSurface.opacity(0.4))
+                    .fill(CivicaColors.amberSurface.opacity(0.4))
             )
     }
 
@@ -202,7 +202,7 @@ struct QuestionBrowserView: View {
                 HStack(spacing: CivicaSpacing.xs) {
                     Text(question.scenario.localizedLabel(in: language))
                         .font(CivicaTypography.captionStrong)
-                        .foregroundStyle(CivicaColors.accentTeal)
+                        .foregroundStyle(CivicaColors.amberPrimary)
                     Text("·")
                         .foregroundStyle(CivicaColors.graphite)
                     Text(question.category.localizedLabel(in: language))

@@ -23,7 +23,6 @@ struct CivicaRootView: View {
     /// the various "Open DTA Connect" / "Start an appeal" handlers
     /// so all three status surfaces share one sheet presentation.
     @State private var externalLink: URL?
-    @State private var splashReady = false
 
     /// True while the user is actively walking the recertification
     /// flow. Routes them through CivicaSNAPFlowView with the recert
@@ -62,11 +61,6 @@ struct CivicaRootView: View {
                     }
                 }
             }
-            SplashView(ready: splashReady)
-        }
-        .task(id: "splash") {
-            try? await Task.sleep(for: .milliseconds(200))
-            splashReady = true
         }
         // Government benefits enrollment carries a stronger trust signal
         // in light mode — pure-white/cream backgrounds with high-contrast

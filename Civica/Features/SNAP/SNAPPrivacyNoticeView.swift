@@ -90,7 +90,7 @@ struct SNAPPrivacyNoticeView: View {
             }
             .padding(CivicaSpacing.lg)
         }
-        .background(CivicaColors.tealSurface.ignoresSafeArea())
+        .background(CivicaColors.amberSurface.ignoresSafeArea())
         .navigationTitle(SNAPPrivacyNoticeNavStrings.navTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(isPresented: $continueToEligibility) {

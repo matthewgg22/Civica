@@ -377,7 +377,7 @@ struct SNAPDocumentUploadView: View {
         case .classifying:           return CivicaColors.warningAmber
         case .extracting:            return CivicaColors.warningAmber
         case .awaitingConfirmation:  return CivicaColors.warningAmber
-        case .confirmed:             return CivicaColors.accentTeal
+        case .confirmed:             return CivicaColors.amberPrimary
         case .rejected:              return CivicaColors.destructive
         }
     }

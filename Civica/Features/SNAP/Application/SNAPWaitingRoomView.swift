@@ -329,7 +329,7 @@ struct SNAPWaitingRoomView: View {
                     icon: "fork.knife",
                     title: SNAPStatusHomeStrings.findHelpFoodLinkTitle.value(in: language),
                     body: SNAPStatusHomeStrings.findHelpFoodLinkSubtitle.value(in: language),
-                    accent: CivicaColors.accentTeal
+                    accent: CivicaColors.pinePrimary
                 )
             }
             .buttonStyle(.plain)

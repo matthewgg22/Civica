@@ -90,7 +90,7 @@ struct SNAPReturningUserHomeView: View {
 
     private func verdictAccent(for status: SNAPEligibilityStatus) -> Color {
         switch status {
-        case .eligible, .eligibleWithConditions: return CivicaColors.accentTeal
+        case .eligible, .eligibleWithConditions: return CivicaColors.amberPrimary
         case .ineligible:                        return CivicaColors.destructive
         case .insufficientInformation:           return CivicaColors.warningAmber
         }
@@ -221,7 +221,7 @@ struct SNAPReturningUserHomeView: View {
     private var statusAccent: Color {
         switch statusStore.status {
         case .documentsRequested, .recertDue: return CivicaColors.warningAmber
-        case .decisionApproved: return CivicaColors.accentTeal
+        case .decisionApproved: return CivicaColors.amberPrimary
         case .decisionDenied: return CivicaColors.destructive
         case .submittedToState, .interviewScheduled, .interviewCompleted: return CivicaColors.pinePrimary
         default: return CivicaColors.pinePrimary

@@ -146,12 +146,15 @@ struct SNAPDecisionLeversView: View {
             HStack(alignment: .firstTextBaseline) {
                 Text(lever.title)
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundStyle(lever.isPrioritized ? CivicaColors.pinePrimary : CivicaColors.ink)
+                    // Prioritized levers use accentTeal (positive-outcome
+                    // informational emphasis). pinePrimary is reserved for
+                    // CTA buttons and links per the v2 palette rules.
+                    .foregroundStyle(lever.isPrioritized ? CivicaColors.amberPrimary : CivicaColors.ink)
                 Spacer(minLength: CivicaSpacing.sm)
                 if let estimate = lever.estimate {
                     Text(estimate)
                         .font(CivicaTypography.footnoteStrong.monospacedDigit())
-                        .foregroundStyle(lever.isPrioritized ? CivicaColors.pinePrimary : CivicaColors.graphite)
+                        .foregroundStyle(lever.isPrioritized ? CivicaColors.amberPrimary : CivicaColors.graphite)
                 }
             }
             Text(lever.body)
@@ -166,7 +169,7 @@ struct SNAPDecisionLeversView: View {
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card)
                 .strokeBorder(
-                    lever.isPrioritized ? CivicaColors.pinePrimary : CivicaColors.hairline,
+                    lever.isPrioritized ? CivicaColors.amberPrimary : CivicaColors.hairline,
                     lineWidth: lever.isPrioritized ? 2 : 1
                 )
         )
@@ -185,7 +188,7 @@ struct SNAPDecisionLeversView: View {
     private func thriftyPlanFooter(amount: Decimal) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Image(systemName: "basket.fill")
-                .foregroundStyle(CivicaColors.accentTeal)
+                .foregroundStyle(CivicaColors.amberPrimary)
                 .accessibilityHidden(true)
             Text(SNAPDecisionLeversStrings.thriftyFootnote.value(in: language))
                 .font(CivicaTypography.footnote)
@@ -193,7 +196,7 @@ struct SNAPDecisionLeversView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(CivicaSpacing.md)
-        .background(CivicaColors.accentTeal.opacity(0.08))
+        .background(CivicaColors.amberPrimary.opacity(0.08))
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
     }
 }
@@ -216,9 +219,13 @@ enum SNAPDecisionLeversStrings {
         "You have a child in the household but didn't report childcare costs. Daycare, after-school programs, or anything you pay out of pocket for child care is deductible — add a receipt next time and your benefit goes up.",
         es: "Tienes un menor en el hogar pero no reportaste costos de cuidado infantil. La guardería, programas extraescolares, o cualquier cosa que pagues de tu bolsillo por cuidado infantil es deducible — añade un recibo la próxima vez y tu beneficio aumenta."
     )
+    // The actual childcare-deduction impact depends on household size
+    // and net income — a hardcoded "$44/mo" was not computed from the
+    // rules engine and was misleading. Use "variable" like the medical
+    // lever so the displayed copy is always honest.
     static let childcareEstimate = CivicaText(
-        "+ up to $44/mo",
-        es: "+ hasta $44/mes"
+        "+ variable",
+        es: "+ variable"
     )
 
     // Personalized levers — medical (for elderly / disabled)
@@ -241,8 +248,8 @@ enum SNAPDecisionLeversStrings {
         es: "Renta o servicios más altos"
     )
     static let rentBody = CivicaText(
-        "If your rent or utility bill goes up, report it to DTA within 10 days. Your monthly award is recalculated.",
-        es: "Si tu renta o factura de servicios aumenta, repórtalo al DTA en 10 días. Tu beneficio mensual se recalcula."
+        "If your rent or utility bill goes up, report it to your benefits agency within 10 days. Your monthly award is recalculated.",
+        es: "Si tu renta o factura de servicios aumenta, repórtalo a tu agencia de beneficios en 10 días. Tu beneficio mensual se recalcula."
     )
 
     // Universal levers — income

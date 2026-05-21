@@ -161,7 +161,7 @@ struct SNAPNotificationPreviewView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             channelHeading(
                 icon: "message.fill",
-                accent: CivicaColors.accentTeal,
+                accent: CivicaColors.amberPrimary,
                 title: SNAPNotificationPreviewStrings.smsHeading.value(in: language)
             )
             ForEach(smsKinds) { kind in
@@ -247,7 +247,7 @@ struct SNAPNotificationPreviewView: View {
                 HStack(alignment: .top, spacing: CivicaSpacing.sm) {
                     Text("·")
                         .font(CivicaTypography.subheadStrong)
-                        .foregroundStyle(CivicaColors.accentTeal)
+                        .foregroundStyle(CivicaColors.amberPrimary)
                         .accessibilityHidden(true)
                     Text(rule)
                         .font(CivicaTypography.footnote)

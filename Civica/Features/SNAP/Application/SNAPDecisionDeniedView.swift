@@ -122,7 +122,7 @@ struct SNAPDecisionDeniedView: View {
                         icon: "fork.knife",
                         title: SNAPStatusHomeStrings.deniedFoodHelpTitle.value(in: language),
                         body: SNAPStatusHomeStrings.deniedFoodHelpBody.value(in: language),
-                        accent: CivicaColors.accentTeal,
+                        accent: CivicaColors.amberPrimary,
                         showChevron: true
                     )
                 }

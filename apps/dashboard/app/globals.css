@@ -13,27 +13,17 @@
   --color-wheat-pressed: #C9A046;
   --color-wheat-surface: #F7E89C;
 
-  /* Amber gold — positive-outcome signal (matches iOS amberPrimary).
-     Replaces old accentTeal wherever a "success / benefit / live" cue
-     was needed. Never use on dark backgrounds — use wheat there. */
-  --color-amber: #C9922A;
-  --color-amber-surface: #F5E2C0;
-
   /* Brick — error / overdue / danger states only */
   --color-brick: #9C3A24;
   --color-brick-pressed: #84311E;
-
-  /* Deprecated — kept so old inline hex references still resolve via
-     the token but new code should use --color-amber or --color-pine. */
-  --color-teal: #C9922A;
-  --color-amber-warm: #B5511E;
+  --color-teal: #2A6F66;
+  --color-amber: #B5511E;
   --color-indigo: #4F46A5;
   --color-error: #C84637;
 
-  /* Surfaces — 3-layer hierarchy: paper → surface → surface-secondary */
+  /* Surfaces */
   --color-paper: #F7F5EF;
   --color-surface: #FFFFFF;
-  --color-surface-secondary: #F0EEE6;
   --color-ink: #1A1714;
   --color-graphite: #5A544D;
   --color-muted: #6B655C;

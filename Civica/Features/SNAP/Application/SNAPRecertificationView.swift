@@ -131,7 +131,7 @@ struct SNAPRecertificationView: View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: "checkmark.circle")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(CivicaColors.accentTeal)
+                .foregroundStyle(CivicaColors.amberPrimary)
                 .frame(width: 22, alignment: .leading)
                 .padding(.top, 2)
                 .accessibilityHidden(true)

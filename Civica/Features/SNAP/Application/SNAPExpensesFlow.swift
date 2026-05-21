@@ -277,18 +277,18 @@ struct SNAPExpensesFlowView: View {
                         Spacer()
                         if viewModel.answers.sharedHousingOccupants == nil {
                             Image(systemName: "checkmark")
-                                .foregroundStyle(CivicaColors.teal)
+                                .foregroundStyle(CivicaColors.amberPrimary)
                         }
                     }
                     .padding(.horizontal, CivicaSpacing.lg)
                     .padding(.vertical, CivicaSpacing.md)
                     .background(viewModel.answers.sharedHousingOccupants == nil
-                        ? CivicaColors.tealSurface : CivicaColors.surfacePrimary)
+                        ? CivicaColors.amberSurface : CivicaColors.surfacePrimary)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
                     .overlay(RoundedRectangle(cornerRadius: CivicaRadius.control)
                         .strokeBorder(
                             viewModel.answers.sharedHousingOccupants == nil
-                                ? CivicaColors.teal : CivicaColors.hairline,
+                                ? CivicaColors.amberPrimary : CivicaColors.hairline,
                             lineWidth: viewModel.answers.sharedHousingOccupants == nil ? 2 : 1
                         ))
                 }
@@ -367,7 +367,7 @@ struct SNAPExpensesFlowView: View {
             HStack(spacing: CivicaSpacing.md) {
                 Image(systemName: isSelected ? "checkmark.square.fill" : "square")
                     .font(.system(size: 22))
-                    .foregroundStyle(isSelected ? CivicaColors.teal : CivicaColors.graphite)
+                    .foregroundStyle(isSelected ? CivicaColors.amberPrimary : CivicaColors.graphite)
                     .frame(width: 28)
                 Text(utilityType.displayName(in: language))
                     .font(CivicaTypography.body)
@@ -377,12 +377,12 @@ struct SNAPExpensesFlowView: View {
             }
             .padding(.horizontal, CivicaSpacing.lg)
             .padding(.vertical, CivicaSpacing.md)
-            .background(isSelected ? CivicaColors.tealSurface : CivicaColors.surfacePrimary)
+            .background(isSelected ? CivicaColors.amberSurface : CivicaColors.surfacePrimary)
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
             .overlay(
                 RoundedRectangle(cornerRadius: CivicaRadius.control)
                     .strokeBorder(
-                        isSelected ? CivicaColors.teal : CivicaColors.hairline,
+                        isSelected ? CivicaColors.amberPrimary : CivicaColors.hairline,
                         lineWidth: isSelected ? 2 : 1
                     )
             )

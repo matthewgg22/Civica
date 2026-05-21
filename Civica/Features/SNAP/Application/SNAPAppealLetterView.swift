@@ -124,7 +124,7 @@ struct SNAPAppealLetterView: View {
         case .ready:
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: "doc.text.fill")
-                    .foregroundStyle(CivicaColors.accentTeal)
+                    .foregroundStyle(CivicaColors.amberPrimary)
                     .accessibilityHidden(true)
                 Text(SNAPAppealLetterScreenStrings.ready.value(in: language))
                     .font(CivicaTypography.subheadStrong)
@@ -132,7 +132,7 @@ struct SNAPAppealLetterView: View {
             }
             .padding(CivicaSpacing.lg)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(CivicaColors.accentTeal.opacity(0.12))
+            .background(CivicaColors.amberPrimary.opacity(0.12))
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
         case .error(let message):
             VStack(alignment: .leading, spacing: CivicaSpacing.sm) {

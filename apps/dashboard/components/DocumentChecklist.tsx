@@ -319,7 +319,7 @@ function ItemRow({ item, isFirst, kindLabel, uploadedDocs, resolving, waiving, w
             <button
               onClick={() => onResolve(item.item_id)}
               disabled={isLoading}
-              className="px-4 py-1.5 text-[13px] font-semibold bg-teal text-white rounded-[3px] hover:opacity-90 disabled:opacity-50"
+              className="px-4 py-1.5 text-[13px] font-semibold bg-pine text-white rounded-[3px] hover:opacity-90 disabled:opacity-50"
             >
               {isLoading ? "Saving…" : "Confirm resolved"}
             </button>

@@ -45,7 +45,7 @@ struct FindHelpPeekSheet: View {
                     .frame(maxWidth: .infinity, minHeight: 48)
                     .background(
                         RoundedRectangle(cornerRadius: CivicaRadius.control)
-                            .fill(CivicaColors.accentTeal)
+                            .fill(CivicaColors.pinePrimary)
                     )
                 }
 
@@ -134,7 +134,7 @@ struct FindHelpPeekSheet: View {
     private var chipStrip: some View {
         if location.resolvedRecordKind == .ebtRetailer {
             HStack(spacing: CivicaSpacing.xs) {
-                chip(FindHelpStrings.chipEbt.value(in: language), background: CivicaColors.accentTeal)
+                chip(FindHelpStrings.chipEbt.value(in: language), background: CivicaColors.amberPrimary)
                 if location.acceptsWic == true {
                     chip(FindHelpStrings.chipWic.value(in: language), background: CivicaColors.indigoStatus)
                 }

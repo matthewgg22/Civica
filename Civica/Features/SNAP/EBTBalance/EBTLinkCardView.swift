@@ -60,7 +60,7 @@ struct EBTLinkCardView: View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: "lock.shield")
                 .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(CivicaColors.accentTeal)
+                .foregroundStyle(CivicaColors.amberPrimary)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(EBTBalanceStrings.linkSecurityEyebrow.value(in: language))

@@ -164,11 +164,11 @@ struct SNAPDecisionApprovedView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             HStack(spacing: CivicaSpacing.xs) {
                 Circle()
-                    .fill(CivicaColors.accentTeal)
+                    .fill(CivicaColors.amberPrimary)
                     .frame(width: 8, height: 8)
                 Text(SNAPDecisionApprovedStrings.approvedBadge.value(in: language))
                     .font(CivicaTypography.captionStrong)
-                    .foregroundStyle(CivicaColors.accentTeal)
+                    .foregroundStyle(CivicaColors.amberPrimary)
                     .textCase(.uppercase)
                     .kerning(1.2)
             }
@@ -259,7 +259,7 @@ struct SNAPDecisionApprovedView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(SNAPDecisionApprovedStrings.wicTitle.value(in: language))
                     .font(CivicaTypography.subheadStrong)
-                    .foregroundStyle(CivicaColors.accentTeal)
+                    .foregroundStyle(CivicaColors.amberPrimary)
                     .fixedSize(horizontal: false, vertical: true)
                 Text(SNAPDecisionApprovedStrings.wicBody.value(in: language))
                     .font(CivicaTypography.footnote)
@@ -272,7 +272,7 @@ struct SNAPDecisionApprovedView: View {
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
             .overlay(
                 RoundedRectangle(cornerRadius: CivicaRadius.card)
-                    .strokeBorder(CivicaColors.accentTeal, lineWidth: 1)
+                    .strokeBorder(CivicaColors.amberPrimary, lineWidth: 1)
             )
         }
         .buttonStyle(.plain)

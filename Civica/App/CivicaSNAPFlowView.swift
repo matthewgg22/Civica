@@ -156,7 +156,7 @@ struct CivicaSNAPFlowView: View {
             Spacer(minLength: 0)
         }
         .padding(CivicaSpacing.md)
-        .background(CivicaColors.brickSurface)
+        .background(CivicaColors.amberSurface)
         .overlay(alignment: .bottom) {
             Rectangle().fill(CivicaColors.hairline).frame(height: 1)
         }

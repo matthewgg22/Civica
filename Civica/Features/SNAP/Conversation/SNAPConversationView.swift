@@ -110,7 +110,7 @@ struct SNAPConversationView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             HStack {
                 Image(systemName: result.status == .eligible ? "checkmark.seal.fill" : "info.circle.fill")
-                    .foregroundColor(result.status == .eligible ? CivicaColors.accentTeal : CivicaColors.warningAmber)
+                    .foregroundColor(result.status == .eligible ? CivicaColors.amberPrimary : CivicaColors.warningAmber)
                     .accessibilityHidden(true)
                 Text(verdictHeadline(result))
                     .font(CivicaTypography.cardTitle)
