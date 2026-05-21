@@ -2,15 +2,15 @@
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
 
-  <rect width="1024" height="1024" fill="#F5F2EC"/>
+  <rect width="1024" height="1024" fill="#2D5A45"/>
 
-  <!-- Riso C glyph: back layer (deep brick, offset +25,+25), front layer (bright brick) -->
+  <!-- Riso C glyph: back layer (dark pine, offset +25,+25), front layer (white) -->
   <!-- Scale 1.45 from center (512,512) — user-approved size -->
   <g transform="translate(512 512) scale(1.45) translate(-512 -512)">
     <g transform="translate(25 25)">
-      <path d="M 657.656 313.280 A 210.000 276.000 0 1 0 657.656 710.720 L 574.784 710.720 A 144.000 220.800 0 1 1 574.784 313.280 Z" fill="#9C3A24"/>
+      <path d="M 657.656 313.280 A 210.000 276.000 0 1 0 657.656 710.720 L 574.784 710.720 A 144.000 220.800 0 1 1 574.784 313.280 Z" fill="#224636"/>
     </g>
-    <path d="M 657.656 313.280 A 210.000 276.000 0 1 0 657.656 710.720 L 574.784 710.720 A 144.000 220.800 0 1 1 574.784 313.280 Z" fill="#E54B3C"/>
+    <path d="M 657.656 313.280 A 210.000 276.000 0 1 0 657.656 710.720 L 574.784 710.720 A 144.000 220.800 0 1 1 574.784 313.280 Z" fill="#FFFFFF"/>
   </g>
 
 </svg>
