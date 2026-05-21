@@ -632,11 +632,8 @@ export default function RulesFrameworkPanel({
         <div className="text-right shrink-0">
           <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-semibold bg-pine-surface text-pine">
             <span className="w-1.5 h-1.5 rounded-full bg-current" />
-            {summary.gates} gates · {summary.calcSteps} calc steps · {summary.caOverlays} CA overlays · {summary.underEnrolled} under-enrolled · {summary.fiscalYear}
+            {summary.fiscalYear}
           </span>
-          <p className="text-[11px] text-muted font-mono tracking-wide mt-1.5">
-            source: packages/snap-calculator + packages/snap-rules
-          </p>
         </div>
       </div>
 
