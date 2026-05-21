@@ -40,9 +40,11 @@ const COHORT_META: Record<Cohort, { label: string; short: string; color: string;
   students: {
     label: "Working college students",
     short: "STU",
-    color: "#C9922A",
-    bg: "rgba(201,146,42,0.08)",
-    border: "rgba(201,146,42,0.30)",
+    // Teal — cohort identifier, intentionally distinct from amber/wheat
+    // which are reserved for status/attention roles (Live, Partial, etc.).
+    color: "#2A6F66",
+    bg: "rgba(42,111,102,0.08)",
+    border: "rgba(42,111,102,0.30)",
   },
   elderly: {
     label: "Elderly 60+",
@@ -505,7 +507,7 @@ function FlagshipStrip({ tools }: { tools: VerificationTool[] }) {
                 </p>
                 {tool && (
                   <span
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm text-[10px] font-semibold mt-2"
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold mt-2"
                     style={{ color: tier.color, background: tier.bg }}
                   >
                     <span className="w-1 h-1 rounded-full" style={{ background: tier.color }} />
@@ -619,7 +621,7 @@ function CohortHeaderStrip() {
           return (
             <div
               key={c.cohort}
-              className="rounded-[3px] p-4"
+              className="rounded-[4px] p-4"
               style={{ background: m.bg, borderLeft: `4px solid ${m.color}` }}
             >
               <div className="flex items-baseline gap-2 mb-3 flex-wrap">
@@ -644,7 +646,7 @@ function CohortHeaderStrip() {
 
               <div className="flex items-baseline gap-4 mb-3 pb-3 border-b" style={{ borderColor: m.border }}>
                 <div>
-                  <p className="text-[28px] font-bold tabular-nums leading-none" style={{ color: m.color }}>
+                  <p className="text-[32px] font-bold tabular-nums leading-none" style={{ color: m.color }}>
                     {c.gap}
                   </p>
                   <p className="text-[10px] text-graphite mt-0.5">{c.gapPct}</p>
@@ -696,7 +698,7 @@ function DistributionMath() {
       <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-muted mb-3">
         Distribution math · addressable cohort by channel at full California coverage
       </p>
-      <div className="rounded-[3px] border border-hairline bg-paper p-4">
+      <div className="rounded-[4px] border border-hairline bg-paper p-4">
         <table className="w-full text-[12px]">
           <thead>
             <tr className="border-b border-hairline">
@@ -764,12 +766,12 @@ function MonetizationFramework() {
       <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-muted mb-3">
         How Civica gets paid · plain-English value chain
       </p>
-      <div className="rounded-[3px] border border-hairline bg-paper p-5">
+      <div className="rounded-[4px] border border-hairline bg-paper p-5">
         <div className="space-y-4">
           {/* Step 1 — Household */}
-          <div className="flex items-start gap-4">
-            <div className="w-9 h-9 rounded-full bg-amber/10 border border-amber/30 flex items-center justify-center flex-shrink-0">
-              <span className="text-[11px] font-bold text-amber">1</span>
+          <div className="flex items-start gap-3.5">
+            <div className="w-7 h-7 rounded-full bg-paper border border-hairline flex items-center justify-center flex-shrink-0 font-mono text-[10px] font-semibold text-graphite tabular-nums">
+              01
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[13px] font-semibold text-ink leading-tight">
@@ -784,9 +786,9 @@ function MonetizationFramework() {
           </div>
 
           {/* Step 2 — Org */}
-          <div className="flex items-start gap-4">
-            <div className="w-9 h-9 rounded-full bg-amber/10 border border-amber/30 flex items-center justify-center flex-shrink-0">
-              <span className="text-[11px] font-bold text-amber">2</span>
+          <div className="flex items-start gap-3.5">
+            <div className="w-7 h-7 rounded-full bg-paper border border-hairline flex items-center justify-center flex-shrink-0 font-mono text-[10px] font-semibold text-graphite tabular-nums">
+              02
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[13px] font-semibold text-ink leading-tight">
@@ -801,9 +803,9 @@ function MonetizationFramework() {
           </div>
 
           {/* Step 3 — Civica gets paid */}
-          <div className="flex items-start gap-4">
-            <div className="w-9 h-9 rounded-full bg-[rgba(92,31,17,0.10)] border border-[rgba(92,31,17,0.30)] flex items-center justify-center flex-shrink-0">
-              <span className="text-[11px] font-bold text-[#5C1F11]">3</span>
+          <div className="flex items-start gap-3.5">
+            <div className="w-7 h-7 rounded-full bg-paper border border-hairline flex items-center justify-center flex-shrink-0 font-mono text-[10px] font-semibold text-graphite tabular-nums">
+              03
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[13px] font-semibold text-ink leading-tight">
@@ -895,7 +897,7 @@ export default function VerificationStackPanel({
   return (
     <section
       aria-labelledby="verification-stack-title"
-      className="bg-surface border border-hairline border-t-2 border-t-pine rounded-[4px] p-7"
+      className="bg-surface border border-hairline border-t-2 border-t-pine-surface rounded-[4px] p-7"
     >
       <div className="flex items-start justify-between gap-6 mb-5 flex-wrap">
         <div>
@@ -915,7 +917,7 @@ export default function VerificationStackPanel({
           </p>
         </div>
         <div className="text-right shrink-0">
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-semibold bg-amber/10 text-amber">
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-semibold bg-pine-surface text-pine">
             <span className="w-1.5 h-1.5 rounded-full bg-current" />
             {summary.liveTools} tools live · {summary.strongOrModerate} Strong or Moderate · {summary.recertTools} for renewal
           </span>

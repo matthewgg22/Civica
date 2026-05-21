@@ -129,7 +129,7 @@ export default function CoverageMapPanel() {
   return (
     <section
       aria-labelledby="audit-simulation-title"
-      className="bg-surface border border-hairline border-t-2 border-t-pine rounded-[4px] p-7"
+      className="bg-surface border border-hairline border-t-2 border-t-pine-surface rounded-[4px] p-7"
     >
       {/* Header */}
       <div className="mb-5">
@@ -163,7 +163,7 @@ export default function CoverageMapPanel() {
         {/* Layer 1 — top-line stats */}
         <div className="grid grid-cols-3 gap-6 mb-6 pb-5 border-b border-hairline">
           <div>
-            <p className="text-[34px] font-bold text-ink tabular-nums leading-none">
+            <p className="text-[32px] font-bold text-ink tabular-nums leading-none">
               $112B
             </p>
             <p className="text-[11px] text-graphite mt-1.5 leading-snug">
@@ -171,7 +171,7 @@ export default function CoverageMapPanel() {
             </p>
           </div>
           <div>
-            <p className="text-[34px] font-bold text-ink tabular-nums leading-none">
+            <p className="text-[32px] font-bold text-ink tabular-nums leading-none">
               41M
             </p>
             <p className="text-[11px] text-graphite mt-1.5 leading-snug">
@@ -179,7 +179,7 @@ export default function CoverageMapPanel() {
             </p>
           </div>
           <div>
-            <p className="text-[34px] font-bold text-[#5C1F11] tabular-nums leading-none">
+            <p className="text-[32px] font-bold text-[#5C1F11] tabular-nums leading-none">
               $13B
             </p>
             <p className="text-[11px] text-graphite mt-1.5 leading-snug">
@@ -325,7 +325,7 @@ export default function CoverageMapPanel() {
                 "Wrong routing into the fast-track pathway (TANF / SSI categorical eligibility), or a miscellaneous error that doesn't fit the four big categories above.",
             },
           ].map((g) => (
-            <div key={g.tag} className="border border-hairline rounded-[3px] p-3 bg-surface">
+            <div key={g.tag} className="border border-hairline rounded-[4px] p-3 bg-surface">
               <div className="flex items-baseline justify-between gap-2 mb-1">
                 <p className="text-[12px] font-semibold text-ink leading-snug">
                   {g.tag}
@@ -577,7 +577,7 @@ export default function CoverageMapPanel() {
           <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-[#5C1F11]">
             Dominant flow
           </p>
-          <p className="text-[28px] font-bold text-[#5C1F11] tabular-nums leading-none mt-0.5">
+          <p className="text-[32px] font-bold text-[#5C1F11] tabular-nums leading-none mt-0.5">
             ~{HEADLINE_TAKEAWAY.shareOfErrorVolume}%
           </p>
           <p className="text-[10px] text-graphite mt-0.5">of all errored cases</p>

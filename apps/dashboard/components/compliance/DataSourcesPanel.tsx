@@ -5,9 +5,9 @@
 import type { DataSourceStatus, PublicDataSource } from "../../lib/analytics/obbba";
 
 const STATUS_META: Record<DataSourceStatus, { color: string; bg: string }> = {
-  Live:            { color: "#C9922A", bg: "rgba(201,146,42,0.10)" },
+  Live:            { color: "#2D5A45", bg: "rgba(45,90,69,0.10)" },   // pine — operational/active
   Static:          { color: "#5A544D", bg: "rgba(90,84,77,0.10)" },
-  "Planned FOIA":  { color: "#9A5A14", bg: "rgba(154,90,20,0.10)" },
+  "Planned FOIA":  { color: "#9A5A14", bg: "rgba(154,90,20,0.10)" }, // amber-brown — pending/cautionary (correct)
 };
 
 export default function DataSourcesPanel({
@@ -18,7 +18,7 @@ export default function DataSourcesPanel({
   return (
     <section
       aria-labelledby="data-sources-title"
-      className="bg-surface border border-hairline rounded-[4px] p-7"
+      className="bg-surface border border-hairline border-t-2 border-t-pine-surface rounded-[4px] p-7"
     >
       <div className="flex items-start justify-between gap-6 mb-5 flex-wrap">
         <div>

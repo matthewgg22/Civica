@@ -11,6 +11,13 @@
  *   standard → §10102, §10108 — 3-zone layout
  *   posture  → shipped / internal items — collapsed chips
  *
+ * INTENTIONAL VARIANT (vs P1/P4/P5): rows use inline `§10102`-style mono
+ * citations in place of the standard numbered "01"/"02" circles used in the
+ * other pillars. The §-labels carry actual information (which CFR section /
+ * OBBBA provision); numbered circles do not. This pillar's row-enumeration
+ * earns the asymmetry — do not "fix" it for visual consistency. Documented
+ * in the cross-pillar design audit, 2026-05-20.
+ *
  * Data: `lib/analytics/obbba.ts`.
  */
 import type {
@@ -80,7 +87,7 @@ function HeroCard({ p }: { p: ObbbaProvision }) {
         <div className="flex items-center gap-2 shrink-0">
           <StakeholderChips stakeholders={p.stakeholders} />
           <span
-            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[10px] font-semibold whitespace-nowrap"
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold whitespace-nowrap"
             style={{ color: statusMeta.color, background: statusMeta.bg }}
           >
             <span className="w-1 h-1 rounded-full" style={{ background: statusMeta.color }} />
@@ -97,7 +104,7 @@ function HeroCard({ p }: { p: ObbbaProvision }) {
         </h4>
 
         {/* Number — sized to support the headline, not overpower it */}
-        <p className="text-[40px] font-bold text-[#5C1F11] tabular-nums leading-none mb-4">
+        <p className="text-[44px] font-bold text-[#5C1F11] tabular-nums leading-none mb-4">
           {p.heroNumber}
         </p>
 
@@ -133,7 +140,7 @@ function HeroCard({ p }: { p: ObbbaProvision }) {
             <span className="group-open:hidden">+ full analysis · posture · sources</span>
             <span className="hidden group-open:inline">− collapse</span>
           </summary>
-          <div className="mt-3 pt-3 border-t border-hairline/60 space-y-2.5">
+          <div className="mt-3 pt-3 border-t border-hairline/50 space-y-2.5">
             <p className="text-[12px] text-graphite leading-relaxed">
               <span className="text-[9px] uppercase tracking-[0.12em] font-semibold mr-1.5" style={{ color: "#9A5A14" }}>Full risk</span>
               {p.exposure}
@@ -212,7 +219,7 @@ function ProvisionRow({ p }: { p: ObbbaProvision }) {
           <div className="flex items-center gap-2 shrink-0">
             <StakeholderChips stakeholders={p.stakeholders} />
             <span
-              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[10px] font-semibold whitespace-nowrap"
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold whitespace-nowrap"
               style={{ color: statusMeta.color, background: statusMeta.bg }}
             >
               <span className="w-1 h-1 rounded-full" style={{ background: statusMeta.color }} />
@@ -240,7 +247,7 @@ function ProvisionRow({ p }: { p: ObbbaProvision }) {
             <span className="group-open:hidden">+ if wrong · if right · posture</span>
             <span className="hidden group-open:inline">− collapse</span>
           </summary>
-          <div className="mt-3 pt-3 border-t border-hairline/60 space-y-2">
+          <div className="mt-3 pt-3 border-t border-hairline/50 space-y-2">
             <p className="text-[12px] text-graphite leading-relaxed">
               <span className="text-[9px] uppercase tracking-[0.12em] font-semibold mr-1.5" style={{ color: "#9A5A14" }}>If wrong</span>
               {p.exposure}
@@ -280,7 +287,7 @@ export default function ObbbaReadinessPanel({
   return (
     <section
       aria-labelledby="obbba-readiness-title"
-      className="bg-surface border border-hairline border-t-2 border-t-pine rounded-[4px] p-7"
+      className="bg-surface border border-hairline border-t-2 border-t-pine-surface rounded-[4px] p-7"
     >
       <div className="flex items-start justify-between gap-6 mb-5 flex-wrap">
         <div>

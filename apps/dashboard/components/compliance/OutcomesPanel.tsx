@@ -19,9 +19,9 @@ import type {
 // Tokens
 // ---------------------------------------------------------------------------
 
-const CIVICA_COLOR = "#2D5A45";     // pine — Civica bars + hero numbers
+const CIVICA_COLOR = "#2A6F66";     // teal — Civica bars + hero numbers (Pillar 5 is the "wins" closing argument)
 const BASELINE_COLOR = "#8E8579";
-const DELTA_GOOD_COLOR = "#2D5A45"; // pine — positive delta callouts
+const DELTA_GOOD_COLOR = "#2A6F66"; // teal — positive delta callouts
 
 const SOURCE_META: Record<OutcomeSourceKind, { label: string; color: string; bg: string }> = {
   live:     { label: "live cohort",         color: "#C9922A", bg: "rgba(201,146,42,0.10)" },
@@ -140,7 +140,7 @@ function HeroScoreboard({ rows }: { rows: OutcomeRow[] }) {
 
             {/* Delta bar */}
             {hasNumeric && (
-              <div className="mt-4 pt-3 border-t border-hairline/60">
+              <div className="mt-4 pt-3 border-t border-hairline/50">
                 <DeltaBar
                   civicaNumeric={r.civicaNumeric as number}
                   baselineNumeric={r.baselineNumeric as number}
@@ -181,7 +181,7 @@ function ValueOrPending({
     const meta = SOURCE_META[source];
     return (
       <span
-        className="inline-block px-2 py-0.5 rounded-sm text-[10px] font-semibold uppercase tracking-wider"
+        className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider"
         style={{ color: meta.color, background: meta.bg }}
       >
         {meta.label}
@@ -191,7 +191,7 @@ function ValueOrPending({
   return (
     <span
       className={`text-[14px] tabular-nums font-semibold ${
-        source === "live" ? "text-amber" : "text-graphite"
+        source === "live" ? "text-pine" : "text-graphite"
       }`}
     >
       {value}
@@ -228,7 +228,7 @@ function EffectIsolationCard({ rows }: { rows: EffectIsolationRow[] }) {
           </p>
         </div>
         <span
-          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm text-[10px] font-semibold tracking-wide whitespace-nowrap"
+          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide whitespace-nowrap"
           style={{ color: "#C9922A", background: "rgba(201,146,42,0.10)" }}
         >
           <span className="w-1 h-1 rounded-full" style={{ background: "#C9922A" }} />
@@ -243,7 +243,7 @@ function EffectIsolationCard({ rows }: { rows: EffectIsolationRow[] }) {
           return (
             <div
               key={r.step}
-              className="rounded-[3px] border border-hairline bg-paper p-4"
+              className="rounded-[4px] border border-hairline bg-paper p-4"
             >
               <div className="grid grid-cols-1 md:grid-cols-[180px_1fr_auto] gap-x-4 gap-y-2 items-start">
                 {/* Metric name */}
@@ -343,7 +343,7 @@ function FoiaSection({ outcomes }: { outcomes: FoiaPendingOutcome[] }) {
         {outcomes.map((o) => (
           <div
             key={o.step}
-            className="rounded-[3px] border border-hairline bg-paper p-4"
+            className="rounded-[4px] border border-hairline bg-paper p-4"
           >
             <div className="flex items-start gap-3 mb-2 flex-wrap">
               <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-[rgba(181,81,30,0.08)] border border-[rgba(181,81,30,0.30)] font-mono text-[10px] font-semibold text-[#B5511E] tabular-nums shrink-0">
@@ -358,7 +358,7 @@ function FoiaSection({ outcomes }: { outcomes: FoiaPendingOutcome[] }) {
                 </p>
               </div>
               <span
-                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[10px] font-semibold tracking-normal whitespace-nowrap"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-normal whitespace-nowrap"
                 style={{ color: "#B5511E", background: "rgba(181,81,30,0.10)" }}
               >
                 <span className="w-1 h-1 rounded-full" style={{ background: "#B5511E" }} />
@@ -422,7 +422,7 @@ export default function OutcomesPanel({
   return (
     <section
       aria-labelledby="outcomes-title"
-      className="bg-surface border border-hairline border-t-2 border-t-pine rounded-[4px] p-7"
+      className="bg-surface border border-hairline border-t-2 border-t-pine-surface rounded-[4px] p-7"
     >
       <div className="flex items-start justify-between gap-6 mb-6 flex-wrap">
         <div>
@@ -442,7 +442,7 @@ export default function OutcomesPanel({
           </p>
         </div>
         <div className="text-right shrink-0">
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-semibold bg-amber/10 text-amber">
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-semibold bg-pine-surface text-pine">
             <span className="w-1.5 h-1.5 rounded-full bg-current" />
             {summary.liveRows} live · {summary.foiaRows} FOIA-pending
           </span>
@@ -527,7 +527,7 @@ export default function OutcomesPanel({
 
               <div className="pt-0.5">
                 <span
-                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[10px] font-semibold tracking-normal whitespace-nowrap"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-normal whitespace-nowrap"
                   style={{ color: civicaMeta.color, background: civicaMeta.bg }}
                 >
                   <span className="w-1 h-1 rounded-full" style={{ background: civicaMeta.color }} />

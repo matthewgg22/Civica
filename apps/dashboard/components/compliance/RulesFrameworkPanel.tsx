@@ -200,7 +200,7 @@ function Subsection({
 
               <div className="pt-0.5">
                 <span
-                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[10px] font-semibold tracking-normal whitespace-nowrap"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-normal whitespace-nowrap"
                   style={{ color: statusMeta.color, background: statusMeta.bg }}
                 >
                   <span className="w-1 h-1 rounded-full" style={{ background: statusMeta.color }} />
@@ -454,36 +454,37 @@ function UnderEnrolledSection({
   return (
     <div>
       <div className="mb-4">
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-[#9A5A14] mb-1">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-1">
           Section D · applying the rules
         </p>
         <h4 className="text-[16px] font-semibold tracking-tight text-ink leading-tight">
-          Who qualifies under these rules but doesn&apos;t apply
+          Greenfield distribution targets — underenrolled populations where impact gets demonstrated
         </h4>
         <p className="text-[13px] text-graphite mt-1 leading-snug max-w-2xl">
-          The bars below show, for each population, how many US households
-          qualify under the rules above versus how many actually enrolled.
-          The amber gap is the gap. Tap any card under the chart for the
-          rule anchor and the human reason the gap exists.
+          Each bar is an addressable market. The amber gap is households that
+          qualify under the rules above but haven&apos;t enrolled — the raw
+          material for demonstrating enrollment impact at scale. Populations
+          with an identified partner channel show the distribution math in
+          the card.
         </p>
       </div>
 
-      {/* Hero — total expected un-enrolled across the four populations */}
+      {/* Hero — total expected un-enrolled across all populations */}
       <div className="bg-paper border-l-4 border-[#9A5A14] rounded-r-[3px] px-5 py-4 mb-5 grid grid-cols-1 md:grid-cols-[auto_auto_1fr] gap-x-8 gap-y-2 items-baseline">
         <div>
           <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-[#9A5A14]">
             Total expected un-enrolled
           </p>
-          <p className="text-[40px] font-bold text-[#9A5A14] tabular-nums leading-none mt-1">
+          <p className="text-[32px] font-bold text-[#9A5A14] tabular-nums leading-none mt-1">
             ~{totalGap.toFixed(1)}M
           </p>
           <p className="text-[10px] text-graphite mt-0.5">US households</p>
         </div>
         <div>
           <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted">
-            Share of the four eligible
+            Share of combined eligible
           </p>
-          <p className="text-[40px] font-bold text-ink tabular-nums leading-none mt-1">
+          <p className="text-[32px] font-bold text-ink tabular-nums leading-none mt-1">
             ~{totalGapPct}%
           </p>
           <p className="text-[10px] text-graphite mt-0.5">
@@ -493,7 +494,8 @@ function UnderEnrolledSection({
         <p className="text-[12px] text-graphite leading-snug md:max-w-md md:justify-self-end italic">
           Populations overlap (a working student may also be a working low-wage
           household), so the sum is illustrative rather than strictly additive
-          — the magnitude is the point.
+          — the magnitude is the point. Where a distribution channel exists, it
+          is shown in the expand drawer.
         </p>
       </div>
 
@@ -511,7 +513,7 @@ function UnderEnrolledSection({
             >
               <summary className="cursor-pointer list-none flex items-start gap-3">
                 <div className="shrink-0">
-                  <p className="text-[26px] font-bold text-[#9A5A14] tabular-nums leading-none">
+                  <p className="text-[32px] font-bold text-[#9A5A14] tabular-nums leading-none">
                     {gapMillions.toFixed(1)}M
                   </p>
                   <p className="text-[10px] text-muted uppercase tracking-wider mt-0.5">
@@ -544,6 +546,14 @@ function UnderEnrolledSection({
                   </span>
                   {p.whyTheyDontApply}
                 </p>
+                {p.distributionChannel && (
+                  <p className="text-[12px] leading-relaxed px-3 py-2 rounded-[3px]" style={{ background: "rgba(201,146,42,0.07)", color: "#7A5010" }}>
+                    <span className="text-[9px] uppercase tracking-[0.14em] font-semibold mr-2" style={{ color: "#C9922A" }}>
+                      Distribution channel
+                    </span>
+                    {p.distributionChannel}
+                  </p>
+                )}
                 <p className="font-mono text-[10px] tracking-wide text-muted leading-snug pt-1">
                   <span className="text-graphite font-semibold uppercase">rule anchor</span>
                   <span className="mx-2">·</span>
@@ -584,7 +594,7 @@ export default function RulesFrameworkPanel({
   return (
     <section
       aria-labelledby="rules-framework-title"
-      className="bg-surface border border-hairline border-t-2 border-t-pine rounded-[4px] p-7"
+      className="bg-surface border border-hairline border-t-2 border-t-pine-surface rounded-[4px] p-7"
     >
       <div className="flex items-start justify-between gap-6 mb-7 flex-wrap">
         <div>
@@ -607,7 +617,7 @@ export default function RulesFrameworkPanel({
           </p>
         </div>
         <div className="text-right shrink-0">
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-semibold bg-amber/10 text-amber">
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-semibold bg-pine-surface text-pine">
             <span className="w-1.5 h-1.5 rounded-full bg-current" />
             {summary.gates} gates · {summary.calcSteps} calc steps · {summary.caOverlays} CA overlays · {summary.underEnrolled} under-enrolled · {summary.fiscalYear}
           </span>
