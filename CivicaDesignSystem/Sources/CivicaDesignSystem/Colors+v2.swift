@@ -29,6 +29,7 @@ extension CivicaColors {
     public static let amberPrimary  = Color.dynamic(light: "#C9922A", dark: "#E8B84B")
     public static let amberSurface  = Color.dynamic(light: "#F5E2C0", dark: "#3D2E12")
 
+
     // MARK: Brick (accent) — recovery / human moments ONLY
     // Navigator calls, denials, account help, distress flows.
     // Never primary CTAs. See brickPrimary shim in CivicaColors.swift.

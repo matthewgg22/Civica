@@ -36,26 +36,28 @@ struct CivicaRootView: View {
     }
 
     var body: some View {
-        Group {
-            if hasCompletedOnboarding {
-                NavigationStack {
-                    rootSurface
-                }
-                .tint(CivicaColors.pinePrimary)
-                // Single shared status store for everything below the
-                // root. SNAPEligibilityIntroView writes the verdict +
-                // advances status; CivicaRootView's rootSurface
-                // re-routes on the change.
-                .environmentObject(statusStore)
-                .environmentObject(enrollmentAuth)
-                .sheet(item: $externalLink) { url in
-                    CivicaSafariSheet(url: url)
-                }
-            } else {
-                OnboardingFlowView { chosenLanguage in
-                    languageRaw = chosenLanguage.rawValue
-                    withAnimation(.easeInOut(duration: 0.32)) {
-                        hasCompletedOnboarding = true
+        ZStack {
+            Group {
+                if hasCompletedOnboarding {
+                    NavigationStack {
+                        rootSurface
+                    }
+                    .tint(CivicaColors.pinePrimary)
+                    // Single shared status store for everything below the
+                    // root. SNAPEligibilityIntroView writes the verdict +
+                    // advances status; CivicaRootView's rootSurface
+                    // re-routes on the change.
+                    .environmentObject(statusStore)
+                    .environmentObject(enrollmentAuth)
+                    .sheet(item: $externalLink) { url in
+                        CivicaSafariSheet(url: url)
+                    }
+                } else {
+                    OnboardingFlowView { chosenLanguage in
+                        languageRaw = chosenLanguage.rawValue
+                        withAnimation(.easeInOut(duration: 0.32)) {
+                            hasCompletedOnboarding = true
+                        }
                     }
                 }
             }
