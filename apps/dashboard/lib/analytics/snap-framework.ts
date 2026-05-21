@@ -260,10 +260,10 @@ const UNDER_ENROLLED: UnderEnrolledPopulation[] = [
     eligibleMillions: 3.5,
     enrolledMillions: 1.2,
     qualifiesBecause:
-      "Higher-ed students aged 18-49 enrolled at least half-time are restricted by default, but the federal exemption pathways are real and wide — working 20+ hours per week, federal or state work-study, caring for a young child, receiving TANF, or enrolling through a SNAP Employment & Training program. A working student on work-study with no parental support typically qualifies.",
+      "Working 20+ hrs/week, work-study, or caring for a young child exempts students from the enrollment restriction. A working student on federal work-study with no parental support typically qualifies.",
     ruleAnchors: ["Section A · gate 5 (student restriction + exemptions)", "Section B · steps 1-3 (income deductions)"],
     whyTheyDontApply:
-      "Most students assume that being a student — or having any parental support, or holding a part-time job — disqualifies them. Campus financial-aid offices rarely flag SNAP proactively, and the student exemption framework is one of the least-understood corners of the rules.",
+      "Students assume enrollment or a part-time job disqualifies them. Financial aid offices rarely flag SNAP; the exemption pathways are the least-understood corner of the rules.",
     sources: ["GAO-19-95 (Food Insecurity report)", "USDA FNS SNAP Student Eligibility Guidance"],
   },
   {
