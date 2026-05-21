@@ -192,8 +192,12 @@ function Subsection({
                   {n.figures}
                 </p>
                 <p className="mt-1.5 font-mono text-[10px] tracking-wide text-muted leading-snug">
-                  <span className="text-graphite">{n.authorities.join(" · ")}</span>
-                  <span className="mx-2 text-muted/50">·</span>
+                  {n.authorities.length > 0 && (
+                    <>
+                      <span className="text-graphite">{n.authorities.join(" · ")}</span>
+                      <span className="mx-2 text-muted/50">·</span>
+                    </>
+                  )}
                   <span className="break-all">{n.source}</span>
                 </p>
               </div>
@@ -551,22 +555,6 @@ function UnderEnrolledSection({
               </summary>
 
               <div className="mt-4 pt-3 border-t border-hairline/60 space-y-2.5">
-                {p.distributionMath && (
-                  <div className="px-3 py-2.5 rounded-[3px] space-y-1" style={{ background: "rgba(201,146,42,0.07)" }}>
-                    <p className="text-[9px] uppercase tracking-[0.14em] font-semibold" style={{ color: "#C9922A" }}>
-                      Distribution math
-                    </p>
-                    <p className="text-[12px] font-mono leading-snug" style={{ color: "#5C1F11" }}>
-                      {p.distributionMath}
-                    </p>
-                    {p.distributionChannel && (
-                      <p className="text-[11px] leading-relaxed pt-1" style={{ color: "#7A5010" }}>
-                        <span className="text-[9px] uppercase tracking-[0.12em] font-semibold mr-1.5" style={{ color: "#C9922A" }}>via</span>
-                        {p.distributionChannel}
-                      </p>
-                    )}
-                  </div>
-                )}
                 <p className="text-[13px] text-graphite leading-relaxed">
                   <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mr-2">
                     The opportunity

@@ -160,7 +160,7 @@ function HeroCard({ p }: { p: ObbbaProvision }) {
               {p.posture}
             </p>
             <p className="font-mono text-[10px] tracking-wide text-muted leading-snug pt-1">
-              {p.authorities.join(" · ")} · {p.source} · {p.effective}
+              {[...p.authorities, p.source, p.effective].filter(Boolean).join(" · ")}
             </p>
           </div>
         </details>
@@ -263,7 +263,7 @@ function ProvisionRow({ p }: { p: ObbbaProvision }) {
               {p.posture}
             </p>
             <p className="font-mono text-[10px] tracking-wide text-muted leading-snug pt-1">
-              {p.authorities.join(" · ")} · {p.source} · {p.effective}
+              {[...p.authorities, p.source, p.effective].filter(Boolean).join(" · ")}
             </p>
           </div>
         </details>
