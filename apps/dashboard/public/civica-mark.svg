@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#2D5A45"/>
+  <!-- C glyph: drop shadow layer -->
+  <g transform="translate(256 256) scale(1.45) translate(-256 -256)">
+    <g transform="translate(12 12)">
+      <path d="M 328.828 156.640 A 105.000 138.000 0 1 0 328.828 355.360 L 287.392 355.360 A 72.000 110.400 0 1 1 287.392 156.640 Z" fill="#224636"/>
+    </g>
+    <path d="M 328.828 156.640 A 105.000 138.000 0 1 0 328.828 355.360 L 287.392 355.360 A 72.000 110.400 0 1 1 287.392 156.640 Z" fill="#FFFFFF"/>
+  </g>
+</svg>

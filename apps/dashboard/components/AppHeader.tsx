@@ -7,7 +7,7 @@ export default function AppHeader({ email, active }: { email?: string; active: "
         <Link href="/dashboard" className="flex items-center gap-3 group">
           <div className="w-8 h-8 rounded-[6px] overflow-hidden shrink-0 ring-1 ring-white/15 group-hover:ring-white/30 transition-all">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/civica-mark.png" alt="Civica" width={32} height={32} className="w-full h-full object-cover" />
+            <img src="/civica-mark.svg" alt="Civica" width={32} height={32} className="w-full h-full object-cover" />
           </div>
           <div>
             <p className="text-[15px] font-semibold tracking-tight text-white leading-none">Civica</p>
