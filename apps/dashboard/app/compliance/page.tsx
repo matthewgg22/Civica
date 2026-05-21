@@ -1,6 +1,46 @@
 // TODO(tests): next PR adds vitest coverage for the three sub-panels and the
 // obbba.ts static data shape. This page intentionally ships test-free per
 // scaffolding scope.
+//
+// ─────────────────────────────────────────────────────────────────────────
+// /compliance design token scale — keep panels visually consistent.
+// Established by cross-pillar design audit, 2026-05-20.
+//
+// PADDING SCALE
+//   p-7  → pillar shell (the 5 main panels + DataSources)
+//   p-5  → primary inner card (hero scoreboard, monetization framework)
+//   p-4  → secondary inner card (per-row cards, posture chips)
+//   p-3  → tertiary inner element (matrix cells, mini cards)
+//
+// HERO NUMERAL TIERS — two sizes only
+//   44px → flagship single number per pillar (P2 OBBBA hero, P5 scoreboard)
+//   32px → secondary stat (P1 totals, P3 funnel layer 1, cohort gaps)
+//   26px → dark hero card composition exception (page-level hero only)
+//
+// BORDER-RADIUS
+//   rounded-[4px]  → all card surfaces (pillar shells + inner cards)
+//   rounded-full   → pills, status chips, numbered circles
+//   rounded-sm     → tiny inline decorations only
+//
+// HAIRLINES
+//   border-hairline      → structural borders (panel shells, sub-section dividers)
+//   border-hairline/50   → nested-card borders, secondary dividers
+//   hairline/30          → faint background dividers only
+//
+// WARM TOKENS — three roles, not three drift colors
+//   #E8C547 wheat  → dark-bg context only (hero card stats)
+//   #C9922A amber  → chip backgrounds + accent borders on paper
+//   #9A5A14 brown  → text + numbers on paper (darker for readability)
+//
+// COHORT vs STATUS TOKENS — never reuse warning colors for identifiers
+//   #2A6F66 teal   → STU cohort tag + Pillar 5 wins (Civica positive)
+//   #5C1F11 brick  → OBBBA hero exposure + 60+ cohort tag
+//
+// NUMBERED CIRCLES (Pillars 1, 4, 5 — Pillar 2 intentionally uses §-labels)
+//   w-7 h-7 rounded-full bg-paper border border-hairline
+//   font-mono text-[10px] font-semibold text-graphite tabular-nums
+//   "01" / "02" / "03" zero-padded
+// ─────────────────────────────────────────────────────────────────────────
 import { cookies } from "next/headers";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import AppHeader from "../../components/AppHeader";
@@ -61,7 +101,7 @@ export default async function CompliancePage() {
       <div className="max-w-6xl mx-auto px-8 py-8 space-y-3">
 
         {/* ── Dark pine hero card — one per page, wheat-gold key metrics ── */}
-        <div className="rounded-[4px] bg-pine overflow-hidden mb-1">
+        <div className="rounded-[4px] bg-pine overflow-hidden mb-3">
           <div className="px-7 py-6">
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/40 mb-2.5">
               Compliance · nationwide framework
@@ -80,7 +120,7 @@ export default async function CompliancePage() {
             {/* Wheat-gold key metrics */}
             <div className="flex flex-wrap items-end gap-x-8 gap-y-3">
               <div>
-                <p className="text-[26px] font-bold tabular-nums leading-none text-wheat">
+                <p className="text-[26px] font-bold tabular-nums leading-none text-white/85">
                   {frameworkSummary.gates}
                 </p>
                 <p className="text-[10px] uppercase tracking-[0.12em] mt-0.5 text-white/40">
@@ -88,7 +128,7 @@ export default async function CompliancePage() {
                 </p>
               </div>
               <div>
-                <p className="text-[26px] font-bold tabular-nums leading-none text-wheat">
+                <p className="text-[26px] font-bold tabular-nums leading-none text-white/85">
                   {frameworkSummary.calcSteps}
                 </p>
                 <p className="text-[10px] uppercase tracking-[0.12em] mt-0.5 text-white/40">
@@ -96,7 +136,7 @@ export default async function CompliancePage() {
                 </p>
               </div>
               <div>
-                <p className="text-[26px] font-bold tabular-nums leading-none text-wheat">
+                <p className="text-[26px] font-bold tabular-nums leading-none text-white/85">
                   {provisions.length}
                 </p>
                 <p className="text-[10px] uppercase tracking-[0.12em] mt-0.5 text-white/40">
@@ -104,7 +144,7 @@ export default async function CompliancePage() {
                 </p>
               </div>
               <div>
-                <p className="text-[26px] font-bold tabular-nums leading-none text-wheat">
+                <p className="text-[26px] font-bold tabular-nums leading-none text-white/85">
                   {stackSummary.liveTools}
                 </p>
                 <p className="text-[10px] uppercase tracking-[0.12em] mt-0.5 text-white/40">
@@ -129,15 +169,41 @@ export default async function CompliancePage() {
           summary={frameworkSummary}
         />
         </section>
+
+        {/* Bridge P1→P2: the rules → what the law charges when they fail */}
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-hairline" />
+          <p className="text-[10px] uppercase tracking-[0.14em] font-semibold text-muted whitespace-nowrap">
+            above: the rules · below: what the law charges when they fail
+          </p>
+          <div className="flex-1 h-px bg-hairline" />
+        </div>
+
         <section id="pillar-2">
         <ObbbaReadinessPanel provisions={provisions} />
         </section>
+
+        {/* Bridge P2→P3: dollar exposure → where the loss actually lives.
+            Elevated treatment vs the other 3 bridges — this is the page's
+            biggest narrative pivot, regulatory exposure → operational diagnostic. */}
+        <div className="flex items-center gap-3 py-1">
+          <div className="flex-1 h-0.5 bg-pine/25" />
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-pine" />
+            <p className="text-[11px] uppercase tracking-[0.14em] font-bold text-pine whitespace-nowrap">
+              above: the dollars at stake · below: where the dollars come from
+            </p>
+            <span className="w-1.5 h-1.5 rounded-full bg-pine" />
+          </div>
+          <div className="flex-1 h-0.5 bg-pine/25" />
+        </div>
+
         <section id="pillar-3">
         <CoverageMapPanel />
         </section>
 
         {/* Bridge P3→P4: identifies risk → shows how it's addressed */}
-        <div className="flex items-center gap-3 py-0.5">
+        <div className="flex items-center gap-3">
           <div className="flex-1 h-px bg-hairline" />
           <p className="text-[10px] uppercase tracking-[0.14em] font-semibold text-muted whitespace-nowrap">
             above: where risk lives · below: how it&apos;s addressed
@@ -150,7 +216,7 @@ export default async function CompliancePage() {
         </section>
 
         {/* Bridge P4→P5: addresses risk → shows results */}
-        <div className="flex items-center gap-3 py-0.5">
+        <div className="flex items-center gap-3">
           <div className="flex-1 h-px bg-hairline" />
           <p className="text-[10px] uppercase tracking-[0.14em] font-semibold text-muted whitespace-nowrap">
             above: how it&apos;s addressed · below: what it produces

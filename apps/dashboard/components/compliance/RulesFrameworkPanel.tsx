@@ -19,9 +19,9 @@ import type {
 import CaliforniaOverlaysMap from "./CaliforniaOverlaysMap";
 
 const STATUS_META: Record<FrameworkStatus, { color: string; bg: string }> = {
-  Implemented:    { color: "#C9922A", bg: "rgba(201,146,42,0.10)" },
-  Partial:        { color: "#9A5A14", bg: "rgba(154,90,20,0.10)" },
-  Discretionary:  { color: "#9C3A24", bg: "rgba(156,58,36,0.10)" },
+  Implemented:    { color: "#2D5A45", bg: "rgba(45,90,69,0.10)" },   // pine — operational
+  Partial:        { color: "#9A5A14", bg: "rgba(154,90,20,0.10)" },  // amber-brown — incomplete
+  Discretionary:  { color: "#9C3A24", bg: "rgba(156,58,36,0.10)" }, // brick — risk/judgment call
 };
 
 // ---------------------------------------------------------------------------
@@ -57,7 +57,7 @@ function BenefitFormulaCard() {
             <p className="text-[11px] uppercase tracking-wider font-semibold text-graphite mb-1.5">
               Net income
             </p>
-            <div className="pl-3 border-l-2 border-amber/40 space-y-1 text-[13px] text-ink tabular-nums">
+            <div className="pl-3 border-l-2 border-hairline space-y-1 text-[13px] text-ink tabular-nums">
               <p>gross income</p>
               <p className="text-graphite">− 20% of earned wages</p>
               <p className="text-graphite">− standard deduction (by household size)</p>
@@ -70,7 +70,7 @@ function BenefitFormulaCard() {
             <p className="text-[11px] uppercase tracking-wider font-semibold text-graphite mb-1.5">
               Monthly benefit
             </p>
-            <div className="pl-3 border-l-2 border-amber/40 space-y-1 text-[13px] text-ink tabular-nums">
+            <div className="pl-3 border-l-2 border-hairline space-y-1 text-[13px] text-ink tabular-nums">
               <p>max allotment (by household size)</p>
               <p className="text-graphite">− 30% × net income</p>
             </div>
@@ -111,7 +111,7 @@ function BenefitFormulaCard() {
             <span className="font-semibold">Net income</span>
             <span className="font-bold text-ink">$1,286</span>
           </div>
-          <p className="text-[10px] text-amber italic font-sans pt-0.5">
+          <p className="text-[10px] text-pine italic font-sans pt-0.5">
             ✓ Below HH3 net limit ($2,221)
           </p>
 
@@ -470,7 +470,7 @@ function UnderEnrolledSection({
       </div>
 
       {/* Hero — total expected un-enrolled across all populations */}
-      <div className="bg-paper border-l-4 border-[#9A5A14] rounded-r-[3px] px-5 py-4 mb-5 grid grid-cols-1 md:grid-cols-[auto_auto_1fr] gap-x-8 gap-y-2 items-baseline">
+      <div className="bg-paper border-l-4 border-hairline rounded-r-[3px] px-5 py-4 mb-5 grid grid-cols-1 md:grid-cols-[auto_auto_1fr] gap-x-8 gap-y-2 items-baseline">
         <div>
           <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-[#9A5A14]">
             Total expected un-enrolled
@@ -521,39 +521,64 @@ function UnderEnrolledSection({
                   </p>
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[14px] font-semibold text-ink leading-snug">
-                    {p.population}
-                  </p>
-                  <p className="text-[12px] text-graphite mt-1 leading-snug">
+                  <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                    <p className="text-[14px] font-semibold text-ink leading-snug">
+                      {p.population}
+                    </p>
+                    {p.distributionChannel && (
+                      <span
+                        className="text-[9px] uppercase tracking-[0.12em] font-semibold px-1.5 py-0.5 rounded-full whitespace-nowrap"
+                        style={{ background: "rgba(201,146,42,0.10)", color: "#C9922A" }}
+                      >
+                        Greenfield target
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[12px] text-graphite leading-snug">
                     {p.headlineCue}
                   </p>
-                  <p className="text-[10px] text-muted mt-1.5 group-open:hidden">
-                    tap for rule anchor + sources →
-                  </p>
+                  {p.distributionMath && (
+                    <p className="text-[11px] font-mono mt-1.5 leading-snug group-open:hidden" style={{ color: "#7A5010" }}>
+                      {p.distributionMath}
+                    </p>
+                  )}
+                  {!p.distributionMath && (
+                    <p className="text-[10px] text-muted mt-1.5 group-open:hidden">
+                      tap for rule anchor + sources →
+                    </p>
+                  )}
                 </div>
               </summary>
 
               <div className="mt-4 pt-3 border-t border-hairline/60 space-y-2.5">
+                {p.distributionMath && (
+                  <div className="px-3 py-2.5 rounded-[3px] space-y-1" style={{ background: "rgba(201,146,42,0.07)" }}>
+                    <p className="text-[9px] uppercase tracking-[0.14em] font-semibold" style={{ color: "#C9922A" }}>
+                      Distribution math
+                    </p>
+                    <p className="text-[12px] font-mono leading-snug" style={{ color: "#5C1F11" }}>
+                      {p.distributionMath}
+                    </p>
+                    {p.distributionChannel && (
+                      <p className="text-[11px] leading-relaxed pt-1" style={{ color: "#7A5010" }}>
+                        <span className="text-[9px] uppercase tracking-[0.12em] font-semibold mr-1.5" style={{ color: "#C9922A" }}>via</span>
+                        {p.distributionChannel}
+                      </p>
+                    )}
+                  </div>
+                )}
                 <p className="text-[13px] text-graphite leading-relaxed">
                   <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mr-2">
-                    Why they qualify
+                    The opportunity
                   </span>
                   {p.qualifiesBecause}
                 </p>
                 <p className="text-[13px] text-graphite leading-relaxed">
                   <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mr-2">
-                    Why they don&apos;t apply
+                    The unlock
                   </span>
                   {p.whyTheyDontApply}
                 </p>
-                {p.distributionChannel && (
-                  <p className="text-[12px] leading-relaxed px-3 py-2 rounded-[3px]" style={{ background: "rgba(201,146,42,0.07)", color: "#7A5010" }}>
-                    <span className="text-[9px] uppercase tracking-[0.14em] font-semibold mr-2" style={{ color: "#C9922A" }}>
-                      Distribution channel
-                    </span>
-                    {p.distributionChannel}
-                  </p>
-                )}
                 <p className="font-mono text-[10px] tracking-wide text-muted leading-snug pt-1">
                   <span className="text-graphite font-semibold uppercase">rule anchor</span>
                   <span className="mx-2">·</span>
