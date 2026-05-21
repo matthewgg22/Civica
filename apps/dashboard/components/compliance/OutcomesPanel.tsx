@@ -446,9 +446,6 @@ export default function OutcomesPanel({
             <span className="w-1.5 h-1.5 rounded-full bg-current" />
             {summary.liveRows} live · {summary.foiaRows} FOIA-pending
           </span>
-          <p className="text-[11px] text-muted font-mono tracking-wide mt-1.5 max-w-md text-right">
-            {summary.headline}
-          </p>
         </div>
       </div>
 

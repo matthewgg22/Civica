@@ -86,7 +86,7 @@ function OverlayRow({ item }: { item: FrameworkItem }) {
 
       <div className="pt-0.5">
         <span
-          className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[10px] font-semibold tracking-normal whitespace-nowrap"
+          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-normal whitespace-nowrap"
           style={{ color: statusMeta.color, background: statusMeta.bg }}
         >
           <span className="w-1 h-1 rounded-full" style={{ background: statusMeta.color }} />
@@ -286,7 +286,7 @@ export default function CaliforniaOverlaysMap({
       </div>
 
       {caSelected && (
-        <div className="mt-5 pt-4 border-t border-hairline/60">
+        <div className="mt-5 pt-4 border-t border-hairline/50">
           <p className="text-[11px] uppercase tracking-[0.12em] font-semibold text-amber mb-3">
             California overlays — {overlays.length} active
           </p>
