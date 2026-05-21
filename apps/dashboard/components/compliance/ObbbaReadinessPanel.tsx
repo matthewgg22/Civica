@@ -316,11 +316,8 @@ export default function ObbbaReadinessPanel({
             }
           >
             <span className="w-1.5 h-1.5 rounded-full bg-current" />
-            {readyCount} ready · {partialCount} partial · FY2026 → FY2028
+            {readyCount} ready · {partialCount} partial
           </span>
-          <p className="text-[11px] text-muted font-mono tracking-wide mt-1.5">
-            source: COMPLIANCE_AUDIT_OBBBA.md · section10105.ts · section10106.ts
-          </p>
         </div>
       </div>
 
