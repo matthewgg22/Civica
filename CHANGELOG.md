@@ -22,6 +22,11 @@ commit subject — say what changed for the reader of this file.
 ## [Unreleased]
 
 ### Added
+- `apps/enrollment-api`: `GET /openapi.json` publishes the OpenAPI 3.1 spec
+  covering the iOS-facing surface (me, me-packets, me-inbox, me-argyle,
+  me-work-hours, buddy, recert, feature-flags). Drift test in
+  `src/openapi/spec.test.ts` keeps the registry honest. See
+  `apps/enrollment-api/src/openapi/spec.ts`.
 - `apps/enrollment-api`: 5-minute Cloudflare Cron Trigger clears
   `app_metadata.role` for completed/revoked buddy relationships so a revoked
   buddy JWT stops authenticating as `kind='buddy'` within the sweep interval
@@ -37,6 +42,8 @@ commit subject — say what changed for the reader of this file.
 - `supabase`: `buddy_packet_summary_view` exposes only safe columns
   (packet_id, status, state_code, current_section, updated_at). Migration
   `20260570_buddy_packet_summary_view.sql`.
+- `CHANGELOG.md`, `CONTRIBUTING.md` — first contributor docs (linked from
+  README).
 
 ### Changed
 - `apps/enrollment-api`: `POST /navigator/packets/:id/error-risk` and

@@ -62,6 +62,14 @@ app.use(
 
 app.get("/health", (c) => c.json({ ok: true, service: "civica-enrollment-api" }));
 
+// OpenAPI spec — public, no auth. Generated from src/openapi/spec.ts which
+// registers all iOS-facing routes with their Zod schemas. Lives at root so
+// iOS / web codegen can fetch it without a JWT.
+app.get("/openapi.json", async (c) => {
+  const { buildOpenAPIDocument } = await import("./openapi/spec.js");
+  return c.json(buildOpenAPIDocument());
+});
+
 // T14: Twilio webhook — no auth middleware (uses Twilio HMAC signature instead of JWT)
 app.route("/", twilioWebhookRouter);
 

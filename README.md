@@ -77,7 +77,7 @@ purposes; new contributors regularly confuse them.
 | Role | Gateway in front of the FastAPI engine (`backend/civic_api/`). Civic-tier routes ported from Flask. | SNAP enrollment, packets, navigator, buddy, recert, OCR webhooks. |
 | Dev command | `docker compose up` (brings up Postgres + the Fly app) | `pnpm --filter @civica/enrollment-api dev` (uses `wrangler dev`) |
 | Local config | `.env.local` (see `.env.example`) | `apps/enrollment-api/.dev.vars` (wrangler convention) |
-| OpenAPI | Yes, at `GET /openapi.json` | Not yet — tracked as DX follow-up |
+| OpenAPI | Yes, at `GET /openapi.json` | Yes, at `GET /openapi.json` (iOS-facing surface) |
 | Calls FastAPI engine | Yes, via `ENGINE_BASE_URL` | No |
 
 If you are adding a route the iOS app or dashboard hits for enrollment,
