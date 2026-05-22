@@ -1,11 +1,27 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "stream",
+  "globalEnv": [
+    "NODE_ENV",
+    "ENROLLMENT_API_URL",
+    "SENTRY_DSN",
+    "SENTRY_ORG",
+    "SENTRY_PROJECT",
+    "SENTRY_AUTH_TOKEN",
+    "SENTRY_SUPPRESS_GLOBAL_ERROR_HANDLER_FILE_WARNING",
+    "AUDIT_SURFACE_ENABLED",
+    "CDSS_SURFACE_ENABLED",
+    "CBO_PREVIEW_ENABLED",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "NEXT_PUBLIC_API_BASE_URL",
+    "NEXT_PUBLIC_SENTRY_DSN"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"],
-      "env": ["NODE_ENV"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"]
     },
     "lint": {
       "dependsOn": ["^build"],
