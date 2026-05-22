@@ -116,7 +116,7 @@ const PROVISIONS: ObbbaProvision[] = [
     marketOpportunity: `If California closes to below the §10105 trigger by FY2028, the state avoids the full $${CA_STATE_EXPOSURE_M}M penalty. Partners and CBO licensees who help drive that error-rate reduction capture the operational margin in a state contract — the largest single addressable revenue opportunity on this dashboard.`,
     posture: `The Civica-enrolled cohort runs an error rate near ${CA_PER.civicaCohortPER.toFixed(1)}% versus California statewide ${CA_PER.statewidePER.toFixed(1)}% — well below the trigger. The supporting data pipeline is in production; the FY2026 baseline collection is underway. The live federal-data feed and a locked attribution methodology with the state are the remaining items.`,
     effective: "FY2028 effective · FY2026 measurement window open",
-    authorities: ["7 USC 2025(c)", "OBBBA §10105"],
+    authorities: ["OBBBA §10105"],
     source: "apps/dashboard/lib/analytics/section10105.ts",
     status: "Partial",
     stakeholders: ["State", "CBO"],
@@ -140,7 +140,7 @@ const PROVISIONS: ObbbaProvision[] = [
     posture:
       "Civica logs county-level outcome telemetry on every packet, and a per-county dashboard surfaces denial mix and navigator handoff outcomes. The formal §10106 county exposure report is awaiting state guidance on the attribution formula.",
     effective: "Active October 1, 2026",
-    authorities: ["7 USC 2025(a)", "OBBBA §10106"],
+    authorities: ["OBBBA §10106"],
     source: "apps/dashboard/lib/analytics/section10106.ts",
     status: "Partial",
     stakeholders: ["County", "CBO"],
@@ -170,7 +170,7 @@ const PROVISIONS: ObbbaProvision[] = [
     posture:
       "Civica asks the new tribal exemption question at intake, lowered the dependent-child cutoff to under 14, raised the age ceiling to 54, and removed the now-defunct homeless, veteran, and foster-youth exemption screens. A payroll-API integration provides a corroborating hours-worked signal; employer-issued pay records remain the documentation of record. The formal evidence package that satisfies a federal review is still pending counsel.",
     effective: "Active July 4, 2025",
-    authorities: ["7 CFR 273.24", "Food Stamp Act §6(o)", "OBBBA §10102(a)"],
+    authorities: ["OBBBA §10102(a)"],
     source: "Civica/Features/SNAP/Rules/FederalDefaultRules.swift",
     status: "Partial",
     stakeholders: ["Household", "State", "CBO"],
@@ -196,7 +196,7 @@ const PROVISIONS: ObbbaProvision[] = [
     posture:
       "Civica's posture is referral-only. When a user answers 'not a US citizen,' the flow does not attempt to determine eligibility — it surfaces the state SNAP office phone number and the option to contact local legal aid. Citizenship is held as a routing flag only; the specific immigration category is never collected or stored. Three items pending counsel: alignment with the new federal verification requirements, the dollar-estimate suppression rule, and the privacy posture on the citizenship flag.",
     effective: "Active 2025",
-    authorities: ["7 USC 2014(a)", "8 USC 1641", "OBBBA §10108"],
+    authorities: ["OBBBA §10108"],
     source: "Civica/Features/SNAP/Application/SNAPHouseholdQuestionFlow.swift",
     status: "Partial",
     stakeholders: ["Household", "CBO"],
@@ -225,7 +225,7 @@ const PROVISIONS: ObbbaProvision[] = [
     posture:
       "Civica shipped the fix. Utility helpers and the voice guide explicitly say 'do not include internet' in both English and Spanish. The state confirms the implementation is compliant. A written confirmation memo to counsel is the only remaining item.",
     effective: "Shipped · state-confirmed",
-    authorities: ["7 CFR 273.9(d)(6)", "OBBBA §10104"],
+    authorities: ["OBBBA §10104"],
     source: "Civica/Features/SNAP/Application — utilities helpers",
     status: "Ready",
     stakeholders: ["State"],
@@ -250,7 +250,7 @@ const PROVISIONS: ObbbaProvision[] = [
     posture:
       "Civica dropped all dollar-pill messaging from cross-program teasers, the app store listing, and the marketing site. A compile-time guard blocks regressions. The full posture is treated as mandatory regardless of funding structure.",
     effective: "Always-on · CI-enforced",
-    authorities: ["7 CFR 277.4(b)(5)(i)", "7 CFR 246.4"],
+    authorities: [],
     source: "Civica/Features/SNAP — compliance copy registry",
     status: "Ready",
     stakeholders: ["CBO", "Civica"],
@@ -275,7 +275,7 @@ const PROVISIONS: ObbbaProvision[] = [
     posture:
       "All nine strings have approved English and Spanish drafts in the compliance registry. A compile-time guard blocks English-only signoff and blocks drift on already-approved rows. Counsel signoff is the remaining item before each row flips from drafted to approved.",
     effective: "Always-on · CI-enforced · counsel signoff pending",
-    authorities: ["7 CFR 277.4", "Food Stamp Act §6"],
+    authorities: [],
     source: "Civica/Features/SNAP — compliance copy registry",
     status: "Partial",
     stakeholders: ["CBO", "Civica", "Household"],

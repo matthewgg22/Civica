@@ -76,7 +76,7 @@ export default function ObbbaTimeline({
         {phases.map((phase) => (
           <div
             key={phase.key}
-            className="rounded-[3px] border border-hairline bg-paper p-4"
+            className="rounded-[4px] border border-hairline bg-paper p-4"
             style={{ borderLeftWidth: 3, borderLeftColor: phase.borderColor }}
           >
             {/* Phase heading + badge */}

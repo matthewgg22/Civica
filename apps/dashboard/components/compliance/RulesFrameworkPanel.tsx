@@ -17,6 +17,8 @@ import type {
   UnderEnrolledPopulation,
 } from "../../lib/analytics/snap-framework";
 import CaliforniaOverlaysMap from "./CaliforniaOverlaysMap";
+import { GravityFunnel } from "./GravityFunnel";
+import UnderEnrolledFlowChart from "./UnderEnrolledFlowChart";
 
 const STATUS_META: Record<FrameworkStatus, { color: string; bg: string }> = {
   Implemented:    { color: "#2D5A45", bg: "rgba(45,90,69,0.10)" },   // pine — operational
@@ -192,8 +194,12 @@ function Subsection({
                   {n.figures}
                 </p>
                 <p className="mt-1.5 font-mono text-[10px] tracking-wide text-muted leading-snug">
-                  <span className="text-graphite">{n.authorities.join(" · ")}</span>
-                  <span className="mx-2 text-muted/50">·</span>
+                  {n.authorities.length > 0 && (
+                    <>
+                      <span className="text-graphite">{n.authorities.join(" · ")}</span>
+                      <span className="mx-2 text-muted/50">·</span>
+                    </>
+                  )}
                   <span className="break-all">{n.source}</span>
                 </p>
               </div>
@@ -363,11 +369,8 @@ function UnderEnrolledChart({
               height={BAR_HEIGHT}
               fill="url(#gap-stripes)"
               rx={2}
-            >
-              <title>
-                {p.population}: {p.eligibleMillions.toFixed(1)}M eligible nationally
-              </title>
-            </rect>
+              aria-label={`${p.population}: ${p.eligibleMillions.toFixed(1)}M eligible nationally`}
+            />
 
             {/* Foreground = enrolled · solid teal */}
             <rect
@@ -377,11 +380,8 @@ function UnderEnrolledChart({
               height={BAR_HEIGHT}
               fill={ENROLLED_COLOR}
               rx={2}
-            >
-              <title>
-                {p.population}: {p.enrolledMillions.toFixed(1)}M enrolled of {p.eligibleMillions.toFixed(1)}M eligible
-              </title>
-            </rect>
+              aria-label={`${p.population}: ${p.enrolledMillions.toFixed(1)}M enrolled of ${p.eligibleMillions.toFixed(1)}M eligible`}
+            />
 
             {/* Right-side stacked numbers — consistent on every row */}
             <text
@@ -469,6 +469,52 @@ function UnderEnrolledSection({
         </p>
       </div>
 
+      {/* Sources callout — diligence anchor. Surfaces the data spread behind
+          the four under-enrolled population cards so a reader scrutinizing
+          the numbers sees the breadth + honesty up front. */}
+      <div
+        className="rounded-[4px] border px-4 py-3 mb-4 flex items-start gap-5 flex-wrap"
+        style={{
+          borderColor: "rgba(154,90,20,0.22)",
+          background: "rgba(154,90,20,0.04)",
+        }}
+      >
+        <div className="shrink-0 pr-4 md:border-r md:border-[rgba(154,90,20,0.20)]">
+          <p
+            className="text-[32px] font-bold tabular-nums leading-none"
+            style={{ color: "#9A5A14" }}
+          >
+            11
+          </p>
+          <p className="text-[9px] uppercase tracking-[0.10em] font-semibold text-muted mt-1">
+            public datasets
+          </p>
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-1">
+            Data behind these numbers
+          </p>
+          <p className="text-[12px] text-graphite leading-snug mb-1.5">
+            Across <span className="font-semibold text-ink">5 federal + state agencies</span>{" "}
+            — <span className="font-mono text-[11px] text-[#9A5A14]">USDA FNS</span>
+            {" · "}
+            <span className="font-mono text-[11px] text-[#9A5A14]">CDSS</span>
+            {" · "}
+            <span className="font-mono text-[11px] text-[#9A5A14]">BLS</span>
+            {" · "}
+            <span className="font-mono text-[11px] text-[#9A5A14]">GAO</span>
+            {" · "}
+            <span className="font-mono text-[11px] text-[#9A5A14]">HUD</span>
+            {" "}— feeding the four under-enrolled population cards below.
+          </p>
+          <p className="text-[11px] text-muted italic leading-snug">
+            Two figures (gig-worker 30–40% and IHSS 50–60% eligibility rates) are model-derived
+            from wage distributions × BBCE income tests, not direct survey data. Both flagged in
+            the relevant population cards.
+          </p>
+        </div>
+      </div>
+
       {/* Hero — total expected un-enrolled across all populations */}
       <div className="bg-paper border-l-4 border-hairline rounded-r-[3px] px-5 py-4 mb-5 grid grid-cols-1 md:grid-cols-[auto_auto_1fr] gap-x-8 gap-y-2 items-baseline">
         <div>
@@ -499,21 +545,38 @@ function UnderEnrolledSection({
         </p>
       </div>
 
-      <div className="w-full overflow-x-auto">
+      <GravityFunnel />
+
+      <div className="w-full overflow-x-auto mt-6">
         <UnderEnrolledChart populations={sorted} maxMillions={axisMax} />
       </div>
 
+      {/* Sankey companion — shows the flow from population through barrier to
+          Civica's intervention wedge. Bar chart = size of gap; Sankey =
+          shape of gap × Civica position. Modeled · pre-pilot. */}
+      <UnderEnrolledFlowChart />
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6">
-        {sorted.map((p) => {
+        {sorted.map((p, i) => {
           const gapMillions = p.eligibleMillions - p.enrolledMillions;
+          const isPrimary = p.primary === true;
           return (
             <details
               key={p.step}
-              className="group border border-hairline rounded-[4px] p-4 bg-paper open:bg-surface transition-colors"
+              id={`pop-card-${i}`}
+              className="group rounded-[4px] p-4 bg-paper open:bg-surface transition-colors"
+              style={
+                isPrimary
+                  ? { border: "1px solid #5C1F1140", borderLeftWidth: "3px", borderLeftColor: "#5C1F11" }
+                  : { border: "1px solid rgb(var(--hairline) / 1)" }
+              }
             >
               <summary className="cursor-pointer list-none flex items-start gap-3">
                 <div className="shrink-0">
-                  <p className="text-[32px] font-bold text-[#9A5A14] tabular-nums leading-none">
+                  <p
+                    className="text-[32px] font-bold tabular-nums leading-none"
+                    style={{ color: isPrimary ? "#5C1F11" : "#9A5A14" }}
+                  >
                     {gapMillions.toFixed(1)}M
                   </p>
                   <p className="text-[10px] text-muted uppercase tracking-wider mt-0.5">
@@ -525,69 +588,84 @@ function UnderEnrolledSection({
                     <p className="text-[14px] font-semibold text-ink leading-snug">
                       {p.population}
                     </p>
-                    {p.distributionChannel && (
+                    {isPrimary ? (
                       <span
-                        className="text-[9px] uppercase tracking-[0.12em] font-semibold px-1.5 py-0.5 rounded-full whitespace-nowrap"
-                        style={{ background: "rgba(201,146,42,0.10)", color: "#C9922A" }}
+                        className="text-[9px] uppercase tracking-[0.12em] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap"
+                        style={{ background: "rgba(92,31,17,0.10)", color: "#5C1F11", border: "1px solid rgba(92,31,17,0.25)" }}
                       >
-                        Greenfield target
+                        Primary wedge
                       </span>
+                    ) : (
+                      p.distributionChannel && (
+                        <span
+                          className="text-[9px] uppercase tracking-[0.12em] font-semibold px-1.5 py-0.5 rounded-full whitespace-nowrap"
+                          style={{ background: "rgba(201,146,42,0.10)", color: "#C9922A" }}
+                        >
+                          Greenfield target
+                        </span>
+                      )
                     )}
                   </div>
                   <p className="text-[12px] text-graphite leading-snug">
                     {p.headlineCue}
                   </p>
-                  {p.distributionMath && (
-                    <p className="text-[11px] font-mono mt-1.5 leading-snug group-open:hidden" style={{ color: "#7A5010" }}>
-                      {p.distributionMath}
-                    </p>
-                  )}
-                  {!p.distributionMath && (
-                    <p className="text-[10px] text-muted mt-1.5 group-open:hidden">
-                      tap for rule anchor + sources →
-                    </p>
-                  )}
                 </div>
               </summary>
 
-              <div className="mt-4 pt-3 border-t border-hairline/60 space-y-2.5">
-                {p.distributionMath && (
-                  <div className="px-3 py-2.5 rounded-[3px] space-y-1" style={{ background: "rgba(201,146,42,0.07)" }}>
-                    <p className="text-[9px] uppercase tracking-[0.14em] font-semibold" style={{ color: "#C9922A" }}>
-                      Distribution math
-                    </p>
-                    <p className="text-[12px] font-mono leading-snug" style={{ color: "#5C1F11" }}>
-                      {p.distributionMath}
-                    </p>
-                    {p.distributionChannel && (
-                      <p className="text-[11px] leading-relaxed pt-1" style={{ color: "#7A5010" }}>
-                        <span className="text-[9px] uppercase tracking-[0.12em] font-semibold mr-1.5" style={{ color: "#C9922A" }}>via</span>
-                        {p.distributionChannel}
-                      </p>
-                    )}
+              <div className="mt-3 pt-3 border-t border-hairline/60">
+                <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2.5">
+                  <div>
+                    <dt className="text-[9px] uppercase tracking-[0.12em] font-semibold text-muted mb-0.5">
+                      Opportunity
+                    </dt>
+                    <dd className="text-[11px] text-graphite leading-snug">
+                      {p.qualifiesBecause}
+                    </dd>
                   </div>
-                )}
-                <p className="text-[13px] text-graphite leading-relaxed">
-                  <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mr-2">
-                    The opportunity
-                  </span>
-                  {p.qualifiesBecause}
-                </p>
-                <p className="text-[13px] text-graphite leading-relaxed">
-                  <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mr-2">
-                    The unlock
-                  </span>
-                  {p.whyTheyDontApply}
-                </p>
-                <p className="font-mono text-[10px] tracking-wide text-muted leading-snug pt-1">
-                  <span className="text-graphite font-semibold uppercase">rule anchor</span>
-                  <span className="mx-2">·</span>
-                  {p.ruleAnchors.join(" + ")}
-                  <span className="mx-2 text-muted/50">·</span>
-                  <span className="text-graphite font-semibold uppercase">source</span>
-                  <span className="mx-2">·</span>
-                  <span className="break-all">{p.sources.join(" · ")}</span>
-                </p>
+                  <div>
+                    <dt className="text-[9px] uppercase tracking-[0.12em] font-semibold text-muted mb-0.5">
+                      Unlock
+                    </dt>
+                    <dd className="text-[11px] text-graphite leading-snug">
+                      {p.whyTheyDontApply}
+                    </dd>
+                  </div>
+                  {p.distributionChannel && (
+                    <div>
+                      <dt
+                        className="text-[9px] uppercase tracking-[0.12em] font-semibold mb-0.5"
+                        style={{ color: isPrimary ? "#5C1F11" : "#9A5A14" }}
+                      >
+                        Channel
+                      </dt>
+                      <dd className="text-[11px] text-graphite leading-snug">
+                        {p.distributionChannel}
+                      </dd>
+                    </div>
+                  )}
+                  {p.distributionMath && (
+                    <div>
+                      <dt
+                        className="text-[9px] uppercase tracking-[0.12em] font-semibold mb-0.5"
+                        style={{ color: isPrimary ? "#5C1F11" : "#9A5A14" }}
+                      >
+                        Math
+                      </dt>
+                      <dd className="text-[11px] text-graphite leading-snug">
+                        {p.distributionMath}
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+                <details className="group/src mt-2.5">
+                  <summary className="cursor-pointer list-none text-[10px] text-muted hover:text-graphite transition-colors">
+                    <span className="group-open/src:hidden">sources + rule anchor →</span>
+                    <span className="hidden group-open/src:inline">− collapse</span>
+                  </summary>
+                  <p className="font-mono text-[9px] tracking-wide text-muted leading-snug mt-1.5 break-all">
+                    {p.ruleAnchors.join(" · ")} · {p.sources.join(" · ")}
+                  </p>
+                </details>
               </div>
             </details>
           );
@@ -623,33 +701,87 @@ export default function RulesFrameworkPanel({
     >
       <div className="flex items-start justify-between gap-6 mb-7 flex-wrap">
         <div>
-          <p className="eyebrow mb-1.5">Pillar 1 · how SNAP works, and where Civica fits</p>
+          <p className="eyebrow mb-1.5">Part 1 · the rules Civica navigates on every applicant&apos;s behalf</p>
           <h3
             id="rules-framework-title"
             className="text-[20px] font-semibold tracking-tight text-ink leading-tight"
           >
-            The rules behind every SNAP estimate Civica produces
+            The rules Civica learns so applicants don&apos;t have to
           </h3>
           <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
             SNAP is a federal program. Congress and USDA set the rules; state
             agencies — in California, CDSS / CalFresh — decide who actually
-            receives benefits. Civica's job is the work in the middle: producing
-            a defensible estimate and a ready-to-submit packet. Sections A and
-            B walk through the federal baseline; Section C lists what California
-            changes on top; Section D applies the rules to name who they
+            receives benefits. Civica sits in the middle as the applicant&apos;s
+            advocate: learning these rules thoroughly, walking households through
+            them, and delivering a packet that&apos;s complete, accurate, and ready
+            to be approved. Sections A and B walk through the federal baseline;
+            Section C lists what California changes on top; Section D names the
+            populations these rules
             <span className="italic"> should </span>
-            reach but don&apos;t.
+            reach but don&apos;t yet.
           </p>
         </div>
         <div className="text-right shrink-0">
           <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-semibold bg-pine-surface text-pine">
             <span className="w-1.5 h-1.5 rounded-full bg-current" />
-            {summary.gates} gates · {summary.calcSteps} calc steps · {summary.caOverlays} CA overlays · {summary.underEnrolled} under-enrolled · {summary.fiscalYear}
+            {summary.fiscalYear}
           </span>
-          <p className="text-[11px] text-muted font-mono tracking-wide mt-1.5">
-            source: packages/snap-calculator + packages/snap-rules
-          </p>
         </div>
+      </div>
+
+      {/* Program scope — sizes the federal program before Sections A–D walk the rules.
+          A YC / mission reader lands here and needs "how big is this thing?" answered
+          before they're asked to care about eligibility gates and calc steps. */}
+      <div className="bg-paper border border-hairline rounded-[4px] p-5 mb-7">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-3">
+          Program scope · USDA FNS · annual
+        </p>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-y-4">
+          <div className="md:pr-5">
+            <p className="text-[22px] font-bold tabular-nums leading-none text-ink">
+              $100B<span className="text-[12px] font-mono text-muted ml-0.5">+/yr</span>
+            </p>
+            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-muted">
+              Federal SNAP outlay
+            </p>
+          </div>
+          <div className="md:px-5 md:border-l md:border-hairline">
+            <p className="text-[22px] font-bold tabular-nums leading-none text-ink">
+              42M
+            </p>
+            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-muted">
+              Americans enrolled
+            </p>
+          </div>
+          <div className="md:px-5 md:border-l md:border-hairline">
+            <p className="text-[22px] font-bold tabular-nums leading-none text-ink">
+              22M
+            </p>
+            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-muted">
+              Households
+            </p>
+          </div>
+          <div className="md:px-5 md:border-l md:border-hairline">
+            <p className="text-[22px] font-bold tabular-nums leading-none text-ink">
+              53
+            </p>
+            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-muted">
+              State + territory programs
+            </p>
+          </div>
+          <div className="md:pl-5 md:border-l md:border-hairline">
+            <p className="text-[22px] font-bold tabular-nums leading-none" style={{ color: "#9A5A14" }}>
+              $11B<span className="text-[12px] font-mono text-muted ml-0.5">+/yr</span>
+            </p>
+            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5" style={{ color: "#9A5A14" }}>
+              California share (largest)
+            </p>
+          </div>
+        </div>
+        <p className="text-[12px] text-graphite leading-relaxed mt-4 pt-3 border-t border-hairline/50">
+          Federal money on state rails. CalFresh is California&apos;s name for SNAP; the state&apos;s
+          $11B+/yr share is the largest in the country and where Civica&apos;s pilots run.
+        </p>
       </div>
 
       <div className="space-y-7">
@@ -665,7 +797,21 @@ export default function RulesFrameworkPanel({
           title="How the benefit is calculated"
           lede="Once a household passes the gates above, seven steps turn that household's income and expenses into a monthly food benefit. The formula is the same in every state — Civica's engine runs it; the state agency confirms the final number."
           items={calcSteps}
-          prelude={<BenefitFormulaCard />}
+          prelude={
+            // Worked example collapsed by default — operator-tier detail
+            // that doesn't need to be in everyone's face. YC / mission readers
+            // skim past; operators click to expand.
+            <details className="group">
+              <summary className="cursor-pointer list-none inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-hairline text-[11px] font-semibold text-graphite hover:text-pine hover:border-pine/40 transition-colors">
+                <span className="text-[9px] transition-transform group-open:rotate-90">▶</span>
+                Show worked example
+                <span className="text-muted font-normal">— HH3 · $2,500/mo earned → $399/mo benefit</span>
+              </summary>
+              <div className="mt-3">
+                <BenefitFormulaCard />
+              </div>
+            </details>
+          }
         />
 
         <CaliforniaOverlaysMap overlays={caOverlays} />

@@ -86,7 +86,7 @@ function OverlayRow({ item }: { item: FrameworkItem }) {
 
       <div className="pt-0.5">
         <span
-          className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[10px] font-semibold tracking-normal whitespace-nowrap"
+          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-normal whitespace-nowrap"
           style={{ color: statusMeta.color, background: statusMeta.bg }}
         >
           <span className="w-1 h-1 rounded-full" style={{ background: statusMeta.color }} />
@@ -144,7 +144,7 @@ export default function CaliforniaOverlaysMap({
       if (!SUPPORTED_STATE_FIPS.has(fips)) continue;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const [cx, cy] = path.centroid(f as any);
-      centroids.push({ fips, name: f.properties.name, x: cx, y: cy });
+      centroids.push({ fips, name: f.properties.name, x: Math.round(cx * 1000) / 1000, y: Math.round(cy * 1000) / 1000 });
     }
 
     return {
@@ -218,7 +218,8 @@ export default function CaliforniaOverlaysMap({
                   fill={fill}
                   stroke={stroke}
                   strokeWidth={strokeWidth}
-                  style={{ cursor }}
+                  className="focus:outline-none focus-visible:outline-none [&:focus-visible]:[stroke:#9A5A14] [&:focus-visible]:[stroke-width:2.25]"
+                  style={{ cursor, outline: "none" }}
                   tabIndex={isSupported ? 0 : -1}
                   role={isSupported ? "button" : undefined}
                   aria-label={label}
@@ -286,7 +287,7 @@ export default function CaliforniaOverlaysMap({
       </div>
 
       {caSelected && (
-        <div className="mt-5 pt-4 border-t border-hairline/60">
+        <div className="mt-5 pt-4 border-t border-hairline/50">
           <p className="text-[11px] uppercase tracking-[0.12em] font-semibold text-amber mb-3">
             California overlays — {overlays.length} active
           </p>

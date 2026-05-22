@@ -711,7 +711,8 @@ function DistributionMath() {
               <th className="text-left text-[10px] uppercase tracking-wider font-semibold text-muted pb-2 pr-3">Channel</th>
               <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-muted pb-2 pr-3">Coordinators</th>
               <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-muted pb-2 pr-3">Per coordinator / yr</th>
-              <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-muted pb-2">≈ Annual enrollments</th>
+              <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-muted pb-2 pr-3">≈ Full channel</th>
+              <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-muted pb-2" style={{ color: "#C9922A" }}>5% lift</th>
             </tr>
           </thead>
           <tbody>
@@ -723,9 +724,10 @@ function DistributionMath() {
               </td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~115</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~100 students</td>
-              <td className="py-2.5 text-right tabular-nums font-bold text-ink">~11K</td>
+              <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~11K</td>
+              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "#C9922A" }}>~550</td>
             </tr>
-            <tr>
+            <tr className="border-b border-hairline/50">
               <td className="py-2.5 pr-3 text-ink">
                 <span className="font-semibold">Senior housing services</span>
                 <CohortBadge cohort="elderly" />
@@ -733,7 +735,8 @@ function DistributionMath() {
               </td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~6,000+</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~75 residents</td>
-              <td className="py-2.5 text-right tabular-nums font-bold text-ink">~450K</td>
+              <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~450K</td>
+              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "#C9922A" }}>~22.5K</td>
             </tr>
             <tr className="border-b border-hairline/50">
               <td className="py-2.5 pr-3 text-ink">
@@ -743,9 +746,10 @@ function DistributionMath() {
               </td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">3 platforms</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~17K / platform</td>
-              <td className="py-2.5 text-right tabular-nums font-bold text-ink">~52K</td>
+              <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~52K</td>
+              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "#C9922A" }}>~2.6K</td>
             </tr>
-            <tr>
+            <tr className="border-b border-hairline/50">
               <td className="py-2.5 pr-3 text-ink">
                 <span className="font-semibold">Home care &amp; agricultural</span>
                 <CohortBadge cohort="labor" />
@@ -753,28 +757,31 @@ function DistributionMath() {
               </td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~2,600 stewards</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~12 members</td>
-              <td className="py-2.5 text-right tabular-nums font-bold text-ink">~31K</td>
+              <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~31K</td>
+              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "#C9922A" }}>~1.6K</td>
             </tr>
             <tr className="border-t-2 border-hairline">
               <td className="pt-2.5 text-[10px] uppercase tracking-wider font-semibold text-muted" colSpan={3}>
                 Combined addressable cohort
               </td>
-              <td className="pt-2.5 text-right tabular-nums font-bold text-[#5C1F11] text-[15px]">~544K / yr</td>
+              <td className="pt-2.5 pr-3 text-right tabular-nums font-bold text-[#5C1F11] text-[15px]">~544K / yr</td>
+              <td className="pt-2.5 text-right tabular-nums font-bold text-[15px]" style={{ color: "#C9922A" }}>~27K / yr</td>
             </tr>
             <tr>
               <td className="text-[10px] text-graphite italic" colSpan={3}>
                 ↳ at average per-cohort allotments
               </td>
+              <td className="pr-3 text-right tabular-nums font-semibold text-[12px] text-graphite">
+                ≈ $1.0B / yr
+              </td>
               <td className="text-right tabular-nums font-semibold text-amber text-[12px]">
-                ≈ $1.0B / yr in SNAP benefits to households
+                ≈ $52M / yr
               </td>
             </tr>
           </tbody>
         </table>
         <p className="text-[10px] text-muted italic leading-snug mt-3">
-          Senior housing is the scale channel (~450K); gig workers and labor union halls are greenfield — high eligibility density, low existing navigation. The $1.0B figure is household-side value
-          (11K students × ~$2,400/yr + 450K elderly × ~$1,800/yr + 52K gig × ~$2,100/yr + 31K labor × ~$1,920/yr);
-          Civica&apos;s revenue is a small fraction, paid by the channel partner, never by the household.
+          Full channel = coordinator model at saturation. 5% lift = conservative Year 1 capture across all four channels (~27K households, ~$52M/yr household-side). Senior housing is the scale channel; gig + labor are greenfield. Civica&apos;s revenue is a small fraction, paid by the channel partner, never by the household.
         </p>
       </div>
     </div>
@@ -927,28 +934,27 @@ export default function VerificationStackPanel({
       <div className="flex items-start justify-between gap-6 mb-5 flex-wrap">
         <div>
           <p className="eyebrow mb-1.5">
-            Pillar 4 · verification stack · what Civica actually deploys
+            Part 5 · the verification stack · how Civica plugs the leak
           </p>
           <h3
             id="verification-stack-title"
             className="text-[20px] font-semibold tracking-tight text-ink leading-tight"
           >
-            How Civica pre-verifies an applicant — at intake, at renewal, after a denial
+            14 tools that take an applicant from question to approved packet
           </h3>
           <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
-            Three flagship screens show the product in action. The coverage matrix
-            below maps all 14 tools to QC audit categories — evidence tier indicates
-            how defensible the resulting documentation is under a USDA error-rate review.
+            Three flagship product screens lead the panel — intake, renewal,
+            denial recovery. The coverage matrix below maps all 14 tools to
+            the QC audit categories from Pillar 3, so you can see exactly
+            which leak each tool plugs. Evidence tier shows how defensible
+            the resulting documentation is under a USDA error-rate review.
           </p>
         </div>
         <div className="text-right shrink-0">
           <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-semibold bg-pine-surface text-pine">
             <span className="w-1.5 h-1.5 rounded-full bg-current" />
-            {summary.liveTools} tools live · {summary.strongOrModerate} Strong or Moderate · {summary.recertTools} for renewal
+            {summary.liveTools} tools live
           </span>
-          <p className="text-[11px] text-muted font-mono tracking-wide mt-1.5">
-            source: civica engineering · production wiring
-          </p>
         </div>
       </div>
 
