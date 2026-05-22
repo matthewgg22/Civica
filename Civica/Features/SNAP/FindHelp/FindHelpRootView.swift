@@ -21,8 +21,15 @@ struct FindHelpRootView: View {
     /// Shown after a user-initiated map pan. Tapping re-searches at
     /// the new map center instead of the device location. Visibility is
     /// derived from `searchAreaCenter != nil`; arming is gated against
-    /// no-op re-arms on continued panning.
+    /// no-op re-arms on continued panning and on micro-pans below
+    /// `searchAreaArmThresholdKm` from the last query center.
     @State private var searchAreaCenter: CLLocationCoordinate2D?
+
+    /// Distance (km) the user must pan from the last query center before
+    /// "Search this area" arms. Empirically, ~3 km is the smallest pan
+    /// that meaningfully changes which retailers appear; below that the
+    /// pill is noise.
+    private static let searchAreaArmThresholdKm: Double = 3.0
 
     /// One-time first-launch onboarding card visibility. Persisted
     /// per-install via AppStorage so the card never resurfaces after
@@ -144,9 +151,22 @@ struct FindHelpRootView: View {
                     selectedLocationId: store.selectedLocation?.id,
                     onSelect: { store.selectLocation($0) },
                     onRegionChanged: { center in
+                        // Already armed → keep tracking the latest center
+                        // silently so the eventual tap re-queries where
+                        // the user actually is, not where they first
+                        // started panning.
                         guard searchAreaCenter == nil else {
                             searchAreaCenter = center
                             return
+                        }
+                        // Gate first-arm on a meaningful distance from
+                        // the last query center. Without an anchor we
+                        // can't compute distance, so we fall through to
+                        // arming (matches prior behavior on cold-start).
+                        if let anchor = store.lastSearchedLocation {
+                            let panned = CLLocation(latitude: center.latitude, longitude: center.longitude)
+                            let meters = panned.distance(from: anchor)
+                            guard meters >= Self.searchAreaArmThresholdKm * 1_000 else { return }
                         }
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                             searchAreaCenter = center
