@@ -51,7 +51,7 @@ function currentMonthStr(): string {
 }
 
 function monthBounds(monthStr: string): { start: string; end: string } {
-  const [year, month] = monthStr.split('-').map(Number);
+  const [year, month] = monthStr.split('-').map(Number) as [number, number];
   const start = new Date(year, month - 1, 1);
   const end = new Date(year, month, 1); // first day of next month (exclusive)
   return {
@@ -105,7 +105,8 @@ app.post('/:packetId/hours', zValidator('json', postBodySchema), async (c) => {
   // Insert the log entry (RLS enforces applicant_id = auth.uid())
   const { data: entry, error: insertErr } = await db
     .schema('snap_enrollment')
-    .from('work_requirement_hour_logs')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .from('work_requirement_hour_logs' as any)
     .insert({
       wr_status_id: statusRow.wr_status_id,
       packet_id: packetId,
@@ -163,7 +164,8 @@ app.get('/:packetId/hours', zValidator('query', monthQuerySchema), async (c) => 
   // Fetch entries for the month
   const { data: entries, error: entriesErr } = await db
     .schema('snap_enrollment')
-    .from('work_requirement_hour_logs')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .from('work_requirement_hour_logs' as any)
     .select('log_id, work_date, hours, activity_type, employer_name, document_id, notes, logged_at')
     .eq('packet_id', packetId)
     .gte('work_date', start)
@@ -193,7 +195,8 @@ app.delete('/:packetId/hours/:logId', async (c) => {
   // RLS enforces applicant_id = auth.uid(); delete will silently no-op if not owner
   const { error } = await db
     .schema('snap_enrollment')
-    .from('work_requirement_hour_logs')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .from('work_requirement_hour_logs' as any)
     .delete()
     .eq('log_id', logId);
 
@@ -215,7 +218,8 @@ async function getMonthlySummary(
 
   const { data: rows, error } = await db
     .schema('snap_enrollment')
-    .from('work_requirement_hour_logs')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .from('work_requirement_hour_logs' as any)
     .select('hours, document_id')
     .eq('packet_id', packetId)
     .gte('work_date', start)
@@ -223,7 +227,8 @@ async function getMonthlySummary(
 
   if (error) throw new HTTPException(500, { message: error.message });
 
-  const entries = rows ?? [];
+  type SummaryRow = { hours: number | string; document_id: string | null };
+  const entries: SummaryRow[] = (rows as unknown as SummaryRow[]) ?? [];
   const totalHours = entries.reduce((sum, r) => sum + Number(r.hours), 0);
   const hasDocumentation = entries.some((r) => r.document_id != null);
 

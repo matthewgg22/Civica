@@ -675,7 +675,7 @@ app.get("/:packetId/verification-summary", async (c) => {
     income_flagged: incomeComparison.flagged,
     address_deliverability: addressResult.deliverability,
     rent_flagged: rentFlagged,
-    argyle_connected: !!(argyleResult.data?.linked_accounts?.length),
+    argyle_connected: Array.isArray(argyleResult.data?.linked_accounts) && argyleResult.data.linked_accounts.length > 0,
   });
 
   return c.json({

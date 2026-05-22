@@ -87,7 +87,7 @@ describe('POST /me/work-requirements/:packetId/hours', () => {
     }, TEST_ENV);
 
     expect(res.status).toBe(201);
-    const body = await res.json() as { entry: typeof MOCK_LOG_ENTRY; monthly_summary: { total_hours: number } };
+    const body = await res.json() as { entry: typeof MOCK_LOG_ENTRY; monthly_summary: { total_hours: number; target_hours: number } };
     expect(body.entry.log_id).toBe(LOG_ID);
     expect(body.entry.hours).toBe(8);
     expect(body.monthly_summary.total_hours).toBe(8);
@@ -184,7 +184,7 @@ describe('GET /me/work-requirements/:packetId/hours', () => {
     const res = await app.request(url, {}, TEST_ENV);
 
     expect(res.status).toBe(200);
-    const body = await res.json() as { entries: unknown[]; monthly_summary: { total_hours: number; entries_count: number } };
+    const body = await res.json() as { entries: unknown[]; monthly_summary: { total_hours: number; entries_count: number; target_hours: number } };
     expect(body.entries).toHaveLength(1);
     expect(body.monthly_summary.entries_count).toBe(1);
     expect(body.monthly_summary.target_hours).toBe(80);
