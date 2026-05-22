@@ -349,16 +349,19 @@ function mockErrorRiskDb(
   packetResult: { data: unknown; error: unknown },
   answersResult: { data: unknown; error: unknown },
   argyleResult: { data: unknown; error: unknown },
+  fieldsResult: { data: unknown; error: unknown } = { data: [], error: null },
 ) {
   const qbPacket = makeQueryBuilder(packetResult);
   const qbAnswers = makeQueryBuilder(answersResult);
   const qbArgyle = makeQueryBuilder(argyleResult);
+  const qbFields = makeQueryBuilder(fieldsResult);
   vi.mocked(makeAnonClient).mockReturnValue({
     schema: vi.fn().mockReturnValue({
       from: vi.fn()
         .mockReturnValueOnce(qbPacket)   // snap_packets ownership check
         .mockReturnValueOnce(qbAnswers)  // packet_answers
-        .mockReturnValueOnce(qbArgyle),  // argyle_connections
+        .mockReturnValueOnce(qbArgyle)   // argyle_connections
+        .mockReturnValueOnce(qbFields),  // extraction_fields (OCR data)
     }),
   } as never);
 }
@@ -448,5 +451,37 @@ describe('POST /navigator/packets/:packetId/error-risk', () => {
       TEST_ENV,
     );
     expect(res.status).toBe(403);
+  });
+
+  // Regression test for the scoring-divergence fix: navigator endpoint must
+  // surface the OBBBA HEAP+Full-SUA conflict ("weak"), not the prior proxy's
+  // unconditional "moderate". Same packet must score identically on both
+  // navigator and applicant endpoints.
+  it('returns weak utility-sua signal on HEAP+Full-SUA conflict (parity with applicant endpoint)', async () => {
+    mockErrorRiskDb(
+      { data: { packet_id: PACKET_ID, applicant_id: 'a0000000-0000-0000-0000-000000000001' }, error: null },
+      {
+        data: [
+          { question_key: 'has_heating_costs', applicant_answer: 'yes' },
+          { question_key: 'has_electric_or_gas', applicant_answer: 'yes' },
+          { question_key: 'has_phone', applicant_answer: 'yes' },
+          { question_key: 'receives_heap', applicant_answer: 'yes' },
+        ],
+        error: null,
+      },
+      { data: { linked_accounts: [] }, error: null },
+      { data: [], error: null },
+    );
+
+    const app = buildTestApp(navigatorRouter, '/navigator', NAVIGATOR);
+    const res = await app.request(
+      `/navigator/packets/${PACKET_ID}/error-risk`,
+      { method: 'POST', headers: JSON_HEADERS },
+      TEST_ENV,
+    );
+
+    expect(res.status).toBe(200);
+    const body = await res.json() as { tier: string; factors: string[] };
+    expect(body.factors).toContain('shelter_utility_unverified');
   });
 });
