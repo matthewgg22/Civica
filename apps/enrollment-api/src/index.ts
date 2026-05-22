@@ -15,6 +15,7 @@ import meRouter from "./routes/me.js";
 import mePacketsRouter from "./routes/me-packets.js";
 import meInboxRouter from "./routes/me-inbox.js";
 import meArgyleRouter from "./routes/me-argyle.js";
+import meWorkHoursRouter from "./routes/me-work-hours.js";
 import benefitsCalRouter from "./routes/benefitscal.js";
 import recertRouter from "./routes/recert.js";
 import twilioWebhookRouter from "./routes/twilio-webhook.js";
@@ -23,6 +24,7 @@ import navigatorRouter from "./routes/navigator.js";
 import argyleWebhookRouter from "./routes/argyle-webhook.js";
 import oauthCanvasRouter from "./routes/oauth-canvas.js";
 import featureFlagsRouter from "./routes/feature-flags.js";
+import buddyRouter from "./routes/buddy.js";
 import { requestLogger } from "./lib/logger.js";
 import { scrubEvent } from "./lib/sentry.js";
 import { withSentry } from "@sentry/cloudflare";
@@ -98,6 +100,10 @@ api.route("/me", meRouter);                         // GET/PATCH /me
 api.route("/me/packets", mePacketsRouter);          // /me/packets/*
 api.route("/me/inbox", meInboxRouter);              // /me/inbox/*
 api.route("/me/argyle/connect", meArgyleRouter);    // GET/POST/DELETE /me/argyle/connect (T-DR3-8)
+api.route("/me/work-requirements", meWorkHoursRouter); // /me/work-requirements/:packetId/hours (§10102)
+
+// Buddy Add routes (feature-flagged: BUDDY_ADD_ENABLED=true)
+api.route("/buddy", buddyRouter);             // POST /buddy/invite, /accept; GET /buddy/applicant-summary, /config
 
 api.route("/benefitscal", benefitsCalRouter);  // /benefitscal/prepare-export/:packetId, /benefitscal/status/:packetId
 
@@ -123,6 +129,8 @@ app.onError((err, c) => {
 // Named export for unit tests — raw Hono app without the Sentry wrapper
 export { app };
 
+import { cleanupBuddyAppMetadata } from "./cron/buddy-app-metadata-cleanup.js";
+
 export default withSentry(
   (env: Env) => ({
     dsn: env.SENTRY_DSN,
@@ -132,6 +140,22 @@ export default withSentry(
   {
     async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
       return app.fetch(request, env, ctx);
+    },
+    async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+      // Buddy access closure: clear app_metadata.role for revoked/completed
+      // buddies so their JWTs stop authenticating as kind='buddy'. Without this
+      // sweep, the buddy role claim survives until token expiry (~1h).
+      ctx.waitUntil(
+        cleanupBuddyAppMetadata(env).then(
+          (result) => {
+            const log = { msg: "buddy_app_metadata_cleanup", ...result };
+            console.log(JSON.stringify(log));
+          },
+          (err) => {
+            console.error(JSON.stringify({ msg: "buddy_app_metadata_cleanup_failed", error: String(err) }));
+          },
+        ),
+      );
     },
   } satisfies ExportedHandler<Env>,
 );

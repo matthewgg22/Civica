@@ -3,11 +3,21 @@ main = "src/index.ts"
 compatibility_date = "2025-05-01"
 compatibility_flags = ["nodejs_compat"]
 
+# Scheduled handlers. Every 5 minutes the worker invokes the buddy
+# app_metadata cleanup sweep — see src/cron/buddy-app-metadata-cleanup.ts.
+# The /plan-eng-review T2 fix closes the buddy JWT one-way door: max
+# post-revoke exposure is the cron interval, not the JWT TTL.
+[triggers]
+crons = ["*/5 * * * *"]
+
 [vars]
 SUPABASE_URL = "https://zgqphgcqfxsgviofsccs.supabase.co"
 # T15: enable AI-powered coaching in the recert practice interview.
 # ANTHROPIC_API_KEY must be set as a wrangler secret (never in [vars]).
 RECERT_AI_ENABLED = "true"
+# Buddy Add feature gate. Set to "true" to enable the buddy invite / accept flow.
+# Off by default until DB migrations (20260566-20260569) are applied to staging.
+BUDDY_ADD_ENABLED = "false"
 # SENTRY_DSN is intentionally absent from [vars] — set it as a secret:
 #   wrangler secret put SENTRY_DSN
 # This prevents the DSN from being committed to source control.
@@ -55,6 +65,11 @@ RECERT_AI_ENABLED = "true"
 #   BENEFITSCAL_CBO_PASSWORD=...        # wrangler secret put BENEFITSCAL_CBO_PASSWORD
 #   BENEFITSCAL_BASE_URL=https://...    # optional override; defaults to https://benefitscal.com
 #                                       # wrangler secret put BENEFITSCAL_BASE_URL
+#
+# Buddy Add (BUDDY_ADD_ENABLED) — dedicated signing key for invite JWTs.
+# Separate from SNAP_FERNET_KEY so buddy invite tokens can be rotated independently.
+# Generate with: openssl rand -base64 32
+#   BUDDY_JWT_SECRET=...              # wrangler secret put BUDDY_JWT_SECRET
 #
 # TODO-15 (Browserless.io driver) — external Playwright service for Phase 2.
 # When set, POST /benefitscal/submit/:packetId auto-builds a Browserless driver
