@@ -19,6 +19,7 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { HTTPException } from 'hono/http-exception';
 import { makeAnonClient } from '../lib/supabase.js';
+import { requireApplicant } from '../lib/auth.js';
 import type { Env } from '../types.js';
 
 const app = new Hono<{ Bindings: Env }>();
@@ -58,12 +59,6 @@ function monthBounds(monthStr: string): { start: string; end: string } {
     start: start.toISOString().slice(0, 10),
     end: end.toISOString().slice(0, 10),
   };
-}
-
-function requireApplicant(actorKind: string): void {
-  if (actorKind !== 'applicant') {
-    throw new HTTPException(403, { message: 'This endpoint is for applicants only' });
-  }
 }
 
 // ---------------------------------------------------------------------------

@@ -43,7 +43,7 @@ describe("cleanupBuddyAppMetadata", () => {
   it("returns zero counts when there are no candidates", async () => {
     mockDb({ data: [], error: null });
     const result = await cleanupBuddyAppMetadata(TEST_ENV);
-    expect(result).toEqual({ candidates: 0, cleared: 0, failed: 0 });
+    expect(result).toEqual({ candidates: 0, cleared: 0, failed: 0, skipped_still_active: 0 });
   });
 
   it("calls Admin API and counts cleared rows on success", async () => {
@@ -96,6 +96,47 @@ describe("cleanupBuddyAppMetadata", () => {
     await expect(cleanupBuddyAppMetadata(TEST_ENV)).rejects.toThrow(
       /buddy_relationship select failed/,
     );
+  });
+
+  // Regression for the multi-applicant buddy bug caught in the pre-merge
+  // review: app_metadata.role is per-auth-user, not per-relationship. If the
+  // buddy still helps another applicant (active row), clearing their global
+  // role would silently break that link. The activity check must come BEFORE
+  // the Admin API call.
+  it("skips Admin API when the buddy still has another active relationship", async () => {
+    const selectQb = makeQueryBuilder({
+      data: [{ id: "rel-completed", buddy_user_id: "buddy-multi" }],
+      error: null,
+    });
+    // 2nd from() call: activity check returns one active row → still-active path
+    const activeQb = makeQueryBuilder({
+      data: [{ id: "rel-still-active" }],
+      error: null,
+    });
+    const updateQb = makeQueryBuilder({ data: null, error: null });
+
+    vi.mocked(makeServiceClient).mockReturnValue({
+      schema: vi.fn().mockReturnValue({
+        from: vi
+          .fn()
+          .mockReturnValueOnce(selectQb) // initial candidate SELECT
+          .mockReturnValueOnce(activeQb) // per-row active-check SELECT
+          .mockReturnValue(updateQb),     // per-row bookkeeping UPDATE
+      }),
+    } as never);
+
+    const fetchMock = vi.fn();
+    globalThis.fetch = fetchMock as unknown as typeof globalThis.fetch;
+
+    const result = await cleanupBuddyAppMetadata(TEST_ENV);
+
+    expect(result.candidates).toBe(1);
+    expect(result.cleared).toBe(0);
+    expect(result.skipped_still_active).toBe(1);
+    expect(result.failed).toBe(0);
+    // The Admin API must NOT be called for a buddy who still has an active
+    // relationship — clearing the role globally would break that link.
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("counts UPDATE failure as failed even when Admin API succeeds", async () => {

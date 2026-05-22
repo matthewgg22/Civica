@@ -31,6 +31,9 @@ export type CleanupResult = {
   candidates: number;
   cleared: number;
   failed: number;
+  /** Rows whose row-level cleared_at was set without calling Admin API, because
+   *  the buddy still has another active relationship. */
+  skipped_still_active: number;
 };
 
 /**
@@ -60,17 +63,40 @@ export async function cleanupBuddyAppMetadata(env: Env): Promise<CleanupResult> 
 
   const rows = data ?? [];
   if (rows.length === 0) {
-    return { candidates: 0, cleared: 0, failed: 0 };
+    return { candidates: 0, cleared: 0, failed: 0, skipped_still_active: 0 };
   }
 
   let cleared = 0;
+  let skipped_still_active = 0;
   let failed = 0;
 
   for (const row of rows) {
-    const ok = await clearAppMetadataRole(env, row.buddy_user_id);
-    if (!ok) {
+    // Multi-applicant guard: app_metadata.role is per-auth-user, not per-relationship.
+    // If this buddy still helps another applicant, clearing the role globally
+    // would silently break that active relationship. Only clear when this is
+    // the buddy's last live link.
+    const { data: activeRows, error: activeErr } = await (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      db.schema("snap_enrollment").from("buddy_relationship" as any) as any
+    )
+      .select("id")
+      .eq("buddy_user_id", row.buddy_user_id)
+      .eq("status", "active")
+      .limit(1) as { data: Array<{ id: string }> | null; error: { message: string } | null };
+
+    if (activeErr) {
       failed += 1;
       continue;
+    }
+
+    const stillActive = (activeRows ?? []).length > 0;
+
+    if (!stillActive) {
+      const ok = await clearAppMetadataRole(env, row.buddy_user_id);
+      if (!ok) {
+        failed += 1;
+        continue;
+      }
     }
 
     const { error: updateErr } = await (
@@ -88,10 +114,14 @@ export async function cleanupBuddyAppMetadata(env: Env): Promise<CleanupResult> 
       continue;
     }
 
-    cleared += 1;
+    if (stillActive) {
+      skipped_still_active += 1;
+    } else {
+      cleared += 1;
+    }
   }
 
-  return { candidates: rows.length, cleared, failed };
+  return { candidates: rows.length, cleared, failed, skipped_still_active };
 }
 
 /**
