@@ -117,13 +117,18 @@ app.onError((err, c) => {
   if (err instanceof HTTPException) {
     return c.json({ error: err.message }, err.status);
   }
+  // Surface the request_id so a user reporting an error gives the team the
+  // exact string to grep Sentry / logs with. requestLogger sets it on every
+  // request; if the middleware was bypassed (e.g. before-middleware error)
+  // we still want a usable correlation handle, so synthesize one.
+  const requestId = (c.get("requestId") as string | undefined) ?? crypto.randomUUID();
   const log = c.get("log");
   if (log) {
-    log.error("unhandled error", { message: err.message, name: err.name });
+    log.error("unhandled error", { message: err.message, name: err.name, request_id: requestId });
   } else {
-    console.error(err);
+    console.error(JSON.stringify({ msg: "unhandled_error", request_id: requestId, error: String(err) }));
   }
-  return c.json({ error: "Internal server error" }, 500);
+  return c.json({ error: "Internal server error", trace_id: requestId }, 500);
 });
 
 // Named export for unit tests — raw Hono app without the Sentry wrapper
