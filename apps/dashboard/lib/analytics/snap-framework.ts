@@ -250,6 +250,13 @@ export interface UnderEnrolledPopulation {
   distributionChannel?: string;
   /** Impact math: partner size × eligibility rate × avg benefit — shown in card summary for targeted groups. */
   distributionMath?: string;
+  /**
+   * True for the primary wedge — the population Civica is leading with today.
+   * Drives brick-accent + "PRIMARY WEDGE" tag in the under-enrolled card.
+   * Per rev1 design doc (2026-05-21), the 60+ via duty-of-care facility
+   * operators path is primary; other rows are validated greenfield targets.
+   */
+  primary?: boolean;
 }
 
 const UNDER_ENROLLED: UnderEnrolledPopulation[] = [
@@ -273,51 +280,61 @@ const UNDER_ENROLLED: UnderEnrolledPopulation[] = [
     eligibleMillions: 14.0,
     enrolledMillions: 11.0,
     qualifiesBecause:
-      "The federal 20% earned-income deduction (Section B step 1), the dependent-care deduction (step 3), and California's BBCE pathway (Section C overlay 2 — gross income up to 200% of poverty) mean that many working families qualify even at incomes that intuitively feel too high to apply.",
+      "20% earned-income deduction + CA BBCE at 200% FPL means many platform workers qualify at incomes that feel too high to apply.",
     ruleAnchors: ["Section B · steps 1, 3 (earned-income + dependent-care deductions)", "Section C · overlay 2 (CA BBCE @ 200% FPL)"],
     whyTheyDontApply:
-      "Platform workers assume any employment income disqualifies them. Gig income is especially invisible to traditional intake — drivers, couriers, and delivery workers rarely identify as benefit-eligible. The distribution unlock is in-app: riders and couriers are already in a digital-first product context at the moment income volatility is highest.",
+      "Platform workers assume wages disqualify them. The unlock is in-app enrollment at the moment income volatility is highest — they're already in a digital-first product context.",
     distributionChannel:
       "Gig platforms (Uber, DoorDash, Instacart) — in-app enrollment partnership at driver onboarding · UFCW grocery locals · direct mobile-first acquisition",
     distributionMath:
-      "~1M CA platform workers → est. 35% eligible-but-unenrolled → ~350K households → ~$80M/mo in unlocked CalFresh benefits",
-    sources: ["USDA FNS Trends in SNAP Participation Rates", "CDSS CalFresh Participation Studies"],
+      "~1M CA platform workers → est. 30–40% eligible-but-unenrolled (derived: CA gig-income distribution × BBCE 200% FPL test; variable-income households systematically under-participate per USDA FNS SNAP participation gap data) → ~300–400K households → ~$70–90M/mo in unlocked CalFresh benefits",
+    sources: [
+      "USDA FNS Trends in SNAP Participation Rates (working low-income participation gap)",
+      "CDSS CalFresh Participation Studies",
+      "Note: 30–40% eligibility rate is model-derived from wage-distribution data, not a published survey figure for gig workers specifically.",
+    ],
   },
   {
-    step: 4,
+    step: 3,
+    primary: true,
     population: "Elderly households (60+)",
-    headlineCue: "Pre-SB 1090 belief that home equity or retirement disqualifies; lasting stigma in the over-65 cohort",
+    headlineCue: "Largest single gap (8.1M) · primary wedge via duty-of-care facility operators (RCFE, Section 202, PACE) where coordinators already own benefits enrollment as part of the job",
     eligibleMillions: 14.0,
     enrolledMillions: 5.9,
     qualifiesBecause:
-      "California eliminated the asset test entirely (Section C overlay 1 · SB 1090), the BBCE pathway lifts the income gate to 200% of poverty (Section C overlay 2), and the federal shelter deduction is uncapped for elderly or disabled households (Section B step 4) — together making most low-fixed-income elderly homeowners eligible regardless of asset value.",
+      "SB 1090 eliminated CA's asset test; BBCE lifts the income gate to 200% FPL; shelter deduction is uncapped for elderly households. Most low-fixed-income homeowners qualify regardless of home equity.",
     ruleAnchors: ["Section C · overlay 1 (CA SB 1090)", "Section C · overlay 2 (CA BBCE)", "Section B · step 4 (uncapped shelter for elderly/disabled)"],
     whyTheyDontApply:
-      "Lingering pre-SB 1090 cultural memory — elderly applicants assume home equity or retirement accounts disqualify them. SNAP also carries lasting stigma in the over-65 cohort that other transfer programs (Medicare, Social Security) do not.",
-    sources: ["USDA FNS SNAP Participation by Demographic Group", "CDSS Senior CalFresh Outreach Reports"],
+      "Pre-SB 1090 cultural memory: home equity and retirement accounts still feel disqualifying. SNAP carries stigma in the 60+ cohort that Medicare and Social Security don't. The unlock is not a consumer app — it's the social worker or service coordinator at the facility where the resident already lives, already trusts staff, and already has benefits enrollment in scope.",
+    distributionChannel:
+      "Duty-of-care facility operators (RCFE, Section 202 HUD-funded, PACE) — coordinator-deployed licensed navigator dashboard. CA RCFEs are licensed by CDSS (same agency that administers CalFresh); Section 202 coordinators are HUD-funded for exactly this work.",
+    distributionMath:
+      "100-resident facility → est. 40% eligible-but-unenrolled (derived: CA 60+ enrollment gap 58% nationally, plus typical facility-resident income profile concentrating at low-fixed-income) → ~40 enrollments × ~$1,680/yr avg CalFresh = ~$67K/yr in unlocked resident income per facility. CA Section 202 + RCFE footprint: ~3,500 licensed facilities → ceiling ~140K facilities-equivalent reach via multi-property operator contracts.",
+    sources: ["USDA FNS SNAP Participation by Demographic Group", "CDSS Senior CalFresh Outreach Reports", "CDSS Community Care Licensing — RCFE Facility Counts", "HUD Section 202 Property Inventory · California"],
   },
   {
-    step: 5,
+    step: 4,
     population: "Home care & seasonal agricultural workers",
     headlineCue: "Union-organized and nearly unreached — SEIU 2015 + UFW are the distribution keys into CA's highest-density eligible cohort",
     eligibleMillions: 4.0,
     enrolledMillions: 1.4,
     qualifiesBecause:
-      "This is the most addressable union-organized cohort in California. IHSS providers earn state minimum wage on part-time hours set by client care assessments — most households with dependents fall under the BBCE 200% FPL ceiling. Agricultural workers earn seasonal wages with multi-month gaps that push annual income below 130% FPL. Both groups already have union infrastructure; Civica partners with that infrastructure to reach workers at scale rather than one-by-one.",
+      "IHSS part-time hours + BBCE 200% FPL ceiling; agricultural seasonal gaps push income below 130% FPL. Union infrastructure already exists — Civica plugs into it.",
     ruleAnchors: [
       "Section B · steps 1–3 (earned-income, excess shelter, dependent-care deductions)",
       "Section C · overlay 2 (CA BBCE @ 200% FPL)",
     ],
     whyTheyDontApply:
-      "Union halls navigate wages and working conditions — not public benefits. Workers assume employment income disqualifies them. The unlock is the union itself: SEIU 2015 stewards and UFW field staff already hold the trust relationships; what's missing is a navigation product that meets workers inside those relationships.",
+      "Union halls navigate wages, not benefits. Stewards and organizers hold the trust relationships — what's missing is a navigation product inside those relationships.",
     distributionChannel:
       "SEIU 2015 (CA IHSS, ~400K members) · UFW (seasonal agricultural, CA-concentrated) · UNITE HERE Local 11 (hotel & food service, SoCal)",
     distributionMath:
-      "SEIU 2015 alone: ~400K CA members → est. 55% eligible-but-unenrolled → ~220K households → ~$51M/mo in unlocked CalFresh benefits",
+      "SEIU 2015 alone: ~400K CA IHSS members → est. 50–60% eligible-but-unenrolled (derived: BLS IHSS wage range $18–22/hr × typical part-time hours → most fall below BBCE 200% FPL ceiling of $2,430/mo for HH1; CDSS IHSS Program Data confirms part-time predominance) → est. ~200–240K households → ~$46–55M/mo in unlocked CalFresh benefits",
     sources: [
       "BLS Occupational Employment Statistics — Home Health & Personal Care Aides",
       "USDA FNS Farm Worker SNAP Participation Study",
       "CDSS IHSS Program Data",
+      "Note: 50–60% eligibility rate is model-derived from IHSS wage distribution × BBCE income test, not a published survey figure.",
     ],
   },
 ];
