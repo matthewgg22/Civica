@@ -70,7 +70,7 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
 
   const riskTierByPacket = new Map<string, RiskTier>();
   const riskScoredAtByPacket = new Map<string, string>();
-  for (const row of (riskRows ?? []) as Array<{ packet_id: string; tier: string | null; created_at: string }>) {
+  for (const row of (riskRows ?? []) as unknown as Array<{ packet_id: string; tier: string | null; created_at: string }>) {
     if (!riskTierByPacket.has(row.packet_id) && row.tier) {
       riskTierByPacket.set(row.packet_id, row.tier as RiskTier);
       riskScoredAtByPacket.set(row.packet_id, row.created_at);
@@ -124,7 +124,7 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
   const showBuckets = filter === "all" || filter === "mine";
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-paper">
       <AppHeader email={user?.email} active="queue" />
 
       <main className="max-w-5xl mx-auto px-8 py-10">

@@ -53,8 +53,8 @@ export default async function QcOutcomesPage() {
     applicants: { full_name_ciphertext: string | null } | null;
   };
 
-  const outcomes = (outcomesRaw ?? []) as OutcomeRow[];
-  const handedOff = (handedOffRaw ?? []) as PacketRow[];
+  const outcomes = (outcomesRaw ?? []) as unknown as OutcomeRow[];
+  const handedOff = (handedOffRaw ?? []) as unknown as PacketRow[];
 
   const sampledIds = new Set(outcomes.map((o) => o.packet_id));
   const unsampledPackets = handedOff.filter((p) => !sampledIds.has(p.packet_id));
