@@ -38,7 +38,9 @@ final class InterviewQuestionBank: ObservableObject {
     }
 
     private func load(from bundle: Bundle) {
-        let resourceNames = ["InterviewQuestions_MA"]
+        // CA is the launch state (per SNAPAgencyDirectory); MA stays
+        // supported so existing tests + practice sessions keep working.
+        let resourceNames = ["InterviewQuestions_CA", "InterviewQuestions_MA"]
         var merged: [InterviewQuestion] = []
         let decoder = JSONDecoder()
 

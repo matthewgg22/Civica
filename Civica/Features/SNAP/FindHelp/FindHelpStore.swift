@@ -49,7 +49,10 @@ final class FindHelpStore: ObservableObject {
     /// can format it back into miles for user-facing copy.
     @Published private(set) var currentRadiusKm: Double = FindHelpStore.defaultRadiusKm
 
-    private var lastSearchedLocation: CLLocation?
+    /// Coordinate of the most recent successful (or attempted) RPC call.
+    /// FindHelpRootView reads this to gate "Search this area" arming on
+    /// a distance threshold so the pill doesn't flash on every micro-pan.
+    private(set) var lastSearchedLocation: CLLocation?
 
     /// True iff the most recent successful `searchNearby` call returned
     /// bundled MA seed data because the live Supabase RPC was

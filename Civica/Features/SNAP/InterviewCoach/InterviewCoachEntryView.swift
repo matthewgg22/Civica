@@ -11,15 +11,7 @@ struct InterviewCoachEntryView: View {
     @State private var showAITransparency = false
 
     @EnvironmentObject private var enrollmentAuth: CivicaEnrollmentAuth
-
-    enum ActiveRecertState: Equatable {
-        case loading
-        case ready(ActiveRecertResponseDTO)
-        case none      // signed-in applicant has no active recert
-        case unauthenticated
-        case failed(String)
-    }
-    @State private var activeRecert: ActiveRecertState = .loading
+    @EnvironmentObject private var recertContext: RecertContextStore
 
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
@@ -83,7 +75,7 @@ struct InterviewCoachEntryView: View {
             ])
         }
         .task(id: enrollmentAuth.state.isAuthenticated) {
-            await loadActiveRecert()
+            await recertContext.refresh(auth: enrollmentAuth, language: language)
         }
         .sheet(isPresented: $showAITransparency) {
             NavigationStack {
@@ -134,7 +126,7 @@ struct InterviewCoachEntryView: View {
 
     @ViewBuilder
     private var practiceAffordance: some View {
-        switch activeRecert {
+        switch recertContext.state {
         case .loading:
             HStack(spacing: CivicaSpacing.sm) {
                 ProgressView().controlSize(.small)
@@ -189,7 +181,7 @@ struct InterviewCoachEntryView: View {
     }
 
     private var noRecertSubtitle: String {
-        switch activeRecert {
+        switch recertContext.state {
         case .unauthenticated:
             return language == .spanish
                 ? "Inicia sesión para practicar tu entrevista."
@@ -200,26 +192,6 @@ struct InterviewCoachEntryView: View {
             return language == .spanish
                 ? "Aún no hay una recertificación activa. Inicia una para practicar tu entrevista."
                 : "No active recertification yet. Start one to practice your interview."
-        }
-    }
-
-    private func loadActiveRecert() async {
-        guard enrollmentAuth.state.isAuthenticated else {
-            activeRecert = .unauthenticated
-            return
-        }
-        activeRecert = .loading
-        let client = enrollmentAuth.makeEnrollmentAPIClient()
-        do {
-            if let recert = try await client.fetchActiveRecert() {
-                activeRecert = .ready(recert)
-            } else {
-                activeRecert = .none
-            }
-        } catch {
-            activeRecert = .failed(language == .spanish
-                ? "No se pudo verificar tu recertificación."
-                : "Could not check your recertification.")
         }
     }
 

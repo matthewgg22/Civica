@@ -26,6 +26,11 @@ import featureFlagsRouter from "./routes/feature-flags.js";
 import { requestLogger } from "./lib/logger.js";
 import { scrubEvent } from "./lib/sentry.js";
 import { withSentry } from "@sentry/cloudflare";
+import { makeServiceClient } from "./lib/supabase.js";
+import {
+  StubUsdaRetailerFetcher,
+  syncUsdaRetailers,
+} from "./lib/usda-retailer-sync.js";
 import type { Env, Variables } from "./types.js";
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>();
@@ -123,6 +128,49 @@ app.onError((err, c) => {
 // Named export for unit tests — raw Hono app without the Sentry wrapper
 export { app };
 
+// Cron dispatch — keep tiny and table-driven so adding/removing
+// schedules in wrangler.toml is the only change needed. Tasks run under
+// the same Sentry envelope as fetch (Sentry's CF integration wires both).
+async function dispatchScheduled(
+  event: ScheduledController,
+  env: Env,
+): Promise<void> {
+  const log = (
+    level: "info" | "warn" | "error",
+    msg: string,
+    extra?: Record<string, unknown>,
+  ) => {
+    console.log(
+      JSON.stringify({
+        level,
+        msg,
+        cron: event.cron,
+        ts: new Date().toISOString(),
+        ...extra,
+      }),
+    );
+  };
+
+  switch (event.cron) {
+    case "0 3 * * *": {
+      // Nightly USDA SNAP Retailer Locator sync. Currently stub-mode —
+      // live USDA endpoint is wired in a follow-up commit once the
+      // public URL + field map is verified.
+      log("info", "scheduled: usda retailer sync starting");
+      const supabase = makeServiceClient(env);
+      const result = await syncUsdaRetailers({
+        fetcher: new StubUsdaRetailerFetcher(),
+        supabase,
+        log,
+      });
+      log("info", "scheduled: usda retailer sync finished", { ...result });
+      return;
+    }
+    default:
+      log("warn", "scheduled: no handler for cron expression");
+  }
+}
+
 export default withSentry(
   (env: Env) => ({
     dsn: env.SENTRY_DSN,
@@ -132,6 +180,13 @@ export default withSentry(
   {
     async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
       return app.fetch(request, env, ctx);
+    },
+    async scheduled(
+      event: ScheduledController,
+      env: Env,
+      ctx: ExecutionContext,
+    ): Promise<void> {
+      ctx.waitUntil(dispatchScheduled(event, env));
     },
   } satisfies ExportedHandler<Env>,
 );

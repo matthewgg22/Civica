@@ -66,3 +66,11 @@ RECERT_AI_ENABLED = "true"
 # in-house browser execution. See packages/benefitscal-cbo/README.md for the
 # v1→v2 migration playbook.
 #   BROWSERLESS_API_KEY=...             # wrangler secret put BROWSERLESS_API_KEY
+
+# Scheduled (cron) triggers — handled by the `scheduled()` export in src/index.ts.
+# Track 1 / M1: nightly USDA SNAP Retailer Locator sync at 03:00 UTC. The
+# handler is currently stub-mode (no live records ingested) until the public
+# USDA endpoint URL + field map is verified. The cron still runs so
+# find_help_sources timestamps stay fresh and the path is observable.
+[triggers]
+crons = ["0 3 * * *"]

@@ -25,6 +25,20 @@ protocol FindHelpServiceProtocol {
         maxResults: Int
     ) async throws -> [FindHelpLocation]
 
+    /// Retailer-specific query — same row shape as searchNearby, but
+    /// scoped to records the SNAP ecosystem treats as places to SPEND
+    /// EBT (`service_types` contains `ebt_retailer`). Backed by the
+    /// `find_retailers_nearby` Postgres function, which is a thin
+    /// specialization of `find_help_locations_nearby` so the haversine
+    /// + bbox math has one source of truth.
+    func searchRetailersNearby(
+        lat: Double,
+        lng: Double,
+        radiusKm: Double,
+        precision: FindHelpLocationPrecision,
+        maxResults: Int
+    ) async throws -> [FindHelpLocation]
+
     func loadSources() async throws -> [FindHelpSourceAttribution]
 }
 
@@ -108,6 +122,23 @@ struct FindHelpService: FindHelpServiceProtocol {
                 (lng * factor).rounded() / factor
             )
         }
+    }
+
+    func searchRetailersNearby(
+        lat: Double,
+        lng: Double,
+        radiusKm: Double = 25,
+        precision: FindHelpLocationPrecision = .coarse,
+        maxResults: Int = 50
+    ) async throws -> [FindHelpLocation] {
+        let (outLat, outLng) = Self.coordinatesForEgress(lat: lat, lng: lng, precision: precision)
+        let body: [String: Any] = [
+            "lat": outLat,
+            "lng": outLng,
+            "radius_km": radiusKm,
+            "max_results": maxResults,
+        ]
+        return try await callRPC(name: "find_retailers_nearby", body: body)
     }
 
     func loadSources() async throws -> [FindHelpSourceAttribution] {
