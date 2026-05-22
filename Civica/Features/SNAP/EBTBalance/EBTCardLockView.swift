@@ -18,6 +18,7 @@ struct EBTCardLockView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+                demoBanner
                 lockCard
                 extrasCard
                 demoDisclosure
@@ -28,6 +29,40 @@ struct EBTCardLockView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle(EBTBalanceStrings.lockScreenTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // MARK: - Prominent demo-mode banner
+
+    // Shown at the top of the lock screen at all times. The lock toggles
+    // are the dangerous affordance here — a user who believes a demo
+    // lock is real may skip reporting a stolen card. The banner names
+    // the real action (CA EBT customer service) so it stays useful even
+    // for a confused recipient.
+    private var demoBanner: some View {
+        HStack(alignment: .top, spacing: CivicaSpacing.sm) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundStyle(CivicaColors.warningAmber)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(EBTBalanceStrings.lockScreenDemoBannerTitle.value(in: language))
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(EBTBalanceStrings.lockScreenDemoBannerBody.value(in: language))
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.statusWarningSurface)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .strokeBorder(CivicaColors.warningAmber, lineWidth: 1)
+        )
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Primary lock card
