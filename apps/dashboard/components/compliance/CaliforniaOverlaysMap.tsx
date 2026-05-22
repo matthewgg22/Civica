@@ -144,7 +144,7 @@ export default function CaliforniaOverlaysMap({
       if (!SUPPORTED_STATE_FIPS.has(fips)) continue;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const [cx, cy] = path.centroid(f as any);
-      centroids.push({ fips, name: f.properties.name, x: cx, y: cy });
+      centroids.push({ fips, name: f.properties.name, x: Math.round(cx * 1000) / 1000, y: Math.round(cy * 1000) / 1000 });
     }
 
     return {
@@ -218,7 +218,8 @@ export default function CaliforniaOverlaysMap({
                   fill={fill}
                   stroke={stroke}
                   strokeWidth={strokeWidth}
-                  style={{ cursor }}
+                  className="focus:outline-none focus-visible:outline-none [&:focus-visible]:[stroke:#9A5A14] [&:focus-visible]:[stroke-width:2.25]"
+                  style={{ cursor, outline: "none" }}
                   tabIndex={isSupported ? 0 : -1}
                   role={isSupported ? "button" : undefined}
                   aria-label={label}

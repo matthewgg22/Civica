@@ -165,3 +165,14 @@ Add new items with `## TODO-N` headings. Never delete — mark as DONE instead.
 **Effort:** S (human ~30min operator action; CC: not the bottleneck)
 **Priority:** P0 — required for acquisition motion
 **Depends on:** nothing — Matthew operator action
+
+---
+
+## TODO-17 — Buddy attribution sprint: ROI panel for buddy profile + union rep org panel
+
+**What:** Build the full attribution UI deferred from the buddy-add feature: (1) Buddy profile screen showing "You've helped N people enroll in SNAP, unlocking $X in CalFresh benefits." (2) Union rep org panel in navigator dashboard showing aggregate member outcomes (enrolled count, $ value, completion rate vs. solo applicants). Wire `attributed_enrollment_count` and `attributed_benefits_value_cents` fields already scaffolded on `BuddyRelationship`.
+**Why:** This is the ROI story that justifies the SEIU/UFW partnership contract. Without it, reps have no measurable output to show union leadership. With it, "we helped 47 members unlock $79K in CalFresh" is the retention argument for the union contract.
+**Effort:** M (human ~1w / CC ~2d)
+**Priority:** P2 — required before SEIU/UFW partnership pitch meeting
+**Depends on:** TODO-5 (enrollment event stream), county outcome feedback loop (PR #32fc1916 county-outcome flow), buddy-add feature shipped
+

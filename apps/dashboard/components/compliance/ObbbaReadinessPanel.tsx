@@ -26,6 +26,7 @@ import type {
   ObbbaStakeholder,
 } from "../../lib/analytics/obbba";
 import ObbbaTimeline from "./ObbbaTimeline";
+import { ObbbaCountdownArc } from "./ObbbaCountdownArc";
 
 const STATUS_META: Record<ObbbaStatus, { color: string; bg: string }> = {
   Ready:   { color: "#C9922A", bg: "rgba(201,146,42,0.10)" },
@@ -136,9 +137,10 @@ function HeroCard({ p }: { p: ObbbaProvision }) {
 
         {/* Full analysis collapsed */}
         <details className="group">
-          <summary className="cursor-pointer list-none text-[10px] uppercase tracking-[0.12em] font-semibold text-muted hover:text-ink transition-colors">
-            <span className="group-open:hidden">+ full analysis · posture · sources</span>
-            <span className="hidden group-open:inline">− collapse</span>
+          <summary className="cursor-pointer list-none flex items-center gap-1.5 text-[10px] uppercase tracking-[0.12em] font-semibold text-muted hover:text-ink transition-colors">
+            <span className="group-open:hidden">Full analysis · posture · sources</span>
+            <span className="hidden group-open:inline">Collapse</span>
+            <span className="transition-transform group-open:rotate-180 text-[8px]">▼</span>
           </summary>
           <div className="mt-3 pt-3 border-t border-hairline/50 space-y-2.5">
             <p className="text-[12px] text-graphite leading-relaxed">
@@ -243,9 +245,10 @@ function ProvisionRow({ p }: { p: ObbbaProvision }) {
 
         {/* Details toggle */}
         <details className="group">
-          <summary className="cursor-pointer list-none text-[10px] uppercase tracking-[0.12em] font-semibold text-muted hover:text-ink transition-colors mt-1">
-            <span className="group-open:hidden">+ if wrong · if right · posture</span>
-            <span className="hidden group-open:inline">− collapse</span>
+          <summary className="cursor-pointer list-none flex items-center gap-1.5 text-[10px] uppercase tracking-[0.12em] font-semibold text-muted hover:text-ink transition-colors mt-1">
+            <span className="group-open:hidden">If wrong · if right · posture</span>
+            <span className="hidden group-open:inline">Collapse</span>
+            <span className="transition-transform group-open:rotate-180 text-[8px]">▼</span>
           </summary>
           <div className="mt-3 pt-3 border-t border-hairline/50 space-y-2">
             <p className="text-[12px] text-graphite leading-relaxed">
@@ -292,7 +295,7 @@ export default function ObbbaReadinessPanel({
       <div className="flex items-start justify-between gap-6 mb-5 flex-wrap">
         <div>
           <p className="eyebrow mb-1.5">
-            Pillar 2 · OBBBA stress test · what the law costs if we get it wrong
+            Part 2 · OBBBA stress test · what the law costs if we get it wrong
           </p>
           <h3
             id="obbba-readiness-title"
@@ -333,6 +336,9 @@ export default function ObbbaReadinessPanel({
           </span>
         ))}
       </div>
+
+      {/* Countdown arc — OBBBA deadline rings */}
+      <ObbbaCountdownArc />
 
       {/* Implementation timeline */}
       <ObbbaTimeline provisions={provisions} />

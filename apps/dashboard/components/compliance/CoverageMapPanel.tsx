@@ -68,6 +68,16 @@ function nodeColorForStage(stage: StageKind): string {
   }
 }
 
+// $13B total SNAP error volume nationally (FY2023). Each link's value is a
+// percentage of that — multiply to get the dollar amount on the path.
+const TOTAL_ERROR_B = 13;
+
+function fmtDollar(pct: number): string {
+  const bns = (pct / 100) * TOTAL_ERROR_B;
+  if (bns >= 1) return `$${bns.toFixed(1)}B / yr`;
+  return `$${Math.round(bns * 1000)}M / yr`;
+}
+
 const SOURCE_LABEL: Record<SourceKind, string> = {
   calibrated: "calibrated from microdata",
   published:  "published federal figure",
@@ -133,22 +143,23 @@ export default function CoverageMapPanel() {
     >
       {/* Header */}
       <div className="mb-5">
-        <p className="eyebrow mb-1.5">Pillar 3 · audit-expectation simulation · where the $13B comes from</p>
+        <p className="eyebrow mb-1.5">Part 3 · the $13B leak · where the money actually goes wrong</p>
         <h3
           id="audit-simulation-title"
           className="text-[22px] font-semibold tracking-tight text-ink leading-tight"
         >
-          Where SNAP errors enter the system, and how they propagate to a loss
+          Where the $13B in SNAP errors actually comes from
         </h3>
         <p className="text-[13px] text-graphite mt-2 max-w-3xl leading-relaxed">
-          Pillar 2 above named the dollar exposure under OBBBA. This panel
-          shows where those losses actually come from. The US issues about
-          <span className="font-semibold text-ink"> $112 billion </span> in
-          SNAP benefits a year; roughly <span className="font-semibold text-ink">$13 billion</span> of
-          that gets flagged as errored — paid wrong, paid late, or denied to
-          someone who actually qualified. The funnel below sizes the volume;
-          the Sankey under it traces the same dollars back to which households
-          and which mistakes drive each loss path.
+          The US issues about
+          <span className="font-semibold text-ink"> $112B </span> in SNAP
+          benefits each year. Roughly
+          <span className="font-semibold text-ink"> $13B</span> of that gets
+          flagged as errored — paid wrong, paid late, or denied to someone
+          who actually qualified. The funnel sizes the volume; the Sankey
+          below traces those dollars back to which households and which
+          mistakes drive each loss path. Every leak the Sankey names is
+          a leak Pillar 4 closes downstream.
         </p>
       </div>
 
@@ -423,38 +434,54 @@ export default function CoverageMapPanel() {
                   strokeOpacity={0.55}
                   strokeWidth={Math.max(1, link.width ?? 1)}
                   className="group-hover:[stroke-opacity:0.85] transition-all"
-                >
-                  <title>
-                    {sourceLabel} → {targetLabel}
-                    {"\n"}
-                    {valueTxt}% of all errored cases · {SOURCE_LABEL[linkRaw.sourceKind]}
-                  </title>
-                </path>
+                  aria-label={`${sourceLabel} → ${targetLabel}: ${valueTxt}% of all errored cases · ${SOURCE_LABEL[linkRaw.sourceKind]}`}
+                />
 
-                {/* Percent label — hidden until the band is hovered */}
-                <g
-                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-150"
-                  style={{ pointerEvents: "none" }}
-                >
-                  <rect
-                    x={midX - plateW / 2}
-                    y={midY - 9}
-                    width={plateW}
-                    height={18}
-                    fill="rgba(248,245,239,0.96)"
-                    stroke="rgba(0,0,0,0.18)"
-                    strokeWidth={0.75}
-                    rx={2}
-                  />
-                  <text
-                    x={midX}
-                    y={midY + 4}
-                    textAnchor="middle"
-                    className="fill-ink text-[11px] font-semibold tabular-nums"
-                  >
-                    {label}
-                  </text>
-                </g>
+                {/* Hover tooltip — percent + dollar amount */}
+                {(() => {
+                  const dollarStr = fmtDollar(value);
+                  const pW = Math.max(label.length * 8, dollarStr.length * 6.8) + 18;
+                  return (
+                    <g
+                      className="opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                      style={{ pointerEvents: "none" }}
+                    >
+                      <rect
+                        x={midX - pW / 2}
+                        y={midY - 16}
+                        width={pW}
+                        height={32}
+                        fill="rgba(248,245,239,0.97)"
+                        stroke="rgba(0,0,0,0.16)"
+                        strokeWidth={0.75}
+                        rx={3}
+                      />
+                      {/* percent */}
+                      <text
+                        x={midX}
+                        y={midY - 3}
+                        textAnchor="middle"
+                        fontSize={12}
+                        fontWeight={700}
+                        fill="#1A1714"
+                        fontFamily="monospace"
+                      >
+                        {label}
+                      </text>
+                      {/* dollar */}
+                      <text
+                        x={midX}
+                        y={midY + 11}
+                        textAnchor="middle"
+                        fontSize={9.5}
+                        fill="#5A544D"
+                        fontFamily="monospace"
+                      >
+                        {dollarStr}
+                      </text>
+                    </g>
+                  );
+                })()}
               </g>
             );
           })}
@@ -477,7 +504,10 @@ export default function CoverageMapPanel() {
               const isStage2 = data.stage === "error";
               const isLeftSide = data.stage === "intake";
 
-              const captionLines = data.caption ? wrapText(data.caption, 32) : [];
+              // Only render caption text when the band is tall enough — SVG text
+              // doesn't clip to parent bounds, so short bands overflow visually.
+              const MIN_CAPTION_H = 32;
+              const captionLines = (data.caption && h >= MIN_CAPTION_H) ? wrapText(data.caption, 32) : [];
 
               if (isStage2) {
                 // Stage 2: label sits above the top of the node bar with a
@@ -496,12 +526,8 @@ export default function CoverageMapPanel() {
                       fill={fill}
                       stroke="#F8F5EF"
                       strokeWidth={1.5}
-                    >
-                      <title>
-                        {data.label}
-                        {data.caption ? "\n" + data.caption : ""}
-                      </title>
-                    </rect>
+                      aria-label={data.caption ? `${data.label}: ${data.caption}` : data.label}
+                    />
                     {/* Background plate */}
                     <rect
                       x={plateX}
@@ -536,12 +562,8 @@ export default function CoverageMapPanel() {
                     width={NODE_WIDTH}
                     height={h}
                     fill={fill}
-                  >
-                    <title>
-                      {data.label}
-                      {data.caption ? "\n" + data.caption : ""}
-                    </title>
-                  </rect>
+                    aria-label={data.caption ? `${data.label}: ${data.caption}` : data.label}
+                  />
                   <text
                     x={labelX}
                     y={y0 + h / 2 - (captionLines.length > 0 ? 8 : 0)}

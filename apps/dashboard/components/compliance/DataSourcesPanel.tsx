@@ -31,8 +31,9 @@ export default function DataSourcesPanel({
           </h3>
           <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
             Every external dataset Civica leans on for the compliance dashboards, plus
-            the FOIA targets that close the remaining gaps. Refresh dates marked
-            <span className="font-mono"> 2026-05-20</span> are sources we don&apos;t refresh on a schedule yet.
+            the FOIA targets that close the remaining gaps. Refresh dates marked{" "}
+            <span className="font-mono">2026-05-20</span>{" "}
+            are sources we don&apos;t refresh on a schedule yet.
           </p>
         </div>
       </div>
