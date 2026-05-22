@@ -18,6 +18,7 @@ import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
 import { makeServiceClient } from "../lib/supabase.js";
 import { getOrCreateApplicant } from "../lib/applicant.js";
+import { requireApplicant } from "../lib/auth.js";
 import type { Env } from "../types.js";
 
 const app = new Hono<{ Bindings: Env }>();
@@ -30,16 +31,6 @@ const connectBodySchema = z.object({
   /** Names of linked employer accounts (informational). */
   linked_accounts: z.array(z.record(z.unknown())).optional(),
 });
-
-// ---------------------------------------------------------------------------
-// Helper: applicant-only guard
-// ---------------------------------------------------------------------------
-
-function requireApplicant(actorKind: string): void {
-  if (actorKind !== "applicant") {
-    throw new HTTPException(403, { message: "This endpoint is for applicants only" });
-  }
-}
 
 // ---------------------------------------------------------------------------
 // GET /me/argyle/connect — connection status

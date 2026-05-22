@@ -4,6 +4,7 @@ import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
 import { makeAnonClient } from "../lib/supabase.js";
 import { withActorContext } from "../middleware/actorContext.js";
+import { requireNavigator } from "../lib/auth.js";
 import type { Env } from "../types.js";
 import { recertEngine } from "@civica/recert-engine";
 import type { PacketSnapshot } from "@civica/recert-engine";
@@ -68,15 +69,6 @@ function buildSnapshot(
   };
 }
 
-// ---------------------------------------------------------------------------
-// Auth guard helper — navigator or above
-// ---------------------------------------------------------------------------
-
-function requireNavigator(actor: { kind: string }): void {
-  if (actor.kind === "applicant") {
-    throw new HTTPException(403, { message: "Navigator role required" });
-  }
-}
 
 // ---------------------------------------------------------------------------
 // POST /v1/enrollment/recert/:packetId/init
@@ -85,7 +77,7 @@ function requireNavigator(actor: { kind: string }): void {
 
 app.post("/:packetId/init", zValidator("json", initRecertSchema), async (c) => {
   const actor = c.get("actor");
-  requireNavigator(actor);
+  requireNavigator(actor.kind);
 
   const packetId = c.req.param("packetId");
   const body = c.req.valid("json");
@@ -148,7 +140,7 @@ app.post("/:packetId/init", zValidator("json", initRecertSchema), async (c) => {
 
 app.get("/:packetId", async (c) => {
   const actor = c.get("actor");
-  requireNavigator(actor);
+  requireNavigator(actor.kind);
 
   const packetId = c.req.param("packetId");
   const db = makeAnonClient(c.env, c.get("jwt"));
@@ -176,7 +168,7 @@ app.get("/:packetId", async (c) => {
 
 app.patch("/:recertId", zValidator("json", patchRecertSchema), async (c) => {
   const actor = c.get("actor");
-  requireNavigator(actor);
+  requireNavigator(actor.kind);
 
   const recertId = c.req.param("recertId");
   const body = c.req.valid("json");
