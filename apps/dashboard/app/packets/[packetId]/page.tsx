@@ -16,7 +16,9 @@ import MissingItemRequestPanel from "../../../components/MissingItemRequestPanel
 import ExpeditedReviewGate from "./ExpeditedReviewGate";
 import ShelterAllocationPanel from "../../../components/ShelterAllocationPanel";
 import type { ShelterAllocation } from "../../../components/ShelterAllocationPanel";
-import { classifyTenancy } from "@civica/snap-qc-engine";
+import { classifyTenancy, detectMissedElections, totalMissedMonthlyValue } from "@civica/snap-qc-engine";
+import type { HouseholdElectionProfile } from "@civica/snap-qc-engine";
+import MissedElectionsPanel from "../../../components/MissedElectionsPanel";
 import ComplianceNarrative from "../../../components/ComplianceNarrative";
 import APIVerificationPanel from "../../../components/APIVerificationPanel";
 import type { VerificationSummary } from "../../../components/APIVerificationPanel";
@@ -129,6 +131,24 @@ export default async function PacketDetailPage({
   const errorRisk = errorRiskResult.data as { score: number | null; tier: string | null } | null;
   const nextStatuses = PACKET_STATUS_TRANSITIONS[packet.status as keyof typeof PACKET_STATUS_TRANSITIONS] ?? [];
 
+  // ── Answer helpers — hoisted so sublease classifier + failure-to-elect below can use them ──
+  type AnswerRow = { question_key: string; applicant_answer: string | null };
+  const answerMap: Record<string, string | null> = Object.fromEntries(
+    answers.map((r: AnswerRow) => [r.question_key, r.applicant_answer])
+  );
+  const getAnswer = (key: string): string | null => answerMap[key] ?? null;
+  const suaAnswers = {
+    has_heating_costs: getAnswer("has_heating_costs") as "yes" | "no" | null,
+    has_electric_or_gas: getAnswer("has_electric_or_gas") as "yes" | "no" | null,
+    has_phone: getAnswer("has_phone") as "yes" | "no" | null,
+  };
+  const suaComputed = determineSUATier(suaAnswers);
+  const answersMap: Record<string, string> = {};
+  for (const a of answers) {
+    if (a.applicant_answer != null) answersMap[a.question_key] = a.applicant_answer;
+  }
+  const shelterAllocation = shelterAllocationResult?.data ?? null;
+
   // Expedited review gate (OBBBA §10102(a)): show when employment_status = "unemployed"
   // AND monthly gross income is very low or unanswered AND navigator hasn't acted yet.
   const employmentAnswer = answers.find((a) => a.question_key === "employment_status");
@@ -157,8 +177,8 @@ export default async function PacketDetailPage({
       lease_in_applicant_name: answersMap["lease_in_applicant_name"] === "true",
       leaseholder_name: answersMap["leaseholder_name"] ?? undefined,
       stated_monthly_rent: parseFloat(getAnswer("monthly_rent_or_mortgage") ?? "0") || 0,
-      payment_method: (answersMap["rent_payment_method"] as string | undefined) ?? "unknown",
-      address: answersMap["address"] as string | undefined,
+      payment_method: (answersMap["rent_payment_method"] as "bank_transfer" | "cash" | "venmo_zelle" | "other" | undefined) ?? "other",
+      address: answersMap["address"] ?? "",
     },
     applicant_name: packet.applicants ? (packet.applicants as { full_name_ciphertext?: string | null }).full_name_ciphertext ?? "" : "",
     household_size: parseFloat(getAnswer("household_size") ?? "1") || 1,
@@ -170,6 +190,68 @@ export default async function PacketDetailPage({
     leaseClassification.tenancy === "shared_tenancy" ||
     leaseClassification.tenancy === "sublease" ||
     shelterAllocation !== null;
+
+  // ── Failure-to-elect detection ──────────────────────────────────────────
+  // Build a HouseholdElectionProfile from intake answers + household members.
+  // household_members is derived from household_size — we don't have per-member
+  // age/disability data in intake answers, so we use the best available proxy.
+  const householdSizeNum = parseFloat(getAnswer("household_size") ?? "1") || 1;
+  const hasElderly = getAnswer("has_elderly_disabled_member") === "yes";
+  const hasDisabled = getAnswer("has_disabled_member") === "yes";
+  const isWorking = getAnswer("employment_status") === "employed" ||
+    getAnswer("employment_status") === "self_employed";
+  const childAges = (getAnswer("child_ages") ?? "").split(",")
+    .map((s) => parseInt(s.trim()))
+    .filter((n) => !isNaN(n));
+
+  // Synthetic household members: primary adult + any known children
+  const householdMembers: HouseholdElectionProfile["household_members"] = [
+    {
+      age: hasElderly ? 68 : 35,
+      is_disabled: hasDisabled,
+      is_working: isWorking,
+      receives_ssi: getAnswer("receives_ssi") === "yes",
+    },
+    ...childAges.map((age) => ({
+      age,
+      is_disabled: false,
+      is_working: false,
+      receives_ssi: false,
+    })),
+  ];
+  // Pad to household size with generic working-age adults if needed
+  while (householdMembers.length < householdSizeNum) {
+    householdMembers.push({ age: 30, is_disabled: false, is_working: false, receives_ssi: false });
+  }
+
+  const electionProfile: HouseholdElectionProfile = {
+    state_code: (packet.state_code as "CA" | "MA") ?? "CA",
+    housing_situation: (getAnswer("housing_situation") as HouseholdElectionProfile["housing_situation"]) ?? "renting",
+    claimed_homeless_deduction: getAnswer("claimed_homeless_deduction") === "true",
+    claimed_sua_tier: (suaComputed as HouseholdElectionProfile["claimed_sua_tier"]) ?? "NONE",
+    claimed_actual_utility_cost_usd:
+      parseFloat(getAnswer("actual_utility_cost_monthly") ?? "") || null,
+    claimed_dependent_care_usd:
+      parseFloat(getAnswer("monthly_dependent_care_cost") ?? "") || null,
+    claimed_medical_deduction_usd:
+      parseFloat(getAnswer("monthly_medical_cost") ?? "") || null,
+    has_heating_costs: getAnswer("has_heating_costs") === "yes" ? true
+      : getAnswer("has_heating_costs") === "no" ? false : null,
+    has_electric_or_gas: getAnswer("has_electric_or_gas") === "yes" ? true
+      : getAnswer("has_electric_or_gas") === "no" ? false : null,
+    has_phone: getAnswer("has_phone") === "yes" ? true
+      : getAnswer("has_phone") === "no" ? false : null,
+    documented_monthly_utility_usd:
+      parseFloat(getAnswer("documented_monthly_utility") ?? "") || null,
+    household_members: householdMembers,
+    monthly_dependent_care_paid_usd:
+      parseFloat(getAnswer("monthly_dependent_care_cost") ?? "") || null,
+    monthly_medical_out_of_pocket_usd:
+      parseFloat(getAnswer("monthly_medical_cost") ?? "") || null,
+  };
+
+  const missedElections = detectMissedElections(electionProfile);
+  const missedElectionsTotal = totalMissedMonthlyValue(missedElections);
 
   // Pre-flight blockers for "Ready for Handoff" + risk data
   const [unresolvedDocsResult, unreviewedFieldsResult, consentResult, riskResult, argyleResult] = await Promise.all([
@@ -201,18 +283,8 @@ export default async function PacketDetailPage({
   const consentedAt = hasConsent ? (consentResult.data![0] as { consented_at: string }).consented_at : null;
 
   // ── Verification Summary (computed server-side from DB data) ────────────────
-  type AnswerRow = { question_key: string; applicant_answer: string | null };
-  const answerMap: Record<string, string | null> = Object.fromEntries(
-    answers.map((r: AnswerRow) => [r.question_key, r.applicant_answer])
-  );
-  const getAnswer = (key: string): string | null => answerMap[key] ?? null;
-
-  const suaAnswers = {
-    has_heating_costs: getAnswer("has_heating_costs") as "yes" | "no" | null,
-    has_electric_or_gas: getAnswer("has_electric_or_gas") as "yes" | "no" | null,
-    has_phone: getAnswer("has_phone") as "yes" | "no" | null,
-  };
-  const suaComputed = determineSUATier(suaAnswers);
+  // (answerMap / getAnswer / suaAnswers / suaComputed / answersMap / shelterAllocation
+  //  are declared earlier so the sublease classifier + failure-to-elect can reference them)
   const heapCheck = checkHEAPCompliance({
     receives_heap: getAnswer("receives_heap") as "yes" | "no" | null | undefined,
     sua_tier_claimed: suaComputed,
@@ -296,10 +368,7 @@ export default async function PacketDetailPage({
   const argyleConn = argyleResult.data ?? null;
   const isArgyleConnected = argyleConn !== null;
 
-  const answersMap: Record<string, string> = {};
-  for (const a of answers) {
-    if (a.applicant_answer != null) answersMap[a.question_key] = a.applicant_answer;
-  }
+  // answersMap / suaComputed hoisted above sublease classifier — just use them here
   const suaQuestionsAnswered = suaComputed !== null;
   const hasHousingSituation = !!answersMap["housing_situation"];
   const hasIncomeDocs = docs.some((d) =>
@@ -323,15 +392,39 @@ export default async function PacketDetailPage({
   const suaDef: "moderate" | "weak"   = suaQuestionsAnswered ? "moderate" : "weak";
   const gigDef: "strong"  | "weak"    = isArgyleConnected   ? "strong"   : "weak";
 
-  const shelterAllocation = shelterAllocationResult?.data ?? null;
-  // Defensibility ladder for shared-lease:
-  //   no housing situation answered → weak
-  //   housing answered, no allocation needed → moderate
-  //   allocation set by navigator, no evidence doc → moderate
-  //   allocation set + evidence document on file → strong
+  // shelterAllocation hoisted above sublease classifier
+
+  // Pull OCR-computed civica_* verification fields for lease documents.
+  // These synthetic fields are written by the OCR webhook after verifyLeaseExtraction() runs.
+  type LeaseFieldRow = { field_key: string; original_ocr_value: string | null; navigator_confirmed_value: string | null };
+  const ocrLeaseDefField = (fields as LeaseFieldRow[]).find(
+    (f) => f.field_key === "civica_defensibility_tier",
+  );
+  const ocrRentMatch = (fields as LeaseFieldRow[]).find(
+    (f) => f.field_key === "civica_rent_verification_status",
+  );
+  const ocrNameMatch = (fields as LeaseFieldRow[]).find(
+    (f) => f.field_key === "civica_name_verification_status",
+  );
+  // Best value: navigator_confirmed_value overrides original_ocr_value
+  const ocrLeaseTier = (ocrLeaseDefField?.navigator_confirmed_value ?? ocrLeaseDefField?.original_ocr_value) as
+    | "strong" | "moderate" | "weak" | null | undefined;
+  const ocrRentMatchValue = ocrRentMatch?.navigator_confirmed_value ?? ocrRentMatch?.original_ocr_value;
+  const ocrNameMatchValue = ocrNameMatch?.navigator_confirmed_value ?? ocrNameMatch?.original_ocr_value;
+
+  // Defensibility ladder for shared-lease (priority order):
+  //   1. OCR verification ran + both axes strong → strong
+  //   2. Allocation set + evidence document → strong
+  //   3. OCR verification ran (any result) → use OCR tier
+  //   4. Allocation set (no evidence doc) → moderate
+  //   5. Housing situation answered → moderate
+  //   6. Nothing → weak
   const leaseDef: "strong" | "moderate" | "weak" = (() => {
     if (!hasHousingSituation) return "weak";
+    if (ocrLeaseTier === "strong") return "strong";
     if (shelterAllocation?.evidence_document_id) return "strong";
+    if (ocrLeaseTier === "moderate" || ocrLeaseTier === "weak") return ocrLeaseTier;
+    if (shelterAllocation) return "moderate";
     return "moderate";
   })();
 
@@ -382,15 +475,23 @@ export default async function PacketDetailPage({
       detail: leaseDef === "weak"
         ? "Housing situation was not answered in the questionnaire. Shared-lease arrangements are a known error source — USDA assigns 11.4% weight. A clear housing answer moves this to moderate."
         : leaseDef === "strong"
-          ? `Rent allocation confirmed by navigator (${shelterAllocation ? `$${shelterAllocation.allocated_rent_usd}/mo — ${Math.round(shelterAllocation.household_share_pct * 100)}% of total lease` : "see allocation"}) with supporting evidence document on file. Strong defensibility.`
-          : shelterAllocation
-            ? `Rent allocation set by navigator: $${shelterAllocation.allocated_rent_usd}/mo (${Math.round(shelterAllocation.household_share_pct * 100)}% of $${shelterAllocation.total_lease_rent_usd} total lease). Upload a roommate agreement to reach strong defensibility.`
-            : "Housing situation is on file. Sublease classifier v1 live — if shared tenancy is detected, use the Shared Lease panel to set the rent allocation and reach strong defensibility.",
+          ? ocrLeaseTier === "strong"
+            ? `Lease OCR verified: rent ${ocrRentMatchValue ?? "matched"}, name ${ocrNameMatchValue ?? "matched"}. Strong defensibility — both axes confirmed independently.`
+            : `Rent allocation confirmed by navigator (${shelterAllocation ? `$${shelterAllocation.allocated_rent_usd}/mo — ${Math.round(shelterAllocation.household_share_pct * 100)}% of total lease` : "see allocation"}) with supporting evidence document on file. Strong defensibility.`
+          : ocrLeaseTier === "weak"
+            ? `OCR flagged a discrepancy: rent ${ocrRentMatchValue ?? "unknown"}, name ${ocrNameMatchValue ?? "unknown"}. Navigator review required before this can advance.`
+            : ocrLeaseTier === "moderate"
+              ? `Lease extracted — one axis incomplete. Rent: ${ocrRentMatchValue ?? "pending"}, name: ${ocrNameMatchValue ?? "pending"}. Confirm or correct in the extraction fields panel below.`
+              : shelterAllocation
+                ? `Rent allocation set by navigator: $${shelterAllocation.allocated_rent_usd}/mo (${Math.round(shelterAllocation.household_share_pct * 100)}% of $${shelterAllocation.total_lease_rent_usd} total lease). Upload a roommate agreement or wait for OCR to reach strong.`
+                : "Housing situation is on file. OCR verification will run automatically when the lease document is confirmed. Sublease classifier v1 live.",
       evidence: [
         { label: "Housing situation", value: answersMap["housing_situation"] ?? "missing" },
         { label: "Lease document", value: docs.some((d) => d.document_kind.toLowerCase().includes("lease")) ? "uploaded" : "not uploaded" },
+        { label: "Rent OCR match", value: ocrRentMatchValue ?? "not yet extracted" },
+        { label: "Name OCR match", value: ocrNameMatchValue ?? "not yet extracted" },
+        { label: "OCR defensibility", value: ocrLeaseTier ?? "pending extraction" },
         { label: "Rent allocation", value: shelterAllocation ? `$${shelterAllocation.allocated_rent_usd}/mo (${Math.round(shelterAllocation.household_share_pct * 100)}%)` : "not set" },
-        { label: "Sublease classifier", value: "v1 live" },
       ],
     },
     {
@@ -602,6 +703,18 @@ export default async function PacketDetailPage({
             />
           </Section>
         )}
+
+        {/* Failure-to-elect — unclaimed deductions / elections */}
+        <Section
+          title="Missed Elections"
+          subtitle={
+            missedElections.length > 0
+              ? `${missedElections.length} unclaimed deduction${missedElections.length > 1 ? "s" : ""} detected — ${new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(missedElectionsTotal)}/mo potential`
+              : "All applicable elections and deductions appear to be claimed"
+          }
+        >
+          <MissedElectionsPanel elections={missedElections} totalMonthlyValue={missedElectionsTotal} />
+        </Section>
 
         {/* Expedited review gate — OBBBA §10102(a) compliance */}
         {showExpeditedGate && <ExpeditedReviewGate packetId={packetId} />}
