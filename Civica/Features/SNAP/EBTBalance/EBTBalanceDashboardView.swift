@@ -56,6 +56,7 @@ struct EBTBalanceDashboardView: View {
                     depositScheduleCard(account)
                     expirationCard(insights)
                     cardSecurityRow
+                    accountServicesRow
                     perksSection
                     newsSection
                     demoDisclosure
@@ -546,6 +547,43 @@ struct EBTBalanceDashboardView: View {
                      : EBTBalanceStrings.securityStatusUnlocked.value(in: language))
                     .font(CivicaTypography.footnoteStrong)
                     .foregroundStyle(store.isCardLocked ? CivicaColors.pinePrimary : CivicaColors.graphite)
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(CivicaColors.graphite)
+                    .accessibilityHidden(true)
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+    }
+
+    // MARK: - Account services row (T13)
+
+    /// Navigation entry into the CA state directory
+    /// (lost card, BenefitsCal, county finder, fraud reporting).
+    /// Pattern mirrors cardSecurityRow — same chevron, same surface
+    /// styling, slotted into the dashboard right after card security.
+    private var accountServicesRow: some View {
+        NavigationLink {
+            EBTAccountServicesView()
+        } label: {
+            HStack(spacing: CivicaSpacing.md) {
+                Image(systemName: "phone.bubble.fill")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(CivicaColors.pinePrimary)
+                    .frame(width: 28, alignment: .leading)
+                    .accessibilityHidden(true)
+                Text(EBTAccountServicesStrings.screenTitle.value(in: language))
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                Spacer(minLength: CivicaSpacing.sm)
                 Image(systemName: "chevron.right")
                     .foregroundStyle(CivicaColors.graphite)
                     .accessibilityHidden(true)
