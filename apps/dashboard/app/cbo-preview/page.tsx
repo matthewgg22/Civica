@@ -1,15 +1,15 @@
 import { cookies } from "next/headers";
-import { redirect, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import { createServerClientFromCookies } from "../../lib/supabase";
-import { homeForRole } from "../../lib/roleRouting";
 import DemoModeBadge from "../../components/DemoModeBadge";
 import CBOContactButton from "../../components/CBOContactButton";
+import StatusPill from "../../components/StatusPill";
 
 export const dynamic = "force-dynamic";
 
 // ---------------------------------------------------------------------------
 // Feature flag — CBO_PREVIEW_ENABLED must be set to render this page.
-// If unset: 404.
+// If unset: 404. Lets the page ship dark and turn on for partnership pushes.
 // Set in Vercel project env or .env.local: CBO_PREVIEW_ENABLED=true
 // ---------------------------------------------------------------------------
 function cboPreviewEnabled(): boolean {
@@ -53,26 +53,71 @@ const VALUE_PROPS = [
   },
 ] as const;
 
+// Sample packets — illustrative rows that mirror the real navigator queue
+// styling (StatusBadge circle + applicant + county + StatusPill + risk dot
+// + time-ago) without any Supabase query. Three rows chosen to show the
+// most common navigator-facing states: needs-attention, in-review, and
+// ready-for-handoff. Risk tiers split low/medium so the dot pattern is
+// visible in the snapshot.
+const SAMPLE_PACKETS = [
+  {
+    id: "sample-1",
+    shortId: "8c41a2",
+    applicantName: "Sarah M.",
+    county: "Tracy",
+    status: "Needs Documents",
+    badgeBg: "bg-warning",
+    badgeIcon: "!",
+    riskTier: "medium" as const,
+    riskLabel: "Medium risk",
+    riskDotBg: "bg-warning",
+    timeAgo: "2h ago",
+  },
+  {
+    id: "sample-2",
+    shortId: "f73d09",
+    applicantName: "Carlos R.",
+    county: "Fresno",
+    status: "In Navigator Review",
+    badgeBg: "bg-indigo",
+    badgeIcon: "◉",
+    riskTier: "low" as const,
+    riskLabel: "Low risk",
+    riskDotBg: "bg-teal",
+    timeAgo: "5h ago",
+  },
+  {
+    id: "sample-3",
+    shortId: "21b8f4",
+    applicantName: "Linh T.",
+    county: "San Jose",
+    status: "Ready for Handoff",
+    badgeBg: "bg-teal",
+    badgeIcon: "✓",
+    riskTier: "low" as const,
+    riskLabel: "Low risk",
+    riskDotBg: "bg-teal",
+    timeAgo: "1d ago",
+  },
+] as const;
+
 // ---------------------------------------------------------------------------
 // Server component
 // ---------------------------------------------------------------------------
 export default async function CBOPreviewPage() {
-  // Feature flag gate — return 404 if not enabled.
+  // Feature flag gate — return 404 if not enabled. Page is public when on
+  // (no role gate; middleware bypasses auth via FULLY_PUBLIC_PREFIXES).
   if (!cboPreviewEnabled()) {
     notFound();
   }
 
-  // Role gate — server component must enforce independently of middleware.
+  // Auth read is informational only — used to decide whether to show the
+  // Sign-out button. Anonymous visitors render the page without it.
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const role = (user?.app_metadata as { role?: unknown } | null)?.role;
-
-  if (typeof role !== "string" || (role !== "cbo_preview" && role !== "admin")) {
-    redirect(typeof role === "string" ? homeForRole(role) : "/login");
-  }
 
   return (
     <main className="min-h-screen bg-paper flex flex-col">
@@ -89,12 +134,15 @@ export default async function CBOPreviewPage() {
             Read-only demo for prospective licensee CBOs
           </p>
         </div>
-        {/* DemoModeBadge always visible — this page is always demo data */}
+        {/* DemoModeBadge always visible — this page is always demo data.
+            Sign-out only renders for authenticated visitors. */}
         <div className="flex items-center gap-4 shrink-0">
           <DemoModeBadge />
-          <form action="/auth/signout" method="post">
-            <button className="text-[13px] font-medium text-pine hover:underline">Sign out</button>
-          </form>
+          {user && (
+            <form action="/auth/signout" method="post">
+              <button className="text-[13px] font-medium text-pine hover:underline">Sign out</button>
+            </form>
+          )}
         </div>
       </header>
 
@@ -144,6 +192,54 @@ export default async function CBOPreviewPage() {
         </div>
         <p className="text-[11px] text-muted mt-3">
           Conversion % relative to intake (1,240 applicants).
+        </p>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Sample queue — illustrates the navigator queue UI with static rows  */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="px-6 md:px-8 py-6" aria-label="Sample navigator queue">
+        <p className="eyebrow mb-4">What navigators see · sample queue</p>
+        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
+          {SAMPLE_PACKETS.map((p, i) => (
+            <div
+              key={p.id}
+              className={`flex items-center gap-4 px-5 py-4 ${i > 0 ? "border-t border-hairline" : ""}`}
+            >
+              {/* StatusBadge — reproduced inline; real component lives in
+                  packets/page.tsx. Same a11y pattern as T9: role="img" +
+                  aria-label, glyph wrapped aria-hidden. */}
+              <div
+                role="img"
+                aria-label={`Status: ${p.status}`}
+                title={p.status}
+                className={`w-9 h-9 rounded-full ${p.badgeBg} flex items-center justify-center text-white text-[15px] font-semibold shrink-0`}
+              >
+                <span aria-hidden="true">{p.badgeIcon}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <p className="text-[15px] font-semibold text-ink">{p.applicantName}</p>
+                  <p className="text-[14px] text-graphite">{p.county}, CA</p>
+                  <span className="text-[11px] text-muted font-mono tabular-nums">{p.shortId}</span>
+                </div>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <StatusPill status={p.status} />
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider">
+                    <span className={`w-2 h-2 rounded-full shrink-0 ${p.riskDotBg}`} />
+                    <span className="text-muted">{p.riskLabel}</span>
+                  </span>
+                </div>
+              </div>
+              <div className="text-right shrink-0">
+                <p className="text-[13px] tabular-nums font-medium text-graphite">{p.timeAgo}</p>
+                <p className="text-[11px] text-muted uppercase tracking-wider mt-0.5">updated</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="text-[11px] text-muted mt-3">
+          Sample data — illustrates the navigator queue layout. Real packet data isn&apos;t shown here.
         </p>
       </section>
 

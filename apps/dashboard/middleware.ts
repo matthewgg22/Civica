@@ -2,29 +2,17 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { homeForRole, isPathAllowedForRole, isPubliclyAccessible, isStaff } from "./lib/roleRouting";
 
-// Paths that bypass auth entirely (no session required, no role gate).
-// Used for public-facing artifacts like the county B2G demo URL that get
-// shared via outreach emails — recipients won't have a Civica account.
-// Match by prefix; routes below render only static / aggregate data.
-const FULLY_PUBLIC_PREFIXES = ["/county-demo"];
-
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
   const path = request.nextUrl.pathname;
 
-  // Short-circuit before any Supabase auth check for fully-public routes.
-  // Must happen before getUser() so recipients without a session don't
-  // get redirected to /login.
-  if (FULLY_PUBLIC_PREFIXES.some((p) => path === p || path.startsWith(p + "/"))) {
-    return supabaseResponse;
-  }
-
-  const path = request.nextUrl.pathname;
-
   // Fully public routes — no Supabase round-trip, no auth needed. Used for
-  // share-out artifacts (e.g. /compliance/county/[slug]) that procurement
-  // officers forward to council members. Resolved before any auth lookup so
-  // an unauthenticated visitor lands on the page instead of /login.
+  // share-out artifacts (compliance briefs, county B2G demo, CBO preview)
+  // that get shared via outreach to recipients without a Civica account.
+  // Resolved before any auth lookup so an unauthenticated visitor lands
+  // on the page instead of being bounced to /login. Canonical list lives
+  // in lib/roleRouting.ts so the middleware and per-route guards can't
+  // drift.
   if (isPubliclyAccessible(path)) {
     return supabaseResponse;
   }

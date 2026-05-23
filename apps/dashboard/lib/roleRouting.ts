@@ -50,14 +50,24 @@ const RESTRICTED_ROLE_ALLOWED_PREFIXES: Record<string, string[]> = {
 const PUBLIC_PREFIXES = ["/auth/", "/api/", "/login", "/qc"];
 
 // Routes that bypass auth entirely — no Supabase session required.
-// Reserved for shareable public artifacts (e.g. per-county compliance briefs
-// that procurement officers forward to council members). Resolved in
-// middleware BEFORE supabase.auth.getUser() so the page renders to anyone.
+// Reserved for shareable public artifacts and outbound sales surfaces.
+// Resolved in middleware BEFORE supabase.auth.getUser() so the page
+// renders to anyone — including procurement officers, council members,
+// and prospective CBO buyers who do not have a Civica account.
+//
+// Current public surfaces:
+//   • /compliance/county/* — per-county compliance briefs (B2G share-out)
+//   • /county-demo/*       — county-facing demo URL (B2G outbound)
+//   • /cbo-preview         — CBO partnership landing page (B2B outbound)
 //
 // IMPORTANT: keep this list tight. Adding a prefix here removes the staff
 // gate for every nested route. /compliance itself is intentionally NOT
 // public — only /compliance/county/* is shareable.
-const FULLY_PUBLIC_PREFIXES = ["/compliance/county/"];
+const FULLY_PUBLIC_PREFIXES = [
+  "/compliance/county/",
+  "/county-demo",
+  "/cbo-preview",
+];
 
 /**
  * True if `path` should be served without any auth gate.
