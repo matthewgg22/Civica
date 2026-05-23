@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Design Concepts</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #ECEAE3; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; padding: 40px 32px; color: #1A1714; }
+.page { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 52px; }
+.label { font-size: 9px; font-family: monospace; letter-spacing: 0.18em; text-transform: uppercase; color: #9A8F85; margin-bottom: 12px; }
+.card { border: 1px solid rgba(26,23,20,0.12); border-radius: 4px; padding: 28px 28px 22px; }
+.light { background: #FDFAF5; }
+.dark  { background: #1A1714; }
+.pine  { background: #EEF4F1; border-color: rgba(42,111,102,0.15); }
+.eyebrow { font-size: 9px; font-family: monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #9A8F85; margin-bottom: 5px; }
+h3 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3; margin-bottom: 5px; }
+.sub { font-size: 12px; color: #5A544D; line-height: 1.6; }
+svg { display: block; overflow: visible; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ══════════════════════════════════════════════════════
+     1. P5 · RADIAL GAUGE TRIO
+══════════════════════════════════════════════════════ -->
+<div>
+  <p class="label">P5 · Outcomes — radial arc gauge trio</p>
+  <div class="card dark">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px;">
+      <div>
+        <p class="eyebrow" style="color:rgba(255,255,255,0.35)">Civica vs CA FY2024 baseline</p>
+        <h3 style="color:white">Flagship outcome metrics</h3>
+        <p class="sub" style="color:rgba(255,255,255,0.4); max-width:440px">Ghost arc = statewide baseline. Teal arc = Civica observed. Each ring shows one headline number.</p>
+      </div>
+      <span style="font-size:10px; font-family:monospace; color:rgba(255,255,255,0.25); letter-spacing:0.1em">LIVE · 90d window</span>
+    </div>
+    <svg id="g-svg" width="920" height="270"></svg>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     2. P1 · GRAVITY FUNNEL
+══════════════════════════════════════════════════════ -->
+<div>
+  <p class="label">P1 · Rules Framework — gravity funnel (Section D)</p>
+  <div class="card light">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:22px; flex-wrap:wrap; gap:12px;">
+      <div>
+        <p class="eyebrow">Where eligible households fall through the cracks</p>
+        <h3>35.5M nationally eligible. Only 19.5M enrolled.</h3>
+        <p class="sub" style="max-width:480px">Each stage is a friction point where eligible households drop out of the funnel before ever applying.</p>
+      </div>
+      <span style="font-size:10px; font-family:monospace; color:#9A8F85; letter-spacing:0.1em; margin-top:4px">NATIONAL AGGREGATE</span>
+    </div>
+    <svg id="f-svg" width="920" height="360"></svg>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3. P2 · COUNTDOWN ARC
+══════════════════════════════════════════════════════ -->
+<div>
+  <p class="label">P2 · OBBBA Readiness — countdown arc + provision status</p>
+  <div class="card pine">
+    <div style="margin-bottom:22px;">
+      <p class="eyebrow" style="color:#2A6F66">§10106 compliance clock</p>
+      <h3>133 days until the federal cost-share drops</h3>
+      <p class="sub" style="max-width:480px">Outer ring: time elapsed since law passage. Inner ring: provision readiness. Oct 1, 2026 is the cliff.</p>
+    </div>
+    <svg id="c-svg" width="920" height="400"></svg>
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<script>
+// ── SVG helpers ──────────────────────────────────────────────────────────────
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const [k,v] of Object.entries(attrs||{})) e.setAttribute(k, String(v));
+  if (text != null) e.textContent = text;
+  return e;
+}
+function add(svg, ...nodes) { nodes.forEach(n => svg.appendChild(n)); }
+
+// degrees-from-top → [x, y]
+function pt(cx, cy, r, deg) {
+  const a = (deg - 90) * Math.PI / 180;
+  return [cx + r*Math.cos(a), cy + r*Math.sin(a)];
+}
+
+// SVG arc path, degrees from top, clockwise
+function arcPath(cx, cy, r, a0, a1) {
+  if (a1 - a0 >= 360) a1 = a0 + 359.9;
+  const [sx,sy] = pt(cx,cy,r,a0), [ex,ey] = pt(cx,cy,r,a1);
+  const large = (a1 - a0) > 180 ? 1 : 0;
+  return `M${sx.toFixed(1)},${sy.toFixed(1)} A${r},${r} 0 ${large} 1 ${ex.toFixed(1)},${ey.toFixed(1)}`;
+}
+
+// ── 1. RADIAL GAUGES ─────────────────────────────────────────────────────────
+(function() {
+  const svg = document.getElementById('g-svg');
+  const metrics = [
+    { title:'Approval rate',         civica:94,  base:71,  max:100, unit:'%',   note:'+23 pts vs baseline',     invert:false },
+    { title:'Error rate reduction',  civica:67,  base:11,  max:100, unit:'%',   note:'vs 11% baseline avg',     invert:false },
+    { title:'Days to decision',      civica:8,   base:23,  max:30,  unit:'d',   note:'8 days · 65% faster',     invert:true  },
+  ];
+
+  const cx = [160, 460, 760];
+  const CY = 135, R = 96, SW = 15;
+  const A0 = 148, SPAN = 244; // arc start deg, total span
+
+  metrics.forEach((m, i) => {
+    const x = cx[i];
+    const civPct  = m.invert ? 1 - m.civica/m.max : m.civica/m.max;
+    const basePct = m.invert ? 1 - m.base/m.max   : m.base/m.max;
+
+    // track
+    add(svg, el('path',{ d:arcPath(x,CY,R,A0,A0+SPAN), fill:'none', stroke:'rgba(255,255,255,0.07)', 'stroke-width':SW, 'stroke-linecap':'butt' }));
+    // baseline ghost
+    add(svg, el('path',{ d:arcPath(x,CY,R,A0,A0+SPAN*basePct), fill:'none', stroke:'rgba(255,255,255,0.17)', 'stroke-width':SW-2, 'stroke-linecap':'round' }));
+    // civica arc
+    add(svg, el('path',{ d:arcPath(x,CY,R,A0,A0+SPAN*civPct), fill:'none', stroke:'#2A6F66', 'stroke-width':SW+2, 'stroke-linecap':'round' }));
+    // end cap glow dot
+    const [edx,edy] = pt(x,CY,R, A0+SPAN*civPct);
+    add(svg,
+      el('circle',{cx:edx,cy:edy,r:8,fill:'#2A6F66',opacity:'0.25'}),
+      el('circle',{cx:edx,cy:edy,r:5,fill:'#2A6F66'})
+    );
+
+    // baseline end callout
+    const [bx,by] = pt(x,CY,R+26, A0+SPAN*basePct);
+    add(svg, el('text',{x:bx,y:by+4,'text-anchor':'middle','font-size':'9',fill:'rgba(255,255,255,0.3)','font-family':'monospace'}, `${m.base}${m.unit}`));
+
+    // center: big number
+    add(svg,
+      el('text',{x,y:CY-12,'text-anchor':'middle','font-size':'40','font-weight':'700',fill:'white','letter-spacing':'-1'}, `${m.civica}`),
+      el('text',{x,y:CY+14,'text-anchor':'middle','font-size':'11',fill:'#2A6F66','letter-spacing':'1'}, m.unit.toUpperCase())
+    );
+
+    // label below ring
+    add(svg,
+      el('text',{x,y:CY+84,'text-anchor':'middle','font-size':'11','font-weight':'600',fill:'rgba(255,255,255,0.6)','letter-spacing':'0.4'}, m.title),
+      el('text',{x,y:CY+101,'text-anchor':'middle','font-size':'10',fill:'rgba(42,111,102,0.85)'}, m.note)
+    );
+  });
+
+  // dividers between gauges
+  [310, 610].forEach(dx => {
+    add(svg, el('line',{x1:dx,y1:20,x2:dx,y2:220,stroke:'rgba(255,255,255,0.06)','stroke-width':'1'}));
+  });
+
+  // legend
+  add(svg,
+    el('circle',{cx:28,cy:252,r:5,fill:'#2A6F66'}),
+    el('text',{x:38,y:256,'font-size':'10',fill:'rgba(255,255,255,0.4)'}, 'Civica observed'),
+    el('circle',{cx:158,cy:252,r:5,fill:'rgba(255,255,255,0.17)'}),
+    el('text',{x:168,y:256,'font-size':'10',fill:'rgba(255,255,255,0.4)'}, 'CA FY2024 baseline')
+  );
+})();
+
+// ── 2. GRAVITY FUNNEL ────────────────────────────────────────────────────────
+(function() {
+  const svg = document.getElementById('f-svg');
+  const W = 920;
+  const CX   = 390;  // funnel horizontal center
+  const MAXW = 270;  // half-width at top
+  const SH   = 72;   // stage height
+  const SG   = 10;   // gap between stages
+  const ANNO_X = CX + MAXW + 30; // annotation column x
+
+  const stages = [
+    { n:35.5, label:'35.5M nationally eligible',  color:'#C4B99A', light:true },
+    { n:28.0, label:'28.0M',                       color:'#9A5A14', light:false, dropN:7.5,  dropHead:'Awareness gap',     dropSub:"Don’t know they qualify — rules are too complex, no outreach" },
+    { n:22.0, label:'22.0M',                       color:'#9C3A24', light:false, dropN:6.0,  dropHead:'Misconception gap', dropSub:'Assume income or assets disqualify them; fear of scrutiny' },
+    { n:19.5, label:'19.5M enrolled',              color:'#2A6F66', light:false, dropN:2.5,  dropHead:'Access gap',        dropSub:'No navigator, no digital pathway, language barrier' },
+  ];
+
+  const maxN = stages[0].n;
+
+  stages.forEach((s, i) => {
+    const halfW = (s.n / maxN) * MAXW;
+    const nextHalfW = i < stages.length-1 ? (stages[i+1].n / maxN) * MAXW : halfW;
+    const topY = i * (SH + SG);
+    const botY = topY + SH;
+
+    // Trapezoid
+    const pts = [
+      [CX-halfW,     topY],
+      [CX+halfW,     topY],
+      [CX+nextHalfW, botY],
+      [CX-nextHalfW, botY],
+    ].map(([x,y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
+
+    add(svg, el('polygon',{ points:pts, fill:s.color, opacity: s.light ? '0.3' : '0.78' }));
+
+    // Label
+    add(svg, el('text',{
+      x:CX, y:topY + SH/2 + 6,
+      'text-anchor':'middle','font-size':'14','font-weight':'700',
+      fill: s.light ? '#5A544D' : 'white'
+    }, s.label));
+
+    // Cohort color strip on right edge (bottom 3 stages)
+    if (!s.light) {
+      add(svg, el('rect',{x:CX+halfW-4,y:topY,width:4,height:SH,fill:s.color,opacity:'1'}));
+    }
+
+    // Drop annotation (between this stage and next)
+    if (s.dropN) {
+      const midY = botY + SG/2;
+      const dotX = CX + halfW + 6;
+
+      // Dashed connector
+      add(svg, el('line',{
+        x1:CX+nextHalfW+2,y1:midY, x2:ANNO_X-6,y2:midY,
+        stroke:'rgba(26,23,20,0.2)','stroke-width':'1','stroke-dasharray':'3 3'
+      }));
+
+      // Drop number
+      add(svg,
+        el('text',{x:ANNO_X,y:midY-8,'font-size':'13','font-weight':'700',fill:'#9C3A24'}, `−${s.dropN.toFixed(1)}M`),
+        el('text',{x:ANNO_X,y:midY+7,'font-size':'10','font-weight':'600',fill:'#1A1714'}, s.dropHead),
+        el('text',{x:ANNO_X,y:midY+20,'font-size':'9',fill:'#9A8F85'}, s.dropSub.length > 52 ? s.dropSub.slice(0,52)+'…' : s.dropSub)
+      );
+    }
+  });
+
+  // Civica bar on left — shows where they intercept
+  const civicaY = (stages.length-1) * (SH + SG);
+  const civicaH = SH;
+  const leftX = CX - MAXW - 64;
+  add(svg,
+    el('rect',{x:leftX,y:civicaY,width:3,height:civicaH,fill:'#2A6F66',rx:'1'}),
+    el('text',{x:leftX-4,y:civicaY+14,'text-anchor':'end','font-size':'10','font-weight':'700',fill:'#2A6F66'}, 'Civica'),
+    el('text',{x:leftX-4,y:civicaY+27,'text-anchor':'end','font-size':'9',fill:'rgba(42,111,102,0.8)'}, 'enrollment'),
+    el('text',{x:leftX-4,y:civicaY+39,'text-anchor':'end','font-size':'9',fill:'rgba(42,111,102,0.8)'}, 'surface')
+  );
+
+  // Bracket line from top to Civica bar
+  add(svg,
+    el('line',{x1:leftX+8,y1:0,x2:leftX+8,y2:civicaY-2,stroke:'rgba(26,23,20,0.1)','stroke-width':'1','stroke-dasharray':'2 3'}),
+    el('line',{x1:leftX+8,y1:civicaY,x2:leftX+8,y2:civicaY+civicaH,stroke:'#2A6F66','stroke-width':'2'})
+  );
+
+  // Bottom note
+  const totalH = stages.length * (SH + SG);
+  add(svg, el('text',{
+    x:CX, y:totalH+20,
+    'text-anchor':'middle','font-size':'10',fill:'#9A8F85'
+  }, '↓ arrow = Civica navigator closes this gap · each bar clickable to cohort detail'));
+})();
+
+// ── 3. COUNTDOWN ARC ─────────────────────────────────────────────────────────
+(function() {
+  const svg = document.getElementById('c-svg');
+  const CX = 240, CY = 210;
+
+  const TOTAL = 214;  // Mar 1 → Oct 1
+  const ELAPSED = 81; // Mar 1 → May 21
+  const REMAINING = 133;
+  const elapsedPct   = ELAPSED / TOTAL;    // 0.379
+  const readinessPct = 0.62;
+
+  const R1 = 148, SW1 = 20;  // outer ring: time
+  const R2 = 118, SW2 = 13;  // inner ring: readiness
+  const A0 = 130, SPAN = 280;
+
+  // Outer track
+  add(svg, el('path',{d:arcPath(CX,CY,R1,A0,A0+SPAN),fill:'none',stroke:'rgba(26,23,20,0.08)','stroke-width':SW1,'stroke-linecap':'butt'}));
+  // Elapsed arc (amber)
+  add(svg, el('path',{d:arcPath(CX,CY,R1,A0,A0+SPAN*elapsedPct),fill:'none',stroke:'#9A5A14','stroke-width':SW1,'stroke-linecap':'butt',opacity:'0.88'}));
+  // Remaining arc (faint brick)
+  add(svg, el('path',{d:arcPath(CX,CY,R1,A0+SPAN*elapsedPct,A0+SPAN),fill:'none',stroke:'rgba(156,58,36,0.12)','stroke-width':SW1,'stroke-linecap':'butt'}));
+
+  // Inner track
+  add(svg, el('path',{d:arcPath(CX,CY,R2,A0,A0+SPAN),fill:'none',stroke:'rgba(26,23,20,0.06)','stroke-width':SW2,'stroke-linecap':'butt'}));
+  // Readiness arc (teal)
+  add(svg, el('path',{d:arcPath(CX,CY,R2,A0,A0+SPAN*readinessPct),fill:'none',stroke:'#2A6F66','stroke-width':SW2,'stroke-linecap':'butt',opacity:'0.82'}));
+
+  // Today dot
+  const [tx,ty] = pt(CX,CY,R1, A0+SPAN*elapsedPct);
+  add(svg,
+    el('circle',{cx:tx,cy:ty,r:10,fill:'#9A5A14',opacity:'0.25'}),
+    el('circle',{cx:tx,cy:ty,r:6,fill:'#9A5A14'})
+  );
+  const [tlx,tly] = pt(CX,CY,R1+28, A0+SPAN*elapsedPct);
+  add(svg, el('text',{x:tlx,y:tly+4,'text-anchor':'middle','font-size':'8','font-weight':'700',fill:'#9A5A14','font-family':'monospace','letter-spacing':'1'},'TODAY'));
+
+  // Start label (Mar 1)
+  const [slx,sly] = pt(CX,CY,R1+28, A0);
+  add(svg, el('text',{x:slx,y:sly+4,'text-anchor':'middle','font-size':'8',fill:'#9A8F85','font-family':'monospace'},'MAR 1'));
+
+  // End label (Oct 1) — with brick marker
+  const [elx,ely] = pt(CX,CY,R1+28, A0+SPAN);
+  add(svg,
+    el('circle',{cx:elx,cy:ely+2,r:5,fill:'#9C3A24',opacity:'0.7'}),
+    el('text',{x:elx,y:ely+18,'text-anchor':'middle','font-size':'8','font-weight':'700',fill:'#9C3A24','font-family':'monospace','letter-spacing':'1'},'OCT 1')
+  );
+
+  // Center hero
+  add(svg,
+    el('text',{x:CX,y:CY-20,'text-anchor':'middle','font-size':'56','font-weight':'700',fill:'#9C3A24','letter-spacing':'-2'}, REMAINING.toString()),
+    el('text',{x:CX,y:CY+8,'text-anchor':'middle','font-size':'10',fill:'#5A544D','letter-spacing':'2'}, 'DAYS REMAINING'),
+    el('text',{x:CX,y:CY+26,'text-anchor':'middle','font-size':'9',fill:'#9A8F85'}, 'until Oct 1, 2026')
+  );
+
+  // Ring legend below center
+  add(svg,
+    // amber swatch
+    el('rect',{x:CX-90,y:CY+66,width:10,height:10,rx:'2',fill:'#9A5A14',opacity:'0.85'}),
+    el('text',{x:CX-76,y:CY+75,'font-size':'9',fill:'#5A544D'}, `${ELAPSED}d elapsed · outer ring`),
+    // teal swatch
+    el('rect',{x:CX-90,y:CY+82,width:10,height:10,rx:'2',fill:'#2A6F66',opacity:'0.82'}),
+    el('text',{x:CX-76,y:CY+91,'font-size':'9',fill:'#5A544D'}, `${Math.round(readinessPct*100)}% provisions addressed · inner ring`)
+  );
+
+  // ── Provision cards ────────────────────────────────────────────────────────
+  const CARD_X = 480;
+  const provisions = [
+    { label:'ABAWD work requirement',      sub:'Age 18–54 now in scope',               status:'enacted',  color:'#9C3A24' },
+    { label:'§10106 cost-share cliff',     sub:'50% → 25% federal match Oct 1',        status:'active',   color:'#9A5A14' },
+    { label:'Student restriction changes', sub:'CA exemption pathways hold',            status:'enacted',  color:'#9C3A24' },
+    { label:'Asset test restoration',      sub:'CA BBCE + SB 1090 shields this',       status:'resolved', color:'#2A6F66' },
+  ];
+
+  const STATUS = { enacted:'ENACTED', active:'ACTIVE RISK', resolved:'RESOLVED' };
+
+  provisions.forEach((p, i) => {
+    const cardY = 28 + i * 86;
+    const cw = 400, ch = 72;
+
+    add(svg,
+      el('rect',{x:CARD_X,y:cardY,width:cw,height:ch,rx:'4',fill:'white',stroke:'rgba(26,23,20,0.10)','stroke-width':'1'}),
+      el('rect',{x:CARD_X,y:cardY,width:'3',height:ch,rx:'2',fill:p.color}),
+    );
+
+    // Status pill
+    add(svg,
+      el('rect',{x:CARD_X+cw-88,y:cardY+16,width:80,height:18,rx:'3',fill:p.color,opacity:'0.12'}),
+      el('text',{x:CARD_X+cw-48,y:cardY+28,'text-anchor':'middle','font-size':'8','font-weight':'700',fill:p.color,'letter-spacing':'0.8'}, STATUS[p.status])
+    );
+
+    add(svg,
+      el('text',{x:CARD_X+14,y:cardY+26,'font-size':'12','font-weight':'600',fill:'#1A1714'}, p.label),
+      el('text',{x:CARD_X+14,y:cardY+44,'font-size':'10',fill:'#5A544D'}, p.sub)
+    );
+
+    // Connector from clock arc to card
+    const angle = A0 + (SPAN / (provisions.length + 1)) * (i + 1);
+    const [px,py] = pt(CX,CY,R1+5,angle);
+    add(svg, el('line',{
+      x1:px.toFixed(1),y1:py.toFixed(1),
+      x2:CARD_X-8,y2:(cardY+ch/2).toFixed(1),
+      stroke:'rgba(26,23,20,0.10)','stroke-width':'1','stroke-dasharray':'3 3'
+    }));
+  });
+
+})();
+</script>
+</body>
+</html>
