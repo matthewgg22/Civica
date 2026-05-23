@@ -1,0 +1,35 @@
+{
+  "name": "@civica/ebt-scraper",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Civica EBT scraper — Fly machine + Playwright, session-cookie handoff model (PIN never on server). See docs/plans/ebt-tracker-propel-parity.md §16.7.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "start": "node dist/server.js",
+    "dev": "tsx src/server.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "probe": "tsx poc/probe.ts",
+    "probe:authed": "tsx poc/probe-authed.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.0",
+    "@sentry/node": "^9.0.0",
+    "dotenv": "^16.4.0",
+    "hono": "^4.7.0",
+    "playwright": "^1.49.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@vitest/coverage-v8": "^2.1.9",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0",
+    "vitest": "^2.1.9"
+  }
+}

@@ -1,0 +1,32 @@
+<!--
+  Minimal hand-crafted fixture: post-login landing page for an authenticated
+  EBT cardholder. Exercises the success path of detectEbtCaErrors() — it must
+  return null. Not a real portal page capture; PoC findings will replace
+  these fixtures with real-shape snapshots once we have them.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>EBT Cardholder Portal</title>
+</head>
+<body>
+  <header>
+    <h1>Welcome, cardholder</h1>
+    <nav><a href="/cardholder/logout">Log out</a></nav>
+  </header>
+  <main>
+    <section class="account-summary">
+      <h2>Available Balance</h2>
+      <div class="account">
+        <span class="label">Food Benefits</span>
+        <span class="amount">$232.45</span>
+      </div>
+      <div class="account">
+        <span class="label">Cash Benefits</span>
+        <span class="amount">$0.00</span>
+      </div>
+      <p class="updated">Last updated: 5/22/2026 9:42 AM</p>
+    </section>
+  </main>
+</body>
+</html>
