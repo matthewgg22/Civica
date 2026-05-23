@@ -55,6 +55,18 @@
   /* Radius — Civica tight 3-4px corners */
   --radius-control: 3px;
   --radius-card: 4px;
+
+  /* Motion — mirrors iOS DESIGN.md §7 tokens so future iOS-web shared
+     design feels identical. Use via custom CSS animations / transitions
+     (`transition: opacity var(--duration-standard) var(--ease-standard)`).
+     Global prefers-reduced-motion override below collapses these to ~0. */
+  --duration-fast:     120ms;  /* micro: toggle ticks, icon state changes */
+  --duration-snap:     180ms;  /* dismiss / return-to-rest */
+  --duration-standard: 200ms;  /* default: card expand, panel reveal */
+  --duration-step:     240ms;  /* form step cross-fades */
+  --duration-slow:     300ms;  /* considered transitions, section reveals */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1); /* easeInOut */
+  --ease-out:      cubic-bezier(0, 0, 0.2, 1);   /* easeOut */
 }
 
 html, body {
@@ -93,4 +105,21 @@ html, body {
   font-size: 12px;
   font-style: italic;
   color: #6B655C;
+}
+
+/* Honor prefers-reduced-motion globally per DESIGN.md §7.3.
+   Collapses animation / transition durations to ~0 across the whole app,
+   so users who request reduced motion don't see card expands, fade-ins,
+   or scroll smoothing. Components that drive motion via JS (e.g., spring
+   physics, RAF loops) should ALSO check `matchMedia('(prefers-reduced-motion: reduce)')`
+   — CSS-only enforcement is necessary but not sufficient. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
