@@ -143,6 +143,17 @@ enum EBTBalanceStrings {
         "Card security",
         es: "Seguridad de la tarjeta"
     )
+    /// Amber banner on EBTCardLockView that names the real action
+    /// (CA EBT 1-877-328-9677) so a confused recipient doesn't
+    /// believe the demo toggle locks their actual card.
+    static let lockScreenDemoBannerTitle = CivicaText(
+        "Demo mode — your card is not really locked",
+        es: "Modo demostración — tu tarjeta no está realmente bloqueada"
+    )
+    static let lockScreenDemoBannerBody = CivicaText(
+        "This is a preview of card-lock in Civica. To actually lock a lost or stolen CalFresh card, call California EBT Customer Service at 1-877-328-9677 (free, 24/7).",
+        es: "Esta es una vista previa del bloqueo de tarjeta en Civica. Para bloquear de verdad una tarjeta CalFresh perdida o robada, llama a Servicio al Cliente de EBT de California al 1-877-328-9677 (gratis, 24/7)."
+    )
     static let lockToggleTitle = CivicaText(
         "Lock my card",
         es: "Bloquear mi tarjeta"
@@ -489,7 +500,8 @@ enum EBTBalanceStrings {
         linkCardFieldLabel, linkStateLabel, linkStateValue, linkCTA, linkingProgress,
         recentActivityEyebrow, depositRowLabel,
         securityRowTitle, securityStatusLocked, securityStatusUnlocked, lockedBannerText,
-        lockScreenTitle, lockToggleTitle, lockToggleHelp,
+        lockScreenTitle, lockScreenDemoBannerTitle, lockScreenDemoBannerBody,
+        lockToggleTitle, lockToggleHelp,
         lockStatusOnLine, lockStatusOffLine, lockExtrasEyebrow,
         blockOutOfStateTitle, blockOutOfStateHelp, blockOnlineTitle, blockOnlineHelp,
         insightsEyebrow, insightsSpentLabel,
