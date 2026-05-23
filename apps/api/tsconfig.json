@@ -21,7 +21,8 @@
     "jsx": "react-jsx",
     "paths": {
       "@civica/db-types": ["../../packages/db-types/snap_enrollment.ts"],
-      "@civica/snap-handoff": ["../../packages/snap-handoff/src/index.ts"]
+      "@civica/snap-handoff": ["../../packages/snap-handoff/src/index.ts"],
+      "@civica/snap-qc-engine": ["../../packages/snap-qc-engine/src/flows/shared-lease/lease-verification.ts"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
