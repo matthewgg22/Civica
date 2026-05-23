@@ -50,12 +50,12 @@
 		C3B862F82D9A42E20092C1CB /* VoteNowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoteNowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3B863022D9A42E20092C1CB /* VoteNowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoteNowUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3D06EF42DE94769009F3459 /* Civica-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Civica-Info.plist"; sourceTree = "<group>"; };
-		CCAA000000000000000000A2 /* Civica.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Civica.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		CCBB000000000000000000A2 /* CivicaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CivicaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC0200000000000000000001 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		CC0200000000000000000002 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		CC0200000000000000000003 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		CC0200000000000000000004 /* Secrets.xcconfig.template */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig.template; sourceTree = "<group>"; };
+		CCAA000000000000000000A2 /* Civica.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Civica.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCBB000000000000000000A2 /* CivicaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CivicaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -199,21 +199,10 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		CC0200000000000000000005 /* Configuration */ = {
-			isa = PBXGroup;
-			children = (
-				CC0200000000000000000001 /* Debug.xcconfig */,
-				CC0200000000000000000002 /* Release.xcconfig */,
-				CC0200000000000000000003 /* Secrets.xcconfig */,
-				CC0200000000000000000004 /* Secrets.xcconfig.template */,
-			);
-			path = "Civica/Configuration";
-			sourceTree = "<group>";
-		};
 		C3B862DF2D9A42E00092C1CB = {
 			isa = PBXGroup;
 			children = (
-				CC0200000000000000000005 /* Configuration */,
+				CC0200000000000000000005 /* Civica/Configuration */,
 				C3D06EF42DE94769009F3459 /* Civica-Info.plist */,
 				C3A44ADE2DE392D000858A5E /* Civica.entitlements */,
 				C3B862EA2D9A42E00092C1CB /* WeVote Information Page */,
@@ -238,6 +227,17 @@
 				CCBB000000000000000000A2 /* CivicaTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		CC0200000000000000000005 /* Civica/Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				CC0200000000000000000001 /* Debug.xcconfig */,
+				CC0200000000000000000002 /* Release.xcconfig */,
+				CC0200000000000000000003 /* Secrets.xcconfig */,
+				CC0200000000000000000004 /* Secrets.xcconfig.template */,
+			);
+			path = Civica/Configuration;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

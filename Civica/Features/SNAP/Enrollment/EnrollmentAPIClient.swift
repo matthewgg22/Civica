@@ -68,6 +68,25 @@ protocol EnrollmentAPIClient: Sendable {
     /// Returns the signed-in applicant's most recent recertification.
     /// Returns nil when none exists (gateway returns 404 → mapped to nil here).
     func fetchActiveRecert() async throws -> ActiveRecertResponseDTO?
+
+    // MARK: Work hours (§10102)
+
+    /// POST /v1/enrollment/me/work-requirements/:packetId/hours
+    /// Log one work session. Returns the saved entry + monthly rollup.
+    func logWorkHours(
+        packetId: String,
+        request: LogWorkHoursRequest
+    ) async throws -> LogWorkHoursResponse
+
+    /// GET /v1/enrollment/me/work-requirements/:packetId/hours?month=YYYY-MM
+    /// Fetch all entries + monthly rollup for the given month (defaults to current).
+    func fetchWorkHours(
+        packetId: String,
+        month: String?
+    ) async throws -> WorkHoursResponse
+
+    /// DELETE /v1/enrollment/me/work-requirements/:packetId/hours/:logId
+    func deleteWorkHoursEntry(packetId: String, logId: String) async throws
 }
 
 // MARK: - Errors
@@ -252,6 +271,39 @@ struct HTTPEnrollmentAPIClient: EnrollmentAPIClient {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         return try decoder.decode(ActiveRecertResponseDTO.self, from: data)
+    }
+
+    // MARK: Work hours (§10102)
+
+    func logWorkHours(
+        packetId: String,
+        request: LogWorkHoursRequest
+    ) async throws -> LogWorkHoursResponse {
+        try await post(
+            path: "/me/work-requirements/\(packetId)/hours",
+            body: request
+        )
+    }
+
+    func fetchWorkHours(
+        packetId: String,
+        month: String?
+    ) async throws -> WorkHoursResponse {
+        var path = "/me/work-requirements/\(packetId)/hours"
+        if let month { path += "?month=\(month)" }
+        return try await getJSON(path: path)
+    }
+
+    func deleteWorkHoursEntry(packetId: String, logId: String) async throws {
+        guard let token = await tokenProvider() else { throw EnrollmentAPIError.unauthenticated }
+        guard let url = URL(string: "/me/work-requirements/\(packetId)/hours/\(logId)", relativeTo: baseURL) else {
+            throw EnrollmentAPIError.invalidURL
+        }
+        var req = URLRequest(url: url)
+        req.httpMethod = "DELETE"
+        req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        let (_, response) = try await session.data(for: req)
+        try validate(response)
     }
 
     // MARK: - Private helpers
@@ -534,6 +586,61 @@ final class MockEnrollmentAPIClient: EnrollmentAPIClient, @unchecked Sendable {
 
     func fetchActiveRecert() async throws -> ActiveRecertResponseDTO? {
         return nil
+    }
+
+    // MARK: Work hours (§10102)
+
+    var mockWorkHoursEntries: [WorkHourLogEntry] = []
+
+    func logWorkHours(
+        packetId: String,
+        request: LogWorkHoursRequest
+    ) async throws -> LogWorkHoursResponse {
+        if shouldFailNext { shouldFailNext = false; throw EnrollmentAPIError.unexpectedStatus(500, body: "mock error") }
+        let entry = WorkHourLogEntry(
+            log_id: UUID().uuidString,
+            work_date: request.work_date,
+            hours: request.hours,
+            activity_type: request.activity_type,
+            employer_name: request.employer_name,
+            document_id: request.document_id,
+            notes: request.notes,
+            logged_at: ISO8601DateFormatter().string(from: Date())
+        )
+        mockWorkHoursEntries.append(entry)
+        let totalHours = mockWorkHoursEntries.reduce(0) { $0 + $1.hours }
+        let summary = WorkHoursMonthlySummary(
+            month: String(request.work_date.prefix(7)),
+            total_hours: totalHours,
+            target_hours: 80,
+            entries_count: mockWorkHoursEntries.count,
+            has_documentation: mockWorkHoursEntries.contains { $0.document_id != nil },
+            is_on_track: true,
+            is_complete: totalHours >= 80
+        )
+        return LogWorkHoursResponse(entry: entry, monthly_summary: summary)
+    }
+
+    func fetchWorkHours(
+        packetId: String,
+        month: String?
+    ) async throws -> WorkHoursResponse {
+        if shouldFailNext { shouldFailNext = false; throw EnrollmentAPIError.unexpectedStatus(500, body: "mock error") }
+        let totalHours = mockWorkHoursEntries.reduce(0) { $0 + $1.hours }
+        let summary = WorkHoursMonthlySummary(
+            month: month ?? "2026-05",
+            total_hours: totalHours,
+            target_hours: 80,
+            entries_count: mockWorkHoursEntries.count,
+            has_documentation: mockWorkHoursEntries.contains { $0.document_id != nil },
+            is_on_track: true,
+            is_complete: totalHours >= 80
+        )
+        return WorkHoursResponse(monthly_summary: summary, entries: mockWorkHoursEntries)
+    }
+
+    func deleteWorkHoursEntry(packetId: String, logId: String) async throws {
+        mockWorkHoursEntries.removeAll { $0.log_id == logId }
     }
 }
 

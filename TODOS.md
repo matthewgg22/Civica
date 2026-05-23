@@ -5,8 +5,9 @@ Add new items with `## TODO-N` headings. Never delete — mark as DONE instead.
 
 ---
 
-## TODO-1 — Extract requireNavigator/requireApplicant to shared auth utility
+## TODO-1 — Extract requireNavigator/requireApplicant to shared auth utility — DONE (buddy-add PR1)
 
+**Status:** DONE — bundled with buddy-add PR1. `requireNavigator`, `requireApplicant`, `requireBuddy` extracted to `apps/enrollment-api/src/lib/auth.ts`. All 4 route files updated to import from the shared module. Also covers `me-argyle.ts` (had its own `requireApplicant`).
 **What:** `apps/enrollment-api/src/routes/work-requirements.ts` and `navigator.ts` both define identical `requireNavigator()` functions. Extract to `apps/enrollment-api/src/lib/auth.ts` and import.
 **Why:** Auth guards that drift silently are a security risk when the role model expands. Current duplication is harmless; future duplication is not.
 **Effort:** S (human ~5min / CC ~5min)
@@ -15,13 +16,19 @@ Add new items with `## TODO-N` headings. Never delete — mark as DONE instead.
 
 ---
 
-## TODO-2 — Rate limiting on enrollment API before App Store launch
+## TODO-2 — Rate limiting on enrollment API before App Store launch — CODE MERGED (PR #248, 2026-05-22), DEPLOY PENDING
 
-**What:** Add rate limiting to `apps/enrollment-api` using Cloudflare Workers Rate Limiting API (Workers Paid plan). Apply to: auth endpoints, BenefitsCal submission endpoints, document upload.
-**Why:** No rate limiting means bots can spam fake packets, exhaust Supabase write quota, and probe the BenefitsCal submission endpoint at scale. Low risk for TestFlight pilot (<100 users). Critical before App Store public launch.
-**Effort:** S (human ~2h / CC ~1h)
-**Priority:** P2 (required before App Store launch, not before TestFlight pilot)
-**Depends on:** App Store submission track (Session J counsel clearance)
+**Status:** Engineering shipped in PR #248 (`ac026c0`). Two tiers wired: `RL_STRICT` (10/min) on buddy invite/accept + oauth exchange; `RL_STANDARD` (60/min) on packet create/submit/error-risk, argyle connect, benefitscal prepare/submit. 6 vitest tests + 345/345 passing. Production protection blocked on operator action below.
+
+**Remaining (operator):**
+1. Provision the two rate-limit bindings in the Cloudflare dashboard with stable `namespace_id` values 1001 (RL_STRICT) and 1002 (RL_STANDARD) so dev/staging/prod share bucket geometry.
+2. `wrangler deploy` from `apps/enrollment-api/` — this activates the bindings declared in `wrangler.toml`.
+3. Smoke test: 11 rapid `POST /buddy/invite` against staging → 11th returns 429 with `Retry-After: 60`.
+
+**Original problem (resolved by PR #248):** No rate limiting means bots can spam fake packets, exhaust Supabase write quota, and probe the BenefitsCal submission endpoint at scale. Low risk for TestFlight pilot (<100 users). Critical before App Store public launch.
+**Effort remaining:** XS (human ~10min operator action; CC: not the bottleneck)
+**Priority:** P1 — required to activate the merged code; until provisioned + deployed, rate limiting degrades gracefully (no protection) in production.
+**Depends on:** Cloudflare account access (Matthew).
 
 ---
 
@@ -148,13 +155,19 @@ Add new items with `## TODO-N` headings. Never delete — mark as DONE instead.
 
 ---
 
-## TODO-15 — Wire BrowserDriver service for Phase 2 submitter
+## TODO-15 — Wire BrowserDriver service for Phase 2 submitter — ENGINEERING DONE, SECRET PENDING
 
-**What:** Stand up an external BrowserDriver service (Browserless.io OR Fly.io Playwright sidecar) and wire its endpoint into the `BrowserDriver` injection interface added in PR #206. Cloudflare Workers cannot run Playwright in-process; the driver service is the bridge.
-**Why:** Without an external driver, Phase 2 submission stays as `DRIVER_NOT_WIRED` regardless of TODO-14 status. This is the eng prerequisite that unblocks all live-portal automation work.
-**Effort:** M (human ~1d eng time / CC ~4h to scaffold + wire)
-**Priority:** P1 — required before v1.1 automated launch
-**Depends on:** nothing — engineering can ship today
+**Status:** Engineering complete (already on `codex/rebuild-feb18`, predates PR #245). `packages/benefitscal-cbo/src/drivers/browserless.ts` is the full v1 implementation (311 lines, session continuity via `browserWSEndpoint`, structured error prefixes, AbortController timeout, all 6 `BrowserDriverPage` methods). `packages/benefitscal-cbo/test/drivers/browserless.test.ts` covers it (240 lines, 50/50 package tests passing). `apps/enrollment-api/src/routes/benefitscal.ts:340–344` auto-builds the factory when `BROWSERLESS_API_KEY` is set; falls through to graceful `DRIVER_NOT_WIRED` failure otherwise. README confirms `[x] Driver service wired — Browserless v1 (TODO-15)`.
+
+**Remaining (operator):**
+1. Sign up at https://browserless.io (free tier: 1000 units/month ≈ 200x pilot volume).
+2. `wrangler secret put BROWSERLESS_API_KEY --env production` from `apps/enrollment-api/`.
+3. Verify: trigger a Phase 2 submission against staging → check `benefitscal_submissions.playwright_log` for transcript instead of `DRIVER_NOT_WIRED`.
+
+**Original problem (resolved):** Cloudflare Workers cannot run Playwright in-process. Without an external driver, Phase 2 submission stays as `DRIVER_NOT_WIRED` regardless of TODO-14 status.
+**Effort remaining:** XS (human ~5min operator action; CC: not the bottleneck)
+**Priority:** P1 — required to activate Phase 2 automation. Also gated downstream on TODO-14 (portal form-fill selectors) and 5 successful sandbox submissions per `packages/benefitscal-cbo/README.md` rollout gate.
+**Depends on:** Browserless.io account.
 
 ---
 
@@ -176,3 +189,122 @@ Add new items with `## TODO-N` headings. Never delete — mark as DONE instead.
 **Priority:** P2 — required before SEIU/UFW partnership pitch meeting
 **Depends on:** TODO-5 (enrollment event stream), county outcome feedback loop (PR #32fc1916 county-outcome flow), buddy-add feature shipped
 
+---
+
+## TODO-18 — Clear app_metadata.role on auto-revoke (buddy access control gap) — DONE (PR #245, 2026-05-22)
+
+**Status:** DONE — shipped in PR #245. 5-min Cloudflare Cron Trigger in `apps/enrollment-api/src/cron/buddy-app-metadata-cleanup.ts` sweeps `buddy_relationship` for completed/revoked rows where `app_metadata_cleared_at IS NULL`, calls Supabase Admin API to clear `app_metadata.role`, and marks the row. Pre-merge review caught a multi-applicant regression (clearing role globally would break a buddy's other active relationships); fixed by checking for other active rows before the Admin API call. Max post-revoke exposure dropped from ~1h JWT TTL to the 5-min sweep interval.
+
+**What:** When a packet reaches a terminal state (approved/denied/withdrawn), the DB trigger sets `BuddyRelationship.status='completed'` but cannot call the Supabase Admin API to clear `app_metadata.role='buddy'` on the auth user. A revoked buddy retains `kind='buddy'` in their JWT until token expiry (~1h window). Fix: in the stall-checker cron (PR3), batch-clear `app_metadata.role` for all completed/revoked buddy relationships where `role` hasn't been cleared yet. Add a `app_metadata_cleared_at TIMESTAMPTZ` column to BuddyRelationship for tracking. Alternatively, add a Postgres NOTIFY + Cloudflare Queue consumer that calls the Admin API immediately on trigger fire.
+**Why:** Identified by outside voice in /plan-eng-review (2026-05-21). The app_metadata approach (D2=C) creates a one-way door: setting role='buddy' is done in POST /buddy/accept; clearing it on trigger-based revoke requires a code path that Postgres triggers can't reach directly. Manual revoke (DELETE /me/buddies/:id) already clears app_metadata via the API route.
+**How to apply:** Wire into PR3 stall-checker cron as a secondary task: `SELECT buddy_user_id FROM buddy_relationship WHERE status IN ('completed','revoked') AND app_metadata_cleared_at IS NULL LIMIT 500`. Call Admin API for each. Update timestamp.
+**Effort:** S (human ~2h / CC ~20min)
+**Priority:** P1 — required before production launch (App Store). Acceptable for demo/pilot.
+**Depends on:** buddy-add PR1 shipped, PR3 stall-checker cron
+
+---
+
+## TODO-19 — Create buddy_packet_summary_view for column-level PII restriction — DONE (PR #245, 2026-05-22)
+
+**Status:** DONE — shipped in PR #245 as migration `20260570_buddy_packet_summary_view.sql`. Dropped the `buddy_read_active_packet` policy on `snap_packets`; replaced with `applicant_read_own_packet` (applicants only) + a column-restricted view (`buddy_packet_summary_view`) backed by a `SECURITY DEFINER` function that predicate-checks against `buddy_relationship`. `apps/enrollment-api/src/routes/buddy.ts` `/applicant-summary` now reads the view via the anon client. `supabase/tests/buddy_rls.sql` expanded from 3 to 7 assertions.
+
+**What:** Create `snap_enrollment.buddy_packet_summary_view` exposing only safe columns: `packet_id, status, state_code, current_section, updated_at`. Update `buddy_read_active_packet` RLS policy to target the view instead of the full `snap_packets` table. Currently the policy grants SELECT on the entire `snap_packets` row (SSN, income, household composition, citizenship status); the API layer narrows via `/buddy/applicant-summary`, but the DB layer does not restrict columns.
+**Why:** Identified by outside voice in /plan-eng-review (2026-05-21). A future developer adding a buddy-authenticated route who queries `snap_packets` directly gets full PII exposure without realizing it. The view is the correct DB-layer defense.
+**How to apply:** New migration `YYYYMMDD_buddy_packet_summary_view.sql`. Update `buddy_rls.sql` to use the view in the EXISTS subquery. Update `supabase/tests/buddy_rls.sql` accordingly.
+**Effort:** S (human ~30min / CC ~10min)
+**Priority:** P2 — required before App Store launch
+**Depends on:** buddy-add PR1 migration shipped
+
+---
+
+## TODO-23 — Argyle production readiness audit (2026-05-22) — clear pending one secret
+
+**Status:** Code is production-ready. **One blocker to set before production traffic:**
+`wrangler secret put ARGYLE_WEBHOOK_SECRET` in `apps/enrollment-api` (from Argyle dashboard → Webhooks → Signing secret). Currently optional (signature verification skipped when absent — `argyle-webhook.ts:80`), but should be enabled before production. No `ARGYLE_CLIENT_ID` / `ARGYLE_API_KEY` needed on Workers — those live in the iOS SDK config.
+
+**Real-world blocker (non-technical):** Production rollout of Argyle gates on California SNAP-handler approval (same gate as first-applicant cohort closure). Per YC application: "Live in staging; production rollout gates on the same SNAP-handler approval that gates first-applicant cohort closure."
+
+**Effort:** S (human ~5min to `wrangler secret put`; CC ~5min to verify post-set)
+**Priority:** P1 — set the secret now so production env is hardened the moment SNAP-handler approval lands
+**Depends on:** Argyle dashboard access; nothing else
+
+---
+
+## TODO-21 — CDSS ACL check before first county outreach email
+
+**What:** Before sending the county outreach email (the pitch to LA/Alameda/Sacramento SNAP directors), check the CDSS ACL database (cdss.ca.gov) for any All County Letter issued after July 4, 2025 covering §10102 ABAWD exemption changes or CDSS-built tracking infrastructure. Search terms: "ABAWD", "§10102", "work requirements", "OBBBA".
+**Why:** If CDSS has issued an ACL on §10102 and/or announced a state-level tracking tool, county directors will wait for CDSS rather than procure Civica. Sending the outreach email before this check risks burning a first-contact relationship irreversibly. Premise #4 of the B2G pitch ("CDSS will not provide the tracking tool — counties are on their own") must be confirmed before the first email goes out.
+**Effort:** S (human ~30min; CC: not applicable)
+**Priority:** P1 — must complete before first county outreach email, not before county demo build
+**Depends on:** county demo URL shipped
+
+---
+
+## TODO-22 — FNS FOIA for county-level California PER data
+
+**What:** File a FOIA request to the FNS Quality Control division for county-level California payment error rate data. The county demo URL currently uses state PER (10.8%) prorated by county caseload share as a proxy. The actual county-level PER is measured independently by FNS QC reviewers and is not publicly available without a FOIA.
+**Why:** A county director who has been through FNS QC review knows the prorated estimate is not an actual county PER. The FOIA data converts the county demo from "directional estimate" to "actual county PER" for the formal procurement conversation. File now (4-6 week process) so the data arrives during the pilot phase.
+**How:** Submit via FOIA.gov or the FNS Public Affairs office. Request: "CA county-level payment error rate data from FNS Quality Control reviews, FY2023-FY2026." Label the county demo estimate as "estimated" and disclose methodology until FOIA data arrives.
+**Effort:** S (human ~1h to draft and submit; CC: not applicable)
+**Priority:** P2 — file this week; demo uses estimates in the interim
+**Depends on:** nothing — independent action
+
+---
+
+## TODO-24 — USDA SNAP retailer locator inside Civica (Propel-parity surface)
+
+**What:** Ingest the USDA SNAP Retailer Locator dataset (public, CSV/JSON) and surface a "Find EBT stores near you" map inside Civica. Source: SNAP-authorized retailers indexed by address; refresh quarterly. Surface either as a new home tile or as a sub-view inside Perks. Use MapKit for native iOS rendering; filter by store type (grocery, farmers market, convenience).
+**Why:** Identified by /plan-eng-review (2026-05-22) as a real Propel-parity gap absent from the EBT Tracker Propel-Parity plan. Recipients in rural CA + farmers-market shoppers especially benefit. Pure-fn data feature with no auth, no scraper, no counsel surface — independent of the main EBT tracker effort.
+**How to apply:** New repo path `apps/dashboard/lib/usdaRetailers.ts` for ingest + transform; iOS `Civica/Features/SNAP/EBTBalance/Stores/EBTRetailerMapView.swift` for surface. No new gateway routes — static data shipped with app or fetched from a public bucket.
+**Effort:** S (human ~1w / CC ~1d)
+**Priority:** P3 — value-add, not gating
+**Depends on:** nothing — independent of EBT tracker work
+
+---
+
+## TODO-25 — Multi-card support (CalFresh + CA Cash Aid on separate cards)
+
+**What:** Some CalWORKs recipients carry two EBT cards: one for CalFresh (SNAP) and one for cash assistance (TANF/GA). Civica's current EBT tracker assumes one card per recipient. Add account-picker UI, per-card scoping on data layer, and per-card push routing.
+**Why:** Identified by /plan-eng-review (2026-05-22) as a real edge case affecting ~30% of households we serve. Not gating Phase 1, but a known limitation we should track so we hear about it from real users with context, not as a surprise.
+**How to apply:** Repository layer adds per-card scoping (existing `ebt_cards` table already supports N rows per user — just remove the implicit "first card" assumption in iOS layer). UI: new `EBTAccountPickerView.swift` between EBTBalanceRootView and EBTBalanceDashboardView. Push handler routes by card_id. Estimate ~2 weeks of UI work; data layer already shaped correctly per §4.6.
+**Effort:** M (human ~2w / CC ~3d)
+**Priority:** P3 — Phase 3+; ship Phase 1 with single-card MVP
+**Depends on:** EBT Tracker Propel-Parity Phase 1 merged
+
+---
+
+## TODO-20 — Helper-initiated invite flow (v2, 60+ resident UX)
+
+**What:** Add a reverse invite flow where the helper (adult child, union rep, facility coordinator) initiates contact and the applicant approves access. Currently the applicant must initiate the invite (open app → find buddy invite screen → generate link → send). For the primary use case (60+ residents with limited tech literacy), the helper is more likely to initiate. Design: helper provides applicant's phone number or facility resident ID → sends a "request to help" → applicant gets notification → one-tap approve/deny.
+**Why:** Identified by outside voice in /plan-eng-review (2026-05-21). The applicant-initiated model breaks for the 60+ senior resident persona (the primary market from the office-hours design doc). An adult child wanting to help their parent shouldn't require the parent to navigate 3-4 screens to generate a link.
+**How to apply:** New route `POST /buddy/request-access`. New `BuddyAccessRequest` table. iOS: `BuddyAccessRequestView.swift`. Requires applicant notification (Twilio or push). Can be added after core buddy feature proves usage.
+**Effort:** M (human ~1w / CC ~2d)
+**Priority:** P3 — v2 backlog; core buddy feature ships first
+**Depends on:** buddy-add PR1+PR2+PR3 shipped, notification system (PR3)
+
+---
+
+## TODO-26 — Apply PR #245 migrations + deploy worker
+
+**What:** PR #245 (`1aa2899`, merged 2026-05-22) shipped 7 supabase migrations and a cron trigger + OpenAPI endpoint. None of it protects production until applied + deployed.
+
+**Remaining (operator):**
+1. `supabase db push` against staging, then production. Migrations apply in order:
+   - `20260565_work_requirement_hour_logs.sql` — work-hours table (TODO-15 adjacent)
+   - `20260566_buddy_actorkind.sql` — buddy enum value
+   - `20260567_buddy_tables.sql` — buddy invite + relationship + org
+   - `20260568_buddy_rls.sql` — initial buddy RLS
+   - `20260569_buddy_autorevoke_trigger.sql` — terminal-state auto-revoke
+   - `20260570_buddy_packet_summary_view.sql` — column-restricted PII view (drops the policy from 20260568)
+   - `20260571_set_actor_context_function.sql` — RPC batching (saves 60–80ms per mutating request)
+2. `wrangler deploy` from `apps/enrollment-api/` — activates the 5-min buddy app_metadata cleanup cron AND publishes `GET /openapi.json`.
+3. Smoke tests:
+   - `https://civica-enrollment-api.workers.dev/openapi.json` returns the OpenAPI 3.1 spec.
+   - Trigger a packet terminal-state transition in staging; wait 5 minutes; confirm `app_metadata.role` cleared on the affected buddy.
+   - Buddy-authenticated client confirms reading `snap_packets` directly returns no rows (only `buddy_packet_summary_view` works).
+4. Bundle with the deploy from TODO-2 if possible — same `wrangler deploy` invocation activates both rate limiting + cron + OpenAPI in one shot.
+
+**Why:** Until the supabase push lands, `set_actor_context()` doesn't exist → withActorContext fails on every mutating request; `buddy_packet_summary_view` doesn't exist → buddy reads break; the buddy enum value isn't registered → the audit trigger rejects buddy actor writes. Until the wrangler deploy lands, the cron doesn't run → revoked buddy JWTs stay live for the JWT TTL (~1h) instead of the 5-min sweep interval.
+**Effort:** XS (human ~15min — staging push + smoke; CC: not the bottleneck)
+**Priority:** P1 — required to activate everything that landed in PR #245.
+**Depends on:** Supabase staging access, Cloudflare account access.

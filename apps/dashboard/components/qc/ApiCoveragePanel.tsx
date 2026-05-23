@@ -34,7 +34,7 @@ export default function ApiCoveragePanel({ apis, totalPackets }: { apis: ApiEntr
   const uncoveredWeight = 100 - coveredWeight;
 
   return (
-    <section className="bg-surface border border-hairline rounded-[4px] p-7">
+    <section className="bg-surface border border-hairline border-t-2 border-t-pine-surface rounded-[4px] p-7">
       <div className="flex items-start justify-between gap-6 mb-6 flex-wrap">
         <div>
           <p className="eyebrow mb-1.5">API integration · weighted coverage</p>
@@ -166,7 +166,7 @@ function ApiCard({ api }: { api: ApiEntry }) {
   const flowColor = FLOW_COLOR[api.flow] ?? "#5A544D";
   return (
     <article
-      className={`rounded-[3px] p-5 flex flex-col gap-3 border ${isLive ? "bg-surface border-hairline" : "bg-paper border-hairline"}`}
+      className={`rounded-[4px] p-5 flex flex-col gap-3 border ${isLive ? "bg-surface border-hairline" : "bg-paper border-hairline"}`}
       style={{ borderTop: `3px solid ${isLive ? "#2A6F66" : "#9A5A14"}` }}
     >
       <div className="flex items-start justify-between gap-3">

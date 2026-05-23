@@ -93,10 +93,10 @@ export default async function OutreachPage() {
   const pendingCount = taskList.length;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-paper">
       <AppHeader email={user?.email} active="outreach" />
 
-      <main className="max-w-5xl mx-auto px-8 py-10">
+      <main className="max-w-5xl mx-auto px-8 py-8">
         <OutreachWelcomeBanner />
         <div className="flex items-baseline gap-3 mb-2">
           <Link href="/dashboard" className="text-[13px] text-muted hover:text-ink transition-colors">

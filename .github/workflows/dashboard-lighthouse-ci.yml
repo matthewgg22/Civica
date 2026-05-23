@@ -1,0 +1,85 @@
+name: Lighthouse CI (dashboard)
+
+# Runs Lighthouse against the navigator dashboard on PRs touching apps/dashboard/.
+# Desktop form factor (this is a staff-facing web app, not a mobile-first surface).
+# Accessibility is hard-error (≥ 90) — navigator dashboard must meet WCAG 2.1 AA.
+# Performance and SEO are warn-only; the dashboard is auth-gated so SEO is secondary.
+
+on:
+  pull_request:
+    branches:
+      - main
+      - codex/rebuild-feb18
+    paths:
+      - "apps/dashboard/**"
+      - ".github/workflows/dashboard-lighthouse-ci.yml"
+  push:
+    branches:
+      - codex/rebuild-feb18
+    paths:
+      - "apps/dashboard/**"
+  workflow_dispatch:
+
+jobs:
+  lighthouse:
+    name: Lighthouse desktop (dashboard public pages)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      # Placeholder env so `next build` doesn't fail on missing config.
+      # Lighthouse audits public/login pages only — no authenticated routes.
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+      NEXT_PUBLIC_SITE_URL: http://localhost:3001
+      SENTRY_DSN: ""
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies (workspace root)
+        run: npm install --no-audit --no-fund
+
+      - name: Build dashboard (production)
+        working-directory: apps/dashboard
+        run: npm run build --webpack
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+
+      - name: Start dashboard server (background, port 3001)
+        working-directory: apps/dashboard
+        run: |
+          PORT=3001 npm start &
+          echo "DASH_PID=$!" >> "$GITHUB_ENV"
+
+      - name: Wait for dashboard server
+        run: |
+          for i in {1..30}; do
+            if curl -fs http://localhost:3001 > /dev/null; then
+              echo "Dashboard ready after ${i}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Dashboard failed to start within 30s"
+          exit 1
+
+      - name: Run Lighthouse desktop
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            http://localhost:3001
+            http://localhost:3001/login
+          configPath: ./apps/dashboard/lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Stop dashboard server
+        if: always()
+        run: kill "$DASH_PID" || true
