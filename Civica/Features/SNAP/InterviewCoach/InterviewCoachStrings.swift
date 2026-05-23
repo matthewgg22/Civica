@@ -43,6 +43,91 @@ enum InterviewCoachStrings {
         "Roleplay with a simulated caseworker. Massachusetts initial-application scenario.",
         es: "Practica con un trabajador social simulado. Escenario de solicitud inicial de Massachusetts."
     )
+
+    // MARK: Persona picker
+    //
+    // Shown after the user taps the "Start a practice session" affordance.
+    // Lets the navigator (or applicant) deliberately pick a caseworker
+    // style + applicant scenario for the upcoming session. The picker
+    // surfaces every enum case in CaseworkerArchetype + ApplicantArchetype;
+    // unimplemented caseworker variants are still selectable so the UI
+    // signals what's coming, but tagged with a "Preview" pill until the
+    // backend prompt lands. Skip CTA falls back to SessionContext.defaultCA.
+
+    static let pickerTitle = CivicaText(
+        "Choose your interviewer",
+        es: "Elige tu entrevistador"
+    )
+    static let pickerSubtitle = CivicaText(
+        "Practice for the caseworker you're worried about. Pick a style and a scenario — or skip to use the defaults.",
+        es: "Practica con el trabajador social que te preocupa. Elige un estilo y un escenario — o salta para usar los valores predeterminados."
+    )
+    static let pickerCaseworkerSection = CivicaText(
+        "Caseworker style",
+        es: "Estilo del trabajador social"
+    )
+    static let pickerApplicantSection = CivicaText(
+        "Applicant scenario",
+        es: "Escenario del solicitante"
+    )
+    static let pickerStartCTA = CivicaText(
+        "Start practice session",
+        es: "Iniciar sesión de práctica"
+    )
+    static let pickerSkipCTA = CivicaText(
+        "Skip — use defaults",
+        es: "Saltar — usar valores predeterminados"
+    )
+    static let pickerPreviewBadge = CivicaText(
+        "Preview",
+        es: "Vista previa"
+    )
+
+    // Per-caseworker one-line descriptions. Same closed set as
+    // CaseworkerArchetype.allCases — kept here so a future translator
+    // doesn't have to touch the model file.
+    static let caseworkerDescFriendlyRushed = CivicaText(
+        "Warm but watching the clock — moves fast through the questions.",
+        es: "Amable pero con prisa — pasa rápido por las preguntas."
+    )
+    static let caseworkerDescFormal = CivicaText(
+        "By-the-book. Reads questions verbatim and writes down every answer.",
+        es: "Apegado al procedimiento. Lee las preguntas literalmente y anota cada respuesta."
+    )
+    static let caseworkerDescSkeptical = CivicaText(
+        "Probes inconsistencies. Asks follow-ups when numbers don't line up.",
+        es: "Sondea inconsistencias. Hace preguntas de seguimiento cuando los números no cuadran."
+    )
+    static let caseworkerDescLanguageMismatched = CivicaText(
+        "Limited shared language. Speak slowly, repeat key numbers and dates.",
+        es: "Idioma limitado en común. Habla despacio y repite números y fechas clave."
+    )
+    static let caseworkerDescAdversarial = CivicaText(
+        "Skeptical and pressing. Frames questions as a possible fraud probe.",
+        es: "Escéptico e insistente. Plantea las preguntas como un posible sondeo de fraude."
+    )
+
+    // Per-applicant one-line descriptions.
+    static let applicantDescStudent = CivicaText(
+        "College or trade student — practice the student-exemption questions.",
+        es: "Estudiante universitario o vocacional — practica preguntas sobre exención estudiantil."
+    )
+    static let applicantDescGigWorker = CivicaText(
+        "Gig / variable income — explaining hours and self-employment costs.",
+        es: "Trabajo eventual / ingreso variable — explicar horas y gastos por cuenta propia."
+    )
+    static let applicantDescMixedStatus = CivicaText(
+        "Mixed-status household — only eligible members count for benefits.",
+        es: "Hogar de estatus mixto — solo los miembros elegibles cuentan para beneficios."
+    )
+    static let applicantDescUnhoused = CivicaText(
+        "Unhoused or unstable housing — shelter, mail, and address questions.",
+        es: "Sin vivienda o vivienda inestable — preguntas sobre refugio, correo y dirección."
+    )
+    static let applicantDescSenior = CivicaText(
+        "Senior (60+) — medical deductions, fixed income, no work requirements.",
+        es: "Adulto mayor (60+) — deducciones médicas, ingresos fijos, sin requisitos laborales."
+    )
     static let loadErrorPrefix = CivicaText(
         "Couldn't load practice questions:",
         es: "No se pudieron cargar las preguntas de práctica:"

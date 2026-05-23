@@ -148,7 +148,7 @@ struct InterviewCoachEntryView: View {
 
         case .ready(let recert):
             NavigationLink {
-                PracticeSessionView(recertId: recert.recertId, auth: enrollmentAuth)
+                PersonaPickerView(recertId: recert.recertId)
             } label: {
                 affordanceRow(title: InterviewCoachStrings.practiceTitle.value(in: language),
                               subtitle: InterviewCoachStrings.practiceSubtitle.value(in: language),

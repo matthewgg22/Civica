@@ -33,6 +33,22 @@ struct PracticeSessionView: View {
         ))
     }
 
+    /// Persona-aware init used by PersonaPickerView. Lets the caller
+    /// thread a chosen SessionContext (caseworker style + applicant
+    /// scenario) into the underlying view model without changing the
+    /// shorter convenience inits above.
+    init(
+        recertId: String,
+        context: PracticeSessionViewModel.SessionContext,
+        auth: CivicaEnrollmentAuth
+    ) {
+        _viewModel = StateObject(wrappedValue: PracticeSessionViewModel.make(
+            recertId: recertId,
+            context: context,
+            auth: auth
+        ))
+    }
+
     // Voice input: SNAPVoiceIntakeService in transcript-only mode feeds
     // the final transcript into `viewModel.draftResponse` so the user can
     // review and edit before sending. Gated on iOS 26 because the service
